@@ -185,11 +185,20 @@ namespace Halobellum.Combat
         /// <summary>Sets up and runs one battle with the given seed.</summary>
         public static BattleResult RunBattle(CombatRules rules, ArmySetup armyA, ArmySetup armyB, RunnerSettings settings, int seed)
         {
+            return CreateBattle(rules, armyA, armyB, settings, seed).Run();
+        }
+
+        /// <summary>
+        /// Builds a battle with both armies placed, ready to step. The game's battle scene uses this
+        /// too, so the same armies, settings and seed give the same battle in the game and the runner.
+        /// </summary>
+        public static BattleSimulation CreateBattle(CombatRules rules, ArmySetup armyA, ArmySetup armyB, RunnerSettings settings, int seed)
+        {
             var simulation = new BattleSimulation(rules, seed);
             var layoutRandom = new SimRandom(seed ^ 0x5EED);
             ArmyLayout.Place(simulation, rules, armyA, Team.A, settings, layoutRandom);
             ArmyLayout.Place(simulation, rules, armyB, Team.B, settings, layoutRandom);
-            return simulation.Run();
+            return simulation;
         }
 
         // ------------------------------------------------------------------ reports

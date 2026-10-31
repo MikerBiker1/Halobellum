@@ -52,6 +52,13 @@ namespace Halobellum.Combat
         public BattleEvents Events { get; } = new BattleEvents();
         public IReadOnlyList<SimUnit> Units => _units;
         public int ProjectileCount => _projectiles.Count;
+
+        /// <summary>Fills the list with the position of every projectile in flight (for visuals).</summary>
+        public void GetProjectilePositions(List<Vec2> positions)
+        {
+            positions.Clear();
+            foreach (Projectile projectile in _projectiles) positions.Add(projectile.Position);
+        }
         /// <summary>Number of ticks simulated so far.</summary>
         public int Tick { get; private set; }
         public float ElapsedSeconds => Tick * _dt;
@@ -140,6 +147,10 @@ namespace Halobellum.Combat
                 {
                     Retarget(unit);
                     unit.RetargetTimer = _rules.RetargetIntervalSeconds;
+                    // Everyone picks a target on the first tick. After that, spread units across the
+                    // interval by id, so 600 units don't all search on the same tick (smoother frame
+                    // times). Each unit still re-evaluates every RetargetIntervalSeconds.
+                    if (Tick == 0) unit.RetargetTimer -= StaggerOffset(unit);
                 }
                 else
                 {
@@ -169,6 +180,13 @@ namespace Halobellum.Combat
                     unit.MoveGoal = target.Position;
                 }
             }
+        }
+
+        /// <summary>A per-unit delay of 0 to (interval - 1 tick), in whole ticks, used to spread out target searches.</summary>
+        private float StaggerOffset(SimUnit unit)
+        {
+            int ticksPerInterval = Math.Max(1, (int)MathF.Round(_rules.RetargetIntervalSeconds / _dt));
+            return (unit.Id % ticksPerInterval) * _dt;
         }
 
         /// <summary>Re-picks the closest legal enemy for the unit and for each of its weapons.</summary>

@@ -17,7 +17,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="../../Assets/_Project/Scripts/Core/**/*.cs" />
-    <Compile Include="../../Assets/_Project/Scripts/Combat/**/*.cs" />
+    <Compile Include="../../Assets/_Project/Scripts/Combat/**/*.cs" Exclude="../../Assets/_Project/Scripts/Combat/Presentation/**/*.cs" />
     <Compile Include="../../Assets/Tests/EditMode/**/*.cs" Exclude="../../Assets/Tests/EditMode/Unity/**/*.cs" />
   </ItemGroup>
   <ItemGroup>

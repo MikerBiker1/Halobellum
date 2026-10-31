@@ -6,6 +6,7 @@
 // A side that wiped the other out always wins (the wiped side deals 0).
 // Depends on: Halobellum.Core (Team).
 
+using System;
 using System.Collections.Generic;
 using Halobellum.Core;
 
@@ -55,5 +56,17 @@ namespace Halobellum.Combat
         public TeamResult TeamB;
 
         public TeamResult For(Team team) => team == Team.A ? TeamA : TeamB;
+
+        /// <summary>
+        /// One line that identifies this result: seed, length, outcome, survivors and damage per side.
+        /// The battle scene and the headless runner print it, so their results can be compared by eye.
+        /// </summary>
+        public string ToSummaryLine()
+        {
+            string limit = TimedOut ? ", time limit" : "";
+            return FormattableString.Invariant($"seed {Seed}, {Ticks} ticks ({DurationSeconds:0.0} s{limit}), {Outcome}; ")
+                + FormattableString.Invariant($"A {TeamA.Survivors}/{TeamA.Deployed} alive, {TeamA.DamageDealt:0.0} dmg; ")
+                + FormattableString.Invariant($"B {TeamB.Survivors}/{TeamB.Deployed} alive, {TeamB.DamageDealt:0.0} dmg");
+        }
     }
 }
