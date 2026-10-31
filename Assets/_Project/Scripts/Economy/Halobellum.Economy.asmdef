@@ -1,0 +1,17 @@
+{
+    "name": "Halobellum.Economy",
+    "rootNamespace": "Halobellum.Economy",
+    "references": [
+        "Halobellum.Core",
+        "Halobellum.Combat"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

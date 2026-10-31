@@ -6,6 +6,7 @@
         "UnityEditor.TestRunner",
         "Halobellum.Core",
         "Halobellum.Combat",
+        "Halobellum.Economy",
         "Halobellum.Units",
         "Halobellum.Presentation"
     ],

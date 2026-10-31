@@ -25,3 +25,11 @@ Milestones and items from PROJECT_BIBLE.md Section 14. An item is ticked when it
 - [x] Camera pan and zoom; speed controls (pause, 1x, 2x, 4x); selecting a squad opens the bottom-left stats window
 - [x] Same armies and seed give the same result in the game and the headless runner
 - [x] 300 vs 300 (600 units) runs at 60 FPS with placeholder art (measured on the owner's PC; see DAILY_REPORT)
+
+## M3: Round loop
+- [x] Match rules data and economy: credits, income and income cap, 2 squads per round, 1 unlock per round, refunds (with tests)
+- [x] Factions and starting draft (5 cards where enough sub-factions exist; Standard UNSC and Covenant for now) (with tests)
+- [x] Deployment grid: placement with snap-to-square, squad rotation, no overlap, only this round's squads movable (with tests)
+- [x] Round flow: deployment (no timer), battle (90 s cap), result; base health and base damage from survivors; round reset; do-nothing AI (with tests)
+- [ ] Match scene with draft, deployment (shop, unlock, placement, rotation), battle and result screens
+- [ ] A full match against the do-nothing AI can be won and lost

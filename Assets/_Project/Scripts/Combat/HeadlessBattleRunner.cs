@@ -27,6 +27,8 @@ namespace Halobellum.Combat
         /// Null means the squads are laid out automatically in rows.
         /// </summary>
         public List<Vec2> Positions;
+        /// <summary>Optional: whether each fixed-position squad is turned 90 degrees (same order as Positions).</summary>
+        public List<bool> Rotations;
 
         public ArmySquad(UnitStats stats, int squadCount, List<Vec2> positions = null)
         {
@@ -53,10 +55,13 @@ namespace Halobellum.Combat
             return this;
         }
 
-        /// <summary>Adds one squad at each given position (see ArmySquad.Positions).</summary>
-        public ArmySetup AddAt(UnitStats stats, List<Vec2> positions)
+        /// <summary>Adds one squad at each given position (see ArmySquad.Positions), optionally turned 90 degrees.</summary>
+        public ArmySetup AddAt(UnitStats stats, List<Vec2> positions, List<bool> rotations = null)
         {
-            Squads.Add(new ArmySquad(stats, positions.Count, new List<Vec2>(positions)));
+            Squads.Add(new ArmySquad(stats, positions.Count, new List<Vec2>(positions))
+            {
+                Rotations = rotations != null ? new List<bool>(rotations) : null,
+            });
             return this;
         }
 
@@ -314,10 +319,12 @@ namespace Halobellum.Combat
                 if (squad.Positions != null)
                 {
                     // Fixed positions in squares; depth is measured back from the front edge of the deployment zone.
-                    foreach (Vec2 position in squad.Positions)
+                    for (int p = 0; p < squad.Positions.Count; p++)
                     {
+                        Vec2 position = squad.Positions[p];
+                        bool rotated = squad.Rotations != null && p < squad.Rotations.Count && squad.Rotations[p];
                         var centre = new Vec2(position.X * rules.SquareSize, -(rules.DeploymentZoneFront + position.Y * rules.SquareSize));
-                        AddSquad(simulation, rules, squad.Stats, team, centre, settings, random);
+                        AddSquad(simulation, rules, squad.Stats, team, centre, settings, random, rotated);
                     }
                     continue;
                 }
@@ -345,10 +352,10 @@ namespace Halobellum.Combat
         }
 
         private static void AddSquad(BattleSimulation simulation, CombatRules rules, UnitStats stats, Team team,
-            Vec2 centreInTeamAFrame, RunnerSettings settings, SimRandom random)
+            Vec2 centreInTeamAFrame, RunnerSettings settings, SimRandom random, bool rotated90 = false)
         {
             Vec2 centre = team == Team.A ? centreInTeamAFrame : -centreInTeamAFrame;
-            List<Vec2> offsets = SquadFormation.Offsets(stats.SquadSize, stats.CollisionRadius, rules.FormationGap, false);
+            List<Vec2> offsets = SquadFormation.Offsets(stats.SquadSize, stats.CollisionRadius, rules.FormationGap, rotated90);
             int squadId = simulation.NewSquadId();
             foreach (Vec2 offset in offsets)
             {

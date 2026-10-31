@@ -3,7 +3,8 @@
     "rootNamespace": "Halobellum.Units",
     "references": [
         "Halobellum.Core",
-        "Halobellum.Combat"
+        "Halobellum.Combat",
+        "Halobellum.Economy"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
