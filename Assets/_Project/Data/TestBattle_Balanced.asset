@@ -127,6 +127,6 @@ MonoBehaviour:
     - {x: 38, y: 7}
     - {x: 38, y: 11}
   seed: 1000
-  positionJitter: 0.3
+  positionJitter: 0
   frontLineDistance: 10
   squadGap: 3

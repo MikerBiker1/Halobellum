@@ -26,6 +26,7 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 - [x] **Answer D11 and D12** in DECISIONS.md.
 - [x] **Answer D13** (how turning works) in DECISIONS.md.
 - [x] **Answer D14** (formation cohesion details) in DECISIONS.md.
-- [ ] **Answer D15** (acquisition range details) in DECISIONS.md.
+- [x] **Answer D15** (acquisition range details) in DECISIONS.md.
+- [ ] **Answer D16** (formation rows) in DECISIONS.md.
 - [ ] **Confirm M2** so M3 can start.
 - [ ] **Optional cleanup:** `E:\AI\_hbci` is my throwaway copy of the project for batch tests and builds (it needs a short path). You can delete it any time; I will recreate it when needed.

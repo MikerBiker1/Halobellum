@@ -447,7 +447,8 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-10-31 | Units drive along their facing (a unit facing the wrong way turns on the spot first) and turn toward targets at their turn speed; the main weapon fires only when facing the target within 15 degrees (data value), other weapons fire in any direction | Approved from D13 |
 | 2026-10-31 | Arena enlarged to 80 squares wide with 40-square deployment zones (80 x 82 in total) | Per the project owner (replaces 60 x 62) |
 | 2026-10-31 | Squads keep formation while advancing and break it, for the rest of the battle, when ANY of these happens: their bodies target different enemies, they collide with another squad, or they engage in combat | Per the project owner; details approved (D14) |
-| 2026-10-31 | Acquisition range: units only notice enemies within 3 x their range; with nothing in sight they march straight ahead; inside the enemy's deployment zone their acquisition range becomes unlimited (refines the Section 6 targeting rule "if nothing is in range, move toward the closest enemy") | Per the project owner; details in D15 |
+| 2026-10-31 | Acquisition range: units only notice enemies within 3 x their range; with nothing in sight they march straight ahead; inside the enemy's deployment zone their acquisition range becomes unlimited (refines the Section 6 targeting rule "if nothing is in range, move toward the closest enemy") | Per the project owner; details approved (D15) |
+| 2026-10-31 | Squad formations are very straight: 2 to 3 rows of perfectly aligned bodies (1 row for up to 4 bodies) | Per the project owner; details in D16 |
 
 ## 18. Assumptions to confirm
 

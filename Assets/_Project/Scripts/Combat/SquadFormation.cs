@@ -1,8 +1,10 @@
 // SquadFormation.cs
-// Works out where each body of a squad starts, around the squad's centre. Bodies stand in rows,
-// about twice as wide as deep (an 18-body squad is 6 wide and 3 deep), facing the enemy. Turning
-// the squad 90 degrees swaps width and depth (Bible Section 5, Placement). Used when a squad is
-// added to a battle; the deployment grid itself is built in Milestone 3.
+// Works out where each body of a squad starts, around the squad's centre. Bodies stand on a
+// straight grid of 2 to 3 perfectly aligned rows facing the enemy (per the project owner):
+// up to 4 bodies stand in one row, up to 12 in 2 rows, more in 3 rows. So 12 infantry are
+// 2 rows of 6 and 18 Marines are 3 rows of 6. Turning the squad 90 degrees swaps width and depth
+// (Bible Section 5, Placement). Used when a squad is added to a battle; the deployment grid itself
+// is built in Milestone 3.
 // Depends on: Halobellum.Core (Vec2).
 
 using System;
@@ -13,11 +15,18 @@ namespace Halobellum.Combat
 {
     public static class SquadFormation
     {
+        /// <summary>Number of rows for a squad of this size: 1 for up to 4 bodies, 2 for up to 12, otherwise 3.</summary>
+        public static int Rows(int squadSize)
+        {
+            if (squadSize <= 4) return 1;
+            return squadSize <= 12 ? 2 : 3;
+        }
+
         /// <summary>Number of bodies per row for a squad of this size.</summary>
         public static int Columns(int squadSize)
         {
             if (squadSize <= 1) return 1;
-            return Math.Min(squadSize, (int)MathF.Ceiling(MathF.Sqrt(squadSize * 2f)));
+            return (int)MathF.Ceiling(squadSize / (float)Rows(squadSize));
         }
 
         /// <summary>

@@ -66,3 +66,9 @@ None.
 - **Battle:** the back rows now march as compact blocks until enemies are within 3 x their range. Team B wins after 64.6 s with 2 of 300 left. Screenshots: `Docs/M2_acquisition_03s.png`, `Docs/M2_acquisition_10s.png`, `Docs/M2_acquisition_20s.png`.
 - **Tests:** Unity EditMode 152 / 152 (5 new acquisition tests), PlayMode 3 / 3, .NET 144 / 144. The scene still matches the headless runner exactly.
 - **Performance:** 1x average about 1110 FPS with worst frames of 6.8 to 6.9 ms in two clean runs; 4x average 986 FPS, worst 8.3 ms. One earlier run had a single 4.4 s stall while the simulation never took more than 5.2 ms; it did not repeat, so it came from outside the game (probably Windows).
+
+## Straight formations (same day)
+- **D15 approved** and recorded.
+- **Formations:** squads now stand in very straight, perfectly aligned rows: 1 row up to 4 bodies, 2 rows up to 12, 3 rows above (12 infantry = 2 rows of 6). The test battle no longer nudges bodies at random when placing them. Details for approval in **D16**.
+- **Battle (tested at 4x only, as requested):** Team B wins after 50.2 s with 22 of 300 left; 4x average 940 FPS, worst frame 8.7 ms, no frame below 60 FPS. Screenshots: `Docs/M2_formations_03s.png`, `Docs/M2_formations_10s.png`.
+- **Tests:** Unity EditMode 161 / 161 (new formation tests), PlayMode 3 / 3, .NET 153 / 153. The scene still matches the headless runner exactly.
