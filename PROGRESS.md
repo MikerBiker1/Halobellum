@@ -11,7 +11,7 @@ Milestones and items from PROJECT_BIBLE.md Section 14. An item is ticked when it
 ## M1: Battle simulation core
 - [x] `UnitDefinition` ScriptableObject and plain C# unit data
 - [x] Damage and armor math, with tests
-- [ ] Optional directional defense, with tests
+- [x] Optional directional defense, with tests
 - [ ] Free continuous-2D movement with collision and separation, with tests
 - [ ] Fixed-timestep simulation in plain C# with closest-enemy targeting, with tests
 - [ ] Headless runner that simulates 3 placeholder units against each other and prints results
