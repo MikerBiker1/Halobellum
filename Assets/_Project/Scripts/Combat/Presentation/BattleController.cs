@@ -66,6 +66,7 @@ namespace Halobellum.Presentation
                 return;
             }
 
+            Application.runInBackground = true; // Keep playing when the window loses focus.
             PlaceholderArt.SetBaseMaterial(placeholderMaterial);
             Rules = combatRules.ToRules();
             ArmySetup armyA = battleSetup.BuildArmyA(_unitSources);
