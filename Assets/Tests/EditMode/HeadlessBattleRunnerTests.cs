@@ -57,6 +57,7 @@ namespace Halobellum.Tests
                 if (unit.Team == Team.A) Assert.Less(unit.Position.Y, -19f, unit.ToString());
                 else Assert.Greater(unit.Position.Y, 19f, unit.ToString());
                 Assert.LessOrEqual(System.Math.Abs(unit.Position.X), _rules.ArenaWidth / 2f, unit.ToString());
+                Assert.LessOrEqual(System.Math.Abs(unit.Position.Y), _rules.ArenaLength / 2f, unit.ToString());
             }
             for (int i = 0; i < sim.Units.Count; i++)
             for (int j = i + 1; j < sim.Units.Count; j++)

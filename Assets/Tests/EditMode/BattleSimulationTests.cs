@@ -156,7 +156,7 @@ namespace Halobellum.Tests
         public void Shield_AbsorbsFirst_ThenRegeneratesAfterTheDelay()
         {
             var sim = NewSim();
-            var shooter = sim.AddUnit(TestUnits.Unit(speed: 0f, weapon: TestUnits.Weapon(damage: 30f, range: 30f, interval: 100f)), Team.A, new Vec2(0f, 0f));
+            var shooter = sim.AddUnit(TestUnits.Unit(speed: 0f, weapon: TestUnits.Weapon(damage: 30f, range: 30f, interval: 100f, type: DamageType.Explosive)), Team.A, new Vec2(0f, 0f));
             var target = sim.AddUnit(TestUnits.Unit(health: 100f, speed: 0f, shield: 50f, shieldRegen: 10f, filter: TargetFilter.Air), Team.B, new Vec2(0f, 10f));
 
             sim.Step();

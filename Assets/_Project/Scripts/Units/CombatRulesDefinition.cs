@@ -26,10 +26,15 @@ namespace Halobellum.Units
         [Tooltip("Battles end after this many seconds.")]
         public float battleTimeLimitSeconds;
 
-        [Header("Arena (metres)")]
-        public float arenaWidth;
-        [Tooltip("From Team A's edge to Team B's edge. Each team owns half.")]
-        public float arenaLength;
+        [Header("Arena (deployment-grid squares)")]
+        [Tooltip("Size of one deployment-grid square in metres.")]
+        public float squareSize;
+        [Tooltip("Arena width, left to right, in squares.")]
+        public int arenaWidthSquares;
+        [Tooltip("Depth of each army's deployment zone in squares.")]
+        public int deploymentDepthSquares;
+        [Tooltip("Squares of no man's land between the two deployment zones.")]
+        public int noMansLandSquares;
 
         [Header("Movement tuning")]
         [Tooltip("Neighbor-search grid cell size in metres.")]
@@ -56,6 +61,9 @@ namespace Halobellum.Units
         [Tooltip("Used instead of the damage type row when a weapon has the anti-armor tag.")]
         public DamageRow antiArmor = new DamageRow();
 
+        [Header("Energy shield multipliers (separate layer, independent of armor)")]
+        public ShieldRow shieldMultipliers = new ShieldRow();
+
         /// <summary>Copies this asset's values into a new plain C# CombatRules for the simulation.</summary>
         public CombatRules ToRules()
         {
@@ -65,8 +73,10 @@ namespace Halobellum.Units
                 RetargetIntervalSeconds = retargetIntervalSeconds,
                 ShieldRegenDelaySeconds = shieldRegenDelaySeconds,
                 BattleTimeLimitSeconds = battleTimeLimitSeconds,
-                ArenaWidth = arenaWidth,
-                ArenaLength = arenaLength,
+                SquareSize = squareSize,
+                ArenaWidthSquares = arenaWidthSquares,
+                DeploymentDepthSquares = deploymentDepthSquares,
+                NoMansLandSquares = noMansLandSquares,
                 SpatialCellSize = spatialCellSize,
                 SeparationPadding = separationPadding,
                 SeparationWeight = separationWeight,
@@ -83,7 +93,21 @@ namespace Halobellum.Units
             table.SetRow(DamageType.Fire, fire.unarmored, fire.light, fire.heavy);
             table.SetRow(DamageType.Melee, melee.unarmored, melee.light, melee.heavy);
             table.SetAntiArmorRow(antiArmor.unarmored, antiArmor.light, antiArmor.heavy);
+            ShieldRow s = shieldMultipliers;
+            table.SetShieldRow(s.ballistic, s.explosive, s.energy, s.fire, s.melee, s.antiArmor);
             return rules;
+        }
+
+        /// <summary>Multipliers against energy shields for each damage type and the anti-armor tag.</summary>
+        [Serializable]
+        public sealed class ShieldRow
+        {
+            public float ballistic;
+            public float explosive;
+            public float energy;
+            public float fire;
+            public float melee;
+            public float antiArmor;
         }
 
         /// <summary>One row of the damage table: multipliers against each armor type.</summary>

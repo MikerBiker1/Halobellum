@@ -277,8 +277,7 @@ namespace Halobellum.Combat
                     Events.RaiseAttackBlocked(directTarget, attacker);
                     return; // A blocked projectile is stopped completely, including any splash.
                 }
-                float damage = DamageCalculator.ComputeDamage(_rules.DamageTable, weapon, directTarget.Stats.ArmorType, defense.DamageMultiplier);
-                DealDamage(directTarget, attacker, damage);
+                DealDamage(directTarget, attacker, weapon, defense.DamageMultiplier);
             }
 
             if (weapon.SplashRadius <= 0f) return;
@@ -292,14 +291,14 @@ namespace Halobellum.Combat
 
                 DefenseResult defense = DirectionalDefense.Evaluate(victim.Stats.DefenseArc, victim.Position,
                     victim.Facing, impactPoint, weapon, false, _random);
-                float damage = DamageCalculator.ComputeDamage(_rules.DamageTable, weapon, victim.Stats.ArmorType, defense.DamageMultiplier);
-                DealDamage(victim, attacker, damage);
+                DealDamage(victim, attacker, weapon, defense.DamageMultiplier);
             }
         }
 
-        private void DealDamage(SimUnit target, SimUnit attacker, float damage)
+        private void DealDamage(SimUnit target, SimUnit attacker, WeaponStats weapon, float directionalMultiplier)
         {
-            float dealt = DamageCalculator.ApplyDamage(damage, ref target.Shield, ref target.Health);
+            float dealt = DamageCalculator.ApplyHit(_rules.DamageTable, weapon, target.Stats.ArmorType, directionalMultiplier,
+                ref target.Shield, ref target.Health);
             target.SecondsSinceDamaged = 0f;
             attacker.DamageDealt += dealt;
             Events.RaiseUnitDamaged(target, attacker, dealt);

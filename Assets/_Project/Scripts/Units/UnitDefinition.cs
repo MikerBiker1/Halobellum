@@ -49,6 +49,7 @@ namespace Halobellum.Units
 
         [Header("Combat")]
         public TargetFilter targetFilter;
+        [Tooltip("The first weapon is the main weapon: its target and range decide where the unit moves and when it stops to fight. Other weapons pick their own targets.")]
         public List<WeaponDefinition> weapons = new List<WeaponDefinition>();
         [Tooltip("Only a few units (Shield Jackals, Hunters) have directional defense.")]
         public bool hasDefenseArc;

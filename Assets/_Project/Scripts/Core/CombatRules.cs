@@ -18,10 +18,25 @@ namespace Halobellum.Core
         /// <summary>A battle ends after this many seconds (Bible: 90).</summary>
         public float BattleTimeLimitSeconds;
 
-        /// <summary>Arena size in metres, left to right.</summary>
-        public float ArenaWidth;
-        /// <summary>Arena size in metres, from Team A's edge to Team B's edge. Each team owns half.</summary>
-        public float ArenaLength;
+        // Arena (decision D4): measured in deployment-grid squares, like Mechabellum.
+        // Team A's deployment zone, then a strip of no man's land, then Team B's zone.
+        /// <summary>Size of one deployment-grid square in metres.</summary>
+        public float SquareSize;
+        /// <summary>Arena width (left to right) in squares.</summary>
+        public int ArenaWidthSquares;
+        /// <summary>Depth of each army's deployment zone in squares.</summary>
+        public int DeploymentDepthSquares;
+        /// <summary>Squares of no man's land between the two deployment zones.</summary>
+        public int NoMansLandSquares;
+
+        /// <summary>Total length in squares, from Team A's edge to Team B's edge.</summary>
+        public int ArenaLengthSquares => DeploymentDepthSquares * 2 + NoMansLandSquares;
+        /// <summary>Arena width in metres. X runs from -ArenaWidth/2 to +ArenaWidth/2.</summary>
+        public float ArenaWidth => ArenaWidthSquares * SquareSize;
+        /// <summary>Arena length in metres. Y runs from -ArenaLength/2 (Team A's edge) to +ArenaLength/2.</summary>
+        public float ArenaLength => ArenaLengthSquares * SquareSize;
+        /// <summary>Distance in metres from the centre line to the front edge of each deployment zone.</summary>
+        public float DeploymentZoneFront => NoMansLandSquares * SquareSize * 0.5f;
 
         // Movement tuning (how units steer and keep apart). Technical values, not unit balance.
         /// <summary>Size of one neighbor-search grid cell in metres.</summary>

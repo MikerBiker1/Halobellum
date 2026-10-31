@@ -16,8 +16,10 @@ MonoBehaviour:
   retargetIntervalSeconds: 0.5
   shieldRegenDelaySeconds: 5
   battleTimeLimitSeconds: 90
-  arenaWidth: 120
-  arenaLength: 160
+  squareSize: 2
+  arenaWidthSquares: 60
+  deploymentDepthSquares: 30
+  noMansLandSquares: 2
   spatialCellSize: 4
   separationPadding: 0.2
   separationWeight: 1
@@ -49,3 +51,10 @@ MonoBehaviour:
     unarmored: 0.5
     light: 1.2
     heavy: 1.5
+  shieldMultipliers:
+    ballistic: 0.75
+    explosive: 1
+    energy: 1.5
+    fire: 0.5
+    melee: 1
+    antiArmor: 0.5

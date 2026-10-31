@@ -51,3 +51,10 @@ None.
 - Tuning values for movement (separation, avoidance, collision passes, formation gap) are also in `CombatRules.asset`, not in code.
 - 300 vs 300 performance (60 FPS) is an M2 criterion and has not been measured yet.
 - M2 was not started.
+
+## Update after review (same day)
+- You approved D1, D3, D5, D6, D7, D8 (first weapon = main weapon) and D9; they are now in the Bible's decision log (Section 17).
+- **D2 changed and implemented:** energy shields use their own multipliers (Ballistic 0.75, Explosive 1.0, Energy 1.5, Fire 0.5, Melee 1.0, Anti-armor 0.5). A hit that breaks the shield carries its remaining base damage over to health using the armor multiplier.
+- **D4 changed and implemented:** the arena is 60 squares wide, with 30 squares per army and 2 squares of no man's land (60 x 62).
+- **New, needs approval: D10.** One square = 2 m (arena 120 m x 124 m).
+- Tests: Unity EditMode 123 / 123 passed; .NET harness 115 / 115. The headless runner gives the same outcomes on the new arena (the infantry dealt slightly less damage to the tanks).

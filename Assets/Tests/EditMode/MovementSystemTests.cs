@@ -200,10 +200,11 @@ namespace Halobellum.Tests
         public void SpatialGrid_QueryMatchesBruteForce()
         {
             var rng = new SimRandom(5);
+            float halfWidth = _rules.ArenaWidth / 2f, halfLength = _rules.ArenaLength / 2f;
             var units = new List<SimUnit>();
             for (int i = 0; i < 300; i++)
             {
-                var p = new Vec2(rng.Range(-60f, 60f), rng.Range(-80f, 80f));
+                var p = new Vec2(rng.Range(-halfWidth, halfWidth), rng.Range(-halfLength, halfLength));
                 units.Add(Walker(i, p, p));
             }
             units[10].State = UnitState.Dead;
@@ -213,7 +214,7 @@ namespace Halobellum.Tests
             var found = new List<SimUnit>();
             for (int q = 0; q < 50; q++)
             {
-                var center = new Vec2(rng.Range(-60f, 60f), rng.Range(-80f, 80f));
+                var center = new Vec2(rng.Range(-halfWidth, halfWidth), rng.Range(-halfLength, halfLength));
                 float radius = rng.Range(0.5f, 15f);
                 grid.Query(center, radius, found);
                 int expected = 0;

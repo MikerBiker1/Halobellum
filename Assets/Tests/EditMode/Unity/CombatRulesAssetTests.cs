@@ -28,8 +28,10 @@ namespace Halobellum.Tests
             Assert.AreEqual(expected.RetargetIntervalSeconds, fromAsset.RetargetIntervalSeconds, 1e-5f);
             Assert.AreEqual(expected.ShieldRegenDelaySeconds, fromAsset.ShieldRegenDelaySeconds, 1e-5f);
             Assert.AreEqual(expected.BattleTimeLimitSeconds, fromAsset.BattleTimeLimitSeconds, 1e-5f);
-            Assert.AreEqual(expected.ArenaWidth, fromAsset.ArenaWidth, 1e-5f);
-            Assert.AreEqual(expected.ArenaLength, fromAsset.ArenaLength, 1e-5f);
+            Assert.AreEqual(expected.SquareSize, fromAsset.SquareSize, 1e-5f);
+            Assert.AreEqual(expected.ArenaWidthSquares, fromAsset.ArenaWidthSquares);
+            Assert.AreEqual(expected.DeploymentDepthSquares, fromAsset.DeploymentDepthSquares);
+            Assert.AreEqual(expected.NoMansLandSquares, fromAsset.NoMansLandSquares);
             Assert.AreEqual(expected.SpatialCellSize, fromAsset.SpatialCellSize, 1e-5f);
             Assert.AreEqual(expected.SeparationPadding, fromAsset.SeparationPadding, 1e-5f);
             Assert.AreEqual(expected.SeparationWeight, fromAsset.SeparationWeight, 1e-5f);
@@ -46,6 +48,11 @@ namespace Halobellum.Tests
                 }
                 Assert.AreEqual(expected.DamageTable.GetAntiArmor(armor), fromAsset.DamageTable.GetAntiArmor(armor), 1e-5f, $"Anti-armor vs {armor}");
             }
+            foreach (DamageType type in Enum.GetValues(typeof(DamageType)))
+            {
+                Assert.AreEqual(expected.DamageTable.GetShield(type), fromAsset.DamageTable.GetShield(type), 1e-5f, $"{type} vs shield");
+            }
+            Assert.AreEqual(expected.DamageTable.GetAntiArmorShield(), fromAsset.DamageTable.GetAntiArmorShield(), 1e-5f, "Anti-armor vs shield");
         }
     }
 }

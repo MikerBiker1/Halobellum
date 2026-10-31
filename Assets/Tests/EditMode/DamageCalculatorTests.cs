@@ -66,47 +66,95 @@ namespace Halobellum.Tests
             Assert.AreEqual(50f, DamageCalculator.ComputeDamage(_table, weapon, ArmorType.Heavy), 1e-4f);
         }
 
+        // ---- Energy shields (decision D2): their own multipliers, independent of armor.
+
+        [TestCase(DamageType.Ballistic, 75f)]
+        [TestCase(DamageType.Explosive, 100f)]
+        [TestCase(DamageType.Energy, 150f)]
+        [TestCase(DamageType.Fire, 50f)]
+        [TestCase(DamageType.Melee, 100f)]
+        public void ApplyHit_Shield_UsesShieldRow_NotArmor(DamageType type, float expectedShieldDamage)
+        {
+            // Heavy armor would change these numbers if armor applied to shields; it must not.
+            float shield = 1000f, health = 100f;
+            float removed = DamageCalculator.ApplyHit(_table, TestUnits.Weapon(damage: 100f, type: type), ArmorType.Heavy, 1f, ref shield, ref health);
+            Assert.AreEqual(1000f - expectedShieldDamage, shield, 1e-3f);
+            Assert.AreEqual(100f, health);
+            Assert.AreEqual(expectedShieldDamage, removed, 1e-3f);
+        }
+
         [Test]
-        public void ApplyDamage_NoShield_HitsHealth()
+        public void ApplyHit_Shield_AntiArmorTagUsesAntiArmorShieldValue()
+        {
+            float shield = 1000f, health = 100f;
+            var weapon = TestUnits.Weapon(damage: 100f, type: DamageType.Energy, antiArmor: true);
+            DamageCalculator.ApplyHit(_table, weapon, ArmorType.Heavy, 1f, ref shield, ref health);
+            Assert.AreEqual(950f, shield, 1e-3f);
+        }
+
+        [Test]
+        public void ApplyHit_NoShield_UsesArmorMultiplier()
         {
             float shield = 0f, health = 100f;
-            float dealt = DamageCalculator.ApplyDamage(30f, ref shield, ref health);
-            Assert.AreEqual(70f, health, 1e-4f);
-            Assert.AreEqual(30f, dealt, 1e-4f);
+            float removed = DamageCalculator.ApplyHit(_table, TestUnits.Weapon(damage: 40f, type: DamageType.Ballistic), ArmorType.Light, 1f, ref shield, ref health);
+            Assert.AreEqual(76f, health, 1e-3f); // 40 x 0.6
+            Assert.AreEqual(24f, removed, 1e-3f);
         }
 
         [Test]
-        public void ApplyDamage_ShieldAbsorbsFirst()
+        public void ApplyHit_BreakingTheShield_CarriesRemainingBaseDamageOverWithArmorMultiplier()
         {
-            float shield = 50f, health = 100f;
-            DamageCalculator.ApplyDamage(30f, ref shield, ref health);
-            Assert.AreEqual(20f, shield, 1e-4f);
-            Assert.AreEqual(100f, health, 1e-4f);
+            // Energy 100 base vs a 30-point shield: x1.5 means the shield soaks 20 base damage.
+            // The other 80 base damage hits Heavy armor at x0.75 = 60.
+            float shield = 30f, health = 500f;
+            float removed = DamageCalculator.ApplyHit(_table, TestUnits.Weapon(damage: 100f, type: DamageType.Energy), ArmorType.Heavy, 1f, ref shield, ref health);
+            Assert.AreEqual(0f, shield);
+            Assert.AreEqual(440f, health, 1e-3f);
+            Assert.AreEqual(90f, removed, 1e-3f);
         }
 
         [Test]
-        public void ApplyDamage_ExcessOverflowsFromShieldToHealth()
+        public void ApplyHit_BreakingTheShield_WithAWeakDamageType()
         {
-            float shield = 20f, health = 100f;
-            DamageCalculator.ApplyDamage(50f, ref shield, ref health);
-            Assert.AreEqual(0f, shield, 1e-4f);
-            Assert.AreEqual(70f, health, 1e-4f);
+            // Fire 100 base vs a 20-point shield: x0.5 means the shield soaks 40 base damage.
+            // The other 60 base damage hits an Unarmored body at x1.5 = 90.
+            float shield = 20f, health = 200f;
+            DamageCalculator.ApplyHit(_table, TestUnits.Weapon(damage: 100f, type: DamageType.Fire), ArmorType.Unarmored, 1f, ref shield, ref health);
+            Assert.AreEqual(0f, shield);
+            Assert.AreEqual(110f, health, 1e-3f);
         }
 
         [Test]
-        public void ApplyDamage_HealthStopsAtZero_AndReportsOnlyRealDamage()
+        public void ApplyHit_ExactlyBreakingTheShield_LeavesHealthUntouched()
+        {
+            float shield = 75f, health = 100f;
+            DamageCalculator.ApplyHit(_table, TestUnits.Weapon(damage: 100f, type: DamageType.Ballistic), ArmorType.Unarmored, 1f, ref shield, ref health);
+            Assert.AreEqual(0f, shield);
+            Assert.AreEqual(100f, health, 1e-3f);
+        }
+
+        [Test]
+        public void ApplyHit_DirectionalMultiplierScalesBaseDamage()
+        {
+            float shield = 0f, health = 1000f;
+            DamageCalculator.ApplyHit(_table, TestUnits.Weapon(damage: 100f, type: DamageType.Explosive), ArmorType.Heavy, 0.2f, ref shield, ref health);
+            Assert.AreEqual(980f, health, 1e-3f);
+        }
+
+        [Test]
+        public void ApplyHit_HealthStopsAtZero_AndReportsOnlyRealDamage()
         {
             float shield = 0f, health = 10f;
-            float dealt = DamageCalculator.ApplyDamage(50f, ref shield, ref health);
+            float removed = DamageCalculator.ApplyHit(_table, TestUnits.Weapon(damage: 50f), ArmorType.Unarmored, 1f, ref shield, ref health);
             Assert.AreEqual(0f, health);
-            Assert.AreEqual(10f, dealt, 1e-4f);
+            Assert.AreEqual(10f, removed, 1e-4f);
         }
 
         [Test]
-        public void ApplyDamage_ZeroOrNegative_DoesNothing()
+        public void ApplyHit_ZeroDamage_DoesNothing()
         {
             float shield = 5f, health = 10f;
-            Assert.AreEqual(0f, DamageCalculator.ApplyDamage(-5f, ref shield, ref health));
+            Assert.AreEqual(0f, DamageCalculator.ApplyHit(_table, TestUnits.Weapon(damage: 0f), ArmorType.Unarmored, 1f, ref shield, ref health));
             Assert.AreEqual(5f, shield);
             Assert.AreEqual(10f, health);
         }
