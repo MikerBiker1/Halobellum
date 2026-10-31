@@ -129,7 +129,7 @@ namespace Halobellum.Combat
                 float side;
                 if (lateral > 1e-4f) side = -1f;       // Obstacle on the left: swerve right.
                 else if (lateral < -1e-4f) side = 1f;  // Obstacle on the right: swerve left.
-                else side = unit.Id % 2 == 0 ? 1f : -1f; // Dead ahead: pick a side by id, so it is repeatable.
+                else side = -1f; // Dead ahead: always keep right, so two units walking at each other pass instead of blocking.
 
                 float urgency = 1f - ahead / reach;
                 float closeness = 1f - MathF.Abs(lateral) / minDistance;

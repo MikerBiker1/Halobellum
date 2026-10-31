@@ -59,3 +59,10 @@ None.
 - **Same fight on the bigger map:** same composition and the same front (chaff screen, tanks at row 6); flankers moved to the new side edges; the spread chaff was stretched by 4/3 to fill the bigger zone, down to the new back corners (row 37). Result: Team A wins after 50.3 s with 35 of 300 left. Back squads stay in formation until they reach the fight; screenshots `Docs/M2_cohesion_03s.png`, `Docs/M2_cohesion_10s.png`, `Docs/M2_cohesion_20s.png`.
 - **Tests:** Unity EditMode 147 / 147 (7 new cohesion tests), PlayMode 3 / 3, .NET 139 / 139. The scene still matches the headless runner exactly.
 - **Performance:** 1x average 982 FPS, worst frame 8.8 ms; 4x average 915 FPS, worst frame 15.8 ms; no frame below 60 FPS.
+
+## Acquisition range (same day)
+- **Acquisition range:** units only notice enemies within 3 x their weapon range; with nothing in sight they march straight ahead (squads in formation), and once inside the enemy's deployment zone they notice enemies at any distance. The multiplier (3) is in `CombatRules.asset`. Details for approval in **D15**. D14 recorded as approved.
+- **Fix:** two units walking straight at each other used to swerve the same way and block each other forever; they now both keep right and pass.
+- **Battle:** the back rows now march as compact blocks until enemies are within 3 x their range. Team B wins after 64.6 s with 2 of 300 left. Screenshots: `Docs/M2_acquisition_03s.png`, `Docs/M2_acquisition_10s.png`, `Docs/M2_acquisition_20s.png`.
+- **Tests:** Unity EditMode 152 / 152 (5 new acquisition tests), PlayMode 3 / 3, .NET 144 / 144. The scene still matches the headless runner exactly.
+- **Performance:** 1x average about 1110 FPS with worst frames of 6.8 to 6.9 ms in two clean runs; 4x average 986 FPS, worst 8.3 ms. One earlier run had a single 4.4 s stall while the simulation never took more than 5.2 ms; it did not repeat, so it came from outside the game (probably Windows).

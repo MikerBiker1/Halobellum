@@ -27,6 +27,8 @@ namespace Halobellum.Units
         public float battleTimeLimitSeconds;
         [Tooltip("The main weapon fires only when the unit faces its target within this many degrees. 180 = any direction.")]
         public float mainWeaponFacingToleranceDegrees;
+        [Tooltip("Units notice enemies within weapon range x this. With nothing in sight they march ahead; inside the enemy's zone the range is unlimited.")]
+        public float acquisitionRangeMultiplier;
 
         [Header("Arena (deployment-grid squares)")]
         [Tooltip("Size of one deployment-grid square in metres.")]
@@ -53,7 +55,7 @@ namespace Halobellum.Units
         public int collisionIterations;
         [Tooltip("Gap in metres between neighbouring bodies when a squad is placed in formation.")]
         public float formationGap;
-        [Tooltip("While a squad marches in formation, each body aims this many seconds of travel ahead of its place.")]
+        [Tooltip("Marching bodies (in formation, or advancing with nothing in sight) aim this many seconds of travel ahead.")]
         public float formationLookaheadSeconds;
 
         [Header("Damage multipliers (vs Unarmored, Light, Heavy)")]
@@ -78,6 +80,7 @@ namespace Halobellum.Units
                 ShieldRegenDelaySeconds = shieldRegenDelaySeconds,
                 BattleTimeLimitSeconds = battleTimeLimitSeconds,
                 MainWeaponFacingToleranceDegrees = mainWeaponFacingToleranceDegrees,
+                AcquisitionRangeMultiplier = acquisitionRangeMultiplier,
                 SquareSize = squareSize,
                 ArenaWidthSquares = arenaWidthSquares,
                 DeploymentDepthSquares = deploymentDepthSquares,

@@ -17,6 +17,7 @@ MonoBehaviour:
   shieldRegenDelaySeconds: 5
   battleTimeLimitSeconds: 90
   mainWeaponFacingToleranceDegrees: 15
+  acquisitionRangeMultiplier: 3
   squareSize: 2
   arenaWidthSquares: 80
   deploymentDepthSquares: 40

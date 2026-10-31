@@ -22,6 +22,11 @@ namespace Halobellum.Core
         /// (the unit must turn its body to aim). 180 means it can fire in any direction.
         /// </summary>
         public float MainWeaponFacingToleranceDegrees;
+        /// <summary>
+        /// Units only notice enemies within (weapon range x this). With nothing in sight they march
+        /// straight ahead; once inside the enemy's deployment zone they notice enemies at any distance.
+        /// </summary>
+        public float AcquisitionRangeMultiplier;
 
         // Arena (decision D4): measured in deployment-grid squares, like Mechabellum.
         // Team A's deployment zone, then a strip of no man's land, then Team B's zone.
@@ -58,7 +63,7 @@ namespace Halobellum.Core
         public int CollisionIterations;
         /// <summary>Gap in metres between neighbouring bodies when a squad is placed in formation.</summary>
         public float FormationGap;
-        /// <summary>While a squad marches in formation, each body aims this many seconds of travel ahead of its place.</summary>
+        /// <summary>Marching bodies (in formation, or advancing with nothing in sight) aim this many seconds of travel ahead.</summary>
         public float FormationLookaheadSeconds;
 
         public DamageTable DamageTable = new DamageTable();

@@ -21,6 +21,7 @@ namespace Halobellum.Tests
                 ShieldRegenDelaySeconds = 5f,
                 BattleTimeLimitSeconds = 90f,
                 MainWeaponFacingToleranceDegrees = 15f,
+                AcquisitionRangeMultiplier = 3f,
                 SquareSize = 2f,
                 ArenaWidthSquares = 80,
                 DeploymentDepthSquares = 40,

@@ -83,11 +83,11 @@ namespace Halobellum.Tests
         [Test]
         public void Squad_BreaksFormation_WhenItsBodiesTargetDifferentSquads()
         {
-            // Two enemy squads straight ahead of each end of a wide squad.
+            // Two enemy squads ahead-left and ahead-right, both within acquisition range (3 x 12 m) but out of range.
             var sim = new BattleSimulation(_rules, 1);
-            int id = sim.AddSquad(Rifle(), Team.A, new Vec2(0f, -60f));
-            sim.AddUnit(Dummy(), Team.B, new Vec2(-30f, 60f), sim.NewSquadId());
-            sim.AddUnit(Dummy(), Team.B, new Vec2(30f, 60f), sim.NewSquadId());
+            int id = sim.AddSquad(Rifle(), Team.A, new Vec2(0f, -20f));
+            sim.AddUnit(Dummy(), Team.B, new Vec2(-20f, 5f), sim.NewSquadId());
+            sim.AddUnit(Dummy(), Team.B, new Vec2(20f, 5f), sim.NewSquadId());
             SimSquad squad = sim.SquadById(id);
 
             sim.Step();

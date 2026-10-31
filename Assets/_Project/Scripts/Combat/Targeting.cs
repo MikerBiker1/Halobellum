@@ -7,6 +7,8 @@
 // Distances for range checks are measured from the shooter's centre to the target's edge, so
 // large units can be hit from as far as small ones. Ties go to the lower unit id, so results
 // are repeatable. The simulation calls this every 0.5 seconds, not every tick.
+// Units only notice enemies within their acquisition range (3 x weapon range by default, from
+// CombatRules) until they reach the enemy's deployment zone; then the range is unlimited.
 // Depends on: SimUnit, Halobellum.Core (WeaponStats, Vec2).
 
 using System;
@@ -49,7 +51,9 @@ namespace Halobellum.Combat
         /// The closest enemy this weapon may legally target, in range or not, or null if there is none.
         /// If the result is out of range, no legal enemy is in range, so the unit should move toward it.
         /// </summary>
-        public static SimUnit FindClosestLegalTarget(SimUnit shooter, WeaponStats weapon, IReadOnlyList<SimUnit> units)
+        /// <param name="acquisitionRange">Enemies further than this (to their edge) are not noticed at all. Infinity = no limit.</param>
+        public static SimUnit FindClosestLegalTarget(SimUnit shooter, WeaponStats weapon, IReadOnlyList<SimUnit> units,
+            float acquisitionRange = float.PositiveInfinity)
         {
             SimUnit best = null;
             float bestDistanceSquared = float.MaxValue;
@@ -57,6 +61,7 @@ namespace Halobellum.Combat
             {
                 SimUnit candidate = units[i];
                 if (!IsLegalTarget(shooter, weapon, candidate)) continue;
+                if (!float.IsPositiveInfinity(acquisitionRange) && EdgeDistance(shooter, candidate) > acquisitionRange) continue;
 
                 float distanceSquared = Vec2.DistanceSquared(shooter.Position, candidate.Position);
                 bool closer = distanceSquared < bestDistanceSquared;

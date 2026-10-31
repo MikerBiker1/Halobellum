@@ -4,9 +4,11 @@
 // It advances in fixed ticks (30 per second from CombatRules). Each tick, in this order:
 //   1. Shields regenerate if the unit has gone long enough without damage.
 //   2. Targeting: every 0.5 s (or at once if its target died) each unit picks the closest enemy it
-//      can legally target. Each weapon picks its own closest legal target.
+//      can legally target within its acquisition range (weapon range x 3; unlimited once inside the
+//      enemy's deployment zone). Each weapon picks its own closest legal target.
 //   3. State: if the first weapon's target is in range the unit stops and attacks (Attack);
-//      otherwise it moves toward that target (Move); with no legal target it waits (Idle).
+//      otherwise it moves toward that target (Move); with nothing in sight it marches straight
+//      ahead (Move); with no legal target anywhere it waits (Idle).
 //   4. Squad cohesion (SimSquad): squads of several bodies march in formation until a break
 //      condition is met. Then movement (MovementSystem): free 2D steering with collision.
 //   5. Attacking units turn toward their target at their own turning speed. Weapons fire when ready
@@ -166,8 +168,12 @@ namespace Halobellum.Combat
             {
                 if (!unit.IsAlive) continue;
 
+                // Once inside the enemy's deployment zone, a unit notices enemies at any distance.
+                if (!unit.UnlimitedAcquisition && IsInEnemyZone(unit)) unit.UnlimitedAcquisition = true;
+
                 unit.RetargetTimer -= _dt;
-                bool targetLost = !Targeting.IsTargetableEnemy(unit, unit.MoveTarget);
+                // Re-pick at once only if the current target died; a unit with no target waits for its next check.
+                bool targetLost = unit.MoveTarget != null && !Targeting.IsTargetableEnemy(unit, unit.MoveTarget);
                 if (unit.RetargetTimer <= 0f || targetLost)
                 {
                     Retarget(unit);
@@ -183,17 +189,23 @@ namespace Halobellum.Combat
                     for (int w = 1; w < unit.Weapons.Length; w++)
                     {
                         SimWeapon weapon = unit.Weapons[w];
-                        if (!Targeting.IsTargetableEnemy(unit, weapon.Target))
+                        if (weapon.Target != null && !Targeting.IsTargetableEnemy(unit, weapon.Target))
                         {
-                            weapon.Target = Targeting.FindClosestLegalTarget(unit, weapon.Stats, _units);
+                            weapon.Target = Targeting.FindClosestLegalTarget(unit, weapon.Stats, _units, AcquisitionRange(unit, weapon.Stats));
                         }
                     }
                 }
 
                 SimUnit target = unit.MoveTarget;
-                if (target == null || unit.Weapons.Length == 0)
+                if (unit.Weapons.Length == 0 || (target == null && unit.UnlimitedAcquisition))
                 {
-                    unit.State = UnitState.Idle;
+                    unit.State = UnitState.Idle; // Nothing it could ever reach.
+                }
+                else if (target == null)
+                {
+                    // Nothing in sight yet: march straight ahead toward the enemy's side.
+                    unit.State = UnitState.Move;
+                    unit.MoveGoal = unit.Position + Forward(unit) * (unit.Stats.MoveSpeed * _rules.FormationLookaheadSeconds + 1f);
                 }
                 else if (Targeting.IsInRange(unit, unit.Weapons[0].Stats, target))
                 {
@@ -252,9 +264,9 @@ namespace Halobellum.Combat
                 float distance = Vec2.DistanceSquared(anchor, member.MoveTarget.Position);
                 if (distance < bestDistance) { bestDistance = distance; heading = member.MoveTarget; }
             }
-            if (heading == null) return; // Nothing to move toward: members stay idle.
+            // Head for the enemy the members are targeting; with none in sight, march straight ahead.
+            Vec2 direction = heading != null ? (heading.Position - anchor).Normalized : Forward(squad.Members[0]);
 
-            Vec2 direction = (heading.Position - anchor).Normalized;
             for (int i = 0; i < squad.Members.Count; i++)
             {
                 SimUnit member = squad.Members[i];
@@ -263,6 +275,23 @@ namespace Halobellum.Combat
                 float ahead = member.Stats.MoveSpeed * _rules.FormationLookaheadSeconds;
                 member.MoveGoal = anchor + squad.Offsets[i] + direction * ahead;
             }
+        }
+
+        /// <summary>How far this weapon notices enemies: weapon range x the acquisition multiplier, or unlimited.</summary>
+        private float AcquisitionRange(SimUnit unit, WeaponStats weapon)
+        {
+            if (unit.UnlimitedAcquisition || _rules.AcquisitionRangeMultiplier <= 0f) return float.PositiveInfinity;
+            return weapon.Range * _rules.AcquisitionRangeMultiplier;
+        }
+
+        /// <summary>Straight ahead toward the enemy's side: up for Team A, down for Team B.</summary>
+        private static Vec2 Forward(SimUnit unit) => unit.Team == Team.A ? Vec2.Up : Vec2.Down;
+
+        /// <summary>True once the unit is inside the enemy's deployment zone (past no man's land).</summary>
+        private bool IsInEnemyZone(SimUnit unit)
+        {
+            float front = _rules.DeploymentZoneFront;
+            return unit.Team == Team.A ? unit.Position.Y > front : unit.Position.Y < -front;
         }
 
         private void MarkEngaged(SimUnit unit)
@@ -288,7 +317,7 @@ namespace Halobellum.Combat
             for (int w = 0; w < unit.Weapons.Length; w++)
             {
                 SimWeapon weapon = unit.Weapons[w];
-                weapon.Target = Targeting.FindClosestLegalTarget(unit, weapon.Stats, _units);
+                weapon.Target = Targeting.FindClosestLegalTarget(unit, weapon.Stats, _units, AcquisitionRange(unit, weapon.Stats));
             }
             unit.MoveTarget = unit.Weapons[0].Target;
         }

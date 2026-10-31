@@ -63,6 +63,8 @@ namespace Halobellum.Combat
         public float RetargetTimer;
         /// <summary>Set by the movement system when this body touched a body of another squad this tick.</summary>
         public bool TouchedOtherSquad;
+        /// <summary>True once the unit has entered the enemy's deployment zone: it then notices enemies at any distance.</summary>
+        public bool UnlimitedAcquisition;
 
         // Battle statistics for results and later features (XP from kills, result screen).
         public float DamageDealt;

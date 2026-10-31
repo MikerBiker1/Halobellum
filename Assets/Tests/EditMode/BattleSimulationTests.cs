@@ -60,11 +60,16 @@ namespace Halobellum.Tests
             var mover = sim.AddUnit(TestUnits.Unit(speed: 5f, weapon: weapon), Team.A, new Vec2(0f, -20f));
             var target = sim.AddUnit(TestUnits.Unit(health: 10000f, speed: 0f), Team.B, new Vec2(0f, 20f));
 
+            // 40 m away is beyond its acquisition range (3 x 10 m): it marches ahead without a target...
             sim.Step();
             Assert.AreEqual(UnitState.Move, mover.State);
+            Assert.IsNull(mover.MoveTarget);
+
+            // ...until the target comes within 30 m, then heads for it.
+            StepSeconds(sim, 3f);
             Assert.AreSame(target, mover.MoveTarget);
 
-            StepSeconds(sim, 10f);
+            StepSeconds(sim, 7f);
             Assert.AreEqual(UnitState.Attack, mover.State);
             float edgeDistance = Targeting.EdgeDistance(mover, target);
             Assert.LessOrEqual(edgeDistance, 10f);
