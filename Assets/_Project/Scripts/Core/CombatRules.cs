@@ -36,6 +36,8 @@ namespace Halobellum.Core
         public float AvoidanceLookaheadSeconds;
         /// <summary>Overlap-resolution passes per tick. More passes means less overlap in crowds.</summary>
         public int CollisionIterations;
+        /// <summary>Gap in metres between neighbouring bodies when a squad is placed in formation.</summary>
+        public float FormationGap;
 
         public DamageTable DamageTable = new DamageTable();
 

@@ -27,6 +27,7 @@ namespace Halobellum.Tests
                 AvoidanceWeight = 1.5f,
                 AvoidanceLookaheadSeconds = 0.75f,
                 CollisionIterations = 3,
+                FormationGap = 0.5f,
             };
             DamageTable t = rules.DamageTable;
             t.SetRow(DamageType.Ballistic, 1.0f, 0.6f, 0.25f);

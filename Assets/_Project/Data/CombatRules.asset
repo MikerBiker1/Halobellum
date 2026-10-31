@@ -24,6 +24,7 @@ MonoBehaviour:
   avoidanceWeight: 1.5
   avoidanceLookaheadSeconds: 0.75
   collisionIterations: 3
+  formationGap: 0.5
   ballistic:
     unarmored: 1
     light: 0.6

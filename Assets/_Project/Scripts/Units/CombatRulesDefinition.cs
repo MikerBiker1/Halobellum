@@ -44,6 +44,8 @@ namespace Halobellum.Units
         public float avoidanceLookaheadSeconds;
         [Tooltip("Overlap-resolution passes per tick.")]
         public int collisionIterations;
+        [Tooltip("Gap in metres between neighbouring bodies when a squad is placed in formation.")]
+        public float formationGap;
 
         [Header("Damage multipliers (vs Unarmored, Light, Heavy)")]
         public DamageRow ballistic = new DamageRow();
@@ -71,6 +73,7 @@ namespace Halobellum.Units
                 AvoidanceWeight = avoidanceWeight,
                 AvoidanceLookaheadSeconds = avoidanceLookaheadSeconds,
                 CollisionIterations = collisionIterations,
+                FormationGap = formationGap,
             };
 
             DamageTable table = rules.DamageTable;

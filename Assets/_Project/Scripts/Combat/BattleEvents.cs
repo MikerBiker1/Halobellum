@@ -1,0 +1,37 @@
+// BattleEvents.cs
+// The simulation's event bus (Bible Section 4, rules 2 and 6). The simulation raises these
+// events; visuals, sound, UI and statistics subscribe to them instead of reading the simulation
+// directly. Unit positions change every tick, so instead of one event per unit move there is a
+// single Ticked event after each tick; listeners then read unit positions.
+// Depends on: SimUnit, BattleResult.
+
+using System;
+
+namespace Halobellum.Combat
+{
+    public sealed class BattleEvents
+    {
+        /// <summary>A unit was added to the battle.</summary>
+        public event Action<SimUnit> UnitSpawned;
+        /// <summary>A weapon fired: attacker, weapon index on the attacker, target.</summary>
+        public event Action<SimUnit, int, SimUnit> WeaponFired;
+        /// <summary>A unit took damage: target, attacker, damage removed from shield and health.</summary>
+        public event Action<SimUnit, SimUnit, float> UnitDamaged;
+        /// <summary>A defense arc blocked a projectile: target, attacker.</summary>
+        public event Action<SimUnit, SimUnit> AttackBlocked;
+        /// <summary>A unit died: the unit, the unit that dealt the killing blow (may be null).</summary>
+        public event Action<SimUnit, SimUnit> UnitDied;
+        /// <summary>One simulation tick finished; the argument is the number of ticks completed.</summary>
+        public event Action<int> Ticked;
+        /// <summary>The battle is over.</summary>
+        public event Action<BattleResult> BattleEnded;
+
+        internal void RaiseUnitSpawned(SimUnit unit) => UnitSpawned?.Invoke(unit);
+        internal void RaiseWeaponFired(SimUnit attacker, int weaponIndex, SimUnit target) => WeaponFired?.Invoke(attacker, weaponIndex, target);
+        internal void RaiseUnitDamaged(SimUnit target, SimUnit attacker, float amount) => UnitDamaged?.Invoke(target, attacker, amount);
+        internal void RaiseAttackBlocked(SimUnit target, SimUnit attacker) => AttackBlocked?.Invoke(target, attacker);
+        internal void RaiseUnitDied(SimUnit unit, SimUnit killer) => UnitDied?.Invoke(unit, killer);
+        internal void RaiseTicked(int tick) => Ticked?.Invoke(tick);
+        internal void RaiseBattleEnded(BattleResult result) => BattleEnded?.Invoke(result);
+    }
+}
