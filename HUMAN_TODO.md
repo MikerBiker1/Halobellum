@@ -30,3 +30,13 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 - [x] **Answer D16** (formation rows) in DECISIONS.md.
 - [x] **Confirm M2** so M3 can start.
 - [ ] **Optional cleanup:** `E:\AI\_hbci` is my throwaway copy of the project for batch tests and builds (it needs a short path). You can delete it any time; I will recreate it when needed.
+
+## 2026-10-31: check M3 (round loop)
+
+- [ ] **Play a match.** Open `Assets/_Project/Scenes/Match.unity` and press **Play**. Pick a draft card (Standard UNSC or Covenant; both use the placeholder units until M4).
+- [ ] **Deploy.** In the shop (right), press **Buy**, move the mouse over your (blue) zone: a green box shows where the squad will stand (red = blocked). Left-click to place, **R** to turn it, right-click to cancel. Click one of your squads to select it: **Move (M)**, **Turn (R)** and **Sell (Delete)** appear at the bottom (move and turn only for squads bought this round). Try **Unlock 50** on the heavy tank, then buy it.
+- [ ] **Check the limits:** only 2 new squads per round, 1 unlock per round, credits and next income in the top bar, no timer.
+- [ ] **Ready:** the AI's army appears and the battle plays (speed buttons at the top). After it, the result screen shows base damage both ways, income, survivors, top damage dealers and what killed what. **Continue** goes to the next round.
+- [ ] **Win and lose:** keep buying to destroy the AI's base (10 to 15 rounds with placeholder units), or sell everything and press Ready repeatedly to lose. **New match** starts over.
+- [ ] **Answer D17 to D20** in DECISIONS.md (income timing, Tier 1 unlocks, draft squads and selling, exact tie, temporary content).
+- [ ] **Confirm M3** so M4 (slice rosters and sandbox) can start.

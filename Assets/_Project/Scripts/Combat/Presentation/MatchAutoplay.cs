@@ -3,7 +3,7 @@
 // checked without clicking. It does nothing unless the game is started with "-autoplay", e.g.
 //   Halobellum.exe -autoplay -autoplayRounds 3 -autoplaySpeed 4 -autoplayShots C:\temp\shots
 // It picks the first draft card, buys up to 2 squads per round of the first affordable unlocked
-// unit type, presses Ready, saves screenshots of the draft, each deployment, battle (at 8 s of
+// unit type, presses Ready, saves screenshots of the draft, each deployment, battle (at 2 s of
 // battle time) and result, then quits after the given number of rounds (or when the match ends).
 // Depends on: MatchController, BattleController, Halobellum.Economy, UnityEngine.
 
@@ -58,14 +58,17 @@ namespace Halobellum.Presentation
                 _lastPhase = m.Phase;
                 _wait = 0.6f; // Let the screen draw before acting or taking a screenshot.
                 _battleShotTaken = false;
+                _phaseShotTaken = false;
             }
             _wait -= Time.unscaledDeltaTime;
             if (_wait > 0f) return;
 
+            // Each screen: first take its screenshot, then act a moment later (a screenshot is saved
+            // at the end of the frame, so acting in the same frame would capture the next screen).
             switch (m.Phase)
             {
                 case MatchPhase.Draft:
-                    Shot("01_draft");
+                    if (ShotFirst("01_draft")) return;
                     _match.ChooseDraft(0);
                     break;
                 case MatchPhase.Deployment:
@@ -76,27 +79,39 @@ namespace Halobellum.Presentation
                         _wait = 0.4f;
                         return;
                     }
-                    Shot($"r{m.Round:00}_1_deployment");
+                    if (ShotFirst($"r{m.Round:00}_1_deployment")) return;
                     _battle.Speed = _speed;
                     _match.Ready();
                     break;
                 case MatchPhase.Battle:
-                    if (!_battleShotTaken && _battle.Simulation != null && _battle.Simulation.ElapsedSeconds >= 8f)
+                    if (!_battleShotTaken && _battle.Simulation != null && _battle.Simulation.ElapsedSeconds >= 2f)
                     {
                         Shot($"r{m.Round:00}_2_battle");
                         _battleShotTaken = true;
                     }
                     break;
                 case MatchPhase.Result:
-                    Shot($"r{m.Round:00}_3_result");
+                    if (ShotFirst($"r{m.Round:00}_3_result")) return;
                     if (m.Round >= _rounds) { Quit(); return; }
                     _match.Continue();
                     break;
                 case MatchPhase.MatchOver:
-                    Shot("99_match_over");
+                    if (ShotFirst("99_match_over")) return;
                     Quit();
                     break;
             }
+        }
+
+        private bool _phaseShotTaken;
+
+        /// <summary>Takes this screen's screenshot once and returns true (wait); returns false once taken (act).</summary>
+        private bool ShotFirst(string name)
+        {
+            if (_phaseShotTaken) return false;
+            Shot(name);
+            _phaseShotTaken = true;
+            _wait = 0.3f;
+            return true;
         }
 
         private void BuySquads(Match m)
