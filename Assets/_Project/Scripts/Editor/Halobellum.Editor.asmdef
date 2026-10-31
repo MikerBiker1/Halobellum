@@ -1,0 +1,20 @@
+{
+    "name": "Halobellum.Editor",
+    "rootNamespace": "Halobellum.EditorTools",
+    "references": [
+        "Halobellum.Core",
+        "Halobellum.Combat",
+        "Halobellum.Units"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

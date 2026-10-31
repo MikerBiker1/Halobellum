@@ -14,4 +14,4 @@ Milestones and items from PROJECT_BIBLE.md Section 14. An item is ticked when it
 - [x] Optional directional defense, with tests
 - [x] Free continuous-2D movement with collision and separation, with tests
 - [x] Fixed-timestep simulation in plain C# with closest-enemy targeting, with tests
-- [ ] Headless runner that simulates 3 placeholder units against each other and prints results
+- [x] Headless runner that simulates 3 placeholder units against each other and prints results
