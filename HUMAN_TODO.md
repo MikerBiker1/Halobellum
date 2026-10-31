@@ -24,6 +24,6 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 - [ ] **Compare with the headless runner.** When the battle ends, the Console shows `Battle finished: seed 1000, 974 ticks ...`. Then use **Halobellum > Headless Runner > Run Selected Battle Setup**: it prints `Headless result ...` with the same line.
 - [ ] **Optional: frame rate on another PC.** I measured on your PC (RX 7800 XT, i7-12700KF), which is above mid-range. The FPS counter is in the top-right corner while playing. To test a built game, ask me for the build steps.
 - [x] **Answer D11 and D12** in DECISIONS.md.
-- [ ] **Answer D13** (how turning works) in DECISIONS.md.
+- [x] **Answer D13** (how turning works) in DECISIONS.md.
 - [ ] **Confirm M2** so M3 can start.
 - [ ] **Optional cleanup:** `E:\AI\_hbci` is my throwaway copy of the project for batch tests and builds (it needs a short path). You can delete it any time; I will recreate it when needed.

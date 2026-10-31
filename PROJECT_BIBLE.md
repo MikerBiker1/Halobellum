@@ -443,7 +443,8 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-10-31 | One deployment square = 2 m (`squareSize` in CombatRules.asset); not final, may be changed at any time | Approved from D10 |
 | 2026-10-31 | Use the URP SRP Batcher; no GPU instancing work before real Halo models are imported | Per the project owner (D11) |
 | 2026-10-31 | Health bars show when a unit is damaged, and for every body of the selected squad | Approved from D12 |
-| 2026-10-31 | Units turn slower the bigger they are: each unit has a 180-degree turn time (starting guideline: chaff 0.25 s, 1-square units 1 s, 2x2-square units 2 s, Titans 3 s) | Per the project owner; details pending in D13 |
+| 2026-10-31 | Units turn slower the bigger they are: each unit has a 180-degree turn time (starting guideline: chaff 0.25 s, 1-square units 1 s, 2x2-square units 2 s, Titans 3 s) | Per the project owner |
+| 2026-10-31 | Units drive along their facing (a unit facing the wrong way turns on the spot first) and turn toward targets at their turn speed; the main weapon fires only when facing the target within 15 degrees (data value), other weapons fire in any direction | Approved from D13 |
 
 ## 18. Assumptions to confirm
 

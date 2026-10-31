@@ -44,3 +44,11 @@ None.
 - **Tests:** Unity EditMode 140 / 140, PlayMode 3 / 3, .NET 132 / 132. The scene still matches the headless runner exactly.
 - **Performance** (balanced battle, built game, 1920 x 1080): 1x average 897 FPS, worst frame 10.4 ms; 4x average 649 FPS, worst frame 12.1 ms; no frame below 60 FPS.
 - Screenshots: `Docs/M2_balanced_start.png`, `Docs/M2_balanced_6s_selected.png`.
+
+## Last M2 battle test (same day)
+- **D13 approved** and added to the Bible's decision log.
+- **New layout** of `Data/TestBattle_Balanced.asset` (both armies identical): 6 infantry squads as a screen in front, the 12 tanks moved back from row 2 to row 6, flankers unchanged on both sides, and the other 16 infantry squads spread through the zone in 5 staggered rows down to both back corners (row 28).
+- **Placeholder speeds lowered as a trial:** infantry 4 to 3 m/s, light vehicle 9 to 7 m/s, heavy tank 3 to 2.5 m/s. These are test units, not roster data; real speeds come with the M4 units.
+- **Result:** Team A wins after 54.3 s with 2 of 300 left. The front chaff screens fight from the first seconds; the middle waves reach the front by about 15 s and the back-corner squads arrive last, around 15 to 20 s. Screenshots: `Docs/M2_waves_03s.png`, `Docs/M2_waves_15s.png`, `Docs/M2_waves_30s.png`.
+- **Tests:** Unity EditMode 140 / 140, PlayMode 3 / 3 (the scene still matches the headless runner exactly).
+- **Performance:** 1x average 1096 FPS; one single frame of 16.7 ms (right at the 60 FPS limit) out of 59,316; 4x average 1010 FPS with no slow frames.
