@@ -44,6 +44,8 @@ namespace Halobellum.Units
         public float moveSpeed;
         [Tooltip("Radius of the round collision footprint in metres.")]
         public float collisionRadius;
+        [Tooltip("Seconds to turn 180 degrees; bigger units turn slower. Starting guideline: chaff 0.25, 1-square units 1, 2x2-square units 2, Titans 3. 0 = instant.")]
+        public float turnTime180;
         [Tooltip("Air units ignore ground collision and fly in straight lines.")]
         public bool isAir;
 
@@ -83,6 +85,7 @@ namespace Halobellum.Units
                 ShieldRegenPerSecond = shieldRegenPerSecond,
                 MoveSpeed = moveSpeed,
                 CollisionRadius = collisionRadius,
+                TurnTime180 = turnTime180,
                 IsAir = isAir,
                 TargetFilter = targetFilter,
                 DefenseArc = hasDefenseArc && defenseArc != null ? defenseArc.ToStats() : null,

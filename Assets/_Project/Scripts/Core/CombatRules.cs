@@ -17,6 +17,11 @@ namespace Halobellum.Core
         public float ShieldRegenDelaySeconds;
         /// <summary>A battle ends after this many seconds (Bible: 90).</summary>
         public float BattleTimeLimitSeconds;
+        /// <summary>
+        /// A unit's main weapon only fires when the unit faces its target within this many degrees
+        /// (the unit must turn its body to aim). 180 means it can fire in any direction.
+        /// </summary>
+        public float MainWeaponFacingToleranceDegrees;
 
         // Arena (decision D4): measured in deployment-grid squares, like Mechabellum.
         // Team A's deployment zone, then a strip of no man's land, then Team B's zone.

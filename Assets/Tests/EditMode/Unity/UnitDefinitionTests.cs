@@ -32,6 +32,7 @@ namespace Halobellum.Tests
             _definition.shieldRegenPerSecond = 10f;
             _definition.moveSpeed = 4f;
             _definition.collisionRadius = 1.5f;
+            _definition.turnTime180 = 2f;
             _definition.isAir = true;
             _definition.targetFilter = TargetFilter.Air;
             _definition.weapons = new List<WeaponDefinition>
@@ -74,6 +75,7 @@ namespace Halobellum.Tests
             Assert.AreEqual(10f, s.ShieldRegenPerSecond);
             Assert.AreEqual(4f, s.MoveSpeed);
             Assert.AreEqual(1.5f, s.CollisionRadius);
+            Assert.AreEqual(2f, s.TurnTime180);
             Assert.IsTrue(s.IsAir);
             Assert.AreEqual(TargetFilter.Air, s.TargetFilter);
             Assert.IsEmpty(s.Validate());

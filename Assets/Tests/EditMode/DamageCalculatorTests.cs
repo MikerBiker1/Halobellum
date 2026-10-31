@@ -89,7 +89,7 @@ namespace Halobellum.Tests
             float shield = 1000f, health = 100f;
             var weapon = TestUnits.Weapon(damage: 100f, type: DamageType.Energy, antiArmor: true);
             DamageCalculator.ApplyHit(_table, weapon, ArmorType.Heavy, 1f, ref shield, ref health);
-            Assert.AreEqual(950f, shield, 1e-3f);
+            Assert.AreEqual(900f, shield, 1e-3f); // Anti-armor x1.0, not Energy x1.5.
         }
 
         [Test]

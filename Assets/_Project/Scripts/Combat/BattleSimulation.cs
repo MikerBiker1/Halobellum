@@ -8,8 +8,9 @@
 //   3. State: if the first weapon's target is in range the unit stops and attacks (Attack);
 //      otherwise it moves toward that target (Move); with no legal target it waits (Idle).
 //   4. Movement (MovementSystem): free 2D steering with collision.
-//   5. Weapons fire when ready at targets in range: instant hits resolve now, other weapons
-//      launch projectiles.
+//   5. Attacking units turn toward their target at their own turning speed. Weapons fire when ready
+//      at targets in range (the main weapon only once the unit faces its target): instant hits
+//      resolve now, other weapons launch projectiles.
 //   6. Projectiles fly and hit (splash damage, directional defense, block rolls).
 //   7. Units at 0 health die. Deaths are applied at the end of the tick, so units that shoot in
 //      the same tick are treated fairly regardless of list order.
@@ -211,8 +212,24 @@ namespace Halobellum.Combat
             {
                 if (unit.State != UnitState.Attack || unit.MoveTarget == null) continue;
                 Vec2 toTarget = unit.MoveTarget.Position - unit.Position;
-                if (toTarget.LengthSquared > 1e-8f) unit.Facing = toTarget.Normalized;
+                if (toTarget.LengthSquared <= 1e-8f) continue;
+                // Turn toward the target at the unit's own turning speed (instantly if it has none).
+                unit.Facing = unit.Stats.TurnTime180 > 0f
+                    ? Vec2.RotateTowards(unit.Facing, toTarget, unit.Stats.TurnRateDegreesPerSecond * _dt)
+                    : toTarget.Normalized;
             }
+        }
+
+        /// <summary>
+        /// The main weapon (index 0) only fires when the unit faces its target closely enough; the unit
+        /// has to turn its body to aim. Other weapons fire in any direction (decision D8).
+        /// </summary>
+        private bool IsAimed(SimUnit unit, int weaponIndex, SimUnit target)
+        {
+            if (weaponIndex != 0 || _rules.MainWeaponFacingToleranceDegrees >= 180f) return true;
+            Vec2 toTarget = target.Position - unit.Position;
+            if (toTarget.LengthSquared <= 1e-8f) return true;
+            return Vec2.AngleDegrees(unit.Facing, toTarget) <= _rules.MainWeaponFacingToleranceDegrees + 0.01f;
         }
 
         private void FireWeapons()
@@ -226,7 +243,8 @@ namespace Halobellum.Combat
                     weapon.Cooldown -= _dt;
 
                     SimUnit target = weapon.Target;
-                    bool canFire = Targeting.IsTargetableEnemy(unit, target) && Targeting.IsInRange(unit, weapon.Stats, target);
+                    bool canFire = Targeting.IsTargetableEnemy(unit, target) && Targeting.IsInRange(unit, weapon.Stats, target)
+                                   && IsAimed(unit, w, target);
                     if (!canFire)
                     {
                         // A weapon that is not shooting stays ready, but cannot store up extra shots.

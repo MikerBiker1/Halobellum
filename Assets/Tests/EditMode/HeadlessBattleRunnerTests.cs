@@ -68,6 +68,24 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void Layout_FixedPositions_AreInSquaresFromTheZoneFront_AndMirroredForTeamB()
+        {
+            var sim = new BattleSimulation(_rules, 1);
+            var noJitter = new RunnerSettings { PositionJitter = 0f, FrontLineDistance = 20f, SquadGap = 3f };
+            var army = new ArmySetup("Placed").AddAt(_tank, new List<Vec2> { new Vec2(-10f, 2f), new Vec2(12f, 5f) });
+            ArmyLayout.Place(sim, _rules, army, Team.A, noJitter, new SimRandom(1));
+            ArmyLayout.Place(sim, _rules, army, Team.B, noJitter, new SimRandom(1));
+
+            // Square size 2 m, zone front 2 m from the centre line.
+            Assert.AreEqual(4, sim.Units.Count);
+            Assert.AreEqual(new Vec2(-20f, -6f), sim.Units[0].Position);
+            Assert.AreEqual(new Vec2(24f, -12f), sim.Units[1].Position);
+            Assert.AreEqual(new Vec2(20f, 6f), sim.Units[2].Position);
+            Assert.AreEqual(new Vec2(-24f, 12f), sim.Units[3].Position);
+            Assert.AreEqual(2, army.SquadTotal);
+        }
+
+        [Test]
         public void Matchup_CountsAddUp()
         {
             var summary = HeadlessBattleRunner.RunMatchup(_rules, ArmySetup.ForBudget(_rifle, 600), ArmySetup.ForBudget(_buggy, 600), _settings);

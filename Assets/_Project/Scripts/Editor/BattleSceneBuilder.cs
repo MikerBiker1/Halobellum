@@ -2,7 +2,7 @@
 // Builds the battle scene (Assets/_Project/Scenes/Battle.unity) from code, so it can always be
 // recreated exactly: a directional light, the Main Camera with the pan/zoom controller, the
 // "Battle" object (BattleController and its views, wired to the Combat Rules asset and the
-// 300 vs 300 test Battle Setup), and the HUD. It also puts the scene first in the build settings.
+// balanced 300 vs 300 test Battle Setup), and the HUD. It also puts the scene first in the build settings.
 //   Menu: Halobellum > Scenes > Rebuild Battle Scene
 //   Command line: -executeMethod Halobellum.EditorTools.BattleSceneBuilder.BuildFromCommandLine
 // Depends on: Halobellum.Presentation, Halobellum.UI, Halobellum.Units, UnityEditor.
@@ -23,7 +23,7 @@ namespace Halobellum.EditorTools
     public static class BattleSceneBuilder
     {
         public const string ScenePath = "Assets/_Project/Scenes/Battle.unity";
-        public const string TestBattlePath = "Assets/_Project/Data/TestBattle_300v300.asset";
+        public const string TestBattlePath = "Assets/_Project/Data/TestBattle_Balanced.asset";
         public const string PlaceholderMaterialPath = "Assets/_Project/Art/Placeholder/PlaceholderLit.mat";
 
         [MenuItem("Halobellum/Scenes/Rebuild Battle Scene")]

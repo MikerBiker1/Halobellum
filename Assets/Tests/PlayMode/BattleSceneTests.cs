@@ -39,11 +39,17 @@ namespace Halobellum.Tests
             Assert.AreEqual(600, units.childCount, "The test battle should be 300 vs 300.");
             Assert.IsNotNull(units.GetChild(0).Find("Body/Mesh"), "Unit views should be spawned from the unit's prefab.");
 
-            Vector3 start = units.GetChild(0).position;
+            var start = new Vector3[units.childCount];
+            for (int i = 0; i < start.Length; i++) start[i] = units.GetChild(i).position;
             battle.Speed = 4f;
-            for (int i = 0; i < 60; i++) yield return null;
-            Assert.Greater(battle.Simulation.Tick, 0);
-            Assert.AreNotEqual(start, units.GetChild(0).position, "Unit views should follow the simulation.");
+            float deadline = Time.realtimeSinceStartup + 30f;
+            while (battle.Simulation.Tick < 60 && Time.realtimeSinceStartup < deadline) yield return null; // 2 s of battle.
+            yield return null;
+
+            // Some units start in range and hold position, but most walk toward the enemy.
+            int moved = 0;
+            for (int i = 0; i < start.Length; i++) if (Vector3.Distance(start[i], units.GetChild(i).position) > 0.5f) moved++;
+            Assert.Greater(moved, start.Length / 2, "Unit views should follow the simulation.");
         }
 
         [UnityTest]

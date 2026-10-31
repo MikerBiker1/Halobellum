@@ -25,6 +25,8 @@ namespace Halobellum.Units
         public float shieldRegenDelaySeconds;
         [Tooltip("Battles end after this many seconds.")]
         public float battleTimeLimitSeconds;
+        [Tooltip("The main weapon fires only when the unit faces its target within this many degrees. 180 = any direction.")]
+        public float mainWeaponFacingToleranceDegrees;
 
         [Header("Arena (deployment-grid squares)")]
         [Tooltip("Size of one deployment-grid square in metres.")]
@@ -73,6 +75,7 @@ namespace Halobellum.Units
                 RetargetIntervalSeconds = retargetIntervalSeconds,
                 ShieldRegenDelaySeconds = shieldRegenDelaySeconds,
                 BattleTimeLimitSeconds = battleTimeLimitSeconds,
+                MainWeaponFacingToleranceDegrees = mainWeaponFacingToleranceDegrees,
                 SquareSize = squareSize,
                 ArenaWidthSquares = arenaWidthSquares,
                 DeploymentDepthSquares = deploymentDepthSquares,

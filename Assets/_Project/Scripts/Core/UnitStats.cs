@@ -89,6 +89,8 @@ namespace Halobellum.Core
         public float MoveSpeed;
         /// <summary>Radius of the unit's round collision footprint in metres.</summary>
         public float CollisionRadius;
+        /// <summary>Seconds the unit needs to turn 180 degrees; bigger units turn slower. 0 means it turns instantly.</summary>
+        public float TurnTime180;
         public bool IsAir;
         public TargetFilter TargetFilter;
 
@@ -97,6 +99,8 @@ namespace Halobellum.Core
         public DefenseArcStats DefenseArc;
 
         public bool HasShield => MaxShield > 0f;
+        /// <summary>Turning speed in degrees per second, or infinity for units that turn instantly.</summary>
+        public float TurnRateDegreesPerSecond => TurnTime180 > 0f ? 180f / TurnTime180 : float.PositiveInfinity;
         public bool HasDefenseArc => DefenseArc != null && DefenseArc.ArcDegrees > 0f;
 
         /// <summary>True if this unit's target filter allows attacking a unit that is (or is not) in the air.</summary>
@@ -121,6 +125,7 @@ namespace Halobellum.Core
             if (MaxShield < 0f) problems.Add($"{label}: shield cannot be negative.");
             if (MoveSpeed < 0f) problems.Add($"{label}: move speed cannot be negative.");
             if (CollisionRadius <= 0f) problems.Add($"{label}: collision size must be above 0.");
+            if (TurnTime180 < 0f) problems.Add($"{label}: turn time cannot be negative.");
             if (Weapons == null || Weapons.Length == 0) problems.Add($"{label}: needs at least one weapon.");
             else
             {

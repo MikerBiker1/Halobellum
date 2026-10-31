@@ -35,3 +35,12 @@ None.
 ## Decisions needing your approval
 - **D11:** keep URP's SRP Batcher instead of GPU instancing for now; revisit GPU instancing and LOD with real models in M9.
 - **D12:** health bars also show for the selected squad at full health.
+
+## Update after your M2 feedback (same day)
+- **D11 and D12 approved** and added to the Bible's decision log.
+- **Shield anti-armor multiplier corrected to 1.0x** (asset, test fixture, decision log).
+- **Turning speed:** every unit has a 180-degree turn time (`turnTime180` on the unit asset). Placeholders: infantry 0.25 s, light vehicle 1 s, heavy tank 2 s. Units drive along their facing, turn toward targets at that speed, and the main weapon waits until the unit faces its target within 15 degrees. **D13** describes this and needs your approval. The stats window shows the turn time.
+- **Balanced test battle** `Data/TestBattle_Balanced.asset`, now the Battle scene's battle. Two identical 300-body armies (12 tanks front and centre, 12 light-vehicle squads on the flanks, 22 infantry squads in four staggered rows so they arrive in waves). Battle setups can now place each squad at a position in deployment squares. Result: Team B wins after 45.9 s with 18 of 300 left. The front tank lines start 12 m apart (only 2 squares of no man's land), inside the tanks' 16 m range, so they fire right away.
+- **Tests:** Unity EditMode 140 / 140, PlayMode 3 / 3, .NET 132 / 132. The scene still matches the headless runner exactly.
+- **Performance** (balanced battle, built game, 1920 x 1080): 1x average 897 FPS, worst frame 10.4 ms; 4x average 649 FPS, worst frame 12.1 ms; no frame below 60 FPS.
+- Screenshots: `Docs/M2_balanced_start.png`, `Docs/M2_balanced_6s_selected.png`.

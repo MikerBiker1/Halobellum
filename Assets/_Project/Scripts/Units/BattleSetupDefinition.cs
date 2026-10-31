@@ -21,7 +21,10 @@ namespace Halobellum.Units
         public sealed class SquadEntry
         {
             public UnitDefinition unit;
+            [Tooltip("Number of squads, laid out automatically in rows. Ignored when Positions is filled in.")]
             [Min(0)] public int squads = 1;
+            [Tooltip("Optional: one squad at each position, in deployment squares. X = across the field (0 = centre, -30 to 30), Y = squares behind the front edge of the army's deployment zone (0 to 30). Team B is mirrored.")]
+            public List<Vector2> positions = new List<Vector2>();
         }
 
         [Header("Team A (bottom, the player's side)")]
@@ -67,9 +70,22 @@ namespace Halobellum.Units
             var army = new ArmySetup(string.IsNullOrEmpty(name) ? "Unnamed army" : name);
             foreach (SquadEntry entry in entries)
             {
-                if (entry == null || entry.unit == null || entry.squads <= 0) continue;
+                if (entry == null || entry.unit == null) continue;
                 UnitStats stats = entry.unit.ToStats();
-                army.Add(stats, entry.squads);
+                if (entry.positions != null && entry.positions.Count > 0)
+                {
+                    var positions = new List<Vec2>(entry.positions.Count);
+                    foreach (Vector2 p in entry.positions) positions.Add(new Vec2(p.x, p.y));
+                    army.AddAt(stats, positions);
+                }
+                else if (entry.squads > 0)
+                {
+                    army.Add(stats, entry.squads);
+                }
+                else
+                {
+                    continue;
+                }
                 if (sources != null) sources[stats] = entry.unit;
             }
             return army;

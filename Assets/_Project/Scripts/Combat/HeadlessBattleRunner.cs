@@ -21,11 +21,18 @@ namespace Halobellum.Combat
     {
         public UnitStats Stats;
         public int SquadCount;
+        /// <summary>
+        /// Optional fixed squad centres, one per squad, in deployment squares in the team's own frame: X across the
+        /// field (0 = centre line), Y = depth behind the front edge of the team's deployment zone.
+        /// Null means the squads are laid out automatically in rows.
+        /// </summary>
+        public List<Vec2> Positions;
 
-        public ArmySquad(UnitStats stats, int squadCount)
+        public ArmySquad(UnitStats stats, int squadCount, List<Vec2> positions = null)
         {
             Stats = stats;
             SquadCount = squadCount;
+            Positions = positions;
         }
     }
 
@@ -43,6 +50,13 @@ namespace Halobellum.Combat
         public ArmySetup Add(UnitStats stats, int squadCount)
         {
             Squads.Add(new ArmySquad(stats, squadCount));
+            return this;
+        }
+
+        /// <summary>Adds one squad at each given position (see ArmySquad.Positions).</summary>
+        public ArmySetup AddAt(UnitStats stats, List<Vec2> positions)
+        {
+            Squads.Add(new ArmySquad(stats, positions.Count, new List<Vec2>(positions)));
             return this;
         }
 
@@ -258,9 +272,10 @@ namespace Halobellum.Combat
     }
 
     /// <summary>
-    /// Places an army's squads in its team's half for the headless runner: squads side by side
-    /// across the field, wrapping into new rows further back when a row is full. Team B is the
-    /// mirror image of Team A. (The real deployment grid comes in Milestone 3.)
+    /// Places an army's squads in its team's half for test battles. Squads with fixed positions go
+    /// exactly there; the others stand side by side across the field, wrapping into new rows further
+    /// back when a row is full. Team B is the mirror image of Team A. (The real deployment grid
+    /// comes in Milestone 3.)
     /// </summary>
     public static class ArmyLayout
     {
@@ -296,6 +311,17 @@ namespace Halobellum.Combat
 
             foreach (ArmySquad squad in army.Squads)
             {
+                if (squad.Positions != null)
+                {
+                    // Fixed positions in squares; depth is measured back from the front edge of the deployment zone.
+                    foreach (Vec2 position in squad.Positions)
+                    {
+                        var centre = new Vec2(position.X * rules.SquareSize, -(rules.DeploymentZoneFront + position.Y * rules.SquareSize));
+                        AddSquad(simulation, rules, squad.Stats, team, centre, settings, random);
+                    }
+                    continue;
+                }
+
                 for (int n = 0; n < squad.SquadCount; n++)
                 {
                     FootprintOf(squad.Stats, rules.FormationGap, out float width, out float depth);

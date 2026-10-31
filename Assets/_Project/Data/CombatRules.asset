@@ -16,6 +16,7 @@ MonoBehaviour:
   retargetIntervalSeconds: 0.5
   shieldRegenDelaySeconds: 5
   battleTimeLimitSeconds: 90
+  mainWeaponFacingToleranceDegrees: 15
   squareSize: 2
   arenaWidthSquares: 60
   deploymentDepthSquares: 30
@@ -57,4 +58,4 @@ MonoBehaviour:
     energy: 1.5
     fire: 0.5
     melee: 1
-    antiArmor: 0.5
+    antiArmor: 1

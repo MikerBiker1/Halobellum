@@ -20,6 +20,7 @@ namespace Halobellum.Tests
                 RetargetIntervalSeconds = 0.5f,
                 ShieldRegenDelaySeconds = 5f,
                 BattleTimeLimitSeconds = 90f,
+                MainWeaponFacingToleranceDegrees = 15f,
                 SquareSize = 2f,
                 ArenaWidthSquares = 60,
                 DeploymentDepthSquares = 30,
@@ -39,7 +40,7 @@ namespace Halobellum.Tests
             t.SetRow(DamageType.Fire, 1.5f, 0.8f, 0.3f);
             t.SetRow(DamageType.Melee, 1.0f, 0.7f, 0.3f);
             t.SetAntiArmorRow(0.5f, 1.2f, 1.5f);
-            t.SetShieldRow(ballistic: 0.75f, explosive: 1.0f, energy: 1.5f, fire: 0.5f, melee: 1.0f, antiArmor: 0.5f);
+            t.SetShieldRow(ballistic: 0.75f, explosive: 1.0f, energy: 1.5f, fire: 0.5f, melee: 1.0f, antiArmor: 1.0f);
             return rules;
         }
     }

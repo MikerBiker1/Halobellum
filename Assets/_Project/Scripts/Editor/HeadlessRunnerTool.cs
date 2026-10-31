@@ -68,7 +68,7 @@ namespace Halobellum.EditorTools
         public static void OpenWindow() => HeadlessRunnerWindow.Open();
 
         /// <summary>
-        /// Runs the Battle Setup selected in the Project window (or the 300 vs 300 test battle if none
+        /// Runs the Battle Setup selected in the Project window (or the scene's test battle if none
         /// is selected) once, headless, and prints the same summary line the battle scene prints when
         /// its battle ends. Matching lines show the game and the runner produce the same result.
         /// </summary>

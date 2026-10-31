@@ -432,7 +432,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-10-29 | Cards are offered every round after the first, alternating spells and reinforcements; skipping gives 50 (spells) or 100 (reinforcements) | Per the project owner |
 | 2026-10-29 | Reinforcement cards: random squad and level against a growing budget; under budget adds copies of the squad until it passes the budget, exactly on budget is free, over budget costs the difference; the card also unlocks the unit | Per the project owner |
 | 2026-10-31 | The anti-armor tag replaces the damage type row (against armor and against shields) | Approved from DECISIONS.md D1 |
-| 2026-10-31 | Energy shields have their own multipliers, independent of armor: Ballistic 0.75, Explosive 1.0, Energy 1.5, Fire 0.5, Melee 1.0, Anti-armor 0.5. A hit that breaks the shield carries its remaining base damage over to health with the armor multiplier | Per the project owner (D2) |
+| 2026-10-31 | Energy shields have their own multipliers, independent of armor: Ballistic 0.75, Explosive 1.0, Energy 1.5, Fire 0.5, Melee 1.0, Anti-armor 1.0. A hit that breaks the shield carries its remaining base damage over to health with the armor multiplier | Per the project owner (D2) |
 | 2026-10-31 | Shield regen rate is a per-unit data field; the 5 second delay is global | Approved from D3 |
 | 2026-10-31 | Arena is 60 squares wide; each army has a 30-square deployment zone with 2 squares of no man's land between (60 x 62). Several chaff bodies can share a square; squads usually fit in 5 x 2 squares | Per the project owner (D4) |
 | 2026-10-31 | Units face their target when attacking and their direction of travel when moving; squad rotation only changes formation shape | Approved from D5 |
@@ -441,6 +441,9 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-10-31 | The first weapon is a unit's main weapon and drives movement; other weapons pick their own targets | Approved from D8 |
 | 2026-10-31 | Headless runner win = survivors' base damage is higher (statistics only) | Approved from D9 |
 | 2026-10-31 | One deployment square = 2 m (`squareSize` in CombatRules.asset); not final, may be changed at any time | Approved from D10 |
+| 2026-10-31 | Use the URP SRP Batcher; no GPU instancing work before real Halo models are imported | Per the project owner (D11) |
+| 2026-10-31 | Health bars show when a unit is damaged, and for every body of the selected squad | Approved from D12 |
+| 2026-10-31 | Units turn slower the bigger they are: each unit has a 180-degree turn time (starting guideline: chaff 0.25 s, 1-square units 1 s, 2x2-square units 2 s, Titans 3 s) | Per the project owner; details pending in D13 |
 
 ## 18. Assumptions to confirm
 

@@ -18,7 +18,7 @@ namespace Halobellum.UI
     public sealed class SquadStatsWindow : MonoBehaviour
     {
         [SerializeField] private BattleController battle;
-        [SerializeField] private float windowWidth = 380f;
+        [SerializeField] private float windowWidth = 440f;
 
         private SquadSelection _selection;
         private GUIStyle _title, _text;
@@ -46,7 +46,7 @@ namespace Halobellum.UI
 
             GUI.Box(window, GUIContent.none);
             GUI.Box(window, GUIContent.none); // Drawn twice for a darker background.
-            GUI.Label(new Rect(window.x + 12f, window.y + 8f, windowWidth - 60f, 26f), $"{s.Name}  (Team {sample.Team})", _title);
+            GUI.Label(new Rect(window.x + 12f, window.y + 8f, windowWidth - 50f, 26f), $"{s.Name}  (Team {sample.Team})", _title);
             if (GUI.Button(new Rect(window.xMax - 34f, window.y + 8f, 24f, 22f), "x")) _selection.Select(-1);
             GUI.Label(new Rect(window.x + 12f, window.y + 38f, windowWidth - 24f, height - 44f), body, _text);
         }
@@ -59,6 +59,7 @@ namespace Halobellum.UI
             b.AppendLine($"Health: {s.MaxHealth:0} per body    Armor: {s.ArmorType}");
             b.AppendLine(s.HasShield ? $"Shield: {s.MaxShield:0} (regen {s.ShieldRegenPerSecond:0.#}/s)" : "Shield: none");
             b.AppendLine($"Move speed: {s.MoveSpeed:0.#} m/s    Collision size: {s.CollisionRadius * 2f:0.#} m");
+            b.AppendLine(s.TurnTime180 > 0f ? $"Turn time: {s.TurnTime180:0.##} s for 180 degrees" : "Turn time: instant");
             b.AppendLine($"Targets: {s.TargetFilter}{(s.IsAir ? "    (air unit)" : "")}");
             for (int i = 0; i < s.Weapons.Length; i++)
             {
@@ -111,7 +112,7 @@ namespace Halobellum.UI
         private void EnsureStyles()
         {
             if (_title != null) return;
-            _title = new GUIStyle(GUI.skin.label) { fontSize = 18, fontStyle = FontStyle.Bold, normal = { textColor = Color.white } };
+            _title = new GUIStyle(GUI.skin.label) { fontSize = 17, fontStyle = FontStyle.Bold, normal = { textColor = Color.white } };
             _text = new GUIStyle(GUI.skin.label) { fontSize = 15, wordWrap = true, normal = { textColor = new Color(0.92f, 0.92f, 0.92f) } };
         }
     }

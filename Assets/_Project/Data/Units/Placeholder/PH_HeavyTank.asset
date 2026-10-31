@@ -25,6 +25,7 @@ MonoBehaviour:
   shieldRegenPerSecond: 0
   moveSpeed: 3
   collisionRadius: 2
+  turnTime180: 2
   isAir: 0
   targetFilter: 0
   weapons:

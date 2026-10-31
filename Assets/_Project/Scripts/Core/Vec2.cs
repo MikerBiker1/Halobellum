@@ -73,6 +73,23 @@ namespace Halobellum.Core
             return MathF.Acos(dot) * (180f / MathF.PI);
         }
 
+        /// <summary>
+        /// Turns the direction 'from' toward 'to' by at most maxDegrees and returns the new direction
+        /// (length 1). When the two point exactly opposite ways it turns counter-clockwise.
+        /// </summary>
+        public static Vec2 RotateTowards(Vec2 from, Vec2 to, float maxDegrees)
+        {
+            Vec2 target = to.Normalized;
+            if (target.LengthSquared < 0.5f) return from.Normalized;
+            Vec2 start = from.Normalized;
+            if (start.LengthSquared < 0.5f) return target;
+
+            float angle = AngleDegrees(start, target);
+            if (angle <= maxDegrees) return target;
+            float direction = Cross(start, target) >= 0f ? 1f : -1f;
+            return start.Rotated(direction * maxDegrees).Normalized;
+        }
+
         /// <summary>The vector rotated counter-clockwise by the given angle in degrees.</summary>
         public Vec2 Rotated(float degrees)
         {
