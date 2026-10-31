@@ -2,7 +2,8 @@
     "name": "Halobellum.Units",
     "rootNamespace": "Halobellum.Units",
     "references": [
-        "Halobellum.Core"
+        "Halobellum.Core",
+        "Halobellum.Combat"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

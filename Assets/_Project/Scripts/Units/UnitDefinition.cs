@@ -55,6 +55,10 @@ namespace Halobellum.Units
         public bool hasDefenseArc;
         public DefenseArcDefinition defenseArc = new DefenseArcDefinition();
 
+        [Header("Visuals")]
+        [Tooltip("Model shown for each body in the battle scene. Tinted with the side's color. If empty, a placeholder primitive sized from the collision radius is used.")]
+        public GameObject prefab;
+
         [Header("Design notes (shown in tooltips)")]
         [TextArea] public string strongAgainst;
         [TextArea] public string weakAgainst;

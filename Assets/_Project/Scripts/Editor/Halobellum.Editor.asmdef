@@ -4,7 +4,9 @@
     "references": [
         "Halobellum.Core",
         "Halobellum.Combat",
-        "Halobellum.Units"
+        "Halobellum.Units",
+        "Halobellum.Presentation",
+        "Halobellum.UI"
     ],
     "includePlatforms": [
         "Editor"

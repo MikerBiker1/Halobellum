@@ -67,6 +67,25 @@ namespace Halobellum.EditorTools
         [MenuItem("Halobellum/Headless Runner/Open Runner Window")]
         public static void OpenWindow() => HeadlessRunnerWindow.Open();
 
+        /// <summary>
+        /// Runs the Battle Setup selected in the Project window (or the 300 vs 300 test battle if none
+        /// is selected) once, headless, and prints the same summary line the battle scene prints when
+        /// its battle ends. Matching lines show the game and the runner produce the same result.
+        /// </summary>
+        [MenuItem("Halobellum/Headless Runner/Run Selected Battle Setup")]
+        public static void RunSelectedBattleSetup()
+        {
+            var setup = Selection.activeObject as BattleSetupDefinition;
+            if (setup == null) setup = AssetDatabase.LoadAssetAtPath<BattleSetupDefinition>(BattleSceneBuilder.TestBattlePath);
+            if (setup == null)
+            {
+                Debug.LogError("Select a Battle Setup asset in the Project window first.");
+                return;
+            }
+            BattleResult result = HeadlessBattleRunner.RunBattle(LoadRules(), setup.BuildArmyA(), setup.BuildArmyB(), setup.BuildLayoutSettings(), setup.seed);
+            Debug.Log($"Headless result for '{setup.name}': {result.ToSummaryLine()}");
+        }
+
         /// <summary>Command-line entry point (-executeMethod). Exits Unity with code 0 on success, 1 on failure.</summary>
         public static void RunPlaceholderRoundRobinBatch()
         {

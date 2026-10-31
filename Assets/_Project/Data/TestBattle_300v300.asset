@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c88f1e668f69828f3c433dcf146f5f9, type: 3}
+  m_Name: TestBattle_300v300
+  m_EditorClassIdentifier: 
+  armyAName: Placeholder Army A
+  armyA:
+  - unit: {fileID: 11400000, guid: b7df3ec8a68c66df70ff0b03829fd2c9, type: 2}
+    squads: 10
+  - unit: {fileID: 11400000, guid: 371c5bdf9bd419137959e17e6d1a1701, type: 2}
+    squads: 22
+  - unit: {fileID: 11400000, guid: 05beefbad16fb5e8a596885d8af31a7a, type: 2}
+    squads: 13
+  armyBName: Placeholder Army B
+  armyB:
+  - unit: {fileID: 11400000, guid: b7df3ec8a68c66df70ff0b03829fd2c9, type: 2}
+    squads: 30
+  - unit: {fileID: 11400000, guid: 371c5bdf9bd419137959e17e6d1a1701, type: 2}
+    squads: 20
+  - unit: {fileID: 11400000, guid: 05beefbad16fb5e8a596885d8af31a7a, type: 2}
+    squads: 15
+  seed: 1000
+  positionJitter: 0.3
+  frontLineDistance: 10
+  squadGap: 3

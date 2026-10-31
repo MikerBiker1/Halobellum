@@ -22,6 +22,7 @@ namespace Halobellum.Tests
             foreach (UnitDefinition unit in units)
             {
                 CollectionAssert.IsEmpty(unit.ToStats().Validate(), unit.name);
+                Assert.IsNotNull(unit.prefab, $"{unit.name} has no prefab (Bible Section 4: a unit is a data asset plus a prefab).");
             }
         }
 

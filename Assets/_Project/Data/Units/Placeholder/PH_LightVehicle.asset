@@ -44,7 +44,8 @@ MonoBehaviour:
     frontDamageMultiplier: 1
     rearDamageMultiplier: 1
     blockChance: 0
-    blockedDamageTypes: []
+    blockedDamageTypes: 
+  prefab: {fileID: 1358878998062610456, guid: bc622304bbb8a974e8a81d60d0c37380, type: 3}
   strongAgainst: Infantry without splash, slow units
   weakAgainst: Heavy armor, anti-armor weapons
   notes: PLACEHOLDER for M1 simulation testing only. Not part of the roster and not
