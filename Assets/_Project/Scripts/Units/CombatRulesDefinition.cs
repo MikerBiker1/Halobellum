@@ -31,6 +31,20 @@ namespace Halobellum.Units
         [Tooltip("From Team A's edge to Team B's edge. Each team owns half.")]
         public float arenaLength;
 
+        [Header("Movement tuning")]
+        [Tooltip("Neighbor-search grid cell size in metres.")]
+        public float spatialCellSize;
+        [Tooltip("Extra gap in metres walking units try to keep between bodies.")]
+        public float separationPadding;
+        [Tooltip("How strongly walking units push away from bodies they touch.")]
+        public float separationWeight;
+        [Tooltip("How strongly walking units swerve around stopped or slower bodies ahead.")]
+        public float avoidanceWeight;
+        [Tooltip("How far ahead units look for obstacles, in seconds of travel.")]
+        public float avoidanceLookaheadSeconds;
+        [Tooltip("Overlap-resolution passes per tick.")]
+        public int collisionIterations;
+
         [Header("Damage multipliers (vs Unarmored, Light, Heavy)")]
         public DamageRow ballistic = new DamageRow();
         public DamageRow explosive = new DamageRow();
@@ -51,6 +65,12 @@ namespace Halobellum.Units
                 BattleTimeLimitSeconds = battleTimeLimitSeconds,
                 ArenaWidth = arenaWidth,
                 ArenaLength = arenaLength,
+                SpatialCellSize = spatialCellSize,
+                SeparationPadding = separationPadding,
+                SeparationWeight = separationWeight,
+                AvoidanceWeight = avoidanceWeight,
+                AvoidanceLookaheadSeconds = avoidanceLookaheadSeconds,
+                CollisionIterations = collisionIterations,
             };
 
             DamageTable table = rules.DamageTable;

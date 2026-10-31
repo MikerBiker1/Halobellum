@@ -21,6 +21,12 @@ namespace Halobellum.Tests
                 BattleTimeLimitSeconds = 90f,
                 ArenaWidth = 120f,
                 ArenaLength = 160f,
+                SpatialCellSize = 4f,
+                SeparationPadding = 0.2f,
+                SeparationWeight = 1f,
+                AvoidanceWeight = 1.5f,
+                AvoidanceLookaheadSeconds = 0.75f,
+                CollisionIterations = 3,
             };
             DamageTable t = rules.DamageTable;
             t.SetRow(DamageType.Ballistic, 1.0f, 0.6f, 0.25f);

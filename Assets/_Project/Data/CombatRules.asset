@@ -18,6 +18,12 @@ MonoBehaviour:
   battleTimeLimitSeconds: 90
   arenaWidth: 120
   arenaLength: 160
+  spatialCellSize: 4
+  separationPadding: 0.2
+  separationWeight: 1
+  avoidanceWeight: 1.5
+  avoidanceLookaheadSeconds: 0.75
+  collisionIterations: 3
   ballistic:
     unarmored: 1
     light: 0.6

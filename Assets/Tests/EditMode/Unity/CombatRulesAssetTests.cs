@@ -30,6 +30,12 @@ namespace Halobellum.Tests
             Assert.AreEqual(expected.BattleTimeLimitSeconds, fromAsset.BattleTimeLimitSeconds, 1e-5f);
             Assert.AreEqual(expected.ArenaWidth, fromAsset.ArenaWidth, 1e-5f);
             Assert.AreEqual(expected.ArenaLength, fromAsset.ArenaLength, 1e-5f);
+            Assert.AreEqual(expected.SpatialCellSize, fromAsset.SpatialCellSize, 1e-5f);
+            Assert.AreEqual(expected.SeparationPadding, fromAsset.SeparationPadding, 1e-5f);
+            Assert.AreEqual(expected.SeparationWeight, fromAsset.SeparationWeight, 1e-5f);
+            Assert.AreEqual(expected.AvoidanceWeight, fromAsset.AvoidanceWeight, 1e-5f);
+            Assert.AreEqual(expected.AvoidanceLookaheadSeconds, fromAsset.AvoidanceLookaheadSeconds, 1e-5f);
+            Assert.AreEqual(expected.CollisionIterations, fromAsset.CollisionIterations);
 
             foreach (ArmorType armor in Enum.GetValues(typeof(ArmorType)))
             {
