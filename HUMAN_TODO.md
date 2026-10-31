@@ -14,5 +14,5 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 
 ## 2026-10-31: after your D1 to D9 review
 
-- [ ] **D10 (square size):** D4 is in squares, so I set one square to 2 m (details in DECISIONS.md). Reply "approve", or give another size. Changing it later only means editing `squareSize` in `Assets/_Project/Data/CombatRules.asset`.
+- [x] **D10 (square size):** D4 is in squares, so I set one square to 2 m (details in DECISIONS.md). Reply "approve", or give another size. Changing it later only means editing `squareSize` in `Assets/_Project/Data/CombatRules.asset`.
 - [ ] **Optional re-check:** in Unity, Test Runner > EditMode > Run All should now show 123 tests, all green.

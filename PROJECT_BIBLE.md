@@ -440,6 +440,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-10-31 | Splash has no falloff and follows the attacker's target filter; a blocked projectile loses its splash | Approved from D7 |
 | 2026-10-31 | The first weapon is a unit's main weapon and drives movement; other weapons pick their own targets | Approved from D8 |
 | 2026-10-31 | Headless runner win = survivors' base damage is higher (statistics only) | Approved from D9 |
+| 2026-10-31 | One deployment square = 2 m (`squareSize` in CombatRules.asset); not final, may be changed at any time | Approved from D10 |
 
 ## 18. Assumptions to confirm
 
