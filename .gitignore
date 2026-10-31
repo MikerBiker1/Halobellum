@@ -69,3 +69,11 @@ crashlytics-build.properties
 # OS files
 .DS_Store
 Thumbs.db
+
+# Headless battle runner reports (regenerate any time)
+/BalanceReports/
+
+# Developer-only .NET test harness for the plain C# simulation (Tools/SimTests)
+!/Tools/**/*.csproj
+/Tools/**/bin/
+/Tools/**/obj/
