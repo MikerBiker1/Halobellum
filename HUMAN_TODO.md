@@ -16,3 +16,13 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 
 - [x] **D10 (square size):** D4 is in squares, so I set one square to 2 m (details in DECISIONS.md). Reply "approve", or give another size. Changing it later only means editing `squareSize` in `Assets/_Project/Data/CombatRules.asset`.
 - [ ] **Optional re-check:** in Unity, Test Runner > EditMode > Run All should now show 123 tests, all green.
+
+## 2026-10-31: check M2 (battle in the scene)
+
+- [ ] **Watch the battle.** In Unity open `Assets/_Project/Scenes/Battle.unity` (Project window, double-click) and press **Play**. 300 blue placeholder units fight 300 red ones.
+- [ ] **Try the controls.** Pan: W A S D / arrow keys, or hold the middle mouse button and drag. Zoom: mouse wheel. Speed: the buttons at the top, or Space (pause), 1 (1x), 2 (2x), 3 (4x). Left-click a unit to open its squad's stats window (bottom-left); right-click or Escape closes it.
+- [ ] **Compare with the headless runner.** When the battle ends, the Console shows `Battle finished: seed 1000, 974 ticks ...`. Then use **Halobellum > Headless Runner > Run Selected Battle Setup**: it prints `Headless result ...` with the same line.
+- [ ] **Optional: frame rate on another PC.** I measured on your PC (RX 7800 XT, i7-12700KF), which is above mid-range. The FPS counter is in the top-right corner while playing. To test a built game, ask me for the build steps.
+- [ ] **Answer D11 and D12** in DECISIONS.md.
+- [ ] **Confirm M2** so M3 can start.
+- [ ] **Optional cleanup:** `E:\AI\_hbci` is my throwaway copy of the project for batch tests and builds (it needs a short path). You can delete it any time; I will recreate it when needed.

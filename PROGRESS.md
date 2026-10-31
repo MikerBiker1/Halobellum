@@ -19,3 +19,9 @@ Milestones and items from PROJECT_BIBLE.md Section 14. An item is ticked when it
 ## Follow-ups after review (2026-10-31)
 - [x] D2: energy shields use their own damage multipliers, and a hit that breaks a shield carries its remaining damage over to health
 - [x] D4: arena defined in squares (60 x 30 per army, 2 squares of no man's land; 2 m per square pending D10)
+
+## M2: Battle in the scene (all criteria pass; waiting for the human to confirm)
+- [x] Placeholder units (prefabs) spawn from data, move through the simulation's free movement (no NavMeshAgent), target and fight, show health bars, and die
+- [x] Camera pan and zoom; speed controls (pause, 1x, 2x, 4x); selecting a squad opens the bottom-left stats window
+- [x] Same armies and seed give the same result in the game and the headless runner
+- [x] 300 vs 300 (600 units) runs at 60 FPS with placeholder art (measured on the owner's PC; see DAILY_REPORT)

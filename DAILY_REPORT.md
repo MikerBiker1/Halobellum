@@ -1,60 +1,37 @@
-# Daily report: 2026-10-31
+# Daily report: 2026-10-31 (M2)
+
+M0 and M1 were confirmed earlier today. This session completed **M2: Battle in the scene**. All criteria pass; waiting for your confirmation.
 
 ## Completed
-**M0: project setup** (waiting for your confirmation)
-- Git repo with a Unity .gitignore (Library, Temp, Logs, Obj and build output excluded), GitHub remote `origin`, everything pushed.
-- Section 3 folder structure under `Assets/_Project` and `Assets/Tests` (empty folders hold a `.gitkeep` so Git keeps them).
-- Empty test scene: `Assets/_Project/Scenes/TestScene.unity`.
-- `PROGRESS.md`, `DECISIONS.md`, `HUMAN_TODO.md`, `BLOCKERS.md` and this report.
-
-**M1: battle simulation core** (every acceptance criterion passes; waiting for your confirmation)
-1. `UnitDefinition` ScriptableObject (Create > Halobellum > Unit Definition) holding every Section 6 stat, plus plain C# copies (`UnitStats`) that the simulation reads.
-2. Damage and armor math: the Section 6 table and global rules live in `Data/CombatRules.asset`; shields absorb damage first.
-3. Optional directional defense: front and rear multipliers, and seeded block rolls against blockable projectiles of listed damage types.
-4. Free continuous-2D movement: steering, separation, sideways avoidance, contact sliding, and no overlap between bodies. A spatial hash grid handles neighbor lookups. Air units fly straight over ground units. No NavMesh and no Unity physics.
-5. Fixed-timestep simulation in plain C# (30 ticks per second): closest-enemy targeting re-checked every 0.5 s, Idle/Move/Attack/Dead states, weapons, projectiles, splash, shields, the 90 s limit, an event bus and battle results. The simulation code has no Unity dependency: its assemblies are set to "no engine references", so it cannot use Unity at all.
-6. Headless runner: N seeded battles between two armies, with a text report and a CSV. There are 3 placeholder units (`Data/Units/Placeholder`: infantry, light vehicle, heavy tank), marked as test data, not roster or balance.
-
-Commits: one per item, all pushed to https://github.com/MikerBiker1/Halobellum.
+- **Battle scene** `Assets/_Project/Scenes/Battle.unity`: plays the 300 vs 300 test battle (`Data/TestBattle_300v300.asset`) through the same simulation as the headless runner.
+- **Units from data:** each body is spawned from the prefab set on its unit asset. Placeholder prefabs were generated for the 3 test units (`Prefabs/Units`): capsules for infantry, boxes for vehicles, sized from the collision radius and tinted blue or red by side. Units move by the simulation's free movement (no NavMeshAgent, no Unity physics), target, fight, show health bars when damaged and disappear when they die. Short tracer lines show instant shots, and small spheres show projectiles. The floor shows both deployment zones, no man's land, and a faint checkerboard of 2 m squares.
+- **Camera:** fixed angled top-down view. Pan with W A S D / arrows or by middle-mouse dragging; zoom with the mouse wheel.
+- **Speed controls:** Pause, 1x, 2x, 4x (buttons, or Space / 1 / 2 / 3). The top bar also shows the battle clock and bodies alive per side, and an FPS counter sits top-right.
+- **Stats window:** left-click a unit to select its squad. Its stats appear bottom-left: squad size and bodies alive, cost, tier, role, health, armor, shield, speed, collision size, target filter, each weapon's damage, rate, range, splash and type, and any defense arc. Level, XP and upgrades come with M6.
+- **Same result in game and runner:** the scene and the runner build battles with the same code. A PlayMode test plays the whole battle in the scene at high speed and checks its result line against the headless runner's (both: `seed 1000, 974 ticks (32.5 s), TeamBWins; A 0/300 alive, 32126.0 dmg; B 127/300 alive, 35640.0 dmg`). A new menu item, Halobellum > Headless Runner > Run Selected Battle Setup, lets you compare by hand.
+- **Tools:** Halobellum > Scenes > Rebuild Battle Scene; Halobellum > Placeholders > Create Missing Placeholder Prefabs; a Windows build script; and a `-benchmark` mode for the built game.
+- **Smoother frame times:** units now do their 0.5 s target searches on different ticks instead of all on the same tick. Each unit still re-checks every 0.5 s, as the Bible says.
 
 ## Test results
-- **Unity EditMode (official):** 113 / 113 passed (Unity 6000.3.27f2, batch mode on a copy of the project).
-- **.NET harness (`dotnet test Tools/SimTests`):** 105 / 105 passed. This is a developer-only fast check of the plain C# code; it leaves out the 8 tests that need Unity.
-- Your open Unity editor compiled all scripts with no errors.
-- Tests cover what the Bible requires for this stage (damage and armor math, directional defense, targeting selection), plus movement, the simulation loop, seeded repeatability and the runner.
+- Unity EditMode: **130 / 130** passed. Unity PlayMode: **3 / 3** passed (scene spawns one prefab view per body and units move; full battle matches the runner; squad selection).
+- .NET harness: 122 / 122 passed. Your open Unity editor: no compile errors.
 
-**Headless run** (600-credit armies, 10 battles per matchup, seeds 1000 to 1009; about 10 s in batch mode):
+**Performance** (built Windows game, 1920 x 1080, 300 vs 300 placeholder units, whole battle; your PC: Radeon RX 7800 XT, Core i7-12700KF):
 
-| Matchup | Result | Avg length |
-| --- | --- | --- |
-| Placeholder Heavy Tank vs Placeholder Infantry | Tank 100% | 18.7 s |
-| Placeholder Heavy Tank vs Placeholder Light Vehicle | Tank 100% | 12.1 s |
-| Placeholder Infantry vs Placeholder Light Vehicle | Infantry 100% | 8.0 s |
+| Speed | Average FPS | 1% low FPS | Worst frame | Frames under 60 FPS |
+| --- | --- | --- | --- | --- |
+| 1x | 963 | 279 | 12.5 ms | 0 |
+| 4x | 790 | 175 | 10.9 ms | 0 |
 
-The placeholder numbers were invented only to exercise the simulation; these results say nothing about game balance.
+The simulation uses about 0.07 ms per frame at 1x and 0.33 ms at 4x. Your PC is above mid-range, but there is roughly 15x headroom below the 16.7 ms frame budget for 60 FPS, so a mid-range PC should hold 60 FPS comfortably. That is not measured. Screenshot: `Docs/M2_battle_300v300.png`.
+
+## Problems found and fixed
+- Built games showed a completely magenta screen. Unity's runtime primitives come with a built-in material URP can't draw in builds. Fixed with a real URP Lit material asset (`Art/Placeholder/PlaceholderLit.mat`) referenced by the scene. The editor never showed the problem.
+- My batch-mode copy of the project must live at a short path because of Windows' 260-character path limit, so it is now at `E:\AI\_hbci` (safe to delete).
 
 ## Blockers
 None.
 
-## Decisions needing your approval (details in DECISIONS.md)
-- **D1:** the anti-armor tag replaces the damage type row (it does not multiply with it).
-- **D2:** shields take damage with the unit's base armor multiplier.
-- **D3:** shield regen rate is a new per-unit data field (the Bible gives a delay but no rate).
-- **D4:** arena placeholder size: 120 m x 160 m.
-- **D5:** units face their target when attacking and their direction of travel when moving; squad rotation only changes the formation shape.
-- **D6:** range is measured to the target's edge.
-- **D7:** splash has no falloff and doesn't hit air from ground weapons; a blocked projectile loses its splash too.
-- **D8:** with several weapons, each weapon picks its own target and the first weapon drives movement.
-- **D9:** a runner "win" is decided by the survivors' base damage.
-
-## Notes
-- Tuning values for movement (separation, avoidance, collision passes, formation gap) are also in `CombatRules.asset`, not in code.
-- 300 vs 300 performance (60 FPS) is an M2 criterion and has not been measured yet.
-- M2 was not started.
-
-## Update after review (same day)
-- You approved D1, D3, D5, D6, D7, D8 (first weapon = main weapon) and D9; they are now in the Bible's decision log (Section 17).
-- **D2 changed and implemented:** energy shields use their own multipliers (Ballistic 0.75, Explosive 1.0, Energy 1.5, Fire 0.5, Melee 1.0, Anti-armor 0.5). A hit that breaks the shield carries its remaining base damage over to health using the armor multiplier.
-- **D4 changed and implemented:** the arena is 60 squares wide, with 30 squares per army and 2 squares of no man's land (60 x 62).
-- **New, needs approval: D10.** One square = 2 m (arena 120 m x 124 m).
-- Tests: Unity EditMode 123 / 123 passed; .NET harness 115 / 115. The headless runner gives the same outcomes on the new arena (the infantry dealt slightly less damage to the tanks).
+## Decisions needing your approval
+- **D11:** keep URP's SRP Batcher instead of GPU instancing for now; revisit GPU instancing and LOD with real models in M9.
+- **D12:** health bars also show for the selected squad at full health.
