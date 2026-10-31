@@ -58,32 +58,51 @@ namespace Halobellum.Presentation
         /// <summary>World position of a unit's base as of the latest tick (air units at flying height).</summary>
         public Vector3 WorldPosition(SimUnit unit) => ToWorld(unit);
 
+        private BattleSimulation _shown;
+        private Transform _container;
+
         private void Start()
         {
             _battle = GetComponent<BattleController>();
             _selection = GetComponent<SquadSelection>();
-            if (_battle.Simulation == null) { enabled = false; return; }
-
             _fillHigh = PlaceholderArt.MaterialFor(healthHighColor);
             _fillMid = PlaceholderArt.MaterialFor(healthMidColor);
             _fillLow = PlaceholderArt.MaterialFor(healthLowColor);
 
-            var container = new GameObject("Units").transform;
-            foreach (SimUnit unit in _battle.Simulation.Units) _views.Add(CreateView(unit, container));
-
-            _battle.Simulation.Events.Ticked += OnTicked;
-            _battle.Simulation.Events.UnitDied += OnUnitDied;
+            _battle.BattleChanged += Rebuild;
             _selection.SelectionChanged += OnSelectionChanged;
+            Rebuild(_battle.Simulation);
         }
 
         private void OnDestroy()
         {
-            if (_battle != null && _battle.Simulation != null)
-            {
-                _battle.Simulation.Events.Ticked -= OnTicked;
-                _battle.Simulation.Events.UnitDied -= OnUnitDied;
-            }
+            Unsubscribe();
+            if (_battle != null) _battle.BattleChanged -= Rebuild;
             if (_selection != null) _selection.SelectionChanged -= OnSelectionChanged;
+        }
+
+        /// <summary>Throws away the old views and makes one view per body of the newly shown battle.</summary>
+        private void Rebuild(BattleSimulation simulation)
+        {
+            Unsubscribe();
+            _views.Clear();
+            if (_container != null) Destroy(_container.gameObject);
+            _shown = simulation;
+            if (simulation == null) return;
+
+            _container = new GameObject("Units").transform;
+            foreach (SimUnit unit in simulation.Units) _views.Add(CreateView(unit, _container));
+            simulation.Events.Ticked += OnTicked;
+            simulation.Events.UnitDied += OnUnitDied;
+            OnSelectionChanged(_selection.SelectedSquadId);
+        }
+
+        private void Unsubscribe()
+        {
+            if (_shown == null) return;
+            _shown.Events.Ticked -= OnTicked;
+            _shown.Events.UnitDied -= OnUnitDied;
+            _shown = null;
         }
 
         private View CreateView(SimUnit unit, Transform container)
@@ -163,8 +182,9 @@ namespace Halobellum.Presentation
         private void LateUpdate()
         {
             if (_camera == null) _camera = Camera.main;
+            if (_shown == null || _battle.Clock == null) return;
             Quaternion barRotation = _camera != null ? _camera.transform.rotation : Quaternion.identity;
-            float alpha = _battle.Clock.Alpha;
+            float alpha = _battle.IsPlaying ? _battle.Clock.Alpha : 1f;
             int selected = _selection.SelectedSquadId;
 
             foreach (View view in _views)

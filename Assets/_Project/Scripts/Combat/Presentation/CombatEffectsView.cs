@@ -40,7 +40,6 @@ namespace Halobellum.Presentation
         {
             _battle = GetComponent<BattleController>();
             _units = GetComponent<UnitViewManager>();
-            if (_battle.Simulation == null) { enabled = false; return; }
 
             var container = new GameObject("Combat Effects").transform;
             _tracerA = PlaceholderArt.MaterialFor(teamATracerColor);
@@ -62,12 +61,29 @@ namespace Halobellum.Presentation
                 _projectiles[i].gameObject.SetActive(false);
             }
 
-            _battle.Simulation.Events.WeaponFired += OnWeaponFired;
+            _battle.BattleChanged += OnBattleChanged;
+            OnBattleChanged(_battle.Simulation);
         }
 
         private void OnDestroy()
         {
-            if (_battle != null && _battle.Simulation != null) _battle.Simulation.Events.WeaponFired -= OnWeaponFired;
+            if (_shown != null) _shown.Events.WeaponFired -= OnWeaponFired;
+            if (_battle != null) _battle.BattleChanged -= OnBattleChanged;
+        }
+
+        private BattleSimulation _shown;
+
+        /// <summary>Listens to the newly shown battle and clears effects left from the last one.</summary>
+        private void OnBattleChanged(BattleSimulation simulation)
+        {
+            if (_shown != null) _shown.Events.WeaponFired -= OnWeaponFired;
+            _shown = simulation;
+            if (_shown != null) _shown.Events.WeaponFired += OnWeaponFired;
+            for (int i = 0; i < _tracers.Length; i++)
+            {
+                _tracerTimeLeft[i] = 0f;
+                _tracers[i].gameObject.SetActive(false);
+            }
         }
 
         private void OnWeaponFired(SimUnit attacker, int weaponIndex, SimUnit target)
@@ -99,7 +115,8 @@ namespace Halobellum.Presentation
                 if (_tracerTimeLeft[i] <= 0f) _tracers[i].gameObject.SetActive(false);
             }
 
-            _battle.Simulation.GetProjectilePositions(_projectilePositions);
+            if (_shown != null) _shown.GetProjectilePositions(_projectilePositions);
+            else _projectilePositions.Clear();
             for (int i = 0; i < _projectiles.Length; i++)
             {
                 bool active = i < _projectilePositions.Count;

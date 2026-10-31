@@ -1,9 +1,10 @@
 // PlayerBuildTool.cs
-// Builds a Windows player of the battle scene, used to measure real game performance (M2 target:
+// Builds a Windows player, used to check the game and measure real performance (M2 target:
 // 300 vs 300 at 60 FPS) outside the editor.
 //   Command line: -executeMethod Halobellum.EditorTools.PlayerBuildTool.BuildWindowsFromCommandLine
 //                 -buildOutput C:\path\Halobellum.exe
-// Run the result with -benchmark (see BattleBenchmark) to get a frame-time report.
+// Run a -battleScene build with -benchmark (see BattleBenchmark), or a normal build with -autoplay
+// (see MatchAutoplay).
 // Depends on: BattleSceneBuilder (scene path), UnityEditor.
 
 using System;
@@ -26,7 +27,9 @@ namespace Halobellum.EditorTools
 
                 BuildReport report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
                 {
-                    scenes = new[] { BattleSceneBuilder.ScenePath },
+                    scenes = Array.IndexOf(args, "-battleScene") >= 0
+                        ? new[] { BattleSceneBuilder.ScenePath }
+                        : new[] { BattleSceneBuilder.MatchScenePath, BattleSceneBuilder.ScenePath },
                     locationPathName = args[index + 1],
                     target = BuildTarget.StandaloneWindows64,
                     options = BuildOptions.None,

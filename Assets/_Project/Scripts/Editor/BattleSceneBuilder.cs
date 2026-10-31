@@ -1,10 +1,13 @@
 // BattleSceneBuilder.cs
-// Builds the battle scene (Assets/_Project/Scenes/Battle.unity) from code, so it can always be
-// recreated exactly: a directional light, the Main Camera with the pan/zoom controller, the
-// "Battle" object (BattleController and its views, wired to the Combat Rules asset and the
-// balanced 300 vs 300 test Battle Setup), and the HUD. It also puts the scene first in the build settings.
-//   Menu: Halobellum > Scenes > Rebuild Battle Scene
-//   Command line: -executeMethod Halobellum.EditorTools.BattleSceneBuilder.BuildFromCommandLine
+// Builds the game's scenes from code, so they can always be recreated exactly:
+//   Match.unity  - the game: starting draft, then rounds of deployment, battle and result against
+//                  the do-nothing AI (MatchController, DeploymentInput, MatchHud).
+//   Battle.unity - the balanced 300 vs 300 test battle, played at once (for battle testing).
+// Both have a directional light, the Main Camera with the pan/zoom controller, the "Battle" object
+// (BattleController and its views, wired to the Combat Rules asset) and a HUD. The Match scene is
+// put first in the build settings, so a built game starts with a match.
+//   Menu: Halobellum > Scenes > Rebuild Match Scene / Rebuild Battle Scene
+//   Command line: -executeMethod Halobellum.EditorTools.BattleSceneBuilder.BuildFromCommandLine (both)
 // Depends on: Halobellum.Presentation, Halobellum.UI, Halobellum.Units, UnityEditor.
 
 using System;
@@ -23,8 +26,10 @@ namespace Halobellum.EditorTools
     public static class BattleSceneBuilder
     {
         public const string ScenePath = "Assets/_Project/Scenes/Battle.unity";
+        public const string MatchScenePath = "Assets/_Project/Scenes/Match.unity";
         public const string TestBattlePath = "Assets/_Project/Data/TestBattle_Balanced.asset";
         public const string PlaceholderMaterialPath = "Assets/_Project/Art/Placeholder/PlaceholderLit.mat";
+        public const string FactionFolder = "Assets/_Project/Data/Factions";
 
         [MenuItem("Halobellum/Scenes/Rebuild Battle Scene")]
         public static void BuildFromMenu()
@@ -34,23 +39,84 @@ namespace Halobellum.EditorTools
             Debug.Log("Battle scene rebuilt at " + ScenePath + ". Press Play to watch the battle.");
         }
 
+        [MenuItem("Halobellum/Scenes/Rebuild Match Scene")]
+        public static void BuildMatchFromMenu()
+        {
+            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            BuildMatch();
+            Debug.Log("Match scene rebuilt at " + MatchScenePath + ". Press Play to start a match.");
+        }
+
+        /// <summary>Command line: rebuilds both scenes.</summary>
         public static void BuildFromCommandLine()
         {
             int exitCode = 0;
-            try { Build(); }
-            catch (Exception e) { Debug.LogError("Building the battle scene failed: " + e); exitCode = 1; }
+            try
+            {
+                Build();
+                BuildMatch();
+            }
+            catch (Exception e) { Debug.LogError("Building the scenes failed: " + e); exitCode = 1; }
             EditorApplication.Exit(exitCode);
         }
 
+        /// <summary>Builds Battle.unity: the 300 vs 300 test battle.</summary>
         public static void Build()
         {
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-
-            // Load the assets after creating the scene: opening a new scene unloads unreferenced assets.
-            var rules = AssetDatabase.LoadAssetAtPath<CombatRulesDefinition>(CombatRulesDefinition.DefaultAssetPath);
             var setup = AssetDatabase.LoadAssetAtPath<BattleSetupDefinition>(TestBattlePath);
-            if (rules == null) throw new InvalidOperationException("Missing " + CombatRulesDefinition.DefaultAssetPath);
             if (setup == null) throw new InvalidOperationException("Missing " + TestBattlePath);
+
+            BattleController battle = CreateCommon();
+            SetReference(battle, "battleSetup", setup);
+            SetReference(battle.gameObject.AddComponent<BattleBenchmark>(), "battle", battle);
+
+            var hud = new GameObject("HUD");
+            SetReference(hud.AddComponent<BattleHud>(), "battle", battle);
+            SetReference(hud.AddComponent<SquadStatsWindow>(), "battle", battle);
+
+            EditorSceneManager.SaveScene(scene, ScenePath);
+            UpdateBuildSettings();
+        }
+
+        /// <summary>Builds Match.unity: the game.</summary>
+        public static void BuildMatch()
+        {
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            var matchRules = AssetDatabase.LoadAssetAtPath<MatchRulesDefinition>(MatchRulesDefinition.DefaultAssetPath);
+            if (matchRules == null) throw new InvalidOperationException("Missing " + MatchRulesDefinition.DefaultAssetPath);
+            List<FactionDefinition> factions = AssetDatabase.FindAssets("t:" + nameof(FactionDefinition), new[] { FactionFolder })
+                .Select(AssetDatabase.GUIDToAssetPath).OrderBy(p => p, StringComparer.Ordinal)
+                .Select(AssetDatabase.LoadAssetAtPath<FactionDefinition>).ToList();
+            if (factions.Count == 0) throw new InvalidOperationException("No factions in " + FactionFolder);
+
+            BattleController battle = CreateCommon();
+            GameObject battleObject = battle.gameObject;
+            var match = battleObject.AddComponent<MatchController>();
+            SetReference(match, "matchRules", matchRules);
+            SetReferenceList(match, "factions", factions.Cast<Object>().ToList());
+            battleObject.AddComponent<DeploymentInput>();
+            battleObject.AddComponent<MatchAutoplay>();
+
+            var hud = new GameObject("HUD");
+            var battleHud = hud.AddComponent<BattleHud>();
+            SetReference(battleHud, "battle", battle);
+            SetBool(battleHud, "showResultLine", false);
+            SetReference(hud.AddComponent<SquadStatsWindow>(), "battle", battle);
+            var matchHud = hud.AddComponent<MatchHud>();
+            SetReference(matchHud, "match", match);
+            SetReference(matchHud, "battle", battle);
+
+            EditorSceneManager.SaveScene(scene, MatchScenePath);
+            UpdateBuildSettings();
+        }
+
+        /// <summary>Light, camera and the Battle object shared by both scenes. Returns the BattleController.</summary>
+        private static BattleController CreateCommon()
+        {
+            // Load assets after the new scene exists: opening a new scene unloads unreferenced assets.
+            var rules = AssetDatabase.LoadAssetAtPath<CombatRulesDefinition>(CombatRulesDefinition.DefaultAssetPath);
+            if (rules == null) throw new InvalidOperationException("Missing " + CombatRulesDefinition.DefaultAssetPath);
 
             var lightObject = new GameObject("Directional Light");
             var light = lightObject.AddComponent<Light>();
@@ -62,9 +128,7 @@ namespace Halobellum.EditorTools
             var battleObject = new GameObject("Battle");
             var battle = battleObject.AddComponent<BattleController>(); // Adds its required view components too.
             SetReference(battle, "combatRules", rules);
-            SetReference(battle, "battleSetup", setup);
             SetReference(battle, "placeholderMaterial", EnsurePlaceholderMaterial());
-            SetReference(battleObject.AddComponent<BattleBenchmark>(), "battle", battle);
 
             var cameraObject = new GameObject("Main Camera") { tag = "MainCamera" };
             var camera = cameraObject.AddComponent<Camera>();
@@ -75,16 +139,19 @@ namespace Halobellum.EditorTools
             camera.backgroundColor = new Color(0.09f, 0.1f, 0.12f);
             cameraObject.AddComponent<AudioListener>();
             SetReference(cameraObject.AddComponent<BattleCameraController>(), "battle", battle);
+            return battle;
+        }
 
-            var hud = new GameObject("HUD");
-            SetReference(hud.AddComponent<BattleHud>(), "battle", battle);
-            SetReference(hud.AddComponent<SquadStatsWindow>(), "battle", battle);
-
-            EditorSceneManager.SaveScene(scene, ScenePath);
-
-            List<EditorBuildSettingsScene> scenes = EditorBuildSettings.scenes.Where(s => s.path != ScenePath).ToList();
-            scenes.Insert(0, new EditorBuildSettingsScene(ScenePath, true));
-            EditorBuildSettings.scenes = scenes.ToArray();
+        /// <summary>Match scene first (the game), then the Battle test scene.</summary>
+        private static void UpdateBuildSettings()
+        {
+            var ordered = new List<EditorBuildSettingsScene>();
+            foreach (string path in new[] { MatchScenePath, ScenePath })
+            {
+                if (System.IO.File.Exists(path)) ordered.Add(new EditorBuildSettingsScene(path, true));
+            }
+            ordered.AddRange(EditorBuildSettings.scenes.Where(s => s.path != MatchScenePath && s.path != ScenePath));
+            EditorBuildSettings.scenes = ordered.ToArray();
             AssetDatabase.SaveAssets();
         }
 
@@ -111,6 +178,25 @@ namespace Halobellum.EditorTools
             property.objectReferenceValue = value;
             serialized.ApplyModifiedPropertiesWithoutUndo();
             if (property.objectReferenceValue == null) throw new InvalidOperationException($"Could not set {component.GetType().Name}.{field}.");
+        }
+
+        private static void SetReferenceList(Object component, string field, List<Object> values)
+        {
+            var serialized = new SerializedObject(component);
+            SerializedProperty property = serialized.FindProperty(field);
+            if (property == null || !property.isArray) throw new InvalidOperationException($"{component.GetType().Name} has no list '{field}'.");
+            property.arraySize = values.Count;
+            for (int i = 0; i < values.Count; i++) property.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void SetBool(Object component, string field, bool value)
+        {
+            var serialized = new SerializedObject(component);
+            SerializedProperty property = serialized.FindProperty(field);
+            if (property == null) throw new InvalidOperationException($"{component.GetType().Name} has no field '{field}'.");
+            property.boolValue = value;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
         }
     }
 }

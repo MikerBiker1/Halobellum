@@ -4,6 +4,7 @@
     "references": [
         "Halobellum.Core",
         "Halobellum.Combat",
+        "Halobellum.Economy",
         "Halobellum.Units",
         "Unity.InputSystem"
     ],

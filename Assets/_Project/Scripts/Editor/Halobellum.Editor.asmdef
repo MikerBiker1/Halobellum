@@ -4,6 +4,7 @@
     "references": [
         "Halobellum.Core",
         "Halobellum.Combat",
+        "Halobellum.Economy",
         "Halobellum.Units",
         "Halobellum.Presentation",
         "Halobellum.UI"

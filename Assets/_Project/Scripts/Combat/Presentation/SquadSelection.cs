@@ -26,15 +26,19 @@ namespace Halobellum.Presentation
         /// <summary>Raised with the new squad id (-1 for none) whenever the selection changes.</summary>
         public event Action<int> SelectionChanged;
 
+        /// <summary>When false, mouse and keyboard don't change the selection (for example while placing a squad).</summary>
+        public bool InputEnabled { get; set; } = true;
+
         private void Start()
         {
             _battle = GetComponent<BattleController>();
             _units = GetComponent<UnitViewManager>();
+            _battle.BattleChanged += _ => Select(-1); // Squad ids belong to one battle.
         }
 
         private void Update()
         {
-            if (_battle.Simulation == null) return;
+            if (_battle.Simulation == null || !InputEnabled) return;
             Mouse mouse = Mouse.current;
             Keyboard keyboard = Keyboard.current;
 

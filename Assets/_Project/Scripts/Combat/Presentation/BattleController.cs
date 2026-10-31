@@ -1,12 +1,16 @@
 // BattleController.cs
-// Runs one battle in the scene. On Awake it builds the BattleSimulation from the Battle Setup and
-// Combat Rules data assets, using the same HeadlessBattleRunner.CreateBattle as the headless
-// runner, so the same setup and seed give the same battle in both. Each frame it asks the
-// BattleClock how many fixed ticks to run (speed 0 = paused, 1x, 2x, 4x) and steps the simulation.
-// It never moves units itself: other components (UnitViewManager, CombatEffectsView, the HUD)
-// read the simulation and subscribe to its events.
+// Shows and runs battles in the scene. It can get its battle two ways:
+//   - Battle scene: a Battle Setup asset is assigned; on Awake it builds that battle with the same
+//     HeadlessBattleRunner.CreateBattle as the headless runner, so the same setup and seed give the
+//     same battle in both, and plays it at once.
+//   - Match scene: no Battle Setup; the MatchController hands over each round's battle with
+//     ShowBattle(). During deployment it hands over a preview battle that is shown but not run.
+// While a battle is playing, each frame it asks the BattleClock how many fixed ticks to run
+// (speed 0 = paused, 1x, 2x, 4x) and steps the simulation. It never moves units itself: other
+// components (UnitViewManager, CombatEffectsView, the HUD) read the simulation and its events,
+// and rebuild themselves when BattleChanged is raised.
 // Depends on: Halobellum.Combat (BattleSimulation, BattleClock, HeadlessBattleRunner),
-//             Halobellum.Units (CombatRulesDefinition, BattleSetupDefinition), UnityEngine.
+//             Halobellum.Units (CombatRulesDefinition, BattleSetupDefinition, UnitDefinition), UnityEngine.
 
 using System;
 using System.Collections.Generic;
@@ -23,6 +27,7 @@ namespace Halobellum.Presentation
     public sealed class BattleController : MonoBehaviour
     {
         [SerializeField] private CombatRulesDefinition combatRules;
+        [Tooltip("Battle scene only: the battle to play. Leave empty in the Match scene.")]
         [SerializeField] private BattleSetupDefinition battleSetup;
         [Tooltip("Most simulation ticks run in one frame. If the PC falls behind, the battle slows down instead of freezing.")]
         [SerializeField] private int maxTicksPerFrame = 8;
@@ -34,22 +39,32 @@ namespace Halobellum.Presentation
         public CombatRules Rules { get; private set; }
         public BattleSimulation Simulation { get; private set; }
         public BattleClock Clock { get; private set; }
+        /// <summary>True while the shown battle is being run (false for a deployment preview).</summary>
+        public bool IsPlaying { get; private set; }
 
-        /// <summary>Battle speed: 0 pauses, 1, 2 or 4 speed it up.</summary>
+        /// <summary>Battle speed: 0 pauses, 1, 2 or 4 speed it up. Kept from one battle to the next.</summary>
         public float Speed
         {
-            get => Clock?.Speed ?? 0f;
-            set { if (Clock != null) Clock.Speed = Mathf.Max(0f, value); }
+            get => Clock?.Speed ?? _speed;
+            set
+            {
+                _speed = Mathf.Max(0f, value);
+                if (Clock != null) Clock.Speed = _speed;
+            }
         }
 
         /// <summary>Time spent stepping the simulation this frame, in milliseconds (for the benchmark).</summary>
         public float LastFrameSimulationMilliseconds { get; private set; }
 
-        /// <summary>Raised once when the battle ends, with its result.</summary>
+        /// <summary>Raised whenever a different battle (or preview) is shown. Views rebuild themselves.</summary>
+        public event Action<BattleSimulation> BattleChanged;
+
+        /// <summary>Raised once when the playing battle ends, with its result.</summary>
         public event Action<BattleResult> BattleFinished;
 
         private readonly System.Diagnostics.Stopwatch _stopwatch = new System.Diagnostics.Stopwatch();
         private readonly Dictionary<UnitStats, UnitDefinition> _unitSources = new Dictionary<UnitStats, UnitDefinition>();
+        private float _speed = 1f;
 
         /// <summary>The prefab set on this unit type's data asset, or null to use a placeholder primitive.</summary>
         public GameObject PrefabFor(UnitStats stats)
@@ -59,34 +74,55 @@ namespace Halobellum.Presentation
 
         private void Awake()
         {
-            if (combatRules == null || battleSetup == null)
+            Application.runInBackground = true; // Keep playing when the window loses focus.
+            if (combatRules == null)
             {
-                Debug.LogError("BattleController needs a Combat Rules asset and a Battle Setup asset.", this);
+                Debug.LogError("BattleController needs a Combat Rules asset.", this);
                 enabled = false;
                 return;
             }
 
-            Application.runInBackground = true; // Keep playing when the window loses focus.
             PlaceholderArt.SetBaseMaterial(placeholderMaterial);
             Rules = combatRules.ToRules();
-            ArmySetup armyA = battleSetup.BuildArmyA(_unitSources);
-            ArmySetup armyB = battleSetup.BuildArmyB(_unitSources);
+            if (battleSetup != null) StartFromSetup();
+        }
+
+        private void StartFromSetup()
+        {
+            var sources = new Dictionary<UnitStats, UnitDefinition>();
+            ArmySetup armyA = battleSetup.BuildArmyA(sources);
+            ArmySetup armyB = battleSetup.BuildArmyB(sources);
             if (!IsValid(armyA) || !IsValid(armyB))
             {
                 enabled = false;
                 return;
             }
-
-            Simulation = HeadlessBattleRunner.CreateBattle(Rules, armyA, armyB, battleSetup.BuildLayoutSettings(), battleSetup.seed);
-            Simulation.Events.BattleEnded += OnBattleEnded;
-            Clock = new BattleClock(Rules.TickSeconds, maxTicksPerFrame);
+            ShowBattle(HeadlessBattleRunner.CreateBattle(Rules, armyA, armyB, battleSetup.BuildLayoutSettings(), battleSetup.seed), sources, play: true);
             Debug.Log($"Battle started: {armyA.Name} ({CountBodies(Team.A)} bodies) vs {armyB.Name} ({CountBodies(Team.B)} bodies), seed {battleSetup.seed}.");
+        }
+
+        /// <summary>
+        /// Shows a battle. play = true runs it; play = false only displays it (deployment preview).
+        /// sources maps each unit type to its data asset, so views can use its prefab.
+        /// </summary>
+        public void ShowBattle(BattleSimulation simulation, IReadOnlyDictionary<UnitStats, UnitDefinition> sources, bool play)
+        {
+            if (Simulation != null) Simulation.Events.BattleEnded -= OnBattleEnded;
+
+            _unitSources.Clear();
+            if (sources != null) foreach (var pair in sources) _unitSources[pair.Key] = pair.Value;
+
+            Simulation = simulation;
+            Clock = new BattleClock(Rules.TickSeconds, maxTicksPerFrame) { Speed = _speed };
+            IsPlaying = play && simulation != null;
+            if (Simulation != null) Simulation.Events.BattleEnded += OnBattleEnded;
+            BattleChanged?.Invoke(Simulation);
         }
 
         private void Update()
         {
             LastFrameSimulationMilliseconds = 0f;
-            if (Simulation == null || Simulation.IsFinished) return;
+            if (!IsPlaying || Simulation == null || Simulation.IsFinished) return;
             int ticks = Clock.Advance(Time.deltaTime);
             if (ticks == 0) return;
 
@@ -102,6 +138,7 @@ namespace Halobellum.Presentation
 
         private void OnBattleEnded(BattleResult result)
         {
+            IsPlaying = false;
             Debug.Log("Battle finished: " + result.ToSummaryLine());
             BattleFinished?.Invoke(result);
         }
@@ -110,11 +147,24 @@ namespace Halobellum.Presentation
         public int CountAlive(Team team)
         {
             int count = 0;
+            if (Simulation == null) return count;
             foreach (SimUnit unit in Simulation.Units)
             {
                 if (unit.Team == team && unit.IsAlive) count++;
             }
             return count;
+        }
+
+        /// <summary>Credits' worth of the living bodies on one team (squad cost shared between its bodies).</summary>
+        public float AliveValue(Team team)
+        {
+            float value = 0f;
+            if (Simulation == null) return value;
+            foreach (SimUnit unit in Simulation.Units)
+            {
+                if (unit.Team == team && unit.IsAlive) value += unit.Stats.Cost / (float)Math.Max(1, unit.Stats.SquadSize);
+            }
+            return value;
         }
 
         private int CountBodies(Team team)

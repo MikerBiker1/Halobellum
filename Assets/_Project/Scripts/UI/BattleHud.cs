@@ -21,6 +21,8 @@ namespace Halobellum.UI
         [SerializeField] private BattleController battle;
         [Tooltip("Show the frames-per-second counter.")]
         [SerializeField] private bool showFps = true;
+        [Tooltip("Show the one-line result when the battle ends (the Match scene has its own result screen).")]
+        [SerializeField] private bool showResultLine = true;
 
         private float _resumeSpeed = 1f;
         private float _smoothedFrameTime;
@@ -54,6 +56,7 @@ namespace Halobellum.UI
         private void OnGUI()
         {
             if (battle == null || battle.Simulation == null) return;
+            if (!battle.IsPlaying && battle.Simulation.Tick == 0) return; // Deployment preview: no battle bar.
             EnsureStyles();
             float scale = HudScale.Apply();
 
@@ -75,7 +78,7 @@ namespace Halobellum.UI
                 DrawSpeedButton(new Rect(buttonsX + 90f * (i + 1), bar.y + 38f, 80f, 28f), $"{Speeds[i]:0}x", Speeds[i]);
             }
 
-            if (sim.IsFinished && sim.Result != null)
+            if (showResultLine && sim.IsFinished && sim.Result != null)
             {
                 var result = new Rect(width * 0.5f - 300f, 90f, 600f, 34f);
                 GUI.Box(result, GUIContent.none);

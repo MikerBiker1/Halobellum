@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &165296987
+--- !u!1 &167652709
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,9 +127,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 165296990}
-  - component: {fileID: 165296989}
-  - component: {fileID: 165296988}
+  - component: {fileID: 167652712}
+  - component: {fileID: 167652711}
+  - component: {fileID: 167652710}
   m_Layer: 0
   m_Name: HUD
   m_TagString: Untagged
@@ -137,41 +137,42 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &165296988
+--- !u!114 &167652710
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 165296987}
+  m_GameObject: {fileID: 167652709}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7d5ad2749417702b3ded08d47b8a33ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Halobellum.UI::Halobellum.UI.SquadStatsWindow
-  battle: {fileID: 1818712898}
+  battle: {fileID: 698212033}
   windowWidth: 440
---- !u!114 &165296989
+--- !u!114 &167652711
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 165296987}
+  m_GameObject: {fileID: 167652709}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 879ea6271b4f461d80ac513c035d78c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Halobellum.UI::Halobellum.UI.BattleHud
-  battle: {fileID: 1818712898}
+  battle: {fileID: 698212033}
   showFps: 1
---- !u!4 &165296990
+  showResultLine: 1
+--- !u!4 &167652712
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 165296987}
+  m_GameObject: {fileID: 167652709}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -180,7 +181,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &497297724
+--- !u!1 &692426035
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -188,121 +189,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 497297728}
-  - component: {fileID: 497297727}
-  - component: {fileID: 497297726}
-  - component: {fileID: 497297725}
-  m_Layer: 0
-  m_Name: Main Camera
-  m_TagString: MainCamera
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &497297725
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 497297724}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec1008e466ca7adede44013b64dd6a32, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Halobellum.Presentation::Halobellum.Presentation.BattleCameraController
-  battle: {fileID: 1818712898}
-  pitch: 55
-  startFocus: {x: 0, y: -5}
-  startDistance: 150
-  minDistance: 20
-  maxDistance: 240
-  panSpeed: 60
-  zoomStep: 0.12
---- !u!81 &497297726
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 497297724}
-  m_Enabled: 1
---- !u!20 &497297727
-Camera:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 497297724}
-  m_Enabled: 1
-  serializedVersion: 2
-  m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.09, g: 0.1, b: 0.12, a: 1}
-  m_projectionMatrixMode: 1
-  m_GateFitMode: 2
-  m_FOVAxisMode: 0
-  m_Iso: 200
-  m_ShutterSpeed: 0.005
-  m_Aperture: 16
-  m_FocusDistance: 10
-  m_FocalLength: 50
-  m_BladeCount: 5
-  m_Curvature: {x: 2, y: 11}
-  m_BarrelClipping: 0.25
-  m_Anamorphism: 0
-  m_SensorSize: {x: 36, y: 24}
-  m_LensShift: {x: 0, y: 0}
-  m_NormalizedViewPortRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
-  near clip plane: 0.5
-  far clip plane: 1500
-  field of view: 50
-  orthographic: 0
-  orthographic size: 5
-  m_Depth: 0
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
-  m_TargetDisplay: 0
-  m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
-  m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
-  m_StereoConvergence: 10
-  m_StereoSeparation: 0.022
---- !u!4 &497297728
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 497297724}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &751769013
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 751769015}
-  - component: {fileID: 751769014}
+  - component: {fileID: 692426037}
+  - component: {fileID: 692426036}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -310,13 +198,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!108 &751769014
+--- !u!108 &692426036
 Light:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 751769013}
+  m_GameObject: {fileID: 692426035}
   m_Enabled: 1
   serializedVersion: 12
   m_Type: 1
@@ -375,13 +263,13 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
---- !u!4 &751769015
+--- !u!4 &692426037
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 751769013}
+  m_GameObject: {fileID: 692426035}
   serializedVersion: 2
   m_LocalRotation: {x: 0.40821794, y: -0.23456973, z: 0.10938166, w: 0.8754261}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -390,7 +278,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1818712897
+--- !u!1 &698212032
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -398,13 +286,13 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1818712904}
-  - component: {fileID: 1818712903}
-  - component: {fileID: 1818712902}
-  - component: {fileID: 1818712901}
-  - component: {fileID: 1818712900}
-  - component: {fileID: 1818712898}
-  - component: {fileID: 1818712899}
+  - component: {fileID: 698212039}
+  - component: {fileID: 698212038}
+  - component: {fileID: 698212037}
+  - component: {fileID: 698212036}
+  - component: {fileID: 698212035}
+  - component: {fileID: 698212033}
+  - component: {fileID: 698212034}
   m_Layer: 0
   m_Name: Battle
   m_TagString: Untagged
@@ -412,13 +300,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1818712898
+--- !u!114 &698212033
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1818712897}
+  m_GameObject: {fileID: 698212032}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 98fd405935ce7319c60c16a9810528e2, type: 3}
@@ -428,27 +316,27 @@ MonoBehaviour:
   battleSetup: {fileID: 11400000, guid: 5fb11144e516fc79f7e4ac9293b174ba, type: 2}
   maxTicksPerFrame: 8
   placeholderMaterial: {fileID: 2100000, guid: fe96e1ff39ce7f645bd65734800d4843, type: 2}
---- !u!114 &1818712899
+--- !u!114 &698212034
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1818712897}
+  m_GameObject: {fileID: 698212032}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0919b8071b95c96fa83c11efff0a4fe3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Halobellum.Presentation::Halobellum.Presentation.BattleBenchmark
-  battle: {fileID: 1818712898}
+  battle: {fileID: 698212033}
   warmUpFrames: 30
---- !u!114 &1818712900
+--- !u!114 &698212035
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1818712897}
+  m_GameObject: {fileID: 698212032}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2df5deb5703b1e55f1e85325d99812b, type: 3}
@@ -459,26 +347,26 @@ MonoBehaviour:
   teamBZoneColor: {r: 0.38, g: 0.3, b: 0.29, a: 1}
   noMansLandColor: {r: 0.22, g: 0.22, b: 0.2, a: 1}
   checkerContrast: 0.06
---- !u!114 &1818712901
+--- !u!114 &698212036
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1818712897}
+  m_GameObject: {fileID: 698212032}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 474b14486bc72022c10be4344295a852, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Halobellum.Presentation::Halobellum.Presentation.SquadSelection
   pickTolerance: 0.6
---- !u!114 &1818712902
+--- !u!114 &698212037
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1818712897}
+  m_GameObject: {fileID: 698212032}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c028ddff633ae7b1cfef6969a2665948, type: 3}
@@ -493,13 +381,13 @@ MonoBehaviour:
   shotHeight: 0.9
   tracerPoolSize: 400
   projectilePoolSize: 300
---- !u!114 &1818712903
+--- !u!114 &698212038
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1818712897}
+  m_GameObject: {fileID: 698212032}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c79e50c14c42f3c05445eb0e7817a24, type: 3}
@@ -516,13 +404,126 @@ MonoBehaviour:
   healthBarHeight: 0.25
   healthBarMinWidth: 1.2
   healthBarGap: 0.6
---- !u!4 &1818712904
+--- !u!4 &698212039
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1818712897}
+  m_GameObject: {fileID: 698212032}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &737834196
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 737834200}
+  - component: {fileID: 737834199}
+  - component: {fileID: 737834198}
+  - component: {fileID: 737834197}
+  m_Layer: 0
+  m_Name: Main Camera
+  m_TagString: MainCamera
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &737834197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 737834196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec1008e466ca7adede44013b64dd6a32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Halobellum.Presentation::Halobellum.Presentation.BattleCameraController
+  battle: {fileID: 698212033}
+  pitch: 55
+  startFocus: {x: 0, y: -5}
+  startDistance: 150
+  minDistance: 20
+  maxDistance: 240
+  panSpeed: 60
+  zoomStep: 0.12
+--- !u!81 &737834198
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 737834196}
+  m_Enabled: 1
+--- !u!20 &737834199
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 737834196}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.09, g: 0.1, b: 0.12, a: 1}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.5
+  far clip plane: 1500
+  field of view: 50
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!4 &737834200
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 737834196}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -535,7 +536,7 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 751769015}
-  - {fileID: 1818712904}
-  - {fileID: 497297728}
-  - {fileID: 165296990}
+  - {fileID: 692426037}
+  - {fileID: 698212039}
+  - {fileID: 737834200}
+  - {fileID: 167652712}

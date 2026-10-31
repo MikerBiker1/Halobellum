@@ -1,0 +1,252 @@
+// MatchController.cs
+// Runs a match in the Match scene (Bible Section 5). It owns the plain C# Match and connects it to
+// the scene: during deployment it shows the player's squads as a preview battle (the AI's squads
+// stay hidden), forwards the player's actions (unlock, buy and place, move, turn, sell), and on
+// Ready hands the round's battle to the BattleController to play. When the battle ends it applies
+// the result (base damage, income) and the HUD shows the result screen.
+// The HUD (Scripts/UI/MatchHud) and DeploymentInput call the public methods here; tests do too.
+// Depends on: BattleController, SquadSelection, Halobellum.Economy (Match, DoNothingAi, DeploymentGrid),
+//             Halobellum.Units (MatchRulesDefinition, FactionDefinition, UnitDefinition), UnityEngine.
+
+using System;
+using System.Collections.Generic;
+using Halobellum.Combat;
+using Halobellum.Core;
+using Halobellum.Economy;
+using Halobellum.Units;
+using UnityEngine;
+
+namespace Halobellum.Presentation
+{
+    [RequireComponent(typeof(BattleController))]
+    public sealed class MatchController : MonoBehaviour
+    {
+        [SerializeField] private MatchRulesDefinition matchRules;
+        [SerializeField] private List<FactionDefinition> factions = new List<FactionDefinition>();
+        [Tooltip("Match seed. 0 = a new random match every time.")]
+        [SerializeField] private int seed;
+
+        private BattleController _battle;
+        private SquadSelection _selection;
+        private readonly Dictionary<UnitStats, UnitDefinition> _sources = new Dictionary<UnitStats, UnitDefinition>();
+        private readonly List<PlacedSquad> _previewOrder = new List<PlacedSquad>();
+
+        public Match Match { get; private set; }
+        /// <summary>Feedback from the last action, for the HUD (empty when nothing to say).</summary>
+        public string Message { get; private set; } = "";
+        /// <summary>Raised after every phase change (draft chosen, battle started or finished, next round).</summary>
+        public event Action PhaseChanged;
+
+        /// <summary>The unit type being placed after pressing Buy, or null.</summary>
+        public UnitStats PlacingType { get; private set; }
+        /// <summary>The squad being moved, or -1.</summary>
+        public int MovingSquadId { get; private set; } = -1;
+        /// <summary>Whether the squad being placed or moved is turned 90 degrees.</summary>
+        public bool PlacingRotated { get; private set; }
+        public bool IsPlacing => PlacingType != null || MovingSquadId >= 0;
+
+        private void Start()
+        {
+            _battle = GetComponent<BattleController>();
+            _selection = GetComponent<SquadSelection>();
+            _battle.BattleFinished += OnBattleFinished;
+            NewMatch();
+        }
+
+        private void OnDestroy()
+        {
+            if (_battle != null) _battle.BattleFinished -= OnBattleFinished;
+        }
+
+        /// <summary>Starts a fresh match at the draft. fixedSeed overrides the Inspector seed (tests).</summary>
+        public void NewMatch(int? fixedSeed = null)
+        {
+            var cache = new Dictionary<UnitDefinition, UnitStats>();
+            var infos = new List<FactionInfo>();
+            foreach (FactionDefinition faction in factions)
+            {
+                if (faction != null) infos.Add(faction.ToInfo(cache));
+            }
+            _sources.Clear();
+            foreach (var pair in cache) _sources[pair.Value] = pair.Key;
+
+            int matchSeed = fixedSeed ?? (seed != 0 ? seed : Environment.TickCount & 0x7FFFFFFF);
+            Match = new Match(matchRules.ToRules(), _battle.Rules, infos, matchSeed, new DoNothingAi());
+            CancelPlacement();
+            Message = "";
+            _battle.ShowBattle(null, null, play: false);
+            PhaseChanged?.Invoke();
+        }
+
+        // ------------------------------------------------------------------ draft
+
+        public ActionResult ChooseDraft(int cardIndex)
+        {
+            ActionResult result = Match.ChooseDraft(cardIndex);
+            Report(result);
+            if (result.Ok)
+            {
+                RefreshPreview();
+                PhaseChanged?.Invoke();
+            }
+            return result;
+        }
+
+        // ------------------------------------------------------------------ deployment
+
+        public ActionResult Unlock(UnitStats type) => Report(Match.Unlock(Team.A, type));
+
+        /// <summary>Starts placing a new squad of this type; the next PlaceAt buys it there.</summary>
+        public void BeginPlacing(UnitStats type)
+        {
+            if (Match.Phase != MatchPhase.Deployment) return;
+            CancelPlacement();
+            PlacingType = type;
+            _selection.InputEnabled = false;
+            Message = "Left-click to place, R to turn, right-click to cancel.";
+        }
+
+        /// <summary>Starts moving one of this round's squads; the next PlaceAt moves it there.</summary>
+        public void BeginMoving(PlacedSquad squad)
+        {
+            if (Match.Phase != MatchPhase.Deployment || squad == null) return;
+            if (!Match.CanMove(squad))
+            {
+                Message = "Only squads bought this round can be moved or turned.";
+                return;
+            }
+            CancelPlacement();
+            MovingSquadId = squad.Id;
+            PlacingRotated = squad.Rotated90;
+            _selection.InputEnabled = false;
+            Message = "Left-click the new spot, R to turn, right-click to cancel.";
+        }
+
+        public void CancelPlacement()
+        {
+            PlacingType = null;
+            MovingSquadId = -1;
+            PlacingRotated = false;
+            if (_selection != null) _selection.InputEnabled = true;
+        }
+
+        /// <summary>Turns the squad being placed, or turns the selected squad where it stands.</summary>
+        public void ToggleRotation()
+        {
+            if (IsPlacing)
+            {
+                PlacingRotated = !PlacingRotated;
+                return;
+            }
+            PlacedSquad squad = SelectedPlacedSquad;
+            if (squad == null) return;
+            if (Report(Match.Move(Team.A, squad.Id, squad.Column, squad.Row, !squad.Rotated90)).Ok) RefreshPreview(squad.Id);
+        }
+
+        /// <summary>The type and footprint rotation of what is being placed or moved (for the ghost).</summary>
+        public UnitStats PlacementType => PlacingType ?? Match.Player.FindSquad(MovingSquadId)?.Type;
+
+        /// <summary>Buys or moves at this spot (column and row in the player's grid).</summary>
+        public ActionResult PlaceAt(int column, int row)
+        {
+            ActionResult result;
+            int placedId;
+            if (PlacingType != null)
+            {
+                result = Match.Buy(Team.A, PlacingType, column, row, PlacingRotated);
+                placedId = result.Ok ? Match.Player.Squads[Match.Player.Squads.Count - 1].Id : -1;
+            }
+            else if (MovingSquadId >= 0)
+            {
+                result = Match.Move(Team.A, MovingSquadId, column, row, PlacingRotated);
+                placedId = MovingSquadId;
+            }
+            else return ActionResult.Fail("Nothing to place.");
+
+            Report(result);
+            if (result.Ok)
+            {
+                CancelPlacement();
+                RefreshPreview(placedId);
+            }
+            return result;
+        }
+
+        /// <summary>True if the thing being placed could go here (for the ghost's color).</summary>
+        public bool CanPlaceAt(int column, int row)
+        {
+            UnitStats type = PlacementType;
+            return type != null && DeploymentGrid.CanPlace(Match.Player, type, column, row, PlacingRotated, Match.CombatRules, MovingSquadId);
+        }
+
+        public ActionResult Sell(PlacedSquad squad)
+        {
+            if (squad == null) return ActionResult.Fail("Select a squad first.");
+            ActionResult result = Report(Match.Sell(Team.A, squad.Id));
+            if (result.Ok) RefreshPreview();
+            return result;
+        }
+
+        /// <summary>The player's squad currently selected in the deployment preview, or null.</summary>
+        public PlacedSquad SelectedPlacedSquad
+        {
+            get
+            {
+                if (Match.Phase != MatchPhase.Deployment || _selection == null || _battle.Simulation == null) return null;
+                IReadOnlyList<SimSquad> squads = _battle.Simulation.Squads;
+                for (int i = 0; i < squads.Count && i < _previewOrder.Count; i++)
+                {
+                    if (squads[i].Id == _selection.SelectedSquadId) return _previewOrder[i];
+                }
+                return null;
+            }
+        }
+
+        // ------------------------------------------------------------------ battle and result
+
+        /// <summary>The player is ready: the round's battle starts (the AI's army is revealed).</summary>
+        public void Ready()
+        {
+            if (Match.Phase != MatchPhase.Deployment) return;
+            CancelPlacement();
+            Message = "";
+            _battle.ShowBattle(Match.StartBattle(), _sources, play: true);
+            PhaseChanged?.Invoke();
+        }
+
+        private void OnBattleFinished(BattleResult result)
+        {
+            if (Match == null || Match.Phase != MatchPhase.Battle || _battle.Simulation != Match.CurrentBattle) return;
+            Match.FinishBattle();
+            PhaseChanged?.Invoke();
+        }
+
+        /// <summary>Leaves the result screen for the next round's deployment.</summary>
+        public void Continue()
+        {
+            if (Match.Phase != MatchPhase.Result) return;
+            Match.ContinueAfterResult();
+            RefreshPreview();
+            PhaseChanged?.Invoke();
+        }
+
+        /// <summary>Shows the player's current deployment (not the AI's) as a battle that isn't running.</summary>
+        private void RefreshPreview(int selectPlacedSquadId = -1)
+        {
+            if (Match.Phase != MatchPhase.Deployment) return;
+            BattleSimulation preview = Match.BuildBattle(includeEnemy: false);
+            _previewOrder.Clear();
+            _previewOrder.AddRange(Match.Player.Squads);
+            _battle.ShowBattle(preview, _sources, play: false);
+
+            int index = _previewOrder.FindIndex(s => s.Id == selectPlacedSquadId);
+            if (index >= 0 && index < preview.Squads.Count) _selection.Select(preview.Squads[index].Id);
+        }
+
+        private ActionResult Report(ActionResult result)
+        {
+            Message = result.Message ?? "";
+            return result;
+        }
+    }
+}
