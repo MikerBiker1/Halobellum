@@ -1,6 +1,6 @@
 // CombatRulesTests.cs
-// Checks the arena size worked out from squares (decision D4): 60 squares wide, two 30-square
-// deployment zones with 2 squares of no man's land between them, 2 m per square.
+// Checks the arena size worked out from squares (decision D4, enlarged 2026-10-31): 80 squares
+// wide, two 40-square deployment zones with 2 squares of no man's land between them, 2 m per square.
 // Depends on: Halobellum.Core, NUnit.
 
 using Halobellum.Core;
@@ -11,12 +11,12 @@ namespace Halobellum.Tests
     public class CombatRulesTests
     {
         [Test]
-        public void Arena_IsSixtyByTwoBlocksOfThirtyPlusTwo()
+        public void Arena_IsEightyByTwoZonesOfFortyPlusTwo()
         {
             CombatRules rules = TestRules.Default();
-            Assert.AreEqual(62, rules.ArenaLengthSquares);
-            Assert.AreEqual(120f, rules.ArenaWidth, 1e-4f);
-            Assert.AreEqual(124f, rules.ArenaLength, 1e-4f);
+            Assert.AreEqual(82, rules.ArenaLengthSquares);
+            Assert.AreEqual(160f, rules.ArenaWidth, 1e-4f);
+            Assert.AreEqual(164f, rules.ArenaLength, 1e-4f);
             Assert.AreEqual(2f, rules.DeploymentZoneFront, 1e-4f, "Each zone starts 1 square (2 m) from the centre line.");
         }
 
@@ -25,8 +25,8 @@ namespace Halobellum.Tests
         {
             CombatRules rules = TestRules.Default();
             rules.SquareSize = 3f;
-            Assert.AreEqual(180f, rules.ArenaWidth, 1e-4f);
-            Assert.AreEqual(186f, rules.ArenaLength, 1e-4f);
+            Assert.AreEqual(240f, rules.ArenaWidth, 1e-4f);
+            Assert.AreEqual(246f, rules.ArenaLength, 1e-4f);
         }
     }
 }

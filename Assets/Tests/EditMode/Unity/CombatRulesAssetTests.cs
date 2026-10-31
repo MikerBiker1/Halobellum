@@ -41,6 +41,7 @@ namespace Halobellum.Tests
             Assert.AreEqual(expected.AvoidanceLookaheadSeconds, fromAsset.AvoidanceLookaheadSeconds, 1e-5f);
             Assert.AreEqual(expected.CollisionIterations, fromAsset.CollisionIterations);
             Assert.AreEqual(expected.FormationGap, fromAsset.FormationGap, 1e-5f);
+            Assert.AreEqual(expected.FormationLookaheadSeconds, fromAsset.FormationLookaheadSeconds, 1e-5f);
 
             foreach (ArmorType armor in Enum.GetValues(typeof(ArmorType)))
             {

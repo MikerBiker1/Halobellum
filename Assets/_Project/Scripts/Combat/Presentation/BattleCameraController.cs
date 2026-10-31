@@ -18,9 +18,9 @@ namespace Halobellum.Presentation
         [SerializeField] private float pitch = 55f;
         [Tooltip("Point on the ground the camera looks at when the battle starts (x, z).")]
         [SerializeField] private Vector2 startFocus = new Vector2(0f, -5f);
-        [SerializeField] private float startDistance = 125f;
+        [SerializeField] private float startDistance = 150f;
         [SerializeField] private float minDistance = 20f;
-        [SerializeField] private float maxDistance = 190f;
+        [SerializeField] private float maxDistance = 240f;
         [Tooltip("Pan speed at a distance of 100 m, in metres per second. Scales with zoom.")]
         [SerializeField] private float panSpeed = 60f;
         [Tooltip("Fraction of the distance moved per scroll notch.")]

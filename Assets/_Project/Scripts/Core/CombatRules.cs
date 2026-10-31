@@ -58,6 +58,8 @@ namespace Halobellum.Core
         public int CollisionIterations;
         /// <summary>Gap in metres between neighbouring bodies when a squad is placed in formation.</summary>
         public float FormationGap;
+        /// <summary>While a squad marches in formation, each body aims this many seconds of travel ahead of its place.</summary>
+        public float FormationLookaheadSeconds;
 
         public DamageTable DamageTable = new DamageTable();
 

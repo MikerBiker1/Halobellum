@@ -1,7 +1,7 @@
 // TestRules.cs
 // Builds a CombatRules object for tests with the Bible's starting values (Section 6 damage table,
 // 30 ticks per second, 0.5 second retarget, 5 second shield delay, 90 second battles) and the
-// approved decisions (D2 shield multipliers, D4 arena of 60 x 62 squares, 2 m per square).
+// approved decisions (D2 shield multipliers, D4 arena of 80 x 82 squares, 2 m per square).
 // The game itself reads these from Data/CombatRules.asset; CombatRulesAssetTests checks that the
 // asset and this fixture agree.
 // Depends on: Halobellum.Core.
@@ -22,8 +22,8 @@ namespace Halobellum.Tests
                 BattleTimeLimitSeconds = 90f,
                 MainWeaponFacingToleranceDegrees = 15f,
                 SquareSize = 2f,
-                ArenaWidthSquares = 60,
-                DeploymentDepthSquares = 30,
+                ArenaWidthSquares = 80,
+                DeploymentDepthSquares = 40,
                 NoMansLandSquares = 2,
                 SpatialCellSize = 4f,
                 SeparationPadding = 0.2f,
@@ -32,6 +32,7 @@ namespace Halobellum.Tests
                 AvoidanceLookaheadSeconds = 0.75f,
                 CollisionIterations = 3,
                 FormationGap = 0.5f,
+                FormationLookaheadSeconds = 1f,
             };
             DamageTable t = rules.DamageTable;
             t.SetRow(DamageType.Ballistic, 1.0f, 0.6f, 0.25f);

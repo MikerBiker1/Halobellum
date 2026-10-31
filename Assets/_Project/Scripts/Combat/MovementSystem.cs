@@ -110,9 +110,11 @@ namespace Halobellum.Combat
                 {
                     Vec2 away = gap > 1e-5f ? offset / gap : PairDirection(unit, other);
                     separation += away * ((minDistance - gap) / minDistance);
+                    MarkContact(unit, other);
                 }
 
                 if (unit.IsAir) continue; // Air units fly straight; they only keep apart from each other.
+                if (unit.SquadId >= 0 && unit.SquadId == other.SquadId) continue; // Squadmates move together; no swerving around each other.
 
                 // Avoidance: swerve around a body ahead of us that is stopped or slower than us.
                 Vec2 toOther = -offset;
@@ -202,6 +204,7 @@ namespace Halobellum.Combat
                     float minDistance = unit.Radius + other.Radius;
                     if (gap >= minDistance) continue;
 
+                    MarkContact(unit, other);
                     Vec2 normal = gap > 1e-5f ? offset / gap : PairDirection(unit, other);
                     float overlap = minDistance - gap;
                     PushShares(unit, other, out float unitShare, out float otherShare);
@@ -209,6 +212,14 @@ namespace Halobellum.Combat
                     other.Position -= normal * (overlap * otherShare);
                 }
             }
+        }
+
+        /// <summary>Records that two touching bodies belong to different squads (this breaks squad formations).</summary>
+        private static void MarkContact(SimUnit a, SimUnit b)
+        {
+            if (a.SquadId == b.SquadId && a.SquadId >= 0) return;
+            a.TouchedOtherSquad = true;
+            b.TouchedOtherSquad = true;
         }
 
         /// <summary>

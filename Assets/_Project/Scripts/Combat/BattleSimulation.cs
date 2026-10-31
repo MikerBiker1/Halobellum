@@ -7,7 +7,8 @@
 //      can legally target. Each weapon picks its own closest legal target.
 //   3. State: if the first weapon's target is in range the unit stops and attacks (Attack);
 //      otherwise it moves toward that target (Move); with no legal target it waits (Idle).
-//   4. Movement (MovementSystem): free 2D steering with collision.
+//   4. Squad cohesion (SimSquad): squads of several bodies march in formation until a break
+//      condition is met. Then movement (MovementSystem): free 2D steering with collision.
 //   5. Attacking units turn toward their target at their own turning speed. Weapons fire when ready
 //      at targets in range (the main weapon only once the unit faces its target): instant hits
 //      resolve now, other weapons launch projectiles.
@@ -34,6 +35,8 @@ namespace Halobellum.Combat
         private readonly List<Projectile> _projectiles = new List<Projectile>();
         private readonly List<SimUnit> _nearby = new List<SimUnit>();
         private readonly List<string> _unitTypeOrder = new List<string>();
+        private readonly List<SimSquad> _squads = new List<SimSquad>();
+        private readonly Dictionary<int, SimSquad> _squadById = new Dictionary<int, SimSquad>();
         private readonly float _dt;
         private readonly int _tickLimit;
         private int _nextSquadId;
@@ -78,14 +81,32 @@ namespace Halobellum.Combat
             var unit = new SimUnit(_units.Count, team, squadId, stats, position, facing);
             _units.Add(unit);
             if (!_unitTypeOrder.Contains(stats.Name)) _unitTypeOrder.Add(stats.Name);
+            if (squadId >= 0)
+            {
+                if (!_squadById.TryGetValue(squadId, out SimSquad squad))
+                {
+                    squad = new SimSquad(squadId, team);
+                    _squadById[squadId] = squad;
+                    _squads.Add(squad);
+                }
+                squad.Members.Add(unit);
+            }
             Events.RaiseUnitSpawned(unit);
             return unit;
         }
 
+        /// <summary>A new squad id, unique within this battle. Use it for every body of one squad.</summary>
+        public int NewSquadId() => _nextSquadId++;
+
+        public IReadOnlyList<SimSquad> Squads => _squads;
+
+        /// <summary>The squad with this id, or null.</summary>
+        public SimSquad SquadById(int squadId) => _squadById.TryGetValue(squadId, out SimSquad squad) ? squad : null;
+
         /// <summary>Adds a whole squad (SquadSize bodies) in formation around center. Returns the squad id.</summary>
         public int AddSquad(UnitStats stats, Team team, Vec2 center, bool rotated90 = false)
         {
-            int squadId = _nextSquadId++;
+            int squadId = NewSquadId();
             List<Vec2> offsets = SquadFormation.Offsets(stats.SquadSize, stats.CollisionRadius, _rules.FormationGap, rotated90);
             foreach (Vec2 offset in offsets)
             {
@@ -110,8 +131,11 @@ namespace Halobellum.Combat
         {
             if (IsFinished) return;
 
+            if (Tick == 0) foreach (SimSquad squad in _squads) squad.FormUp();
+
             UpdateShields();
             UpdateTargetsAndStates();
+            UpdateSquadFormations();
             _movement.Step(_units, _dt);
             FaceTargets();
             FireWeapons();
@@ -181,6 +205,69 @@ namespace Halobellum.Combat
                     unit.MoveGoal = target.Position;
                 }
             }
+        }
+
+        /// <summary>
+        /// Squad cohesion (see SimSquad): breaks formations whose break conditions are met, then sends
+        /// the bodies of intact squads to their places in the formation, moving together toward the
+        /// enemy their members are heading for.
+        /// </summary>
+        private void UpdateSquadFormations()
+        {
+            foreach (SimSquad squad in _squads)
+            {
+                if (!squad.IsIntact) continue;
+
+                bool engaged = squad.Engaged, touched = false, split = false, anyTarget = false;
+                int targetSquad = 0;
+                foreach (SimUnit member in squad.Members)
+                {
+                    if (!member.IsAlive) continue;
+                    if (member.State == UnitState.Attack) engaged = true;
+                    if (member.TouchedOtherSquad) touched = true;
+                    if (member.MoveTarget == null) continue;
+                    // Bodies outside any squad count as their own squad.
+                    int key = member.MoveTarget.SquadId >= 0 ? member.MoveTarget.SquadId : -1 - member.MoveTarget.Id;
+                    if (!anyTarget) { targetSquad = key; anyTarget = true; }
+                    else if (key != targetSquad) split = true;
+                }
+
+                if (engaged) squad.Break("engaged in combat");
+                else if (touched) squad.Break("collided with another squad");
+                else if (split) squad.Break("targets in different squads");
+                else ApplyFormationGoals(squad);
+            }
+
+            foreach (SimUnit unit in _units) unit.TouchedOtherSquad = false; // Movement sets it again this tick.
+        }
+
+        private void ApplyFormationGoals(SimSquad squad)
+        {
+            Vec2 anchor = squad.Anchor();
+            SimUnit heading = null;
+            float bestDistance = float.MaxValue;
+            foreach (SimUnit member in squad.Members)
+            {
+                if (!member.IsAlive || member.MoveTarget == null) continue;
+                float distance = Vec2.DistanceSquared(anchor, member.MoveTarget.Position);
+                if (distance < bestDistance) { bestDistance = distance; heading = member.MoveTarget; }
+            }
+            if (heading == null) return; // Nothing to move toward: members stay idle.
+
+            Vec2 direction = (heading.Position - anchor).Normalized;
+            for (int i = 0; i < squad.Members.Count; i++)
+            {
+                SimUnit member = squad.Members[i];
+                if (!member.IsAlive || member.State != UnitState.Move) continue;
+                // Aim a little ahead of the formation place, so members keep marching at full speed.
+                float ahead = member.Stats.MoveSpeed * _rules.FormationLookaheadSeconds;
+                member.MoveGoal = anchor + squad.Offsets[i] + direction * ahead;
+            }
+        }
+
+        private void MarkEngaged(SimUnit unit)
+        {
+            if (unit.SquadId >= 0 && _squadById.TryGetValue(unit.SquadId, out SimSquad squad)) squad.Engaged = true;
         }
 
         /// <summary>A per-unit delay of 0 to (interval - 1 tick), in whole ticks, used to spread out target searches.</summary>
@@ -255,6 +342,7 @@ namespace Halobellum.Combat
 
                     weapon.Cooldown += weapon.Stats.FireInterval;
                     Events.RaiseWeaponFired(unit, w, target);
+                    MarkEngaged(unit);
 
                     if (weapon.Stats.IsInstant)
                     {
@@ -337,6 +425,7 @@ namespace Halobellum.Combat
                 ref target.Shield, ref target.Health);
             target.SecondsSinceDamaged = 0f;
             attacker.DamageDealt += dealt;
+            MarkEngaged(target);
             Events.RaiseUnitDamaged(target, attacker, dealt);
 
             if (target.Health <= 0f && target.KilledById < 0)

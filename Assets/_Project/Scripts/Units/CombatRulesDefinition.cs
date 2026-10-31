@@ -53,6 +53,8 @@ namespace Halobellum.Units
         public int collisionIterations;
         [Tooltip("Gap in metres between neighbouring bodies when a squad is placed in formation.")]
         public float formationGap;
+        [Tooltip("While a squad marches in formation, each body aims this many seconds of travel ahead of its place.")]
+        public float formationLookaheadSeconds;
 
         [Header("Damage multipliers (vs Unarmored, Light, Heavy)")]
         public DamageRow ballistic = new DamageRow();
@@ -87,6 +89,7 @@ namespace Halobellum.Units
                 AvoidanceLookaheadSeconds = avoidanceLookaheadSeconds,
                 CollisionIterations = collisionIterations,
                 FormationGap = formationGap,
+                FormationLookaheadSeconds = formationLookaheadSeconds,
             };
 
             DamageTable table = rules.DamageTable;

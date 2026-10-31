@@ -52,3 +52,10 @@ None.
 - **Result:** Team A wins after 54.3 s with 2 of 300 left. The front chaff screens fight from the first seconds; the middle waves reach the front by about 15 s and the back-corner squads arrive last, around 15 to 20 s. Screenshots: `Docs/M2_waves_03s.png`, `Docs/M2_waves_15s.png`, `Docs/M2_waves_30s.png`.
 - **Tests:** Unity EditMode 140 / 140, PlayMode 3 / 3 (the scene still matches the headless runner exactly).
 - **Performance:** 1x average 1096 FPS; one single frame of 16.7 ms (right at the 60 FPS limit) out of 59,316; 4x average 1010 FPS with no slow frames.
+
+## Formation cohesion and bigger map (same day)
+- **Squad formation cohesion:** squads of several bodies now march in formation (each body keeps its place) and break formation for the rest of the battle when ANY of these happens: their bodies' closest enemies are in different enemy squads, a body touches a body of another squad, or a body attacks, fires or is hit. Single-body squads (tanks) move on their own. Details for approval in **D14**. Squadmates also no longer swerve around each other.
+- **Arena enlarged** to 80 x 82 squares (10 more columns on the left and right, 10 more rows in each army's zone); 160 m x 164 m. The camera starts further back (150 m) and zooms out to 240 m.
+- **Same fight on the bigger map:** same composition and the same front (chaff screen, tanks at row 6); flankers moved to the new side edges; the spread chaff was stretched by 4/3 to fill the bigger zone, down to the new back corners (row 37). Result: Team A wins after 50.3 s with 35 of 300 left. Back squads stay in formation until they reach the fight; screenshots `Docs/M2_cohesion_03s.png`, `Docs/M2_cohesion_10s.png`, `Docs/M2_cohesion_20s.png`.
+- **Tests:** Unity EditMode 147 / 147 (7 new cohesion tests), PlayMode 3 / 3, .NET 139 / 139. The scene still matches the headless runner exactly.
+- **Performance:** 1x average 982 FPS, worst frame 8.8 ms; 4x average 915 FPS, worst frame 15.8 ms; no frame below 60 FPS.

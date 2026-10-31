@@ -349,7 +349,7 @@ namespace Halobellum.Combat
         {
             Vec2 centre = team == Team.A ? centreInTeamAFrame : -centreInTeamAFrame;
             List<Vec2> offsets = SquadFormation.Offsets(stats.SquadSize, stats.CollisionRadius, rules.FormationGap, false);
-            int squadId = simulation.Units.Count; // Unique per squad within this battle.
+            int squadId = simulation.NewSquadId();
             foreach (Vec2 offset in offsets)
             {
                 Vec2 placed = team == Team.A ? offset : -offset;

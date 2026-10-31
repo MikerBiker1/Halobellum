@@ -214,9 +214,9 @@ MonoBehaviour:
   battle: {fileID: 1818712898}
   pitch: 55
   startFocus: {x: 0, y: -5}
-  startDistance: 125
+  startDistance: 150
   minDistance: 20
-  maxDistance: 190
+  maxDistance: 240
   panSpeed: 60
   zoomStep: 0.12
 --- !u!81 &497297726

@@ -61,6 +61,8 @@ namespace Halobellum.Combat
         public SimUnit MoveTarget;
         /// <summary>Seconds until the next target re-evaluation.</summary>
         public float RetargetTimer;
+        /// <summary>Set by the movement system when this body touched a body of another squad this tick.</summary>
+        public bool TouchedOtherSquad;
 
         // Battle statistics for results and later features (XP from kills, result screen).
         public float DamageDealt;

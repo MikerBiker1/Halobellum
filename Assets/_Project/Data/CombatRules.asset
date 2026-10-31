@@ -18,8 +18,8 @@ MonoBehaviour:
   battleTimeLimitSeconds: 90
   mainWeaponFacingToleranceDegrees: 15
   squareSize: 2
-  arenaWidthSquares: 60
-  deploymentDepthSquares: 30
+  arenaWidthSquares: 80
+  deploymentDepthSquares: 40
   noMansLandSquares: 2
   spatialCellSize: 4
   separationPadding: 0.2
@@ -28,6 +28,7 @@ MonoBehaviour:
   avoidanceLookaheadSeconds: 0.75
   collisionIterations: 3
   formationGap: 0.5
+  formationLookaheadSeconds: 1
   ballistic:
     unarmored: 1
     light: 0.6
