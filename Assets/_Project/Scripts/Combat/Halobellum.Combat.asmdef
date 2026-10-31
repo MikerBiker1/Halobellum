@@ -1,0 +1,16 @@
+{
+    "name": "Halobellum.Combat",
+    "rootNamespace": "Halobellum.Combat",
+    "references": [
+        "Halobellum.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

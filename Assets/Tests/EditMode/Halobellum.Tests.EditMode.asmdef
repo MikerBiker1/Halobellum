@@ -5,6 +5,7 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Halobellum.Core",
+        "Halobellum.Combat",
         "Halobellum.Units"
     ],
     "includePlatforms": [
