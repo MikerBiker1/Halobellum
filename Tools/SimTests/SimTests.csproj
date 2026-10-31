@@ -1,0 +1,28 @@
+<!--
+  SimTests.csproj
+  Developer-only harness: compiles the plain C# simulation (Scripts/Core and Scripts/Combat) and the
+  EditMode tests that do not need Unity, then runs them with the .NET SDK in a few seconds.
+  Unity's Test Runner remains the official test run. Tests under Assets/Tests/EditMode/Unity need
+  the Unity engine and are excluded here.
+  Run: dotnet test Tools/SimTests
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../Assets/_Project/Scripts/Core/**/*.cs" />
+    <Compile Include="../../Assets/_Project/Scripts/Combat/**/*.cs" />
+    <Compile Include="../../Assets/Tests/EditMode/**/*.cs" Exclude="../../Assets/Tests/EditMode/Unity/**/*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="NUnit" Version="3.14.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+  </ItemGroup>
+</Project>

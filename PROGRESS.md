@@ -9,7 +9,7 @@ Milestones and items from PROJECT_BIBLE.md Section 14. An item is ticked when it
 - [x] `PROGRESS.md`, `DECISIONS.md`, `HUMAN_TODO.md`, `BLOCKERS.md`, `DAILY_REPORT.md` created
 
 ## M1: Battle simulation core
-- [ ] `UnitDefinition` ScriptableObject and plain C# unit data
+- [x] `UnitDefinition` ScriptableObject and plain C# unit data
 - [ ] Damage and armor math, with tests
 - [ ] Optional directional defense, with tests
 - [ ] Free continuous-2D movement with collision and separation, with tests
