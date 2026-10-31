@@ -343,7 +343,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 
 **M2: Battle in the scene**
 
-- Placeholder prefabs spawn from data, move through the simulation’s free-movement system (no NavMeshAgent), target and fight, show health bars, and die.
+- Placeholder prefabs spawn from data, move through the simulation’s free-movement system (no NavMeshAgent), target and fight, show health bars when damaged, and die.
 - Camera pan and zoom. Speed controls. Selecting a squad opens the bottom-left stats window.
 - 300 vs 300 units (600 total) runs at 60 FPS on a mid-range PC, with placeholder art. For the same armies and seed, the game and the headless runner produce the same result.
 
