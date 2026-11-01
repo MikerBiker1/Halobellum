@@ -316,8 +316,9 @@ The AI plays the same game under the same rules, including the income cap, unloc
 
 - This is a private, non-commercial fan project and will not be shared.
 - Any art or audio the human places in `Art/Imported` may be used. Each asset folder gets a `SOURCE.txt` noting where it came from, so it can be swapped later.
+- Feel free to grab assets from internet sources. SFX, music, models, etc. need to be from the Halo franchaise.
 - Agents use placeholders (colored primitives, one color per faction, size by role) when an asset is missing, and log what is needed in `HUMAN_TODO.md`.
-- Visual target: realistic but low-detail and unpolished. Silhouette, color, and scale must make each unit recognizable from the game camera. Normalize imported model scale and tint by faction to hide style mismatches.
+- Visual target: realistic but low-detail. Color, and scale must make each unit recognizable from the game camera. Normalize imported model scale and tint by faction to hide style mismatches.
 - Use level-of-detail models and GPU instancing for large squads.
 
 ## 13. UI requirements
@@ -475,6 +476,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-01 | Artillery (Wraith, Archer Missile Pod) lobs its shots, aims ahead of the target and can miss. The Scarab's Focus Beam charges 2 s, fires 3 s at 400 damage per second in a small area, survives its target's death and drifts slowly to the next one | Per the project owner (D37) |
 | 2026-11-01 | The Flood are built (M8): packs of 5 Infection Forms that an area hit hurts all at once, infection, the Seeder, Carrier Form, Infected Pelican and Phantom, Swarm Form as anti-air, Abomination aura and spawning; Normal and Hard AI avoid Unarmored units against them, Easy doesn't | Design left to the agent by the project owner (D38) |
 | 2026-11-01 | Infection Forms leap: they pounce from 6 m and jump over what holds them up | Per the project owner (D39) |
+| 2026-11-01 | M8 confirmed. M9 runs in approved stages: pipeline proof, combat identity, balance, models and animation, effects and audio, menus | Agreed with the project owner (D40) |
 
 ## 18. Assumptions to confirm
 
