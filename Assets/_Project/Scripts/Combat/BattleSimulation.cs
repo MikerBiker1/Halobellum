@@ -62,6 +62,11 @@ namespace Halobellum.Combat
         private readonly List<string> _unitTypeOrder = new List<string>();
         private readonly List<SimSquad> _squads = new List<SimSquad>();
         private readonly List<SimSpell> _spells = new List<SimSpell>();
+        private readonly List<PendingRise> _rises = new List<PendingRise>();
+        private readonly List<SimUnit> _bursting = new List<SimUnit>();
+        private readonly List<SimUnit> _spawners = new List<SimUnit>();
+        private readonly List<SimUnit> _auras = new List<SimUnit>();
+        private readonly Dictionary<UnitStats, UnitStats> _infectedForms = new Dictionary<UnitStats, UnitStats>();
         private readonly Dictionary<int, SimSquad> _squadById = new Dictionary<int, SimSquad>();
         private readonly float _dt;
         private readonly int _tickLimit;
@@ -119,6 +124,12 @@ namespace Halobellum.Combat
             var unit = new SimUnit(_units.Count, team, squadId, stats, position, facing);
             _units.Add(unit);
             if (!_unitTypeOrder.Contains(stats.Name)) _unitTypeOrder.Add(stats.Name);
+            if (stats.SpawnedUnit != null)
+            {
+                unit.NextSpawnAt = ElapsedSeconds + stats.SpawnIntervalSeconds;
+                _spawners.Add(unit);
+            }
+            if (stats.AuraRadius > 0f) _auras.Add(unit);
             if (squadId >= 0)
             {
                 if (!_squadById.TryGetValue(squadId, out SimSquad squad))
@@ -182,6 +193,8 @@ namespace Halobellum.Combat
             if (Tick == 0) foreach (SimSquad squad in _squads) squad.FormUp();
 
             SpawnReinforcements();
+            UpdateRises();
+            UpdateSpawners();
             UpdateSpells();
             UpdateStatusEffects();
             UpdateShields();
@@ -228,6 +241,123 @@ namespace Halobellum.Combat
             }
         }
 
+        /// <summary>A new squad of this unit type on the spot, for this battle only.</summary>
+        private void SpawnSquad(UnitStats stats, Team team, Vec2 centre, int bodies)
+        {
+            int squadId = NewSquadId();
+            Vec2 forward = team == Team.A ? Vec2.Up : Vec2.Down;
+            foreach (Vec2 offset in SquadFormation.Offsets(bodies, stats.CollisionRadius, _rules.FormationGap, false))
+            {
+                SimUnit spawned = CreateUnit(stats, team, centre + (team == Team.A ? offset : -offset), squadId);
+                spawned.Facing = forward;
+                spawned.UnlimitedAcquisition = IsInEnemyZone(spawned);
+            }
+            _squadById[squadId].FormUp();
+        }
+
+        /// <summary>Killed units whose time has come get up on the other side.</summary>
+        private void UpdateRises()
+        {
+            for (int i = 0; i < _rises.Count; i++)
+            {
+                PendingRise rise = _rises[i];
+                if (ElapsedSeconds + 1e-4f < rise.At) continue;
+                SimUnit risen = CreateUnit(InfectedFormOf(rise.Corpse.Stats), rise.Team, rise.Corpse.Position, -1);
+                risen.Facing = rise.Team == Team.A ? Vec2.Up : Vec2.Down;
+                risen.UnlimitedAcquisition = true;
+                Events.RaiseUnitRose(rise.Corpse, risen);
+                _rises.RemoveAt(i--);
+            }
+        }
+
+        /// <summary>Units that keep releasing others (the Abomination's Infection Forms).</summary>
+        private void UpdateSpawners()
+        {
+            int count = _spawners.Count; // New squads may be spawners too; they start next tick.
+            for (int i = 0; i < count; i++)
+            {
+                SimUnit unit = _spawners[i];
+                if (!unit.IsAlive || ElapsedSeconds + 1e-4f < unit.NextSpawnAt) continue;
+                unit.NextSpawnAt += unit.Stats.SpawnIntervalSeconds;
+                SpawnSquad(unit.Stats.SpawnedUnit, unit.Team, unit.Position + Forward(unit) * (unit.Radius + 1f), unit.Stats.SpawnedUnit.SquadSize);
+            }
+        }
+
+        /// <summary>
+        /// What a unit becomes when it is infected (Bible Section 8.3): its own body and base damage, 60%
+        /// of its health, no shield or techs, and a melee attack as a dumb charger. It cannot be infected again.
+        /// </summary>
+        private UnitStats InfectedFormOf(UnitStats original)
+        {
+            if (_infectedForms.TryGetValue(original, out UnitStats infected)) return infected;
+            float damagePerSecond = 0f;
+            foreach (WeaponStats weapon in original.Weapons) damagePerSecond += weapon.DamagePerShot * weapon.ShotsPerSecond;
+            infected = new UnitStats
+            {
+                Name = "Infected " + original.Name,
+                Role = original.Role,
+                Tier = original.Tier,
+                SquadSize = 1,
+                BaseDamage = original.BaseDamage,
+                MaxHealth = original.MaxHealth * _rules.InfectedHealthShare,
+                ArmorType = original.ArmorType,
+                MoveSpeed = original.MoveSpeed * _rules.InfectedSpeedMultiplier,
+                CollisionRadius = original.CollisionRadius,
+                TurnTime180 = original.TurnTime180,
+                IsAir = original.IsAir,
+                TargetFilter = TargetFilter.Ground,
+                IsFlood = true,
+                InfectedFrom = original,
+                Weapons = new[]
+                {
+                    new WeaponStats
+                    {
+                        Name = "Infected Melee",
+                        DamagePerShot = damagePerSecond * _rules.InfectedDamageShare * _rules.InfectedMeleeInterval,
+                        FireInterval = _rules.InfectedMeleeInterval,
+                        Range = _rules.InfectedMeleeRange,
+                        DamageType = DamageType.Melee,
+                    },
+                },
+            };
+            _infectedForms[original] = infected;
+            return infected;
+        }
+
+        /// <summary>True if this unit, just killed, rises as an infected unit.</summary>
+        private bool WillRise(SimUnit unit)
+        {
+            if (unit.IsSeeded || unit.MarkedForInfection) return true;
+            if (unit.Stats.IsFlood || unit.Stats.ImmuneToInfection || unit.IsAir || unit.Stats.ArmorType != ArmorType.Unarmored) return false;
+            _movement.Grid.Query(unit.Position, unit.Radius + _rules.InfectionRange + _movement.Grid.MaxRadius, _nearby);
+            foreach (SimUnit other in _nearby)
+            {
+                if (!other.Stats.Infects || !Targeting.IsTargetableEnemy(unit, other)) continue;
+                if (Targeting.EdgeDistance(unit, other) <= _rules.InfectionRange) return true;
+            }
+            return false;
+        }
+
+        /// <summary>A dying unit's explosion and the units it releases.</summary>
+        private void ApplyDeathBurst(SimUnit unit)
+        {
+            DeathBurstStats burst = unit.Stats.DeathBurst;
+            if (burst.Damage > 0f && burst.Radius > 0f)
+            {
+                WeaponStats weapon = burst.AsWeapon();
+                _movement.Grid.Query(unit.Position, burst.Radius + _movement.Grid.MaxRadius, _nearby);
+                foreach (SimUnit victim in _nearby)
+                {
+                    if (!Targeting.IsTargetableEnemy(unit, victim) || !weapon.CanTarget(unit.Stats, victim.IsAir)) continue;
+                    if (Vec2.Distance(victim.Position, unit.Position) - victim.Radius > burst.Radius) continue;
+                    DefenseResult defense = DirectionalDefense.Evaluate(victim.Stats.DefenseArc, victim.Position,
+                        victim.Facing, unit.Position, weapon, false, _random);
+                    DealDamage(victim, unit, weapon, defense.DamageMultiplier, true);
+                }
+            }
+            foreach (SpawnEntry spawn in burst.Spawns) SpawnSquad(spawn.Unit, unit.Team, unit.Position, spawn.Bodies);
+        }
+
         /// <summary>Applies every spell effect that is due this tick (in the order the spells were cast).</summary>
         private void UpdateSpells()
         {
@@ -264,7 +394,6 @@ namespace Halobellum.Combat
         /// </summary>
         private void UpdateStatusEffects()
         {
-            if (_spells.Count == 0) return;
             float now = ElapsedSeconds;
             foreach (SimUnit unit in _units)
             {
@@ -272,6 +401,19 @@ namespace Halobellum.Combat
                 unit.SetTechsDisabled(now < unit.TechsDisabledUntil);
                 unit.SpeedMultiplier = now < unit.SlowedUntil ? unit.SlowMultiplier : 1f;
                 unit.RangeMultiplier = 1f;
+                if (unit.IsSeeded) UpdateSeed(unit, now);
+            }
+            foreach (SimUnit source in _auras)
+            {
+                if (!source.IsAlive) continue;
+                foreach (SimUnit unit in _units)
+                {
+                    if (!unit.IsAlive || unit.Team != source.Team || unit == source || unit.AuraTick == Tick) continue;
+                    if (Vec2.Distance(unit.Position, source.Position) - unit.Radius > source.Stats.AuraRadius) continue;
+                    unit.AuraTick = Tick;
+                    unit.SpeedMultiplier *= source.Stats.AuraSpeedMultiplier;
+                    if (unit.Health > 0f) unit.Health = Math.Min(unit.Stats.MaxHealth, unit.Health + unit.Stats.MaxHealth * source.Stats.AuraHealPerSecondShare * _dt);
+                }
             }
             foreach (SimSpell spell in _spells)
             {
@@ -281,6 +423,36 @@ namespace Halobellum.Combat
                     if (unit.IsAlive && spell.Covers(unit)) unit.RangeMultiplier = Math.Min(unit.RangeMultiplier, spell.Stats.RangeMultiplier);
                 }
             }
+        }
+
+        /// <summary>A seed eats its host and slows it until it runs out (it can kill: the host then rises).</summary>
+        private void UpdateSeed(SimUnit unit, float now)
+        {
+            if (now >= unit.SeededUntil)
+            {
+                unit.IsSeeded = false;
+                return;
+            }
+            unit.SpeedMultiplier *= 1f - unit.SeedSlowShare;
+            if (unit.Health <= 0f) return;
+            unit.Health -= unit.SeedDamagePerSecond * _dt;
+            unit.SecondsSinceDamaged = 0f;
+            if (unit.Health <= 0f && unit.KilledById < 0 && unit.KilledBySpell == null && unit.SeededById >= 0)
+            {
+                unit.KilledById = unit.SeededById;
+                _units[unit.SeededById].Kills++;
+            }
+        }
+
+        /// <summary>A hit from a Seeder plants its seed, if the target can take one.</summary>
+        private void PlantSeed(SimUnit target, SimUnit attacker, WeaponStats weapon)
+        {
+            if (!Targeting.CanBeSeeded(target)) return;
+            target.IsSeeded = true;
+            target.SeededUntil = ElapsedSeconds + weapon.SeedSeconds;
+            target.SeedDamagePerSecond = target.Stats.MaxHealth * weapon.SeedDamageSharePerSecond;
+            target.SeedSlowShare = weapon.SeedSlowShare;
+            target.SeededById = attacker.Id;
         }
 
         /// <summary>An EMP: every unit in the area loses shield and its techs for a while; armored units are slowed.</summary>
@@ -312,7 +484,7 @@ namespace Halobellum.Combat
                 // Offensive spells hit everyone in the area, the caster's own units too (D33).
                 if (!victim.IsAlive || (victim.Team == spell.Team && !spell.Stats.Offensive) || !spell.Stats.Targets.Allows(victim.IsAir)) continue;
                 if (!spell.Covers(victim)) continue;
-                float multiplier = victim.IsAir ? weapon.AirDamageMultiplier : 1f;
+                float multiplier = (victim.IsAir ? weapon.AirDamageMultiplier : 1f) * victim.FormsAlive;
                 float dealt = DamageCalculator.ApplyHit(_rules.DamageTable, weapon, victim.Stats.ArmorType, multiplier, ref victim.Shield, ref victim.Health);
                 victim.SecondsSinceDamaged = 0f;
                 spell.DamageDealt += dealt;
@@ -322,6 +494,8 @@ namespace Halobellum.Combat
                 {
                     victim.KilledBySpell = spell;
                     spell.Kills++;
+                    if (spell.Stats.InfectsKills && victim.Team != spell.Team && !victim.Stats.IsFlood && !victim.Stats.ImmuneToInfection
+                        && !victim.IsAir && victim.Stats.ArmorType == ArmorType.Unarmored) victim.MarkedForInfection = true;
                 }
             }
         }
@@ -596,7 +770,37 @@ namespace Halobellum.Combat
                 weapon.Target = Targeting.FindClosestLegalTarget(unit, weapon.Stats, _units, AcquisitionRange(unit, weapon.Stats));
             }
             if (unit.Stats.SwitchesWeapons) ChooseWeaponByTarget(unit);
+            if (unit.Stats.SeeksDensestCluster)
+            {
+                SimUnit cluster = DensestCluster(unit);
+                if (cluster != null) unit.Weapons[unit.MainWeaponIndex].Target = cluster;
+            }
             unit.MoveTarget = unit.Weapons[unit.MainWeaponIndex].Target;
+        }
+
+        /// <summary>The enemy with the most other enemies within the unit's death-burst radius (ties: the lowest id).</summary>
+        private SimUnit DensestCluster(SimUnit unit)
+        {
+            WeaponStats weapon = unit.Weapons[unit.MainWeaponIndex].Stats;
+            float radius = unit.Stats.DeathBurst?.Radius ?? 0f;
+            float radiusSquared = radius * radius;
+            SimUnit best = null;
+            int bestCount = -1;
+            foreach (SimUnit candidate in _units)
+            {
+                if (!Targeting.IsLegalTarget(unit, weapon, candidate)) continue;
+                int count = 0;
+                foreach (SimUnit other in _units)
+                {
+                    if (other.Team == candidate.Team && other.IsAlive && !other.IsAir && Vec2.DistanceSquared(other.Position, candidate.Position) <= radiusSquared) count++;
+                }
+                if (count > bestCount)
+                {
+                    bestCount = count;
+                    best = candidate;
+                }
+            }
+            return best;
         }
 
         /// <summary>
@@ -680,6 +884,11 @@ namespace Halobellum.Combat
                     Events.RaiseWeaponFired(unit, w, target);
                     MarkEngaged(unit);
 
+                    if (unit.Stats.SelfDestructs && w == unit.MainWeaponIndex)
+                    {
+                        unit.Health = 0f;
+                        break;
+                    }
                     if (weapon.Stats.IsBeam)
                     {
                         weapon.BeamPhase = BeamPhase.Charging;
@@ -754,7 +963,7 @@ namespace Halobellum.Combat
 
                 DefenseResult defense = DirectionalDefense.Evaluate(victim.Stats.DefenseArc, victim.Position,
                     victim.Facing, attacker.Position, weapon, false, _random);
-                DealDamage(victim, attacker, weapon, defense.DamageMultiplier);
+                DealDamage(victim, attacker, weapon, defense.DamageMultiplier, true);
             }
         }
 
@@ -835,7 +1044,8 @@ namespace Halobellum.Combat
                     Events.RaiseAttackBlocked(directTarget, attacker);
                     return; // A blocked projectile is stopped completely, including any splash.
                 }
-                DealDamage(directTarget, attacker, weapon, defense.DamageMultiplier);
+                DealDamage(directTarget, attacker, weapon, defense.DamageMultiplier, weapon.IsCone || weapon.SplashRadius > 0f);
+                if (weapon.SeedSeconds > 0f) PlantSeed(directTarget, attacker, weapon);
             }
 
             if (weapon.IsCone)
@@ -854,7 +1064,7 @@ namespace Halobellum.Combat
 
                 DefenseResult defense = DirectionalDefense.Evaluate(victim.Stats.DefenseArc, victim.Position,
                     victim.Facing, impactPoint, weapon, false, _random);
-                DealDamage(victim, attacker, weapon, defense.DamageMultiplier);
+                DealDamage(victim, attacker, weapon, defense.DamageMultiplier, true);
             }
         }
 
@@ -877,13 +1087,15 @@ namespace Halobellum.Combat
 
                 DefenseResult defense = DirectionalDefense.Evaluate(victim.Stats.DefenseArc, victim.Position,
                     victim.Facing, sourcePosition, weapon, false, _random);
-                DealDamage(victim, attacker, weapon, defense.DamageMultiplier);
+                DealDamage(victim, attacker, weapon, defense.DamageMultiplier, true);
             }
         }
 
-        private void DealDamage(SimUnit target, SimUnit attacker, WeaponStats weapon, float directionalMultiplier)
+        /// <param name="areaHit">An area hit (splash, cone, beam) hurts every tiny form in a pack (D38).</param>
+        private void DealDamage(SimUnit target, SimUnit attacker, WeaponStats weapon, float directionalMultiplier, bool areaHit)
         {
-            float multiplier = (target.IsAir ? directionalMultiplier * weapon.AirDamageMultiplier : directionalMultiplier) * attacker.DamageMultiplier;
+            float multiplier = (target.IsAir ? directionalMultiplier * weapon.AirDamageMultiplier : directionalMultiplier) * attacker.DamageMultiplier * attacker.FormsShare;
+            if (areaHit) multiplier *= target.FormsAlive;
             float dealt = DamageCalculator.ApplyHit(_rules.DamageTable, weapon, target.Stats.ArmorType, multiplier,
                 ref target.Shield, ref target.Health);
             target.SecondsSinceDamaged = 0f;
@@ -902,8 +1114,10 @@ namespace Halobellum.Combat
 
         private void ApplyDeaths()
         {
-            foreach (SimUnit unit in _units)
+            int count = _units.Count; // Death bursts add units; those can't die before they exist.
+            for (int i = 0; i < count; i++)
             {
+                SimUnit unit = _units[i];
                 if (!unit.IsAlive || unit.Health > 0f) continue;
                 unit.State = UnitState.Dead;
                 unit.Velocity = Vec2.Zero;
@@ -911,7 +1125,15 @@ namespace Halobellum.Combat
                 foreach (SimWeapon weapon in unit.Weapons) weapon.Target = null;
                 SimUnit killer = unit.KilledById >= 0 ? _units[unit.KilledById] : null;
                 Events.RaiseUnitDied(unit, killer);
+                if (WillRise(unit))
+                {
+                    _rises.Add(new PendingRise { Corpse = unit, Team = unit.Team == Team.A ? Team.B : Team.A, At = ElapsedSeconds + _rules.InfectionDelaySeconds });
+                    Events.RaiseUnitInfected(unit);
+                }
+                if (unit.Stats.DeathBurst != null) _bursting.Add(unit);
             }
+            foreach (SimUnit unit in _bursting) ApplyDeathBurst(unit);
+            _bursting.Clear();
         }
 
         private void CheckForEnd()
@@ -921,6 +1143,13 @@ namespace Halobellum.Combat
             {
                 if (!unit.IsAlive) continue;
                 if (unit.Team == Team.A) aliveA++;
+                else aliveB++;
+            }
+
+            // A body about to rise is still on its way into the fight.
+            foreach (PendingRise rise in _rises)
+            {
+                if (rise.Team == Team.A) aliveA++;
                 else aliveB++;
             }
 
@@ -1008,6 +1237,14 @@ namespace Halobellum.Combat
                 line.Kills += spell.Kills;
             }
             return teamResult;
+        }
+
+        /// <summary>A killed unit about to rise for the other side.</summary>
+        private struct PendingRise
+        {
+            public SimUnit Corpse;
+            public Team Team;
+            public float At;
         }
 
         /// <summary>A shot in flight. It follows its target and hits when it arrives; a lobbed one flies to a fixed spot.</summary>

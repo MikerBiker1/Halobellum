@@ -132,19 +132,40 @@ namespace Halobellum.UI
             }
         }
 
+        /// <summary>The Flood's special rules (D38), and whether Infection Forms can infect this unit.</summary>
+        private static void AppendFloodLines(StringBuilder b, UnitStats s)
+        {
+            if (s.FormsPerBody > 1) b.AppendLine("Area damage hits every form in a pack");
+            if (s.Infects) b.AppendLine("Infects: Unarmored enemies killed near it rise as Flood");
+            if (s.SelfDestructs) b.AppendLine("Explodes when it reaches an enemy");
+            if (s.SeeksDensestCluster) b.AppendLine("Dives at the thickest group of enemies");
+            if (s.DeathBurst != null)
+            {
+                string released = "";
+                foreach (SpawnEntry spawn in s.DeathBurst.Spawns) released += $", releases {spawn.Unit.Name}";
+                b.AppendLine($"On death: {s.DeathBurst.Damage:0} damage in {s.DeathBurst.Radius:0.#} m{released}");
+            }
+            if (s.SpawnedUnit != null) b.AppendLine($"Releases {s.SpawnedUnit.Name} every {s.SpawnIntervalSeconds:0.#} s");
+            if (s.AuraRadius > 0f) b.AppendLine($"Friends within {s.AuraRadius:0} m: faster, and they heal");
+            if (!s.IsFlood) b.AppendLine(s.ArmorType == ArmorType.Unarmored && !s.ImmuneToInfection ? "Can be infected once its shield is down" : "Infection Forms cannot infect it");
+        }
+
         private string BuildText(UnitStats s, int alive, float totalHealth)
         {
             StringBuilder b = _builder.Clear();
             b.AppendLine($"Role: {RoleName(s.Role)}    Tier {s.Tier}    Cost {s.Cost}{(s.Level > 1 ? $"    Level {s.Level}" : "")}");
-            b.AppendLine($"Squad size: {s.SquadSize}  ({alive} alive, {totalHealth:0} health left)");
-            b.AppendLine($"Health: {s.MaxHealth:0} per body    Armor: {s.ArmorType}");
+            string packs = s.FormsPerBody > 1 ? $" in {s.SquadSize} packs" : "";
+            b.AppendLine($"Squad size: {s.FormsInSquad}{packs}  ({alive} alive, {totalHealth:0} health left)");
+            b.AppendLine($"Health: {s.MaxHealth:0} per {(s.FormsPerBody > 1 ? "pack" : "body")}    Armor: {s.ArmorType}");
             b.AppendLine(s.HasShield ? $"Shield: {s.MaxShield:0} (regen {s.ShieldRegenPerSecond:0.#}/s)" : "Shield: none");
             b.AppendLine($"Move speed: {s.MoveSpeed:0.#} m/s    Collision size: {s.CollisionRadius * 2f:0.#} m");
             b.AppendLine(s.TurnTime180 > 0f ? $"Turn time: {s.TurnTime180:0.##} s for 180 degrees" : "Turn time: instant");
             b.AppendLine($"Targets: {s.TargetFilter}{(s.IsAir ? "    (air unit)" : "")}");
+            AppendFloodLines(b, s);
             for (int i = 0; i < s.Weapons.Length; i++)
             {
                 WeaponStats w = s.Weapons[i];
+                if (s.SelfDestructs && w.DamagePerShot <= 0f) continue; // Its damage is the death burst, listed above.
                 string main = s.Weapons.Length > 1 && i == 0 ? " (main)" : "";
                 b.AppendLine();
                 b.AppendLine($"{w.Name}{main}");
@@ -158,6 +179,7 @@ namespace Halobellum.UI
                     b.AppendLine($"  Damage {w.DamagePerShot:0.#} {w.DamageType}{(w.IsAntiArmor ? ", anti-armor" : "")}    Rate {w.ShotsPerSecond:0.##}/s");
                 }
                 if (w.Lobbed) b.AppendLine("  Lobbed: aims ahead of its target, can miss");
+                if (w.SeedSeconds > 0f) b.AppendLine($"  Seeds its target for {w.SeedSeconds:0.#} s: a host that dies rises as Flood");
                 string minRange = w.MinRange > 0f ? $" (min {w.MinRange:0.#})" : "";
                 string splash = w.SplashRadius > 0f ? $"{w.SplashRadius:0.#} m" : "none";
                 b.AppendLine($"  Range {w.Range:0.#} m{minRange}    Splash {splash}");

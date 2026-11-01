@@ -29,6 +29,10 @@ namespace Halobellum.Combat
         public event Action<BattleResult> BattleEnded;
         /// <summary>A spell took effect (each damage tick, or its buff or drop).</summary>
         public event Action<SimSpell> SpellTriggered;
+        /// <summary>A unit just killed will rise as an infected unit: its corpse.</summary>
+        public event Action<SimUnit> UnitInfected;
+        /// <summary>An infected unit rose: its corpse, the new unit.</summary>
+        public event Action<SimUnit, SimUnit> UnitRose;
 
         internal void RaiseUnitSpawned(SimUnit unit) => UnitSpawned?.Invoke(unit);
         internal void RaiseReinforcementDropped(SimUnit carrier, int squadId) => ReinforcementDropped?.Invoke(carrier, squadId);
@@ -39,5 +43,7 @@ namespace Halobellum.Combat
         internal void RaiseTicked(int tick) => Ticked?.Invoke(tick);
         internal void RaiseBattleEnded(BattleResult result) => BattleEnded?.Invoke(result);
         internal void RaiseSpellTriggered(SimSpell spell) => SpellTriggered?.Invoke(spell);
+        internal void RaiseUnitInfected(SimUnit corpse) => UnitInfected?.Invoke(corpse);
+        internal void RaiseUnitRose(SimUnit corpse, SimUnit risen) => UnitRose?.Invoke(corpse, risen);
     }
 }

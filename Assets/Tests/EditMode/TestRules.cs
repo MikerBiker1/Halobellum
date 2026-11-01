@@ -38,6 +38,13 @@ namespace Halobellum.Tests
                 YieldWeight = 2f,
                 AdvanceSpeedMultiplier = 0.5f,
                 AdvanceRangeShare = 0.25f,
+                InfectionRange = 2f,
+                InfectionDelaySeconds = 2f,
+                InfectedHealthShare = 0.6f,
+                InfectedDamageShare = 1f,
+                InfectedSpeedMultiplier = 1.5f,
+                InfectedMeleeRange = 1.2f,
+                InfectedMeleeInterval = 1f,
             };
             DamageTable t = rules.DamageTable;
             t.SetRow(DamageType.Ballistic, 1.0f, 0.6f, 0.25f);

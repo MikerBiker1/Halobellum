@@ -85,6 +85,33 @@ namespace Halobellum.Combat
         public float SlowMultiplier = 1f;
         /// <summary>Battle time until which its tech upgrades are disabled (EMP).</summary>
         public float TechsDisabledUntil;
+        /// <summary>True while a Seeder's seed is in it (D38). If it dies like this, it rises as a Flood unit.</summary>
+        public bool IsSeeded;
+        public float SeededUntil;
+        public float SeedDamagePerSecond;
+        public float SeedSlowShare;
+        public int SeededById = -1;
+        /// <summary>Killed by a spell that infects: it rises as a Flood unit.</summary>
+        public bool MarkedForInfection;
+        /// <summary>Battle time of its next release (units that keep releasing others).</summary>
+        public float NextSpawnAt;
+        /// <summary>The last tick an aura reached it (several auras do not add up).</summary>
+        public int AuraTick = -1;
+
+        /// <summary>How many of its tiny forms are still alive (1 for a normal unit).</summary>
+        public int FormsAlive
+        {
+            get
+            {
+                int forms = Stats.FormsPerBody;
+                if (forms <= 1) return 1;
+                int alive = (int)System.MathF.Ceiling(Health / (Stats.MaxHealth / forms) - 1e-4f);
+                return alive < 1 ? 1 : alive > forms ? forms : alive;
+            }
+        }
+
+        /// <summary>The share of its forms still alive: a pack deals less as it shrinks.</summary>
+        public float FormsShare => (float)FormsAlive / Stats.FormsPerBody;
 
         /// <summary>Its move speed right now.</summary>
         public float MoveSpeedNow => Stats.MoveSpeed * SpeedMultiplier;

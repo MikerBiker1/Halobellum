@@ -1,74 +1,44 @@
-# Daily report: 2026-11-01 (afternoon), M7: Cards
+# Daily report: 2026-11-01 (evening), M8: Flood
 
-This morning's report (D25 to D30) is in this file's Git history. You approved D30 and confirmed M4 to M6 by moving on to M7. **M7 is done**: all criteria pass, waiting for your confirmation.
+Today's earlier report (M7, D33 to D37) is in this file's Git history. You confirmed M7. **M8 is built**: the Flood are playable in matches and the Sandbox, for you and the AI. All tests pass. It is waiting for your play test and confirmation.
 
-## What M7 adds
-- **Card screen:** opens at the start of every round from round 2, before deployment. It offers spells in round 2, reinforcements in round 3, then keeps alternating.
-  - Pick 1 of 3 cards, or **Skip** for +50 credits (spells) or +100 (reinforcements). The button shows the bonus.
-  - Each card shows its price, and you can't take a card you can't afford.
-- **Spell cards** (permanent and rechargeable, Bible Section 10):
-  - You pay once when you take the card, and the spell is yours for the match. It can be used in the round you take it.
-  - Each spell has a maximum number of copies. Once you own the maximum, it isn't offered again, and offers can show fewer than 3 cards.
-  - After use, a spell recharges for its number of rounds. A 1-round recharge means every other round, as in your example.
-  - **Placing spells:** a **Spells** panel on the left during deployment, with Place, Move and X (take back). While placing, the area follows the mouse:
-    - **red** for offensive spells (anywhere on the field);
-    - **blue** for defensive spells and buffs (your own side only);
-    - grey where the spell can't go.
-  - Spells go off a moment after the battle starts. Strikes and zones flash, and drop pods fall from the sky. The enemy's spells stay hidden until the battle starts, and the AI never sees yours.
-- **Reinforcement cards** (single-use):
-  - Each card is a random unit from your roster at a random level. It's copied until it reaches the round's budget (200 + 50 per round), and you pay whatever it's worth above the budget. The Bible's examples are all checked by tests.
-  - The squads join your army like squads bought this round, so you can move them. They unlock the unit, ignore the 2-squad and 1-unlock limits, and start with 0 XP.
-- **First spells** (D31):
-  - **UNSC:** MAC Strike, Archer Missile Barrage, HAVOK Nuke, ODST Drop Pods (12 ODSTs land for one battle), Bubble Shield, Battlefield Rally.
-  - **Covenant:** Plasma Bombardment, Plasma Storm, Glassing Beam, Energy Shield Dome, Prophet's Blessing.
-- **Result screen:** spells appear under top damage dealers and "what killed what", for example "Your MAC Strike killed 9 Grunt".
-- **AI:** takes the card worth the most for its price, or skips. It aims strikes at the densest part of your army **as it was revealed last battle**, drops pods on your most valuable squad, and puts buffs on its own densest group. Easy is careless about both.
+## What M8 adds
+- **Packs (your idea):** Infection Forms come as 50 forms in 10 packs of 5. A pack moves as one body and shows and deals less as its forms die. A bullet hurts one form; splash, flame, beams and spells hurt all of them.
+- **Infection:** an Unarmored unit killed within 2 m of Infection Forms turns green, gets up 2 s later at 60% health and charges its old friends.
+- **11 units:** Infection Forms and Carrier Form (Tier 1); Combat Form, Stalker Form, Pure Form Ranged and Swarm Form (Tier 2); Pure Form Tank, Seeder, Infected Pelican and Infected Phantom (Tier 3); Flood Abomination (Tier 4).
+- **Choices I made (D38):** the Swarm Form fills the open anti-air slot. The Seeder plants a seed that eats its host, and a host that dies seeded rises whatever its armor. The Abomination speeds up and heals nearby Flood and keeps releasing forms.
+- **8 Flood spells,** three of which raise the Unarmored units they kill. Items, economy and buff cards are shared.
+- **AI:** Normal and Hard avoid Unarmored squads once they have seen your Flood. Easy doesn't care.
+- **Look:** a Flood UI theme with its own textures and title font. Units are placeholder art.
 
-## Your D31 and D32 additions (D33, later the same day)
-- **Friendly fire:** offensive spells now hit your own army too.
-- **New spells:** Smoke Bomb and EMP for both factions, Banshee Ambush for the Covenant.
-- **Bigger, later spells:** the HAVOK Nuke and Glassing Beam appear from round 7 and land 6 s in.
-- **ODSTs:** 12 troopers, SMGs on chaff and unarmored targets, rocket launchers on everything else.
-- **Card schedule:** rounds 2 and 3 offer spells, items, economy cards and buffs; reinforcements start at round 4, then every other round.
-- **Items:** the 8 items, with an **Inventory** panel and hexagons over squads. New icons are in `Art/UI/Items`.
-- **Economy and buffs:** Supply Enhancement; from round 5 the extra deployment slot; from round 7 Super Supply and the 3 Advanced cards.
-- **Intensive Training:** an icon at the top left. Select a squad, click it, confirm.
-- **Shop:** every unit shows its price, even before it's unlocked.
-- **Your answers to D33 (D34):** smoke lasts the whole round, Intensive Training can be taken twice (two icons, separate cooldowns), Laser Sights is +2 m, and the Sandbox has an **Items** panel with all 8 items (no spells).
+## How powerful infection is (measured)
+One battle per line, about 1800 credits per side, Infection Forms only:
 
-## After your play test (D35)
-- **Items** are dragged from the Inventory onto a hexagon (a click on the item, then on a hexagon, also still works). Overlapping hexagons pick the one nearest the mouse.
-- **Reinforcement cards** no longer show the budget.
-- **Shields** show as a blue bar over the health bar.
-- **Smoke Bomb** is placed in two clicks: one end, then aim the other at any angle. The same placement will work for any future line-shaped spell.
-- **Glassing Beam** hits air units too.
+| Against | Bodies that rose | Left at the end |
+| --- | --- | --- |
+| Marines | 317 of 324 (98%) | 89 of 180 packs, 255 risen Marines |
+| Grunts | 331 of 360 (92%) | 99 of 180 packs, 286 risen Grunts |
+| Jackals (Plasma Rifle) | 43 of 96 (45%) | 129 of 180 packs, 43 risen Jackals |
+| Elites | 6 of 18 (33%) | 150 of 180 packs, 6 risen Elites |
+| Flamethrower Troopers | 0 of 72 | All Forms dead, all 72 Troopers alive |
+| Scorpions | 0 of 6 | All Forms dead, all 6 Scorpions alive |
 
-## Speed (D36)
-- **The trial is gone:** 1x, 2x and 4x are real again, so projectiles, rate of fire and the round clock are back to normal.
-- **Every unit moves at half its old speed,** and the stats window shows the real number (Marines: 1.5 m/s).
-- **Warthog, Ghost and Gauss Warthog** get +1 m/s on top: 5, 5.5 and 4.75 m/s.
-- **What it did to balance:** the counter web still passes (24 of 24). 12 of 276 matchups change winner, mostly in favour of long-range units. Battles average 36 s instead of 26 s, and 4 of 276 reach the 90 s limit instead of 3. This is noted for the balance pass.
+In a mixed army it is much smaller: in the Sandbox demo, 4 squads of Forms against 4 of Marines plus a Scorpion and a Spartan got only 7 bodies up.
 
-## New weapon mechanics (D37)
-- **Artillery lobs its shots:** the Wraith and the Archer Missile Pod fire in an arc, aim ahead of a moving target and can miss.
-- **Scarab Focus Beam:** 2 s charge, 3 s beam at 400 damage per second, 3 s rest. It keeps firing after its target dies and drifts slowly to the next one. Anti-armor makes that 600 per second against Heavy, so one beam kills a level 1 Scorpion.
-- **Elephant unchanged:** it still beats 20 of the other 23 units. It already lost to the Scarab, and by my estimate now loses by more.
-- **Balance:** the counter web still passes (24 of 24) and no matchup changes winner.
+## Balance (first pass)
+- **Infection Forms at equal cost:** beat Marines, Grunts, Jackals and Elites. Lose to Flamethrowers, Fuel Rod Grunts, Scorpions, Wraiths, Mantises and Elephants.
+- **Counter web:** 35 of 35 units have a counter winning at least 90%.
+- **For the balance pass:** the Scarab beats 33 of 34. Warthog and Ghost each beat only 1 of the 11 Flood units. Infection Forms also beat Spartans and Warthogs. 49 of 595 pairs reach the 90 s limit (it was 4 of 276).
 
 ## Decisions needing your approval
-None: D31 to D34 are answered. Spells stay out of the Sandbox, as you asked.
+**D38** in `DECISIONS.md` lists everything I decided on your carte blanche. Change anything you like.
 
 ## Test results
-- **Unity:** EditMode **375 / 375**, PlayMode **24 / 24**. **.NET harness:** **334 / 334**.
-- **New tests:**
-  - Spell effects in battle.
-  - Card rules, including the Bible's pricing examples and the "every other round" recharge.
-  - The spell data.
-  - A scene test: a spell taken, placed (outline shown), cast and recharging, then a reinforcement card whose squads appear on the field.
-  - AI-vs-AI matches with cards are played to the end.
-- **Built game:** 5 rounds of autoplay as UNSC and as Covenant, plus the Sandbox demo, with no errors. Screenshots are in `Docs/M7_*.png` and `Docs/D3*.png`.
-- **Not tested automatically:** dragging with the real mouse, clicking on the field to place a line, or clicking the training icon. The tests cover the drag logic and the same functions those clicks call.
-- **Small note:** decimals follow your PC's language (for example "2,5 s"), as elsewhere in the HUD.
+- **Unity:** EditMode **408 / 408**, PlayMode **25 / 25**. **.NET harness:** **360 / 360**.
+- **New tests:** packs, infection rules (armor, shields, Spartans, range, no second infection), the Seeder, death bursts, the crash dive, spawning, the aura, the Flood data, the AI's reaction, and a scene test in which a Marine really rises.
+- **Built game:** 3 rounds of autoplay as UNSC, Covenant and Flood, plus the Sandbox demo, with no errors.
+- **Not tested automatically:** how it feels. The balance numbers come from armies of a single unit type, so mixed armies may play differently.
+- **Small note:** at the bottom of a long stats window, the last tech's description can touch the frame.
 
 ## Blockers
 None.

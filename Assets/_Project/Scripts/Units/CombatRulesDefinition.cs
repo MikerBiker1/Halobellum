@@ -66,6 +66,19 @@ namespace Halobellum.Units
         [Tooltip("It stops edging forward once its target is within this share of its main weapon's range.")]
         [Range(0f, 1f)] public float advanceRangeShare;
 
+        [Header("Infection (Bible Section 8.3)")]
+        [Tooltip("An Unarmored unit that dies within this many metres of an Infection Form rises as an infected unit.")]
+        public float infectionRange = 2f;
+        [Tooltip("Seconds until a killed unit rises.")]
+        public float infectionDelaySeconds = 2f;
+        [Tooltip("An infected unit's health, as a share of what the unit had.")]
+        public float infectedHealthShare = 0.6f;
+        [Tooltip("An infected unit's melee damage per second, as a share of the damage per second of the unit's weapons.")]
+        public float infectedDamageShare = 1f;
+        public float infectedSpeedMultiplier = 1.5f;
+        public float infectedMeleeRange = 1.2f;
+        public float infectedMeleeInterval = 1f;
+
         [Header("Damage multipliers (vs Unarmored, Light, Heavy)")]
         public DamageRow ballistic = new DamageRow();
         public DamageRow explosive = new DamageRow();
@@ -105,6 +118,13 @@ namespace Halobellum.Units
                 YieldWeight = yieldWeight,
                 AdvanceSpeedMultiplier = advanceSpeedMultiplier,
                 AdvanceRangeShare = advanceRangeShare,
+                InfectionRange = infectionRange,
+                InfectionDelaySeconds = infectionDelaySeconds,
+                InfectedHealthShare = infectedHealthShare,
+                InfectedDamageShare = infectedDamageShare,
+                InfectedSpeedMultiplier = infectedSpeedMultiplier,
+                InfectedMeleeRange = infectedMeleeRange,
+                InfectedMeleeInterval = infectedMeleeInterval,
             };
 
             DamageTable table = rules.DamageTable;

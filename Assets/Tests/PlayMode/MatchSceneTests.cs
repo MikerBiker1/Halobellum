@@ -56,7 +56,7 @@ namespace Halobellum.Tests
         {
             yield return LoadMatch();
             Assert.AreEqual(MatchPhase.Draft, _match.Match.Phase);
-            Assert.AreEqual(2, _match.Match.PlayerDraft.Count, "Standard UNSC and Standard Covenant.");
+            Assert.AreEqual(3, _match.Match.PlayerDraft.Count, "Standard UNSC, Covenant and Flood.");
 
             _match.ChooseDraft(0);
             yield return null;
@@ -112,7 +112,7 @@ namespace Halobellum.Tests
             yield return PlayRound();
             Assert.AreEqual(MatchPhase.Result, m.Phase);
             Assert.IsNotNull(m.LastSummary);
-            Assert.AreEqual(m.Player.Squads.Count + m.Enemy.Squads.Count, _battle.Simulation.Squads.Count, "The battle reveals the AI's army.");
+            Assert.GreaterOrEqual(_battle.Simulation.Squads.Count, m.Player.Squads.Count + m.Enemy.Squads.Count, "The battle reveals the AI's army (Flood release more squads during it).");
 
             _match.Continue();
             yield return null;

@@ -67,6 +67,35 @@ namespace Halobellum.Units
         [Tooltip("If ticked, the drop only works once a tech upgrade with 'Unlocks Reinforcement' is bought (e.g. the Pelican's troop bay).")]
         public bool reinforcementNeedsUpgrade;
 
+        [Header("Flood (D38)")]
+        [Tooltip("Tiny forms one body stands for (Infection Forms: 5). They act as one body; an area hit hurts every form in it.")]
+        public int formsPerBody = 1;
+        [Tooltip("A Flood unit: it cannot be infected or seeded.")]
+        public bool isFlood;
+        [Tooltip("Unarmored enemies that die within melee range of this unit rise as infected units.")]
+        public bool infects;
+        [Tooltip("Infection Forms cannot infect this unit even though its body is Unarmored (Spartans).")]
+        public bool immuneToInfection;
+        [Tooltip("The unit kills itself when its main weapon fires, to set off its death burst.")]
+        public bool selfDestructs;
+        [Tooltip("The unit heads for the thickest group of enemies instead of the closest one.")]
+        public bool seeksDensestCluster;
+        [Tooltip("Damage of the explosion when it dies. Together with Death Spawns, this makes a death burst.")]
+        public float deathBurstDamage;
+        public float deathBurstRadius;
+        public DamageType deathBurstDamageType;
+        public bool deathBurstAntiArmor;
+        public List<SpawnDefinition> deathSpawns = new List<SpawnDefinition>();
+        [Tooltip("Unit type it keeps releasing during the battle. Empty = none.")]
+        public UnitDefinition spawnedUnit;
+        public int spawnedBodies;
+        public float spawnIntervalSeconds;
+        [Tooltip("Friendly units within this many metres get the aura below. 0 = no aura.")]
+        public float auraRadius;
+        public float auraSpeedMultiplier = 1f;
+        [Tooltip("Share of its maximum health a unit in the aura regains per second.")]
+        public float auraHealPerSecondShare;
+
         [Header("Tech upgrades (up to 3, Bible Section 9)")]
         public List<TechUpgradeDefinition> techUpgrades = new List<TechUpgradeDefinition>();
 
@@ -104,7 +133,40 @@ namespace Halobellum.Units
                 IsAir = isAir,
                 TargetFilter = targetFilter,
                 DefenseArc = hasDefenseArc && defenseArc != null ? defenseArc.ToStats() : null,
+                FormsPerBody = Math.Max(1, formsPerBody),
+                IsFlood = isFlood,
+                Infects = infects,
+                ImmuneToInfection = immuneToInfection,
+                SelfDestructs = selfDestructs,
+                SeeksDensestCluster = seeksDensestCluster,
+                SpawnIntervalSeconds = spawnIntervalSeconds,
+                AuraRadius = auraRadius,
+                AuraSpeedMultiplier = auraSpeedMultiplier,
+                AuraHealPerSecondShare = auraHealPerSecondShare,
             };
+
+            // Units spawned by this one are copies with the given body count as their squad size.
+            if (spawnedUnit != null && spawnedBodies > 0 && depth < 2)
+            {
+                stats.SpawnedUnit = spawnedUnit.ToStats(depth + 1);
+                stats.SpawnedUnit.SquadSize = spawnedBodies;
+            }
+            if (deathBurstDamage > 0f || (deathSpawns != null && deathSpawns.Count > 0))
+            {
+                var spawns = new List<SpawnEntry>();
+                if (deathSpawns != null && depth < 2)
+                {
+                    foreach (SpawnDefinition spawn in deathSpawns)
+                    {
+                        if (spawn?.unit != null && spawn.bodies > 0) spawns.Add(new SpawnEntry { Unit = spawn.unit.ToStats(depth + 1), Bodies = spawn.bodies });
+                    }
+                }
+                stats.DeathBurst = new DeathBurstStats
+                {
+                    Damage = deathBurstDamage, Radius = deathBurstRadius, DamageType = deathBurstDamageType,
+                    IsAntiArmor = deathBurstAntiArmor, Spawns = spawns.ToArray(),
+                };
+            }
 
             int count = weapons?.Count ?? 0;
             stats.Weapons = new WeaponStats[count];
@@ -129,6 +191,14 @@ namespace Halobellum.Units
             stats.TechUpgrades = techs.ToArray();
             return stats;
         }
+    }
+
+    /// <summary>Inspector data for bodies of a unit type released when a unit dies.</summary>
+    [Serializable]
+    public sealed class SpawnDefinition
+    {
+        public UnitDefinition unit;
+        public int bodies;
     }
 
     /// <summary>Inspector data for one weapon. See WeaponStats for what each value means.</summary>
@@ -170,6 +240,12 @@ namespace Halobellum.Units
         public float beamRestSeconds;
         [Tooltip("Beam: how fast its spot follows a target or moves to a new one, in metres per second.")]
         public float beamSweepSpeed;
+        [Tooltip("Seed: seconds a hit plants a seed in the target (it loses health, is slowed, and rises as Flood if it dies seeded). 0 = none.")]
+        public float seedSeconds;
+        [Tooltip("Seed: share of its maximum health the target loses per second.")]
+        public float seedDamageSharePerSecond;
+        [Tooltip("Seed: the target moves this share slower (0.3 = 30% slower).")]
+        public float seedSlowShare;
 
         public WeaponStats ToStats()
         {
@@ -195,6 +271,9 @@ namespace Halobellum.Units
                 BeamChargeSeconds = beamChargeSeconds,
                 BeamRestSeconds = beamRestSeconds,
                 BeamSweepSpeed = beamSweepSpeed,
+                SeedSeconds = seedSeconds,
+                SeedDamageSharePerSecond = seedDamageSharePerSecond,
+                SeedSlowShare = seedSlowShare,
             };
         }
     }

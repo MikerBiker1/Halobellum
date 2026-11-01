@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48a24a6f0743ea50b653bb6800d1d896, type: 3}
+  m_Name: SwarmForm
+  m_EditorClassIdentifier: 
+  unitName: Swarm Form
+  role: 6
+  tier: 2
+  unlockCost: 50
+  squadSize: 4
+  cost: 300
+  baseDamage: 15
+  maxHealth: 200
+  armorType: 0
+  maxShield: 0
+  shieldRegenPerSecond: 0
+  moveSpeed: 3.5
+  collisionRadius: 1
+  turnTime180: 0.3
+  isAir: 1
+  targetFilter: 1
+  weapons:
+  - weaponName: Spat Bone
+    damagePerShot: 12
+    fireInterval: 0.4
+    range: 14
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 0
+    damageType: 0
+    isAntiArmor: 0
+    canBeBlocked: 0
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 3
+    coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+  hasDefenseArc: 0
+  defenseArc:
+    arcDegrees: 0
+    frontDamageMultiplier: 1
+    rearDamageMultiplier: 1
+    blockChance: 0
+    blockedDamageTypes: 
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
+  reinforcementNeedsUpgrade: 0
+  formsPerBody: 5
+  isFlood: 1
+  infects: 0
+  immuneToInfection: 0
+  selfDestructs: 0
+  seeksDensestCluster: 0
+  deathBurstDamage: 0
+  deathBurstRadius: 0
+  deathBurstDamageType: 0
+  deathBurstAntiArmor: 0
+  deathSpawns: []
+  spawnedUnit: {fileID: 0}
+  spawnedBodies: 0
+  spawnIntervalSeconds: 0
+  auraRadius: 0
+  auraSpeedMultiplier: 1
+  auraHealPerSecondShare: 0
+  techUpgrades:
+  - {fileID: 11400000, guid: 5786e9ccb6dad88351349ae9b24f582d, type: 2}
+  - {fileID: 11400000, guid: d21a487b3029909605e3c15e9f7439ab, type: 2}
+  prefab: {fileID: 1475722708688505506, guid: 47fa3318c4b7d9e44980bc4741fe7cea, type: 3}
+  strongAgainst: Aerial
+  weakAgainst: Ground units
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Stalker Form (100%). First-pass M8 values (DECISIONS D38).'

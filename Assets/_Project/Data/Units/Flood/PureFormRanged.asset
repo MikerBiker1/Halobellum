@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48a24a6f0743ea50b653bb6800d1d896, type: 3}
+  m_Name: PureFormRanged
+  m_EditorClassIdentifier: 
+  unitName: Pure Form Ranged
+  role: 5
+  tier: 2
+  unlockCost: 50
+  squadSize: 2
+  cost: 300
+  baseDamage: 30
+  maxHealth: 400
+  armorType: 1
+  maxShield: 0
+  shieldRegenPerSecond: 0
+  moveSpeed: 1
+  collisionRadius: 1.1
+  turnTime180: 1
+  isAir: 0
+  targetFilter: 0
+  weapons:
+  - weaponName: Bone Shards
+    damagePerShot: 60
+    fireInterval: 3
+    range: 34
+    minRange: 8
+    projectileSpeed: 22
+    splashRadius: 3
+    damageType: 1
+    isAntiArmor: 0
+    canBeBlocked: 0
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    lobbed: 1
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+  hasDefenseArc: 0
+  defenseArc:
+    arcDegrees: 0
+    frontDamageMultiplier: 1
+    rearDamageMultiplier: 1
+    blockChance: 0
+    blockedDamageTypes: 
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
+  reinforcementNeedsUpgrade: 0
+  formsPerBody: 1
+  isFlood: 1
+  infects: 0
+  immuneToInfection: 0
+  selfDestructs: 0
+  seeksDensestCluster: 0
+  deathBurstDamage: 0
+  deathBurstRadius: 0
+  deathBurstDamageType: 0
+  deathBurstAntiArmor: 0
+  deathSpawns: []
+  spawnedUnit: {fileID: 0}
+  spawnedBodies: 0
+  spawnIntervalSeconds: 0
+  auraRadius: 0
+  auraSpeedMultiplier: 1
+  auraHealPerSecondShare: 0
+  techUpgrades:
+  - {fileID: 11400000, guid: 353d851cb080a420b6755e2d5c6b62a5, type: 2}
+  - {fileID: 11400000, guid: 8e787041f2dbb72c72d7c75304b54bc8, type: 2}
+  prefab: {fileID: 5837781860510122022, guid: 6bf481148443ec9408c301ea109a225d, type: 3}
+  strongAgainst: 'Slow, grouped units'
+  weakAgainst: 'Flankers, air'
+  notes: 'Best counters (headless runner, equal cost): Hornet (100%), Pelican (100%). First-pass M8 values (DECISIONS D38).'

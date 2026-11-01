@@ -35,6 +35,10 @@ namespace Halobellum.Presentation
         [SerializeField] private Color healthMidColor = new Color(0.95f, 0.8f, 0.2f);
         [SerializeField] private Color healthLowColor = new Color(0.95f, 0.25f, 0.2f);
         [SerializeField] private Color shieldColor = new Color(0.25f, 0.6f, 1f);
+        [Tooltip("Mixed into the side's color for infected units, and the color of a corpse about to rise (D38).")]
+        [SerializeField] private Color infectedColor = new Color(0.55f, 0.68f, 0.18f);
+        [Tooltip("Size of each tiny form in a pack, as a share of the pack's size (Infection Forms).")]
+        [SerializeField] private float formScale = 0.42f;
 
         [Header("Layout (metres)")]
         [Tooltip("Height at which air units fly.")]
@@ -65,6 +69,9 @@ namespace Halobellum.Presentation
 
         private sealed class View
         {
+            /// <summary>The tiny forms of a pack, or null for a normal body.</summary>
+            public GameObject[] Forms;
+            public int FormsShown;
             public SimUnit Unit;
             public GameObject Root;
             public Transform Bar;
@@ -224,6 +231,8 @@ namespace Halobellum.Presentation
             simulation.Events.UnitSpawned += OnUnitSpawned;
             simulation.Events.ReinforcementDropped += OnReinforcementDropped;
             simulation.Events.SpellTriggered += OnSpellTriggered;
+            simulation.Events.UnitInfected += OnUnitInfected;
+            simulation.Events.UnitRose += OnUnitRose;
             OnSelectionChanged(_selection.SelectedSquadId);
         }
 
@@ -235,6 +244,8 @@ namespace Halobellum.Presentation
             _shown.Events.UnitSpawned -= OnUnitSpawned;
             _shown.Events.ReinforcementDropped -= OnReinforcementDropped;
             _shown.Events.SpellTriggered -= OnSpellTriggered;
+            _shown.Events.UnitInfected -= OnUnitInfected;
+            _shown.Events.UnitRose -= OnUnitRose;
             _shown = null;
         }
 
@@ -246,9 +257,14 @@ namespace Halobellum.Presentation
             view.Root.transform.SetParent(container, false);
 
             Color color = GhostTeam == unit.Team ? ghostColor : unit.Team == Team.A ? teamAColor : teamBColor;
+            if (stats.InfectedFrom != null) color = Color.Lerp(color, infectedColor, 0.55f);
             Material teamMaterial = PlaceholderArt.MaterialFor(color);
-            GameObject prefab = _battle.PrefabFor(stats);
-            if (prefab != null)
+            GameObject prefab = _battle.PrefabFor(stats.InfectedFrom ?? stats);
+            if (stats.FormsPerBody > 1)
+            {
+                CreateForms(view, stats, prefab, teamMaterial);
+            }
+            else if (prefab != null)
             {
                 // The unit's prefab (from its data asset), tinted with the side's color.
                 GameObject body = Instantiate(prefab, view.Root.transform, false);
@@ -300,6 +316,39 @@ namespace Halobellum.Presentation
             return view;
         }
 
+        /// <summary>A pack shows each of its tiny forms: one in the middle, the others around it.</summary>
+        private void CreateForms(View view, UnitStats stats, GameObject prefab, Material material)
+        {
+            view.Forms = new GameObject[stats.FormsPerBody];
+            view.FormsShown = stats.FormsPerBody;
+            for (int i = 0; i < stats.FormsPerBody; i++)
+            {
+                GameObject form;
+                if (prefab != null)
+                {
+                    form = Instantiate(prefab, view.Root.transform, false);
+                    foreach (Renderer renderer in form.GetComponentsInChildren<Renderer>()) renderer.sharedMaterial = material;
+                }
+                else
+                {
+                    Transform part = PlaceholderArt.CreatePart("Form", view.Root.transform, PlaceholderArt.BodyMesh(stats), material);
+                    part.localScale = PlaceholderArt.BodyScale(stats);
+                    part.localPosition = new Vector3(0f, stats.IsAir ? 0f : PlaceholderArt.BodyHeight(stats) * 0.5f, 0f);
+                    form = part.gameObject;
+                }
+                form.name = $"Form {i + 1}";
+                Transform t = form.transform;
+                t.localScale *= formScale;
+                t.localPosition *= formScale;
+                if (i > 0)
+                {
+                    float angle = (i - 1) * Mathf.PI * 2f / (stats.FormsPerBody - 1);
+                    t.localPosition += new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * (stats.CollisionRadius * (1f - formScale));
+                }
+                view.Forms[i] = form;
+            }
+        }
+
         private void OnTicked(int tick)
         {
             foreach (View view in _views)
@@ -333,6 +382,23 @@ namespace Halobellum.Presentation
             for (int n = 0; n < spell.Stats.DropSquads; n++) DropSquad(spell.DroppedSquadId + n, Time.unscaledTime, dropHeight);
         }
 
+        /// <summary>A body that will rise stays on the ground, turning sick green, until it does.</summary>
+        private void OnUnitInfected(SimUnit corpse)
+        {
+            if (corpse.Id < 0 || corpse.Id >= _views.Count) return;
+            View view = _views[corpse.Id];
+            view.Root.SetActive(true);
+            view.Bar.gameObject.SetActive(false);
+            view.Ring.SetActive(false);
+            Material material = PlaceholderArt.MaterialFor(infectedColor);
+            foreach (Renderer renderer in view.Root.GetComponentsInChildren<Renderer>()) renderer.sharedMaterial = material;
+        }
+
+        private void OnUnitRose(SimUnit corpse, SimUnit risen)
+        {
+            if (corpse.Id >= 0 && corpse.Id < _views.Count) _views[corpse.Id].Root.SetActive(false);
+        }
+
         private void OnUnitDied(SimUnit unit, SimUnit killer)
         {
             // Unit ids are their index in the simulation's unit list.
@@ -362,11 +428,18 @@ namespace Halobellum.Presentation
                     Vector3.LerpUnclamped(view.PreviousPosition, view.CurrentPosition, alpha) + Vector3.up * DropOffset(view),
                     Quaternion.SlerpUnclamped(view.PreviousRotation, view.CurrentRotation, alpha));
 
+                if (view.Forms != null && unit.FormsAlive != view.FormsShown)
+                {
+                    view.FormsShown = unit.FormsAlive;
+                    for (int i = 0; i < view.Forms.Length; i++) view.Forms[i].SetActive(i < view.FormsShown);
+                }
+
                 float fraction = Mathf.Clamp01(unit.Health / unit.Stats.MaxHealth);
                 view.ShieldPeak = Mathf.Max(view.ShieldPeak, Mathf.Max(unit.Stats.MaxShield, unit.Shield));
                 float shieldFraction = view.ShieldPeak > 0f ? Mathf.Clamp01(unit.Shield / view.ShieldPeak) : 0f;
                 bool hasShieldBar = view.ShieldPeak > 0f;
-                bool showBar = fraction < 0.999f || unit.SquadId == selected || (hasShieldBar && shieldFraction < 0.999f);
+                // A pack's health shows in how many forms are left, so it only has a bar when selected.
+                bool showBar = (fraction < 0.999f && view.Forms == null) || unit.SquadId == selected || (hasShieldBar && shieldFraction < 0.999f);
                 if (view.Bar.gameObject.activeSelf != showBar) view.Bar.gameObject.SetActive(showBar);
                 if (!showBar) continue;
 

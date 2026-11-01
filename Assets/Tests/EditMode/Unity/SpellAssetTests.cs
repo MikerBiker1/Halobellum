@@ -30,6 +30,7 @@ namespace Halobellum.Tests
 
         [TestCase("UNSC_Standard")]
         [TestCase("Covenant_Standard")]
+        [TestCase("Flood_Standard")]
         public void EveryFaction_OffersItemsEconomyBuffsAndTraining(string asset)
         {
             List<CardStats> cards = Cards(asset);
@@ -43,6 +44,22 @@ namespace Halobellum.Tests
                 Assert.IsNotNull(definition.icon, $"{definition.name} has an icon.");
             Assert.IsTrue(cards.Where(c => c.Type == CardType.Buff && c.ExtraSquadsPerRound == 0).All(c => c.MinRound >= 7), "Powerful buffs from round 7.");
             Assert.AreEqual(5, cards.Single(c => c.ExtraSquadsPerRound > 0).MinRound, "The extra slot from round 5.");
+        }
+
+        [Test]
+        public void FloodSpells_InfectWhatTheyKill_AndDropForms()
+        {
+            List<SpellStats> spells = Spells("Flood_Standard");
+            foreach (SpellStats spell in spells) CollectionAssert.IsEmpty(spell.Validate(), spell.Name);
+            Assert.IsTrue(spells.Single(s => s.Name == "Spore Burst").InfectsKills);
+            Assert.IsTrue(spells.Single(s => s.Name == "Blight Rain").InfectsKills);
+            SpellStats wrath = spells.Single(s => s.Name == "Gravemind's Wrath");
+            Assert.IsTrue(wrath.InfectsKills);
+            Assert.AreEqual(7, wrath.MinRound, "Big spells only appear late.");
+            Assert.AreEqual(1, wrath.MaxOwnedCopies);
+            SpellStats pods = spells.Single(s => s.Name == "Dispersal Pods");
+            Assert.AreEqual(SpellEffect.DropSquad, pods.Effect);
+            Assert.AreEqual("Infection Forms", pods.DropUnit.Name);
         }
 
         [Test]

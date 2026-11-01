@@ -34,6 +34,13 @@ MonoBehaviour:
   yieldWeight: 2
   advanceSpeedMultiplier: 0.5
   advanceRangeShare: 0.25
+  infectionRange: 2
+  infectionDelaySeconds: 2
+  infectedHealthShare: 0.6
+  infectedDamageShare: 1
+  infectedSpeedMultiplier: 1.5
+  infectedMeleeRange: 1.2
+  infectedMeleeInterval: 1
   ballistic:
     unarmored: 1
     light: 0.6

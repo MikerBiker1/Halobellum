@@ -81,3 +81,15 @@ Milestones and items from PROJECT_BIBLE.md Section 14. An item is ticked when it
 - [x] D35 (play test): drag items onto hexagons, no budget text, blue shield bar, two-click line placement at any angle, Glassing Beam hits air
 - [x] D36 (after the speed trial): battle speed is real again; all move speeds halved, +1 m/s for Warthog, Ghost and Gauss Warthog; counter web and matchup table re-measured. For the next balance pass: slower armies favour long-range units (12 of 276 matchups changed winner, see D36)
 - [x] D37: lobbed artillery that aims ahead and can miss (Wraith, Archer Missile Pod); Scarab Focus Beam (2 s charge, 3 s at 400 damage per second, 3 s rest). For the next balance pass: the Scarab beats 22 of 23 units and its damage against Heavy armor went up, so check it in mixed armies
+- [x] M7 confirmed by the owner, along with D37
+
+## M8: Flood faction
+
+- [x] Packs of tiny forms: one body stands for 5, area hits hurt them all, they show and deal less as they die
+- [x] Infection: Unarmored units killed near Infection Forms rise 2 s later for the Flood at 60% health; rules tested
+- [x] Seeder, Carrier Form death burst, Infected Pelican crash dive, Infected Phantom drop, Abomination aura and spawning
+- [x] Flood roster (11 units), techs, 8 spells, shared items and cards, Flood_Standard faction, Match and Sandbox scenes
+- [x] Flood UI theme and textures, Creepster title font, placeholder prefabs, packs and rising corpses on the field
+- [x] AI: Normal and Hard avoid Unarmored units against the Flood, Easy doesn't care; the AI can also play as Flood
+- [x] First balance pass: counter web 35 of 35, matchup table covers all 595 pairs
+- [ ] For the next balance pass: Scarab beats 33 of 34; Warthog and Ghost beat only 1 of 11 Flood units; Infection Forms beat Spartans and Warthogs; 49 of 595 pairs reach the 90 s limit

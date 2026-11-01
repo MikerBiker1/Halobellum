@@ -40,7 +40,7 @@ namespace Halobellum.Presentation
         public static Mesh BodyMesh(UnitStats stats)
         {
             if (stats.IsAir) return Sphere;
-            return stats.ArmorType == ArmorType.Unarmored ? Capsule : Cube;
+            return stats.IsFlood || stats.ArmorType == ArmorType.Unarmored ? Capsule : Cube; // Flood: all flesh, no boxes.
         }
 
         /// <summary>Local scale of the body mesh, so its footprint matches the collision radius.</summary>
@@ -48,6 +48,7 @@ namespace Halobellum.Presentation
         {
             float r = stats.CollisionRadius;
             if (stats.IsAir) return new Vector3(2f * r, 0.6f * r, 2f * r);
+            if (stats.IsFlood) return new Vector3(2f * r, (stats.Role == UnitRole.Titan ? 2.4f : 1.3f) * r, 2f * r); // The Abomination towers.
             switch (stats.ArmorType)
             {
                 case ArmorType.Unarmored: return new Vector3(2f * r, 1.8f * r, 2f * r); // Capsule mesh is 2 units tall: 3.6 x radius.

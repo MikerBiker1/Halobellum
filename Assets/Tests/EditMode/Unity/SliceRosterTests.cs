@@ -54,6 +54,21 @@ namespace Halobellum.Tests
             ("Scarab", UnitRole.Titan, 4, 350, 1, 800, 9000),
         };
 
+        private static readonly (string name, UnitRole role, int tier, int unlock, int squad, int cost, float health)[] Flood =
+        {
+            ("Infection Forms", UnitRole.Chaff, 1, 0, 10, 100, 190),
+            ("Carrier Form", UnitRole.ChaffClear, 1, 0, 4, 150, 140),
+            ("Combat Form", UnitRole.SingleTargetDps, 2, 50, 6, 200, 220),
+            ("Stalker Form", UnitRole.Flanker, 2, 50, 3, 250, 450),
+            ("Pure Form Ranged", UnitRole.Artillery, 2, 50, 2, 300, 400),
+            ("Swarm Form", UnitRole.AntiAir, 2, 50, 4, 300, 200),
+            ("Pure Form Tank", UnitRole.Tank, 3, 200, 1, 500, 3200),
+            ("Seeder", UnitRole.SingleTargetDps, 3, 200, 2, 450, 800),
+            ("Infected Pelican", UnitRole.Aerial, 3, 200, 1, 400, 900),
+            ("Infected Phantom", UnitRole.Aerial, 3, 200, 1, 450, 1100),
+            ("Flood Abomination", UnitRole.Titan, 4, 350, 1, 800, 7000),
+        };
+
         private static Dictionary<string, UnitDefinition> Load(string folder) =>
             HeadlessRunnerTool.LoadUnitsInFolder(folder).ToDictionary(u => u.unitName);
 
@@ -62,9 +77,10 @@ namespace Halobellum.Tests
 
         [TestCase(0)]
         [TestCase(1)]
+        [TestCase(2)]
         public void Roster_MatchesSection8(int factionIndex)
         {
-            var table = factionIndex == 0 ? Unsc : Covenant;
+            var table = factionIndex == 0 ? Unsc : factionIndex == 1 ? Covenant : Flood;
             Dictionary<string, UnitDefinition> units = Load(HeadlessRunnerTool.SliceFolders[factionIndex]);
             Assert.AreEqual(table.Length, units.Count, "Exactly the units of the Section 8 table.");
             foreach (var row in table)
@@ -86,6 +102,7 @@ namespace Halobellum.Tests
 
         [TestCase(0)]
         [TestCase(1)]
+        [TestCase(2)]
         public void EveryFaction_CoversEveryRole(int factionIndex)
         {
             var roles = Load(HeadlessRunnerTool.SliceFolders[factionIndex]).Values.Select(u => u.role).ToList();
@@ -189,6 +206,57 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void FloodAbilities_AreSetUp()
+        {
+            Dictionary<string, UnitStats> u = AllStats();
+            UnitStats forms = u["Infection Forms"];
+            Assert.AreEqual(5, forms.FormsPerBody);
+            Assert.AreEqual(50, forms.FormsInSquad, "50 forms in a squad, in packs of 5.");
+            Assert.IsTrue(forms.Infects);
+            foreach (var row in Flood)
+            {
+                Assert.IsTrue(u[row.name].IsFlood, row.name);
+                if (row.name != "Infection Forms") Assert.IsFalse(u[row.name].Infects, row.name + ": only Infection Forms infect.");
+            }
+
+            UnitStats carrier = u["Carrier Form"];
+            Assert.IsTrue(carrier.SelfDestructs);
+            Assert.AreEqual("Infection Forms", carrier.DeathBurst.Spawns[0].Unit.Name);
+            Assert.Greater(carrier.DeathBurst.Damage, 0f);
+
+            UnitStats pelican = u["Infected Pelican"];
+            Assert.IsTrue(pelican.IsAir && pelican.SelfDestructs && pelican.SeeksDensestCluster);
+            Assert.AreEqual(10, pelican.DeathBurst.Spawns.Where(s => s.Unit.Name == "Infection Forms").Sum(s => s.Bodies * s.Unit.FormsPerBody), "Bible: 10 Infection Forms.");
+            Assert.AreEqual(5, pelican.DeathBurst.Spawns.Where(s => s.Unit.Name == "Combat Form").Sum(s => s.Bodies), "Bible: 5 Combat Forms.");
+
+            Assert.IsNotNull(u["Infected Phantom"].Reinforcement, "It carries Combat Forms.");
+            Assert.AreEqual("Combat Form", u["Infected Phantom"].Reinforcement.Name);
+            Assert.Greater(u["Seeder"].Weapons[0].SeedSeconds, 0f);
+            Assert.IsTrue(u["Pure Form Ranged"].Weapons[0].Lobbed);
+            Assert.IsTrue(u["Swarm Form"].IsAir);
+            Assert.AreEqual(5, u["Swarm Form"].FormsPerBody);
+
+            UnitStats abomination = u["Flood Abomination"];
+            Assert.AreEqual("Infection Forms", abomination.SpawnedUnit.Name);
+            Assert.Greater(abomination.AuraRadius, 0f);
+            Assert.Greater(abomination.AuraSpeedMultiplier, 1f);
+        }
+
+        [Test]
+        public void Infection_OnlyWorksOnTheRightUnits()
+        {
+            Dictionary<string, UnitStats> u = AllStats();
+            Assert.IsTrue(u["Spartan"].ImmuneToInfection, "Bible: Spartans cannot be infected.");
+            foreach (string name in new[] { "Marine", "Grunt", "Elite", "Zealot", "Flamethrower Trooper" })
+            {
+                Assert.AreEqual(ArmorType.Unarmored, u[name].ArmorType, name);
+                Assert.IsFalse(u[name].ImmuneToInfection, name);
+            }
+            foreach (string name in new[] { "Warthog", "Scorpion", "Hunter Pair", "Wraith", "Elephant" })
+                Assert.AreNotEqual(ArmorType.Unarmored, u[name].ArmorType, name);
+        }
+
+        [Test]
         public void EveryUnit_HasTwoOrThreeValidTechUpgrades()
         {
             foreach (UnitDefinition unit in HeadlessRunnerTool.LoadSliceUnits())
@@ -229,6 +297,8 @@ namespace Halobellum.Tests
             var covenant = AssetDatabase.LoadAssetAtPath<FactionDefinition>("Assets/_Project/Data/Factions/Covenant_Standard.asset");
             CollectionAssert.AreEquivalent(Unsc.Select(r => r.name), unsc.baseRoster.Select(u => u.unitName));
             CollectionAssert.AreEquivalent(Covenant.Select(r => r.name), covenant.baseRoster.Select(u => u.unitName));
+            var flood = AssetDatabase.LoadAssetAtPath<FactionDefinition>("Assets/_Project/Data/Factions/Flood_Standard.asset");
+            CollectionAssert.AreEquivalent(Flood.Select(r => r.name), flood.baseRoster.Select(u => u.unitName));
         }
     }
 }

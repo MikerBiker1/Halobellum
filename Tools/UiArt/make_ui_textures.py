@@ -5,6 +5,8 @@
 #             engraved plate seams, small window lights, amber accent stripes.
 #   Covenant: violet hull with a metallic sheen, smooth rounded leaf-like corners, a dark crevice with
 #             a glowing blue line, organic flowing engravings with blue light strips.
+#   Flood:    a rim of lumpy grey-green flesh, a dark wet crevice, a sick yellow-green glow, and mottled
+#             biomass with veins and boils inside (decision D38).
 # Panels, rows and ornaments are drawn at double resolution (the HUD draws them at half size, so they
 # stay sharp on large screens); buttons and bar fills are drawn at HUD size (Unity stretches them 1:1).
 # Textures whose name ends in _Tile repeat (the HUD tiles them over panel interiors).
@@ -555,6 +557,154 @@ def covenant_ornament(folder):
     c.save(folder, "Covenant_Ornament")
 
 
+# ======================================================================================== Flood
+
+FLESH_DEEP = (0.055, 0.06, 0.03)
+FLESH = (0.31, 0.33, 0.17)
+FLESH_LIGHT = (0.62, 0.62, 0.36)
+BILE = (0.62, 0.8, 0.14)
+BILE_CORE = (0.93, 1.0, 0.5)
+BLOOD = (0.42, 0.12, 0.1)
+
+
+def flood_panel_frame(folder):
+    # 256 px at double resolution, border 60 (30 HUD px). Interior transparent (see unsc_panel_frame).
+    S = 256
+    c = Canvas(S, S)
+    # A lumpy outline: the distance to the box is pushed in and out by smooth noise.
+    lumps = periodic_noise(c, S, 16, seed=31)
+    fine = periodic_noise(c, S, 24, seed=37)
+    d = shape_distance(c, S - 18, S - 18, (26, 26, 26, 26), "round", inset=9) + (lumps - 0.5) * 7.0
+    lit = facing(d)
+    outside = np.clip(d, 0, None)
+    c.paint(BILE, np.where(d > 0, 0.22 * np.exp(-(outside / 4.5) ** 2), 0))
+    c.paint(FLESH_DEEP, band(d, 0.6, -1.5))
+    # The rim: a swollen tube of flesh.
+    t = np.clip((d + 13.0) / 12.0, 0, 1)
+    crest = np.sin(np.pi * t) ** 2
+    body = lerp(lerp(FLESH_DEEP, FLESH, 0.3 + 0.7 * crest), FLESH_LIGHT, np.clip(crest ** 5 * 0.5 + lit * 0.22 + (fine - 0.5) * 0.5, 0, 1))
+    c.paint(body, band(d, -1.0, -13.0))
+    # Veins running across the rim.
+    veins = np.clip(1.4 - np.abs(lumps - 0.5) * 90.0, 0, 1)
+    c.paint(BLOOD, veins * band(d, -2.0, -12.0) * 0.8)
+    c.paint((0.95, 0.95, 0.7), line(d, -5.0, 1.5) * np.clip(lit, 0, 1) ** 2 * 0.35)
+    # The wet crevice with its sick glow.
+    c.paint((0.02, 0.025, 0.005), band(d, -12.5, -17.5))
+    c.paint(BILE, np.exp(-((d + 15.0) / 3.5) ** 2) * 0.6 * (d < -8))
+    c.paint(BILE_CORE, line(d, -15.0, 1.2) * (0.35 + 0.65 * fine))
+    depth = np.clip(-d - 17.5, 0, None)
+    c.paint(BILE, np.where(d < -17.5, 0.1 * np.exp(-depth / 7.0), 0))
+    # Boils on the two big corners.
+    for (bx, by, br) in ((30, 30, 13), (52, 21, 7), (21, 52, 8), (S - 30, S - 30, 13), (S - 52, S - 21, 7), (S - 21, S - 52, 8)):
+        e = np.hypot(c.x - bx, c.y - by) / br
+        c.paint(FLESH_DEEP, np.clip((1.18 - e) * 6, 0, 1))
+        c.paint(lerp(BILE, FLESH, np.clip(e, 0, 1)), np.clip((1.0 - e) * 6, 0, 1))
+        highlight = np.hypot(c.x - bx + br * 0.3, c.y - by + br * 0.3) / (br * 0.4)
+        c.paint(BILE_CORE, np.clip(1.0 - highlight, 0, 1) * 0.8)
+    c.save(folder, "Flood_PanelFrame")
+
+
+def flood_hull_tile(folder):
+    # Seamless 512 px biomass: dark mottling, branching veins, scattered boils.
+    T = 512
+    c = Canvas(T, T)
+    n = periodic_noise(c, T, 18, seed=41)
+    m = periodic_noise(c, T, 12, seed=43)
+    c.paint(lerp((0.5, 0.55, 0.2), (0.45, 0.2, 0.15), m), 0.04 + 0.12 * n)
+    gy, gx = np.gradient(n)
+    grad = np.maximum(np.hypot(gx, gy), 1e-6)
+    for level, strength in ((0.5, 0.5), (0.34, 0.28), (0.66, 0.28)):
+        dist = np.abs(n - level) / grad
+        c.paint((0.02, 0.025, 0.0), np.clip(1.8 - dist, 0, 1) * strength)
+        c.paint(BLOOD, np.clip(1.0 - np.abs(dist - 2.0), 0, 1) * strength * 0.6)
+    rng = np.random.default_rng(47)
+    for _ in range(14):
+        bx, by, br = rng.uniform(0, T), rng.uniform(0, T), rng.uniform(5, 13)
+        dx = np.minimum(np.abs(c.x - bx), T - np.abs(c.x - bx))
+        dy = np.minimum(np.abs(c.y - by), T - np.abs(c.y - by))
+        e = np.hypot(dx, dy) / br
+        c.paint((0.02, 0.025, 0.0), np.clip((1.2 - e) * 5, 0, 1) * 0.5)
+        c.paint(BILE, np.clip((1.0 - e) * 3, 0, 1) * 0.2)
+    c.save(folder, "Flood_Hull_Tile")
+
+
+def flood_button(folder, name, top, bottom, edge, edge_alpha, inner_glow):
+    # 128 x 44 at HUD size; 9-slice border 14.
+    W, H = 128, 44
+    c = Canvas(W, H)
+    d = shape_distance(c, W - 4, H - 4, (9, 9, 9, 9), "round", inset=2)
+    t = np.clip((c.y - 2) / (H - 4), 0, 1)
+    c.paint(BILE, np.where(d > 0, inner_glow * 0.5 * np.exp(-(np.clip(d, 0, None) / 1.6) ** 2), 0))
+    c.paint(FLESH_DEEP, band(d, 0.6, -60))
+    c.paint(lerp(top, bottom, t), band(d, -0.8, -60))
+    c.paint((0.95, 0.95, 0.7), np.exp(-((c.y - 9) / 4.0) ** 2) * 0.13 * band(d, -2.0, -60))
+    c.paint(BILE, np.where(d < 0, inner_glow * np.exp(-np.clip(-d, 0, None) / 3.0), 0))
+    c.paint(edge, line(d, -1.0, 1.3) * edge_alpha)
+    c.save(folder, name)
+
+
+def flood_row(folder):
+    W, H = 128, 80
+    c = Canvas(W, H)
+    d = shape_distance(c, W - 4, H - 4, (12, 12, 12, 12), "round", inset=2)
+    c.paint((0.05, 0.055, 0.02), band(d, 0.5, -100) * 0.82)
+    c.paint((0, 0, 0), np.where(d < 0, 0.3 * np.exp(-np.clip(c.y - 2, 0, None) / 6.0), 0))
+    c.paint(BILE, line(d, -2.5, 1.2) * 0.42)
+    c.paint(BILE, np.where(d < 0, 0.08 * np.exp(-np.clip(-d, 0, None) / 4.0), 0))
+    c.paint(FLESH_LIGHT, line(d, -0.5, 1.0) * np.clip(facing(d), 0, 1) * 0.5)
+    c.save(folder, "Flood_Row")
+
+
+def flood_bar_fill(folder):
+    # A wet, rounded bar body (8 x 20 at HUD size, stretched), white so the HUD tints it.
+    W, H = 8, 20
+    c = Canvas(W, H)
+    t = c.y / H
+    shade = 0.65 + 0.35 * np.exp(-((t - 0.35) / 0.22) ** 2) - 0.25 * t
+    c.paint(np.dstack([shade, shade, shade]), np.ones_like(t))
+    c.paint((1, 1, 1), np.exp(-((t - 0.22) / 0.06) ** 2) * 0.45)
+    c.save(folder, "Flood_BarFill")
+
+
+def flood_ornament(folder):
+    # A swollen pustule in a ridge of flesh: 200 x 34 at double resolution.
+    W, H = 200, 34
+    c = Canvas(W, H)
+    cx, cy = W / 2, H / 2
+    u = (c.x - cx) / (W / 2 - 4)
+    half_height = (H / 2 - 3) * np.clip(1 - u ** 2, 0, 1) ** 0.6
+    dist = np.abs(c.y - cy) - half_height
+    ridge = np.clip(0.5 - dist, 0, 1) * (np.abs(u) < 1)
+    t = np.clip((c.y - (cy - half_height)) / np.maximum(2 * half_height, 1), 0, 1)
+    c.paint(lerp(FLESH_LIGHT, FLESH_DEEP, t), ridge)
+    e = np.hypot((c.x - cx) / 18.0, (c.y - cy) / 10.0)
+    c.paint(FLESH_DEEP, np.clip((1.15 - e) * 5, 0, 1))
+    c.paint(BILE, np.clip((1.0 - e) * 3, 0, 1))
+    c.paint(BILE_CORE, np.clip((0.5 - np.hypot((c.x - cx + 5) / 7.0, (c.y - cy + 3) / 4.0)) * 3, 0, 1))
+    for bx in (-44, 44):
+        s = np.hypot(c.x - cx - bx, (c.y - cy)) / 5.0
+        c.paint(BILE, np.clip((1.0 - s) * 3, 0, 1) * 0.8)
+    c.save(folder, "Flood_Ornament")
+
+
+def flood_hexagons(folder):
+    S = 128
+    filled = Canvas(S, S)
+    d = hex_distance(filled, S, 54)
+    filled.paint(BILE, np.where(d > 0, 0.35 * np.exp(-(np.clip(d, 0, None) / 4.0) ** 2), 0))
+    t = np.clip(filled.y / S, 0, 1)
+    filled.paint(lerp((0.27, 0.29, 0.13), (0.09, 0.1, 0.04), t), band(d, 0.6, -80))
+    filled.paint(BILE_CORE, line(d, -2.0, 2.0))
+    filled.save(folder, "Flood_HexFilled")
+
+    empty = Canvas(S, S)
+    d = hex_distance(empty, S, 54)
+    empty.paint(BILE, np.where(d > 0, 0.35 * np.exp(-(np.clip(d, 0, None) / 4.0) ** 2), 0))
+    empty.paint((0.07, 0.08, 0.03), band(d, 0.6, -80) * 0.45)
+    empty.paint(BILE_CORE, line(d, -2.0, 3.0))
+    empty.save(folder, "Flood_HexEmpty")
+
+
 # ======================================================================================== hexagons and icons
 
 def hex_distance(c, size, apothem):
@@ -773,5 +923,19 @@ def main():
     covenant_ornament(cov)
 
 
+def main_flood():
+    folder = os.path.join(OUT, "Flood")
+    flood_hexagons(folder)
+    flood_panel_frame(folder)
+    flood_hull_tile(folder)
+    flood_button(folder, "Flood_Button", (0.27, 0.29, 0.13), (0.13, 0.14, 0.05), BILE, 0.5, 0.08)
+    flood_button(folder, "Flood_ButtonHover", (0.37, 0.4, 0.17), (0.2, 0.22, 0.08), BILE_CORE, 0.7, 0.16)
+    flood_button(folder, "Flood_ButtonPressed", (0.1, 0.11, 0.04), (0.17, 0.19, 0.07), BILE, 0.7, 0.2)
+    flood_row(folder)
+    flood_bar_fill(folder)
+    flood_ornament(folder)
+
+
 if __name__ == "__main__":
     main()
+    main_flood()

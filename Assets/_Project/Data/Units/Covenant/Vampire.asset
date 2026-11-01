@@ -48,6 +48,9 @@ MonoBehaviour:
     beamChargeSeconds: 0
     beamRestSeconds: 0
     beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -59,10 +62,27 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
+  formsPerBody: 1
+  isFlood: 0
+  infects: 0
+  immuneToInfection: 0
+  selfDestructs: 0
+  seeksDensestCluster: 0
+  deathBurstDamage: 0
+  deathBurstRadius: 0
+  deathBurstDamageType: 0
+  deathBurstAntiArmor: 0
+  deathSpawns: []
+  spawnedUnit: {fileID: 0}
+  spawnedBodies: 0
+  spawnIntervalSeconds: 0
+  auraRadius: 0
+  auraSpeedMultiplier: 1
+  auraHealPerSecondShare: 0
   techUpgrades:
   - {fileID: 11400000, guid: ab1e12f76741380d31f2744b91810f4e, type: 2}
   - {fileID: 11400000, guid: 22ff79a1dd5e7b1624217d637b5911fb, type: 2}
   prefab: {fileID: 5104527227943967435, guid: 303492183918dee44a8538a6de5d584f, type: 3}
   strongAgainst: Aerial
   weakAgainst: Ground units
-  notes: 'Best counters (headless runner, equal cost): Marine (100%), Elite (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Scarab (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

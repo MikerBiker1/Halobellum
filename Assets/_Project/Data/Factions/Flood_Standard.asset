@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e6990b4d722009a3b5c9081c2c03694, type: 3}
+  m_Name: Flood_Standard
+  m_EditorClassIdentifier:
+  factionName: Flood
+  color: {r: 0.55, g: 0.7, b: 0.25, a: 1}
+  uiTheme: {fileID: 11400000, guid: 87cb403e3cf7feffd24566ed2d3e4448, type: 2}
+  baseRoster:
+  - {fileID: 11400000, guid: 6b41beaaf1cf621860b58e52a70f04fb, type: 2}
+  - {fileID: 11400000, guid: e1d22574e0be7a65ffab6c4609c4643a, type: 2}
+  - {fileID: 11400000, guid: 5f45713bce1607ea1deeeb50c0ca4acb, type: 2}
+  - {fileID: 11400000, guid: 34f2b85aa8d330d33ba3deaee5c60eed, type: 2}
+  - {fileID: 11400000, guid: c79f173da5e82f3be7ff5b1260e0568e, type: 2}
+  - {fileID: 11400000, guid: 69462c3646524fc57f5a8b8cf7a94bc3, type: 2}
+  - {fileID: 11400000, guid: 48f7aa1ae8913d26c2bd91ac19fc8590, type: 2}
+  - {fileID: 11400000, guid: 281f5f99c37a52673be9c6ac6a68d070, type: 2}
+  - {fileID: 11400000, guid: dad4c4d3f10e6685447f72c7059e892f, type: 2}
+  - {fileID: 11400000, guid: 476b50be0c8c7710d43533097fb7e21f, type: 2}
+  - {fileID: 11400000, guid: 427eed8d1c8163c9c22e41c6d4146dcb, type: 2}
+  subFactions:
+  - subFactionName: Standard
+    exclusiveUnits: []
+  spells:
+  - {fileID: 11400000, guid: 62bd10625489ba16ead28b4f055c0822, type: 2}
+  - {fileID: 11400000, guid: 1d774007a8ec4f044daa6205f6bf9845, type: 2}
+  - {fileID: 11400000, guid: 61a1047ec659aa41d4f8c6dee69b8a63, type: 2}
+  - {fileID: 11400000, guid: 10e6809d3b84c6427fbef0272ba5ee3a, type: 2}
+  - {fileID: 11400000, guid: 72ec708347c8973268b123559b5e209e, type: 2}
+  - {fileID: 11400000, guid: ca678612f3c36a2b1216090d9ab49bb5, type: 2}
+  - {fileID: 11400000, guid: 5ccde66276b38b46d359007de26d33c3, type: 2}
+  - {fileID: 11400000, guid: 270be571569f1aac18c72f4c4fbb61f8, type: 2}
+  cards:
+  - {fileID: 11400000, guid: 1bccd83a6a9ada7d8723c04c55c477fb, type: 2}
+  - {fileID: 11400000, guid: c885be13c21c99bfccb23e9874f123c4, type: 2}
+  - {fileID: 11400000, guid: fb266884a3a226d60f3875cb8bc0eee8, type: 2}
+  - {fileID: 11400000, guid: 1a12cd5c25eb744153c1ca4b6633cc55, type: 2}
+  - {fileID: 11400000, guid: b29427962c4ab22e830adefe88c1b7dd, type: 2}
+  - {fileID: 11400000, guid: e27aa68da9826f253f71b71c8bb7e51d, type: 2}
+  - {fileID: 11400000, guid: 4a174d9c239b3177e760da3fd539fee1, type: 2}
+  - {fileID: 11400000, guid: ccb628eea669914ed5f3add577b365e2, type: 2}
+  - {fileID: 11400000, guid: 46cc2fc74d6206e3e6bd5c4f68b12ed4, type: 2}
+  - {fileID: 11400000, guid: d6361113f281d0a2523e781953296335, type: 2}
+  - {fileID: 11400000, guid: c9bda781d2a0d1188464ffc21513f4bf, type: 2}
+  - {fileID: 11400000, guid: 184f16ac367eb7fea1daee3c808e910c, type: 2}
+  - {fileID: 11400000, guid: f5a8c0fa88824dbfc5b11853615f2b25, type: 2}
+  - {fileID: 11400000, guid: 955f870450391da0556688a980dab5ba, type: 2}
+  - {fileID: 11400000, guid: cda3cfa7745b46270e833ea1ad1c7c38, type: 2}

@@ -48,6 +48,9 @@ MonoBehaviour:
     beamChargeSeconds: 0
     beamRestSeconds: 0
     beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -59,10 +62,27 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
+  formsPerBody: 1
+  isFlood: 0
+  infects: 0
+  immuneToInfection: 0
+  selfDestructs: 0
+  seeksDensestCluster: 0
+  deathBurstDamage: 0
+  deathBurstRadius: 0
+  deathBurstDamageType: 0
+  deathBurstAntiArmor: 0
+  deathSpawns: []
+  spawnedUnit: {fileID: 0}
+  spawnedBodies: 0
+  spawnIntervalSeconds: 0
+  auraRadius: 0
+  auraSpeedMultiplier: 1
+  auraHealPerSecondShare: 0
   techUpgrades:
   - {fileID: 11400000, guid: 08d7886e19de72d20a4f47245aefc876, type: 2}
   - {fileID: 11400000, guid: 1b62c1cca9608f073810db8e5a691624, type: 2}
   prefab: {fileID: 9201634983580509971, guid: 71a6a5dec83c45341820d82896e7e606, type: 3}
   strongAgainst: 'Tanks, heavy units'
   weakAgainst: 'Chaff swarms, flankers'
-  notes: 'Best counters (headless runner, equal cost): Marine (100%), Warthog (0%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Infection Forms (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

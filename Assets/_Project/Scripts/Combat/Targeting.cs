@@ -32,12 +32,19 @@ namespace Halobellum.Combat
             return target != null && target.IsAlive && target.Health > 0f && target.Team != shooter.Team;
         }
 
+        /// <summary>True if a Seeder's seed can take in this unit (D38): not a Titan, not Flood, and no shield up.</summary>
+        public static bool CanBeSeeded(SimUnit target)
+        {
+            return !target.Stats.IsFlood && target.Stats.Role != UnitRole.Titan && target.Shield <= 0f;
+        }
+
         /// <summary>True if the shooter may pick this target for this weapon (filter and minimum range).</summary>
         public static bool IsLegalTarget(SimUnit shooter, WeaponStats weapon, SimUnit target)
         {
             if (!IsTargetableEnemy(shooter, target)) return false;
             if (weapon != null ? !weapon.CanTarget(shooter.Stats, target.IsAir) : !shooter.Stats.CanTarget(target.IsAir)) return false;
             if (weapon != null && !weapon.FitsClass(target.Stats)) return false;
+            if (weapon != null && weapon.SeedSeconds > 0f && (!CanBeSeeded(target) || target.IsSeeded)) return false;
             float minRange = weapon?.MinRange ?? 0f;
             return minRange <= 0f || EdgeDistance(shooter, target) >= minRange;
         }

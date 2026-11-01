@@ -27,6 +27,7 @@ MonoBehaviour:
   damagePerTick: 50
   damageType: 1
   isAntiArmor: 0
+  infectsKills: 0
   ticks: 6
   tickInterval: 0.5
   targets: 2

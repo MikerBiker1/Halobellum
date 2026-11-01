@@ -93,7 +93,7 @@ namespace Halobellum.UI
                 {
                     UnitStats unit = card.Squads[s];
                     GUI.Label(new Rect(rect.x + 28f, rect.y + 110f + s * 44f, rect.width - 44f, 44f),
-                        $"{unit.Name}\n{RoleName(unit.Role)}, {Bodies(unit.SquadSize)}, worth {unit.Cost}", _small);
+                        $"{unit.Name}\n{RoleName(unit.Role)}, {Bodies(unit.FormsInSquad)}, worth {unit.Cost}", _small);
                 }
                 if (GUI.Button(new Rect(rect.x + 16f, rect.yMax - 52f, rect.width - 32f, 38f), "Choose", _bigButton)) match.ChooseDraft(i);
             }
@@ -244,7 +244,7 @@ namespace Halobellum.UI
             UnitStats unit = reinforcement.Type;
             GUI.Label(new Rect(x, y, w, 30f), unit.Name, _header); y += 34f;
             GUI.Label(new Rect(x, y, w, 24f), $"{reinforcement.Squads} squad{(reinforcement.Squads == 1 ? "" : "s")} at level {reinforcement.Level}", _text); y += 28f;
-            GUI.Label(new Rect(x, y, w, 24f), $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.SquadSize)} each", _small); y += 30f;
+            GUI.Label(new Rect(x, y, w, 24f), $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.FormsInSquad)} each", _small); y += 30f;
             GUI.Label(new Rect(x, y, w, 24f), $"Worth {reinforcement.TotalWorth} ({reinforcement.SquadWorth} per squad)", _text); y += 26f;
             bool unlocked = match.Match.Player.Unlocked.Contains(unit);
             GUI.Label(new Rect(x, y, w, 48f), unlocked ? "Placed like squads bought this round, on top of your squad limit."
@@ -381,7 +381,7 @@ namespace Halobellum.UI
                 var row = new Rect(0f, i * rowHeight, content.width, rowHeight - 4f);
                 HudTheme.RowBox(row);
                 GUI.Label(new Rect(row.x + 8f, row.y + 4f, row.width - 130f, 24f), $"{unit.Name} - {unit.Cost} cr", _text);
-                GUI.Label(new Rect(row.x + 8f, row.y + 28f, row.width - 130f, 22f), $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.SquadSize)}", _small);
+                GUI.Label(new Rect(row.x + 8f, row.y + 28f, row.width - 130f, 22f), $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.FormsInSquad)}", _small);
 
                 var button = new Rect(row.xMax - 118f, row.y + 9f, 110f, 36f);
                 if (player.Unlocked.Contains(unit))

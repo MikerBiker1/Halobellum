@@ -45,6 +45,8 @@ namespace Halobellum.Units
         public float damagePerTick;
         public DamageType damageType;
         public bool isAntiArmor;
+        [Tooltip("Unarmored enemies it kills rise as infected units.")]
+        public bool infectsKills;
         [Tooltip("1 = a single strike; more = a zone that hits this many times.")]
         public int ticks = 1;
         public float tickInterval;
@@ -108,6 +110,7 @@ namespace Halobellum.Units
                 DamagePerTick = damagePerTick,
                 DamageType = damageType,
                 IsAntiArmor = isAntiArmor,
+                InfectsKills = infectsKills,
                 Ticks = ticks,
                 TickInterval = tickInterval,
                 Targets = targets,

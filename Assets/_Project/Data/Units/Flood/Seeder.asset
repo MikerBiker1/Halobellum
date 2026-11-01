@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48a24a6f0743ea50b653bb6800d1d896, type: 3}
+  m_Name: Seeder
+  m_EditorClassIdentifier: 
+  unitName: Seeder
+  role: 2
+  tier: 3
+  unlockCost: 200
+  squadSize: 2
+  cost: 450
+  baseDamage: 45
+  maxHealth: 800
+  armorType: 1
+  maxShield: 0
+  shieldRegenPerSecond: 0
+  moveSpeed: 1.5
+  collisionRadius: 1.2
+  turnTime180: 1
+  isAir: 0
+  targetFilter: 0
+  weapons:
+  - weaponName: Seed Spore
+    damagePerShot: 60
+    fireInterval: 2.5
+    range: 24
+    minRange: 0
+    projectileSpeed: 30
+    splashRadius: 0
+    damageType: 2
+    isAntiArmor: 0
+    canBeBlocked: 0
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 8
+    seedDamageSharePerSecond: 0.08
+    seedSlowShare: 0.4
+  hasDefenseArc: 0
+  defenseArc:
+    arcDegrees: 0
+    frontDamageMultiplier: 1
+    rearDamageMultiplier: 1
+    blockChance: 0
+    blockedDamageTypes: 
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
+  reinforcementNeedsUpgrade: 0
+  formsPerBody: 1
+  isFlood: 1
+  infects: 0
+  immuneToInfection: 0
+  selfDestructs: 0
+  seeksDensestCluster: 0
+  deathBurstDamage: 0
+  deathBurstRadius: 0
+  deathBurstDamageType: 0
+  deathBurstAntiArmor: 0
+  deathSpawns: []
+  spawnedUnit: {fileID: 0}
+  spawnedBodies: 0
+  spawnIntervalSeconds: 0
+  auraRadius: 0
+  auraSpeedMultiplier: 1
+  auraHealPerSecondShare: 0
+  techUpgrades:
+  - {fileID: 11400000, guid: 757a40fb6da515b64785ab074e78b47a, type: 2}
+  - {fileID: 11400000, guid: 0ef4c9fa6f590f3b2cd4d035f1d3c6f6, type: 2}
+  prefab: {fileID: 4022379312652394556, guid: 1ac9ebd70789d6b41aae956c11df703e, type: 3}
+  strongAgainst: 'Tanks, heavy units'
+  weakAgainst: 'Chaff swarms, flankers'
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Grunt (100%). First-pass M8 values (DECISIONS D38).'

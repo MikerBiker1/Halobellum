@@ -146,6 +146,7 @@ namespace Halobellum.Core
             stats.Level = level;
             stats.MaxHealth *= level;
             foreach (WeaponStats weapon in stats.Weapons) weapon.DamagePerShot *= level;
+            if (stats.DeathBurst != null) stats.DeathBurst.Damage *= level;
 
             if (techs == null) return stats;
             foreach (TechUpgrade tech in techs)

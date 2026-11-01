@@ -48,6 +48,9 @@ MonoBehaviour:
     beamChargeSeconds: 0
     beamRestSeconds: 0
     beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
   - weaponName: Fuel Rod Bomb
     damagePerShot: 50
     fireInterval: 2.5
@@ -67,6 +70,9 @@ MonoBehaviour:
     beamChargeSeconds: 0
     beamRestSeconds: 0
     beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -78,6 +84,23 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
+  formsPerBody: 1
+  isFlood: 0
+  infects: 0
+  immuneToInfection: 0
+  selfDestructs: 0
+  seeksDensestCluster: 0
+  deathBurstDamage: 0
+  deathBurstRadius: 0
+  deathBurstDamageType: 0
+  deathBurstAntiArmor: 0
+  deathSpawns: []
+  spawnedUnit: {fileID: 0}
+  spawnedBodies: 0
+  spawnIntervalSeconds: 0
+  auraRadius: 0
+  auraSpeedMultiplier: 1
+  auraHealPerSecondShare: 0
   techUpgrades:
   - {fileID: 11400000, guid: 2212d1cca002c254402bc6c64b0aca0a, type: 2}
   - {fileID: 11400000, guid: e3986a9a87053ad9a5ee0d14aecb00db, type: 2}

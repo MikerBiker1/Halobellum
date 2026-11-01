@@ -66,6 +66,8 @@ namespace Halobellum.Core
         public float TickInterval;
         /// <summary>Which enemies it hits: ground, air or both.</summary>
         public TargetFilter Targets = TargetFilter.Ground;
+        /// <summary>Unarmored enemies it kills rise as infected units (Flood spells, D38).</summary>
+        public bool InfectsKills;
 
         // Buffs.
         /// <summary>Bonus shield given to each unit, as a share of its maximum health (0.5 = half its health).</summary>

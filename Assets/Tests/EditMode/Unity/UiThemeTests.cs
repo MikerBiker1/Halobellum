@@ -39,6 +39,7 @@ namespace Halobellum.Tests
 
         [TestCase("UNSC")]
         [TestCase("Covenant")]
+        [TestCase("Flood")]
         public void FactionThemes_AreTextured_WithFontFiles(string name)
         {
             // Decision D28: textured, ship-inspired panels and real font files (free OFL fonts).
@@ -79,6 +80,8 @@ namespace Halobellum.Tests
             var covenant = AssetDatabase.LoadAssetAtPath<FactionDefinition>("Assets/_Project/Data/Factions/Covenant_Standard.asset");
             Assert.AreSame(Theme("UNSC"), unsc.uiTheme);
             Assert.AreSame(Theme("Covenant"), covenant.uiTheme);
+            var flood = AssetDatabase.LoadAssetAtPath<FactionDefinition>("Assets/_Project/Data/Factions/Flood_Standard.asset");
+            Assert.AreSame(Theme("Flood"), flood.uiTheme);
         }
 
         [Test]

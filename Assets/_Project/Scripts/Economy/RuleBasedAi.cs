@@ -517,12 +517,28 @@ namespace Halobellum.Economy
                         score += _random.Range(-0.1f, 0.1f);
                         break;
                 }
+                if (Difficulty != AiDifficulty.Easy) score += AgainstTheFlood(unit, seen, totalSeen);
             }
             else
             {
                 score += _random.Range(-0.3f, 0.3f);
             }
             return score;
+        }
+
+        /// <summary>
+        /// Decision D38: the more of the enemy's army is Flood, the more Normal and Hard avoid units that
+        /// only feed it (Unarmored bodies Infection Forms can infect) and want chaff clear and armor. Easy doesn't care.
+        /// </summary>
+        private static float AgainstTheFlood(UnitStats unit, IReadOnlyList<SeenSquad> seen, float totalSeen)
+        {
+            float flood = 0f;
+            foreach (SeenSquad squad in seen) if (squad.Type.IsFlood) flood += squad.Value;
+            if (flood <= 0f || unit.IsFlood) return 0f;
+            float share = flood / totalSeen;
+            if (unit.Role == UnitRole.ChaffClear) return 2f * share;
+            bool feedsIt = unit.ArmorType == ArmorType.Unarmored && !unit.ImmuneToInfection;
+            return feedsIt ? -4f * share : 1f * share;
         }
 
         private static bool CountersSeenRole(UnitStats unit, UnitRole role, IReadOnlyList<SeenSquad> seen)

@@ -166,7 +166,7 @@ namespace Halobellum.UI
                 HudTheme.RowBox(row);
                 if (placing) HudTheme.RowBox(row);
                 GUI.Label(new Rect(row.x + 8f, row.y + 2f, row.width - 110f, 22f), stats.Name, _text);
-                GUI.Label(new Rect(row.x + 8f, row.y + 24f, row.width - 110f, 20f), $"{RoleName(stats.Role)}, {Bodies(stats.SquadSize)}, {stats.Cost}", _small);
+                GUI.Label(new Rect(row.x + 8f, row.y + 24f, row.width - 110f, 20f), $"{RoleName(stats.Role)}, {Bodies(stats.FormsInSquad)}, {stats.Cost}", _small);
                 if (GUI.Button(new Rect(row.xMax - 92f, row.y + 7f, 86f, 32f), placing ? "Placing" : "Place", _button))
                 {
                     if (placing) sandbox.CancelPlacement();

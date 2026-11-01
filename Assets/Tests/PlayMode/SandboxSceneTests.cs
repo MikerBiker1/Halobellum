@@ -45,11 +45,43 @@ namespace Halobellum.Tests
         public IEnumerator OffersEverySliceUnit_FromBothFactions_PlusThePlaceholders()
         {
             yield return LoadSandbox();
-            Assert.AreEqual(27, _sandbox.Units.Count);
+            Assert.AreEqual(38, _sandbox.Units.Count);
+            Assert.AreEqual(11, _sandbox.Units.Count(u => u.Faction == "Flood"));
             Assert.AreEqual(12, _sandbox.Units.Count(u => u.Faction == "UNSC"));
             Assert.AreEqual(12, _sandbox.Units.Count(u => u.Faction == "Covenant"));
             Assert.AreEqual(3, _sandbox.Units.Count(u => u.Faction == SandboxController.ExtraUnitsLabel));
             Assert.IsTrue(_sandbox.IsDeploying);
+        }
+
+        [UnityTest]
+        public IEnumerator Flood_ShowsItsForms_AndMarinesRiseInTheRealScene()
+        {
+            yield return LoadSandbox();
+            UnitStats forms = Unit("Infection Forms");
+            _sandbox.AddSquad(Team.A, forms);
+            _sandbox.AddSquad(Team.A, forms);
+            _sandbox.AddSquad(Team.A, forms);
+            _sandbox.AddSquad(Team.B, Unit("Marine"));
+            _sandbox.AddSquad(Team.B, Unit("Scorpion"));
+            yield return null;
+
+            GameObject pack = GameObject.Find("Units").transform.GetChild(0).gameObject;
+            Assert.AreEqual(5, pack.GetComponentsInChildren<Transform>(false).Count(t => t.name.StartsWith("Form ")), "A pack shows its 5 forms.");
+
+            _battle.Speed = 4f;
+            _sandbox.Run();
+            float limit = Time.realtimeSinceStartup + 40f;
+            SimUnit risen = null;
+            while (risen == null && !_battle.Simulation.IsFinished && Time.realtimeSinceStartup < limit)
+            {
+                yield return null;
+                risen = _battle.Simulation.Units.FirstOrDefault(u => u.Stats.InfectedFrom != null);
+            }
+            Assert.IsNotNull(risen, "A Marine rose.");
+            Assert.AreEqual("Infected Marine", risen.Stats.Name);
+            Assert.AreEqual(Team.A, risen.Team);
+            yield return null;
+            Assert.IsNotNull(GameObject.Find($"Infected Marine #{risen.Id} (A)"), "The risen Marine has a view.");
         }
 
         [UnityTest]

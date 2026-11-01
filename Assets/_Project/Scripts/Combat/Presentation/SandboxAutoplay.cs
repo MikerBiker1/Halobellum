@@ -4,7 +4,7 @@
 // Sandbox scene). It places a mixed army on each side (ground and air units), saves a screenshot of
 // the placement, runs the battle at 4x, saves screenshots at 3 s and 12 s of battle time and at the
 // end, then quits. It also saves one screenshot of a lobbed shot at the top of its arc, one of a beam
-// charging and one of a beam firing, the first time each is seen.
+// charging, one of a beam firing and one of the first infected body, the first time each is seen.
 // Depends on: SandboxController, BattleController, Halobellum.Combat, Halobellum.Core, UnityEngine.
 
 using System;
@@ -21,15 +21,15 @@ namespace Halobellum.Presentation
     {
         public const string Flag = "-sandboxDemo";
 
-        private static readonly string[] Blue = { "Marine", "Marine", "Scorpion", "Pelican", "Warthog", "Spartan" };
-        private static readonly string[] Red = { "Grunt", "Grunt", "Jackal (Shield)", "Elite", "Wraith", "Banshee", "Scarab" };
+        private static readonly string[] Blue = { "Marine", "Marine", "Marine", "Marine", "Scorpion", "Spartan" };
+        private static readonly string[] Red = { "Infection Forms", "Infection Forms", "Infection Forms", "Infection Forms", "Carrier Form", "Flood Abomination", "Scarab", "Wraith" };
 
         private SandboxController _sandbox;
         private BattleController _battle;
         private string _shots;
         private int _step;
         private float _wait = 1f;
-        private bool _shotArc, _shotCharge, _shotBeam;
+        private bool _shotArc, _shotCharge, _shotBeam, _shotInfected;
         private readonly List<ShotInFlight> _inFlight = new List<ShotInFlight>();
         private readonly List<BeamShot> _beams = new List<BeamShot>();
 
@@ -108,7 +108,9 @@ namespace Halobellum.Presentation
                     break;
                 default:
                     enabled = false;
-                    Debug.Log("Sandbox demo finished: " + _battle.Simulation.Result.ToSummaryLine());
+                    int infected = 0;
+                    foreach (SimUnit unit in _battle.Simulation.Units) if (unit.Stats.InfectedFrom != null) infected++;
+                    Debug.Log("Sandbox demo finished: " + _battle.Simulation.Result.ToSummaryLine() + $"; {infected} rose infected");
                     Application.Quit();
                     break;
             }
@@ -126,6 +128,16 @@ namespace Halobellum.Presentation
                     if (shot.ArcLength <= 0f || shot.Progress < 0.4f || shot.Progress > 0.6f) continue;
                     Shot("arc");
                     _shotArc = true;
+                    break;
+                }
+            }
+            if (!_shotInfected)
+            {
+                foreach (SimUnit unit in simulation.Units)
+                {
+                    if (unit.Stats.InfectedFrom == null) continue;
+                    Shot("infected");
+                    _shotInfected = true;
                     break;
                 }
             }

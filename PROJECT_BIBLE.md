@@ -231,32 +231,36 @@ ODSTs are not a unit. They appear as a UNSC spell card (Section 10).
 
 The Covenant has no dedicated anti-armor unit. Elites, Zealots, and Wraith splash fill that job for the slice, and a dedicated unit may be added in the balance pass if win rates demand it. The Engineer is not in the slice.
 
-### 8.3 Flood (planned, after UNSC and Covenant are stable)
+### 8.3 Flood
 
-The Flood win by spreading. They have a roster of their own, plus temporary infected versions of other units.
+The Flood win by spreading. They have a roster of their own, plus temporary infected versions of other units. They have fewer unit types per tier than the other factions, because they will get more exclusive sub-faction units (M10). First-pass stats are in the unit assets and `balance.csv` (D38).
 
-| Role | Unit |
-| --- | --- |
-| Chaff | Infection Forms (large swarm) |
-| Chaff clear | Carrier Form (explodes on death, releases Infection Forms) |
-| Single-target DPS | Combat Form |
-| Tank | Pure Form Tank |
-| Flanker | Stalker Form |
-| Artillery | Pure Form Ranged |
-| Anti-air | To be designed |
-| Aerial | Infected Covenant dropship, Infected Pelican (one-shot crash dive) |
-| Titan | Flood Abomination (very tall and large) |
+| Unit | Role | Tier | Unlock | Squad | Cost | Health | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Infection Forms | Chaff | 1 | 0 | 50 forms in 10 packs | 100 | 190 per pack | Fast; the only unit that infects |
+| Carrier Form | Chaff clear | 1 | 0 | 4 | 150 | 140 | Explodes on reaching an enemy or when killed, releases 10 Infection Forms |
+| Combat Form | Single-target DPS | 2 | 50 | 6 | 200 | 220 | Anti-armor claws, scavenged rifle |
+| Stalker Form | Flanker | 2 | 50 | 3 | 250 | 450 | Very fast pure form |
+| Pure Form Ranged | Artillery | 2 | 50 | 2 | 300 | 400 | Lobs bone shards |
+| Swarm Form | Anti-air | 2 | 50 | 20 forms in 4 packs | 300 | 200 per pack | Flying packs, bonus damage against air |
+| Pure Form Tank | Tank | 3 | 200 | 1 | 500 | 3200 | Heavy armor, splash slam |
+| Seeder | Single-target DPS | 3 | 200 | 2 | 450 | 800 | Seeds enemies from range |
+| Infected Pelican | Aerial | 3 | 200 | 1 | 400 | 900 | One-shot crash dive |
+| Infected Phantom | Aerial | 3 | 200 | 1 | 450 | 1100 | Drops 5 Combat Forms after 8 seconds |
+| Flood Abomination | Titan | 4 | 350 | 1 | 800 | 7000 | Very tall and large; aura for nearby Flood, keeps releasing Infection Forms |
+
+**Packs.** One Infection Forms body is a pack of 5 tiny forms that move and act as one. A pack shows and deals less as its forms die. A single shot hurts one form; an area hit (splash, cone, beam, spell) hurts every form in the pack.
 
 **Infection mechanic**
 
-- **Only Infection Forms can infect.** Combat Forms, Carrier Forms, and Pure Forms do not. The Seeder is the one exception.
+- **Only Infection Forms can infect.** Combat Forms, Carrier Forms, and Pure Forms do not. The Seeder and the Flood's infecting spells are the exceptions.
 - Only **Unarmored** units can be infected, and only when they die within melee range of an Infection Form.
-- Vehicles, Heavy and Light Armor, Spartans, and Hunters cannot be infected. A unit with an Unarmored body and an energy shield, such as an Elite, can be infected only after its shield is depleted.
-- A killed unit rises as a **Combat Form** after 2 seconds. Its stats come from its original definition scaled to 60% health. It becomes a dumb melee charger: moves to the nearest enemy, no special abilities.
+- Vehicles, Heavy and Light Armor, Spartans, and Hunters cannot be infected by Infection Forms. A unit with an Unarmored body and an energy shield, such as an Elite, can be infected only after its shield is depleted.
+- A killed unit rises as an infected unit after 2 seconds. Its stats come from its original definition scaled to 60% health. It becomes a dumb melee charger: moves to the nearest enemy, no special abilities. It keeps its base damage and cannot be infected again.
 - Infected units exist only for that round and are discarded at round end.
-- **Seeder (Tier 3 concept):** a unit that infects enemies from range, acting like Mechabellum’s Hacker. Unlike Infection Forms, it can infect armored units, but it cannot infect units whose energy shield is up. Design details are to be decided before Milestone 8.
-- **Infected Pelican:** a one-shot Tier 3 unit that crashes into the densest enemy cluster, dealing heavy splash damage and spawning 10 Infection Forms and 5 Combat Forms on impact.
-- Counters: Fire, splash, and armored units. Players are expected to invest in chaff clear.
+- **Seeder:** a hit plants a seed for 8 seconds. The host loses health and is slowed, and if it dies seeded it rises as an infected unit, whatever its armor. A shield that is up stops the seed. Titans and Flood cannot be seeded.
+- **Infected Pelican:** a one-shot Tier 3 unit that crashes into the densest enemy cluster, dealing heavy splash damage and spawning 10 Infection Forms and 5 Combat Forms on impact. If it is shot down, it does the same where it falls.
+- Counters: Fire, splash, and armored units. Players are expected to invest in chaff clear. Fighting the Flood with chaff feeds them.
 
 ### 8.4 Sub-factions (built after the slice, do not implement until approved)
 
@@ -469,6 +473,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-01 | Items are dragged onto hexagons; no budget shown on reinforcement cards; blue shield bar over the health bar; line-shaped spells are placed in two clicks at any angle; Glassing Beam hits air | Per the project owner (D35) |
 | 2026-11-01 | Battle speed stays real (1x, 2x, 4x). Every unit's move speed is halved in the data (Marines 1.5 m/s); Warthog, Ghost and Gauss Warthog get +1 m/s on top | Per the project owner, after a trial (D36) |
 | 2026-11-01 | Artillery (Wraith, Archer Missile Pod) lobs its shots, aims ahead of the target and can miss. The Scarab's Focus Beam charges 2 s, fires 3 s at 400 damage per second in a small area, survives its target's death and drifts slowly to the next one | Per the project owner (D37) |
+| 2026-11-01 | The Flood are built (M8): packs of 5 Infection Forms that an area hit hurts all at once, infection, the Seeder, Carrier Form, Infected Pelican and Phantom, Swarm Form as anti-air, Abomination aura and spawning; Normal and Hard AI avoid Unarmored units against them, Easy doesn't | Design left to the agent by the project owner (D38) |
 
 ## 18. Assumptions to confirm
 

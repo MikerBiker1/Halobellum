@@ -100,11 +100,12 @@ namespace Halobellum.Tests
         // ------------------------------------------------------------------ countering
 
         /// <summary>Round 2 after the player fielded a big army of one unit type (seen by the AI in round 1's battle).</summary>
-        private static (Match match, RuleBasedAi ai) AfterPlayerFielded(string unitName, int squads, AiDifficulty difficulty, int seed = 3)
+        private static (Match match, RuleBasedAi ai) AfterPlayerFielded(string unitName, int squads, AiDifficulty difficulty, int seed = 3, System.Action<IReadOnlyList<UnitStats>> prepare = null)
         {
             var ai = new RuleBasedAi(difficulty, seed);
             Match match = NewMatch(ai, seed);
             match.ChooseDraft(0);
+            prepare?.Invoke(match.Player.Roster);
             match.Player.Squads.Clear();
             UnitStats type = match.Player.Roster.Single(u => u.Name == unitName);
             for (int i = 0; i < squads; i++)
@@ -131,6 +132,44 @@ namespace Halobellum.Tests
             List<PlacedSquad> bought = BoughtThisRound(match);
             Assert.IsNotEmpty(bought, ai.LastDecision);
             Assert.IsTrue(bought.Any(s => s.Type.Role == expectedCounter), $"Expected a {expectedCounter} squad. {ai.LastDecision}");
+        }
+
+        /// <summary>The player's chaff is Flood; some of the roster has armor, the rest are Unarmored bodies.</summary>
+        private static void FloodChaff(IReadOnlyList<UnitStats> roster)
+        {
+            foreach (UnitStats unit in roster)
+            {
+                if (unit.Name == "Chaff") { unit.IsFlood = true; unit.Infects = true; }
+                if (unit.Name == "Tank" || unit.Name == "Titan") unit.ArmorType = ArmorType.Heavy;
+                if (unit.Name == "Raider" || unit.Name == "Flak" || unit.Name == "Gunship") unit.ArmorType = ArmorType.Light;
+            }
+        }
+
+        [TestCase(AiDifficulty.Normal)]
+        [TestCase(AiDifficulty.Hard)]
+        public void AgainstTheFlood_ItDoesNotBuyUnitsThatFeedIt(AiDifficulty difficulty)
+        {
+            for (int seed = 1; seed <= 10; seed++)
+            {
+                var (match, ai) = AfterPlayerFielded("Chaff", 5, difficulty, seed, FloodChaff);
+                foreach (PlacedSquad squad in BoughtThisRound(match))
+                {
+                    bool feedsIt = !squad.Type.IsFlood && squad.Type.ArmorType == ArmorType.Unarmored && squad.Type.Role != UnitRole.ChaffClear;
+                    Assert.IsFalse(feedsIt, $"{squad.Type.Name}: {ai.LastDecision}");
+                }
+            }
+        }
+
+        [Test]
+        public void Easy_DoesNotCareAboutTheFlood()
+        {
+            int fed = 0;
+            for (int seed = 1; seed <= 30; seed++)
+            {
+                var (match, _) = AfterPlayerFielded("Chaff", 5, AiDifficulty.Easy, seed, FloodChaff);
+                fed += BoughtThisRound(match).Count(s => !s.Type.IsFlood && s.Type.ArmorType == ArmorType.Unarmored && s.Type.Role != UnitRole.ChaffClear);
+            }
+            Assert.Greater(fed, 0, "Easy buys them anyway.");
         }
 
         [Test]

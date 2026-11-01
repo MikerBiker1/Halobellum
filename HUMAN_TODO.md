@@ -119,3 +119,11 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 - [ ] **Scarab.** Watch for a thin line and a growing spot (2 s), then the thick beam (3 s). Kill its target during the beam: the beam should stay on and drift slowly to the next target. Placeholder art only.
 - [ ] **Numbers I chose:** the 3 s rest between beams and the 2 m/s drift. Tell me if either feels wrong.
 
+## 2026-11-01 (M8): play the Flood
+
+- [ ] **Play as Flood.** Pick the Flood card in the draft. Check the UI (flesh, veins, green glow; the text should not be clipped).
+- [ ] **Infection.** In the Sandbox, put Infection Forms against Marines at 1x. Corpses should turn green and get up after 2 s, fighting for the Flood.
+- [ ] **Counters.** Try Infection Forms against Flamethrowers, then against Scorpions: they should get wiped out.
+- [ ] **Carrier Form, Seeder, Infected Pelican, Abomination.** Do they feel like what you imagined? The stats window lists what each one does.
+- [ ] **Hard AI.** Play Flood against Hard for a few rounds: from round 2 it should stop buying Unarmored squads.
+

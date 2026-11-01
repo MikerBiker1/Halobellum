@@ -80,6 +80,19 @@ namespace Halobellum.Core
         /// <summary>It stops edging forward once its target is within this share of its main weapon's range.</summary>
         public float AdvanceRangeShare;
 
+        // Infection (Bible Section 8.3, D38).
+        /// <summary>An Unarmored unit that dies within this many metres of an Infection Form rises as an infected unit.</summary>
+        public float InfectionRange;
+        /// <summary>Seconds until a killed unit rises.</summary>
+        public float InfectionDelaySeconds;
+        /// <summary>An infected unit's health, as a share of what the unit had (Bible: 60%).</summary>
+        public float InfectedHealthShare;
+        /// <summary>An infected unit's melee damage per second, as a share of the damage per second of the unit's weapons.</summary>
+        public float InfectedDamageShare;
+        public float InfectedSpeedMultiplier;
+        public float InfectedMeleeRange;
+        public float InfectedMeleeInterval;
+
         public DamageTable DamageTable = new DamageTable();
 
         public float TickSeconds => TicksPerSecond > 0 ? 1f / TicksPerSecond : 0f;

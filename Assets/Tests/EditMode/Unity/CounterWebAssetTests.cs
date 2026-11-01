@@ -49,6 +49,17 @@ namespace Halobellum.Tests
             ("Hunter Pair", "Spartan"),
             ("Zealot", "Marine"),
             ("Scarab", "Spartan"),
+            ("Infection Forms", "Flamethrower Trooper"),
+            ("Carrier Form", "Scorpion"),
+            ("Combat Form", "Marine"),
+            ("Stalker Form", "Flamethrower Trooper"),
+            ("Pure Form Ranged", "Hornet"),
+            ("Swarm Form", "Marine"),
+            ("Pure Form Tank", "Gauss Warthog"),
+            ("Seeder", "Marine"),
+            ("Infected Pelican", "Vampire"),
+            ("Infected Phantom", "Swarm Form"),
+            ("Flood Abomination", "Spartan"),
         };
 
         [Test]
@@ -56,7 +67,7 @@ namespace Halobellum.Tests
         {
             Dictionary<string, UnitStats> units = HeadlessRunnerTool.LoadSliceUnits()
                 .ToDictionary(u => u.unitName, HeadlessRunnerTool.ValidatedStats);
-            Assert.AreEqual(24, units.Count);
+            Assert.AreEqual(35, units.Count);
             CollectionAssert.AreEquivalent(units.Keys, BestCounters.Select(p => p.unit), "One line per slice unit.");
 
             CombatRules rules = HeadlessRunnerTool.LoadRules();

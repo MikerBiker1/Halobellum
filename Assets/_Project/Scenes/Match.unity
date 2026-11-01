@@ -385,6 +385,7 @@ MonoBehaviour:
   factions:
   - {fileID: 11400000, guid: 988900441e10967359ab5caa9a1dbb86, type: 2}
   - {fileID: 11400000, guid: dbbb56bd6538040231b35b6b35bda6ec, type: 2}
+  - {fileID: 11400000, guid: 974f0fba69c5aef174372f1acc5f6732, type: 2}
   matchupTable: {fileID: 11400000, guid: 7f12dbd5b123ce7f994248c15783b53e, type: 2}
   seed: 0
 --- !u!114 &2081739573

@@ -73,6 +73,16 @@ namespace Halobellum.Core
         public float BeamRestSeconds;
         /// <summary>How fast a firing beam's spot follows its target, or moves to a new one, in metres per second.</summary>
         public float BeamSweepSpeed;
+        /// <summary>
+        /// Seed (the Seeder, D38): if above 0, a hit plants a seed in the target for this many seconds.
+        /// A seeded unit takes damage over time, is slowed, and rises as a Flood unit if it dies seeded,
+        /// whatever its armor. Shields that are up stop it; Titans and Flood cannot be seeded.
+        /// </summary>
+        public float SeedSeconds;
+        /// <summary>Share of its maximum health a seeded unit loses per second.</summary>
+        public float SeedDamageSharePerSecond;
+        /// <summary>A seeded unit moves this share slower (0.3 = 30% slower).</summary>
+        public float SeedSlowShare;
 
         public float ShotsPerSecond => FireInterval > 0f ? 1f / FireInterval : 0f;
         public bool IsInstant => ProjectileSpeed <= 0f;
@@ -128,6 +138,32 @@ namespace Halobellum.Core
         }
     }
 
+    /// <summary>Bodies of a unit type spawned during a battle (they only exist for that battle).</summary>
+    public sealed class SpawnEntry
+    {
+        public UnitStats Unit;
+        public int Bodies;
+    }
+
+    /// <summary>What a unit does when it dies, however it dies: an explosion and units released on the spot (D38).</summary>
+    public sealed class DeathBurstStats
+    {
+        public float Damage;
+        public float Radius;
+        public DamageType DamageType;
+        public bool IsAntiArmor;
+        public SpawnEntry[] Spawns = new SpawnEntry[0];
+
+        /// <summary>The burst as a weapon, so it goes through the same damage table as any shot. It hits ground units only.</summary>
+        public WeaponStats AsWeapon() => new WeaponStats
+        {
+            Name = "Death burst", DamagePerShot = Damage, DamageType = DamageType, IsAntiArmor = IsAntiArmor,
+            HasOwnTargetFilter = true, TargetFilter = TargetFilter.Ground, SplashRadius = Radius,
+        };
+
+        public DeathBurstStats Clone() => (DeathBurstStats)MemberwiseClone();
+    }
+
     /// <summary>All stats of one unit type. Health and damage are per body; cost is per squad.</summary>
     public sealed class UnitStats
     {
@@ -170,6 +206,35 @@ namespace Halobellum.Core
         /// <summary>A drop that only works once a tech upgrade unlocks it (the Pelican's troop bay); null = none.</summary>
         public UnitStats LockedReinforcement;
 
+        /// <summary>
+        /// How many tiny forms one body stands for (Infection Forms: 5). They move and act as one body.
+        /// Health and damage are for the whole body; it shows and deals less as its forms die, and an area
+        /// hit (splash, cone, beam, spell) hurts every form in it.
+        /// </summary>
+        public int FormsPerBody = 1;
+        /// <summary>A Flood unit: it cannot be infected or seeded (D38).</summary>
+        public bool IsFlood;
+        /// <summary>Unarmored enemies that die within melee range of this unit rise as infected units (Infection Forms).</summary>
+        public bool Infects;
+        /// <summary>Infection Forms cannot infect this unit even though its body is Unarmored (Spartans).</summary>
+        public bool ImmuneToInfection;
+        /// <summary>Null for units without one.</summary>
+        public DeathBurstStats DeathBurst;
+        /// <summary>The unit kills itself when its main weapon fires, to set off its death burst (Carrier Form, Infected Pelican).</summary>
+        public bool SelfDestructs;
+        /// <summary>The unit heads for the thickest group of enemies instead of the closest one (Infected Pelican).</summary>
+        public bool SeeksDensestCluster;
+        /// <summary>Released again and again during the battle (Abomination); SquadSize is the bodies each time. Null = none.</summary>
+        public UnitStats SpawnedUnit;
+        public float SpawnIntervalSeconds;
+        /// <summary>Friendly units within this many metres get the aura below. 0 = no aura.</summary>
+        public float AuraRadius;
+        public float AuraSpeedMultiplier = 1f;
+        /// <summary>Share of its maximum health a unit in the aura regains per second.</summary>
+        public float AuraHealPerSecondShare;
+        /// <summary>The unit this one was before it was infected, or null.</summary>
+        public UnitStats InfectedFrom;
+
         /// <summary>The tech upgrades this unit type can buy (up to 3, Bible Section 9).</summary>
         public TechUpgrade[] TechUpgrades = new TechUpgrade[0];
         /// <summary>Squad level these stats were made for (1 = base stats; see UnitUpgrades.Apply).</summary>
@@ -180,6 +245,8 @@ namespace Halobellum.Core
         public float TurnRateDegreesPerSecond => TurnTime180 > 0f ? 180f / TurnTime180 : float.PositiveInfinity;
         public bool HasDefenseArc => DefenseArc != null && DefenseArc.ArcDegrees > 0f;
         public bool HasReinforcement => Reinforcement != null && Reinforcement.SquadSize > 0;
+        /// <summary>The number of individuals a squad holds, as the player counts them (50 Infection Forms in 10 bodies).</summary>
+        public int FormsInSquad => SquadSize * System.Math.Max(1, FormsPerBody);
 
         /// <summary>True if this unit's target filter allows attacking a unit that is (or is not) in the air.</summary>
         public bool CanTarget(bool targetIsAir) => TargetFilter.Allows(targetIsAir);
@@ -214,9 +281,14 @@ namespace Halobellum.Core
                     if (w.Lobbed && (w.ProjectileSpeed <= 0f || w.SplashRadius <= 0f)) problems.Add($"{wl}: a lobbed shot needs a projectile speed and a splash radius.");
                     if (w.IsBeam && w.SplashRadius <= 0f) problems.Add($"{wl}: a beam needs a splash radius.");
                     if (w.IsBeam && w.ProjectileSpeed > 0f) problems.Add($"{wl}: a beam cannot have a projectile speed.");
+                    if (w.SeedSeconds < 0f || w.SeedDamageSharePerSecond < 0f || w.SeedSlowShare < 0f || w.SeedSlowShare > 1f) problems.Add($"{wl}: seed values are out of range.");
                     if (w.BeamSeconds < 0f || w.BeamChargeSeconds < 0f || w.BeamRestSeconds < 0f || w.BeamSweepSpeed < 0f) problems.Add($"{wl}: beam values cannot be negative.");
                 }
             }
+            if (FormsPerBody < 1) problems.Add($"{label}: forms per body must be 1 or more.");
+            if (SelfDestructs && DeathBurst == null) problems.Add($"{label}: a unit that self-destructs needs a death burst.");
+            if (SpawnedUnit != null && SpawnIntervalSeconds <= 0f) problems.Add($"{label}: a spawn needs an interval above 0.");
+            if (AuraRadius < 0f || AuraHealPerSecondShare < 0f || AuraSpeedMultiplier <= 0f) problems.Add($"{label}: aura values are out of range.");
             if (DefenseArc != null)
             {
                 if (DefenseArc.ArcDegrees < 0f || DefenseArc.ArcDegrees > 360f) problems.Add($"{label}: defense arc must be 0 to 360 degrees.");
@@ -271,6 +343,7 @@ namespace Halobellum.Core
             copy.DefenseArc = DefenseArc?.Clone();
             copy.Reinforcement = Reinforcement?.Clone();
             copy.LockedReinforcement = LockedReinforcement?.Clone();
+            copy.DeathBurst = DeathBurst?.Clone();
             copy.TechUpgrades = TechUpgrades == null ? new TechUpgrade[0] : (TechUpgrade[])TechUpgrades.Clone(); // Techs are shared, read-only data.
             return copy;
         }

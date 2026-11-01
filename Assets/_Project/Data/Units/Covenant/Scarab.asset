@@ -48,6 +48,9 @@ MonoBehaviour:
     beamChargeSeconds: 2
     beamRestSeconds: 3
     beamSweepSpeed: 2
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
   - weaponName: Plasma Turret (left)
     damagePerShot: 10
     fireInterval: 0.25
@@ -67,6 +70,9 @@ MonoBehaviour:
     beamChargeSeconds: 0
     beamRestSeconds: 0
     beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
   - weaponName: Plasma Turret (right)
     damagePerShot: 10
     fireInterval: 0.25
@@ -86,6 +92,9 @@ MonoBehaviour:
     beamChargeSeconds: 0
     beamRestSeconds: 0
     beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -97,6 +106,23 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
+  formsPerBody: 1
+  isFlood: 0
+  infects: 0
+  immuneToInfection: 0
+  selfDestructs: 0
+  seeksDensestCluster: 0
+  deathBurstDamage: 0
+  deathBurstRadius: 0
+  deathBurstDamageType: 0
+  deathBurstAntiArmor: 0
+  deathSpawns: []
+  spawnedUnit: {fileID: 0}
+  spawnedBodies: 0
+  spawnIntervalSeconds: 0
+  auraRadius: 0
+  auraSpeedMultiplier: 1
+  auraHealPerSecondShare: 0
   techUpgrades:
   - {fileID: 11400000, guid: 97ad07379e511319140f46b5855a8494, type: 2}
   - {fileID: 11400000, guid: 9f1639418395e56709e955b69c8cdeb9, type: 2}

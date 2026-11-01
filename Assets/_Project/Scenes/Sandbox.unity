@@ -384,6 +384,7 @@ MonoBehaviour:
   factions:
   - {fileID: 11400000, guid: 988900441e10967359ab5caa9a1dbb86, type: 2}
   - {fileID: 11400000, guid: dbbb56bd6538040231b35b6b35bda6ec, type: 2}
+  - {fileID: 11400000, guid: 974f0fba69c5aef174372f1acc5f6732, type: 2}
   extraUnits:
   - {fileID: 11400000, guid: b7df3ec8a68c66df70ff0b03829fd2c9, type: 2}
   - {fileID: 11400000, guid: 371c5bdf9bd419137959e17e6d1a1701, type: 2}

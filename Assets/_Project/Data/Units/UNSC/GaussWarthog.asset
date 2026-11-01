@@ -48,6 +48,9 @@ MonoBehaviour:
     beamChargeSeconds: 0
     beamRestSeconds: 0
     beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -59,6 +62,23 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
+  formsPerBody: 1
+  isFlood: 0
+  infects: 0
+  immuneToInfection: 0
+  selfDestructs: 0
+  seeksDensestCluster: 0
+  deathBurstDamage: 0
+  deathBurstRadius: 0
+  deathBurstDamageType: 0
+  deathBurstAntiArmor: 0
+  deathSpawns: []
+  spawnedUnit: {fileID: 0}
+  spawnedBodies: 0
+  spawnIntervalSeconds: 0
+  auraRadius: 0
+  auraSpeedMultiplier: 1
+  auraHealPerSecondShare: 0
   techUpgrades:
   - {fileID: 11400000, guid: 944c92efea92c58e0ee42467c16db362, type: 2}
   - {fileID: 11400000, guid: 391ec40b24c7446588828146e2a8b4b3, type: 2}

@@ -36,7 +36,7 @@ namespace Halobellum.EditorTools
     {
         public const string PlaceholderFolder = "Assets/_Project/Data/Units/Placeholder";
         /// <summary>The slice rosters (Bible Section 8), UNSC first.</summary>
-        public static readonly string[] SliceFolders = { "Assets/_Project/Data/Units/UNSC", "Assets/_Project/Data/Units/Covenant" };
+        public static readonly string[] SliceFolders = { "Assets/_Project/Data/Units/UNSC", "Assets/_Project/Data/Units/Covenant", "Assets/_Project/Data/Units/Flood" };
         public const int DefaultCounterWebBudget = 1800;
 
         // Default runner options (tool settings, not balance values).
