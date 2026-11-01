@@ -235,24 +235,11 @@ namespace Halobellum.Economy
         /// </summary>
         public BattleSimulation BuildBattle(bool includeEnemy)
         {
-            ArmySetup armyA = BuildArmy(Player);
-            ArmySetup armyB = includeEnemy ? BuildArmy(Enemy) : new ArmySetup(Enemy.Label);
-            var layout = new RunnerSettings { Battles = 1, BaseSeed = BattleSeed, PositionJitter = 0f, FrontLineDistance = 0f, SquadGap = 0f };
-            return HeadlessBattleRunner.CreateBattle(CombatRules, armyA, armyB, layout, BattleSeed);
+            return DeploymentGrid.CreateBattle(CombatRules, Player, includeEnemy ? Enemy : null, BattleSeed);
         }
 
         /// <summary>The seed of this round's battle (changes every battle, repeatable for the same match seed).</summary>
         public int BattleSeed => unchecked(Seed * 7919 + _battleCount * 104729 + Round);
-
-        private ArmySetup BuildArmy(PlayerState player)
-        {
-            var army = new ArmySetup(player.Label);
-            foreach (PlacedSquad squad in player.Squads)
-            {
-                army.AddAt(squad.Type, new List<Vec2> { DeploymentGrid.CentreInSquares(squad, CombatRules) }, new List<bool> { squad.Rotated90 });
-            }
-            return army;
-        }
 
         /// <summary>Applies the finished battle: base damage, win check, income. Returns the round summary.</summary>
         public RoundSummary FinishBattle()

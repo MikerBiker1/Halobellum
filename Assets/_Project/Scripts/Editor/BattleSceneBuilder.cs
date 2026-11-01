@@ -3,11 +3,13 @@
 //   Match.unity  - the game: starting draft, then rounds of deployment, battle and result against
 //                  the do-nothing AI (MatchController, DeploymentInput, MatchHud).
 //   Battle.unity - the balanced 300 vs 300 test battle, played at once (for battle testing).
+//   Sandbox.unity - place two armies from every faction freely and run the battle (SandboxController,
+//                  DeploymentInput, SandboxHud); reached from the draft screen.
 // Both have a directional light, the Main Camera with the pan/zoom controller, the "Battle" object
 // (BattleController and its views, wired to the Combat Rules asset) and a HUD. The Match scene is
 // put first in the build settings, so a built game starts with a match.
-//   Menu: Halobellum > Scenes > Rebuild Match Scene / Rebuild Battle Scene
-//   Command line: -executeMethod Halobellum.EditorTools.BattleSceneBuilder.BuildFromCommandLine (both)
+//   Menu: Halobellum > Scenes > Rebuild Match Scene / Rebuild Battle Scene / Rebuild Sandbox Scene
+//   Command line: -executeMethod Halobellum.EditorTools.BattleSceneBuilder.BuildFromCommandLine (all three)
 // Depends on: Halobellum.Presentation, Halobellum.UI, Halobellum.Units, UnityEditor.
 
 using System;
@@ -27,6 +29,7 @@ namespace Halobellum.EditorTools
     {
         public const string ScenePath = "Assets/_Project/Scenes/Battle.unity";
         public const string MatchScenePath = "Assets/_Project/Scenes/Match.unity";
+        public const string SandboxScenePath = "Assets/_Project/Scenes/Sandbox.unity";
         public const string TestBattlePath = "Assets/_Project/Data/TestBattle_Balanced.asset";
         public const string PlaceholderMaterialPath = "Assets/_Project/Art/Placeholder/PlaceholderLit.mat";
         public const string FactionFolder = "Assets/_Project/Data/Factions";
@@ -47,7 +50,15 @@ namespace Halobellum.EditorTools
             Debug.Log("Match scene rebuilt at " + MatchScenePath + ". Press Play to start a match.");
         }
 
-        /// <summary>Command line: rebuilds both scenes.</summary>
+        [MenuItem("Halobellum/Scenes/Rebuild Sandbox Scene")]
+        public static void BuildSandboxFromMenu()
+        {
+            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            BuildSandbox();
+            Debug.Log("Sandbox scene rebuilt at " + SandboxScenePath + ". Press Play to place two armies.");
+        }
+
+        /// <summary>Command line: rebuilds all three scenes.</summary>
         public static void BuildFromCommandLine()
         {
             int exitCode = 0;
@@ -55,6 +66,7 @@ namespace Halobellum.EditorTools
             {
                 Build();
                 BuildMatch();
+                BuildSandbox();
             }
             catch (Exception e) { Debug.LogError("Building the scenes failed: " + e); exitCode = 1; }
             EditorApplication.Exit(exitCode);
@@ -79,16 +91,23 @@ namespace Halobellum.EditorTools
             UpdateBuildSettings();
         }
 
+        /// <summary>Every faction asset in Data/Factions, UNSC first.</summary>
+        private static List<FactionDefinition> LoadFactions()
+        {
+            List<FactionDefinition> factions = AssetDatabase.FindAssets("t:" + nameof(FactionDefinition), new[] { FactionFolder })
+                .Select(AssetDatabase.GUIDToAssetPath).OrderBy(p => p.Contains("UNSC") ? 0 : 1).ThenBy(p => p, StringComparer.Ordinal)
+                .Select(AssetDatabase.LoadAssetAtPath<FactionDefinition>).ToList();
+            if (factions.Count == 0) throw new InvalidOperationException("No factions in " + FactionFolder);
+            return factions;
+        }
+
         /// <summary>Builds Match.unity: the game.</summary>
         public static void BuildMatch()
         {
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             var matchRules = AssetDatabase.LoadAssetAtPath<MatchRulesDefinition>(MatchRulesDefinition.DefaultAssetPath);
             if (matchRules == null) throw new InvalidOperationException("Missing " + MatchRulesDefinition.DefaultAssetPath);
-            List<FactionDefinition> factions = AssetDatabase.FindAssets("t:" + nameof(FactionDefinition), new[] { FactionFolder })
-                .Select(AssetDatabase.GUIDToAssetPath).OrderBy(p => p, StringComparer.Ordinal)
-                .Select(AssetDatabase.LoadAssetAtPath<FactionDefinition>).ToList();
-            if (factions.Count == 0) throw new InvalidOperationException("No factions in " + FactionFolder);
+            List<FactionDefinition> factions = LoadFactions();
 
             BattleController battle = CreateCommon();
             GameObject battleObject = battle.gameObject;
@@ -108,6 +127,30 @@ namespace Halobellum.EditorTools
             SetReference(matchHud, "battle", battle);
 
             EditorSceneManager.SaveScene(scene, MatchScenePath);
+            UpdateBuildSettings();
+        }
+
+        /// <summary>Builds Sandbox.unity: place two armies freely and run the battle.</summary>
+        public static void BuildSandbox()
+        {
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            List<FactionDefinition> factions = LoadFactions();
+
+            BattleController battle = CreateCommon();
+            GameObject battleObject = battle.gameObject;
+            var sandbox = battleObject.AddComponent<SandboxController>();
+            SetReferenceList(sandbox, "factions", factions.Cast<Object>().ToList());
+            battleObject.AddComponent<DeploymentInput>();
+            battleObject.AddComponent<SandboxAutoplay>();
+
+            var hud = new GameObject("HUD");
+            SetReference(hud.AddComponent<BattleHud>(), "battle", battle);
+            SetReference(hud.AddComponent<SquadStatsWindow>(), "battle", battle);
+            var sandboxHud = hud.AddComponent<SandboxHud>();
+            SetReference(sandboxHud, "sandbox", sandbox);
+            SetReference(sandboxHud, "battle", battle);
+
+            EditorSceneManager.SaveScene(scene, SandboxScenePath);
             UpdateBuildSettings();
         }
 
@@ -142,15 +185,18 @@ namespace Halobellum.EditorTools
             return battle;
         }
 
-        /// <summary>Match scene first (the game), then the Battle test scene.</summary>
+        /// <summary>The game's scenes in build order: the Match first (a built game starts with a match).</summary>
+        public static readonly string[] GameScenes = { MatchScenePath, SandboxScenePath, ScenePath };
+
+        /// <summary>Match scene first (the game), then the Sandbox and the Battle test scene.</summary>
         private static void UpdateBuildSettings()
         {
             var ordered = new List<EditorBuildSettingsScene>();
-            foreach (string path in new[] { MatchScenePath, ScenePath })
+            foreach (string path in GameScenes)
             {
                 if (System.IO.File.Exists(path)) ordered.Add(new EditorBuildSettingsScene(path, true));
             }
-            ordered.AddRange(EditorBuildSettings.scenes.Where(s => s.path != MatchScenePath && s.path != ScenePath));
+            ordered.AddRange(EditorBuildSettings.scenes.Where(s => !GameScenes.Contains(s.path)));
             EditorBuildSettings.scenes = ordered.ToArray();
             AssetDatabase.SaveAssets();
         }

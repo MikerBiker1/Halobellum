@@ -34,10 +34,10 @@ Milestones and items from PROJECT_BIBLE.md Section 14. An item is ticked when it
 - [x] Match scene with draft, deployment (shop, unlock, placement, rotation), battle and result screens
 - [x] A full match against the do-nothing AI can be won and lost (headless and PlayMode tests)
 
-## M4: Slice rosters and sandbox (in progress)
+## M4: Slice rosters and sandbox (all criteria pass; waiting for the human to confirm)
 - [x] Combat mechanics the slice units need: per-weapon target filters, bonus damage against air, cone splash (flamethrower), and a timed mid-battle drop (Pelican) (with tests)
 - [x] UNSC slice roster (12 units, Section 8.1): data assets with unlock prices, placeholder prefabs, faction roster
 - [x] Covenant slice roster (12 units, Section 8.2): data assets with unlock prices, placeholder prefabs, faction roster
 - [x] Counter web runner: every unit against every unit at equal cost, report and CSV, `balance.csv`
-- [ ] Counter web verified: every role has a counter that wins over 70% of the time (first-pass values tuned; Bible numbers only changed with approval)
-- [ ] Sandbox mode: pick two armies, place them freely, run the battle
+- [x] Counter web verified: every role has a counter that wins over 70% of the time (first-pass values tuned; Bible numbers only changed with approval)
+- [x] Sandbox mode: pick two armies, place them freely, run the battle

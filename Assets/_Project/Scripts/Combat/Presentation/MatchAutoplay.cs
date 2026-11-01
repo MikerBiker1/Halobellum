@@ -5,7 +5,8 @@
 // It picks the first draft card, buys up to 2 squads per round of the first affordable unlocked
 // unit type, presses Ready, saves screenshots of the draft, the bought squads falling in, each
 // deployment, battle (at 2 s of battle time) and result, then quits after the given number of rounds (or when the match ends).
-// Depends on: MatchController, BattleController, Halobellum.Economy, UnityEngine.
+// With "-sandboxDemo <folder>" it opens the Sandbox scene instead (see SandboxAutoplay).
+// Depends on: MatchController, BattleController, SandboxAutoplay, Halobellum.Economy, UnityEngine.
 
 using System;
 using System.Globalization;
@@ -33,6 +34,13 @@ namespace Halobellum.Presentation
         private void Awake()
         {
             string[] args = Environment.GetCommandLineArgs();
+            if (Array.IndexOf(args, SandboxAutoplay.Flag) >= 0)
+            {
+                // The sandbox demo runs in the Sandbox scene (see SandboxAutoplay).
+                enabled = false;
+                UnityEngine.SceneManagement.SceneManager.LoadScene("Sandbox");
+                return;
+            }
             if (Array.IndexOf(args, "-autoplay") < 0)
             {
                 enabled = false;

@@ -41,3 +41,12 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 - [x] **Answer D17 to D20** in DECISIONS.md (income timing, Tier 1 unlocks, draft squads and selling, exact tie, temporary content).
 - [ ] **Re-check deployment after your D17 to D19 changes.** Start a match: you have 200 credits, and your 2 free squads stand in the middle of your zone. Press **Buy**: the squad falls from the sky to the middle of your zone and is selected when it lands; press **M** (or Move) to put it somewhere else, R to turn it. Select a free draft squad: Sell shows half its cost.
 - [x] **Confirm M3** so M4 (slice rosters and sandbox) can start.
+
+## 2026-10-31: check M4 (slice rosters and sandbox)
+
+- [ ] **Play a match with the real units.** Open `Assets/_Project/Scenes/Match.unity` and press **Play**. The draft cards now offer real Tier 1 squads (Marines, Flamethrower Troopers, Warthogs; Grunts, Fuel Rod Grunts, Jackals, Ghosts), and the shop lists all 12 units of your faction with their unlock prices.
+- [ ] **Try the sandbox.** On the draft screen press **Sandbox: test any two armies** (or open `Assets/_Project/Scenes/Sandbox.unity`). Choose **Blue** or **Red**, press **Place** next to a unit, and left-click in that side's zone (it keeps placing that unit until you right-click). Click a squad to **Move (M)**, **Turn (R)** or **Remove (Del)** it. **Copy to red** mirrors your army, the top bar shows both armies' cost. Press **Run battle**, then **Reset** to put both armies back and try again. **Back to match** returns to the draft.
+- [ ] **Watch a Pelican drop.** In the sandbox, put a Pelican on one side and a few squads on the other; 10 seconds into the battle 6 Marines fall from it.
+- [ ] **Optional: run the counter web yourself.** Menu **Halobellum > Headless Runner > Run Counter Web** (takes several minutes; a progress bar shows). The report appears in the Console; the full win-rate matrix goes to `BalanceReports/`.
+- [ ] **Answer D21 to D24** in DECISIONS.md (first-pass stats, how the abilities work, counter web method and the 55-70% vs over-70% question, placeholder units).
+- [ ] **Confirm M4** so M5 (AI opponent) can start.

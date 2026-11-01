@@ -1,11 +1,12 @@
 // DeploymentInput.cs
-// Mouse and keyboard during deployment (Bible Section 5, Placement). Bought squads appear in the
-// middle of the zone (MatchController); the selected squad can then be moved: a flat "ghost" shows
-// its footprint snapped to the grid squares under the mouse, green where it fits, red where it doesn't.
-//   Selected squad: M moves it (if bought this round), R turns it, Delete sells it.
-//   While moving: left-click puts it there, R turns it, right-click or Escape cancels.
-// Depends on: MatchController, BattleController (rules), UiHitAreas, PlaceholderArt,
-//             Halobellum.Economy (DeploymentGrid, MatchPhase), Unity Input System.
+// Mouse and keyboard during deployment (Bible Section 5, Placement), for any scene with an
+// IDeploymentPlacement (the Match, the Sandbox). While a squad is being placed or moved, a flat
+// "ghost" shows its footprint snapped to the grid squares under the mouse, green where it fits,
+// red where it doesn't. Team B's zone is the mirror image of Team A's.
+//   Selected squad: M moves it, R turns it, Delete sells (match) or removes (sandbox) it.
+//   While placing or moving: left-click puts it there, R turns it, right-click or Escape cancels.
+// Depends on: IDeploymentPlacement, BattleController (rules), UiHitAreas, PlaceholderArt,
+//             Halobellum.Economy (DeploymentGrid), Unity Input System.
 
 using Halobellum.Core;
 using Halobellum.Economy;
@@ -14,13 +15,12 @@ using UnityEngine.InputSystem;
 
 namespace Halobellum.Presentation
 {
-    [RequireComponent(typeof(MatchController))]
     public sealed class DeploymentInput : MonoBehaviour
     {
         [SerializeField] private Color validColor = new Color(0.3f, 0.95f, 0.4f);
         [SerializeField] private Color invalidColor = new Color(0.95f, 0.3f, 0.25f);
 
-        private MatchController _match;
+        private IDeploymentPlacement _match;
         private BattleController _battle;
         private Transform _ghost;
         private MeshRenderer _ghostRenderer;
@@ -28,7 +28,7 @@ namespace Halobellum.Presentation
 
         private void Start()
         {
-            _match = GetComponent<MatchController>();
+            _match = GetComponent<IDeploymentPlacement>();
             _battle = GetComponent<BattleController>();
             _validMaterial = PlaceholderArt.MaterialFor(validColor);
             _invalidMaterial = PlaceholderArt.MaterialFor(invalidColor);
@@ -39,9 +39,8 @@ namespace Halobellum.Presentation
 
         private void Update()
         {
-            Match match = _match.Match;
-            bool deploying = match != null && match.Phase == MatchPhase.Deployment;
-            if (!deploying)
+            if (_match == null) return;
+            if (!_match.IsDeploying)
             {
                 if (_match.IsPlacing) _match.CancelPlacement();
                 _ghost.gameObject.SetActive(false);
@@ -58,7 +57,7 @@ namespace Halobellum.Presentation
                 if (selected == null) return;
                 if (keyboard.mKey.wasPressedThisFrame) _match.BeginMoving(selected);
                 else if (keyboard.rKey.wasPressedThisFrame) _match.ToggleRotation();
-                else if (keyboard.deleteKey.wasPressedThisFrame) _match.Sell(selected);
+                else if (keyboard.deleteKey.wasPressedThisFrame) _match.Remove(selected);
                 return;
             }
 
@@ -95,6 +94,7 @@ namespace Halobellum.Presentation
 
             CombatRules rules = _battle.Rules;
             DeploymentGrid.Footprint(_match.PlacementType, _match.PlacingRotated, rules, out int width, out int depth);
+            if (_match.PlacingTeam == Team.B) hit = -hit; // Team B's grid is mirrored through the centre.
             float columnF = (hit.x + rules.ArenaWidth * 0.5f) / rules.SquareSize;
             float rowF = (-hit.z - rules.DeploymentZoneFront) / rules.SquareSize; // Rows count back from the zone's front.
             column = Mathf.RoundToInt(columnF - width * 0.5f);
@@ -108,6 +108,11 @@ namespace Halobellum.Presentation
             DeploymentGrid.Footprint(_match.PlacementType, _match.PlacingRotated, rules, out int width, out int depth);
             float x = (column + width * 0.5f) * rules.SquareSize - rules.ArenaWidth * 0.5f;
             float z = -(rules.DeploymentZoneFront + (row + depth * 0.5f) * rules.SquareSize);
+            if (_match.PlacingTeam == Team.B)
+            {
+                x = -x;
+                z = -z;
+            }
             _ghost.SetPositionAndRotation(new Vector3(x, 0.06f, z), Quaternion.identity);
             _ghost.localScale = new Vector3(width * rules.SquareSize - 0.1f, 0.1f, depth * rules.SquareSize - 0.1f);
             _ghostRenderer.sharedMaterial = _match.CanPlaceAt(column, row) ? _validMaterial : _invalidMaterial;

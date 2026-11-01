@@ -5,9 +5,11 @@
 // squads. Turning a squad 90 degrees swaps its width and depth.
 // Coordinates are in the owner's frame: column 0 is the owner's left edge, row 0 is the front edge
 // of the owner's zone. Team B's grid is the mirror image of Team A's.
+// CreateBattle turns two deployments into a battle (used by the Match and the Sandbox).
 // Depends on: Halobellum.Core (UnitStats, CombatRules, Vec2), Halobellum.Combat (SquadFormation), PlayerState.
 
 using System;
+using System.Collections.Generic;
 using Halobellum.Combat;
 using Halobellum.Core;
 
@@ -62,6 +64,29 @@ namespace Halobellum.Economy
         {
             Footprint(squad.Type, squad.Rotated90, rules, out int width, out int depth);
             return new Vec2(squad.Column + width * 0.5f - rules.ArenaWidthSquares * 0.5f, squad.Row + depth * 0.5f);
+        }
+
+        /// <summary>A player's deployment as an army for the battle, squads in deployment order.</summary>
+        public static ArmySetup BuildArmy(PlayerState player, CombatRules rules)
+        {
+            var army = new ArmySetup(player.Label);
+            foreach (PlacedSquad squad in player.Squads)
+            {
+                army.AddAt(squad.Type, new List<Vec2> { CentreInSquares(squad, rules) }, new List<bool> { squad.Rotated90 });
+            }
+            return army;
+        }
+
+        /// <summary>
+        /// A battle (not started) from two deployments: squads in deployment order, Team A first, so
+        /// simulation squad i is placed squad i. playerB may be null (an empty side, e.g. a preview).
+        /// </summary>
+        public static BattleSimulation CreateBattle(CombatRules rules, PlayerState playerA, PlayerState playerB, int seed)
+        {
+            ArmySetup armyA = BuildArmy(playerA, rules);
+            ArmySetup armyB = playerB != null ? BuildArmy(playerB, rules) : new ArmySetup("Team B");
+            var layout = new RunnerSettings { Battles = 1, BaseSeed = seed, PositionJitter = 0f, FrontLineDistance = 0f, SquadGap = 0f };
+            return HeadlessBattleRunner.CreateBattle(rules, armyA, armyB, layout, seed);
         }
 
         /// <summary>

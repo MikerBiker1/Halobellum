@@ -56,4 +56,4 @@ MonoBehaviour:
   prefab: {fileID: 5104527227943967435, guid: 303492183918dee44a8538a6de5d584f, type: 3}
   strongAgainst: Aerial
   weakAgainst: Ground units
-  notes: 'Best counters (headless runner, equal cost): Marine (100%), Elite (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Elephant (100%), Elite (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

@@ -70,4 +70,4 @@ MonoBehaviour:
   prefab: {fileID: 6683260802297900999, guid: d0452180e823bc64cafbb877f53a53fd, type: 3}
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air
-  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Vampire (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Vampire (100%), Wolverine (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

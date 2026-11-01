@@ -1,6 +1,7 @@
 // MatchHud.cs
 // The match screens (Bible Section 13), one per phase:
-//   Draft: the starting draft cards (faction, sub-faction, 2 free squads) to choose from.
+//   Draft: the starting draft cards (faction, sub-faction, 2 free squads) to choose from, and a
+//     button to the Sandbox.
 //   Deployment: credits and next income, squads bought (x of 2), unlocks (x of 1), both bases, the
 //     unit shop (Buy / Unlock), actions for the selected squad (Move, Turn, Sell) and Ready. No timer.
 //   Battle: both base health bars and a live army-value comparison (speed controls are in BattleHud).
@@ -17,11 +18,14 @@ using Halobellum.Core;
 using Halobellum.Economy;
 using Halobellum.Presentation;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Halobellum.UI
 {
     public sealed class MatchHud : MonoBehaviour
     {
+        public const string SandboxSceneName = "Sandbox";
+
         [SerializeField] private MatchController match;
         [SerializeField] private BattleController battle;
         [SerializeField] private Color playerColor = new Color(0.35f, 0.55f, 1f);
@@ -75,10 +79,16 @@ namespace Halobellum.UI
                 {
                     UnitStats unit = card.Squads[s];
                     GUI.Label(new Rect(rect.x + 28f, rect.y + 110f + s * 44f, rect.width - 44f, 44f),
-                        $"{unit.Name}\n{RoleName(unit.Role)}, {unit.SquadSize} bodies, worth {unit.Cost}", _small);
+                        $"{unit.Name}\n{RoleName(unit.Role)}, {Bodies(unit.SquadSize)}, worth {unit.Cost}", _small);
                 }
                 if (GUI.Button(new Rect(rect.x + 16f, rect.yMax - 52f, rect.width - 32f, 38f), "Choose", _bigButton)) match.ChooseDraft(i);
             }
+
+            // The sandbox (Milestone 4): place any two armies and watch them fight.
+            var sandbox = new Rect(width * 0.5f - 200f, y + cardHeight + 30f, 400f, 50f);
+            Panel(sandbox);
+            if (GUI.Button(new Rect(sandbox.x + 8f, sandbox.y + 6f, sandbox.width - 16f, 38f), "Sandbox: test any two armies", _button))
+                SceneManager.LoadScene(SandboxSceneName);
         }
 
         // ------------------------------------------------------------------ deployment
@@ -117,7 +127,7 @@ namespace Halobellum.UI
             Match m = match.Match;
             PlayerState player = m.Player;
             List<UnitStats> roster = player.Roster;
-            const float panelWidth = 360f, rowHeight = 58f;
+            const float panelWidth = 420f, rowHeight = 58f;
             float panelHeight = Mathf.Min(height - 200f, 50f + roster.Count * rowHeight);
             var panel = new Rect(width - panelWidth - 10f, 110f, panelWidth, panelHeight);
             Panel(panel);
@@ -131,8 +141,8 @@ namespace Halobellum.UI
                 UnitStats unit = roster[i];
                 var row = new Rect(0f, i * rowHeight, content.width, rowHeight - 4f);
                 GUI.Box(row, GUIContent.none);
-                GUI.Label(new Rect(row.x + 8f, row.y + 4f, 210f, 24f), unit.Name, _text);
-                GUI.Label(new Rect(row.x + 8f, row.y + 28f, 220f, 22f), $"Tier {unit.Tier}, {RoleName(unit.Role)}, {unit.SquadSize} bodies", _small);
+                GUI.Label(new Rect(row.x + 8f, row.y + 4f, row.width - 130f, 24f), unit.Name, _text);
+                GUI.Label(new Rect(row.x + 8f, row.y + 28f, row.width - 130f, 22f), $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.SquadSize)}", _small);
 
                 var button = new Rect(row.xMax - 118f, row.y + 9f, 110f, 36f);
                 if (player.Unlocked.Contains(unit))
@@ -282,6 +292,8 @@ namespace Halobellum.UI
             GUI.color = old;
             GUI.Label(rect, $"{label}: {Mathf.Max(0, health)} / {maxHealth}", _smallCentered);
         }
+
+        private static string Bodies(int count) => count == 1 ? "1 body" : $"{count} bodies";
 
         private static string RoleName(UnitRole role)
         {

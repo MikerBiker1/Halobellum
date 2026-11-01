@@ -56,4 +56,4 @@ MonoBehaviour:
   prefab: {fileID: 3760541862654182237, guid: 5eed2f1c115c1fc4f8bb9dcd850d8f8c, type: 3}
   strongAgainst: 'Tanks, heavy units'
   weakAgainst: 'Chaff swarms, flankers'
-  notes: 'Best counters (headless runner, equal cost): Marine (100%), Warthog (0%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Ghost (0%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

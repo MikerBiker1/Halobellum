@@ -29,7 +29,7 @@ namespace Halobellum.EditorTools
                 {
                     scenes = Array.IndexOf(args, "-battleScene") >= 0
                         ? new[] { BattleSceneBuilder.ScenePath }
-                        : new[] { BattleSceneBuilder.MatchScenePath, BattleSceneBuilder.ScenePath },
+                        : BattleSceneBuilder.GameScenes,
                     locationPathName = args[index + 1],
                     target = BuildTarget.StandaloneWindows64,
                     options = BuildOptions.None,

@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/_Project/Scenes/Match.unity
     guid: 278814d8cac0834498afadb6381c497b
   - enabled: 1
+    path: Assets/_Project/Scenes/Sandbox.unity
+    guid: a3642291af633d448a3277336062e77a
+  - enabled: 1
     path: Assets/_Project/Scenes/Battle.unity
     guid: 2378ea8ecb3614e4dab02e15c0e26fc5
   - enabled: 1

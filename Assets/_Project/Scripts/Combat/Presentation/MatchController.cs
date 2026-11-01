@@ -21,7 +21,7 @@ using UnityEngine;
 namespace Halobellum.Presentation
 {
     [RequireComponent(typeof(BattleController))]
-    public sealed class MatchController : MonoBehaviour
+    public sealed class MatchController : MonoBehaviour, IDeploymentPlacement
     {
         [SerializeField] private MatchRulesDefinition matchRules;
         [SerializeField] private List<FactionDefinition> factions = new List<FactionDefinition>();
@@ -47,6 +47,9 @@ namespace Halobellum.Presentation
         /// <summary>Whether the squad being moved is turned 90 degrees.</summary>
         public bool PlacingRotated { get; private set; }
         public bool IsPlacing => MovingSquadId >= 0;
+        public bool IsDeploying => Match != null && Match.Phase == MatchPhase.Deployment;
+        /// <summary>The player always deploys in their own zone.</summary>
+        public Team PlacingTeam => Team.A;
 
         private void Start()
         {
@@ -196,6 +199,9 @@ namespace Halobellum.Presentation
             UnitStats type = PlacementType;
             return type != null && DeploymentGrid.CanPlace(Match.Player, type, column, row, PlacingRotated, Match.CombatRules, MovingSquadId);
         }
+
+        /// <summary>In a match, taking a squad off the field means selling it.</summary>
+        public ActionResult Remove(PlacedSquad squad) => Sell(squad);
 
         public ActionResult Sell(PlacedSquad squad)
         {
