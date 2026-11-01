@@ -92,6 +92,8 @@ namespace Halobellum.Core
         public float InfectedSpeedMultiplier;
         public float InfectedMeleeRange;
         public float InfectedMeleeInterval;
+        /// <summary>A unit that can leap jumps over what is in its way after being held up this many seconds (D39).</summary>
+        public float LeapWhenHeldUpSeconds;
 
         public DamageTable DamageTable = new DamageTable();
 

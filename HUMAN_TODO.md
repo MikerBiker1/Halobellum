@@ -126,4 +126,5 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 - [ ] **Counters.** Try Infection Forms against Flamethrowers, then against Scorpions: they should get wiped out.
 - [ ] **Carrier Form, Seeder, Infected Pelican, Abomination.** Do they feel like what you imagined? The stats window lists what each one does.
 - [ ] **Hard AI.** Play Flood against Hard for a few rounds: from round 2 it should stop buying Unarmored squads.
+- [ ] **The leap (D39).** Watch Infection Forms at 1x: they should pounce from about 6 m, jump over Carrier Forms and crowds, and no longer pause as they cross into the enemy's half. Tell me if 2.5 s between leaps, or their height and speed, feels wrong.
 

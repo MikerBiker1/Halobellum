@@ -201,6 +201,7 @@ namespace Halobellum.Combat
             UpdateTargetsAndStates();
             UpdateSquadFormations();
             UpdateAdvances();
+            UpdateLeaps();
             _movement.Step(_units, _dt);
             FaceTargets();
             FireWeapons();
@@ -558,8 +559,13 @@ namespace Halobellum.Combat
             {
                 if (!unit.IsAlive) continue;
 
-                // Once inside the enemy's deployment zone, a unit notices enemies at any distance.
-                if (!unit.UnlimitedAcquisition && IsInEnemyZone(unit)) unit.UnlimitedAcquisition = true;
+                // Once inside the enemy's deployment zone, a unit notices enemies at any distance. It looks
+                // straight away, instead of standing idle until its next check.
+                if (!unit.UnlimitedAcquisition && IsInEnemyZone(unit))
+                {
+                    unit.UnlimitedAcquisition = true;
+                    unit.RetargetTimer = 0f;
+                }
 
                 unit.RetargetTimer -= _dt;
                 // Re-pick at once only if the current target died; a unit with no target waits for its next check.
@@ -684,7 +690,7 @@ namespace Halobellum.Combat
             {
                 SimUnit unit = _units[i];
                 _advancing[i] = false;
-                if (_rules.AdvanceSpeedMultiplier <= 0f || !unit.IsAlive || unit.IsAir || unit.State != UnitState.Attack
+                if (_rules.AdvanceSpeedMultiplier <= 0f || !unit.IsAlive || unit.IsAir || unit.IsLeaping || unit.State != UnitState.Attack
                     || unit.MoveTarget == null || unit.MoveSpeedNow <= 0f) continue;
                 WeaponStats weapon = unit.Weapons[unit.MainWeaponIndex].Stats;
                 float step = unit.MoveSpeedNow * _rules.AdvanceSpeedMultiplier * _dt;
@@ -709,7 +715,7 @@ namespace Halobellum.Combat
             grid.Query(unit.Position, unit.Radius + grid.MaxRadius + touch, _nearby);
             foreach (SimUnit friend in _nearby)
             {
-                if (friend == unit || friend.Team != unit.Team || friend.IsAir || !friend.IsAlive) continue;
+                if (friend == unit || friend.Team != unit.Team || friend.IsAir || !friend.IsAlive || friend.IsLeaping) continue;
                 bool pushing = friend.State == UnitState.Move || friend.Advancing;
                 if (!pushing) continue;
 
@@ -727,11 +733,55 @@ namespace Halobellum.Combat
             return false;
         }
 
+        /// <summary>
+        /// Decision D39: a walking unit that can leap pounces on a target within its leap range, landing
+        /// against it, and jumps over whatever holds it up (a slower friend, a crowd), straight on along its way.
+        /// </summary>
+        private void UpdateLeaps()
+        {
+            foreach (SimUnit unit in _units)
+            {
+                float range = unit.Stats.LeapRange;
+                if (range <= 0f || !unit.IsAlive || unit.IsLeaping) continue;
+                if (unit.State != UnitState.Move)
+                {
+                    unit.HeldUpSeconds = 0f;
+                    continue;
+                }
+                Vec2 way = unit.MoveGoal - unit.Position;
+                if (way.LengthSquared < 1e-8f) continue;
+                way = way.Normalized;
+                unit.HeldUpSeconds = Vec2.Dot(unit.Velocity, way) < 0.5f * unit.MoveSpeedNow ? unit.HeldUpSeconds + _dt : 0f;
+                if (ElapsedSeconds + 1e-4f < unit.LeapReadyAt) continue;
+
+                SimUnit target = unit.MoveTarget;
+                if (Targeting.IsTargetableEnemy(unit, target) && Targeting.EdgeDistance(unit, target) <= range)
+                {
+                    Vec2 fromTarget = (unit.Position - target.Position).Normalized;
+                    StartLeap(unit, target.Position + fromTarget * (target.Radius + unit.Radius));
+                }
+                else if (unit.HeldUpSeconds >= _rules.LeapWhenHeldUpSeconds)
+                {
+                    StartLeap(unit, unit.Position + way * range);
+                }
+            }
+        }
+
+        private void StartLeap(SimUnit unit, Vec2 landing)
+        {
+            unit.IsLeaping = true;
+            unit.LeapFrom = unit.Position;
+            unit.LeapTo = landing;
+            unit.LeapReadyAt = ElapsedSeconds + unit.Stats.LeapCooldownSeconds;
+            unit.HeldUpSeconds = 0f;
+            MarkEngaged(unit); // Its squad's formation is over.
+        }
+
         /// <summary>How far this weapon notices enemies: weapon range x the acquisition multiplier, or unlimited.</summary>
         private float AcquisitionRange(SimUnit unit, WeaponStats weapon)
         {
             if (unit.UnlimitedAcquisition || _rules.AcquisitionRangeMultiplier <= 0f) return float.PositiveInfinity;
-            return weapon.Range * _rules.AcquisitionRangeMultiplier;
+            return Math.Max(weapon.Range, unit.Stats.LeapRange) * _rules.AcquisitionRangeMultiplier; // A leap is its reach too.
         }
 
         /// <summary>Straight ahead toward the enemy's side: up for Team A, down for Team B.</summary>
@@ -859,7 +909,7 @@ namespace Halobellum.Combat
         {
             foreach (SimUnit unit in _units)
             {
-                if (!unit.IsAlive) continue;
+                if (!unit.IsAlive || unit.IsLeaping) continue;
                 for (int w = 0; w < unit.Weapons.Length; w++)
                 {
                     SimWeapon weapon = unit.Weapons[w];

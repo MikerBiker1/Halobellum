@@ -96,6 +96,14 @@ namespace Halobellum.Units
         [Tooltip("Share of its maximum health a unit in the aura regains per second.")]
         public float auraHealPerSecondShare;
 
+        [Header("Leap (D39)")]
+        [Tooltip("It pounces on a target within this many metres, and jumps this far over anything that holds it up. 0 = never.")]
+        public float leapRange;
+        [Tooltip("Metres per second in the air.")]
+        public float leapSpeed;
+        [Tooltip("Seconds from one leap to the next.")]
+        public float leapCooldownSeconds;
+
         [Header("Tech upgrades (up to 3, Bible Section 9)")]
         public List<TechUpgradeDefinition> techUpgrades = new List<TechUpgradeDefinition>();
 
@@ -143,6 +151,9 @@ namespace Halobellum.Units
                 AuraRadius = auraRadius,
                 AuraSpeedMultiplier = auraSpeedMultiplier,
                 AuraHealPerSecondShare = auraHealPerSecondShare,
+                LeapRange = leapRange,
+                LeapSpeed = leapSpeed,
+                LeapCooldownSeconds = leapCooldownSeconds,
             };
 
             // Units spawned by this one are copies with the given body count as their squad size.

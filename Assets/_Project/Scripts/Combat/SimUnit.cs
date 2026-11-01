@@ -98,6 +98,25 @@ namespace Halobellum.Combat
         /// <summary>The last tick an aura reached it (several auras do not add up).</summary>
         public int AuraTick = -1;
 
+        /// <summary>True while it is in the air on a leap (D39): it flies over bodies and cannot attack.</summary>
+        public bool IsLeaping;
+        public Vec2 LeapFrom;
+        public Vec2 LeapTo;
+        /// <summary>Battle time from which it can leap again.</summary>
+        public float LeapReadyAt;
+        /// <summary>Seconds it has been walking much slower than it wants to.</summary>
+        public float HeldUpSeconds;
+
+        /// <summary>How far along its leap it is, 0 to 1.</summary>
+        public float LeapProgress
+        {
+            get
+            {
+                float total = Vec2.Distance(LeapFrom, LeapTo);
+                return !IsLeaping || total < 1e-4f ? 0f : System.Math.Min(1f, Vec2.Distance(LeapFrom, Position) / total);
+            }
+        }
+
         /// <summary>How many of its tiny forms are still alive (1 for a normal unit).</summary>
         public int FormsAlive
         {

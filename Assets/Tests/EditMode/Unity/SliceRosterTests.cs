@@ -213,6 +213,8 @@ namespace Halobellum.Tests
             Assert.AreEqual(5, forms.FormsPerBody);
             Assert.AreEqual(50, forms.FormsInSquad, "50 forms in a squad, in packs of 5.");
             Assert.IsTrue(forms.Infects);
+            Assert.AreEqual(6f, forms.LeapRange, 1e-3f, "They pounce from 6 m.");
+            Assert.Greater(forms.LeapSpeed, forms.MoveSpeed);
             foreach (var row in Flood)
             {
                 Assert.IsTrue(u[row.name].IsFlood, row.name);

@@ -137,6 +137,7 @@ namespace Halobellum.UI
         {
             if (s.FormsPerBody > 1) b.AppendLine("Area damage hits every form in a pack");
             if (s.Infects) b.AppendLine("Infects: Unarmored enemies killed near it rise as Flood");
+            if (s.LeapRange > 0f) b.AppendLine($"Leaps at enemies within {s.LeapRange:0} m, and over anything in its way");
             if (s.SelfDestructs) b.AppendLine("Explodes when it reaches an enemy");
             if (s.SeeksDensestCluster) b.AppendLine("Dives at the thickest group of enemies");
             if (s.DeathBurst != null)

@@ -232,6 +232,15 @@ namespace Halobellum.Core
         public float AuraSpeedMultiplier = 1f;
         /// <summary>Share of its maximum health a unit in the aura regains per second.</summary>
         public float AuraHealPerSecondShare;
+        /// <summary>
+        /// Leap (Infection Forms, D39): it pounces on a target within this many metres of its edge, and
+        /// jumps this far over anything that holds it up. It flies over bodies and cannot attack in the air. 0 = never.
+        /// </summary>
+        public float LeapRange;
+        /// <summary>Metres per second in the air.</summary>
+        public float LeapSpeed;
+        /// <summary>Seconds from one leap to the next.</summary>
+        public float LeapCooldownSeconds;
         /// <summary>The unit this one was before it was infected, or null.</summary>
         public UnitStats InfectedFrom;
 
@@ -286,6 +295,7 @@ namespace Halobellum.Core
                 }
             }
             if (FormsPerBody < 1) problems.Add($"{label}: forms per body must be 1 or more.");
+            if (LeapRange < 0f || LeapCooldownSeconds < 0f || (LeapRange > 0f && LeapSpeed <= 0f)) problems.Add($"{label}: a leap needs a range and a speed above 0.");
             if (SelfDestructs && DeathBurst == null) problems.Add($"{label}: a unit that self-destructs needs a death burst.");
             if (SpawnedUnit != null && SpawnIntervalSeconds <= 0f) problems.Add($"{label}: a spawn needs an interval above 0.");
             if (AuraRadius < 0f || AuraHealPerSecondShare < 0f || AuraSpeedMultiplier <= 0f) problems.Add($"{label}: aura values are out of range.");

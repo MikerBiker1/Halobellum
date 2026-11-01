@@ -41,6 +41,7 @@ MonoBehaviour:
   infectedSpeedMultiplier: 1.5
   infectedMeleeRange: 1.2
   infectedMeleeInterval: 1
+  leapWhenHeldUpSeconds: 0.3
   ballistic:
     unarmored: 1
     light: 0.6

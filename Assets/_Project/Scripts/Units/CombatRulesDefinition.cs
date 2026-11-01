@@ -78,6 +78,8 @@ namespace Halobellum.Units
         public float infectedSpeedMultiplier = 1.5f;
         public float infectedMeleeRange = 1.2f;
         public float infectedMeleeInterval = 1f;
+        [Tooltip("A unit that can leap jumps over what is in its way after being held up this many seconds.")]
+        public float leapWhenHeldUpSeconds = 0.3f;
 
         [Header("Damage multipliers (vs Unarmored, Light, Heavy)")]
         public DamageRow ballistic = new DamageRow();
@@ -125,6 +127,7 @@ namespace Halobellum.Units
                 InfectedSpeedMultiplier = infectedSpeedMultiplier,
                 InfectedMeleeRange = infectedMeleeRange,
                 InfectedMeleeInterval = infectedMeleeInterval,
+                LeapWhenHeldUpSeconds = leapWhenHeldUpSeconds,
             };
 
             DamageTable table = rules.DamageTable;

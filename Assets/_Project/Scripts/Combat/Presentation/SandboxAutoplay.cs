@@ -4,7 +4,7 @@
 // Sandbox scene). It places a mixed army on each side (ground and air units), saves a screenshot of
 // the placement, runs the battle at 4x, saves screenshots at 3 s and 12 s of battle time and at the
 // end, then quits. It also saves one screenshot of a lobbed shot at the top of its arc, one of a beam
-// charging, one of a beam firing and one of the first infected body, the first time each is seen.
+// charging, one of a beam firing, one of the first infected body and one of a unit leaping, the first time each is seen.
 // Depends on: SandboxController, BattleController, Halobellum.Combat, Halobellum.Core, UnityEngine.
 
 using System;
@@ -29,7 +29,7 @@ namespace Halobellum.Presentation
         private string _shots;
         private int _step;
         private float _wait = 1f;
-        private bool _shotArc, _shotCharge, _shotBeam, _shotInfected;
+        private bool _shotArc, _shotCharge, _shotBeam, _shotInfected, _shotLeap;
         private readonly List<ShotInFlight> _inFlight = new List<ShotInFlight>();
         private readonly List<BeamShot> _beams = new List<BeamShot>();
 
@@ -129,6 +129,16 @@ namespace Halobellum.Presentation
                     Shot("arc");
                     _shotArc = true;
                     break;
+                }
+            }
+            if (!_shotLeap)
+            {
+                int leaping = 0;
+                foreach (SimUnit unit in simulation.Units) if (unit.IsAlive && unit.IsLeaping && unit.LeapProgress > 0.3f) leaping++;
+                if (leaping >= 5)
+                {
+                    Shot("leap");
+                    _shotLeap = true;
                 }
             }
             if (!_shotInfected)

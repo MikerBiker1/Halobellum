@@ -92,4 +92,5 @@ Milestones and items from PROJECT_BIBLE.md Section 14. An item is ticked when it
 - [x] Flood UI theme and textures, Creepster title font, placeholder prefabs, packs and rising corpses on the field
 - [x] AI: Normal and Hard avoid Unarmored units against the Flood, Easy doesn't care; the AI can also play as Flood
 - [x] First balance pass: counter web 35 of 35, matchup table covers all 595 pairs
+- [x] D39 (after watching it): Infection Forms pounce from 6 m and jump over what holds them up; fixed units pausing when they enter the enemy's zone
 - [ ] For the next balance pass: Scarab beats 33 of 34; Warthog and Ghost beat only 1 of 11 Flood units; Infection Forms beat Spartans and Warthogs; 49 of 595 pairs reach the 90 s limit

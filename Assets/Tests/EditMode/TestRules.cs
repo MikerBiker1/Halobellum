@@ -45,6 +45,7 @@ namespace Halobellum.Tests
                 InfectedSpeedMultiplier = 1.5f,
                 InfectedMeleeRange = 1.2f,
                 InfectedMeleeInterval = 1f,
+                LeapWhenHeldUpSeconds = 0.3f,
             };
             DamageTable t = rules.DamageTable;
             t.SetRow(DamageType.Ballistic, 1.0f, 0.6f, 0.25f);

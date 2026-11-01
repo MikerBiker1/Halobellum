@@ -17,7 +17,8 @@
 // After moving, overlapping bodies are pushed apart (bodies cannot overlap). A unit that is
 // standing and fighting is not pushed by units walking past it; between two walkers the smaller
 // body gives way more (shares by body area). Air units ignore ground units entirely, fly in
-// straight lines, and only keep apart from other air units.
+// straight lines, and only keep apart from other air units. A unit on a leap (D39) flies straight to
+// where it will land, over every body on the way; it lands among them and is pushed apart then.
 // Units are kept inside the arena. Unity only displays the resulting positions.
 // Depends on: SimUnit, SpatialHashGrid, Halobellum.Core (CombatRules, Vec2).
 
@@ -61,6 +62,11 @@ namespace Halobellum.Combat
             {
                 SimUnit unit = units[i];
                 _newFacings[i] = unit.Facing;
+                if (unit.IsAlive && unit.IsLeaping)
+                {
+                    _newVelocities[i] = LeapVelocity(unit, dt, ref _newFacings[i]);
+                    continue;
+                }
                 bool steers = unit.State == UnitState.Move || (unit.Advancing && unit.State == UnitState.Attack);
                 _newVelocities[i] = unit.IsAlive && steers ? SteeringVelocity(unit, dt, out _newFacings[i]) : Vec2.Zero;
             }
@@ -73,6 +79,7 @@ namespace Halobellum.Combat
                 Vec2 velocity = _newVelocities[i];
                 unit.Velocity = velocity;
                 if (velocity.LengthSquared > 1e-8f) unit.Position += velocity * dt;
+                if (unit.IsLeaping && Vec2.DistanceSquared(unit.Position, unit.LeapTo) < 1e-4f) unit.IsLeaping = false; // Landed.
 
                 if (unit.Stats.TurnTime180 > 0f) unit.Facing = _newFacings[i];
                 else if (velocity.LengthSquared > 1e-8f) unit.Facing = velocity.Normalized; // Instant turners face where they move.
@@ -86,9 +93,23 @@ namespace Halobellum.Combat
             }
             for (int i = 0; i < units.Count; i++)
             {
-                if (units[i].IsAlive) ClampToArena(units[i]);
+                // A leap that reaches the edge of the arena ends there.
+                if (units[i].IsAlive && ClampToArena(units[i])) units[i].IsLeaping = false;
             }
         }
+
+        /// <summary>Straight at the landing spot at leap speed, never past it.</summary>
+        private static Vec2 LeapVelocity(SimUnit unit, float dt, ref Vec2 facing)
+        {
+            Vec2 toLanding = unit.LeapTo - unit.Position;
+            float distance = toLanding.Length;
+            if (distance < 1e-4f) return Vec2.Zero;
+            facing = toLanding / distance;
+            return facing * Math.Min(unit.Stats.LeapSpeed, distance / dt);
+        }
+
+        /// <summary>True if two bodies can touch: both on the ground or both in the air, and neither on a leap.</summary>
+        private static bool CanTouch(SimUnit a, SimUnit b) => a.IsAir == b.IsAir && !a.IsLeaping && !b.IsLeaping;
 
         private Vec2 SteeringVelocity(SimUnit unit, float dt, out Vec2 facing)
         {
@@ -110,7 +131,7 @@ namespace Halobellum.Combat
             Vec2 avoidance = Vec2.Zero;
             foreach (SimUnit other in _neighbors)
             {
-                if (other == unit || other.IsAir != unit.IsAir) continue;
+                if (other == unit || !CanTouch(unit, other)) continue;
 
                 Vec2 offset = unit.Position - other.Position;
                 float gap = offset.Length;
@@ -178,7 +199,7 @@ namespace Halobellum.Combat
             float padding = _rules.SeparationPadding;
             foreach (SimUnit unit in units)
             {
-                if (!unit.IsAlive || unit.IsAir || (unit.State != UnitState.Move && !unit.Advancing)) continue;
+                if (!unit.IsAlive || unit.IsAir || unit.IsLeaping || (unit.State != UnitState.Move && !unit.Advancing)) continue;
                 float speed = unit.MoveSpeedNow;
                 if (speed < slowest * _rules.YieldSpeedRatio) continue; // Nobody here is slow enough to make way for it.
                 Vec2 way = unit.MoveGoal - unit.Position;
@@ -211,7 +232,7 @@ namespace Halobellum.Combat
         /// </summary>
         private bool MakesWayFor(SimUnit slower, SimUnit faster)
         {
-            return _rules.YieldSpeedRatio > 0f && slower != faster && slower.Team == faster.Team && !slower.IsAir && !faster.IsAir
+            return _rules.YieldSpeedRatio > 0f && slower != faster && slower.Team == faster.Team && !slower.IsAir && !faster.IsAir && !slower.IsLeaping
                 && faster.Radius >= slower.Radius && faster.MoveSpeedNow >= slower.MoveSpeedNow * _rules.YieldSpeedRatio;
         }
 
@@ -247,7 +268,7 @@ namespace Halobellum.Combat
         {
             foreach (SimUnit other in _neighbors)
             {
-                if (other == unit || other.IsAir != unit.IsAir) continue;
+                if (other == unit || !CanTouch(unit, other)) continue;
 
                 Vec2 toOther = other.Position - unit.Position;
                 float gap = toOther.Length;
@@ -280,7 +301,7 @@ namespace Halobellum.Combat
                 foreach (SimUnit other in _neighbors)
                 {
                     // Handle each pair once, and never mix air with ground.
-                    if (other.Id <= unit.Id || other.IsAir != unit.IsAir) continue;
+                    if (other.Id <= unit.Id || !CanTouch(unit, other)) continue;
 
                     Vec2 offset = unit.Position - other.Position;
                     float gap = offset.Length;
@@ -336,13 +357,16 @@ namespace Halobellum.Combat
             return a.Id < b.Id ? direction : -direction;
         }
 
-        private void ClampToArena(SimUnit unit)
+        /// <summary>Keeps the unit inside the arena. Returns true if it had to be moved back.</summary>
+        private bool ClampToArena(SimUnit unit)
         {
             float halfWidth = _rules.ArenaWidth * 0.5f - unit.Radius;
             float halfLength = _rules.ArenaLength * 0.5f - unit.Radius;
             float x = Math.Clamp(unit.Position.X, -halfWidth, halfWidth);
             float y = Math.Clamp(unit.Position.Y, -halfLength, halfLength);
+            bool moved = x != unit.Position.X || y != unit.Position.Y;
             unit.Position = new Vec2(x, y);
+            return moved;
         }
     }
 }

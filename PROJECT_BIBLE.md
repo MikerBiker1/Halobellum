@@ -249,7 +249,7 @@ The Flood win by spreading. They have a roster of their own, plus temporary infe
 | Infected Phantom | Aerial | 3 | 200 | 1 | 450 | 1100 | Drops 5 Combat Forms after 8 seconds |
 | Flood Abomination | Titan | 4 | 350 | 1 | 800 | 7000 | Very tall and large; aura for nearby Flood, keeps releasing Infection Forms |
 
-**Packs.** One Infection Forms body is a pack of 5 tiny forms that move and act as one. A pack shows and deals less as its forms die. A single shot hurts one form; an area hit (splash, cone, beam, spell) hurts every form in the pack.
+**Packs.** One Infection Forms body is a pack of 5 tiny forms that move and act as one. A pack shows and deals less as its forms die. A single shot hurts one form; an area hit (splash, cone, beam, spell) hurts every form in the pack. A pack pounces on a target within 6 metres and jumps over anything that holds it up, flying over bodies; it cannot attack in the air (D39).
 
 **Infection mechanic**
 
@@ -474,6 +474,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-01 | Battle speed stays real (1x, 2x, 4x). Every unit's move speed is halved in the data (Marines 1.5 m/s); Warthog, Ghost and Gauss Warthog get +1 m/s on top | Per the project owner, after a trial (D36) |
 | 2026-11-01 | Artillery (Wraith, Archer Missile Pod) lobs its shots, aims ahead of the target and can miss. The Scarab's Focus Beam charges 2 s, fires 3 s at 400 damage per second in a small area, survives its target's death and drifts slowly to the next one | Per the project owner (D37) |
 | 2026-11-01 | The Flood are built (M8): packs of 5 Infection Forms that an area hit hurts all at once, infection, the Seeder, Carrier Form, Infected Pelican and Phantom, Swarm Form as anti-air, Abomination aura and spawning; Normal and Hard AI avoid Unarmored units against them, Easy doesn't | Design left to the agent by the project owner (D38) |
+| 2026-11-01 | Infection Forms leap: they pounce from 6 m and jump over what holds them up | Per the project owner (D39) |
 
 ## 18. Assumptions to confirm
 

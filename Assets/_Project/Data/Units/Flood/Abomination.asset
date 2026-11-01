@@ -101,10 +101,13 @@ MonoBehaviour:
   auraRadius: 14
   auraSpeedMultiplier: 1.2
   auraHealPerSecondShare: 0.01
+  leapRange: 0
+  leapSpeed: 0
+  leapCooldownSeconds: 0
   techUpgrades:
   - {fileID: 11400000, guid: 16ceed7a8023baafe198b50e17340185, type: 2}
   - {fileID: 11400000, guid: 29b1d0f9443b14adc23673df9a46e039, type: 2}
   prefab: {fileID: 7363495293459576789, guid: 0b9f0a72c4fd9234983765dfae34baec, type: 3}
   strongAgainst: Most things in a straight fight
   weakAgainst: 'Single-target DPS, large chaff swarms'
-  notes: 'Best counters (headless runner, equal cost): Spartan (100%), Zealot (100%). First-pass M8 values (DECISIONS D38).'
+  notes: 'Best counters (headless runner, equal cost): Zealot (100%), Spartan (70%). First-pass M8 values (DECISIONS D38).'

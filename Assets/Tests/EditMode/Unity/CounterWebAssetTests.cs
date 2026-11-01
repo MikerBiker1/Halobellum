@@ -59,7 +59,7 @@ namespace Halobellum.Tests
             ("Seeder", "Marine"),
             ("Infected Pelican", "Vampire"),
             ("Infected Phantom", "Swarm Form"),
-            ("Flood Abomination", "Spartan"),
+            ("Flood Abomination", "Zealot"),
         };
 
         [Test]

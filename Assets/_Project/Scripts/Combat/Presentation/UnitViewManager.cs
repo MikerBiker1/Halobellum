@@ -39,6 +39,8 @@ namespace Halobellum.Presentation
         [SerializeField] private Color infectedColor = new Color(0.55f, 0.68f, 0.18f);
         [Tooltip("Size of each tiny form in a pack, as a share of the pack's size (Infection Forms).")]
         [SerializeField] private float formScale = 0.42f;
+        [Tooltip("How high a leap goes at its peak, as a share of its length.")]
+        [SerializeField] private float leapHeightShare = 0.35f;
 
         [Header("Layout (metres)")]
         [Tooltip("Height at which air units fly.")]
@@ -545,7 +547,13 @@ namespace Halobellum.Presentation
 
         private Vector3 ToWorld(SimUnit unit)
         {
-            return new Vector3(unit.Position.X, unit.IsAir ? airHeight : 0f, unit.Position.Y);
+            float height = unit.IsAir ? airHeight : 0f;
+            if (unit.IsLeaping)
+            {
+                float t = unit.LeapProgress;
+                height += 4f * leapHeightShare * Vec2.Distance(unit.LeapFrom, unit.LeapTo) * t * (1f - t);
+            }
+            return new Vector3(unit.Position.X, height, unit.Position.Y);
         }
 
         private static Quaternion ToRotation(SimUnit unit)
