@@ -24,24 +24,32 @@ This morning's report (D25 to D30) is in this file's Git history. You approved D
 - **Result screen:** spells appear under top damage dealers and "what killed what", for example "Your MAC Strike killed 9 Grunt".
 - **AI:** takes the card worth the most for its price, or skips. It aims strikes at the densest part of your army **as it was revealed last battle**, drops pods on your most valuable squad, and puts buffs on its own densest group. Easy is careless about both.
 
+## Your D31 and D32 additions (D33, later the same day)
+- **Friendly fire:** offensive spells now hit your own army too.
+- **New spells:** Smoke Bomb and EMP for both factions, Banshee Ambush for the Covenant.
+- **Bigger, later spells:** the HAVOK Nuke and Glassing Beam appear from round 7 and land 6 s in.
+- **ODSTs:** 12 troopers, SMGs on chaff and unarmored targets, rocket launchers on everything else.
+- **Card schedule:** rounds 2 and 3 offer spells, items, economy cards and buffs; reinforcements start at round 4, then every other round.
+- **Items:** the 8 items, with an **Inventory** panel and hexagons over squads. New icons are in `Art/UI/Items`.
+- **Economy and buffs:** Supply Enhancement; from round 5 the extra deployment slot; from round 7 Super Supply and the 3 Advanced cards.
+- **Intensive Training:** an icon at the top left. Select a squad, click it, confirm.
+- **Shop:** every unit shows its price, even before it's unlocked.
+- **Choices to check:** D33 lists what I had to decide. The main ones are EMP at 150 credits, smoke lasting 20 s, ODST health lowered to 100, and Laser Sights at +20 m as you wrote it (very strong next to Advanced Targeting's +2 m for 400).
+
 ## Decisions needing your approval
-- **D31: the spell catalogue.** Prices, recharge times, damage and areas are all first-pass values in `Data/Spells`.
-- **D32: card rule details I had to choose.** The main ones:
-  - The card screen comes before deployment.
-  - Reinforcement levels grow with the rounds: level 1 until round 4, up to 2 until round 8, up to 3 after that.
-  - A reinforcement squad sold before its first battle refunds only what you paid. That way, taking a free card and selling it isn't a way to make money.
-  - No spells in the Sandbox yet.
+- **D33:** the choices behind your additions (see DECISIONS.md). D31 and D32 are answered and updated.
+- **Still open from D32:** spells and items aren't in the Sandbox yet.
 
 ## Test results
-- **Unity:** EditMode **323 / 323**, PlayMode **19 / 19**. **.NET harness:** **293 / 293**.
+- **Unity:** EditMode **352 / 352**, PlayMode **21 / 21**. **.NET harness:** **318 / 318**.
 - **New tests:**
   - Spell effects in battle.
   - Card rules, including the Bible's pricing examples and the "every other round" recharge.
   - The spell data.
   - A scene test: a spell taken, placed (outline shown), cast and recharging, then a reinforcement card whose squads appear on the field.
   - AI-vs-AI matches with cards are played to the end.
-- **Built game:** 3 rounds of autoplay as UNSC and as Covenant with no errors. Screenshots are in `Docs/M7_*.png`.
-- **Not tested automatically:** placing a spell with the real mouse. The scene test uses the same functions the mouse calls.
+- **Built game:** 5 rounds of autoplay as UNSC and as Covenant with no errors. Screenshots are in `Docs/M7_*.png`.
+- **Not tested automatically:** placing a spell, clicking a hexagon or the training icon with the real mouse. The scene tests use the same functions the buttons call.
 - **Small note:** decimals follow your PC's language (for example "2,5 s"), as elsewhere in the HUD.
 
 ## Blockers

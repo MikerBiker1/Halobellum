@@ -102,7 +102,6 @@ namespace Halobellum.Presentation
                     {
                         BuySquads(m);
                         PlaceSpells(m);
-                        UseItemsAndTraining(m);
                         _lastShotRound = m.Round;
                         _dropShotPending = true;
                         _wait = 0.25f; // Bought squads drop in: one shot mid-fall, then let them land.
@@ -114,6 +113,25 @@ namespace Halobellum.Presentation
                         _dropShotPending = false;
                         _wait = 0.8f;
                         return;
+                    }
+                    // With an item in the inventory: one shot with the item selected (hexagons over the squads).
+                    if (m.Player.Inventory.Count > 0 && _inventoryShotRound != m.Round)
+                    {
+                        if (_match.PlacingItem == null)
+                        {
+                            _match.BeginPlacingItem(m.Player.Inventory[0]);
+                            _wait = 0.4f;
+                            return;
+                        }
+                        Shot($"r{m.Round:00}_1a_inventory");
+                        _inventoryShotRound = m.Round;
+                        _wait = 0.4f;
+                        return;
+                    }
+                    if (_inventoryShotRound == m.Round || m.Player.Inventory.Count == 0)
+                    {
+                        _match.CancelItemPlacement();
+                        UseItemsAndTraining(m);
                     }
                     if (ShotFirst($"r{m.Round:00}_1_deployment")) return;
                     _battle.Speed = _speed;
@@ -139,6 +157,7 @@ namespace Halobellum.Presentation
         }
 
         private bool _phaseShotTaken;
+        private int _inventoryShotRound = -1;
 
         private void TakeFirstAffordableCard(Match m)
         {

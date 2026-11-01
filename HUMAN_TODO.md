@@ -82,11 +82,24 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 
 ## 2026-11-01 (evening): check M7 (cards)
 
-- [ ] **Card screen.** Play a match (`Assets/_Project/Scenes/Match.unity`, Play). After round 1, the round 2 screen offers 3 spells: **Take** one (price on the button) or **Skip** (+50). Round 3 offers reinforcements (Skip gives +100), round 4 spells again.
+- [ ] **Card screen.** Play a match (`Assets/_Project/Scenes/Match.unity`, Play). After round 1, rounds 2 and 3 offer general cards: **Take** one (price on the button) or **Skip** (+50). Round 4 offers reinforcements (Skip gives +100), then it alternates.
 - [ ] **Place a spell.** In deployment, the **Spells** panel (left) lists your spells. Press **Place**: the area follows the mouse, red for offensive spells (anywhere), blue for defensive ones (only your side), grey where it can't go. Left-click to place, right-click to cancel; **Move** and **X** change your mind. Press Ready and watch it go off.
 - [ ] **Recharge.** The panel shows "Recharging: N round(s)" after use (MAC Strike: usable every other round).
 - [ ] **Reinforcements.** Take a reinforcement card: its squads appear in the middle of your zone (move them like bought squads); you can still buy your 2 squads.
 - [ ] **Try the big ones.** HAVOK Nuke / Glassing Beam (one copy, 4-round recharge), ODST Drop Pods (UNSC: 6 ODSTs fall from the sky where you placed them).
-- [ ] **Answer D31 and D32** in DECISIONS.md (spell numbers, card rule details).
+- [x] **Answer D31 and D32** in DECISIONS.md (spell numbers, card rule details).
 - [ ] **Confirm M7.**
+
+## 2026-11-01 (night): check your D31 and D32 additions
+
+- [ ] **Items.** Take an item card. It appears in the **Inventory** (mid left). Click it: an empty hexagon appears over every squad without an item. Click a hexagon: the squad now shows the item, and the stats window lists it. Right-click cancels.
+- [ ] **Deployment Module.** Put one on a squad from an earlier round: Move and Turn work on it in every round.
+- [ ] **Intensive Training.** Take the card. Its icon is at the top left. Select a squad, click the icon, **Confirm**: the XP bar fills, and the icon shows its cooldown.
+- [ ] **Smoke and EMP.** Place a Smoke Bomb (**R** turns it) in front of the enemy. Place an EMP on shielded units. Both can catch your own units.
+- [ ] **Friendly fire.** Drop a strike on your own squad: it takes the damage.
+- [ ] **ODSTs (UNSC).** 12 troopers land: SMGs on infantry, rockets on vehicles.
+- [ ] **Banshee Ambush (Covenant).** 2 Banshee squads drop in from above.
+- [ ] **From round 5 and 7.** The extra deployment slot from round 5; the HAVOK Nuke, Glassing Beam, powerful buffs and Super Supply from round 7. The nuke lands 6 seconds in, so watch your troops walk out of (or into) it.
+- [ ] **Shop.** Every unit shows its price, even before it's unlocked.
+- [ ] **Answer D33** in DECISIONS.md, especially Laser Sights (+20 m as written) and the prices and durations I chose (EMP 150 credits, smoke 20 s).
 

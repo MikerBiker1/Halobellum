@@ -76,3 +76,4 @@ Milestones and items from PROJECT_BIBLE.md Section 14. An item is ticked when it
 - [x] Reinforcement cards: single-use, budget-based pricing (the Bible's examples tested), unlock the unit, placed like squads bought this round, outside the squad and unlock limits, 0 XP
 - [x] Offered every round from round 2, alternating spells and reinforcements, pick 1 of 3 or skip for 50 / 100 credits; card screen UI; AI takes cards and casts spells
 - [x] First-pass spell catalogue for UNSC (6) and Covenant (5), ODST drop-pod unit
+- [x] D33 (your additions): friendly fire, Smoke Bomb, EMP, Banshee Ambush, ODST SMG and rockets, items and Inventory, economy and powerful buff cards, deployment slot, Intensive Training, reinforcements from round 4, squad prices in the shop
