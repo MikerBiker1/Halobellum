@@ -1,6 +1,6 @@
 # Daily report: 2026-11-01 (afternoon), M7: Cards
 
-This morning's report (D25 to D30) is in this file's Git history. You approved D30 and confirmed M4 to M6 by moving on to M7. **M7 is done**: all criteria pass, waiting for your confirmation and your answers to D31 and D32.
+This morning's report (D25 to D30) is in this file's Git history. You approved D30 and confirmed M4 to M6 by moving on to M7. **M7 is done**: all criteria pass, waiting for your confirmation and your answer to D33.
 
 ## What M7 adds
 - **Card screen:** opens at the start of every round from round 2, before deployment. It offers spells in round 2, reinforcements in round 3, then keeps alternating.
@@ -19,7 +19,7 @@ This morning's report (D25 to D30) is in this file's Git history. You approved D
   - Each card is a random unit from your roster at a random level. It's copied until it reaches the round's budget (200 + 50 per round), and you pay whatever it's worth above the budget. The Bible's examples are all checked by tests.
   - The squads join your army like squads bought this round, so you can move them. They unlock the unit, ignore the 2-squad and 1-unlock limits, and start with 0 XP.
 - **First spells** (D31):
-  - **UNSC:** MAC Strike, Archer Missile Barrage, HAVOK Nuke, ODST Drop Pods (6 ODSTs land for one battle), Bubble Shield, Battlefield Rally.
+  - **UNSC:** MAC Strike, Archer Missile Barrage, HAVOK Nuke, ODST Drop Pods (12 ODSTs land for one battle), Bubble Shield, Battlefield Rally.
   - **Covenant:** Plasma Bombardment, Plasma Storm, Glassing Beam, Energy Shield Dome, Prophet's Blessing.
 - **Result screen:** spells appear under top damage dealers and "what killed what", for example "Your MAC Strike killed 9 Grunt".
 - **AI:** takes the card worth the most for its price, or skips. It aims strikes at the densest part of your army **as it was revealed last battle**, drops pods on your most valuable squad, and puts buffs on its own densest group. Easy is careless about both.
