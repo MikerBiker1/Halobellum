@@ -50,10 +50,10 @@ MonoBehaviour:
     rearDamageMultiplier: 1
     blockChance: 0
     blockedDamageTypes: 
-  reinforcementUnit: {fileID: 11400000, guid: 63fe08127caa6095039aa26ce7f4e1c8, type: 2}
-  reinforcementBodies: 6
-  reinforcementDelaySeconds: 10
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
   prefab: {fileID: 2326103994285859615, guid: 9ec6c6c3ff2f15e4a9513612417df2de, type: 3}
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air
-  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Vampire (30%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Vampire (100%), Wolverine (100%). Carries no troops until its M6 upgrade (D22); the drop mechanic is ready for it. First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

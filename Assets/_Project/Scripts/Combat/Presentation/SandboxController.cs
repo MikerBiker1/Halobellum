@@ -1,5 +1,6 @@
 // SandboxController.cs
-// Sandbox mode (Milestone 4, used for balancing): pick two armies from every faction's roster,
+// Sandbox mode (Milestone 4, used for balancing): pick two armies from every faction's roster
+// (plus the placeholder test units, which never appear in matches),
 // place them freely in both deployment zones (no credits, no limits, every squad movable), run the
 // battle, then reset to the same placement and try again. Both armies are shown while placing.
 // Placement uses the same deployment grid as the match (snap to squares, turn 90 degrees, no
@@ -35,6 +36,8 @@ namespace Halobellum.Presentation
         }
 
         [SerializeField] private List<FactionDefinition> factions = new List<FactionDefinition>();
+        [Tooltip("Extra units offered only in the sandbox (the placeholder test units), listed as 'Placeholder'.")]
+        [SerializeField] private List<UnitDefinition> extraUnits = new List<UnitDefinition>();
         [Tooltip("Seed of the next battle (shield block rolls).")]
         [SerializeField] private int seed = 1000;
 
@@ -68,6 +71,9 @@ namespace Halobellum.Presentation
 
         public PlayerState Army(Team team) => team == Team.A ? ArmyA : ArmyB;
 
+        /// <summary>The group name of the sandbox-only units in the unit list.</summary>
+        public const string ExtraUnitsLabel = "Placeholder";
+
         private void Awake()
         {
             _battle = GetComponent<BattleController>();
@@ -79,6 +85,13 @@ namespace Halobellum.Presentation
                 if (faction == null) continue;
                 FactionInfo info = faction.ToInfo(cache);
                 foreach (UnitStats unit in info.BaseRoster) Units.Add(new SandboxUnit(info.Name, unit));
+            }
+            foreach (UnitDefinition extra in extraUnits)
+            {
+                if (extra == null) continue;
+                UnitStats stats = extra.ToStats();
+                cache[extra] = stats;
+                Units.Add(new SandboxUnit(ExtraUnitsLabel, stats));
             }
             foreach (var pair in cache) _sources[pair.Value] = pair.Key;
         }

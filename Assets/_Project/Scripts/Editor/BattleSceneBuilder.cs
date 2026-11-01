@@ -140,6 +140,8 @@ namespace Halobellum.EditorTools
             GameObject battleObject = battle.gameObject;
             var sandbox = battleObject.AddComponent<SandboxController>();
             SetReferenceList(sandbox, "factions", factions.Cast<Object>().ToList());
+            // The placeholder test units are offered in the sandbox only, never in matches.
+            SetReferenceList(sandbox, "extraUnits", HeadlessRunnerTool.LoadUnitsInFolder(HeadlessRunnerTool.PlaceholderFolder).Cast<Object>().ToList());
             battleObject.AddComponent<DeploymentInput>();
             battleObject.AddComponent<SandboxAutoplay>();
 

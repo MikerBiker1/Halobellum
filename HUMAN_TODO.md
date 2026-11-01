@@ -46,7 +46,8 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 
 - [ ] **Play a match with the real units.** Open `Assets/_Project/Scenes/Match.unity` and press **Play**. The draft cards now offer real Tier 1 squads (Marines, Flamethrower Troopers, Warthogs; Grunts, Fuel Rod Grunts, Jackals, Ghosts), and the shop lists all 12 units of your faction with their unlock prices.
 - [ ] **Try the sandbox.** On the draft screen press **Sandbox: test any two armies** (or open `Assets/_Project/Scenes/Sandbox.unity`). Choose **Blue** or **Red**, press **Place** next to a unit, and left-click in that side's zone (it keeps placing that unit until you right-click). Click a squad to **Move (M)**, **Turn (R)** or **Remove (Del)** it. **Copy to red** mirrors your army, the top bar shows both armies' cost. Press **Run battle**, then **Reset** to put both armies back and try again. **Back to match** returns to the draft.
-- [ ] **Watch a Pelican drop.** In the sandbox, put a Pelican on one side and a few squads on the other; 10 seconds into the battle 6 Marines fall from it.
+- [ ] **Placeholder units in the sandbox.** At the bottom of the sandbox's unit list, the 3 placeholder test units have their own "Placeholder" group. They never appear in a match.
 - [ ] **Optional: run the counter web yourself.** Menu **Halobellum > Headless Runner > Run Counter Web** (takes several minutes; a progress bar shows). The report appears in the Console; the full win-rate matrix goes to `BalanceReports/`.
-- [ ] **Answer D21 to D24** in DECISIONS.md (first-pass stats, how the abilities work, counter web method and the 55-70% vs over-70% question, placeholder units).
+- [x] **Answer D21 to D24** in DECISIONS.md (first-pass stats, how the abilities work, counter web method and the 55-70% vs over-70% question, placeholder units).
+- [ ] **D23: pick the counter threshold.** My suggestion is in DECISIONS.md: a counter must win at least 9 of 10 equal-value battles (90%).
 - [ ] **Confirm M4** so M5 (AI opponent) can start.

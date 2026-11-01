@@ -1,9 +1,9 @@
 // SandboxAutoplay.cs
 // Test tool for built games: shows the Sandbox scene working without clicking. It does nothing
 // unless the game is started with "-sandboxDemo <screenshot folder>" (MatchAutoplay then opens the
-// Sandbox scene). It places a mixed army on each side (including a Pelican, whose Marines drop at
-// 10 s), saves a screenshot of the placement, runs the battle at 4x, saves screenshots at 3 s and
-// 12 s of battle time and at the end, then quits.
+// Sandbox scene). It places a mixed army on each side (ground and air units), saves a screenshot of
+// the placement, runs the battle at 4x, saves screenshots at 3 s and 12 s of battle time and at the
+// end, then quits.
 // Depends on: SandboxController, BattleController, Halobellum.Core, UnityEngine.
 
 using System;

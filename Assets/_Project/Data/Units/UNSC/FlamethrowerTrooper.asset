@@ -30,8 +30,8 @@ MonoBehaviour:
   targetFilter: 0
   weapons:
   - weaponName: M7057 Flamethrower
-    damagePerShot: 20
-    fireInterval: 0.5
+    damagePerShot: 3
+    fireInterval: 0.1
     range: 11
     minRange: 0
     projectileSpeed: 0
@@ -42,7 +42,7 @@ MonoBehaviour:
     hasOwnTargetFilter: 0
     targetFilter: 0
     airDamageMultiplier: 1
-    coneDegrees: 90
+    coneDegrees: 15
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0

@@ -124,6 +124,8 @@ namespace Halobellum.Tests
             Assert.IsTrue(u["Gauss Warthog"].Weapons[0].IsAntiArmor, "Anti-armor gauss cannon.");
             Assert.AreEqual(DamageType.Fire, u["Flamethrower Trooper"].Weapons[0].DamageType);
             Assert.IsTrue(u["Flamethrower Trooper"].Weapons[0].IsCone, "Splash cone.");
+            Assert.LessOrEqual(u["Flamethrower Trooper"].Weapons[0].ConeDegrees, 15f, "A narrow cone (D22).");
+            Assert.LessOrEqual(u["Flamethrower Trooper"].Weapons[0].FireInterval, 0.1f, "Low damage, very fast ticks (D22).");
             Assert.Greater(u["Archer Missile Pod"].Weapons[0].MinRange, 0f, "Artillery has a minimum range.");
             Assert.Greater(u["Wraith"].Weapons[0].SplashRadius, 0f, "Mortar splash.");
             Assert.AreEqual(DamageType.Explosive, u["Scorpion"].Weapons[0].DamageType, "Cannon (explosive) plus coax.");
@@ -133,11 +135,8 @@ namespace Halobellum.Tests
             Assert.IsTrue(u["Pelican"].Weapons[0].CanTarget(u["Pelican"], true) && u["Pelican"].Weapons[0].CanTarget(u["Pelican"], false),
                 "Pelican autocannon hits air and ground.");
 
-            // Pelican: drops one small Marine squad (6) after 10 seconds.
-            Assert.IsTrue(u["Pelican"].HasReinforcement);
-            Assert.AreEqual("Marine", u["Pelican"].Reinforcement.Name);
-            Assert.AreEqual(6, u["Pelican"].Reinforcement.SquadSize);
-            Assert.AreEqual(10f, u["Pelican"].ReinforcementDelaySeconds, 1e-3f);
+            // Pelican: a plain air unit until its troop-carrying upgrade (M6, decision D22).
+            Assert.IsFalse(u["Pelican"].HasReinforcement, "The Pelican only carries Marines after its M6 upgrade.");
 
             // Directional defense: Shield Jackals (120 degrees, block 80% of ballistic projectiles) and Hunters (240 degrees).
             DefenseArcStats jackal = u["Jackal (Shield)"].DefenseArc;
@@ -153,6 +152,22 @@ namespace Halobellum.Tests
             // Titans have several weapons (turrets for chaff, a main gun for armor).
             Assert.GreaterOrEqual(u["Elephant"].Weapons.Length, 2);
             Assert.GreaterOrEqual(u["Scarab"].Weapons.Length, 2);
+        }
+
+        [Test]
+        public void PlaceholderUnits_NeverAppearInMatches()
+        {
+            var placeholders = new HashSet<UnitDefinition>(HeadlessRunnerTool.LoadUnitsInFolder(HeadlessRunnerTool.PlaceholderFolder));
+            Assert.IsNotEmpty(placeholders);
+            foreach (string guid in AssetDatabase.FindAssets("t:" + nameof(FactionDefinition), new[] { "Assets/_Project/Data/Factions" }))
+            {
+                var faction = AssetDatabase.LoadAssetAtPath<FactionDefinition>(AssetDatabase.GUIDToAssetPath(guid));
+                IEnumerable<UnitDefinition> units = faction.baseRoster.Concat(faction.subFactions.SelectMany(s => s.exclusiveUnits));
+                foreach (UnitDefinition unit in units)
+                {
+                    Assert.IsFalse(placeholders.Contains(unit), $"{unit.name} is a placeholder unit in the {faction.factionName} faction (decision D24).");
+                }
+            }
         }
 
         [Test]

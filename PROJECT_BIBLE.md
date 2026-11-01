@@ -453,6 +453,9 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-10-31 | Free draft squads appear in the middle of the zone. A bought squad is placed at the free spot nearest the middle: it drops in from high above and is then selected, ready to be moved. Free draft squads sell for half their cost | Per the project owner (D18) |
 | 2026-10-31 | An exact tie is a tied round (damage undone, income paid, next round) instead of a replay | Per the project owner (D19) |
 | 2026-10-31 | Until M4, both Standard draft cards use the placeholder units, squads use side colors, and the do-nothing AI only keeps its free squads | Approved from D20 |
+| 2026-10-31 | First-pass stats for everything Section 8 leaves open (weapons, speeds, sizes, shields, arcs) are in the unit assets and `balance.csv` | Approved from D21 |
+| 2026-10-31 | The Pelican carries no troops when bought; its 6-Marine drop (after 10 s) is an upgrade in M6. The Flamethrower Trooper's cone is 15 degrees with very low damage per very fast tick; an upgrade may widen it later | Per the project owner (D22) |
+| 2026-10-31 | Placeholder test units never appear in normal matches; they are offered in the Sandbox only | Per the project owner (D24) |
 
 ## 18. Assumptions to confirm
 

@@ -1,8 +1,8 @@
 // SandboxSceneTests.cs
 // Plays the real Sandbox scene (Milestone 4): every slice unit is offered, squads can be placed on
 // both sides (snapped to each side's grid, no overlap), moved, turned, removed, copied to the other
-// side; Run plays the battle with both armies and Reset brings back the same placement. A Pelican's
-// Marines appear mid-battle with views.
+// side; Run plays the battle with both armies and Reset brings back the same placement. The
+// placeholder test units are offered too (sandbox only).
 // Depends on: Halobellum.Presentation (SandboxController, BattleController), Halobellum.Economy,
 //             Halobellum.Core, NUnit, Unity Test Framework.
 
@@ -41,12 +41,13 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
-        public IEnumerator OffersEverySliceUnit_FromBothFactions()
+        public IEnumerator OffersEverySliceUnit_FromBothFactions_PlusThePlaceholders()
         {
             yield return LoadSandbox();
-            Assert.AreEqual(24, _sandbox.Units.Count);
+            Assert.AreEqual(27, _sandbox.Units.Count);
             Assert.AreEqual(12, _sandbox.Units.Count(u => u.Faction == "UNSC"));
             Assert.AreEqual(12, _sandbox.Units.Count(u => u.Faction == "Covenant"));
+            Assert.AreEqual(3, _sandbox.Units.Count(u => u.Faction == SandboxController.ExtraUnitsLabel));
             Assert.IsTrue(_sandbox.IsDeploying);
         }
 
@@ -131,22 +132,10 @@ namespace Halobellum.Tests
             int viewsAtStart = CountViews();
             Assert.AreEqual(bodies, viewsAtStart);
 
-            bool dropped = false;
-            float pelicanDiedAt = float.MaxValue;
-            _battle.Simulation.Events.ReinforcementDropped += (carrier, squadId) => dropped = true;
-            _battle.Simulation.Events.UnitDied += (unit, killer) =>
-            {
-                if (unit.Stats.Name == "Pelican") pelicanDiedAt = _battle.Simulation.ElapsedSeconds;
-            };
             float deadline = Time.realtimeSinceStartup + 120f;
             while (!_battle.Simulation.IsFinished && Time.realtimeSinceStartup < deadline) yield return null;
             Assert.IsTrue(_battle.Simulation.IsFinished, "The battle did not finish in time.");
-            if (pelicanDiedAt >= 10f && _battle.Simulation.ElapsedSeconds >= 10f) Assert.IsTrue(dropped, "A Pelican alive at 10 s drops its Marines.");
-            if (dropped)
-            {
-                Assert.AreEqual(bodies + 6, _battle.Simulation.Units.Count, "6 Marines dropped.");
-                Assert.AreEqual(_battle.Simulation.Units.Count, CountViews(), "Dropped Marines get views too.");
-            }
+            Assert.AreEqual(bodies, _battle.Simulation.Units.Count, "The Pelican carries no troops before its M6 upgrade.");
 
             _sandbox.ResetBattle();
             yield return null;
