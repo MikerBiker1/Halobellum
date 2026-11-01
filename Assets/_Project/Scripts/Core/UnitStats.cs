@@ -57,10 +57,27 @@ namespace Halobellum.Core
         /// that fits the closest enemy it can attack.
         /// </summary>
         public WeaponTargetClass TargetClass;
+        /// <summary>
+        /// Lobbed shot (artillery, D37): flies in an arc to the spot where the target is heading when it
+        /// is fired, and only damages what is inside the splash when it lands. It can miss.
+        /// </summary>
+        public bool Lobbed;
+        /// <summary>
+        /// Beam (Scarab, D37): if above 0, the weapon charges, then fires a beam for this many seconds at
+        /// one spot, hitting everything within SplashRadius every FireInterval seconds. 0 means no beam.
+        /// </summary>
+        public float BeamSeconds;
+        /// <summary>Seconds a beam charges before it fires.</summary>
+        public float BeamChargeSeconds;
+        /// <summary>Seconds a beam rests after firing, before it can charge again.</summary>
+        public float BeamRestSeconds;
+        /// <summary>How fast a firing beam's spot follows its target, or moves to a new one, in metres per second.</summary>
+        public float BeamSweepSpeed;
 
         public float ShotsPerSecond => FireInterval > 0f ? 1f / FireInterval : 0f;
         public bool IsInstant => ProjectileSpeed <= 0f;
         public bool IsCone => ConeDegrees > 0f;
+        public bool IsBeam => BeamSeconds > 0f;
 
         /// <summary>True if this weapon, on this unit, may attack a unit that is (or is not) in the air.</summary>
         /// <summary>True if this weapon's target class fits this enemy.</summary>
@@ -194,6 +211,10 @@ namespace Halobellum.Core
                     if (w.SplashRadius < 0f) problems.Add($"{wl}: splash radius cannot be negative.");
                     if (w.AirDamageMultiplier < 0f) problems.Add($"{wl}: damage against air cannot be negative.");
                     if (w.ConeDegrees < 0f || w.ConeDegrees > 360f) problems.Add($"{wl}: cone must be 0 to 360 degrees.");
+                    if (w.Lobbed && (w.ProjectileSpeed <= 0f || w.SplashRadius <= 0f)) problems.Add($"{wl}: a lobbed shot needs a projectile speed and a splash radius.");
+                    if (w.IsBeam && w.SplashRadius <= 0f) problems.Add($"{wl}: a beam needs a splash radius.");
+                    if (w.IsBeam && w.ProjectileSpeed > 0f) problems.Add($"{wl}: a beam cannot have a projectile speed.");
+                    if (w.BeamSeconds < 0f || w.BeamChargeSeconds < 0f || w.BeamRestSeconds < 0f || w.BeamSweepSpeed < 0f) problems.Add($"{wl}: beam values cannot be negative.");
                 }
             }
             if (DefenseArc != null)

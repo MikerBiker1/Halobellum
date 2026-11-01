@@ -112,3 +112,10 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 - [ ] **Shield bar.** Spartans, Elites and Zealots show a blue bar over their health bar once hit or when selected.
 - [ ] **Speed (D36).** The trial is gone: units move at half their old speed and the Warthog, Ghost and Gauss Warthog are 1 m/s faster than that. Projectiles, rate of fire and the round clock are back to normal at 1x.
 - [ ] **Reinforcement cards** no longer mention the budget. **Glassing Beam** hits air.
+
+## 2026-11-01 (new weapon mechanics): check D37
+
+- [ ] **Wraith and Archer Missile Pod.** In the Sandbox, watch the shots arc up and land. Moving units should mostly still get hit, and a fast vehicle that turns should sometimes dodge.
+- [ ] **Scarab.** Watch for a thin line and a growing spot (2 s), then the thick beam (3 s). Kill its target during the beam: the beam should stay on and drift slowly to the next target. Placeholder art only.
+- [ ] **Numbers I chose:** the 3 s rest between beams and the 2 m/s drift. Tell me if either feels wrong.
+

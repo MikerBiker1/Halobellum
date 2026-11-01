@@ -1,8 +1,9 @@
 // CombatEffectsView.cs
 // Shows who is shooting whom, so fights are readable (Bible pillar "Readable battles"):
 //   - instant-hit weapons draw a short tracer from the shooter to the target (WeaponFired event);
-//   - projectile weapons show a small sphere for every projectile in flight.
-// Tracers and projectile spheres come from fixed-size pools, so nothing is created during battle.
+//   - projectile weapons show a small sphere for every projectile in flight; lobbed ones fly in an arc;
+//   - beam weapons draw a thin line while charging, then a thick beam with a glowing spot on the ground.
+// Tracers, projectile spheres and beams come from fixed-size pools, so nothing is created during battle.
 // Tracer lifetime counts in battle time: it pauses with the battle and runs faster at 2x and 4x.
 // Depends on: BattleController, UnitViewManager, PlaceholderArt, Halobellum.Combat, UnityEngine.
 
@@ -26,6 +27,17 @@ namespace Halobellum.Presentation
         [SerializeField] private float shotHeight = 0.9f;
         [SerializeField] private int tracerPoolSize = 400;
         [SerializeField] private int projectilePoolSize = 300;
+        [Tooltip("How high a lobbed shot flies at its peak, as a share of the distance it travels.")]
+        [SerializeField] private float lobHeightShare = 0.3f;
+        [Tooltip("Size of a lobbed shot, bigger than a normal one so its arc can be followed.")]
+        [SerializeField] private float lobbedSize = 1.4f;
+        [SerializeField] private Color teamABeamColor = new Color(0.45f, 0.75f, 1f);
+        [SerializeField] private Color teamBBeamColor = new Color(0.75f, 0.45f, 1f);
+        [Tooltip("Height of the beam above a ground unit (it comes out of a big walker's body).")]
+        [SerializeField] private float beamOriginHeight = 4f;
+        [SerializeField] private float beamChargeWidth = 0.25f;
+        [SerializeField] private float beamWidth = 1.4f;
+        [SerializeField] private int beamPoolSize = 12;
 
         private BattleController _battle;
         private UnitViewManager _units;
@@ -33,7 +45,11 @@ namespace Halobellum.Presentation
         private float[] _tracerTimeLeft;
         private int _nextTracer;
         private Transform[] _projectiles;
-        private readonly List<Vec2> _projectilePositions = new List<Vec2>();
+        private readonly List<ShotInFlight> _shots = new List<ShotInFlight>();
+        private Transform[] _beams;
+        private Transform[] _beamSpots;
+        private readonly List<BeamShot> _shownBeams = new List<BeamShot>();
+        private Material _beamA, _beamB;
         private Material _tracerA, _tracerB;
 
         private void Start()
@@ -59,6 +75,18 @@ namespace Halobellum.Presentation
                 _projectiles[i] = PlaceholderArt.CreatePart("Projectile", container, PlaceholderArt.Sphere, projectileMaterial);
                 _projectiles[i].localScale = Vector3.one * projectileSize;
                 _projectiles[i].gameObject.SetActive(false);
+            }
+
+            _beamA = PlaceholderArt.MaterialFor(teamABeamColor);
+            _beamB = PlaceholderArt.MaterialFor(teamBBeamColor);
+            _beams = new Transform[beamPoolSize];
+            _beamSpots = new Transform[beamPoolSize];
+            for (int i = 0; i < beamPoolSize; i++)
+            {
+                _beams[i] = PlaceholderArt.CreatePart("Beam", container, PlaceholderArt.Cube, _beamA);
+                _beams[i].gameObject.SetActive(false);
+                _beamSpots[i] = PlaceholderArt.CreatePart("Beam Spot", container, PlaceholderArt.Sphere, _beamA);
+                _beamSpots[i].gameObject.SetActive(false);
             }
 
             _battle.BattleChanged += OnBattleChanged;
@@ -88,7 +116,8 @@ namespace Halobellum.Presentation
 
         private void OnWeaponFired(SimUnit attacker, int weaponIndex, SimUnit target)
         {
-            if (!attacker.Weapons[weaponIndex].Stats.IsInstant) return; // Projectiles are drawn in LateUpdate.
+            WeaponStats weapon = attacker.Weapons[weaponIndex].Stats;
+            if (!weapon.IsInstant || weapon.IsBeam) return; // Projectiles and beams are drawn in LateUpdate.
 
             Vector3 from = ShotPoint(attacker);
             Vector3 to = ShotPoint(target);
@@ -115,18 +144,57 @@ namespace Halobellum.Presentation
                 if (_tracerTimeLeft[i] <= 0f) _tracers[i].gameObject.SetActive(false);
             }
 
-            if (_shown != null) _shown.GetProjectilePositions(_projectilePositions);
-            else _projectilePositions.Clear();
+            if (_shown != null) _shown.GetProjectiles(_shots);
+            else _shots.Clear();
             for (int i = 0; i < _projectiles.Length; i++)
             {
-                bool active = i < _projectilePositions.Count;
+                bool active = i < _shots.Count;
                 if (active)
                 {
-                    Vec2 p = _projectilePositions[i];
-                    _projectiles[i].position = new Vector3(p.X, shotHeight, p.Y);
+                    ShotInFlight shot = _shots[i];
+                    float arc = 4f * lobHeightShare * shot.ArcLength * shot.Progress * (1f - shot.Progress);
+                    _projectiles[i].position = new Vector3(shot.Position.X, shotHeight + arc, shot.Position.Y);
+                    _projectiles[i].localScale = Vector3.one * (shot.ArcLength > 0f ? lobbedSize : projectileSize);
                 }
                 if (_projectiles[i].gameObject.activeSelf != active) _projectiles[i].gameObject.SetActive(active);
             }
+
+            DrawBeams();
+        }
+
+        private void DrawBeams()
+        {
+            if (_shown != null) _shown.GetBeams(_shownBeams);
+            else _shownBeams.Clear();
+            for (int i = 0; i < _beams.Length; i++)
+            {
+                bool active = i < _shownBeams.Count;
+                if (active) DrawBeam(i, _shownBeams[i]);
+                if (_beams[i].gameObject.activeSelf != active) _beams[i].gameObject.SetActive(active);
+                if (_beamSpots[i].gameObject.activeSelf != active) _beamSpots[i].gameObject.SetActive(active);
+            }
+        }
+
+        private void DrawBeam(int index, BeamShot beam)
+        {
+            Vector3 from = _units.WorldPosition(beam.Attacker);
+            if (!beam.Attacker.IsAir) from.y = beamOriginHeight;
+            Vector3 to = new Vector3(beam.Point.X, 0.1f, beam.Point.Y);
+            Vector3 line = to - from;
+            Material material = beam.Attacker.Team == Team.A ? _beamA : _beamB;
+
+            float width = beam.Firing ? beamWidth : beamChargeWidth * beam.Charge;
+            Transform body = _beams[index];
+            body.SetPositionAndRotation((from + to) * 0.5f, Quaternion.LookRotation(line));
+            body.localScale = new Vector3(width, width, line.magnitude);
+            body.GetComponent<MeshRenderer>().sharedMaterial = material;
+
+            // The spot grows to the area the beam will hit, so the target can be read before it fires.
+            float size = beam.Radius * 2f * (beam.Firing ? 1f : beam.Charge);
+            Transform spot = _beamSpots[index];
+            spot.position = to;
+            spot.localScale = new Vector3(size, 0.3f, size);
+            spot.GetComponent<MeshRenderer>().sharedMaterial = material;
         }
 
         private Vector3 ShotPoint(SimUnit unit)

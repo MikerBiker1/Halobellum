@@ -3,11 +3,14 @@
 // unless the game is started with "-sandboxDemo <screenshot folder>" (MatchAutoplay then opens the
 // Sandbox scene). It places a mixed army on each side (ground and air units), saves a screenshot of
 // the placement, runs the battle at 4x, saves screenshots at 3 s and 12 s of battle time and at the
-// end, then quits.
-// Depends on: SandboxController, BattleController, Halobellum.Core, UnityEngine.
+// end, then quits. It also saves one screenshot of a lobbed shot at the top of its arc, one of a beam
+// charging and one of a beam firing, the first time each is seen.
+// Depends on: SandboxController, BattleController, Halobellum.Combat, Halobellum.Core, UnityEngine.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using Halobellum.Combat;
 using Halobellum.Core;
 using UnityEngine;
 
@@ -19,13 +22,16 @@ namespace Halobellum.Presentation
         public const string Flag = "-sandboxDemo";
 
         private static readonly string[] Blue = { "Marine", "Marine", "Scorpion", "Pelican", "Warthog", "Spartan" };
-        private static readonly string[] Red = { "Grunt", "Grunt", "Jackal (Shield)", "Elite", "Wraith", "Banshee" };
+        private static readonly string[] Red = { "Grunt", "Grunt", "Jackal (Shield)", "Elite", "Wraith", "Banshee", "Scarab" };
 
         private SandboxController _sandbox;
         private BattleController _battle;
         private string _shots;
         private int _step;
         private float _wait = 1f;
+        private bool _shotArc, _shotCharge, _shotBeam;
+        private readonly List<ShotInFlight> _inFlight = new List<ShotInFlight>();
+        private readonly List<BeamShot> _beams = new List<BeamShot>();
 
         private void Awake()
         {
@@ -48,6 +54,7 @@ namespace Halobellum.Presentation
 
         private void Update()
         {
+            if (_step >= 5) ShootWeaponMechanics();
             _wait -= Time.unscaledDeltaTime;
             if (_wait > 0f) return;
             switch (_step)
@@ -104,6 +111,37 @@ namespace Halobellum.Presentation
                     Debug.Log("Sandbox demo finished: " + _battle.Simulation.Result.ToSummaryLine());
                     Application.Quit();
                     break;
+            }
+        }
+
+        private void ShootWeaponMechanics()
+        {
+            BattleSimulation simulation = _battle.Simulation;
+            if (simulation == null) return;
+            if (!_shotArc)
+            {
+                simulation.GetProjectiles(_inFlight);
+                foreach (ShotInFlight shot in _inFlight)
+                {
+                    if (shot.ArcLength <= 0f || shot.Progress < 0.4f || shot.Progress > 0.6f) continue;
+                    Shot("arc");
+                    _shotArc = true;
+                    break;
+                }
+            }
+            simulation.GetBeams(_beams);
+            foreach (BeamShot beam in _beams)
+            {
+                if (beam.Firing && !_shotBeam)
+                {
+                    Shot("beam_firing");
+                    _shotBeam = true;
+                }
+                else if (!beam.Firing && beam.Charge > 0.6f && !_shotCharge)
+                {
+                    Shot("beam_charging");
+                    _shotCharge = true;
+                }
             }
         }
 

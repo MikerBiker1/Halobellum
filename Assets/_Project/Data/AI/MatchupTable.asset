@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18f573ec65622716199bfdc1300f78c5, type: 3}
   m_Name: MatchupTable
   m_EditorClassIdentifier: 
-  source: Counter web, 2026-11-01 12:07, about 1800 credits per army, 10 battles
+  source: Counter web, 2026-11-01 12:50, about 1800 credits per army, 10 battles
     per pair
   entries:
   - attacker: Archer Missile Pod
@@ -23,7 +23,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Archer Missile Pod
     defender: Gauss Warthog
-    winRate: 0.6
+    winRate: 0.5
   - attacker: Archer Missile Pod
     defender: Hornet
     winRate: 0
@@ -224,7 +224,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Gauss Warthog
     defender: Archer Missile Pod
-    winRate: 0.4
+    winRate: 0.5
   - attacker: Gauss Warthog
     defender: Elephant
     winRate: 0
@@ -287,7 +287,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Gauss Warthog
     defender: Wraith
-    winRate: 0.9
+    winRate: 1
   - attacker: Gauss Warthog
     defender: Zealot
     winRate: 0
@@ -1544,7 +1544,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Wraith
     defender: Gauss Warthog
-    winRate: 0.1
+    winRate: 0
   - attacker: Wraith
     defender: Hornet
     winRate: 0

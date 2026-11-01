@@ -80,3 +80,4 @@ Milestones and items from PROJECT_BIBLE.md Section 14. An item is ticked when it
 - [x] D34: smoke lasts the whole round, Intensive Training twice with separate cooldowns, Laser Sights +2 m, all items in the Sandbox
 - [x] D35 (play test): drag items onto hexagons, no budget text, blue shield bar, two-click line placement at any angle, Glassing Beam hits air
 - [x] D36 (after the speed trial): battle speed is real again; all move speeds halved, +1 m/s for Warthog, Ghost and Gauss Warthog; counter web and matchup table re-measured. For the next balance pass: slower armies favour long-range units (12 of 276 matchups changed winner, see D36)
+- [x] D37: lobbed artillery that aims ahead and can miss (Wraith, Archer Missile Pod); Scarab Focus Beam (2 s charge, 3 s at 400 damage per second, 3 s rest). For the next balance pass: the Scarab beats 22 of 23 units and its damage against Heavy armor went up, so check it in mixed armies

@@ -146,7 +146,7 @@ A unit can be unlocked and bought in the same round. Buying a squad is limited t
 
 **Unit stats (all data-driven):** squad size, cost, tier, unlock cost, role, health, armor type, shield (optional, regenerates after 5 seconds without damage), move speed, collision size, target filter (ground, air, both), optional defense arc settings, `BaseDamage`, and one or more weapons.
 
-**Weapon stats:** damage per shot, fire interval (displayed as rate of fire, in shots per second), range, minimum range (for artillery), projectile speed (or instant), splash radius, and damage type. Whether a projectile can be blocked (for example by a Jackal shield) is a weapon flag.
+**Weapon stats:** damage per shot, fire interval (displayed as rate of fire, in shots per second), range, minimum range (for artillery), projectile speed (or instant), splash radius, and damage type. Whether a projectile can be blocked (for example by a Jackal shield) is a weapon flag. A weapon can be **lobbed** (the shot arcs to where the target is heading and only damages what is in the splash when it lands, so it can miss) or a **beam** (it charges, fires for a set time at one spot, hitting everything in its radius, keeps firing if the target dies, then rests).
 
 **Armor types:** Unarmored (infantry), Light Armor (light vehicles), Heavy Armor (tanks, Hunters). An energy shield is a layer on top of any type. A unit whose shield is depleted counts as its base armor type: an Elite has an Unarmored body, so it can be infected once its shield is down.
 
@@ -204,7 +204,7 @@ Numbers below are first-pass values for the first playable slice. Costs are per 
 | Scorpion | Tank | 2 | 50 | 1 | 300 | 1200 | Heavy armor; cannon (explosive) plus coax |
 | Wolverine | Anti-air | 2 | 50 | 1 | 300 | 500 | Rocket volleys, bonus damage against air, can still hit ground |
 | Hornet | Aerial | 2 | 50 | 2 | 300 | 400 | Air, rockets, bombs ground |
-| Archer Missile Pod | Artillery | 2 | 50 | 2 | 300 | 350 | Long-range explosive barrage |
+| Archer Missile Pod | Artillery | 2 | 50 | 2 | 300 | 350 | Long-range explosive barrage; lobbed |
 | Pelican | Aerial | 2 | 50 | 1 | 300 | 800 | Chin-mounted M370 autocannon (ballistic, hits air and ground); drops one small Marine squad (6) mid-battle after 10 seconds |
 | Spartan | Single-target DPS | 3 | 225 | 1 | 450 | 1500 | Energy shield, Spartan Laser |
 | Mantis | Tank | 3 | 250 | 1 | 500 | 2500 | Heavy armor; chaingun and rockets |
@@ -222,12 +222,12 @@ ODSTs are not a unit. They appear as a UNSC spell card (Section 10).
 | Jackal (Shield) | Tank | 1 | 0 | 6 | 150 | 70 | Frontal energy shield: 120 degree arc, blocks 80% of incoming ballistic projectiles. Strong against light chaff |
 | Ghost | Flanker | 1 | 0 | 2 | 200 | 250 | Fast, light armor |
 | Elite | Single-target DPS | 2 | 50 | 3 | 300 | 200 | Regenerating shield, Unarmored body (can be infected once its shield is down) |
-| Wraith | Artillery | 2 | 50 | 1 | 300 | 900 | Mortar; heavy armor; slow |
+| Wraith | Artillery | 2 | 50 | 1 | 300 | 900 | Lobbed mortar; heavy armor; slow |
 | Vampire | Anti-air | 2 | 50 | 1 | 300 | 500 | Plasma, bonus damage against air, can still hit ground |
 | Banshee | Aerial | 2 | 50 | 2 | 300 | 400 | Fast bombing runs |
 | Hunter pair | Tank | 3 | 225 | 2 | 450 | 1500 | Heavy armor; 240 degree front defense arc, extremely resistant inside it, weak from behind |
 | Zealot | Single-target DPS | 3 | 200 | 1 | 400 | 1400 | Energy sword, fast, strong shield, Unarmored body |
-| Scarab | Titan | 4 | 350 | 1 | 800 | 9000 | Walking fortress; plasma turrets plus main beam |
+| Scarab | Titan | 4 | 350 | 1 | 800 | 9000 | Walking fortress; plasma turrets plus a charged main beam |
 
 The Covenant has no dedicated anti-armor unit. Elites, Zealots, and Wraith splash fill that job for the slice, and a dedicated unit may be added in the balance pass if win rates demand it. The Engineer is not in the slice.
 
@@ -468,6 +468,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-01 | Smoke lasts the whole round; Intensive Training can be taken twice; Laser Sights +2 m; every item (no spells) in the Sandbox | Per the project owner (D33, D34) |
 | 2026-11-01 | Items are dragged onto hexagons; no budget shown on reinforcement cards; blue shield bar over the health bar; line-shaped spells are placed in two clicks at any angle; Glassing Beam hits air | Per the project owner (D35) |
 | 2026-11-01 | Battle speed stays real (1x, 2x, 4x). Every unit's move speed is halved in the data (Marines 1.5 m/s); Warthog, Ghost and Gauss Warthog get +1 m/s on top | Per the project owner, after a trial (D36) |
+| 2026-11-01 | Artillery (Wraith, Archer Missile Pod) lobs its shots, aims ahead of the target and can miss. The Scarab's Focus Beam charges 2 s, fires 3 s at 400 damage per second in a small area, survives its target's death and drifts slowly to the next one | Per the project owner (D37) |
 
 ## 18. Assumptions to confirm
 

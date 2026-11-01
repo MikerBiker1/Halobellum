@@ -22,4 +22,4 @@ Vampire,Covenant,AntiAir,2,50,1,300,500,Light,0,3.5,18,30,30,22,500,60,"Marine (
 Banshee,Covenant,Aerial,2,50,2,300,400,Light,0,5,10,100,100,85,800,30,"Wolverine (100%), Vampire (100%)"
 Hunter Pair,Covenant,Tank,3,225,2,450,1500,Heavy,0,1.1,16,60,60,60,3000,45,"Spartan (100%), Zealot (100%)"
 Zealot,Covenant,SingleTargetDps,3,200,1,400,1400,Unarmored,600,3,1.5,89,213,267,2000,80,"Marine (100%), Grunt (100%)"
-Scarab,Covenant,Titan,4,350,1,800,9000,Heavy,0,0.75,24,123,184,190,9000,160,"Spartan (100%), Marine (0%)"
+Scarab,Covenant,Titan,4,350,1,800,9000,Heavy,0,0.75,24,155,260,285,9000,160,"Spartan (100%), Marine (0%)"

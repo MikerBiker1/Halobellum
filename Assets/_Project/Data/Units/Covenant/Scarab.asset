@@ -30,8 +30,8 @@ MonoBehaviour:
   targetFilter: 2
   weapons:
   - weaponName: Focus Beam
-    damagePerShot: 260
-    fireInterval: 3
+    damagePerShot: 40
+    fireInterval: 0.1
     range: 24
     minRange: 0
     projectileSpeed: 0
@@ -43,6 +43,11 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 3
+    beamChargeSeconds: 2
+    beamRestSeconds: 3
+    beamSweepSpeed: 2
   - weaponName: Plasma Turret (left)
     damagePerShot: 10
     fireInterval: 0.25
@@ -57,6 +62,11 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
   - weaponName: Plasma Turret (right)
     damagePerShot: 10
     fireInterval: 0.25
@@ -71,6 +81,11 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0

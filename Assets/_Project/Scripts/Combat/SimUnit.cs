@@ -19,6 +19,14 @@ namespace Halobellum.Combat
         Dead = 3,
     }
 
+    /// <summary>What a beam weapon is doing (D37).</summary>
+    public enum BeamPhase
+    {
+        Off = 0,
+        Charging = 1,
+        Firing = 2,
+    }
+
     /// <summary>Live state of one weapon on a unit.</summary>
     public sealed class SimWeapon
     {
@@ -27,6 +35,13 @@ namespace Halobellum.Combat
         public SimUnit Target;
         /// <summary>Seconds until this weapon can fire again.</summary>
         public float Cooldown;
+        public BeamPhase BeamPhase;
+        /// <summary>The enemy a charging or firing beam is locked on to, or null.</summary>
+        public SimUnit BeamTarget;
+        /// <summary>The spot on the ground a beam is aimed at.</summary>
+        public Vec2 BeamPoint;
+        /// <summary>Ticks already spent in the current beam phase.</summary>
+        public int BeamTicks;
 
         public SimWeapon(WeaponStats stats)
         {

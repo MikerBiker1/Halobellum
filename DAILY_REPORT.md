@@ -49,11 +49,17 @@ This morning's report (D25 to D30) is in this file's Git history. You approved D
 - **Warthog, Ghost and Gauss Warthog** get +1 m/s on top: 5, 5.5 and 4.75 m/s.
 - **What it did to balance:** the counter web still passes (24 of 24). 12 of 276 matchups change winner, mostly in favour of long-range units. Battles average 36 s instead of 26 s, and 4 of 276 reach the 90 s limit instead of 3. This is noted for the balance pass.
 
+## New weapon mechanics (D37)
+- **Artillery lobs its shots:** the Wraith and the Archer Missile Pod fire in an arc, aim ahead of a moving target and can miss.
+- **Scarab Focus Beam:** 2 s charge, 3 s beam at 400 damage per second, 3 s rest. It keeps firing after its target dies and drifts slowly to the next one. Anti-armor makes that 600 per second against Heavy, so one beam kills a level 1 Scorpion.
+- **Elephant unchanged:** it still beats 20 of the other 23 units. It already lost to the Scarab, and by my estimate now loses by more.
+- **Balance:** the counter web still passes (24 of 24) and no matchup changes winner.
+
 ## Decisions needing your approval
 None: D31 to D34 are answered. Spells stay out of the Sandbox, as you asked.
 
 ## Test results
-- **Unity:** EditMode **360 / 360**, PlayMode **24 / 24**. **.NET harness:** **321 / 321**.
+- **Unity:** EditMode **375 / 375**, PlayMode **24 / 24**. **.NET harness:** **334 / 334**.
 - **New tests:**
   - Spell effects in battle.
   - Card rules, including the Bible's pricing examples and the "every other round" recharge.

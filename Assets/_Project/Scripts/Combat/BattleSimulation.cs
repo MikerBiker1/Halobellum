@@ -31,6 +31,26 @@ using Halobellum.Core;
 
 namespace Halobellum.Combat
 {
+    /// <summary>A projectile in flight, for drawing. ArcLength is 0 unless the shot is lobbed.</summary>
+    public struct ShotInFlight
+    {
+        public Vec2 Position;
+        public float ArcLength;
+        /// <summary>How far along its flight the shot is, 0 to 1.</summary>
+        public float Progress;
+    }
+
+    /// <summary>A beam charging or firing, for drawing.</summary>
+    public struct BeamShot
+    {
+        public SimUnit Attacker;
+        public Vec2 Point;
+        public float Radius;
+        public bool Firing;
+        /// <summary>How far the charge has come, 0 to 1 (1 while firing).</summary>
+        public float Charge;
+    }
+
     public sealed class BattleSimulation
     {
         private readonly CombatRules _rules;
@@ -66,10 +86,15 @@ namespace Halobellum.Combat
         public int ProjectileCount => _projectiles.Count;
 
         /// <summary>Fills the list with the position of every projectile in flight (for visuals).</summary>
-        public void GetProjectilePositions(List<Vec2> positions)
+        public void GetProjectiles(List<ShotInFlight> shots)
         {
-            positions.Clear();
-            foreach (Projectile projectile in _projectiles) positions.Add(projectile.Position);
+            shots.Clear();
+            foreach (Projectile projectile in _projectiles)
+            {
+                float total = projectile.Weapon.Lobbed ? Vec2.Distance(projectile.Origin, projectile.AimPoint) : 0f;
+                float progress = total > 1e-4f ? Math.Min(1f, Vec2.Distance(projectile.Origin, projectile.Position) / total) : 0f;
+                shots.Add(new ShotInFlight { Position = projectile.Position, ArcLength = total, Progress = progress });
+            }
         }
         /// <summary>Number of ticks simulated so far.</summary>
         public int Tick { get; private set; }
@@ -635,6 +660,11 @@ namespace Halobellum.Combat
                 {
                     SimWeapon weapon = unit.Weapons[w];
                     weapon.Cooldown -= _dt;
+                    if (weapon.BeamPhase != BeamPhase.Off)
+                    {
+                        UpdateBeam(unit, weapon);
+                        continue;
+                    }
 
                     SimUnit target = weapon.Target;
                     bool canFire = Targeting.IsTargetableEnemy(unit, target) && Targeting.IsInRange(unit, weapon.Stats, target)
@@ -647,10 +677,19 @@ namespace Halobellum.Combat
                     }
                     if (weapon.Cooldown > 0f) continue;
 
-                    weapon.Cooldown += weapon.Stats.FireInterval;
                     Events.RaiseWeaponFired(unit, w, target);
                     MarkEngaged(unit);
 
+                    if (weapon.Stats.IsBeam)
+                    {
+                        weapon.BeamPhase = BeamPhase.Charging;
+                        weapon.BeamTarget = target;
+                        weapon.BeamPoint = target.Position;
+                        weapon.BeamTicks = 0;
+                        continue;
+                    }
+
+                    weapon.Cooldown += weapon.Stats.FireInterval;
                     if (weapon.Stats.IsInstant)
                     {
                         ResolveHit(unit, weapon.Stats, target, target.Position, unit.Position);
@@ -659,6 +698,93 @@ namespace Halobellum.Combat
                     {
                         _projectiles.Add(new Projectile(unit, weapon.Stats, target, unit.Position));
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// One tick of a beam (D37). While charging, its spot stays on the locked target (or where that
+        /// target died). While firing, it hits everything around the spot every FireInterval, whether or
+        /// not the target still lives; the spot moves at BeamSweepSpeed toward the locked target or, once
+        /// that one is dead, toward the weapon's new target, and never leaves the weapon's reach.
+        /// </summary>
+        private void UpdateBeam(SimUnit unit, SimWeapon weapon)
+        {
+            WeaponStats stats = weapon.Stats;
+            MarkEngaged(unit);
+            if (!Targeting.IsTargetableEnemy(unit, weapon.BeamTarget)) weapon.BeamTarget = null;
+
+            if (weapon.BeamPhase == BeamPhase.Charging)
+            {
+                if (weapon.BeamTarget != null) weapon.BeamPoint = weapon.BeamTarget.Position;
+                if (++weapon.BeamTicks < TicksFor(stats.BeamChargeSeconds)) return;
+                weapon.BeamPhase = BeamPhase.Firing;
+                weapon.BeamTicks = 0;
+                return;
+            }
+
+            if (weapon.BeamTarget == null && Targeting.IsTargetableEnemy(unit, weapon.Target)) weapon.BeamTarget = weapon.Target;
+            if (weapon.BeamTarget != null)
+            {
+                Vec2 toTarget = weapon.BeamTarget.Position - weapon.BeamPoint;
+                float step = stats.BeamSweepSpeed * _dt;
+                weapon.BeamPoint = toTarget.Length <= step ? weapon.BeamTarget.Position : weapon.BeamPoint + toTarget.Normalized * step;
+            }
+            Vec2 fromUnit = weapon.BeamPoint - unit.Position;
+            float reach = stats.Range * unit.RangeMultiplier + unit.Radius + stats.SplashRadius;
+            if (fromUnit.Length > reach) weapon.BeamPoint = unit.Position + fromUnit.Normalized * reach;
+
+            if (weapon.BeamTicks % TicksFor(stats.FireInterval) == 0) ResolveBeamHit(unit, stats, weapon.BeamPoint);
+            if (++weapon.BeamTicks < TicksFor(stats.BeamSeconds)) return;
+            weapon.BeamPhase = BeamPhase.Off;
+            weapon.BeamTarget = null;
+            weapon.Cooldown = stats.BeamRestSeconds;
+        }
+
+        private int TicksFor(float seconds) => Math.Max(1, (int)MathF.Round(seconds / _dt));
+
+        /// <summary>One hit of a beam: every legal enemy around the spot.</summary>
+        private void ResolveBeamHit(SimUnit attacker, WeaponStats weapon, Vec2 point)
+        {
+            _movement.Grid.Query(point, weapon.SplashRadius + _movement.Grid.MaxRadius, _nearby);
+            foreach (SimUnit victim in _nearby)
+            {
+                if (!Targeting.IsTargetableEnemy(attacker, victim) || !weapon.CanTarget(attacker.Stats, victim.IsAir)) continue;
+                if (Vec2.Distance(victim.Position, point) - victim.Radius > weapon.SplashRadius) continue;
+
+                DefenseResult defense = DirectionalDefense.Evaluate(victim.Stats.DefenseArc, victim.Position,
+                    victim.Facing, attacker.Position, weapon, false, _random);
+                DealDamage(victim, attacker, weapon, defense.DamageMultiplier);
+            }
+        }
+
+        /// <summary>The spot a lobbed shot should land on to meet a target that keeps moving the way it is now.</summary>
+        private static Vec2 LeadPoint(Vec2 origin, SimUnit target, float projectileSpeed)
+        {
+            Vec2 point = target.Position;
+            for (int i = 0; i < 3; i++) point = target.Position + target.Velocity * (Vec2.Distance(origin, point) / projectileSpeed);
+            return point;
+        }
+
+        /// <summary>Every beam charging or firing right now, for drawing.</summary>
+        public void GetBeams(List<BeamShot> beams)
+        {
+            beams.Clear();
+            foreach (SimUnit unit in _units)
+            {
+                if (!unit.IsAlive) continue;
+                foreach (SimWeapon weapon in unit.Weapons)
+                {
+                    if (weapon.BeamPhase == BeamPhase.Off) continue;
+                    bool firing = weapon.BeamPhase == BeamPhase.Firing;
+                    beams.Add(new BeamShot
+                    {
+                        Attacker = unit,
+                        Point = weapon.BeamPoint,
+                        Radius = weapon.Stats.SplashRadius,
+                        Firing = firing,
+                        Charge = firing ? 1f : (weapon.BeamTicks + 1f) / TicksFor(weapon.Stats.BeamChargeSeconds),
+                    });
                 }
             }
         }
@@ -884,7 +1010,7 @@ namespace Halobellum.Combat
             return teamResult;
         }
 
-        /// <summary>A shot in flight. It follows its target and hits when it arrives.</summary>
+        /// <summary>A shot in flight. It follows its target and hits when it arrives; a lobbed one flies to a fixed spot.</summary>
         private sealed class Projectile
         {
             public readonly SimUnit Attacker;
@@ -899,10 +1025,10 @@ namespace Halobellum.Combat
             {
                 Attacker = attacker;
                 Weapon = weapon;
-                Target = target;
+                Target = weapon.Lobbed ? null : target;
                 Origin = origin;
                 Position = origin;
-                AimPoint = target.Position;
+                AimPoint = weapon.Lobbed ? LeadPoint(origin, target, weapon.ProjectileSpeed) : target.Position;
             }
         }
     }

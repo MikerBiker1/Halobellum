@@ -160,6 +160,16 @@ namespace Halobellum.Units
         public float coneDegrees;
         [Tooltip("Limits the weapon to one class of enemy; a unit with such weapons uses the one that fits its target (ODSTs).")]
         public WeaponTargetClass targetClass;
+        [Tooltip("Flies in an arc to where the target is heading and can miss (artillery). Needs a projectile speed and a splash radius.")]
+        public bool lobbed;
+        [Tooltip("Beam: seconds it fires, hitting everything within the splash radius every fire interval. 0 = no beam.")]
+        public float beamSeconds;
+        [Tooltip("Beam: seconds it charges before firing.")]
+        public float beamChargeSeconds;
+        [Tooltip("Beam: seconds it rests after firing.")]
+        public float beamRestSeconds;
+        [Tooltip("Beam: how fast its spot follows a target or moves to a new one, in metres per second.")]
+        public float beamSweepSpeed;
 
         public WeaponStats ToStats()
         {
@@ -180,6 +190,11 @@ namespace Halobellum.Units
                 AirDamageMultiplier = airDamageMultiplier,
                 ConeDegrees = coneDegrees,
                 TargetClass = targetClass,
+                Lobbed = lobbed,
+                BeamSeconds = beamSeconds,
+                BeamChargeSeconds = beamChargeSeconds,
+                BeamRestSeconds = beamRestSeconds,
+                BeamSweepSpeed = beamSweepSpeed,
             };
         }
     }

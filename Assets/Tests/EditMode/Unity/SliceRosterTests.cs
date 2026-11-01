@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Halobellum.Combat;
 using Halobellum.Core;
 using Halobellum.EditorTools;
 using Halobellum.Units;
@@ -158,6 +159,33 @@ namespace Halobellum.Tests
             // Titans have several weapons (turrets for chaff, a main gun for armor).
             Assert.GreaterOrEqual(u["Elephant"].Weapons.Length, 2);
             Assert.GreaterOrEqual(u["Scarab"].Weapons.Length, 2);
+        }
+
+        [Test]
+        public void OneFocusBeam_KillsALevelOneScorpion()
+        {
+            Dictionary<string, UnitStats> u = AllStats();
+            UnitStats scarab = u["Scarab"];
+            scarab.Weapons = new[] { scarab.Weapons[0] }; // The beam alone, without the turrets.
+            Assert.IsTrue(scarab.Weapons[0].IsBeam);
+
+            var sim = new BattleSimulation(HeadlessRunnerTool.LoadRules(), 1);
+            sim.AddUnit(scarab, Team.A, Vec2.Zero);
+            SimUnit scorpion = sim.AddUnit(u["Scorpion"], Team.B, new Vec2(0f, 25f));
+            for (int i = 0; i < 57; i++) sim.Step(); // Just under 2 s: still charging.
+            Assert.AreEqual(scorpion.Stats.MaxHealth, scorpion.Health, "Nothing hits before the beam fires.");
+            for (int i = 0; i < 95; i++) sim.Step(); // The rest of the charge and the 3 s beam.
+            Assert.IsFalse(scorpion.IsAlive);
+        }
+
+        [Test]
+        public void Artillery_IsLobbed()
+        {
+            Dictionary<string, UnitStats> u = AllStats();
+            Assert.IsTrue(u["Wraith"].Weapons[0].Lobbed);
+            Assert.IsTrue(u["Archer Missile Pod"].Weapons[0].Lobbed);
+            Assert.IsFalse(u["Scorpion"].Weapons[0].Lobbed, "Tank cannons fire straight.");
+            Assert.IsFalse(u["Elephant"].Weapons[0].Lobbed);
         }
 
         [Test]

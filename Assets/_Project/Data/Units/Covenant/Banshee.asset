@@ -43,6 +43,11 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
   - weaponName: Fuel Rod Bomb
     damagePerShot: 50
     fireInterval: 2.5
@@ -57,6 +62,11 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0

@@ -148,7 +148,16 @@ namespace Halobellum.UI
                 string main = s.Weapons.Length > 1 && i == 0 ? " (main)" : "";
                 b.AppendLine();
                 b.AppendLine($"{w.Name}{main}");
-                b.AppendLine($"  Damage {w.DamagePerShot:0.#} {w.DamageType}{(w.IsAntiArmor ? ", anti-armor" : "")}    Rate {w.ShotsPerSecond:0.##}/s");
+                if (w.IsBeam)
+                {
+                    b.AppendLine($"  Beam {w.DamagePerShot * w.ShotsPerSecond:0.#} damage/s {w.DamageType}{(w.IsAntiArmor ? ", anti-armor" : "")}");
+                    b.AppendLine($"  Charges {w.BeamChargeSeconds:0.#} s, fires {w.BeamSeconds:0.#} s, rests {w.BeamRestSeconds:0.#} s");
+                }
+                else
+                {
+                    b.AppendLine($"  Damage {w.DamagePerShot:0.#} {w.DamageType}{(w.IsAntiArmor ? ", anti-armor" : "")}    Rate {w.ShotsPerSecond:0.##}/s");
+                }
+                if (w.Lobbed) b.AppendLine("  Lobbed: aims ahead of its target, can miss");
                 string minRange = w.MinRange > 0f ? $" (min {w.MinRange:0.#})" : "";
                 string splash = w.SplashRadius > 0f ? $"{w.SplashRadius:0.#} m" : "none";
                 b.AppendLine($"  Range {w.Range:0.#} m{minRange}    Splash {splash}");
