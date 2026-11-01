@@ -93,7 +93,7 @@ namespace Halobellum.Combat
         private Vec2 SteeringVelocity(SimUnit unit, float dt, out Vec2 facing)
         {
             facing = unit.Facing;
-            float speed = unit.Stats.MoveSpeed * (unit.State == UnitState.Attack ? _rules.AdvanceSpeedMultiplier : 1f);
+            float speed = unit.MoveSpeedNow * (unit.State == UnitState.Attack ? _rules.AdvanceSpeedMultiplier : 1f);
             Vec2 toGoal = unit.MoveGoal - unit.Position;
             float distance = toGoal.Length;
             if (speed <= 0f || distance < 1e-4f) return Vec2.Zero;
@@ -171,7 +171,7 @@ namespace Halobellum.Combat
             foreach (SimUnit unit in units)
             {
                 unit.YieldSteer = Vec2.Zero;
-                if (unit.IsAlive && !unit.IsAir && unit.Stats.MoveSpeed > 0f) slowest = Math.Min(slowest, unit.Stats.MoveSpeed);
+                if (unit.IsAlive && !unit.IsAir && unit.MoveSpeedNow > 0f) slowest = Math.Min(slowest, unit.MoveSpeedNow);
             }
             if (_rules.YieldSpeedRatio <= 0f || slowest == float.MaxValue) return;
 
@@ -179,7 +179,7 @@ namespace Halobellum.Combat
             foreach (SimUnit unit in units)
             {
                 if (!unit.IsAlive || unit.IsAir || (unit.State != UnitState.Move && !unit.Advancing)) continue;
-                float speed = unit.Stats.MoveSpeed;
+                float speed = unit.MoveSpeedNow;
                 if (speed < slowest * _rules.YieldSpeedRatio) continue; // Nobody here is slow enough to make way for it.
                 Vec2 way = unit.MoveGoal - unit.Position;
                 float length = way.Length;
@@ -212,7 +212,7 @@ namespace Halobellum.Combat
         private bool MakesWayFor(SimUnit slower, SimUnit faster)
         {
             return _rules.YieldSpeedRatio > 0f && slower != faster && slower.Team == faster.Team && !slower.IsAir && !faster.IsAir
-                && faster.Radius >= slower.Radius && faster.Stats.MoveSpeed >= slower.Stats.MoveSpeed * _rules.YieldSpeedRatio;
+                && faster.Radius >= slower.Radius && faster.MoveSpeedNow >= slower.MoveSpeedNow * _rules.YieldSpeedRatio;
         }
 
         /// <summary>

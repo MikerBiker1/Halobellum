@@ -109,11 +109,11 @@ namespace Halobellum.Combat
         }
 
         /// <summary>Casts a spell for this team at this spot; it takes effect at its delay once the battle runs.</summary>
-        public SimSpell AddSpell(SpellStats stats, Team team, Vec2 position)
+        public SimSpell AddSpell(SpellStats stats, Team team, Vec2 position, bool rotated90 = false)
         {
             if (Tick > 0) throw new InvalidOperationException("Add spells before the battle starts.");
             if (stats == null) throw new ArgumentNullException(nameof(stats));
-            var spell = new SimSpell(_spells.Count, stats, team, position);
+            var spell = new SimSpell(_spells.Count, stats, team, position, rotated90);
             _spells.Add(spell);
             return spell;
         }
@@ -158,6 +158,7 @@ namespace Halobellum.Combat
 
             SpawnReinforcements();
             UpdateSpells();
+            UpdateStatusEffects();
             UpdateShields();
             UpdateTargetsAndStates();
             UpdateSquadFormations();
@@ -224,9 +225,55 @@ namespace Halobellum.Combat
                         case SpellEffect.Damage: ApplySpellDamage(spell); break;
                         case SpellEffect.Buff: ApplySpellBuff(spell); break;
                         case SpellEffect.DropSquad: DropSpellSquads(spell); break;
+                        case SpellEffect.Disrupt: ApplySpellDisruption(spell); break;
                     }
                     Events.RaiseSpellTriggered(spell);
                     if (stats.Effect != SpellEffect.Damage || stats.TickInterval <= 0f) break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Lasting spell effects, worked out afresh every tick: an EMP's disabled techs and slowed armored
+        /// units, and the reduced range of every unit inside smoke (of either side, as long as it hangs).
+        /// </summary>
+        private void UpdateStatusEffects()
+        {
+            if (_spells.Count == 0) return;
+            float now = ElapsedSeconds;
+            foreach (SimUnit unit in _units)
+            {
+                if (!unit.IsAlive) continue;
+                unit.SetTechsDisabled(now < unit.TechsDisabledUntil);
+                unit.SpeedMultiplier = now < unit.SlowedUntil ? unit.SlowMultiplier : 1f;
+                unit.RangeMultiplier = 1f;
+            }
+            foreach (SimSpell spell in _spells)
+            {
+                if (spell.Stats.Effect != SpellEffect.Smoke || spell.TicksDone == 0 || spell.IsOverAt(now)) continue;
+                foreach (SimUnit unit in _units)
+                {
+                    if (unit.IsAlive && spell.Covers(unit)) unit.RangeMultiplier = Math.Min(unit.RangeMultiplier, spell.Stats.RangeMultiplier);
+                }
+            }
+        }
+
+        /// <summary>An EMP: every unit in the area loses shield and its techs for a while; armored units are slowed.</summary>
+        private void ApplySpellDisruption(SimSpell spell)
+        {
+            SpellStats stats = spell.Stats;
+            float now = ElapsedSeconds;
+            foreach (SimUnit unit in _units)
+            {
+                if (!unit.IsAlive || !spell.Covers(unit)) continue;
+                float removed = Math.Min(unit.Shield, stats.ShieldDamage);
+                unit.Shield -= removed;
+                spell.DamageDealt += removed;
+                if (stats.TechDisableSeconds > 0f) unit.TechsDisabledUntil = Math.Max(unit.TechsDisabledUntil, now + stats.TechDisableSeconds);
+                if (stats.SlowShare > 0f && unit.Stats.ArmorType != ArmorType.Unarmored)
+                {
+                    unit.SlowedUntil = Math.Max(unit.SlowedUntil, now + stats.SlowSeconds);
+                    unit.SlowMultiplier = 1f - stats.SlowShare;
                 }
             }
         }
@@ -237,8 +284,9 @@ namespace Halobellum.Combat
             _movement.Grid.Query(spell.Position, spell.Stats.Radius + _movement.Grid.MaxRadius, _nearby);
             foreach (SimUnit victim in _nearby)
             {
-                if (!victim.IsAlive || victim.Team == spell.Team || !spell.Stats.Targets.Allows(victim.IsAir)) continue;
-                if (Vec2.Distance(victim.Position, spell.Position) - victim.Radius > spell.Stats.Radius) continue;
+                // Offensive spells hit everyone in the area, the caster's own units too (D33).
+                if (!victim.IsAlive || (victim.Team == spell.Team && !spell.Stats.Offensive) || !spell.Stats.Targets.Allows(victim.IsAir)) continue;
+                if (!spell.Covers(victim)) continue;
                 float multiplier = victim.IsAir ? weapon.AirDamageMultiplier : 1f;
                 float dealt = DamageCalculator.ApplyHit(_rules.DamageTable, weapon, victim.Stats.ArmorType, multiplier, ref victim.Shield, ref victim.Health);
                 victim.SecondsSinceDamaged = 0f;
@@ -296,6 +344,8 @@ namespace Halobellum.Combat
             {
                 if (!unit.IsAlive) continue;
                 unit.SecondsSinceDamaged += _dt;
+                if (unit.Stats.HealPerSecondShare > 0f && unit.Health > 0f)
+                    unit.Health = Math.Min(Math.Max(unit.Health, unit.Stats.MaxHealth), unit.Health + unit.Stats.MaxHealth * unit.Stats.HealPerSecondShare * _dt);
                 if (unit.Stats.HasShield && unit.Shield < unit.Stats.MaxShield && unit.SecondsSinceDamaged >= _rules.ShieldRegenDelaySeconds)
                 {
                     unit.Shield = Math.Min(unit.Stats.MaxShield, unit.Shield + unit.Stats.ShieldRegenPerSecond * _dt);
@@ -327,7 +377,7 @@ namespace Halobellum.Combat
                 else
                 {
                     // Between evaluations, only replace secondary weapon targets that died.
-                    for (int w = 1; w < unit.Weapons.Length; w++)
+                    for (int w = 1; w < unit.Weapons.Length && !unit.Stats.SwitchesWeapons; w++)
                     {
                         SimWeapon weapon = unit.Weapons[w];
                         if (weapon.Target != null && !Targeting.IsTargetableEnemy(unit, weapon.Target))
@@ -346,9 +396,9 @@ namespace Halobellum.Combat
                 {
                     // Nothing in sight yet: march straight ahead toward the enemy's side.
                     unit.State = UnitState.Move;
-                    unit.MoveGoal = unit.Position + Forward(unit) * (unit.Stats.MoveSpeed * _rules.FormationLookaheadSeconds + 1f);
+                    unit.MoveGoal = unit.Position + Forward(unit) * (unit.MoveSpeedNow * _rules.FormationLookaheadSeconds + 1f);
                 }
-                else if (Targeting.IsInRange(unit, unit.Weapons[0].Stats, target))
+                else if (Targeting.IsInRange(unit, unit.Weapons[unit.MainWeaponIndex].Stats, target))
                 {
                     unit.State = UnitState.Attack;
                 }
@@ -413,7 +463,7 @@ namespace Halobellum.Combat
                 SimUnit member = squad.Members[i];
                 if (!member.IsAlive || member.State != UnitState.Move) continue;
                 // Aim a little ahead of the formation place, so members keep marching at full speed.
-                float ahead = member.Stats.MoveSpeed * _rules.FormationLookaheadSeconds;
+                float ahead = member.MoveSpeedNow * _rules.FormationLookaheadSeconds;
                 member.MoveGoal = anchor + squad.Offsets[i] + direction * ahead;
             }
         }
@@ -436,10 +486,10 @@ namespace Halobellum.Combat
                 SimUnit unit = _units[i];
                 _advancing[i] = false;
                 if (_rules.AdvanceSpeedMultiplier <= 0f || !unit.IsAlive || unit.IsAir || unit.State != UnitState.Attack
-                    || unit.MoveTarget == null || unit.Stats.MoveSpeed <= 0f) continue;
-                WeaponStats weapon = unit.Weapons[0].Stats;
-                float step = unit.Stats.MoveSpeed * _rules.AdvanceSpeedMultiplier * _dt;
-                float closest = Math.Max(weapon.MinRange, weapon.Range * _rules.AdvanceRangeShare);
+                    || unit.MoveTarget == null || unit.MoveSpeedNow <= 0f) continue;
+                WeaponStats weapon = unit.Weapons[unit.MainWeaponIndex].Stats;
+                float step = unit.MoveSpeedNow * _rules.AdvanceSpeedMultiplier * _dt;
+                float closest = Math.Max(weapon.MinRange, weapon.Range * unit.RangeMultiplier * _rules.AdvanceRangeShare);
                 if (Targeting.EdgeDistance(unit, unit.MoveTarget) - step <= closest) continue;
                 _advancing[i] = HasBlockedFriendBehind(unit);
             }
@@ -472,7 +522,7 @@ namespace Halobellum.Combat
                 way = way.Normalized;
                 if (Vec2.Dot(way, toUnit / gap) < 0.5f) continue; // We are not in its way.
 
-                float wantedSpeed = friend.Stats.MoveSpeed * (friend.Advancing ? _rules.AdvanceSpeedMultiplier : 1f);
+                float wantedSpeed = friend.MoveSpeedNow * (friend.Advancing ? _rules.AdvanceSpeedMultiplier : 1f);
                 if (Vec2.Dot(friend.Velocity, way) < 0.5f * wantedSpeed) return true; // Held up.
             }
             return false;
@@ -520,7 +570,34 @@ namespace Halobellum.Combat
                 SimWeapon weapon = unit.Weapons[w];
                 weapon.Target = Targeting.FindClosestLegalTarget(unit, weapon.Stats, _units, AcquisitionRange(unit, weapon.Stats));
             }
-            unit.MoveTarget = unit.Weapons[0].Target;
+            if (unit.Stats.SwitchesWeapons) ChooseWeaponByTarget(unit);
+            unit.MoveTarget = unit.Weapons[unit.MainWeaponIndex].Target;
+        }
+
+        /// <summary>
+        /// Units that switch weapons (ODSTs, D33) use one weapon at a time: the one whose target is the
+        /// closest enemy. It decides where the unit moves; the other weapons wait.
+        /// </summary>
+        private static void ChooseWeaponByTarget(SimUnit unit)
+        {
+            int best = 0;
+            float bestDistance = float.MaxValue;
+            for (int w = 0; w < unit.Weapons.Length; w++)
+            {
+                SimUnit target = unit.Weapons[w].Target;
+                if (target == null) continue;
+                float distance = Vec2.DistanceSquared(unit.Position, target.Position);
+                if (distance < bestDistance)
+                {
+                    bestDistance = distance;
+                    best = w;
+                }
+            }
+            unit.MainWeaponIndex = best;
+            for (int w = 0; w < unit.Weapons.Length; w++)
+            {
+                if (w != best) unit.Weapons[w].Target = null;
+            }
         }
 
         private void FaceTargets()
@@ -543,7 +620,7 @@ namespace Halobellum.Combat
         /// </summary>
         private bool IsAimed(SimUnit unit, int weaponIndex, SimUnit target)
         {
-            if (weaponIndex != 0 || _rules.MainWeaponFacingToleranceDegrees >= 180f) return true;
+            if (weaponIndex != unit.MainWeaponIndex || _rules.MainWeaponFacingToleranceDegrees >= 180f) return true;
             Vec2 toTarget = target.Position - unit.Position;
             if (toTarget.LengthSquared <= 1e-8f) return true;
             return Vec2.AngleDegrees(unit.Facing, toTarget) <= _rules.MainWeaponFacingToleranceDegrees + 0.01f;
@@ -662,13 +739,14 @@ namespace Halobellum.Combat
             if (direction.LengthSquared <= 1e-8f) direction = attacker.Facing;
             float halfAngle = weapon.ConeDegrees * 0.5f;
 
-            _movement.Grid.Query(sourcePosition, weapon.Range + _movement.Grid.MaxRadius, _nearby);
+            float coneRange = weapon.Range * attacker.RangeMultiplier;
+            _movement.Grid.Query(sourcePosition, coneRange + _movement.Grid.MaxRadius, _nearby);
             foreach (SimUnit victim in _nearby)
             {
                 if (victim == directTarget) continue;
                 if (!Targeting.IsTargetableEnemy(attacker, victim) || !weapon.CanTarget(attacker.Stats, victim.IsAir)) continue;
                 Vec2 toVictim = victim.Position - sourcePosition;
-                if (toVictim.Length - victim.Radius > weapon.Range) continue;
+                if (toVictim.Length - victim.Radius > coneRange) continue;
                 if (toVictim.LengthSquared > 1e-8f && Vec2.AngleDegrees(direction, toVictim) > halfAngle) continue;
 
                 DefenseResult defense = DirectionalDefense.Evaluate(victim.Stats.DefenseArc, victim.Position,
@@ -686,6 +764,8 @@ namespace Halobellum.Combat
             attacker.DamageDealt += dealt;
             MarkEngaged(target);
             Events.RaiseUnitDamaged(target, attacker, dealt);
+            if (attacker.Stats.LifestealShare > 0f && attacker.IsAlive && attacker.Health > 0f)
+                attacker.Health = Math.Min(attacker.Stats.MaxHealth, attacker.Health + dealt * attacker.Stats.LifestealShare);
 
             if (target.Health <= 0f && target.KilledById < 0 && target.KilledBySpell == null)
             {

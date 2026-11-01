@@ -22,7 +22,7 @@ namespace Halobellum.Combat
     /// <summary>Live state of one weapon on a unit.</summary>
     public sealed class SimWeapon
     {
-        public readonly WeaponStats Stats;
+        public WeaponStats Stats;
         /// <summary>The enemy this weapon is shooting at, or null.</summary>
         public SimUnit Target;
         /// <summary>Seconds until this weapon can fire again.</summary>
@@ -41,7 +41,9 @@ namespace Halobellum.Combat
         public readonly Team Team;
         /// <summary>Which squad this body belongs to (-1 if none).</summary>
         public readonly int SquadId;
-        public readonly UnitStats Stats;
+        /// <summary>The unit's current stats: its own, or those without techs while an EMP has disabled them.</summary>
+        public UnitStats Stats { get; private set; }
+        private readonly UnitStats _fullStats;
         public readonly SimWeapon[] Weapons;
 
         public Vec2 Position;
@@ -57,6 +59,29 @@ namespace Halobellum.Combat
         public float DamageMultiplier = 1f;
         /// <summary>The spell that dealt the killing blow, or null (then KilledById tells the unit, if any).</summary>
         public SimSpell KilledBySpell;
+        /// <summary>The weapon that decides where the unit moves and stops: the first one, except on units that switch weapons by target.</summary>
+        public int MainWeaponIndex;
+        /// <summary>Multiplies its weapons' range (units in smoke). Set every tick.</summary>
+        public float RangeMultiplier = 1f;
+        /// <summary>Multiplies its move speed (units slowed by an EMP). Set every tick.</summary>
+        public float SpeedMultiplier = 1f;
+        /// <summary>Battle time until which it stays slowed, and by how much.</summary>
+        public float SlowedUntil;
+        public float SlowMultiplier = 1f;
+        /// <summary>Battle time until which its tech upgrades are disabled (EMP).</summary>
+        public float TechsDisabledUntil;
+
+        /// <summary>Its move speed right now.</summary>
+        public float MoveSpeedNow => Stats.MoveSpeed * SpeedMultiplier;
+
+        /// <summary>Switches between its full stats and its stats without techs (an EMP). Weapons keep their targets and cooldowns.</summary>
+        public void SetTechsDisabled(bool disabled)
+        {
+            UnitStats wanted = disabled && _fullStats.WithoutTechs != null ? _fullStats.WithoutTechs : _fullStats;
+            if (wanted == Stats) return;
+            Stats = wanted;
+            for (int i = 0; i < Weapons.Length && i < wanted.Weapons.Length; i++) Weapons[i].Stats = wanted.Weapons[i];
+        }
 
         public float Health;
         public float Shield;
@@ -88,6 +113,7 @@ namespace Halobellum.Combat
             Team = team;
             SquadId = squadId;
             Stats = stats;
+            _fullStats = stats;
             Position = position;
             Facing = facing.LengthSquared > 0f ? facing.Normalized : Vec2.Up;
             Health = stats.MaxHealth;

@@ -87,9 +87,61 @@ namespace Halobellum.Core
         /// </summary>
         public static UnitStats Apply(UnitStats baseStats, int level, IReadOnlyList<TechUpgrade> techs)
         {
-            level = Math.Max(1, Math.Min(MaxLevel, level));
-            if (level == 1 && (techs == null || techs.Count == 0)) return baseStats;
+            return Apply(baseStats, level, techs, null, null);
+        }
 
+        /// <summary>
+        /// The same, also with the squad's item and the army's buffs (decision D33). Melee weapons (3 m
+        /// or less) are not "ranged": the army's range bonus skips them. If it has techs, the result
+        /// remembers the stats without them (WithoutTechs), which an EMP switches to for a while.
+        /// </summary>
+        public static UnitStats Apply(UnitStats baseStats, int level, IReadOnlyList<TechUpgrade> techs, ItemStats item, ArmyBuffs buffs)
+        {
+            level = Math.Max(1, Math.Min(MaxLevel, level));
+            bool hasTechs = techs != null && techs.Count > 0;
+            if (level == 1 && !hasTechs && item == null && (buffs == null || buffs.IsNeutral)) return baseStats;
+
+            UnitStats stats = ApplyLevelAndTechs(baseStats, level, techs);
+            ApplyItemAndBuffs(stats, item, buffs);
+            if (hasTechs)
+            {
+                UnitStats withoutTechs = ApplyLevelAndTechs(baseStats, level, null);
+                ApplyItemAndBuffs(withoutTechs, item, buffs);
+                stats.WithoutTechs = withoutTechs;
+            }
+            return stats;
+        }
+
+        private static void ApplyItemAndBuffs(UnitStats stats, ItemStats item, ArmyBuffs buffs)
+        {
+            if (item != null)
+            {
+                stats.MaxHealth *= item.HealthMultiplier;
+                stats.MoveSpeed *= item.MoveSpeedMultiplier;
+                stats.LifestealShare = item.LifestealShare;
+                stats.HealPerSecondShare = item.HealPerSecondShare;
+                foreach (WeaponStats weapon in stats.Weapons)
+                {
+                    weapon.DamagePerShot *= item.DamageMultiplier;
+                    weapon.Range += item.RangeBonus;
+                }
+            }
+            if (buffs != null)
+            {
+                stats.MaxHealth *= buffs.HealthMultiplier;
+                foreach (WeaponStats weapon in stats.Weapons)
+                {
+                    weapon.DamagePerShot *= buffs.DamageMultiplier;
+                    if (weapon.Range > MeleeRange) weapon.Range += buffs.RangeBonus;
+                }
+            }
+        }
+
+        /// <summary>Weapons reaching this far or less count as melee, not ranged.</summary>
+        public const float MeleeRange = 3f;
+
+        private static UnitStats ApplyLevelAndTechs(UnitStats baseStats, int level, IReadOnlyList<TechUpgrade> techs)
+        {
             UnitStats stats = baseStats.Clone();
             stats.Level = level;
             stats.MaxHealth *= level;

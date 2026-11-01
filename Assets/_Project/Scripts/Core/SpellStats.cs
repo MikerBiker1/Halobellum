@@ -7,9 +7,16 @@
 //     (1 tick = a strike, more = a zone such as a plasma storm), through the normal damage table.
 //   - Buff: the caster's units inside Radius get a bonus shield (a share of their health) and/or a
 //     damage multiplier for the rest of the battle.
-//   - DropSquad: DropSquads squads of DropUnit land at the spot for that battle only (ODST pods).
-// Offensive spells can be placed anywhere on the field (red outline); defensive spells and buffs only
-// in the caster's own deployment zone (blue outline). No numbers live here: every value is data.
+//   - DropSquad: DropSquads squads of DropUnit land at the spot for that battle only (ODST pods,
+//     Banshee Ambush).
+//   - Disrupt: an EMP. Removes ShieldDamage of every unit's shield, switches off its tech upgrades
+//     for TechDisableSeconds and slows armored units by SlowShare for SlowSeconds.
+//   - Smoke: for DurationSeconds, units inside have their weapon range multiplied by RangeMultiplier.
+// Offensive spells can be placed anywhere on the field (red outline) and can hurt the caster's own
+// units too (decision D33); defensive spells and buffs go only in the caster's own deployment zone
+// (blue outline) and only help the caster. An area is a circle (Radius), or a rectangle when AreaWidth
+// is above 0: AreaWidth across the field and AreaDepth along it, or the other way around when the
+// player turned it 90 degrees. No numbers live here: every value is data.
 // Depends on: UnitStats, WeaponStats, CombatEnums.
 
 using System.Collections.Generic;
@@ -21,6 +28,8 @@ namespace Halobellum.Core
         Damage = 0,
         Buff = 1,
         DropSquad = 2,
+        Disrupt = 3,
+        Smoke = 4,
     }
 
     public sealed class SpellStats
@@ -40,6 +49,12 @@ namespace Halobellum.Core
         public float Radius;
         /// <summary>Seconds after the battle starts before the first effect.</summary>
         public float DelaySeconds;
+        /// <summary>The first round it can be offered (extremely impactful spells only appear late).</summary>
+        public int MinRound;
+        /// <summary>A rectangular area: width across the field in metres (0 = a circle of Radius).</summary>
+        public float AreaWidth;
+        /// <summary>A rectangular area: depth along the field in metres.</summary>
+        public float AreaDepth;
 
         // Damage spells.
         public float DamagePerTick;
@@ -60,6 +75,29 @@ namespace Halobellum.Core
         // Drop squads.
         public UnitStats DropUnit;
         public int DropSquads = 1;
+
+        // Disrupt (EMP).
+        /// <summary>Shield removed from each unit (health is not touched).</summary>
+        public float ShieldDamage;
+        public float TechDisableSeconds;
+        /// <summary>Armored units move this share slower (0.4 = 40% slower).</summary>
+        public float SlowShare;
+        public float SlowSeconds;
+
+        // Smoke.
+        public float DurationSeconds;
+        /// <summary>Weapon range of units inside is multiplied by this (0.5 = half).</summary>
+        public float RangeMultiplier = 1f;
+
+        public bool IsRectangle => AreaWidth > 0f;
+
+        /// <summary>True if a body at this offset from the area's centre touches the area.</summary>
+        public bool Covers(Vec2 offset, float bodyRadius, bool rotated90)
+        {
+            if (!IsRectangle) return offset.Length - bodyRadius <= Radius;
+            float halfX = (rotated90 ? AreaDepth : AreaWidth) * 0.5f, halfY = (rotated90 ? AreaWidth : AreaDepth) * 0.5f;
+            return System.Math.Abs(offset.X) <= halfX + bodyRadius && System.Math.Abs(offset.Y) <= halfY + bodyRadius;
+        }
 
         private WeaponStats _weapon;
 
@@ -94,6 +132,10 @@ namespace Halobellum.Core
                     if (ShieldBonusShare > 0f) parts.Add($"+{ShieldBonusShare * 100f:0}% health as shield");
                     if (DamageMultiplier > 1f) parts.Add($"+{(DamageMultiplier - 1f) * 100f:0}% damage");
                     return $"{string.Join(", ", parts)} for your units in {Radius:0} m";
+                case SpellEffect.Disrupt:
+                    return $"{ShieldDamage:0} damage to shields, disables techs for {TechDisableSeconds:0} s, armored units {SlowShare * 100f:0}% slower for {SlowSeconds:0} s, in {Radius:0} m";
+                case SpellEffect.Smoke:
+                    return $"Smoke in a {AreaDepth:0} x {AreaWidth:0} m line for {DurationSeconds:0} s: units inside have {(1f - RangeMultiplier) * 100f:0}% less range";
                 default:
                     return $"{DropSquads} x {DropUnit?.Name ?? "?"} squad{(DropSquads == 1 ? "" : "s")} land for this battle";
             }
@@ -127,6 +169,15 @@ namespace Halobellum.Core
                 case SpellEffect.DropSquad:
                     if (DropUnit == null) problems.Add($"{label}: no unit to drop.");
                     if (DropSquads < 1) problems.Add($"{label}: drops at least 1 squad.");
+                    break;
+                case SpellEffect.Disrupt:
+                    if (Radius <= 0f) problems.Add($"{label}: radius must be above 0.");
+                    if (ShieldDamage <= 0f && TechDisableSeconds <= 0f && SlowShare <= 0f) problems.Add($"{label}: a disruption needs an effect.");
+                    break;
+                case SpellEffect.Smoke:
+                    if (AreaWidth <= 0f && Radius <= 0f) problems.Add($"{label}: smoke needs an area.");
+                    if (DurationSeconds <= 0f) problems.Add($"{label}: smoke needs a duration.");
+                    if (RangeMultiplier <= 0f || RangeMultiplier >= 1f) problems.Add($"{label}: smoke must reduce range.");
                     break;
             }
             return problems;

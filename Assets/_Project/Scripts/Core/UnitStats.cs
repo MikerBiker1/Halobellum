@@ -8,6 +8,17 @@ using System.Collections.Generic;
 
 namespace Halobellum.Core
 {
+    /// <summary>Which enemies a weapon is meant for, on units that switch weapons by target (ODSTs, D33).</summary>
+    public enum WeaponTargetClass
+    {
+        /// <summary>Any enemy (normal weapons).</summary>
+        Any = 0,
+        /// <summary>Chaff and unarmored enemies (the ODST's SMG).</summary>
+        ChaffOrUnarmored = 1,
+        /// <summary>Everything tougher (the ODST's rocket launcher).</summary>
+        Tougher = 2,
+    }
+
     /// <summary>One weapon on a unit (Bible Section 6, "Weapon stats").</summary>
     public sealed class WeaponStats
     {
@@ -41,12 +52,25 @@ namespace Halobellum.Core
         /// SplashRadius is not used for cone weapons. 0 means no cone.
         /// </summary>
         public float ConeDegrees;
+        /// <summary>
+        /// Limits the weapon to one class of enemy. A unit with such weapons uses one at a time: the one
+        /// that fits the closest enemy it can attack.
+        /// </summary>
+        public WeaponTargetClass TargetClass;
 
         public float ShotsPerSecond => FireInterval > 0f ? 1f / FireInterval : 0f;
         public bool IsInstant => ProjectileSpeed <= 0f;
         public bool IsCone => ConeDegrees > 0f;
 
         /// <summary>True if this weapon, on this unit, may attack a unit that is (or is not) in the air.</summary>
+        /// <summary>True if this weapon's target class fits this enemy.</summary>
+        public bool FitsClass(UnitStats enemy)
+        {
+            if (TargetClass == WeaponTargetClass.Any) return true;
+            bool light = enemy.Role == UnitRole.Chaff || enemy.ArmorType == ArmorType.Unarmored;
+            return TargetClass == WeaponTargetClass.ChaffOrUnarmored ? light : !light;
+        }
+
         public bool CanTarget(UnitStats owner, bool targetIsAir)
         {
             return HasOwnTargetFilter ? TargetFilter.Allows(targetIsAir) : owner == null || owner.CanTarget(targetIsAir);
@@ -197,6 +221,27 @@ namespace Halobellum.Core
         }
 
         /// <summary>A deep copy, so changes to one copy never affect another.</summary>
+        /// <summary>True if the unit uses one weapon at a time, chosen by its target (ODSTs).</summary>
+        public bool SwitchesWeapons
+        {
+            get
+            {
+                if (Weapons == null) return false;
+                foreach (WeaponStats weapon in Weapons) if (weapon != null && weapon.TargetClass != WeaponTargetClass.Any) return true;
+                return false;
+            }
+        }
+
+        /// <summary>Share of the damage dealt that comes back as health (from items).</summary>
+        public float LifestealShare;
+        /// <summary>Share of its maximum health a body recovers per second (from items).</summary>
+        public float HealPerSecondShare;
+        /// <summary>
+        /// The same unit without its tech upgrades (level, item and army buffs kept), or null if it has no
+        /// techs. An EMP switches a unit to these stats for a while.
+        /// </summary>
+        public UnitStats WithoutTechs;
+
         public UnitStats Clone()
         {
             var copy = (UnitStats)MemberwiseClone();

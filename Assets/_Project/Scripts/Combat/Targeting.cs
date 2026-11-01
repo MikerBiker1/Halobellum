@@ -37,6 +37,7 @@ namespace Halobellum.Combat
         {
             if (!IsTargetableEnemy(shooter, target)) return false;
             if (weapon != null ? !weapon.CanTarget(shooter.Stats, target.IsAir) : !shooter.Stats.CanTarget(target.IsAir)) return false;
+            if (weapon != null && !weapon.FitsClass(target.Stats)) return false;
             float minRange = weapon?.MinRange ?? 0f;
             return minRange <= 0f || EdgeDistance(shooter, target) >= minRange;
         }
@@ -45,7 +46,7 @@ namespace Halobellum.Combat
         public static bool IsInRange(SimUnit shooter, WeaponStats weapon, SimUnit target)
         {
             float distance = EdgeDistance(shooter, target);
-            return distance <= weapon.Range && distance >= weapon.MinRange;
+            return distance <= weapon.Range * shooter.RangeMultiplier && distance >= weapon.MinRange;
         }
 
         /// <summary>
