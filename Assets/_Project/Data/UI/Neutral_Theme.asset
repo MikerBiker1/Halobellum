@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03e86a01e404793f605d1567c10f7231, type: 3}
+  m_Name: Neutral_Theme
+  m_EditorClassIdentifier: 
+  themeName: Neutral
+  fontAsset: {fileID: 0}
+  osFontNames:
+  - Arial
+  uppercaseTitles: 0
+  panelShape: 0
+  cornerSize: 3
+  borderThickness: 1
+  glowSize: 0
+  panelColor: {r: 0.08, g: 0.08, b: 0.09, a: 0.88}
+  borderColor: {r: 0.35, g: 0.36, b: 0.4, a: 1}
+  glowColor: {r: 0, g: 0, b: 0, a: 0}
+  textColor: {r: 0.95, g: 0.95, b: 0.95, a: 1}
+  dimTextColor: {r: 0.78, g: 0.78, b: 0.8, a: 1}
+  titleColor: {r: 1, g: 1, b: 1, a: 1}
+  accentColor: {r: 0.45, g: 0.75, b: 1, a: 1}
+  buttonColor: {r: 0.2, g: 0.21, b: 0.24, a: 0.95}
+  buttonHoverColor: {r: 0.28, g: 0.3, b: 0.34, a: 0.98}
+  buttonPressedColor: {r: 0.14, g: 0.15, b: 0.17, a: 1}
+  buttonTextColor: {r: 1, g: 1, b: 1, a: 1}
+  disabledTextColor: {r: 0.55, g: 0.55, b: 0.55, a: 1}

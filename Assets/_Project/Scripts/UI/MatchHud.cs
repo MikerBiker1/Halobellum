@@ -7,7 +7,8 @@
 //   Battle: both base health bars and a live army-value comparison (speed controls are in BattleHud).
 //   Result: base damage dealt by each side, income, survivors, top damage dealers, what killed what.
 //   Match over: the winner and a New match button.
-// Placeholder UI drawn with Unity's immediate-mode GUI; scales with the screen height.
+// The look follows the player's faction (HudTheme: UNSC or Covenant style); the draft screen is neutral.
+// Drawn with Unity's immediate-mode GUI; scales with the screen height.
 // Depends on: Halobellum.Presentation (MatchController, BattleController, UiHitAreas),
 //             Halobellum.Economy (Match, PlayerState, RoundSummary), HudScale.
 
@@ -17,6 +18,7 @@ using Halobellum.Combat;
 using Halobellum.Core;
 using Halobellum.Economy;
 using Halobellum.Presentation;
+using Halobellum.Units;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -28,16 +30,20 @@ namespace Halobellum.UI
 
         [SerializeField] private MatchController match;
         [SerializeField] private BattleController battle;
+        [Tooltip("The look of the draft screen (and the fallback when a faction has no theme).")]
+        [SerializeField] private UiThemeDefinition neutralTheme;
         [SerializeField] private Color playerColor = new Color(0.35f, 0.55f, 1f);
         [SerializeField] private Color enemyColor = new Color(1f, 0.4f, 0.32f);
 
-        private GUIStyle _title, _big, _text, _small, _smallCentered, _button, _bigButton, _centered;
+        private GUIStyle _title, _big, _text, _small, _smallCentered, _button, _bigButton, _centered, _header, _barLabel;
         private float _scale;
         private Vector2 _shopScroll;
 
         private void OnGUI()
         {
             if (match == null || match.Match == null) return;
+            HudTheme.Use(match.Match.Phase == MatchPhase.Draft ? neutralTheme : match.PlayerTheme ?? neutralTheme);
+            HudTheme.Apply();
             EnsureStyles();
             _scale = HudScale.Apply();
 
@@ -117,13 +123,14 @@ namespace Halobellum.UI
             // Top bar.
             var bar = new Rect(width * 0.5f - 560f, 8f, 1120f, 64f);
             Panel(bar);
-            GUI.Label(new Rect(bar.x + 16f, bar.y + 6f, 220f, 26f), $"Round {m.Round}: Deployment", _text);
+            GUI.Label(new Rect(bar.x + 16f, bar.y + 6f, 220f, 26f), HudTheme.Title($"Round {m.Round}: Deployment"), _header);
             GUI.Label(new Rect(bar.x + 16f, bar.y + 32f, 260f, 26f), $"Credits {player.Credits}  (+{m.NextIncome} next round)", _text);
             GUI.Label(new Rect(bar.x + 290f, bar.y + 6f, 220f, 26f), $"Squads bought: {player.SquadsBoughtThisRound} of {m.Rules.NewSquadsPerRound}", _text);
             GUI.Label(new Rect(bar.x + 290f, bar.y + 32f, 220f, 26f), $"Unlocks: {player.UnlocksThisRound} of {m.Rules.UnlocksPerRound}", _text);
             BaseBar(new Rect(bar.x + 520f, bar.y + 10f, 220f, 20f), "Your base", player.BaseHealth, m.Rules.BaseHealth, playerColor);
             BaseBar(new Rect(bar.x + 520f, bar.y + 36f, 220f, 20f), "Enemy base", m.Enemy.BaseHealth, m.Rules.BaseHealth, enemyColor);
-            GUI.Label(new Rect(bar.x + 760f, bar.y + 6f, 200f, 52f), $"{player.Label}\nvs {m.Enemy.Label}, {m.EnemyAi.Label}", _small);
+            GUI.Label(new Rect(bar.x + 760f, bar.y + 6f, 200f, 26f), $"{player.Faction.Name} vs {m.Enemy.Faction?.Name ?? "?"}", _small);
+            GUI.Label(new Rect(bar.x + 760f, bar.y + 32f, 200f, 26f), m.EnemyAi.Label, _small);
             if (GUI.Button(new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f), "Ready", _bigButton)) match.Ready();
 
             if (!string.IsNullOrEmpty(match.Message))
@@ -146,7 +153,7 @@ namespace Halobellum.UI
             float panelHeight = Mathf.Min(height - 200f, 50f + roster.Count * rowHeight);
             var panel = new Rect(width - panelWidth - 10f, 110f, panelWidth, panelHeight);
             Panel(panel);
-            GUI.Label(new Rect(panel.x + 12f, panel.y + 8f, panel.width - 24f, 28f), $"Shop: {player.Faction.Name}", _text);
+            GUI.Label(new Rect(panel.x + 12f, panel.y + 8f, panel.width - 24f, 28f), HudTheme.Title($"Shop: {player.Faction.Name}"), _header);
 
             var view = new Rect(panel.x + 6f, panel.y + 40f, panel.width - 12f, panel.height - 46f);
             var content = new Rect(0f, 0f, view.width - 18f, roster.Count * rowHeight);
@@ -216,7 +223,7 @@ namespace Halobellum.UI
             if (s == null) return;
             Rect panel = CenteredPanel(640f, 520f);
             float y = panel.y + 12f;
-            GUI.Label(new Rect(panel.x, y, panel.width, 34f), $"Round {s.Round} result", _centered);
+            GUI.Label(new Rect(panel.x, y, panel.width, 34f), HudTheme.Title($"Round {s.Round} result"), _centered);
             y += 44f;
             y = SummaryLines(s, panel, y);
 
@@ -238,7 +245,7 @@ namespace Halobellum.UI
             Rect panel = CenteredPanel(640f, 560f);
             float y = panel.y + 12f;
             bool won = m.Winner == Team.A;
-            GUI.Label(new Rect(panel.x, y, panel.width, 40f), won ? "Victory!" : "Defeat", _title);
+            GUI.Label(new Rect(panel.x, y, panel.width, 40f), HudTheme.Title(won ? "Victory!" : "Defeat"), _title);
             y += 52f;
             GUI.Label(new Rect(panel.x + 20f, y, panel.width - 40f, 26f),
                 won ? $"The enemy base fell in round {m.Round}." : $"Your base fell in round {m.Round}.", _text);
@@ -297,8 +304,7 @@ namespace Halobellum.UI
         private void Panel(Rect rect)
         {
             UiHitAreas.Add(HudScale.ToScreen(rect, _scale));
-            GUI.Box(rect, GUIContent.none);
-            GUI.Box(rect, GUIContent.none);
+            HudTheme.PanelBox(rect);
         }
 
         private void BaseBar(Rect rect, string label, int health, int maxHealth, Color color)
@@ -310,7 +316,7 @@ namespace Halobellum.UI
             GUI.color = color;
             GUI.DrawTexture(new Rect(rect.x, rect.y, rect.width * fraction, rect.height), Texture2D.whiteTexture);
             GUI.color = old;
-            GUI.Label(rect, $"{label}: {Mathf.Max(0, health)} / {maxHealth}", _smallCentered);
+            GUI.Label(rect, $"{label}: {Mathf.Max(0, health)} / {maxHealth}", _barLabel);
         }
 
         private static string Bodies(int count) => count == 1 ? "1 body" : $"{count} bodies";
@@ -326,14 +332,19 @@ namespace Halobellum.UI
             }
         }
 
+        private int _styleVersion = -1;
+
         private void EnsureStyles()
         {
-            if (_text != null) return;
-            _text = new GUIStyle(GUI.skin.label) { fontSize = 17, normal = { textColor = Color.white } };
-            _small = new GUIStyle(_text) { fontSize = 15, alignment = TextAnchor.MiddleLeft };
-            _big = new GUIStyle(_text) { fontSize = 24, fontStyle = FontStyle.Bold };
-            _centered = new GUIStyle(_text) { fontSize = 24, fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleCenter };
+            if (_text != null && _styleVersion == HudTheme.Version) return;
+            _styleVersion = HudTheme.Version;
+            _text = new GUIStyle(GUI.skin.label) { fontSize = 17, normal = { textColor = HudTheme.Text } };
+            _small = new GUIStyle(_text) { fontSize = 15, alignment = TextAnchor.MiddleLeft, normal = { textColor = HudTheme.DimText } };
+            _big = new GUIStyle(_text) { fontSize = 24, fontStyle = FontStyle.Bold, normal = { textColor = HudTheme.TitleColor } };
+            _centered = new GUIStyle(_text) { fontSize = 24, fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleCenter, normal = { textColor = HudTheme.TitleColor } };
             _title = new GUIStyle(_centered) { fontSize = 34 };
+            _header = new GUIStyle(_text) { fontSize = 18, fontStyle = FontStyle.Bold, normal = { textColor = HudTheme.TitleColor } };
+            _barLabel = new GUIStyle(_text) { fontSize = 15, fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.white } };
             _button = new GUIStyle(GUI.skin.button) { fontSize = 15 };
             _bigButton = new GUIStyle(GUI.skin.button) { fontSize = 19, fontStyle = FontStyle.Bold };
             _smallCentered = new GUIStyle(_small) { alignment = TextAnchor.MiddleCenter };

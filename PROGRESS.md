@@ -52,8 +52,8 @@ Milestones and items from PROJECT_BIBLE.md Section 14. An item is ticked when it
 - [x] Tech upgrades: data assets, up to 3 per unit type, bought with credits, apply to every squad of that type (with tests)
 - [x] UI: level, XP bar, level-up button and tech upgrades in the stats window; the AI uses levels and techs
 
-## Later request (2026-10-31): faction-styled UI
-- [ ] After M5 and M6: UNSC-style UI when the player picked UNSC, Covenant-style when they picked Covenant (fonts, panels, colours)
+## Later request (2026-10-31): faction-styled UI (done; waiting for the human to look)
+- [x] After M5 and M6: UNSC-style UI when the player picked UNSC, Covenant-style when they picked Covenant (fonts, panels, colours)
 
 ## Notes for the next balance pass (from the human, 2026-10-31)
 - Flamethrower Troopers should be excellent against chaff such as Marines (today they lose to Marines, which outrange them).

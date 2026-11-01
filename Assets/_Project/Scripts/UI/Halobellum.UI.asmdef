@@ -6,6 +6,7 @@
         "Halobellum.Combat",
         "Halobellum.Economy",
         "Halobellum.Presentation",
+        "Halobellum.Units",
         "Unity.InputSystem"
     ],
     "includePlatforms": [],

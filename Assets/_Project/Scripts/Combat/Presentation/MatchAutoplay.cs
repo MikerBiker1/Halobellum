@@ -25,6 +25,8 @@ namespace Halobellum.Presentation
         private string _shots;
         private int _rounds = 3;
         private float _speed = 4f;
+        private int _card;
+        private string _faction;
         private float _wait;
         private int _lastShotRound = -1;
         private MatchPhase _lastPhase = (MatchPhase)(-1);
@@ -49,6 +51,8 @@ namespace Halobellum.Presentation
             _shots = Argument(args, "-autoplayShots");
             if (int.TryParse(Argument(args, "-autoplayRounds"), out int rounds)) _rounds = rounds;
             if (float.TryParse(Argument(args, "-autoplaySpeed"), NumberStyles.Float, CultureInfo.InvariantCulture, out float speed)) _speed = speed;
+            if (int.TryParse(Argument(args, "-autoplayCard"), out int card)) _card = card; // Which draft card to pick (default 0).
+            _faction = Argument(args, "-autoplayFaction"); // Or the first card of this faction, e.g. UNSC.
             if (_shots != null) Directory.CreateDirectory(_shots);
         }
 
@@ -78,7 +82,13 @@ namespace Halobellum.Presentation
             {
                 case MatchPhase.Draft:
                     if (ShotFirst("01_draft")) return;
-                    _match.ChooseDraft(0);
+                    int pick = Mathf.Clamp(_card, 0, m.PlayerDraft.Count - 1);
+                    if (!string.IsNullOrEmpty(_faction))
+                    {
+                        int byFaction = m.PlayerDraft.FindIndex(c => c.Faction.Name == _faction);
+                        if (byFaction >= 0) pick = byFaction;
+                    }
+                    _match.ChooseDraft(pick);
                     break;
                 case MatchPhase.Deployment:
                     if (_lastShotRound != m.Round)

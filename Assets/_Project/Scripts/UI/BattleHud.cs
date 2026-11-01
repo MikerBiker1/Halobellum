@@ -57,6 +57,7 @@ namespace Halobellum.UI
         {
             if (battle == null || battle.Simulation == null) return;
             if (!battle.IsPlaying && battle.Simulation.Tick == 0) return; // Deployment preview: no battle bar.
+            HudTheme.Apply();
             EnsureStyles();
             float scale = HudScale.Apply();
 
@@ -107,13 +108,16 @@ namespace Halobellum.UI
             return $"Battle over ({reason}): {outcome}.  Survivors {result.TeamA.Survivors} vs {result.TeamB.Survivors}";
         }
 
+        private int _styleVersion = -1;
+
         private void EnsureStyles()
         {
-            if (_label != null) return;
-            _label = new GUIStyle(GUI.skin.label) { fontSize = 16, normal = { textColor = Color.white } };
+            if (_label != null && _styleVersion == HudTheme.Version) return;
+            _styleVersion = HudTheme.Version;
+            _label = new GUIStyle(GUI.skin.label) { fontSize = 16, normal = { textColor = HudTheme.Text } };
             _centered = new GUIStyle(_label) { alignment = TextAnchor.MiddleCenter, fontSize = 18 };
             _button = new GUIStyle(GUI.skin.button) { fontSize = 15 };
-            _selectedButton = new GUIStyle(_button) { fontStyle = FontStyle.Bold, normal = { textColor = new Color(1f, 0.85f, 0.2f) } };
+            _selectedButton = new GUIStyle(_button) { fontStyle = FontStyle.Bold, normal = { textColor = HudTheme.Accent }, hover = { textColor = HudTheme.Accent } };
         }
     }
 }

@@ -33,6 +33,7 @@ namespace Halobellum.EditorTools
         public const string TestBattlePath = "Assets/_Project/Data/TestBattle_Balanced.asset";
         public const string PlaceholderMaterialPath = "Assets/_Project/Art/Placeholder/PlaceholderLit.mat";
         public const string FactionFolder = "Assets/_Project/Data/Factions";
+        public const string NeutralThemePath = "Assets/_Project/Data/UI/Neutral_Theme.asset";
 
         [MenuItem("Halobellum/Scenes/Rebuild Battle Scene")]
         public static void BuildFromMenu()
@@ -127,6 +128,8 @@ namespace Halobellum.EditorTools
             var matchHud = hud.AddComponent<MatchHud>();
             SetReference(matchHud, "match", match);
             SetReference(matchHud, "battle", battle);
+            var neutral = AssetDatabase.LoadAssetAtPath<UiThemeDefinition>(NeutralThemePath);
+            if (neutral != null) SetReference(matchHud, "neutralTheme", neutral);
 
             EditorSceneManager.SaveScene(scene, MatchScenePath);
             UpdateBuildSettings();
@@ -153,6 +156,8 @@ namespace Halobellum.EditorTools
             var sandboxHud = hud.AddComponent<SandboxHud>();
             SetReference(sandboxHud, "sandbox", sandbox);
             SetReference(sandboxHud, "battle", battle);
+            var neutralTheme = AssetDatabase.LoadAssetAtPath<UiThemeDefinition>(NeutralThemePath);
+            if (neutralTheme != null) SetReference(sandboxHud, "neutralTheme", neutralTheme);
 
             EditorSceneManager.SaveScene(scene, SandboxScenePath);
             UpdateBuildSettings();

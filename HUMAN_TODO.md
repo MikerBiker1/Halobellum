@@ -51,3 +51,15 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 - [x] **Answer D21 to D24** in DECISIONS.md (first-pass stats, how the abilities work, counter web method and the 55-70% vs over-70% question, placeholder units).
 - [x] **D23: pick the counter threshold.** My suggestion is in DECISIONS.md: a counter must win at least 9 of 10 equal-value battles (90%).
 - [ ] **Confirm M4** so M5 (AI opponent) can start.
+
+## 2026-10-31 (night): check M5 (AI), M6 (leveling and techs) and the faction UI
+
+- [ ] **Pick a difficulty and play.** Open `Assets/_Project/Scenes/Match.unity`, press **Play**. On the draft screen choose **Easy**, **Normal** or **Hard** (remembered for next time), then a card. The top bar shows "UNSC vs Covenant / Normal AI".
+- [ ] **Watch the AI.** It now buys and places an army each round (chaff and tanks in front, ranged behind, flankers on the sides) and answers what you fielded last battle. It never sees what you buy this round.
+- [ ] **Level a squad up.** After a battle, the result screen lists your squads that are ready. Next round, click one: the stats window (bottom left) shows its level, XP bar and **Level up (price)**. A level-2 squad has double health and damage.
+- [ ] **Research a tech.** In the same window, **Buy** a tech: it applies to every squad of that type for the rest of the match. Try the Pelican's **Troop Bay** (it then drops 6 Marines 10 seconds into each battle) or the Flamethrower's **Wide Nozzle**.
+- [ ] **Sandbox: levels and techs.** In the sandbox, click a squad: **Level +** / **Level -** and **Add** / **Remove** techs freely, per side.
+- [ ] **Look at the faction styles.** Play once as UNSC (steel panels with cut corners, amber capital titles) and once as Covenant (violet rounded panels with a glow, cyan titles). The draft screen and the sandbox stay neutral. Colours, fonts and shapes are in `Data/UI/*_Theme.asset` if you want to tweak them.
+- [ ] **Optional: real fonts.** If you have Halo-style fonts you are allowed to use, put the font files in `Assets/_Project/Art/Imported/Fonts` (with a `SOURCE.txt`) and drag them into the theme's **Font Asset** slot.
+- [ ] **Answer D25 to D28** in DECISIONS.md (how the AI decides, leveling details, the tech catalogue, the faction styles).
+- [ ] **Confirm M4, M5 and M6.**

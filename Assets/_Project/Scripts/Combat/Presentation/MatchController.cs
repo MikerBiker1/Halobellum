@@ -98,6 +98,20 @@ namespace Halobellum.Presentation
 
         // ------------------------------------------------------------------ draft
 
+        /// <summary>The UI theme of the player's faction (null before the draft or if the faction has none).</summary>
+        public UiThemeDefinition PlayerTheme
+        {
+            get
+            {
+                if (Match?.Player.Faction == null) return null;
+                foreach (FactionDefinition faction in factions)
+                {
+                    if (faction != null && (faction.factionName == Match.Player.Faction.Name || faction.name == Match.Player.Faction.Name)) return faction.uiTheme;
+                }
+                return null;
+            }
+        }
+
         /// <summary>Sets the AI's difficulty for this match (only before a draft card is chosen).</summary>
         public void SetDifficulty(AiDifficulty difficulty)
         {

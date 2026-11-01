@@ -39,6 +39,7 @@ namespace Halobellum.UI
         private void OnGUI()
         {
             if (battle == null || battle.Simulation == null || _selection == null || _selection.SelectedSquadId < 0) return;
+            HudTheme.Apply();
             EnsureStyles();
             float scale = HudScale.Apply();
 
@@ -53,8 +54,7 @@ namespace Halobellum.UI
             var window = new Rect(10f, HudScale.ScaledHeight(scale) - height - 10f, windowWidth, height);
             UiHitAreas.Add(HudScale.ToScreen(window, scale));
 
-            GUI.Box(window, GUIContent.none);
-            GUI.Box(window, GUIContent.none); // Drawn twice for a darker background.
+            HudTheme.PanelBox(window);
             GUI.Label(new Rect(window.x + 12f, window.y + 8f, windowWidth - 50f, 26f), $"{s.Name}  (Team {sample.Team})", _title);
             if (GUI.Button(new Rect(window.xMax - 34f, window.y + 8f, 24f, 22f), "x")) _selection.Select(-1);
             GUI.Label(new Rect(window.x + 12f, window.y + 38f, windowWidth - 24f, textHeight), body, _text);
@@ -100,7 +100,7 @@ namespace Halobellum.UI
                 Color old = GUI.color;
                 GUI.color = new Color(0f, 0f, 0f, 0.6f);
                 GUI.DrawTexture(bar, Texture2D.whiteTexture);
-                GUI.color = new Color(0.95f, 0.8f, 0.25f);
+                GUI.color = HudTheme.Accent;
                 GUI.DrawTexture(new Rect(bar.x, bar.y, bar.width * fraction, bar.height), Texture2D.whiteTexture);
                 GUI.color = old;
                 GUI.Label(bar, $"XP {p.Xp:0} / {p.XpNeeded:0}", _center);
@@ -188,12 +188,15 @@ namespace Halobellum.UI
             }
         }
 
+        private int _styleVersion = -1;
+
         private void EnsureStyles()
         {
-            if (_title != null) return;
-            _title = new GUIStyle(GUI.skin.label) { fontSize = 17, fontStyle = FontStyle.Bold, normal = { textColor = Color.white } };
-            _text = new GUIStyle(GUI.skin.label) { fontSize = 15, wordWrap = true, normal = { textColor = new Color(0.92f, 0.92f, 0.92f) } };
-            _small = new GUIStyle(_text) { fontSize = 13, wordWrap = false, normal = { textColor = new Color(0.75f, 0.85f, 0.75f) } };
+            if (_title != null && _styleVersion == HudTheme.Version) return;
+            _styleVersion = HudTheme.Version;
+            _title = new GUIStyle(GUI.skin.label) { fontSize = 17, fontStyle = FontStyle.Bold, normal = { textColor = HudTheme.TitleColor } };
+            _text = new GUIStyle(GUI.skin.label) { fontSize = 15, wordWrap = true, normal = { textColor = HudTheme.Text } };
+            _small = new GUIStyle(_text) { fontSize = 13, wordWrap = false, normal = { textColor = HudTheme.DimText } };
             _center = new GUIStyle(_text) { fontSize = 13, alignment = TextAnchor.MiddleCenter, wordWrap = false };
             _techName = new GUIStyle(_text) { fontStyle = FontStyle.Bold, wordWrap = false };
         }

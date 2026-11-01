@@ -2,6 +2,7 @@
     "name": "Halobellum.Tests.EditMode",
     "rootNamespace": "Halobellum.Tests",
     "references": [
+        "Halobellum.UI",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Halobellum.Core",

@@ -166,6 +166,17 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
+        public IEnumerator TheUi_UsesThePlayersFactionTheme()
+        {
+            yield return LoadMatch();
+            Assert.IsNull(_match.PlayerTheme, "No faction yet on the draft screen (neutral look).");
+            _match.ChooseDraft(1);
+            yield return null;
+            Assert.IsNotNull(_match.PlayerTheme);
+            Assert.AreEqual(_match.Match.Player.Faction.Name, _match.PlayerTheme.themeName);
+        }
+
+        [UnityTest]
         public IEnumerator Difficulty_IsChosenOnTheDraftScreen_AndLockedAfterward()
         {
             yield return LoadMatch();

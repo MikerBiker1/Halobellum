@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   factionName: Covenant
   color: {r: 0.6, g: 0.3, b: 0.85, a: 1}
+  uiTheme: {fileID: 11400000, guid: 67c8f2767539d4fc8b5a8029c213a917, type: 2}
   baseRoster:
   - {fileID: 11400000, guid: 268173acf7a0bbc09ed3f3959cde83f0, type: 2}
   - {fileID: 11400000, guid: 1563707a45e677113a77b34397af1a42, type: 2}

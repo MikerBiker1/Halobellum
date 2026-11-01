@@ -10,6 +10,7 @@
 using Halobellum.Core;
 using Halobellum.Economy;
 using Halobellum.Presentation;
+using Halobellum.Units;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -21,6 +22,8 @@ namespace Halobellum.UI
 
         [SerializeField] private SandboxController sandbox;
         [SerializeField] private BattleController battle;
+        [Tooltip("The sandbox's look (neutral).")]
+        [SerializeField] private UiThemeDefinition neutralTheme;
         [SerializeField] private Color blueColor = new Color(0.35f, 0.55f, 1f);
         [SerializeField] private Color redColor = new Color(1f, 0.4f, 0.32f);
 
@@ -31,6 +34,8 @@ namespace Halobellum.UI
         private void OnGUI()
         {
             if (sandbox == null) return;
+            HudTheme.Use(neutralTheme);
+            HudTheme.Apply();
             EnsureStyles();
             _scale = HudScale.Apply();
             float width = HudScale.ScaledWidth(_scale), height = HudScale.ScaledHeight(_scale);
@@ -169,8 +174,7 @@ namespace Halobellum.UI
         private void Panel(Rect rect)
         {
             UiHitAreas.Add(HudScale.ToScreen(rect, _scale));
-            GUI.Box(rect, GUIContent.none);
-            GUI.Box(rect, GUIContent.none);
+            HudTheme.PanelBox(rect);
         }
 
         private static string Bodies(int count) => count == 1 ? "1 body" : $"{count} bodies";
@@ -186,13 +190,16 @@ namespace Halobellum.UI
             }
         }
 
+        private int _styleVersion = -1;
+
         private void EnsureStyles()
         {
-            if (_text != null) return;
-            _text = new GUIStyle(GUI.skin.label) { fontSize = 17, normal = { textColor = Color.white } };
-            _small = new GUIStyle(_text) { fontSize = 15, alignment = TextAnchor.MiddleLeft };
+            if (_text != null && _styleVersion == HudTheme.Version) return;
+            _styleVersion = HudTheme.Version;
+            _text = new GUIStyle(GUI.skin.label) { fontSize = 17, normal = { textColor = HudTheme.Text } };
+            _small = new GUIStyle(_text) { fontSize = 15, alignment = TextAnchor.MiddleLeft, normal = { textColor = HudTheme.DimText } };
             _smallCentered = new GUIStyle(_small) { alignment = TextAnchor.MiddleCenter };
-            _header = new GUIStyle(_text) { fontSize = 19, fontStyle = FontStyle.Bold };
+            _header = new GUIStyle(_text) { fontSize = 19, fontStyle = FontStyle.Bold, normal = { textColor = HudTheme.TitleColor } };
             _button = new GUIStyle(GUI.skin.button) { fontSize = 15 };
             _bigButton = new GUIStyle(GUI.skin.button) { fontSize = 19, fontStyle = FontStyle.Bold };
         }

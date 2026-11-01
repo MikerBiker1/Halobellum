@@ -26,6 +26,8 @@ namespace Halobellum.Units
 
         public string factionName;
         public Color color = Color.white;
+        [Tooltip("The HUD's look when the player plays this faction (Data/UI).")]
+        public UiThemeDefinition uiTheme;
         public List<UnitDefinition> baseRoster = new List<UnitDefinition>();
         public List<SubFactionEntry> subFactions = new List<SubFactionEntry>();
 
