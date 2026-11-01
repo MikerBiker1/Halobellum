@@ -24,7 +24,7 @@ namespace Halobellum.Tests
             RefundAfterBattle = 0.5f,
             DraftCardCount = 5,
             DraftSquadsPerCard = 2,
-            XpBarPerSquadCost = 1f,
+            XpBarPerSquadCost = 2f,
             LevelUpCostShare = 0.5f,
         };
 

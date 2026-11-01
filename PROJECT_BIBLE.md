@@ -457,6 +457,10 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-10-31 | The Pelican carries no troops when bought; its 6-Marine drop (after 10 s) is an upgrade in M6. The Flamethrower Trooper's cone is 15 degrees with very low damage per very fast tick; an upgrade may widen it later | Per the project owner (D22) |
 | 2026-10-31 | Placeholder test units never appear in normal matches; they are offered in the Sandbox only | Per the project owner (D24) |
 | 2026-10-31 | Counter threshold: a counter wins at least 90% (9 of 10) of equal-value battles; replaces "55 to 70%" | Per the project owner (D23) |
+| 2026-11-01 | The AI sees only public information and your army as it was at the last battle start; you see the enemy's last-battle army as grey ghosts during deployment, never its current deployment | Approved from D25, with the owner's addition |
+| 2026-11-01 | XP bar = 2 x the squad's base price; a squad ready to level up shows a pulsing yellow arrow | Per the project owner (D26) |
+| 2026-11-01 | First-pass tech catalogue kept until all units are made | Approved from D27 |
+| 2026-11-01 | Faction UI: textured, ship-inspired panels (UNSC grey hull plating; Covenant violet with glowing blue lines) | Per the project owner (D28) |
 
 ## 18. Assumptions to confirm
 

@@ -23,6 +23,8 @@ namespace Halobellum.Economy
         public int Column;
         public int Row;
         public bool Rotated90;
+        /// <summary>The owner's techs for this unit type at that moment (they show in the battle).</summary>
+        public IReadOnlyList<TechUpgrade> Techs = System.Array.Empty<TechUpgrade>();
 
         /// <summary>What the squad is worth: its price plus half its price per level above 1 (Section 10's rule).</summary>
         public int Value => Type.Cost + Type.Cost * (Level - 1) / 2;

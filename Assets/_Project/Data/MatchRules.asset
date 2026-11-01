@@ -23,5 +23,5 @@ MonoBehaviour:
   refundAfterBattle: 0.5
   draftCardCount: 5
   draftSquadsPerCard: 2
-  xpBarPerSquadCost: 1
+  xpBarPerSquadCost: 2
   levelUpCostShare: 0.5

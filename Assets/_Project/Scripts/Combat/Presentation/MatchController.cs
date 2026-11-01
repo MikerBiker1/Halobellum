@@ -1,10 +1,12 @@
 // MatchController.cs
 // Runs a match in the Match scene (Bible Section 5). It owns the plain C# Match and connects it to
-// the scene: during deployment it shows the player's squads as a preview battle (the AI's squads
-// stay hidden), forwards the player's actions (unlock, buy, move, turn, sell), and on Ready hands
+// the scene: during deployment it shows the player's squads as a preview battle (the AI's current
+// squads stay hidden; its army as it was at the last battle start shows as grey ghosts the player
+// can select, decision D25), forwards the player's actions (unlock, buy, move, turn, sell), and on Ready hands
 // the round's battle to the BattleController to play. When the battle ends it applies the result
 // (base damage, income) and the HUD shows the result screen. A bought squad is placed in the middle
-// of the zone, drops in from high above and is selected when it lands, ready to be moved.
+// of the zone, drops in from high above and is selected when it lands, ready to be moved. Squads
+// ready to level up show a pulsing arrow (decision D26).
 // The HUD (Scripts/UI/MatchHud) and DeploymentInput call the public methods here; tests do too.
 // Depends on: BattleController, SquadSelection, UnitViewManager,
 //             Halobellum.Economy (Match, RuleBasedAi, DeploymentGrid),
@@ -37,6 +39,8 @@ namespace Halobellum.Presentation
         private readonly Dictionary<int, float> _drops = new Dictionary<int, float>();
         private readonly Dictionary<UnitStats, UnitDefinition> _sources = new Dictionary<UnitStats, UnitDefinition>();
         private readonly List<PlacedSquad> _previewOrder = new List<PlacedSquad>();
+        /// <summary>The enemy's ghost squads in the preview, after the player's (decision D25).</summary>
+        private readonly List<SeenSquad> _ghostOrder = new List<SeenSquad>();
 
         public Match Match { get; private set; }
         /// <summary>Feedback from the last action, for the HUD (empty when nothing to say).</summary>
@@ -64,6 +68,7 @@ namespace Halobellum.Presentation
             _battle = GetComponent<BattleController>();
             _selection = GetComponent<SquadSelection>();
             _views = GetComponent<UnitViewManager>();
+            _views.LevelUpReady = ShowsLevelUpArrow;
             _battle.BattleFinished += OnBattleFinished;
             NewMatch();
         }
@@ -92,6 +97,7 @@ namespace Halobellum.Presentation
             CancelPlacement();
             _drops.Clear();
             Message = "";
+            _views.GhostTeam = null;
             _battle.ShowBattle(null, null, play: false);
             PhaseChanged?.Invoke();
         }
@@ -282,12 +288,48 @@ namespace Halobellum.Presentation
             return index < Match.Enemy.Squads.Count ? Match.Enemy.Squads[index] : null;
         }
 
+        /// <summary>The enemy ghost behind a preview squad (deployment only), or null.</summary>
+        public SeenSquad GhostFor(int simSquadId)
+        {
+            BattleSimulation sim = _battle.Simulation;
+            if (Match == null || sim == null || Match.Phase != MatchPhase.Deployment) return null;
+            for (int i = 0; i < sim.Squads.Count; i++)
+            {
+                if (sim.Squads[i].Id != simSquadId) continue;
+                int ghost = i - _previewOrder.Count;
+                return ghost >= 0 && ghost < _ghostOrder.Count ? _ghostOrder[ghost] : null;
+            }
+            return null;
+        }
+
+        /// <summary>Decision D26: the player's squads that are ready to level up show an arrow (deployment and result).</summary>
+        private bool ShowsLevelUpArrow(int simSquadId)
+        {
+            if (Match == null || (Match.Phase != MatchPhase.Deployment && Match.Phase != MatchPhase.Result)) return false;
+            PlacedSquad squad = PlacedFor(simSquadId, out Team team);
+            return team == Team.A && Match.CanLevelUp(squad);
+        }
+
         public SquadProgressView DescribeProgress(int simSquadId)
         {
+            SeenSquad ghost = GhostFor(simSquadId);
+            if (ghost != null)
+            {
+                // What the player saw of this enemy squad when the last battle started (D25).
+                var seen = new SquadProgressView { SideLabel = "enemy, last battle", Level = ghost.Level, Note = "As seen at the start of the last battle." };
+                foreach (TechUpgrade tech in ghost.Techs) seen.Techs.Add(new TechLine { Tech = tech, Owned = true });
+                return seen;
+            }
+
             PlacedSquad squad = PlacedFor(simSquadId, out Team team);
             if (squad == null) return null;
             var view = new SquadProgressView { Level = squad.Level };
-            if (team == Team.B) return view; // The enemy's level is visible, nothing else.
+            if (team == Team.B)
+            {
+                // The enemy in battle: its level and the techs it fights with, nothing else.
+                foreach (TechUpgrade tech in Match.Enemy.TechsFor(squad.Type)) view.Techs.Add(new TechLine { Tech = tech, Owned = true });
+                return view;
+            }
 
             bool deploying = Match.Phase == MatchPhase.Deployment;
             PlayerState player = Match.Player;
@@ -343,6 +385,7 @@ namespace Halobellum.Presentation
             CancelPlacement();
             _drops.Clear();
             Message = "";
+            _views.GhostTeam = null;
             _battle.ShowBattle(Match.StartBattle(), _sources, play: true);
             PhaseChanged?.Invoke();
         }
@@ -363,13 +406,19 @@ namespace Halobellum.Presentation
             PhaseChanged?.Invoke();
         }
 
-        /// <summary>Shows the player's current deployment (not the AI's) as a battle that isn't running.</summary>
+        /// <summary>
+        /// Shows the player's current deployment as a battle that isn't running, with the enemy's army
+        /// as it was at the last battle start as grey ghosts (D25; never the AI's current deployment).
+        /// </summary>
         private void RefreshPreview(int selectPlacedSquadId = -1)
         {
             if (Match.Phase != MatchPhase.Deployment) return;
-            BattleSimulation preview = Match.BuildBattle(includeEnemy: false);
+            BattleSimulation preview = Match.BuildPreview();
             _previewOrder.Clear();
             _previewOrder.AddRange(Match.Player.Squads);
+            _ghostOrder.Clear();
+            _ghostOrder.AddRange(Match.SeenArmy(Team.B));
+            _views.GhostTeam = Team.B;
             _battle.ShowBattle(preview, _sources, play: false);
 
             // Squads still dropping in keep falling from where they were.

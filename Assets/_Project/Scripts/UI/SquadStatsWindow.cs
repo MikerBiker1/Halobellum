@@ -55,7 +55,7 @@ namespace Halobellum.UI
             UiHitAreas.Add(HudScale.ToScreen(window, scale));
 
             HudTheme.PanelBox(window);
-            GUI.Label(new Rect(window.x + 12f, window.y + 8f, windowWidth - 50f, 26f), $"{s.Name}  (Team {sample.Team})", _title);
+            GUI.Label(new Rect(window.x + 12f, window.y + 8f, windowWidth - 50f, 26f), $"{s.Name}  ({progress?.SideLabel ?? $"Team {sample.Team}"})", _title);
             if (GUI.Button(new Rect(window.xMax - 34f, window.y + 8f, 24f, 22f), "x")) _selection.Select(-1);
             GUI.Label(new Rect(window.x + 12f, window.y + 38f, windowWidth - 24f, textHeight), body, _text);
             if (progress != null) DrawProgress(progress, window.x + 12f, window.y + 42f + textHeight, windowWidth - 24f);

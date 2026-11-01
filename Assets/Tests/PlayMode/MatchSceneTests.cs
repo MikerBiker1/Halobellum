@@ -2,10 +2,12 @@
 // Plays the real Match scene (Milestone 3): starting draft, deployment preview (the AI's army stays
 // hidden), buying a squad (placed in the middle, dropped in, then selected), a full round
 // (deployment, battle, result, next round with income), the AI difficulty choice, and full
-// matches that are won, lost, and played to the end against the Normal AI (Milestone 5).
+// matches that are won, lost, and played to the end against the Normal AI (Milestone 5), the
+// enemy's last-battle army shown as grey ghosts (D25) and the level-up arrow (D26).
 // Depends on: Halobellum.Presentation, Halobellum.Economy, Halobellum.Core, NUnit, Unity Test Framework.
 
 using System.Collections;
+using Halobellum.Combat;
 using Halobellum.Core;
 using Halobellum.Economy;
 using Halobellum.Presentation;
@@ -225,6 +227,46 @@ namespace Halobellum.Tests
             yield return PlayRound();
             Assert.AreEqual(MatchPhase.MatchOver, m.Phase);
             Assert.AreEqual(Team.A, m.Winner);
+        }
+
+        [UnityTest]
+        public IEnumerator Round2_ShowsTheEnemysLastArmyAsGreyGhosts_AndReadySquadsGetAnArrow()
+        {
+            yield return LoadMatch();
+            _match.ChooseDraft(0);
+            yield return null;
+            Match m = _match.Match;
+            yield return PlayRound();
+            Assert.AreEqual(MatchPhase.Result, m.Phase);
+            _match.Continue();
+            yield return null;
+
+            // D25: the player's squads, then the enemy's army as it was at the last battle start.
+            int playerBodies = 0, ghostBodies = 0;
+            foreach (PlacedSquad squad in m.Player.Squads) playerBodies += squad.Type.SquadSize;
+            foreach (SeenSquad squad in m.SeenArmy(Team.B)) ghostBodies += squad.Type.SquadSize;
+            Assert.Greater(ghostBodies, 0);
+            Assert.AreEqual(playerBodies + ghostBodies, CountViews(), "Ghosts of the last battle, not the AI's new squads.");
+            var views = _battle.GetComponent<UnitViewManager>();
+            SimSquad ghost = _battle.Simulation.Squads[m.Player.Squads.Count];
+            Assert.AreEqual(Team.B, ghost.Team);
+            Renderer body = GameObject.Find("Units").transform.GetChild(ghost.Members[0].Id).GetComponentInChildren<Renderer>();
+            Assert.IsTrue(body.sharedMaterial.color == views.GhostColor, "Ghosts are grey.");
+            SquadProgressView seen = _match.DescribeProgress(ghost.Id);
+            Assert.IsNotNull(seen, "A ghost can be selected and read.");
+            Assert.AreEqual(m.SeenArmy(Team.B)[0].Level, seen.Level);
+            Assert.IsNull(seen.LevelUpLabel, "Nothing to buy on an enemy ghost.");
+
+            // D26: a squad with a full XP bar shows the arrow until it levels up.
+            PlacedSquad ready = m.Player.Squads[0];
+            ready.Xp = m.XpNeeded(ready);
+            yield return null;
+            CollectionAssert.Contains(views.SquadsWithArrows(), _battle.Simulation.Squads[0].Id);
+            CollectionAssert.DoesNotContain(views.SquadsWithArrows(), ghost.Id);
+            m.Player.Credits = 5000;
+            Assert.IsTrue(_match.LevelUp(ready).Ok, _match.Message);
+            yield return null;
+            CollectionAssert.DoesNotContain(views.SquadsWithArrows(), _battle.Simulation.Squads[0].Id);
         }
     }
 }

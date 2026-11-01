@@ -9,9 +9,13 @@
 // (used for newly bought squads during deployment; looks only, the simulation is unchanged).
 // Units added during the battle (a Pelican's Marines) get their views when they appear, and fall
 // from their carrier's flying height.
+// Units of the GhostTeam are drawn grey: during deployment, the enemy's army as it was at the last
+// battle start (decision D25). Squads for which LevelUpReady says yes get a small yellow arrow above
+// them that pulses bright, dim, bright (decision D26).
 // The simulation's 2D position (x, y) becomes the world position (x, height, y).
 // Depends on: BattleController, SquadSelection, PlaceholderArt, Halobellum.Combat, UnityEngine.
 
+using System;
 using System.Collections.Generic;
 using Halobellum.Combat;
 using Halobellum.Core;
@@ -43,6 +47,18 @@ namespace Halobellum.Presentation
         [Tooltip("Seconds a dropped squad takes to land.")]
         [SerializeField] private float dropDuration = 0.6f;
 
+        [Header("Ghosts and level-up arrows")]
+        [Tooltip("Color of the enemy's last-battle army shown during deployment (decision D25).")]
+        [SerializeField] private Color ghostColor = new Color(0.56f, 0.58f, 0.62f);
+        [SerializeField] private Color arrowBrightColor = new Color(1f, 0.92f, 0.12f);
+        [SerializeField] private Color arrowDimColor = new Color(0.45f, 0.36f, 0.04f);
+        [Tooltip("Seconds for one bright-dim-bright pulse of the level-up arrow.")]
+        [SerializeField] private float arrowPulseSeconds = 1.2f;
+        [Tooltip("Height of the level-up arrow (metres).")]
+        [SerializeField] private float arrowSize = 1.8f;
+        [Tooltip("Gap between the top of the squad's tallest body and the arrow (metres).")]
+        [SerializeField] private float arrowGap = 1.4f;
+
         private sealed class View
         {
             public SimUnit Unit;
@@ -65,6 +81,26 @@ namespace Halobellum.Presentation
         private readonly List<View> _views = new List<View>();
         private Material _fillHigh, _fillMid, _fillLow;
         private Camera _camera;
+        private Transform _arrowContainer;
+        private Material _arrowMaterial;
+        private Mesh _arrowMesh;
+        /// <summary>Level-up arrows by simulation squad id.</summary>
+        private readonly Dictionary<int, Transform> _arrows = new Dictionary<int, Transform>();
+
+        /// <summary>Units of this side are drawn as grey ghosts (set before the battle is shown), or null.</summary>
+        public Team? GhostTeam { get; set; }
+        /// <summary>Which simulation squads show the level-up arrow (null = none). Asked every frame.</summary>
+        public Func<int, bool> LevelUpReady { get; set; }
+        /// <summary>The ghost color (for tests).</summary>
+        public Color GhostColor => ghostColor;
+
+        /// <summary>Simulation squads currently showing a level-up arrow (for tests).</summary>
+        public List<int> SquadsWithArrows()
+        {
+            var squads = new List<int>();
+            foreach (var pair in _arrows) if (pair.Value.gameObject.activeSelf) squads.Add(pair.Key);
+            return squads;
+        }
 
         public float AirHeight => airHeight;
         /// <summary>Seconds a dropped-in squad takes to land.</summary>
@@ -123,6 +159,8 @@ namespace Halobellum.Presentation
         private void OnDestroy()
         {
             Unsubscribe();
+            if (_arrowMaterial != null) Destroy(_arrowMaterial);
+            if (_arrowMesh != null) Destroy(_arrowMesh);
             if (_battle != null) _battle.BattleChanged -= Rebuild;
             if (_selection != null) _selection.SelectionChanged -= OnSelectionChanged;
         }
@@ -136,6 +174,9 @@ namespace Halobellum.Presentation
             _shown = simulation;
             if (simulation == null) return;
 
+            if (_arrowContainer == null) _arrowContainer = new GameObject("Level-up Arrows").transform;
+            foreach (Transform arrow in _arrows.Values) Destroy(arrow.gameObject);
+            _arrows.Clear();
             _container = new GameObject("Units").transform;
             foreach (SimUnit unit in simulation.Units) _views.Add(CreateView(unit, _container));
             simulation.Events.Ticked += OnTicked;
@@ -162,7 +203,7 @@ namespace Halobellum.Presentation
             view.Root = new GameObject($"{stats.Name} #{unit.Id} ({unit.Team})");
             view.Root.transform.SetParent(container, false);
 
-            Color color = unit.Team == Team.A ? teamAColor : teamBColor;
+            Color color = GhostTeam == unit.Team ? ghostColor : unit.Team == Team.A ? teamAColor : teamBColor;
             Material teamMaterial = PlaceholderArt.MaterialFor(color);
             GameObject prefab = _battle.PrefabFor(stats);
             if (prefab != null)
@@ -276,6 +317,82 @@ namespace Halobellum.Presentation
                     view.FillRenderer.sharedMaterial = fraction > 0.5f ? _fillHigh : fraction > 0.25f ? _fillMid : _fillLow;
                 }
             }
+            UpdateArrows(barRotation);
+        }
+
+        /// <summary>Shows a pulsing arrow above every squad that is ready to level up, hides the others.</summary>
+        private void UpdateArrows(Quaternion rotation)
+        {
+            foreach (Transform arrow in _arrows.Values) arrow.gameObject.SetActive(false);
+            if (LevelUpReady == null) return;
+
+            float phase = arrowPulseSeconds > 0f ? Time.unscaledTime / arrowPulseSeconds : 0f;
+            float bob = Mathf.Sin(phase * 2f * Mathf.PI) * 0.15f;
+            foreach (SimSquad squad in _shown.Squads)
+            {
+                if (!LevelUpReady(squad.Id)) continue;
+                // Above the middle of the squad's living bodies, over the tallest one.
+                Vector3 sum = Vector3.zero;
+                float top = float.MinValue, widest = 0f;
+                int alive = 0;
+                foreach (SimUnit member in squad.Members)
+                {
+                    if (!member.IsAlive || member.Id < 0 || member.Id >= _views.Count) continue;
+                    Vector3 position = _views[member.Id].Root.transform.position;
+                    sum += position;
+                    top = Mathf.Max(top, position.y + PlaceholderArt.BodyHeight(member.Stats) * (member.Stats.IsAir ? 0.5f : 1f));
+                    widest = Mathf.Max(widest, member.Stats.CollisionRadius);
+                    alive++;
+                }
+                if (alive == 0) continue;
+
+                if (!_arrows.TryGetValue(squad.Id, out Transform arrow))
+                {
+                    arrow = PlaceholderArt.CreatePart($"Level-up Arrow (squad {squad.Id})", _arrowContainer, ArrowMesh(), ArrowMaterial());
+                    _arrows[squad.Id] = arrow;
+                }
+                float size = arrowSize * Mathf.Max(1f, widest * 0.6f);
+                Vector3 centre = sum / alive;
+                arrow.gameObject.SetActive(true);
+                arrow.SetPositionAndRotation(new Vector3(centre.x, top + arrowGap + size * 0.5f + bob, centre.z), rotation);
+                arrow.localScale = Vector3.one * size;
+            }
+            // Bright, dim, bright: one full cycle per arrowPulseSeconds.
+            if (_arrowMaterial != null) _arrowMaterial.color = Color.Lerp(arrowDimColor, arrowBrightColor, 0.5f + 0.5f * Mathf.Cos(phase * 2f * Mathf.PI));
+        }
+
+        private Material ArrowMaterial()
+        {
+            if (_arrowMaterial == null) _arrowMaterial = new Material(PlaceholderArt.MaterialFor(arrowBrightColor)) { name = "Level-up Arrow" };
+            return _arrowMaterial;
+        }
+
+        /// <summary>A flat arrow pointing up (1 unit tall, centred), visible from both sides.</summary>
+        private Mesh ArrowMesh()
+        {
+            if (_arrowMesh != null) return _arrowMesh;
+            var outline = new[]
+            {
+                new Vector3(-0.17f, -0.5f), new Vector3(0.17f, -0.5f), new Vector3(0.17f, 0.02f),
+                new Vector3(0.42f, 0.02f), new Vector3(0f, 0.5f), new Vector3(-0.42f, 0.02f), new Vector3(-0.17f, 0.02f),
+            };
+            int[] front = { 0, 2, 1, 0, 6, 2, 6, 4, 2, 5, 4, 6, 2, 4, 3 };
+            var vertices = new List<Vector3>(outline);
+            vertices.AddRange(outline);
+            var triangles = new List<int>(front);
+            for (int i = 0; i < front.Length; i += 3)
+            {
+                // The back side: same triangles, opposite winding.
+                triangles.Add(front[i] + outline.Length);
+                triangles.Add(front[i + 2] + outline.Length);
+                triangles.Add(front[i + 1] + outline.Length);
+            }
+            _arrowMesh = new Mesh { name = "Level-up Arrow" };
+            _arrowMesh.SetVertices(vertices);
+            _arrowMesh.SetTriangles(triangles, 0);
+            _arrowMesh.RecalculateNormals();
+            _arrowMesh.RecalculateBounds();
+            return _arrowMesh;
         }
 
         private Vector3 ToWorld(SimUnit unit)

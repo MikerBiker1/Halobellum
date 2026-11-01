@@ -8,6 +8,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Halobellum.Combat;
 using Halobellum.Core;
 using Halobellum.Economy;
 using NUnit.Framework;
@@ -254,6 +255,36 @@ namespace Halobellum.Tests
             match.StartBattle();
             Assert.AreEqual(squads, match.SeenArmy(Team.A).Count);
             Assert.AreEqual("Alpha", match.SeenFaction(Team.A));
+        }
+
+        [Test]
+        public void PlayersPreview_ShowsTheEnemyAsSeenAtTheLastBattle_NeverItsCurrentDeployment()
+        {
+            // Decision D25: during deployment the player sees the enemy's last-battle army (as ghosts).
+            Match match = NewMatch(new DoNothingAi());
+            match.ChooseDraft(0);
+            int playerSquads = match.Player.Squads.Count;
+            Assert.AreEqual(playerSquads, match.BuildPreview().Squads.Count, "Round 1: nothing of the enemy seen yet.");
+
+            PlacedSquad veteran = match.Enemy.Squads[0];
+            var plating = new TechUpgrade { Name = "Plating", Cost = 100, HealthMultiplier = 2f };
+            veteran.Type.TechUpgrades = new[] { plating };
+            match.Enemy.AddTech(veteran.Type, plating);
+            veteran.Level = 2;
+            int enemySquadsAtBattle = match.Enemy.Squads.Count;
+            PlayBattle(match);
+            match.ContinueAfterResult();
+
+            // Round 2: the enemy buys a squad; the player must not see it.
+            Assert.IsTrue(match.Buy(Team.B, veteran.Type).Ok);
+            BattleSimulation preview = match.BuildPreview();
+            Assert.AreEqual(playerSquads + enemySquadsAtBattle, preview.Squads.Count, "The player's squads, then the enemy's as seen at the last battle.");
+            Assert.AreEqual(Team.B, preview.Squads[playerSquads].Team);
+            SeenSquad seen = match.SeenArmy(Team.B)[0];
+            Assert.AreEqual(2, seen.Level);
+            CollectionAssert.AreEqual(new[] { plating }, seen.Techs, "Techs show in battle, so they are seen.");
+            Assert.AreEqual(veteran.Type.MaxHealth * 2f * 2f, preview.Squads[playerSquads].Members[0].Stats.MaxHealth, 1e-3f,
+                "The ghost has the level and techs it fought with.");
         }
 
         // ------------------------------------------------------------------ full match

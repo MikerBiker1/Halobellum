@@ -55,6 +55,11 @@ Milestones and items from PROJECT_BIBLE.md Section 14. An item is ticked when it
 ## Later request (2026-10-31): faction-styled UI (done; waiting for the human to look)
 - [x] After M5 and M6: UNSC-style UI when the player picked UNSC, Covenant-style when they picked Covenant (fonts, panels, colours)
 
+## Answers to D25-D28 (2026-11-01)
+- [x] D25: during deployment, the enemy's army as it was at the last battle start shows as grey ghosts you can select (never its current deployment)
+- [x] D26: XP bar doubled (2 x the squad's price); squads ready to level up show a pulsing yellow arrow
+- [ ] D28: textured faction UI (UNSC hull plating, Covenant violet with glowing blue lines), downloaded fonts
+
 ## Notes for the next balance pass (from the human, 2026-10-31)
 - Flamethrower Troopers should be excellent against chaff such as Marines (today they lose to Marines, which outrange them).
 - Warthogs should have enough range, and enough health with their light armor, to destroy Flamethrower Troopers.

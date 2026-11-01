@@ -25,6 +25,7 @@
 //     is undone, income is paid and the match goes on to the next round.
 // The AI only sees the match through an AiView: its own state, public information, and each army as
 // it was revealed when the last battle started (SeenArmy), never the opponent's current deployment.
+// The player gets the same: BuildPreview shows the enemy's last-battle army as ghosts (D25).
 // Depends on: MatchRules, PlayerState, DeploymentGrid, StartingDraft, RoundSummary, IMatchAi, AiView,
 //             Halobellum.Combat (HeadlessBattleRunner, BattleSimulation), Halobellum.Core.
 
@@ -344,7 +345,11 @@ namespace Halobellum.Economy
             seen.Clear();
             foreach (PlacedSquad squad in player.Squads)
             {
-                seen.Add(new SeenSquad { Type = squad.Type, Level = squad.Level, Column = squad.Column, Row = squad.Row, Rotated90 = squad.Rotated90 });
+                seen.Add(new SeenSquad
+                {
+                    Type = squad.Type, Level = squad.Level, Column = squad.Column, Row = squad.Row, Rotated90 = squad.Rotated90,
+                    Techs = new List<TechUpgrade>(player.TechsFor(squad.Type)),
+                });
             }
         }
 
@@ -356,6 +361,34 @@ namespace Halobellum.Economy
         public BattleSimulation BuildBattle(bool includeEnemy)
         {
             return DeploymentGrid.CreateBattle(CombatRules, Player, includeEnemy ? Enemy : null, BattleSeed);
+        }
+
+        /// <summary>
+        /// The deployment preview (decision D25): the player's current deployment, then the enemy's army
+        /// as the player saw it when the last battle started (never its current deployment). Simulation
+        /// squad i is the player's squad i, then SeenArmy(Team.B) in order.
+        /// </summary>
+        public BattleSimulation BuildPreview()
+        {
+            PlayerState seen = SeenAsDeployment(Team.B);
+            return DeploymentGrid.CreateBattle(CombatRules, Player, seen.Squads.Count > 0 ? seen : null, BattleSeed);
+        }
+
+        /// <summary>A side's army as seen at the last battle start, as a deployment (levels and techs included).</summary>
+        public PlayerState SeenAsDeployment(Team team)
+        {
+            var state = new PlayerState(team);
+            int id = 0;
+            foreach (SeenSquad squad in SeenArmy(team))
+            {
+                state.Squads.Add(new PlacedSquad
+                {
+                    Id = ++id, Type = squad.Type, Column = squad.Column, Row = squad.Row, Rotated90 = squad.Rotated90,
+                    Level = squad.Level, HasFought = true,
+                });
+                foreach (TechUpgrade tech in squad.Techs) state.AddTech(squad.Type, tech);
+            }
+            return state;
         }
 
         /// <summary>The seed of this round's battle (changes every battle, repeatable for the same match seed).</summary>

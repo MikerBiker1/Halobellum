@@ -24,6 +24,8 @@ namespace Halobellum.Presentation
     /// <summary>The level / XP / tech section of the stats window for one squad.</summary>
     public sealed class SquadProgressView
     {
+        /// <summary>Replaces "Team A" / "Team B" in the window title when set (e.g. for the enemy's ghosts).</summary>
+        public string SideLabel;
         public int Level = 1;
         public int MaxLevel = UnitUpgrades.MaxLevel;
         public bool ShowXp;
