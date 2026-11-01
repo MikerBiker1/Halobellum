@@ -20,7 +20,7 @@ using UnityEngine;
 namespace Halobellum.Presentation
 {
     [RequireComponent(typeof(BattleController))]
-    public sealed class SandboxController : MonoBehaviour, IDeploymentPlacement
+    public sealed class SandboxController : MonoBehaviour, IDeploymentPlacement, ISquadProgression
     {
         /// <summary>One unit type the sandbox offers, with the faction it comes from.</summary>
         public readonly struct SandboxUnit
@@ -208,6 +208,7 @@ namespace Halobellum.Presentation
             if (IsBattle) return;
             CancelPlacement();
             Army(team).Squads.Clear();
+            Army(team).Techs.Clear();
             Refresh();
         }
 
@@ -218,18 +219,25 @@ namespace Halobellum.Presentation
             CancelPlacement();
             PlayerState target = Army(from.Opponent());
             target.Squads.Clear();
+            target.Techs.Clear();
             foreach (PlacedSquad squad in Army(from).Squads)
             {
-                target.Squads.Add(new PlacedSquad { Id = _nextSquadId++, Type = squad.Type, Column = squad.Column, Row = squad.Row, Rotated90 = squad.Rotated90, PricePaid = squad.PricePaid });
+                target.Squads.Add(new PlacedSquad { Id = _nextSquadId++, Type = squad.Type, Column = squad.Column, Row = squad.Row, Rotated90 = squad.Rotated90, PricePaid = squad.PricePaid, Level = squad.Level });
             }
+            foreach (var pair in Army(from).Techs) target.Techs[pair.Key] = new List<TechUpgrade>(pair.Value);
             Refresh();
         }
 
-        /// <summary>Total cost of one side's squads (to compare armies of equal value).</summary>
+        /// <summary>
+        /// What one side's army is worth (to compare armies of equal value): each squad's price plus
+        /// half its price per level above 1, plus the techs it owns.
+        /// </summary>
         public int ArmyCost(Team team)
         {
             int total = 0;
-            foreach (PlacedSquad squad in Army(team).Squads) total += squad.Type.Cost;
+            PlayerState army = Army(team);
+            foreach (PlacedSquad squad in army.Squads) total += squad.Type.Cost + squad.Type.Cost * (squad.Level - 1) / 2;
+            foreach (var pair in army.Techs) foreach (TechUpgrade tech in pair.Value) total += tech.Cost;
             return total;
         }
 
@@ -256,6 +264,67 @@ namespace Halobellum.Presentation
             IsBattle = false;
             Message = "";
             Refresh();
+        }
+
+        // ------------------------------------------------------------------ levels and techs (free in the sandbox)
+
+        /// <summary>Sets a squad's level (1 to 5).</summary>
+        public void SetLevel(PlacedSquad squad, int level)
+        {
+            if (IsBattle || squad == null) return;
+            squad.Level = Math.Max(1, Math.Min(UnitUpgrades.MaxLevel, level));
+            Refresh(squad.Id);
+        }
+
+        /// <summary>Gives or takes away a tech for every squad of that type on one side.</summary>
+        public void ToggleTech(Team team, UnitStats type, TechUpgrade tech, int reselectSquadId = -1)
+        {
+            if (IsBattle) return;
+            PlayerState army = Army(team);
+            if (army.HasTech(type, tech)) army.RemoveTech(type, tech);
+            else army.AddTech(type, tech);
+            Refresh(reselectSquadId);
+        }
+
+        public SquadProgressView DescribeProgress(int simSquadId)
+        {
+            BattleSimulation sim = _battle.Simulation;
+            if (sim == null) return null;
+            int index = -1;
+            for (int i = 0; i < sim.Squads.Count; i++) if (sim.Squads[i].Id == simSquadId) { index = i; break; }
+            if (index < 0) return null;
+            var all = new List<PlacedSquad>(ArmyA.Squads);
+            all.AddRange(ArmyB.Squads);
+            if (index >= all.Count) return null;
+            PlacedSquad squad = all[index];
+            Team team = index < ArmyA.Squads.Count ? Team.A : Team.B;
+            PlayerState army = Army(team);
+
+            var view = new SquadProgressView { Level = squad.Level, Note = IsBattle ? null : "Sandbox: set the level and techs freely." };
+            if (!IsBattle)
+            {
+                if (squad.Level < UnitUpgrades.MaxLevel)
+                {
+                    view.LevelUpLabel = "Level +";
+                    view.LevelUpEnabled = true;
+                    view.OnLevelUp = () => SetLevel(squad, squad.Level + 1);
+                }
+                if (squad.Level > 1) view.OnLevelDown = () => SetLevel(squad, squad.Level - 1);
+            }
+            foreach (TechUpgrade tech in squad.Type.TechUpgrades ?? Array.Empty<TechUpgrade>())
+            {
+                if (tech == null) continue;
+                bool owned = army.HasTech(squad.Type, tech);
+                view.Techs.Add(new TechLine
+                {
+                    Tech = tech,
+                    Owned = owned,
+                    ButtonLabel = IsBattle ? null : owned ? "Remove" : "Add",
+                    ButtonEnabled = !IsBattle,
+                    OnButton = () => ToggleTech(team, squad.Type, tech, squad.Id),
+                });
+            }
+            return view;
         }
 
         // ------------------------------------------------------------------ selection and preview

@@ -32,6 +32,8 @@ namespace Halobellum.Economy
         public int Level = 1;
         /// <summary>Experience earned from kills toward the next level. It survives the round reset.</summary>
         public float Xp;
+        /// <summary>Credits spent leveling this squad up (refunded with the squad's price when sold).</summary>
+        public int LevelUpSpent;
     }
 
     public sealed class PlayerState
@@ -46,9 +48,53 @@ namespace Halobellum.Economy
         public int SquadsBoughtThisRound;
         public int UnlocksThisRound;
 
+        /// <summary>Tech upgrades bought, per unit type (they apply to every squad of that type).</summary>
+        public readonly Dictionary<UnitStats, List<TechUpgrade>> Techs = new Dictionary<UnitStats, List<TechUpgrade>>();
+        private readonly Dictionary<(UnitStats, int, int), UnitStats> _effective = new Dictionary<(UnitStats, int, int), UnitStats>();
+
         public PlayerState(Team team)
         {
             Team = team;
+        }
+
+        /// <summary>The techs this player owns for a unit type (empty if none).</summary>
+        public IReadOnlyList<TechUpgrade> TechsFor(UnitStats type) =>
+            type != null && Techs.TryGetValue(type, out List<TechUpgrade> list) ? list : (IReadOnlyList<TechUpgrade>)System.Array.Empty<TechUpgrade>();
+
+        public bool HasTech(UnitStats type, TechUpgrade tech) => Techs.TryGetValue(type, out List<TechUpgrade> list) && list.Contains(tech);
+
+        public void AddTech(UnitStats type, TechUpgrade tech)
+        {
+            if (!Techs.TryGetValue(type, out List<TechUpgrade> list)) Techs[type] = list = new List<TechUpgrade>();
+            if (!list.Contains(tech)) list.Add(tech);
+        }
+
+        /// <summary>Removes a tech (sandbox only; in a match techs are permanent).</summary>
+        public void RemoveTech(UnitStats type, TechUpgrade tech)
+        {
+            if (Techs.TryGetValue(type, out List<TechUpgrade> list)) list.Remove(tech);
+        }
+
+        /// <summary>The squad's battle stats: its unit type at its level with this player's techs (cached).</summary>
+        public UnitStats EffectiveStats(PlacedSquad squad)
+        {
+            // Key on which techs are owned (one bit per slot), and apply them in slot order.
+            int mask = 0;
+            var owned = new List<TechUpgrade>();
+            TechUpgrade[] slots = squad.Type.TechUpgrades ?? System.Array.Empty<TechUpgrade>();
+            for (int i = 0; i < slots.Length; i++)
+            {
+                if (slots[i] == null || !HasTech(squad.Type, slots[i])) continue;
+                mask |= 1 << i;
+                owned.Add(slots[i]);
+            }
+            var key = (squad.Type, squad.Level, mask);
+            if (!_effective.TryGetValue(key, out UnitStats stats))
+            {
+                stats = UnitUpgrades.Apply(squad.Type, squad.Level, owned);
+                _effective[key] = stats;
+            }
+            return stats;
         }
 
         public bool HasFaction => Faction != null;

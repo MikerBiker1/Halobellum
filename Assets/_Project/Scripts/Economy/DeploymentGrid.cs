@@ -66,13 +66,16 @@ namespace Halobellum.Economy
             return new Vec2(squad.Column + width * 0.5f - rules.ArenaWidthSquares * 0.5f, squad.Row + depth * 0.5f);
         }
 
-        /// <summary>A player's deployment as an army for the battle, squads in deployment order.</summary>
+        /// <summary>
+        /// A player's deployment as an army for the battle, squads in deployment order. Each squad fights
+        /// with its level and the player's tech upgrades applied (PlayerState.EffectiveStats).
+        /// </summary>
         public static ArmySetup BuildArmy(PlayerState player, CombatRules rules)
         {
             var army = new ArmySetup(player.Label);
             foreach (PlacedSquad squad in player.Squads)
             {
-                army.AddAt(squad.Type, new List<Vec2> { CentreInSquares(squad, rules) }, new List<bool> { squad.Rotated90 });
+                army.AddAt(player.EffectiveStats(squad), new List<Vec2> { CentreInSquares(squad, rules) }, new List<bool> { squad.Rotated90 });
             }
             return army;
         }

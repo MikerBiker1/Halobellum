@@ -137,6 +137,35 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
+        public IEnumerator LevelUpAndTech_FromTheStatsWindowActions_ChangeTheSquadsBattleStats()
+        {
+            yield return LoadMatch();
+            _match.ChooseDraft(0);
+            yield return null;
+            Match m = _match.Match;
+            PlacedSquad squad = m.Player.Squads[0];
+            m.Player.Credits = 2000;
+            squad.Xp = m.XpNeeded(squad);
+
+            Assert.IsTrue(_match.LevelUp(squad).Ok, _match.Message);
+            yield return null;
+            Assert.AreEqual(2, squad.Level);
+            Assert.AreEqual(_match.SelectedPlacedSquad, squad, "Still selected after the level-up.");
+            SquadProgressView view = _match.DescribeProgress(_battle.Simulation.Squads[0].Id);
+            Assert.AreEqual(2, view.Level);
+            Assert.IsTrue(view.ShowXp);
+            Assert.IsNotEmpty(view.Techs, "Every slice unit has techs.");
+            Assert.AreEqual(squad.Type.MaxHealth * 2f, _battle.Simulation.Units[0].Stats.MaxHealth, 1e-3f, "The preview shows level 2.");
+
+            TechLine first = view.Techs[0];
+            Assert.IsTrue(first.ButtonEnabled, "Affordable during deployment.");
+            first.OnButton();
+            yield return null;
+            Assert.IsTrue(m.Player.HasTech(squad.Type, first.Tech));
+            Assert.IsTrue(_match.DescribeProgress(_battle.Simulation.Squads[0].Id).Techs[0].Owned);
+        }
+
+        [UnityTest]
         public IEnumerator Difficulty_IsChosenOnTheDraftScreen_AndLockedAfterward()
         {
             yield return LoadMatch();

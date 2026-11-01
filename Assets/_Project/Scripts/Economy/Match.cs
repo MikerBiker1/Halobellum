@@ -15,7 +15,11 @@
 //     its slot for the round), RefundAfterBattle afterwards. Free draft squads always sell for
 //     RefundAfterBattle of their cost.
 //   - Every battle is built fresh from both deployments, so each round starts like the last one
-//     started, plus whatever was bought (round reset).
+//     started, plus whatever was bought (round reset). Squads keep their level and XP.
+//   - Leveling (Section 5): squads earn XP from kills (the victim's worth per body); when the bar
+//     (XpBarPerSquadCost x the squad's price, the same at every level) is full, LevelUp costs half
+//     the base price and raises the level (health and damage x level, up to 5).
+//   - Tech upgrades (Section 9): BuyTech buys one of a unit type's techs for every squad of that type.
 //   - Result: every surviving body deals its BaseDamage to the enemy base, both at once. A base at
 //     0 or below loses; if both fall, the lower one loses. An exact tie is a tied round: the damage
 //     is undone, income is paid and the match goes on to the next round.
@@ -213,12 +217,93 @@ namespace Halobellum.Economy
             return ActionResult.Success();
         }
 
-        /// <summary>Credits a sale would give back right now.</summary>
+        /// <summary>Credits a sale would give back right now (the squad's price and its level-ups).</summary>
         public int SellValue(PlacedSquad squad)
         {
-            if (squad.FromDraft) return (int)MathF.Round(squad.Type.Cost * Rules.RefundAfterBattle);
+            if (squad.FromDraft) return (int)MathF.Round((squad.Type.Cost + squad.LevelUpSpent) * Rules.RefundAfterBattle);
             float share = CanMove(squad) ? Rules.RefundBeforeBattle : Rules.RefundAfterBattle;
-            return (int)MathF.Round(squad.PricePaid * share);
+            return (int)MathF.Round((squad.PricePaid + squad.LevelUpSpent) * share);
+        }
+
+        // ------------------------------------------------------------------ leveling and techs
+
+        /// <summary>XP needed to fill the squad's bar (the same at every level).</summary>
+        public float XpNeeded(PlacedSquad squad) => squad.Type.Cost * Rules.XpBarPerSquadCost;
+
+        public int LevelUpCost(PlacedSquad squad) => (int)MathF.Round(squad.Type.Cost * Rules.LevelUpCostShare);
+
+        /// <summary>True if the squad's XP bar is full and it is below the maximum level.</summary>
+        public bool CanLevelUp(PlacedSquad squad) =>
+            squad != null && squad.Level < UnitUpgrades.MaxLevel && squad.Xp >= XpNeeded(squad) - 1e-3f;
+
+        public ActionResult LevelUp(Team team, int squadId)
+        {
+            PlayerState player = Get(team);
+            PlacedSquad squad = player.FindSquad(squadId);
+            if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Squads can only be leveled up during deployment.");
+            if (squad == null) return ActionResult.Fail("No such squad.");
+            if (squad.Level >= UnitUpgrades.MaxLevel) return ActionResult.Fail($"{squad.Type.Name} is already at the maximum level.");
+            if (!CanLevelUp(squad)) return ActionResult.Fail("Its XP bar is not full yet.");
+            int cost = LevelUpCost(squad);
+            if (player.Credits < cost) return ActionResult.Fail($"Not enough credits ({cost} needed).");
+
+            player.Credits -= cost;
+            squad.Level++;
+            squad.Xp = 0f;
+            squad.LevelUpSpent += cost;
+            return ActionResult.Success($"{squad.Type.Name} is now level {squad.Level}.");
+        }
+
+        /// <summary>Buys one of a unit type's tech upgrades; it applies to every squad of that type for the rest of the match.</summary>
+        public ActionResult BuyTech(Team team, UnitStats type, TechUpgrade tech)
+        {
+            PlayerState player = Get(team);
+            if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Techs can only be bought during deployment.");
+            if (type == null || tech == null || type.TechUpgrades == null || Array.IndexOf(type.TechUpgrades, tech) < 0)
+                return ActionResult.Fail("That unit has no such tech.");
+            if (!player.Unlocked.Contains(type)) return ActionResult.Fail($"Unlock {type.Name} first.");
+            if (player.HasTech(type, tech)) return ActionResult.Fail($"{tech.Name} is already researched.");
+            if (player.Credits < tech.Cost) return ActionResult.Fail($"Not enough credits ({tech.Cost} needed).");
+
+            player.Credits -= tech.Cost;
+            player.AddTech(type, tech);
+            return ActionResult.Success($"{tech.Name} researched for every {type.Name}.");
+        }
+
+        /// <summary>
+        /// Gives each placed squad the XP its bodies earned in the finished battle: for every enemy body
+        /// killed, the victim's worth (its squad price per body, plus half per level above 1).
+        /// Simulation squad i is placed squad i (Team A's squads first, then Team B's); units dropped
+        /// mid-battle belong to no placed squad and earn nothing.
+        /// </summary>
+        private void AwardXp(BattleSimulation battle, RoundSummary summary)
+        {
+            var placed = new List<(PlacedSquad squad, PlayerState owner)>();
+            foreach (PlacedSquad squad in Player.Squads) placed.Add((squad, Player));
+            foreach (PlacedSquad squad in Enemy.Squads) placed.Add((squad, Enemy));
+            var bySimSquad = new Dictionary<int, int>();
+            for (int i = 0; i < battle.Squads.Count && i < placed.Count; i++) bySimSquad[battle.Squads[i].Id] = i;
+
+            var earned = new float[placed.Count];
+            foreach (SimUnit victim in battle.Units)
+            {
+                if (victim.IsAlive || victim.KilledById < 0) continue;
+                SimUnit killer = battle.Units[victim.KilledById];
+                if (!bySimSquad.TryGetValue(killer.SquadId, out int index)) continue;
+                UnitStats v = victim.Stats;
+                earned[index] += v.Cost / (float)Math.Max(1, v.SquadSize) * (1f + 0.5f * (v.Level - 1));
+            }
+            for (int i = 0; i < placed.Count; i++)
+            {
+                PlacedSquad squad = placed[i].squad;
+                if (earned[i] <= 0f) continue;
+                summary.XpGained[squad.Id] = earned[i];
+                if (squad.Level < UnitUpgrades.MaxLevel) squad.Xp = Math.Min(XpNeeded(squad), squad.Xp + earned[i]);
+            }
+            foreach (PlacedSquad squad in Player.Squads)
+            {
+                if (CanLevelUp(squad)) summary.PlayerSquadsReadyToLevel.Add(squad.Type.Name);
+            }
         }
 
         public ActionResult Sell(Team team, int squadId)
@@ -291,6 +376,7 @@ namespace Halobellum.Economy
                 BaseDamageByB = (int)MathF.Round(result.TeamB.SurvivorBaseDamage),
                 Kills = RoundSummary.CountKills(CurrentBattle),
             };
+            AwardXp(CurrentBattle, summary);
 
             _baseHealthBeforeA = Player.BaseHealth;
             _baseHealthBeforeB = Enemy.BaseHealth;

@@ -24,6 +24,8 @@ namespace Halobellum.Tests
             RefundAfterBattle = 0.5f,
             DraftCardCount = 5,
             DraftSquadsPerCard = 2,
+            XpBarPerSquadCost = 1f,
+            LevelUpCostShare = 0.5f,
         };
 
         public static UnitStats Infantry() => Unit("Infantry", tier: 1, unlock: 0, squad: 12, cost: 100, health: 60f, radius: 0.5f, baseDamage: 100f / 12f / 5f);

@@ -135,8 +135,14 @@ namespace Halobellum.Tests
             Assert.IsTrue(u["Pelican"].Weapons[0].CanTarget(u["Pelican"], true) && u["Pelican"].Weapons[0].CanTarget(u["Pelican"], false),
                 "Pelican autocannon hits air and ground.");
 
-            // Pelican: a plain air unit until its troop-carrying upgrade (M6, decision D22).
-            Assert.IsFalse(u["Pelican"].HasReinforcement, "The Pelican only carries Marines after its M6 upgrade.");
+            // Pelican: a plain air unit until its Troop Bay tech (decision D22), which drops 6 Marines at 10 s.
+            Assert.IsFalse(u["Pelican"].HasReinforcement, "The Pelican only carries Marines after its Troop Bay tech.");
+            Assert.IsNotNull(u["Pelican"].LockedReinforcement);
+            Assert.AreEqual("Marine", u["Pelican"].LockedReinforcement.Name);
+            Assert.AreEqual(6, u["Pelican"].LockedReinforcement.SquadSize);
+            Assert.AreEqual(10f, u["Pelican"].ReinforcementDelaySeconds, 1e-3f);
+            TechUpgrade bay = u["Pelican"].TechUpgrades.Single(t => t.UnlocksReinforcement);
+            Assert.IsTrue(UnitUpgrades.Apply(u["Pelican"], 1, new[] { bay }).HasReinforcement);
 
             // Directional defense: Shield Jackals (120 degrees, block 80% of ballistic projectiles) and Hunters (240 degrees).
             DefenseArcStats jackal = u["Jackal (Shield)"].DefenseArc;
@@ -152,6 +158,24 @@ namespace Halobellum.Tests
             // Titans have several weapons (turrets for chaff, a main gun for armor).
             Assert.GreaterOrEqual(u["Elephant"].Weapons.Length, 2);
             Assert.GreaterOrEqual(u["Scarab"].Weapons.Length, 2);
+        }
+
+        [Test]
+        public void EveryUnit_HasTwoOrThreeValidTechUpgrades()
+        {
+            foreach (UnitDefinition unit in HeadlessRunnerTool.LoadSliceUnits())
+            {
+                UnitStats stats = unit.ToStats();
+                Assert.That(stats.TechUpgrades.Length, Is.InRange(2, UnitUpgrades.MaxTechsPerUnit), unit.unitName);
+                foreach (TechUpgrade tech in stats.TechUpgrades)
+                {
+                    Assert.IsNotNull(tech, unit.unitName + " has an empty tech slot.");
+                    Assert.Greater(tech.Cost, 0, tech.Name);
+                    Assert.IsNotEmpty(tech.EffectsText(), tech.Name + " does nothing.");
+                }
+            }
+            UnitStats flamer = HeadlessRunnerTool.LoadSliceUnits().Single(d => d.unitName == "Flamethrower Trooper").ToStats();
+            Assert.IsTrue(flamer.TechUpgrades.Any(t => t.ConeDegreesBonus > 0f), "A later upgrade widens the flamethrower cone (D22).");
         }
 
         [Test]

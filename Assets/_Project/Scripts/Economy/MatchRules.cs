@@ -32,6 +32,13 @@ namespace Halobellum.Economy
         public int DraftCardCount;
         /// <summary>Free Tier 1 squads on each draft card (Bible: 2).</summary>
         public int DraftSquadsPerCard;
+        /// <summary>
+        /// Size of the XP bar as a share of the squad's base price (decision D26: 1 = a squad must kill
+        /// its own price's worth of enemies to fill it). The same at every level (Bible Section 5).
+        /// </summary>
+        public float XpBarPerSquadCost = 1f;
+        /// <summary>Level-up price as a share of the squad's base price (Bible: half).</summary>
+        public float LevelUpCostShare = 0.5f;
 
         /// <summary>
         /// Income for a round: BaseIncome in round 1, then IncomeIncreasePerRound more each round,

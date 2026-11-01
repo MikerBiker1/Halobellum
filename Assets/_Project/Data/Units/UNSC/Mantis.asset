@@ -67,6 +67,10 @@ MonoBehaviour:
   reinforcementUnit: {fileID: 0}
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
+  reinforcementNeedsUpgrade: 0
+  techUpgrades:
+  - {fileID: 11400000, guid: 2881c33efa2797c8e77b16174dcd7800, type: 2}
+  - {fileID: 11400000, guid: d28c85c00e84f636f16f30ee31615b49, type: 2}
   prefab: {fileID: 682829876330678696, guid: 1b84cfffc7c493746893cfe0519b3988, type: 3}
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS

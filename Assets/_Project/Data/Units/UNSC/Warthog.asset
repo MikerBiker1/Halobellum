@@ -53,6 +53,10 @@ MonoBehaviour:
   reinforcementUnit: {fileID: 0}
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
+  reinforcementNeedsUpgrade: 0
+  techUpgrades:
+  - {fileID: 11400000, guid: a9156e23cacdb222dd6e1404e88d7e60, type: 2}
+  - {fileID: 11400000, guid: 5180959523109da52dbb3dc27b85b4fa, type: 2}
   prefab: {fileID: 1272590660598749317, guid: 57cf19a71eeab274f9a2302fc9551ad6, type: 3}
   strongAgainst: 'Artillery, DPS'
   weakAgainst: 'Chaff clear, tanks'

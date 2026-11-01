@@ -5,7 +5,8 @@
 //   - public information: both bases, the opponent's faction once it has been seen in a battle;
 //   - the opponent's army only as it was revealed at the start of the last battle (SeenOpponentArmy),
 //     never the opponent's current deployment;
-//   - its own actions, which go through the same Match rules as the player's (Unlock, Buy, Sell).
+//   - its own actions, which go through the same Match rules as the player's (Unlock, Buy, Move,
+//     Sell, LevelUp, BuyTech).
 // The same view can drive the player's side (tests and autoplay let an AI play Team A).
 // Depends on: Match, PlayerState, DeploymentGrid, Halobellum.Core.
 
@@ -65,5 +66,9 @@ namespace Halobellum.Economy
         public ActionResult Move(PlacedSquad squad, int column, int row, bool rotated90) => _match.Move(Team, squad.Id, column, row, rotated90);
         public ActionResult Sell(PlacedSquad squad) => _match.Sell(Team, squad.Id);
         public int SellValue(PlacedSquad squad) => _match.SellValue(squad);
+        public bool CanLevelUp(PlacedSquad squad) => Self.Squads.Contains(squad) && _match.CanLevelUp(squad);
+        public int LevelUpCost(PlacedSquad squad) => _match.LevelUpCost(squad);
+        public ActionResult LevelUp(PlacedSquad squad) => _match.LevelUp(Team, squad.Id);
+        public ActionResult BuyTech(UnitStats type, TechUpgrade tech) => _match.BuyTech(Team, type, tech);
     }
 }

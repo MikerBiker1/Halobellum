@@ -29,6 +29,10 @@ namespace Halobellum.Economy
         public int BaseHealthA;
         public int BaseHealthB;
         public int IncomeAwarded;
+        /// <summary>XP each placed squad earned in this battle (placed squad id -> XP), both sides.</summary>
+        public Dictionary<int, float> XpGained = new Dictionary<int, float>();
+        /// <summary>The player's squads whose XP bar is full (they can be leveled up), by unit name.</summary>
+        public List<string> PlayerSquadsReadyToLevel = new List<string>();
         /// <summary>True if both bases fell to exactly the same health: a tied round (damage undone, the match goes on).</summary>
         public bool Tie;
         /// <summary>The winner if this round ended the match, otherwise null.</summary>

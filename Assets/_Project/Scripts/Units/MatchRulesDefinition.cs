@@ -39,6 +39,12 @@ namespace Halobellum.Units
         public int draftCardCount;
         public int draftSquadsPerCard;
 
+        [Header("Squad leveling")]
+        [Tooltip("XP bar size as a share of the squad's base price (1 = kill your own price's worth of enemies). Same at every level.")]
+        public float xpBarPerSquadCost = 1f;
+        [Tooltip("Level-up price as a share of the squad's base price (Bible: 0.5).")]
+        [Range(0f, 2f)] public float levelUpCostShare = 0.5f;
+
         public MatchRules ToRules()
         {
             return new MatchRules
@@ -54,6 +60,8 @@ namespace Halobellum.Units
                 RefundAfterBattle = refundAfterBattle,
                 DraftCardCount = draftCardCount,
                 DraftSquadsPerCard = draftSquadsPerCard,
+                XpBarPerSquadCost = xpBarPerSquadCost,
+                LevelUpCostShare = levelUpCostShare,
             };
         }
     }

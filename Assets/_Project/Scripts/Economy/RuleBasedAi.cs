@@ -7,7 +7,8 @@
 //      bonus if the unit counters what the opponent fields (Section 7 counter table), plus a small
 //      bonus for higher tiers.
 //   4. Unlocks at most one unit type and buys at most 2 squads (the same limits as the player),
-//      using the same Match actions.
+//      using the same Match actions. Then it spends what is left on level-ups (squads with a full
+//      XP bar, most valuable first) and tech upgrades (for the unit type it has the most of).
 //   5. Places squads by role: chaff and tanks in front, ranged units behind, flankers on the sides.
 // Difficulty only changes decision quality, never information or income:
 //   Easy   - picks strategies partly at random, counters poorly, often leaves credits unspent, and
@@ -190,10 +191,61 @@ namespace Halobellum.Economy
                 if (UsesMatchups) UpdateThreats(view, seen); // The new squad covers part of the threat.
             }
 
+            // 5. Level-ups and techs with the credits left.
+            var upgrades = new List<string>();
+            SpendOnUpgrades(view, upgrades);
+
             LastDecision = $"Round {view.Round}: {Strategy}" + (CounteredRole.HasValue ? $", countering {CounteredRole}" : "")
                            + (unlocked != null ? $", unlocked {unlocked}" : "")
                            + (bought.Count > 0 ? ", bought " + string.Join(" + ", bought) : ", bought nothing")
+                           + (upgrades.Count > 0 ? ", upgraded " + string.Join(" + ", upgrades) : "")
                            + $", {self.Credits} credits left";
+        }
+
+        /// <summary>
+        /// Level-ups first (squads with a full XP bar, most valuable first), then one tech for the unit
+        /// type it has invested the most in. Easy rarely bothers; Normal and Hard keep a small reserve
+        /// only before round 3 (squads and unlocks matter more early).
+        /// </summary>
+        private void SpendOnUpgrades(AiView view, List<string> upgrades)
+        {
+            PlayerState self = view.Self;
+            if (Difficulty == AiDifficulty.Easy && _random.NextFloat() < 0.7f) return;
+
+            var ready = new List<PlacedSquad>();
+            foreach (PlacedSquad squad in self.Squads) if (view.CanLevelUp(squad)) ready.Add(squad);
+            ready.Sort((a, b) => b.Type.Cost.CompareTo(a.Type.Cost));
+            foreach (PlacedSquad squad in ready)
+            {
+                if (view.LevelUpCost(squad) > self.Credits) continue;
+                if (view.LevelUp(squad).Ok) upgrades.Add($"{squad.Type.Name} to level {squad.Level}");
+            }
+
+            // Techs: for the unit type with the most credits invested, the cheapest tech not owned yet.
+            var invested = new Dictionary<UnitStats, int>();
+            foreach (PlacedSquad squad in self.Squads)
+            {
+                invested.TryGetValue(squad.Type, out int value);
+                invested[squad.Type] = value + squad.Type.Cost * squad.Level;
+            }
+            var types = new List<UnitStats>(invested.Keys);
+            types.Sort((a, b) => invested[b].CompareTo(invested[a]));
+            int reserve = view.Round < 3 ? 100 : 0;
+            foreach (UnitStats type in types)
+            {
+                if (type.TechUpgrades == null || invested[type] < type.Cost * 2) continue; // Only worth it with 2+ squads' worth.
+                TechUpgrade cheapest = null;
+                foreach (TechUpgrade tech in type.TechUpgrades)
+                {
+                    if (tech == null || self.HasTech(type, tech) || tech.Cost + reserve > self.Credits) continue;
+                    if (cheapest == null || tech.Cost < cheapest.Cost) cheapest = tech;
+                }
+                if (cheapest != null && view.BuyTech(type, cheapest).Ok)
+                {
+                    upgrades.Add($"{cheapest.Name} ({type.Name})");
+                    break; // One tech per round keeps money for squads.
+                }
+            }
         }
 
         private AiStrategy ChooseStrategy(AiView view, IReadOnlyList<SeenSquad> seen, float[] valueByRole, float totalSeen)

@@ -223,6 +223,11 @@ namespace Halobellum.UI
             string footer = (s.Tie ? "Exact tie: both bases are restored. " : "")
                             + $"Income: +{s.IncomeAwarded} credits for next round.";
             GUI.Label(new Rect(panel.x + 20f, panel.yMax - 96f, panel.width - 40f, 26f), footer, _text);
+            if (s.PlayerSquadsReadyToLevel.Count > 0)
+            {
+                GUI.Label(new Rect(panel.x + 20f, panel.yMax - 122f, panel.width - 40f, 26f),
+                    "Ready to level up: " + string.Join(", ", s.PlayerSquadsReadyToLevel.Distinct()) + " (select it next round)", _small);
+            }
             if (GUI.Button(new Rect(panel.x + panel.width * 0.5f - 110f, panel.yMax - 58f, 220f, 44f), "Continue", _bigButton)) match.Continue();
         }
 

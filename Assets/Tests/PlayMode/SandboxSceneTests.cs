@@ -110,6 +110,31 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
+        public IEnumerator LevelsAndTechs_CanBeSetFreely_PerSide()
+        {
+            yield return LoadSandbox();
+            UnitStats pelican = Unit("Pelican");
+            _sandbox.AddSquad(Team.A, pelican);
+            PlacedSquad squad = _sandbox.ArmyA.Squads[0];
+            _sandbox.SetLevel(squad, 3);
+            Assert.AreEqual(3, squad.Level);
+            Assert.AreEqual(pelican.Cost * 2, _sandbox.ArmyCost(Team.A), "Worth its price plus half per level above 1.");
+
+            TechUpgrade bay = pelican.TechUpgrades.Single(t => t.UnlocksReinforcement);
+            _sandbox.ToggleTech(Team.A, pelican, bay);
+            Assert.IsTrue(_sandbox.ArmyA.HasTech(pelican, bay));
+            Assert.IsFalse(_sandbox.ArmyB.HasTech(pelican, bay), "Techs are per side.");
+            yield return null;
+            Assert.IsTrue(_battle.Simulation.Units[0].Stats.HasReinforcement, "The Troop Bay switches the drop on.");
+            Assert.AreEqual(pelican.MaxHealth * 3f, _battle.Simulation.Units[0].Stats.MaxHealth, 1e-3f);
+            Assert.IsNotNull(_sandbox.DescribeProgress(_battle.Simulation.Squads[0].Id));
+
+            _sandbox.ToggleTech(Team.A, pelican, bay);
+            yield return null;
+            Assert.IsFalse(_battle.Simulation.Units[0].Stats.HasReinforcement, "Removing the tech switches it off again.");
+        }
+
+        [UnityTest]
         public IEnumerator Run_PlaysTheBattle_ThenResetBringsBackThePlacement()
         {
             yield return LoadSandbox();

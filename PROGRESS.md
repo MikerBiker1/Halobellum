@@ -47,10 +47,10 @@ Milestones and items from PROJECT_BIBLE.md Section 14. An item is ticked when it
 - [x] 3 difficulty levels (Easy, Normal, Hard) chosen on the draft screen; Hard uses measured matchups
 - [x] Full playable match against the AI (headless and PlayMode tests)
 
-## M6: Leveling and tech upgrades (planned)
-- [ ] Squad XP from kills, level-ups for half the base price, level multipliers (with tests)
-- [ ] Tech upgrades: data assets, up to 3 per unit type, bought with credits, apply to every squad of that type (with tests)
-- [ ] UI: level, XP bar, level-up button and tech upgrades in the stats window; the AI uses levels and techs
+## M6: Leveling and tech upgrades (all criteria pass; waiting for the human to confirm)
+- [x] Squad XP from kills, level-ups for half the base price, level multipliers (with tests)
+- [x] Tech upgrades: data assets, up to 3 per unit type, bought with credits, apply to every squad of that type (with tests)
+- [x] UI: level, XP bar, level-up button and tech upgrades in the stats window; the AI uses levels and techs
 
 ## Later request (2026-10-31): faction-styled UI
 - [ ] After M5 and M6: UNSC-style UI when the player picked UNSC, Covenant-style when they picked Covenant (fonts, panels, colours)

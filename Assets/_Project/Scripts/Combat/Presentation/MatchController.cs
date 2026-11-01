@@ -21,7 +21,7 @@ using UnityEngine;
 namespace Halobellum.Presentation
 {
     [RequireComponent(typeof(BattleController))]
-    public sealed class MatchController : MonoBehaviour, IDeploymentPlacement
+    public sealed class MatchController : MonoBehaviour, IDeploymentPlacement, ISquadProgression
     {
         [SerializeField] private MatchRulesDefinition matchRules;
         [SerializeField] private List<FactionDefinition> factions = new List<FactionDefinition>();
@@ -232,6 +232,77 @@ namespace Halobellum.Presentation
                 RefreshPreview();
             }
             return result;
+        }
+
+        // ------------------------------------------------------------------ leveling and techs (M6)
+
+        public ActionResult LevelUp(PlacedSquad squad)
+        {
+            if (squad == null) return ActionResult.Fail("Select a squad first.");
+            ActionResult result = Report(Match.LevelUp(Team.A, squad.Id));
+            if (result.Ok) RefreshPreview(squad.Id);
+            return result;
+        }
+
+        public ActionResult BuyTech(UnitStats type, TechUpgrade tech, int reselectSquadId = -1)
+        {
+            ActionResult result = Report(Match.BuyTech(Team.A, type, tech));
+            if (result.Ok) RefreshPreview(reselectSquadId);
+            return result;
+        }
+
+        /// <summary>The placed squad behind a simulation squad (preview: the player's; battle: Team A then Team B), or null.</summary>
+        public PlacedSquad PlacedFor(int simSquadId, out Team team)
+        {
+            team = Team.A;
+            BattleSimulation sim = _battle.Simulation;
+            if (Match == null || sim == null) return null;
+            int index = -1;
+            for (int i = 0; i < sim.Squads.Count; i++) if (sim.Squads[i].Id == simSquadId) { index = i; break; }
+            if (index < 0) return null;
+            if (Match.Phase == MatchPhase.Deployment) return index < _previewOrder.Count ? _previewOrder[index] : null;
+            if (sim != Match.CurrentBattle) return null;
+            if (index < Match.Player.Squads.Count) return Match.Player.Squads[index];
+            team = Team.B;
+            index -= Match.Player.Squads.Count;
+            return index < Match.Enemy.Squads.Count ? Match.Enemy.Squads[index] : null;
+        }
+
+        public SquadProgressView DescribeProgress(int simSquadId)
+        {
+            PlacedSquad squad = PlacedFor(simSquadId, out Team team);
+            if (squad == null) return null;
+            var view = new SquadProgressView { Level = squad.Level };
+            if (team == Team.B) return view; // The enemy's level is visible, nothing else.
+
+            bool deploying = Match.Phase == MatchPhase.Deployment;
+            PlayerState player = Match.Player;
+            view.ShowXp = squad.Level < UnitUpgrades.MaxLevel;
+            view.Xp = squad.Xp;
+            view.XpNeeded = Match.XpNeeded(squad);
+            if (squad.Level < UnitUpgrades.MaxLevel)
+            {
+                view.LevelUpLabel = $"Level up ({Match.LevelUpCost(squad)})";
+                view.LevelUpEnabled = deploying && Match.CanLevelUp(squad) && player.Credits >= Match.LevelUpCost(squad);
+                view.OnLevelUp = () => LevelUp(squad);
+                view.Note = Match.CanLevelUp(squad) ? "XP bar full: ready to level up." : "Earns XP from kills.";
+            }
+            else view.Note = "Maximum level.";
+
+            foreach (TechUpgrade tech in squad.Type.TechUpgrades ?? Array.Empty<TechUpgrade>())
+            {
+                if (tech == null) continue;
+                bool owned = player.HasTech(squad.Type, tech);
+                view.Techs.Add(new TechLine
+                {
+                    Tech = tech,
+                    Owned = owned,
+                    ButtonLabel = owned ? null : $"Buy {tech.Cost}",
+                    ButtonEnabled = deploying && player.Credits >= tech.Cost && player.Unlocked.Contains(squad.Type),
+                    OnButton = () => BuyTech(squad.Type, tech, squad.Id),
+                });
+            }
+            return view;
         }
 
         /// <summary>The player's squad currently selected in the deployment preview, or null.</summary>

@@ -67,6 +67,10 @@ MonoBehaviour:
   reinforcementUnit: {fileID: 0}
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
+  reinforcementNeedsUpgrade: 0
+  techUpgrades:
+  - {fileID: 11400000, guid: 2212d1cca002c254402bc6c64b0aca0a, type: 2}
+  - {fileID: 11400000, guid: e3986a9a87053ad9a5ee0d14aecb00db, type: 2}
   prefab: {fileID: 6613337904330699548, guid: d8a32c602cc841b4b9e194e583a07b52, type: 3}
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air

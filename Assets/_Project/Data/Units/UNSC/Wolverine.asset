@@ -53,6 +53,11 @@ MonoBehaviour:
   reinforcementUnit: {fileID: 0}
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
+  reinforcementNeedsUpgrade: 0
+  techUpgrades:
+  - {fileID: 11400000, guid: 4edb9a5e45b04a243c3fa7509de51b5b, type: 2}
+  - {fileID: 11400000, guid: 7fe873f9146e9a028a385f17b73e3734, type: 2}
+  - {fileID: 11400000, guid: 8f2426f2323841089ad27d54462209b3, type: 2}
   prefab: {fileID: 3509483001527763620, guid: cf4b615a56a73d84888675b8a42645d0, type: 3}
   strongAgainst: Aerial
   weakAgainst: Ground units

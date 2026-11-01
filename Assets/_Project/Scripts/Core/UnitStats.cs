@@ -126,6 +126,13 @@ namespace Halobellum.Core
         /// </summary>
         public UnitStats Reinforcement;
         public float ReinforcementDelaySeconds;
+        /// <summary>A drop that only works once a tech upgrade unlocks it (the Pelican's troop bay); null = none.</summary>
+        public UnitStats LockedReinforcement;
+
+        /// <summary>The tech upgrades this unit type can buy (up to 3, Bible Section 9).</summary>
+        public TechUpgrade[] TechUpgrades = new TechUpgrade[0];
+        /// <summary>Squad level these stats were made for (1 = base stats; see UnitUpgrades.Apply).</summary>
+        public int Level = 1;
 
         public bool HasShield => MaxShield > 0f;
         /// <summary>Turning speed in degrees per second, or infinity for units that turn instantly.</summary>
@@ -171,10 +178,20 @@ namespace Halobellum.Core
                 if (DefenseArc.BlockChance < 0f || DefenseArc.BlockChance > 1f) problems.Add($"{label}: block chance must be 0 to 1.");
                 if (DefenseArc.FrontDamageMultiplier < 0f || DefenseArc.RearDamageMultiplier < 0f) problems.Add($"{label}: defense multipliers cannot be negative.");
             }
-            if (Reinforcement != null)
+            UnitStats drop = Reinforcement ?? LockedReinforcement;
+            if (drop != null)
             {
                 if (ReinforcementDelaySeconds < 0f) problems.Add($"{label}: reinforcement delay cannot be negative.");
-                foreach (string problem in Reinforcement.Validate()) problems.Add($"{label} reinforcement: {problem}");
+                foreach (string problem in drop.Validate()) problems.Add($"{label} reinforcement: {problem}");
+            }
+            if (TechUpgrades != null)
+            {
+                if (TechUpgrades.Length > UnitUpgrades.MaxTechsPerUnit) problems.Add($"{label}: at most {UnitUpgrades.MaxTechsPerUnit} tech upgrades.");
+                foreach (TechUpgrade tech in TechUpgrades)
+                {
+                    if (tech == null) problems.Add($"{label}: a tech upgrade slot is empty.");
+                    else problems.AddRange(tech.Validate(label));
+                }
             }
             return problems;
         }
@@ -187,6 +204,8 @@ namespace Halobellum.Core
             for (int i = 0; i < copy.Weapons.Length; i++) copy.Weapons[i] = Weapons[i]?.Clone();
             copy.DefenseArc = DefenseArc?.Clone();
             copy.Reinforcement = Reinforcement?.Clone();
+            copy.LockedReinforcement = LockedReinforcement?.Clone();
+            copy.TechUpgrades = TechUpgrades == null ? new TechUpgrade[0] : (TechUpgrade[])TechUpgrades.Clone(); // Techs are shared, read-only data.
             return copy;
         }
     }

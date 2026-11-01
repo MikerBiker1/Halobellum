@@ -64,6 +64,11 @@ namespace Halobellum.Units
         public int reinforcementBodies;
         [Tooltip("Seconds after the battle starts before the drop (only if this unit is still alive).")]
         public float reinforcementDelaySeconds;
+        [Tooltip("If ticked, the drop only works once a tech upgrade with 'Unlocks Reinforcement' is bought (e.g. the Pelican's troop bay).")]
+        public bool reinforcementNeedsUpgrade;
+
+        [Header("Tech upgrades (up to 3, Bible Section 9)")]
+        public List<TechUpgradeDefinition> techUpgrades = new List<TechUpgradeDefinition>();
 
         [Header("Visuals")]
         [Tooltip("Model shown for each body in the battle scene. Tinted with the side's color. If empty, a placeholder primitive sized from the collision radius is used.")]
@@ -109,10 +114,19 @@ namespace Halobellum.Units
             // (Depth guard: a unit that drops itself would otherwise never end.)
             if (reinforcementUnit != null && reinforcementBodies > 0 && depth < 2)
             {
-                stats.Reinforcement = reinforcementUnit.ToStats(depth + 1);
-                stats.Reinforcement.SquadSize = reinforcementBodies;
+                UnitStats drop = reinforcementUnit.ToStats(depth + 1);
+                drop.SquadSize = reinforcementBodies;
                 stats.ReinforcementDelaySeconds = reinforcementDelaySeconds;
+                if (reinforcementNeedsUpgrade) stats.LockedReinforcement = drop;
+                else stats.Reinforcement = drop;
             }
+
+            var techs = new List<TechUpgrade>();
+            if (techUpgrades != null)
+            {
+                foreach (TechUpgradeDefinition tech in techUpgrades) techs.Add(tech != null ? tech.ToStats() : null);
+            }
+            stats.TechUpgrades = techs.ToArray();
             return stats;
         }
     }

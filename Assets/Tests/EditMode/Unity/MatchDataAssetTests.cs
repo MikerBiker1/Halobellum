@@ -35,6 +35,8 @@ namespace Halobellum.Tests
             Assert.AreEqual(expected.RefundAfterBattle, actual.RefundAfterBattle, 1e-5f);
             Assert.AreEqual(expected.DraftCardCount, actual.DraftCardCount);
             Assert.AreEqual(expected.DraftSquadsPerCard, actual.DraftSquadsPerCard);
+            Assert.AreEqual(expected.XpBarPerSquadCost, actual.XpBarPerSquadCost, 1e-5f);
+            Assert.AreEqual(expected.LevelUpCostShare, actual.LevelUpCostShare, 1e-5f, "Bible: level-ups cost half the base price.");
         }
 
         [Test]

@@ -53,6 +53,10 @@ MonoBehaviour:
   reinforcementUnit: {fileID: 0}
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
+  reinforcementNeedsUpgrade: 0
+  techUpgrades:
+  - {fileID: 11400000, guid: 08d7886e19de72d20a4f47245aefc876, type: 2}
+  - {fileID: 11400000, guid: 1b62c1cca9608f073810db8e5a691624, type: 2}
   prefab: {fileID: 9201634983580509971, guid: 71a6a5dec83c45341820d82896e7e606, type: 3}
   strongAgainst: 'Tanks, heavy units'
   weakAgainst: 'Chaff swarms, flankers'
