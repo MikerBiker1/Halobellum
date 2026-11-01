@@ -40,4 +40,4 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 - [x] **Win and lose:** keep buying to destroy the AI's base (10 to 15 rounds with placeholder units), or sell everything and press Ready repeatedly to lose. **New match** starts over.
 - [x] **Answer D17 to D20** in DECISIONS.md (income timing, Tier 1 unlocks, draft squads and selling, exact tie, temporary content).
 - [ ] **Re-check deployment after your D17 to D19 changes.** Start a match: you have 200 credits, and your 2 free squads stand in the middle of your zone. Press **Buy**: the squad falls from the sky to the middle of your zone and is selected when it lands; press **M** (or Move) to put it somewhere else, R to turn it. Select a free draft squad: Sell shows half its cost.
-- [ ] **Confirm M3** so M4 (slice rosters and sandbox) can start.
+- [x] **Confirm M3** so M4 (slice rosters and sandbox) can start.
