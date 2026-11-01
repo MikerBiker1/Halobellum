@@ -32,9 +32,9 @@ namespace Halobellum.Presentation
         [SerializeField] private Color teamBColor = new Color(0.9f, 0.3f, 0.22f);
         [SerializeField] private Color selectionColor = new Color(1f, 0.85f, 0.2f);
         [SerializeField] private Color healthBackColor = new Color(0.08f, 0.08f, 0.08f);
-        [SerializeField] private Color healthHighColor = new Color(0.3f, 0.9f, 0.3f);
-        [SerializeField] private Color healthMidColor = new Color(0.95f, 0.8f, 0.2f);
-        [SerializeField] private Color healthLowColor = new Color(0.95f, 0.25f, 0.2f);
+        [Tooltip("Health bars tell the sides apart (D43): your units are green, the enemy's red.")]
+        [SerializeField] private Color friendlyHealthColor = new Color(0.3f, 0.9f, 0.3f);
+        [SerializeField] private Color enemyHealthColor = new Color(0.95f, 0.25f, 0.2f);
         [SerializeField] private Color shieldColor = new Color(0.25f, 0.6f, 1f);
         [Tooltip("Mixed into the side's color for infected units, and the color of a corpse about to rise (D38).")]
         [SerializeField] private Color infectedColor = new Color(0.55f, 0.68f, 0.18f);
@@ -42,8 +42,6 @@ namespace Halobellum.Presentation
         [SerializeField] private float formScale = 0.42f;
         [Tooltip("How high a leap goes at its peak, as a share of its length.")]
         [SerializeField] private float leapHeightShare = 0.35f;
-        [Tooltip("How much of the side's colour a real model takes on, so the armies can be told apart (0 = none).")]
-        [SerializeField] private float bakedTeamTint = 0.65f;
 
         [Header("Layout (metres)")]
         [Tooltip("Height at which air units fly.")]
@@ -108,7 +106,7 @@ namespace Halobellum.Presentation
         private BattleController _battle;
         private SquadSelection _selection;
         private readonly List<View> _views = new List<View>();
-        private Material _fillHigh, _fillMid, _fillLow;
+        private Material _fillFriendly, _fillEnemy;
         private Camera _camera;
         private Transform _arrowContainer;
         private Material _arrowMaterial;
@@ -227,6 +225,12 @@ namespace Halobellum.Presentation
             return view.Root.GetComponentInChildren<Renderer>().sharedMaterial.color;
         }
 
+        /// <summary>How strongly a baked body is tinted (for tests).</summary>
+        public float BakedTintStrength(SimUnit unit) => _views[unit.Id].BakedTint.a;
+
+        /// <summary>The colour of a body's health bar (for tests).</summary>
+        public Color HealthBarColor(SimUnit unit) => _views[unit.Id].FillRenderer.sharedMaterial.color;
+
         /// <summary>True if this body is still on the field (a fallen body stays a while; for tests).</summary>
         public bool IsShown(SimUnit unit) => unit.Id >= 0 && unit.Id < _views.Count && _views[unit.Id].Root.activeSelf;
 
@@ -265,9 +269,8 @@ namespace Halobellum.Presentation
             _battle = GetComponent<BattleController>();
             _selection = GetComponent<SquadSelection>();
             _block = new MaterialPropertyBlock();
-            _fillHigh = PlaceholderArt.MaterialFor(healthHighColor);
-            _fillMid = PlaceholderArt.MaterialFor(healthMidColor);
-            _fillLow = PlaceholderArt.MaterialFor(healthLowColor);
+            _fillFriendly = PlaceholderArt.MaterialFor(friendlyHealthColor);
+            _fillEnemy = PlaceholderArt.MaterialFor(enemyHealthColor);
 
             _battle.BattleChanged += Rebuild;
             _selection.SelectionChanged += OnSelectionChanged;
@@ -345,8 +348,8 @@ namespace Halobellum.Presentation
                 view.BakedRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 view.BakedRenderer.receiveShadows = false;
                 view.Baked = baked;
-                // A real model keeps its own colours, with enough of the side's colour to tell the armies apart.
-                float strength = GhostTeam == unit.Team ? 0.9f : stats.InfectedFrom != null ? 0.75f : bakedTeamTint;
+                // A real model keeps its own colours (D43); only a ghost or an infected body is tinted.
+                float strength = GhostTeam == unit.Team ? 0.9f : stats.InfectedFrom != null ? 0.75f : 0f;
                 view.BakedTint = new Color(color.r, color.g, color.b, strength);
                 Play(view, WantedAnimation(unit), false);
             }
@@ -376,7 +379,7 @@ namespace Halobellum.Presentation
             view.Bar.localPosition = new Vector3(0f, barY, 0f);
             Transform back = PlaceholderArt.CreatePart("Back", view.Bar, PlaceholderArt.Quad, PlaceholderArt.MaterialFor(healthBackColor));
             back.localScale = new Vector3(view.BarWidth + 0.08f, healthBarHeight + 0.08f, 1f);
-            view.Fill = PlaceholderArt.CreatePart("Fill", view.Bar, PlaceholderArt.Quad, _fillHigh);
+            view.Fill = PlaceholderArt.CreatePart("Fill", view.Bar, PlaceholderArt.Quad, unit.Team == Team.A ? _fillFriendly : _fillEnemy);
             view.FillRenderer = view.Fill.GetComponent<MeshRenderer>();
             view.Fill.localPosition = new Vector3(0f, 0f, -0.01f);
             view.Bar.gameObject.SetActive(false);
@@ -587,7 +590,6 @@ namespace Halobellum.Presentation
                     float width = view.BarWidth * fraction;
                     view.Fill.localScale = new Vector3(width, healthBarHeight, 1f);
                     view.Fill.localPosition = new Vector3((width - view.BarWidth) * 0.5f, 0f, -0.01f);
-                    view.FillRenderer.sharedMaterial = fraction > 0.5f ? _fillHigh : fraction > 0.25f ? _fillMid : _fillLow;
                 }
             }
             UpdateArrows(barRotation);

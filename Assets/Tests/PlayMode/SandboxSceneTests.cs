@@ -98,7 +98,12 @@ namespace Halobellum.Tests
             var views = _battle.GetComponent<UnitViewManager>();
             SimUnit first = _battle.Simulation.Units.First(u => u.Stats.Name == "Marine");
             Assert.AreEqual(BakedAnimation.Still, views.PlayingAnimation(first), "Time stands still in deployment.");
-            Assert.IsNull(views.PlayingAnimation(_battle.Simulation.Units.First(u => u.Stats.Name == "Grunt")), "No real model yet.");
+            SimUnit grunt = _battle.Simulation.Units.First(u => u.Stats.Name == "Grunt");
+            Assert.IsNull(views.PlayingAnimation(grunt), "No real model yet.");
+            Assert.Greater(views.HealthBarColor(first).g, 0.6f, "Your units have green health bars.");
+            Assert.Greater(views.HealthBarColor(grunt).r, 0.6f, "The enemy's are red.");
+            Assert.Less(views.HealthBarColor(grunt).g, 0.5f);
+            Assert.AreEqual(0f, views.BakedTintStrength(first), "A real model keeps its own colours.");
 
             _battle.Speed = 4f;
             _sandbox.Run();

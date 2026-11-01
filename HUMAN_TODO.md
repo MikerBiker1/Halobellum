@@ -130,8 +130,10 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 
 ## 2026-11-01 (M9): look at the Marine
 
-- [ ] **Watch Marines at 1x in the Sandbox.** Are the transitions smooth, and is 0.2 s right? I can only see still frames.
-- [ ] **Their colour.** Is 65% of the side's colour right? It keeps the armies readable but costs some of the model's own colours up close (`bakedTeamTint` on the Unit View Manager).
 - [ ] **A fallen Marine's rifle** stands upright through the floor. Is that acceptable for now?
 - [ ] **A real rifle, when you like:** generate one in Meshy as a separate unrigged FBX and put it in `Assets/_Project/Art/Imported/Models/Marine/`. It replaces the boxes.
 
+## 2026-11-01 (M9): download the Scorpion
+
+- [ ] **Log in to CGTrader and download** [the free Sci-Fi Tank](https://www.cgtrader.com/free-3d-models/vehicle/sci-fi-vehicle/armored-light-tank-inspired-by-halo-scorpion). It needs an account, and I don't log in for you.
+- [ ] **Put the .blend file in `E:\AI\Halobellum\Art_Source\Scorpion\`** (unzip it if needed). That folder is outside `Assets` on purpose, and Git ignores it, because the file is huge. Then tell me.

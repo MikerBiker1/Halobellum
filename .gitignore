@@ -77,3 +77,6 @@ Thumbs.db
 !/Tools/**/*.csproj
 /Tools/**/bin/
 /Tools/**/obj/
+
+# Huge source models; what the game uses is made from them and lives in Assets.
+Art_Source/

@@ -242,7 +242,7 @@ namespace Halobellum.EditorTools
                 Vector3 direction = (bones[otherHand].position - bones[hand].position).normalized;
                 Matrix4x4 rifleToWorld = Matrix4x4.TRS(bones[hand].position, Quaternion.LookRotation(direction, Vector3.up), Vector3.one);
                 Matrix4x4 rifleToMesh = bindPoses[hand].inverse * bones[hand].worldToLocalMatrix * rifleToWorld;
-                var dark = new Color(0.1f, 0.11f, 0.12f, 1f);
+                var dark = new Color(0.015f, 0.015f, 0.018f, 1f); // Black.
                 void Box(Vector3 centre, Vector3 size) => AddBox(positions, normals, uvs, colors, boneIds, weights, triangles, rifleToMesh, centre, size, dark, keptIndex[hand]);
                 Box(new Vector3(0f, 0.03f, 0.14f), new Vector3(0.05f, 0.08f, 0.42f));   // Body.
                 Box(new Vector3(0f, 0.04f, 0.46f), new Vector3(0.025f, 0.025f, 0.24f)); // Barrel.
