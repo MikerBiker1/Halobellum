@@ -6,7 +6,9 @@
 //   Primitives:  today's way, one capsule per body, no animation;
 //   Skinned:     the usual Unity way, a SkinnedMeshRenderer and an animation per body, skinned on the CPU;
 //   BakedViews:  one object per body as the game has now, with the animation baked into a texture (BakedCrowd.shader);
-//   BakedDirect: the same shader, with no object per body at all.
+//   BakedDirect: the same shader, with no object per body at all;
+//   Marine:      the real baked Marine, one object per body, playing one clip;
+//   MarineFading: the same, with every body in the middle of a cross-fade all the time (the worst case).
 // Results go to the output file, with a screenshot of each way next to it. Then the game quits.
 // Depends on: PlaceholderArt, UnityEngine.
 
@@ -16,6 +18,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using Halobellum.Units;
 using Unity.Profiling;
 using UnityEngine;
 
@@ -86,6 +89,13 @@ namespace Halobellum.Presentation
             yield return Measure("Skinned", SpawnSkinned, null);
             yield return Measure("BakedViews", SpawnBakedViews, null);
             yield return Measure("BakedDirect", _ => { }, DrawBakedDirect);
+            var marine = Resources.Load<BakedBodyDefinition>("BakedBodies/Marine");
+            if (marine != null && marine.IsReady)
+            {
+                _report.AppendLine($"Real Marine: {marine.mesh.triangles.Length / 3} triangles");
+                yield return Measure("Marine", count => SpawnMarines(marine, count, false), null);
+                yield return Measure("MarineFading", count => SpawnMarines(marine, count, true), null);
+            }
 
             File.WriteAllText(_output, _report.ToString());
             Application.Quit();
@@ -196,7 +206,7 @@ namespace Halobellum.Presentation
         private void SpawnBakedViews(int count)
         {
             var block = new MaterialPropertyBlock();
-            int offsetId = Shader.PropertyToID("_AnimOffset"), colorId = Shader.PropertyToID("_BaseColor");
+            int animId = Shader.PropertyToID("_AnimNow"), blendId = Shader.PropertyToID("_AnimBlend"), colorId = Shader.PropertyToID("_BaseColor");
             for (int i = 0; i < count; i++)
             {
                 var body = new GameObject("Body");
@@ -207,14 +217,47 @@ namespace Halobellum.Presentation
                 renderer.sharedMaterial = _bakedMaterial;
                 renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 renderer.receiveShadows = false;
-                block.SetFloat(offsetId, (i % 30) / (float)Fps);
-                block.SetColor(colorId, new Color(0.25f, 0.45f, 0.95f));
+                block.SetVector(animId, new Vector4(0f, Frames, -(i % 30) / (float)Fps, 1f));
+                block.SetVector(blendId, Vector4.zero);
+                block.SetColor(colorId, new Color(0.25f, 0.45f, 0.95f, 1f));
                 renderer.SetPropertyBlock(block);
             }
         }
 
+        private void SpawnMarines(BakedBodyDefinition marine, int count, bool fading)
+        {
+            var block = new MaterialPropertyBlock();
+            BakedClip shooting = marine.Clip(BakedAnimation.Shooting), moving = marine.Clip(BakedAnimation.Moving);
+            for (int i = 0; i < count; i++)
+            {
+                var body = new GameObject("Body");
+                body.transform.SetParent(_container, false);
+                body.transform.position = Place(i, count);
+                body.AddComponent<MeshFilter>().sharedMesh = marine.mesh;
+                var renderer = body.AddComponent<MeshRenderer>();
+                renderer.sharedMaterial = marine.material;
+                renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                renderer.receiveShadows = false;
+                block.SetVector("_AnimNow", new Vector4(shooting.firstRow, shooting.frames, -(i % 30) / 30f, 1f));
+                block.SetVector("_AnimOld", new Vector4(moving.firstRow, moving.frames, -(i % 30) / 30f, 1f));
+                // A fade so long that it never finishes in this test.
+                block.SetVector("_AnimBlend", fading ? new Vector4(_time, 100000f, 0f, 0f) : Vector4.zero);
+                block.SetColor("_BaseColor", new Color(0.25f, 0.45f, 0.95f, 0.45f));
+                renderer.SetPropertyBlock(block);
+            }
+        }
+
+        private float _time;
+
+        private void Update()
+        {
+            _time += Time.unscaledDeltaTime;
+            Shader.SetGlobalFloat("_BattleTime", _time);
+        }
+
         private Matrix4x4[] _matrices = new Matrix4x4[0];
-        private float[] _offsets;
+        private Vector4[] _anims;
+        private Vector4[] _blends;
         private Vector4[] _colors;
         private MaterialPropertyBlock _directBlock;
 
@@ -226,17 +269,19 @@ namespace Halobellum.Presentation
                 _matrices = new Matrix4x4[count];
                 for (int i = 0; i < count; i++) _matrices[i] = Matrix4x4.Translate(Place(i, count));
             }
-            if (_offsets == null)
+            if (_anims == null)
             {
-                _offsets = new float[BatchSize];
+                _anims = new Vector4[BatchSize];
+                _blends = new Vector4[BatchSize];
                 _colors = new Vector4[BatchSize];
                 for (int i = 0; i < BatchSize; i++)
                 {
-                    _offsets[i] = (i % 30) / (float)Fps;
+                    _anims[i] = new Vector4(0f, Frames, -(i % 30) / (float)Fps, 1f);
                     _colors[i] = new Vector4(0.25f, 0.45f, 0.95f, 1f);
                 }
             }
-            _directBlock.SetFloatArray("_AnimOffset", _offsets);
+            _directBlock.SetVectorArray("_AnimNow", _anims);
+            _directBlock.SetVectorArray("_AnimBlend", _blends);
             _directBlock.SetVectorArray("_BaseColor", _colors);
             var parameters = new RenderParams(_bakedMaterial)
             {
@@ -321,6 +366,7 @@ namespace Halobellum.Presentation
             _mesh.SetNormals(normals);
             _mesh.SetUVs(1, boneIds);
             _mesh.SetUVs(2, boneWeights);
+            _mesh.SetColors(new Color[positions.Count]);
             _mesh.boneWeights = weights.ToArray();
             _mesh.bindposes = _bindPoses;
             _mesh.SetTriangles(triangles, 0);

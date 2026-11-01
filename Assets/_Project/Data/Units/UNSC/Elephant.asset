@@ -130,6 +130,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8a7a4097e82cdfaa16c86b41b25fd9a9, type: 2}
   - {fileID: 11400000, guid: fba21d9b54e7193aea10bc81d6203716, type: 2}
   prefab: {fileID: 3722853874749606193, guid: b4c1d8785f532dc49b7a5fa1fe33a987, type: 3}
+  bakedBody: {fileID: 0}
   strongAgainst: Most things in a straight fight
   weakAgainst: 'Single-target DPS, large chaff swarms'
   notes: 'Best counters (headless runner, equal cost): Spartan (100%), Zealot (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

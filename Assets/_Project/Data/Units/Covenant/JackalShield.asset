@@ -86,6 +86,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 34854f8b363dd043239beac1f988c5fe, type: 2}
   - {fileID: 11400000, guid: 01a0f4e95765bc4c44ceac076cce5e37, type: 2}
   prefab: {fileID: 1656974460176144887, guid: 31186ad0e8cb7934ea8dc16f92b9f807, type: 3}
+  bakedBody: {fileID: 0}
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
   notes: 'Best counters (headless runner, equal cost): Jackal (Plasma Rifle) (100%), Elite (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

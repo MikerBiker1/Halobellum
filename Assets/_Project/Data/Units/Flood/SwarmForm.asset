@@ -86,6 +86,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5786e9ccb6dad88351349ae9b24f582d, type: 2}
   - {fileID: 11400000, guid: d21a487b3029909605e3c15e9f7439ab, type: 2}
   prefab: {fileID: 1475722708688505506, guid: 47fa3318c4b7d9e44980bc4741fe7cea, type: 3}
+  bakedBody: {fileID: 0}
   strongAgainst: Aerial
   weakAgainst: Ground units
   notes: 'Best counters (headless runner, equal cost): Marine (100%), Stalker Form (100%). First-pass M8 values (DECISIONS D38).'

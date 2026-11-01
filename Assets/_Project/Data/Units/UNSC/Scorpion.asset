@@ -109,6 +109,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a11953c26840e74baa5b5ef5d8a104c1, type: 2}
   - {fileID: 11400000, guid: f3ceb23480b0e186eed2debb809cac15, type: 2}
   prefab: {fileID: 8549437021839627642, guid: aff201ec04e78ae429c63e7eca3029ad, type: 3}
+  bakedBody: {fileID: 0}
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
   notes: 'Best counters (headless runner, equal cost): Gauss Warthog (100%), Spartan (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

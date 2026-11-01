@@ -477,6 +477,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-01 | The Flood are built (M8): packs of 5 Infection Forms that an area hit hurts all at once, infection, the Seeder, Carrier Form, Infected Pelican and Phantom, Swarm Form as anti-air, Abomination aura and spawning; Normal and Hard AI avoid Unarmored units against them, Easy doesn't | Design left to the agent by the project owner (D38) |
 | 2026-11-01 | Infection Forms leap: they pounce from 6 m and jump over what holds them up | Per the project owner (D39) |
 | 2026-11-01 | M8 confirmed. M9 runs in approved stages: pipeline proof, combat identity, balance, models and animation, effects and audio, menus | Agreed with the project owner (D40) |
+| 2026-11-01 | Animated models are baked into textures and keep one object per body; animations cross-fade in the shader on battle time; real models take on their side's colour | Measured, then approved by the project owner (D41, D42) |
 
 ## 18. Assumptions to confirm
 

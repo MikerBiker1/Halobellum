@@ -79,6 +79,18 @@ namespace Halobellum.Presentation
             return null;
         }
 
+        /// <summary>The baked animated model of this unit type, or null if it has none yet.</summary>
+        public BakedBodyDefinition BakedBodyFor(UnitStats stats)
+        {
+            if (stats == null) return null;
+            if (_unitSources.TryGetValue(stats, out UnitDefinition definition)) return definition.bakedBody;
+            foreach (var pair in _unitSources)
+            {
+                if (pair.Key.Name == stats.Name) return pair.Value.bakedBody;
+            }
+            return null;
+        }
+
         private void Awake()
         {
             Application.runInBackground = true; // Keep playing when the window loses focus.

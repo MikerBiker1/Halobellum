@@ -128,7 +128,10 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 - [ ] **Hard AI.** Play Flood against Hard for a few rounds: from round 2 it should stop buying Unarmored squads.
 - [ ] **The leap (D39).** Watch Infection Forms at 1x: they should pounce from about 6 m, jump over Carrier Forms and crowds, and no longer pause as they cross into the enemy's half. Tell me if 2.5 s between leaps, or their height and speed, feels wrong.
 
-## 2026-11-01 (M9): model choice for the pipeline proof
+## 2026-11-01 (M9): look at the Marine
 
-- [ ] **Choose where the Marine and Scorpion models come from.** Options are in my message and in D41's follow-up. If you get any files yourself, put them in `Assets/_Project/Art/Imported/Models/<Unit>/` with a `SOURCE.txt` saying where they came from.
+- [ ] **Watch Marines at 1x in the Sandbox.** Are the transitions smooth, and is 0.2 s right? I can only see still frames.
+- [ ] **Their colour.** Is 65% of the side's colour right? It keeps the armies readable but costs some of the model's own colours up close (`bakedTeamTint` on the Unit View Manager).
+- [ ] **A fallen Marine's rifle** stands upright through the floor. Is that acceptable for now?
+- [ ] **A real rifle, when you like:** generate one in Meshy as a separate unrigged FBX and put it in `Assets/_Project/Art/Imported/Models/Marine/`. It replaces the boxes.
 

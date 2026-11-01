@@ -266,8 +266,7 @@ namespace Halobellum.Tests
             var views = _battle.GetComponent<UnitViewManager>();
             SimSquad ghost = _battle.Simulation.Squads[m.Player.Squads.Count];
             Assert.AreEqual(Team.B, ghost.Team);
-            Renderer body = GameObject.Find("Units").transform.GetChild(ghost.Members[0].Id).GetComponentInChildren<Renderer>();
-            Assert.IsTrue(body.sharedMaterial.color == views.GhostColor, "Ghosts are grey.");
+            Assert.IsTrue(views.BodyColor(ghost.Members[0]) == views.GhostColor, "Ghosts are grey.");
             SquadProgressView seen = _match.DescribeProgress(ghost.Id);
             Assert.IsNotNull(seen, "A ghost can be selected and read.");
             Assert.AreEqual(m.SeenArmy(Team.B)[0].Level, seen.Level);

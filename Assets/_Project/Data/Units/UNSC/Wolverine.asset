@@ -87,6 +87,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7fe873f9146e9a028a385f17b73e3734, type: 2}
   - {fileID: 11400000, guid: 8f2426f2323841089ad27d54462209b3, type: 2}
   prefab: {fileID: 3509483001527763620, guid: cf4b615a56a73d84888675b8a42645d0, type: 3}
+  bakedBody: {fileID: 0}
   strongAgainst: Aerial
   weakAgainst: Ground units
   notes: 'Best counters (headless runner, equal cost): Ghost (100%), Pure Form Tank (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using Halobellum.Combat;
 using Halobellum.Core;
+using Halobellum.Units;
 using UnityEngine;
 
 namespace Halobellum.Presentation
@@ -41,6 +42,8 @@ namespace Halobellum.Presentation
         [SerializeField] private float formScale = 0.42f;
         [Tooltip("How high a leap goes at its peak, as a share of its length.")]
         [SerializeField] private float leapHeightShare = 0.35f;
+        [Tooltip("How much of the side's colour a real model takes on, so the armies can be told apart (0 = none).")]
+        [SerializeField] private float bakedTeamTint = 0.65f;
 
         [Header("Layout (metres)")]
         [Tooltip("Height at which air units fly.")]
@@ -71,6 +74,14 @@ namespace Halobellum.Presentation
 
         private sealed class View
         {
+            /// <summary>Its baked animated model and what that is playing (D41, D42), or null for a plain body.</summary>
+            public BakedBodyDefinition Baked;
+            public MeshRenderer BakedRenderer;
+            public BakedAnimation Playing;
+            public Vector4 AnimNow;
+            public Color BakedTint;
+            /// <summary>Battle time at which a fallen body disappears.</summary>
+            public float HideAt;
             /// <summary>The tiny forms of a pack, or null for a normal body.</summary>
             public GameObject[] Forms;
             public int FormsShown;
@@ -191,11 +202,69 @@ namespace Halobellum.Presentation
 
         private BattleSimulation _shown;
         private Transform _container;
+        private static readonly int BattleTimeId = Shader.PropertyToID("_BattleTime");
+        private static readonly int TintId = Shader.PropertyToID("_BaseColor");
+        private static readonly int AnimNowId = Shader.PropertyToID("_AnimNow");
+        private static readonly int AnimOldId = Shader.PropertyToID("_AnimOld");
+        private static readonly int AnimBlendId = Shader.PropertyToID("_AnimBlend");
+        private MaterialPropertyBlock _block;
+        private readonly List<View> _falling = new List<View>();
+        /// <summary>The clock baked animations run on: battle time, so they pause and speed up with the battle.</summary>
+        private float _animationTime;
+
+        /// <summary>What a body's baked model is playing, or null if it has none (for tests).</summary>
+        public BakedAnimation? PlayingAnimation(SimUnit unit)
+        {
+            if (unit.Id < 0 || unit.Id >= _views.Count || _views[unit.Id].Baked == null) return null;
+            return _views[unit.Id].Playing;
+        }
+
+        /// <summary>The colour a body is tinted with, whichever way it is drawn (for tests).</summary>
+        public Color BodyColor(SimUnit unit)
+        {
+            View view = _views[unit.Id];
+            if (view.Baked != null) return new Color(view.BakedTint.r, view.BakedTint.g, view.BakedTint.b, 1f);
+            return view.Root.GetComponentInChildren<Renderer>().sharedMaterial.color;
+        }
+
+        /// <summary>True if this body is still on the field (a fallen body stays a while; for tests).</summary>
+        public bool IsShown(SimUnit unit) => unit.Id >= 0 && unit.Id < _views.Count && _views[unit.Id].Root.activeSelf;
+
+        /// <summary>Starts an animation on a baked body, cross-fading from what it was playing unless told not to.</summary>
+        private void Play(View view, BakedAnimation role, bool fade)
+        {
+            BakedClip clip = view.Baked.Clip(role);
+            if (clip == null) return;
+            // Bodies of a squad don't march in step: a loop starts somewhere different on each.
+            float phase = clip.loops ? (view.Unit.Id * 0.37f % 1f) * clip.frames / view.Baked.bakedFps : 0f;
+            Vector4 old = fade ? view.AnimNow : Vector4.zero;
+            view.AnimNow = new Vector4(clip.firstRow, clip.frames, _animationTime - phase, clip.loops ? 1f : 0f);
+            view.Playing = role;
+            _block.Clear();
+            _block.SetColor(TintId, view.BakedTint);
+            _block.SetVector(AnimNowId, view.AnimNow);
+            _block.SetVector(AnimOldId, fade ? old : view.AnimNow);
+            _block.SetVector(AnimBlendId, new Vector4(_animationTime, fade ? view.Baked.transitionSeconds : 0f, 0f, 0f));
+            view.BakedRenderer.SetPropertyBlock(_block);
+        }
+
+        /// <summary>What a living body should be playing right now.</summary>
+        private BakedAnimation WantedAnimation(SimUnit unit)
+        {
+            if (!_battle.IsPlaying) return BakedAnimation.Still; // Time stands still in deployment.
+            switch (unit.State)
+            {
+                case UnitState.Move: return BakedAnimation.Moving;
+                case UnitState.Attack: return BakedAnimation.Shooting;
+                default: return BakedAnimation.Still;
+            }
+        }
 
         private void Start()
         {
             _battle = GetComponent<BattleController>();
             _selection = GetComponent<SquadSelection>();
+            _block = new MaterialPropertyBlock();
             _fillHigh = PlaceholderArt.MaterialFor(healthHighColor);
             _fillMid = PlaceholderArt.MaterialFor(healthMidColor);
             _fillLow = PlaceholderArt.MaterialFor(healthLowColor);
@@ -221,6 +290,9 @@ namespace Halobellum.Presentation
             _views.Clear();
             if (_container != null) Destroy(_container.gameObject);
             _shown = simulation;
+            _falling.Clear();
+            _animationTime = 0f;
+            Shader.SetGlobalFloat(BattleTimeId, 0f);
             if (simulation == null) return;
 
             if (_arrowContainer == null) _arrowContainer = new GameObject("Level-up Arrows").transform;
@@ -262,7 +334,23 @@ namespace Halobellum.Presentation
             if (stats.InfectedFrom != null) color = Color.Lerp(color, infectedColor, 0.55f);
             Material teamMaterial = PlaceholderArt.MaterialFor(color);
             GameObject prefab = _battle.PrefabFor(stats.InfectedFrom ?? stats);
-            if (stats.FormsPerBody > 1)
+            BakedBodyDefinition baked = _battle.BakedBodyFor(stats.InfectedFrom ?? stats);
+            if (baked != null && baked.IsReady)
+            {
+                var body = new GameObject("Body");
+                body.transform.SetParent(view.Root.transform, false);
+                body.AddComponent<MeshFilter>().sharedMesh = baked.mesh;
+                view.BakedRenderer = body.AddComponent<MeshRenderer>();
+                view.BakedRenderer.sharedMaterial = baked.material;
+                view.BakedRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                view.BakedRenderer.receiveShadows = false;
+                view.Baked = baked;
+                // A real model keeps its own colours, with enough of the side's colour to tell the armies apart.
+                float strength = GhostTeam == unit.Team ? 0.9f : stats.InfectedFrom != null ? 0.75f : bakedTeamTint;
+                view.BakedTint = new Color(color.r, color.g, color.b, strength);
+                Play(view, WantedAnimation(unit), false);
+            }
+            else if (stats.FormsPerBody > 1)
             {
                 CreateForms(view, stats, prefab, teamMaterial);
             }
@@ -392,24 +480,48 @@ namespace Halobellum.Presentation
             view.Root.SetActive(true);
             view.Bar.gameObject.SetActive(false);
             view.Ring.SetActive(false);
+            if (view.Baked != null)
+            {
+                view.BakedTint = new Color(infectedColor.r, infectedColor.g, infectedColor.b, 0.8f);
+                _block.Clear();
+                view.BakedRenderer.GetPropertyBlock(_block);
+                _block.SetColor(TintId, view.BakedTint);
+                view.BakedRenderer.SetPropertyBlock(_block);
+                return;
+            }
             Material material = PlaceholderArt.MaterialFor(infectedColor);
             foreach (Renderer renderer in view.Root.GetComponentsInChildren<Renderer>()) renderer.sharedMaterial = material;
         }
 
         private void OnUnitRose(SimUnit corpse, SimUnit risen)
         {
-            if (corpse.Id >= 0 && corpse.Id < _views.Count) _views[corpse.Id].Root.SetActive(false);
+            if (corpse.Id < 0 || corpse.Id >= _views.Count) return;
+            _views[corpse.Id].Root.SetActive(false);
+            _falling.Remove(_views[corpse.Id]);
         }
 
         private void OnUnitDied(SimUnit unit, SimUnit killer)
         {
             // Unit ids are their index in the simulation's unit list.
-            if (unit.Id >= 0 && unit.Id < _views.Count) _views[unit.Id].Root.SetActive(false);
+            if (unit.Id < 0 || unit.Id >= _views.Count) return;
+            View view = _views[unit.Id];
+            if (view.Baked == null || view.Baked.Clip(BakedAnimation.Dead) == null)
+            {
+                view.Root.SetActive(false);
+                return;
+            }
+            // It falls, stays down a moment, then goes.
+            view.Bar.gameObject.SetActive(false);
+            view.Ring.SetActive(false);
+            Play(view, BakedAnimation.Dead, true);
+            BakedClip dead = view.Baked.Clip(BakedAnimation.Dead);
+            view.HideAt = _animationTime + dead.frames / (float)view.Baked.bakedFps + view.Baked.corpseSeconds;
+            _falling.Add(view);
         }
 
         private void OnSelectionChanged(int squadId)
         {
-            foreach (View view in _views) view.Ring.SetActive(squadId >= 0 && view.Unit.SquadId == squadId);
+            foreach (View view in _views) view.Ring.SetActive(squadId >= 0 && view.Unit.SquadId == squadId && view.Unit.IsAlive);
         }
 
         private void LateUpdate()
@@ -420,6 +532,15 @@ namespace Halobellum.Presentation
             float alpha = _battle.IsPlaying ? _battle.Clock.Alpha : 1f;
             int selected = _selection.SelectedSquadId;
 
+            _animationTime += Time.deltaTime * _battle.Speed;
+            Shader.SetGlobalFloat(BattleTimeId, _animationTime);
+            for (int i = _falling.Count - 1; i >= 0; i--)
+            {
+                if (_animationTime < _falling[i].HideAt) continue;
+                _falling[i].Root.SetActive(false);
+                _falling.RemoveAt(i);
+            }
+
             foreach (View view in _views)
             {
                 SimUnit unit = view.Unit;
@@ -429,6 +550,12 @@ namespace Halobellum.Presentation
                 root.SetPositionAndRotation(
                     Vector3.LerpUnclamped(view.PreviousPosition, view.CurrentPosition, alpha) + Vector3.up * DropOffset(view),
                     Quaternion.SlerpUnclamped(view.PreviousRotation, view.CurrentRotation, alpha));
+
+                if (view.Baked != null)
+                {
+                    BakedAnimation wanted = WantedAnimation(unit);
+                    if (wanted != view.Playing) Play(view, wanted, true);
+                }
 
                 if (view.Forms != null && unit.FormsAlive != view.FormsShown)
                 {

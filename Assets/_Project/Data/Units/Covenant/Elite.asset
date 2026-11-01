@@ -86,6 +86,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 08d7886e19de72d20a4f47245aefc876, type: 2}
   - {fileID: 11400000, guid: 1b62c1cca9608f073810db8e5a691624, type: 2}
   prefab: {fileID: 9201634983580509971, guid: 71a6a5dec83c45341820d82896e7e606, type: 3}
+  bakedBody: {fileID: 0}
   strongAgainst: 'Tanks, heavy units'
   weakAgainst: 'Chaff swarms, flankers'
   notes: 'Best counters (headless runner, equal cost): Marine (100%), Infection Forms (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

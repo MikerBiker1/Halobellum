@@ -12,6 +12,7 @@ using Halobellum.Combat;
 using Halobellum.Core;
 using Halobellum.Economy;
 using Halobellum.Presentation;
+using Halobellum.Units;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -82,6 +83,51 @@ namespace Halobellum.Tests
             Assert.AreEqual(Team.A, risen.Team);
             yield return null;
             Assert.IsNotNull(GameObject.Find($"Infected Marine #{risen.Id} (A)"), "The risen Marine has a view.");
+        }
+
+        [UnityTest]
+        public IEnumerator Marines_PlayTheirAnimations_AndFallBeforeTheyGo()
+        {
+            yield return LoadSandbox();
+            // Grunts have a shorter range than Marines: the Marines get to fire before any of them falls.
+            _sandbox.AddSquad(Team.A, Unit("Marine"));
+            _sandbox.AddSquad(Team.B, Unit("Grunt"));
+            _sandbox.AddSquad(Team.B, Unit("Grunt"));
+            yield return null;
+
+            var views = _battle.GetComponent<UnitViewManager>();
+            SimUnit first = _battle.Simulation.Units.First(u => u.Stats.Name == "Marine");
+            Assert.AreEqual(BakedAnimation.Still, views.PlayingAnimation(first), "Time stands still in deployment.");
+            Assert.IsNull(views.PlayingAnimation(_battle.Simulation.Units.First(u => u.Stats.Name == "Grunt")), "No real model yet.");
+
+            _battle.Speed = 4f;
+            _sandbox.Run();
+            yield return null;
+            bool moved = false, shot = false;
+            SimUnit fallen = null;
+            float limit = Time.realtimeSinceStartup + 40f;
+            while (fallen == null && Time.realtimeSinceStartup < limit)
+            {
+                yield return null;
+                foreach (SimUnit unit in _battle.Simulation.Units.Where(u => u.Stats.Name == "Marine"))
+                {
+                    BakedAnimation? playing = views.PlayingAnimation(unit);
+                    moved |= playing == BakedAnimation.Moving && unit.State == UnitState.Move;
+                    shot |= playing == BakedAnimation.Shooting && unit.State == UnitState.Attack;
+                    if (!unit.IsAlive) fallen = unit;
+                }
+            }
+            Assert.IsTrue(moved, "They run.");
+            Assert.IsTrue(shot, "They shoot.");
+            Assert.IsNotNull(fallen, "One of them fell.");
+            yield return null;
+            Assert.AreEqual(BakedAnimation.Dead, views.PlayingAnimation(fallen));
+            Assert.IsTrue(views.IsShown(fallen), "It stays on the field to play its death.");
+            limit = Time.realtimeSinceStartup + 10f;
+            while (views.IsShown(fallen) && !_battle.Simulation.IsFinished && Time.realtimeSinceStartup < limit) yield return null;
+            limit = Time.realtimeSinceStartup + 5f;
+            while (views.IsShown(fallen) && Time.realtimeSinceStartup < limit) yield return null;
+            Assert.IsFalse(views.IsShown(fallen), "Then it goes.");
         }
 
         [UnityTest]

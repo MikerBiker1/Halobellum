@@ -4,14 +4,17 @@
 // Sandbox scene). It places a mixed army on each side (ground and air units), saves a screenshot of
 // the placement, runs the battle at 4x, saves screenshots at 3 s and 12 s of battle time and at the
 // end, then quits. It also saves one screenshot of a lobbed shot at the top of its arc, one of a beam
-// charging, one of a beam firing, one of the first infected body and one of a unit leaping, the first time each is seen.
+// charging, one of a beam firing, one of the first infected body and one of a unit leaping, the first time each is
+// seen, and close-ups of a baked Marine: held still, in the middle of a cross-fade, running, shooting and falling.
 // Depends on: SandboxController, BattleController, Halobellum.Combat, Halobellum.Core, UnityEngine.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Halobellum.Combat;
 using Halobellum.Core;
+using Halobellum.Units;
 using UnityEngine;
 
 namespace Halobellum.Presentation
@@ -52,8 +55,93 @@ namespace Halobellum.Presentation
             _battle = GetComponent<BattleController>();
         }
 
+        private bool _closeUp, _shotFade;
+        private readonly HashSet<BakedAnimation> _shotRoles = new HashSet<BakedAnimation>();
+
+        /// <summary>Freezes the battle, looks closely at a body, saves a screenshot, and carries on.</summary>
+        private IEnumerator CloseUp(SimUnit unit, string name)
+        {
+            _closeUp = true;
+            float speed = _battle.Speed;
+            _battle.Speed = 0f;
+            Camera view = Camera.main;
+            var control = view.GetComponent<BattleCameraController>();
+            if (control != null) control.enabled = false;
+            view.transform.GetPositionAndRotation(out Vector3 position, out Quaternion rotation);
+            var body = new Vector3(unit.Position.X, 0.8f, unit.Position.Y);
+            var facing = new Vector3(unit.Facing.X, 0f, unit.Facing.Y);
+            view.transform.position = body + facing * 3.4f + Vector3.Cross(facing, Vector3.up) * 1.8f + Vector3.up * 0.9f;
+            view.transform.LookAt(body);
+            yield return null;
+            Shot(name);
+            yield return null;
+            yield return null;
+            view.transform.SetPositionAndRotation(position, rotation);
+            if (control != null) control.enabled = true;
+            _battle.Speed = speed;
+            _closeUp = false;
+        }
+
+        private void ShootMarine()
+        {
+            BattleSimulation simulation = _battle.Simulation;
+            if (simulation == null || _closeUp) return;
+            var views = GetComponent<UnitViewManager>();
+            foreach (SimUnit unit in simulation.Units)
+            {
+                if (unit.Stats.Name != "Marine") continue;
+                BakedAnimation? playing = views.PlayingAnimation(unit);
+                if (playing == null) return;
+                // The fade takes 0.2 battle seconds and starts with the battle.
+                if (_step >= 5 && !_shotFade && simulation.ElapsedSeconds >= 0.1f)
+                {
+                    _shotFade = true;
+                    StartCoroutine(CloseUp(unit, "marine_fade"));
+                    return;
+                }
+                bool settled = simulation.ElapsedSeconds >= 1f;
+                if (playing == BakedAnimation.Still && _step == 4 && _shotRoles.Add(BakedAnimation.Still))
+                {
+                    StartCoroutine(CloseUp(unit, "marine_still"));
+                    return;
+                }
+                if (settled && playing == BakedAnimation.Moving && unit.IsAlive && _shotRoles.Add(BakedAnimation.Moving))
+                {
+                    StartCoroutine(CloseUp(unit, "marine_moving"));
+                    return;
+                }
+                if (settled && playing == BakedAnimation.Shooting && unit.IsAlive && unit.Weapons[0].Target != null && _shotRoles.Add(BakedAnimation.Shooting))
+                {
+                    StartCoroutine(CloseUp(unit, "marine_shooting"));
+                    return;
+                }
+                // A corpse that rises as infected is gone before it has finished falling: try the next one.
+                if (unit == _deadSeen && !views.IsShown(unit))
+                {
+                    _deadSeen = null;
+                    _deadShotAt = 0f;
+                }
+                if (playing == BakedAnimation.Dead && !unit.IsAlive && views.IsShown(unit) && !_shotRoles.Contains(BakedAnimation.Dead))
+                {
+                    if (_deadSeen == null) _deadSeen = unit;
+                    if (_deadSeen == unit && Time.unscaledTime >= _deadShotAt && _deadShotAt > 0f)
+                    {
+                        _shotRoles.Add(BakedAnimation.Dead);
+                        StartCoroutine(CloseUp(unit, "marine_dead"));
+                        return;
+                    }
+                    if (_deadSeen == unit && _deadShotAt <= 0f) _deadShotAt = Time.unscaledTime + 0.6f; // At 4x: well into the fall.
+                }
+            }
+        }
+
+        private SimUnit _deadSeen;
+        private float _deadShotAt;
+
         private void Update()
         {
+            if (_step >= 4) ShootMarine();
+            if (_closeUp) return;
             if (_step >= 5) ShootWeaponMechanics();
             _wait -= Time.unscaledDeltaTime;
             if (_wait > 0f) return;

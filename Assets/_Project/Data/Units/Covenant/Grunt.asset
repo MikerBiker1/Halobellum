@@ -86,6 +86,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8dc72c1539e67da50decf877da548343, type: 2}
   - {fileID: 11400000, guid: 5a70d9eb44bd3692451c853e714add74, type: 2}
   prefab: {fileID: 1298981148952636865, guid: 151b2b2498119cd48953b54be0514fbf, type: 3}
+  bakedBody: {fileID: 0}
   strongAgainst: Single-target DPS
   weakAgainst: Chaff clear
   notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Fuel Rod Grunt (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

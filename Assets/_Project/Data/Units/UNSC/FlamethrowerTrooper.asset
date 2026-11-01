@@ -87,6 +87,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d9236b9f059c810a731539dfc1eb6f9e, type: 2}
   - {fileID: 11400000, guid: a2472059f088d5f48d33c697e789b584, type: 2}
   prefab: {fileID: 8576991978158374779, guid: 23994aec43c28fc44b83ebb1ad9e654d, type: 3}
+  bakedBody: {fileID: 0}
   strongAgainst: Chaff
   weakAgainst: 'Tanks, flankers'
   notes: 'Best counters (headless runner, equal cost): Scorpion (100%), Mantis (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
