@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MatchRules
   m_EditorClassIdentifier: 
   startingCredits: 200
-  baseIncome: 400
+  baseIncome: 200
   incomeIncreasePerRound: 200
   incomeCap: 1600
   baseHealth: 2000

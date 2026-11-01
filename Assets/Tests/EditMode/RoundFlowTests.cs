@@ -130,7 +130,7 @@ namespace Halobellum.Tests
             Assert.IsNull(summary.MatchWinner);
             Assert.AreEqual(10, match.Player.BaseHealth, "Damage is undone.");
             Assert.AreEqual(10, match.Enemy.BaseHealth);
-            Assert.AreEqual(creditsBefore + 600, match.Player.Credits, "A tied round still pays income.");
+            Assert.AreEqual(creditsBefore + 400, match.Player.Credits, "A tied round still pays income (400 after round 1).");
 
             match.ContinueAfterResult();
             Assert.AreEqual(2, match.Round, "The match goes on to the next round.");

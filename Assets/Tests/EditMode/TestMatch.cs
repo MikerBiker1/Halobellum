@@ -14,7 +14,7 @@ namespace Halobellum.Tests
         public static MatchRules Rules() => new MatchRules
         {
             StartingCredits = 200,
-            BaseIncome = 400,
+            BaseIncome = 200,
             IncomeIncreasePerRound = 200,
             IncomeCap = 1600,
             BaseHealth = 2000,

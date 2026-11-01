@@ -5,7 +5,7 @@
 // tests drive it directly. The AI uses exactly the same actions (Unlock, Buy, Move, Sell).
 // Rules (values in MatchRules):
 //   - Round 1 starts with StartingCredits (200); after each round, both players get the next
-//     round's income (600, 800 ... capped at 1600). Banked credits have no limit.
+//     round's income (400, 600, 800 ... capped at 1600; D29). Banked credits have no limit.
 //   - The free draft squads and every newly bought squad are placed at the free spot nearest the
 //     middle of the zone (the player can then move them).
 //   - Each round: at most NewSquadsPerRound squads bought (free draft squads don't count) and

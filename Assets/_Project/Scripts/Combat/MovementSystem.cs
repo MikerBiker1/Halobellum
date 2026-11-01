@@ -5,11 +5,16 @@
 //   - separation: a push away from bodies it is touching or nearly touching,
 //   - avoidance: a sideways swerve around bodies ahead that are stopped or slower, so units
 //     flow around allies and faster units overtake slower ones,
+//   - yielding (decision D30): a sideways step out of the way of a friendly unit coming from
+//     behind that is much faster (YieldSpeedRatio), so chaff parts for a fast vehicle,
 //   - turning: units turn at their own speed (TurnTime180; bigger units turn slower) and drive
 //     forward along their facing, so a unit facing the wrong way stops and turns first.
+// Fighting units normally stand still; one that is edging forward to make room for a friend stuck
+// behind it (SimUnit.Advancing, set by BattleSimulation) steers like a walker at reduced speed.
 // After moving, overlapping bodies are pushed apart (bodies cannot overlap). A unit that is
-// standing and fighting is not pushed by units walking past it. Air units ignore ground units
-// entirely, fly in straight lines, and only keep apart from other air units.
+// standing and fighting is not pushed by units walking past it; between two walkers the smaller
+// body gives way more (shares by body area). Air units ignore ground units entirely, fly in
+// straight lines, and only keep apart from other air units.
 // Units are kept inside the arena. Unity only displays the resulting positions.
 // Depends on: SimUnit, SpatialHashGrid, Halobellum.Core (CombatRules, Vec2).
 
@@ -48,11 +53,13 @@ namespace Halobellum.Combat
 
             // 1. Decide every velocity from the same snapshot of positions, so list order doesn't matter.
             _grid.Build(units);
+            AskSlowerUnitsToYield(units);
             for (int i = 0; i < units.Count; i++)
             {
                 SimUnit unit = units[i];
                 _newFacings[i] = unit.Facing;
-                _newVelocities[i] = unit.IsAlive && unit.State == UnitState.Move ? SteeringVelocity(unit, dt, out _newFacings[i]) : Vec2.Zero;
+                bool steers = unit.State == UnitState.Move || (unit.Advancing && unit.State == UnitState.Attack);
+                _newVelocities[i] = unit.IsAlive && steers ? SteeringVelocity(unit, dt, out _newFacings[i]) : Vec2.Zero;
             }
 
             // 2. Move and turn.
@@ -83,7 +90,7 @@ namespace Halobellum.Combat
         private Vec2 SteeringVelocity(SimUnit unit, float dt, out Vec2 facing)
         {
             facing = unit.Facing;
-            float speed = unit.Stats.MoveSpeed;
+            float speed = unit.Stats.MoveSpeed * (unit.State == UnitState.Attack ? _rules.AdvanceSpeedMultiplier : 1f);
             Vec2 toGoal = unit.MoveGoal - unit.Position;
             float distance = toGoal.Length;
             if (speed <= 0f || distance < 1e-4f) return Vec2.Zero;
@@ -136,10 +143,57 @@ namespace Halobellum.Combat
                 avoidance += direction.Perpendicular * (side * urgency * closeness);
             }
 
-            Vec2 steer = direction + separation * _rules.SeparationWeight + avoidance * _rules.AvoidanceWeight;
+            Vec2 steer = direction + separation * _rules.SeparationWeight + avoidance * _rules.AvoidanceWeight + unit.YieldSteer * _rules.YieldWeight;
             Vec2 velocity = steer.ClampLength(1f) * maxSpeed;
             velocity = ApplyTurning(unit, velocity, dt, out facing);
             return RemovePushIntoContacts(unit, velocity, padding);
+        }
+
+        /// <summary>
+        /// Decision D30: every walking ground unit looks along its own way (as far as its avoidance
+        /// look-ahead) for friendly ground units at least YieldSpeedRatio times slower that stand in its
+        /// path, and asks them to step aside (SimUnit.YieldSteer): sideways, to the side they are
+        /// already on (left when dead ahead, since the faster unit keeps right), more urgently the
+        /// closer they are and the more squarely in its path. Only units fast enough to overtake
+        /// someone look, so slow crowds cost nothing extra.
+        /// </summary>
+        private void AskSlowerUnitsToYield(List<SimUnit> units)
+        {
+            float slowest = float.MaxValue;
+            foreach (SimUnit unit in units)
+            {
+                unit.YieldSteer = Vec2.Zero;
+                if (unit.IsAlive && !unit.IsAir && unit.Stats.MoveSpeed > 0f) slowest = Math.Min(slowest, unit.Stats.MoveSpeed);
+            }
+            if (_rules.YieldSpeedRatio <= 0f || slowest == float.MaxValue) return;
+
+            float padding = _rules.SeparationPadding;
+            foreach (SimUnit unit in units)
+            {
+                if (!unit.IsAlive || unit.IsAir || (unit.State != UnitState.Move && !unit.Advancing)) continue;
+                float speed = unit.Stats.MoveSpeed;
+                if (speed < slowest * _rules.YieldSpeedRatio) continue; // Nobody here is slow enough to make way for it.
+                Vec2 way = unit.MoveGoal - unit.Position;
+                float length = way.Length;
+                if (length < 1e-4f) continue;
+                way /= length;
+
+                float lookahead = speed * _rules.AvoidanceLookaheadSeconds;
+                _grid.Query(unit.Position, lookahead + unit.Radius + _grid.MaxRadius + padding, _neighbors);
+                foreach (SimUnit other in _neighbors)
+                {
+                    if (other == unit || other.Team != unit.Team || other.IsAir || speed < other.Stats.MoveSpeed * _rules.YieldSpeedRatio) continue;
+                    Vec2 offset = other.Position - unit.Position;
+                    float minDistance = unit.Radius + other.Radius + padding;
+                    float reach = lookahead + minDistance;
+                    float ahead = Vec2.Dot(offset, way);
+                    float across = Vec2.Cross(way, offset); // Positive: it is on our left.
+                    if (ahead <= 0f || ahead >= reach || MathF.Abs(across) >= minDistance) continue;
+
+                    float side = across >= -1e-4f ? 1f : -1f;
+                    other.YieldSteer += way.Perpendicular * (side * (1f - ahead / reach) * (1f - MathF.Abs(across) / minDistance));
+                }
+            }
         }
 
         /// <summary>
@@ -224,7 +278,9 @@ namespace Halobellum.Combat
 
         /// <summary>
         /// How much of an overlap each body moves. A unit standing still (fighting or idle) is not
-        /// pushed by a unit that is walking, so walkers slide around it. Otherwise both move equally.
+        /// pushed by a unit that is walking, so walkers slide around it. Two standing units move
+        /// equally; between two walkers the smaller body gives way more (shares by body area), so a
+        /// vehicle shoulders through infantry instead of being held by it (D30).
         /// </summary>
         private static void PushShares(SimUnit a, SimUnit b, out float aShare, out float bShare)
         {
@@ -232,7 +288,13 @@ namespace Halobellum.Combat
             bool bAnchored = b.State != UnitState.Move;
             if (aAnchored && !bAnchored) { aShare = 0f; bShare = 1f; }
             else if (!aAnchored && bAnchored) { aShare = 1f; bShare = 0f; }
-            else { aShare = 0.5f; bShare = 0.5f; }
+            else if (aAnchored) { aShare = 0.5f; bShare = 0.5f; }
+            else
+            {
+                float aArea = a.Radius * a.Radius, bArea = b.Radius * b.Radius;
+                aShare = bArea / (aArea + bArea);
+                bShare = 1f - aShare;
+            }
         }
 
         /// <summary>A repeatable push direction for two bodies at exactly the same spot (from b toward a).</summary>

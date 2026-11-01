@@ -17,7 +17,7 @@ namespace Halobellum.Units
 
         [Header("Credits")]
         public int startingCredits;
-        [Tooltip("Income for round 1.")]
+        [Tooltip("Income for round 1 (the same as the starting credits: round 1 is paid by them; after round 1 comes the round-2 income).")]
         public int baseIncome;
         [Tooltip("Extra income per round after the first.")]
         public int incomeIncreasePerRound;

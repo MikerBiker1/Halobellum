@@ -60,6 +60,10 @@ Milestones and items from PROJECT_BIBLE.md Section 14. An item is ticked when it
 - [x] D26: XP bar doubled (2 x the squad's price); squads ready to level up show a pulsing yellow arrow
 - [x] D28: textured faction UI (UNSC hull plating, Covenant violet with glowing blue lines), downloaded fonts (waiting for the human to look)
 
+## Adjustments after the first play test (2026-11-01)
+- [x] D29: income builds on the 200 starting credits (400 after round 1, 600 after round 2 ... capped at 1600)
+- [x] D30: crowds: slower units make way for much faster friends, smaller walkers give way, fighting front lines edge forward while a friend is stuck behind (counter web still 24 of 24)
+
 ## Notes for the next balance pass (from the human, 2026-10-31)
 - Flamethrower Troopers should be excellent against chaff such as Marines (today they lose to Marines, which outrange them).
 - Warthogs should have enough range, and enough health with their light armor, to destroy Flamethrower Troopers.

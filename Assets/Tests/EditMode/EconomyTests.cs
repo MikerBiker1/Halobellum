@@ -31,12 +31,13 @@ namespace Halobellum.Tests
             _match.ContinueAfterResult();
         }
 
-        [TestCase(1, 400)]
-        [TestCase(2, 600)]
-        [TestCase(3, 800)]
-        [TestCase(6, 1400)]
-        [TestCase(7, 1600)]
+        [TestCase(1, 200)]
+        [TestCase(2, 400)]
+        [TestCase(3, 600)]
+        [TestCase(6, 1200)]
+        [TestCase(7, 1400)]
         [TestCase(8, 1600)]
+        [TestCase(9, 1600)]
         [TestCase(20, 1600)]
         public void IncomePerRound_GrowsBy200_AndIsCappedAt1600(int round, int expected)
         {
@@ -49,17 +50,17 @@ namespace Halobellum.Tests
             Assert.AreEqual(1, _match.Round);
             Assert.AreEqual(200, Player.Credits);
             Assert.AreEqual(200, _match.Enemy.Credits);
-            Assert.AreEqual(600, _match.NextIncome);
+            Assert.AreEqual(400, _match.NextIncome, "200 to start, 400 after round 1 (D29).");
         }
 
         [Test]
         public void IncomeIsAwardedAfterEachRound_AndBankedCreditsHaveNoLimit()
         {
-            PlayRound(); // +600
+            PlayRound(); // +400
             Assert.AreEqual(2, _match.Round);
-            Assert.AreEqual(800, Player.Credits);
-            for (int i = 0; i < 8; i++) PlayRound(); // +800 +1000 +1200 +1400 +1600 +1600 +1600 +1600
-            Assert.AreEqual(800 + 800 + 1000 + 1200 + 1400 + 1600 * 4, Player.Credits);
+            Assert.AreEqual(600, Player.Credits);
+            for (int i = 0; i < 8; i++) PlayRound(); // +600 +800 +1000 +1200 +1400 +1600 +1600 +1600
+            Assert.AreEqual(600 + 600 + 800 + 1000 + 1200 + 1400 + 1600 * 3, Player.Credits);
         }
 
         [Test]
@@ -128,7 +129,7 @@ namespace Halobellum.Tests
             Assert.IsFalse(_match.Unlock(Team.A, _walker).Ok);
             PlayRound();
             Assert.IsTrue(_match.Unlock(Team.A, _walker).Ok);
-            Assert.AreEqual(5000 - 50 + 600 - 225, Player.Credits);
+            Assert.AreEqual(5000 - 50 + 400 - 225, Player.Credits);
         }
 
         [Test]

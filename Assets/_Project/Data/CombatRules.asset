@@ -30,6 +30,10 @@ MonoBehaviour:
   collisionIterations: 3
   formationGap: 0.5
   formationLookaheadSeconds: 1
+  yieldSpeedRatio: 1.2
+  yieldWeight: 2
+  advanceSpeedMultiplier: 0.5
+  advanceRangeShare: 0.25
   ballistic:
     unarmored: 1
     light: 0.6

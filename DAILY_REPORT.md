@@ -42,6 +42,15 @@ Answer to "if you can't manage this, tell me how I can help": no help was needed
 - **Overlapping result text:** the "Ready to level up" line on the result screen overlapped the last "what killed what" line. It now follows the list.
 - **Clipped titles:** the new fonts sit lower than Arial, which the HUD was laid out with, so their text was clipped at the bottom. Each theme now moves its text up by a set amount.
 
+## After your play test (afternoon)
+- **D29, income:** income now builds on the 200 starting credits: 200 to start, **400 after round 1**, 600 after round 2, and so on up to 1600 (reached after round 7). Only `baseIncome` in `MatchRules.asset` changed, from 400 to 200.
+- **D30, crowds.** Two new tests reproduced both problems on the old code (the vehicle stuck behind a chaff squad; only half of a front squad firing while the squad behind jiggled). Both pass now.
+  - **Making way:** a moving unit looks ahead along its path. Friendly units at least 1.2x slower that stand in it step sideways out of the way.
+  - **Pushing:** when two walking bodies collide, the smaller one gives way more.
+  - **Edging forward:** a fighting unit with a held-up friend right behind it moves toward its target at half speed while still firing. It stops at 25% of its weapon range (never inside a minimum range).
+  - **Balance:** the counter web still passes with the real units, 24 of 24, in both Unity and .NET. The Hard AI's matchup table was re-measured.
+  - Details are in DECISIONS.md (D30) for your approval.
+
 ## Test results
 - Unity EditMode **291 / 291**, Unity PlayMode **18 / 18**, .NET harness **265 / 265**.
 - New tests:

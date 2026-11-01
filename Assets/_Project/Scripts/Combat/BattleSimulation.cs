@@ -147,6 +147,7 @@ namespace Halobellum.Combat
             UpdateShields();
             UpdateTargetsAndStates();
             UpdateSquadFormations();
+            UpdateAdvances();
             _movement.Step(_units, _dt);
             FaceTargets();
             FireWeapons();
@@ -313,6 +314,66 @@ namespace Halobellum.Combat
                 float ahead = member.Stats.MoveSpeed * _rules.FormationLookaheadSeconds;
                 member.MoveGoal = anchor + squad.Offsets[i] + direction * ahead;
             }
+        }
+
+        private bool[] _advancing = new bool[0];
+
+        /// <summary>
+        /// Decision D30: a fighting unit edges toward its target (at AdvanceSpeedMultiplier of its speed,
+        /// still firing) while a friendly ground unit right behind it is trying to move through it and
+        /// is blocked. A friend that is itself edging forward counts too, so a whole column moves up.
+        /// It stops once the target is within AdvanceRangeShare of its main weapon's range, and never
+        /// steps inside the weapon's minimum range. Reads last tick's positions, velocities and edging
+        /// flags, and writes all new flags at once, so the order of units doesn't matter.
+        /// </summary>
+        private void UpdateAdvances()
+        {
+            if (_advancing.Length < _units.Count) _advancing = new bool[Math.Max(_units.Count, _advancing.Length * 2)];
+            for (int i = 0; i < _units.Count; i++)
+            {
+                SimUnit unit = _units[i];
+                _advancing[i] = false;
+                if (_rules.AdvanceSpeedMultiplier <= 0f || !unit.IsAlive || unit.IsAir || unit.State != UnitState.Attack
+                    || unit.MoveTarget == null || unit.Stats.MoveSpeed <= 0f) continue;
+                WeaponStats weapon = unit.Weapons[0].Stats;
+                float step = unit.Stats.MoveSpeed * _rules.AdvanceSpeedMultiplier * _dt;
+                float closest = Math.Max(weapon.MinRange, weapon.Range * _rules.AdvanceRangeShare);
+                if (Targeting.EdgeDistance(unit, unit.MoveTarget) - step <= closest) continue;
+                _advancing[i] = HasBlockedFriendBehind(unit);
+            }
+            for (int i = 0; i < _units.Count; i++)
+            {
+                SimUnit unit = _units[i];
+                unit.Advancing = _advancing[i];
+                if (unit.Advancing) unit.MoveGoal = unit.MoveTarget.Position;
+            }
+        }
+
+        /// <summary>True if a friendly ground unit touching this one is trying to walk through it and is held up.</summary>
+        private bool HasBlockedFriendBehind(SimUnit unit)
+        {
+            const float contactSlack = 0.3f; // Metres beyond the separation padding that still count as touching.
+            SpatialHashGrid grid = _movement.Grid;
+            float touch = _rules.SeparationPadding + contactSlack;
+            grid.Query(unit.Position, unit.Radius + grid.MaxRadius + touch, _nearby);
+            foreach (SimUnit friend in _nearby)
+            {
+                if (friend == unit || friend.Team != unit.Team || friend.IsAir || !friend.IsAlive) continue;
+                bool pushing = friend.State == UnitState.Move || friend.Advancing;
+                if (!pushing) continue;
+
+                Vec2 toUnit = unit.Position - friend.Position;
+                float gap = toUnit.Length;
+                if (gap < 1e-5f || gap - unit.Radius - friend.Radius > touch) continue;
+                Vec2 way = friend.MoveGoal - friend.Position;
+                if (way.LengthSquared < 1e-8f) continue;
+                way = way.Normalized;
+                if (Vec2.Dot(way, toUnit / gap) < 0.5f) continue; // We are not in its way.
+
+                float wantedSpeed = friend.Stats.MoveSpeed * (friend.Advancing ? _rules.AdvanceSpeedMultiplier : 1f);
+                if (Vec2.Dot(friend.Velocity, way) < 0.5f * wantedSpeed) return true; // Held up.
+            }
+            return false;
         }
 
         /// <summary>How far this weapon notices enemies: weapon range x the acquisition multiplier, or unlimited.</summary>

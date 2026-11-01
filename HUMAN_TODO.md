@@ -71,3 +71,11 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 - [ ] **Faction UI (D28).** Play once as UNSC and once as Covenant and tell me what to change: colours, how strong the hull texture is, fonts, anything. Screenshots are in `Docs/D28_*.png`. Quick tweaks without me: `Assets/_Project/Data/UI/UNSC_Theme.asset` and `Covenant_Theme.asset` (e.g. **Panel Detail Tint** alpha for the hull texture's strength, **Font Scale**, colours).
 - [ ] **Optional: reference art.** If you want the textures closer to a particular look, put reference images (screenshots of Halo menus, ship close-ups) in a folder and tell me where; I redraw the textures from them.
 - [ ] **Confirm M4, M5 and M6** (still open from last night).
+
+## 2026-11-01 (afternoon): check the income and crowd changes
+
+- [ ] **Income (D29).** Start a match: 200 credits. After round 1 the top bar's "+... next round" shows 400 and you receive 400; then 600, 800 ... up to 1600.
+- [ ] **Chaff makes way (D30).** In the sandbox (or a match), put a squad of Marines or Grunts in front of a Warthog or Ghost and run the battle: the chaff steps aside and the vehicle drives through instead of getting stuck at an angle.
+- [ ] **Front lines edge forward (D30).** Put two squads of the same unit one behind the other (e.g. 2 Marine squads) against an enemy: when the front squad starts shooting, it slowly moves up while firing, so the squad behind gets into range instead of jiggling. Tell me if it should stop sooner or later (now: at 25% of its range from the target), or move faster (now: half speed).
+- [ ] **Answer D30** in DECISIONS.md (the details of how crowds behave).
+

@@ -49,6 +49,10 @@ namespace Halobellum.Combat
         public Vec2 Facing;
         /// <summary>Velocity applied in the last tick, in metres per second.</summary>
         public Vec2 Velocity;
+        /// <summary>True while a fighting unit edges toward its target to make room for a friend stuck behind it (D30).</summary>
+        public bool Advancing;
+        /// <summary>Sideways step asked of this unit by faster friendly units coming through (D30), rebuilt every tick.</summary>
+        public Vec2 YieldSteer;
 
         public float Health;
         public float Shield;

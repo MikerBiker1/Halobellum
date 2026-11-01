@@ -34,6 +34,10 @@ namespace Halobellum.Tests
                 CollisionIterations = 3,
                 FormationGap = 0.5f,
                 FormationLookaheadSeconds = 1f,
+                YieldSpeedRatio = 1.2f,
+                YieldWeight = 2f,
+                AdvanceSpeedMultiplier = 0.5f,
+                AdvanceRangeShare = 0.25f,
             };
             DamageTable t = rules.DamageTable;
             t.SetRow(DamageType.Ballistic, 1.0f, 0.6f, 0.25f);

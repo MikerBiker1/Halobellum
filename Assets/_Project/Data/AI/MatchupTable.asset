@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18f573ec65622716199bfdc1300f78c5, type: 3}
   m_Name: MatchupTable
   m_EditorClassIdentifier: 
-  source: 'Counter web, Unity run 2026-10-31, about 1800 credits per army, 10 battles per pair'
+  source: Counter web, 2026-11-01 07:43, about 1800 credits per army, 10 battles
+    per pair
   entries:
   - attacker: Archer Missile Pod
     defender: Elephant
@@ -31,7 +32,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Archer Missile Pod
     defender: Marine
-    winRate: 1
+    winRate: 0.6
   - attacker: Archer Missile Pod
     defender: Pelican
     winRate: 0
@@ -43,7 +44,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Archer Missile Pod
     defender: Warthog
-    winRate: 0.3
+    winRate: 0.2
   - attacker: Archer Missile Pod
     defender: Wolverine
     winRate: 1
@@ -52,7 +53,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Archer Missile Pod
     defender: Elite
-    winRate: 0.1
+    winRate: 0
   - attacker: Archer Missile Pod
     defender: Fuel Rod Grunt
     winRate: 1
@@ -66,10 +67,10 @@ MonoBehaviour:
     defender: Hunter Pair
     winRate: 0
   - attacker: Archer Missile Pod
-    defender: 'Jackal (Plasma Rifle)'
+    defender: Jackal (Plasma Rifle)
     winRate: 1
   - attacker: Archer Missile Pod
-    defender: 'Jackal (Shield)'
+    defender: Jackal (Shield)
     winRate: 1
   - attacker: Archer Missile Pod
     defender: Scarab
@@ -130,15 +131,15 @@ MonoBehaviour:
     winRate: 1
   - attacker: Elephant
     defender: Grunt
-    winRate: 1
+    winRate: 0
   - attacker: Elephant
     defender: Hunter Pair
     winRate: 1
   - attacker: Elephant
-    defender: 'Jackal (Plasma Rifle)'
+    defender: Jackal (Plasma Rifle)
     winRate: 1
   - attacker: Elephant
-    defender: 'Jackal (Shield)'
+    defender: Jackal (Shield)
     winRate: 1
   - attacker: Elephant
     defender: Scarab
@@ -184,7 +185,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Flamethrower Trooper
     defender: Wolverine
-    winRate: 0.4
+    winRate: 0.8
   - attacker: Flamethrower Trooper
     defender: Banshee
     winRate: 0
@@ -204,10 +205,10 @@ MonoBehaviour:
     defender: Hunter Pair
     winRate: 0
   - attacker: Flamethrower Trooper
-    defender: 'Jackal (Plasma Rifle)'
+    defender: Jackal (Plasma Rifle)
     winRate: 0
   - attacker: Flamethrower Trooper
-    defender: 'Jackal (Shield)'
+    defender: Jackal (Shield)
     winRate: 1
   - attacker: Flamethrower Trooper
     defender: Scarab
@@ -273,10 +274,10 @@ MonoBehaviour:
     defender: Hunter Pair
     winRate: 0
   - attacker: Gauss Warthog
-    defender: 'Jackal (Plasma Rifle)'
+    defender: Jackal (Plasma Rifle)
     winRate: 0
   - attacker: Gauss Warthog
-    defender: 'Jackal (Shield)'
+    defender: Jackal (Shield)
     winRate: 0
   - attacker: Gauss Warthog
     defender: Scarab
@@ -342,10 +343,10 @@ MonoBehaviour:
     defender: Hunter Pair
     winRate: 1
   - attacker: Hornet
-    defender: 'Jackal (Plasma Rifle)'
+    defender: Jackal (Plasma Rifle)
     winRate: 0
   - attacker: Hornet
-    defender: 'Jackal (Shield)'
+    defender: Jackal (Shield)
     winRate: 0
   - attacker: Hornet
     defender: Scarab
@@ -400,21 +401,21 @@ MonoBehaviour:
     winRate: 0
   - attacker: Mantis
     defender: Fuel Rod Grunt
-    winRate: 1
+    winRate: 0.9
   - attacker: Mantis
     defender: Ghost
     winRate: 1
   - attacker: Mantis
     defender: Grunt
-    winRate: 1
+    winRate: 0
   - attacker: Mantis
     defender: Hunter Pair
     winRate: 0
   - attacker: Mantis
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 1
+    defender: Jackal (Plasma Rifle)
+    winRate: 0.2
   - attacker: Mantis
-    defender: 'Jackal (Shield)'
+    defender: Jackal (Shield)
     winRate: 1
   - attacker: Mantis
     defender: Scarab
@@ -430,7 +431,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Marine
     defender: Archer Missile Pod
-    winRate: 0
+    winRate: 0.4
   - attacker: Marine
     defender: Elephant
     winRate: 0
@@ -480,10 +481,10 @@ MonoBehaviour:
     defender: Hunter Pair
     winRate: 0
   - attacker: Marine
-    defender: 'Jackal (Plasma Rifle)'
+    defender: Jackal (Plasma Rifle)
     winRate: 1
   - attacker: Marine
-    defender: 'Jackal (Shield)'
+    defender: Jackal (Shield)
     winRate: 1
   - attacker: Marine
     defender: Scarab
@@ -549,10 +550,10 @@ MonoBehaviour:
     defender: Hunter Pair
     winRate: 0.2
   - attacker: Pelican
-    defender: 'Jackal (Plasma Rifle)'
+    defender: Jackal (Plasma Rifle)
     winRate: 0
   - attacker: Pelican
-    defender: 'Jackal (Shield)'
+    defender: Jackal (Shield)
     winRate: 0
   - attacker: Pelican
     defender: Scarab
@@ -618,10 +619,10 @@ MonoBehaviour:
     defender: Hunter Pair
     winRate: 0
   - attacker: Scorpion
-    defender: 'Jackal (Plasma Rifle)'
+    defender: Jackal (Plasma Rifle)
     winRate: 1
   - attacker: Scorpion
-    defender: 'Jackal (Shield)'
+    defender: Jackal (Shield)
     winRate: 1
   - attacker: Scorpion
     defender: Scarab
@@ -687,10 +688,10 @@ MonoBehaviour:
     defender: Hunter Pair
     winRate: 1
   - attacker: Spartan
-    defender: 'Jackal (Plasma Rifle)'
+    defender: Jackal (Plasma Rifle)
     winRate: 0
   - attacker: Spartan
-    defender: 'Jackal (Shield)'
+    defender: Jackal (Shield)
     winRate: 0
   - attacker: Spartan
     defender: Scarab
@@ -706,7 +707,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Warthog
     defender: Archer Missile Pod
-    winRate: 0.7
+    winRate: 0.8
   - attacker: Warthog
     defender: Elephant
     winRate: 0
@@ -756,10 +757,10 @@ MonoBehaviour:
     defender: Hunter Pair
     winRate: 0
   - attacker: Warthog
-    defender: 'Jackal (Plasma Rifle)'
+    defender: Jackal (Plasma Rifle)
     winRate: 0
   - attacker: Warthog
-    defender: 'Jackal (Shield)'
+    defender: Jackal (Shield)
     winRate: 0
   - attacker: Warthog
     defender: Scarab
@@ -781,7 +782,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Wolverine
     defender: Flamethrower Trooper
-    winRate: 0.6
+    winRate: 0.2
   - attacker: Wolverine
     defender: Gauss Warthog
     winRate: 0
@@ -814,7 +815,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Wolverine
     defender: Fuel Rod Grunt
-    winRate: 0.7
+    winRate: 0.5
   - attacker: Wolverine
     defender: Ghost
     winRate: 0
@@ -825,11 +826,11 @@ MonoBehaviour:
     defender: Hunter Pair
     winRate: 0
   - attacker: Wolverine
-    defender: 'Jackal (Plasma Rifle)'
+    defender: Jackal (Plasma Rifle)
     winRate: 0
   - attacker: Wolverine
-    defender: 'Jackal (Shield)'
-    winRate: 1
+    defender: Jackal (Shield)
+    winRate: 0
   - attacker: Wolverine
     defender: Scarab
     winRate: 0
@@ -894,10 +895,10 @@ MonoBehaviour:
     defender: Hunter Pair
     winRate: 1
   - attacker: Banshee
-    defender: 'Jackal (Plasma Rifle)'
+    defender: Jackal (Plasma Rifle)
     winRate: 0
   - attacker: Banshee
-    defender: 'Jackal (Shield)'
+    defender: Jackal (Shield)
     winRate: 0
   - attacker: Banshee
     defender: Scarab
@@ -913,7 +914,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Elite
     defender: Archer Missile Pod
-    winRate: 0.9
+    winRate: 1
   - attacker: Elite
     defender: Elephant
     winRate: 0
@@ -963,10 +964,10 @@ MonoBehaviour:
     defender: Hunter Pair
     winRate: 0
   - attacker: Elite
-    defender: 'Jackal (Plasma Rifle)'
+    defender: Jackal (Plasma Rifle)
     winRate: 0
   - attacker: Elite
-    defender: 'Jackal (Shield)'
+    defender: Jackal (Shield)
     winRate: 1
   - attacker: Elite
     defender: Scarab
@@ -997,7 +998,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Fuel Rod Grunt
     defender: Mantis
-    winRate: 0
+    winRate: 0.1
   - attacker: Fuel Rod Grunt
     defender: Marine
     winRate: 1
@@ -1015,7 +1016,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Fuel Rod Grunt
     defender: Wolverine
-    winRate: 0.3
+    winRate: 0.5
   - attacker: Fuel Rod Grunt
     defender: Banshee
     winRate: 0
@@ -1032,10 +1033,10 @@ MonoBehaviour:
     defender: Hunter Pair
     winRate: 0
   - attacker: Fuel Rod Grunt
-    defender: 'Jackal (Plasma Rifle)'
+    defender: Jackal (Plasma Rifle)
     winRate: 1
   - attacker: Fuel Rod Grunt
-    defender: 'Jackal (Shield)'
+    defender: Jackal (Shield)
     winRate: 1
   - attacker: Fuel Rod Grunt
     defender: Scarab
@@ -1101,10 +1102,10 @@ MonoBehaviour:
     defender: Hunter Pair
     winRate: 0
   - attacker: Ghost
-    defender: 'Jackal (Plasma Rifle)'
+    defender: Jackal (Plasma Rifle)
     winRate: 0
   - attacker: Ghost
-    defender: 'Jackal (Shield)'
+    defender: Jackal (Shield)
     winRate: 0
   - attacker: Ghost
     defender: Scarab
@@ -1123,7 +1124,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Grunt
     defender: Elephant
-    winRate: 0
+    winRate: 1
   - attacker: Grunt
     defender: Flamethrower Trooper
     winRate: 0
@@ -1135,7 +1136,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Grunt
     defender: Mantis
-    winRate: 0
+    winRate: 1
   - attacker: Grunt
     defender: Marine
     winRate: 0
@@ -1170,10 +1171,10 @@ MonoBehaviour:
     defender: Hunter Pair
     winRate: 0
   - attacker: Grunt
-    defender: 'Jackal (Plasma Rifle)'
+    defender: Jackal (Plasma Rifle)
     winRate: 0
   - attacker: Grunt
-    defender: 'Jackal (Shield)'
+    defender: Jackal (Shield)
     winRate: 1
   - attacker: Grunt
     defender: Scarab
@@ -1239,10 +1240,10 @@ MonoBehaviour:
     defender: Grunt
     winRate: 1
   - attacker: Hunter Pair
-    defender: 'Jackal (Plasma Rifle)'
+    defender: Jackal (Plasma Rifle)
     winRate: 1
   - attacker: Hunter Pair
-    defender: 'Jackal (Shield)'
+    defender: Jackal (Shield)
     winRate: 1
   - attacker: Hunter Pair
     defender: Scarab
@@ -1256,142 +1257,142 @@ MonoBehaviour:
   - attacker: Hunter Pair
     defender: Zealot
     winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Plasma Rifle)
     defender: Archer Missile Pod
     winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Plasma Rifle)
     defender: Elephant
     winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Plasma Rifle)
     defender: Flamethrower Trooper
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Plasma Rifle)
     defender: Gauss Warthog
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Plasma Rifle)
     defender: Hornet
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Plasma Rifle)
     defender: Mantis
-    winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+    winRate: 0.8
+  - attacker: Jackal (Plasma Rifle)
     defender: Marine
     winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Plasma Rifle)
     defender: Pelican
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Plasma Rifle)
     defender: Scorpion
     winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Plasma Rifle)
     defender: Spartan
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Plasma Rifle)
     defender: Warthog
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Plasma Rifle)
     defender: Wolverine
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Plasma Rifle)
     defender: Banshee
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Plasma Rifle)
     defender: Elite
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Plasma Rifle)
     defender: Fuel Rod Grunt
     winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Plasma Rifle)
     defender: Ghost
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Plasma Rifle)
     defender: Grunt
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Plasma Rifle)
     defender: Hunter Pair
     winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: 'Jackal (Shield)'
+  - attacker: Jackal (Plasma Rifle)
+    defender: Jackal (Shield)
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Plasma Rifle)
     defender: Scarab
     winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Plasma Rifle)
     defender: Vampire
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Plasma Rifle)
     defender: Wraith
     winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Plasma Rifle)
     defender: Zealot
     winRate: 1
-  - attacker: 'Jackal (Shield)'
+  - attacker: Jackal (Shield)
     defender: Archer Missile Pod
     winRate: 0
-  - attacker: 'Jackal (Shield)'
+  - attacker: Jackal (Shield)
     defender: Elephant
     winRate: 0
-  - attacker: 'Jackal (Shield)'
+  - attacker: Jackal (Shield)
     defender: Flamethrower Trooper
     winRate: 0
-  - attacker: 'Jackal (Shield)'
+  - attacker: Jackal (Shield)
     defender: Gauss Warthog
     winRate: 1
-  - attacker: 'Jackal (Shield)'
+  - attacker: Jackal (Shield)
     defender: Hornet
     winRate: 1
-  - attacker: 'Jackal (Shield)'
+  - attacker: Jackal (Shield)
     defender: Mantis
     winRate: 0
-  - attacker: 'Jackal (Shield)'
+  - attacker: Jackal (Shield)
     defender: Marine
     winRate: 0
-  - attacker: 'Jackal (Shield)'
+  - attacker: Jackal (Shield)
     defender: Pelican
     winRate: 1
-  - attacker: 'Jackal (Shield)'
+  - attacker: Jackal (Shield)
     defender: Scorpion
     winRate: 0
-  - attacker: 'Jackal (Shield)'
+  - attacker: Jackal (Shield)
     defender: Spartan
     winRate: 1
-  - attacker: 'Jackal (Shield)'
+  - attacker: Jackal (Shield)
     defender: Warthog
     winRate: 1
-  - attacker: 'Jackal (Shield)'
+  - attacker: Jackal (Shield)
     defender: Wolverine
-    winRate: 0
-  - attacker: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Jackal (Shield)
     defender: Banshee
     winRate: 1
-  - attacker: 'Jackal (Shield)'
+  - attacker: Jackal (Shield)
     defender: Elite
     winRate: 0
-  - attacker: 'Jackal (Shield)'
+  - attacker: Jackal (Shield)
     defender: Fuel Rod Grunt
     winRate: 0
-  - attacker: 'Jackal (Shield)'
+  - attacker: Jackal (Shield)
     defender: Ghost
     winRate: 1
-  - attacker: 'Jackal (Shield)'
+  - attacker: Jackal (Shield)
     defender: Grunt
     winRate: 0
-  - attacker: 'Jackal (Shield)'
+  - attacker: Jackal (Shield)
     defender: Hunter Pair
     winRate: 0
-  - attacker: 'Jackal (Shield)'
-    defender: 'Jackal (Plasma Rifle)'
+  - attacker: Jackal (Shield)
+    defender: Jackal (Plasma Rifle)
     winRate: 0
-  - attacker: 'Jackal (Shield)'
+  - attacker: Jackal (Shield)
     defender: Scarab
     winRate: 0
-  - attacker: 'Jackal (Shield)'
+  - attacker: Jackal (Shield)
     defender: Vampire
     winRate: 1
-  - attacker: 'Jackal (Shield)'
+  - attacker: Jackal (Shield)
     defender: Wraith
     winRate: 0
-  - attacker: 'Jackal (Shield)'
+  - attacker: Jackal (Shield)
     defender: Zealot
     winRate: 1
   - attacker: Scarab
@@ -1449,10 +1450,10 @@ MonoBehaviour:
     defender: Hunter Pair
     winRate: 1
   - attacker: Scarab
-    defender: 'Jackal (Plasma Rifle)'
+    defender: Jackal (Plasma Rifle)
     winRate: 1
   - attacker: Scarab
-    defender: 'Jackal (Shield)'
+    defender: Jackal (Shield)
     winRate: 1
   - attacker: Scarab
     defender: Vampire
@@ -1518,10 +1519,10 @@ MonoBehaviour:
     defender: Hunter Pair
     winRate: 0.3
   - attacker: Vampire
-    defender: 'Jackal (Plasma Rifle)'
+    defender: Jackal (Plasma Rifle)
     winRate: 0
   - attacker: Vampire
-    defender: 'Jackal (Shield)'
+    defender: Jackal (Shield)
     winRate: 0
   - attacker: Vampire
     defender: Scarab
@@ -1587,10 +1588,10 @@ MonoBehaviour:
     defender: Hunter Pair
     winRate: 0
   - attacker: Wraith
-    defender: 'Jackal (Plasma Rifle)'
+    defender: Jackal (Plasma Rifle)
     winRate: 1
   - attacker: Wraith
-    defender: 'Jackal (Shield)'
+    defender: Jackal (Shield)
     winRate: 1
   - attacker: Wraith
     defender: Scarab
@@ -1656,10 +1657,10 @@ MonoBehaviour:
     defender: Hunter Pair
     winRate: 1
   - attacker: Zealot
-    defender: 'Jackal (Plasma Rifle)'
+    defender: Jackal (Plasma Rifle)
     winRate: 0
   - attacker: Zealot
-    defender: 'Jackal (Shield)'
+    defender: Jackal (Shield)
     winRate: 0
   - attacker: Zealot
     defender: Scarab

@@ -65,6 +65,20 @@ namespace Halobellum.Core
         public float FormationGap;
         /// <summary>Marching bodies (in formation, or advancing with nothing in sight) aim this many seconds of travel ahead.</summary>
         public float FormationLookaheadSeconds;
+        /// <summary>
+        /// Decision D30: a walking unit steps aside for a friendly unit coming from behind that is at least
+        /// this many times faster (chaff parts for a fast vehicle). 0 = never.
+        /// </summary>
+        public float YieldSpeedRatio;
+        /// <summary>How strongly a walking unit steps aside for a faster friendly unit behind it.</summary>
+        public float YieldWeight;
+        /// <summary>
+        /// Decision D30: a fighting unit with a blocked friendly unit right behind it edges toward its
+        /// target at this share of its move speed, still firing. 0 = never.
+        /// </summary>
+        public float AdvanceSpeedMultiplier;
+        /// <summary>It stops edging forward once its target is within this share of its main weapon's range.</summary>
+        public float AdvanceRangeShare;
 
         public DamageTable DamageTable = new DamageTable();
 

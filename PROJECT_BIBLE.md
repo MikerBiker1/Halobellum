@@ -88,7 +88,7 @@ A match is a series of rounds against an AI opponent. Each round has these phase
 | Rule | Value |
 | --- | --- |
 | Starting credits | 200 |
-| Income per round | 400, plus 200 per round after the first |
+| Income per round | 200 (round 1, paid by the starting credits), plus 200 per round after the first: 400 after round 1, 600 after round 2 ... |
 | Income cap | Income per round is capped at 1600. Banked credits have no limit. |
 | Base health | 2000 each |
 | Base damage | Every surviving unit deals damage to the enemy base. Per-unit damage is a data field (`BaseDamage`); default is (squad cost ÷ squad size) ÷ 5. |
@@ -461,6 +461,8 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-01 | XP bar = 2 x the squad's base price; a squad ready to level up shows a pulsing yellow arrow | Per the project owner (D26) |
 | 2026-11-01 | First-pass tech catalogue kept until all units are made | Approved from D27 |
 | 2026-11-01 | Faction UI: textured, ship-inspired panels (UNSC grey hull plating; Covenant violet with glowing blue lines) | Per the project owner (D28) |
+| 2026-11-01 | Income builds on the 200 starting credits: 400 after round 1, 600 after round 2 ... capped at 1600 | Per the project owner (D29) |
+| 2026-11-01 | Crowds: slower units step aside for much faster friends behind them, smaller walkers give way to bigger ones, and a fighting unit edges toward its target (still firing) while a friend is stuck behind it | Per the project owner (D30) |
 
 ## 18. Assumptions to confirm
 

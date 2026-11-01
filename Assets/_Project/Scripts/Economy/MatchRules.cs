@@ -12,7 +12,7 @@ namespace Halobellum.Economy
     {
         /// <summary>Credits each player has at the start of round 1 (Bible: 200).</summary>
         public int StartingCredits;
-        /// <summary>Income for round 1 (Bible: 400). Later rounds add IncomeIncreasePerRound each.</summary>
+        /// <summary>Income for round 1, the same as the starting credits (decision D29: 200). Later rounds add IncomeIncreasePerRound each.</summary>
         public int BaseIncome;
         /// <summary>Extra income per round after the first (Bible: 200).</summary>
         public int IncomeIncreasePerRound;
@@ -42,7 +42,8 @@ namespace Halobellum.Economy
 
         /// <summary>
         /// Income for a round: BaseIncome in round 1, then IncomeIncreasePerRound more each round,
-        /// never more than IncomeCap. With the Bible values: 400, 600, 800 ... capped at 1600.
+        /// never more than IncomeCap. With the Bible values: 200, 400, 600 ... capped at 1600. Round 1 is
+        /// covered by the starting credits; the income paid after round N is IncomeForRound(N + 1).
         /// </summary>
         public int IncomeForRound(int round)
         {

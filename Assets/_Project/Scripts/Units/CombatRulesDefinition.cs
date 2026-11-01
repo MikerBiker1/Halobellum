@@ -57,6 +57,14 @@ namespace Halobellum.Units
         public float formationGap;
         [Tooltip("Marching bodies (in formation, or advancing with nothing in sight) aim this many seconds of travel ahead.")]
         public float formationLookaheadSeconds;
+        [Tooltip("A walking unit steps aside for a friendly unit behind it that is at least this many times faster (0 = never).")]
+        public float yieldSpeedRatio;
+        [Tooltip("How strongly a walking unit steps aside for a faster friendly unit behind it.")]
+        public float yieldWeight;
+        [Tooltip("A fighting unit with a blocked friend right behind it edges toward its target at this share of its speed, still firing (0 = never).")]
+        public float advanceSpeedMultiplier;
+        [Tooltip("It stops edging forward once its target is within this share of its main weapon's range.")]
+        [Range(0f, 1f)] public float advanceRangeShare;
 
         [Header("Damage multipliers (vs Unarmored, Light, Heavy)")]
         public DamageRow ballistic = new DamageRow();
@@ -93,6 +101,10 @@ namespace Halobellum.Units
                 CollisionIterations = collisionIterations,
                 FormationGap = formationGap,
                 FormationLookaheadSeconds = formationLookaheadSeconds,
+                YieldSpeedRatio = yieldSpeedRatio,
+                YieldWeight = yieldWeight,
+                AdvanceSpeedMultiplier = advanceSpeedMultiplier,
+                AdvanceRangeShare = advanceRangeShare,
             };
 
             DamageTable table = rules.DamageTable;
