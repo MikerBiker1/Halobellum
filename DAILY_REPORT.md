@@ -41,14 +41,19 @@ This morning's report (D25 to D30) is in this file's Git history. You approved D
 - **Reinforcement cards** no longer show the budget.
 - **Shields** show as a blue bar over the health bar.
 - **Smoke Bomb** is placed in two clicks: one end, then aim the other at any angle. The same placement will work for any future line-shaped spell.
-- **Battle speed, on trial:** 1x / 2x / 4x really run at 0.5 / 1 / 2. A 90 s battle now takes up to 3 real minutes at 1x.
 - **Glassing Beam** hits air units too.
+
+## Speed (D36)
+- **The trial is gone:** 1x, 2x and 4x are real again, so projectiles, rate of fire and the round clock are back to normal.
+- **Every unit moves at half its old speed,** and the stats window shows the real number (Marines: 1.5 m/s).
+- **Warthog, Ghost and Gauss Warthog** get +1 m/s on top: 5, 5.5 and 4.75 m/s.
+- **What it did to balance:** the counter web still passes (24 of 24). 12 of 276 matchups change winner, mostly in favour of long-range units. Battles average 36 s instead of 26 s, and 4 of 276 reach the 90 s limit instead of 3. This is noted for the balance pass.
 
 ## Decisions needing your approval
 None: D31 to D34 are answered. Spells stay out of the Sandbox, as you asked.
 
 ## Test results
-- **Unity:** EditMode **360 / 360**, PlayMode **25 / 25**. **.NET harness:** **321 / 321**.
+- **Unity:** EditMode **360 / 360**, PlayMode **24 / 24**. **.NET harness:** **321 / 321**.
 - **New tests:**
   - Spell effects in battle.
   - Card rules, including the Bible's pricing examples and the "every other round" recharge.

@@ -23,7 +23,7 @@ MonoBehaviour:
   armorType: 1
   maxShield: 0
   shieldRegenPerSecond: 0
-  moveSpeed: 8
+  moveSpeed: 5
   collisionRadius: 1.2
   turnTime180: 1
   isAir: 0
@@ -60,4 +60,4 @@ MonoBehaviour:
   prefab: {fileID: 1272590660598749317, guid: 57cf19a71eeab274f9a2302fc9551ad6, type: 3}
   strongAgainst: 'Artillery, DPS'
   weakAgainst: 'Chaff clear, tanks'
-  notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Fuel Rod Grunt (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Scorpion (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

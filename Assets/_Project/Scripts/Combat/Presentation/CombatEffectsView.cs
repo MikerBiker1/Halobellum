@@ -107,7 +107,7 @@ namespace Halobellum.Presentation
 
         private void LateUpdate()
         {
-            float battleTime = Time.deltaTime * (_battle.Clock?.Speed ?? _battle.Speed);
+            float battleTime = Time.deltaTime * _battle.Speed;
             for (int i = 0; i < _tracers.Length; i++)
             {
                 if (_tracerTimeLeft[i] <= 0f) continue;

@@ -23,7 +23,7 @@ MonoBehaviour:
   armorType: 0
   maxShield: 400
   shieldRegenPerSecond: 80
-  moveSpeed: 3.5
+  moveSpeed: 1.75
   collisionRadius: 0.6
   turnTime180: 0.5
   isAir: 0
@@ -60,4 +60,4 @@ MonoBehaviour:
   prefab: {fileID: 3141885320692605752, guid: bafe5c4c162e99d4098435c1149897ef, type: 3}
   strongAgainst: 'Tanks, heavy units'
   weakAgainst: 'Chaff swarms, flankers'
-  notes: 'Best counters (headless runner, equal cost): Grunt (100%), Marine (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Grunt (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

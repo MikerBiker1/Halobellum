@@ -23,7 +23,7 @@ MonoBehaviour:
   armorType: 2
   maxShield: 0
   shieldRegenPerSecond: 0
-  moveSpeed: 2.2
+  moveSpeed: 1.1
   collisionRadius: 1.2
   turnTime180: 1.5
   isAir: 0

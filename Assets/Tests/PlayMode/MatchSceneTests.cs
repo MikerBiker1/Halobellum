@@ -331,23 +331,6 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
-        public IEnumerator SpeedButtons_ShowTheirNumbers_ButRunAtHalf()
-        {
-            yield return LoadMatch();
-            _match.ChooseDraft(0);
-            yield return null;
-            _battle.Speed = 1f;
-            _match.Ready();
-            yield return null;
-            Assert.AreEqual(1f, _battle.Speed, "The button still says 1x.");
-            Assert.AreEqual(0.5f, _battle.Clock.Speed, 1e-5f, "It really runs at half speed (D35).");
-            _battle.Speed = 4f;
-            Assert.AreEqual(2f, _battle.Clock.Speed, 1e-5f);
-            _battle.Speed = 0f;
-            Assert.IsTrue(_battle.Clock.IsPaused, "Pause still pauses.");
-        }
-
-        [UnityTest]
         public IEnumerator Items_GoOnASquad_FromTheInventory()
         {
             yield return LoadMatch();

@@ -43,16 +43,13 @@ namespace Halobellum.Presentation
         public bool IsPlaying { get; private set; }
 
         /// <summary>Battle speed: 0 pauses, 1, 2 or 4 speed it up. Kept from one battle to the next.</summary>
-        [Tooltip("Real speed of the battle at the speed shown as 1x (decision D35: 0.5, so 1x / 2x / 4x really run at 0.5 / 1 / 2).")]
-        [SerializeField] private float speedScale = 0.5f;
-
         public float Speed
         {
-            get => _speed;
+            get => Clock?.Speed ?? _speed;
             set
             {
                 _speed = Mathf.Max(0f, value);
-                if (Clock != null) Clock.Speed = _speed * speedScale;
+                if (Clock != null) Clock.Speed = _speed;
             }
         }
 
@@ -123,7 +120,7 @@ namespace Halobellum.Presentation
             if (sources != null) foreach (var pair in sources) _unitSources[pair.Key] = pair.Value;
 
             Simulation = simulation;
-            Clock = new BattleClock(Rules.TickSeconds, maxTicksPerFrame) { Speed = _speed * speedScale };
+            Clock = new BattleClock(Rules.TickSeconds, maxTicksPerFrame) { Speed = _speed };
             IsPlaying = play && simulation != null;
             if (Simulation != null) Simulation.Events.BattleEnded += OnBattleEnded;
             BattleChanged?.Invoke(Simulation);

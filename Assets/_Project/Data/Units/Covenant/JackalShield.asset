@@ -23,7 +23,7 @@ MonoBehaviour:
   armorType: 0
   maxShield: 0
   shieldRegenPerSecond: 0
-  moveSpeed: 3
+  moveSpeed: 1.5
   collisionRadius: 0.6
   turnTime180: 0.25
   isAir: 0
@@ -60,4 +60,4 @@ MonoBehaviour:
   prefab: {fileID: 1656974460176144887, guid: 31186ad0e8cb7934ea8dc16f92b9f807, type: 3}
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
-  notes: 'Best counters (headless runner, equal cost): Elite (100%), Jackal (Plasma Rifle) (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Jackal (Plasma Rifle) (100%), Elite (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

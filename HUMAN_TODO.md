@@ -110,6 +110,5 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 - [ ] **Dragging items.** Drag an item from the Inventory onto a hexagon (match and Sandbox). Dropping elsewhere cancels.
 - [ ] **Smoke placement.** Press Place on a Smoke Bomb, click where one end goes, move the mouse (the rectangle swings around), click to confirm. Right-click goes back a step.
 - [ ] **Shield bar.** Spartans, Elites and Zealots show a blue bar over their health bar once hit or when selected.
-- [ ] **Speed trial.** Does 1x (really half speed) feel right? If not, change **Speed Scale** on the Battle object's Battle Controller, or tell me.
+- [ ] **Speed (D36).** The trial is gone: units move at half their old speed and the Warthog, Ghost and Gauss Warthog are 1 m/s faster than that. Projectiles, rate of fire and the round clock are back to normal at 1x.
 - [ ] **Reinforcement cards** no longer mention the budget. **Glassing Beam** hits air.
-

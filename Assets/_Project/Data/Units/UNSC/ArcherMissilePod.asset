@@ -23,7 +23,7 @@ MonoBehaviour:
   armorType: 1
   maxShield: 0
   shieldRegenPerSecond: 0
-  moveSpeed: 2.5
+  moveSpeed: 1.25
   collisionRadius: 1.4
   turnTime180: 1.5
   isAir: 0
@@ -60,4 +60,4 @@ MonoBehaviour:
   prefab: {fileID: 6852676159974335452, guid: 6fa0d675984a78948aec6dfa27aa64cd, type: 3}
   strongAgainst: 'Slow, grouped units'
   weakAgainst: 'Flankers, air'
-  notes: 'Best counters (headless runner, equal cost): Banshee (100%), Ghost (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Hornet (100%), Pelican (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

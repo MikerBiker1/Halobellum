@@ -23,7 +23,7 @@ MonoBehaviour:
   armorType: 1
   maxShield: 0
   shieldRegenPerSecond: 0
-  moveSpeed: 4
+  moveSpeed: 2
   collisionRadius: 1.4
   turnTime180: 1.5
   isAir: 0
@@ -61,4 +61,4 @@ MonoBehaviour:
   prefab: {fileID: 3509483001527763620, guid: cf4b615a56a73d84888675b8a42645d0, type: 3}
   strongAgainst: Aerial
   weakAgainst: Ground units
-  notes: 'Best counters (headless runner, equal cost): Archer Missile Pod (100%), Elephant (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Scarab (100%), Hunter Pair (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

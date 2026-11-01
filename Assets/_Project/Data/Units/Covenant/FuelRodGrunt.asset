@@ -23,7 +23,7 @@ MonoBehaviour:
   armorType: 0
   maxShield: 0
   shieldRegenPerSecond: 0
-  moveSpeed: 3
+  moveSpeed: 1.5
   collisionRadius: 0.5
   turnTime180: 0.25
   isAir: 0
@@ -60,4 +60,4 @@ MonoBehaviour:
   prefab: {fileID: 5002157480385503126, guid: ca1bd6056b4bcb9429c68c899665fab8, type: 3}
   strongAgainst: Chaff
   weakAgainst: 'Tanks, flankers'
-  notes: 'Best counters (headless runner, equal cost): Hunter Pair (100%), Mantis (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Scorpion (100%), Mantis (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

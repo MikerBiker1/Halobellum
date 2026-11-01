@@ -30,7 +30,7 @@ namespace Halobellum.Tests
             ("Warthog", "Flamethrower Trooper"),
             ("Gauss Warthog", "Marine"),
             ("Scorpion", "Gauss Warthog"),
-            ("Wolverine", "Marine"),
+            ("Wolverine", "Scarab"),
             ("Hornet", "Wolverine"),
             ("Archer Missile Pod", "Hornet"),
             ("Pelican", "Wolverine"),

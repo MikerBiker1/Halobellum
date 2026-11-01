@@ -78,4 +78,5 @@ Milestones and items from PROJECT_BIBLE.md Section 14. An item is ticked when it
 - [x] First-pass spell catalogue for UNSC (6) and Covenant (5), ODST drop-pod unit
 - [x] D33 (your additions): friendly fire, Smoke Bomb, EMP, Banshee Ambush, ODST SMG and rockets, items and Inventory, economy and powerful buff cards, deployment slot, Intensive Training, reinforcements from round 4, squad prices in the shop
 - [x] D34: smoke lasts the whole round, Intensive Training twice with separate cooldowns, Laser Sights +2 m, all items in the Sandbox
-- [x] D35 (play test): drag items onto hexagons, no budget text, blue shield bar, two-click line placement at any angle, battle speed on trial (1x = 0.5), Glassing Beam hits air
+- [x] D35 (play test): drag items onto hexagons, no budget text, blue shield bar, two-click line placement at any angle, Glassing Beam hits air
+- [x] D36 (after the speed trial): battle speed is real again; all move speeds halved, +1 m/s for Warthog, Ghost and Gauss Warthog; counter web and matchup table re-measured. For the next balance pass: slower armies favour long-range units (12 of 276 matchups changed winner, see D36)
