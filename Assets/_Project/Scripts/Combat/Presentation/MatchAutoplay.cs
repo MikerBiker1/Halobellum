@@ -2,9 +2,12 @@
 // Test tool for built games: plays the Match scene by itself so screens and performance can be
 // checked without clicking. It does nothing unless the game is started with "-autoplay", e.g.
 //   Halobellum.exe -autoplay -autoplayRounds 3 -autoplaySpeed 4 -autoplayShots C:\temp\shots
-// It picks the first draft card, buys up to 2 squads per round of the first affordable unlocked
-// unit type, presses Ready, saves screenshots of the draft, the bought squads falling in, each
-// deployment, battle (at 2 s of battle time) and result, then quits after the given number of rounds (or when the match ends).
+// It picks the first draft card, takes the first affordable card on each card screen (Milestone 7),
+// buys up to 2 squads per round of the first affordable unlocked unit type, places every ready spell
+// (offensive ones on the enemy's last-seen army, defensive ones on its own first squad), presses
+// Ready, saves screenshots of the draft, each card screen, the bought squads falling in, each
+// deployment, battle (at 1.2 s of battle time, when spells go off) and result, then quits after the
+// given number of rounds (or when the match ends).
 // With "-sandboxDemo <folder>" it opens the Sandbox scene instead (see SandboxAutoplay).
 // Depends on: MatchController, BattleController, SandboxAutoplay, Halobellum.Economy, UnityEngine.
 
@@ -90,10 +93,15 @@ namespace Halobellum.Presentation
                     }
                     _match.ChooseDraft(pick);
                     break;
+                case MatchPhase.Cards:
+                    if (ShotFirst($"r{m.Round:00}_c_cards")) return;
+                    TakeFirstAffordableCard(m);
+                    break;
                 case MatchPhase.Deployment:
                     if (_lastShotRound != m.Round)
                     {
                         BuySquads(m);
+                        PlaceSpells(m);
                         _lastShotRound = m.Round;
                         _dropShotPending = true;
                         _wait = 0.25f; // Bought squads drop in: one shot mid-fall, then let them land.
@@ -111,7 +119,7 @@ namespace Halobellum.Presentation
                     _match.Ready();
                     break;
                 case MatchPhase.Battle:
-                    if (!_battleShotTaken && _battle.Simulation != null && _battle.Simulation.ElapsedSeconds >= 2f)
+                    if (!_battleShotTaken && _battle.Simulation != null && _battle.Simulation.ElapsedSeconds >= 1.2f)
                     {
                         Shot($"r{m.Round:00}_2_battle");
                         _battleShotTaken = true;
@@ -130,6 +138,37 @@ namespace Halobellum.Presentation
         }
 
         private bool _phaseShotTaken;
+
+        private void TakeFirstAffordableCard(Match m)
+        {
+            CardOffer offer = m.Player.Offer;
+            for (int i = 0; offer != null && i < offer.Count; i++)
+            {
+                if (offer.PriceOf(i) <= m.Player.Credits && _match.ChooseCard(i).Ok) return;
+            }
+            _match.SkipCards();
+        }
+
+        private void PlaceSpells(Match m)
+        {
+            foreach (OwnedSpell spell in m.Player.Spells)
+            {
+                if (!spell.IsReady(m.Round)) continue;
+                Vec2 target = new Vec2(0f, 30f);
+                if (spell.Stats.Offensive && m.SeenArmy(Team.B).Count > 0)
+                {
+                    SeenSquad seen = m.SeenArmy(Team.B)[0];
+                    target = DeploymentGrid.WorldCentre(seen.Type, seen.Column, seen.Row, seen.Rotated90, Team.B, m.CombatRules);
+                }
+                else if (!spell.Stats.Offensive && m.Player.Squads.Count > 0)
+                {
+                    PlacedSquad own = m.Player.Squads[0];
+                    target = DeploymentGrid.WorldCentre(own.Type, own.Column, own.Row, own.Rotated90, Team.A, m.CombatRules);
+                }
+                _match.BeginPlacingSpell(spell);
+                if (!_match.PlaceSpellAt(target).Ok) _match.CancelSpellPlacement();
+            }
+        }
 
         /// <summary>Takes this screen's screenshot once and returns true (wait); returns false once taken (act).</summary>
         private bool ShotFirst(string name)

@@ -80,3 +80,13 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 - [x] **Re-check after the second D30 change.** A Warthog or Ghost behind chaff should now drive straight at its target while the chaff splits to both sides (no turning left and right). Faster infantry behind a Scorpion or Titan go around it; the tank keeps its line.
 - [ ] **Answer D30** in DECISIONS.md (the details of how crowds behave).
 
+## 2026-11-01 (evening): check M7 (cards)
+
+- [ ] **Card screen.** Play a match (`Assets/_Project/Scenes/Match.unity`, Play). After round 1, the round 2 screen offers 3 spells: **Take** one (price on the button) or **Skip** (+50). Round 3 offers reinforcements (Skip gives +100), round 4 spells again.
+- [ ] **Place a spell.** In deployment, the **Spells** panel (left) lists your spells. Press **Place**: the area follows the mouse, red for offensive spells (anywhere), blue for defensive ones (only your side), grey where it can't go. Left-click to place, right-click to cancel; **Move** and **X** change your mind. Press Ready and watch it go off.
+- [ ] **Recharge.** The panel shows "Recharging: N round(s)" after use (MAC Strike: usable every other round).
+- [ ] **Reinforcements.** Take a reinforcement card: its squads appear in the middle of your zone (move them like bought squads); you can still buy your 2 squads.
+- [ ] **Try the big ones.** HAVOK Nuke / Glassing Beam (one copy, 4-round recharge), ODST Drop Pods (UNSC: 6 ODSTs fall from the sky where you placed them).
+- [ ] **Answer D31 and D32** in DECISIONS.md (spell numbers, card rule details).
+- [ ] **Confirm M7.**
+

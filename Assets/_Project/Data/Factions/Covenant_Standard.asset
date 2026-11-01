@@ -31,3 +31,9 @@ MonoBehaviour:
   subFactions:
   - subFactionName: Standard
     exclusiveUnits: []
+  spells:
+  - {fileID: 11400000, guid: 24a845a0a64ea7ba8aa2e5b11b160884, type: 2}
+  - {fileID: 11400000, guid: 17439d7a16746d79c5dc9837fcf3127a, type: 2}
+  - {fileID: 11400000, guid: a057907475d3043bb8e1008520e92ac9, type: 2}
+  - {fileID: 11400000, guid: 630c27af9ed68b6afd1a091e3dd47234, type: 2}
+  - {fileID: 11400000, guid: 309ca594a0eed227e137c6a2582b8e3c, type: 2}

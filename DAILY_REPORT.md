@@ -1,73 +1,48 @@
-# Daily report: 2026-11-01 (your D25 to D28 answers)
+# Daily report: 2026-11-01 (afternoon), M7: Cards
 
-Last night's report (M5, M6 and the first faction styles) is in this file's Git history. Today I worked through your answers to D25 to D28. All three changes are done, tested and pushed. They wait for your look, and M4, M5 and M6 still wait for your confirmation.
+This morning's report (D25 to D30) is in this file's Git history. You approved D30 and confirmed M4 to M6 by moving on to M7. **M7 is done**: all criteria pass, waiting for your confirmation and your answers to D31 and D32.
 
-## D25: the enemy's last army as grey ghosts
-- During deployment, the enemy's army **as it was when the last battle started** stands in its zone in grey, at the same positions.
-- **Click a ghost** to see its stats. The window says "enemy, last battle" and shows its level and the techs it fought with.
-- **What the AI deploys this round stays hidden** until you press Ready. A test checks that a squad the AI buys during the round never appears.
-- Seen squads now also record their owner's techs, because techs show in battle. The AI gets the same information about you.
+## What M7 adds
+- **Card screen:** opens at the start of every round from round 2, before deployment. It offers spells in round 2, reinforcements in round 3, then keeps alternating.
+  - Pick 1 of 3 cards, or **Skip** for +50 credits (spells) or +100 (reinforcements). The button shows the bonus.
+  - Each card shows its price, and you can't take a card you can't afford.
+- **Spell cards** (permanent and rechargeable, Bible Section 10):
+  - You pay once when you take the card, and the spell is yours for the match. It can be used in the round you take it.
+  - Each spell has a maximum number of copies. Once you own the maximum, it isn't offered again, and offers can show fewer than 3 cards.
+  - After use, a spell recharges for its number of rounds. A 1-round recharge means every other round, as in your example.
+  - **Placing spells:** a **Spells** panel on the left during deployment, with Place, Move and X (take back). While placing, the area follows the mouse:
+    - **red** for offensive spells (anywhere on the field);
+    - **blue** for defensive spells and buffs (your own side only);
+    - grey where the spell can't go.
+  - Spells go off a moment after the battle starts. Strikes and zones flash, and drop pods fall from the sky. The enemy's spells stay hidden until the battle starts, and the AI never sees yours.
+- **Reinforcement cards** (single-use):
+  - Each card is a random unit from your roster at a random level. It's copied until it reaches the round's budget (200 + 50 per round), and you pay whatever it's worth above the budget. The Bible's examples are all checked by tests.
+  - The squads join your army like squads bought this round, so you can move them. They unlock the unit, ignore the 2-squad and 1-unlock limits, and start with 0 XP.
+- **First spells** (D31):
+  - **UNSC:** MAC Strike, Archer Missile Barrage, HAVOK Nuke, ODST Drop Pods (6 ODSTs land for one battle), Bubble Shield, Battlefield Rally.
+  - **Covenant:** Plasma Bombardment, Plasma Storm, Glassing Beam, Energy Shield Dome, Prophet's Blessing.
+- **Result screen:** spells appear under top damage dealers and "what killed what", for example "Your MAC Strike killed 9 Grunt".
+- **AI:** takes the card worth the most for its price, or skips. It aims strikes at the densest part of your army **as it was revealed last battle**, drops pods on your most valuable squad, and puts buffs on its own densest group. Easy is careless about both.
 
-## D26: double XP and the level-up arrow
-- The XP bar is now **twice the squad's price** (`xpBarPerSquadCost` = 2 in `MatchRules.asset`).
-- A squad that is ready to level up shows a **yellow arrow** above it. It pulses bright, dim, bright, and has a dark outline so it stands out over any squad. It disappears once the squad levels up.
-- The arrow shows during deployment and on the result screen. Size, colours and pulse speed are on the Battle object's Unit View Manager.
-- Screenshots: `Docs/D26_level_up_arrows.png` and `Docs/D26_level_up_arrows_closeup.png`.
-
-## D28: textured faction UI
-Answer to "if you can't manage this, tell me how I can help": no help was needed.
-- **Textures:** drawn by a script I wrote, `Tools/UiArt/make_ui_textures.py`. They are ours, match the HUD exactly, and can be redrawn after any change.
-- **Fonts:** downloaded from Google Fonts (SIL Open Font License, free to ship). Each font folder has its licence and a `SOURCE.txt`.
-- **UNSC, after the frigate image:**
-  - Bevelled steel frames with cut corners, ribbed edges, an engraved seam, amber stripes on the big corners, small window lights and rivets.
-  - Panel interiors tiled with hull plating: plate seams, ribbed plates, vents, rows of windows, stencil markings.
-  - Recessed list rows with an amber corner bracket.
-  - Steel buttons with an amber tick and an amber outline on hover.
-  - Segmented health and XP bars.
-  - A small tab with lights on top of wide panels.
-  - Titles in Saira Semi Condensed (capitals), text in Chakra Petch.
-- **Covenant, after the cruiser image:**
-  - Polished violet frames with rounded, leaf-like corners and a dark crevice holding a **glowing blue line**.
-  - Armoured swoops with glowing strips over the two big corners.
-  - Interiors tiled with pearly violet metal, flowing engraved lines and blue light strips.
-  - Violet buttons with a blue outline that glows on hover.
-  - Smooth glowing bars.
-  - A glowing lens on top of wide panels.
-  - Titles in Audiowide, text in Electrolize.
-- **What stays neutral:** the draft screen and the sandbox.
-- **Settings:** everything is in `Data/UI/UNSC_Theme.asset` and `Covenant_Theme.asset`: textures, fonts, text sizes, how strong the hull texture is.
-- **Screenshots:** `Docs/D28_UNSC_deployment.png`, `Docs/D28_UNSC_result.png`, `Docs/D28_Covenant_deployment.png`, `Docs/D28_Covenant_result.png`.
-
-## Fixed along the way
-- **Overlapping result text:** the "Ready to level up" line on the result screen overlapped the last "what killed what" line. It now follows the list.
-- **Clipped titles:** the new fonts sit lower than Arial, which the HUD was laid out with, so their text was clipped at the bottom. Each theme now moves its text up by a set amount.
-
-## After your play test (afternoon)
-- **D29, income:** income now builds on the 200 starting credits: 200 to start, **400 after round 1**, 600 after round 2, and so on up to 1600 (reached after round 7). Only `baseIncome` in `MatchRules.asset` changed, from 400 to 200.
-- **D30, crowds.** Two new tests reproduced both problems on the old code (the vehicle stuck behind a chaff squad; only half of a front squad firing while the squad behind jiggled). Both pass now.
-  - **Making way:** a moving unit looks ahead along its path. Friendly units at least 1.2x slower that stand in it step sideways out of the way.
-  - **Pushing:** when two walking bodies collide, the smaller one gives way more.
-  - **Edging forward:** a fighting unit with a held-up friend right behind it moves toward its target at half speed while still firing. It stops at 25% of its weapon range (never inside a minimum range).
-  - **Balance:** the counter web still passes with the real units, 24 of 24, in both Unity and .NET. The Hard AI's matchup table was re-measured.
-  - Details are in DECISIONS.md (D30) for your approval.
-- **D30, second round (your feedback):**
-  - **Big units hold their line:** a unit only makes way for a faster friend that is at least as big as itself. Tanks and Titans never step aside for smaller units, which go around them.
-  - **No more weaving:** the Warthog or Ghost drives straight at its target. It no longer swerves around, steers away from, or slides along units that are making way for it. It shoves smaller ones aside, and slows down (still heading straight) behind same-size ones.
-  - Both are covered by tests: the vehicle's heading stays within a few degrees of straight, and the tank is never asked to make way. The counter web is still 24 of 24.
+## Decisions needing your approval
+- **D31: the spell catalogue.** Prices, recharge times, damage and areas are all first-pass values in `Data/Spells`.
+- **D32: card rule details I had to choose.** The main ones:
+  - The card screen comes before deployment.
+  - Reinforcement levels grow with the rounds: level 1 until round 4, up to 2 until round 8, up to 3 after that.
+  - A reinforcement squad sold before its first battle refunds only what you paid. That way, taking a free card and selling it isn't a way to make money.
+  - No spells in the Sandbox yet.
 
 ## Test results
-- Unity EditMode **291 / 291**, Unity PlayMode **18 / 18**, .NET harness **265 / 265**.
-- New tests:
-  - The preview shows the enemy as seen at the last battle, never its current deployment.
-  - Ghosts are grey and can be read.
-  - The arrow appears for a ready squad and goes away after the level-up.
-  - Both faction themes have every texture and both fonts, with licences; the neutral theme stays plain.
-- **Built game:** 2-round autoplay as UNSC and as Covenant, plus four 3-round runs to catch the arrow on screen. No errors.
-- **Not tested automatically:** clicking a ghost with the real mouse, and how the UI looks at resolutions other than 1920 x 1080.
+- **Unity:** EditMode **323 / 323**, PlayMode **19 / 19**. **.NET harness:** **293 / 293**.
+- **New tests:**
+  - Spell effects in battle.
+  - Card rules, including the Bible's pricing examples and the "every other round" recharge.
+  - The spell data.
+  - A scene test: a spell taken, placed (outline shown), cast and recharging, then a reinforcement card whose squads appear on the field.
+  - AI-vs-AI matches with cards are played to the end.
+- **Built game:** 3 rounds of autoplay as UNSC and as Covenant with no errors. Screenshots are in `Docs/M7_*.png`.
+- **Not tested automatically:** placing a spell with the real mouse. The scene test uses the same functions the mouse calls.
+- **Small note:** decimals follow your PC's language (for example "2,5 s"), as elsewhere in the HUD.
 
 ## Blockers
 None.
-
-## Waiting for you
-- **Feedback on the new look**, from playing once per faction. Your checklist is at the bottom of HUMAN_TODO.md.
-- **Confirm M4, M5 and M6.**

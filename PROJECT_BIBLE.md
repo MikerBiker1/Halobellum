@@ -463,6 +463,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-01 | Faction UI: textured, ship-inspired panels (UNSC grey hull plating; Covenant violet with glowing blue lines) | Per the project owner (D28) |
 | 2026-11-01 | Income builds on the 200 starting credits: 400 after round 1, 600 after round 2 ... capped at 1600 | Per the project owner (D29) |
 | 2026-11-01 | Crowds: slower units step aside for much faster friends behind them that are at least as big (tanks and Titans never step aside for smaller units; those go around), the unit coming through drives straight on, smaller walkers give way to bigger ones, and a fighting unit edges toward its target (still firing) while a friend is stuck behind it | Per the project owner (D30) |
+| 2026-11-01 | M4, M5 and M6 confirmed; D30 (crowd movement) approved | Per the project owner |
 
 ## 18. Assumptions to confirm
 

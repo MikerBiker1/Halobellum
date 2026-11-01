@@ -4,6 +4,9 @@
 //     button to the Sandbox.
 //   Deployment: credits and next income, squads bought (x of 2), unlocks (x of 1), both bases, the
 //     unit shop (Buy / Unlock), actions for the selected squad (Move, Turn, Sell) and Ready. No timer.
+//   Cards (from round 2, Milestone 7): 3 spell or reinforcement cards with their prices, and Skip
+//     with its bonus. During deployment a spell bar (left) lists owned spells: Place / Move, take
+//     back, or how many rounds until recharged.
 //   Battle: both base health bars and a live army-value comparison (speed controls are in BattleHud).
 //   Result: base damage dealt by each side, income, survivors, top damage dealers, what killed what.
 //   Match over: the winner and a New match button.
@@ -35,7 +38,7 @@ namespace Halobellum.UI
         [SerializeField] private Color playerColor = new Color(0.35f, 0.55f, 1f);
         [SerializeField] private Color enemyColor = new Color(1f, 0.4f, 0.32f);
 
-        private GUIStyle _title, _big, _text, _small, _smallCentered, _button, _bigButton, _centered, _header, _barLabel;
+        private GUIStyle _title, _big, _text, _small, _smallCentered, _button, _bigButton, _centered, _header, _barLabel, _wrap, _wrapDim;
         private float _scale;
         private Vector2 _shopScroll;
 
@@ -51,6 +54,7 @@ namespace Halobellum.UI
             {
                 case MatchPhase.Draft: DrawDraft(); break;
                 case MatchPhase.Deployment: DrawDeployment(); break;
+                case MatchPhase.Cards: DrawCards(); break;
                 case MatchPhase.Battle: DrawBattle(); break;
                 case MatchPhase.Result: DrawBattle(); DrawResult(); break;
                 case MatchPhase.MatchOver: DrawMatchOver(); break;
@@ -141,7 +145,112 @@ namespace Halobellum.UI
             }
 
             DrawShop(width, height);
+            DrawSpellBar();
             DrawSelectedSquadActions(width, height);
+        }
+
+        // ------------------------------------------------------------------ cards (Milestone 7)
+
+        private void DrawCards()
+        {
+            Match m = match.Match;
+            CardOffer offer = m.Player.Offer;
+            if (offer == null) return;
+            bool spells = offer.Kind == CardKind.Spell;
+            const float cardWidth = 310f, cardHeight = 330f, gap = 20f;
+            float panelWidth = Mathf.Max(3, offer.Count) * (cardWidth + gap) + gap;
+            Rect panel = CenteredPanel(panelWidth, cardHeight + 170f);
+            GUI.Label(new Rect(panel.x, panel.y + 14f, panel.width, 34f),
+                HudTheme.Title(spells ? $"Round {m.Round}: choose a spell" : $"Round {m.Round}: choose reinforcements"), _centered);
+            GUI.Label(new Rect(panel.x, panel.y + 50f, panel.width, 24f),
+                spells ? $"Spells are kept for the match and recharge after each use.   Credits {m.Player.Credits}"
+                       : $"Budget {m.Rules.ReinforcementBudget(m.Round)}: you pay what a card is worth above it.   Credits {m.Player.Credits}", _smallCentered);
+
+            if (offer.Count == 0)
+                GUI.Label(new Rect(panel.x, panel.y + 160f, panel.width, 30f), "No spells left to offer: you own every spell you can.", _smallCentered);
+            float x = panel.x + gap + (panelWidth - gap - offer.Count * (cardWidth + gap)) * 0.5f;
+            for (int i = 0; i < offer.Count; i++)
+            {
+                var card = new Rect(x + i * (cardWidth + gap), panel.y + 86f, cardWidth, cardHeight);
+                HudTheme.RowBox(card);
+                if (spells) DrawSpellCard(card, offer.Spells[i], m.Player.CopiesOwned(offer.Spells[i]));
+                else DrawReinforcementCard(card, offer.Reinforcements[i]);
+                int price = offer.PriceOf(i);
+                GUI.enabled = m.Player.Credits >= price;
+                string label = price > 0 ? $"Take ({price})" : "Take (free)";
+                if (GUI.Button(new Rect(card.x + 14f, card.yMax - 52f, card.width - 28f, 40f), label, _bigButton)) match.ChooseCard(i);
+                GUI.enabled = true;
+            }
+            if (GUI.Button(new Rect(panel.center.x - 120f, panel.yMax - 62f, 240f, 44f), $"Skip (+{offer.SkipBonus} credits)", _bigButton)) match.SkipCards();
+            if (!string.IsNullOrEmpty(match.Message))
+                GUI.Label(new Rect(panel.x, panel.yMax - 92f, panel.width, 26f), match.Message, _smallCentered);
+        }
+
+        private void DrawSpellCard(Rect card, SpellStats spell, int owned)
+        {
+            float x = card.x + 14f, w = card.width - 28f, y = card.y + 12f;
+            GUI.Label(new Rect(x, y, w, 30f), spell.Name, _header); y += 32f;
+            Color old = GUI.color;
+            GUI.color = SpellView.ColorFor(spell);
+            GUI.Label(new Rect(x, y, w, 24f), spell.Offensive ? "Offensive: anywhere on the field" : "Defensive: on your own side", _text);
+            GUI.color = old;
+            y += 28f;
+            GUI.Label(new Rect(x, y, w, 66f), spell.EffectsText(), _wrap); y += 70f;
+            GUI.Label(new Rect(x, y, w, 66f), spell.Description, _wrapDim); y += 70f;
+            GUI.Label(new Rect(x, y, w, 24f), $"Recharge: {spell.CooldownRounds} round{(spell.CooldownRounds == 1 ? "" : "s")} after use", _small); y += 24f;
+            GUI.Label(new Rect(x, y, w, 24f), $"Owned: {owned} of {spell.MaxOwnedCopies}", _small);
+        }
+
+        private void DrawReinforcementCard(Rect card, ReinforcementCard reinforcement)
+        {
+            float x = card.x + 14f, w = card.width - 28f, y = card.y + 12f;
+            UnitStats unit = reinforcement.Type;
+            GUI.Label(new Rect(x, y, w, 30f), unit.Name, _header); y += 34f;
+            GUI.Label(new Rect(x, y, w, 24f), $"{reinforcement.Squads} squad{(reinforcement.Squads == 1 ? "" : "s")} at level {reinforcement.Level}", _text); y += 28f;
+            GUI.Label(new Rect(x, y, w, 24f), $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.SquadSize)} each", _small); y += 30f;
+            GUI.Label(new Rect(x, y, w, 24f), $"Worth {reinforcement.TotalWorth} ({reinforcement.SquadWorth} per squad)", _text); y += 26f;
+            GUI.Label(new Rect(x, y, w, 24f), $"Budget {reinforcement.Budget}", _small); y += 26f;
+            bool unlocked = match.Match.Player.Unlocked.Contains(unit);
+            GUI.Label(new Rect(x, y, w, 48f), unlocked ? "Placed like squads bought this round; free of the 2-squad limit."
+                                                       : "Also unlocks the unit for the rest of the match.", _wrapDim);
+        }
+
+        /// <summary>The player's spells during deployment: place, move or take back ready ones; recharging ones show how long.</summary>
+        private void DrawSpellBar()
+        {
+            Match m = match.Match;
+            List<OwnedSpell> spells = m.Player.Spells;
+            if (spells.Count == 0) return;
+            const float rowHeight = 52f;
+            var panel = new Rect(10f, 110f, 330f, 44f + spells.Count * rowHeight);
+            Panel(panel);
+            GUI.Label(new Rect(panel.x + 12f, panel.y + 8f, panel.width - 24f, 28f), HudTheme.Title("Spells"), _header);
+            for (int i = 0; i < spells.Count; i++)
+            {
+                OwnedSpell spell = spells[i];
+                var row = new Rect(panel.x + 6f, panel.y + 40f + i * rowHeight, panel.width - 12f, rowHeight - 4f);
+                HudTheme.RowBox(row);
+                Color old = GUI.color;
+                GUI.color = SpellView.ColorFor(spell.Stats);
+                GUI.DrawTexture(new Rect(row.x + 8f, row.y + 10f, 6f, row.height - 20f), Texture2D.whiteTexture);
+                GUI.color = old;
+                GUI.Label(new Rect(row.x + 22f, row.y + 3f, row.width - 130f, 24f), spell.Stats.Name, _text);
+                bool ready = spell.IsReady(m.Round);
+                string status = !ready ? $"Recharging: {spell.RoundsLeft(m.Round)} round(s)"
+                    : match.PlacingSpellId == spell.Id ? "Click on the field" : spell.IsPlaced ? "Placed" : "Ready";
+                GUI.Label(new Rect(row.x + 22f, row.y + 25f, row.width - 130f, 20f), status, _small);
+                if (!ready) continue;
+                if (match.PlacingSpellId == spell.Id)
+                {
+                    if (GUI.Button(new Rect(row.xMax - 104f, row.y + 8f, 96f, 32f), "Cancel", _button)) match.CancelSpellPlacement();
+                }
+                else if (spell.IsPlaced)
+                {
+                    if (GUI.Button(new Rect(row.xMax - 104f, row.y + 8f, 62f, 32f), "Move", _button)) match.BeginPlacingSpell(spell);
+                    if (GUI.Button(new Rect(row.xMax - 38f, row.y + 8f, 30f, 32f), "X", _button)) match.UnplaceSpell(spell);
+                }
+                else if (GUI.Button(new Rect(row.xMax - 104f, row.y + 8f, 96f, 32f), "Place", _button)) match.BeginPlacingSpell(spell);
+            }
         }
 
         private void DrawShop(float width, float height)
@@ -284,7 +393,7 @@ namespace Halobellum.UI
 
         private static IEnumerable<UnitTypeResult> TopDealers(BattleResult result, int count)
         {
-            return result.TeamA.UnitTypes.Concat(result.TeamB.UnitTypes)
+            return result.TeamA.UnitTypes.Concat(result.TeamB.UnitTypes).Concat(result.TeamA.Spells).Concat(result.TeamB.Spells)
                 .Where(t => t.DamageDealt > 0f)
                 .OrderByDescending(t => t.DamageDealt)
                 .Take(count);
@@ -342,6 +451,9 @@ namespace Halobellum.UI
             _button = new GUIStyle(GUI.skin.button) { fontSize = HudTheme.Size(15) };
             _bigButton = new GUIStyle(GUI.skin.button) { fontSize = HudTheme.Size(19), fontStyle = FontStyle.Bold };
             _smallCentered = new GUIStyle(_small) { alignment = TextAnchor.MiddleCenter };
+            _wrap = new GUIStyle(_text) { fontSize = HudTheme.Size(15), wordWrap = true };
+            _wrapDim = new GUIStyle(_small) { wordWrap = true, alignment = TextAnchor.UpperLeft };
+            HudTheme.Fit(_wrap, _wrapDim);
             HudTheme.Fit(_text, _small, _big, _centered, _title, _header, _barLabel, _button, _bigButton, _smallCentered);
         }
     }

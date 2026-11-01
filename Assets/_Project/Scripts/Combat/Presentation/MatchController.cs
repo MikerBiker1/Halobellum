@@ -6,7 +6,9 @@
 // the round's battle to the BattleController to play. When the battle ends it applies the result
 // (base damage, income) and the HUD shows the result screen. A bought squad is placed in the middle
 // of the zone, drops in from high above and is selected when it lands, ready to be moved. Squads
-// ready to level up show a pulsing arrow (decision D26).
+// ready to level up show a pulsing arrow (decision D26). From round 2 each round opens with the card
+// screen (Milestone 7): take a spell or reinforcement card, or skip. Owned spells are placed during
+// deployment (SpellView draws the blue / red outlines and handles the mouse) and go off in battle.
 // The HUD (Scripts/UI/MatchHud) and DeploymentInput call the public methods here; tests do too.
 // Depends on: BattleController, SquadSelection, UnitViewManager,
 //             Halobellum.Economy (Match, RuleBasedAi, DeploymentGrid),
@@ -35,6 +37,7 @@ namespace Halobellum.Presentation
         private BattleController _battle;
         private SquadSelection _selection;
         private UnitViewManager _views;
+        private SpellView _spellView;
         /// <summary>Squads still dropping in: placed squad id -> Time.unscaledTime the drop began.</summary>
         private readonly Dictionary<int, float> _drops = new Dictionary<int, float>();
         private readonly Dictionary<UnitStats, UnitDefinition> _sources = new Dictionary<UnitStats, UnitDefinition>();
@@ -69,6 +72,8 @@ namespace Halobellum.Presentation
             _selection = GetComponent<SquadSelection>();
             _views = GetComponent<UnitViewManager>();
             _views.LevelUpReady = ShowsLevelUpArrow;
+            _spellView = GetComponent<SpellView>();
+            if (_spellView == null) _spellView = gameObject.AddComponent<SpellView>();
             _battle.BattleFinished += OnBattleFinished;
             NewMatch();
         }
@@ -95,6 +100,7 @@ namespace Halobellum.Presentation
             _matchups = matchupTable != null ? matchupTable.ToTable() : null;
             Match = new Match(matchRules.ToRules(), _battle.Rules, infos, matchSeed, new RuleBasedAi(Difficulty, matchSeed, _matchups));
             CancelPlacement();
+            CancelSpellPlacement();
             _drops.Clear();
             Message = "";
             _views.GhostTeam = null;
@@ -188,6 +194,7 @@ namespace Halobellum.Presentation
                 return;
             }
             CancelPlacement();
+            CancelSpellPlacement();
             MovingSquadId = squad.Id;
             PlacingRotated = squad.Rotated90;
             _selection.InputEnabled = false;
@@ -376,6 +383,75 @@ namespace Halobellum.Presentation
             }
         }
 
+        // ------------------------------------------------------------------ cards and spells (Milestone 7)
+
+        /// <summary>True while the card screen is up (start of a round from round 2).</summary>
+        public bool IsChoosingCards => Match != null && Match.Phase == MatchPhase.Cards;
+
+        public ActionResult ChooseCard(int index)
+        {
+            ActionResult result = Report(Match.ChooseCard(Team.A, index));
+            if (result.Ok)
+            {
+                RefreshPreview();
+                PhaseChanged?.Invoke();
+            }
+            return result;
+        }
+
+        public ActionResult SkipCards()
+        {
+            ActionResult result = Report(Match.SkipCards(Team.A));
+            if (result.Ok)
+            {
+                RefreshPreview();
+                PhaseChanged?.Invoke();
+            }
+            return result;
+        }
+
+        /// <summary>The spell being placed (its outline follows the mouse), or -1.</summary>
+        public int PlacingSpellId { get; private set; } = -1;
+        public OwnedSpell PlacingSpell => Match?.Player.FindSpell(PlacingSpellId);
+
+        /// <summary>Starts placing (or moving) one of the player's ready spells; the next PlaceSpellAt puts it there.</summary>
+        public void BeginPlacingSpell(OwnedSpell spell)
+        {
+            if (Match.Phase != MatchPhase.Deployment || spell == null) return;
+            if (!spell.IsReady(Match.Round))
+            {
+                Message = $"{spell.Stats.Name} is recharging ({spell.RoundsLeft(Match.Round)} more round(s)).";
+                return;
+            }
+            CancelPlacement();
+            PlacingSpellId = spell.Id;
+            _selection.InputEnabled = false;
+            Message = spell.Stats.Offensive
+                ? $"{spell.Stats.Name}: left-click anywhere on the field (red), right-click to cancel."
+                : $"{spell.Stats.Name}: left-click on your side (blue), right-click to cancel.";
+        }
+
+        public void CancelSpellPlacement()
+        {
+            if (PlacingSpellId < 0) return;
+            PlacingSpellId = -1;
+            if (_selection != null && !IsPlacing) _selection.InputEnabled = true;
+        }
+
+        /// <summary>True if the spell being placed could go at this battlefield point (metres).</summary>
+        public bool CanPlaceSpellAt(Vec2 position) => PlacingSpell != null && Match.CanPlaceSpell(Team.A, PlacingSpell, position);
+
+        public ActionResult PlaceSpellAt(Vec2 position)
+        {
+            if (PlacingSpellId < 0) return ActionResult.Fail("No spell to place.");
+            ActionResult result = Report(Match.PlaceSpell(Team.A, PlacingSpellId, position));
+            if (result.Ok) CancelSpellPlacement();
+            return result;
+        }
+
+        /// <summary>Takes a placed spell back; it stays ready.</summary>
+        public ActionResult UnplaceSpell(OwnedSpell spell) => spell == null ? ActionResult.Fail("No spell.") : Report(Match.UnplaceSpell(Team.A, spell.Id));
+
         // ------------------------------------------------------------------ battle and result
 
         /// <summary>The player is ready: the round's battle starts (the AI's army is revealed).</summary>
@@ -383,6 +459,7 @@ namespace Halobellum.Presentation
         {
             if (Match.Phase != MatchPhase.Deployment) return;
             CancelPlacement();
+            CancelSpellPlacement();
             _drops.Clear();
             Message = "";
             _views.GhostTeam = null;
@@ -412,7 +489,7 @@ namespace Halobellum.Presentation
         /// </summary>
         private void RefreshPreview(int selectPlacedSquadId = -1)
         {
-            if (Match.Phase != MatchPhase.Deployment) return;
+            if (Match.Phase != MatchPhase.Deployment && Match.Phase != MatchPhase.Cards) return;
             BattleSimulation preview = Match.BuildPreview();
             _previewOrder.Clear();
             _previewOrder.AddRange(Match.Player.Squads);

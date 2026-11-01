@@ -3,10 +3,12 @@
 // hidden), buying a squad (placed in the middle, dropped in, then selected), a full round
 // (deployment, battle, result, next round with income), the AI difficulty choice, and full
 // matches that are won, lost, and played to the end against the Normal AI (Milestone 5), the
-// enemy's last-battle army shown as grey ghosts (D25) and the level-up arrow (D26).
+// enemy's last-battle army shown as grey ghosts (D25) and the level-up arrow (D26), and cards
+// (Milestone 7): the card screen from round 2, a spell placed and cast in battle, reinforcements.
 // Depends on: Halobellum.Presentation, Halobellum.Economy, Halobellum.Core, NUnit, Unity Test Framework.
 
 using System.Collections;
+using System.Linq;
 using Halobellum.Combat;
 using Halobellum.Core;
 using Halobellum.Economy;
@@ -114,9 +116,18 @@ namespace Halobellum.Tests
 
             _match.Continue();
             yield return null;
-            Assert.AreEqual(MatchPhase.Deployment, m.Phase);
+            Assert.AreEqual(MatchPhase.Cards, m.Phase, "Round 2 opens with the card screen.");
             Assert.AreEqual(2, m.Round);
             Assert.AreEqual(creditsBefore + m.LastSummary.IncomeAwarded, m.Player.Credits);
+            Assert.IsTrue(_match.SkipCards().Ok);
+            Assert.AreEqual(MatchPhase.Deployment, m.Phase);
+        }
+
+        /// <summary>Leaves the result screen and skips the card offer if there is one.</summary>
+        private void ContinueAndSkipCards()
+        {
+            _match.Continue();
+            if (_match.Match.Phase == MatchPhase.Cards) _match.SkipCards();
         }
 
         [UnityTest]
@@ -132,7 +143,7 @@ namespace Halobellum.Tests
             while (m.Phase != MatchPhase.MatchOver && rounds < 200)
             {
                 yield return PlayRound();
-                if (m.Phase == MatchPhase.Result) _match.Continue();
+                if (m.Phase == MatchPhase.Result) ContinueAndSkipCards();
                 rounds++;
             }
             Assert.AreEqual(Team.B, m.Winner);
@@ -205,6 +216,11 @@ namespace Halobellum.Tests
             int rounds = 0;
             while (m.Phase != MatchPhase.MatchOver && rounds < 40)
             {
+                if (m.Phase == MatchPhase.Cards)
+                {
+                    int card = playerAi.ChooseCard(new AiView(m, Team.A), m.Player.Offer);
+                    if (card < 0 || !_match.ChooseCard(card).Ok) _match.SkipCards();
+                }
                 playerAi.Deploy(new AiView(m, Team.A));
                 yield return PlayRound();
                 Assert.Greater(m.Enemy.Squads.Count, 0, "The AI fields an army.");
@@ -238,7 +254,7 @@ namespace Halobellum.Tests
             Match m = _match.Match;
             yield return PlayRound();
             Assert.AreEqual(MatchPhase.Result, m.Phase);
-            _match.Continue();
+            ContinueAndSkipCards();
             yield return null;
 
             // D25: the player's squads, then the enemy's army as it was at the last battle start.
@@ -267,6 +283,65 @@ namespace Halobellum.Tests
             Assert.IsTrue(_match.LevelUp(ready).Ok, _match.Message);
             yield return null;
             CollectionAssert.DoesNotContain(views.SquadsWithArrows(), _battle.Simulation.Squads[0].Id);
+        }
+
+        [UnityTest]
+        public IEnumerator Cards_ASpellIsTakenPlacedAndCast_ThenReinforcementsJoin()
+        {
+            yield return LoadMatch();
+            _match.ChooseDraft(0);
+            yield return null;
+            Match m = _match.Match;
+            yield return PlayRound();
+            _match.Continue();
+            yield return null;
+
+            // Round 2: spells.
+            Assert.AreEqual(MatchPhase.Cards, m.Phase);
+            CardOffer offer = m.Player.Offer;
+            Assert.AreEqual(CardKind.Spell, offer.Kind);
+            Assert.AreEqual(3, offer.Count, "The factions have more than 3 spells.");
+            m.Player.Credits = 3000;
+            int strike = offer.Spells.FindIndex(s => s.Offensive && s.Effect == SpellEffect.Damage);
+            Assert.GreaterOrEqual(strike, 0, "This seed offers a damage spell.");
+            Assert.IsTrue(_match.ChooseCard(strike).Ok, _match.Message);
+            Assert.AreEqual(MatchPhase.Deployment, m.Phase);
+            OwnedSpell spell = m.Player.Spells.Single();
+
+            _match.BeginPlacingSpell(spell);
+            Assert.IsFalse(_match.CanPlaceSpellAt(new Vec2(0f, m.CombatRules.ArenaLength)), "Not outside the field.");
+            Assert.IsTrue(_match.PlaceSpellAt(new Vec2(0f, 30f)).Ok, _match.Message);
+            yield return null;
+            yield return null;
+            var view = _battle.GetComponent<SpellView>();
+            Assert.IsNotNull(view, "The Match scene draws spells.");
+            Assert.GreaterOrEqual(view.VisibleOutlines, 1, "The placed spell shows its outline.");
+
+            _battle.Speed = 16f;
+            _match.Ready();
+            Assert.IsTrue(_battle.Simulation.Spells.Any(s => s.Stats == spell.Stats && s.Team == Team.A), "Cast into the battle.");
+            float deadline = Time.realtimeSinceStartup + 120f;
+            while (m.Phase == MatchPhase.Battle && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.AreNotEqual(MatchPhase.Battle, m.Phase);
+            SimSpell cast = _battle.Simulation.Spells.First(s => s.Team == Team.A);
+            Assert.IsTrue(cast.TicksDone > 0 || _battle.Simulation.ElapsedSeconds < cast.Stats.DelaySeconds,
+                $"{cast.Stats.Name} went off (battle lasted {_battle.Simulation.ElapsedSeconds:0.0} s, delay {cast.Stats.DelaySeconds} s, ticks {cast.TicksDone}).");
+            Assert.IsFalse(spell.IsReady(3), "Recharging next round.");
+
+            // Round 3: reinforcements.
+            _match.Continue();
+            yield return null;
+            Assert.AreEqual(MatchPhase.Cards, m.Phase);
+            Assert.AreEqual(CardKind.Reinforcement, m.Player.Offer.Kind);
+            int before = m.Player.Squads.Count;
+            ReinforcementCard card = m.Player.Offer.Reinforcements[0];
+            Assert.IsTrue(_match.ChooseCard(0).Ok, _match.Message);
+            Assert.AreEqual(before + card.Squads, m.Player.Squads.Count);
+            yield return null;
+            int bodies = 0;
+            foreach (PlacedSquad squad in m.Player.Squads) bodies += squad.Type.SquadSize;
+            foreach (SeenSquad squad in m.SeenArmy(Team.B)) bodies += squad.Type.SquadSize;
+            Assert.AreEqual(bodies, CountViews(), "The reinforcement squads are shown on the field.");
         }
     }
 }

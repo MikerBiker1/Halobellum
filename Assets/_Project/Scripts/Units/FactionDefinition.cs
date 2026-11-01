@@ -2,7 +2,7 @@
 // The data asset for one faction (Bible Section 8): its base roster and its sub-factions, each with
 // its own exclusive units added on top of the base roster. Factions feed the starting draft.
 // Until the real sub-factions are built, each faction has one temporary "Standard" sub-faction with
-// no exclusive units (Bible Section 5). Create one with right-click > Create > Halobellum > Faction.
+// no exclusive units (Bible Section 5). It also lists the faction's spell cards (Milestone 7). Create one with right-click > Create > Halobellum > Faction.
 // Depends on: UnitDefinition, Halobellum.Economy (FactionInfo), Halobellum.Core, UnityEngine.
 
 using System;
@@ -30,6 +30,8 @@ namespace Halobellum.Units
         public UiThemeDefinition uiTheme;
         public List<UnitDefinition> baseRoster = new List<UnitDefinition>();
         public List<SubFactionEntry> subFactions = new List<SubFactionEntry>();
+        [Tooltip("Spells this faction can be offered between rounds (Milestone 7, Data/Spells).")]
+        public List<SpellDefinition> spells = new List<SpellDefinition>();
 
         /// <summary>
         /// Copies this faction into plain C# for the match. statsCache makes every unit asset turn into
@@ -50,6 +52,10 @@ namespace Halobellum.Units
                     if (unit != null) sub.ExclusiveUnits.Add(StatsFor(unit, statsCache));
                 }
                 info.SubFactions.Add(sub);
+            }
+            foreach (SpellDefinition spell in spells)
+            {
+                if (spell != null) info.Spells.Add(spell.ToStats(statsCache));
             }
             return info;
         }

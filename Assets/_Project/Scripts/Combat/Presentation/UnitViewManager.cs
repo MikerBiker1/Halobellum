@@ -8,7 +8,7 @@
 // A squad can be dropped in (DropSquad): it starts high above, out of sight, and falls to its spot
 // (used for newly bought squads during deployment; looks only, the simulation is unchanged).
 // Units added during the battle (a Pelican's Marines) get their views when they appear, and fall
-// from their carrier's flying height.
+// from their carrier's flying height; squads landed by drop-pod spells fall from high above.
 // Units of the GhostTeam are drawn grey: during deployment, the enemy's army as it was at the last
 // battle start (decision D25). Squads for which LevelUpReady says yes get a small yellow arrow above
 // them that pulses bright, dim, bright (decision D26).
@@ -185,6 +185,7 @@ namespace Halobellum.Presentation
             simulation.Events.UnitDied += OnUnitDied;
             simulation.Events.UnitSpawned += OnUnitSpawned;
             simulation.Events.ReinforcementDropped += OnReinforcementDropped;
+            simulation.Events.SpellTriggered += OnSpellTriggered;
             OnSelectionChanged(_selection.SelectedSquadId);
         }
 
@@ -195,6 +196,7 @@ namespace Halobellum.Presentation
             _shown.Events.UnitDied -= OnUnitDied;
             _shown.Events.UnitSpawned -= OnUnitSpawned;
             _shown.Events.ReinforcementDropped -= OnReinforcementDropped;
+            _shown.Events.SpellTriggered -= OnSpellTriggered;
             _shown = null;
         }
 
@@ -273,6 +275,13 @@ namespace Halobellum.Presentation
         private void OnReinforcementDropped(SimUnit carrier, int squadId)
         {
             if (carrier.IsAir) DropSquad(squadId, Time.unscaledTime, airHeight);
+        }
+
+        /// <summary>Drop-pod spells: the landed squads fall from high above, like newly bought squads.</summary>
+        private void OnSpellTriggered(SimSpell spell)
+        {
+            if (spell.Stats.Effect != SpellEffect.DropSquad || spell.DroppedSquadId < 0) return;
+            for (int n = 0; n < spell.Stats.DropSquads; n++) DropSquad(spell.DroppedSquadId + n, Time.unscaledTime, dropHeight);
         }
 
         private void OnUnitDied(SimUnit unit, SimUnit killer)
