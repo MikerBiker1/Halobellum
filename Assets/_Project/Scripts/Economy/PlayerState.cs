@@ -34,6 +34,10 @@ namespace Halobellum.Economy
         public float Xp;
         /// <summary>Credits spent leveling this squad up (refunded with the squad's price when sold).</summary>
         public int LevelUpSpent;
+        /// <summary>True for squads from a reinforcement card (Milestone 7): they don't count toward the squads per round.</summary>
+        public bool FromCard;
+        /// <summary>For reinforcement squads: the worth of the levels it came with (half its price per level above 1).</summary>
+        public int GrantedLevelWorth;
     }
 
     public sealed class PlayerState
@@ -47,6 +51,21 @@ namespace Halobellum.Economy
         public readonly List<PlacedSquad> Squads = new List<PlacedSquad>();
         public int SquadsBoughtThisRound;
         public int UnlocksThisRound;
+
+        /// <summary>Spells owned (Milestone 7), each with its own cooldown and placement for the round.</summary>
+        public readonly List<OwnedSpell> Spells = new List<OwnedSpell>();
+        /// <summary>This round's card offer while it waits for a decision, otherwise null.</summary>
+        public CardOffer Offer;
+
+        /// <summary>How many copies of this spell the player owns.</summary>
+        public int CopiesOwned(SpellStats spell)
+        {
+            int count = 0;
+            foreach (OwnedSpell owned in Spells) if (owned.Stats == spell) count++;
+            return count;
+        }
+
+        public OwnedSpell FindSpell(int spellId) => Spells.Find(s => s.Id == spellId);
 
         /// <summary>Tech upgrades bought, per unit type (they apply to every squad of that type).</summary>
         public readonly Dictionary<UnitStats, List<TechUpgrade>> Techs = new Dictionary<UnitStats, List<TechUpgrade>>();

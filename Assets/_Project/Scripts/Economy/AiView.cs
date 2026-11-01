@@ -72,5 +72,17 @@ namespace Halobellum.Economy
         public int LevelUpCost(PlacedSquad squad) => _match.LevelUpCost(squad);
         public ActionResult LevelUp(PlacedSquad squad) => _match.LevelUp(Team, squad.Id);
         public ActionResult BuyTech(UnitStats type, TechUpgrade tech) => _match.BuyTech(Team, type, tech);
+
+        // Cards and spells (Milestone 7). Only this side's own offer and spells: the opponent's stay hidden.
+        public CardOffer Offer => Self.Offer;
+        public IReadOnlyList<OwnedSpell> Spells => Self.Spells;
+        public ActionResult ChooseCard(int index) => _match.ChooseCard(Team, index);
+        public ActionResult SkipCards() => _match.SkipCards(Team);
+        public bool CanPlaceSpell(OwnedSpell spell, Vec2 position) => _match.CanPlaceSpell(Team, spell, position);
+        public ActionResult PlaceSpell(OwnedSpell spell, Vec2 position) => _match.PlaceSpell(Team, spell.Id, position);
+        /// <summary>Battlefield position (metres) of one of this side's squads.</summary>
+        public Vec2 WorldCentre(PlacedSquad squad) => DeploymentGrid.WorldCentre(squad.Type, squad.Column, squad.Row, squad.Rotated90, Team, CombatRules);
+        /// <summary>Battlefield position (metres) of an opponent squad as it was seen at the last battle start.</summary>
+        public Vec2 WorldCentre(SeenSquad squad) => DeploymentGrid.WorldCentre(squad.Type, squad.Column, squad.Row, squad.Rotated90, Team.Opponent(), CombatRules);
     }
 }

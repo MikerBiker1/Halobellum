@@ -14,7 +14,13 @@ namespace Halobellum.Economy
         /// <summary>Index of the draft card to pick.</summary>
         int ChooseDraftCard(AiView view, IReadOnlyList<DraftCard> cards);
 
-        /// <summary>Spend credits and place squads for this round's deployment phase.</summary>
+        /// <summary>
+        /// The card to take from this round's offer (Milestone 7), or -1 to skip it. Called at the start
+        /// of the round, before Deploy.
+        /// </summary>
+        int ChooseCard(AiView view, CardOffer offer);
+
+        /// <summary>Spend credits, place squads and place spells for this round's deployment phase.</summary>
         void Deploy(AiView view);
 
         /// <summary>A short name for the HUD, e.g. "Normal AI".</summary>
@@ -24,6 +30,8 @@ namespace Halobellum.Economy
     public sealed class DoNothingAi : IMatchAi
     {
         public int ChooseDraftCard(AiView view, IReadOnlyList<DraftCard> cards) => 0;
+
+        public int ChooseCard(AiView view, CardOffer offer) => -1;
 
         public void Deploy(AiView view)
         {

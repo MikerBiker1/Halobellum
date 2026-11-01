@@ -10,6 +10,12 @@
 //      using the same Match actions. Then it spends what is left on level-ups (squads with a full
 //      XP bar, most valuable first) and tech upgrades (for the unit type it has the most of).
 //   5. Places squads by role: chaff and tanks in front, ranged units behind, flankers on the sides.
+//   6. Cards (Milestone 7, decision D32): takes the reinforcement card that adds the most worth for
+//      its price (Hard also weighs how well the unit counters the revealed army) or the spell with the
+//      most impact it can afford while keeping a reserve; skips when nothing beats the skip bonus.
+//      Places its ready spells: strikes and zones on the densest part of the opponent's army as
+//      revealed at the last battle start, drop pods on the opponent's most valuable revealed squad,
+//      buffs on its own densest group. It never sees the opponent's spells or new squads.
 // Difficulty only changes decision quality, never information or income:
 //   Easy   - picks strategies partly at random, counters poorly, often leaves credits unspent, and
 //            places squads sloppily.
@@ -138,6 +144,121 @@ namespace Halobellum.Economy
             return best;
         }
 
+        // ------------------------------------------------------------------ cards and spells (Milestone 7)
+
+        public int ChooseCard(AiView view, CardOffer offer)
+        {
+            if (offer == null || offer.Count == 0) return -1;
+            int credits = view.Self.Credits;
+            if (Difficulty == AiDifficulty.Easy)
+            {
+                // Easy: half the time it skips, otherwise it takes a random card it can afford.
+                if (_random.NextFloat() < 0.5f) return -1;
+                int pick = _random.RangeInt(0, offer.Count);
+                return offer.PriceOf(pick) <= credits ? pick : -1;
+            }
+
+            int best = -1;
+            float bestValue = offer.SkipBonus; // A card has to be worth more than skipping.
+            for (int i = 0; i < offer.Count; i++)
+            {
+                int price = offer.PriceOf(i);
+                if (price > credits) continue;
+                float value;
+                if (offer.Kind == CardKind.Reinforcement)
+                {
+                    ReinforcementCard card = offer.Reinforcements[i];
+                    value = card.TotalWorth - price; // Free worth gained.
+                    if (UsesMatchups) value *= 1f + MatchupAdvantage(card.Type, view.SeenOpponentArmy) + 0.5f * (_matchups.OverallStrength(card.Type) - 0.5f);
+                }
+                else
+                {
+                    // Keep enough for squads this round (Normal keeps more than Hard).
+                    int reserve = Difficulty == AiDifficulty.Hard ? 100 : 200;
+                    if (credits - price < reserve) continue;
+                    value = SpellImpact(offer.Spells[i]);
+                }
+                if (value > bestValue)
+                {
+                    bestValue = value;
+                    best = i;
+                }
+            }
+            return best;
+        }
+
+        /// <summary>A rough worth of a spell in credits, to compare it with the others and with skipping.</summary>
+        private static float SpellImpact(SpellStats spell)
+        {
+            switch (spell.Effect)
+            {
+                case SpellEffect.Damage: return spell.DamagePerTick * Math.Max(1, spell.Ticks) * spell.Radius * 0.15f / (1f + spell.CooldownRounds * 0.5f);
+                case SpellEffect.DropSquad: return (spell.DropUnit?.Cost ?? 0) * spell.DropSquads / (1f + spell.CooldownRounds * 0.5f);
+                default: return 60f + spell.Radius * 10f;
+            }
+        }
+
+        /// <summary>Places every ready spell for this round (see the header). Easy forgets half of them.</summary>
+        private void PlaceSpells(AiView view, List<string> placed)
+        {
+            foreach (OwnedSpell spell in view.Spells)
+            {
+                if (!spell.IsReady(view.Round) || spell.IsPlaced) continue;
+                if (Difficulty == AiDifficulty.Easy && _random.NextFloat() < 0.5f) continue;
+                Vec2? target = null;
+                if (spell.Stats.Effect == SpellEffect.Buff)
+                {
+                    var own = new List<(Vec2, float)>();
+                    foreach (PlacedSquad squad in view.Self.Squads) own.Add((view.WorldCentre(squad), squad.Type.Cost * squad.Level));
+                    target = DensestSpot(own, spell.Stats.Radius);
+                }
+                else
+                {
+                    var seen = new List<(Vec2, float)>();
+                    foreach (SeenSquad squad in view.SeenOpponentArmy) seen.Add((view.WorldCentre(squad), squad.Value));
+                    if (spell.Stats.Effect == SpellEffect.DropSquad) target = MostValuable(seen);
+                    else target = Difficulty == AiDifficulty.Easy && seen.Count > 0 ? seen[_random.RangeInt(0, seen.Count)].Item1 : DensestSpot(seen, spell.Stats.Radius);
+                }
+                if (target.HasValue && view.PlaceSpell(spell, target.Value).Ok) placed.Add(spell.Stats.Name);
+            }
+        }
+
+        /// <summary>The squad position with the most value within `radius` (+3 m) around it, or null.</summary>
+        private static Vec2? DensestSpot(List<(Vec2 position, float value)> squads, float radius)
+        {
+            Vec2? best = null;
+            float bestValue = 0f;
+            foreach (var centre in squads)
+            {
+                float value = 0f;
+                foreach (var other in squads)
+                {
+                    if (Vec2.Distance(centre.position, other.position) <= radius + 3f) value += other.value;
+                }
+                if (value > bestValue)
+                {
+                    bestValue = value;
+                    best = centre.position;
+                }
+            }
+            return best;
+        }
+
+        private static Vec2? MostValuable(List<(Vec2 position, float value)> squads)
+        {
+            Vec2? best = null;
+            float bestValue = 0f;
+            foreach (var squad in squads)
+            {
+                if (squad.value > bestValue)
+                {
+                    bestValue = squad.value;
+                    best = squad.position;
+                }
+            }
+            return best;
+        }
+
         // ------------------------------------------------------------------ deployment
 
         public void Deploy(AiView view)
@@ -191,14 +312,17 @@ namespace Halobellum.Economy
                 if (UsesMatchups) UpdateThreats(view, seen); // The new squad covers part of the threat.
             }
 
-            // 5. Level-ups and techs with the credits left.
+            // 5. Level-ups and techs with the credits left, then spells.
             var upgrades = new List<string>();
             SpendOnUpgrades(view, upgrades);
+            var spells = new List<string>();
+            PlaceSpells(view, spells);
 
             LastDecision = $"Round {view.Round}: {Strategy}" + (CounteredRole.HasValue ? $", countering {CounteredRole}" : "")
                            + (unlocked != null ? $", unlocked {unlocked}" : "")
                            + (bought.Count > 0 ? ", bought " + string.Join(" + ", bought) : ", bought nothing")
                            + (upgrades.Count > 0 ? ", upgraded " + string.Join(" + ", upgrades) : "")
+                           + (spells.Count > 0 ? ", cast " + string.Join(" + ", spells) : "")
                            + $", {self.Credits} credits left";
         }
 

@@ -40,6 +40,32 @@ namespace Halobellum.Economy
         /// <summary>Level-up price as a share of the squad's base price (Bible: half).</summary>
         public float LevelUpCostShare = 0.5f;
 
+        // Cards (Bible Section 10, Milestone 7).
+        /// <summary>First round with a card offer (Bible: 2); offers then alternate spells / reinforcements. 0 = no cards.</summary>
+        public int FirstCardRound = 2;
+        /// <summary>Cards per offer (Bible: 3).</summary>
+        public int CardsPerOffer = 3;
+        /// <summary>Credits for skipping a spell offer (Bible: 50).</summary>
+        public int SpellSkipBonus = 50;
+        /// <summary>Credits for skipping a reinforcement offer (Bible: 100).</summary>
+        public int ReinforcementSkipBonus = 100;
+        /// <summary>Reinforcement budget: base plus this much per round number (Bible Section 18: 200 + 50 per round).</summary>
+        public int ReinforcementBudgetBase = 200;
+        public int ReinforcementBudgetPerRound = 50;
+        /// <summary>Highest level a reinforcement card can have (decision D32).</summary>
+        public int ReinforcementMaxLevel = 3;
+        /// <summary>The possible reinforcement level goes up by 1 every this many rounds: level 1 in rounds 1-4, up to 2 in 5-8 ... (D32).</summary>
+        public int ReinforcementLevelEveryRounds = 4;
+
+        public bool CardsEnabled => FirstCardRound > 0;
+
+        /// <summary>The reinforcement budget of a round.</summary>
+        public int ReinforcementBudget(int round) => ReinforcementBudgetBase + ReinforcementBudgetPerRound * round;
+
+        /// <summary>The highest level a reinforcement card can have in this round.</summary>
+        public int ReinforcementLevelCap(int round) =>
+            Math.Max(1, Math.Min(ReinforcementMaxLevel, 1 + (round - 1) / Math.Max(1, ReinforcementLevelEveryRounds)));
+
         /// <summary>
         /// Income for a round: BaseIncome in round 1, then IncomeIncreasePerRound more each round,
         /// never more than IncomeCap. With the Bible values: 200, 400, 600 ... capped at 1600. Round 1 is

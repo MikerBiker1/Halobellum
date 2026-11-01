@@ -25,3 +25,11 @@ MonoBehaviour:
   draftSquadsPerCard: 2
   xpBarPerSquadCost: 2
   levelUpCostShare: 0.5
+  firstCardRound: 2
+  cardsPerOffer: 3
+  spellSkipBonus: 50
+  reinforcementSkipBonus: 100
+  reinforcementBudgetBase: 200
+  reinforcementBudgetPerRound: 50
+  reinforcementMaxLevel: 3
+  reinforcementLevelEveryRounds: 4

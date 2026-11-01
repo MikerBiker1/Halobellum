@@ -41,19 +41,32 @@ namespace Halobellum.Economy
 
         public int BaseDamageBy(Team team) => team == Team.A ? BaseDamageByA : BaseDamageByB;
 
-        /// <summary>Counts kills by (killer team, killer type, victim type) from a finished battle.</summary>
+        /// <summary>Counts kills by (killer team, killer type or spell, victim type) from a finished battle.</summary>
         public static List<KillCount> CountKills(BattleSimulation simulation)
         {
             var byKey = new Dictionary<string, KillCount>();
             var ordered = new List<KillCount>();
             foreach (SimUnit unit in simulation.Units)
             {
-                if (unit.IsAlive || unit.KilledById < 0) continue;
-                SimUnit killer = simulation.Units[unit.KilledById];
-                string key = $"{killer.Team}|{killer.Stats.Name}|{unit.Stats.Name}";
+                if (unit.IsAlive) continue;
+                Team killerTeam;
+                string killerName;
+                if (unit.KilledBySpell != null)
+                {
+                    killerTeam = unit.KilledBySpell.Team;
+                    killerName = unit.KilledBySpell.Stats.Name;
+                }
+                else if (unit.KilledById >= 0)
+                {
+                    SimUnit killer = simulation.Units[unit.KilledById];
+                    killerTeam = killer.Team;
+                    killerName = killer.Stats.Name;
+                }
+                else continue;
+                string key = $"{killerTeam}|{killerName}|{unit.Stats.Name}";
                 if (!byKey.TryGetValue(key, out KillCount count))
                 {
-                    count = new KillCount { KillerTeam = killer.Team, KillerType = killer.Stats.Name, VictimType = unit.Stats.Name };
+                    count = new KillCount { KillerTeam = killerTeam, KillerType = killerName, VictimType = unit.Stats.Name };
                     byKey[key] = count;
                     ordered.Add(count);
                 }

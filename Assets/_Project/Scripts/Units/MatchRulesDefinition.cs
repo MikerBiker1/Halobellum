@@ -45,6 +45,19 @@ namespace Halobellum.Units
         [Tooltip("Level-up price as a share of the squad's base price (Bible: 0.5).")]
         [Range(0f, 2f)] public float levelUpCostShare = 0.5f;
 
+        [Header("Cards (Milestone 7)")]
+        [Tooltip("First round with a card offer (offers then alternate spells / reinforcements). 0 = no cards.")]
+        public int firstCardRound = 2;
+        public int cardsPerOffer = 3;
+        public int spellSkipBonus = 50;
+        public int reinforcementSkipBonus = 100;
+        [Tooltip("Reinforcement budget = base + per round x round number.")]
+        public int reinforcementBudgetBase = 200;
+        public int reinforcementBudgetPerRound = 50;
+        public int reinforcementMaxLevel = 3;
+        [Tooltip("The possible reinforcement level goes up by 1 every this many rounds.")]
+        public int reinforcementLevelEveryRounds = 4;
+
         public MatchRules ToRules()
         {
             return new MatchRules
@@ -62,6 +75,14 @@ namespace Halobellum.Units
                 DraftSquadsPerCard = draftSquadsPerCard,
                 XpBarPerSquadCost = xpBarPerSquadCost,
                 LevelUpCostShare = levelUpCostShare,
+                FirstCardRound = firstCardRound,
+                CardsPerOffer = cardsPerOffer,
+                SpellSkipBonus = spellSkipBonus,
+                ReinforcementSkipBonus = reinforcementSkipBonus,
+                ReinforcementBudgetBase = reinforcementBudgetBase,
+                ReinforcementBudgetPerRound = reinforcementBudgetPerRound,
+                ReinforcementMaxLevel = reinforcementMaxLevel,
+                ReinforcementLevelEveryRounds = reinforcementLevelEveryRounds,
             };
         }
     }

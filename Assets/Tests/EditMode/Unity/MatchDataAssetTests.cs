@@ -37,6 +37,15 @@ namespace Halobellum.Tests
             Assert.AreEqual(expected.DraftSquadsPerCard, actual.DraftSquadsPerCard);
             Assert.AreEqual(expected.XpBarPerSquadCost, actual.XpBarPerSquadCost, 1e-5f);
             Assert.AreEqual(expected.LevelUpCostShare, actual.LevelUpCostShare, 1e-5f, "Bible: level-ups cost half the base price.");
+            MatchRules cards = TestMatch.RulesWithCards();
+            Assert.AreEqual(cards.FirstCardRound, actual.FirstCardRound, "Bible: card offers from round 2.");
+            Assert.AreEqual(cards.CardsPerOffer, actual.CardsPerOffer);
+            Assert.AreEqual(cards.SpellSkipBonus, actual.SpellSkipBonus);
+            Assert.AreEqual(cards.ReinforcementSkipBonus, actual.ReinforcementSkipBonus);
+            Assert.AreEqual(cards.ReinforcementBudgetBase, actual.ReinforcementBudgetBase);
+            Assert.AreEqual(cards.ReinforcementBudgetPerRound, actual.ReinforcementBudgetPerRound);
+            Assert.AreEqual(cards.ReinforcementMaxLevel, actual.ReinforcementMaxLevel);
+            Assert.AreEqual(cards.ReinforcementLevelEveryRounds, actual.ReinforcementLevelEveryRounds);
         }
 
         [Test]

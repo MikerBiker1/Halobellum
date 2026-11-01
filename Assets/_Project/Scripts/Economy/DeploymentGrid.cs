@@ -67,6 +67,32 @@ namespace Halobellum.Economy
         }
 
         /// <summary>
+        /// The squad's centre on the battlefield, in metres (the simulation's coordinates): Team A's zone
+        /// is below the centre line (negative Y), Team B's above it, mirrored (its column 0 is on the
+        /// right as seen from Team A).
+        /// </summary>
+        public static Vec2 WorldCentre(UnitStats type, int column, int row, bool rotated90, Team team, CombatRules rules)
+        {
+            Footprint(type, rotated90, rules, out int width, out int depth);
+            var inSquares = new Vec2(column + width * 0.5f - rules.ArenaWidthSquares * 0.5f, row + depth * 0.5f);
+            var teamA = new Vec2(inSquares.X * rules.SquareSize, -(rules.DeploymentZoneFront + inSquares.Y * rules.SquareSize));
+            return team == Team.A ? teamA : -teamA;
+        }
+
+        /// <summary>True if a battlefield point (metres) lies inside a team's deployment zone.</summary>
+        public static bool InZone(Vec2 position, Team team, CombatRules rules)
+        {
+            float halfWidth = rules.ArenaWidth * 0.5f, halfLength = rules.ArenaLength * 0.5f;
+            if (position.X < -halfWidth || position.X > halfWidth) return false;
+            float y = team == Team.A ? -position.Y : position.Y;
+            return y >= rules.DeploymentZoneFront && y <= halfLength;
+        }
+
+        /// <summary>True if a battlefield point (metres) lies inside the arena.</summary>
+        public static bool InArena(Vec2 position, CombatRules rules) =>
+            Math.Abs(position.X) <= rules.ArenaWidth * 0.5f && Math.Abs(position.Y) <= rules.ArenaLength * 0.5f;
+
+        /// <summary>
         /// A player's deployment as an army for the battle, squads in deployment order. Each squad fights
         /// with its level and the player's tech upgrades applied (PlayerState.EffectiveStats).
         /// </summary>

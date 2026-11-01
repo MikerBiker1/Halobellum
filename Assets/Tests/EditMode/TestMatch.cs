@@ -26,7 +26,16 @@ namespace Halobellum.Tests
             DraftSquadsPerCard = 2,
             XpBarPerSquadCost = 2f,
             LevelUpCostShare = 0.5f,
+            FirstCardRound = 0, // Cards off: the older tests play rounds without offers; CardTests turn them on.
         };
+
+        /// <summary>The rules with cards on, as in the game (Bible Section 10).</summary>
+        public static MatchRules RulesWithCards()
+        {
+            MatchRules rules = Rules();
+            rules.FirstCardRound = 2;
+            return rules;
+        }
 
         public static UnitStats Infantry() => Unit("Infantry", tier: 1, unlock: 0, squad: 12, cost: 100, health: 60f, radius: 0.5f, baseDamage: 100f / 12f / 5f);
         public static UnitStats Buggy() => Unit("Buggy", tier: 1, unlock: 0, squad: 2, cost: 200, health: 300f, radius: 1.2f, baseDamage: 20f);
