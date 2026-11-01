@@ -2,7 +2,8 @@
 // Target selection (Bible Section 6, Targeting): a unit always picks the closest enemy it can
 // legally target, with no priorities or preferred targets. "Legal" means:
 //   - the enemy is alive and on the other team,
-//   - the unit's target filter allows it (ground, air or both),
+//   - the weapon's target filter allows it (ground, air or both; the unit's filter unless the
+//     weapon has its own),
 //   - the enemy is not closer than the weapon's minimum range (artillery).
 // Distances for range checks are measured from the shooter's centre to the target's edge, so
 // large units can be hit from as far as small ones. Ties go to the lower unit id, so results
@@ -35,7 +36,7 @@ namespace Halobellum.Combat
         public static bool IsLegalTarget(SimUnit shooter, WeaponStats weapon, SimUnit target)
         {
             if (!IsTargetableEnemy(shooter, target)) return false;
-            if (!shooter.Stats.CanTarget(target.IsAir)) return false;
+            if (weapon != null ? !weapon.CanTarget(shooter.Stats, target.IsAir) : !shooter.Stats.CanTarget(target.IsAir)) return false;
             float minRange = weapon?.MinRange ?? 0f;
             return minRange <= 0f || EdgeDistance(shooter, target) >= minRange;
         }

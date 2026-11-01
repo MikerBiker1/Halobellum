@@ -57,6 +57,14 @@ namespace Halobellum.Units
         public bool hasDefenseArc;
         public DefenseArcDefinition defenseArc = new DefenseArcDefinition();
 
+        [Header("Mid-battle drop (optional, e.g. Pelican)")]
+        [Tooltip("Unit type dropped under this unit during the battle. Empty = no drop. Dropped units only exist for that battle.")]
+        public UnitDefinition reinforcementUnit;
+        [Tooltip("Number of bodies dropped (one squad).")]
+        public int reinforcementBodies;
+        [Tooltip("Seconds after the battle starts before the drop (only if this unit is still alive).")]
+        public float reinforcementDelaySeconds;
+
         [Header("Visuals")]
         [Tooltip("Model shown for each body in the battle scene. Tinted with the side's color. If empty, a placeholder primitive sized from the collision radius is used.")]
         public GameObject prefab;
@@ -68,7 +76,9 @@ namespace Halobellum.Units
         [TextArea] public string notes;
 
         /// <summary>Copies this asset's values into a new plain C# UnitStats for the simulation.</summary>
-        public UnitStats ToStats()
+        public UnitStats ToStats() => ToStats(0);
+
+        private UnitStats ToStats(int depth)
         {
             var stats = new UnitStats
             {
@@ -94,6 +104,15 @@ namespace Halobellum.Units
             int count = weapons?.Count ?? 0;
             stats.Weapons = new WeaponStats[count];
             for (int i = 0; i < count; i++) stats.Weapons[i] = weapons[i]?.ToStats();
+
+            // A dropped squad is a copy of the dropped unit with the dropped body count as its squad size.
+            // (Depth guard: a unit that drops itself would otherwise never end.)
+            if (reinforcementUnit != null && reinforcementBodies > 0 && depth < 2)
+            {
+                stats.Reinforcement = reinforcementUnit.ToStats(depth + 1);
+                stats.Reinforcement.SquadSize = reinforcementBodies;
+                stats.ReinforcementDelaySeconds = reinforcementDelaySeconds;
+            }
             return stats;
         }
     }
@@ -118,6 +137,13 @@ namespace Halobellum.Units
         public bool isAntiArmor;
         [Tooltip("Can be blocked by a defense arc such as a Jackal shield.")]
         public bool canBeBlocked;
+        [Tooltip("Use this weapon's own target filter instead of the unit's (e.g. bombs that only hit ground units).")]
+        public bool hasOwnTargetFilter;
+        public TargetFilter targetFilter;
+        [Tooltip("Damage multiplier against air units (bonus damage against air). 1 = no bonus.")]
+        public float airDamageMultiplier = 1f;
+        [Tooltip("Cone splash (flamethrowers): width in degrees of a cone from the shooter out to the range. 0 = no cone.")]
+        public float coneDegrees;
 
         public WeaponStats ToStats()
         {
@@ -133,6 +159,10 @@ namespace Halobellum.Units
                 DamageType = damageType,
                 IsAntiArmor = isAntiArmor,
                 CanBeBlocked = canBeBlocked,
+                HasOwnTargetFilter = hasOwnTargetFilter,
+                TargetFilter = targetFilter,
+                AirDamageMultiplier = airDamageMultiplier,
+                ConeDegrees = coneDegrees,
             };
         }
     }

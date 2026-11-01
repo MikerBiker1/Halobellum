@@ -35,7 +35,7 @@ Milestones and items from PROJECT_BIBLE.md Section 14. An item is ticked when it
 - [x] A full match against the do-nothing AI can be won and lost (headless and PlayMode tests)
 
 ## M4: Slice rosters and sandbox (in progress)
-- [ ] Combat mechanics the slice units need: per-weapon target filters, bonus damage against air, cone splash (flamethrower), and a timed mid-battle drop (Pelican) (with tests)
+- [x] Combat mechanics the slice units need: per-weapon target filters, bonus damage against air, cone splash (flamethrower), and a timed mid-battle drop (Pelican) (with tests)
 - [ ] UNSC slice roster (12 units, Section 8.1): data assets with unlock prices, placeholder prefabs, faction roster
 - [ ] Covenant slice roster (12 units, Section 8.2): data assets with unlock prices, placeholder prefabs, faction roster
 - [ ] Counter web runner: every unit against every unit at equal cost, report and CSV, `balance.csv`

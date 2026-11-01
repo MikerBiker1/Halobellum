@@ -39,6 +39,10 @@ MonoBehaviour:
     damageType: 0
     isAntiArmor: 0
     canBeBlocked: 1
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -46,6 +50,9 @@ MonoBehaviour:
     rearDamageMultiplier: 1
     blockChance: 0
     blockedDamageTypes: 
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
   prefab: {fileID: 9023644236943888962, guid: 28a03c24bfd0aea4e91085093f8a6f5c, type: 3}
   strongAgainst: Single-target units, light vehicles in small numbers
   weakAgainst: Splash damage, heavy armor

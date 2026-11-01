@@ -31,6 +31,20 @@ namespace Halobellum.Core
         Both = 2,
     }
 
+    public static class TargetFilterExtensions
+    {
+        /// <summary>True if this filter allows attacking a unit that is (or is not) in the air.</summary>
+        public static bool Allows(this TargetFilter filter, bool targetIsAir)
+        {
+            switch (filter)
+            {
+                case TargetFilter.Ground: return !targetIsAir;
+                case TargetFilter.Air: return targetIsAir;
+                default: return true;
+            }
+        }
+    }
+
     public enum UnitRole
     {
         Chaff = 0,

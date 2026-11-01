@@ -69,7 +69,14 @@ namespace Halobellum.Presentation
         /// <summary>The prefab set on this unit type's data asset, or null to use a placeholder primitive.</summary>
         public GameObject PrefabFor(UnitStats stats)
         {
-            return stats != null && _unitSources.TryGetValue(stats, out UnitDefinition definition) ? definition.prefab : null;
+            if (stats == null) return null;
+            if (_unitSources.TryGetValue(stats, out UnitDefinition definition)) return definition.prefab;
+            // Dropped squads (a Pelican's Marines) are copies of a unit type: find it by name.
+            foreach (var pair in _unitSources)
+            {
+                if (pair.Key.Name == stats.Name) return pair.Value.prefab;
+            }
+            return null;
         }
 
         private void Awake()

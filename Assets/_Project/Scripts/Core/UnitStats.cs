@@ -27,9 +27,30 @@ namespace Halobellum.Core
         public bool IsAntiArmor;
         /// <summary>Whether this weapon's projectiles can be blocked by a defense arc (for example a Jackal shield).</summary>
         public bool CanBeBlocked;
+        /// <summary>
+        /// If true, this weapon uses its own TargetFilter instead of the unit's (for example a Hornet's
+        /// bombs only hit ground units while its rockets hit both).
+        /// </summary>
+        public bool HasOwnTargetFilter;
+        public TargetFilter TargetFilter;
+        /// <summary>Damage multiplier against air units ("bonus damage against air"). 1 means no bonus.</summary>
+        public float AirDamageMultiplier = 1f;
+        /// <summary>
+        /// Cone splash (flamethrowers): if above 0, each shot also hits every legal enemy inside a cone
+        /// this many degrees wide, from the shooter out to the weapon's range, centred on the target.
+        /// SplashRadius is not used for cone weapons. 0 means no cone.
+        /// </summary>
+        public float ConeDegrees;
 
         public float ShotsPerSecond => FireInterval > 0f ? 1f / FireInterval : 0f;
         public bool IsInstant => ProjectileSpeed <= 0f;
+        public bool IsCone => ConeDegrees > 0f;
+
+        /// <summary>True if this weapon, on this unit, may attack a unit that is (or is not) in the air.</summary>
+        public bool CanTarget(UnitStats owner, bool targetIsAir)
+        {
+            return HasOwnTargetFilter ? TargetFilter.Allows(targetIsAir) : owner == null || owner.CanTarget(targetIsAir);
+        }
 
         public WeaponStats Clone() => (WeaponStats)MemberwiseClone();
     }
@@ -98,21 +119,22 @@ namespace Halobellum.Core
         /// <summary>Null for the many units that have no directional defense.</summary>
         public DefenseArcStats DefenseArc;
 
+        /// <summary>
+        /// Optional mid-battle drop (Pelican): a squad of this unit type (its SquadSize is the number of
+        /// bodies dropped) appears under this unit once it has been alive this many seconds. Null = none.
+        /// Dropped units only exist for that battle.
+        /// </summary>
+        public UnitStats Reinforcement;
+        public float ReinforcementDelaySeconds;
+
         public bool HasShield => MaxShield > 0f;
         /// <summary>Turning speed in degrees per second, or infinity for units that turn instantly.</summary>
         public float TurnRateDegreesPerSecond => TurnTime180 > 0f ? 180f / TurnTime180 : float.PositiveInfinity;
         public bool HasDefenseArc => DefenseArc != null && DefenseArc.ArcDegrees > 0f;
+        public bool HasReinforcement => Reinforcement != null && Reinforcement.SquadSize > 0;
 
         /// <summary>True if this unit's target filter allows attacking a unit that is (or is not) in the air.</summary>
-        public bool CanTarget(bool targetIsAir)
-        {
-            switch (TargetFilter)
-            {
-                case TargetFilter.Ground: return !targetIsAir;
-                case TargetFilter.Air: return targetIsAir;
-                default: return true;
-            }
-        }
+        public bool CanTarget(bool targetIsAir) => TargetFilter.Allows(targetIsAir);
 
         /// <summary>Lists problems that would break the simulation. An empty list means the data is usable.</summary>
         public List<string> Validate()
@@ -139,6 +161,8 @@ namespace Halobellum.Core
                     if (w.MinRange < 0f || w.MinRange >= w.Range) problems.Add($"{wl}: minimum range must be 0 or more and below range.");
                     if (w.DamagePerShot < 0f) problems.Add($"{wl}: damage cannot be negative.");
                     if (w.SplashRadius < 0f) problems.Add($"{wl}: splash radius cannot be negative.");
+                    if (w.AirDamageMultiplier < 0f) problems.Add($"{wl}: damage against air cannot be negative.");
+                    if (w.ConeDegrees < 0f || w.ConeDegrees > 360f) problems.Add($"{wl}: cone must be 0 to 360 degrees.");
                 }
             }
             if (DefenseArc != null)
@@ -146,6 +170,11 @@ namespace Halobellum.Core
                 if (DefenseArc.ArcDegrees < 0f || DefenseArc.ArcDegrees > 360f) problems.Add($"{label}: defense arc must be 0 to 360 degrees.");
                 if (DefenseArc.BlockChance < 0f || DefenseArc.BlockChance > 1f) problems.Add($"{label}: block chance must be 0 to 1.");
                 if (DefenseArc.FrontDamageMultiplier < 0f || DefenseArc.RearDamageMultiplier < 0f) problems.Add($"{label}: defense multipliers cannot be negative.");
+            }
+            if (Reinforcement != null)
+            {
+                if (ReinforcementDelaySeconds < 0f) problems.Add($"{label}: reinforcement delay cannot be negative.");
+                foreach (string problem in Reinforcement.Validate()) problems.Add($"{label} reinforcement: {problem}");
             }
             return problems;
         }
@@ -157,6 +186,7 @@ namespace Halobellum.Core
             copy.Weapons = new WeaponStats[Weapons?.Length ?? 0];
             for (int i = 0; i < copy.Weapons.Length; i++) copy.Weapons[i] = Weapons[i]?.Clone();
             copy.DefenseArc = DefenseArc?.Clone();
+            copy.Reinforcement = Reinforcement?.Clone();
             return copy;
         }
     }

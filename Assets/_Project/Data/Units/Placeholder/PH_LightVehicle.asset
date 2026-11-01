@@ -39,6 +39,10 @@ MonoBehaviour:
     damageType: 0
     isAntiArmor: 0
     canBeBlocked: 1
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -46,6 +50,9 @@ MonoBehaviour:
     rearDamageMultiplier: 1
     blockChance: 0
     blockedDamageTypes: 
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
   prefab: {fileID: 1358878998062610456, guid: bc622304bbb8a974e8a81d60d0c37380, type: 3}
   strongAgainst: Infantry without splash, slow units
   weakAgainst: Heavy armor, anti-armor weapons

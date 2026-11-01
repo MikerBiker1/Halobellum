@@ -2,6 +2,8 @@
 // The battle simulation (Bible Sections 4 and 6). Plain C#: no GameObjects, models or animation,
 // so the game, the tests and the headless runner all run exactly this code.
 // It advances in fixed ticks (30 per second from CombatRules). Each tick, in this order:
+//   0. Mid-battle drops: a unit with a reinforcement (Pelican) drops its squad once it has been
+//      alive long enough; the dropped squad joins the battle like any other.
 //   1. Shields regenerate if the unit has gone long enough without damage.
 //   2. Targeting: every 0.5 s (or at once if its target died) each unit picks the closest enemy it
 //      can legally target within its acquisition range (weapon range x 3; unlimited once inside the
@@ -14,7 +16,8 @@
 //   5. Attacking units turn toward their target at their own turning speed. Weapons fire when ready
 //      at targets in range (the main weapon only once the unit faces its target): instant hits
 //      resolve now, other weapons launch projectiles.
-//   6. Projectiles fly and hit (splash damage, directional defense, block rolls).
+//   6. Projectiles fly and hit (splash or cone damage, directional defense, block rolls, bonus
+//      damage against air).
 //   7. Units at 0 health die. Deaths are applied at the end of the tick, so units that shoot in
 //      the same tick are treated fairly regardless of list order.
 //   8. The battle ends when a side has no units left or the time limit is reached.
@@ -79,6 +82,11 @@ namespace Halobellum.Combat
         public SimUnit AddUnit(UnitStats stats, Team team, Vec2 position, int squadId = -1)
         {
             if (Tick > 0) throw new InvalidOperationException("Add units before the battle starts.");
+            return CreateUnit(stats, team, position, squadId);
+        }
+
+        private SimUnit CreateUnit(UnitStats stats, Team team, Vec2 position, int squadId)
+        {
             Vec2 facing = team == Team.A ? Vec2.Up : Vec2.Down;
             var unit = new SimUnit(_units.Count, team, squadId, stats, position, facing);
             _units.Add(unit);
@@ -135,6 +143,7 @@ namespace Halobellum.Combat
 
             if (Tick == 0) foreach (SimSquad squad in _squads) squad.FormUp();
 
+            SpawnReinforcements();
             UpdateShields();
             UpdateTargetsAndStates();
             UpdateSquadFormations();
@@ -147,6 +156,35 @@ namespace Halobellum.Combat
             Tick++;
             Events.RaiseTicked(Tick);
             CheckForEnd();
+        }
+
+        private readonly List<SimUnit> _dropping = new List<SimUnit>();
+
+        /// <summary>Drops the reinforcement squad of every living unit whose drop delay has passed (once per unit).</summary>
+        private void SpawnReinforcements()
+        {
+            _dropping.Clear();
+            foreach (SimUnit unit in _units)
+            {
+                if (!unit.IsAlive || unit.ReinforcementDropped || !unit.Stats.HasReinforcement) continue;
+                if (ElapsedSeconds + 1e-4f >= unit.Stats.ReinforcementDelaySeconds) _dropping.Add(unit);
+            }
+            foreach (SimUnit carrier in _dropping)
+            {
+                carrier.ReinforcementDropped = true;
+                UnitStats stats = carrier.Stats.Reinforcement;
+                int squadId = NewSquadId();
+                Vec2 forward = carrier.Team == Team.A ? Vec2.Up : Vec2.Down;
+                foreach (Vec2 offset in SquadFormation.Offsets(stats.SquadSize, stats.CollisionRadius, _rules.FormationGap, false))
+                {
+                    Vec2 placed = carrier.Team == Team.A ? offset : -offset;
+                    SimUnit dropped = CreateUnit(stats, carrier.Team, carrier.Position + placed, squadId);
+                    dropped.Facing = forward;
+                    dropped.UnlimitedAcquisition = carrier.UnlimitedAcquisition || IsInEnemyZone(dropped);
+                }
+                _squadById[squadId].FormUp();
+                Events.RaiseReinforcementDropped(carrier, squadId);
+            }
         }
 
         private void UpdateShields()
@@ -417,7 +455,8 @@ namespace Halobellum.Combat
 
         /// <summary>
         /// Applies one hit: to the direct target (unless a defense arc blocks it) and, for splash
-        /// weapons, to every other enemy the attacker could target within the splash radius.
+        /// weapons, to every other enemy the weapon could target within the splash radius. Cone weapons
+        /// instead hit every such enemy inside their cone, from the shooter out to their range.
         /// </summary>
         private void ResolveHit(SimUnit attacker, WeaponStats weapon, SimUnit directTarget, Vec2 impactPoint, Vec2 sourcePosition)
         {
@@ -433,13 +472,18 @@ namespace Halobellum.Combat
                 DealDamage(directTarget, attacker, weapon, defense.DamageMultiplier);
             }
 
+            if (weapon.IsCone)
+            {
+                ResolveCone(attacker, weapon, directTarget, impactPoint, sourcePosition);
+                return;
+            }
             if (weapon.SplashRadius <= 0f) return;
 
             _movement.Grid.Query(impactPoint, weapon.SplashRadius + _movement.Grid.MaxRadius, _nearby);
             foreach (SimUnit victim in _nearby)
             {
                 if (victim == directTarget) continue;
-                if (!Targeting.IsTargetableEnemy(attacker, victim) || !attacker.Stats.CanTarget(victim.IsAir)) continue;
+                if (!Targeting.IsTargetableEnemy(attacker, victim) || !weapon.CanTarget(attacker.Stats, victim.IsAir)) continue;
                 if (Vec2.Distance(victim.Position, impactPoint) - victim.Radius > weapon.SplashRadius) continue;
 
                 DefenseResult defense = DirectionalDefense.Evaluate(victim.Stats.DefenseArc, victim.Position,
@@ -448,9 +492,32 @@ namespace Halobellum.Combat
             }
         }
 
+        /// <summary>Cone splash: every other legal enemy inside the cone from the source toward the impact point.</summary>
+        private void ResolveCone(SimUnit attacker, WeaponStats weapon, SimUnit directTarget, Vec2 impactPoint, Vec2 sourcePosition)
+        {
+            Vec2 direction = impactPoint - sourcePosition;
+            if (direction.LengthSquared <= 1e-8f) direction = attacker.Facing;
+            float halfAngle = weapon.ConeDegrees * 0.5f;
+
+            _movement.Grid.Query(sourcePosition, weapon.Range + _movement.Grid.MaxRadius, _nearby);
+            foreach (SimUnit victim in _nearby)
+            {
+                if (victim == directTarget) continue;
+                if (!Targeting.IsTargetableEnemy(attacker, victim) || !weapon.CanTarget(attacker.Stats, victim.IsAir)) continue;
+                Vec2 toVictim = victim.Position - sourcePosition;
+                if (toVictim.Length - victim.Radius > weapon.Range) continue;
+                if (toVictim.LengthSquared > 1e-8f && Vec2.AngleDegrees(direction, toVictim) > halfAngle) continue;
+
+                DefenseResult defense = DirectionalDefense.Evaluate(victim.Stats.DefenseArc, victim.Position,
+                    victim.Facing, sourcePosition, weapon, false, _random);
+                DealDamage(victim, attacker, weapon, defense.DamageMultiplier);
+            }
+        }
+
         private void DealDamage(SimUnit target, SimUnit attacker, WeaponStats weapon, float directionalMultiplier)
         {
-            float dealt = DamageCalculator.ApplyHit(_rules.DamageTable, weapon, target.Stats.ArmorType, directionalMultiplier,
+            float multiplier = target.IsAir ? directionalMultiplier * weapon.AirDamageMultiplier : directionalMultiplier;
+            float dealt = DamageCalculator.ApplyHit(_rules.DamageTable, weapon, target.Stats.ArmorType, multiplier,
                 ref target.Shield, ref target.Health);
             target.SecondsSinceDamaged = 0f;
             attacker.DamageDealt += dealt;

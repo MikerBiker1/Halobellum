@@ -7,6 +7,8 @@
 // only when a unit is damaged or its squad is selected. Selected squads get a ring under each body.
 // A squad can be dropped in (DropSquad): it starts high above, out of sight, and falls to its spot
 // (used for newly bought squads during deployment; looks only, the simulation is unchanged).
+// Units added during the battle (a Pelican's Marines) get their views when they appear, and fall
+// from their carrier's flying height.
 // The simulation's 2D position (x, y) becomes the world position (x, height, y).
 // Depends on: BattleController, SquadSelection, PlaceholderArt, Halobellum.Combat, UnityEngine.
 
@@ -55,6 +57,7 @@ namespace Halobellum.Presentation
             public Quaternion PreviousRotation, CurrentRotation;
             /// <summary>Time.unscaledTime at which the drop-in started, or NaN when not dropping.</summary>
             public float DropStart = float.NaN;
+            public float DropHeight;
         }
 
         private BattleController _battle;
@@ -71,12 +74,15 @@ namespace Halobellum.Presentation
         /// Makes every body of this simulation squad fall from high above to its spot. startTime is the
         /// Time.unscaledTime the fall began (so a squad keeps falling if the views are rebuilt meanwhile).
         /// </summary>
-        public void DropSquad(int squadId, float startTime)
+        public void DropSquad(int squadId, float startTime) => DropSquad(squadId, startTime, dropHeight);
+
+        private void DropSquad(int squadId, float startTime, float height)
         {
             foreach (View view in _views)
             {
                 if (view.Unit.SquadId != squadId) continue;
                 view.DropStart = startTime;
+                view.DropHeight = height;
                 view.Root.transform.position = view.CurrentPosition + Vector3.up * DropOffset(view);
             }
         }
@@ -92,7 +98,7 @@ namespace Halobellum.Presentation
                 return 0f;
             }
             progress = Mathf.Max(0f, progress);
-            return dropHeight * (1f - progress * progress);
+            return view.DropHeight * (1f - progress * progress);
         }
 
         /// <summary>World position of a unit's base as of the latest tick (air units at flying height).</summary>
@@ -134,6 +140,8 @@ namespace Halobellum.Presentation
             foreach (SimUnit unit in simulation.Units) _views.Add(CreateView(unit, _container));
             simulation.Events.Ticked += OnTicked;
             simulation.Events.UnitDied += OnUnitDied;
+            simulation.Events.UnitSpawned += OnUnitSpawned;
+            simulation.Events.ReinforcementDropped += OnReinforcementDropped;
             OnSelectionChanged(_selection.SelectedSquadId);
         }
 
@@ -142,6 +150,8 @@ namespace Halobellum.Presentation
             if (_shown == null) return;
             _shown.Events.Ticked -= OnTicked;
             _shown.Events.UnitDied -= OnUnitDied;
+            _shown.Events.UnitSpawned -= OnUnitSpawned;
+            _shown.Events.ReinforcementDropped -= OnReinforcementDropped;
             _shown = null;
         }
 
@@ -206,6 +216,20 @@ namespace Halobellum.Presentation
                 view.CurrentPosition = ToWorld(view.Unit);
                 view.CurrentRotation = ToRotation(view.Unit);
             }
+        }
+
+        /// <summary>A unit added during the battle: give it a view (unit ids are their index, so views stay in step).</summary>
+        private void OnUnitSpawned(SimUnit unit)
+        {
+            while (_views.Count <= unit.Id && _views.Count < _shown.Units.Count)
+            {
+                _views.Add(CreateView(_shown.Units[_views.Count], _container));
+            }
+        }
+
+        private void OnReinforcementDropped(SimUnit carrier, int squadId)
+        {
+            if (carrier.IsAir) DropSquad(squadId, Time.unscaledTime, airHeight);
         }
 
         private void OnUnitDied(SimUnit unit, SimUnit killer)

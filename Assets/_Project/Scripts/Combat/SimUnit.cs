@@ -65,6 +65,8 @@ namespace Halobellum.Combat
         public bool TouchedOtherSquad;
         /// <summary>True once the unit has entered the enemy's deployment zone: it then notices enemies at any distance.</summary>
         public bool UnlimitedAcquisition;
+        /// <summary>True once this unit's mid-battle reinforcement (if it has one) has been dropped.</summary>
+        public bool ReinforcementDropped;
 
         // Battle statistics for results and later features (XP from kills, result screen).
         public float DamageDealt;

@@ -13,6 +13,8 @@ namespace Halobellum.Combat
     {
         /// <summary>A unit was added to the battle.</summary>
         public event Action<SimUnit> UnitSpawned;
+        /// <summary>A unit (the carrier) dropped its reinforcement squad (squad id) mid-battle.</summary>
+        public event Action<SimUnit, int> ReinforcementDropped;
         /// <summary>A weapon fired: attacker, weapon index on the attacker, target.</summary>
         public event Action<SimUnit, int, SimUnit> WeaponFired;
         /// <summary>A unit took damage: target, attacker, damage removed from shield and health.</summary>
@@ -27,6 +29,7 @@ namespace Halobellum.Combat
         public event Action<BattleResult> BattleEnded;
 
         internal void RaiseUnitSpawned(SimUnit unit) => UnitSpawned?.Invoke(unit);
+        internal void RaiseReinforcementDropped(SimUnit carrier, int squadId) => ReinforcementDropped?.Invoke(carrier, squadId);
         internal void RaiseWeaponFired(SimUnit attacker, int weaponIndex, SimUnit target) => WeaponFired?.Invoke(attacker, weaponIndex, target);
         internal void RaiseUnitDamaged(SimUnit target, SimUnit attacker, float amount) => UnitDamaged?.Invoke(target, attacker, amount);
         internal void RaiseAttackBlocked(SimUnit target, SimUnit attacker) => AttackBlocked?.Invoke(target, attacker);
