@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: OdstDropPods
   m_EditorClassIdentifier:
   spellName: ODST Drop Pods
-  description: Orbital drop shock troopers land anywhere on the field for this battle.
+  description: 'Orbital drop shock troopers land anywhere on the field for this battle: SMGs for infantry, rocket launchers for armor.'
   offensive: 1
   effect: 2
   cost: 200
@@ -21,6 +21,9 @@ MonoBehaviour:
   maxOwnedCopies: 1
   radius: 4
   delaySeconds: 1
+  minRound: 0
+  areaWidth: 0
+  areaDepth: 0
   damagePerTick: 0
   damageType: 0
   isAntiArmor: 0
@@ -31,3 +34,9 @@ MonoBehaviour:
   damageMultiplier: 1
   dropUnit: {fileID: 11400000, guid: 8a3350ac6299c7cd0669882d23359655, type: 2}
   dropSquads: 1
+  shieldDamage: 0
+  techDisableSeconds: 0
+  slowShare: 0
+  slowSeconds: 0
+  durationSeconds: 0
+  rangeMultiplier: 1

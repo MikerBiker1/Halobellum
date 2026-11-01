@@ -21,10 +21,15 @@
 //     the base price and raises the level (health and damage x level, up to 5).
 //   - Tech upgrades (Section 9): BuyTech buys one of a unit type's techs for every squad of that type.
 //   - Cards (Section 10, Milestone 7): from round 2, each round starts with a card offer (Cards phase
-//     for the player; the AI decides at once), alternating spells and reinforcements; take one
-//     (ChooseCard) or skip for a bonus (SkipCards). Spells are kept and placed during deployment
-//     (PlaceSpell: offensive anywhere, defensive in your own zone); they take effect when the battle
-//     starts, are hidden from the opponent until then, and recharge CooldownRounds rounds after use.
+//     for the player; the AI decides at once): reinforcements every other round from round 4, general
+//     cards otherwise (see CardDeck); take one (ChooseCard) or skip for a bonus (SkipCards).
+//     Spells are kept and placed during deployment (PlaceSpell: offensive anywhere, defensive in your
+//     own zone); they take effect when the battle starts, are hidden from the opponent until then,
+//     and recharge CooldownRounds rounds after use.
+//     Items go to the Inventory and are placed on a squad without one (PlaceItem); they stay on it
+//     and return to the Inventory if the squad is sold. A Deployment Module lets its squad move in
+//     every deployment phase. Economy cards add income on top of the income cap, buff cards improve
+//     the whole army or add a deployment slot. Intensive Training fills a squad's XP bar (UseTraining).
 //     Reinforcement squads are placed like squads bought this round, unlock their unit, start with
 //     0 XP and don't count toward the squads per round or the unlock limit.
 //   - Result: every surviving body deals its BaseDamage to the enemy base, both at once. A base at
@@ -80,6 +85,7 @@ namespace Halobellum.Economy
         private int _nextSpellId = 1;
         private int _battleCount;
         private int _baseHealthBeforeA, _baseHealthBeforeB;
+        private ArmyBuffs _seenBuffsA = new ArmyBuffs(), _seenBuffsB = new ArmyBuffs();
 
         public Match(MatchRules rules, CombatRules combatRules, IReadOnlyList<FactionInfo> factions, int seed, IMatchAi enemyAi)
         {
@@ -130,8 +136,14 @@ namespace Halobellum.Economy
         /// <summary>A team's faction name once it has been seen in a battle, otherwise null.</summary>
         public string SeenFaction(Team team) => team == Team.A ? _seenFactionA : _seenFactionB;
 
-        /// <summary>Income each player receives at the end of this round.</summary>
+        /// <summary>The income both players get at the end of this round, before economy cards.</summary>
         public int NextIncome => Rules.IncomeForRound(Round + 1);
+
+        /// <summary>The credits this side receives at the end of this round: on top of the capped income, its economy cards (D33).</summary>
+        public int NextIncomeFor(Team team) => NextIncome + Get(team).BonusIncome;
+
+        /// <summary>How many squads this side may buy per round.</summary>
+        public int SquadsPerRound(Team team) => Rules.NewSquadsPerRound + Get(team).ExtraSquadsPerRound;
 
         // ------------------------------------------------------------------ draft
 
@@ -196,7 +208,7 @@ namespace Halobellum.Economy
             PlayerState player = Get(team);
             if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Squads can only be bought during deployment.");
             if (!player.Unlocked.Contains(type)) return ActionResult.Fail($"Unlock {type.Name} first.");
-            if (player.SquadsBoughtThisRound >= Rules.NewSquadsPerRound) return ActionResult.Fail($"You can buy {Rules.NewSquadsPerRound} squads per round.");
+            if (player.SquadsBoughtThisRound >= SquadsPerRound(team)) return ActionResult.Fail($"You can buy {SquadsPerRound(team)} squads per round.");
             if (player.Credits < type.Cost) return ActionResult.Fail($"Not enough credits ({type.Cost} needed).");
             if (!DeploymentGrid.CanPlace(player, type, column, row, rotated90, CombatRules)) return ActionResult.Fail("That spot is blocked or outside your zone.");
 
@@ -210,8 +222,11 @@ namespace Halobellum.Economy
             return ActionResult.Success($"{type.Name} bought.");
         }
 
-        /// <summary>True if the squad was bought this round and has not fought yet (only those can move or turn).</summary>
-        public bool CanMove(PlacedSquad squad) => squad != null && squad.RoundBought == Round && !squad.HasFought;
+        /// <summary>True if the squad can move or turn: bought this round and not fought yet, or carrying a Deployment Module.</summary>
+        public bool CanMove(PlacedSquad squad) => squad != null && (IsNew(squad) || (squad.Item != null && squad.Item.FreeDeployment));
+
+        /// <summary>True if the squad was bought this round and has not fought yet.</summary>
+        private bool IsNew(PlacedSquad squad) => squad.RoundBought == Round && !squad.HasFought;
 
         public ActionResult Move(Team team, int squadId, int column, int row, bool rotated90)
         {
@@ -235,9 +250,9 @@ namespace Halobellum.Economy
         public int SellValue(PlacedSquad squad)
         {
             if (squad.FromDraft) return (int)MathF.Round((squad.Type.Cost + squad.LevelUpSpent) * Rules.RefundAfterBattle);
-            if (squad.FromCard && !CanMove(squad))
+            if (squad.FromCard && !IsNew(squad))
                 return (int)MathF.Round((squad.Type.Cost + squad.GrantedLevelWorth + squad.LevelUpSpent) * Rules.RefundAfterBattle);
-            float share = CanMove(squad) ? Rules.RefundBeforeBattle : Rules.RefundAfterBattle;
+            float share = IsNew(squad) ? Rules.RefundBeforeBattle : Rules.RefundAfterBattle;
             return (int)MathF.Round((squad.PricePaid + squad.LevelUpSpent) * share);
         }
 
@@ -330,8 +345,9 @@ namespace Halobellum.Economy
             if (squad == null) return ActionResult.Fail("No such squad.");
 
             int refund = SellValue(squad);
-            if (CanMove(squad) && !squad.FromDraft && !squad.FromCard) player.SquadsBoughtThisRound = Math.Max(0, player.SquadsBoughtThisRound - 1);
+            if (IsNew(squad) && !squad.FromDraft && !squad.FromCard) player.SquadsBoughtThisRound = Math.Max(0, player.SquadsBoughtThisRound - 1);
             player.Credits += refund;
+            if (squad.Item != null) player.Inventory.Add(squad.Item); // The item is not lost with the squad.
             player.Squads.Remove(squad);
             return ActionResult.Success($"{squad.Type.Name} sold for {refund}.");
         }
@@ -347,6 +363,8 @@ namespace Halobellum.Economy
             CastPlacedSpells(Enemy, CurrentBattle);
             Reveal(Player, _seenA);
             Reveal(Enemy, _seenB);
+            _seenBuffsA = Player.Buffs.Clone();
+            _seenBuffsB = Enemy.Buffs.Clone();
             _seenFactionA = Player.Faction?.Name;
             _seenFactionB = Enemy.Faction?.Name;
             foreach (PlacedSquad squad in Player.Squads) squad.HasFought = true;
@@ -362,7 +380,7 @@ namespace Halobellum.Economy
             foreach (OwnedSpell spell in player.Spells)
             {
                 if (!spell.IsPlaced) continue;
-                battle.AddSpell(spell.Stats, player.Team, spell.Position);
+                battle.AddSpell(spell.Stats, player.Team, spell.Position, spell.Rotated90);
                 spell.IsPlaced = false;
                 spell.ReadyRound = Round + spell.Stats.CooldownRounds + 1;
             }
@@ -377,7 +395,7 @@ namespace Halobellum.Economy
                 seen.Add(new SeenSquad
                 {
                     Type = squad.Type, Level = squad.Level, Column = squad.Column, Row = squad.Row, Rotated90 = squad.Rotated90,
-                    Techs = new List<TechUpgrade>(player.TechsFor(squad.Type)),
+                    Techs = new List<TechUpgrade>(player.TechsFor(squad.Type)), Item = squad.Item,
                 });
             }
         }
@@ -407,13 +425,14 @@ namespace Halobellum.Economy
         public PlayerState SeenAsDeployment(Team team)
         {
             var state = new PlayerState(team);
+            state.SetBuffs(team == Team.A ? _seenBuffsA : _seenBuffsB);
             int id = 0;
             foreach (SeenSquad squad in SeenArmy(team))
             {
                 state.Squads.Add(new PlacedSquad
                 {
                     Id = ++id, Type = squad.Type, Column = squad.Column, Row = squad.Row, Rotated90 = squad.Rotated90,
-                    Level = squad.Level, HasFought = true,
+                    Level = squad.Level, HasFought = true, Item = squad.Item,
                 });
                 foreach (TechUpgrade tech in squad.Techs) state.AddTech(squad.Type, tech);
             }
@@ -472,9 +491,9 @@ namespace Halobellum.Economy
             }
             else
             {
-                summary.IncomeAwarded = NextIncome;
+                summary.IncomeAwarded = NextIncomeFor(Team.A);
                 Player.Credits += summary.IncomeAwarded;
-                Enemy.Credits += summary.IncomeAwarded;
+                Enemy.Credits += NextIncomeFor(Team.B);
                 Phase = MatchPhase.Result;
             }
             LastSummary = summary;
@@ -529,16 +548,77 @@ namespace Halobellum.Economy
             if (player.Credits < price) return ActionResult.Fail($"Not enough credits ({price} needed).");
 
             player.Credits -= price;
-            string message;
-            if (offer.Kind == CardKind.Spell)
-            {
-                SpellStats spell = offer.Spells[index];
-                player.Spells.Add(new OwnedSpell { Id = _nextSpellId++, Stats = spell, ReadyRound = Round });
-                message = $"{spell.Name} added to your spells.";
-            }
-            else message = PlaceReinforcements(player, offer.Reinforcements[index], price);
+            string message = offer.Kind == CardKind.General
+                ? ApplyCard(player, offer.Cards[index])
+                : PlaceReinforcements(player, offer.Reinforcements[index], price);
             ResolveOffer(team);
             return ActionResult.Success(message);
+        }
+
+        /// <summary>What a general card does when it is taken.</summary>
+        private string ApplyCard(PlayerState player, CardStats card)
+        {
+            if (card.Type == CardType.Spell)
+            {
+                player.Spells.Add(new OwnedSpell { Id = _nextSpellId++, Stats = card.Spell, ReadyRound = Round });
+                return $"{card.Name} added to your spells.";
+            }
+            player.CardsTaken.Add(card);
+            switch (card.Type)
+            {
+                case CardType.Item:
+                    player.Inventory.Add(card.Item);
+                    return $"{card.Name} added to your inventory.";
+                case CardType.Training:
+                    player.Training = card;
+                    player.TrainingReadyRound = Round;
+                    return $"{card.Name} ready: select a squad and use it.";
+            }
+            player.BonusIncome += card.BonusIncome;
+            player.ExtraSquadsPerRound += card.ExtraSquadsPerRound;
+            ArmyBuffs buffs = player.Buffs.Clone();
+            buffs.DamageMultiplier *= card.AllDamageMultiplier;
+            buffs.HealthMultiplier *= card.AllHealthMultiplier;
+            buffs.RangeBonus += card.AllRangeBonus;
+            player.SetBuffs(buffs);
+            return $"{card.Name}: {card.EffectsText()}.";
+        }
+
+        /// <summary>Puts an item from the inventory on a squad that has none; it stays there and affects the whole squad.</summary>
+        public ActionResult PlaceItem(Team team, ItemStats item, int squadId)
+        {
+            PlayerState player = Get(team);
+            PlacedSquad squad = player.FindSquad(squadId);
+            if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Items are placed during deployment.");
+            if (item == null || !player.Inventory.Contains(item)) return ActionResult.Fail("That item is not in your inventory.");
+            if (squad == null) return ActionResult.Fail("No such squad.");
+            if (squad.Item != null) return ActionResult.Fail($"{squad.Type.Name} already carries {squad.Item.Name}.");
+            player.Inventory.Remove(item);
+            squad.Item = item;
+            return ActionResult.Success($"{item.Name} placed on {squad.Type.Name}.");
+        }
+
+        /// <summary>True if this side owns Intensive Training and it has recharged.</summary>
+        public bool CanUseTraining(Team team)
+        {
+            PlayerState player = Get(team);
+            return Phase == MatchPhase.Deployment && player.Training != null && player.TrainingReadyRound <= Round;
+        }
+
+        /// <summary>Intensive Training: fills the squad's XP bar (it can then be leveled up); recharges like a spell.</summary>
+        public ActionResult UseTraining(Team team, int squadId)
+        {
+            PlayerState player = Get(team);
+            PlacedSquad squad = player.FindSquad(squadId);
+            if (player.Training == null) return ActionResult.Fail("You don't have Intensive Training.");
+            if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Training happens during deployment.");
+            if (player.TrainingReadyRound > Round) return ActionResult.Fail($"Intensive Training is recharging ({player.TrainingReadyRound - Round} more round(s)).");
+            if (squad == null) return ActionResult.Fail("Select a squad first.");
+            if (squad.Level >= UnitUpgrades.MaxLevel) return ActionResult.Fail($"{squad.Type.Name} is already at the maximum level.");
+            if (CanLevelUp(squad)) return ActionResult.Fail($"{squad.Type.Name}'s XP bar is already full.");
+            squad.Xp = XpNeeded(squad);
+            player.TrainingReadyRound = Round + player.Training.CooldownRounds + 1;
+            return ActionResult.Success($"{squad.Type.Name}'s XP bar is full: it can level up.");
         }
 
         /// <summary>Skips this team's offer for its bonus (50 for spells, 100 for reinforcements).</summary>
@@ -586,7 +666,7 @@ namespace Halobellum.Economy
         }
 
         /// <summary>Places (or moves) a spell for this round's battle. Offensive spells anywhere, defensive ones in your own zone.</summary>
-        public ActionResult PlaceSpell(Team team, int spellId, Vec2 position)
+        public ActionResult PlaceSpell(Team team, int spellId, Vec2 position, bool rotated90 = false)
         {
             OwnedSpell spell = Get(team).FindSpell(spellId);
             if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Spells are placed during deployment.");
@@ -596,6 +676,7 @@ namespace Halobellum.Economy
                 return ActionResult.Fail(spell.Stats.Offensive ? "Place it on the battlefield." : $"{spell.Stats.Name} can only be placed on your own side.");
             spell.IsPlaced = true;
             spell.Position = position;
+            spell.Rotated90 = rotated90;
             return ActionResult.Success($"{spell.Stats.Name} placed.");
         }
 

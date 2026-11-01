@@ -39,6 +39,8 @@ namespace Halobellum.Presentation
         public Action OnLevelDown;
         /// <summary>A short note under the level (e.g. "XP bar full: ready to level up").</summary>
         public string Note;
+        /// <summary>The item the squad carries and what it does, or null.</summary>
+        public string ItemText;
         public List<TechLine> Techs = new List<TechLine>();
     }
 

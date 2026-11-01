@@ -286,6 +286,48 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
+        public IEnumerator Items_GoOnASquad_FromTheInventory()
+        {
+            yield return LoadMatch();
+            _match.ChooseDraft(0);
+            yield return null;
+            Match m = _match.Match;
+            CardStats card = m.Player.Faction.Cards.Find(c => c.Type == CardType.Item && c.Item.HealthMultiplier > 1f);
+            Assert.IsNotNull(card, "The factions offer items.");
+            Assert.IsNotNull(_match.IconFor(card), "Items have icons.");
+            m.Player.Inventory.Add(card.Item);
+            PlacedSquad squad = m.Player.Squads[0];
+
+            _match.BeginPlacingItem(card.Item);
+            Assert.AreSame(card.Item, _match.PlacingItem);
+            yield return null;
+            Assert.IsTrue(_match.SquadOnScreen(squad, out _), "Its hexagon can be drawn over the squad.");
+            Assert.IsTrue(_match.PlaceItemOn(squad).Ok, _match.Message);
+            Assert.IsNull(_match.PlacingItem);
+            Assert.AreSame(card.Item, squad.Item);
+            yield return null;
+            Assert.AreEqual(squad.Type.MaxHealth * card.Item.HealthMultiplier, _battle.Simulation.Squads[0].Members[0].Stats.MaxHealth, 1e-2f, "The field shows the stronger squad.");
+        }
+
+        [UnityTest]
+        public IEnumerator IntensiveTraining_FillsTheSelectedSquadsXpBar()
+        {
+            yield return LoadMatch();
+            _match.ChooseDraft(0);
+            yield return null;
+            Match m = _match.Match;
+            m.Player.Training = m.Player.Faction.Cards.Find(c => c.Type == CardType.Training);
+            Assert.IsNotNull(m.Player.Training, "The factions offer Intensive Training.");
+            Assert.IsNotNull(_match.IconFor(m.Player.Training));
+            m.Player.TrainingReadyRound = m.Round;
+            Assert.IsFalse(_match.UseTraining(null).Ok);
+            PlacedSquad squad = m.Player.Squads[0];
+            Assert.IsTrue(_match.UseTraining(squad).Ok, _match.Message);
+            Assert.IsTrue(m.CanLevelUp(squad));
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator Cards_ASpellIsTakenPlacedAndCast_ThenReinforcementsJoin()
         {
             yield return LoadMatch();
@@ -299,11 +341,16 @@ namespace Halobellum.Tests
             // Round 2: spells.
             Assert.AreEqual(MatchPhase.Cards, m.Phase);
             CardOffer offer = m.Player.Offer;
-            Assert.AreEqual(CardKind.Spell, offer.Kind);
-            Assert.AreEqual(3, offer.Count, "The factions have more than 3 spells.");
+            Assert.AreEqual(CardKind.General, offer.Kind);
+            Assert.AreEqual(3, offer.Count, "The factions have more than 3 cards.");
             m.Player.Credits = 3000;
-            int strike = offer.Spells.FindIndex(s => s.Offensive && s.Effect == SpellEffect.Damage);
-            Assert.GreaterOrEqual(strike, 0, "This seed offers a damage spell.");
+            int strike = offer.Cards.FindIndex(c => c.Spell != null && c.Spell.Offensive && c.Spell.Effect == SpellEffect.Damage);
+            if (strike < 0)
+            {
+                // Not offered with this seed: swap one in, it is the spell's journey being tested.
+                offer.Cards[0] = m.Player.Faction.Cards.Find(c => c.Spell != null && c.Spell.Offensive && c.Spell.Effect == SpellEffect.Damage && c.MinRound <= m.Round);
+                strike = 0;
+            }
             Assert.IsTrue(_match.ChooseCard(strike).Ok, _match.Message);
             Assert.AreEqual(MatchPhase.Deployment, m.Phase);
             OwnedSpell spell = m.Player.Spells.Single();
@@ -328,7 +375,12 @@ namespace Halobellum.Tests
                 $"{cast.Stats.Name} went off (battle lasted {_battle.Simulation.ElapsedSeconds:0.0} s, delay {cast.Stats.DelaySeconds} s, ticks {cast.TicksDone}).");
             Assert.IsFalse(spell.IsReady(3), "Recharging next round.");
 
-            // Round 3: reinforcements.
+            // Round 4: reinforcements (round 3 is another general offer).
+            _match.Continue();
+            yield return null;
+            Assert.AreEqual(CardKind.General, m.Player.Offer.Kind, "Round 3.");
+            _match.SkipCards();
+            yield return PlayRound();
             _match.Continue();
             yield return null;
             Assert.AreEqual(MatchPhase.Cards, m.Phase);

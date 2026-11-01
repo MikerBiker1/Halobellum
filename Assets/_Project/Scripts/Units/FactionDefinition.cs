@@ -32,12 +32,15 @@ namespace Halobellum.Units
         public List<SubFactionEntry> subFactions = new List<SubFactionEntry>();
         [Tooltip("Spells this faction can be offered between rounds (Milestone 7, Data/Spells).")]
         public List<SpellDefinition> spells = new List<SpellDefinition>();
+        [Tooltip("Items, economy cards, buffs and Intensive Training this faction can be offered (Data/Cards).")]
+        public List<CardDefinition> cards = new List<CardDefinition>();
 
         /// <summary>
         /// Copies this faction into plain C# for the match. statsCache makes every unit asset turn into
         /// one shared UnitStats object, so the same unit is recognised everywhere in the match.
         /// </summary>
-        public FactionInfo ToInfo(Dictionary<UnitDefinition, UnitStats> statsCache)
+        /// <param name="cardSources">If given, filled with the asset behind each non-spell card (for its icon).</param>
+        public FactionInfo ToInfo(Dictionary<UnitDefinition, UnitStats> statsCache, Dictionary<CardStats, CardDefinition> cardSources = null)
         {
             var info = new FactionInfo { Name = string.IsNullOrEmpty(factionName) ? name : factionName };
             foreach (UnitDefinition unit in baseRoster)
@@ -55,7 +58,14 @@ namespace Halobellum.Units
             }
             foreach (SpellDefinition spell in spells)
             {
-                if (spell != null) info.Spells.Add(spell.ToStats(statsCache));
+                if (spell != null) info.Cards.Add(CardStats.FromSpell(spell.ToStats(statsCache)));
+            }
+            foreach (CardDefinition definition in cards)
+            {
+                if (definition == null) continue;
+                CardStats card = definition.ToStats();
+                info.Cards.Add(card);
+                if (cardSources != null) cardSources[card] = definition;
             }
             return info;
         }

@@ -25,6 +25,58 @@ namespace Halobellum.Tests
             return Faction(asset).spells.Select(s => s.ToStats(cache)).ToList();
         }
 
+        private static List<CardStats> Cards(string asset) =>
+            Faction(asset).ToInfo(new Dictionary<UnitDefinition, UnitStats>()).Cards;
+
+        [TestCase("UNSC_Standard")]
+        [TestCase("Covenant_Standard")]
+        public void EveryFaction_OffersItemsEconomyBuffsAndTraining(string asset)
+        {
+            List<CardStats> cards = Cards(asset);
+            foreach (CardStats card in cards) CollectionAssert.IsEmpty(card.Validate(), card.Name);
+            Assert.AreEqual(8, cards.Count(c => c.Type == CardType.Item), "The 8 items.");
+            Assert.AreEqual(2, cards.Count(c => c.Type == CardType.Economy), "Supply Enhancement and Super Supply.");
+            Assert.AreEqual(1, cards.Count(c => c.Type == CardType.Training));
+            Assert.AreEqual(4, cards.Count(c => c.Type == CardType.Buff));
+            foreach (CardDefinition definition in Faction(asset).cards)
+                Assert.IsNotNull(definition.icon, $"{definition.name} has an icon.");
+            Assert.IsTrue(cards.Where(c => c.Type == CardType.Buff && c.ExtraSquadsPerRound == 0).All(c => c.MinRound >= 7), "Powerful buffs from round 7.");
+            Assert.AreEqual(5, cards.Single(c => c.ExtraSquadsPerRound > 0).MinRound, "The extra slot from round 5.");
+        }
+
+        [Test]
+        public void TheBigSpells_OnlyAppearFromRound7_WithALongDelay()
+        {
+            foreach (string name in new[] { "UNSC_Standard:HAVOK Nuke", "Covenant_Standard:Glassing Beam" })
+            {
+                string[] parts = name.Split(':');
+                SpellStats spell = Spells(parts[0]).Single(s => s.Name == parts[1]);
+                Assert.GreaterOrEqual(spell.MinRound, 7, spell.Name);
+                Assert.AreEqual(6f, spell.DelaySeconds, 1e-3f, spell.Name);
+            }
+        }
+
+        [Test]
+        public void BothFactions_HaveSmokeAndEmp_OnlyTheCovenantHasTheBansheeAmbush()
+        {
+            foreach (string asset in new[] { "UNSC_Standard", "Covenant_Standard" })
+            {
+                List<SpellStats> spells = Spells(asset);
+                SpellStats smoke = spells.Single(s => s.Effect == SpellEffect.Smoke);
+                Assert.AreEqual(15f, smoke.AreaWidth, 1e-3f);
+                Assert.AreEqual(4f, smoke.AreaDepth, 1e-3f);
+                Assert.AreEqual(100, smoke.Cost);
+                Assert.AreEqual(3, smoke.CooldownRounds);
+                SpellStats emp = spells.Single(s => s.Effect == SpellEffect.Disrupt);
+                Assert.AreEqual(10000f, emp.ShieldDamage, 1e-3f);
+                Assert.AreEqual(2, emp.CooldownRounds);
+            }
+            SpellStats ambush = Spells("Covenant_Standard").Single(s => s.Name == "Banshee Ambush");
+            Assert.AreEqual("Banshee", ambush.DropUnit.Name);
+            Assert.AreEqual(2, ambush.DropSquads);
+            CollectionAssert.DoesNotContain(Spells("UNSC_Standard").Select(s => s.Name).ToList(), "Banshee Ambush");
+        }
+
         [TestCase("UNSC_Standard")]
         [TestCase("Covenant_Standard")]
         public void EveryFaction_HasValidSpells_MoreThanOneOffer(string asset)
@@ -61,6 +113,8 @@ namespace Halobellum.Tests
             SpellStats pods = Spells("UNSC_Standard").Single(s => s.Effect == SpellEffect.DropSquad);
             Assert.AreEqual("ODST", pods.DropUnit.Name);
             CollectionAssert.IsEmpty(pods.DropUnit.Validate());
+            Assert.AreEqual(12, pods.DropUnit.SquadSize, "A squad of 12 (D33).");
+            Assert.IsTrue(pods.DropUnit.SwitchesWeapons, "SMG or rocket launcher, by target.");
             foreach (string asset in new[] { "UNSC_Standard", "Covenant_Standard" })
             {
                 Assert.IsFalse(Faction(asset).baseRoster.Any(u => u.unitName == "ODST"), "Not buyable.");

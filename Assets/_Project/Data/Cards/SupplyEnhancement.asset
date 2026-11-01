@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e60f424de7e158173404479ece2d51b5, type: 3}
+  m_Name: SupplyEnhancement
+  m_EditorClassIdentifier:
+  cardName: Supply Enhancement
+  description: 'Better supply lines.'
+  type: 2
+  icon: {fileID: 2800000, guid: c8ac1970fec938b91c9a89ca293cd8a4, type: 3}
+  cost: 100
+  maxOwnedCopies: 1
+  minRound: 0
+  healthMultiplier: 1
+  damageMultiplier: 1
+  moveSpeedMultiplier: 1
+  rangeBonus: 0
+  lifestealShare: 0
+  healPerSecondShare: 0
+  freeDeployment: 0
+  bonusIncome: 50
+  allDamageMultiplier: 1
+  allHealthMultiplier: 1
+  allRangeBonus: 0
+  extraSquadsPerRound: 0
+  cooldownRounds: 0

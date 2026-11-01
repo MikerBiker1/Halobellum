@@ -4,8 +4,8 @@
 //   Halobellum.exe -autoplay -autoplayRounds 3 -autoplaySpeed 4 -autoplayShots C:\temp\shots
 // It picks the first draft card, takes the first affordable card on each card screen (Milestone 7),
 // buys up to 2 squads per round of the first affordable unlocked unit type, places every ready spell
-// (offensive ones on the enemy's last-seen army, defensive ones on its own first squad), presses
-// Ready, saves screenshots of the draft, each card screen, the bought squads falling in, each
+// (offensive ones on the enemy's last-seen army, defensive ones on its own first squad), puts items
+// on its squads, uses Intensive Training, presses Ready, saves screenshots of the draft, each card screen, the bought squads falling in, each
 // deployment, battle (at 1.2 s of battle time, when spells go off) and result, then quits after the
 // given number of rounds (or when the match ends).
 // With "-sandboxDemo <folder>" it opens the Sandbox scene instead (see SandboxAutoplay).
@@ -102,6 +102,7 @@ namespace Halobellum.Presentation
                     {
                         BuySquads(m);
                         PlaceSpells(m);
+                        UseItemsAndTraining(m);
                         _lastShotRound = m.Round;
                         _dropShotPending = true;
                         _wait = 0.25f; // Bought squads drop in: one shot mid-fall, then let them land.
@@ -147,6 +148,18 @@ namespace Halobellum.Presentation
                 if (offer.PriceOf(i) <= m.Player.Credits && _match.ChooseCard(i).Ok) return;
             }
             _match.SkipCards();
+        }
+
+        private void UseItemsAndTraining(Match m)
+        {
+            foreach (ItemStats item in new System.Collections.Generic.List<ItemStats>(m.Player.Inventory))
+            {
+                PlacedSquad free = m.Player.Squads.Find(s => s.Item == null);
+                if (free == null) break;
+                _match.BeginPlacingItem(item);
+                _match.PlaceItemOn(free);
+            }
+            if (m.CanUseTraining(Team.A) && m.Player.Squads.Count > 0) _match.UseTraining(m.Player.Squads[0]);
         }
 
         private void PlaceSpells(Match m)

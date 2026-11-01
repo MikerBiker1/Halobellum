@@ -10,12 +10,14 @@
 //      using the same Match actions. Then it spends what is left on level-ups (squads with a full
 //      XP bar, most valuable first) and tech upgrades (for the unit type it has the most of).
 //   5. Places squads by role: chaff and tanks in front, ranged units behind, flankers on the sides.
-//   6. Cards (Milestone 7, decision D32): takes the reinforcement card that adds the most worth for
-//      its price (Hard also weighs how well the unit counters the revealed army) or the spell with the
-//      most impact it can afford while keeping a reserve; skips when nothing beats the skip bonus.
-//      Places its ready spells: strikes and zones on the densest part of the opponent's army as
-//      revealed at the last battle start, drop pods on the opponent's most valuable revealed squad,
-//      buffs on its own densest group. It never sees the opponent's spells or new squads.
+//   6. Cards (Milestone 7, decisions D32 and D33): takes the reinforcement card that adds the most
+//      worth for its price (Hard also weighs how well the unit counters the revealed army), or the
+//      general card (spell, item, economy, buff, training) it values most and can afford while keeping
+//      a reserve; skips when nothing beats the skip bonus. Places its ready spells: strikes, zones,
+//      EMPs and smoke on the densest part of the opponent's army as revealed at the last battle start,
+//      drop pods on the opponent's most valuable revealed squad, buffs on its own densest group. Puts
+//      items and Intensive Training on its most valuable squads. It never sees the opponent's spells,
+//      items or new squads until they have been revealed in a battle.
 // Difficulty only changes decision quality, never information or income:
 //   Easy   - picks strategies partly at random, counters poorly, often leaves credits unspent, and
 //            places squads sloppily.
@@ -176,7 +178,7 @@ namespace Halobellum.Economy
                     // Keep enough for squads this round (Normal keeps more than Hard).
                     int reserve = Difficulty == AiDifficulty.Hard ? 100 : 200;
                     if (credits - price < reserve) continue;
-                    value = SpellImpact(offer.Spells[i]);
+                    value = CardValue(view, offer.Cards[i]);
                 }
                 if (value > bestValue)
                 {
@@ -187,11 +189,38 @@ namespace Halobellum.Economy
             return best;
         }
 
-        /// <summary>A rough worth of a spell in credits, to compare it with the others and with skipping.</summary>
+        /// <summary>A rough worth of a general card in credits, to compare the cards with each other and with skipping.</summary>
+        private static float CardValue(AiView view, CardStats card)
+        {
+            float army = 0f, bestSquad = 100f;
+            foreach (PlacedSquad squad in view.Self.Squads)
+            {
+                float worth = squad.Type.Cost * squad.Level;
+                army += worth;
+                bestSquad = Math.Max(bestSquad, worth);
+            }
+            switch (card.Type)
+            {
+                case CardType.Spell: return SpellImpact(card.Spell);
+                case CardType.Economy: return card.BonusIncome * 3f;
+                case CardType.Training: return 150f;
+                case CardType.Item:
+                    ItemStats item = card.Item;
+                    return bestSquad * (item.DamageMultiplier - 1f + item.HealthMultiplier - 1f + 0.5f * (item.MoveSpeedMultiplier - 1f)
+                                        + 0.02f * item.RangeBonus + 0.4f * item.LifestealShare + 8f * item.HealPerSecondShare);
+                default:
+                    return army * (card.AllDamageMultiplier - 1f + card.AllHealthMultiplier - 1f + 0.03f * card.AllRangeBonus)
+                           + card.BonusIncome * 3f + card.ExtraSquadsPerRound * 150f;
+            }
+        }
+
+        /// <summary>A rough worth of a spell in credits.</summary>
         private static float SpellImpact(SpellStats spell)
         {
             switch (spell.Effect)
             {
+                case SpellEffect.Disrupt: return 60f + spell.Radius * 10f;
+                case SpellEffect.Smoke: return 110f;
                 case SpellEffect.Damage: return spell.DamagePerTick * Math.Max(1, spell.Ticks) * spell.Radius * 0.15f / (1f + spell.CooldownRounds * 0.5f);
                 case SpellEffect.DropSquad: return (spell.DropUnit?.Cost ?? 0) * spell.DropSquads / (1f + spell.CooldownRounds * 0.5f);
                 default: return 60f + spell.Radius * 10f;
@@ -221,6 +250,26 @@ namespace Halobellum.Economy
                 }
                 if (target.HasValue && view.PlaceSpell(spell, target.Value).Ok) placed.Add(spell.Stats.Name);
             }
+        }
+
+        /// <summary>
+        /// Items go on its most valuable squads without one (Easy: any squad); a Deployment Module, which the
+        /// AI has no use for, on its cheapest. Intensive Training on its most valuable squad that can use it.
+        /// </summary>
+        private void UseItemsAndTraining(AiView view, List<string> upgrades)
+        {
+            var squads = new List<PlacedSquad>(view.Self.Squads);
+            squads.Sort((a, b) => (b.Type.Cost * b.Level).CompareTo(a.Type.Cost * a.Level));
+            foreach (ItemStats item in new List<ItemStats>(view.Inventory))
+            {
+                var free = squads.FindAll(s => s.Item == null);
+                if (free.Count == 0) break;
+                PlacedSquad target = Difficulty == AiDifficulty.Easy ? free[_random.RangeInt(0, free.Count)] : item.FreeDeployment ? free[free.Count - 1] : free[0];
+                if (view.PlaceItem(item, target).Ok) upgrades.Add($"{item.Name} on {target.Type.Name}");
+            }
+            if (!view.CanUseTraining) return;
+            PlacedSquad trainee = squads.Find(s => s.Level < UnitUpgrades.MaxLevel && !view.CanLevelUp(s));
+            if (trainee != null && view.UseTraining(trainee).Ok) upgrades.Add($"training for {trainee.Type.Name}");
         }
 
         /// <summary>The squad position with the most value within `radius` (+3 m) around it, or null.</summary>
@@ -301,7 +350,7 @@ namespace Halobellum.Economy
             // 3-4. Unlock at most one unit type, then buy up to the squad limit.
             var bought = new List<string>();
             string unlocked = TryUnlock(view, seen, totalSeen);
-            for (int i = 0; i < view.Rules.NewSquadsPerRound; i++)
+            for (int i = 0; i < view.SquadsPerRound; i++)
             {
                 if (Difficulty == AiDifficulty.Easy && _random.NextFloat() < 0.35f) break; // Easy wastes budget.
                 UnitStats choice = BestAffordable(view, seen, totalSeen, unlockedOnly: true);
@@ -314,6 +363,7 @@ namespace Halobellum.Economy
 
             // 5. Level-ups and techs with the credits left, then spells.
             var upgrades = new List<string>();
+            UseItemsAndTraining(view, upgrades);
             SpendOnUpgrades(view, upgrades);
             var spells = new List<string>();
             PlaceSpells(view, spells);

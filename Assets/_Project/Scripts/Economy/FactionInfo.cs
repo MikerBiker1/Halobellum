@@ -20,8 +20,8 @@ namespace Halobellum.Economy
         public string Name = "";
         public List<UnitStats> BaseRoster = new List<UnitStats>();
         public List<SubFactionInfo> SubFactions = new List<SubFactionInfo>();
-        /// <summary>The spells this faction can be offered (Bible Section 10).</summary>
-        public List<SpellStats> Spells = new List<SpellStats>();
+        /// <summary>The spells, items, economy cards and buffs this faction can be offered (Bible Section 10).</summary>
+        public List<CardStats> Cards = new List<CardStats>();
 
         /// <summary>Every unit type a player of this faction and sub-faction can unlock: base roster plus exclusives.</summary>
         public List<UnitStats> RosterFor(SubFactionInfo subFaction)

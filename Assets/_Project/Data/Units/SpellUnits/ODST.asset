@@ -16,10 +16,10 @@ MonoBehaviour:
   role: 2
   tier: 2
   unlockCost: 0
-  squadSize: 6
+  squadSize: 12
   cost: 300
-  baseDamage: 10
-  maxHealth: 160
+  baseDamage: 5
+  maxHealth: 100
   armorType: 0
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -29,10 +29,10 @@ MonoBehaviour:
   isAir: 0
   targetFilter: 2
   weapons:
-  - weaponName: BR55 Battle Rifle
-    damagePerShot: 18
-    fireInterval: 0.8
-    range: 14
+  - weaponName: M7 SMG
+    damagePerShot: 3
+    fireInterval: 0.1
+    range: 10
     minRange: 0
     projectileSpeed: 0
     splashRadius: 0
@@ -43,6 +43,22 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
+    targetClass: 1
+  - weaponName: M41 Rocket Launcher
+    damagePerShot: 60
+    fireInterval: 3
+    range: 16
+    minRange: 0
+    projectileSpeed: 40
+    splashRadius: 1.5
+    damageType: 1
+    isAntiArmor: 1
+    canBeBlocked: 0
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    targetClass: 2
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -58,4 +74,4 @@ MonoBehaviour:
   prefab: {fileID: 0}
   strongAgainst: Chaff
   weakAgainst: Chaff clear
-  notes: 'Only lands from the ODST Drop Pods spell (UNSC, decision D31); not in any roster. First-pass values.'
+  notes: 'Only lands from the ODST Drop Pods spell (UNSC, decisions D31 and D33); not in any roster. Uses the SMG on chaff and unarmored enemies, the rocket launcher on tougher ones. First-pass values.'

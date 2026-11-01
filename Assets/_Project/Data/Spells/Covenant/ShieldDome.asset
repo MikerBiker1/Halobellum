@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ShieldDome
   m_EditorClassIdentifier:
   spellName: Energy Shield Dome
-  description: A dome of hard light shields your units.
+  description: 'A dome of hard light shields your units.'
   offensive: 0
   effect: 1
   cost: 100
@@ -21,6 +21,9 @@ MonoBehaviour:
   maxOwnedCopies: 2
   radius: 8
   delaySeconds: 0
+  minRound: 0
+  areaWidth: 0
+  areaDepth: 0
   damagePerTick: 0
   damageType: 0
   isAntiArmor: 0
@@ -31,3 +34,9 @@ MonoBehaviour:
   damageMultiplier: 1
   dropUnit: {fileID: 0}
   dropSquads: 1
+  shieldDamage: 0
+  techDisableSeconds: 0
+  slowShare: 0
+  slowSeconds: 0
+  durationSeconds: 0
+  rangeMultiplier: 1

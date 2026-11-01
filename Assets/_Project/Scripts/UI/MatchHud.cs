@@ -4,9 +4,12 @@
 //     button to the Sandbox.
 //   Deployment: credits and next income, squads bought (x of 2), unlocks (x of 1), both bases, the
 //     unit shop (Buy / Unlock), actions for the selected squad (Move, Turn, Sell) and Ready. No timer.
-//   Cards (from round 2, Milestone 7): 3 spell or reinforcement cards with their prices, and Skip
-//     with its bonus. During deployment a spell bar (left) lists owned spells: Place / Move, take
-//     back, or how many rounds until recharged.
+//   Cards (from round 2, Milestone 7): 3 cards with their prices (spells, items, economy, buffs,
+//     training, or reinforcements every other round from round 4), and Skip with its bonus.
+//     During deployment a spell bar (left) lists owned spells: Place / Move, take back, or how many
+//     rounds until recharged. Under it the Inventory holds items: click one, and an empty hexagon
+//     appears over every squad without an item; squads with an item show it. Intensive Training is
+//     an icon at the top left: select a squad, click it, confirm (decision D33).
 //   Battle: both base health bars and a live army-value comparison (speed controls are in BattleHud).
 //   Result: base damage dealt by each side, income, survivors, top damage dealers, what killed what.
 //   Match over: the winner and a New match button.
@@ -128,8 +131,8 @@ namespace Halobellum.UI
             var bar = new Rect(width * 0.5f - 560f, 8f, 1120f, 64f);
             Panel(bar);
             GUI.Label(new Rect(bar.x + 16f, bar.y + 6f, 220f, 26f), HudTheme.Title($"Round {m.Round}: Deployment"), _header);
-            GUI.Label(new Rect(bar.x + 16f, bar.y + 32f, 260f, 26f), $"Credits {player.Credits}  (+{m.NextIncome} next round)", _text);
-            GUI.Label(new Rect(bar.x + 290f, bar.y + 6f, 220f, 26f), $"Squads bought: {player.SquadsBoughtThisRound} of {m.Rules.NewSquadsPerRound}", _text);
+            GUI.Label(new Rect(bar.x + 16f, bar.y + 32f, 260f, 26f), $"Credits {player.Credits}  (+{m.NextIncomeFor(Team.A)} next round)", _text);
+            GUI.Label(new Rect(bar.x + 290f, bar.y + 6f, 220f, 26f), $"Squads bought: {player.SquadsBoughtThisRound} of {m.SquadsPerRound(Team.A)}", _text);
             GUI.Label(new Rect(bar.x + 290f, bar.y + 32f, 220f, 26f), $"Unlocks: {player.UnlocksThisRound} of {m.Rules.UnlocksPerRound}", _text);
             BaseBar(new Rect(bar.x + 520f, bar.y + 10f, 220f, 20f), "Your base", player.BaseHealth, m.Rules.BaseHealth, playerColor);
             BaseBar(new Rect(bar.x + 520f, bar.y + 36f, 220f, 20f), "Enemy base", m.Enemy.BaseHealth, m.Rules.BaseHealth, enemyColor);
@@ -144,8 +147,10 @@ namespace Halobellum.UI
                 GUI.Label(message, match.Message, _smallCentered);
             }
 
+            DrawSquadItemSlots();
             DrawShop(width, height);
-            DrawSpellBar();
+            DrawInventory(DrawSpellBar());
+            DrawTrainingIcon();
             DrawSelectedSquadActions(width, height);
         }
 
@@ -156,24 +161,24 @@ namespace Halobellum.UI
             Match m = match.Match;
             CardOffer offer = m.Player.Offer;
             if (offer == null) return;
-            bool spells = offer.Kind == CardKind.Spell;
+            bool general = offer.Kind == CardKind.General;
             const float cardWidth = 310f, cardHeight = 330f, gap = 20f;
             float panelWidth = Mathf.Max(3, offer.Count) * (cardWidth + gap) + gap;
             Rect panel = CenteredPanel(panelWidth, cardHeight + 170f);
             GUI.Label(new Rect(panel.x, panel.y + 14f, panel.width, 34f),
-                HudTheme.Title(spells ? $"Round {m.Round}: choose a spell" : $"Round {m.Round}: choose reinforcements"), _centered);
+                HudTheme.Title(general ? $"Round {m.Round}: choose a card" : $"Round {m.Round}: choose reinforcements"), _centered);
             GUI.Label(new Rect(panel.x, panel.y + 50f, panel.width, 24f),
-                spells ? $"Spells are kept for the match and recharge after each use.   Credits {m.Player.Credits}"
-                       : $"Budget {m.Rules.ReinforcementBudget(m.Round)}: you pay what a card is worth above it.   Credits {m.Player.Credits}", _smallCentered);
+                general ? $"Credits {m.Player.Credits}"
+                        : $"Budget {m.Rules.ReinforcementBudget(m.Round)}: you pay what a card is worth above it.   Credits {m.Player.Credits}", _smallCentered);
 
             if (offer.Count == 0)
-                GUI.Label(new Rect(panel.x, panel.y + 160f, panel.width, 30f), "No spells left to offer: you own every spell you can.", _smallCentered);
+                GUI.Label(new Rect(panel.x, panel.y + 160f, panel.width, 30f), "No cards left to offer.", _smallCentered);
             float x = panel.x + gap + (panelWidth - gap - offer.Count * (cardWidth + gap)) * 0.5f;
             for (int i = 0; i < offer.Count; i++)
             {
                 var card = new Rect(x + i * (cardWidth + gap), panel.y + 86f, cardWidth, cardHeight);
                 HudTheme.RowBox(card);
-                if (spells) DrawSpellCard(card, offer.Spells[i], m.Player.CopiesOwned(offer.Spells[i]));
+                if (general) DrawGeneralCard(card, offer.Cards[i], m.Player.CopiesOwned(offer.Cards[i]));
                 else DrawReinforcementCard(card, offer.Reinforcements[i]);
                 int price = offer.PriceOf(i);
                 GUI.enabled = m.Player.Credits >= price;
@@ -186,19 +191,51 @@ namespace Halobellum.UI
                 GUI.Label(new Rect(panel.x, panel.yMax - 92f, panel.width, 26f), match.Message, _smallCentered);
         }
 
-        private void DrawSpellCard(Rect card, SpellStats spell, int owned)
+        /// <summary>A spell, item, economy, buff or training card: what kind it is, what it does, its limits.</summary>
+        private void DrawGeneralCard(Rect card, CardStats stats, int owned)
         {
             float x = card.x + 14f, w = card.width - 28f, y = card.y + 12f;
-            GUI.Label(new Rect(x, y, w, 30f), spell.Name, _header); y += 32f;
+            Texture2D icon = match.IconFor(stats);
+            if (icon != null) DrawHexIcon(new Rect(card.xMax - 56f, card.y + 8f, 44f, 44f), icon);
+            GUI.Label(new Rect(x, y, w - (icon != null ? 44f : 0f), 30f), stats.Name, _header);
+            y += 32f;
             Color old = GUI.color;
-            GUI.color = SpellView.ColorFor(spell);
-            GUI.Label(new Rect(x, y, w, 24f), spell.Offensive ? "Offensive: anywhere on the field" : "Defensive: on your own side", _text);
+            GUI.color = CardKindColor(stats);
+            GUI.Label(new Rect(x, y, w, 24f), CardKindText(stats), _text);
             GUI.color = old;
             y += 28f;
-            GUI.Label(new Rect(x, y, w, 66f), spell.EffectsText(), _wrap); y += 70f;
-            GUI.Label(new Rect(x, y, w, 66f), spell.Description, _wrapDim); y += 70f;
-            GUI.Label(new Rect(x, y, w, 24f), $"Recharge: {spell.CooldownRounds} round{(spell.CooldownRounds == 1 ? "" : "s")} after use", _small); y += 24f;
-            GUI.Label(new Rect(x, y, w, 24f), $"Owned: {owned} of {spell.MaxOwnedCopies}", _small);
+            GUI.Label(new Rect(x, y, w, 66f), stats.EffectsText(), _wrap);
+            y += 70f;
+            GUI.Label(new Rect(x, y, w, 66f), stats.Description, _wrapDim);
+            y += 70f;
+            if (stats.Spell != null)
+                GUI.Label(new Rect(x, y, w, 24f), $"Recharge: {stats.Spell.CooldownRounds} round{(stats.Spell.CooldownRounds == 1 ? "" : "s")} after use", _small);
+            y += 24f;
+            if (stats.MaxOwnedCopies < 99) GUI.Label(new Rect(x, y, w, 24f), $"Owned: {owned} of {stats.MaxOwnedCopies}", _small);
+        }
+
+        private static string CardKindText(CardStats card)
+        {
+            switch (card.Type)
+            {
+                case CardType.Spell: return card.Spell.Offensive ? "Offensive: anywhere on the field" : "Defensive: on your own side";
+                case CardType.Item: return "Item: goes on one squad";
+                case CardType.Economy: return "Economy";
+                case CardType.Training: return "Ability: use it on a squad";
+                default: return "Buff: for your whole army";
+            }
+        }
+
+        private static Color CardKindColor(CardStats card)
+        {
+            switch (card.Type)
+            {
+                case CardType.Spell: return SpellView.ColorFor(card.Spell);
+                case CardType.Item: return new Color(1f, 0.82f, 0.35f);
+                case CardType.Economy: return new Color(0.45f, 0.95f, 0.5f);
+                case CardType.Training: return new Color(0.5f, 0.9f, 1f);
+                default: return new Color(0.95f, 0.75f, 1f);
+            }
         }
 
         private void DrawReinforcementCard(Rect card, ReinforcementCard reinforcement)
@@ -211,16 +248,127 @@ namespace Halobellum.UI
             GUI.Label(new Rect(x, y, w, 24f), $"Worth {reinforcement.TotalWorth} ({reinforcement.SquadWorth} per squad)", _text); y += 26f;
             GUI.Label(new Rect(x, y, w, 24f), $"Budget {reinforcement.Budget}", _small); y += 26f;
             bool unlocked = match.Match.Player.Unlocked.Contains(unit);
-            GUI.Label(new Rect(x, y, w, 48f), unlocked ? "Placed like squads bought this round; free of the 2-squad limit."
+            GUI.Label(new Rect(x, y, w, 48f), unlocked ? "Placed like squads bought this round, on top of your squad limit."
                                                        : "Also unlocks the unit for the rest of the match.", _wrapDim);
         }
 
+        // ------------------------------------------------------------------ items and training (D33)
+
+        /// <summary>A hexagon with an icon on it; returns true if clicked when clickable.</summary>
+        private bool DrawHexIcon(Rect rect, Texture2D icon, bool clickable = false)
+        {
+            UiThemeDefinition theme = HudTheme.Current;
+            if (theme != null && theme.hexFilled != null) GUI.DrawTexture(rect, theme.hexFilled, ScaleMode.StretchToFill);
+            if (icon != null) GUI.DrawTexture(new Rect(rect.x + rect.width * 0.2f, rect.y + rect.height * 0.2f, rect.width * 0.6f, rect.height * 0.6f), icon, ScaleMode.ScaleToFit);
+            return clickable && GUI.Button(rect, GUIContent.none, GUIStyle.none);
+        }
+
+        /// <summary>The Inventory: items waiting to be placed. Click one, then the hexagon over a squad.</summary>
+        private void DrawInventory(float top)
+        {
+            List<ItemStats> items = match.Match.Player.Inventory;
+            if (items.Count == 0) return;
+            const float size = 56f, gap = 6f;
+            int perRow = 5;
+            int rows = Mathf.CeilToInt(items.Count / (float)perRow);
+            var panel = new Rect(10f, top, 330f, 44f + rows * (size + gap) + 44f);
+            Panel(panel);
+            GUI.Label(new Rect(panel.x + 12f, panel.y + 8f, panel.width - 24f, 28f), HudTheme.Title("Inventory"), _header);
+            string hovered = null;
+            for (int i = 0; i < items.Count; i++)
+            {
+                ItemStats item = items[i];
+                var rect = new Rect(panel.x + 12f + (i % perRow) * (size + gap), panel.y + 40f + (i / perRow) * (size + gap), size, size);
+                bool selected = match.PlacingItem == item;
+                if (selected)
+                {
+                    Color old = GUI.color;
+                    GUI.color = HudTheme.Accent;
+                    GUI.DrawTexture(new Rect(rect.x - 2f, rect.y - 2f, rect.width + 4f, rect.height + 4f), HudTheme.Current != null && HudTheme.Current.hexEmpty != null ? HudTheme.Current.hexEmpty : Texture2D.whiteTexture, ScaleMode.StretchToFill);
+                    GUI.color = old;
+                }
+                if (DrawHexIcon(rect, match.IconFor(item), clickable: true))
+                {
+                    if (selected) match.CancelItemPlacement();
+                    else match.BeginPlacingItem(item);
+                }
+                if (rect.Contains(Event.current.mousePosition)) hovered = $"{item.Name}: {item.EffectsText()}";
+            }
+            string caption = hovered ?? (match.PlacingItem != null ? $"{match.PlacingItem.Name}: {match.PlacingItem.EffectsText()}" : "Click an item, then a squad.");
+            GUI.Label(new Rect(panel.x + 12f, panel.yMax - 46f, panel.width - 24f, 42f), caption, _wrapDim);
+        }
+
+        /// <summary>Over each of the player's squads: the item it carries, or an empty hexagon to click while an item is selected.</summary>
+        private void DrawSquadItemSlots()
+        {
+            ItemStats placing = match.PlacingItem;
+            foreach (PlacedSquad squad in match.Match.Player.Squads)
+            {
+                if (squad.Item == null && placing == null) continue;
+                if (!match.SquadOnScreen(squad, out Vector3 screen)) continue;
+                // Screen pixels (origin bottom-left) to HUD coordinates (origin top-left, scaled).
+                var centre = new Vector2(screen.x / _scale, (Screen.height - screen.y) / _scale);
+                const float size = 40f;
+                var rect = new Rect(centre.x - size * 0.5f, centre.y - size - 6f, size, size);
+                if (squad.Item != null)
+                {
+                    DrawHexIcon(rect, match.IconFor(squad.Item));
+                    continue;
+                }
+                UiHitAreas.Add(HudScale.ToScreen(rect, _scale));
+                UiThemeDefinition theme = HudTheme.Current;
+                if (theme != null && theme.hexEmpty != null) GUI.DrawTexture(rect, theme.hexEmpty, ScaleMode.StretchToFill);
+                if (GUI.Button(rect, GUIContent.none, GUIStyle.none)) match.PlaceItemOn(squad);
+            }
+        }
+
+        private bool _confirmTraining;
+
+        /// <summary>Intensive Training, top left: select a squad, press the icon, confirm. Shows how long it still recharges.</summary>
+        private void DrawTrainingIcon()
+        {
+            Match m = match.Match;
+            CardStats training = m.Player.Training;
+            if (training == null) return;
+            var rect = new Rect(14f, 8f, 64f, 64f);
+            UiHitAreas.Add(HudScale.ToScreen(rect, _scale));
+            int roundsLeft = Mathf.Max(0, m.Player.TrainingReadyRound - m.Round);
+            Color old = GUI.color;
+            if (roundsLeft > 0) GUI.color = new Color(0.5f, 0.5f, 0.5f, 1f);
+            bool clicked = DrawHexIcon(rect, match.IconFor(training), clickable: true);
+            GUI.color = old;
+            if (roundsLeft > 0) GUI.Label(rect, roundsLeft.ToString(), _centered);
+            if (rect.Contains(Event.current.mousePosition))
+                GUI.Label(new Rect(rect.xMax + 6f, rect.y + 2f, 300f, 60f), roundsLeft > 0 ? $"{training.Name}: recharging, {roundsLeft} round(s)" : $"{training.Name}: select a squad, then click to fill its XP bar", _wrapDim);
+
+            if (clicked && roundsLeft == 0)
+            {
+                _confirmTraining = match.SelectedPlacedSquad != null;
+                if (!_confirmTraining) match.UseTraining(null); // Shows "Select a squad first".
+            }
+            PlacedSquad squad = match.SelectedPlacedSquad;
+            if (!_confirmTraining || squad == null)
+            {
+                _confirmTraining = false;
+                return;
+            }
+            var panel = new Rect(rect.xMax + 8f, rect.y, 300f, 92f);
+            Panel(panel);
+            GUI.Label(new Rect(panel.x + 12f, panel.y + 8f, panel.width - 24f, 40f), $"Fill the XP bar of {squad.Type.Name}?", _wrap);
+            if (GUI.Button(new Rect(panel.x + 12f, panel.yMax - 42f, 130f, 34f), "Confirm", _button))
+            {
+                match.UseTraining(squad);
+                _confirmTraining = false;
+            }
+            if (GUI.Button(new Rect(panel.xMax - 142f, panel.yMax - 42f, 130f, 34f), "Cancel", _button)) _confirmTraining = false;
+        }
+
         /// <summary>The player's spells during deployment: place, move or take back ready ones; recharging ones show how long.</summary>
-        private void DrawSpellBar()
+        private float DrawSpellBar()
         {
             Match m = match.Match;
             List<OwnedSpell> spells = m.Player.Spells;
-            if (spells.Count == 0) return;
+            if (spells.Count == 0) return 110f;
             const float rowHeight = 52f;
             var panel = new Rect(10f, 110f, 330f, 44f + spells.Count * rowHeight);
             Panel(panel);
@@ -251,6 +399,7 @@ namespace Halobellum.UI
                 }
                 else if (GUI.Button(new Rect(row.xMax - 104f, row.y + 8f, 96f, 32f), "Place", _button)) match.BeginPlacingSpell(spell);
             }
+            return panel.yMax + 6f;
         }
 
         private void DrawShop(float width, float height)
@@ -258,7 +407,7 @@ namespace Halobellum.UI
             Match m = match.Match;
             PlayerState player = m.Player;
             List<UnitStats> roster = player.Roster;
-            const float panelWidth = 420f, rowHeight = 58f;
+            const float panelWidth = 460f, rowHeight = 58f;
             float panelHeight = Mathf.Min(height - 200f, 50f + roster.Count * rowHeight);
             var panel = new Rect(width - panelWidth - 10f, 110f, panelWidth, panelHeight);
             Panel(panel);
@@ -272,13 +421,13 @@ namespace Halobellum.UI
                 UnitStats unit = roster[i];
                 var row = new Rect(0f, i * rowHeight, content.width, rowHeight - 4f);
                 HudTheme.RowBox(row);
-                GUI.Label(new Rect(row.x + 8f, row.y + 4f, row.width - 130f, 24f), unit.Name, _text);
+                GUI.Label(new Rect(row.x + 8f, row.y + 4f, row.width - 130f, 24f), $"{unit.Name} - {unit.Cost} cr", _text);
                 GUI.Label(new Rect(row.x + 8f, row.y + 28f, row.width - 130f, 22f), $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.SquadSize)}", _small);
 
                 var button = new Rect(row.xMax - 118f, row.y + 9f, 110f, 36f);
                 if (player.Unlocked.Contains(unit))
                 {
-                    bool canBuy = player.Credits >= unit.Cost && player.SquadsBoughtThisRound < m.Rules.NewSquadsPerRound;
+                    bool canBuy = player.Credits >= unit.Cost && player.SquadsBoughtThisRound < m.SquadsPerRound(Team.A);
                     GUI.enabled = canBuy;
                     if (GUI.Button(button, $"Buy {unit.Cost}", _button)) match.Buy(unit);
                 }

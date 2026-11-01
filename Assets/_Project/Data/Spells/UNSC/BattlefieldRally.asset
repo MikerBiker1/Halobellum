@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BattlefieldRally
   m_EditorClassIdentifier:
   spellName: Battlefield Rally
-  description: A Spartan rallies the troops: more damage for the whole battle.
+  description: 'A Spartan rallies the troops: more damage for the whole battle.'
   offensive: 0
   effect: 1
   cost: 150
@@ -21,6 +21,9 @@ MonoBehaviour:
   maxOwnedCopies: 1
   radius: 10
   delaySeconds: 0
+  minRound: 0
+  areaWidth: 0
+  areaDepth: 0
   damagePerTick: 0
   damageType: 0
   isAntiArmor: 0
@@ -31,3 +34,9 @@ MonoBehaviour:
   damageMultiplier: 1.3
   dropUnit: {fileID: 0}
   dropSquads: 1
+  shieldDamage: 0
+  techDisableSeconds: 0
+  slowShare: 0
+  slowSeconds: 0
+  durationSeconds: 0
+  rangeMultiplier: 1

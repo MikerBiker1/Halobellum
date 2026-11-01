@@ -40,6 +40,8 @@ MonoBehaviour:
   buttonHover: {fileID: 2800000, guid: bad95693185e27f68bb1d824290b83fb, type: 3}
   buttonPressed: {fileID: 2800000, guid: 6a37ef7909ea05abe3cab186e666a361, type: 3}
   buttonBorder: 12
+  hexEmpty: {fileID: 2800000, guid: c10aba4ddb85d999b64beba8c46c9a1a, type: 3}
+  hexFilled: {fileID: 2800000, guid: 91c22c3bd2245f9ee1973833b6308f51, type: 3}
   panelShape: 1
   cornerSize: 8
   borderThickness: 1

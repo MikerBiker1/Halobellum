@@ -46,8 +46,10 @@ namespace Halobellum.Units
         [Range(0f, 2f)] public float levelUpCostShare = 0.5f;
 
         [Header("Cards (Milestone 7)")]
-        [Tooltip("First round with a card offer (offers then alternate spells / reinforcements). 0 = no cards.")]
+        [Tooltip("First round with a card offer. 0 = no cards.")]
         public int firstCardRound = 2;
+        [Tooltip("First reinforcement offer, then every other round; the other rounds offer spells, items, economy cards and buffs.")]
+        public int reinforcementFirstRound = 4;
         public int cardsPerOffer = 3;
         public int spellSkipBonus = 50;
         public int reinforcementSkipBonus = 100;
@@ -76,6 +78,7 @@ namespace Halobellum.Units
                 XpBarPerSquadCost = xpBarPerSquadCost,
                 LevelUpCostShare = levelUpCostShare,
                 FirstCardRound = firstCardRound,
+                ReinforcementFirstRound = reinforcementFirstRound,
                 CardsPerOffer = cardsPerOffer,
                 SpellSkipBonus = spellSkipBonus,
                 ReinforcementSkipBonus = reinforcementSkipBonus,

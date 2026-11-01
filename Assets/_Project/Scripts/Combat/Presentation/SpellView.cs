@@ -7,8 +7,9 @@
 //     left-click places it, right-click or Escape cancels. The enemy's spells are never shown here.
 //   Battle: when the battle starts, every spell of both sides shows its outline (they are revealed
 //     now) until it has gone off. Each effect flashes: strikes and zone ticks a bright burst in the
-//     colour of their damage type, buffs a ring pulse; zones glow while they last. Drop-pod squads
-//     fall from the sky (UnitViewManager).
+//     colour of their damage type, buffs and EMPs a ring pulse; zones glow while they last; smoke is
+//     a grey cloud for as long as it hangs. Drop-pod squads fall from the sky (UnitViewManager).
+//   Rectangular spells (smoke) show a rectangle; R turns them while placing.
 // Discs are flat quads with a texture drawn in code and the built-in Sprites/Default shader (always
 // included in builds), so no material assets are needed. Looks only; the simulation is unchanged.
 // Depends on: MatchController, BattleController, UiHitAreas, PlaceholderArt, Halobellum.Combat,
@@ -33,7 +34,9 @@ namespace Halobellum.Presentation
 
         private MatchController _match;
         private BattleController _battle;
-        private Material _discMaterial, _glowMaterial;
+        private Material _discMaterial, _glowMaterial, _rectMaterial;
+        private readonly List<Renderer> _rectOutlines = new List<Renderer>();
+        private int _rectsUsed;
         private MaterialPropertyBlock _block;
         private readonly List<Renderer> _outlines = new List<Renderer>();
         private int _outlinesUsed;
@@ -50,7 +53,7 @@ namespace Halobellum.Presentation
         private readonly List<Flash> _flashes = new List<Flash>();
 
         /// <summary>Outlines drawn this frame (for tests).</summary>
-        public int VisibleOutlines => _outlinesUsed;
+        public int VisibleOutlines => _outlinesUsed + _rectsUsed;
 
         private void Start()
         {
@@ -60,6 +63,7 @@ namespace Halobellum.Presentation
             Shader shader = Shader.Find("Sprites/Default");
             _discMaterial = new Material(shader) { name = "Spell Outline", mainTexture = MakeDiscTexture() };
             _glowMaterial = new Material(shader) { name = "Spell Flash", mainTexture = MakeGlowTexture() };
+            _rectMaterial = new Material(shader) { name = "Spell Rectangle", mainTexture = MakeRectTexture() };
             _battle.BattleChanged += OnBattleChanged;
             OnBattleChanged(_battle.Simulation);
         }
@@ -70,6 +74,7 @@ namespace Halobellum.Presentation
             if (_shown != null) _shown.Events.SpellTriggered -= OnSpellTriggered;
             if (_discMaterial != null) Destroy(_discMaterial);
             if (_glowMaterial != null) Destroy(_glowMaterial);
+            if (_rectMaterial != null) Destroy(_rectMaterial);
         }
 
         private void OnBattleChanged(BattleSimulation simulation)
@@ -82,6 +87,7 @@ namespace Halobellum.Presentation
         private void Update()
         {
             _outlinesUsed = 0;
+            _rectsUsed = 0;
             if (_match != null && _match.Match != null)
             {
                 if (_match.IsDeploying) UpdateDeployment();
@@ -91,6 +97,10 @@ namespace Halobellum.Presentation
             {
                 if (_outlines[i].gameObject.activeSelf) _outlines[i].gameObject.SetActive(false);
             }
+            for (int i = _rectsUsed; i < _rectOutlines.Count; i++)
+            {
+                if (_rectOutlines[i].gameObject.activeSelf) _rectOutlines[i].gameObject.SetActive(false);
+            }
             UpdateFlashes();
         }
 
@@ -98,9 +108,17 @@ namespace Halobellum.Presentation
 
         private void UpdateDeployment()
         {
+            if (_match.PlacingItem != null)
+            {
+                Keyboard itemKeyboard = Keyboard.current;
+                Mouse itemMouse = Mouse.current;
+                if ((itemKeyboard != null && itemKeyboard.escapeKey.wasPressedThisFrame) || (itemMouse != null && itemMouse.rightButton.wasPressedThisFrame))
+                    _match.CancelItemPlacement();
+            }
+
             foreach (OwnedSpell spell in _match.Match.Player.Spells)
             {
-                if (spell.IsPlaced && spell.Id != _match.PlacingSpellId) ShowOutline(spell.Position, spell.Stats, ColorFor(spell.Stats), 1f);
+                if (spell.IsPlaced && spell.Id != _match.PlacingSpellId) ShowOutline(spell.Position, spell.Stats, spell.Rotated90, ColorFor(spell.Stats), 1f);
             }
 
             OwnedSpell placing = _match.PlacingSpell;
@@ -112,11 +130,12 @@ namespace Halobellum.Presentation
                 _match.CancelSpellPlacement();
                 return;
             }
+            if (keyboard != null && keyboard.rKey.wasPressedThisFrame) _match.ToggleSpellRotation();
             if (mouse == null) return;
             Vector2 pointer = mouse.position.ReadValue();
             if (UiHitAreas.Contains(pointer) || !PointerOnGround(pointer, out Vec2 position)) return;
             bool valid = _match.CanPlaceSpellAt(position);
-            ShowOutline(position, placing.Stats, valid ? ColorFor(placing.Stats) : BlockedColor, 1f);
+            ShowOutline(position, placing.Stats, _match.PlacingSpellRotated, valid ? ColorFor(placing.Stats) : BlockedColor, 1f);
             if (mouse.leftButton.wasPressedThisFrame && valid) _match.PlaceSpellAt(position);
         }
 
@@ -141,12 +160,13 @@ namespace Halobellum.Presentation
             float now = _shown.ElapsedSeconds;
             foreach (SimSpell spell in _shown.Spells)
             {
-                if (spell.IsDone) continue;
+                if (spell.IsOverAt(now)) continue;
                 // Revealed at the start: the area is outlined until it goes off; a running zone pulses.
                 bool active = spell.TicksDone > 0;
-                float pulse = active ? 0.75f + 0.25f * Mathf.Sin(Time.unscaledTime * 10f) : 1f;
+                bool smoke = spell.Stats.Effect == SpellEffect.Smoke;
+                float pulse = active && !smoke ? 0.75f + 0.25f * Mathf.Sin(Time.unscaledTime * 10f) : 1f;
                 Color color = active ? EffectColor(spell.Stats) : ColorFor(spell.Stats);
-                ShowOutline(spell.Position, spell.Stats, color, pulse);
+                ShowOutline(spell.Position, spell.Stats, spell.Rotated90, color, pulse);
             }
         }
 
@@ -166,8 +186,11 @@ namespace Halobellum.Presentation
                     }
                     break;
                 case SpellEffect.Buff:
+                case SpellEffect.Disrupt:
                     AddFlash(spell.Position, stats.Radius, EffectColor(stats), true);
                     break;
+                case SpellEffect.Smoke:
+                    break; // The grey area is the effect.
                 default:
                     AddFlash(spell.Position, Mathf.Max(3f, stats.Radius), new Color(1f, 0.85f, 0.5f), false);
                     break;
@@ -182,6 +205,8 @@ namespace Halobellum.Presentation
         private static Color EffectColor(SpellStats stats)
         {
             if (stats.Effect == SpellEffect.Buff) return stats.ShieldBonusShare > 0f ? new Color(0.4f, 0.8f, 1f) : new Color(1f, 0.85f, 0.3f);
+            if (stats.Effect == SpellEffect.Smoke) return new Color(0.72f, 0.74f, 0.76f);
+            if (stats.Effect == SpellEffect.Disrupt) return new Color(0.5f, 0.95f, 1f);
             switch (stats.IsAntiArmor ? DamageType.Explosive : stats.DamageType)
             {
                 case DamageType.Energy: return new Color(0.55f, 0.6f, 1f);
@@ -191,8 +216,19 @@ namespace Halobellum.Presentation
             }
         }
 
-        private void ShowOutline(Vec2 position, SpellStats stats, Color color, float alpha)
+        private void ShowOutline(Vec2 position, SpellStats stats, bool rotated90, Color color, float alpha)
         {
+            if (stats.IsRectangle)
+            {
+                if (_rectsUsed == _rectOutlines.Count) _rectOutlines.Add(CreateDisc("Spell Rectangle", _rectMaterial));
+                Renderer rectangle = _rectOutlines[_rectsUsed++];
+                rectangle.transform.SetPositionAndRotation(new Vector3(position.X, DiscHeight, position.Y), Quaternion.Euler(90f, 0f, 0f));
+                rectangle.transform.localScale = rotated90 ? new Vector3(stats.AreaDepth, stats.AreaWidth, 1f) : new Vector3(stats.AreaWidth, stats.AreaDepth, 1f);
+                color.a = alpha;
+                SetColor(rectangle, color);
+                if (!rectangle.gameObject.activeSelf) rectangle.gameObject.SetActive(true);
+                return;
+            }
             if (_outlinesUsed == _outlines.Count) _outlines.Add(CreateDisc("Spell Outline", _discMaterial));
             Renderer disc = _outlines[_outlinesUsed++];
             float radius = Mathf.Max(1f, stats.Radius);
@@ -275,6 +311,25 @@ namespace Halobellum.Presentation
                     float fill = r < 1f ? 0.22f + 0.1f * r * r : 0f;
                     float alpha = Mathf.Clamp01(Mathf.Max(fill, ring * 0.95f)) * Mathf.Clamp01(edge * size * 0.5f + 0.5f);
                     pixels[y * size + x] = new Color(1f, 1f, 1f, alpha);
+                }
+            }
+            texture.SetPixels(pixels);
+            texture.Apply();
+            return texture;
+        }
+
+        /// <summary>A white rectangle: a soft fill with a brighter edge (smoke; stretched to its area).</summary>
+        private static Texture2D MakeRectTexture()
+        {
+            const int size = 64;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false) { name = "Spell Rectangle", wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
+            var pixels = new Color[size * size];
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    int edge = Mathf.Min(Mathf.Min(x, y), Mathf.Min(size - 1 - x, size - 1 - y));
+                    pixels[y * size + x] = new Color(1f, 1f, 1f, edge < 2 ? 0.95f : 0.4f);
                 }
             }
             texture.SetPixels(pixels);

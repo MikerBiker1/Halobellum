@@ -139,6 +139,29 @@ namespace Halobellum.Presentation
             return view.DropHeight * (1f - progress * progress);
         }
 
+        /// <summary>World position just above the middle of a squad's living bodies (for icons over it); false if none is left.</summary>
+        public bool SquadTop(int squadId, out Vector3 position)
+        {
+            position = Vector3.zero;
+            SimSquad squad = _shown?.SquadById(squadId);
+            if (squad == null) return false;
+            Vector3 sum = Vector3.zero;
+            float top = float.MinValue;
+            int alive = 0;
+            foreach (SimUnit member in squad.Members)
+            {
+                if (!member.IsAlive || member.Id < 0 || member.Id >= _views.Count) continue;
+                Vector3 body = _views[member.Id].Root.transform.position;
+                sum += body;
+                top = Mathf.Max(top, body.y + PlaceholderArt.BodyHeight(member.Stats) * (member.Stats.IsAir ? 0.5f : 1f));
+                alive++;
+            }
+            if (alive == 0) return false;
+            Vector3 centre = sum / alive;
+            position = new Vector3(centre.x, top, centre.z);
+            return true;
+        }
+
         /// <summary>World position of a unit's base as of the latest tick (air units at flying height).</summary>
         public Vector3 WorldPosition(SimUnit unit) => ToWorld(unit);
 

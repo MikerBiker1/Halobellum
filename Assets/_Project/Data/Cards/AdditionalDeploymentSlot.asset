@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e60f424de7e158173404479ece2d51b5, type: 3}
+  m_Name: AdditionalDeploymentSlot
+  m_EditorClassIdentifier:
+  cardName: Additional Deployment Slot
+  description: 'Deploy more squads every round.'
+  type: 3
+  icon: {fileID: 2800000, guid: b3a0ac7de94201130ce370b5152c2a6f, type: 3}
+  cost: 100
+  maxOwnedCopies: 1
+  minRound: 5
+  healthMultiplier: 1
+  damageMultiplier: 1
+  moveSpeedMultiplier: 1
+  rangeBonus: 0
+  lifestealShare: 0
+  healPerSecondShare: 0
+  freeDeployment: 0
+  bonusIncome: 0
+  allDamageMultiplier: 1
+  allHealthMultiplier: 1
+  allRangeBonus: 0
+  extraSquadsPerRound: 1
+  cooldownRounds: 0

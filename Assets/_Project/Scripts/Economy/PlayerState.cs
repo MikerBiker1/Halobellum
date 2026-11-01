@@ -38,6 +38,8 @@ namespace Halobellum.Economy
         public bool FromCard;
         /// <summary>For reinforcement squads: the worth of the levels it came with (half its price per level above 1).</summary>
         public int GrantedLevelWorth;
+        /// <summary>The item this squad carries (decision D33), or null. It affects the whole squad.</summary>
+        public ItemStats Item;
     }
 
     public sealed class PlayerState
@@ -57,19 +59,45 @@ namespace Halobellum.Economy
         /// <summary>This round's card offer while it waits for a decision, otherwise null.</summary>
         public CardOffer Offer;
 
-        /// <summary>How many copies of this spell the player owns.</summary>
-        public int CopiesOwned(SpellStats spell)
+        /// <summary>Every non-spell card taken this match (economy, buffs, items, training), for the copies limit.</summary>
+        public readonly List<CardStats> CardsTaken = new List<CardStats>();
+        /// <summary>Items waiting to be placed on a squad.</summary>
+        public readonly List<ItemStats> Inventory = new List<ItemStats>();
+        /// <summary>Extra credits every round (Economy cards).</summary>
+        public int BonusIncome;
+        /// <summary>More squads can be deployed per round (Additional Deployment Slot).</summary>
+        public int ExtraSquadsPerRound;
+        /// <summary>Army-wide bonuses from buff cards.</summary>
+        public ArmyBuffs Buffs { get; private set; } = new ArmyBuffs();
+        /// <summary>The Intensive Training card, once taken, and the first round it can be used again.</summary>
+        public CardStats Training;
+        public int TrainingReadyRound;
+
+        /// <summary>How many times the player took this card.</summary>
+        public int CopiesOwned(CardStats card)
         {
             int count = 0;
-            foreach (OwnedSpell owned in Spells) if (owned.Stats == spell) count++;
+            if (card.Spell != null)
+            {
+                foreach (OwnedSpell owned in Spells) if (owned.Stats == card.Spell) count++;
+                return count;
+            }
+            foreach (CardStats taken in CardsTaken) if (taken == card) count++;
             return count;
+        }
+
+        /// <summary>Replaces the army-wide bonuses (buff cards; stats are worked out again).</summary>
+        public void SetBuffs(ArmyBuffs buffs)
+        {
+            Buffs = buffs;
+            _effective.Clear();
         }
 
         public OwnedSpell FindSpell(int spellId) => Spells.Find(s => s.Id == spellId);
 
         /// <summary>Tech upgrades bought, per unit type (they apply to every squad of that type).</summary>
         public readonly Dictionary<UnitStats, List<TechUpgrade>> Techs = new Dictionary<UnitStats, List<TechUpgrade>>();
-        private readonly Dictionary<(UnitStats, int, int), UnitStats> _effective = new Dictionary<(UnitStats, int, int), UnitStats>();
+        private readonly Dictionary<(UnitStats, int, int, ItemStats), UnitStats> _effective = new Dictionary<(UnitStats, int, int, ItemStats), UnitStats>();
 
         public PlayerState(Team team)
         {
@@ -94,7 +122,7 @@ namespace Halobellum.Economy
             if (Techs.TryGetValue(type, out List<TechUpgrade> list)) list.Remove(tech);
         }
 
-        /// <summary>The squad's battle stats: its unit type at its level with this player's techs (cached).</summary>
+        /// <summary>The squad's battle stats: its unit type at its level with this player's techs, its item and the army's buffs (cached).</summary>
         public UnitStats EffectiveStats(PlacedSquad squad)
         {
             // Key on which techs are owned (one bit per slot), and apply them in slot order.
@@ -107,10 +135,10 @@ namespace Halobellum.Economy
                 mask |= 1 << i;
                 owned.Add(slots[i]);
             }
-            var key = (squad.Type, squad.Level, mask);
+            var key = (squad.Type, squad.Level, mask, squad.Item);
             if (!_effective.TryGetValue(key, out UnitStats stats))
             {
-                stats = UnitUpgrades.Apply(squad.Type, squad.Level, owned);
+                stats = UnitUpgrades.Apply(squad.Type, squad.Level, owned, squad.Item, Buffs);
                 _effective[key] = stats;
             }
             return stats;

@@ -158,6 +158,8 @@ namespace Halobellum.Units
         public float airDamageMultiplier = 1f;
         [Tooltip("Cone splash (flamethrowers): width in degrees of a cone from the shooter out to the range. 0 = no cone.")]
         public float coneDegrees;
+        [Tooltip("Limits the weapon to one class of enemy; a unit with such weapons uses the one that fits its target (ODSTs).")]
+        public WeaponTargetClass targetClass;
 
         public WeaponStats ToStats()
         {
@@ -177,6 +179,7 @@ namespace Halobellum.Units
                 TargetFilter = targetFilter,
                 AirDamageMultiplier = airDamageMultiplier,
                 ConeDegrees = coneDegrees,
+                TargetClass = targetClass,
             };
         }
     }

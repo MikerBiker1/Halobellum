@@ -76,6 +76,10 @@ namespace Halobellum.Units
         public Texture2D buttonHover;
         public Texture2D buttonPressed;
         public int buttonBorder = 12;
+        [Tooltip("The empty hexagon over squads while placing an item.")]
+        public Texture2D hexEmpty;
+        [Tooltip("The hexagon behind item icons (Inventory, over squads, Intensive Training).")]
+        public Texture2D hexFilled;
 
         [Header("Panels")]
         public PanelShape panelShape = PanelShape.Square;

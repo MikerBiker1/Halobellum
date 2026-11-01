@@ -1,15 +1,15 @@
 // Cards.cs
-// Spell and reinforcement cards (Bible Section 10, Milestone 7).
-//   - Offers come between rounds, every round from MatchRules.FirstCardRound (2), alternating
-//     spells (first) and reinforcements. A player takes 1 of up to 3 cards or skips for a bonus
-//     (50 for spells, 100 for reinforcements).
-//   - Spell offers draw from the faction's spells the player does not own the maximum of yet (fewer
-//     than 3 eligible = fewer cards). A spell is paid once and kept (OwnedSpell); it recharges for
-//     CooldownRounds rounds after each use.
+// Card offers (Bible Section 10, Milestone 7, decisions D32 and D33).
+//   - Offers come between rounds from MatchRules.FirstCardRound (2). Reinforcement offers come every
+//     other round from MatchRules.ReinforcementFirstRound (4: rounds 4, 6, 8 ...); the other rounds
+//     (2, 3, 5, 7 ...) offer general cards: spells, items, economy cards, buffs and Intensive Training.
+//     A player takes 1 of up to 3 cards or skips for a bonus (50 for general, 100 for reinforcements).
+//   - General offers draw from the faction's cards that are allowed by now (CardStats.MinRound) and
+//     that the player doesn't own the maximum of yet; fewer than 3 eligible = fewer cards.
 //   - Reinforcement offers: per card a random unit type from the player's roster at a random level
 //     (up to MatchRules.ReinforcementLevelCap), copied until its worth reaches the round's budget;
 //     the player pays whatever the worth exceeds the budget (ReinforcementCard.Price).
-// Depends on: MatchRules, PlayerState, Halobellum.Core (SpellStats, UnitStats, SimRandom, Vec2).
+// Depends on: MatchRules, PlayerState, Halobellum.Core (CardStats, SpellStats, UnitStats, SimRandom, Vec2).
 
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,8 @@ namespace Halobellum.Economy
 {
     public enum CardKind
     {
-        Spell = 0,
+        /// <summary>Spells, items, economy cards, buffs and Intensive Training.</summary>
+        General = 0,
         Reinforcement = 1,
     }
 
@@ -54,17 +55,17 @@ namespace Halobellum.Economy
     {
         public CardKind Kind;
         public int Round;
-        public List<SpellStats> Spells = new List<SpellStats>();
+        public List<CardStats> Cards = new List<CardStats>();
         public List<ReinforcementCard> Reinforcements = new List<ReinforcementCard>();
         /// <summary>Credits for skipping this offer.</summary>
         public int SkipBonus;
 
-        public int Count => Kind == CardKind.Spell ? Spells.Count : Reinforcements.Count;
+        public int Count => Kind == CardKind.General ? Cards.Count : Reinforcements.Count;
 
         /// <summary>Credits taking card `index` costs.</summary>
-        public int PriceOf(int index) => Kind == CardKind.Spell ? Spells[index].Cost : Reinforcements[index].Price;
+        public int PriceOf(int index) => Kind == CardKind.General ? Cards[index].Cost : Reinforcements[index].Price;
 
-        public string NameOf(int index) => Kind == CardKind.Spell ? Spells[index].Name : Reinforcements[index].Type.Name;
+        public string NameOf(int index) => Kind == CardKind.General ? Cards[index].Name : Reinforcements[index].Type.Name;
     }
 
     /// <summary>A spell a player owns: ready from ReadyRound, and placed (or not) for the current round.</summary>
@@ -77,6 +78,8 @@ namespace Halobellum.Economy
         public bool IsPlaced;
         /// <summary>Where it is placed, in battlefield metres (only while IsPlaced).</summary>
         public Vec2 Position;
+        /// <summary>A rectangular area turned 90 degrees (only while IsPlaced).</summary>
+        public bool Rotated90;
 
         public bool IsReady(int round) => ReadyRound <= round;
         /// <summary>Rounds until it can be used again (0 = ready).</summary>
@@ -85,25 +88,26 @@ namespace Halobellum.Economy
 
     public static class CardDeck
     {
-        /// <summary>Whether a round has an offer, and of which kind: spells in round 2, then alternating.</summary>
+        /// <summary>Whether a round has an offer at all.</summary>
         public static bool HasOffer(MatchRules rules, int round) => rules.CardsEnabled && round >= rules.FirstCardRound;
 
+        /// <summary>Reinforcements every other round from ReinforcementFirstRound, general cards otherwise.</summary>
         public static CardKind KindForRound(MatchRules rules, int round) =>
-            (round - rules.FirstCardRound) % 2 == 0 ? CardKind.Spell : CardKind.Reinforcement;
+            round >= rules.ReinforcementFirstRound && (round - rules.ReinforcementFirstRound) % 2 == 0 ? CardKind.Reinforcement : CardKind.General;
 
         /// <summary>A fresh offer for this player and round, drawn with the match's random numbers.</summary>
         public static CardOffer Draw(PlayerState player, MatchRules rules, int round, SimRandom random)
         {
             var offer = new CardOffer { Round = round, Kind = KindForRound(rules, round) };
-            if (offer.Kind == CardKind.Spell)
+            if (offer.Kind == CardKind.General)
             {
                 offer.SkipBonus = rules.SpellSkipBonus;
-                var eligible = new List<SpellStats>();
-                foreach (SpellStats spell in player.Faction?.Spells ?? new List<SpellStats>())
+                var eligible = new List<CardStats>();
+                foreach (CardStats card in player.Faction?.Cards ?? new List<CardStats>())
                 {
-                    if (spell != null && player.CopiesOwned(spell) < spell.MaxOwnedCopies && !eligible.Contains(spell)) eligible.Add(spell);
+                    if (card != null && round >= card.MinRound && player.CopiesOwned(card) < card.MaxOwnedCopies && !eligible.Contains(card)) eligible.Add(card);
                 }
-                offer.Spells.AddRange(PickDistinct(eligible, rules.CardsPerOffer, random));
+                offer.Cards.AddRange(PickDistinct(eligible, rules.CardsPerOffer, random));
             }
             else
             {

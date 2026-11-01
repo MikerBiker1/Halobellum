@@ -34,6 +34,12 @@ namespace Halobellum.Units
         public float radius;
         [Tooltip("Seconds after the battle starts before it takes effect.")]
         public float delaySeconds;
+        [Tooltip("The first round it can be offered (extremely impactful spells only appear late).")]
+        public int minRound;
+        [Tooltip("A rectangular area instead of a circle: width across the field in metres. 0 = a circle of Radius.")]
+        public float areaWidth;
+        [Tooltip("A rectangular area: depth along the field in metres.")]
+        public float areaDepth;
 
         [Header("Damage (strikes and zones)")]
         public float damagePerTick;
@@ -53,6 +59,19 @@ namespace Halobellum.Units
         [Header("Drop pods")]
         public UnitDefinition dropUnit;
         public int dropSquads = 1;
+
+        [Header("Disruption (EMP)")]
+        [Tooltip("Shield removed from each unit (health is not touched).")]
+        public float shieldDamage;
+        public float techDisableSeconds;
+        [Tooltip("Armored units move this share slower (0.4 = 40% slower).")]
+        public float slowShare;
+        public float slowSeconds;
+
+        [Header("Smoke")]
+        public float durationSeconds;
+        [Tooltip("Weapon range of units inside is multiplied by this (0.5 = half).")]
+        public float rangeMultiplier = 1f;
 
         public SpellStats ToStats(Dictionary<UnitDefinition, UnitStats> statsCache = null)
         {
@@ -76,6 +95,15 @@ namespace Halobellum.Units
                 MaxOwnedCopies = maxOwnedCopies,
                 Radius = radius,
                 DelaySeconds = delaySeconds,
+                MinRound = minRound,
+                AreaWidth = areaWidth,
+                AreaDepth = areaDepth,
+                ShieldDamage = shieldDamage,
+                TechDisableSeconds = techDisableSeconds,
+                SlowShare = slowShare,
+                SlowSeconds = slowSeconds,
+                DurationSeconds = durationSeconds,
+                RangeMultiplier = rangeMultiplier,
                 DamagePerTick = damagePerTick,
                 DamageType = damageType,
                 IsAntiArmor = isAntiArmor,

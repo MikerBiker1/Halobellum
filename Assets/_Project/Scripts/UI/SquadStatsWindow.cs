@@ -69,6 +69,7 @@ namespace Halobellum.UI
             float height = 10f + 30f; // Gap, level line (with buttons).
             if (p.ShowXp) height += 22f;
             if (!string.IsNullOrEmpty(p.Note)) height += LineHeight;
+            if (!string.IsNullOrEmpty(p.ItemText)) height += LineHeight * 2f;
             if (p.Techs.Count > 0) height += LineHeight + p.Techs.Count * TechRowHeight;
             return height;
         }
@@ -104,6 +105,11 @@ namespace Halobellum.UI
             {
                 GUI.Label(new Rect(x, y, width, LineHeight), p.Note, _text);
                 y += LineHeight;
+            }
+            if (!string.IsNullOrEmpty(p.ItemText))
+            {
+                GUI.Label(new Rect(x, y, width, LineHeight * 2f), p.ItemText, _text);
+                y += LineHeight * 2f;
             }
             if (p.Techs.Count == 0) return;
 

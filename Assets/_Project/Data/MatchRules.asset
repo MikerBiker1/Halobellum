@@ -26,6 +26,7 @@ MonoBehaviour:
   xpBarPerSquadCost: 2
   levelUpCostShare: 0.5
   firstCardRound: 2
+  reinforcementFirstRound: 4
   cardsPerOffer: 3
   spellSkipBonus: 50
   reinforcementSkipBonus: 100

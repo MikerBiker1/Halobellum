@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PlasmaStorm
   m_EditorClassIdentifier:
   spellName: Plasma Storm
-  description: A storm of plasma bolts rains on the area.
+  description: 'A storm of plasma bolts rains on the area.'
   offensive: 1
   effect: 0
   cost: 150
@@ -21,6 +21,9 @@ MonoBehaviour:
   maxOwnedCopies: 2
   radius: 10
   delaySeconds: 1
+  minRound: 0
+  areaWidth: 0
+  areaDepth: 0
   damagePerTick: 40
   damageType: 2
   isAntiArmor: 0
@@ -31,3 +34,9 @@ MonoBehaviour:
   damageMultiplier: 1
   dropUnit: {fileID: 0}
   dropSquads: 1
+  shieldDamage: 0
+  techDisableSeconds: 0
+  slowShare: 0
+  slowSeconds: 0
+  durationSeconds: 0
+  rangeMultiplier: 1

@@ -9,6 +9,8 @@
 // ready to level up show a pulsing arrow (decision D26). From round 2 each round opens with the card
 // screen (Milestone 7): take a spell or reinforcement card, or skip. Owned spells are placed during
 // deployment (SpellView draws the blue / red outlines and handles the mouse) and go off in battle.
+// Items wait in the Inventory until the player selects one and picks a squad; Intensive Training fills
+// a selected squad's XP bar (decision D33). The HUD draws both and calls the functions here.
 // The HUD (Scripts/UI/MatchHud) and DeploymentInput call the public methods here; tests do too.
 // Depends on: BattleController, SquadSelection, UnitViewManager,
 //             Halobellum.Economy (Match, RuleBasedAi, DeploymentGrid),
@@ -38,6 +40,7 @@ namespace Halobellum.Presentation
         private SquadSelection _selection;
         private UnitViewManager _views;
         private SpellView _spellView;
+        private readonly Dictionary<CardStats, CardDefinition> _cardSources = new Dictionary<CardStats, CardDefinition>();
         /// <summary>Squads still dropping in: placed squad id -> Time.unscaledTime the drop began.</summary>
         private readonly Dictionary<int, float> _drops = new Dictionary<int, float>();
         private readonly Dictionary<UnitStats, UnitDefinition> _sources = new Dictionary<UnitStats, UnitDefinition>();
@@ -88,9 +91,10 @@ namespace Halobellum.Presentation
         {
             var cache = new Dictionary<UnitDefinition, UnitStats>();
             var infos = new List<FactionInfo>();
+            _cardSources.Clear();
             foreach (FactionDefinition faction in factions)
             {
-                if (faction != null) infos.Add(faction.ToInfo(cache));
+                if (faction != null) infos.Add(faction.ToInfo(cache, _cardSources));
             }
             _sources.Clear();
             foreach (var pair in cache) _sources[pair.Value] = pair.Key;
@@ -101,6 +105,7 @@ namespace Halobellum.Presentation
             Match = new Match(matchRules.ToRules(), _battle.Rules, infos, matchSeed, new RuleBasedAi(Difficulty, matchSeed, _matchups));
             CancelPlacement();
             CancelSpellPlacement();
+            CancelItemPlacement();
             _drops.Clear();
             Message = "";
             _views.GhostTeam = null;
@@ -195,6 +200,7 @@ namespace Halobellum.Presentation
             }
             CancelPlacement();
             CancelSpellPlacement();
+            CancelItemPlacement();
             MovingSquadId = squad.Id;
             PlacingRotated = squad.Rotated90;
             _selection.InputEnabled = false;
@@ -295,6 +301,8 @@ namespace Halobellum.Presentation
             return index < Match.Enemy.Squads.Count ? Match.Enemy.Squads[index] : null;
         }
 
+        private static string ItemText(ItemStats item) => item == null ? null : $"Item: {item.Name} ({item.EffectsText()})";
+
         /// <summary>The enemy ghost behind a preview squad (deployment only), or null.</summary>
         public SeenSquad GhostFor(int simSquadId)
         {
@@ -323,14 +331,14 @@ namespace Halobellum.Presentation
             if (ghost != null)
             {
                 // What the player saw of this enemy squad when the last battle started (D25).
-                var seen = new SquadProgressView { SideLabel = "enemy, last battle", Level = ghost.Level, Note = "As seen at the start of the last battle." };
+                var seen = new SquadProgressView { SideLabel = "enemy, last battle", Level = ghost.Level, Note = "As seen at the start of the last battle.", ItemText = ItemText(ghost.Item) };
                 foreach (TechUpgrade tech in ghost.Techs) seen.Techs.Add(new TechLine { Tech = tech, Owned = true });
                 return seen;
             }
 
             PlacedSquad squad = PlacedFor(simSquadId, out Team team);
             if (squad == null) return null;
-            var view = new SquadProgressView { Level = squad.Level };
+            var view = new SquadProgressView { Level = squad.Level, ItemText = ItemText(squad.Item) };
             if (team == Team.B)
             {
                 // The enemy in battle: its level and the techs it fights with, nothing else.
@@ -424,11 +432,24 @@ namespace Halobellum.Presentation
                 return;
             }
             CancelPlacement();
+            CancelItemPlacement();
             PlacingSpellId = spell.Id;
+            PlacingSpellRotated = spell.IsPlaced && spell.Rotated90;
+            _selection.Select(-1);
             _selection.InputEnabled = false;
             Message = spell.Stats.Offensive
                 ? $"{spell.Stats.Name}: left-click anywhere on the field (red), right-click to cancel."
                 : $"{spell.Stats.Name}: left-click on your side (blue), right-click to cancel.";
+            if (spell.Stats.IsRectangle) Message += " R turns it.";
+        }
+
+        /// <summary>A rectangular spell being placed is turned 90 degrees.</summary>
+        public bool PlacingSpellRotated { get; private set; }
+
+        /// <summary>Turns the rectangular spell being placed.</summary>
+        public void ToggleSpellRotation()
+        {
+            if (PlacingSpell != null && PlacingSpell.Stats.IsRectangle) PlacingSpellRotated = !PlacingSpellRotated;
         }
 
         public void CancelSpellPlacement()
@@ -444,13 +465,82 @@ namespace Halobellum.Presentation
         public ActionResult PlaceSpellAt(Vec2 position)
         {
             if (PlacingSpellId < 0) return ActionResult.Fail("No spell to place.");
-            ActionResult result = Report(Match.PlaceSpell(Team.A, PlacingSpellId, position));
+            ActionResult result = Report(Match.PlaceSpell(Team.A, PlacingSpellId, position, PlacingSpellRotated));
             if (result.Ok) CancelSpellPlacement();
             return result;
         }
 
         /// <summary>Takes a placed spell back; it stays ready.</summary>
         public ActionResult UnplaceSpell(OwnedSpell spell) => spell == null ? ActionResult.Fail("No spell.") : Report(Match.UnplaceSpell(Team.A, spell.Id));
+
+        // ------------------------------------------------------------------ items and training (D33)
+
+        /// <summary>The item the player picked from the Inventory, waiting for a squad (hexagons show), or null.</summary>
+        public ItemStats PlacingItem { get; private set; }
+
+        public void BeginPlacingItem(ItemStats item)
+        {
+            if (Match.Phase != MatchPhase.Deployment || item == null || !Match.Player.Inventory.Contains(item)) return;
+            CancelPlacement();
+            CancelSpellPlacement();
+            PlacingItem = item;
+            _selection.InputEnabled = false;
+            Message = $"{item.Name}: click the hexagon over a squad, right-click to cancel.";
+        }
+
+        public void CancelItemPlacement()
+        {
+            if (PlacingItem == null) return;
+            PlacingItem = null;
+            if (_selection != null && !IsPlacing) _selection.InputEnabled = true;
+        }
+
+        public ActionResult PlaceItemOn(PlacedSquad squad)
+        {
+            if (PlacingItem == null || squad == null) return ActionResult.Fail("Pick an item first.");
+            ActionResult result = Report(Match.PlaceItem(Team.A, PlacingItem, squad.Id));
+            if (result.Ok)
+            {
+                int squadId = squad.Id;
+                CancelItemPlacement();
+                RefreshPreview(squadId); // Its stats changed.
+            }
+            return result;
+        }
+
+        /// <summary>Intensive Training on this squad: its XP bar fills up, and it can then be leveled up.</summary>
+        public ActionResult UseTraining(PlacedSquad squad)
+        {
+            if (squad == null) return Report(ActionResult.Fail("Select a squad first."));
+            ActionResult result = Report(Match.UseTraining(Team.A, squad.Id));
+            if (result.Ok) RefreshPreview(squad.Id);
+            return result;
+        }
+
+        /// <summary>The icon of an item or card (Art/UI/Items), or null.</summary>
+        public Texture2D IconFor(ItemStats item)
+        {
+            foreach (var pair in _cardSources)
+            {
+                if (pair.Key.Item == item) return pair.Value.icon;
+            }
+            return null;
+        }
+
+        public Texture2D IconFor(CardStats card) => card != null && _cardSources.TryGetValue(card, out CardDefinition definition) ? definition.icon : null;
+
+        /// <summary>Screen position (pixels, origin bottom-left) just above one of the player's squads; false if it isn't on screen.</summary>
+        public bool SquadOnScreen(PlacedSquad squad, out Vector3 screen)
+        {
+            screen = Vector3.zero;
+            int index = _previewOrder.IndexOf(squad);
+            BattleSimulation sim = _battle.Simulation;
+            Camera camera = Camera.main;
+            if (index < 0 || sim == null || index >= sim.Squads.Count || camera == null) return false;
+            if (!_views.SquadTop(sim.Squads[index].Id, out Vector3 world)) return false;
+            screen = camera.WorldToScreenPoint(world);
+            return screen.z > 0f;
+        }
 
         // ------------------------------------------------------------------ battle and result
 
@@ -460,6 +550,7 @@ namespace Halobellum.Presentation
             if (Match.Phase != MatchPhase.Deployment) return;
             CancelPlacement();
             CancelSpellPlacement();
+            CancelItemPlacement();
             _drops.Clear();
             Message = "";
             _views.GhostTeam = null;

@@ -1,10 +1,12 @@
 // CardTests.cs
-// Cards (Bible Section 10, Milestone 7): offers from round 2 alternating spells and reinforcements,
-// skip bonuses, spell prices, maximum copies, cooldowns ("a 1-round cooldown can be used every other
-// round"), placement rules (offensive anywhere, defensive only on your own side), spells cast when the
-// battle starts and hidden from the opponent, reinforcement budget and pricing (the Bible's examples),
-// reinforcement squads (unlock, outside the squad limit, 0 XP, movable, refunds), spell kills in the
-// round summary, and the AI taking cards and casting spells in full matches.
+// Cards (Bible Section 10, Milestone 7, decisions D32 and D33): general offers in rounds 2 and 3,
+// reinforcements from round 4 every other round, cards that only appear late, skip bonuses, spell
+// prices, maximum copies, cooldowns ("a 1-round cooldown can be used every other round"), placement
+// rules (offensive anywhere, defensive only on your own side), spells cast when the battle starts and
+// hidden from the opponent, reinforcement budget and pricing (the Bible's examples), reinforcement
+// squads (unlock, outside the squad limit, 0 XP, movable, refunds), spell kills in the round summary,
+// items (inventory, one per squad, whole squad, Deployment Module), economy and buff cards, Intensive
+// Training, and the AI taking cards and using them in full matches.
 // Depends on: Halobellum.Economy, Halobellum.Combat, Halobellum.Core, NUnit.
 
 using System.Collections.Generic;
@@ -19,6 +21,7 @@ namespace Halobellum.Tests
     public class CardTests
     {
         private SpellStats _strike, _nuke, _dome, _pods;
+        private CardStats _strikeCard, _nukeCard, _domeCard, _podsCard, _heavyArmorCard, _moduleCard, _supplyCard, _tacticsCard, _slotCard, _trainingCard;
         private UnitStats _infantry, _buggy, _tank, _walker;
 
         private List<FactionInfo> Factions()
@@ -28,7 +31,18 @@ namespace Halobellum.Tests
             _nuke = new SpellStats { Name = "Nuke", Offensive = true, Effect = SpellEffect.Damage, Cost = 300, CooldownRounds = 4, MaxOwnedCopies = 1, Radius = 12f, DelaySeconds = 3f, DamagePerTick = 2000f, DamageType = DamageType.Explosive };
             _dome = new SpellStats { Name = "Dome", Effect = SpellEffect.Buff, Cost = 100, CooldownRounds = 1, MaxOwnedCopies = 1, Radius = 8f, ShieldBonusShare = 0.5f };
             _pods = new SpellStats { Name = "Pods", Offensive = true, Effect = SpellEffect.DropSquad, Cost = 150, CooldownRounds = 2, MaxOwnedCopies = 1, DropUnit = _infantry, DelaySeconds = 0.5f };
-            foreach (FactionInfo faction in factions) faction.Spells.AddRange(new[] { _strike, _nuke, _dome, _pods });
+            _strikeCard = CardStats.FromSpell(_strike);
+            _nukeCard = CardStats.FromSpell(_nuke);
+            _nukeCard.MinRound = 7;
+            _domeCard = CardStats.FromSpell(_dome);
+            _podsCard = CardStats.FromSpell(_pods);
+            foreach (FactionInfo faction in factions) faction.Cards.AddRange(new[] { _strikeCard, _nukeCard, _domeCard, _podsCard });
+            _heavyArmorCard = new CardStats { Name = "Heavy Armor", Type = CardType.Item, Cost = 50, MaxOwnedCopies = 99, Item = new ItemStats { Name = "Heavy Armor", HealthMultiplier = 1.7f } };
+            _moduleCard = new CardStats { Name = "Deployment Module", Type = CardType.Item, Cost = 0, MaxOwnedCopies = 99, Item = new ItemStats { Name = "Deployment Module", FreeDeployment = true } };
+            _supplyCard = new CardStats { Name = "Supply Enhancement", Type = CardType.Economy, Cost = 100, BonusIncome = 50 };
+            _tacticsCard = new CardStats { Name = "Advanced Offensive Tactics", Type = CardType.Buff, Cost = 350, MinRound = 7, AllDamageMultiplier = 1.3f };
+            _slotCard = new CardStats { Name = "Additional Deployment Slot", Type = CardType.Buff, Cost = 100, MinRound = 5, ExtraSquadsPerRound = 1 };
+            _trainingCard = new CardStats { Name = "Intensive Training", Type = CardType.Training, Cost = 50, CooldownRounds = 1 };
             return factions;
         }
 
@@ -55,7 +69,7 @@ namespace Halobellum.Tests
         // ------------------------------------------------------------------ offers
 
         [Test]
-        public void Offers_StartInRound2WithSpells_ThenAlternate()
+        public void Offers_GeneralInRounds2And3_ReinforcementsFromRound4_EveryOtherRound()
         {
             Match match = NewMatch();
             Assert.AreEqual(MatchPhase.Deployment, match.Phase, "No cards in round 1.");
@@ -63,16 +77,20 @@ namespace Halobellum.Tests
 
             PlayRound(match);
             Assert.AreEqual(MatchPhase.Cards, match.Phase, "Round 2 starts with the card screen.");
-            Assert.AreEqual(CardKind.Spell, match.Player.Offer.Kind);
+            Assert.AreEqual(CardKind.General, match.Player.Offer.Kind);
             Assert.AreEqual(3, match.Player.Offer.Count);
             Assert.IsFalse(match.Buy(Team.A, _infantry).Ok, "No deployment before the card is decided.");
             match.SkipCards(Team.A);
 
             PlayRound(match);
-            Assert.AreEqual(CardKind.Reinforcement, match.Player.Offer.Kind, "Round 3: reinforcements.");
+            Assert.AreEqual(CardKind.General, match.Player.Offer.Kind, "Round 3: still no reinforcements.");
             match.SkipCards(Team.A);
-            PlayRound(match);
-            Assert.AreEqual(CardKind.Spell, match.Player.Offer.Kind, "Round 4: spells again.");
+            foreach (CardKind expected in new[] { CardKind.Reinforcement, CardKind.General, CardKind.Reinforcement, CardKind.General, CardKind.Reinforcement })
+            {
+                PlayRound(match);
+                Assert.AreEqual(expected, match.Player.Offer.Kind, $"Round {match.Round}");
+                match.SkipCards(Team.A);
+            }
         }
 
         [Test]
@@ -87,6 +105,8 @@ namespace Halobellum.Tests
             Assert.IsFalse(match.SkipCards(Team.A).Ok, "Only once.");
 
             PlayRound(match);
+            match.SkipCards(Team.A);
+            PlayRound(match); // Round 4: reinforcements.
             before = match.Player.Credits;
             match.SkipCards(Team.A);
             Assert.AreEqual(before + 100, match.Player.Credits);
@@ -98,14 +118,13 @@ namespace Halobellum.Tests
             Match match = NewMatch();
             PlayRound(match);
             CardOffer offer = match.Player.Offer;
-            int index = offer.Spells.IndexOf(_strike);
-            if (index < 0) index = 0;
-            SpellStats taken = offer.Spells[index];
+            int index = offer.Cards.FindIndex(c => c.Type == CardType.Spell);
+            CardStats taken = offer.Cards[index];
             int before = match.Player.Credits;
             Assert.IsTrue(match.ChooseCard(Team.A, index).Ok);
             Assert.AreEqual(before - taken.Cost, match.Player.Credits);
             OwnedSpell owned = match.Player.Spells.Single();
-            Assert.AreSame(taken, owned.Stats);
+            Assert.AreSame(taken.Spell, owned.Stats);
             Assert.IsTrue(owned.IsReady(match.Round));
             Assert.AreEqual(MatchPhase.Deployment, match.Phase);
         }
@@ -115,8 +134,8 @@ namespace Halobellum.Tests
         {
             Match match = NewMatch();
             PlayRound(match);
-            match.Player.Credits = 10;
-            Assert.IsFalse(match.ChooseCard(Team.A, 0).Ok);
+            match.Player.Credits = 0;
+            Assert.IsFalse(match.ChooseCard(Team.A, match.Player.Offer.Cards.FindIndex(c => c.Cost > 0)).Ok);
             Assert.AreEqual(MatchPhase.Cards, match.Phase, "Still deciding.");
         }
 
@@ -124,12 +143,11 @@ namespace Halobellum.Tests
         public void SpellsAtTheirMaximum_AreNoLongerOffered_AndOffersCanHaveFewerCards()
         {
             Match match = NewMatch();
-            match.Player.Spells.Add(new OwnedSpell { Id = 100, Stats = _nuke });
             match.Player.Spells.Add(new OwnedSpell { Id = 101, Stats = _dome });
             match.Player.Spells.Add(new OwnedSpell { Id = 102, Stats = _strike }); // Strike allows 2 copies: still offered.
             PlayRound(match);
             CardOffer offer = match.Player.Offer;
-            CollectionAssert.AreEquivalent(new[] { _strike, _pods }, offer.Spells, "Only 2 eligible spells: 2 cards.");
+            CollectionAssert.AreEquivalent(new[] { _strikeCard, _podsCard }, offer.Cards, "The Nuke waits for round 7, Dome is at its maximum: 2 cards.");
         }
 
         // ------------------------------------------------------------------ cooldowns and placement
@@ -178,7 +196,7 @@ namespace Halobellum.Tests
             Assert.IsTrue(match.CanPlaceSpell(Team.A, strike, enemyZone));
             Assert.IsTrue(match.CanPlaceSpell(Team.A, strike, ownZone));
             Assert.IsFalse(match.CanPlaceSpell(Team.A, strike, outside));
-            Assert.IsTrue(match.CanPlaceSpell(Team.B, new OwnedSpell { Stats = _dome }, enemyZone) == false, "Not Team B's spell.");
+            Assert.IsFalse(match.CanPlaceSpell(Team.B, new OwnedSpell { Stats = _dome }, enemyZone), "Not Team B's spell.");
 
             Assert.IsFalse(match.PlaceSpell(Team.A, dome.Id, enemyZone).Ok);
             Assert.IsTrue(match.PlaceSpell(Team.A, dome.Id, ownZone).Ok);
@@ -244,7 +262,9 @@ namespace Halobellum.Tests
             Match match = NewMatch();
             PlayRound(match);
             match.SkipCards(Team.A);
-            PlayRound(match); // Round 3: reinforcements.
+            PlayRound(match);
+            match.SkipCards(Team.A);
+            PlayRound(match); // Round 4: reinforcements.
             CardOffer offer = match.Player.Offer;
             Assert.AreEqual(CardKind.Reinforcement, offer.Kind);
             match.Player.Credits = 5000;
@@ -282,6 +302,199 @@ namespace Halobellum.Tests
             match.Player.Squads.Add(new PlacedSquad { Id = 900, Type = _tank, Column = 10, Row = 20, RoundBought = 1, PricePaid = 0, FromCard = true, Level = 2, GrantedLevelWorth = 150, HasFought = true });
             PlacedSquad squad = match.Player.FindSquad(900);
             Assert.AreEqual((300 + 150) / 2, match.SellValue(squad));
+        }
+
+        // ------------------------------------------------------------------ late cards
+
+        [Test]
+        public void StrongCards_OnlyAppearFromTheirRound()
+        {
+            List<FactionInfo> factions = Factions();
+            foreach (FactionInfo faction in factions)
+            {
+                faction.Cards.Clear();
+                faction.Cards.AddRange(new[] { _strikeCard, _nukeCard, _tacticsCard, _slotCard });
+            }
+            var match = new Match(TestMatch.RulesWithCards(), TestRules.Default(), factions, 1, new DoNothingAi());
+            match.ChooseDraft(0);
+            PlayRound(match);
+            CollectionAssert.AreEquivalent(new[] { _strikeCard }, match.Player.Offer.Cards, "Round 2.");
+            for (int round = 3; round <= 7; round++)
+            {
+                match.SkipCards(Team.A);
+                PlayRound(match);
+                Assert.AreEqual(round, match.Round);
+                if (round == 5) CollectionAssert.AreEquivalent(new[] { _strikeCard, _slotCard }, match.Player.Offer.Cards, "The slot from round 5.");
+            }
+            Assert.AreEqual(3, match.Player.Offer.Count);
+            Assert.IsTrue(match.Player.Offer.Cards.All(c => c == _strikeCard || c == _nukeCard || c == _tacticsCard || c == _slotCard), "Round 7: all of them are possible.");
+        }
+
+        // ------------------------------------------------------------------ items
+
+        /// <summary>Gives the player a card directly, as if taken from an offer in round 2.</summary>
+        private static void Give(Match match, CardStats card)
+        {
+            match.Player.Offer = new CardOffer { Kind = CardKind.General, Round = match.Round, Cards = new List<CardStats> { card } };
+            Assert.IsTrue(match.ChooseCard(Team.A, 0).Ok);
+        }
+
+        [Test]
+        public void Items_GoToTheInventory_ThenOntoOneSquad_ForTheWholeSquad()
+        {
+            Match match = NewMatch();
+            PlacedSquad squad = match.Player.Squads[0];
+            int before = match.Player.Credits;
+            Give(match, _heavyArmorCard);
+            Assert.AreEqual(before - 50, match.Player.Credits);
+            ItemStats armor = _heavyArmorCard.Item;
+            CollectionAssert.Contains(match.Player.Inventory, armor);
+            Assert.IsNull(squad.Item, "Nothing changes until it is placed.");
+
+            Assert.IsTrue(match.PlaceItem(Team.A, armor, squad.Id).Ok);
+            Assert.AreSame(armor, squad.Item);
+            CollectionAssert.DoesNotContain(match.Player.Inventory, armor);
+            Assert.AreEqual(squad.Type.MaxHealth * 1.7f, match.Player.EffectiveStats(squad).MaxHealth, 1e-3f);
+
+            BattleSimulation battle = match.BuildBattle(includeEnemy: false);
+            SimSquad simSquad = battle.Squads[match.Player.Squads.IndexOf(squad)];
+            Assert.IsTrue(simSquad.Members.All(u => System.Math.Abs(u.Stats.MaxHealth - squad.Type.MaxHealth * 1.7f) < 1e-3f), "Every body of the squad.");
+
+            Give(match, _heavyArmorCard);
+            Assert.IsFalse(match.PlaceItem(Team.A, armor, squad.Id).Ok, "One item per squad.");
+            Assert.IsTrue(match.PlaceItem(Team.A, armor, match.Player.Squads[1].Id).Ok, "Another squad can take it.");
+        }
+
+        [Test]
+        public void SellingASquad_PutsItsItemBackInTheInventory()
+        {
+            Match match = NewMatch();
+            PlacedSquad squad = match.Player.Squads[0];
+            Give(match, _heavyArmorCard);
+            match.PlaceItem(Team.A, _heavyArmorCard.Item, squad.Id);
+            Assert.IsTrue(match.Sell(Team.A, squad.Id).Ok);
+            CollectionAssert.Contains(match.Player.Inventory, _heavyArmorCard.Item);
+        }
+
+        [Test]
+        public void DeploymentModule_LetsItsSquadMove_InEveryRound()
+        {
+            Match match = NewMatch();
+            PlacedSquad carrier = match.Player.Squads[0], other = match.Player.Squads[1];
+            Give(match, _moduleCard);
+            match.PlaceItem(Team.A, _moduleCard.Item, carrier.Id);
+            PlayRound(match);
+            match.SkipCards(Team.A);
+            Assert.IsTrue(match.CanMove(carrier), "It can still move after fighting.");
+            Assert.IsFalse(match.CanMove(other));
+            Assert.IsTrue(match.Move(Team.A, carrier.Id, 2, 30, true).Ok, "And turn.");
+            Assert.AreEqual(match.Rules.RefundAfterBattle * (carrier.Type.Cost), match.SellValue(carrier), 1f, "It still sells like a squad that has fought.");
+        }
+
+        [Test]
+        public void ItemsOfTheEnemy_AreSeenOnlyAfterTheBattle()
+        {
+            Match match = NewMatch();
+            PlacedSquad enemy = match.Enemy.Squads[0];
+            match.Enemy.Inventory.Add(_heavyArmorCard.Item);
+            match.PlaceItem(Team.B, _heavyArmorCard.Item, enemy.Id);
+            Assert.IsEmpty(match.SeenArmy(Team.B), "Nothing seen yet.");
+            PlayRound(match);
+            Assert.AreSame(_heavyArmorCard.Item, match.SeenArmy(Team.B)[0].Item);
+            PlayerState seen = match.SeenAsDeployment(Team.B);
+            Assert.AreEqual(enemy.Type.MaxHealth * 1.7f, seen.EffectiveStats(seen.Squads[0]).MaxHealth, 1e-3f, "The grey ghost shows it.");
+        }
+
+        // ------------------------------------------------------------------ economy and buffs
+
+        [Test]
+        public void SupplyEnhancement_AddsIncomeEveryRound_ForThatPlayerOnly_AboveTheCap()
+        {
+            Match match = NewMatch();
+            Give(match, _supplyCard);
+            Assert.AreEqual(match.NextIncome + 50, match.NextIncomeFor(Team.A));
+            Assert.AreEqual(match.NextIncome, match.NextIncomeFor(Team.B));
+            int mine = match.Player.Credits, theirs = match.Enemy.Credits;
+            match.StartBattle().Run();
+            RoundSummary summary = match.FinishBattle();
+            Assert.AreEqual(mine + 400 + 50, match.Player.Credits);
+            Assert.AreEqual(theirs + 400, match.Enemy.Credits);
+            Assert.AreEqual(450, summary.IncomeAwarded, "The result screen shows the player's income.");
+
+            match.Player.BonusIncome = 150;
+            match.ContinueAfterResult();
+            match.SkipCards(Team.A);
+            Assert.AreEqual(match.Rules.IncomeCap + 150, match.Rules.IncomeForRound(30) + match.Player.BonusIncome, "On top of the income cap.");
+        }
+
+        [Test]
+        public void BuffCards_ImproveTheWholeArmy_AndOldSquadsToo()
+        {
+            Match match = NewMatch();
+            PlacedSquad squad = match.Player.Squads[0];
+            float damage = match.Player.EffectiveStats(squad).Weapons[0].DamagePerShot;
+            match.Player.Credits = 1000;
+            Give(match, _tacticsCard);
+            Assert.AreEqual(damage * 1.3f, match.Player.EffectiveStats(squad).Weapons[0].DamagePerShot, 1e-3f);
+        }
+
+        [Test]
+        public void AdditionalDeploymentSlot_AllowsOneMoreSquadPerRound()
+        {
+            Match match = NewMatch();
+            match.Player.Credits = 5000;
+            Give(match, _slotCard);
+            Assert.AreEqual(3, match.SquadsPerRound(Team.A));
+            Assert.AreEqual(2, match.SquadsPerRound(Team.B));
+            UnitStats type = match.Player.Squads[0].Type;
+            Assert.IsTrue(match.Buy(Team.A, type).Ok);
+            Assert.IsTrue(match.Buy(Team.A, type).Ok);
+            Assert.IsTrue(match.Buy(Team.A, type).Ok, "The third squad this round.");
+            Assert.IsFalse(match.Buy(Team.A, type).Ok);
+        }
+
+        [Test]
+        public void CardsAtTheirMaximum_AreNoLongerOffered()
+        {
+            List<FactionInfo> factions = Factions();
+            foreach (FactionInfo faction in factions)
+            {
+                faction.Cards.Clear();
+                faction.Cards.Add(_supplyCard);
+            }
+            var match = new Match(TestMatch.RulesWithCards(), TestRules.Default(), factions, 1, new DoNothingAi());
+            match.ChooseDraft(0);
+            PlayRound(match);
+            Assert.IsTrue(match.ChooseCard(Team.A, match.Player.Offer.Cards.IndexOf(_supplyCard)).Ok);
+            PlayRound(match);
+            CollectionAssert.IsEmpty(match.Player.Offer.Cards, "1 copy allowed: only Skip is left.");
+        }
+
+        // ------------------------------------------------------------------ Intensive Training
+
+        [Test]
+        public void IntensiveTraining_FillsTheXpBar_ThenRechargesForARound()
+        {
+            Match match = NewMatch();
+            PlacedSquad squad = match.Player.Squads[0], other = match.Player.Squads[1];
+            Assert.IsFalse(match.UseTraining(Team.A, squad.Id).Ok, "Not owned yet.");
+            Give(match, _trainingCard);
+            Assert.IsTrue(match.CanUseTraining(Team.A));
+            Assert.IsTrue(match.UseTraining(Team.A, squad.Id).Ok);
+            Assert.AreEqual(match.XpNeeded(squad), squad.Xp, 1e-3f);
+            Assert.IsTrue(match.CanLevelUp(squad), "It can now be leveled up, if the player pays.");
+            Assert.AreEqual(1, squad.Level, "It does not level up by itself.");
+            Assert.IsFalse(match.CanUseTraining(Team.A), "Used this round.");
+
+            PlayRound(match);
+            match.SkipCards(Team.A);
+            Assert.IsFalse(match.UseTraining(Team.A, other.Id).Ok, "Round 2: recharging.");
+            PlayRound(match);
+            match.SkipCards(Team.A);
+            Assert.IsTrue(match.CanUseTraining(Team.A), "Round 3: ready again.");
+            Assert.IsFalse(match.UseTraining(Team.A, squad.Id).Ok, "Its bar is already full: not wasted.");
+            other.Xp = 0f; // Whatever it earned in the battles.
+            Assert.IsTrue(match.UseTraining(Team.A, other.Id).Ok);
         }
 
         // ------------------------------------------------------------------ results and AI
@@ -329,7 +542,7 @@ namespace Halobellum.Tests
             }
             Assert.AreEqual(MatchPhase.MatchOver, match.Phase, "The match ended.");
             Assert.IsTrue(match.Winner.HasValue);
-            Assert.Greater(match.Player.Spells.Count + match.Enemy.Spells.Count, 0, "Spells were taken.");
+            Assert.Greater(match.Player.Spells.Count + match.Enemy.Spells.Count + match.Player.CardsTaken.Count + match.Enemy.CardsTaken.Count, 0, "Cards were taken.");
             Assert.Greater(spellsCast, 0, "Spells were cast.");
             Assert.IsTrue(match.Player.Squads.Concat(match.Enemy.Squads).Any(s => s.FromCard) || rounds < 4, "Reinforcements were taken (in a match that reached round 3).");
         }

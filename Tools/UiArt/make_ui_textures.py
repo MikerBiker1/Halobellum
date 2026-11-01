@@ -8,6 +8,8 @@
 # Panels, rows and ornaments are drawn at double resolution (the HUD draws them at half size, so they
 # stay sharp on large screens); buttons and bar fills are drawn at HUD size (Unity stretches them 1:1).
 # Textures whose name ends in _Tile repeat (the HUD tiles them over panel interiors).
+# Also the hexagons behind item icons (one look per faction) and the white item and card icons
+# (Art/UI/Items, decision D33), which sit on those hexagons in the Inventory and over squads.
 # Run:  python make_ui_textures.py   (needs numpy and Pillow; run again after changing anything here)
 
 import hashlib
@@ -15,7 +17,7 @@ import math
 import os
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 OUT = os.path.join(ROOT, "Assets", "_Project", "Art", "UI")
@@ -553,8 +555,203 @@ def covenant_ornament(folder):
     c.save(folder, "Covenant_Ornament")
 
 
+# ======================================================================================== hexagons and icons
+
+def hex_distance(c, size, apothem):
+    """Signed distance to a pointy-topped hexagon centred in a size x size image."""
+    x, y = np.abs(c.x - size / 2), np.abs(c.y - size / 2)
+    return np.maximum(x, 0.8660254 * y + 0.5 * x) - apothem
+
+
+def unsc_hexagons(folder):
+    S = 128
+    filled = Canvas(S, S)
+    d = hex_distance(filled, S, 56)
+    filled.paint((0, 0, 0), np.where(d > 0, 0.4 * np.exp(-(np.clip(d, 0, None) / 3.0) ** 2), 0))
+    t = np.clip(filled.y / S, 0, 1)
+    filled.paint(lerp((0.25, 0.28, 0.3), (0.1, 0.115, 0.125), t), band(d, 0.6, -80))
+    filled.paint(STEEL_LIGHT, line(d, -1.5, 2.0))
+    filled.paint(AMBER, line(d, -6.0, 2.0) * 0.9)
+    filled.save(folder, "UNSC_HexFilled")
+
+    empty = Canvas(S, S)
+    d = hex_distance(empty, S, 56)
+    empty.paint((0.05, 0.06, 0.065), band(d, 0.6, -80) * 0.45)
+    empty.paint(AMBER, line(d, -2.0, 4.0))
+    empty.save(folder, "UNSC_HexEmpty")
+
+
+def covenant_hexagons(folder):
+    S = 128
+    filled = Canvas(S, S)
+    d = hex_distance(filled, S, 54)
+    filled.paint(GLOW_BLUE, np.where(d > 0, 0.45 * np.exp(-(np.clip(d, 0, None) / 4.0) ** 2), 0))
+    t = np.clip(filled.y / S, 0, 1)
+    filled.paint(lerp((0.3, 0.19, 0.52), (0.1, 0.05, 0.2), t), band(d, 0.6, -80))
+    filled.paint(GLOW_CORE, line(d, -2.0, 2.0))
+    filled.save(folder, "Covenant_HexFilled")
+
+    empty = Canvas(S, S)
+    d = hex_distance(empty, S, 54)
+    empty.paint(GLOW_BLUE, np.where(d > 0, 0.45 * np.exp(-(np.clip(d, 0, None) / 4.0) ** 2), 0))
+    empty.paint((0.08, 0.04, 0.16), band(d, 0.6, -80) * 0.45)
+    empty.paint(GLOW_CORE, line(d, -2.0, 3.0))
+    empty.save(folder, "Covenant_HexEmpty")
+
+
+def save_icon(folder, name, draw_function):
+    """Draws a white icon at 4x and scales it down to 96 x 96, so its edges are smooth."""
+    big = 384
+    image = Image.new("RGBA", (big, big), (255, 255, 255, 0))
+    draw_function(ImageDraw.Draw(image), big)
+    image = image.resize((96, 96), Image.LANCZOS)
+    os.makedirs(folder, exist_ok=True)
+    path = os.path.join(folder, name + ".png")
+    image.save(path)
+    write_texture_meta(path)
+    print("wrote", os.path.relpath(path, ROOT))
+
+
+WHITE = (255, 255, 255, 255)
+CLEAR = (255, 255, 255, 0)
+
+
+def icon_laser(d, s):
+    # A crosshair.
+    m = s / 2
+    d.ellipse([m - 110, m - 110, m + 110, m + 110], outline=WHITE, width=26)
+    d.ellipse([m - 24, m - 24, m + 24, m + 24], fill=WHITE)
+    for a, b in (((m, 20), (m, 110)), ((m, s - 110), (m, s - 20)), ((20, m), (110, m)), ((s - 110, m), (s - 20, m))):
+        d.line([a, b], fill=WHITE, width=26)
+
+
+def icon_absorb(d, s):
+    # A shield with a drop cut out of it.
+    d.polygon([(70, 60), (s - 70, 60), (s - 70, 210), (s / 2, 340), (70, 210)], fill=WHITE)
+    m = s / 2
+    d.polygon([(m, 95), (m + 52, 195), (m - 52, 195)], fill=CLEAR)
+    d.ellipse([m - 52, 150, m + 52, 254], fill=CLEAR)
+
+
+def icon_core(d, s):
+    # A core with rays.
+    m = s / 2
+    for i in range(8):
+        a = i * math.pi / 4
+        d.line([(m + 80 * math.cos(a), m + 80 * math.sin(a)), (m + 165 * math.cos(a), m + 165 * math.sin(a))], fill=WHITE, width=30)
+    d.ellipse([m - 66, m - 66, m + 66, m + 66], fill=WHITE)
+
+
+def icon_deploy(d, s):
+    # Four arrows: move anywhere.
+    m = s / 2
+    d.line([(m, 80), (m, s - 80)], fill=WHITE, width=32)
+    d.line([(80, m), (s - 80, m)], fill=WHITE, width=32)
+    w = 62
+    d.polygon([(m, 16), (m - w, 100), (m + w, 100)], fill=WHITE)
+    d.polygon([(m, s - 16), (m - w, s - 100), (m + w, s - 100)], fill=WHITE)
+    d.polygon([(16, m), (100, m - w), (100, m + w)], fill=WHITE)
+    d.polygon([(s - 16, m), (s - 100, m - w), (s - 100, m + w)], fill=WHITE)
+
+
+def icon_haste(d, s):
+    # Double chevrons pointing up.
+    for y in (70, 190):
+        d.polygon([(s / 2, y), (s - 60, y + 110), (s - 60, y + 180), (s / 2, y + 70), (60, y + 180), (60, y + 110)], fill=WHITE)
+
+
+def icon_armor(d, s):
+    # A solid shield with a bar.
+    d.polygon([(60, 50), (s - 60, 50), (s - 60, 210), (s / 2, 350), (60, 210)], fill=WHITE)
+    d.rectangle([s / 2 - 90, 130, s / 2 + 90, 164], fill=CLEAR)
+
+
+def icon_repair(d, s):
+    # A medical cross.
+    m = s / 2
+    d.rectangle([m - 50, 50, m + 50, s - 50], fill=WHITE)
+    d.rectangle([50, m - 50, s - 50, m + 50], fill=WHITE)
+
+
+def icon_firepower(d, s):
+    # A shell pointing up with a blast line.
+    m = s / 2
+    d.polygon([(m, 24), (m + 62, 130), (m - 62, 130)], fill=WHITE)
+    d.rectangle([m - 62, 130, m + 62, 270], fill=WHITE)
+    d.rectangle([m - 92, 296, m + 92, 340], fill=WHITE)
+
+
+def icon_supply(d, s):
+    # A crate.
+    d.rectangle([60, 110, s - 60, s - 60], fill=WHITE)
+    d.polygon([(60, 110), (120, 50), (s - 120, 50), (s - 60, 110)], fill=WHITE)
+    d.rectangle([s / 2 - 22, 130, s / 2 + 22, s - 60], fill=CLEAR)
+
+
+def icon_super_supply(d, s):
+    # A crate with an up arrow.
+    d.rectangle([70, 200, s - 70, s - 40], fill=WHITE)
+    m = s / 2
+    d.polygon([(m, 20), (m + 90, 120), (m - 90, 120)], fill=WHITE)
+    d.rectangle([m - 36, 120, m + 36, 180], fill=WHITE)
+
+
+def icon_offense(d, s):
+    # Crossed blades.
+    d.line([(70, 70), (s - 90, s - 90)], fill=WHITE, width=40)
+    d.line([(s - 70, 70), (90, s - 90)], fill=WHITE, width=40)
+    d.line([(50, 300), (130, 220)], fill=WHITE, width=34)
+    d.line([(s - 50, 300), (s - 130, 220)], fill=WHITE, width=34)
+
+
+def icon_defense(d, s):
+    # A shield outline with a smaller shield inside.
+    d.polygon([(60, 50), (s - 60, 50), (s - 60, 210), (s / 2, 350), (60, 210)], fill=WHITE)
+    d.polygon([(100, 88), (s - 100, 88), (s - 100, 195), (s / 2, 298), (100, 195)], fill=CLEAR)
+    d.polygon([(140, 130), (s - 140, 130), (s - 140, 185), (s / 2, 245), (140, 185)], fill=WHITE)
+
+
+def icon_targeting(d, s):
+    # Target rings.
+    m = s / 2
+    d.ellipse([m - 150, m - 150, m + 150, m + 150], outline=WHITE, width=28)
+    d.ellipse([m - 84, m - 84, m + 84, m + 84], outline=WHITE, width=28)
+    d.ellipse([m - 26, m - 26, m + 26, m + 26], fill=WHITE)
+
+
+def icon_slot(d, s):
+    # A plus inside a square slot.
+    d.rectangle([56, 56, s - 56, s - 56], outline=WHITE, width=28)
+    m = s / 2
+    d.rectangle([m - 24, 110, m + 24, s - 110], fill=WHITE)
+    d.rectangle([110, m - 24, s - 110, m + 24], fill=WHITE)
+
+
+def icon_training(d, s):
+    # A rising bar chart with a chevron: rank up.
+    for i, h in enumerate((90, 170, 250)):
+        x = 60 + i * 96
+        d.rectangle([x, s - 50 - h, x + 72, s - 50], fill=WHITE)
+    d.polygon([(240, 30), (340, 30), (340, 130)], fill=WHITE)
+
+
+ICONS = {
+    "Item_LaserSights": icon_laser, "Item_AbsorptionModule": icon_absorb, "Item_AmplifyingCore": icon_core,
+    "Item_DeploymentModule": icon_deploy, "Item_HasteStims": icon_haste, "Item_HeavyArmor": icon_armor,
+    "Item_RepairKit": icon_repair, "Item_ImprovedFirepower": icon_firepower,
+    "Card_SupplyEnhancement": icon_supply, "Card_SuperSupply": icon_super_supply, "Card_AdvancedOffense": icon_offense,
+    "Card_AdvancedDefense": icon_defense, "Card_AdvancedTargeting": icon_targeting, "Card_DeploymentSlot": icon_slot,
+    "Card_IntensiveTraining": icon_training,
+}
+
+
 def main():
+    items = os.path.join(OUT, "Items")
+    for name, draw in ICONS.items():
+        save_icon(items, name, draw)
+
     unsc = os.path.join(OUT, "UNSC")
+    unsc_hexagons(unsc)
     unsc_panel_frame(unsc)
     unsc_hull_tile(unsc)
     unsc_button(unsc, "UNSC_Button", (0.25, 0.28, 0.30), (0.14, 0.16, 0.175), STEEL_DARK, 1.0, 0.55)
@@ -565,6 +762,7 @@ def main():
     unsc_ornament(unsc)
 
     cov = os.path.join(OUT, "Covenant")
+    covenant_hexagons(cov)
     covenant_panel_frame(cov)
     covenant_hull_tile(cov)
     covenant_button(cov, "Covenant_Button", (0.32, 0.2, 0.52), (0.17, 0.09, 0.3), GLOW_BLUE, 0.55, 0.0)

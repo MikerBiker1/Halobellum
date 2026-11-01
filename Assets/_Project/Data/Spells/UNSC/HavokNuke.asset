@@ -13,14 +13,17 @@ MonoBehaviour:
   m_Name: HavokNuke
   m_EditorClassIdentifier:
   spellName: HAVOK Nuke
-  description: A tactical nuclear warhead. Devastating, slow to recharge.
+  description: 'A tactical nuclear warhead. Devastating, slow to recharge. Mind your own troops.'
   offensive: 1
   effect: 0
   cost: 350
   cooldownRounds: 4
   maxOwnedCopies: 1
   radius: 14
-  delaySeconds: 3
+  delaySeconds: 6
+  minRound: 7
+  areaWidth: 0
+  areaDepth: 0
   damagePerTick: 2500
   damageType: 1
   isAntiArmor: 0
@@ -31,3 +34,9 @@ MonoBehaviour:
   damageMultiplier: 1
   dropUnit: {fileID: 0}
   dropSquads: 1
+  shieldDamage: 0
+  techDisableSeconds: 0
+  slowShare: 0
+  slowSeconds: 0
+  durationSeconds: 0
+  rangeMultiplier: 1

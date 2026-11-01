@@ -25,6 +25,8 @@ namespace Halobellum.Economy
         public bool Rotated90;
         /// <summary>The owner's techs for this unit type at that moment (they show in the battle).</summary>
         public IReadOnlyList<TechUpgrade> Techs = System.Array.Empty<TechUpgrade>();
+        /// <summary>The item it carried in that battle, or null.</summary>
+        public ItemStats Item;
 
         /// <summary>What the squad is worth: its price plus half its price per level above 1 (Section 10's rule).</summary>
         public int Value => Type.Cost + Type.Cost * (Level - 1) / 2;
@@ -48,7 +50,9 @@ namespace Halobellum.Economy
 
         /// <summary>The AI's own state. (The opponent's PlayerState is never exposed.)</summary>
         public PlayerState Self => _match.Get(Team);
-        public int NextIncome => _match.NextIncome;
+        public int NextIncome => _match.NextIncomeFor(Team);
+        /// <summary>How many squads this side may buy per round.</summary>
+        public int SquadsPerRound => _match.SquadsPerRound(Team);
         public int OwnBaseHealth => Self.BaseHealth;
         public int OpponentBaseHealth => _match.Get(Team.Opponent()).BaseHealth;
 
@@ -79,7 +83,11 @@ namespace Halobellum.Economy
         public ActionResult ChooseCard(int index) => _match.ChooseCard(Team, index);
         public ActionResult SkipCards() => _match.SkipCards(Team);
         public bool CanPlaceSpell(OwnedSpell spell, Vec2 position) => _match.CanPlaceSpell(Team, spell, position);
-        public ActionResult PlaceSpell(OwnedSpell spell, Vec2 position) => _match.PlaceSpell(Team, spell.Id, position);
+        public ActionResult PlaceSpell(OwnedSpell spell, Vec2 position, bool rotated90 = false) => _match.PlaceSpell(Team, spell.Id, position, rotated90);
+        public IReadOnlyList<ItemStats> Inventory => Self.Inventory;
+        public ActionResult PlaceItem(ItemStats item, PlacedSquad squad) => _match.PlaceItem(Team, item, squad.Id);
+        public bool CanUseTraining => _match.CanUseTraining(Team);
+        public ActionResult UseTraining(PlacedSquad squad) => _match.UseTraining(Team, squad.Id);
         /// <summary>Battlefield position (metres) of one of this side's squads.</summary>
         public Vec2 WorldCentre(PlacedSquad squad) => DeploymentGrid.WorldCentre(squad.Type, squad.Column, squad.Row, squad.Rotated90, Team, CombatRules);
         /// <summary>Battlefield position (metres) of an opponent squad as it was seen at the last battle start.</summary>

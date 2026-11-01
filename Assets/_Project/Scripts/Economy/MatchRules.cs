@@ -41,11 +41,13 @@ namespace Halobellum.Economy
         public float LevelUpCostShare = 0.5f;
 
         // Cards (Bible Section 10, Milestone 7).
-        /// <summary>First round with a card offer (Bible: 2); offers then alternate spells / reinforcements. 0 = no cards.</summary>
+        /// <summary>First round with a card offer (Bible: 2). 0 = no cards.</summary>
         public int FirstCardRound = 2;
+        /// <summary>First reinforcement offer (decision D32: round 4), then every other round; the other rounds offer general cards.</summary>
+        public int ReinforcementFirstRound = 4;
         /// <summary>Cards per offer (Bible: 3).</summary>
         public int CardsPerOffer = 3;
-        /// <summary>Credits for skipping a spell offer (Bible: 50).</summary>
+        /// <summary>Credits for skipping a general offer (spells, items, economy, buffs; Bible: 50).</summary>
         public int SpellSkipBonus = 50;
         /// <summary>Credits for skipping a reinforcement offer (Bible: 100).</summary>
         public int ReinforcementSkipBonus = 100;
