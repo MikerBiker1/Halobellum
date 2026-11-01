@@ -42,6 +42,8 @@ namespace Halobellum.Combat
         public float SurvivorBaseDamage;
         /// <summary>Per unit type, in the order the types were first added.</summary>
         public List<UnitTypeResult> UnitTypes = new List<UnitTypeResult>();
+        /// <summary>This side's spells in the battle: damage and kills (Deployed and Survivors stay 0).</summary>
+        public List<UnitTypeResult> Spells = new List<UnitTypeResult>();
     }
 
     public sealed class BattleResult

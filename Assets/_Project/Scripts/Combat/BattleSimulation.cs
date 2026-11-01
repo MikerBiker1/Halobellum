@@ -41,6 +41,7 @@ namespace Halobellum.Combat
         private readonly List<SimUnit> _nearby = new List<SimUnit>();
         private readonly List<string> _unitTypeOrder = new List<string>();
         private readonly List<SimSquad> _squads = new List<SimSquad>();
+        private readonly List<SimSpell> _spells = new List<SimSpell>();
         private readonly Dictionary<int, SimSquad> _squadById = new Dictionary<int, SimSquad>();
         private readonly float _dt;
         private readonly int _tickLimit;
@@ -60,6 +61,8 @@ namespace Halobellum.Combat
         public int Seed { get; }
         public BattleEvents Events { get; } = new BattleEvents();
         public IReadOnlyList<SimUnit> Units => _units;
+        /// <summary>Spells cast into this battle, in the order they were added.</summary>
+        public IReadOnlyList<SimSpell> Spells => _spells;
         public int ProjectileCount => _projectiles.Count;
 
         /// <summary>Fills the list with the position of every projectile in flight (for visuals).</summary>
@@ -105,6 +108,16 @@ namespace Halobellum.Combat
             return unit;
         }
 
+        /// <summary>Casts a spell for this team at this spot; it takes effect at its delay once the battle runs.</summary>
+        public SimSpell AddSpell(SpellStats stats, Team team, Vec2 position)
+        {
+            if (Tick > 0) throw new InvalidOperationException("Add spells before the battle starts.");
+            if (stats == null) throw new ArgumentNullException(nameof(stats));
+            var spell = new SimSpell(_spells.Count, stats, team, position);
+            _spells.Add(spell);
+            return spell;
+        }
+
         /// <summary>A new squad id, unique within this battle. Use it for every body of one squad.</summary>
         public int NewSquadId() => _nextSquadId++;
 
@@ -144,6 +157,7 @@ namespace Halobellum.Combat
             if (Tick == 0) foreach (SimSquad squad in _squads) squad.FormUp();
 
             SpawnReinforcements();
+            UpdateSpells();
             UpdateShields();
             UpdateTargetsAndStates();
             UpdateSquadFormations();
@@ -185,6 +199,94 @@ namespace Halobellum.Combat
                 }
                 _squadById[squadId].FormUp();
                 Events.RaiseReinforcementDropped(carrier, squadId);
+            }
+        }
+
+        /// <summary>Applies every spell effect that is due this tick (in the order the spells were cast).</summary>
+        private void UpdateSpells()
+        {
+            if (_spells.Count == 0) return;
+            float now = ElapsedSeconds + 1e-4f;
+            bool gridReady = false;
+            foreach (SimSpell spell in _spells)
+            {
+                SpellStats stats = spell.Stats;
+                while (!spell.IsDone && now >= stats.DelaySeconds + spell.TicksDone * stats.TickInterval)
+                {
+                    if (!gridReady)
+                    {
+                        _movement.Grid.Build(_units); // Current positions (the grid is empty before the first move).
+                        gridReady = true;
+                    }
+                    spell.TicksDone++;
+                    switch (stats.Effect)
+                    {
+                        case SpellEffect.Damage: ApplySpellDamage(spell); break;
+                        case SpellEffect.Buff: ApplySpellBuff(spell); break;
+                        case SpellEffect.DropSquad: DropSpellSquads(spell); break;
+                    }
+                    Events.RaiseSpellTriggered(spell);
+                    if (stats.Effect != SpellEffect.Damage || stats.TickInterval <= 0f) break;
+                }
+            }
+        }
+
+        private void ApplySpellDamage(SimSpell spell)
+        {
+            WeaponStats weapon = spell.Stats.AsWeapon();
+            _movement.Grid.Query(spell.Position, spell.Stats.Radius + _movement.Grid.MaxRadius, _nearby);
+            foreach (SimUnit victim in _nearby)
+            {
+                if (!victim.IsAlive || victim.Team == spell.Team || !spell.Stats.Targets.Allows(victim.IsAir)) continue;
+                if (Vec2.Distance(victim.Position, spell.Position) - victim.Radius > spell.Stats.Radius) continue;
+                float multiplier = victim.IsAir ? weapon.AirDamageMultiplier : 1f;
+                float dealt = DamageCalculator.ApplyHit(_rules.DamageTable, weapon, victim.Stats.ArmorType, multiplier, ref victim.Shield, ref victim.Health);
+                victim.SecondsSinceDamaged = 0f;
+                spell.DamageDealt += dealt;
+                MarkEngaged(victim);
+                Events.RaiseUnitDamaged(victim, null, dealt);
+                if (victim.Health <= 0f && victim.KilledById < 0 && victim.KilledBySpell == null)
+                {
+                    victim.KilledBySpell = spell;
+                    spell.Kills++;
+                }
+            }
+        }
+
+        private void ApplySpellBuff(SimSpell spell)
+        {
+            _movement.Grid.Query(spell.Position, spell.Stats.Radius + _movement.Grid.MaxRadius, _nearby);
+            foreach (SimUnit unit in _nearby)
+            {
+                if (!unit.IsAlive || unit.Team != spell.Team) continue;
+                if (Vec2.Distance(unit.Position, spell.Position) - unit.Radius > spell.Stats.Radius) continue;
+                if (spell.Stats.ShieldBonusShare > 0f) unit.Shield += unit.Stats.MaxHealth * spell.Stats.ShieldBonusShare;
+                if (spell.Stats.DamageMultiplier > 0f) unit.DamageMultiplier *= spell.Stats.DamageMultiplier;
+            }
+        }
+
+        /// <summary>Drop pods: the spell's squads land in formation around the spot, facing the enemy, for this battle only.</summary>
+        private void DropSpellSquads(SimSpell spell)
+        {
+            UnitStats stats = spell.Stats.DropUnit;
+            if (stats == null) return;
+            Vec2 forward = spell.Team == Team.A ? Vec2.Up : Vec2.Down;
+            ArmyLayout.FootprintOf(stats, _rules.FormationGap, out float width, out _);
+            for (int n = 0; n < spell.Stats.DropSquads; n++)
+            {
+                int squadId = NewSquadId();
+                if (n == 0) spell.DroppedSquadId = squadId;
+                // Several squads stand side by side, centred on the spot.
+                float offsetX = (n - (spell.Stats.DropSquads - 1) * 0.5f) * (width + _rules.FormationGap * 2f);
+                Vec2 centre = spell.Position + new Vec2(spell.Team == Team.A ? offsetX : -offsetX, 0f);
+                foreach (Vec2 offset in SquadFormation.Offsets(stats.SquadSize, stats.CollisionRadius, _rules.FormationGap, false))
+                {
+                    Vec2 placed = spell.Team == Team.A ? offset : -offset;
+                    SimUnit dropped = CreateUnit(stats, spell.Team, centre + placed, squadId);
+                    dropped.Facing = forward;
+                    dropped.UnlimitedAcquisition = IsInEnemyZone(dropped);
+                }
+                _squadById[squadId].FormUp();
             }
         }
 
@@ -577,7 +679,7 @@ namespace Halobellum.Combat
 
         private void DealDamage(SimUnit target, SimUnit attacker, WeaponStats weapon, float directionalMultiplier)
         {
-            float multiplier = target.IsAir ? directionalMultiplier * weapon.AirDamageMultiplier : directionalMultiplier;
+            float multiplier = (target.IsAir ? directionalMultiplier * weapon.AirDamageMultiplier : directionalMultiplier) * attacker.DamageMultiplier;
             float dealt = DamageCalculator.ApplyHit(_rules.DamageTable, weapon, target.Stats.ArmorType, multiplier,
                 ref target.Shield, ref target.Health);
             target.SecondsSinceDamaged = 0f;
@@ -585,7 +687,7 @@ namespace Halobellum.Combat
             MarkEngaged(target);
             Events.RaiseUnitDamaged(target, attacker, dealt);
 
-            if (target.Health <= 0f && target.KilledById < 0)
+            if (target.Health <= 0f && target.KilledById < 0 && target.KilledBySpell == null)
             {
                 target.KilledById = attacker.Id;
                 attacker.Kills++;
@@ -684,6 +786,20 @@ namespace Halobellum.Combat
                 teamResult.DamageDealt += typeResult.DamageDealt;
                 teamResult.Kills += typeResult.Kills;
                 teamResult.SurvivorBaseDamage += typeResult.SurvivorBaseDamage;
+            }
+
+            // Spells: one line per spell name (several copies of one spell add up).
+            foreach (SimSpell spell in _spells)
+            {
+                if (spell.Team != team) continue;
+                UnitTypeResult line = teamResult.Spells.Find(s => s.UnitName == spell.Stats.Name);
+                if (line == null)
+                {
+                    line = new UnitTypeResult { UnitName = spell.Stats.Name, Team = team };
+                    teamResult.Spells.Add(line);
+                }
+                line.DamageDealt += spell.DamageDealt;
+                line.Kills += spell.Kills;
             }
             return teamResult;
         }

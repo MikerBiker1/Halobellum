@@ -53,6 +53,10 @@ namespace Halobellum.Combat
         public bool Advancing;
         /// <summary>Sideways step asked of this unit by faster friendly units coming through (D30), rebuilt every tick.</summary>
         public Vec2 YieldSteer;
+        /// <summary>Multiplies the damage of every weapon of this unit (damage buff spells). 1 = normal.</summary>
+        public float DamageMultiplier = 1f;
+        /// <summary>The spell that dealt the killing blow, or null (then KilledById tells the unit, if any).</summary>
+        public SimSpell KilledBySpell;
 
         public float Health;
         public float Shield;

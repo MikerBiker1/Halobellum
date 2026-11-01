@@ -27,6 +27,8 @@ namespace Halobellum.Combat
         public event Action<int> Ticked;
         /// <summary>The battle is over.</summary>
         public event Action<BattleResult> BattleEnded;
+        /// <summary>A spell took effect (each damage tick, or its buff or drop).</summary>
+        public event Action<SimSpell> SpellTriggered;
 
         internal void RaiseUnitSpawned(SimUnit unit) => UnitSpawned?.Invoke(unit);
         internal void RaiseReinforcementDropped(SimUnit carrier, int squadId) => ReinforcementDropped?.Invoke(carrier, squadId);
@@ -36,5 +38,6 @@ namespace Halobellum.Combat
         internal void RaiseUnitDied(SimUnit unit, SimUnit killer) => UnitDied?.Invoke(unit, killer);
         internal void RaiseTicked(int tick) => Ticked?.Invoke(tick);
         internal void RaiseBattleEnded(BattleResult result) => BattleEnded?.Invoke(result);
+        internal void RaiseSpellTriggered(SimSpell spell) => SpellTriggered?.Invoke(spell);
     }
 }
