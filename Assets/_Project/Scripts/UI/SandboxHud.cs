@@ -139,8 +139,8 @@ namespace Halobellum.UI
                 UnitStats stats = unit.Stats;
                 var row = new Rect(0f, y, content.width, rowHeight - 4f);
                 bool placing = sandbox.PlacingType == stats;
-                GUI.Box(row, GUIContent.none);
-                if (placing) GUI.Box(row, GUIContent.none);
+                HudTheme.RowBox(row);
+                if (placing) HudTheme.RowBox(row);
                 GUI.Label(new Rect(row.x + 8f, row.y + 2f, row.width - 110f, 22f), stats.Name, _text);
                 GUI.Label(new Rect(row.x + 8f, row.y + 24f, row.width - 110f, 20f), $"{RoleName(stats.Role)}, {Bodies(stats.SquadSize)}, {stats.Cost}", _small);
                 if (GUI.Button(new Rect(row.xMax - 92f, row.y + 7f, 86f, 32f), placing ? "Placing" : "Place", _button))
@@ -196,12 +196,13 @@ namespace Halobellum.UI
         {
             if (_text != null && _styleVersion == HudTheme.Version) return;
             _styleVersion = HudTheme.Version;
-            _text = new GUIStyle(GUI.skin.label) { fontSize = 17, normal = { textColor = HudTheme.Text } };
-            _small = new GUIStyle(_text) { fontSize = 15, alignment = TextAnchor.MiddleLeft, normal = { textColor = HudTheme.DimText } };
+            _text = new GUIStyle(GUI.skin.label) { fontSize = HudTheme.Size(17), normal = { textColor = HudTheme.Text } };
+            _small = new GUIStyle(_text) { fontSize = HudTheme.Size(15), alignment = TextAnchor.MiddleLeft, normal = { textColor = HudTheme.DimText } };
             _smallCentered = new GUIStyle(_small) { alignment = TextAnchor.MiddleCenter };
-            _header = new GUIStyle(_text) { fontSize = 19, fontStyle = FontStyle.Bold, normal = { textColor = HudTheme.TitleColor } };
-            _button = new GUIStyle(GUI.skin.button) { fontSize = 15 };
-            _bigButton = new GUIStyle(GUI.skin.button) { fontSize = 19, fontStyle = FontStyle.Bold };
+            _header = new GUIStyle(_text) { font = HudTheme.TitleFont, fontSize = HudTheme.TitleSize(19), fontStyle = HudTheme.TitleFontStyle, normal = { textColor = HudTheme.TitleColor } };
+            _button = new GUIStyle(GUI.skin.button) { fontSize = HudTheme.Size(15) };
+            _bigButton = new GUIStyle(GUI.skin.button) { fontSize = HudTheme.Size(19), fontStyle = FontStyle.Bold };
+            HudTheme.Fit(_text, _small, _smallCentered, _header, _button, _bigButton);
         }
     }
 }

@@ -1,0 +1,3 @@
+Generated textures: drawn by Tools/UiArt/make_ui_textures.py (written for this project, no third-party art).
+Run it again (Python with numpy and Pillow) after changing it; it redraws every PNG here and keeps their GUIDs.
+Decision D28: UNSC hull-plating look, Covenant violet hull with glowing blue lines.

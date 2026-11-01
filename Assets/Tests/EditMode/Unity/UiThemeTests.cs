@@ -2,6 +2,8 @@
 // Checks the faction UI themes (requested after M6): the UNSC, Covenant and neutral theme assets
 // exist and look different (UNSC: cut corners and capital titles; Covenant: rounded, glowing),
 // each faction asset points to its theme, and HudTheme switches themes and titles correctly.
+// Decision D28: the UNSC and Covenant themes are textured (Art/UI) and use font files with their
+// licences; the neutral theme stays plain.
 // Needs the Unity editor (AssetDatabase), so it runs only in Unity's Test Runner.
 // Depends on: Halobellum.Units, Halobellum.UI (HudTheme), NUnit, UnityEditor.
 
@@ -9,6 +11,7 @@ using Halobellum.UI;
 using Halobellum.Units;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEngine;
 
 namespace Halobellum.Tests
 {
@@ -32,6 +35,41 @@ namespace Halobellum.Tests
             Assert.IsNotEmpty(unsc.osFontNames);
             Assert.IsNotEmpty(covenant.osFontNames);
             Assert.AreNotEqual(unsc.osFontNames[0], covenant.osFontNames[0], "Different fonts.");
+        }
+
+        [TestCase("UNSC")]
+        [TestCase("Covenant")]
+        public void FactionThemes_AreTextured_WithFontFiles(string name)
+        {
+            // Decision D28: textured, ship-inspired panels and real font files (free OFL fonts).
+            UiThemeDefinition theme = Theme(name);
+            foreach (Texture2D texture in new[] { theme.panelFrame, theme.panelDetail, theme.panelOrnament, theme.rowFrame, theme.barFill, theme.buttonNormal, theme.buttonHover, theme.buttonPressed })
+            {
+                Assert.IsNotNull(texture, $"{name}: every texture slot is filled.");
+                Assert.AreEqual(1, texture.mipmapCount, $"{texture.name}: UI textures have no mipmaps (Art/UI import rule).");
+            }
+            Assert.AreEqual(TextureWrapMode.Repeat, theme.panelDetail.wrapMode, "The hull texture tiles.");
+            Assert.AreEqual(TextureWrapMode.Clamp, theme.panelFrame.wrapMode, "Frames are 9-sliced, not tiled.");
+            Assert.Less(2 * theme.panelFrameBorder, theme.panelFrame.width, "The frame's corners leave a middle to stretch.");
+            Assert.Less(2 * theme.buttonBorder, theme.buttonNormal.height);
+            Assert.IsNotNull(theme.fontAsset);
+            Assert.IsNotNull(theme.titleFontAsset);
+            foreach (Font font in new[] { theme.fontAsset, theme.titleFontAsset })
+            {
+                string folder = System.IO.Path.GetDirectoryName(AssetDatabase.GetAssetPath(font));
+                Assert.IsTrue(System.IO.File.Exists(System.IO.Path.Combine(folder, "OFL.txt")), $"{font.name}: its licence ships with it.");
+            }
+        }
+
+        [Test]
+        public void FactionThemes_LookDifferent_AndNeutralStaysPlain()
+        {
+            UiThemeDefinition unsc = Theme("UNSC"), covenant = Theme("Covenant"), neutral = Theme("Neutral");
+            Assert.AreNotSame(unsc.panelFrame, covenant.panelFrame);
+            Assert.AreNotSame(unsc.fontAsset, covenant.fontAsset);
+            Assert.AreNotSame(unsc.titleFontAsset, covenant.titleFontAsset);
+            Assert.IsNull(neutral.panelFrame, "The draft screen and the sandbox keep the plain look.");
+            Assert.IsNull(neutral.buttonNormal);
         }
 
         [Test]

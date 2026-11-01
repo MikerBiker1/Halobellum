@@ -14,9 +14,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   themeName: Neutral
   fontAsset: {fileID: 0}
+  titleFontAsset: {fileID: 0}
   osFontNames:
   - Arial
   uppercaseTitles: 0
+  fontScale: 1
+  titleFontScale: 1
+  textShift: 0
+  titleTextShift: 0
+  textureScale: 0.5
+  panelFrame: {fileID: 0}
+  panelFrameBorder: 48
+  panelFillInset: 15
+  panelDetail: {fileID: 0}
+  panelDetailTint: {r: 1, g: 1, b: 1, a: 1}
+  panelOrnament: {fileID: 0}
+  ornamentOffset: -3
+  rowFrame: {fileID: 0}
+  rowFrameBorder: 20
+  barFill: {fileID: 0}
+  barSegmentWidth: 0
+  buttonNormal: {fileID: 0}
+  buttonHover: {fileID: 0}
+  buttonPressed: {fileID: 0}
+  buttonBorder: 12
   panelShape: 0
   cornerSize: 3
   borderThickness: 1

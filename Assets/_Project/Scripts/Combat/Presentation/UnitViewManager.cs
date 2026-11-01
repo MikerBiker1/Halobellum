@@ -50,12 +50,14 @@ namespace Halobellum.Presentation
         [Header("Ghosts and level-up arrows")]
         [Tooltip("Color of the enemy's last-battle army shown during deployment (decision D25).")]
         [SerializeField] private Color ghostColor = new Color(0.56f, 0.58f, 0.62f);
-        [SerializeField] private Color arrowBrightColor = new Color(1f, 0.92f, 0.12f);
-        [SerializeField] private Color arrowDimColor = new Color(0.45f, 0.36f, 0.04f);
+        [Tooltip("The arrow pulses between these two colours (values above 1 make it brighter under the scene's lighting).")]
+        [SerializeField] private Color arrowBrightColor = new Color(1.5f, 1.35f, 0.25f);
+        [SerializeField] private Color arrowDimColor = new Color(0.8f, 0.66f, 0.1f);
+        [SerializeField] private Color arrowOutlineColor = new Color(0.08f, 0.06f, 0.01f);
         [Tooltip("Seconds for one bright-dim-bright pulse of the level-up arrow.")]
         [SerializeField] private float arrowPulseSeconds = 1.2f;
         [Tooltip("Height of the level-up arrow (metres).")]
-        [SerializeField] private float arrowSize = 1.8f;
+        [SerializeField] private float arrowSize = 2.6f;
         [Tooltip("Gap between the top of the squad's tallest body and the arrow (metres).")]
         [SerializeField] private float arrowGap = 1.4f;
 
@@ -349,6 +351,10 @@ namespace Halobellum.Presentation
                 if (!_arrows.TryGetValue(squad.Id, out Transform arrow))
                 {
                     arrow = PlaceholderArt.CreatePart($"Level-up Arrow (squad {squad.Id})", _arrowContainer, ArrowMesh(), ArrowMaterial());
+                    // A dark outline just behind it (the arrow faces the camera), so it reads over any squad.
+                    Transform outline = PlaceholderArt.CreatePart("Outline", arrow, ArrowMesh(), PlaceholderArt.MaterialFor(arrowOutlineColor));
+                    outline.localPosition = new Vector3(0f, 0f, 0.03f);
+                    outline.localScale = Vector3.one * 1.22f;
                     _arrows[squad.Id] = arrow;
                 }
                 float size = arrowSize * Mathf.Max(1f, widest * 0.6f);

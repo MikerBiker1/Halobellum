@@ -1,63 +1,60 @@
-# Daily report: 2026-10-31, night session (M5, M6 and the faction UI)
+# Daily report: 2026-11-01 (your D25 to D28 answers)
 
-M0 to M3 are confirmed. M4 is done (its report is in this file's Git history), and you asked to move on to M5 and M6. This session completed **M5: AI opponent**, **M6: Leveling and tech upgrades**, and the **faction-styled UI** you asked for. All criteria pass; waiting for your confirmation and your answers to D25 to D28.
+Last night's report (M5, M6 and the first faction styles) is in this file's Git history. Today I worked through your answers to D25 to D28. All three changes are done, tested and pushed. They wait for your look, and M4, M5 and M6 still wait for your confirmation.
 
-Before that, D23 went in: a counter must win at least 90% (9 of 10) of equal-value battles. That threshold replaces Section 15's "55 to 70%" in the Bible. Your balance notes (flamethrowers, Warthog range, Pelican, Marines, valuation) are saved in PROGRESS.md for the next balance pass.
+## D25: the enemy's last army as grey ghosts
+- During deployment, the enemy's army **as it was when the last battle started** stands in its zone in grey, at the same positions.
+- **Click a ghost** to see its stats. The window says "enemy, last battle" and shows its level and the techs it fought with.
+- **What the AI deploys this round stays hidden** until you press Ready. A test checks that a squad the AI buys during the round never appears.
+- Seen squads now also record their owner's techs, because techs show in battle. The AI gets the same information about you.
 
-## M5: AI opponent
-- **No cheating, by design.**
-  - The AI only gets an `AiView`: its own state, both bases, last round's base damage, and your army **as it was when the last battle started**.
-  - It deploys at the start of each round, before you act, and uses the same actions and limits (1 unlock, 2 squads per round).
-- **Strategies:** swarm, armor push, air raid, balanced.
-  - Each round the AI scores its roster: the strategy's preferred roles, a bonus for counters, a small bonus per tier.
-  - It counters the role you spent most on (Section 7 table).
-  - In round 1 it moves its free draft squads into position.
-- **Placement:** chaff in front, tanks and Titans just behind, flankers on the side edges, single-target DPS and chaff clear behind the tanks, anti-air and aircraft further back, artillery at the back.
-- **Difficulty:**
-  - **Easy** is partly random, gives counters little weight, skips about 1 in 3 purchases and places sloppily.
-  - **Normal** counters sensibly with the role table.
-  - **Hard** uses **measured** matchups (the counter web's unit-vs-unit win rates, in `Data/AI/MatchupTable.asset`, rewritten by every counter-web run). It aims at the part of your army its own army doesn't beat yet, values strong all-round units, and changes strategy after a bad round.
-  - Measured with the real units, AI against AI, 20 to 30 matches per pairing: **Hard beats Easy 100% and Normal about 60%; Normal beats Easy about 70%.**
-  - My first version of Hard lost to Normal, which is why it now uses the measured table.
-- **Difficulty choice:** buttons on the draft screen (remembered, default Normal). The top bar shows "UNSC vs Covenant / Normal AI".
+## D26: double XP and the level-up arrow
+- The XP bar is now **twice the squad's price** (`xpBarPerSquadCost` = 2 in `MatchRules.asset`).
+- A squad that is ready to level up shows a **yellow arrow** above it. It pulses bright, dim, bright, and has a dark outline so it stands out over any squad. It disappears once the squad levels up.
+- The arrow shows during deployment and on the result screen. Size, colours and pulse speed are on the Battle object's Unit View Manager.
+- Screenshots: `Docs/D26_level_up_arrows.png` and `Docs/D26_level_up_arrows_closeup.png`.
 
-## M6: Leveling and tech upgrades
-- **XP and levels (Section 5):**
-  - Kills earn the victim's worth per body; the XP bar is the squad's own price (data value), the same at every level.
-  - Level-up costs half the base price; health and damage are multiplied by the level, up to 5.
-  - Level and XP survive the round reset, and the opponent sees levels once a squad has fought.
-- **Tech upgrades (Section 9):** 52 first-pass techs, 2 or 3 per unit, as data assets in `Data/Upgrades`.
-  - Each is bought once per unit type and applies to every squad of that type.
-  - Specials: the Pelican's **Troop Bay** (your D22: it now drops 6 Marines at 10 s), the Flamethrower's **Wide Nozzle** (+30-degree cone), the Scorpion's **Anti-Air Coax**.
-- **Stats window:**
-  - Your squads show level, XP bar, **Level up (price)** and the techs with **Buy** buttons.
-  - The AI's squads show their level only.
-  - The result screen lists your squads that are ready to level up.
-- **Sandbox:** set any squad's level and give or remove techs per side; army value counts levels and techs.
-- **AI:** levels up its ready squads and researches one tech per round for its most-invested unit type (Easy rarely does).
+## D28: textured faction UI
+Answer to "if you can't manage this, tell me how I can help": no help was needed.
+- **Textures:** drawn by a script I wrote, `Tools/UiArt/make_ui_textures.py`. They are ours, match the HUD exactly, and can be redrawn after any change.
+- **Fonts:** downloaded from Google Fonts (SIL Open Font License, free to ship). Each font folder has its licence and a `SOURCE.txt`.
+- **UNSC, after the frigate image:**
+  - Bevelled steel frames with cut corners, ribbed edges, an engraved seam, amber stripes on the big corners, small window lights and rivets.
+  - Panel interiors tiled with hull plating: plate seams, ribbed plates, vents, rows of windows, stencil markings.
+  - Recessed list rows with an amber corner bracket.
+  - Steel buttons with an amber tick and an amber outline on hover.
+  - Segmented health and XP bars.
+  - A small tab with lights on top of wide panels.
+  - Titles in Saira Semi Condensed (capitals), text in Chakra Petch.
+- **Covenant, after the cruiser image:**
+  - Polished violet frames with rounded, leaf-like corners and a dark crevice holding a **glowing blue line**.
+  - Armoured swoops with glowing strips over the two big corners.
+  - Interiors tiled with pearly violet metal, flowing engraved lines and blue light strips.
+  - Violet buttons with a blue outline that glows on hover.
+  - Smooth glowing bars.
+  - A glowing lens on top of wide panels.
+  - Titles in Audiowide, text in Electrolize.
+- **What stays neutral:** the draft screen and the sandbox.
+- **Settings:** everything is in `Data/UI/UNSC_Theme.asset` and `Covenant_Theme.asset`: textures, fonts, text sizes, how strong the hull texture is.
+- **Screenshots:** `Docs/D28_UNSC_deployment.png`, `Docs/D28_UNSC_result.png`, `Docs/D28_Covenant_deployment.png`, `Docs/D28_Covenant_result.png`.
 
-## Faction-styled UI
-- **Theme assets in `Data/UI`:** colours, fonts and panel shape, all editable in the Inspector.
-  - **UNSC:** dark steel panels with cut corners, amber titles in capitals, Franklin Gothic.
-  - **Covenant:** deep violet rounded panels with a purple glow, cyan titles, Candara.
-  - **Neutral:** draft screen and sandbox.
-- **When it applies:** your faction's theme covers every screen of the match: the match screens, the battle bar and the stats window.
-- **Fonts:** taken from Windows by name, so no font files were copied. I first tried Bahnschrift for UNSC, but it is a variable font and Unity drew the wrong text with it, so I switched to Franklin Gothic.
-- **Screenshots:** `Docs/M6_UNSC_deployment.png`, `Docs/M6_UNSC_result.png`, `Docs/M6_Covenant_deployment.png`, `Docs/M6_Covenant_result.png`, `Docs/M6_sandbox.png`.
+## Fixed along the way
+- **Overlapping result text:** the "Ready to level up" line on the result screen overlapped the last "what killed what" line. It now follows the list.
+- **Clipped titles:** the new fonts sit lower than Arial, which the HUD was laid out with, so their text was clipped at the bottom. Each theme now moves its text up by a set amount.
 
 ## Test results
-- Unity EditMode **287 / 287**, Unity PlayMode **17 / 17**, .NET harness 264 / 264.
-  - New: AI tests (rules, counters, placement, no cheating, difficulty, full AI-vs-AI matches), leveling and tech tests (the Bible's required leveling tests), theme tests.
-  - PlayMode: a full match against the Normal AI played to the end, a level-up and tech purchase through the stats-window actions, and sandbox levels and techs.
-- **Built game:** autoplay as UNSC and as Covenant (2 rounds each, 4x) and the sandbox demo ran without errors.
-- **Not tested automatically:** clicking the new buttons with a real mouse, and how the themes look on another PC. On a PC without these fonts, Arial is used.
-- **Small cosmetic issue:** in the neutral Sandbox list, the bottom of letters like "g" is slightly cut off.
+- Unity EditMode **291 / 291**, Unity PlayMode **18 / 18**, .NET harness **265 / 265**.
+- New tests:
+  - The preview shows the enemy as seen at the last battle, never its current deployment.
+  - Ghosts are grey and can be read.
+  - The arrow appears for a ready squad and goes away after the level-up.
+  - Both faction themes have every texture and both fonts, with licences; the neutral theme stays plain.
+- **Built game:** 2-round autoplay as UNSC and as Covenant, plus four 3-round runs to catch the arrow on screen. No errors.
+- **Not tested automatically:** clicking a ghost with the real mouse, and how the UI looks at resolutions other than 1920 x 1080.
 
 ## Blockers
 None.
 
-## Decisions needing your approval
-- **D25:** how the AI decides (information it sees, strategies, placement, difficulty levels, draft pick).
-- **D26:** leveling details (XP per kill, bar size, no carry-over, shields and base damage unchanged, refunds).
-- **D27:** the tech catalogue and its rules (prices by tier, no per-round limit, needs the unit unlocked).
-- **D28:** the faction styles.
+## Waiting for you
+- **Feedback on the new look**, from playing once per faction. Your checklist is at the bottom of HUMAN_TODO.md.
+- **Confirm M4, M5 and M6.**

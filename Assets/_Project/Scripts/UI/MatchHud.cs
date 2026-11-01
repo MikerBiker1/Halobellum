@@ -162,7 +162,7 @@ namespace Halobellum.UI
             {
                 UnitStats unit = roster[i];
                 var row = new Rect(0f, i * rowHeight, content.width, rowHeight - 4f);
-                GUI.Box(row, GUIContent.none);
+                HudTheme.RowBox(row);
                 GUI.Label(new Rect(row.x + 8f, row.y + 4f, row.width - 130f, 24f), unit.Name, _text);
                 GUI.Label(new Rect(row.x + 8f, row.y + 28f, row.width - 130f, 22f), $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.SquadSize)}", _small);
 
@@ -221,20 +221,20 @@ namespace Halobellum.UI
         {
             RoundSummary s = match.Match.LastSummary;
             if (s == null) return;
-            Rect panel = CenteredPanel(640f, 520f);
+            Rect panel = CenteredPanel(640f, 550f);
             float y = panel.y + 12f;
             GUI.Label(new Rect(panel.x, y, panel.width, 34f), HudTheme.Title($"Round {s.Round} result"), _centered);
             y += 44f;
             y = SummaryLines(s, panel, y);
+            if (s.PlayerSquadsReadyToLevel.Count > 0)
+            {
+                GUI.Label(new Rect(panel.x + 20f, y + 8f, panel.width - 40f, 26f),
+                    "Ready to level up: " + string.Join(", ", s.PlayerSquadsReadyToLevel.Distinct()) + " (select it next round)", _text);
+            }
 
             string footer = (s.Tie ? "Exact tie: both bases are restored. " : "")
                             + $"Income: +{s.IncomeAwarded} credits for next round.";
             GUI.Label(new Rect(panel.x + 20f, panel.yMax - 96f, panel.width - 40f, 26f), footer, _text);
-            if (s.PlayerSquadsReadyToLevel.Count > 0)
-            {
-                GUI.Label(new Rect(panel.x + 20f, panel.yMax - 122f, panel.width - 40f, 26f),
-                    "Ready to level up: " + string.Join(", ", s.PlayerSquadsReadyToLevel.Distinct()) + " (select it next round)", _small);
-            }
             if (GUI.Button(new Rect(panel.x + panel.width * 0.5f - 110f, panel.yMax - 58f, 220f, 44f), "Continue", _bigButton)) match.Continue();
         }
 
@@ -309,13 +309,7 @@ namespace Halobellum.UI
 
         private void BaseBar(Rect rect, string label, int health, int maxHealth, Color color)
         {
-            float fraction = maxHealth > 0 ? Mathf.Clamp01(health / (float)maxHealth) : 0f;
-            Color old = GUI.color;
-            GUI.color = new Color(0f, 0f, 0f, 0.6f);
-            GUI.DrawTexture(rect, Texture2D.whiteTexture);
-            GUI.color = color;
-            GUI.DrawTexture(new Rect(rect.x, rect.y, rect.width * fraction, rect.height), Texture2D.whiteTexture);
-            GUI.color = old;
+            HudTheme.Bar(rect, maxHealth > 0 ? health / (float)maxHealth : 0f, color);
             GUI.Label(rect, $"{label}: {Mathf.Max(0, health)} / {maxHealth}", _barLabel);
         }
 
@@ -338,16 +332,17 @@ namespace Halobellum.UI
         {
             if (_text != null && _styleVersion == HudTheme.Version) return;
             _styleVersion = HudTheme.Version;
-            _text = new GUIStyle(GUI.skin.label) { fontSize = 17, normal = { textColor = HudTheme.Text } };
-            _small = new GUIStyle(_text) { fontSize = 15, alignment = TextAnchor.MiddleLeft, normal = { textColor = HudTheme.DimText } };
-            _big = new GUIStyle(_text) { fontSize = 24, fontStyle = FontStyle.Bold, normal = { textColor = HudTheme.TitleColor } };
-            _centered = new GUIStyle(_text) { fontSize = 24, fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleCenter, normal = { textColor = HudTheme.TitleColor } };
-            _title = new GUIStyle(_centered) { fontSize = 34 };
-            _header = new GUIStyle(_text) { fontSize = 18, fontStyle = FontStyle.Bold, normal = { textColor = HudTheme.TitleColor } };
-            _barLabel = new GUIStyle(_text) { fontSize = 15, fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.white } };
-            _button = new GUIStyle(GUI.skin.button) { fontSize = 15 };
-            _bigButton = new GUIStyle(GUI.skin.button) { fontSize = 19, fontStyle = FontStyle.Bold };
+            _text = new GUIStyle(GUI.skin.label) { fontSize = HudTheme.Size(17), normal = { textColor = HudTheme.Text } };
+            _small = new GUIStyle(_text) { fontSize = HudTheme.Size(15), alignment = TextAnchor.MiddleLeft, normal = { textColor = HudTheme.DimText } };
+            _big = new GUIStyle(_text) { font = HudTheme.TitleFont, fontSize = HudTheme.TitleSize(24), fontStyle = HudTheme.TitleFontStyle, normal = { textColor = HudTheme.TitleColor } };
+            _centered = new GUIStyle(_big) { alignment = TextAnchor.MiddleCenter };
+            _title = new GUIStyle(_centered) { fontSize = HudTheme.TitleSize(34) };
+            _header = new GUIStyle(_text) { font = HudTheme.TitleFont, fontSize = HudTheme.TitleSize(18), fontStyle = HudTheme.TitleFontStyle, normal = { textColor = HudTheme.TitleColor } };
+            _barLabel = new GUIStyle(_text) { fontSize = HudTheme.Size(15), fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.white } };
+            _button = new GUIStyle(GUI.skin.button) { fontSize = HudTheme.Size(15) };
+            _bigButton = new GUIStyle(GUI.skin.button) { fontSize = HudTheme.Size(19), fontStyle = FontStyle.Bold };
             _smallCentered = new GUIStyle(_small) { alignment = TextAnchor.MiddleCenter };
+            HudTheme.Fit(_text, _small, _big, _centered, _title, _header, _barLabel, _button, _bigButton, _smallCentered);
         }
     }
 }

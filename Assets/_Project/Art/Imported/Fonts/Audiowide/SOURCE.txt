@@ -1,0 +1,5 @@
+Font: Audiowide (Regular)
+Source: Google Fonts, https://github.com/google/fonts/tree/main/ofl/audiowide
+Downloaded: 2026-11-01 (static TTF; not a variable font)
+Licence: SIL Open Font License 1.1 (OFL.txt in this folder). Free to use, bundle and ship with the game; the font itself must not be sold on its own.
+Used by: Data/UI theme assets (decision D28).

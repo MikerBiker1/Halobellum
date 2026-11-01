@@ -67,7 +67,7 @@ namespace Halobellum.UI
             // Top bar.
             var bar = new Rect(width * 0.5f - 300f, 8f, 600f, 74f);
             UiHitAreas.Add(HudScale.ToScreen(bar, scale));
-            GUI.Box(bar, GUIContent.none);
+            HudTheme.PanelBox(bar);
             float limit = battle.Rules.BattleTimeLimitSeconds;
             GUI.Label(new Rect(bar.x + 12f, bar.y + 6f, 576f, 26f),
                 $"Team A  {battle.CountAlive(Team.A)}        {sim.ElapsedSeconds:0.0} s / {limit:0} s        {battle.CountAlive(Team.B)}  Team B", _centered);
@@ -82,7 +82,7 @@ namespace Halobellum.UI
             if (showResultLine && sim.IsFinished && sim.Result != null)
             {
                 var result = new Rect(width * 0.5f - 300f, 90f, 600f, 34f);
-                GUI.Box(result, GUIContent.none);
+                HudTheme.PanelBox(result);
                 GUI.Label(result, ResultText(sim.Result), _centered);
             }
 
@@ -114,10 +114,11 @@ namespace Halobellum.UI
         {
             if (_label != null && _styleVersion == HudTheme.Version) return;
             _styleVersion = HudTheme.Version;
-            _label = new GUIStyle(GUI.skin.label) { fontSize = 16, normal = { textColor = HudTheme.Text } };
-            _centered = new GUIStyle(_label) { alignment = TextAnchor.MiddleCenter, fontSize = 18 };
-            _button = new GUIStyle(GUI.skin.button) { fontSize = 15 };
+            _label = new GUIStyle(GUI.skin.label) { fontSize = HudTheme.Size(16), normal = { textColor = HudTheme.Text } };
+            _centered = new GUIStyle(_label) { alignment = TextAnchor.MiddleCenter, fontSize = HudTheme.Size(18) };
+            _button = new GUIStyle(GUI.skin.button) { fontSize = HudTheme.Size(15) };
             _selectedButton = new GUIStyle(_button) { fontStyle = FontStyle.Bold, normal = { textColor = HudTheme.Accent }, hover = { textColor = HudTheme.Accent } };
+            HudTheme.Fit(_label, _centered, _button, _selectedButton);
         }
     }
 }

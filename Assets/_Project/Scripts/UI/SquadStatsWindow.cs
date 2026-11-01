@@ -77,7 +77,7 @@ namespace Halobellum.UI
         private void DrawProgress(SquadProgressView p, float x, float y, float width)
         {
             y += 10f;
-            GUI.Label(new Rect(x, y + 2f, 160f, LineHeight), $"Level {p.Level} of {p.MaxLevel}", _title);
+            GUI.Label(new Rect(x, y, 170f, LineHeight + 6f), $"Level {p.Level} of {p.MaxLevel}", _title);
             float buttonX = x + width;
             if (p.LevelUpLabel != null)
             {
@@ -96,13 +96,7 @@ namespace Halobellum.UI
             if (p.ShowXp)
             {
                 var bar = new Rect(x, y + 3f, width, 16f);
-                float fraction = p.XpNeeded > 0f ? Mathf.Clamp01(p.Xp / p.XpNeeded) : 0f;
-                Color old = GUI.color;
-                GUI.color = new Color(0f, 0f, 0f, 0.6f);
-                GUI.DrawTexture(bar, Texture2D.whiteTexture);
-                GUI.color = HudTheme.Accent;
-                GUI.DrawTexture(new Rect(bar.x, bar.y, bar.width * fraction, bar.height), Texture2D.whiteTexture);
-                GUI.color = old;
+                HudTheme.Bar(bar, p.XpNeeded > 0f ? p.Xp / p.XpNeeded : 0f, HudTheme.Accent);
                 GUI.Label(bar, $"XP {p.Xp:0} / {p.XpNeeded:0}", _center);
                 y += 22f;
             }
@@ -194,11 +188,12 @@ namespace Halobellum.UI
         {
             if (_title != null && _styleVersion == HudTheme.Version) return;
             _styleVersion = HudTheme.Version;
-            _title = new GUIStyle(GUI.skin.label) { fontSize = 17, fontStyle = FontStyle.Bold, normal = { textColor = HudTheme.TitleColor } };
-            _text = new GUIStyle(GUI.skin.label) { fontSize = 15, wordWrap = true, normal = { textColor = HudTheme.Text } };
-            _small = new GUIStyle(_text) { fontSize = 13, wordWrap = false, normal = { textColor = HudTheme.DimText } };
-            _center = new GUIStyle(_text) { fontSize = 13, alignment = TextAnchor.MiddleCenter, wordWrap = false };
+            _title = new GUIStyle(GUI.skin.label) { font = HudTheme.TitleFont, fontSize = HudTheme.TitleSize(17), fontStyle = HudTheme.TitleFontStyle, normal = { textColor = HudTheme.TitleColor } };
+            _text = new GUIStyle(GUI.skin.label) { fontSize = HudTheme.Size(15), wordWrap = true, normal = { textColor = HudTheme.Text } };
+            _small = new GUIStyle(_text) { fontSize = HudTheme.Size(13), wordWrap = false, normal = { textColor = HudTheme.DimText } };
+            _center = new GUIStyle(_text) { fontSize = HudTheme.Size(13), alignment = TextAnchor.MiddleCenter, wordWrap = false, normal = { textColor = Color.white } };
             _techName = new GUIStyle(_text) { fontStyle = FontStyle.Bold, wordWrap = false };
+            HudTheme.Fit(_title, _text, _small, _center, _techName);
         }
     }
 }

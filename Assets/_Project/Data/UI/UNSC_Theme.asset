@@ -13,17 +13,38 @@ MonoBehaviour:
   m_Name: UNSC_Theme
   m_EditorClassIdentifier: 
   themeName: UNSC
-  fontAsset: {fileID: 0}
+  fontAsset: {fileID: 12800000, guid: 67493f62478c22fbdf15cf833f07c10a, type: 3}
+  titleFontAsset: {fileID: 12800000, guid: 77faddaf3ec1a6e8cf0a39117bdcaa93, type: 3}
   osFontNames:
   - Franklin Gothic Medium
   - Arial Narrow
   - Arial
   uppercaseTitles: 1
+  fontScale: 1.0
+  titleFontScale: 1.08
+  textShift: 0.1
+  titleTextShift: 0.24
+  textureScale: 0.5
+  panelFrame: {fileID: 2800000, guid: 64949af7b3fd997170f3f4839b8d41b7, type: 3}
+  panelFrameBorder: 48
+  panelFillInset: 21
+  panelDetail: {fileID: 2800000, guid: 6fbb1853faf8ee5203600896f41eb499, type: 3}
+  panelDetailTint: {r: 1, g: 1, b: 1, a: 0.8}
+  panelOrnament: {fileID: 2800000, guid: 1e833c7affba4564e3989019f0ee9a9e, type: 3}
+  ornamentOffset: -3
+  rowFrame: {fileID: 2800000, guid: 137122f02ab475f4458c81c9eb1aeaea, type: 3}
+  rowFrameBorder: 20
+  barFill: {fileID: 2800000, guid: bc5f405b7c2b63010cb46779772ea025, type: 3}
+  barSegmentWidth: 14
+  buttonNormal: {fileID: 2800000, guid: c7f04349ad57526006eed91c7cc6a814, type: 3}
+  buttonHover: {fileID: 2800000, guid: bad95693185e27f68bb1d824290b83fb, type: 3}
+  buttonPressed: {fileID: 2800000, guid: 6a37ef7909ea05abe3cab186e666a361, type: 3}
+  buttonBorder: 12
   panelShape: 1
   cornerSize: 8
   borderThickness: 1
   glowSize: 0
-  panelColor: {r: 0.07, g: 0.09, b: 0.1, a: 0.93}
+  panelColor: {r: 0.07, g: 0.082, b: 0.09, a: 0.93}
   borderColor: {r: 0.42, g: 0.5, b: 0.55, a: 1}
   glowColor: {r: 0, g: 0, b: 0, a: 0}
   textColor: {r: 0.9, g: 0.92, b: 0.9, a: 1}

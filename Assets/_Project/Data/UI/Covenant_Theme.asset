@@ -13,17 +13,38 @@ MonoBehaviour:
   m_Name: Covenant_Theme
   m_EditorClassIdentifier: 
   themeName: Covenant
-  fontAsset: {fileID: 0}
+  fontAsset: {fileID: 12800000, guid: 60ddab7073989aca5beac49a9c33209f, type: 3}
+  titleFontAsset: {fileID: 12800000, guid: 1e9bd503d20ed6d2d62e0466c84463c0, type: 3}
   osFontNames:
   - Candara
   - Segoe UI
   - Arial
   uppercaseTitles: 0
+  fontScale: 1.0
+  titleFontScale: 0.92
+  textShift: 0.05
+  titleTextShift: 0.09
+  textureScale: 0.5
+  panelFrame: {fileID: 2800000, guid: e612d3b59230d0e866283609c96d747c, type: 3}
+  panelFrameBorder: 60
+  panelFillInset: 18
+  panelDetail: {fileID: 2800000, guid: 37e273ce422368955614a209a5c09832, type: 3}
+  panelDetailTint: {r: 1, g: 1, b: 1, a: 0.9}
+  panelOrnament: {fileID: 2800000, guid: 7ec1062fe3fc429930af093bebb97bc1, type: 3}
+  ornamentOffset: -7
+  rowFrame: {fileID: 2800000, guid: 7f9cd8029054b71b0c136a8e2609452b, type: 3}
+  rowFrameBorder: 22
+  barFill: {fileID: 2800000, guid: 7394f626e0bef914c95f958043e83f7f, type: 3}
+  barSegmentWidth: 0
+  buttonNormal: {fileID: 2800000, guid: 423d076a3b62d6da2dd3bb8b9f578c5e, type: 3}
+  buttonHover: {fileID: 2800000, guid: d3b1f2f2b31e7299479e0514c3c871eb, type: 3}
+  buttonPressed: {fileID: 2800000, guid: 7427987440f51f8bb31e0ac5401707f1, type: 3}
+  buttonBorder: 14
   panelShape: 2
   cornerSize: 11
   borderThickness: 1
   glowSize: 4
-  panelColor: {r: 0.1, g: 0.04, b: 0.16, a: 0.91}
+  panelColor: {r: 0.094, g: 0.047, b: 0.165, a: 0.925}
   borderColor: {r: 0.72, g: 0.38, b: 1, a: 1}
   glowColor: {r: 0.62, g: 0.3, b: 1, a: 0.45}
   textColor: {r: 0.93, g: 0.9, b: 1, a: 1}

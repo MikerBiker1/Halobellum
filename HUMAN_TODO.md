@@ -60,6 +60,14 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 - [ ] **Research a tech.** In the same window, **Buy** a tech: it applies to every squad of that type for the rest of the match. Try the Pelican's **Troop Bay** (it then drops 6 Marines 10 seconds into each battle) or the Flamethrower's **Wide Nozzle**.
 - [ ] **Sandbox: levels and techs.** In the sandbox, click a squad: **Level +** / **Level -** and **Add** / **Remove** techs freely, per side.
 - [ ] **Look at the faction styles.** Play once as UNSC (steel panels with cut corners, amber capital titles) and once as Covenant (violet rounded panels with a glow, cyan titles). The draft screen and the sandbox stay neutral. Colours, fonts and shapes are in `Data/UI/*_Theme.asset` if you want to tweak them.
-- [ ] **Optional: real fonts.** If you have Halo-style fonts you are allowed to use, put the font files in `Assets/_Project/Art/Imported/Fonts` (with a `SOURCE.txt`) and drag them into the theme's **Font Asset** slot.
-- [ ] **Answer D25 to D28** in DECISIONS.md (how the AI decides, leveling details, the tech catalogue, the faction styles).
+- [x] **Optional: real fonts.** (Done another way on 2026-11-01: free OFL fonts are now in `Art/Imported/Fonts`.) If you have Halo-style fonts you are allowed to use, put the font files in `Assets/_Project/Art/Imported/Fonts` (with a `SOURCE.txt`) and drag them into the theme's **Font Asset** slot.
+- [x] **Answer D25 to D28** in DECISIONS.md (how the AI decides, leveling details, the tech catalogue, the faction styles).
 - [ ] **Confirm M4, M5 and M6.**
+
+## 2026-11-01: check your D25, D26 and D28 changes
+
+- [ ] **Enemy ghosts (D25).** Play a match and finish round 1. In round 2's deployment, the enemy's army from the last battle stands in its zone in grey. Click a grey squad: the stats window shows it as "enemy, last battle" with its level and techs. What the AI buys this round stays hidden until you press Ready.
+- [ ] **Level-up arrow (D26).** When a squad's XP bar is full (now twice its price), a yellow arrow above it pulses bright, dim, bright. It goes away once you level the squad up. Size, colours and speed are on the Battle object's **Unit View Manager** (Ghosts and level-up arrows).
+- [ ] **Faction UI (D28).** Play once as UNSC and once as Covenant and tell me what to change: colours, how strong the hull texture is, fonts, anything. Screenshots are in `Docs/D28_*.png`. Quick tweaks without me: `Assets/_Project/Data/UI/UNSC_Theme.asset` and `Covenant_Theme.asset` (e.g. **Panel Detail Tint** alpha for the hull texture's strength, **Font Scale**, colours).
+- [ ] **Optional: reference art.** If you want the textures closer to a particular look, put reference images (screenshots of Halo menus, ship close-ups) in a folder and tell me where; I redraw the textures from them.
+- [ ] **Confirm M4, M5 and M6** (still open from last night).
