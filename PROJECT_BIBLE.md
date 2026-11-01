@@ -357,7 +357,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 
 - All UNSC and Covenant units from Section 8 implemented with placeholder art and abilities, with unlock prices.
 - Sandbox mode: pick two armies, place them freely, run the battle. Used for balancing.
-- Counter web verified by the headless runner (every role has a counter that wins over 55% of the time against it).
+- Counter web verified by the headless runner (every role has a counter that wins over 70% of the time against it).
 
 **M5: AI opponent**
 
