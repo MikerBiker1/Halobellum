@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48a24a6f0743ea50b653bb6800d1d896, type: 3}
+  m_Name: Scarab
+  m_EditorClassIdentifier: 
+  unitName: Scarab
+  role: 8
+  tier: 4
+  unlockCost: 350
+  squadSize: 1
+  cost: 800
+  baseDamage: 160
+  maxHealth: 9000
+  armorType: 2
+  maxShield: 0
+  shieldRegenPerSecond: 0
+  moveSpeed: 1.5
+  collisionRadius: 5
+  turnTime180: 3
+  isAir: 0
+  targetFilter: 2
+  weapons:
+  - weaponName: Focus Beam
+    damagePerShot: 260
+    fireInterval: 3
+    range: 24
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 2
+    damageType: 2
+    isAntiArmor: 1
+    canBeBlocked: 0
+    hasOwnTargetFilter: 1
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+  - weaponName: Plasma Turret (left)
+    damagePerShot: 10
+    fireInterval: 0.25
+    range: 16
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 0
+    damageType: 2
+    isAntiArmor: 0
+    canBeBlocked: 0
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+  - weaponName: Plasma Turret (right)
+    damagePerShot: 10
+    fireInterval: 0.25
+    range: 16
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 0
+    damageType: 2
+    isAntiArmor: 0
+    canBeBlocked: 0
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+  hasDefenseArc: 0
+  defenseArc:
+    arcDegrees: 0
+    frontDamageMultiplier: 1
+    rearDamageMultiplier: 1
+    blockChance: 0
+    blockedDamageTypes: 
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
+  prefab: {fileID: 1194748871548261961, guid: 3c8e98ecf3d641b498f89055340c1705, type: 3}
+  strongAgainst: Most things in a straight fight
+  weakAgainst: 'Single-target DPS, large chaff swarms'
+  notes: 'Best counters (headless runner, equal cost): Spartan (100%), Zealot (70%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48a24a6f0743ea50b653bb6800d1d896, type: 3}
+  m_Name: HunterPair
+  m_EditorClassIdentifier: 
+  unitName: Hunter Pair
+  role: 3
+  tier: 3
+  unlockCost: 225
+  squadSize: 2
+  cost: 450
+  baseDamage: 45
+  maxHealth: 1500
+  armorType: 2
+  maxShield: 0
+  shieldRegenPerSecond: 0
+  moveSpeed: 2.2
+  collisionRadius: 1.2
+  turnTime180: 1.5
+  isAir: 0
+  targetFilter: 0
+  weapons:
+  - weaponName: Assault Cannon
+    damagePerShot: 60
+    fireInterval: 2
+    range: 16
+    minRange: 0
+    projectileSpeed: 30
+    splashRadius: 2.5
+    damageType: 1
+    isAntiArmor: 0
+    canBeBlocked: 0
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+  hasDefenseArc: 1
+  defenseArc:
+    arcDegrees: 240
+    frontDamageMultiplier: 0.7
+    rearDamageMultiplier: 1.5
+    blockChance: 0
+    blockedDamageTypes: 
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
+  prefab: {fileID: 6218792780624318807, guid: 9a7cecd71e3994d44a0c934e571bc9ac, type: 3}
+  strongAgainst: Chaff clear
+  weakAgainst: Single-target DPS
+  notes: 'Best counters (headless runner, equal cost): Spartan (100%), Zealot (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48a24a6f0743ea50b653bb6800d1d896, type: 3}
+  m_Name: Wraith
+  m_EditorClassIdentifier: 
+  unitName: Wraith
+  role: 5
+  tier: 2
+  unlockCost: 50
+  squadSize: 1
+  cost: 300
+  baseDamage: 60
+  maxHealth: 900
+  armorType: 2
+  maxShield: 0
+  shieldRegenPerSecond: 0
+  moveSpeed: 2
+  collisionRadius: 2
+  turnTime180: 2
+  isAir: 0
+  targetFilter: 0
+  weapons:
+  - weaponName: Plasma Mortar
+    damagePerShot: 80
+    fireInterval: 3.5
+    range: 38
+    minRange: 10
+    projectileSpeed: 20
+    splashRadius: 4
+    damageType: 1
+    isAntiArmor: 0
+    canBeBlocked: 0
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+  hasDefenseArc: 0
+  defenseArc:
+    arcDegrees: 0
+    frontDamageMultiplier: 1
+    rearDamageMultiplier: 1
+    blockChance: 0
+    blockedDamageTypes: 
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
+  prefab: {fileID: 1109930609769597904, guid: 98f9f3c04bb950c4a8532a5b5b5b69a2, type: 3}
+  strongAgainst: 'Slow, grouped units'
+  weakAgainst: 'Flankers, air'
+  notes: 'Best counters (headless runner, equal cost): Hornet (100%), Pelican (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

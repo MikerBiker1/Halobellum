@@ -1,6 +1,6 @@
 // PlaceholderPrefabBuilder.cs
-// Creates a placeholder prefab for every unit asset in Data/Units/Placeholder that has no prefab
-// yet, and assigns it to the asset's Prefab field (Bible Section 4, rule 1: a unit is a data asset
+// Creates a placeholder prefab for every unit asset under Data/Units (placeholders and the slice
+// rosters) that has no prefab yet, and assigns it to the asset's Prefab field (Bible Section 4, rule 1: a unit is a data asset
 // plus a prefab). Each prefab is one Unity primitive sized from the unit's collision radius:
 // capsule for infantry, box for vehicles, flattened sphere for air units. Swapping in real art
 // later only means assigning a different prefab to the unit asset.
@@ -23,6 +23,7 @@ namespace Halobellum.EditorTools
     public static class PlaceholderPrefabBuilder
     {
         public const string PrefabFolder = "Assets/_Project/Prefabs/Units";
+        public const string UnitsFolder = "Assets/_Project/Data/Units";
 
         [MenuItem("Halobellum/Placeholders/Create Missing Placeholder Prefabs")]
         public static void BuildFromMenu()
@@ -39,14 +40,14 @@ namespace Halobellum.EditorTools
             EditorApplication.Exit(exitCode);
         }
 
-        /// <summary>Creates and assigns prefabs for placeholder units that have none. Returns how many were created.</summary>
+        /// <summary>Creates and assigns prefabs for unit assets that have none. Returns how many were created.</summary>
         public static int Build()
         {
             var material = AssetDatabase.LoadAssetAtPath<Material>(BattleSceneBuilder.PlaceholderMaterialPath);
             if (material == null) throw new InvalidOperationException("Missing " + BattleSceneBuilder.PlaceholderMaterialPath + " (rebuild the battle scene first).");
 
             int created = 0;
-            foreach (UnitDefinition unit in HeadlessRunnerTool.LoadUnitsInFolder(HeadlessRunnerTool.PlaceholderFolder))
+            foreach (UnitDefinition unit in HeadlessRunnerTool.LoadUnitsInFolder(UnitsFolder))
             {
                 if (unit.prefab != null) continue;
                 unit.prefab = CreatePrefab(unit, material);

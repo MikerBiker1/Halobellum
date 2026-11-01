@@ -15,9 +15,18 @@ MonoBehaviour:
   factionName: Covenant
   color: {r: 0.6, g: 0.3, b: 0.85, a: 1}
   baseRoster:
-  - {fileID: 11400000, guid: 371c5bdf9bd419137959e17e6d1a1701, type: 2}
-  - {fileID: 11400000, guid: 05beefbad16fb5e8a596885d8af31a7a, type: 2}
-  - {fileID: 11400000, guid: b7df3ec8a68c66df70ff0b03829fd2c9, type: 2}
+  - {fileID: 11400000, guid: 268173acf7a0bbc09ed3f3959cde83f0, type: 2}
+  - {fileID: 11400000, guid: 1563707a45e677113a77b34397af1a42, type: 2}
+  - {fileID: 11400000, guid: 46f355b6659ddf5755dc6b5ead339258, type: 2}
+  - {fileID: 11400000, guid: cb572cde0f0c256bfb0220a3f6e03a73, type: 2}
+  - {fileID: 11400000, guid: 3e545b1f523a87b8bdb0bf84ceb9943a, type: 2}
+  - {fileID: 11400000, guid: 92d00221f62116d3f56ff8e674023364, type: 2}
+  - {fileID: 11400000, guid: 805986fc2317135f08df3dd174361796, type: 2}
+  - {fileID: 11400000, guid: 5198e3298f197e38621b4856925f150b, type: 2}
+  - {fileID: 11400000, guid: 1e3ad32ff0a7b0d2dfd0ccdb12075a0d, type: 2}
+  - {fileID: 11400000, guid: 780c7cb950e568dbf59cb744c3bc0a4b, type: 2}
+  - {fileID: 11400000, guid: f456f983b2e848fd27010f8edd11ed95, type: 2}
+  - {fileID: 11400000, guid: 9404075fd6bb3f19513e98b949f4be10, type: 2}
   subFactions:
   - subFactionName: Standard
     exclusiveUnits: []

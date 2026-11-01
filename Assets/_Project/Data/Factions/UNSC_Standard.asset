@@ -15,9 +15,18 @@ MonoBehaviour:
   factionName: UNSC
   color: {r: 0.25, g: 0.45, b: 0.95, a: 1}
   baseRoster:
-  - {fileID: 11400000, guid: 371c5bdf9bd419137959e17e6d1a1701, type: 2}
-  - {fileID: 11400000, guid: 05beefbad16fb5e8a596885d8af31a7a, type: 2}
-  - {fileID: 11400000, guid: b7df3ec8a68c66df70ff0b03829fd2c9, type: 2}
+  - {fileID: 11400000, guid: 63fe08127caa6095039aa26ce7f4e1c8, type: 2}
+  - {fileID: 11400000, guid: b518303ed193c3c0d8229aa982f52118, type: 2}
+  - {fileID: 11400000, guid: e3f3d56d649f0ee34420a51eed46d81d, type: 2}
+  - {fileID: 11400000, guid: 64aa96354ae1952d85119ad52f517940, type: 2}
+  - {fileID: 11400000, guid: f53317aa03c8b9271e27af343daa1973, type: 2}
+  - {fileID: 11400000, guid: 5553d99908b0aebdfacb2464e0dfac8a, type: 2}
+  - {fileID: 11400000, guid: 40d712ea06ae6f0ff29032c8f972ea8d, type: 2}
+  - {fileID: 11400000, guid: d793bec59f54a22e854a3821e28a41bc, type: 2}
+  - {fileID: 11400000, guid: 0c0f0716c87249e033b862afcb2a15f9, type: 2}
+  - {fileID: 11400000, guid: cdd0af62c5651f61e13ec8127e895c73, type: 2}
+  - {fileID: 11400000, guid: a480e72bceb9cb554de068cabc52ac61, type: 2}
+  - {fileID: 11400000, guid: c0ea203c825d770707d27469369bf520, type: 2}
   subFactions:
   - subFactionName: Standard
     exclusiveUnits: []

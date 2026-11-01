@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48a24a6f0743ea50b653bb6800d1d896, type: 3}
+  m_Name: Mantis
+  m_EditorClassIdentifier: 
+  unitName: Mantis
+  role: 3
+  tier: 3
+  unlockCost: 250
+  squadSize: 1
+  cost: 500
+  baseDamage: 100
+  maxHealth: 2500
+  armorType: 2
+  maxShield: 0
+  shieldRegenPerSecond: 0
+  moveSpeed: 3
+  collisionRadius: 2
+  turnTime180: 2
+  isAir: 0
+  targetFilter: 2
+  weapons:
+  - weaponName: Chaingun
+    damagePerShot: 8
+    fireInterval: 0.2
+    range: 14
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 0
+    damageType: 0
+    isAntiArmor: 0
+    canBeBlocked: 1
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+  - weaponName: Rockets
+    damagePerShot: 60
+    fireInterval: 2.5
+    range: 18
+    minRange: 0
+    projectileSpeed: 35
+    splashRadius: 2
+    damageType: 1
+    isAntiArmor: 0
+    canBeBlocked: 0
+    hasOwnTargetFilter: 1
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+  hasDefenseArc: 0
+  defenseArc:
+    arcDegrees: 0
+    frontDamageMultiplier: 1
+    rearDamageMultiplier: 1
+    blockChance: 0
+    blockedDamageTypes: 
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
+  prefab: {fileID: 682829876330678696, guid: 1b84cfffc7c493746893cfe0519b3988, type: 3}
+  strongAgainst: Chaff clear
+  weakAgainst: Single-target DPS
+  notes: 'Best counters (headless runner, equal cost): Gauss Warthog (100%), Spartan (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
