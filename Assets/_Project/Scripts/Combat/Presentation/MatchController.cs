@@ -1,11 +1,13 @@
 // MatchController.cs
 // Runs a match in the Match scene (Bible Section 5). It owns the plain C# Match and connects it to
 // the scene: during deployment it shows the player's squads as a preview battle (the AI's squads
-// stay hidden), forwards the player's actions (unlock, buy and place, move, turn, sell), and on
-// Ready hands the round's battle to the BattleController to play. When the battle ends it applies
-// the result (base damage, income) and the HUD shows the result screen.
+// stay hidden), forwards the player's actions (unlock, buy, move, turn, sell), and on Ready hands
+// the round's battle to the BattleController to play. When the battle ends it applies the result
+// (base damage, income) and the HUD shows the result screen. A bought squad is placed in the middle
+// of the zone, drops in from high above and is selected when it lands, ready to be moved.
 // The HUD (Scripts/UI/MatchHud) and DeploymentInput call the public methods here; tests do too.
-// Depends on: BattleController, SquadSelection, Halobellum.Economy (Match, DoNothingAi, DeploymentGrid),
+// Depends on: BattleController, SquadSelection, UnitViewManager,
+//             Halobellum.Economy (Match, DoNothingAi, DeploymentGrid),
 //             Halobellum.Units (MatchRulesDefinition, FactionDefinition, UnitDefinition), UnityEngine.
 
 using System;
@@ -28,6 +30,9 @@ namespace Halobellum.Presentation
 
         private BattleController _battle;
         private SquadSelection _selection;
+        private UnitViewManager _views;
+        /// <summary>Squads still dropping in: placed squad id -> Time.unscaledTime the drop began.</summary>
+        private readonly Dictionary<int, float> _drops = new Dictionary<int, float>();
         private readonly Dictionary<UnitStats, UnitDefinition> _sources = new Dictionary<UnitStats, UnitDefinition>();
         private readonly List<PlacedSquad> _previewOrder = new List<PlacedSquad>();
 
@@ -37,18 +42,17 @@ namespace Halobellum.Presentation
         /// <summary>Raised after every phase change (draft chosen, battle started or finished, next round).</summary>
         public event Action PhaseChanged;
 
-        /// <summary>The unit type being placed after pressing Buy, or null.</summary>
-        public UnitStats PlacingType { get; private set; }
         /// <summary>The squad being moved, or -1.</summary>
         public int MovingSquadId { get; private set; } = -1;
-        /// <summary>Whether the squad being placed or moved is turned 90 degrees.</summary>
+        /// <summary>Whether the squad being moved is turned 90 degrees.</summary>
         public bool PlacingRotated { get; private set; }
-        public bool IsPlacing => PlacingType != null || MovingSquadId >= 0;
+        public bool IsPlacing => MovingSquadId >= 0;
 
         private void Start()
         {
             _battle = GetComponent<BattleController>();
             _selection = GetComponent<SquadSelection>();
+            _views = GetComponent<UnitViewManager>();
             _battle.BattleFinished += OnBattleFinished;
             NewMatch();
         }
@@ -73,6 +77,7 @@ namespace Halobellum.Presentation
             int matchSeed = fixedSeed ?? (seed != 0 ? seed : Environment.TickCount & 0x7FFFFFFF);
             Match = new Match(matchRules.ToRules(), _battle.Rules, infos, matchSeed, new DoNothingAi());
             CancelPlacement();
+            _drops.Clear();
             Message = "";
             _battle.ShowBattle(null, null, play: false);
             PhaseChanged?.Invoke();
@@ -96,14 +101,39 @@ namespace Halobellum.Presentation
 
         public ActionResult Unlock(UnitStats type) => Report(Match.Unlock(Team.A, type));
 
-        /// <summary>Starts placing a new squad of this type; the next PlaceAt buys it there.</summary>
-        public void BeginPlacing(UnitStats type)
+        /// <summary>
+        /// Buys a squad of this type: it is placed at the free spot nearest the middle of the zone,
+        /// drops in from high above and is selected when it lands.
+        /// </summary>
+        public ActionResult Buy(UnitStats type)
         {
-            if (Match.Phase != MatchPhase.Deployment) return;
+            if (Match.Phase != MatchPhase.Deployment) return ActionResult.Fail("Squads can only be bought during deployment.");
             CancelPlacement();
-            PlacingType = type;
-            _selection.InputEnabled = false;
-            Message = "Left-click to place, R to turn, right-click to cancel.";
+            ActionResult result = Report(Match.Buy(Team.A, type));
+            if (result.Ok)
+            {
+                _drops[Match.Player.Squads[Match.Player.Squads.Count - 1].Id] = Time.unscaledTime;
+                RefreshPreview();
+            }
+            return result;
+        }
+
+        /// <summary>True while a bought squad is still falling into place.</summary>
+        public bool IsDropping => _drops.Count > 0;
+
+        private void Update()
+        {
+            if (_drops.Count == 0) return;
+            // Select each squad as it lands (the last one to land stays selected).
+            float duration = _views.DropDuration;
+            int landed = -1;
+            foreach (var pair in _drops)
+            {
+                if (Time.unscaledTime - pair.Value >= duration) landed = pair.Key;
+            }
+            if (landed < 0) return;
+            _drops.Remove(landed);
+            if (Match.Phase == MatchPhase.Deployment && !IsPlacing) SelectPlaced(landed);
         }
 
         /// <summary>Starts moving one of this round's squads; the next PlaceAt moves it there.</summary>
@@ -124,13 +154,12 @@ namespace Halobellum.Presentation
 
         public void CancelPlacement()
         {
-            PlacingType = null;
             MovingSquadId = -1;
             PlacingRotated = false;
             if (_selection != null) _selection.InputEnabled = true;
         }
 
-        /// <summary>Turns the squad being placed, or turns the selected squad where it stands.</summary>
+        /// <summary>Turns the squad being moved, or turns the selected squad where it stands.</summary>
         public void ToggleRotation()
         {
             if (IsPlacing)
@@ -143,36 +172,25 @@ namespace Halobellum.Presentation
             if (Report(Match.Move(Team.A, squad.Id, squad.Column, squad.Row, !squad.Rotated90)).Ok) RefreshPreview(squad.Id);
         }
 
-        /// <summary>The type and footprint rotation of what is being placed or moved (for the ghost).</summary>
-        public UnitStats PlacementType => PlacingType ?? Match.Player.FindSquad(MovingSquadId)?.Type;
+        /// <summary>The type of the squad being moved (for the ghost), or null.</summary>
+        public UnitStats PlacementType => Match.Player.FindSquad(MovingSquadId)?.Type;
 
-        /// <summary>Buys or moves at this spot (column and row in the player's grid).</summary>
+        /// <summary>Moves the squad being moved to this spot (column and row in the player's grid).</summary>
         public ActionResult PlaceAt(int column, int row)
         {
-            ActionResult result;
-            int placedId;
-            if (PlacingType != null)
-            {
-                result = Match.Buy(Team.A, PlacingType, column, row, PlacingRotated);
-                placedId = result.Ok ? Match.Player.Squads[Match.Player.Squads.Count - 1].Id : -1;
-            }
-            else if (MovingSquadId >= 0)
-            {
-                result = Match.Move(Team.A, MovingSquadId, column, row, PlacingRotated);
-                placedId = MovingSquadId;
-            }
-            else return ActionResult.Fail("Nothing to place.");
-
-            Report(result);
+            if (MovingSquadId < 0) return ActionResult.Fail("Nothing to place.");
+            int placedId = MovingSquadId;
+            ActionResult result = Report(Match.Move(Team.A, placedId, column, row, PlacingRotated));
             if (result.Ok)
             {
                 CancelPlacement();
+                _drops.Remove(placedId);
                 RefreshPreview(placedId);
             }
             return result;
         }
 
-        /// <summary>True if the thing being placed could go here (for the ghost's color).</summary>
+        /// <summary>True if the squad being moved could go here (for the ghost's color).</summary>
         public bool CanPlaceAt(int column, int row)
         {
             UnitStats type = PlacementType;
@@ -183,7 +201,11 @@ namespace Halobellum.Presentation
         {
             if (squad == null) return ActionResult.Fail("Select a squad first.");
             ActionResult result = Report(Match.Sell(Team.A, squad.Id));
-            if (result.Ok) RefreshPreview();
+            if (result.Ok)
+            {
+                _drops.Remove(squad.Id);
+                RefreshPreview();
+            }
             return result;
         }
 
@@ -209,6 +231,7 @@ namespace Halobellum.Presentation
         {
             if (Match.Phase != MatchPhase.Deployment) return;
             CancelPlacement();
+            _drops.Clear();
             Message = "";
             _battle.ShowBattle(Match.StartBattle(), _sources, play: true);
             PhaseChanged?.Invoke();
@@ -239,8 +262,21 @@ namespace Halobellum.Presentation
             _previewOrder.AddRange(Match.Player.Squads);
             _battle.ShowBattle(preview, _sources, play: false);
 
-            int index = _previewOrder.FindIndex(s => s.Id == selectPlacedSquadId);
-            if (index >= 0 && index < preview.Squads.Count) _selection.Select(preview.Squads[index].Id);
+            // Squads still dropping in keep falling from where they were.
+            foreach (var pair in _drops)
+            {
+                int dropIndex = _previewOrder.FindIndex(s => s.Id == pair.Key);
+                if (dropIndex >= 0 && dropIndex < preview.Squads.Count) _views.DropSquad(preview.Squads[dropIndex].Id, pair.Value);
+            }
+            SelectPlaced(selectPlacedSquadId);
+        }
+
+        /// <summary>Selects the preview squad showing this placed squad (nothing if it is not shown).</summary>
+        private void SelectPlaced(int placedSquadId)
+        {
+            int index = _previewOrder.FindIndex(s => s.Id == placedSquadId);
+            if (_battle.Simulation != null && index >= 0 && index < _battle.Simulation.Squads.Count)
+                _selection.Select(_battle.Simulation.Squads[index].Id);
         }
 
         private ActionResult Report(ActionResult result)

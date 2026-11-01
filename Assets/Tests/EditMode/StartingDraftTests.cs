@@ -101,6 +101,15 @@ namespace Halobellum.Tests
             }
             Assert.AreEqual(0, match.Player.SquadsBoughtThisRound);
             Assert.AreEqual(MatchPhase.Deployment, match.Phase);
+
+            // The free squads are placed in the middle of the zone (the first exactly at the middle).
+            PlacedSquad first = match.Player.Squads[0];
+            DeploymentGrid.Footprint(first.Type, false, match.CombatRules, out int width, out int depth);
+            Assert.AreEqual((match.CombatRules.ArenaWidthSquares - width) / 2, first.Column);
+            Assert.AreEqual((match.CombatRules.DeploymentDepthSquares - depth) / 2, first.Row);
+            Vec2 second = DeploymentGrid.CentreInSquares(match.Player.Squads[1], match.CombatRules);
+            Assert.Less(System.Math.Abs(second.X), 10f, "The second free squad is next to the first.");
+            Assert.Less(System.Math.Abs(second.Y - match.CombatRules.DeploymentDepthSquares * 0.5f), 10f);
         }
 
         [Test]

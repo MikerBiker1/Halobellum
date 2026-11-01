@@ -5,6 +5,8 @@
 // (Ticked event) and are blended between the last two ticks each frame, so movement looks smooth
 // at any frame rate. Dead units disappear (UnitDied event). Health bars face the camera and show
 // only when a unit is damaged or its squad is selected. Selected squads get a ring under each body.
+// A squad can be dropped in (DropSquad): it starts high above, out of sight, and falls to its spot
+// (used for newly bought squads during deployment; looks only, the simulation is unchanged).
 // The simulation's 2D position (x, y) becomes the world position (x, height, y).
 // Depends on: BattleController, SquadSelection, PlaceholderArt, Halobellum.Combat, UnityEngine.
 
@@ -33,6 +35,12 @@ namespace Halobellum.Presentation
         [SerializeField] private float healthBarMinWidth = 1.2f;
         [SerializeField] private float healthBarGap = 0.6f;
 
+        [Header("Drop-in of newly bought squads")]
+        [Tooltip("Height above its spot from which a dropped squad starts falling (metres; above the camera).")]
+        [SerializeField] private float dropHeight = 300f;
+        [Tooltip("Seconds a dropped squad takes to land.")]
+        [SerializeField] private float dropDuration = 0.6f;
+
         private sealed class View
         {
             public SimUnit Unit;
@@ -45,6 +53,8 @@ namespace Halobellum.Presentation
             public float ShownFraction = -1f;
             public Vector3 PreviousPosition, CurrentPosition;
             public Quaternion PreviousRotation, CurrentRotation;
+            /// <summary>Time.unscaledTime at which the drop-in started, or NaN when not dropping.</summary>
+            public float DropStart = float.NaN;
         }
 
         private BattleController _battle;
@@ -54,6 +64,36 @@ namespace Halobellum.Presentation
         private Camera _camera;
 
         public float AirHeight => airHeight;
+        /// <summary>Seconds a dropped-in squad takes to land.</summary>
+        public float DropDuration => dropDuration;
+
+        /// <summary>
+        /// Makes every body of this simulation squad fall from high above to its spot. startTime is the
+        /// Time.unscaledTime the fall began (so a squad keeps falling if the views are rebuilt meanwhile).
+        /// </summary>
+        public void DropSquad(int squadId, float startTime)
+        {
+            foreach (View view in _views)
+            {
+                if (view.Unit.SquadId != squadId) continue;
+                view.DropStart = startTime;
+                view.Root.transform.position = view.CurrentPosition + Vector3.up * DropOffset(view);
+            }
+        }
+
+        /// <summary>Height above its spot of a falling body (0 once landed). Falls like under gravity: slow, then fast.</summary>
+        private float DropOffset(View view)
+        {
+            if (float.IsNaN(view.DropStart)) return 0f;
+            float progress = dropDuration > 0f ? (Time.unscaledTime - view.DropStart) / dropDuration : 1f;
+            if (progress >= 1f)
+            {
+                view.DropStart = float.NaN;
+                return 0f;
+            }
+            progress = Mathf.Max(0f, progress);
+            return dropHeight * (1f - progress * progress);
+        }
 
         /// <summary>World position of a unit's base as of the latest tick (air units at flying height).</summary>
         public Vector3 WorldPosition(SimUnit unit) => ToWorld(unit);
@@ -194,7 +234,7 @@ namespace Halobellum.Presentation
 
                 Transform root = view.Root.transform;
                 root.SetPositionAndRotation(
-                    Vector3.LerpUnclamped(view.PreviousPosition, view.CurrentPosition, alpha),
+                    Vector3.LerpUnclamped(view.PreviousPosition, view.CurrentPosition, alpha) + Vector3.up * DropOffset(view),
                     Quaternion.SlerpUnclamped(view.PreviousRotation, view.CurrentRotation, alpha));
 
                 float fraction = Mathf.Clamp01(unit.Health / unit.Stats.MaxHealth);

@@ -10,7 +10,7 @@ namespace Halobellum.Economy
 {
     public sealed class MatchRules
     {
-        /// <summary>Credits each player has at the start of round 1 (Bible: 400).</summary>
+        /// <summary>Credits each player has at the start of round 1 (Bible: 200).</summary>
         public int StartingCredits;
         /// <summary>Income for round 1 (Bible: 400). Later rounds add IncomeIncreasePerRound each.</summary>
         public int BaseIncome;
@@ -26,7 +26,7 @@ namespace Halobellum.Economy
         public int UnlocksPerRound;
         /// <summary>Share of the price refunded when selling a squad before the battle of the round it was bought (Bible: 100%).</summary>
         public float RefundBeforeBattle;
-        /// <summary>Share of the price refunded when selling a squad after that (Bible: 50%).</summary>
+        /// <summary>Share of the price refunded when selling a squad after that (Bible: 50%). Free draft squads always sell for this share of their cost.</summary>
         public float RefundAfterBattle;
         /// <summary>Cards in the starting draft (Bible: 5), fewer if there are not enough sub-factions.</summary>
         public int DraftCardCount;

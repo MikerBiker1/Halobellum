@@ -65,25 +65,29 @@ namespace Halobellum.Economy
         }
 
         /// <summary>
-        /// The free spot closest to the middle of the front of the zone, searching row by row from the
-        /// front and outward from the centre. Returns false if the zone is full.
+        /// The free spot closest to the middle of the zone (where draft and newly bought squads
+        /// appear). On equal distance the spot nearer the front wins, then the one further left.
+        /// Returns false if the zone is full.
         /// </summary>
         public static bool FindFreeSpot(PlayerState player, UnitStats type, bool rotated90, CombatRules rules, out int column, out int row)
         {
-            Footprint(type, rotated90, rules, out int width, out _);
+            Footprint(type, rotated90, rules, out int width, out int depth);
             int centreColumn = (rules.ArenaWidthSquares - width) / 2;
-            for (row = 0; row < rules.DeploymentDepthSquares; row++)
+            int centreRow = (rules.DeploymentDepthSquares - depth) / 2;
+            int bestDistance = int.MaxValue;
+            column = row = -1;
+            for (int r = 0; r + depth <= rules.DeploymentDepthSquares; r++)
             {
-                for (int step = 0; step <= rules.ArenaWidthSquares; step++)
+                for (int c = 0; c + width <= rules.ArenaWidthSquares; c++)
                 {
-                    // Try centre, then alternately left and right of it.
-                    int offset = (step + 1) / 2 * (step % 2 == 1 ? -1 : 1);
-                    column = centreColumn + offset;
-                    if (CanPlace(player, type, column, row, rotated90, rules)) return true;
+                    int distance = (c - centreColumn) * (c - centreColumn) + (r - centreRow) * (r - centreRow);
+                    if (distance >= bestDistance || !CanPlace(player, type, c, r, rotated90, rules)) continue;
+                    bestDistance = distance;
+                    column = c;
+                    row = r;
                 }
             }
-            column = row = -1;
-            return false;
+            return column >= 0;
         }
     }
 }

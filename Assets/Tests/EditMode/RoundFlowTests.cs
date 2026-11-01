@@ -116,7 +116,7 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void ExactTie_ReplaysTheRound()
+        public void ExactTie_IsATiedRound_DamageUndone_IncomePaid_NextRound()
         {
             var match = TestMatch.Started(out UnitStats infantry, out UnitStats buggy, out _, out _);
             infantry.TargetFilter = TargetFilter.Air;
@@ -126,14 +126,14 @@ namespace Halobellum.Tests
             int creditsBefore = match.Player.Credits;
 
             RoundSummary summary = PlayBattle(match);
-            Assert.IsTrue(summary.Replay);
+            Assert.IsTrue(summary.Tie);
             Assert.IsNull(summary.MatchWinner);
             Assert.AreEqual(10, match.Player.BaseHealth, "Damage is undone.");
             Assert.AreEqual(10, match.Enemy.BaseHealth);
-            Assert.AreEqual(creditsBefore, match.Player.Credits, "No income for a replayed round.");
+            Assert.AreEqual(creditsBefore + 600, match.Player.Credits, "A tied round still pays income.");
 
             match.ContinueAfterResult();
-            Assert.AreEqual(1, match.Round);
+            Assert.AreEqual(2, match.Round, "The match goes on to the next round.");
             Assert.AreEqual(MatchPhase.Deployment, match.Phase);
         }
 

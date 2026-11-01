@@ -1,10 +1,9 @@
 // DeploymentInput.cs
-// Mouse and keyboard during deployment (Bible Section 5, Placement). While a squad is being placed
-// or moved, a flat "ghost" shows its footprint snapped to the grid squares under the mouse: green
-// where it fits, red where it doesn't.
-//   Left-click: place / move there.   R: turn 90 degrees.   Right-click or Escape: cancel.
-// When nothing is being placed: M moves the selected squad (if bought this round), R turns it,
-// Delete sells it.
+// Mouse and keyboard during deployment (Bible Section 5, Placement). Bought squads appear in the
+// middle of the zone (MatchController); the selected squad can then be moved: a flat "ghost" shows
+// its footprint snapped to the grid squares under the mouse, green where it fits, red where it doesn't.
+//   Selected squad: M moves it (if bought this round), R turns it, Delete sells it.
+//   While moving: left-click puts it there, R turns it, right-click or Escape cancels.
 // Depends on: MatchController, BattleController (rules), UiHitAreas, PlaceholderArt,
 //             Halobellum.Economy (DeploymentGrid, MatchPhase), Unity Input System.
 

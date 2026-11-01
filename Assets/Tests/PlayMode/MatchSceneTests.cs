@@ -1,7 +1,8 @@
 // MatchSceneTests.cs
 // Plays the real Match scene (Milestone 3): starting draft, deployment preview (the AI's army stays
-// hidden), buying and placing a squad, a full round (deployment, battle, result, next round with
-// income), and full matches against the do-nothing AI that are won and lost.
+// hidden), buying a squad (placed in the middle, dropped in, then selected), a full round
+// (deployment, battle, result, next round with income), and full matches against the do-nothing
+// AI that are won and lost.
 // Depends on: Halobellum.Presentation, Halobellum.Economy, Halobellum.Core, NUnit, Unity Test Framework.
 
 using System.Collections;
@@ -63,7 +64,7 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
-        public IEnumerator BuyingAndPlacing_AddsTheSquad_AndSelectsIt()
+        public IEnumerator Buying_PlacesTheSquadInTheMiddle_DropsItIn_ThenSelectsIt()
         {
             yield return LoadMatch();
             _match.ChooseDraft(0);
@@ -74,16 +75,25 @@ namespace Halobellum.Tests
             int viewsBefore = CountViews();
 
             Assert.IsTrue(DeploymentGrid.FindFreeSpot(m.Player, type, false, m.CombatRules, out int column, out int row));
-            _match.BeginPlacing(type);
-            Assert.IsTrue(_match.IsPlacing);
-            Assert.IsTrue(_match.PlaceAt(column, row).Ok, _match.Message);
+            Assert.IsTrue(_match.Buy(type).Ok, _match.Message);
             yield return null;
 
-            Assert.IsFalse(_match.IsPlacing);
             Assert.AreEqual(creditsBefore - type.Cost, m.Player.Credits);
             Assert.AreEqual(viewsBefore + type.SquadSize, CountViews());
-            Assert.IsNotNull(_match.SelectedPlacedSquad, "The new squad should be selected.");
-            Assert.AreEqual(column, _match.SelectedPlacedSquad.Column);
+            PlacedSquad bought = m.Player.Squads[m.Player.Squads.Count - 1];
+            Assert.AreEqual(column, bought.Column);
+            Assert.AreEqual(row, bought.Row);
+            Assert.IsTrue(_match.IsDropping);
+            Assert.IsNull(_match.SelectedPlacedSquad, "Selected only once it lands.");
+            Transform units = GameObject.Find("Units").transform;
+            Assert.Greater(units.GetChild(units.childCount - 1).position.y, 50f, "A bought squad starts high above the field.");
+
+            float deadline = Time.realtimeSinceStartup + 5f;
+            while (_match.IsDropping && Time.realtimeSinceStartup < deadline) yield return null;
+            yield return null;
+            Assert.IsFalse(_match.IsDropping);
+            Assert.Less(units.GetChild(units.childCount - 1).position.y, 0.5f, "It has landed on its spot.");
+            Assert.AreSame(bought, _match.SelectedPlacedSquad, "The new squad is selected when it lands.");
         }
 
         [UnityTest]

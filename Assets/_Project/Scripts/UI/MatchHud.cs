@@ -139,7 +139,7 @@ namespace Halobellum.UI
                 {
                     bool canBuy = player.Credits >= unit.Cost && player.SquadsBoughtThisRound < m.Rules.NewSquadsPerRound;
                     GUI.enabled = canBuy;
-                    if (GUI.Button(button, $"Buy {unit.Cost}", _button)) match.BeginPlacing(unit);
+                    if (GUI.Button(button, $"Buy {unit.Cost}", _button)) match.Buy(unit);
                 }
                 else
                 {
@@ -195,9 +195,8 @@ namespace Halobellum.UI
             y += 44f;
             y = SummaryLines(s, panel, y);
 
-            string footer = s.Replay
-                ? "Exact tie: both bases are restored and the round is played again."
-                : $"Income: +{s.IncomeAwarded} credits for next round.";
+            string footer = (s.Tie ? "Exact tie: both bases are restored. " : "")
+                            + $"Income: +{s.IncomeAwarded} credits for next round.";
             GUI.Label(new Rect(panel.x + 20f, panel.yMax - 96f, panel.width - 40f, 26f), footer, _text);
             if (GUI.Button(new Rect(panel.x + panel.width * 0.5f - 110f, panel.yMax - 58f, 220f, 44f), "Continue", _bigButton)) match.Continue();
         }

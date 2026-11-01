@@ -87,15 +87,15 @@ A match is a series of rounds against an AI opponent. Each round has these phase
 
 | Rule | Value |
 | --- | --- |
-| Starting credits | 400 |
+| Starting credits | 200 |
 | Income per round | 400, plus 200 per round after the first |
 | Income cap | Income per round is capped at 1600. Banked credits have no limit. |
 | Base health | 2000 each |
 | Base damage | Every surviving unit deals damage to the enemy base. Per-unit damage is a data field (`BaseDamage`); default is (squad cost ÷ squad size) ÷ 5. |
-| Win condition | Reduce the enemy base to 0 or below. If both fall in the same round, the base with the lower (more negative) health loses; an exact tie replays the round. |
+| Win condition | Reduce the enemy base to 0 or below. If both fall in the same round, the base with the lower (more negative) health loses; an exact tie is a tied round: the damage is undone, income is paid and the match goes on to the next round. |
 | New squads per round | 2 |
 | Unit unlocks per round | 1 |
-| Unit sale refund | 100% before the battle of the round it was bought, 50% afterward |
+| Unit sale refund | 100% before the battle of the round it was bought, 50% afterward. Free draft squads always sell for 50% of their cost. |
 
 **How a round ends and how base damage works.** A battle ends when one side has no units left, or when 90 seconds pass. Either way, the result is resolved the same way: every unit still alive on each side deals its `BaseDamage` to the opposing base, and both sides take damage at the same time. There is no separate “round winner” penalty. A side that was wiped out simply has no survivors, so it deals nothing. Example: at 90 seconds the player has 1 Scorpion alive (300 ÷ 1 ÷ 5 = 60 damage) and the AI has 2 Ghosts alive (200 ÷ 2 ÷ 5 = 20 each, 40 total). The AI base takes 60 and the player base takes 40. Only units alive at the moment the battle ends count, and temporary units from the round (infected units, reinforcements) are included if still alive.
 
@@ -449,6 +449,10 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-10-31 | Squads keep formation while advancing and break it, for the rest of the battle, when ANY of these happens: their bodies target different enemies, they collide with another squad, or they engage in combat | Per the project owner; details approved (D14) |
 | 2026-10-31 | Acquisition range: units only notice enemies within 3 x their range; with nothing in sight they march straight ahead; inside the enemy's deployment zone their acquisition range becomes unlimited (refines the Section 6 targeting rule "if nothing is in range, move toward the closest enemy") | Per the project owner; details approved (D15) |
 | 2026-10-31 | Squad formations are very straight: 2 to 3 rows of perfectly aligned bodies (1 row for up to 4 bodies) | Per the project owner; details approved (D16) |
+| 2026-10-31 | Starting credits 200 (was 400); income after each round is the next round's income (600, 800 ... capped at 1600); Tier 1 unlocks are free but use the round's unlock | Per the project owner (D17) |
+| 2026-10-31 | Free draft squads appear in the middle of the zone. A bought squad is placed at the free spot nearest the middle: it drops in from high above and is then selected, ready to be moved. Free draft squads sell for half their cost | Per the project owner (D18) |
+| 2026-10-31 | An exact tie is a tied round (damage undone, income paid, next round) instead of a replay | Per the project owner (D19) |
+| 2026-10-31 | Until M4, both Standard draft cards use the placeholder units, squads use side colors, and the do-nothing AI only keeps its free squads | Approved from D20 |
 
 ## 18. Assumptions to confirm
 

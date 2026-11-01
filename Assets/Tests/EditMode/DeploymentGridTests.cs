@@ -56,12 +56,20 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void FindFreeSpot_StartsFrontCentre()
+        public void FindFreeSpot_StartsInTheMiddleOfTheZone_ThenTheNearestFreeSpot()
         {
             var player = new PlayerState(Team.A);
-            Assert.IsTrue(DeploymentGrid.FindFreeSpot(player, TestMatch.Infantry(), false, _rules, out int column, out int row));
-            Assert.AreEqual(0, row);
-            Assert.AreEqual((80 - 5) / 2, column);
+            UnitStats infantry = TestMatch.Infantry();
+            DeploymentGrid.Footprint(infantry, false, _rules, out int width, out int depth);
+            Assert.IsTrue(DeploymentGrid.FindFreeSpot(player, infantry, false, _rules, out int column, out int row));
+            Assert.AreEqual((80 - width) / 2, column);
+            Assert.AreEqual((40 - depth) / 2, row);
+
+            player.Squads.Add(new PlacedSquad { Id = 1, Type = infantry, Column = column, Row = row });
+            Assert.IsTrue(DeploymentGrid.FindFreeSpot(player, infantry, false, _rules, out int column2, out int row2));
+            Assert.IsTrue(DeploymentGrid.CanPlace(player, infantry, column2, row2, false, _rules));
+            Assert.AreEqual(column, column2, "The nearest free spot is just in front of the first squad.");
+            Assert.AreEqual(row - depth, row2);
         }
 
         [Test]

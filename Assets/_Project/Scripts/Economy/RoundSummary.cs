@@ -29,8 +29,8 @@ namespace Halobellum.Economy
         public int BaseHealthA;
         public int BaseHealthB;
         public int IncomeAwarded;
-        /// <summary>True if both bases fell to exactly the same health below 0: the round is played again.</summary>
-        public bool Replay;
+        /// <summary>True if both bases fell to exactly the same health: a tied round (damage undone, the match goes on).</summary>
+        public bool Tie;
         /// <summary>The winner if this round ended the match, otherwise null.</summary>
         public Team? MatchWinner;
         public List<KillCount> Kills = new List<KillCount>();

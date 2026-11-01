@@ -3,8 +3,8 @@
 // checked without clicking. It does nothing unless the game is started with "-autoplay", e.g.
 //   Halobellum.exe -autoplay -autoplayRounds 3 -autoplaySpeed 4 -autoplayShots C:\temp\shots
 // It picks the first draft card, buys up to 2 squads per round of the first affordable unlocked
-// unit type, presses Ready, saves screenshots of the draft, each deployment, battle (at 2 s of
-// battle time) and result, then quits after the given number of rounds (or when the match ends).
+// unit type, presses Ready, saves screenshots of the draft, the bought squads falling in, each
+// deployment, battle (at 2 s of battle time) and result, then quits after the given number of rounds (or when the match ends).
 // Depends on: MatchController, BattleController, Halobellum.Economy, UnityEngine.
 
 using System;
@@ -28,6 +28,7 @@ namespace Halobellum.Presentation
         private int _lastShotRound = -1;
         private MatchPhase _lastPhase = (MatchPhase)(-1);
         private bool _battleShotTaken;
+        private bool _dropShotPending;
 
         private void Awake()
         {
@@ -76,7 +77,15 @@ namespace Halobellum.Presentation
                     {
                         BuySquads(m);
                         _lastShotRound = m.Round;
-                        _wait = 0.4f;
+                        _dropShotPending = true;
+                        _wait = 0.25f; // Bought squads drop in: one shot mid-fall, then let them land.
+                        return;
+                    }
+                    if (_dropShotPending)
+                    {
+                        Shot($"r{m.Round:00}_0_drop");
+                        _dropShotPending = false;
+                        _wait = 0.8f;
                         return;
                     }
                     if (ShotFirst($"r{m.Round:00}_1_deployment")) return;
@@ -121,10 +130,7 @@ namespace Halobellum.Presentation
                 foreach (UnitStats type in m.Player.Roster)
                 {
                     if (!m.Player.Unlocked.Contains(type) || m.Player.Credits < type.Cost) continue;
-                    if (!DeploymentGrid.FindFreeSpot(m.Player, type, false, m.CombatRules, out int column, out int row)) continue;
-                    _match.BeginPlacing(type);
-                    _match.PlaceAt(column, row);
-                    break;
+                    if (_match.Buy(type).Ok) break;
                 }
             }
         }

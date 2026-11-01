@@ -47,8 +47,8 @@ namespace Halobellum.Tests
         public void Round1_StartsWithStartingCredits()
         {
             Assert.AreEqual(1, _match.Round);
-            Assert.AreEqual(400, Player.Credits);
-            Assert.AreEqual(400, _match.Enemy.Credits);
+            Assert.AreEqual(200, Player.Credits);
+            Assert.AreEqual(200, _match.Enemy.Credits);
             Assert.AreEqual(600, _match.NextIncome);
         }
 
@@ -57,9 +57,9 @@ namespace Halobellum.Tests
         {
             PlayRound(); // +600
             Assert.AreEqual(2, _match.Round);
-            Assert.AreEqual(1000, Player.Credits);
+            Assert.AreEqual(800, Player.Credits);
             for (int i = 0; i < 8; i++) PlayRound(); // +800 +1000 +1200 +1400 +1600 +1600 +1600 +1600
-            Assert.AreEqual(1000 + 800 + 1000 + 1200 + 1400 + 1600 * 4, Player.Credits);
+            Assert.AreEqual(800 + 800 + 1000 + 1200 + 1400 + 1600 * 4, Player.Credits);
         }
 
         [Test]
@@ -67,8 +67,20 @@ namespace Halobellum.Tests
         {
             var result = _match.Buy(Team.A, _infantry, 0, 10, false);
             Assert.IsTrue(result.Ok, result.Message);
-            Assert.AreEqual(300, Player.Credits);
+            Assert.AreEqual(100, Player.Credits);
             Assert.AreEqual(3, Player.Squads.Count); // 2 free draft squads + 1 bought.
+        }
+
+        [Test]
+        public void Buy_WithoutASpot_PlacesTheSquadAtTheFreeSpotNearestTheMiddle()
+        {
+            Assert.IsTrue(DeploymentGrid.FindFreeSpot(Player, _infantry, false, _match.CombatRules, out int column, out int row));
+            Assert.IsTrue(_match.Buy(Team.A, _infantry).Ok);
+            PlacedSquad bought = Player.Squads[Player.Squads.Count - 1];
+            Assert.AreEqual(column, bought.Column);
+            Assert.AreEqual(row, bought.Row);
+            Assert.IsFalse(bought.Rotated90);
+            Assert.AreEqual(100, Player.Credits);
         }
 
         [Test]
@@ -126,7 +138,7 @@ namespace Halobellum.Tests
             Player.Unlocked.Remove(_buggy);
             Player.Unlocked.Remove(_infantry);
             Assert.IsTrue(_match.Unlock(Team.A, _buggy).Ok);
-            Assert.AreEqual(400, Player.Credits);
+            Assert.AreEqual(200, Player.Credits);
             Assert.IsFalse(_match.Unlock(Team.A, _infantry).Ok);
         }
 
@@ -166,11 +178,20 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void FreeDraftSquads_RefundNothing()
+        public void FreeDraftSquads_SellForHalfTheirCost_AndDontFreeASlot()
         {
             PlacedSquad free = Player.Squads[0];
             Assert.IsTrue(free.FromDraft);
-            Assert.AreEqual(0, _match.SellValue(free));
+            Assert.AreEqual(free.Type.Cost / 2, _match.SellValue(free), "Half the squad's cost, even in round 1.");
+
+            PlayRound();
+            Assert.AreEqual(free.Type.Cost / 2, _match.SellValue(free), "Still half after fighting.");
+            Player.Credits = 5000;
+            Assert.IsTrue(_match.Buy(Team.A, _infantry, 0, 10, false).Ok);
+            Assert.IsTrue(_match.Buy(Team.A, _infantry, 10, 10, false).Ok);
+            Assert.IsTrue(_match.Sell(Team.A, free.Id).Ok);
+            Assert.AreEqual(5000 - 200 + free.Type.Cost / 2, Player.Credits);
+            Assert.IsFalse(_match.Buy(Team.A, _infantry, 20, 10, false).Ok, "Selling a draft squad does not free a slot.");
         }
 
         [Test]

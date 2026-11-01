@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ae10bbbe9221ee6862a34b757808243, type: 3}
   m_Name: MatchRules
   m_EditorClassIdentifier: 
-  startingCredits: 400
+  startingCredits: 200
   baseIncome: 400
   incomeIncreasePerRound: 200
   incomeCap: 1600

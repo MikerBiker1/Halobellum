@@ -4,17 +4,21 @@
 // until a base falls. Plain C#: the Match scene shows it and sends the player's actions here, and
 // tests drive it directly. The AI uses exactly the same actions (Unlock, Buy, Move, Sell).
 // Rules (values in MatchRules):
-//   - Round 1 starts with StartingCredits; after each round, both players get the next round's
-//     income (400, then +200 per round, capped at 1600). Banked credits have no limit.
+//   - Round 1 starts with StartingCredits (200); after each round, both players get the next
+//     round's income (600, 800 ... capped at 1600). Banked credits have no limit.
+//   - The free draft squads and every newly bought squad are placed at the free spot nearest the
+//     middle of the zone (the player can then move them).
 //   - Each round: at most NewSquadsPerRound squads bought (free draft squads don't count) and
 //     UnlocksPerRound unlocks (Tier 1 unlocks are free but still count).
 //   - Only squads bought this round, before their first battle, can be moved or turned.
 //   - Selling refunds RefundBeforeBattle of the price before the squad's first battle (and frees
-//     its slot for the round), RefundAfterBattle afterwards.
+//     its slot for the round), RefundAfterBattle afterwards. Free draft squads always sell for
+//     RefundAfterBattle of their cost.
 //   - Every battle is built fresh from both deployments, so each round starts like the last one
 //     started, plus whatever was bought (round reset).
 //   - Result: every surviving body deals its BaseDamage to the enemy base, both at once. A base at
-//     0 or below loses; if both fall, the lower one loses; an exact tie plays the round again.
+//     0 or below loses; if both fall, the lower one loses. An exact tie is a tied round: the damage
+//     is undone, income is paid and the match goes on to the next round.
 // Depends on: MatchRules, PlayerState, DeploymentGrid, StartingDraft, RoundSummary, IMatchAi,
 //             Halobellum.Combat (HeadlessBattleRunner, BattleSimulation), Halobellum.Core.
 
@@ -143,6 +147,14 @@ namespace Halobellum.Economy
             return ActionResult.Success($"{type.Name} unlocked.");
         }
 
+        /// <summary>Buys a squad and places it at the free spot nearest the middle of the zone.</summary>
+        public ActionResult Buy(Team team, UnitStats type)
+        {
+            if (!DeploymentGrid.FindFreeSpot(Get(team), type, false, CombatRules, out int column, out int row))
+                return ActionResult.Fail("Your deployment zone is full.");
+            return Buy(team, type, column, row, false);
+        }
+
         public ActionResult Buy(Team team, UnitStats type, int column, int row, bool rotated90)
         {
             PlayerState player = Get(team);
@@ -183,6 +195,7 @@ namespace Halobellum.Economy
         /// <summary>Credits a sale would give back right now.</summary>
         public int SellValue(PlacedSquad squad)
         {
+            if (squad.FromDraft) return (int)MathF.Round(squad.Type.Cost * Rules.RefundAfterBattle);
             float share = CanMove(squad) ? Rules.RefundBeforeBattle : Rules.RefundAfterBattle;
             return (int)MathF.Round(squad.PricePaid * share);
         }
@@ -270,8 +283,8 @@ namespace Halobellum.Economy
                 else if (Enemy.BaseHealth < Player.BaseHealth) Winner = Team.A;
                 else
                 {
-                    // Exact tie: undo the damage and play the round again.
-                    summary.Replay = true;
+                    // Exact tie: a tied round. The damage is undone and the match goes on.
+                    summary.Tie = true;
                     Player.BaseHealth = _baseHealthBeforeA;
                     Enemy.BaseHealth = _baseHealthBeforeB;
                 }
@@ -289,32 +302,21 @@ namespace Halobellum.Economy
             }
             else
             {
-                if (!summary.Replay)
-                {
-                    summary.IncomeAwarded = NextIncome;
-                    Player.Credits += summary.IncomeAwarded;
-                    Enemy.Credits += summary.IncomeAwarded;
-                }
+                summary.IncomeAwarded = NextIncome;
+                Player.Credits += summary.IncomeAwarded;
+                Enemy.Credits += summary.IncomeAwarded;
                 Phase = MatchPhase.Result;
             }
             LastSummary = summary;
             return summary;
         }
 
-        /// <summary>Leaves the result screen: the next round's deployment (or the same round again after a tie).</summary>
+        /// <summary>Leaves the result screen for the next round's deployment.</summary>
         public void ContinueAfterResult()
         {
             if (Phase != MatchPhase.Result) return;
             CurrentBattle = null;
-            if (LastSummary != null && LastSummary.Replay)
-            {
-                Phase = MatchPhase.Deployment;
-                _enemyAi.Deploy(this, Enemy);
-            }
-            else
-            {
-                BeginRound(Round + 1);
-            }
+            BeginRound(Round + 1);
         }
 
         private void BeginRound(int round)
