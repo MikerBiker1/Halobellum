@@ -15,9 +15,9 @@
 //     battle (or only DurationSeconds, if above 0).
 // Offensive spells can be placed anywhere on the field (red outline) and can hurt the caster's own
 // units too (decision D33); defensive spells and buffs go only in the caster's own deployment zone
-// (blue outline) and only help the caster. An area is a circle (Radius), or a rectangle when AreaWidth
-// is above 0: AreaWidth across the field and AreaDepth along it, or the other way around when the
-// player turned it 90 degrees. No numbers live here: every value is data.
+// (blue outline) and only help the caster. An area is a circle (Radius), or a line when AreaWidth is
+// above 0: AreaWidth long and AreaDepth wide, at any angle (the player clicks one end and aims the other,
+// decision D35). No numbers live here: every value is data.
 // Depends on: UnitStats, WeaponStats, CombatEnums.
 
 using System.Collections.Generic;
@@ -52,9 +52,9 @@ namespace Halobellum.Core
         public float DelaySeconds;
         /// <summary>The first round it can be offered (extremely impactful spells only appear late).</summary>
         public int MinRound;
-        /// <summary>A rectangular area: width across the field in metres (0 = a circle of Radius).</summary>
+        /// <summary>A line-shaped area: its length in metres (0 = a circle of Radius).</summary>
         public float AreaWidth;
-        /// <summary>A rectangular area: depth along the field in metres.</summary>
+        /// <summary>A line-shaped area: its width in metres.</summary>
         public float AreaDepth;
 
         // Damage spells.
@@ -93,12 +93,24 @@ namespace Halobellum.Core
 
         public bool IsRectangle => AreaWidth > 0f;
 
-        /// <summary>True if a body at this offset from the area's centre touches the area.</summary>
-        public bool Covers(Vec2 offset, float bodyRadius, bool rotated90)
+        /// <summary>True if a body at this offset from the area's centre touches the area. angleDegrees: the direction of a line.</summary>
+        public bool Covers(Vec2 offset, float bodyRadius, float angleDegrees)
         {
             if (!IsRectangle) return offset.Length - bodyRadius <= Radius;
-            float halfX = (rotated90 ? AreaDepth : AreaWidth) * 0.5f, halfY = (rotated90 ? AreaWidth : AreaDepth) * 0.5f;
-            return System.Math.Abs(offset.X) <= halfX + bodyRadius && System.Math.Abs(offset.Y) <= halfY + bodyRadius;
+            Vec2 local = offset.Rotated(-angleDegrees); // Along the line (X) and across it (Y).
+            return System.Math.Abs(local.X) <= AreaWidth * 0.5f + bodyRadius && System.Math.Abs(local.Y) <= AreaDepth * 0.5f + bodyRadius;
+        }
+
+        /// <summary>
+        /// A line from one end toward a point: where its centre is and which way it points (its length is
+        /// always AreaWidth, the point only gives the direction).
+        /// </summary>
+        public Vec2 LineFrom(Vec2 start, Vec2 towards, out float angleDegrees)
+        {
+            Vec2 way = towards - start;
+            Vec2 direction = way.LengthSquared > 1e-6f ? way.Normalized : Vec2.Right;
+            angleDegrees = (float)(System.Math.Atan2(direction.Y, direction.X) * 180.0 / System.Math.PI);
+            return start + direction * (AreaWidth * 0.5f);
         }
 
         private WeaponStats _weapon;

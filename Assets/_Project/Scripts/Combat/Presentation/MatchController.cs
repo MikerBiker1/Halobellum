@@ -434,38 +434,60 @@ namespace Halobellum.Presentation
             CancelPlacement();
             CancelItemPlacement();
             PlacingSpellId = spell.Id;
-            PlacingSpellRotated = spell.IsPlaced && spell.Rotated90;
+            PlacingLineStart = null;
             _selection.Select(-1);
             _selection.InputEnabled = false;
             Message = spell.Stats.Offensive
                 ? $"{spell.Stats.Name}: left-click anywhere on the field (red), right-click to cancel."
                 : $"{spell.Stats.Name}: left-click on your side (blue), right-click to cancel.";
-            if (spell.Stats.IsRectangle) Message += " R turns it.";
+            if (spell.Stats.IsRectangle) Message = $"{spell.Stats.Name}: left-click where one end goes, right-click to cancel.";
         }
 
-        /// <summary>A rectangular spell being placed is turned 90 degrees.</summary>
-        public bool PlacingSpellRotated { get; private set; }
+        /// <summary>
+        /// A line-shaped spell being placed (D35): where its first end was clicked, or null. The other end
+        /// then follows the mouse, and a second click confirms.
+        /// </summary>
+        public Vec2? PlacingLineStart { get; private set; }
 
-        /// <summary>Turns the rectangular spell being placed.</summary>
-        public void ToggleSpellRotation()
+        /// <summary>The first click of a line-shaped spell.</summary>
+        public void SetLineStart(Vec2 position)
         {
-            if (PlacingSpell != null && PlacingSpell.Stats.IsRectangle) PlacingSpellRotated = !PlacingSpellRotated;
+            if (PlacingSpell == null || !PlacingSpell.Stats.IsRectangle) return;
+            PlacingLineStart = position;
+            Message = $"{PlacingSpell.Stats.Name}: move the mouse to aim the other end, left-click to confirm, right-click to go back.";
+        }
+
+        /// <summary>Forgets the first click; the spell is still being placed.</summary>
+        public void ClearLineStart()
+        {
+            if (PlacingSpell == null || PlacingLineStart == null) return;
+            PlacingLineStart = null;
+            Message = $"{PlacingSpell.Stats.Name}: left-click where one end goes, right-click to cancel.";
+        }
+
+        /// <summary>The second click of a line-shaped spell: it runs from the first click toward this point.</summary>
+        public ActionResult PlaceLineTowards(Vec2 towards)
+        {
+            if (PlacingSpell == null || PlacingLineStart == null) return ActionResult.Fail("Click where one end goes first.");
+            Vec2 centre = PlacingSpell.Stats.LineFrom(PlacingLineStart.Value, towards, out float angle);
+            return PlaceSpellAt(centre, angle);
         }
 
         public void CancelSpellPlacement()
         {
             if (PlacingSpellId < 0) return;
             PlacingSpellId = -1;
+            PlacingLineStart = null;
             if (_selection != null && !IsPlacing) _selection.InputEnabled = true;
         }
 
         /// <summary>True if the spell being placed could go at this battlefield point (metres).</summary>
         public bool CanPlaceSpellAt(Vec2 position) => PlacingSpell != null && Match.CanPlaceSpell(Team.A, PlacingSpell, position);
 
-        public ActionResult PlaceSpellAt(Vec2 position)
+        public ActionResult PlaceSpellAt(Vec2 position, float angleDegrees = 0f)
         {
             if (PlacingSpellId < 0) return ActionResult.Fail("No spell to place.");
-            ActionResult result = Report(Match.PlaceSpell(Team.A, PlacingSpellId, position, PlacingSpellRotated));
+            ActionResult result = Report(Match.PlaceSpell(Team.A, PlacingSpellId, position, angleDegrees));
             if (result.Ok) CancelSpellPlacement();
             return result;
         }

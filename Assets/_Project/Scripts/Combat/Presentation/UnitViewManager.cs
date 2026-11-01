@@ -4,7 +4,8 @@
 // body; nothing here changes the simulation. Positions come from the simulation after each tick
 // (Ticked event) and are blended between the last two ticks each frame, so movement looks smooth
 // at any frame rate. Dead units disappear (UnitDied event). Health bars face the camera and show
-// only when a unit is damaged or its squad is selected. Selected squads get a ring under each body.
+// only when a unit is damaged or its squad is selected; a unit with an energy shield has a blue shield
+// bar over its health bar (decision D35). Selected squads get a ring under each body.
 // A squad can be dropped in (DropSquad): it starts high above, out of sight, and falls to its spot
 // (used for newly bought squads during deployment; looks only, the simulation is unchanged).
 // Units added during the battle (a Pelican's Marines) get their views when they appear, and fall
@@ -33,6 +34,7 @@ namespace Halobellum.Presentation
         [SerializeField] private Color healthHighColor = new Color(0.3f, 0.9f, 0.3f);
         [SerializeField] private Color healthMidColor = new Color(0.95f, 0.8f, 0.2f);
         [SerializeField] private Color healthLowColor = new Color(0.95f, 0.25f, 0.2f);
+        [SerializeField] private Color shieldColor = new Color(0.25f, 0.6f, 1f);
 
         [Header("Layout (metres)")]
         [Tooltip("Height at which air units fly.")]
@@ -71,6 +73,11 @@ namespace Halobellum.Presentation
             public GameObject Ring;
             public float BarWidth;
             public float ShownFraction = -1f;
+            public GameObject ShieldBar;
+            public Transform ShieldFill;
+            /// <summary>The most shield this body has had in this battle (a bar's full width); 0 = no bar.</summary>
+            public float ShieldPeak;
+            public float ShownShieldFraction = -1f;
             public Vector3 PreviousPosition, CurrentPosition;
             public Quaternion PreviousRotation, CurrentRotation;
             /// <summary>Time.unscaledTime at which the drop-in started, or NaN when not dropping.</summary>
@@ -137,6 +144,14 @@ namespace Halobellum.Presentation
             }
             progress = Mathf.Max(0f, progress);
             return view.DropHeight * (1f - progress * progress);
+        }
+
+        /// <summary>The fill of a unit's shield bar (0 to 1), or -1 if no shield bar is showing (for tests).</summary>
+        public float ShieldBarFraction(SimUnit unit)
+        {
+            if (unit.Id < 0 || unit.Id >= _views.Count) return -1f;
+            View view = _views[unit.Id];
+            return view.Bar.gameObject.activeSelf && view.ShieldBar.activeSelf ? view.ShownShieldFraction : -1f;
         }
 
         /// <summary>World position just above the middle of a squad's living bodies (for icons over it); false if none is left.</summary>
@@ -260,6 +275,17 @@ namespace Halobellum.Presentation
             view.Fill.localPosition = new Vector3(0f, 0f, -0.01f);
             view.Bar.gameObject.SetActive(false);
 
+            // Shield bar: the same, in blue, just over the health bar.
+            Transform shieldBar = new GameObject("Shield Bar").transform;
+            shieldBar.SetParent(view.Bar, false);
+            shieldBar.localPosition = new Vector3(0f, healthBarHeight + 0.1f, 0f);
+            Transform shieldBack = PlaceholderArt.CreatePart("Back", shieldBar, PlaceholderArt.Quad, PlaceholderArt.MaterialFor(healthBackColor));
+            shieldBack.localScale = new Vector3(view.BarWidth + 0.08f, healthBarHeight + 0.08f, 1f);
+            view.ShieldFill = PlaceholderArt.CreatePart("Fill", shieldBar, PlaceholderArt.Quad, PlaceholderArt.MaterialFor(shieldColor));
+            view.ShieldFill.localPosition = new Vector3(0f, 0f, -0.01f);
+            view.ShieldBar = shieldBar.gameObject;
+            view.ShieldBar.SetActive(false);
+
             // Selection ring: a thin flat cylinder under the body.
             Transform ring = PlaceholderArt.CreatePart("Selection Ring", view.Root.transform, PlaceholderArt.Cylinder, PlaceholderArt.MaterialFor(selectionColor));
             float ringSize = stats.CollisionRadius * 2.4f;
@@ -337,11 +363,22 @@ namespace Halobellum.Presentation
                     Quaternion.SlerpUnclamped(view.PreviousRotation, view.CurrentRotation, alpha));
 
                 float fraction = Mathf.Clamp01(unit.Health / unit.Stats.MaxHealth);
-                bool showBar = fraction < 0.999f || unit.SquadId == selected;
+                view.ShieldPeak = Mathf.Max(view.ShieldPeak, Mathf.Max(unit.Stats.MaxShield, unit.Shield));
+                float shieldFraction = view.ShieldPeak > 0f ? Mathf.Clamp01(unit.Shield / view.ShieldPeak) : 0f;
+                bool hasShieldBar = view.ShieldPeak > 0f;
+                bool showBar = fraction < 0.999f || unit.SquadId == selected || (hasShieldBar && shieldFraction < 0.999f);
                 if (view.Bar.gameObject.activeSelf != showBar) view.Bar.gameObject.SetActive(showBar);
                 if (!showBar) continue;
 
                 view.Bar.rotation = barRotation;
+                if (view.ShieldBar.activeSelf != hasShieldBar) view.ShieldBar.SetActive(hasShieldBar);
+                if (hasShieldBar && !Mathf.Approximately(shieldFraction, view.ShownShieldFraction))
+                {
+                    view.ShownShieldFraction = shieldFraction;
+                    float shieldWidth = view.BarWidth * shieldFraction;
+                    view.ShieldFill.localScale = new Vector3(shieldWidth, healthBarHeight, 1f);
+                    view.ShieldFill.localPosition = new Vector3((shieldWidth - view.BarWidth) * 0.5f, 0f, -0.01f);
+                }
                 if (!Mathf.Approximately(fraction, view.ShownFraction))
                 {
                     view.ShownFraction = fraction;

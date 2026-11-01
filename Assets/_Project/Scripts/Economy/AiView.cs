@@ -83,7 +83,7 @@ namespace Halobellum.Economy
         public ActionResult ChooseCard(int index) => _match.ChooseCard(Team, index);
         public ActionResult SkipCards() => _match.SkipCards(Team);
         public bool CanPlaceSpell(OwnedSpell spell, Vec2 position) => _match.CanPlaceSpell(Team, spell, position);
-        public ActionResult PlaceSpell(OwnedSpell spell, Vec2 position, bool rotated90 = false) => _match.PlaceSpell(Team, spell.Id, position, rotated90);
+        public ActionResult PlaceSpell(OwnedSpell spell, Vec2 position, float angleDegrees = 0f) => _match.PlaceSpell(Team, spell.Id, position, angleDegrees);
         public IReadOnlyList<ItemStats> Inventory => Self.Inventory;
         public ActionResult PlaceItem(ItemStats item, PlacedSquad squad) => _match.PlaceItem(Team, item, squad.Id);
         public bool CanUseTraining => _match.CanUseTraining(Team);

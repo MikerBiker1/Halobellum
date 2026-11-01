@@ -55,6 +55,7 @@ namespace Halobellum.Tests
                 Assert.GreaterOrEqual(spell.MinRound, 7, spell.Name);
                 Assert.AreEqual(6f, spell.DelaySeconds, 1e-3f, spell.Name);
             }
+            Assert.AreEqual(TargetFilter.Both, Spells("Covenant_Standard").Single(s => s.Name == "Glassing Beam").Targets, "The beam hits air units too (D35).");
         }
 
         [Test]

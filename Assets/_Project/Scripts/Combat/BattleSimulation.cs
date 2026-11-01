@@ -109,11 +109,11 @@ namespace Halobellum.Combat
         }
 
         /// <summary>Casts a spell for this team at this spot; it takes effect at its delay once the battle runs.</summary>
-        public SimSpell AddSpell(SpellStats stats, Team team, Vec2 position, bool rotated90 = false)
+        public SimSpell AddSpell(SpellStats stats, Team team, Vec2 position, float angleDegrees = 0f)
         {
             if (Tick > 0) throw new InvalidOperationException("Add spells before the battle starts.");
             if (stats == null) throw new ArgumentNullException(nameof(stats));
-            var spell = new SimSpell(_spells.Count, stats, team, position, rotated90);
+            var spell = new SimSpell(_spells.Count, stats, team, position, angleDegrees);
             _spells.Add(spell);
             return spell;
         }

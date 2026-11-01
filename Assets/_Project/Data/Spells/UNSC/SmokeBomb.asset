@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SmokeBomb
   m_EditorClassIdentifier:
   spellName: Smoke Bomb
-  description: 'Releases smoke in a wide straight line. Blinds both sides.'
+  description: 'Click one end, aim the other. Smoke fills the line and blinds both sides.'
   offensive: 1
   effect: 4
   cost: 100

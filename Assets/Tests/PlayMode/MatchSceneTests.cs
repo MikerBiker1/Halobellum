@@ -286,6 +286,68 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
+        public IEnumerator SmokeBomb_IsPlacedInTwoClicks_OneEndThenTheOther()
+        {
+            yield return LoadMatch();
+            _match.ChooseDraft(0);
+            yield return null;
+            Match m = _match.Match;
+            SpellStats smoke = m.Player.Faction.Cards.Find(c => c.Spell != null && c.Spell.Effect == SpellEffect.Smoke).Spell;
+            var owned = new OwnedSpell { Id = 900, Stats = smoke, ReadyRound = m.Round };
+            m.Player.Spells.Add(owned);
+
+            _match.BeginPlacingSpell(owned);
+            Assert.IsNull(_match.PlacingLineStart);
+            Vec2 start = new Vec2(0f, 20f);
+            _match.SetLineStart(start);
+            Assert.IsFalse(owned.IsPlaced, "The first click only sets one end.");
+            _match.ClearLineStart();
+            Assert.IsNull(_match.PlacingLineStart, "Right-click goes back one step.");
+            Assert.AreSame(owned, _match.PlacingSpell, "Still placing.");
+
+            _match.SetLineStart(start);
+            Assert.IsTrue(_match.PlaceLineTowards(start + new Vec2(0f, 50f)).Ok, _match.Message);
+            Assert.IsTrue(owned.IsPlaced);
+            Assert.AreEqual(90f, owned.AngleDegrees, 1e-3f, "It points at the mouse.");
+            Assert.AreEqual(20f + smoke.AreaWidth * 0.5f, owned.Position.Y, 1e-3f, "Its length stays the same.");
+            Assert.IsNull(_match.PlacingSpell);
+            yield return null;
+            yield return null;
+            Assert.GreaterOrEqual(_battle.GetComponent<SpellView>().VisibleOutlines, 1, "The placed line shows.");
+
+            // Aimed up and to the right: the drawn rectangle really lies along that direction.
+            _match.BeginPlacingSpell(owned);
+            _match.SetLineStart(start);
+            Assert.IsTrue(_match.PlaceLineTowards(start + new Vec2(30f, 30f)).Ok, _match.Message);
+            Assert.AreEqual(45f, owned.AngleDegrees, 1e-3f);
+            yield return null;
+            yield return null;
+            GameObject drawn = GameObject.Find("Spell Rectangle");
+            Assert.IsNotNull(drawn, "The rectangle is drawn.");
+            Vector3 along = new Vector3(0.7071f, 0f, 0.7071f); // The field's (x, y) is the world's (x, z).
+            Assert.AreEqual(1f, Mathf.Abs(Vector3.Dot(drawn.transform.right, along)), 1e-3f, "It lies along the aimed direction.");
+            Assert.AreEqual(owned.Position.X, drawn.transform.position.x, 1e-3f);
+            Assert.AreEqual(owned.Position.Y, drawn.transform.position.z, 1e-3f);
+        }
+
+        [UnityTest]
+        public IEnumerator SpeedButtons_ShowTheirNumbers_ButRunAtHalf()
+        {
+            yield return LoadMatch();
+            _match.ChooseDraft(0);
+            yield return null;
+            _battle.Speed = 1f;
+            _match.Ready();
+            yield return null;
+            Assert.AreEqual(1f, _battle.Speed, "The button still says 1x.");
+            Assert.AreEqual(0.5f, _battle.Clock.Speed, 1e-5f, "It really runs at half speed (D35).");
+            _battle.Speed = 4f;
+            Assert.AreEqual(2f, _battle.Clock.Speed, 1e-5f);
+            _battle.Speed = 0f;
+            Assert.IsTrue(_battle.Clock.IsPaused, "Pause still pauses.");
+        }
+
+        [UnityTest]
         public IEnumerator Items_GoOnASquad_FromTheInventory()
         {
             yield return LoadMatch();

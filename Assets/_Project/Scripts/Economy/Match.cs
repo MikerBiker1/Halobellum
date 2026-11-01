@@ -380,7 +380,7 @@ namespace Halobellum.Economy
             foreach (OwnedSpell spell in player.Spells)
             {
                 if (!spell.IsPlaced) continue;
-                battle.AddSpell(spell.Stats, player.Team, spell.Position, spell.Rotated90);
+                battle.AddSpell(spell.Stats, player.Team, spell.Position, spell.AngleDegrees);
                 spell.IsPlaced = false;
                 spell.ReadyRound = Round + spell.Stats.CooldownRounds + 1;
             }
@@ -662,7 +662,7 @@ namespace Halobellum.Economy
         }
 
         /// <summary>Places (or moves) a spell for this round's battle. Offensive spells anywhere, defensive ones in your own zone.</summary>
-        public ActionResult PlaceSpell(Team team, int spellId, Vec2 position, bool rotated90 = false)
+        public ActionResult PlaceSpell(Team team, int spellId, Vec2 position, float angleDegrees = 0f)
         {
             OwnedSpell spell = Get(team).FindSpell(spellId);
             if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Spells are placed during deployment.");
@@ -672,7 +672,7 @@ namespace Halobellum.Economy
                 return ActionResult.Fail(spell.Stats.Offensive ? "Place it on the battlefield." : $"{spell.Stats.Name} can only be placed on your own side.");
             spell.IsPlaced = true;
             spell.Position = position;
-            spell.Rotated90 = rotated90;
+            spell.AngleDegrees = angleDegrees;
             return ActionResult.Success($"{spell.Stats.Name} placed.");
         }
 

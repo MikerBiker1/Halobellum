@@ -173,6 +173,29 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
+        public IEnumerator ShieldedUnits_ShowABlueBarOverTheirHealthBar()
+        {
+            yield return LoadSandbox();
+            _sandbox.AddSquad(Team.A, Unit("Spartan"));
+            _sandbox.AddSquad(Team.B, Unit("Marine"));
+            yield return null;
+            var views = _battle.GetComponent<UnitViewManager>();
+            var selection = _battle.GetComponent<SquadSelection>();
+            SimUnit spartan = _battle.Simulation.Squads[0].Members[0];
+            SimUnit marine = _battle.Simulation.Squads[1].Members[0];
+            yield return null;
+            Assert.AreEqual(-1f, views.ShieldBarFraction(spartan), "Bars stay hidden at full health and shield.");
+
+            spartan.Shield = spartan.Stats.MaxShield * 0.5f;
+            yield return null;
+            Assert.AreEqual(0.5f, views.ShieldBarFraction(spartan), 1e-3f, "A damaged shield shows, half full.");
+
+            selection.Select(_battle.Simulation.Squads[1].Id);
+            yield return null;
+            Assert.AreEqual(-1f, views.ShieldBarFraction(marine), "A selected unit without a shield has no shield bar.");
+        }
+
+        [UnityTest]
         public IEnumerator OffersEveryItem_OnceEach_NoSpells_AndTheyWorkOnBothSides()
         {
             yield return LoadSandbox();

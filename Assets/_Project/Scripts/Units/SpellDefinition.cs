@@ -36,9 +36,9 @@ namespace Halobellum.Units
         public float delaySeconds;
         [Tooltip("The first round it can be offered (extremely impactful spells only appear late).")]
         public int minRound;
-        [Tooltip("A rectangular area instead of a circle: width across the field in metres. 0 = a circle of Radius.")]
+        [Tooltip("A line instead of a circle: its length in metres (the player clicks one end and aims the other). 0 = a circle of Radius.")]
         public float areaWidth;
-        [Tooltip("A rectangular area: depth along the field in metres.")]
+        [Tooltip("A line: its width in metres.")]
         public float areaDepth;
 
         [Header("Damage (strikes and zones)")]

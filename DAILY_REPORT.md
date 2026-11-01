@@ -36,11 +36,19 @@ This morning's report (D25 to D30) is in this file's Git history. You approved D
 - **Shop:** every unit shows its price, even before it's unlocked.
 - **Your answers to D33 (D34):** smoke lasts the whole round, Intensive Training can be taken twice (two icons, separate cooldowns), Laser Sights is +2 m, and the Sandbox has an **Items** panel with all 8 items (no spells).
 
+## After your play test (D35)
+- **Items** are dragged from the Inventory onto a hexagon (a click on the item, then on a hexagon, also still works). Overlapping hexagons pick the one nearest the mouse.
+- **Reinforcement cards** no longer show the budget.
+- **Shields** show as a blue bar over the health bar.
+- **Smoke Bomb** is placed in two clicks: one end, then aim the other at any angle. The same placement will work for any future line-shaped spell.
+- **Battle speed, on trial:** 1x / 2x / 4x really run at 0.5 / 1 / 2. A 90 s battle now takes up to 3 real minutes at 1x.
+- **Glassing Beam** hits air units too.
+
 ## Decisions needing your approval
 None: D31 to D34 are answered. Spells stay out of the Sandbox, as you asked.
 
 ## Test results
-- **Unity:** EditMode **354 / 354**, PlayMode **22 / 22**. **.NET harness:** **320 / 320**.
+- **Unity:** EditMode **360 / 360**, PlayMode **25 / 25**. **.NET harness:** **321 / 321**.
 - **New tests:**
   - Spell effects in battle.
   - Card rules, including the Bible's pricing examples and the "every other round" recharge.
@@ -48,7 +56,7 @@ None: D31 to D34 are answered. Spells stay out of the Sandbox, as you asked.
   - A scene test: a spell taken, placed (outline shown), cast and recharging, then a reinforcement card whose squads appear on the field.
   - AI-vs-AI matches with cards are played to the end.
 - **Built game:** 5 rounds of autoplay as UNSC and as Covenant, plus the Sandbox demo, with no errors. Screenshots are in `Docs/M7_*.png` and `Docs/D3*.png`.
-- **Not tested automatically:** placing a spell, clicking a hexagon or the training icon with the real mouse. The scene tests use the same functions the buttons call.
+- **Not tested automatically:** dragging with the real mouse, clicking on the field to place a line, or clicking the training icon. The tests cover the drag logic and the same functions those clicks call.
 - **Small note:** decimals follow your PC's language (for example "2,5 s"), as elsewhere in the HUD.
 
 ## Blockers

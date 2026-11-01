@@ -466,6 +466,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-01 | M4, M5 and M6 confirmed; D30 (crowd movement) approved | Per the project owner |
 | 2026-11-01 | Offensive spells can hurt your own army. New cards: Smoke Bomb, EMP, Banshee Ambush, Supply Enhancement, items (Inventory, one per squad), Intensive Training, powerful buffs from round 7, extra deployment slot from round 5. ODSTs: 12 bodies, SMG or rockets by target. Nukes from round 7 with a 6 s delay. Reinforcements from round 4 | Per the project owner (D31, D32, D33) |
 | 2026-11-01 | Smoke lasts the whole round; Intensive Training can be taken twice; Laser Sights +2 m; every item (no spells) in the Sandbox | Per the project owner (D33, D34) |
+| 2026-11-01 | Items are dragged onto hexagons; no budget shown on reinforcement cards; blue shield bar over the health bar; line-shaped spells are placed in two clicks at any angle; on trial: speed buttons 1x / 2x / 4x really run at 0.5 / 1 / 2; Glassing Beam hits air | Per the project owner (D35) |
 
 ## 18. Assumptions to confirm
 

@@ -2,7 +2,7 @@
 // The sandbox screen (Milestone 4): a side switch (blue / red), the units of every faction to place
 // on that side, both armies' totals, actions for the selected squad (Move, Turn, Remove), and Run /
 // Reset, Clear side, Copy side, the battle seed and a button back to the match. An Items panel on the
-// left offers every item for free (decision D34): click one, then the hexagon over a squad of either
+// left offers every item for free (decision D34): drag one onto the hexagon over a squad of either
 // side. Speed controls and the battle result line come from BattleHud; the squad stats window from
 // SquadStatsWindow.
 // Placeholder UI drawn with Unity's immediate-mode GUI; scales with the screen height.
@@ -46,10 +46,11 @@ namespace Halobellum.UI
             DrawTopBar(width);
             if (!sandbox.IsBattle)
             {
-                ItemHud.DrawSquadSlots(AllSquads(), sandbox.PlacingItem, _scale, sandbox.SquadOnScreen, sandbox.IconFor, squad => sandbox.PlaceItemOn(squad));
+                ItemHud.DrawSquadSlots(AllSquads(), sandbox.PlacingItem, _scale, sandbox.SquadOnScreen, sandbox.IconFor, squad => sandbox.PlaceItemOn(squad), sandbox.CancelPlacement);
                 DrawUnitList(width, height);
                 DrawItems();
                 DrawSelectedSquadActions(width, height);
+                ItemHud.DrawDragged(sandbox.IconFor);
             }
             if (!string.IsNullOrEmpty(sandbox.Message))
             {
@@ -72,12 +73,8 @@ namespace Halobellum.UI
             var panel = new Rect(10f, 8f, 330f, 44f + ItemHud.GridHeight(sandbox.Items.Count) + 44f);
             Panel(panel);
             GUI.Label(new Rect(panel.x + 12f, panel.y + 8f, panel.width - 24f, 28f), "Items", _header);
-            string hovered = ItemHud.DrawItemGrid(panel.x + 12f, panel.y + 40f, sandbox.Items, sandbox.PlacingItem, sandbox.IconFor, item =>
-            {
-                if (sandbox.PlacingItem == item) sandbox.CancelPlacement();
-                else sandbox.BeginPlacingItem(item);
-            });
-            string caption = hovered ?? (sandbox.PlacingItem != null ? ItemHud.Describe(sandbox.PlacingItem) : "Click an item, then a squad of either side.");
+            string hovered = ItemHud.DrawItemGrid(panel.x + 12f, panel.y + 40f, sandbox.Items, sandbox.PlacingItem, sandbox.IconFor, sandbox.BeginPlacingItem);
+            string caption = hovered ?? (sandbox.PlacingItem != null ? ItemHud.Describe(sandbox.PlacingItem) : "Drag an item onto a squad's hexagon, on either side.");
             GUI.Label(new Rect(panel.x + 12f, panel.yMax - 46f, panel.width - 24f, 42f), caption, _wrapDim);
         }
 

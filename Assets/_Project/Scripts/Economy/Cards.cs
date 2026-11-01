@@ -78,8 +78,8 @@ namespace Halobellum.Economy
         public bool IsPlaced;
         /// <summary>Where it is placed, in battlefield metres (only while IsPlaced).</summary>
         public Vec2 Position;
-        /// <summary>A rectangular area turned 90 degrees (only while IsPlaced).</summary>
-        public bool Rotated90;
+        /// <summary>The direction of a line-shaped area (only while IsPlaced).</summary>
+        public float AngleDegrees;
 
         public bool IsReady(int round) => ReadyRound <= round;
         /// <summary>Rounds until it can be used again (0 = ready).</summary>

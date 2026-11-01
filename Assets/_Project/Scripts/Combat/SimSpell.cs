@@ -14,8 +14,8 @@ namespace Halobellum.Combat
         public readonly SpellStats Stats;
         public readonly Team Team;
         public readonly Vec2 Position;
-        /// <summary>A rectangular area turned 90 degrees (see SpellStats).</summary>
-        public readonly bool Rotated90;
+        /// <summary>The direction of a line-shaped area (see SpellStats).</summary>
+        public readonly float AngleDegrees;
 
         /// <summary>Effects applied so far (damage ticks, or 1 once a buff or drop has happened).</summary>
         public int TicksDone;
@@ -24,9 +24,9 @@ namespace Halobellum.Combat
         /// <summary>Squad id of the dropped squad(s) for drop spells, -1 before the drop.</summary>
         public int DroppedSquadId = -1;
 
-        public SimSpell(int id, SpellStats stats, Team team, Vec2 position, bool rotated90 = false)
+        public SimSpell(int id, SpellStats stats, Team team, Vec2 position, float angleDegrees = 0f)
         {
-            Rotated90 = rotated90;
+            AngleDegrees = angleDegrees;
             Id = id;
             Stats = stats;
             Team = team;
@@ -40,6 +40,6 @@ namespace Halobellum.Combat
         public bool IsOverAt(float seconds) => IsDone && (Stats.Effect != SpellEffect.Smoke || (Stats.DurationSeconds > 0f && seconds >= Stats.DelaySeconds + Stats.DurationSeconds));
 
         /// <summary>True if a body at this position touches the spell's area.</summary>
-        public bool Covers(SimUnit unit) => Stats.Covers(unit.Position - Position, unit.Radius, Rotated90);
+        public bool Covers(SimUnit unit) => Stats.Covers(unit.Position - Position, unit.Radius, AngleDegrees);
     }
 }

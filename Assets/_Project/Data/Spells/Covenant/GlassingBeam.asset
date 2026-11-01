@@ -29,7 +29,7 @@ MonoBehaviour:
   isAntiArmor: 0
   ticks: 5
   tickInterval: 0.6
-  targets: 0
+  targets: 2
   shieldBonusShare: 0
   damageMultiplier: 1
   dropUnit: {fileID: 0}

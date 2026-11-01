@@ -293,16 +293,40 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void Smoke_TurnedAround_IsALineAlongTheField()
+        public void Smoke_AtRightAngles_IsALineAlongTheField()
         {
             var sim = new BattleSimulation(TestRules.Default(), 1);
             SimUnit across = sim.AddUnit(Dummy(), Team.B, new Vec2(7f, 30f));
             SimUnit along = sim.AddUnit(Dummy(), Team.B, new Vec2(0f, 37f));
             sim.AddUnit(Dummy(), Team.A, new Vec2(0f, -40f));
-            sim.AddSpell(Smoke(), Team.A, new Vec2(0f, 30f), rotated90: true);
+            sim.AddSpell(Smoke(), Team.A, new Vec2(0f, 30f), angleDegrees: 90f);
             RunSeconds(sim, 0.1f);
             Assert.AreEqual(1f, across.RangeMultiplier);
             Assert.AreEqual(0.5f, along.RangeMultiplier, 1e-5f);
+        }
+
+        [Test]
+        public void ALine_RunsFromItsFirstEnd_TowardTheMouse_AtAnyAngle()
+        {
+            SpellStats smoke = Smoke();
+            Vec2 start = new Vec2(0f, 30f);
+            Vec2 centre = smoke.LineFrom(start, start + new Vec2(100f, 100f), out float angle);
+            Assert.AreEqual(45f, angle, 1e-3f);
+            Assert.AreEqual(7.5f, Vec2.Distance(start, centre), 1e-3f, "The centre is half its length from the first end, however far the mouse is.");
+
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            Vec2 way = new Vec2(0.7071f, 0.7071f);
+            SimUnit nearEnd = sim.AddUnit(Dummy(), Team.B, start + way * 1f);
+            SimUnit farEnd = sim.AddUnit(Dummy(), Team.B, start + way * 14f);
+            SimUnit beyond = sim.AddUnit(Dummy(), Team.B, start + way * 16f);
+            SimUnit beside = sim.AddUnit(Dummy(), Team.B, centre + new Vec2(-way.Y, way.X) * 3f);
+            sim.AddUnit(Dummy(), Team.A, new Vec2(0f, -40f));
+            sim.AddSpell(smoke, Team.A, centre, angle);
+            RunSeconds(sim, 0.1f);
+            Assert.AreEqual(0.5f, nearEnd.RangeMultiplier, 1e-5f);
+            Assert.AreEqual(0.5f, farEnd.RangeMultiplier, 1e-5f);
+            Assert.AreEqual(1f, beyond.RangeMultiplier, "Past the far end.");
+            Assert.AreEqual(1f, beside.RangeMultiplier, "Beside the line.");
         }
 
         [Test]

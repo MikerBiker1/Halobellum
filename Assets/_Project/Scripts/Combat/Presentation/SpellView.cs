@@ -9,7 +9,8 @@
 //     now) until it has gone off. Each effect flashes: strikes and zone ticks a bright burst in the
 //     colour of their damage type, buffs and EMPs a ring pulse; zones glow while they last; smoke is
 //     a grey cloud for as long as it hangs. Drop-pod squads fall from the sky (UnitViewManager).
-//   Rectangular spells (smoke) show a rectangle; R turns them while placing.
+//   Line-shaped spells (smoke, later a napalm strike) are placed in two clicks (decision D35): the
+//     first sets one end, the other end then follows the mouse, a second click confirms.
 // Discs are flat quads with a texture drawn in code and the built-in Sprites/Default shader (always
 // included in builds), so no material assets are needed. Looks only; the simulation is unchanged.
 // Depends on: MatchController, BattleController, UiHitAreas, PlaceholderArt, Halobellum.Combat,
@@ -118,7 +119,7 @@ namespace Halobellum.Presentation
 
             foreach (OwnedSpell spell in _match.Match.Player.Spells)
             {
-                if (spell.IsPlaced && spell.Id != _match.PlacingSpellId) ShowOutline(spell.Position, spell.Stats, spell.Rotated90, ColorFor(spell.Stats), 1f);
+                if (spell.IsPlaced && spell.Id != _match.PlacingSpellId) ShowOutline(spell.Position, spell.Stats, spell.AngleDegrees, ColorFor(spell.Stats), 1f);
             }
 
             OwnedSpell placing = _match.PlacingSpell;
@@ -127,16 +128,34 @@ namespace Halobellum.Presentation
             Mouse mouse = Mouse.current;
             if ((keyboard != null && keyboard.escapeKey.wasPressedThisFrame) || (mouse != null && mouse.rightButton.wasPressedThisFrame))
             {
-                _match.CancelSpellPlacement();
+                if (_match.PlacingLineStart != null) _match.ClearLineStart(); // Back one step.
+                else _match.CancelSpellPlacement();
                 return;
             }
-            if (keyboard != null && keyboard.rKey.wasPressedThisFrame) _match.ToggleSpellRotation();
             if (mouse == null) return;
             Vector2 pointer = mouse.position.ReadValue();
             if (UiHitAreas.Contains(pointer) || !PointerOnGround(pointer, out Vec2 position)) return;
-            bool valid = _match.CanPlaceSpellAt(position);
-            ShowOutline(position, placing.Stats, _match.PlacingSpellRotated, valid ? ColorFor(placing.Stats) : BlockedColor, 1f);
-            if (mouse.leftButton.wasPressedThisFrame && valid) _match.PlaceSpellAt(position);
+            bool click = mouse.leftButton.wasPressedThisFrame;
+            if (!placing.Stats.IsRectangle)
+            {
+                bool valid = _match.CanPlaceSpellAt(position);
+                ShowOutline(position, placing.Stats, 0f, valid ? ColorFor(placing.Stats) : BlockedColor, 1f);
+                if (click && valid) _match.PlaceSpellAt(position);
+                return;
+            }
+
+            // A line: first the end that stays, then the end that follows the mouse.
+            if (_match.PlacingLineStart == null)
+            {
+                bool valid = _match.CanPlaceSpellAt(position);
+                ShowDisc(position, placing.Stats.AreaDepth * 0.5f, valid ? ColorFor(placing.Stats) : BlockedColor, 1f);
+                if (click && valid) _match.SetLineStart(position);
+                return;
+            }
+            Vec2 centre = placing.Stats.LineFrom(_match.PlacingLineStart.Value, position, out float angle);
+            bool lineValid = _match.CanPlaceSpellAt(centre);
+            ShowOutline(centre, placing.Stats, angle, lineValid ? ColorFor(placing.Stats) : BlockedColor, 1f);
+            if (click && lineValid) _match.PlaceLineTowards(position);
         }
 
         private static bool PointerOnGround(Vector2 pointer, out Vec2 position)
@@ -166,7 +185,7 @@ namespace Halobellum.Presentation
                 bool smoke = spell.Stats.Effect == SpellEffect.Smoke;
                 float pulse = active && !smoke ? 0.75f + 0.25f * Mathf.Sin(Time.unscaledTime * 10f) : 1f;
                 Color color = active ? EffectColor(spell.Stats) : ColorFor(spell.Stats);
-                ShowOutline(spell.Position, spell.Stats, spell.Rotated90, color, pulse);
+                ShowOutline(spell.Position, spell.Stats, spell.AngleDegrees, color, pulse);
             }
         }
 
@@ -216,22 +235,27 @@ namespace Halobellum.Presentation
             }
         }
 
-        private void ShowOutline(Vec2 position, SpellStats stats, bool rotated90, Color color, float alpha)
+        private void ShowOutline(Vec2 position, SpellStats stats, float angleDegrees, Color color, float alpha)
         {
             if (stats.IsRectangle)
             {
                 if (_rectsUsed == _rectOutlines.Count) _rectOutlines.Add(CreateDisc("Spell Rectangle", _rectMaterial));
                 Renderer rectangle = _rectOutlines[_rectsUsed++];
-                rectangle.transform.SetPositionAndRotation(new Vector3(position.X, DiscHeight, position.Y), Quaternion.Euler(90f, 0f, 0f));
-                rectangle.transform.localScale = rotated90 ? new Vector3(stats.AreaDepth, stats.AreaWidth, 1f) : new Vector3(stats.AreaWidth, stats.AreaDepth, 1f);
+                // The field's Y is the world's Z, and a turn about the world's up axis runs the other way.
+                rectangle.transform.SetPositionAndRotation(new Vector3(position.X, DiscHeight, position.Y), Quaternion.Euler(90f, -angleDegrees, 0f));
+                rectangle.transform.localScale = new Vector3(stats.AreaWidth, stats.AreaDepth, 1f);
                 color.a = alpha;
                 SetColor(rectangle, color);
                 if (!rectangle.gameObject.activeSelf) rectangle.gameObject.SetActive(true);
                 return;
             }
+            ShowDisc(position, Mathf.Max(1f, stats.Radius), color, alpha);
+        }
+
+        private void ShowDisc(Vec2 position, float radius, Color color, float alpha)
+        {
             if (_outlinesUsed == _outlines.Count) _outlines.Add(CreateDisc("Spell Outline", _discMaterial));
             Renderer disc = _outlines[_outlinesUsed++];
-            float radius = Mathf.Max(1f, stats.Radius);
             disc.transform.SetPositionAndRotation(new Vector3(position.X, DiscHeight, position.Y), Quaternion.Euler(90f, 0f, 0f));
             disc.transform.localScale = new Vector3(radius * 2f, radius * 2f, 1f);
             color.a = alpha;

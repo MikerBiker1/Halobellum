@@ -7,8 +7,9 @@
 //   Cards (from round 2, Milestone 7): 3 cards with their prices (spells, items, economy, buffs,
 //     training, or reinforcements every other round from round 4), and Skip with its bonus.
 //     During deployment a spell bar (left) lists owned spells: Place / Move, take back, or how many
-//     rounds until recharged. Under it the Inventory holds items: click one, and an empty hexagon
-//     appears over every squad without an item; squads with an item show it. Intensive Training is
+//     rounds until recharged. Under it the Inventory holds items: drag one, and an empty hexagon
+//     appears over every squad without an item; drop it on one (squads with an item show it; see
+//     ItemHud). Intensive Training is
 //     an icon at the top left: select a squad, click it, confirm (decision D33).
 //   Battle: both base health bars and a live army-value comparison (speed controls are in BattleHud).
 //   Result: base damage dealt by each side, income, survivors, top damage dealers, what killed what.
@@ -152,6 +153,7 @@ namespace Halobellum.UI
             DrawInventory(DrawSpellBar());
             DrawTrainingIcons();
             DrawSelectedSquadActions(width, height);
+            ItemHud.DrawDragged(match.IconFor);
         }
 
         // ------------------------------------------------------------------ cards (Milestone 7)
@@ -167,9 +169,7 @@ namespace Halobellum.UI
             Rect panel = CenteredPanel(panelWidth, cardHeight + 170f);
             GUI.Label(new Rect(panel.x, panel.y + 14f, panel.width, 34f),
                 HudTheme.Title(general ? $"Round {m.Round}: choose a card" : $"Round {m.Round}: choose reinforcements"), _centered);
-            GUI.Label(new Rect(panel.x, panel.y + 50f, panel.width, 24f),
-                general ? $"Credits {m.Player.Credits}"
-                        : $"Budget {m.Rules.ReinforcementBudget(m.Round)}: you pay what a card is worth above it.   Credits {m.Player.Credits}", _smallCentered);
+            GUI.Label(new Rect(panel.x, panel.y + 50f, panel.width, 24f), $"Credits {m.Player.Credits}", _smallCentered);
 
             if (offer.Count == 0)
                 GUI.Label(new Rect(panel.x, panel.y + 160f, panel.width, 30f), "No cards left to offer.", _smallCentered);
@@ -246,7 +246,6 @@ namespace Halobellum.UI
             GUI.Label(new Rect(x, y, w, 24f), $"{reinforcement.Squads} squad{(reinforcement.Squads == 1 ? "" : "s")} at level {reinforcement.Level}", _text); y += 28f;
             GUI.Label(new Rect(x, y, w, 24f), $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.SquadSize)} each", _small); y += 30f;
             GUI.Label(new Rect(x, y, w, 24f), $"Worth {reinforcement.TotalWorth} ({reinforcement.SquadWorth} per squad)", _text); y += 26f;
-            GUI.Label(new Rect(x, y, w, 24f), $"Budget {reinforcement.Budget}", _small); y += 26f;
             bool unlocked = match.Match.Player.Unlocked.Contains(unit);
             GUI.Label(new Rect(x, y, w, 48f), unlocked ? "Placed like squads bought this round, on top of your squad limit."
                                                        : "Also unlocks the unit for the rest of the match.", _wrapDim);
@@ -262,18 +261,14 @@ namespace Halobellum.UI
             var panel = new Rect(10f, top, 330f, 44f + ItemHud.GridHeight(items.Count) + 44f);
             Panel(panel);
             GUI.Label(new Rect(panel.x + 12f, panel.y + 8f, panel.width - 24f, 28f), HudTheme.Title("Inventory"), _header);
-            string hovered = ItemHud.DrawItemGrid(panel.x + 12f, panel.y + 40f, items, match.PlacingItem, match.IconFor, item =>
-            {
-                if (match.PlacingItem == item) match.CancelItemPlacement();
-                else match.BeginPlacingItem(item);
-            });
-            string caption = hovered ?? (match.PlacingItem != null ? ItemHud.Describe(match.PlacingItem) : "Click an item, then a squad.");
+            string hovered = ItemHud.DrawItemGrid(panel.x + 12f, panel.y + 40f, items, match.PlacingItem, match.IconFor, match.BeginPlacingItem);
+            string caption = hovered ?? (match.PlacingItem != null ? ItemHud.Describe(match.PlacingItem) : "Drag an item onto a squad's hexagon.");
             GUI.Label(new Rect(panel.x + 12f, panel.yMax - 46f, panel.width - 24f, 42f), caption, _wrapDim);
         }
 
         private void DrawSquadItemSlots()
         {
-            ItemHud.DrawSquadSlots(match.Match.Player.Squads, match.PlacingItem, _scale, match.SquadOnScreen, match.IconFor, squad => match.PlaceItemOn(squad));
+            ItemHud.DrawSquadSlots(match.Match.Player.Squads, match.PlacingItem, _scale, match.SquadOnScreen, match.IconFor, squad => match.PlaceItemOn(squad), match.CancelItemPlacement);
         }
 
         private bool _confirmTraining;
