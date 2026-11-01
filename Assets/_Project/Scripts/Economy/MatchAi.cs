@@ -1,9 +1,9 @@
 // MatchAi.cs
 // The AI opponent's decisions. The AI plays under the same rules as the player (Bible Section 11)
-// and only acts through the same Match actions. Milestone 3 uses the do-nothing AI: it picks the
-// first draft card, keeps its 2 free starting squads where the match places them, and never buys,
-// unlocks or sells anything. The rule-based AI comes in Milestone 5.
-// Depends on: Match, PlayerState, DraftCard.
+// and only sees and acts through an AiView (no access to the opponent's current deployment).
+// RuleBasedAi is the real opponent (Milestone 5); the do-nothing AI picks the first draft card,
+// keeps its 2 free starting squads and never acts (used by tests).
+// Depends on: AiView, DraftCard.
 
 using System.Collections.Generic;
 
@@ -12,18 +12,23 @@ namespace Halobellum.Economy
     public interface IMatchAi
     {
         /// <summary>Index of the draft card to pick.</summary>
-        int ChooseDraftCard(Match match, PlayerState self, IReadOnlyList<DraftCard> cards);
+        int ChooseDraftCard(AiView view, IReadOnlyList<DraftCard> cards);
 
         /// <summary>Spend credits and place squads for this round's deployment phase.</summary>
-        void Deploy(Match match, PlayerState self);
+        void Deploy(AiView view);
+
+        /// <summary>A short name for the HUD, e.g. "Normal AI".</summary>
+        string Label { get; }
     }
 
     public sealed class DoNothingAi : IMatchAi
     {
-        public int ChooseDraftCard(Match match, PlayerState self, IReadOnlyList<DraftCard> cards) => 0;
+        public int ChooseDraftCard(AiView view, IReadOnlyList<DraftCard> cards) => 0;
 
-        public void Deploy(Match match, PlayerState self)
+        public void Deploy(AiView view)
         {
         }
+
+        public string Label => "Passive AI";
     }
 }

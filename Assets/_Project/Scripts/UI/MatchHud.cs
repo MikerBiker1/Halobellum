@@ -84,6 +84,21 @@ namespace Halobellum.UI
                 if (GUI.Button(new Rect(rect.x + 16f, rect.yMax - 52f, rect.width - 32f, 38f), "Choose", _bigButton)) match.ChooseDraft(i);
             }
 
+            // AI difficulty (Milestone 5): only changes how well the AI decides, never what it knows or earns.
+            var difficulty = new Rect(width * 0.5f - 300f, y - 150f, 600f, 50f);
+            Panel(difficulty);
+            GUI.Label(new Rect(difficulty.x + 14f, difficulty.y + 10f, 140f, 30f), "AI difficulty:", _text);
+            string[] names = { "Easy", "Normal", "Hard" };
+            for (int d = 0; d < names.Length; d++)
+            {
+                bool selected = (int)match.Difficulty == d;
+                Color old = GUI.backgroundColor;
+                if (selected) GUI.backgroundColor = new Color(0.45f, 0.75f, 1f);
+                if (GUI.Button(new Rect(difficulty.x + 160f + d * 145f, difficulty.y + 7f, 135f, 36f), selected ? $"[ {names[d]} ]" : names[d], _button))
+                    match.SetDifficulty((AiDifficulty)d);
+                GUI.backgroundColor = old;
+            }
+
             // The sandbox (Milestone 4): place any two armies and watch them fight.
             var sandbox = new Rect(width * 0.5f - 200f, y + cardHeight + 30f, 400f, 50f);
             Panel(sandbox);
@@ -108,7 +123,7 @@ namespace Halobellum.UI
             GUI.Label(new Rect(bar.x + 290f, bar.y + 32f, 220f, 26f), $"Unlocks: {player.UnlocksThisRound} of {m.Rules.UnlocksPerRound}", _text);
             BaseBar(new Rect(bar.x + 520f, bar.y + 10f, 220f, 20f), "Your base", player.BaseHealth, m.Rules.BaseHealth, playerColor);
             BaseBar(new Rect(bar.x + 520f, bar.y + 36f, 220f, 20f), "Enemy base", m.Enemy.BaseHealth, m.Rules.BaseHealth, enemyColor);
-            GUI.Label(new Rect(bar.x + 760f, bar.y + 6f, 200f, 52f), $"{player.Label}\nvs {m.Enemy.Label}", _small);
+            GUI.Label(new Rect(bar.x + 760f, bar.y + 6f, 200f, 52f), $"{player.Label}\nvs {m.Enemy.Label}, {m.EnemyAi.Label}", _small);
             if (GUI.Button(new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f), "Ready", _bigButton)) match.Ready();
 
             if (!string.IsNullOrEmpty(match.Message))

@@ -28,6 +28,10 @@ namespace Halobellum.Economy
         public bool FromDraft;
         /// <summary>True once the squad has been in a battle: it can no longer be moved or turned.</summary>
         public bool HasFought;
+        /// <summary>Squad level, 1 to 5 (Bible Section 5, Squad leveling). It survives the round reset.</summary>
+        public int Level = 1;
+        /// <summary>Experience earned from kills toward the next level. It survives the round reset.</summary>
+        public float Xp;
     }
 
     public sealed class PlayerState

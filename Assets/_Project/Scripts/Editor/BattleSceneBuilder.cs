@@ -113,6 +113,8 @@ namespace Halobellum.EditorTools
             GameObject battleObject = battle.gameObject;
             var match = battleObject.AddComponent<MatchController>();
             SetReference(match, "matchRules", matchRules);
+            var matchups = AssetDatabase.LoadAssetAtPath<MatchupTableDefinition>(MatchupTableDefinition.DefaultAssetPath);
+            if (matchups != null) SetReference(match, "matchupTable", matchups);
             SetReferenceList(match, "factions", factions.Cast<Object>().ToList());
             battleObject.AddComponent<DeploymentInput>();
             battleObject.AddComponent<MatchAutoplay>();

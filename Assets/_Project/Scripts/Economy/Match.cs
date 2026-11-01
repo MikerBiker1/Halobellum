@@ -19,7 +19,9 @@
 //   - Result: every surviving body deals its BaseDamage to the enemy base, both at once. A base at
 //     0 or below loses; if both fall, the lower one loses. An exact tie is a tied round: the damage
 //     is undone, income is paid and the match goes on to the next round.
-// Depends on: MatchRules, PlayerState, DeploymentGrid, StartingDraft, RoundSummary, IMatchAi,
+// The AI only sees the match through an AiView: its own state, public information, and each army as
+// it was revealed when the last battle started (SeenArmy), never the opponent's current deployment.
+// Depends on: MatchRules, PlayerState, DeploymentGrid, StartingDraft, RoundSummary, IMatchAi, AiView,
 //             Halobellum.Combat (HeadlessBattleRunner, BattleSimulation), Halobellum.Core.
 
 using System;
@@ -57,7 +59,9 @@ namespace Halobellum.Economy
     public sealed class Match
     {
         private readonly SimRandom _random;
-        private readonly IMatchAi _enemyAi;
+        private IMatchAi _enemyAi;
+        private readonly List<SeenSquad> _seenA = new List<SeenSquad>(), _seenB = new List<SeenSquad>();
+        private string _seenFactionA, _seenFactionB;
         private int _nextSquadId = 1;
         private int _battleCount;
         private int _baseHealthBeforeA, _baseHealthBeforeB;
@@ -94,6 +98,23 @@ namespace Halobellum.Economy
 
         public PlayerState Get(Team team) => team == Team.A ? Player : Enemy;
 
+        /// <summary>The AI playing Team B.</summary>
+        public IMatchAi EnemyAi => _enemyAi;
+
+        /// <summary>Replaces the AI (e.g. after the player picks a difficulty). Only before the draft is chosen.</summary>
+        public bool SetEnemyAi(IMatchAi ai)
+        {
+            if (Phase != MatchPhase.Draft || ai == null) return false;
+            _enemyAi = ai;
+            return true;
+        }
+
+        /// <summary>A team's army as it was when the last battle started (what the other side has seen).</summary>
+        public IReadOnlyList<SeenSquad> SeenArmy(Team team) => team == Team.A ? _seenA : _seenB;
+
+        /// <summary>A team's faction name once it has been seen in a battle, otherwise null.</summary>
+        public string SeenFaction(Team team) => team == Team.A ? _seenFactionA : _seenFactionB;
+
         /// <summary>Income each player receives at the end of this round.</summary>
         public int NextIncome => Rules.IncomeForRound(Round + 1);
 
@@ -106,7 +127,7 @@ namespace Halobellum.Economy
             if (cardIndex < 0 || cardIndex >= PlayerDraft.Count) return ActionResult.Fail("No such card.");
 
             ApplyDraftCard(Player, PlayerDraft[cardIndex]);
-            int enemyChoice = EnemyDraft.Count > 0 ? Math.Clamp(_enemyAi.ChooseDraftCard(this, Enemy, EnemyDraft), 0, EnemyDraft.Count - 1) : -1;
+            int enemyChoice = EnemyDraft.Count > 0 ? Math.Clamp(_enemyAi.ChooseDraftCard(new AiView(this, Team.B), EnemyDraft), 0, EnemyDraft.Count - 1) : -1;
             if (enemyChoice >= 0) ApplyDraftCard(Enemy, EnemyDraft[enemyChoice]);
 
             BeginRound(1);
@@ -221,11 +242,25 @@ namespace Halobellum.Economy
         {
             if (Phase != MatchPhase.Deployment) throw new InvalidOperationException("A battle can only start after deployment.");
             CurrentBattle = BuildBattle(includeEnemy: true);
+            Reveal(Player, _seenA);
+            Reveal(Enemy, _seenB);
+            _seenFactionA = Player.Faction?.Name;
+            _seenFactionB = Enemy.Faction?.Name;
             foreach (PlacedSquad squad in Player.Squads) squad.HasFought = true;
             foreach (PlacedSquad squad in Enemy.Squads) squad.HasFought = true;
             _battleCount++;
             Phase = MatchPhase.Battle;
             return CurrentBattle;
+        }
+
+        /// <summary>Copies an army as both sides see it when the battle starts.</summary>
+        private static void Reveal(PlayerState player, List<SeenSquad> seen)
+        {
+            seen.Clear();
+            foreach (PlacedSquad squad in player.Squads)
+            {
+                seen.Add(new SeenSquad { Type = squad.Type, Level = squad.Level, Column = squad.Column, Row = squad.Row, Rotated90 = squad.Rotated90 });
+            }
         }
 
         /// <summary>
@@ -320,7 +355,7 @@ namespace Halobellum.Economy
                 player.UnlocksThisRound = 0;
             }
             Phase = MatchPhase.Deployment;
-            _enemyAi.Deploy(this, Enemy);
+            _enemyAi.Deploy(new AiView(this, Team.B));
         }
     }
 }

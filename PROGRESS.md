@@ -34,13 +34,26 @@ Milestones and items from PROJECT_BIBLE.md Section 14. An item is ticked when it
 - [x] Match scene with draft, deployment (shop, unlock, placement, rotation), battle and result screens
 - [x] A full match against the do-nothing AI can be won and lost (headless and PlayMode tests)
 
-## M4: Slice rosters and sandbox (all criteria pass; waiting for the human to confirm)
+## M4: Slice rosters and sandbox (all criteria pass; the human moved on to M5 and M6)
 - [x] Combat mechanics the slice units need: per-weapon target filters, bonus damage against air, cone splash (flamethrower), and a timed mid-battle drop (Pelican) (with tests)
 - [x] UNSC slice roster (12 units, Section 8.1): data assets with unlock prices, placeholder prefabs, faction roster
 - [x] Covenant slice roster (12 units, Section 8.2): data assets with unlock prices, placeholder prefabs, faction roster
 - [x] Counter web runner: every unit against every unit at equal cost, report and CSV, `balance.csv`
 - [x] Counter web verified: every role has a counter that wins over 70% of the time (first-pass values tuned; Bible numbers only changed with approval)
 - [x] Sandbox mode: pick two armies, place them freely, run the battle
+
+## M5: AI opponent (all criteria pass; waiting for the human to confirm)
+- [x] Rule-based AI: 4 strategies (swarm, armor push, air raid, balanced), counters the player's most expensive role, role-based placement, same rules and limits as the player, no cheating (with tests)
+- [x] 3 difficulty levels (Easy, Normal, Hard) chosen on the draft screen; Hard uses measured matchups
+- [x] Full playable match against the AI (headless and PlayMode tests)
+
+## M6: Leveling and tech upgrades (planned)
+- [ ] Squad XP from kills, level-ups for half the base price, level multipliers (with tests)
+- [ ] Tech upgrades: data assets, up to 3 per unit type, bought with credits, apply to every squad of that type (with tests)
+- [ ] UI: level, XP bar, level-up button and tech upgrades in the stats window; the AI uses levels and techs
+
+## Later request (2026-10-31): faction-styled UI
+- [ ] After M5 and M6: UNSC-style UI when the player picked UNSC, Covenant-style when they picked Covenant (fonts, panels, colours)
 
 ## Notes for the next balance pass (from the human, 2026-10-31)
 - Flamethrower Troopers should be excellent against chaff such as Marines (today they lose to Marines, which outrange them).

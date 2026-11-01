@@ -1,8 +1,8 @@
 // MatchSceneTests.cs
 // Plays the real Match scene (Milestone 3): starting draft, deployment preview (the AI's army stays
 // hidden), buying a squad (placed in the middle, dropped in, then selected), a full round
-// (deployment, battle, result, next round with income), and full matches against the do-nothing
-// AI that are won and lost.
+// (deployment, battle, result, next round with income), the AI difficulty choice, and full
+// matches that are won, lost, and played to the end against the Normal AI (Milestone 5).
 // Depends on: Halobellum.Presentation, Halobellum.Economy, Halobellum.Core, NUnit, Unity Test Framework.
 
 using System.Collections;
@@ -134,6 +134,42 @@ namespace Halobellum.Tests
                 rounds++;
             }
             Assert.AreEqual(Team.B, m.Winner);
+        }
+
+        [UnityTest]
+        public IEnumerator Difficulty_IsChosenOnTheDraftScreen_AndLockedAfterward()
+        {
+            yield return LoadMatch();
+            _match.SetDifficulty(AiDifficulty.Hard);
+            Assert.AreEqual(AiDifficulty.Hard, _match.Difficulty);
+            Assert.AreEqual("Hard AI", _match.Match.EnemyAi.Label);
+            _match.ChooseDraft(0);
+            _match.SetDifficulty(AiDifficulty.Easy);
+            Assert.AreEqual("Hard AI", _match.Match.EnemyAi.Label, "The difficulty cannot change once the match started.");
+            _match.SetDifficulty(AiDifficulty.Normal); // Leave the remembered setting at the default for other tests.
+        }
+
+        [UnityTest]
+        public IEnumerator FullMatch_AgainstTheNormalAi_IsPlayedToTheEnd()
+        {
+            yield return LoadMatch(seed: 21);
+            _match.SetDifficulty(AiDifficulty.Normal);
+            Match m = _match.Match;
+            var playerAi = new RuleBasedAi(AiDifficulty.Normal, 22); // Plays the human's side.
+            _match.ChooseDraft(playerAi.ChooseDraftCard(new AiView(m, Team.A), m.PlayerDraft));
+            yield return null;
+            Assert.AreEqual("Normal AI", m.EnemyAi.Label);
+
+            int rounds = 0;
+            while (m.Phase != MatchPhase.MatchOver && rounds < 40)
+            {
+                playerAi.Deploy(new AiView(m, Team.A));
+                yield return PlayRound();
+                Assert.Greater(m.Enemy.Squads.Count, 0, "The AI fields an army.");
+                if (m.Phase == MatchPhase.Result) _match.Continue();
+                rounds++;
+            }
+            Assert.AreEqual(MatchPhase.MatchOver, m.Phase, $"No winner after {rounds} rounds.");
         }
 
         [UnityTest]

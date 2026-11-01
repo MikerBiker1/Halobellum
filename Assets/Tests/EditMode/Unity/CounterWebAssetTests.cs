@@ -3,7 +3,8 @@
 // counter from the latest full counter-web run (Halobellum > Headless Runner > Run Counter Web, also
 // listed in each unit's notes) still wins at least 90% of equal-cost battles against it (D23). This runs
 // only those 24 pairs, so it stays quick; the full run checks every pair. If a balance change moves a
-// unit's best counter, run the full counter web again and update this list.
+// unit's best counter, run the full counter web again and update this list. Also checks that the
+// matchup table the Hard AI uses (written by the counter web) covers every pair of slice units.
 // Needs the Unity editor (AssetDatabase), so it runs only in Unity's Test Runner.
 // Depends on: Halobellum.Combat (CounterWeb), Halobellum.EditorTools (HeadlessRunnerTool), Halobellum.Units, NUnit.
 
@@ -11,8 +12,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Halobellum.Combat;
 using Halobellum.Core;
+using Halobellum.Economy;
 using Halobellum.EditorTools;
+using Halobellum.Units;
 using NUnit.Framework;
+using UnityEditor;
 
 namespace Halobellum.Tests
 {
@@ -71,6 +75,22 @@ namespace Halobellum.Tests
                     failures.Add($"{counterName} beats {unitName} only {CounterWeb.Percent(matchup.WinRateA)} ({matchup.CostA} vs {matchup.CostB} credits)");
             }
             Assert.IsEmpty(failures, string.Join("\n", failures));
+        }
+
+        [Test]
+        public void MatchupTable_ForTheHardAi_CoversEveryPairOfSliceUnits()
+        {
+            var asset = AssetDatabase.LoadAssetAtPath<MatchupTableDefinition>(MatchupTableDefinition.DefaultAssetPath);
+            Assert.IsNotNull(asset, "Missing " + MatchupTableDefinition.DefaultAssetPath + " (run the counter web).");
+            MatchupTable table = asset.ToTable();
+            List<UnitStats> units = HeadlessRunnerTool.LoadSliceUnits().Select(u => u.ToStats()).ToList();
+            foreach (UnitStats a in units)
+            {
+                foreach (UnitStats b in units)
+                {
+                    if (a != b) Assert.IsTrue(table.WinRate(a, b).HasValue, $"No measured win rate for {a.Name} vs {b.Name}.");
+                }
+            }
         }
     }
 }

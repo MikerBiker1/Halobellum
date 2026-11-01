@@ -7,7 +7,7 @@
 // of the zone, drops in from high above and is selected when it lands, ready to be moved.
 // The HUD (Scripts/UI/MatchHud) and DeploymentInput call the public methods here; tests do too.
 // Depends on: BattleController, SquadSelection, UnitViewManager,
-//             Halobellum.Economy (Match, DoNothingAi, DeploymentGrid),
+//             Halobellum.Economy (Match, RuleBasedAi, DeploymentGrid),
 //             Halobellum.Units (MatchRulesDefinition, FactionDefinition, UnitDefinition), UnityEngine.
 
 using System;
@@ -25,6 +25,8 @@ namespace Halobellum.Presentation
     {
         [SerializeField] private MatchRulesDefinition matchRules;
         [SerializeField] private List<FactionDefinition> factions = new List<FactionDefinition>();
+        [Tooltip("Measured unit-vs-unit win rates (Data/AI/MatchupTable.asset) that the Hard AI uses to pick counters.")]
+        [SerializeField] private MatchupTableDefinition matchupTable;
         [Tooltip("Match seed. 0 = a new random match every time.")]
         [SerializeField] private int seed;
 
@@ -41,6 +43,12 @@ namespace Halobellum.Presentation
         public string Message { get; private set; } = "";
         /// <summary>Raised after every phase change (draft chosen, battle started or finished, next round).</summary>
         public event Action PhaseChanged;
+
+        private const string DifficultyKey = "Halobellum.AiDifficulty";
+        private MatchupTable _matchups;
+
+        /// <summary>The AI's difficulty (chosen on the draft screen, remembered between matches).</summary>
+        public AiDifficulty Difficulty { get; private set; } = AiDifficulty.Normal;
 
         /// <summary>The squad being moved, or -1.</summary>
         public int MovingSquadId { get; private set; } = -1;
@@ -78,7 +86,9 @@ namespace Halobellum.Presentation
             foreach (var pair in cache) _sources[pair.Value] = pair.Key;
 
             int matchSeed = fixedSeed ?? (seed != 0 ? seed : Environment.TickCount & 0x7FFFFFFF);
-            Match = new Match(matchRules.ToRules(), _battle.Rules, infos, matchSeed, new DoNothingAi());
+            Difficulty = (AiDifficulty)Mathf.Clamp(PlayerPrefs.GetInt(DifficultyKey, (int)AiDifficulty.Normal), 0, 2);
+            _matchups = matchupTable != null ? matchupTable.ToTable() : null;
+            Match = new Match(matchRules.ToRules(), _battle.Rules, infos, matchSeed, new RuleBasedAi(Difficulty, matchSeed, _matchups));
             CancelPlacement();
             _drops.Clear();
             Message = "";
@@ -87,6 +97,15 @@ namespace Halobellum.Presentation
         }
 
         // ------------------------------------------------------------------ draft
+
+        /// <summary>Sets the AI's difficulty for this match (only before a draft card is chosen).</summary>
+        public void SetDifficulty(AiDifficulty difficulty)
+        {
+            if (Match == null || Match.Phase != MatchPhase.Draft) return;
+            if (!Match.SetEnemyAi(new RuleBasedAi(difficulty, Match.Seed, _matchups))) return;
+            Difficulty = difficulty;
+            PlayerPrefs.SetInt(DifficultyKey, (int)difficulty);
+        }
 
         public ActionResult ChooseDraft(int cardIndex)
         {

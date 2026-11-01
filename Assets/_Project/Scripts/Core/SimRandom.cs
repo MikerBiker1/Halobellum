@@ -41,6 +41,13 @@ namespace Halobellum.Core
             return min + (max - min) * NextFloat();
         }
 
+        /// <summary>A whole number from min (inclusive) to max (exclusive). Returns min if max is not above min.</summary>
+        public int RangeInt(int min, int max)
+        {
+            if (max <= min) return min;
+            return min + (int)(NextULong() % (ulong)(max - min));
+        }
+
         /// <summary>True with the given probability (0 = never, 1 = always).</summary>
         public bool Chance(float probability)
         {

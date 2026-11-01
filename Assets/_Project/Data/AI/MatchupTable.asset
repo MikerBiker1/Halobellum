@@ -1,0 +1,1672 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18f573ec65622716199bfdc1300f78c5, type: 3}
+  m_Name: MatchupTable
+  m_EditorClassIdentifier: 
+  source: 'Counter web, Unity run 2026-10-31, about 1800 credits per army, 10 battles per pair'
+  entries:
+  - attacker: Archer Missile Pod
+    defender: Elephant
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Archer Missile Pod
+    defender: Gauss Warthog
+    winRate: 0.4
+  - attacker: Archer Missile Pod
+    defender: Hornet
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Mantis
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Marine
+    winRate: 1
+  - attacker: Archer Missile Pod
+    defender: Pelican
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Scorpion
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Spartan
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Warthog
+    winRate: 0.3
+  - attacker: Archer Missile Pod
+    defender: Wolverine
+    winRate: 1
+  - attacker: Archer Missile Pod
+    defender: Banshee
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Elite
+    winRate: 0.1
+  - attacker: Archer Missile Pod
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Archer Missile Pod
+    defender: Ghost
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Grunt
+    winRate: 1
+  - attacker: Archer Missile Pod
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: Archer Missile Pod
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Archer Missile Pod
+    defender: Scarab
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Vampire
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Wraith
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Zealot
+    winRate: 0
+  - attacker: Elephant
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Elephant
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Elephant
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Elephant
+    defender: Hornet
+    winRate: 1
+  - attacker: Elephant
+    defender: Mantis
+    winRate: 1
+  - attacker: Elephant
+    defender: Marine
+    winRate: 1
+  - attacker: Elephant
+    defender: Pelican
+    winRate: 1
+  - attacker: Elephant
+    defender: Scorpion
+    winRate: 1
+  - attacker: Elephant
+    defender: Spartan
+    winRate: 0
+  - attacker: Elephant
+    defender: Warthog
+    winRate: 1
+  - attacker: Elephant
+    defender: Wolverine
+    winRate: 1
+  - attacker: Elephant
+    defender: Banshee
+    winRate: 1
+  - attacker: Elephant
+    defender: Elite
+    winRate: 1
+  - attacker: Elephant
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Elephant
+    defender: Ghost
+    winRate: 1
+  - attacker: Elephant
+    defender: Grunt
+    winRate: 1
+  - attacker: Elephant
+    defender: Hunter Pair
+    winRate: 1
+  - attacker: Elephant
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: Elephant
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Elephant
+    defender: Scarab
+    winRate: 0
+  - attacker: Elephant
+    defender: Vampire
+    winRate: 1
+  - attacker: Elephant
+    defender: Wraith
+    winRate: 1
+  - attacker: Elephant
+    defender: Zealot
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Archer Missile Pod
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Elephant
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Flamethrower Trooper
+    defender: Hornet
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Mantis
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Marine
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Pelican
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Scorpion
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Spartan
+    winRate: 1
+  - attacker: Flamethrower Trooper
+    defender: Warthog
+    winRate: 1
+  - attacker: Flamethrower Trooper
+    defender: Wolverine
+    winRate: 0.4
+  - attacker: Flamethrower Trooper
+    defender: Banshee
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Elite
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Ghost
+    winRate: 1
+  - attacker: Flamethrower Trooper
+    defender: Grunt
+    winRate: 1
+  - attacker: Flamethrower Trooper
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Flamethrower Trooper
+    defender: Scarab
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Vampire
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Wraith
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Zealot
+    winRate: 1
+  - attacker: Gauss Warthog
+    defender: Archer Missile Pod
+    winRate: 0.6
+  - attacker: Gauss Warthog
+    defender: Elephant
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Flamethrower Trooper
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Hornet
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Mantis
+    winRate: 1
+  - attacker: Gauss Warthog
+    defender: Marine
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Pelican
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Scorpion
+    winRate: 1
+  - attacker: Gauss Warthog
+    defender: Spartan
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Warthog
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Wolverine
+    winRate: 1
+  - attacker: Gauss Warthog
+    defender: Banshee
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Elite
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Ghost
+    winRate: 1
+  - attacker: Gauss Warthog
+    defender: Grunt
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: 'Jackal (Shield)'
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Scarab
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Vampire
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Wraith
+    winRate: 0.9
+  - attacker: Gauss Warthog
+    defender: Zealot
+    winRate: 0
+  - attacker: Hornet
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Hornet
+    defender: Elephant
+    winRate: 0
+  - attacker: Hornet
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Hornet
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Hornet
+    defender: Mantis
+    winRate: 1
+  - attacker: Hornet
+    defender: Marine
+    winRate: 0
+  - attacker: Hornet
+    defender: Pelican
+    winRate: 1
+  - attacker: Hornet
+    defender: Scorpion
+    winRate: 1
+  - attacker: Hornet
+    defender: Spartan
+    winRate: 0
+  - attacker: Hornet
+    defender: Warthog
+    winRate: 0
+  - attacker: Hornet
+    defender: Wolverine
+    winRate: 0
+  - attacker: Hornet
+    defender: Banshee
+    winRate: 0
+  - attacker: Hornet
+    defender: Elite
+    winRate: 0
+  - attacker: Hornet
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Hornet
+    defender: Ghost
+    winRate: 0
+  - attacker: Hornet
+    defender: Grunt
+    winRate: 0
+  - attacker: Hornet
+    defender: Hunter Pair
+    winRate: 1
+  - attacker: Hornet
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Hornet
+    defender: 'Jackal (Shield)'
+    winRate: 0
+  - attacker: Hornet
+    defender: Scarab
+    winRate: 0
+  - attacker: Hornet
+    defender: Vampire
+    winRate: 0
+  - attacker: Hornet
+    defender: Wraith
+    winRate: 1
+  - attacker: Hornet
+    defender: Zealot
+    winRate: 1
+  - attacker: Mantis
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Mantis
+    defender: Elephant
+    winRate: 0
+  - attacker: Mantis
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Mantis
+    defender: Gauss Warthog
+    winRate: 0
+  - attacker: Mantis
+    defender: Hornet
+    winRate: 0
+  - attacker: Mantis
+    defender: Marine
+    winRate: 1
+  - attacker: Mantis
+    defender: Pelican
+    winRate: 1
+  - attacker: Mantis
+    defender: Scorpion
+    winRate: 0
+  - attacker: Mantis
+    defender: Spartan
+    winRate: 0
+  - attacker: Mantis
+    defender: Warthog
+    winRate: 1
+  - attacker: Mantis
+    defender: Wolverine
+    winRate: 1
+  - attacker: Mantis
+    defender: Banshee
+    winRate: 0
+  - attacker: Mantis
+    defender: Elite
+    winRate: 0
+  - attacker: Mantis
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Mantis
+    defender: Ghost
+    winRate: 1
+  - attacker: Mantis
+    defender: Grunt
+    winRate: 1
+  - attacker: Mantis
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Mantis
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: Mantis
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Mantis
+    defender: Scarab
+    winRate: 0
+  - attacker: Mantis
+    defender: Vampire
+    winRate: 1
+  - attacker: Mantis
+    defender: Wraith
+    winRate: 1
+  - attacker: Mantis
+    defender: Zealot
+    winRate: 0
+  - attacker: Marine
+    defender: Archer Missile Pod
+    winRate: 0
+  - attacker: Marine
+    defender: Elephant
+    winRate: 0
+  - attacker: Marine
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Marine
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Marine
+    defender: Hornet
+    winRate: 1
+  - attacker: Marine
+    defender: Mantis
+    winRate: 0
+  - attacker: Marine
+    defender: Pelican
+    winRate: 1
+  - attacker: Marine
+    defender: Scorpion
+    winRate: 0
+  - attacker: Marine
+    defender: Spartan
+    winRate: 1
+  - attacker: Marine
+    defender: Warthog
+    winRate: 1
+  - attacker: Marine
+    defender: Wolverine
+    winRate: 1
+  - attacker: Marine
+    defender: Banshee
+    winRate: 1
+  - attacker: Marine
+    defender: Elite
+    winRate: 1
+  - attacker: Marine
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: Marine
+    defender: Ghost
+    winRate: 1
+  - attacker: Marine
+    defender: Grunt
+    winRate: 1
+  - attacker: Marine
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Marine
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: Marine
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Marine
+    defender: Scarab
+    winRate: 0
+  - attacker: Marine
+    defender: Vampire
+    winRate: 1
+  - attacker: Marine
+    defender: Wraith
+    winRate: 0
+  - attacker: Marine
+    defender: Zealot
+    winRate: 1
+  - attacker: Pelican
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Pelican
+    defender: Elephant
+    winRate: 0
+  - attacker: Pelican
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Pelican
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Pelican
+    defender: Hornet
+    winRate: 0
+  - attacker: Pelican
+    defender: Mantis
+    winRate: 0
+  - attacker: Pelican
+    defender: Marine
+    winRate: 0
+  - attacker: Pelican
+    defender: Scorpion
+    winRate: 0
+  - attacker: Pelican
+    defender: Spartan
+    winRate: 0
+  - attacker: Pelican
+    defender: Warthog
+    winRate: 0
+  - attacker: Pelican
+    defender: Wolverine
+    winRate: 0
+  - attacker: Pelican
+    defender: Banshee
+    winRate: 0
+  - attacker: Pelican
+    defender: Elite
+    winRate: 0
+  - attacker: Pelican
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Pelican
+    defender: Ghost
+    winRate: 0
+  - attacker: Pelican
+    defender: Grunt
+    winRate: 0
+  - attacker: Pelican
+    defender: Hunter Pair
+    winRate: 0.2
+  - attacker: Pelican
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Pelican
+    defender: 'Jackal (Shield)'
+    winRate: 0
+  - attacker: Pelican
+    defender: Scarab
+    winRate: 0
+  - attacker: Pelican
+    defender: Vampire
+    winRate: 0
+  - attacker: Pelican
+    defender: Wraith
+    winRate: 1
+  - attacker: Pelican
+    defender: Zealot
+    winRate: 1
+  - attacker: Scorpion
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Scorpion
+    defender: Elephant
+    winRate: 0
+  - attacker: Scorpion
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Scorpion
+    defender: Gauss Warthog
+    winRate: 0
+  - attacker: Scorpion
+    defender: Hornet
+    winRate: 0
+  - attacker: Scorpion
+    defender: Mantis
+    winRate: 1
+  - attacker: Scorpion
+    defender: Marine
+    winRate: 1
+  - attacker: Scorpion
+    defender: Pelican
+    winRate: 1
+  - attacker: Scorpion
+    defender: Spartan
+    winRate: 0
+  - attacker: Scorpion
+    defender: Warthog
+    winRate: 1
+  - attacker: Scorpion
+    defender: Wolverine
+    winRate: 1
+  - attacker: Scorpion
+    defender: Banshee
+    winRate: 0
+  - attacker: Scorpion
+    defender: Elite
+    winRate: 1
+  - attacker: Scorpion
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Scorpion
+    defender: Ghost
+    winRate: 1
+  - attacker: Scorpion
+    defender: Grunt
+    winRate: 1
+  - attacker: Scorpion
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Scorpion
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: Scorpion
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Scorpion
+    defender: Scarab
+    winRate: 0
+  - attacker: Scorpion
+    defender: Vampire
+    winRate: 1
+  - attacker: Scorpion
+    defender: Wraith
+    winRate: 1
+  - attacker: Scorpion
+    defender: Zealot
+    winRate: 0
+  - attacker: Spartan
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Spartan
+    defender: Elephant
+    winRate: 1
+  - attacker: Spartan
+    defender: Flamethrower Trooper
+    winRate: 0
+  - attacker: Spartan
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Spartan
+    defender: Hornet
+    winRate: 1
+  - attacker: Spartan
+    defender: Mantis
+    winRate: 1
+  - attacker: Spartan
+    defender: Marine
+    winRate: 0
+  - attacker: Spartan
+    defender: Pelican
+    winRate: 1
+  - attacker: Spartan
+    defender: Scorpion
+    winRate: 1
+  - attacker: Spartan
+    defender: Warthog
+    winRate: 1
+  - attacker: Spartan
+    defender: Wolverine
+    winRate: 1
+  - attacker: Spartan
+    defender: Banshee
+    winRate: 1
+  - attacker: Spartan
+    defender: Elite
+    winRate: 0
+  - attacker: Spartan
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: Spartan
+    defender: Ghost
+    winRate: 1
+  - attacker: Spartan
+    defender: Grunt
+    winRate: 0
+  - attacker: Spartan
+    defender: Hunter Pair
+    winRate: 1
+  - attacker: Spartan
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Spartan
+    defender: 'Jackal (Shield)'
+    winRate: 0
+  - attacker: Spartan
+    defender: Scarab
+    winRate: 1
+  - attacker: Spartan
+    defender: Vampire
+    winRate: 1
+  - attacker: Spartan
+    defender: Wraith
+    winRate: 1
+  - attacker: Spartan
+    defender: Zealot
+    winRate: 0
+  - attacker: Warthog
+    defender: Archer Missile Pod
+    winRate: 0.7
+  - attacker: Warthog
+    defender: Elephant
+    winRate: 0
+  - attacker: Warthog
+    defender: Flamethrower Trooper
+    winRate: 0
+  - attacker: Warthog
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Warthog
+    defender: Hornet
+    winRate: 1
+  - attacker: Warthog
+    defender: Mantis
+    winRate: 0
+  - attacker: Warthog
+    defender: Marine
+    winRate: 0
+  - attacker: Warthog
+    defender: Pelican
+    winRate: 1
+  - attacker: Warthog
+    defender: Scorpion
+    winRate: 0
+  - attacker: Warthog
+    defender: Spartan
+    winRate: 0
+  - attacker: Warthog
+    defender: Wolverine
+    winRate: 1
+  - attacker: Warthog
+    defender: Banshee
+    winRate: 1
+  - attacker: Warthog
+    defender: Elite
+    winRate: 0
+  - attacker: Warthog
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: Warthog
+    defender: Ghost
+    winRate: 0
+  - attacker: Warthog
+    defender: Grunt
+    winRate: 0
+  - attacker: Warthog
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Warthog
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Warthog
+    defender: 'Jackal (Shield)'
+    winRate: 0
+  - attacker: Warthog
+    defender: Scarab
+    winRate: 0
+  - attacker: Warthog
+    defender: Vampire
+    winRate: 1
+  - attacker: Warthog
+    defender: Wraith
+    winRate: 0
+  - attacker: Warthog
+    defender: Zealot
+    winRate: 0
+  - attacker: Wolverine
+    defender: Archer Missile Pod
+    winRate: 0
+  - attacker: Wolverine
+    defender: Elephant
+    winRate: 0
+  - attacker: Wolverine
+    defender: Flamethrower Trooper
+    winRate: 0.6
+  - attacker: Wolverine
+    defender: Gauss Warthog
+    winRate: 0
+  - attacker: Wolverine
+    defender: Hornet
+    winRate: 1
+  - attacker: Wolverine
+    defender: Mantis
+    winRate: 0
+  - attacker: Wolverine
+    defender: Marine
+    winRate: 0
+  - attacker: Wolverine
+    defender: Pelican
+    winRate: 1
+  - attacker: Wolverine
+    defender: Scorpion
+    winRate: 0
+  - attacker: Wolverine
+    defender: Spartan
+    winRate: 0
+  - attacker: Wolverine
+    defender: Warthog
+    winRate: 0
+  - attacker: Wolverine
+    defender: Banshee
+    winRate: 1
+  - attacker: Wolverine
+    defender: Elite
+    winRate: 0
+  - attacker: Wolverine
+    defender: Fuel Rod Grunt
+    winRate: 0.7
+  - attacker: Wolverine
+    defender: Ghost
+    winRate: 0
+  - attacker: Wolverine
+    defender: Grunt
+    winRate: 0
+  - attacker: Wolverine
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Wolverine
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Wolverine
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Wolverine
+    defender: Scarab
+    winRate: 0
+  - attacker: Wolverine
+    defender: Vampire
+    winRate: 1
+  - attacker: Wolverine
+    defender: Wraith
+    winRate: 0
+  - attacker: Wolverine
+    defender: Zealot
+    winRate: 0
+  - attacker: Banshee
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Banshee
+    defender: Elephant
+    winRate: 0
+  - attacker: Banshee
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Banshee
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Banshee
+    defender: Hornet
+    winRate: 1
+  - attacker: Banshee
+    defender: Mantis
+    winRate: 1
+  - attacker: Banshee
+    defender: Marine
+    winRate: 0
+  - attacker: Banshee
+    defender: Pelican
+    winRate: 1
+  - attacker: Banshee
+    defender: Scorpion
+    winRate: 1
+  - attacker: Banshee
+    defender: Spartan
+    winRate: 0
+  - attacker: Banshee
+    defender: Warthog
+    winRate: 0
+  - attacker: Banshee
+    defender: Wolverine
+    winRate: 0
+  - attacker: Banshee
+    defender: Elite
+    winRate: 0
+  - attacker: Banshee
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Banshee
+    defender: Ghost
+    winRate: 0
+  - attacker: Banshee
+    defender: Grunt
+    winRate: 0
+  - attacker: Banshee
+    defender: Hunter Pair
+    winRate: 1
+  - attacker: Banshee
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Banshee
+    defender: 'Jackal (Shield)'
+    winRate: 0
+  - attacker: Banshee
+    defender: Scarab
+    winRate: 0
+  - attacker: Banshee
+    defender: Vampire
+    winRate: 0
+  - attacker: Banshee
+    defender: Wraith
+    winRate: 1
+  - attacker: Banshee
+    defender: Zealot
+    winRate: 1
+  - attacker: Elite
+    defender: Archer Missile Pod
+    winRate: 0.9
+  - attacker: Elite
+    defender: Elephant
+    winRate: 0
+  - attacker: Elite
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Elite
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Elite
+    defender: Hornet
+    winRate: 1
+  - attacker: Elite
+    defender: Mantis
+    winRate: 1
+  - attacker: Elite
+    defender: Marine
+    winRate: 0
+  - attacker: Elite
+    defender: Pelican
+    winRate: 1
+  - attacker: Elite
+    defender: Scorpion
+    winRate: 0
+  - attacker: Elite
+    defender: Spartan
+    winRate: 1
+  - attacker: Elite
+    defender: Warthog
+    winRate: 1
+  - attacker: Elite
+    defender: Wolverine
+    winRate: 1
+  - attacker: Elite
+    defender: Banshee
+    winRate: 1
+  - attacker: Elite
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: Elite
+    defender: Ghost
+    winRate: 1
+  - attacker: Elite
+    defender: Grunt
+    winRate: 0
+  - attacker: Elite
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Elite
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Elite
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Elite
+    defender: Scarab
+    winRate: 0
+  - attacker: Elite
+    defender: Vampire
+    winRate: 1
+  - attacker: Elite
+    defender: Wraith
+    winRate: 0
+  - attacker: Elite
+    defender: Zealot
+    winRate: 1
+  - attacker: Fuel Rod Grunt
+    defender: Archer Missile Pod
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Elephant
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Fuel Rod Grunt
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Fuel Rod Grunt
+    defender: Hornet
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Mantis
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Marine
+    winRate: 1
+  - attacker: Fuel Rod Grunt
+    defender: Pelican
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Scorpion
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Spartan
+    winRate: 1
+  - attacker: Fuel Rod Grunt
+    defender: Warthog
+    winRate: 1
+  - attacker: Fuel Rod Grunt
+    defender: Wolverine
+    winRate: 0.3
+  - attacker: Fuel Rod Grunt
+    defender: Banshee
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Elite
+    winRate: 1
+  - attacker: Fuel Rod Grunt
+    defender: Ghost
+    winRate: 1
+  - attacker: Fuel Rod Grunt
+    defender: Grunt
+    winRate: 1
+  - attacker: Fuel Rod Grunt
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: Fuel Rod Grunt
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Fuel Rod Grunt
+    defender: Scarab
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Vampire
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Wraith
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Zealot
+    winRate: 1
+  - attacker: Ghost
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Ghost
+    defender: Elephant
+    winRate: 0
+  - attacker: Ghost
+    defender: Flamethrower Trooper
+    winRate: 0
+  - attacker: Ghost
+    defender: Gauss Warthog
+    winRate: 0
+  - attacker: Ghost
+    defender: Hornet
+    winRate: 1
+  - attacker: Ghost
+    defender: Mantis
+    winRate: 0
+  - attacker: Ghost
+    defender: Marine
+    winRate: 0
+  - attacker: Ghost
+    defender: Pelican
+    winRate: 1
+  - attacker: Ghost
+    defender: Scorpion
+    winRate: 0
+  - attacker: Ghost
+    defender: Spartan
+    winRate: 0
+  - attacker: Ghost
+    defender: Warthog
+    winRate: 1
+  - attacker: Ghost
+    defender: Wolverine
+    winRate: 1
+  - attacker: Ghost
+    defender: Banshee
+    winRate: 1
+  - attacker: Ghost
+    defender: Elite
+    winRate: 0
+  - attacker: Ghost
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: Ghost
+    defender: Grunt
+    winRate: 0
+  - attacker: Ghost
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Ghost
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Ghost
+    defender: 'Jackal (Shield)'
+    winRate: 0
+  - attacker: Ghost
+    defender: Scarab
+    winRate: 0
+  - attacker: Ghost
+    defender: Vampire
+    winRate: 1
+  - attacker: Ghost
+    defender: Wraith
+    winRate: 0
+  - attacker: Ghost
+    defender: Zealot
+    winRate: 0
+  - attacker: Grunt
+    defender: Archer Missile Pod
+    winRate: 0
+  - attacker: Grunt
+    defender: Elephant
+    winRate: 0
+  - attacker: Grunt
+    defender: Flamethrower Trooper
+    winRate: 0
+  - attacker: Grunt
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Grunt
+    defender: Hornet
+    winRate: 1
+  - attacker: Grunt
+    defender: Mantis
+    winRate: 0
+  - attacker: Grunt
+    defender: Marine
+    winRate: 0
+  - attacker: Grunt
+    defender: Pelican
+    winRate: 1
+  - attacker: Grunt
+    defender: Scorpion
+    winRate: 0
+  - attacker: Grunt
+    defender: Spartan
+    winRate: 1
+  - attacker: Grunt
+    defender: Warthog
+    winRate: 1
+  - attacker: Grunt
+    defender: Wolverine
+    winRate: 1
+  - attacker: Grunt
+    defender: Banshee
+    winRate: 1
+  - attacker: Grunt
+    defender: Elite
+    winRate: 1
+  - attacker: Grunt
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: Grunt
+    defender: Ghost
+    winRate: 1
+  - attacker: Grunt
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Grunt
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Grunt
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Grunt
+    defender: Scarab
+    winRate: 0
+  - attacker: Grunt
+    defender: Vampire
+    winRate: 1
+  - attacker: Grunt
+    defender: Wraith
+    winRate: 0
+  - attacker: Grunt
+    defender: Zealot
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Elephant
+    winRate: 0
+  - attacker: Hunter Pair
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Hornet
+    winRate: 0
+  - attacker: Hunter Pair
+    defender: Mantis
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Marine
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Pelican
+    winRate: 0
+  - attacker: Hunter Pair
+    defender: Scorpion
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Spartan
+    winRate: 0
+  - attacker: Hunter Pair
+    defender: Warthog
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Wolverine
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Banshee
+    winRate: 0
+  - attacker: Hunter Pair
+    defender: Elite
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Ghost
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Grunt
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Scarab
+    winRate: 0
+  - attacker: Hunter Pair
+    defender: Vampire
+    winRate: 0
+  - attacker: Hunter Pair
+    defender: Wraith
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Zealot
+    winRate: 0
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Archer Missile Pod
+    winRate: 0
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Elephant
+    winRate: 0
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Hornet
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Mantis
+    winRate: 0
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Marine
+    winRate: 0
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Pelican
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Scorpion
+    winRate: 0
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Spartan
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Warthog
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Wolverine
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Banshee
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Elite
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Ghost
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Grunt
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Scarab
+    winRate: 0
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Vampire
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Wraith
+    winRate: 0
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Zealot
+    winRate: 1
+  - attacker: 'Jackal (Shield)'
+    defender: Archer Missile Pod
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Elephant
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Flamethrower Trooper
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: 'Jackal (Shield)'
+    defender: Hornet
+    winRate: 1
+  - attacker: 'Jackal (Shield)'
+    defender: Mantis
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Marine
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Pelican
+    winRate: 1
+  - attacker: 'Jackal (Shield)'
+    defender: Scorpion
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Spartan
+    winRate: 1
+  - attacker: 'Jackal (Shield)'
+    defender: Warthog
+    winRate: 1
+  - attacker: 'Jackal (Shield)'
+    defender: Wolverine
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Banshee
+    winRate: 1
+  - attacker: 'Jackal (Shield)'
+    defender: Elite
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Ghost
+    winRate: 1
+  - attacker: 'Jackal (Shield)'
+    defender: Grunt
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Scarab
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Vampire
+    winRate: 1
+  - attacker: 'Jackal (Shield)'
+    defender: Wraith
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Zealot
+    winRate: 1
+  - attacker: Scarab
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Scarab
+    defender: Elephant
+    winRate: 1
+  - attacker: Scarab
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Scarab
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Scarab
+    defender: Hornet
+    winRate: 1
+  - attacker: Scarab
+    defender: Mantis
+    winRate: 1
+  - attacker: Scarab
+    defender: Marine
+    winRate: 1
+  - attacker: Scarab
+    defender: Pelican
+    winRate: 1
+  - attacker: Scarab
+    defender: Scorpion
+    winRate: 1
+  - attacker: Scarab
+    defender: Spartan
+    winRate: 0
+  - attacker: Scarab
+    defender: Warthog
+    winRate: 1
+  - attacker: Scarab
+    defender: Wolverine
+    winRate: 1
+  - attacker: Scarab
+    defender: Banshee
+    winRate: 1
+  - attacker: Scarab
+    defender: Elite
+    winRate: 1
+  - attacker: Scarab
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Scarab
+    defender: Ghost
+    winRate: 1
+  - attacker: Scarab
+    defender: Grunt
+    winRate: 1
+  - attacker: Scarab
+    defender: Hunter Pair
+    winRate: 1
+  - attacker: Scarab
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: Scarab
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Scarab
+    defender: Vampire
+    winRate: 1
+  - attacker: Scarab
+    defender: Wraith
+    winRate: 1
+  - attacker: Scarab
+    defender: Zealot
+    winRate: 0.5
+  - attacker: Vampire
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Vampire
+    defender: Elephant
+    winRate: 0
+  - attacker: Vampire
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Vampire
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Vampire
+    defender: Hornet
+    winRate: 1
+  - attacker: Vampire
+    defender: Mantis
+    winRate: 0
+  - attacker: Vampire
+    defender: Marine
+    winRate: 0
+  - attacker: Vampire
+    defender: Pelican
+    winRate: 1
+  - attacker: Vampire
+    defender: Scorpion
+    winRate: 0
+  - attacker: Vampire
+    defender: Spartan
+    winRate: 0
+  - attacker: Vampire
+    defender: Warthog
+    winRate: 0
+  - attacker: Vampire
+    defender: Wolverine
+    winRate: 0
+  - attacker: Vampire
+    defender: Banshee
+    winRate: 1
+  - attacker: Vampire
+    defender: Elite
+    winRate: 0
+  - attacker: Vampire
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Vampire
+    defender: Ghost
+    winRate: 0
+  - attacker: Vampire
+    defender: Grunt
+    winRate: 0
+  - attacker: Vampire
+    defender: Hunter Pair
+    winRate: 0.3
+  - attacker: Vampire
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Vampire
+    defender: 'Jackal (Shield)'
+    winRate: 0
+  - attacker: Vampire
+    defender: Scarab
+    winRate: 0
+  - attacker: Vampire
+    defender: Wraith
+    winRate: 1
+  - attacker: Vampire
+    defender: Zealot
+    winRate: 1
+  - attacker: Wraith
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Wraith
+    defender: Elephant
+    winRate: 0
+  - attacker: Wraith
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Wraith
+    defender: Gauss Warthog
+    winRate: 0.1
+  - attacker: Wraith
+    defender: Hornet
+    winRate: 0
+  - attacker: Wraith
+    defender: Mantis
+    winRate: 0
+  - attacker: Wraith
+    defender: Marine
+    winRate: 1
+  - attacker: Wraith
+    defender: Pelican
+    winRate: 0
+  - attacker: Wraith
+    defender: Scorpion
+    winRate: 0
+  - attacker: Wraith
+    defender: Spartan
+    winRate: 0
+  - attacker: Wraith
+    defender: Warthog
+    winRate: 1
+  - attacker: Wraith
+    defender: Wolverine
+    winRate: 1
+  - attacker: Wraith
+    defender: Banshee
+    winRate: 0
+  - attacker: Wraith
+    defender: Elite
+    winRate: 1
+  - attacker: Wraith
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Wraith
+    defender: Ghost
+    winRate: 1
+  - attacker: Wraith
+    defender: Grunt
+    winRate: 1
+  - attacker: Wraith
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Wraith
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: Wraith
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Wraith
+    defender: Scarab
+    winRate: 0
+  - attacker: Wraith
+    defender: Vampire
+    winRate: 0
+  - attacker: Wraith
+    defender: Zealot
+    winRate: 0
+  - attacker: Zealot
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Zealot
+    defender: Elephant
+    winRate: 1
+  - attacker: Zealot
+    defender: Flamethrower Trooper
+    winRate: 0
+  - attacker: Zealot
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Zealot
+    defender: Hornet
+    winRate: 0
+  - attacker: Zealot
+    defender: Mantis
+    winRate: 1
+  - attacker: Zealot
+    defender: Marine
+    winRate: 0
+  - attacker: Zealot
+    defender: Pelican
+    winRate: 0
+  - attacker: Zealot
+    defender: Scorpion
+    winRate: 1
+  - attacker: Zealot
+    defender: Spartan
+    winRate: 1
+  - attacker: Zealot
+    defender: Warthog
+    winRate: 1
+  - attacker: Zealot
+    defender: Wolverine
+    winRate: 1
+  - attacker: Zealot
+    defender: Banshee
+    winRate: 0
+  - attacker: Zealot
+    defender: Elite
+    winRate: 0
+  - attacker: Zealot
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: Zealot
+    defender: Ghost
+    winRate: 1
+  - attacker: Zealot
+    defender: Grunt
+    winRate: 0
+  - attacker: Zealot
+    defender: Hunter Pair
+    winRate: 1
+  - attacker: Zealot
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Zealot
+    defender: 'Jackal (Shield)'
+    winRate: 0
+  - attacker: Zealot
+    defender: Scarab
+    winRate: 0.5
+  - attacker: Zealot
+    defender: Vampire
+    winRate: 0
+  - attacker: Zealot
+    defender: Wraith
+    winRate: 1

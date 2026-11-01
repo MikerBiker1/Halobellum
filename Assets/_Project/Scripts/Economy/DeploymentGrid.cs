@@ -97,15 +97,24 @@ namespace Halobellum.Economy
         public static bool FindFreeSpot(PlayerState player, UnitStats type, bool rotated90, CombatRules rules, out int column, out int row)
         {
             Footprint(type, rotated90, rules, out int width, out int depth);
-            int centreColumn = (rules.ArenaWidthSquares - width) / 2;
-            int centreRow = (rules.DeploymentDepthSquares - depth) / 2;
+            return FindFreeSpotNear(player, type, rotated90, rules, (rules.ArenaWidthSquares - width) / 2, (rules.DeploymentDepthSquares - depth) / 2, out column, out row);
+        }
+
+        /// <summary>
+        /// The free spot whose top-left square is closest to (targetColumn, targetRow), for example to
+        /// put tanks in front and artillery at the back. Same tie rules as FindFreeSpot.
+        /// </summary>
+        public static bool FindFreeSpotNear(PlayerState player, UnitStats type, bool rotated90, CombatRules rules,
+            int targetColumn, int targetRow, out int column, out int row)
+        {
+            Footprint(type, rotated90, rules, out int width, out int depth);
             int bestDistance = int.MaxValue;
             column = row = -1;
             for (int r = 0; r + depth <= rules.DeploymentDepthSquares; r++)
             {
                 for (int c = 0; c + width <= rules.ArenaWidthSquares; c++)
                 {
-                    int distance = (c - centreColumn) * (c - centreColumn) + (r - centreRow) * (r - centreRow);
+                    int distance = (c - targetColumn) * (c - targetColumn) + (r - targetRow) * (r - targetRow);
                     if (distance >= bestDistance || !CanPlace(player, type, c, r, rotated90, rules)) continue;
                     bestDistance = distance;
                     column = c;

@@ -6,7 +6,8 @@
 //   Menu: Halobellum > Headless Runner > Run Counter Web
 //     Runs every slice unit (Data/Units/UNSC and Covenant) against every other at equal cost and
 //     checks that each unit has a counter winning at least 90% (CounterWeb, decision D23). Report to the Console,
-//     win-rate matrix CSV to <project>/BalanceReports/.
+//     win-rate matrix CSV to <project>/BalanceReports/, and the measured win rates into
+//     Data/AI/MatchupTable.asset (used by the Hard AI).
 //   Menu: Halobellum > Headless Runner > Open Runner Window   (pick any two armies)
 //   Command line, with the Unity editor closed:
 //     Unity.exe -batchmode -nographics -projectPath <project> -logFile <log>
@@ -123,7 +124,33 @@ namespace Halobellum.EditorTools
             CounterWebReport result = CounterWeb.Run(LoadRules(), units, settings, progress);
             report = $"Slice rosters, about {budget} credits per army, {battles} battles per matchup.\n" + CounterWeb.FormatReport(result);
             csvPath = WriteCsv("counter_web", CounterWeb.MatrixCsv(result));
+            SaveMatchupTable(result, $"Counter web, {DateTime.Now:yyyy-MM-dd HH:mm}, about {budget} credits per army, {battles} battles per pair");
             return result;
+        }
+
+        /// <summary>Writes the measured win rates into Data/AI/MatchupTable.asset (creating it if needed) for the Hard AI.</summary>
+        public static void SaveMatchupTable(CounterWebReport result, string source)
+        {
+            var asset = AssetDatabase.LoadAssetAtPath<MatchupTableDefinition>(MatchupTableDefinition.DefaultAssetPath);
+            if (asset == null)
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(MatchupTableDefinition.DefaultAssetPath) ?? "Assets");
+                asset = ScriptableObject.CreateInstance<MatchupTableDefinition>();
+                AssetDatabase.CreateAsset(asset, MatchupTableDefinition.DefaultAssetPath);
+            }
+            asset.source = source;
+            asset.entries.Clear();
+            foreach (UnitStats attacker in result.Units)
+            {
+                foreach (UnitStats defender in result.Units)
+                {
+                    if (attacker == defender) continue;
+                    float rate = result.WinRate(attacker, defender);
+                    if (rate >= 0f) asset.entries.Add(new MatchupTableDefinition.Entry { attacker = attacker.Name, defender = defender.Name, winRate = rate });
+                }
+            }
+            EditorUtility.SetDirty(asset);
+            AssetDatabase.SaveAssets();
         }
 
         /// <summary>Every unit of the slice rosters, UNSC first, in file name order.</summary>
