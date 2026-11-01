@@ -95,11 +95,13 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 - [ ] **Items.** Take an item card. It appears in the **Inventory** (mid left). Click it: an empty hexagon appears over every squad without an item. Click a hexagon: the squad now shows the item, and the stats window lists it. Right-click cancels.
 - [ ] **Deployment Module.** Put one on a squad from an earlier round: Move and Turn work on it in every round.
 - [ ] **Intensive Training.** Take the card. Its icon is at the top left. Select a squad, click the icon, **Confirm**: the XP bar fills, and the icon shows its cooldown.
-- [ ] **Smoke and EMP.** Place a Smoke Bomb (**R** turns it) in front of the enemy. Place an EMP on shielded units. Both can catch your own units.
+- [ ] **Smoke and EMP.** Place a Smoke Bomb (**R** turns it) in front of the enemy; it stays for the whole round. Place an EMP on shielded units. Both can catch your own units.
 - [ ] **Friendly fire.** Drop a strike on your own squad: it takes the damage.
 - [ ] **ODSTs (UNSC).** 12 troopers land: SMGs on infantry, rockets on vehicles.
 - [ ] **Banshee Ambush (Covenant).** 2 Banshee squads drop in from above.
 - [ ] **From round 5 and 7.** The extra deployment slot from round 5; the HAVOK Nuke, Glassing Beam, powerful buffs and Super Supply from round 7. The nuke lands 6 seconds in, so watch your troops walk out of (or into) it.
 - [ ] **Shop.** Every unit shows its price, even before it's unlocked.
-- [ ] **Answer D33** in DECISIONS.md, especially Laser Sights (+20 m as written) and the prices and durations I chose (EMP 150 credits, smoke 20 s).
+- [x] **Answer D33** in DECISIONS.md.
+- [ ] **Sandbox items (D34).** In the Sandbox, the **Items** panel is at the top left. Click an item, then the hexagon over a squad of either side. Select the squad: the stats window lists the item and has **Remove**. Run a battle to compare.
+- [ ] **Two Intensive Trainings.** Take the card twice: two icons at the top left, each with its own cooldown.
 

@@ -2,12 +2,13 @@
 // Plays the real Sandbox scene (Milestone 4): every slice unit is offered, squads can be placed on
 // both sides (snapped to each side's grid, no overlap), moved, turned, removed, copied to the other
 // side; Run plays the battle with both armies and Reset brings back the same placement. The
-// placeholder test units are offered too (sandbox only).
+// placeholder test units are offered too (sandbox only). Every item can be put on squads (D34).
 // Depends on: Halobellum.Presentation (SandboxController, BattleController), Halobellum.Economy,
 //             Halobellum.Core, NUnit, Unity Test Framework.
 
 using System.Collections;
 using System.Linq;
+using Halobellum.Combat;
 using Halobellum.Core;
 using Halobellum.Economy;
 using Halobellum.Presentation;
@@ -169,6 +170,50 @@ namespace Halobellum.Tests
             Assert.AreEqual(placedB, _sandbox.ArmyB.Squads.Count);
             Assert.AreEqual(bodies, CountViews());
             Assert.IsFalse(_battle.IsPlaying);
+        }
+
+        [UnityTest]
+        public IEnumerator OffersEveryItem_OnceEach_NoSpells_AndTheyWorkOnBothSides()
+        {
+            yield return LoadSandbox();
+            Assert.AreEqual(8, _sandbox.Items.Count, "All 8 items, once each.");
+            Assert.AreEqual(8, _sandbox.Items.Select(i => i.Name).Distinct().Count());
+            Assert.IsTrue(_sandbox.Items.All(i => _sandbox.IconFor(i) != null), "With their icons.");
+
+            UnitStats marine = Unit("Marine");
+            _sandbox.AddSquad(Team.A, marine);
+            _sandbox.AddSquad(Team.B, marine);
+            yield return null;
+            PlacedSquad blue = _sandbox.ArmyA.Squads[0], red = _sandbox.ArmyB.Squads[0];
+            int costBefore = _sandbox.ArmyCost(Team.B);
+
+            ItemStats armor = _sandbox.Items.Single(i => i.Name == "Heavy Armor");
+            _sandbox.BeginPlacingItem(armor);
+            Assert.AreSame(armor, _sandbox.PlacingItem);
+            Assert.IsTrue(_sandbox.SquadOnScreen(red, out _), "Its hexagon can be drawn over the squad.");
+            Assert.IsTrue(_sandbox.PlaceItemOn(red).Ok);
+            Assert.AreSame(armor, red.Item);
+            Assert.IsNull(_sandbox.PlacingItem);
+            Assert.Greater(_sandbox.ArmyCost(Team.B), costBefore, "The item counts toward the army's value.");
+            yield return null;
+            SimSquad redSquad = _battle.Simulation.Squads[1];
+            Assert.AreEqual(marine.MaxHealth * 1.7f, redSquad.Members[0].Stats.MaxHealth, 1e-2f, "The whole squad gets it.");
+
+            _sandbox.BeginPlacingItem(armor);
+            Assert.IsFalse(_sandbox.PlaceItemOn(red).Ok, "One item per squad.");
+            Assert.IsTrue(_sandbox.PlaceItemOn(blue).Ok, "The same item can go on any number of squads.");
+
+            SquadProgressView view = _sandbox.DescribeProgress(redSquad.Id);
+            StringAssert.Contains("Heavy Armor", view.ItemText);
+            Assert.IsNotNull(view.OnRemoveItem);
+            view.OnRemoveItem();
+            Assert.IsNull(red.Item, "It can be taken off again.");
+
+            _sandbox.CopyToOtherSide(Team.A);
+            Assert.AreSame(armor, _sandbox.ArmyB.Squads[0].Item, "Copying a side copies its items.");
+            _sandbox.Run();
+            yield return null;
+            Assert.AreEqual(marine.MaxHealth * 1.7f, _battle.Simulation.Squads[1].Members[0].Stats.MaxHealth, 1e-2f, "They count in the battle.");
         }
     }
 }

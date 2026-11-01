@@ -108,7 +108,9 @@ namespace Halobellum.UI
             }
             if (!string.IsNullOrEmpty(p.ItemText))
             {
-                GUI.Label(new Rect(x, y, width, LineHeight * 2f), p.ItemText, _text);
+                bool removable = p.OnRemoveItem != null;
+                GUI.Label(new Rect(x, y, width - (removable ? 100f : 0f), LineHeight * 2f), p.ItemText, _text);
+                if (removable && GUI.Button(new Rect(x + width - 90f, y + 6f, 90f, 30f), "Remove")) p.OnRemoveItem();
                 y += LineHeight * 2f;
             }
             if (p.Techs.Count == 0) return;

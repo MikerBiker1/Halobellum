@@ -1,6 +1,6 @@
 # Daily report: 2026-11-01 (afternoon), M7: Cards
 
-This morning's report (D25 to D30) is in this file's Git history. You approved D30 and confirmed M4 to M6 by moving on to M7. **M7 is done**: all criteria pass, waiting for your confirmation and your answer to D33.
+This morning's report (D25 to D30) is in this file's Git history. You approved D30 and confirmed M4 to M6 by moving on to M7. **M7 is done**: all criteria pass, waiting for your confirmation.
 
 ## What M7 adds
 - **Card screen:** opens at the start of every round from round 2, before deployment. It offers spells in round 2, reinforcements in round 3, then keeps alternating.
@@ -34,21 +34,20 @@ This morning's report (D25 to D30) is in this file's Git history. You approved D
 - **Economy and buffs:** Supply Enhancement; from round 5 the extra deployment slot; from round 7 Super Supply and the 3 Advanced cards.
 - **Intensive Training:** an icon at the top left. Select a squad, click it, confirm.
 - **Shop:** every unit shows its price, even before it's unlocked.
-- **Choices to check:** D33 lists what I had to decide. The main ones are EMP at 150 credits, smoke lasting 20 s, ODST health lowered to 100, and Laser Sights at +20 m as you wrote it (very strong next to Advanced Targeting's +2 m for 400).
+- **Your answers to D33 (D34):** smoke lasts the whole round, Intensive Training can be taken twice (two icons, separate cooldowns), Laser Sights is +2 m, and the Sandbox has an **Items** panel with all 8 items (no spells).
 
 ## Decisions needing your approval
-- **D33:** the choices behind your additions (see DECISIONS.md). D31 and D32 are answered and updated.
-- **Still open from D32:** spells and items aren't in the Sandbox yet.
+None: D31 to D34 are answered. Spells stay out of the Sandbox, as you asked.
 
 ## Test results
-- **Unity:** EditMode **352 / 352**, PlayMode **21 / 21**. **.NET harness:** **318 / 318**.
+- **Unity:** EditMode **354 / 354**, PlayMode **22 / 22**. **.NET harness:** **320 / 320**.
 - **New tests:**
   - Spell effects in battle.
   - Card rules, including the Bible's pricing examples and the "every other round" recharge.
   - The spell data.
   - A scene test: a spell taken, placed (outline shown), cast and recharging, then a reinforcement card whose squads appear on the field.
   - AI-vs-AI matches with cards are played to the end.
-- **Built game:** 5 rounds of autoplay as UNSC and as Covenant with no errors. Screenshots are in `Docs/M7_*.png`.
+- **Built game:** 5 rounds of autoplay as UNSC and as Covenant, plus the Sandbox demo, with no errors. Screenshots are in `Docs/M7_*.png` and `Docs/D3*.png`.
 - **Not tested automatically:** placing a spell, clicking a hexagon or the training icon with the real mouse. The scene tests use the same functions the buttons call.
 - **Small note:** decimals follow your PC's language (for example "2,5 s"), as elsewhere in the HUD.
 

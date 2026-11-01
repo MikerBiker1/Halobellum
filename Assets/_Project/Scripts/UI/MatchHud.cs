@@ -150,7 +150,7 @@ namespace Halobellum.UI
             DrawSquadItemSlots();
             DrawShop(width, height);
             DrawInventory(DrawSpellBar());
-            DrawTrainingIcon();
+            DrawTrainingIcons();
             DrawSelectedSquadActions(width, height);
         }
 
@@ -196,7 +196,7 @@ namespace Halobellum.UI
         {
             float x = card.x + 14f, w = card.width - 28f, y = card.y + 12f;
             Texture2D icon = match.IconFor(stats);
-            if (icon != null) DrawHexIcon(new Rect(card.xMax - 56f, card.y + 8f, 44f, 44f), icon);
+            if (icon != null) ItemHud.DrawHexIcon(new Rect(card.xMax - 56f, card.y + 8f, 44f, 44f), icon);
             GUI.Label(new Rect(x, y, w - (icon != null ? 44f : 0f), 30f), stats.Name, _header);
             y += 32f;
             Color old = GUI.color;
@@ -254,94 +254,58 @@ namespace Halobellum.UI
 
         // ------------------------------------------------------------------ items and training (D33)
 
-        /// <summary>A hexagon with an icon on it; returns true if clicked when clickable.</summary>
-        private bool DrawHexIcon(Rect rect, Texture2D icon, bool clickable = false)
-        {
-            UiThemeDefinition theme = HudTheme.Current;
-            if (theme != null && theme.hexFilled != null) GUI.DrawTexture(rect, theme.hexFilled, ScaleMode.StretchToFill);
-            if (icon != null) GUI.DrawTexture(new Rect(rect.x + rect.width * 0.2f, rect.y + rect.height * 0.2f, rect.width * 0.6f, rect.height * 0.6f), icon, ScaleMode.ScaleToFit);
-            return clickable && GUI.Button(rect, GUIContent.none, GUIStyle.none);
-        }
-
         /// <summary>The Inventory: items waiting to be placed. Click one, then the hexagon over a squad.</summary>
         private void DrawInventory(float top)
         {
             List<ItemStats> items = match.Match.Player.Inventory;
             if (items.Count == 0) return;
-            const float size = 56f, gap = 6f;
-            int perRow = 5;
-            int rows = Mathf.CeilToInt(items.Count / (float)perRow);
-            var panel = new Rect(10f, top, 330f, 44f + rows * (size + gap) + 44f);
+            var panel = new Rect(10f, top, 330f, 44f + ItemHud.GridHeight(items.Count) + 44f);
             Panel(panel);
             GUI.Label(new Rect(panel.x + 12f, panel.y + 8f, panel.width - 24f, 28f), HudTheme.Title("Inventory"), _header);
-            string hovered = null;
-            for (int i = 0; i < items.Count; i++)
+            string hovered = ItemHud.DrawItemGrid(panel.x + 12f, panel.y + 40f, items, match.PlacingItem, match.IconFor, item =>
             {
-                ItemStats item = items[i];
-                var rect = new Rect(panel.x + 12f + (i % perRow) * (size + gap), panel.y + 40f + (i / perRow) * (size + gap), size, size);
-                bool selected = match.PlacingItem == item;
-                if (selected)
-                {
-                    Color old = GUI.color;
-                    GUI.color = HudTheme.Accent;
-                    GUI.DrawTexture(new Rect(rect.x - 2f, rect.y - 2f, rect.width + 4f, rect.height + 4f), HudTheme.Current != null && HudTheme.Current.hexEmpty != null ? HudTheme.Current.hexEmpty : Texture2D.whiteTexture, ScaleMode.StretchToFill);
-                    GUI.color = old;
-                }
-                if (DrawHexIcon(rect, match.IconFor(item), clickable: true))
-                {
-                    if (selected) match.CancelItemPlacement();
-                    else match.BeginPlacingItem(item);
-                }
-                if (rect.Contains(Event.current.mousePosition)) hovered = $"{item.Name}: {item.EffectsText()}";
-            }
-            string caption = hovered ?? (match.PlacingItem != null ? $"{match.PlacingItem.Name}: {match.PlacingItem.EffectsText()}" : "Click an item, then a squad.");
+                if (match.PlacingItem == item) match.CancelItemPlacement();
+                else match.BeginPlacingItem(item);
+            });
+            string caption = hovered ?? (match.PlacingItem != null ? ItemHud.Describe(match.PlacingItem) : "Click an item, then a squad.");
             GUI.Label(new Rect(panel.x + 12f, panel.yMax - 46f, panel.width - 24f, 42f), caption, _wrapDim);
         }
 
-        /// <summary>Over each of the player's squads: the item it carries, or an empty hexagon to click while an item is selected.</summary>
         private void DrawSquadItemSlots()
         {
-            ItemStats placing = match.PlacingItem;
-            foreach (PlacedSquad squad in match.Match.Player.Squads)
-            {
-                if (squad.Item == null && placing == null) continue;
-                if (!match.SquadOnScreen(squad, out Vector3 screen)) continue;
-                // Screen pixels (origin bottom-left) to HUD coordinates (origin top-left, scaled).
-                var centre = new Vector2(screen.x / _scale, (Screen.height - screen.y) / _scale);
-                const float size = 40f;
-                var rect = new Rect(centre.x - size * 0.5f, centre.y - size - 6f, size, size);
-                if (squad.Item != null)
-                {
-                    DrawHexIcon(rect, match.IconFor(squad.Item));
-                    continue;
-                }
-                UiHitAreas.Add(HudScale.ToScreen(rect, _scale));
-                UiThemeDefinition theme = HudTheme.Current;
-                if (theme != null && theme.hexEmpty != null) GUI.DrawTexture(rect, theme.hexEmpty, ScaleMode.StretchToFill);
-                if (GUI.Button(rect, GUIContent.none, GUIStyle.none)) match.PlaceItemOn(squad);
-            }
+            ItemHud.DrawSquadSlots(match.Match.Player.Squads, match.PlacingItem, _scale, match.SquadOnScreen, match.IconFor, squad => match.PlaceItemOn(squad));
         }
 
         private bool _confirmTraining;
 
-        /// <summary>Intensive Training, top left: select a squad, press the icon, confirm. Shows how long it still recharges.</summary>
-        private void DrawTrainingIcon()
+        /// <summary>Intensive Training, top left (one icon per copy): select a squad, press a ready icon, confirm. Each icon shows its own recharge.</summary>
+        private void DrawTrainingIcons()
         {
             Match m = match.Match;
-            CardStats training = m.Player.Training;
-            if (training == null) return;
-            var rect = new Rect(14f, 8f, 64f, 64f);
-            UiHitAreas.Add(HudScale.ToScreen(rect, _scale));
-            int roundsLeft = Mathf.Max(0, m.Player.TrainingReadyRound - m.Round);
-            Color old = GUI.color;
-            if (roundsLeft > 0) GUI.color = new Color(0.5f, 0.5f, 0.5f, 1f);
-            bool clicked = DrawHexIcon(rect, match.IconFor(training), clickable: true);
-            GUI.color = old;
-            if (roundsLeft > 0) GUI.Label(rect, roundsLeft.ToString(), _centered);
-            if (rect.Contains(Event.current.mousePosition))
-                GUI.Label(new Rect(rect.xMax + 6f, rect.y + 2f, 300f, 60f), roundsLeft > 0 ? $"{training.Name}: recharging, {roundsLeft} round(s)" : $"{training.Name}: select a squad, then click to fill its XP bar", _wrapDim);
+            List<OwnedTraining> copies = m.Player.Trainings;
+            if (copies.Count == 0) return;
+            const float size = 64f, gap = 6f;
+            float right = 14f;
+            bool clickedReady = false;
+            for (int i = 0; i < copies.Count; i++)
+            {
+                OwnedTraining copy = copies[i];
+                var rect = new Rect(14f + i * (size + gap), 8f, size, size);
+                right = rect.xMax;
+                UiHitAreas.Add(HudScale.ToScreen(rect, _scale));
+                int roundsLeft = copy.RoundsLeft(m.Round);
+                Color old = GUI.color;
+                if (roundsLeft > 0) GUI.color = new Color(0.5f, 0.5f, 0.5f, 1f);
+                bool clicked = ItemHud.DrawHexIcon(rect, match.IconFor(copy.Card), clickable: true);
+                GUI.color = old;
+                if (roundsLeft > 0) GUI.Label(rect, roundsLeft.ToString(), _centered);
+                else if (clicked) clickedReady = true;
+                if (rect.Contains(Event.current.mousePosition))
+                    GUI.Label(new Rect(14f + copies.Count * (size + gap) + 2f, 10f, 300f, 60f),
+                        roundsLeft > 0 ? $"{copy.Card.Name}: recharging, {roundsLeft} round(s)" : $"{copy.Card.Name}: select a squad, then click to fill its XP bar", _wrapDim);
+            }
 
-            if (clicked && roundsLeft == 0)
+            if (clickedReady)
             {
                 _confirmTraining = match.SelectedPlacedSquad != null;
                 if (!_confirmTraining) match.UseTraining(null); // Shows "Select a squad first".
@@ -352,7 +316,7 @@ namespace Halobellum.UI
                 _confirmTraining = false;
                 return;
             }
-            var panel = new Rect(rect.xMax + 8f, rect.y, 300f, 92f);
+            var panel = new Rect(right + 8f, 8f, 300f, 92f);
             Panel(panel);
             GUI.Label(new Rect(panel.x + 12f, panel.y + 8f, panel.width - 24f, 40f), $"Fill the XP bar of {squad.Type.Name}?", _wrap);
             if (GUI.Button(new Rect(panel.x + 12f, panel.yMax - 42f, 130f, 34f), "Confirm", _button))

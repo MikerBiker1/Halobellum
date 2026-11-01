@@ -59,25 +59,42 @@ namespace Halobellum.Presentation
                     _wait = 0.5f;
                     break;
                 case 1:
+                    // An item selected (hexagons over the squads) and one already on a squad.
+                    if (_sandbox.Items.Count > 1)
+                    {
+                        _sandbox.BeginPlacingItem(_sandbox.Items[0]);
+                        _sandbox.PlaceItemOn(_sandbox.ArmyA.Squads[0]);
+                        _sandbox.BeginPlacingItem(_sandbox.Items[1]);
+                    }
+                    _step++;
+                    _wait = 0.4f;
+                    break;
+                case 2:
+                    Shot("0_items");
+                    _step++;
+                    _wait = 0.3f;
+                    break;
+                case 3:
+                    _sandbox.CancelPlacement();
                     Shot("1_placement");
                     _step++;
                     _wait = 0.3f;
                     break;
-                case 2:
+                case 4:
                     _battle.Speed = 4f;
                     _sandbox.Run();
                     _step++;
                     break;
-                case 3:
+                case 5:
                     if (_battle.Simulation.ElapsedSeconds >= 3f) { Shot("2_battle_3s"); _step++; }
                     break;
-                case 4:
+                case 6:
                     if (_battle.Simulation.ElapsedSeconds >= 12f || _battle.Simulation.IsFinished) { Shot("3_battle_12s"); _step++; }
                     break;
-                case 5:
+                case 7:
                     if (_battle.Simulation.IsFinished) { _step++; _wait = 0.5f; }
                     break;
-                case 6:
+                case 8:
                     Shot("4_result");
                     _step++;
                     _wait = 0.5f;

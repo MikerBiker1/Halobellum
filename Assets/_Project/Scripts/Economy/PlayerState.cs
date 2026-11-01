@@ -69,9 +69,8 @@ namespace Halobellum.Economy
         public int ExtraSquadsPerRound;
         /// <summary>Army-wide bonuses from buff cards.</summary>
         public ArmyBuffs Buffs { get; private set; } = new ArmyBuffs();
-        /// <summary>The Intensive Training card, once taken, and the first round it can be used again.</summary>
-        public CardStats Training;
-        public int TrainingReadyRound;
+        /// <summary>Copies of Intensive Training taken; each has its own cooldown.</summary>
+        public readonly List<OwnedTraining> Trainings = new List<OwnedTraining>();
 
         /// <summary>How many times the player took this card.</summary>
         public int CopiesOwned(CardStats card)

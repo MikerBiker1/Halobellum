@@ -1,12 +1,15 @@
 // SandboxHud.cs
 // The sandbox screen (Milestone 4): a side switch (blue / red), the units of every faction to place
 // on that side, both armies' totals, actions for the selected squad (Move, Turn, Remove), and Run /
-// Reset, Clear side, Copy side, the battle seed and a button back to the match. Speed controls and
-// the battle result line come from BattleHud; the squad stats window from SquadStatsWindow.
+// Reset, Clear side, Copy side, the battle seed and a button back to the match. An Items panel on the
+// left offers every item for free (decision D34): click one, then the hexagon over a squad of either
+// side. Speed controls and the battle result line come from BattleHud; the squad stats window from
+// SquadStatsWindow.
 // Placeholder UI drawn with Unity's immediate-mode GUI; scales with the screen height.
 // Depends on: Halobellum.Presentation (SandboxController, BattleController, UiHitAreas), HudScale,
 //             Halobellum.Core, UnityEngine (SceneManagement).
 
+using System.Collections.Generic;
 using Halobellum.Core;
 using Halobellum.Economy;
 using Halobellum.Presentation;
@@ -27,7 +30,7 @@ namespace Halobellum.UI
         [SerializeField] private Color blueColor = new Color(0.35f, 0.55f, 1f);
         [SerializeField] private Color redColor = new Color(1f, 0.4f, 0.32f);
 
-        private GUIStyle _text, _small, _smallCentered, _button, _bigButton, _header;
+        private GUIStyle _text, _small, _smallCentered, _button, _bigButton, _header, _wrapDim;
         private float _scale;
         private Vector2 _scroll;
 
@@ -43,7 +46,9 @@ namespace Halobellum.UI
             DrawTopBar(width);
             if (!sandbox.IsBattle)
             {
+                ItemHud.DrawSquadSlots(AllSquads(), sandbox.PlacingItem, _scale, sandbox.SquadOnScreen, sandbox.IconFor, squad => sandbox.PlaceItemOn(squad));
                 DrawUnitList(width, height);
+                DrawItems();
                 DrawSelectedSquadActions(width, height);
             }
             if (!string.IsNullOrEmpty(sandbox.Message))
@@ -52,6 +57,28 @@ namespace Halobellum.UI
                 Panel(message);
                 GUI.Label(message, sandbox.Message, _smallCentered);
             }
+        }
+
+        private IEnumerable<PlacedSquad> AllSquads()
+        {
+            foreach (PlacedSquad squad in sandbox.ArmyA.Squads) yield return squad;
+            foreach (PlacedSquad squad in sandbox.ArmyB.Squads) yield return squad;
+        }
+
+        /// <summary>Every item, free: click one, then the hexagon over a squad.</summary>
+        private void DrawItems()
+        {
+            if (sandbox.Items.Count == 0) return;
+            var panel = new Rect(10f, 8f, 330f, 44f + ItemHud.GridHeight(sandbox.Items.Count) + 44f);
+            Panel(panel);
+            GUI.Label(new Rect(panel.x + 12f, panel.y + 8f, panel.width - 24f, 28f), "Items", _header);
+            string hovered = ItemHud.DrawItemGrid(panel.x + 12f, panel.y + 40f, sandbox.Items, sandbox.PlacingItem, sandbox.IconFor, item =>
+            {
+                if (sandbox.PlacingItem == item) sandbox.CancelPlacement();
+                else sandbox.BeginPlacingItem(item);
+            });
+            string caption = hovered ?? (sandbox.PlacingItem != null ? ItemHud.Describe(sandbox.PlacingItem) : "Click an item, then a squad of either side.");
+            GUI.Label(new Rect(panel.x + 12f, panel.yMax - 46f, panel.width - 24f, 42f), caption, _wrapDim);
         }
 
         private void DrawTopBar(float width)
@@ -202,7 +229,8 @@ namespace Halobellum.UI
             _header = new GUIStyle(_text) { font = HudTheme.TitleFont, fontSize = HudTheme.TitleSize(19), fontStyle = HudTheme.TitleFontStyle, normal = { textColor = HudTheme.TitleColor } };
             _button = new GUIStyle(GUI.skin.button) { fontSize = HudTheme.Size(15) };
             _bigButton = new GUIStyle(GUI.skin.button) { fontSize = HudTheme.Size(19), fontStyle = FontStyle.Bold };
-            HudTheme.Fit(_text, _small, _smallCentered, _header, _button, _bigButton);
+            _wrapDim = new GUIStyle(_small) { wordWrap = true, alignment = TextAnchor.UpperLeft };
+            HudTheme.Fit(_text, _small, _smallCentered, _header, _button, _bigButton, _wrapDim);
         }
     }
 }

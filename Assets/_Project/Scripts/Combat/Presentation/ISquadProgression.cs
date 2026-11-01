@@ -41,6 +41,8 @@ namespace Halobellum.Presentation
         public string Note;
         /// <summary>The item the squad carries and what it does, or null.</summary>
         public string ItemText;
+        /// <summary>Sandbox only: takes the item off the squad. Null = no button.</summary>
+        public Action OnRemoveItem;
         public List<TechLine> Techs = new List<TechLine>();
     }
 

@@ -497,6 +497,22 @@ namespace Halobellum.Tests
             Assert.IsTrue(match.UseTraining(Team.A, other.Id).Ok);
         }
 
+        [Test]
+        public void TwoCopiesOfIntensiveTraining_RechargeSeparately()
+        {
+            Match match = NewMatch();
+            match.Player.Credits = 1000;
+            Give(match, _trainingCard);
+            Give(match, _trainingCard);
+            Assert.AreEqual(2, match.Player.Trainings.Count);
+            Assert.AreEqual(2, match.Player.CopiesOwned(_trainingCard));
+            PlacedSquad first = match.Player.Squads[0], second = match.Player.Squads[1];
+            Assert.IsTrue(match.UseTraining(Team.A, first.Id).Ok);
+            Assert.IsTrue(match.CanUseTraining(Team.A), "The second copy is still ready.");
+            Assert.IsTrue(match.UseTraining(Team.A, second.Id).Ok, "Both in the same round.");
+            Assert.IsFalse(match.CanUseTraining(Team.A));
+        }
+
         // ------------------------------------------------------------------ results and AI
 
         [Test]

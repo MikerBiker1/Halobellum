@@ -36,8 +36,8 @@ namespace Halobellum.Combat
         /// <summary>True once every effect of the spell has happened.</summary>
         public bool IsDone => TicksDone >= (Stats.Effect == SpellEffect.Damage ? System.Math.Max(1, Stats.Ticks) : 1);
 
-        /// <summary>True once it has nothing left to do at this battle time (smoke hangs around after it starts).</summary>
-        public bool IsOverAt(float seconds) => IsDone && (Stats.Effect != SpellEffect.Smoke || seconds >= Stats.DelaySeconds + Stats.DurationSeconds);
+        /// <summary>True once it has nothing left to do at this battle time (smoke hangs around after it starts, by default until the battle ends).</summary>
+        public bool IsOverAt(float seconds) => IsDone && (Stats.Effect != SpellEffect.Smoke || (Stats.DurationSeconds > 0f && seconds >= Stats.DelaySeconds + Stats.DurationSeconds));
 
         /// <summary>True if a body at this position touches the spell's area.</summary>
         public bool Covers(SimUnit unit) => Stats.Covers(unit.Position - Position, unit.Radius, Rotated90);

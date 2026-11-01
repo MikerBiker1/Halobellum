@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: LaserSights
   m_EditorClassIdentifier:
   cardName: Laser Sights
-  description: 'Sights that let a squad hit from much further away.'
+  description: 'Sights that let a squad hit from further away.'
   type: 1
   icon: {fileID: 2800000, guid: 10ffed690affd7765d8b13f7e27607ab, type: 3}
   cost: 50
@@ -22,7 +22,7 @@ MonoBehaviour:
   healthMultiplier: 1
   damageMultiplier: 1
   moveSpeedMultiplier: 1
-  rangeBonus: 20
+  rangeBonus: 2
   lifestealShare: 0
   healPerSecondShare: 0
   freeDeployment: 0

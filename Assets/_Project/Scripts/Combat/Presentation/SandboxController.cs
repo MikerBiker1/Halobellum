@@ -5,6 +5,8 @@
 // battle, then reset to the same placement and try again. Both armies are shown while placing.
 // Placement uses the same deployment grid as the match (snap to squares, turn 90 degrees, no
 // overlap), so a sandbox battle plays exactly like a match battle with the same deployments.
+// Every item is free to use (decision D34): pick one from Items, then a squad on either side; one
+// item per squad, and the stats window can take it off again. Spells are not in the sandbox.
 // The HUD (Scripts/UI/SandboxHud) and DeploymentInput call the public methods here; tests do too.
 // Depends on: BattleController, SquadSelection, IDeploymentPlacement, Halobellum.Economy
 //             (PlayerState, DeploymentGrid), Halobellum.Units (FactionDefinition, UnitDefinition), UnityEngine.
@@ -16,6 +18,7 @@ using Halobellum.Core;
 using Halobellum.Economy;
 using Halobellum.Units;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Halobellum.Presentation
 {
@@ -43,6 +46,9 @@ namespace Halobellum.Presentation
 
         private BattleController _battle;
         private SquadSelection _selection;
+        private UnitViewManager _views;
+        private readonly Dictionary<ItemStats, CardStats> _itemCards = new Dictionary<ItemStats, CardStats>();
+        private readonly Dictionary<CardStats, CardDefinition> _cardSources = new Dictionary<CardStats, CardDefinition>();
         private readonly Dictionary<UnitStats, UnitDefinition> _sources = new Dictionary<UnitStats, UnitDefinition>();
         private readonly List<PlacedSquad> _previewOrder = new List<PlacedSquad>();
         private int _nextSquadId = 1;
@@ -50,6 +56,10 @@ namespace Halobellum.Presentation
         public PlayerState ArmyA { get; } = new PlayerState(Team.A);
         public PlayerState ArmyB { get; } = new PlayerState(Team.B);
         public List<SandboxUnit> Units { get; } = new List<SandboxUnit>();
+        /// <summary>Every item, once each: pick one, then a squad.</summary>
+        public List<ItemStats> Items { get; } = new List<ItemStats>();
+        /// <summary>The item picked from the list, waiting for a squad (hexagons show), or null.</summary>
+        public ItemStats PlacingItem { get; private set; }
         public int Seed { get => seed; set => seed = value; }
         /// <summary>Which side new squads go to.</summary>
         public Team EditingTeam { get; set; } = Team.A;
@@ -78,13 +88,21 @@ namespace Halobellum.Presentation
         {
             _battle = GetComponent<BattleController>();
             _selection = GetComponent<SquadSelection>();
+            _views = GetComponent<UnitViewManager>();
 
             var cache = new Dictionary<UnitDefinition, UnitStats>();
             foreach (FactionDefinition faction in factions)
             {
                 if (faction == null) continue;
-                FactionInfo info = faction.ToInfo(cache);
+                FactionInfo info = faction.ToInfo(cache, _cardSources);
                 foreach (UnitStats unit in info.BaseRoster) Units.Add(new SandboxUnit(info.Name, unit));
+                foreach (CardStats card in info.Cards)
+                {
+                    // Factions share their items: list each one once.
+                    if (card.Item == null || Items.Exists(i => i.Name == card.Item.Name)) continue;
+                    Items.Add(card.Item);
+                    _itemCards[card.Item] = card;
+                }
             }
             foreach (UnitDefinition extra in extraUnits)
             {
@@ -97,6 +115,14 @@ namespace Halobellum.Presentation
         }
 
         private void Start() => Refresh();
+
+        private void Update()
+        {
+            if (PlacingItem == null) return;
+            Keyboard keyboard = Keyboard.current;
+            Mouse mouse = Mouse.current;
+            if ((keyboard != null && keyboard.escapeKey.wasPressedThisFrame) || (mouse != null && mouse.rightButton.wasPressedThisFrame)) CancelPlacement();
+        }
 
         // ------------------------------------------------------------------ placing
 
@@ -124,6 +150,7 @@ namespace Halobellum.Presentation
         public void CancelPlacement()
         {
             PlacingType = null;
+            PlacingItem = null;
             MovingSquadId = -1;
             PlacingRotated = false;
             if (_selection != null) _selection.InputEnabled = true;
@@ -222,7 +249,7 @@ namespace Halobellum.Presentation
             target.Techs.Clear();
             foreach (PlacedSquad squad in Army(from).Squads)
             {
-                target.Squads.Add(new PlacedSquad { Id = _nextSquadId++, Type = squad.Type, Column = squad.Column, Row = squad.Row, Rotated90 = squad.Rotated90, PricePaid = squad.PricePaid, Level = squad.Level });
+                target.Squads.Add(new PlacedSquad { Id = _nextSquadId++, Type = squad.Type, Column = squad.Column, Row = squad.Row, Rotated90 = squad.Rotated90, PricePaid = squad.PricePaid, Level = squad.Level, Item = squad.Item });
             }
             foreach (var pair in Army(from).Techs) target.Techs[pair.Key] = new List<TechUpgrade>(pair.Value);
             Refresh();
@@ -230,13 +257,17 @@ namespace Halobellum.Presentation
 
         /// <summary>
         /// What one side's army is worth (to compare armies of equal value): each squad's price plus
-        /// half its price per level above 1, plus the techs it owns.
+        /// half its price per level above 1 and the price of its item, plus the techs it owns.
         /// </summary>
         public int ArmyCost(Team team)
         {
             int total = 0;
             PlayerState army = Army(team);
-            foreach (PlacedSquad squad in army.Squads) total += squad.Type.Cost + squad.Type.Cost * (squad.Level - 1) / 2;
+            foreach (PlacedSquad squad in army.Squads)
+            {
+                total += squad.Type.Cost + squad.Type.Cost * (squad.Level - 1) / 2;
+                if (squad.Item != null && _itemCards.TryGetValue(squad.Item, out CardStats card)) total += card.Cost;
+            }
             foreach (var pair in army.Techs) foreach (TechUpgrade tech in pair.Value) total += tech.Cost;
             return total;
         }
@@ -286,6 +317,54 @@ namespace Halobellum.Presentation
             Refresh(reselectSquadId);
         }
 
+        // ------------------------------------------------------------------ items (free in the sandbox)
+
+        /// <summary>Picks an item; the next PlaceItemOn puts it on a squad of either side.</summary>
+        public void BeginPlacingItem(ItemStats item)
+        {
+            if (IsBattle || item == null || !Items.Contains(item)) return;
+            CancelPlacement();
+            PlacingItem = item;
+            _selection.InputEnabled = false;
+            Message = $"{item.Name}: click the hexagon over a squad, right-click to cancel.";
+        }
+
+        public ActionResult PlaceItemOn(PlacedSquad squad)
+        {
+            if (IsBattle || PlacingItem == null || squad == null) return ActionResult.Fail("Pick an item first.");
+            if (squad.Item != null) return Report(ActionResult.Fail($"{squad.Type.Name} already carries {squad.Item.Name}."));
+            squad.Item = PlacingItem;
+            Message = $"{squad.Item.Name} placed on {squad.Type.Name}.";
+            CancelPlacement();
+            Refresh(squad.Id);
+            return ActionResult.Success(Message);
+        }
+
+        /// <summary>Takes the item off a squad.</summary>
+        public void RemoveItem(PlacedSquad squad)
+        {
+            if (IsBattle || squad == null) return;
+            squad.Item = null;
+            Refresh(squad.Id);
+        }
+
+        /// <summary>The icon of an item (Art/UI/Items), or null.</summary>
+        public Texture2D IconFor(ItemStats item) =>
+            item != null && _itemCards.TryGetValue(item, out CardStats card) && _cardSources.TryGetValue(card, out CardDefinition definition) ? definition.icon : null;
+
+        /// <summary>Screen position (pixels, origin bottom-left) just above a squad; false if it isn't on screen.</summary>
+        public bool SquadOnScreen(PlacedSquad squad, out Vector3 screen)
+        {
+            screen = Vector3.zero;
+            int index = _previewOrder.IndexOf(squad);
+            BattleSimulation sim = _battle.Simulation;
+            Camera camera = Camera.main;
+            if (index < 0 || sim == null || index >= sim.Squads.Count || camera == null) return false;
+            if (!_views.SquadTop(sim.Squads[index].Id, out Vector3 world)) return false;
+            screen = camera.WorldToScreenPoint(world);
+            return screen.z > 0f;
+        }
+
         public SquadProgressView DescribeProgress(int simSquadId)
         {
             BattleSimulation sim = _battle.Simulation;
@@ -301,6 +380,11 @@ namespace Halobellum.Presentation
             PlayerState army = Army(team);
 
             var view = new SquadProgressView { Level = squad.Level, Note = IsBattle ? null : "Sandbox: set the level and techs freely." };
+            if (squad.Item != null)
+            {
+                view.ItemText = $"Item: {squad.Item.Name} ({squad.Item.EffectsText()})";
+                if (!IsBattle) view.OnRemoveItem = () => RemoveItem(squad);
+            }
             if (!IsBattle)
             {
                 if (squad.Level < UnitUpgrades.MaxLevel)

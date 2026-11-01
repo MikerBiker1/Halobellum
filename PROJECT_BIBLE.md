@@ -465,6 +465,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-01 | Crowds: slower units step aside for much faster friends behind them that are at least as big (tanks and Titans never step aside for smaller units; those go around), the unit coming through drives straight on, smaller walkers give way to bigger ones, and a fighting unit edges toward its target (still firing) while a friend is stuck behind it | Per the project owner (D30) |
 | 2026-11-01 | M4, M5 and M6 confirmed; D30 (crowd movement) approved | Per the project owner |
 | 2026-11-01 | Offensive spells can hurt your own army. New cards: Smoke Bomb, EMP, Banshee Ambush, Supply Enhancement, items (Inventory, one per squad), Intensive Training, powerful buffs from round 7, extra deployment slot from round 5. ODSTs: 12 bodies, SMG or rockets by target. Nukes from round 7 with a 6 s delay. Reinforcements from round 4 | Per the project owner (D31, D32, D33) |
+| 2026-11-01 | Smoke lasts the whole round; Intensive Training can be taken twice; Laser Sights +2 m; every item (no spells) in the Sandbox | Per the project owner (D33, D34) |
 
 ## 18. Assumptions to confirm
 

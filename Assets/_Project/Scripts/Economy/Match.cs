@@ -570,8 +570,7 @@ namespace Halobellum.Economy
                     player.Inventory.Add(card.Item);
                     return $"{card.Name} added to your inventory.";
                 case CardType.Training:
-                    player.Training = card;
-                    player.TrainingReadyRound = Round;
+                    player.Trainings.Add(new OwnedTraining { Card = card, ReadyRound = Round });
                     return $"{card.Name} ready: select a squad and use it.";
             }
             player.BonusIncome += card.BonusIncome;
@@ -598,26 +597,23 @@ namespace Halobellum.Economy
             return ActionResult.Success($"{item.Name} placed on {squad.Type.Name}.");
         }
 
-        /// <summary>True if this side owns Intensive Training and it has recharged.</summary>
-        public bool CanUseTraining(Team team)
-        {
-            PlayerState player = Get(team);
-            return Phase == MatchPhase.Deployment && player.Training != null && player.TrainingReadyRound <= Round;
-        }
+        /// <summary>True if this side has a copy of Intensive Training that has recharged.</summary>
+        public bool CanUseTraining(Team team) => Phase == MatchPhase.Deployment && Get(team).Trainings.Exists(t => t.IsReady(Round));
 
         /// <summary>Intensive Training: fills the squad's XP bar (it can then be leveled up); recharges like a spell.</summary>
         public ActionResult UseTraining(Team team, int squadId)
         {
             PlayerState player = Get(team);
             PlacedSquad squad = player.FindSquad(squadId);
-            if (player.Training == null) return ActionResult.Fail("You don't have Intensive Training.");
+            if (player.Trainings.Count == 0) return ActionResult.Fail("You don't have Intensive Training.");
             if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Training happens during deployment.");
-            if (player.TrainingReadyRound > Round) return ActionResult.Fail($"Intensive Training is recharging ({player.TrainingReadyRound - Round} more round(s)).");
+            OwnedTraining training = player.Trainings.Find(t => t.IsReady(Round));
+            if (training == null) return ActionResult.Fail("Intensive Training is recharging.");
             if (squad == null) return ActionResult.Fail("Select a squad first.");
             if (squad.Level >= UnitUpgrades.MaxLevel) return ActionResult.Fail($"{squad.Type.Name} is already at the maximum level.");
             if (CanLevelUp(squad)) return ActionResult.Fail($"{squad.Type.Name}'s XP bar is already full.");
             squad.Xp = XpNeeded(squad);
-            player.TrainingReadyRound = Round + player.Training.CooldownRounds + 1;
+            training.ReadyRound = Round + training.Card.CooldownRounds + 1;
             return ActionResult.Success($"{squad.Type.Name}'s XP bar is full: it can level up.");
         }
 

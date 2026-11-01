@@ -38,5 +38,5 @@ MonoBehaviour:
   techDisableSeconds: 0
   slowShare: 0
   slowSeconds: 0
-  durationSeconds: 20
+  durationSeconds: 0
   rangeMultiplier: 0.5

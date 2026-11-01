@@ -278,6 +278,21 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void Smoke_WithoutADuration_LastsTheWholeBattle()
+        {
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            SimUnit inside = sim.AddUnit(Dummy(), Team.B, new Vec2(0f, 30f));
+            sim.AddUnit(Dummy(), Team.A, new Vec2(0f, -40f));
+            SpellStats smoke = Smoke();
+            smoke.DurationSeconds = 0f;
+            SimSpell cast = sim.AddSpell(smoke, Team.A, new Vec2(0f, 30f));
+            RunSeconds(sim, 80f);
+            Assert.AreEqual(0.5f, inside.RangeMultiplier, 1e-5f, "Still there 80 s in.");
+            Assert.IsFalse(cast.IsOverAt(sim.ElapsedSeconds));
+            CollectionAssert.IsEmpty(smoke.Validate());
+        }
+
+        [Test]
         public void Smoke_TurnedAround_IsALineAlongTheField()
         {
             var sim = new BattleSimulation(TestRules.Default(), 1);

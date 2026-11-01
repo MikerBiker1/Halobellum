@@ -11,7 +11,8 @@
 //     Banshee Ambush).
 //   - Disrupt: an EMP. Removes ShieldDamage of every unit's shield, switches off its tech upgrades
 //     for TechDisableSeconds and slows armored units by SlowShare for SlowSeconds.
-//   - Smoke: for DurationSeconds, units inside have their weapon range multiplied by RangeMultiplier.
+//   - Smoke: units inside have their weapon range multiplied by RangeMultiplier, for the rest of the
+//     battle (or only DurationSeconds, if above 0).
 // Offensive spells can be placed anywhere on the field (red outline) and can hurt the caster's own
 // units too (decision D33); defensive spells and buffs go only in the caster's own deployment zone
 // (blue outline) and only help the caster. An area is a circle (Radius), or a rectangle when AreaWidth
@@ -85,6 +86,7 @@ namespace Halobellum.Core
         public float SlowSeconds;
 
         // Smoke.
+        /// <summary>How long it hangs; 0 = until the battle ends.</summary>
         public float DurationSeconds;
         /// <summary>Weapon range of units inside is multiplied by this (0.5 = half).</summary>
         public float RangeMultiplier = 1f;
@@ -135,7 +137,8 @@ namespace Halobellum.Core
                 case SpellEffect.Disrupt:
                     return $"{ShieldDamage:0} damage to shields, disables techs for {TechDisableSeconds:0} s, armored units {SlowShare * 100f:0}% slower for {SlowSeconds:0} s, in {Radius:0} m";
                 case SpellEffect.Smoke:
-                    return $"Smoke in a {AreaDepth:0} x {AreaWidth:0} m line for {DurationSeconds:0} s: units inside have {(1f - RangeMultiplier) * 100f:0}% less range";
+                    string lasts = DurationSeconds > 0f ? $"for {DurationSeconds:0} s" : "for the whole round";
+                    return $"Smoke in a {AreaDepth:0} x {AreaWidth:0} m line {lasts}: units inside have {(1f - RangeMultiplier) * 100f:0}% less range";
                 default:
                     return $"{DropSquads} x {DropUnit?.Name ?? "?"} squad{(DropSquads == 1 ? "" : "s")} land for this battle";
             }
@@ -176,7 +179,6 @@ namespace Halobellum.Core
                     break;
                 case SpellEffect.Smoke:
                     if (AreaWidth <= 0f && Radius <= 0f) problems.Add($"{label}: smoke needs an area.");
-                    if (DurationSeconds <= 0f) problems.Add($"{label}: smoke needs a duration.");
                     if (RangeMultiplier <= 0f || RangeMultiplier >= 1f) problems.Add($"{label}: smoke must reduce range.");
                     break;
             }

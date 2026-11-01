@@ -36,7 +36,8 @@ namespace Halobellum.Tests
             foreach (CardStats card in cards) CollectionAssert.IsEmpty(card.Validate(), card.Name);
             Assert.AreEqual(8, cards.Count(c => c.Type == CardType.Item), "The 8 items.");
             Assert.AreEqual(2, cards.Count(c => c.Type == CardType.Economy), "Supply Enhancement and Super Supply.");
-            Assert.AreEqual(1, cards.Count(c => c.Type == CardType.Training));
+            Assert.AreEqual(2, cards.Single(c => c.Type == CardType.Training).MaxOwnedCopies, "Intensive Training can be taken twice.");
+            Assert.AreEqual(2f, cards.Single(c => c.Name == "Laser Sights").Item.RangeBonus, 1e-3f);
             Assert.AreEqual(4, cards.Count(c => c.Type == CardType.Buff));
             foreach (CardDefinition definition in Faction(asset).cards)
                 Assert.IsNotNull(definition.icon, $"{definition.name} has an icon.");
@@ -65,6 +66,7 @@ namespace Halobellum.Tests
                 SpellStats smoke = spells.Single(s => s.Effect == SpellEffect.Smoke);
                 Assert.AreEqual(15f, smoke.AreaWidth, 1e-3f);
                 Assert.AreEqual(4f, smoke.AreaDepth, 1e-3f);
+                Assert.AreEqual(0f, smoke.DurationSeconds, "It lasts the whole round.");
                 Assert.AreEqual(100, smoke.Cost);
                 Assert.AreEqual(3, smoke.CooldownRounds);
                 SpellStats emp = spells.Single(s => s.Effect == SpellEffect.Disrupt);

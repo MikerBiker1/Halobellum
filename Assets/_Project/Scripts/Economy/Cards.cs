@@ -86,6 +86,17 @@ namespace Halobellum.Economy
         public int RoundsLeft(int round) => Math.Max(0, ReadyRound - round);
     }
 
+    /// <summary>One copy of Intensive Training: each copy recharges on its own.</summary>
+    public sealed class OwnedTraining
+    {
+        public CardStats Card;
+        /// <summary>The first round it can be used again.</summary>
+        public int ReadyRound;
+
+        public bool IsReady(int round) => ReadyRound <= round;
+        public int RoundsLeft(int round) => Math.Max(0, ReadyRound - round);
+    }
+
     public static class CardDeck
     {
         /// <summary>Whether a round has an offer at all.</summary>

@@ -267,9 +267,12 @@ namespace Halobellum.Economy
                 PlacedSquad target = Difficulty == AiDifficulty.Easy ? free[_random.RangeInt(0, free.Count)] : item.FreeDeployment ? free[free.Count - 1] : free[0];
                 if (view.PlaceItem(item, target).Ok) upgrades.Add($"{item.Name} on {target.Type.Name}");
             }
-            if (!view.CanUseTraining) return;
-            PlacedSquad trainee = squads.Find(s => s.Level < UnitUpgrades.MaxLevel && !view.CanLevelUp(s));
-            if (trainee != null && view.UseTraining(trainee).Ok) upgrades.Add($"training for {trainee.Type.Name}");
+            while (view.CanUseTraining)
+            {
+                PlacedSquad trainee = squads.Find(s => s.Level < UnitUpgrades.MaxLevel && !view.CanLevelUp(s));
+                if (trainee == null || !view.UseTraining(trainee).Ok) break;
+                upgrades.Add($"training for {trainee.Type.Name}");
+            }
         }
 
         /// <summary>The squad position with the most value within `radius` (+3 m) around it, or null.</summary>

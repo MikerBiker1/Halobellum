@@ -316,10 +316,10 @@ namespace Halobellum.Tests
             _match.ChooseDraft(0);
             yield return null;
             Match m = _match.Match;
-            m.Player.Training = m.Player.Faction.Cards.Find(c => c.Type == CardType.Training);
-            Assert.IsNotNull(m.Player.Training, "The factions offer Intensive Training.");
-            Assert.IsNotNull(_match.IconFor(m.Player.Training));
-            m.Player.TrainingReadyRound = m.Round;
+            CardStats training = m.Player.Faction.Cards.Find(c => c.Type == CardType.Training);
+            Assert.IsNotNull(training, "The factions offer Intensive Training.");
+            Assert.IsNotNull(_match.IconFor(training));
+            m.Player.Trainings.Add(new OwnedTraining { Card = training, ReadyRound = m.Round });
             Assert.IsFalse(_match.UseTraining(null).Ok);
             PlacedSquad squad = m.Player.Squads[0];
             Assert.IsTrue(_match.UseTraining(squad).Ok, _match.Message);

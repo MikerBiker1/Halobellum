@@ -69,6 +69,7 @@ namespace Halobellum.Units
         public float slowSeconds;
 
         [Header("Smoke")]
+        [Tooltip("How long it hangs in seconds; 0 = until the battle ends.")]
         public float durationSeconds;
         [Tooltip("Weapon range of units inside is multiplied by this (0.5 = half).")]
         public float rangeMultiplier = 1f;
