@@ -6,7 +6,10 @@
 //   - avoidance: a sideways swerve around bodies ahead that are stopped or slower, so units
 //     flow around allies and faster units overtake slower ones,
 //   - yielding (decision D30): a sideways step out of the way of a friendly unit coming from
-//     behind that is much faster (YieldSpeedRatio), so chaff parts for a fast vehicle,
+//     behind that is much faster (YieldSpeedRatio) and at least as big, so chaff parts for a fast
+//     vehicle; the vehicle drives straight on, neither swerving around nor bracing against units
+//     that are making way for it. Big units (tanks, Titans) never make way for smaller ones,
+//     which go around them,
 //   - turning: units turn at their own speed (TurnTime180; bigger units turn slower) and drive
 //     forward along their facing, so a unit facing the wrong way stops and turns first.
 // Fighting units normally stand still; one that is edging forward to make room for a friend stuck
@@ -113,14 +116,19 @@ namespace Halobellum.Combat
                 float gap = offset.Length;
                 float minDistance = unit.Radius + other.Radius + padding;
 
+                // A walking unit that is making way for us steps aside on its own: we hold our line.
+                bool givesWay = other.State == UnitState.Move && MakesWayFor(other, unit);
                 if (gap < minDistance)
                 {
-                    Vec2 away = gap > 1e-5f ? offset / gap : PairDirection(unit, other);
-                    separation += away * ((minDistance - gap) / minDistance);
                     MarkContact(unit, other);
+                    if (!givesWay)
+                    {
+                        Vec2 away = gap > 1e-5f ? offset / gap : PairDirection(unit, other);
+                        separation += away * ((minDistance - gap) / minDistance);
+                    }
                 }
 
-                if (unit.IsAir) continue; // Air units fly straight; they only keep apart from each other.
+                if (unit.IsAir || givesWay) continue; // Air units fly straight; they only keep apart from each other.
                 if (unit.SquadId >= 0 && unit.SquadId == other.SquadId) continue; // Squadmates move together; no swerving around each other.
 
                 // Avoidance: swerve around a body ahead of us that is stopped or slower than us.
@@ -182,7 +190,7 @@ namespace Halobellum.Combat
                 _grid.Query(unit.Position, lookahead + unit.Radius + _grid.MaxRadius + padding, _neighbors);
                 foreach (SimUnit other in _neighbors)
                 {
-                    if (other == unit || other.Team != unit.Team || other.IsAir || speed < other.Stats.MoveSpeed * _rules.YieldSpeedRatio) continue;
+                    if (other == unit || !MakesWayFor(other, unit)) continue;
                     Vec2 offset = other.Position - unit.Position;
                     float minDistance = unit.Radius + other.Radius + padding;
                     float reach = lookahead + minDistance;
@@ -194,6 +202,17 @@ namespace Halobellum.Combat
                     other.YieldSteer += way.Perpendicular * (side * (1f - ahead / reach) * (1f - MathF.Abs(across) / minDistance));
                 }
             }
+        }
+
+        /// <summary>
+        /// Decision D30: true if `slower` makes way for `faster`: friendly ground units, the faster one at
+        /// least YieldSpeedRatio times faster and at least as big. Big units (tanks, Titans) never make
+        /// way for smaller ones; those go around them.
+        /// </summary>
+        private bool MakesWayFor(SimUnit slower, SimUnit faster)
+        {
+            return _rules.YieldSpeedRatio > 0f && slower != faster && slower.Team == faster.Team && !slower.IsAir && !faster.IsAir
+                && faster.Radius >= slower.Radius && faster.Stats.MoveSpeed >= slower.Stats.MoveSpeed * _rules.YieldSpeedRatio;
         }
 
         /// <summary>
@@ -218,7 +237,10 @@ namespace Halobellum.Combat
         /// <summary>
         /// Stops a walker from pressing into bodies it is already touching: the part of its velocity
         /// aimed into a touching body (beyond how fast that body is moving away) is removed, so it
-        /// slides along the body instead. This keeps crowds from crushing together.
+        /// slides along the body instead. This keeps crowds from crushing together. Against a walking
+        /// unit that is making way for it (D30), it keeps heading straight: a smaller one is simply
+        /// shoved aside (a vehicle through infantry), a same-size one makes it slow down instead of
+        /// sliding sideways while it steps aside.
         /// Uses the neighbor list filled by SteeringVelocity.
         /// </summary>
         private Vec2 RemovePushIntoContacts(SimUnit unit, Vec2 velocity, float padding)
@@ -233,8 +255,15 @@ namespace Halobellum.Combat
 
                 Vec2 normal = toOther / gap;
                 float otherAway = Math.Max(0f, Vec2.Dot(other.Velocity, normal));
-                float into = Vec2.Dot(velocity, normal) - otherAway;
-                if (into > 0f) velocity -= normal * into;
+                float along = Vec2.Dot(velocity, normal);
+                float into = along - otherAway;
+                if (into <= 0f) continue;
+                if (other.State == UnitState.Move && MakesWayFor(other, unit))
+                {
+                    if (other.Radius < unit.Radius) continue; // Shove a smaller body aside.
+                    velocity *= otherAway / along; // Same size: slow down, keep heading.
+                }
+                else velocity -= normal * into;
             }
             return velocity;
         }

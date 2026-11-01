@@ -1,7 +1,8 @@
 // CrowdMovementTests.cs
 // Crowd movement fixes asked for by the project owner after playing (decision D30):
 //   - slower units step aside for a faster friendly unit coming from behind, so a fast vehicle is not
-//     stuck behind a marching chaff squad;
+//     stuck behind a marching chaff squad, and the vehicle drives straight through while they split;
+//   - big units (tanks, Titans) never make way for smaller ones: those go around them;
 //   - a fighting front line edges forward while friendly units are stuck behind it, so a second squad
 //     of the same unit gets into range instead of jiggling behind the first.
 // Depends on: Halobellum.Combat, Halobellum.Core, NUnit.
@@ -31,10 +32,45 @@ namespace Halobellum.Tests
             SimUnit car = sim.AddUnit(vehicle, Team.A, new Vec2(0f, -46f));
             sim.AddUnit(Wall(), Team.B, new Vec2(0f, 55f));
 
-            for (int i = 0; i < 5 * 30; i++) sim.Step();
+            float widestSwerve = 0f, widestDrift = 0f;
+            for (int i = 0; i < 5 * 30; i++)
+            {
+                sim.Step();
+                widestSwerve = System.Math.Max(widestSwerve, System.Math.Abs(car.Facing.X));
+                widestDrift = System.Math.Max(widestDrift, System.Math.Abs(car.Position.X));
+            }
 
             float chaffFront = sim.Units.Where(u => u.Stats == chaff).Max(u => u.Position.Y);
             Assert.Greater(car.Position.Y, chaffFront + 2f, "The faster vehicle got past the chaff squad in front of it.");
+            Assert.Less(widestSwerve, 0.15f, "It keeps heading straight for its target (no turning left and right).");
+            Assert.Less(widestDrift, 0.5f, "It stays on its line while the chaff splits.");
+        }
+
+        [Test]
+        public void BigSlowTank_DoesNotMakeWay_FasterSmallUnitsGoAroundIt()
+        {
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            UnitStats tank = TestUnits.Unit(name: "Tank", speed: 2f, radius: 2f, filter: TargetFilter.Ground,
+                weapon: TestUnits.Weapon(damage: 1f, range: 12f));
+            tank.TurnTime180 = 2f;
+            UnitStats infantry = TestUnits.Unit(name: "Infantry", speed: 4f, radius: 0.5f, squadSize: 12, filter: TargetFilter.Ground,
+                weapon: TestUnits.Weapon(damage: 1f, range: 10f));
+            SimUnit big = sim.AddUnit(tank, Team.A, new Vec2(0f, -40f));
+            sim.AddSquad(infantry, Team.A, new Vec2(0f, -45f));
+            sim.AddUnit(Wall(), Team.B, new Vec2(0f, 55f));
+
+            float widestDrift = 0f, strongestYield = 0f;
+            for (int i = 0; i < 6 * 30; i++)
+            {
+                sim.Step();
+                widestDrift = System.Math.Max(widestDrift, System.Math.Abs(big.Position.X));
+                strongestYield = System.Math.Max(strongestYield, big.YieldSteer.Length);
+            }
+
+            Assert.AreEqual(0f, strongestYield, "The tank is never asked to make way for smaller units.");
+            Assert.Less(widestDrift, 0.25f, "It keeps its line (only jostled a little as infantry squeeze past).");
+            int passed = sim.Units.Count(u => u.Stats == infantry && u.Position.Y > big.Position.Y);
+            Assert.GreaterOrEqual(passed, 10, "The faster infantry went around it.");
         }
 
         [Test]

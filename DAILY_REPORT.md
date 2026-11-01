@@ -50,6 +50,10 @@ Answer to "if you can't manage this, tell me how I can help": no help was needed
   - **Edging forward:** a fighting unit with a held-up friend right behind it moves toward its target at half speed while still firing. It stops at 25% of its weapon range (never inside a minimum range).
   - **Balance:** the counter web still passes with the real units, 24 of 24, in both Unity and .NET. The Hard AI's matchup table was re-measured.
   - Details are in DECISIONS.md (D30) for your approval.
+- **D30, second round (your feedback):**
+  - **Big units hold their line:** a unit only makes way for a faster friend that is at least as big as itself. Tanks and Titans never step aside for smaller units, which go around them.
+  - **No more weaving:** the Warthog or Ghost drives straight at its target. It no longer swerves around, steers away from, or slides along units that are making way for it. It shoves smaller ones aside, and slows down (still heading straight) behind same-size ones.
+  - Both are covered by tests: the vehicle's heading stays within a few degrees of straight, and the tank is never asked to make way. The counter web is still 24 of 24.
 
 ## Test results
 - Unity EditMode **291 / 291**, Unity PlayMode **18 / 18**, .NET harness **265 / 265**.
