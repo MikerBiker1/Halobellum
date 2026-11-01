@@ -3,12 +3,18 @@
 //   Menu: Halobellum > Headless Runner > Run Placeholder Round Robin
 //     Runs every placeholder unit (Data/Units/Placeholder) against every other with equal budgets,
 //     prints the report to the Console and writes a CSV to <project>/BalanceReports/.
+//   Menu: Halobellum > Headless Runner > Run Counter Web
+//     Runs every slice unit (Data/Units/UNSC and Covenant) against every other at equal cost and
+//     checks that each unit has a counter winning over 70% (CounterWeb). Report to the Console,
+//     win-rate matrix CSV to <project>/BalanceReports/.
 //   Menu: Halobellum > Headless Runner > Open Runner Window   (pick any two armies)
 //   Command line, with the Unity editor closed:
 //     Unity.exe -batchmode -nographics -projectPath <project> -logFile <log>
 //       -executeMethod Halobellum.EditorTools.HeadlessRunnerTool.RunPlaceholderRoundRobinBatch
 //       [-battles 10] [-seed 1000] [-budget 600]
 //     The report is written to the log file and the CSV to BalanceReports/.
+//     Counter web: -executeMethod Halobellum.EditorTools.HeadlessRunnerTool.RunCounterWebBatch
+//       [-battles 10] [-seed 1000] [-budget 1800]   (exit code 1 if a unit has no counter)
 // Runner options below are tool defaults, not game rules. Game rules come from Data/CombatRules.asset.
 // Depends on: Halobellum.Combat (HeadlessBattleRunner), Halobellum.Units (UnitDefinition,
 //             CombatRulesDefinition), UnityEditor.
@@ -28,6 +34,9 @@ namespace Halobellum.EditorTools
     public static class HeadlessRunnerTool
     {
         public const string PlaceholderFolder = "Assets/_Project/Data/Units/Placeholder";
+        /// <summary>The slice rosters (Bible Section 8), UNSC first.</summary>
+        public static readonly string[] SliceFolders = { "Assets/_Project/Data/Units/UNSC", "Assets/_Project/Data/Units/Covenant" };
+        public const int DefaultCounterWebBudget = 1800;
 
         // Default runner options (tool settings, not balance values).
         public const int DefaultBattles = 10;
@@ -62,6 +71,67 @@ namespace Halobellum.EditorTools
                 Debug.LogError("Headless runner failed: " + e.Message);
                 throw;
             }
+        }
+
+        [MenuItem("Halobellum/Headless Runner/Run Counter Web")]
+        public static void RunCounterWebMenu()
+        {
+            try
+            {
+                CounterWebReport result = RunCounterWeb(DefaultBattles, DefaultSeed, DefaultCounterWebBudget, out string report, out string csvPath,
+                    (done, total) => EditorUtility.DisplayProgressBar("Counter web", $"Matchup {done} of {total}", done / (float)total));
+                if (result.AllPass) Debug.Log(report + "\nMatrix CSV written to " + csvPath);
+                else Debug.LogWarning(report + "\nMatrix CSV written to " + csvPath);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Counter web failed: " + e.Message);
+                throw;
+            }
+            finally
+            {
+                EditorUtility.ClearProgressBar();
+            }
+        }
+
+        /// <summary>Command-line entry point (-executeMethod). Exit code 0 if every unit has a counter, 1 otherwise.</summary>
+        public static void RunCounterWebBatch()
+        {
+            int exitCode = 1;
+            try
+            {
+                string[] args = Environment.GetCommandLineArgs();
+                CounterWebReport result = RunCounterWeb(IntArg(args, "-battles", DefaultBattles), IntArg(args, "-seed", DefaultSeed),
+                    IntArg(args, "-budget", DefaultCounterWebBudget), out string report, out string csvPath);
+                Debug.Log("===== COUNTER WEB REPORT =====\n" + report + "Matrix CSV written to " + csvPath + "\n===== END REPORT =====");
+                if (result.AllPass) exitCode = 0;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Counter web failed: " + e);
+            }
+            EditorApplication.Exit(exitCode);
+        }
+
+        /// <summary>Runs the counter web on the slice rosters and writes the win-rate matrix CSV.</summary>
+        public static CounterWebReport RunCounterWeb(int battles, int seed, int budget, out string report, out string csvPath,
+            Action<int, int> progress = null)
+        {
+            List<UnitStats> units = LoadSliceUnits().Select(ValidatedStats).ToList();
+            if (units.Count < 2) throw new InvalidOperationException("Need the slice roster unit assets in " + string.Join(", ", SliceFolders) + ".");
+            var settings = new CounterWebSettings { Budget = budget, Runner = DefaultSettings(battles, seed) };
+            CounterWebReport result = CounterWeb.Run(LoadRules(), units, settings, progress);
+            report = $"Slice rosters, about {budget} credits per army, {battles} battles per matchup.\n" + CounterWeb.FormatReport(result);
+            csvPath = WriteCsv("counter_web", CounterWeb.MatrixCsv(result));
+            return result;
+        }
+
+        /// <summary>Every unit of the slice rosters, UNSC first, in file name order.</summary>
+        public static List<UnitDefinition> LoadSliceUnits()
+        {
+            var units = new List<UnitDefinition>();
+            foreach (string folder in SliceFolders) units.AddRange(LoadUnitsInFolder(folder));
+            return units;
         }
 
         [MenuItem("Halobellum/Headless Runner/Open Runner Window")]
