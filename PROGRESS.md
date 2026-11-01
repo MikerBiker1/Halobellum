@@ -41,3 +41,10 @@ Milestones and items from PROJECT_BIBLE.md Section 14. An item is ticked when it
 - [x] Counter web runner: every unit against every unit at equal cost, report and CSV, `balance.csv`
 - [x] Counter web verified: every role has a counter that wins over 70% of the time (first-pass values tuned; Bible numbers only changed with approval)
 - [x] Sandbox mode: pick two armies, place them freely, run the battle
+
+## Notes for the next balance pass (from the human, 2026-10-31)
+- Flamethrower Troopers should be excellent against chaff such as Marines (today they lose to Marines, which outrange them).
+- Warthogs should have enough range, and enough health with their light armor, to destroy Flamethrower Troopers.
+- The Pelican has a chin-mounted autocannon, so it should not be weak (today it wins about 27% of matchups on average).
+- Marines may be too strong (65% average win rate).
+- Adjust unit valuation (prices) if necessary.

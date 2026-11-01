@@ -1,7 +1,7 @@
 // CounterWebAssetTests.cs
 // Verifies the counter web on the real slice roster assets (Milestone 4): for every unit, its best
 // counter from the latest full counter-web run (Halobellum > Headless Runner > Run Counter Web, also
-// listed in each unit's notes) still wins more than 70% of equal-cost battles against it. This runs
+// listed in each unit's notes) still wins at least 90% of equal-cost battles against it (D23). This runs
 // only those 24 pairs, so it stays quick; the full run checks every pair. If a balance change moves a
 // unit's best counter, run the full counter web again and update this list.
 // Needs the Unity editor (AssetDatabase), so it runs only in Unity's Test Runner.
@@ -48,7 +48,7 @@ namespace Halobellum.Tests
         };
 
         [Test]
-        public void EveryUnit_HasACounterThatWinsOver70Percent()
+        public void EveryUnit_HasACounterThatWinsAtLeast90Percent()
         {
             Dictionary<string, UnitStats> units = HeadlessRunnerTool.LoadSliceUnits()
                 .ToDictionary(u => u.unitName, HeadlessRunnerTool.ValidatedStats);
@@ -67,7 +67,7 @@ namespace Halobellum.Tests
                 UnitStats unit = units[unitName], counter = units[counterName];
                 Assert.IsTrue(CounterWeb.IsCounter(counter, unit), $"{counterName} ({counter.Role}) is not a Section 7 counter of {unitName} ({unit.Role}).");
                 CounterMatchup matchup = CounterWeb.RunPair(rules, counter, unit, settings);
-                if (matchup.WinRateA <= settings.Threshold)
+                if (matchup.WinRateA < settings.Threshold - 1e-4f)
                     failures.Add($"{counterName} beats {unitName} only {CounterWeb.Percent(matchup.WinRateA)} ({matchup.CostA} vs {matchup.CostB} credits)");
             }
             Assert.IsEmpty(failures, string.Join("\n", failures));

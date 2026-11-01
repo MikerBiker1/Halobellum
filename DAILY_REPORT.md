@@ -11,7 +11,7 @@ Before M4, your D17 to D20 answers went in: 200 starting credits, squads placed 
   - The flamethrower cone is now 15 degrees, with 3 Fire damage every 0.1 s.
   - Scorpions already lose every equal-cost fight to Hornets and Banshees: their coax does only 0.6x to aircraft.
 - **D24:** placeholder units never appear in matches (a new test checks every faction) and are offered in the Sandbox under "Placeholder".
-- **D23 is still open:** my suggestion is a 90% threshold (9 of 10 equal-value battles).
+- **D23:** approved. The counter threshold is now 90% (9 of 10 equal-value battles); every unit's best counter wins 100%.
 - Counter web rerun in Unity: still **24 of 24**.
 
 ## Completed
@@ -75,4 +75,4 @@ Before M4, your D17 to D20 answers went in: 200 starting credits, squads placed 
 None.
 
 ## Decisions needing your approval
-- **D23:** the counter threshold. I suggest a counter must win at least 9 of 10 equal-value battles (90%), replacing Section 15's 55 to 70%.
+None for M4.

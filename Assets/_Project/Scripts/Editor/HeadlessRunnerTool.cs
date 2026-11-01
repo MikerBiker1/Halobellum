@@ -5,7 +5,7 @@
 //     prints the report to the Console and writes a CSV to <project>/BalanceReports/.
 //   Menu: Halobellum > Headless Runner > Run Counter Web
 //     Runs every slice unit (Data/Units/UNSC and Covenant) against every other at equal cost and
-//     checks that each unit has a counter winning over 70% (CounterWeb). Report to the Console,
+//     checks that each unit has a counter winning at least 90% (CounterWeb, decision D23). Report to the Console,
 //     win-rate matrix CSV to <project>/BalanceReports/.
 //   Menu: Halobellum > Headless Runner > Open Runner Window   (pick any two armies)
 //   Command line, with the Unity editor closed:

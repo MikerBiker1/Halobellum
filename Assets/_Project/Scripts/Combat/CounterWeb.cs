@@ -2,7 +2,7 @@
 // Checks the counter web (Bible Sections 7 and 15, Milestone 4): every unit fights every other unit
 // in single-type armies of (nearly) equal cost, with the headless runner. For each unit, its counters
 // are the units whose role is in its role's "weak against" list (Section 7 table); the unit passes
-// if its best counter wins more than the threshold (70%) of the battles against it.
+// if its best counter wins at least the threshold (90%, decision D23: 9 of 10) of the battles against it.
 // Armies: as many squads of each type as fit a budget (default 1800 credits), picking the two squad
 // counts whose total costs are closest to each other (both within 80% to 125% of the budget).
 // Half of each matchup's battles swap the sides, so neither unit always plays Team A.
@@ -24,8 +24,8 @@ namespace Halobellum.Combat
         public int Budget = 1800;
         public float MinBudgetShare = 0.8f;
         public float MaxBudgetShare = 1.25f;
-        /// <summary>A counter must win MORE than this share of its battles (Milestone 4: 70%).</summary>
-        public float Threshold = 0.7f;
+        /// <summary>A counter must win AT LEAST this share of its battles (decision D23: 90%, i.e. 9 of 10).</summary>
+        public float Threshold = 0.9f;
         /// <summary>Battles per matchup, seeds, layout and position jitter.</summary>
         public RunnerSettings Runner;
     }
@@ -203,7 +203,7 @@ namespace Halobellum.Combat
                     if (rate >= 0f) line.Counters.Add((other, rate));
                 }
                 line.Counters.Sort((x, y) => y.winRate.CompareTo(x.winRate));
-                line.Passes = line.BestRate > threshold;
+                line.Passes = line.BestRate >= threshold - 1e-4f;
                 report.Lines.Add(line);
             }
             return report;
@@ -214,7 +214,7 @@ namespace Halobellum.Combat
         {
             var text = new StringBuilder();
             int passing = report.Lines.FindAll(l => l.Passes).Count;
-            text.AppendLine($"Counter web: {passing} of {report.Lines.Count} units have a counter winning over {Percent(report.Threshold)}.");
+            text.AppendLine($"Counter web: {passing} of {report.Lines.Count} units have a counter winning at least {Percent(report.Threshold)}.");
             foreach (CounterWebLine line in report.Lines)
             {
                 string counters = line.Counters.Count == 0 ? "(no counter role in the roster)" : "";

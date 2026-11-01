@@ -1,6 +1,6 @@
 // CounterWebTests.cs
 // Tests the counter web checker (Milestone 4): the role counters from the Bible's Section 7 table,
-// equal-cost army sizes, side swapping, and the pass rule (best counter wins MORE than 70%).
+// equal-cost army sizes, side swapping, and the pass rule (best counter wins AT LEAST 90%, D23).
 // The real rosters are checked against it in Unity/CounterWebAssetTests.
 // Depends on: Halobellum.Combat (CounterWeb), Halobellum.Core, NUnit, TestUnits, TestRules.
 
@@ -97,25 +97,25 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void Report_PassesOnlyWhenTheBestCounterWinsMoreThanTheThreshold()
+        public void Report_PassesOnlyWhenTheBestCounterWinsAtLeastTheThreshold()
         {
             UnitStats chaff = Role(UnitRole.Chaff), clear = Role(UnitRole.ChaffClear), tank = Role(UnitRole.Tank);
             var matchups = new List<CounterMatchup>
             {
-                new CounterMatchup { A = clear, B = chaff, Battles = 10, WinsA = 8, WinsB = 2 },  // Chaff clear beats chaff 80%.
-                new CounterMatchup { A = tank, B = clear, Battles = 10, WinsA = 7, WinsB = 3 },   // Tank beats chaff clear exactly 70%.
+                new CounterMatchup { A = clear, B = chaff, Battles = 10, WinsA = 9, WinsB = 1 },  // Chaff clear beats chaff 9 of 10.
+                new CounterMatchup { A = tank, B = clear, Battles = 10, WinsA = 8, WinsB = 2 },   // Tank beats chaff clear only 8 of 10.
                 new CounterMatchup { A = tank, B = chaff, Battles = 10, WinsA = 5, WinsB = 5 },
             };
-            CounterWebReport report = CounterWeb.BuildReport(new[] { chaff, clear, tank }, matchups, 0.7f);
+            CounterWebReport report = CounterWeb.BuildReport(new[] { chaff, clear, tank }, matchups, new CounterWebSettings().Threshold);
 
-            Assert.IsTrue(report.Lines[0].Passes, "Chaff: countered 80% by chaff clear.");
+            Assert.IsTrue(report.Lines[0].Passes, "Chaff: countered 9 of 10 (90%) by chaff clear.");
             Assert.AreSame(clear, report.Lines[0].BestCounter);
-            Assert.IsFalse(report.Lines[1].Passes, "Chaff clear: 70% is not MORE than 70%.");
+            Assert.IsFalse(report.Lines[1].Passes, "Chaff clear: 8 of 10 is below 90%.");
             Assert.IsFalse(report.Lines[2].Passes, "Tank: no single-target DPS unit in this roster.");
             Assert.IsFalse(report.AllPass);
-            Assert.AreEqual(0.2f, report.WinRate(chaff, clear), 1e-5f);
+            Assert.AreEqual(0.1f, report.WinRate(chaff, clear), 1e-5f);
             StringAssert.Contains("1 of 3 units", CounterWeb.FormatReport(report));
-            StringAssert.Contains("0.80", CounterWeb.MatrixCsv(report));
+            StringAssert.Contains("0.90", CounterWeb.MatrixCsv(report));
         }
     }
 }

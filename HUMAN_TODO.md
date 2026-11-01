@@ -49,5 +49,5 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 - [ ] **Placeholder units in the sandbox.** At the bottom of the sandbox's unit list, the 3 placeholder test units have their own "Placeholder" group. They never appear in a match.
 - [ ] **Optional: run the counter web yourself.** Menu **Halobellum > Headless Runner > Run Counter Web** (takes several minutes; a progress bar shows). The report appears in the Console; the full win-rate matrix goes to `BalanceReports/`.
 - [x] **Answer D21 to D24** in DECISIONS.md (first-pass stats, how the abilities work, counter web method and the 55-70% vs over-70% question, placeholder units).
-- [ ] **D23: pick the counter threshold.** My suggestion is in DECISIONS.md: a counter must win at least 9 of 10 equal-value battles (90%).
+- [x] **D23: pick the counter threshold.** My suggestion is in DECISIONS.md: a counter must win at least 9 of 10 equal-value battles (90%).
 - [ ] **Confirm M4** so M5 (AI opponent) can start.

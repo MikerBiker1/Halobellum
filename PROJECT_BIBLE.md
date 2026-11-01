@@ -357,7 +357,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 
 - All UNSC and Covenant units from Section 8 implemented with placeholder art and abilities, with unlock prices.
 - Sandbox mode: pick two armies, place them freely, run the battle. Used for balancing.
-- Counter web verified by the headless runner (every role has a counter that wins over 70% of the time against it).
+- Counter web verified by the headless runner (every role has a counter that wins at least 90% of equal-value battles against it; D23).
 
 **M5: AI opponent**
 
@@ -385,7 +385,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 
 1. Keep a balance spreadsheet (`balance.csv`) with each unit’s cost, health, damage per second, role, and counters.
 2. After any unit change, run the headless runner on all role matchups and record win rates.
-3. Targets: counters win 55 to 70% of the time; no unit except Titans wins more than 60% across all matchups; cost-efficiency within 15% across roles.
+3. Targets: a counter wins at least 90% (9 of 10) of equal-value battles against what it counters (higher tiers, levels and techs may beat it); no unit except Titans wins more than 60% across all matchups; cost-efficiency within 15% across roles.
 4. Run economy simulations to confirm credits are neither piling up unused nor too scarce.
 5. Balance numbers live only in data files, and agents do not change them without human approval; propose changes in DECISIONS.md. Log every approved change in `balance.csv`.
 
@@ -456,6 +456,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-10-31 | First-pass stats for everything Section 8 leaves open (weapons, speeds, sizes, shields, arcs) are in the unit assets and `balance.csv` | Approved from D21 |
 | 2026-10-31 | The Pelican carries no troops when bought; its 6-Marine drop (after 10 s) is an upgrade in M6. The Flamethrower Trooper's cone is 15 degrees with very low damage per very fast tick; an upgrade may widen it later | Per the project owner (D22) |
 | 2026-10-31 | Placeholder test units never appear in normal matches; they are offered in the Sandbox only | Per the project owner (D24) |
+| 2026-10-31 | Counter threshold: a counter wins at least 90% (9 of 10) of equal-value battles; replaces "55 to 70%" | Per the project owner (D23) |
 
 ## 18. Assumptions to confirm
 
