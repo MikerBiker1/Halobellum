@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Halobellum.Combat;
 using Halobellum.Core;
 using Halobellum.Economy;
@@ -53,6 +54,8 @@ namespace Halobellum.Presentation
         public string Message { get; private set; } = "";
         /// <summary>Raised after every phase change (draft chosen, battle started or finished, next round).</summary>
         public event Action PhaseChanged;
+        /// <summary>Raised after each action the player takes, with the name of its method and how it went (for sound).</summary>
+        public event Action<string, ActionResult> ActionTaken;
 
         private const string DifficultyKey = "Halobellum.AiDifficulty";
         private MatchupTable _matchups;
@@ -629,9 +632,10 @@ namespace Halobellum.Presentation
                 _selection.Select(_battle.Simulation.Squads[index].Id);
         }
 
-        private ActionResult Report(ActionResult result)
+        private ActionResult Report(ActionResult result, [CallerMemberName] string action = "")
         {
             Message = result.Message ?? "";
+            ActionTaken?.Invoke(action, result);
             return result;
         }
     }

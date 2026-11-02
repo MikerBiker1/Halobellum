@@ -106,6 +106,7 @@ namespace Halobellum.UI
                     if (current.type == EventType.MouseDown && current.button == 0)
                     {
                         Drag.Press(item, current.mousePosition, selected == item);
+                        UiAudio.Click();
                         if (selected != item) onSelect(item);
                         current.Use();
                     }

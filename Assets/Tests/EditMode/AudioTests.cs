@@ -1,0 +1,313 @@
+// AudioTests.cs
+// The sound system without playing anything (M10): the voice limits, that every slot has a file behind it, which slot goes with
+// what, that the owner's files replace the generated ones by just being dropped in (with a real file and a real import), and how
+// the files are imported. How it sounds is for the owner's ears; the levels of the files are measured by Tools/Audio/measure.py.
+// Depends on: Halobellum.Presentation, Halobellum.Core, Halobellum.Economy, Halobellum.Units, NUnit, UnityEditor.
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Halobellum.Core;
+using Halobellum.Economy;
+using Halobellum.Presentation;
+using Halobellum.Units;
+using NUnit.Framework;
+using UnityEditor;
+using UnityEngine;
+
+namespace Halobellum.Tests
+{
+    public class AudioTests
+    {
+        private const string GeneratedFolder = "Assets/_Project/Audio/Generated/Resources/GeneratedAudio/";
+        private const string OverrideFolder = "Assets/_Project/Art/Imported/Audio/Resources/AudioOverride/";
+
+        // ------------------------------------------------------------------ voice limits
+
+        [Test]
+        public void Limiter_StopsAtItsMost_AndLetsOneInWhenAVoiceEnds()
+        {
+            var limiter = new VoiceLimiter(1);
+            limiter.SetLimit(0, 2, 0f);
+            Assert.IsTrue(limiter.TryStart(0, 0f));
+            Assert.IsTrue(limiter.TryStart(0, 0f));
+            Assert.IsFalse(limiter.TryStart(0, 0f), "A third voice is over the limit.");
+            limiter.Release(0);
+            Assert.IsTrue(limiter.TryStart(0, 0f));
+        }
+
+        [Test]
+        public void Limiter_KeepsItsGapBetweenStarts()
+        {
+            var limiter = new VoiceLimiter(1);
+            limiter.SetLimit(0, 10, 0.05f);
+            Assert.IsTrue(limiter.TryStart(0, 1f));
+            Assert.IsFalse(limiter.TryStart(0, 1.01f));
+            Assert.IsTrue(limiter.TryStart(0, 1.06f));
+        }
+
+        [Test]
+        public void Limiter_TwoHundredRiflesPlayOnlyAFew()
+        {
+            var limiter = new VoiceLimiter((int)SfxGroup.Count);
+            AudioCatalog.SetLimits(limiter);
+            int started = 0;
+            for (int i = 0; i < 200; i++)
+            {
+                if (limiter.TryStart((int)SfxGroup.SmallArms, 5f)) started++;
+            }
+            Assert.AreEqual(1, started, "All in one instant: only one gets through the gap.");
+            for (int i = 0; i < 200; i++)
+            {
+                if (limiter.TryStart((int)SfxGroup.SmallArms, 5f + i * 0.01f)) started++;
+            }
+            Assert.LessOrEqual(limiter.ActiveIn((int)SfxGroup.SmallArms), 4);
+        }
+
+        // ------------------------------------------------------------------ the slots have files
+
+        [Test]
+        public void EveryMusicAndUiSlot_HasAGeneratedFile()
+        {
+            foreach (string slot in AudioSlots.MusicAndUiSlots())
+                Assert.IsTrue(File.Exists(GeneratedFolder + slot + ".wav"), "No file for " + slot);
+        }
+
+        [Test]
+        public void EveryCue_HasAGeneratedFile()
+        {
+            foreach (SfxCue cue in AudioCatalog.Cues)
+            {
+                bool one = File.Exists(GeneratedFolder + cue.Slot + ".wav");
+                bool several = File.Exists(GeneratedFolder + cue.Slot + "_1.wav");
+                Assert.IsTrue(one || several, "No file for " + cue.Slot);
+            }
+        }
+
+        [Test]
+        public void EveryCue_LoadsAClipThroughTheLibrary()
+        {
+            AudioLibrary.Forget();
+            foreach (SfxCue cue in AudioCatalog.Cues)
+            {
+                Assert.IsFalse(cue.Clips.IsEmpty, "Nothing loads for " + cue.Slot);
+                Assert.AreEqual(cue.Slot, cue.Clips.Slot);
+            }
+        }
+
+        [Test]
+        public void TheOwnersList_NamesEverySlot()
+        {
+            string text = File.ReadAllText("Assets/_Project/Art/Imported/Audio/README.txt");
+            foreach (string slot in AudioSlots.MusicAndUiSlots().Concat(AudioCatalog.Cues.Select(c => c.Slot)))
+                StringAssert.Contains(slot, text, "README.txt doesn't list " + slot);
+        }
+
+        // ------------------------------------------------------------------ which slot goes with what
+
+        [TestCase("UNSC", "unsc")]
+        [TestCase("Covenant", "covenant")]
+        [TestCase("Flood", "flood")]
+        [TestCase(null, "unsc")]
+        [TestCase("Someone new", "unsc")]
+        public void FactionKey(string faction, string key) => Assert.AreEqual(key, AudioSlots.FactionKey(faction));
+
+        [TestCase(MatchPhase.Draft, "UNSC", "music_mainmenu")]
+        [TestCase(MatchPhase.Cards, "Flood", "music_flood_menu")]
+        [TestCase(MatchPhase.Deployment, "Covenant", "music_covenant_deployment")]
+        [TestCase(MatchPhase.Battle, "UNSC", "music_unsc_battle")]
+        [TestCase(MatchPhase.Result, "Covenant", "music_covenant_menu")]
+        [TestCase(MatchPhase.MatchOver, "Flood", "music_flood_menu")]
+        public void MusicFollowsTheScreenAndTheFaction(MatchPhase phase, string faction, string slot) => Assert.AreEqual(slot, AudioSlots.MusicForPhase(phase, faction));
+
+        [Test]
+        public void UiSounds_DifferByFaction()
+        {
+            foreach (UiSound sound in Enum.GetValues(typeof(UiSound)))
+            {
+                string[] slots = { AudioSlots.Ui("UNSC", sound), AudioSlots.Ui("Covenant", sound), AudioSlots.Ui("Flood", sound) };
+                Assert.AreEqual(3, slots.Distinct().Count(), sound.ToString());
+            }
+            Assert.AreEqual("ui_neutral_click", AudioSlots.Ui(null, UiSound.Click));
+            Assert.AreEqual("ui_unsc_buy", AudioSlots.Ui(null, UiSound.Buy), "With no side chosen, a sound the neutral set lacks comes from UNSC.");
+        }
+
+        [Test]
+        public void EveryWeaponKind_HasASound_ExceptABurst()
+        {
+            foreach (WeaponFeelKind kind in Enum.GetValues(typeof(WeaponFeelKind)))
+            {
+                foreach (string faction in new[] { "UNSC", "Covenant", "Flood" })
+                {
+                    SfxCue cue = AudioCatalog.Fire(kind, faction);
+                    if (kind == WeaponFeelKind.Burst) Assert.IsNull(cue, "A burst is heard when the unit goes off.");
+                    else Assert.IsNotNull(cue, $"{kind} of {faction}");
+                }
+            }
+        }
+
+        [Test]
+        public void WeaponsSoundOfTheirFaction()
+        {
+            Assert.AreEqual("sfx_fire_bullet", AudioCatalog.Fire(WeaponFeel.FromName("MA5 Assault Rifle").Value, "UNSC").Slot);
+            Assert.AreEqual("sfx_fire_plasma", AudioCatalog.Fire(WeaponFeel.FromName("Plasma Rifle").Value, "Covenant").Slot);
+            Assert.AreEqual("sfx_fire_needle", AudioCatalog.Fire(WeaponFeel.FromName("Needle Cannons").Value, "Covenant").Slot);
+            Assert.AreEqual("sfx_fire_melee_covenant", AudioCatalog.Fire(WeaponFeel.FromName("Energy Sword").Value, "Covenant").Slot);
+            Assert.AreEqual("sfx_fire_melee_flood", AudioCatalog.Fire(WeaponFeel.FromName("Claw Swipe").Value, "Flood").Slot);
+            Assert.AreEqual("sfx_fire_bio", AudioCatalog.Fire(WeaponFeel.FromName("Spat Bone").Value, "Flood").Slot);
+            Assert.AreEqual("sfx_fire_bullet_flood", AudioCatalog.Fire(WeaponFeel.FromName("Scavenged Rifle").Value, "Flood").Slot);
+        }
+
+        [Test]
+        public void EverySpellInTheGame_HasASound()
+        {
+            string[] guids = AssetDatabase.FindAssets("t:SpellDefinition");
+            Assert.Greater(guids.Length, 10);
+            var seen = new HashSet<string>();
+            foreach (string guid in guids)
+            {
+                var definition = AssetDatabase.LoadAssetAtPath<SpellDefinition>(AssetDatabase.GUIDToAssetPath(guid));
+                SpellStats stats = definition.ToStats();
+                string slot = AudioSlots.Spell(stats, 1, "UNSC");
+                Assert.IsNotNull(slot, stats.Name);
+                Assert.IsNotNull(AudioCatalog.ForSlot(slot), $"{stats.Name}: {slot} is not in the catalog.");
+                seen.Add(slot);
+            }
+            Assert.Greater(seen.Count, 8, "Spells should not all sound alike.");
+        }
+
+        [Test]
+        public void Spells_OneLongSoundCoversRepeatedHits_ButAStormSoundsEachOne()
+        {
+            var glassing = new SpellStats { Name = "Glassing Beam", Effect = SpellEffect.Damage, Ticks = 5 };
+            Assert.AreEqual("sfx_spell_glassing", AudioSlots.Spell(glassing, 1, "Covenant"));
+            Assert.IsNull(AudioSlots.Spell(glassing, 2, "Covenant"));
+            var storm = new SpellStats { Name = "Plasma Storm", Effect = SpellEffect.Damage, Ticks = 8 };
+            Assert.AreEqual("sfx_spell_storm_tick", AudioSlots.Spell(storm, 3, "Covenant"));
+        }
+
+        [Test]
+        public void Clips_ThePickDoesNotRepeat()
+        {
+            var clips = new[] { AudioClip.Create("a", 10, 1, 44100, false), AudioClip.Create("b", 10, 1, 44100, false), AudioClip.Create("c", 10, 1, 44100, false) };
+            var set = new AudioClipSet("x", clips, false);
+            AudioClip last = null;
+            var random = new System.Random(3);
+            for (int i = 0; i < 50; i++)
+            {
+                AudioClip clip = set.Pick((float)random.NextDouble());
+                Assert.AreNotSame(last, clip);
+                last = clip;
+            }
+        }
+
+        // ------------------------------------------------------------------ the owner's files
+
+        [Test]
+        public void Library_OwnersFileWins_AndAMissingOneIsJustSilent()
+        {
+            Func<string, AudioClip> real = AudioLibrary.Loader;
+            AudioClip generated = AudioClip.Create("generated", 10, 1, 44100, false), owners = AudioClip.Create("owners", 10, 1, 44100, false);
+            try
+            {
+                AudioLibrary.Forget();
+                AudioLibrary.Loader = path => path == "AudioOverride/slot_a" ? owners : path == "GeneratedAudio/slot_a" || path == "GeneratedAudio/slot_b" ? generated : null;
+                AudioClipSet a = AudioLibrary.Get("slot_a");
+                Assert.AreSame(owners, a.Clips.Single());
+                Assert.IsTrue(a.IsOverride);
+                AudioClipSet b = AudioLibrary.Get("slot_b");
+                Assert.AreSame(generated, b.Clips.Single());
+                Assert.IsFalse(b.IsOverride);
+                Assert.IsTrue(AudioLibrary.Get("slot_c").IsEmpty);
+            }
+            finally
+            {
+                AudioLibrary.Loader = real;
+                AudioLibrary.Forget();
+            }
+        }
+
+        /// <summary>A short real WAV, written and imported as the owner's drop would be.</summary>
+        private static void DropWav(string name, float seconds)
+        {
+            int samples = (int)(44100 * seconds);
+            using (var file = new BinaryWriter(File.Create(OverrideFolder + name + ".wav")))
+            {
+                file.Write(new[] { 'R', 'I', 'F', 'F' });
+                file.Write(36 + samples * 2);
+                file.Write(new[] { 'W', 'A', 'V', 'E', 'f', 'm', 't', ' ' });
+                file.Write(16);
+                file.Write((short)1);
+                file.Write((short)1);
+                file.Write(44100);
+                file.Write(88200);
+                file.Write((short)2);
+                file.Write((short)16);
+                file.Write(new[] { 'd', 'a', 't', 'a' });
+                file.Write(samples * 2);
+                for (int i = 0; i < samples; i++) file.Write((short)(Mathf.Sin(i * 0.05f) * 8000f));
+            }
+            AssetDatabase.ImportAsset(OverrideFolder + name + ".wav", ImportAssetOptions.ForceSynchronousImport);
+        }
+
+        [Test]
+        public void DroppingARealFileInTheFolder_ReplacesTheSlot()
+        {
+            string[] dropped = { "sfx_fire_bullet", "music_unsc_battle_1", "music_unsc_battle_2" };
+            try
+            {
+                AudioLibrary.Forget();
+                Assert.IsFalse(AudioLibrary.Get("sfx_fire_bullet").IsOverride);
+                Assert.Greater(AudioLibrary.Get("sfx_fire_bullet").Clips.Length, 1, "The generated sound has variants.");
+
+                DropWav("sfx_fire_bullet", 0.5f);
+                DropWav("music_unsc_battle_1", 0.25f);
+                DropWav("music_unsc_battle_2", 0.5f);
+                AudioLibrary.Forget();
+
+                AudioClipSet bullet = AudioLibrary.Get("sfx_fire_bullet");
+                Assert.IsTrue(bullet.IsOverride);
+                Assert.AreEqual(0.5f, bullet.Clips.Single().length, 0.01f);
+                Assert.AreSame(bullet, AudioCatalog.ForSlot("sfx_fire_bullet").Clips.Slot == "sfx_fire_bullet" ? AudioCatalog.ForSlot("sfx_fire_bullet").Clips : null, "A cue plays what the library found.");
+
+                AudioClipSet music = AudioLibrary.Get("music_unsc_battle");
+                Assert.IsTrue(music.IsOverride);
+                Assert.AreEqual(2, music.Clips.Length, "Several files for one slot take turns.");
+
+                var importer = (AudioImporter)AssetImporter.GetAtPath(OverrideFolder + "music_unsc_battle_1.wav");
+                Assert.AreEqual(AudioClipLoadType.Streaming, importer.defaultSampleSettings.loadType, "The owner's music is treated like the generated music.");
+            }
+            finally
+            {
+                foreach (string name in dropped) AssetDatabase.DeleteAsset(OverrideFolder + name + ".wav");
+                AudioLibrary.Forget();
+            }
+            Assert.IsFalse(AudioLibrary.Get("sfx_fire_bullet").IsOverride, "Taking the file out brings the generated sound back.");
+        }
+
+        // ------------------------------------------------------------------ how files are imported
+
+        [Test]
+        public void Music_IsStreamedAndCompressed_EffectsAreReadyInMemory()
+        {
+            var music = (AudioImporter)AssetImporter.GetAtPath(GeneratedFolder + "music_mainmenu.wav");
+            Assert.AreEqual(AudioClipLoadType.Streaming, music.defaultSampleSettings.loadType);
+            Assert.AreEqual(AudioCompressionFormat.Vorbis, music.defaultSampleSettings.compressionFormat);
+            var sfx = (AudioImporter)AssetImporter.GetAtPath(GeneratedFolder + "sfx_fire_bullet_1.wav");
+            Assert.AreEqual(AudioClipLoadType.DecompressOnLoad, sfx.defaultSampleSettings.loadType);
+            var ui = (AudioImporter)AssetImporter.GetAtPath(GeneratedFolder + "ui_flood_click.wav");
+            Assert.AreEqual(AudioCompressionFormat.PCM, ui.defaultSampleSettings.compressionFormat);
+        }
+
+        // ------------------------------------------------------------------ silence in the room
+
+        [TestCase(new string[0], false, false)]
+        [TestCase(new string[0], true, true)]
+        [TestCase(new[] { "-autoplay" }, false, true)]
+        [TestCase(new[] { "-sandboxDemo", "x" }, false, true)]
+        [TestCase(new[] { "-autoplay", "-audioOn" }, false, false)]
+        [TestCase(new[] { "-audioCapture", "x.wav" }, true, false)]
+        public void TestRunsMakeNoNoise(string[] arguments, bool batchMode, bool muted) => Assert.AreEqual(muted, AudioDirector.ShouldMute(arguments, batchMode));
+    }
+}

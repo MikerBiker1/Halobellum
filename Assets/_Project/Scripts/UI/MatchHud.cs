@@ -96,6 +96,7 @@ namespace Halobellum.UI
                         $"{unit.Name}\n{RoleName(unit.Role)}, {Bodies(unit.FormsInSquad)}, worth {unit.Cost}", _small);
                 }
                 if (GUI.Button(new Rect(rect.x + 16f, rect.yMax - 52f, rect.width - 32f, 38f), "Choose", _bigButton)) match.ChooseDraft(i);
+                UiAudio.Watch(new Rect(rect.x + 16f, rect.yMax - 52f, rect.width - 32f, 38f));
             }
 
             // AI difficulty (Milestone 5): only changes how well the AI decides, never what it knows or earns.
@@ -140,6 +141,7 @@ namespace Halobellum.UI
             GUI.Label(new Rect(bar.x + 760f, bar.y + 6f, 200f, 26f), $"{player.Faction.Name} vs {m.Enemy.Faction?.Name ?? "?"}", _small);
             GUI.Label(new Rect(bar.x + 760f, bar.y + 32f, 200f, 26f), m.EnemyAi.Label, _small);
             if (GUI.Button(new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f), "Ready", _bigButton)) match.Ready();
+            UiAudio.Watch(new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f));
 
             if (!string.IsNullOrEmpty(match.Message))
             {
@@ -184,6 +186,7 @@ namespace Halobellum.UI
                 GUI.enabled = m.Player.Credits >= price;
                 string label = price > 0 ? $"Take ({price})" : "Take (free)";
                 if (GUI.Button(new Rect(card.x + 14f, card.yMax - 52f, card.width - 28f, 40f), label, _bigButton)) match.ChooseCard(i);
+                UiAudio.Watch(new Rect(card.x + 14f, card.yMax - 52f, card.width - 28f, 40f), m.Player.Credits >= price);
                 GUI.enabled = true;
             }
             if (GUI.Button(new Rect(panel.center.x - 120f, panel.yMax - 62f, 240f, 44f), $"Skip (+{offer.SkipBonus} credits)", _bigButton)) match.SkipCards();
@@ -389,12 +392,14 @@ namespace Halobellum.UI
                     bool canBuy = player.Credits >= unit.Cost && player.SquadsBoughtThisRound < m.SquadsPerRound(Team.A);
                     GUI.enabled = canBuy;
                     if (GUI.Button(button, $"Buy {unit.Cost}", _button)) match.Buy(unit);
+                    UiAudio.Watch(button, canBuy);
                 }
                 else
                 {
                     bool canUnlock = player.Credits >= unit.UnlockCost && player.UnlocksThisRound < m.Rules.UnlocksPerRound;
                     GUI.enabled = canUnlock;
                     if (GUI.Button(button, unit.UnlockCost > 0 ? $"Unlock {unit.UnlockCost}" : "Unlock (free)", _button)) match.Unlock(unit);
+                    UiAudio.Watch(button, canUnlock);
                 }
                 GUI.enabled = true;
             }

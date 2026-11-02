@@ -3,6 +3,7 @@
     "rootNamespace": "Halobellum.Tests",
     "references": [
         "Halobellum.UI",
+        "Halobellum.Presentation",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Halobellum.Core",
