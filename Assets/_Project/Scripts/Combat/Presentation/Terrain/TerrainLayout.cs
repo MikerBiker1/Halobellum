@@ -75,9 +75,9 @@ namespace Halobellum.Presentation
         {
             if (points.Count < 2) return;
             c.Decals.Uv = new Vector2(0f, 0.3f);
-            c.Decals.FlatRibbon(D, points, width * 2.6f, width * 0.8f, C(22, 12, 10, 170), true);
-            c.Decals.FlatRibbon(D, points, width, width * 0.25f, C(74, 34, 36, 255));
-            c.Decals.FlatRibbon(D, points, width * 0.45f, width * 0.1f, C(150, 88, 70, 255));
+            c.Decals.FlatRibbon(D, points, width * 2.6f, width * 0.8f, C(50, 36, 30, 110), true);
+            c.Decals.FlatRibbon(D, points, width, width * 0.25f, C(92, 56, 52, 255));
+            c.Decals.FlatRibbon(D, points, width * 0.45f, width * 0.1f, C(128, 88, 72, 255));
             c.Decals.Uv = Vector2.zero;
         }
 
@@ -85,11 +85,12 @@ namespace Halobellum.Presentation
         protected static void Pustule(TerrainCanvas c, TerrainRandom r, float x, float z, float radius)
         {
             c.Decals.Uv = Vector2.zero;
-            c.Decals.FlatDisc(D, x, z, radius * 1.7f, radius * 1.55f, C(24, 16, 10, 210), C(24, 16, 10, 0), 10);
-            c.Decals.FlatDisc(D, x, z, radius, radius * 0.92f, C(196, 196, 96), C(118, 110, 46), 10);
-            c.Decals.FlatDisc(D, x - radius * 0.2f, z + radius * 0.25f, radius * 0.4f, radius * 0.34f, C(240, 240, 176), C(196, 196, 96, 0), 8);
+            // Dull, so that it never looks like a unit at a distance.
+            c.Decals.FlatDisc(D, x, z, radius * 1.7f, radius * 1.55f, C(44, 32, 22, 170), C(44, 32, 22, 0), 10);
+            c.Decals.FlatDisc(D, x, z, radius, radius * 0.92f, C(170, 164, 110), C(116, 106, 70), 10);
+            c.Decals.FlatDisc(D, x - radius * 0.2f, z + radius * 0.25f, radius * 0.4f, radius * 0.34f, C(204, 200, 152), C(170, 164, 110, 0), 8);
             c.Glow.Uv = new Vector2(0.5f, r.Range(0f, 6.28f));
-            c.Glow.FlatDisc(G, x, z, radius * 2.5f, radius * 2.4f, C(170, 190, 60, 60), C(170, 190, 60, 0), 8);
+            c.Glow.FlatDisc(G, x, z, radius * 2.2f, radius * 2.1f, C(170, 190, 60, 16), C(170, 190, 60, 0), 8);
             c.Glow.Uv = Vector2.zero;
         }
 

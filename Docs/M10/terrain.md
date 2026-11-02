@@ -26,7 +26,6 @@ Each faction has three layouts (the brief asked for at least two). The match see
 | Covenant | Crystal Garden | Pale drifted sand and slowly opening spirals of teal seams, in a field of tall crystals, under a cooler blue-grey sky. |
 | Flood | Creep | Living biomass, brown rot and sinew. Nests of pustules with veins spreading from them, a lumpy wall around the field, arching and rearing tendrils, swollen pods, spores in the air, a dark sky. |
 | Flood | Wreck | A place the Flood has taken: rot and pools of slime over the broken slabs of a dead base, burst barriers, rusted containers, strangled masts, the great ribs of a hull. A browner sky. |
-
 | Flood | Hive | Raw sinew under a bruised red-brown sky, cut by trenches of rot, with tall ribbed spires standing over it. |
 
 All shapes and textures are original. Nothing was downloaded, and there are no logos or markings from anywhere.

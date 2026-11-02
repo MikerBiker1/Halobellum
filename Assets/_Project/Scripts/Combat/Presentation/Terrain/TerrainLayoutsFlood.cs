@@ -14,7 +14,7 @@ namespace Halobellum.Presentation
         private static readonly Color32 Skin = new Color32(112, 112, 56, 0);
         private static readonly Color32 Pale = new Color32(186, 176, 102, 0);
         private static readonly Color32 RootColor = new Color32(84, 62, 44, 0);
-        private static readonly Color32 PodGlow = new Color32(226, 226, 110, 90);
+        private static readonly Color32 PodGlow = new Color32(226, 226, 130, 60);
 
         public override string Name => "Creep";
 
@@ -33,7 +33,7 @@ namespace Halobellum.Presentation
             var branch = new List<Vector2>();
 
             // Nests of pustules with veins spreading from them over the floor.
-            for (int nest = 0; nest < 8; nest++)
+            for (int nest = 0; nest < 6; nest++)
             {
                 float nx = r.Range(-74f, 74f), nz = c.Z(r.Range(14f, 78f));
                 int veins = 3 + r.Int(3);
@@ -51,13 +51,13 @@ namespace Halobellum.Presentation
                     }
                 }
                 c.PaintDisc(nx, nz, r.Range(7f, 12f), 2, 0.8f);
-                int heads = 4 + r.Int(6);
+                int heads = 3 + r.Int(4);
                 for (int h = 0; h < heads; h++)
                     Pustule(c, r, nx + r.Range(-5f, 5f), nz + r.Range(-5f, 5f), r.Range(0.5f, 1.3f));
             }
 
             // Stray heads and dark slick patches.
-            for (int i = 0; i < 26; i++) Pustule(c, r, r.Range(-78f, 78f), c.Z(r.Range(6f, 80f)), r.Range(0.3f, 0.8f));
+            for (int i = 0; i < 14; i++) Pustule(c, r, r.Range(-78f, 78f), c.Z(r.Range(6f, 80f)), r.Range(0.3f, 0.7f));
             for (int i = 0; i < 22; i++) Stain(c, r.Range(-78f, 78f), c.Z(r.Range(6f, 80f)), r.Range(1.5f, 5f), C(30, 22, 12, 120));
 
             // A wall of biomass around the field, low and lumpy, with tendrils over it.
@@ -187,7 +187,7 @@ namespace Halobellum.Presentation
                 c.KeepOnFloor(path, 0.5f);
                 Vein(c, path, r.Range(0.35f, 0.8f));
             }
-            for (int i = 0; i < 16; i++) Pustule(c, r, r.Range(-78f, 78f), c.Z(r.Range(6f, 80f)), r.Range(0.4f, 1.0f));
+            for (int i = 0; i < 10; i++) Pustule(c, r, r.Range(-78f, 78f), c.Z(r.Range(6f, 80f)), r.Range(0.4f, 0.8f));
 
             // Old scorch marks.
             for (int i = 0; i < 12; i++) Crater(c, r.Range(-74f, 74f), c.Z(r.Range(12f, 78f)), r.Range(1.5f, 3.6f), C(70, 56, 40));
@@ -317,7 +317,7 @@ namespace Halobellum.Presentation
                 c.KeepOnFloor(path, 0.5f);
                 Vein(c, path, r.Range(0.4f, 0.8f));
             }
-            for (int i = 0; i < 34; i++) Pustule(c, r, r.Range(-78f, 78f), c.Z(r.Range(6f, 80f)), r.Range(0.35f, 1f));
+            for (int i = 0; i < 16; i++) Pustule(c, r, r.Range(-78f, 78f), c.Z(r.Range(6f, 80f)), r.Range(0.35f, 0.8f));
 
             // Low swellings all round the floor.
             for (int k = -1; k <= 1; k += 2)

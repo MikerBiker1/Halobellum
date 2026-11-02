@@ -181,7 +181,7 @@ namespace Halobellum.Presentation
             FogEnd = 850f,
             FogAmount = 1f,
             Haze = Rgb(146, 150, 82),
-            HazeAmount = 0.42f,
+            HazeAmount = 0.34f,
             MoteColor = Rgb(216, 224, 110),
             MoteCount = 140,
         };

@@ -316,12 +316,12 @@ def flood_mass():
     fine = band_noise(73, 50, 260, 0.6)
     mottled = band_noise(74, 10, 50)
     height = np.clip(lump * 0.7 + big * 0.25 + fine * 0.05 - crease * 0.3, 0, 1)
-    color = ramp(big * 0.45 + mottled * 0.55, (72, 76, 44), (92, 96, 52), (112, 112, 62), (134, 128, 78))
-    color = blend(color, (58, 42, 32), crease * 0.62)
+    color = ramp(big * 0.45 + mottled * 0.55, (112, 118, 78), (128, 134, 88), (144, 148, 98), (162, 160, 112))
+    color = blend(color, (84, 72, 54), crease * 0.55)
     pale = smooth(0.55, 0.95, lump) * smooth(0.5, 0.8, mottled)
-    color = blend(color, (156, 148, 96), pale * 0.25)
-    color *= (0.92 + 0.16 * fine)[..., None]
-    color *= relief(height, 9.0)[..., None]
+    color = blend(color, (178, 172, 124), pale * 0.2)
+    color *= (0.94 + 0.12 * fine)[..., None]
+    color *= relief(height, 6.0)[..., None]
     return color, height
 
 
@@ -331,19 +331,19 @@ def flood_rot():
     mud = wrap_sample(band_noise(83, 3, 40, 1.0), warp_x, warp_y)
     fine = band_noise(84, 50, 300, 0.6)
     height = np.clip(mud * 0.75 + fine * 0.25, 0, 1)
-    color = ramp(mud, (54, 40, 30), (78, 58, 40), (100, 76, 50), (122, 96, 64))
-    color *= (0.84 + 0.3 * fine)[..., None]
+    color = ramp(mud, (100, 84, 64), (116, 98, 74), (132, 112, 84), (150, 130, 98))
+    color *= (0.9 + 0.2 * fine)[..., None]
 
     def fibre(rng):
         g = rng.uniform(0.7, 1.2)
-        return (int(66 * g), int(44 * g), int(30 * g), 200)
+        return (int(96 * g), int(76 * g), int(58 * g), 170)
 
     layer = strokes(85, 5000, 10, 34, 2, fibre)
     color = color * (1 - layer[..., 3:] * 0.6) + layer[..., :3] * 255.0 * layer[..., 3:] * 0.6
     spores = blur(dots(86, 2200, 0.8, 2.6), 0.6)
-    color = blend(color, (156, 152, 84), np.clip(spores, 0, 1) * 0.7)
+    color = blend(color, (170, 164, 110), np.clip(spores, 0, 1) * 0.45)
     height = np.clip(height + spores * 0.15, 0, 1)
-    color *= relief(height, 9.0)[..., None]
+    color *= relief(height, 6.0)[..., None]
     return color, height
 
 
@@ -355,16 +355,16 @@ def flood_sinew():
     veins = np.clip(smooth(0.86, 0.98, vein_a) + smooth(0.88, 0.98, vein_b) * 0.7, 0, 1)
     tissue = band_noise(95, 4, 30)
     fine = band_noise(96, 60, 300, 0.5)
-    color = ramp(tissue, (92, 72, 56), (110, 88, 64), (124, 102, 74), (138, 118, 86))
+    color = ramp(tissue, (124, 104, 84), (140, 120, 96), (154, 134, 108), (168, 150, 122))
     color *= (0.92 + 0.16 * fine)[..., None]
-    color = blend(color, (136, 82, 66), blur(veins, 2.0) * 0.4)
-    color = blend(color, (84, 44, 40), veins * 0.55)
+    color = blend(color, (150, 104, 88), blur(veins, 2.0) * 0.35)
+    color = blend(color, (104, 66, 58), veins * 0.5)
 
     # Pustules: a pale, wet head in a dark ring. Few and dull: they must not look like units.
     heads = blur(dots(97, 60, 5, 12), 1.6)
     ring = np.clip(blur(dots(97, 60, 7, 16), 2.2) - heads, 0, 1)
-    color = blend(color, (70, 48, 36), ring * 0.6)
-    color = blend(color, (172, 164, 96), np.clip(heads * 1.1, 0, 1) * 0.7)
+    color = blend(color, (96, 76, 60), ring * 0.5)
+    color = blend(color, (184, 178, 124), np.clip(heads * 1.1, 0, 1) * 0.6)
     height = np.clip(tissue * 0.5 + veins * 0.25 + heads * 0.6, 0, 1)
     color *= relief(height, 7.0)[..., None]
     return color, height

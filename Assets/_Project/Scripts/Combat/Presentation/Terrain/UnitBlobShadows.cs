@@ -78,7 +78,8 @@ namespace Halobellum.Presentation
                     SimUnit unit = units[i];
                     if (!unit.IsAlive || !_views.TryBodyPosition(unit, out Vector3 at)) continue;
                     float radius = Mathf.Max(0.5f, unit.Radius) * 1.45f;
-                    float strength = 1f;
+                    // A pack of tiny forms is dark against the ground already: a dark blob would swallow it.
+                    float strength = unit.FormsAlive > 1 ? 0.25f : 1f;
                     if (unit.IsAir)
                     {
                         radius *= 1.35f;
