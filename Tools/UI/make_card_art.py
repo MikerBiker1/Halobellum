@@ -32,7 +32,23 @@ X = (_xx + 0.5) / SS
 Y = (_yy + 0.5) / SS
 ALONG = np.where(np.abs(X - C) > np.abs(Y - C), Y, X)   # Position along the nearest edge.
 ON_SIDE = np.abs(X - C) > np.abs(Y - C)                 # True on the left and right edges.
-CORNER_DIST = np.minimum(np.abs(X - C), np.abs(Y - C))
+FROM_EDGE_MIDDLE = np.abs(ALONG - C)                    # How far along an edge from its middle.
+
+
+def on_edge(extra=0.0):
+    """True on the repeating middle of each edge, and `extra` pixels on into the corners."""
+    return FROM_EDGE_MIDDLE <= P / 2.0 + extra
+
+
+def whole_repeats(period, phase=0.0, extra=0.0):
+    """True where a shape repeating every `period` pixels sits wholly on the edge: it is kept or dropped as a whole, never cut in half."""
+    centre = B + (np.floor((ALONG - B) / period + phase) + 0.5 - phase) * period
+    return np.abs(centre - C) <= P / 2.0 + extra
+
+
+def fade_into_corners(start, end):
+    """1 on the middle of each edge, fading to 0 between `start` and `end` pixels beyond its repeating part."""
+    return 1.0 - smooth(P / 2.0 + start, P / 2.0 + end, FROM_EDGE_MIDDLE)
 
 
 def smooth(edge0, edge1, v):
@@ -184,7 +200,7 @@ def frame_unsc(path):
     outer, window = box(24.0, chamfer=62.0), box(58.0, chamfer=40.0)
     band = inside(outer) * (1.0 - inside(window))
     noise = periodic_noise(11)
-    plate_seams = (np.abs(((ALONG - B) % (P / 2.0)) - 12.0) < 1.2) & (CORNER_DIST > C - B + 2.0)
+    plate_seams = (np.abs(((ALONG - B) % (P / 2.0)) - 12.0) < 1.2) & on_edge(0.0)
     mid = np.abs(-outer - 13.0) < 0.9
     height = bevel(outer, 7.0) * bevel(-window, 6.0) - 0.34 * mid - 0.5 * plate_seams
     c = Canvas()
@@ -193,22 +209,19 @@ def frame_unsc(path):
     wear = np.clip(periodic_noise(12, kmax=7) * 0.5 + periodic_noise(13, kmax=7) * 0.5 - 0.72, 0.0, 1.0)
     c.paint(rgb("c9d0d2"), band * wear * 0.65)
 
-    # Hazard stripes: on a strip along the inside of the band, and on plates across each cut corner.
+    # Hazard stripes: on a strip along the inside of the band, at the top and the bottom.
     stripes = (((X + Y) / 32.0) % 1.0) < 0.5
     hazard_color = np.where(stripes[..., None], np.asarray(rgb("e0a81c"), np.float32), np.asarray(rgb("15161a"), np.float32))
-    in_corner = mirrored(lambda x, y: inside(np.maximum(np.abs(x + y - 100.0) - 20.0, -(x + y - 60.0))))
-    corner_plate = in_corner * inside(box(32.0, chamfer=64.0)) * (1.0 - inside(box(52.0, chamfer=44.0)))
-    corner_plate = np.clip(corner_plate, 0.0, 1.0)
     strip = inside(np.abs(outer + 26.0) - 5.0) * smooth(C - 92.0, C - 70.0, np.maximum(np.abs(X - C), np.abs(Y - C)))
     strip = strip * (np.abs(Y - C) > np.abs(X - C))  # Strips along the top and bottom edges.
-    hazard = np.clip(corner_plate + strip, 0.0, 1.0) * band
+    hazard = strip * band
     c.paint(hazard_color, hazard)
     diffuse, _ = shade(height, 30.0)
     c.paint((0, 0, 0), hazard * np.clip(0.55 - diffuse, 0.0, 0.5))
 
     # Rivets along the edges, and larger bolts in the corners.
     rivet_u = (((ALONG - B) / 48.0) % 1.0 - 0.5) * 48.0
-    rivet = inside(np.hypot(rivet_u, -outer - 6.0) - 2.6) * (CORNER_DIST > C - B + 10.0)
+    rivet = inside(np.hypot(rivet_u, -outer - 6.0) - 2.6) * on_edge(26.0)
     c.paint(rgb("c6ced1"), rivet * band)
     bolts = mirrored(lambda x, y: inside(np.hypot(x - 92.0, y - 41.0) - 4.2) + inside(np.hypot(x - 41.0, y - 92.0) - 4.2))
     c.paint(rgb("dfe5e7"), np.clip(bolts, 0, 1))
@@ -224,10 +237,9 @@ def frame_covenant(path):
     for flip in (False, True):
         fin = []
         for t in np.linspace(0.0, 1.0, 40):
-            fin.append((6.0 + 165.0 * t ** 1.8, 6.0 + 22.0 * t + 0.0 * t))
+            fin.append((6.0 + 146.0 * t ** 1.8, 6.0 + 22.0 * t))   # Stays inside the corner: the edge beyond it repeats.
         for t in np.linspace(1.0, 0.0, 40):
-            fin.append((8.0 + 20.0 * t ** 0.0 * 0.0 + 22.0 * t + 0.0, 6.0 + 165.0 * t ** 1.8))
-        fin = [(x, y) for x, y in fin]
+            fin.append((8.0 + 22.0 * t, 6.0 + 146.0 * t ** 1.8))
         blades.append([(SIZE - x, SIZE - y) for x, y in fin] if flip else fin)
     blade_mask = polygon_mask(blades)
     blade_d = np.minimum(outer_core, (0.5 - gauss(blade_mask, 1.2)) * 8.0)
@@ -246,7 +258,7 @@ def frame_covenant(path):
     c.paint(rgb("d47bf2"), band * sheen * 0.16)
 
     # The main line of light along the middle of the band, and a thin wave beside it.
-    middle = (outer_core + (-window)) * 0.5 if False else np.abs(box(46.0, r=56.0))
+    middle = np.abs(box(46.0, r=56.0))
     glow = inside(middle - 1.1, soft=0.8) * band
     halo_line = gauss(glow, 3.5) * band
     c.add_light(rgb("53b8ff"), halo_line * 1.5)
@@ -315,7 +327,7 @@ def frame_spell_offensive(path):
     """Offensive spell: charred black iron with a red-hot edge, saw teeth all round, and spikes at the corners."""
     tooth = np.abs(line_along(48.0) - 0.5) * 2.0
     teeth = (tooth - 0.5) * 18.0
-    outer_body = box(30.0, chamfer=30.0) + teeth * smooth(C - B + 8.0, C - B + 40.0, CORNER_DIST)
+    outer_body = box(30.0, chamfer=30.0) + teeth * fade_into_corners(8.0, 40.0)
     spikes = []
     for sx, sy in ((1, 1), (-1, 1), (1, -1), (-1, -1)):
         def corner(px, py):
@@ -337,7 +349,7 @@ def frame_spell_offensive(path):
     cracks = np.clip(1.0 - np.abs(periodic_noise(42, terms=30, kmax=7)) * 9.0, 0.0, 1.0) ** 2
     c.add_light(rgb("ff5a1c"), band * cracks * 0.6)
     # The red-hot inner edge.
-    hot = inside(np.abs(-window - 0.0) - 2.2, soft=0.9) * (1.0 - inside(window) * 0.0)
+    hot = inside(np.abs(window) - 2.2, soft=0.9)
     c.add_light(rgb("ff4a14"), gauss(hot, 2.0) * 1.1 * (1.0 - inside(window) * 0.6))
     c.add_light(rgb("ffd27a"), hot * band * 0.9)
     inner_shadow(c, window, 14.0, 0.75)
@@ -361,8 +373,8 @@ def frame_spell_defensive(path):
     # A honeycomb of light on the inner ring.
     u, v = (X - B) / 24.0, (Y - B) / 24.0
     hex_a = np.abs(np.cos(math.pi * u))
-    hex_b = np.abs(np.cos(math.pi * (u * 0.5 + v * 0.8660254 * 8.0 / 8.0 * 1.0)))
-    hex_c = np.abs(np.cos(math.pi * (u * 0.5 - v * 0.8660254 * 8.0 / 8.0 * 1.0)))
+    hex_b = np.abs(np.cos(math.pi * (u * 0.5 + v)))
+    hex_c = np.abs(np.cos(math.pi * (u * 0.5 - v)))
     cells = np.clip(1.0 - np.minimum(np.minimum(hex_a, hex_b), hex_c) * 9.0, 0.0, 1.0)
     inner_ring = inside(gap_in) * (1.0 - inside(window))
     c.add_light(rgb("7ec8ff"), cells * inner_ring * 0.35)
@@ -400,7 +412,7 @@ def frame_economy(path):
     coin_u = (line_along(64.0) - 0.5) * 64.0
     coin_v = -outer - 17.0
     coin_d = np.hypot(coin_u, coin_v)
-    away = CORNER_DIST > C - B + 22.0
+    away = whole_repeats(64.0, extra=32.0)
     coin = inside(coin_d - 11.0) * away
     c.paint(rgb("3d2c05"), inside(coin_d - 12.5) * away * 0.8)
     c.paint(rgb("f2c842"), coin)
@@ -426,10 +438,9 @@ def frame_economy(path):
 
 def frame_buff(path):
     """Buff: orchid alloy with a crown of rising points on top, chevrons rising up the sides, and swept-up top corners."""
-    side = np.where(Y < C, 1.0, 0.0)
     crown_wave = np.abs(line_along(48.0) - 0.5) * 2.0
     top_edge = (~ON_SIDE) & (Y < C)
-    outer_body = box(32.0, chamfer=20.0) - top_edge * (1.0 - crown_wave) * 16.0 * smooth(C - B + 6.0, C - B + 30.0, CORNER_DIST)
+    outer_body = box(32.0, chamfer=20.0) - top_edge * (1.0 - crown_wave) * 16.0 * fade_into_corners(10.0, 40.0)
     wings = []
     for sx in (1, -1):
         def corner(px, py):
@@ -448,10 +459,10 @@ def frame_buff(path):
     # Chevrons rising up the left and right edges.
     u = (((Y - B) / 32.0) % 1.0) * 32.0
     across = np.abs(np.minimum(X, SIZE - X) - 44.0)
-    chevron = (np.abs((u + across * 0.75) % 32.0 - 11.0) < 4.2) & (across < 11.0) & ON_SIDE & (CORNER_DIST > C - B + 14.0)
+    chevron = (np.abs((u + across * 0.75) % 32.0 - 11.0) < 4.2) & (across < 11.0) & ON_SIDE & on_edge(36.0)
     c.paint(rgb("ffe0f8"), chevron.astype(np.float32) * band * 0.95)
     # A double line on the top and bottom edges.
-    top_bottom = (~ON_SIDE) & (CORNER_DIST > C - B + 6.0)
+    top_bottom = (~ON_SIDE) & on_edge(30.0)
     line_d = np.abs(np.minimum(Y, SIZE - Y) - 46.0)
     c.paint(rgb("ffe0f8"), inside(np.abs(line_d - 3.5) - 1.1) * top_bottom * band)
     # A rising star in each top corner, a small point in each bottom corner.
@@ -479,7 +490,7 @@ def frame_item(path):
     """Item: brass and gunmetal like a machine part: notched cut corners, hex bolts along the edges, a hex nut in each corner."""
     outer_plain = box(26.0, chamfer=46.0)
     notch_u = np.abs(line_along(96.0) - 0.5) * 96.0
-    notches = (notch_u < 14.0) & (CORNER_DIST > C - B + 6.0)
+    notches = (notch_u < 14.0) & on_edge(20.0)
     outer = np.where(notches, outer_plain + 7.0, outer_plain)
     window = box(60.0, chamfer=24.0)
     band = inside(outer) * (1.0 - inside(window))
@@ -496,7 +507,7 @@ def frame_item(path):
     # Hex bolts on the edges, repeating.
     u = (line_along(96.0, 0.5) - 0.5) * 96.0
     v = -outer_plain - 15.0
-    away = CORNER_DIST > C - B + 26.0
+    away = whole_repeats(96.0, phase=0.5, extra=0.5)
     bolt = _hexagon_d(u, v, 0.0, 0.0, 10.0)
     c.paint(rgb("1b1204"), inside(bolt - 2.0) * away * 0.8)
     c.paint(rgb("cfd3d6"), inside(bolt) * away)
@@ -526,17 +537,16 @@ def frame_training(path):
     metal(c, band, height, rgb("06302f"), rgb("46cdbb"), noise, strength=16.0, spec=0.12, spec_power=12.0)
     # Stitches.
     dash = (((ALONG - B) / 16.0) % 1.0) < 0.58
-    seam = inside(np.abs(outer + 7.0) - 1.5) * dash * (CORNER_DIST > C - B + 0.0)
-    corner_arc = inside(np.abs(outer + 7.0) - 1.5) * (CORNER_DIST <= C - B + 0.0) * (((np.arctan2(C - np.abs(Y - C), C - np.abs(X - C)) * 22.0) % 1.0) < 0.58)
-    c.paint(rgb("ecfffb"), np.clip(seam + corner_arc, 0, 1) * band)
-    seam2 = inside(np.abs(window - 6.0) - 1.3) * dash * (CORNER_DIST > C - B + 0.0)
+    seam = inside(np.abs(outer + 7.0) - 1.5) * dash
+    c.paint(rgb("ecfffb"), seam * band)
+    seam2 = inside(np.abs(window - 6.0) - 1.3) * dash
     c.paint(rgb("ecfffb"), seam2 * band * 0.85)
     # Three rank chevrons in each corner, pointing into the corner.
     x, y = np.minimum(X, SIZE - X), np.minimum(Y, SIZE - Y)
     cover = np.zeros_like(X)
     for offset in (0.0, 15.0, 30.0):
-        d = np.maximum(x, y) + 0.0  # A right-angled chevron with its point towards the card's corner.
-        cover = np.maximum(cover, inside(np.abs(d - (46.0 + offset)) - 4.4) * (np.minimum(x, y) > 32.0 + offset * 0.0) * (np.maximum(x, y) < 100.0))
+        d = np.maximum(x, y)  # A right-angled chevron with its point towards the card's corner.
+        cover = np.maximum(cover, inside(np.abs(d - (46.0 + offset)) - 4.4) * (np.minimum(x, y) > 32.0) * (d < 100.0))
     c.paint(rgb("052826"), gauss(cover, 1.5) * 0.9)
     c.paint(rgb("ffe28a"), cover)
     inner_shadow(c, window, 12.0, 0.7)
@@ -708,8 +718,8 @@ def e_missile(d, s, cx, cy, size, angle):
 
 def e_missiles(d, s):
     a = math.radians(180 + 30)
-    for cx, cy in ((0.28, 0.32), (0.56, 0.2), (0.48, 0.62), (0.78, 0.5)):
-        e_missile(d, s, s * cx, s * cy, s * 0.15, a)
+    for cx, cy in ((0.24, 0.3), (0.56, 0.2), (0.44, 0.66), (0.78, 0.54)):
+        e_missile(d, s, s * cx, s * cy, s * 0.22, a)
 
 
 def e_nuke(d, s):
@@ -819,11 +829,11 @@ def e_blessing(d, s):
 
 
 def e_shell(d, s):
-    # A lumpy shell around a small core.
-    for cx, cy, r in ((0.5, 0.2, 0.15), (0.26, 0.34, 0.15), (0.74, 0.34, 0.15), (0.18, 0.58, 0.14), (0.82, 0.58, 0.14), (0.32, 0.8, 0.14), (0.68, 0.8, 0.14), (0.5, 0.86, 0.12)):
+    # A thick lumpy wall curling round a small core.
+    for cx, cy, r in ((0.5, 0.17, 0.16), (0.27, 0.27, 0.17), (0.74, 0.3, 0.15), (0.15, 0.52, 0.14), (0.86, 0.56, 0.13), (0.26, 0.78, 0.17), (0.7, 0.8, 0.16), (0.48, 0.88, 0.12)):
         puff(d, s * cx, s * cy, s * r)
-    puff(d, s * 0.5, s * 0.54, s * 0.27, CLEAR)
-    puff(d, s * 0.5, s * 0.54, s * 0.13)
+    d.ellipse((s * 0.28, s * 0.3, s * 0.72, s * 0.74), fill=CLEAR)
+    puff(d, s * 0.5, s * 0.52, s * 0.11)
 
 
 def e_rain(d, s):
@@ -933,14 +943,14 @@ def e_faction_covenant(d, s):
 
 
 def e_faction_flood(d, s):
-    # A lobed spore with a dark heart.
-    for i in range(7):
-        a = math.tau * i / 7.0 + 0.3
-        r = 0.27 if i % 2 == 0 else 0.33
-        puff(d, s * (0.5 + r * math.cos(a)), s * (0.5 + r * math.sin(a)), s * (0.15 if i % 2 == 0 else 0.11))
-    puff(d, s * 0.5, s * 0.5, s * 0.25)
-    puff(d, s * 0.5, s * 0.5, s * 0.11, CLEAR)
-    puff(d, s * 0.5, s * 0.5, s * 0.05)
+    # A misshapen spore with a dark heart, and tendrils reaching out from it unevenly.
+    for a, length, width in ((0.3, 0.47, 0.05), (1.25, 0.38, 0.04), (2.1, 0.46, 0.055), (3.0, 0.36, 0.04), (3.85, 0.48, 0.05), (4.7, 0.34, 0.04), (5.5, 0.44, 0.05)):
+        bend = a + 0.45
+        thick_line(d, [(s * 0.5, s * 0.5), (s * (0.5 + length * 0.6 * math.cos(a)), s * (0.5 + length * 0.6 * math.sin(a))), (s * (0.5 + length * math.cos(bend)), s * (0.5 + length * math.sin(bend)))], s * width)
+    for cx, cy, r in ((0.5, 0.5, 0.25), (0.34, 0.42, 0.14), (0.64, 0.4, 0.13), (0.62, 0.64, 0.14), (0.38, 0.64, 0.12)):
+        puff(d, s * cx, s * cy, s * r)
+    puff(d, s * 0.5, s * 0.51, s * 0.11, CLEAR)
+    puff(d, s * 0.5, s * 0.51, s * 0.045)
 
 
 EMBLEMS = {
