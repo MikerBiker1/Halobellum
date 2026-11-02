@@ -44,7 +44,7 @@ Shots in flight are blended between the simulation's last two ticks, as bodies a
 - **Titans** (Scarab, Elephant) go up in a chain of blasts over two seconds, and burn for 24 seconds.
 - **Air units** blow up in the air, rain chunks and fall burning to the ground, where they crash with a fireball and a scorch mark.
 - **Flood** burst in gore and spores, leaving a dark splatter. The Abomination comes apart in several heaves.
-- **Infected Pelican**: fire and smoke all the way down its dive. On impact, the biggest thing a unit can do on the field: a white flash, a fireball far wider than a titan's, two rings (the first shows the real reach of its burst), a big spore cloud, a rain of chunks, the blast rolling on for a moment, and the strongest camera shake. Spells can be bigger still: the nuke is.
+- **Infected Pelican**: fire and smoke all the way down its dive. On impact, a blast about as big as a titan's: a white flash, a fireball a little wider than what it damages, two rings (the first shows the real reach of its burst, 7 m), a spore cloud, a rain of chunks, and the blast rolling on for a moment. The owner asked for it to be at least 50% smaller after playing, so everything it draws was halved from what it was (a flash and a ground glow 36 m across, not 71 m; 196 particles at once, not 402), its shake went from 1 to 0.7 of the strongest, which is half as much movement, and the fire left burning on the spot is half as wide. The burst's reach and damage in the simulation are not touched. The crash's sound is a fixed cue that doesn't scale with the blast and stays as it was.
 
 ## Spells
 

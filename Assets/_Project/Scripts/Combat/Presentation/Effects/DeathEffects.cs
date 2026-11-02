@@ -4,7 +4,7 @@
 //   vehicles blow up and stay as blackened wrecks that burn and smoke for a while, then sink away;
 //   air units blow up in the air and fall burning to the ground, where they crash;
 //   Flood bodies burst in gore and spores;
-//   the Infected Pelican trails fire and smoke in its dive, and its crash is the biggest thing on the field.
+//   the Infected Pelican trails fire and smoke in its dive, and its crash is a blast about as big as a titan's.
 // Death events are noted and handled in LateUpdate, after UnitViewManager has dealt with them in its own way, and after the
 // simulation has said whether the body rises again: such a corpse is left to UnitViewManager. Wrecks and falling bodies run on battle
 // time and are capped; past the cap the oldest wreck goes first. The simulation is only read.
@@ -174,7 +174,7 @@ namespace Halobellum.Presentation
 
                 case DeathStyle.CrashBurst:
                     _recipes.PelicanCrash(position, radius, stats.DeathBurst.Radius);
-                    AddFire(new Vector3(position.x, 0f, position.z), radius * 3f, TitanWreckSeconds);
+                    AddFire(new Vector3(position.x, 0f, position.z), radius * 1.3f, TitanWreckSeconds);
                     break;
             }
 

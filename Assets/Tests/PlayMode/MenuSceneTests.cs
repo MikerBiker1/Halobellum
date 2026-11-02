@@ -1,5 +1,5 @@
 // MenuSceneTests.cs
-// Plays the real menu and pause flow (M10): the MainMenu scene opens with its camera moving and its Pelicans flying; New Match reaches a
+// Plays the real menu and pause flow (M10): the MainMenu scene opens with its camera moving and its Pelicans flying, and its Scarab standing still; New Match reaches a
 // working draft; pausing truly stops a battle in every phase and resumes where it was, at the same speed; the HUD and field input are
 // off while paused and back after; leaving for the menu puts time right; the Sandbox's Back button goes where it came from.
 // Depends on: Halobellum.Presentation, Halobellum.UI, Halobellum.Economy, NUnit, Unity Test Framework.
@@ -86,6 +86,35 @@ namespace Halobellum.Tests
                 Assert.IsNotNull(renderer.sharedMaterial, renderer.name + " has no material.");
                 Assert.AreNotEqual("Hidden/InternalErrorShader", renderer.sharedMaterial.shader.name, renderer.name);
             }
+        }
+
+        [UnityTest]
+        public IEnumerator MainMenu_TheWalkerStandsStill_AndItsBeamStillFires()
+        {
+            yield return SceneManager.LoadSceneAsync(GameFlow.MainMenuScene, LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+            var backdrop = Object.FindAnyObjectByType<MenuBackdrop>();
+            var parts = backdrop.walker.GetComponentsInChildren<Transform>(true);
+            var places = new Vector3[parts.Length];
+            var turns = new Quaternion[parts.Length];
+            for (int i = 0; i < parts.Length; i++)
+            {
+                places[i] = parts[i].position;
+                turns[i] = parts[i].rotation;
+            }
+
+            yield return WaitRealSeconds(1f);
+            backdrop.ApplyAt(backdrop.beamStart + 1f);
+            yield return null;
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(places[i], parts[i].position, parts[i].name + " stays where it is.");
+                Assert.AreEqual(turns[i], parts[i].rotation, parts[i].name + " doesn't swing.");
+            }
+            backdrop.ApplyAt(backdrop.beamStart + 1f);
+            Assert.IsTrue(backdrop.beam.enabled, "The beam fires.");
+            Assert.AreEqual(backdrop.beamFrom.position, backdrop.beam.GetPosition(0), "From its gun.");
         }
 
         [UnityTest]

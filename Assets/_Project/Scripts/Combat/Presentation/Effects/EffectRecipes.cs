@@ -446,16 +446,16 @@ namespace Halobellum.Presentation
         }
 
         /// <summary>
-        /// The Infected Pelican comes down: the biggest thing on the field. burstRadius is the reach of its death burst, the size of
-        /// the ring; the fire and the cloud go far beyond it.
+        /// The Infected Pelican comes down: a big crash, about what a titan's blast is. burstRadius is the reach of its death burst, the size
+        /// of the first ring; the fire and the cloud fill it and go a little beyond, so that the eye can still tell what it damages.
         /// </summary>
         public void PelicanCrash(Vector3 position, float bodyRadius, float burstRadius)
         {
             Vector3 ground = new Vector3(position.x, 0.14f, position.z);
             Vector3 low = new Vector3(position.x, 1.5f, position.z);
-            // The first ring shows what the burst really reaches; everything else is made to dwarf any other death on the field.
+            // The first ring shows what the burst really reaches.
             _kit.Ring(EffectPriority.Huge, ground, burstRadius * 2f, new Color(1f, 0.9f, 0.65f, 1f), 0.45f);
-            float radius = Mathf.Max(burstRadius, bodyRadius * 2f) * 1.7f;
+            float radius = Mathf.Max(burstRadius, bodyRadius * 2f) * 0.85f;
             const EffectPriority huge = EffectPriority.Huge;
 
             _kit.Glow(huge, low + Vector3.up * radius * 0.4f, radius * 6f, Color.white, 0.14f);
@@ -466,37 +466,37 @@ namespace Halobellum.Presentation
             _kit.Scorch(huge, ground, radius * 2.6f, ScorchBlack, 90f);
             _kit.Scorch(huge, ground, radius * 1.6f, SplatterDark, 90f);
 
-            for (int i = 0; i < 56; i++)
+            for (int i = 0; i < 28; i++)
             {
                 Vector3 out3 = Random.onUnitSphere;
                 out3.y = Mathf.Abs(out3.y) * 0.75f + 0.25f;
                 _kit.Fire(huge, low + out3 * radius * 0.25f, out3 * radius * Random.Range(1.6f, 4.2f), radius * Random.Range(0.45f, 0.95f), Random.Range(0.7f, 1.5f));
             }
-            for (int i = 0; i < 26; i++)
+            for (int i = 0; i < 13; i++)
             {
                 Vector3 out3 = Random.onUnitSphere;
                 out3.y = Mathf.Abs(out3.y);
                 _kit.Smoke(huge, low + out3 * radius * 0.4f, out3 * radius * 0.9f + Vector3.up * radius * Random.Range(0.7f, 1.6f), radius * Random.Range(0.8f, 1.4f), SmokeDark, Random.Range(2.5f, 5f));
             }
-            for (int i = 0; i < 22; i++) _kit.Smoke(huge, low + Random.insideUnitSphere * radius, Random.insideUnitSphere * radius * 0.6f + Vector3.up * radius * 0.35f, radius * Random.Range(0.8f, 1.3f), SporeCloud, Random.Range(3.5f, 7f));
-            for (int i = 0; i < 150; i++) _kit.Spore(huge, low + Random.insideUnitSphere * radius, Random.insideUnitSphere * radius * 1.3f + Vector3.up * Random.Range(1f, 5f), Random.Range(0.35f, 0.8f) * _kit.ReadScale, SporeGreen, Random.Range(2f, 6f));
-            for (int i = 0; i < 90; i++) _kit.Spark(huge, low, Random.onUnitSphere * radius * Random.Range(2f, 6f) + Vector3.up * radius * 2.5f, 0.1f * _kit.ReadScale, i % 3 == 0 ? new Color(0.75f, 1f, 0.35f) : SparkHot, Random.Range(0.6f, 1.8f));
-            for (int i = 0; i < 46; i++)
+            for (int i = 0; i < 11; i++) _kit.Smoke(huge, low + Random.insideUnitSphere * radius, Random.insideUnitSphere * radius * 0.6f + Vector3.up * radius * 0.35f, radius * Random.Range(0.8f, 1.3f), SporeCloud, Random.Range(3.5f, 7f));
+            for (int i = 0; i < 70; i++) _kit.Spore(huge, low + Random.insideUnitSphere * radius, Random.insideUnitSphere * radius * 1.3f + Vector3.up * Random.Range(0.5f, 2.5f), Random.Range(0.35f, 0.8f) * _kit.ReadScale, SporeGreen, Random.Range(2f, 6f));
+            for (int i = 0; i < 40; i++) _kit.Spark(huge, low, Random.onUnitSphere * radius * Random.Range(2f, 6f) + Vector3.up * radius * 2.5f, 0.1f * _kit.ReadScale, i % 3 == 0 ? new Color(0.75f, 1f, 0.35f) : SparkHot, Random.Range(0.6f, 1.8f));
+            for (int i = 0; i < 24; i++)
             {
                 Vector3 out3 = Random.onUnitSphere;
                 out3.y = Mathf.Abs(out3.y) + 0.6f;
                 Color color = i % 3 == 0 ? MetalHot : i % 3 == 1 ? MetalDark : FleshSick;
-                _kit.Chunk(huge, low, out3 * Random.Range(10f, 28f), Random.Range(0.25f, 0.8f), color, Random.Range(2.2f, 4.5f));
+                _kit.Chunk(huge, low, out3 * Random.Range(5f, 14f), Random.Range(0.2f, 0.55f), color, Random.Range(2.2f, 4.5f));
             }
-            for (int i = 0; i < 4; i++) _kit.Heat(huge, low + Vector3.up * radius * (0.4f + i * 0.5f) + Random.insideUnitSphere * radius * 0.5f, Vector3.up * 4f, radius * 3f, 1.2f);
+            for (int i = 0; i < 2; i++) _kit.Heat(huge, low + Vector3.up * radius * (0.4f + i * 0.5f) + Random.insideUnitSphere * radius * 0.5f, Vector3.up * 2f, radius * 3f, 1.2f);
 
             // The blast goes on rolling for a moment.
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 3; i++)
             {
                 Vector3 spot = position + new Vector3(Random.Range(-radius, radius), Random.Range(1f, radius * 0.6f), Random.Range(-radius, radius)) * 0.7f;
                 FireballAfter(0.18f + i * 0.2f, spot, radius * Random.Range(0.35f, 0.55f), EffectPriority.Big);
             }
-            CameraShake.Kick(position, 1f);
+            CameraShake.Kick(position, 0.7f);
         }
     }
 }

@@ -2,7 +2,7 @@
 
 ## What the player sees
 
-The game now opens in a new scene, **MainMenu**. It fades in from black on a dusk battlefield seen from ground level: Marines in silhouette, Scorpions on the line, a burnt-out Warthog smoking, Wraiths further on, and a huge Scarab walking slowly through the haze toward the camera, with a low sun beside it. Pelicans cross the sky in three different groups. Every 26 seconds the Scarab fires its beam at the ground. Embers drift past. The camera wanders very slowly.
+The game now opens in a new scene, **MainMenu**. It fades in from black on a dusk battlefield seen from ground level: Marines in silhouette, Scorpions on the line, a burnt-out Warthog smoking, Wraiths further on, and a huge Scarab standing in the haze on all four legs, with a low sun beside it. Pelicans cross the sky in three different groups. Every 26 seconds the Scarab fires its beam at the ground. Embers drift past. The camera wanders very slowly.
 
 On the left, under a soft darkness so the text stands out: the title **HALOBELLUM** and the buttons **New Match** (with Easy / Normal / Hard next to it), **Sandbox**, **Settings** and **Quit**. There are no Halo logos or marks. The look (near-black panels, a fine edge, warm amber) belongs to these screens only, because they belong to no faction.
 
@@ -81,6 +81,12 @@ To change the picture, edit `MainMenuSceneBuilder.cs` and run it (Halobellum > S
 - **Narrow windows.** `HudScale.ScaleFor` lets the UI scale grow only as far as 1140 units still fit across the window, so that the 1120-unit bars of the Match and the Sandbox stay on the screen. The only sizes in the Settings list that this changes are 120% and 125% at 5:4, which both show as about 118%. Every HUD of a scene uses the same scale, so they stay in line.
 - **Items panel and squad window.** See above. On the narrowest windows (under about 1200 units) the moved panel lies over the left edge of the unit list, where the pictures and the "Place for" label are. The Place buttons stay clear.
 - **Squad actions and squad window.** Under about 1420 units wide the Move / Turn / Sell panel ran under the stats window and hid the Move button. It now stands right of that window (`SquadStatsWindow.ActionsPanelLeft`), in the Match and the Sandbox.
+
+## After the owner played
+
+- **The menu Scarab stands still.** The owner liked it there but not its walk up close, so it no longer walks and no leg swings. `MenuBackdrop` has no walking left in it; its beam and glowing panels fire as before, and the Pelicans, the camera's drift and the Marines still move. It stands at (57.5, 169), where it was about ten seconds into the old walk, so the picture is the one that was praised.
+- **All four feet are on the ground.** The old walk kept one height, so feet floated by up to 2.9 m or sank by up to 0.6 m along the way. The ground slopes about 2.5 m across the stance, so `MainMenuSceneBuilder.PlantLegs` sets the body level at the middle height and slides each leg 0.75 to 1.32 m up or down at the hip until its lowest vertex is 3 cm into the ground's real triangles. Nothing is rotated, and the slide does not show at the hips even through a long lens. These are overrides in the scene only: the prefab and the battle's Scarab are untouched. `MenuScarabTests` holds all of it, reading the vertices in the editor, because a game can't read a model's meshes.
+- **What the camera sees of the feet.** A low swell in front hides the last 0.25 to 1.25 m of each leg from the menu's camera, about as it did before, so the feet meet the ground just behind that crest.
 
 ## Test tools and the player's settings
 

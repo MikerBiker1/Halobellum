@@ -1,7 +1,7 @@
 // MainMenuSceneBuilder.cs
 // Builds Scenes/MainMenu.unity from code (M10), so it can always be made again exactly: a low camera on a darkening battlefield, looking
-// toward the sun. Marines and Scorpions in front; a burnt-out Warthog smoking on the left; Wraiths further on; a huge Scarab coming through
-// the haze; ridges behind it, smoke on the horizon, embers in the air, Pelicans crossing the sky. The models are the project's own; the
+// toward the sun. Marines and Scorpions in front; a burnt-out Warthog smoking on the left; Wraiths further on; a huge Scarab standing in
+// the haze, all four legs on the ground; ridges behind it, smoke on the horizon, embers in the air, Pelicans crossing the sky. The models are the project's own; the
 // ground, ridges, rocks, sky, smoke and glow are all made here or by MenuSky.shader, and written to Art/Menu. The moving parts are in
 // MenuBackdrop and the screen in MainMenuHud.
 //   Menu: Halobellum > Scenes > Rebuild Main Menu Scene
@@ -35,6 +35,8 @@ namespace Halobellum.EditorTools
         // Where the sun is: low, ahead of the camera and to the right.
         private const float SunElevation = 8.5f, SunAzimuth = 24f;
         private static readonly Vector3 CameraSpot = new Vector3(2f, 0f, -44f);
+        // How far the Scarab's feet go into the ground, in metres: enough that no light shows under them.
+        private const float FootSink = 0.03f;
 
         [MenuItem("Halobellum/Scenes/Rebuild Main Menu Scene")]
         public static void BuildFromMenu()
@@ -521,28 +523,76 @@ namespace Halobellum.EditorTools
             return model;
         }
 
+        /// <summary>
+        /// Stands the model on the ground as it really is under each foot. The ground slopes about two metres across its stance, so the body
+        /// goes level at the middle height and each leg slides up or down at the hip until its lowest point sits just in the ground.
+        /// </summary>
+        private static void PlantLegs(Transform model, List<Transform> legs)
+        {
+            Mesh ground = GameObject.Find("Ground").GetComponent<MeshFilter>().sharedMesh;
+            Vector3[] groundPoints = ground.vertices;
+            int[] groundTriangles = ground.triangles;
+            var under = new float[legs.Count];
+            float middle = 0f;
+            for (int i = 0; i < legs.Count; i++)
+            {
+                Vector3 foot = LowestPoint(legs[i]);
+                under[i] = MeshHeight(groundPoints, groundTriangles, foot.x, foot.z);
+                middle += under[i] / legs.Count;
+            }
+            model.position += Vector3.up * (middle - LowestPoint(legs[0]).y);
+            for (int i = 0; i < legs.Count; i++)
+            {
+                float slide = under[i] - FootSink - LowestPoint(legs[i]).y;
+                legs[i].position += Vector3.up * slide;
+                Debug.Log($"Menu Scarab: {legs[i].name} slid {slide:0.00} m onto the ground at {under[i]:0.00}.");
+            }
+        }
+
+        /// <summary>The lowest vertex of this part of a model, in the world. A model's meshes can be read here in the editor, though not in a game.</summary>
+        private static Vector3 LowestPoint(Transform part)
+        {
+            Matrix4x4 world = part.localToWorldMatrix;
+            var lowest = new Vector3(0f, float.MaxValue, 0f);
+            foreach (Vector3 vertex in part.GetComponent<MeshFilter>().sharedMesh.vertices)
+            {
+                Vector3 point = world.MultiplyPoint3x4(vertex);
+                if (point.y < lowest.y) lowest = point;
+            }
+            return lowest;
+        }
+
+        /// <summary>The height of the ground's triangles here: between its vertices they run a little off GroundHeight.</summary>
+        private static float MeshHeight(Vector3[] points, int[] triangles, float x, float z)
+        {
+            for (int t = 0; t < triangles.Length; t += 3)
+            {
+                Vector3 a = points[triangles[t]], b = points[triangles[t + 1]], c = points[triangles[t + 2]];
+                float area = (b.z - c.z) * (a.x - c.x) + (c.x - b.x) * (a.z - c.z);
+                if (Mathf.Abs(area) < 1e-6f) continue;
+                float shareA = ((b.z - c.z) * (x - c.x) + (c.x - b.x) * (z - c.z)) / area;
+                float shareB = ((c.z - a.z) * (x - c.x) + (a.x - c.x) * (z - c.z)) / area;
+                if (shareA < 0f || shareB < 0f || shareA + shareB > 1f) continue;
+                return shareA * a.y + shareB * b.y + (1f - shareA - shareB) * c.y;
+            }
+            throw new InvalidOperationException($"No ground at {x}, {z}.");
+        }
+
         private static void PlaceArmy(MenuBackdrop backdrop)
         {
             var army = new GameObject("Army").transform;
 
-            // The walker, far off, coming on through the haze.
-            GameObject scarab = PlaceModel("Scarab_Model", army, 58f, 178f, 192f, 3.7f);
+            // The walker, far off, standing in the haze. This spot is where it was a few seconds into its old walk, the picture that was praised.
+            GameObject scarab = PlaceModel("Scarab_Model", army, 57.5f, 169f, 192f, 3.7f);
             backdrop.walker = scarab.transform;
-            backdrop.walkerStart = scarab.transform.position;
-            backdrop.walkerDirection = new Vector3(-0.06f, 0f, -1f);
-            var legs = new List<MenuBackdrop.Leg>();
-            Quaternion inverse = Quaternion.Inverse(scarab.transform.rotation);
+            var legs = new List<Transform>();
             Transform muzzle = null;
             foreach (Transform node in scarab.GetComponentsInChildren<Transform>(true))
             {
-                if (node.name.StartsWith("Swing_"))
-                {
-                    int.TryParse(node.name.Substring(node.name.LastIndexOf('_') + 1), out int percent);
-                    legs.Add(new MenuBackdrop.Leg { node = node, rest = inverse * node.rotation, phase = percent / 100f });
-                }
+                if (node.name.StartsWith("Swing_")) legs.Add(node);
                 else if (muzzle == null && node.name.StartsWith("Muzzle_")) muzzle = node;
             }
-            backdrop.legs = legs.ToArray();
+            PlantLegs(scarab.transform, legs);
             Debug.Log($"Menu Scarab: {legs.Count} legs, muzzle {(muzzle != null ? muzzle.name : "none")}");
             BuildBeam(backdrop, muzzle != null ? muzzle : scarab.transform);
 

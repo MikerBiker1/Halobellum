@@ -1,7 +1,8 @@
 // MenuBackdrop.cs
-// Makes the main menu's picture move (M10): the camera's slow drift, Pelicans flying past, the Scarab's slow walk and its beam, the baked
-// Marines' idle animation. All of it runs from one clock with no objects made and nothing allocated while it plays. MainMenuSceneBuilder
-// makes the scene and fills in the fields here. ApplyAt shows any moment, so the builder can take a preview picture.
+// Makes the main menu's picture move (M10): the camera's slow drift, Pelicans flying past, the Scarab's beam, the baked Marines' idle
+// animation. The Scarab itself stands still, planted on all four legs: MainMenuSceneBuilder puts them on the ground and nothing here moves
+// them. All of it runs from one clock with no objects made and nothing allocated while it plays. MainMenuSceneBuilder makes the scene and
+// fills in the fields here. ApplyAt shows any moment, so the builder can take a preview picture.
 // Shadows have to reach the far-off Scarab here, so it widens the shadow distance while the menu is open and puts it back afterwards.
 // The Scarab's glowing panels are made for the battle's bright day and would burn flat white against this dusk, so here they stay dim
 // and rise only as the beam fires. Only these renderers change (a property block): the battle's Scarab shares the materials.
@@ -43,15 +44,6 @@ namespace Halobellum.UI
             public Color tint;
         }
 
-        /// <summary>A leg of the Scarab, as ModelParts swings it in battle.</summary>
-        [Serializable]
-        public sealed class Leg
-        {
-            public Transform node;
-            public Quaternion rest;
-            public float phase;
-        }
-
         [Header("Camera")]
         public Camera view;
         public Vector3 cameraPosition;
@@ -68,14 +60,8 @@ namespace Halobellum.UI
         public Transform[] glows = Array.Empty<Transform>();
 
         [Header("The walker")]
+        [Tooltip("The Scarab, standing still. Only its beam and its panels change.")]
         public Transform walker;
-        public Vector3 walkerStart;
-        public Vector3 walkerDirection = Vector3.back;
-        public float walkerSpeed = 0.9f;
-        [Tooltip("It stops after this many metres, so that it never reaches the camera.")]
-        public float walkerDistance = 60f;
-        public Leg[] legs = Array.Empty<Leg>();
-        public float legDegrees = 5f;
 
         [Header("The walker's beam")]
         public LineRenderer beam;
@@ -179,7 +165,6 @@ namespace Halobellum.UI
             Shader.SetGlobalFloat(BattleTimeId, time);
             MoveCamera(time);
             foreach (Flyer flyer in flyers) Fly(flyer, time);
-            Walk(time);
             FireBeam(time);
             if (view != null)
             {
@@ -220,22 +205,6 @@ namespace Halobellum.UI
             position.y += Mathf.Sin(time * 0.9f + flyer.bobPhase) * 0.5f;
             float lean = Mathf.Sin(progress * Mathf.PI) * flyer.bank + Mathf.Sin(time * 0.6f + flyer.bobPhase) * 1.5f;
             flyer.body.SetPositionAndRotation(position, Quaternion.LookRotation(path) * Quaternion.Euler(0f, 0f, lean));
-        }
-
-        private void Walk(float time)
-        {
-            if (walker == null) return;
-            float walked = walkerSpeed * time;
-            float moving = Mathf.Clamp01((walkerDistance - walked) / 5f);
-            walker.position = walkerStart + walkerDirection.normalized * Mathf.Min(walked, walkerDistance);
-            Quaternion rotation = walker.rotation;
-            Vector3 axis = walker.right;
-            foreach (Leg leg in legs)
-            {
-                if (leg.node == null) continue;
-                float angle = Mathf.Sin((time * 0.28f + leg.phase) * Mathf.PI * 2f) * legDegrees * moving;
-                leg.node.rotation = Quaternion.AngleAxis(angle, axis) * rotation * leg.rest;
-            }
         }
 
         /// <summary>How far the walker's panels have risen toward their firing glow, 0 at rest to 1. For tests.</summary>

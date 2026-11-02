@@ -1,6 +1,7 @@
 // EffectsTests.cs
 // The battle effects (M10): each weapon gets a look and shows who fired it, each unit a kind of death, each spell a look of its own; the
-// budget drops small things first; the shake adds up sensibly; and in the real Sandbox and Match scenes effects run in every kind of
+// budget drops small things first; the shake adds up sensibly; the Infected Pelican's crash is half what it was but still fills what it
+// damages; and in the real Sandbox and Match scenes effects run in every kind of
 // fight and between battles without an error, stay under their caps, freeze with the battle, and allocate nothing per shot.
 // Depends on: Halobellum.Presentation, Halobellum.Combat, Halobellum.Core, NUnit, Unity Test Framework.
 
@@ -244,6 +245,52 @@ namespace Halobellum.Tests
             Assert.AreEqual(SpellLook.Emp, SpellLooks.For(new SpellStats { Name = "Electromagnetic Pulse", Effect = SpellEffect.Disrupt }));
             Assert.AreEqual(SpellLook.SporeWave, SpellLooks.For(new SpellStats { Name = "Nerve Spores", Effect = SpellEffect.Disrupt }));
             Assert.AreEqual(SpellLook.Nuke, SpellLooks.For(new SpellStats { Name = "A New Bomb", Radius = 12f }), "A spell with an unknown name goes by what it does.");
+        }
+
+        /// <summary>All the particles of one kind that an effect has made so far.</summary>
+        private static ParticleSystem.Particle[] ParticlesOf(GameObject host, string layer)
+        {
+            ParticleSystem system = host.GetComponentsInChildren<ParticleSystem>(true).First(s => s.name == layer);
+            var particles = new ParticleSystem.Particle[system.particleCount];
+            system.GetParticles(particles);
+            return particles;
+        }
+
+        [Test]
+        public void ThePelicansCrash_IsHalfWhatItWas_AndStillFillsWhatItDamages()
+        {
+            // The Infected Pelican's own numbers.
+            const float burstRadius = 7f, bodyRadius = 2.5f;
+            var host = new GameObject("Crash");
+            var kit = new EffectKit(host.transform);
+            new EffectRecipes(kit).PelicanCrash(Vector3.zero, bodyRadius, burstRadius);
+
+            float Largest(string layer) => ParticlesOf(host, layer).Max(p => p.startSize);
+            float Fastest(string layer) => ParticlesOf(host, layer).Max(p => p.velocity.magnitude);
+            try
+            {
+                // What each was before it was cut, in metres and metres a second, and half of it is the most it may be now.
+                const float half = 0.5f;
+                Assert.LessOrEqual(Largest("Glow"), 71.4f * half + 0.01f, "The flash.");
+                Assert.LessOrEqual(Largest("Ground Glow"), 71.4f * half + 0.01f, "The light on the ground.");
+                Assert.LessOrEqual(Largest("Shock Ring"), 42.84f * half + 0.01f, "The outer ring.");
+                Assert.LessOrEqual(Largest("Scorch"), 30.94f * half + 0.01f, "The burn on the ground.");
+                Assert.LessOrEqual(Largest("Fire"), 11.31f * half + 0.01f, "A lick of fire.");
+                Assert.LessOrEqual(Fastest("Fire"), 55f * half, "How far the fire flies.");
+                Assert.LessOrEqual(Largest("Smoke"), 16.66f * half + 0.01f, "A puff of smoke.");
+                Assert.LessOrEqual(Fastest("Sparks"), 101.2f * half, "How far the sparks fly.");
+                Assert.LessOrEqual(Fastest("Chunks"), 44.8f * half, "How far the pieces fly.");
+                Assert.LessOrEqual(kit.LiveParticles, 402 / 2, "It was 402 particles at once.");
+
+                Assert.AreEqual(1, ParticlesOf(host, "Shock Ring").Count(p => Mathf.Approximately(p.startSize, burstRadius * 2f)), "One ring shows the burst's true reach.");
+                Assert.GreaterOrEqual(Largest("Scorch"), burstRadius * 2f, "The burn is as wide as what the burst damages.");
+                Assert.Greater(Largest("Glow"), burstRadius * 2f, "So is the flash.");
+                Assert.Greater(kit.LiveParticles, 150, "Still a big crash.");
+            }
+            finally
+            {
+                Object.DestroyImmediate(host);
+            }
         }
 
         [Test]
