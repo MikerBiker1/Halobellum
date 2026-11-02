@@ -23,6 +23,7 @@ namespace Halobellum.Presentation
         public const string GalleryFlag = "-gallery";
         public const string BenchmarkFlag = "-benchmark";
         public const string MenuDemoFlag = "-menuDemo";
+        public const string CardsDemoFlag = "-cardsDemo";
 
         private static string _lastScene;
 
@@ -36,7 +37,7 @@ namespace Halobellum.Presentation
         public static string DirectSceneFor(string[] args)
         {
             if (Has(args, SandboxAutoplay.Flag) || Has(args, GalleryFlag)) return SandboxScene;
-            if (Has(args, AutoplayFlag) || Has(args, CrowdBenchmark.Flag)) return MatchScene;
+            if (Has(args, AutoplayFlag) || Has(args, CrowdBenchmark.Flag) || Has(args, CardsDemoFlag)) return MatchScene;
             if (Has(args, BenchmarkFlag)) return BattleScene;
             return null;
         }
