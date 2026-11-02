@@ -109,6 +109,9 @@ namespace Halobellum.Presentation
                 case WeaponFeelKind.Bomb:
                     if (name.Contains("fuel rod"))
                         return new WeaponLook { Shot = flood ? FloodPlasma : FuelRodGreen, Flash = flood ? FloodPlasma : FuelRodGreen, FlashSize = 1.8f, ShotWidth = 1.5f, Impact = ImpactStyle.Plasma, Blast = BlastStyle.Plasma, Ball = true };
+                    // Flood bombs (Spore Bombs) burst in gore and spores, not fire.
+                    if (flood)
+                        return new WeaponLook { Shot = FloodPlasma, Flash = FloodPlasma, FlashSize = 1.2f, ShotWidth = 0.55f, Impact = ImpactStyle.Bio, Blast = BlastStyle.Bio };
                     return new WeaponLook { Shot = RocketOrange, Flash = RocketOrange, FlashSize = 1.2f, ShotWidth = 0.55f, Impact = ImpactStyle.Bullet, Blast = BlastStyle.Fire, SmokeTrail = true };
                 case WeaponFeelKind.Flame:
                     return new WeaponLook { Shot = new Color(1f, 0.6f, 0.2f), Flash = new Color(1f, 0.65f, 0.25f), FlashSize = 1.6f, ShotWidth = 0.4f, Impact = ImpactStyle.None };

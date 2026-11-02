@@ -32,11 +32,14 @@ namespace Halobellum.Presentation
         private bool _fired;
         private SimUnit _firedBy;
         private SimUnit _firedAt;
-        private string _waitFor;
+        private string _waitFor, _waitForWeapon;
+        private string _only;
 
-        public void Prepare(string shots)
+        /// <param name="only">Only the pictures whose names contain this ("w_Railgun", "d_Scorpion", "crash", "s_"); null for all of them.</param>
+        public void Prepare(string shots, string only = null)
         {
             _shots = shots;
+            _only = only;
             _sandbox = GetComponent<SandboxController>();
             _battle = GetComponent<BattleController>();
             _views = GetComponent<UnitViewManager>();
@@ -44,13 +47,15 @@ namespace Halobellum.Presentation
             _control = _camera.GetComponent<BattleCameraController>();
         }
 
+        private bool Wanted(string picture) => _only == null || picture.Contains(_only);
+
         /// <summary>Every picture: weapons, deaths, the crash, spells.</summary>
         public IEnumerator TakeAll()
         {
             if (_control != null) _control.enabled = false;
             yield return Weapons();
             yield return Deaths();
-            yield return PelicanCrash();
+            if (Wanted("crash")) yield return PelicanCrash();
             yield return Spells();
             if (_control != null) _control.enabled = true;
             Debug.Log("Effects gallery finished.");
@@ -60,14 +65,16 @@ namespace Halobellum.Presentation
 
         private readonly struct WeaponShot
         {
-            public readonly string Label, Shooter, Target;
+            public readonly string Label, Shooter, Target, Weapon;
             public readonly float Delay;
-            public WeaponShot(string label, string shooter, string target, float delay)
+            /// <param name="weapon">Which of the shooter's weapons to wait for; null for any.</param>
+            public WeaponShot(string label, string shooter, string target, float delay, string weapon = null)
             {
                 Label = label;
                 Shooter = shooter;
                 Target = target;
                 Delay = delay;
+                Weapon = weapon;
             }
         }
 
@@ -80,9 +87,14 @@ namespace Halobellum.Presentation
                 new WeaponShot("HeavyBullet", "Warthog", tough, 0.05f),
                 new WeaponShot("Cannon", "Scorpion", tough, 0.2f),
                 new WeaponShot("Gauss", "Gauss Warthog", tough, 0.06f),
+                new WeaponShot("Railgun", "Cobra", tough, 0.03f),
+                new WeaponShot("EmpRailgun", "Gremlin", tough, 0.03f),
                 new WeaponShot("Rocket", "Wolverine", "Hornet", 0.25f),
                 new WeaponShot("RocketLobbed", "Archer Missile Pod", tough, 0.9f),
                 new WeaponShot("Bomb", "Hornet", tough, 0.2f),
+                new WeaponShot("SporeBombFlight", "Infested Hornet", tough, 0.3f, "Spore Bombs"),
+                new WeaponShot("SporeBombBlast", "Infested Hornet", tough, 1.05f, "Spore Bombs"),
+                new WeaponShot("SporeBombBanshee", "Infested Banshee", tough, 0.3f, "Spore Bomb"),
                 new WeaponShot("Flame", "Flamethrower Trooper", tough, 0.7f),
                 new WeaponShot("Plasma", "Jackal (Plasma Rifle)", tough, 0.08f),
                 new WeaponShot("PlasmaElite", "Elite", tough, 0.08f),
@@ -99,8 +111,11 @@ namespace Halobellum.Presentation
                 new WeaponShot("BoneShards", "Pure Form Ranged", tough, 0.8f),
                 new WeaponShot("FloodPlasma", "Infected Phantom", tough, 0.08f),
             };
-            foreach (WeaponShot shot in list) yield return OneWeapon(shot);
-            yield return ScarabBeam();
+            foreach (WeaponShot shot in list)
+            {
+                if (Wanted("w_" + shot.Label)) yield return OneWeapon(shot);
+            }
+            if (Wanted("w_Beam")) yield return ScarabBeam();
         }
 
         private IEnumerator OneWeapon(WeaponShot shot)
@@ -110,6 +125,7 @@ namespace Halobellum.Presentation
             _sandbox.Run();
             _fired = false;
             _waitFor = shot.Shooter;
+            _waitForWeapon = shot.Weapon;
             _battle.Simulation.Events.WeaponFired += OnFired;
             GameCamera(Vector3.zero);
             float limit = 45f;
@@ -138,6 +154,7 @@ namespace Halobellum.Presentation
         private void OnFired(SimUnit attacker, int weapon, SimUnit target)
         {
             if (attacker.Stats.Name != _waitFor) return;
+            if (_waitForWeapon != null && attacker.Weapons[weapon].Stats.Name != _waitForWeapon) return;
             _fired = true;
             _firedBy = attacker;
             _firedAt = target;
@@ -193,7 +210,10 @@ namespace Halobellum.Presentation
                 "Marine", "Placeholder Infantry", "Warthog", "Scorpion", "Elephant", "Scarab", "Hornet", "Pelican", "Banshee",
                 "Infection Forms", "Combat Form", "Stalker Form", "Carrier Form", "Flood Abomination", "Swarm Form", "Infected Phantom",
             };
-            foreach (string name in list) yield return OneDeath(name);
+            foreach (string name in list)
+            {
+                if (Wanted("d_" + name.Replace(" ", ""))) yield return OneDeath(name);
+            }
         }
 
         private IEnumerator OneDeath(string name)
@@ -294,7 +314,10 @@ namespace Halobellum.Presentation
                 new SpellShot(new SpellStats { Name = "Smoke Bomb", Offensive = false, Effect = SpellEffect.Smoke, AreaWidth = 15f, AreaDepth = 4f, RangeMultiplier = 0.5f, DelaySeconds = 0.5f }, 2.5f),
                 new SpellShot(new SpellStats { Name = "ODST Drop Pods", Offensive = true, Effect = SpellEffect.DropSquad, Radius = 4f, DropUnit = marine, DropSquads = 1, DelaySeconds = 1f }, 0.1f, 0.5f),
             };
-            foreach (SpellShot shot in list) yield return OneSpell(shot);
+            foreach (SpellShot shot in list)
+            {
+                if (Wanted("s_" + shot.Stats.Name.Replace(" ", "").Replace("'", ""))) yield return OneSpell(shot);
+            }
         }
 
         private IEnumerator OneSpell(SpellShot shot)

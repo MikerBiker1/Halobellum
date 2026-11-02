@@ -269,6 +269,9 @@ namespace Halobellum.Presentation
         private static readonly Color32 Root = new Color32(70, 46, 38, 0);
         private static readonly Color32 PodGlow = new Color32(226, 216, 110, 110);
 
+        /// <summary>How many metres a trench takes to open up from nothing: 3 of its 7 m steps.</summary>
+        private const float TrenchTaper = 21f;
+
         public override string Name => "Hive";
 
         public override TerrainTheme Mood(TerrainTheme theme)
@@ -305,8 +308,8 @@ namespace Halobellum.Presentation
                 c.KeepOnFloor(path, 0.5f);
                 if (path.Count < 2) continue;
                 c.Decals.Uv = new Vector2(0f, 0.3f);
-                c.Decals.FlatRibbon(D, path, 4.2f, 2.2f, C(142, 118, 80, 90), true);
-                c.Decals.FlatRibbon(D, path, 2.4f, 0.9f, C(30, 18, 14, 225), true);
+                c.Decals.FlatRibbon(D, path, 4.2f, 2.2f, C(142, 118, 80, 90), true, taperEnds: TrenchTaper);
+                c.Decals.FlatRibbon(D, path, 2.4f, 0.9f, C(30, 18, 14, 225), true, taperEnds: TrenchTaper);
                 c.Decals.Uv = Vector2.zero;
             }
 

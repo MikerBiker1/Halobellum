@@ -17,6 +17,8 @@ namespace Halobellum.UI
     public sealed class BattleHud : MonoBehaviour
     {
         private static readonly float[] Speeds = { 1f, 2f, 4f };
+        private static readonly string[] SpeedNames = { "1x", "2x", "4x" };
+        private const float FpsTextSeconds = 0.25f;
 
         [SerializeField] private BattleController battle;
         [Tooltip("Show the frames-per-second counter.")]
@@ -27,6 +29,11 @@ namespace Halobellum.UI
         private float _resumeSpeed = 1f;
         private float _smoothedFrameTime;
         private GUIStyle _label, _centered, _button, _selectedButton;
+        private readonly HudLine _topLine = new HudLine();
+        private string _fpsText;
+        private float _nextFpsText;
+
+        private void Awake() => useGUILayout = false; // Nothing here uses GUILayout. With the layout pass on, Unity makes new layout groups for this script every frame, which is garbage at every frame rate.
 
         private void Update()
         {
@@ -69,14 +76,16 @@ namespace Halobellum.UI
             UiHitAreas.Add(HudScale.ToScreen(bar, scale));
             HudTheme.PanelBox(bar);
             float limit = battle.Rules.BattleTimeLimitSeconds;
-            GUI.Label(new Rect(bar.x + 12f, bar.y + 6f, 576f, 26f),
-                $"Team A  {battle.CountAlive(Team.A)}        {sim.ElapsedSeconds:0.0} s / {limit:0} s        {battle.CountAlive(Team.B)}  Team B", _centered);
+            int aliveA = battle.CountAlive(Team.A), aliveB = battle.CountAlive(Team.B);
+            if (_topLine.Changed(aliveA, aliveB, HudLine.Tenths(sim.ElapsedSeconds), HudLine.Whole(limit)))
+                _topLine.Text = $"Team A  {aliveA}        {sim.ElapsedSeconds:0.0} s / {limit:0} s        {aliveB}  Team B";
+            GUI.Label(new Rect(bar.x + 12f, bar.y + 6f, 576f, 26f), _topLine.Text, _centered);
 
             float buttonsX = bar.x + 120f;
             DrawSpeedButton(new Rect(buttonsX, bar.y + 38f, 80f, 28f), "Pause", 0f);
             for (int i = 0; i < Speeds.Length; i++)
             {
-                DrawSpeedButton(new Rect(buttonsX + 90f * (i + 1), bar.y + 38f, 80f, 28f), $"{Speeds[i]:0}x", Speeds[i]);
+                DrawSpeedButton(new Rect(buttonsX + 90f * (i + 1), bar.y + 38f, 80f, 28f), SpeedNames[i], Speeds[i]);
             }
 
             if (showResultLine && sim.IsFinished && sim.Result != null)
@@ -88,7 +97,13 @@ namespace Halobellum.UI
 
             if (showFps && _smoothedFrameTime > 0f)
             {
-                GUI.Label(new Rect(width - 190f, 8f, 180f, 26f), $"{1f / _smoothedFrameTime:0} FPS  ({_smoothedFrameTime * 1000f:0.0} ms)", _label);
+                // A few times a second: faster can't be read, and it would be a new string every frame.
+                if (_fpsText == null || Time.unscaledTime >= _nextFpsText)
+                {
+                    _nextFpsText = Time.unscaledTime + FpsTextSeconds;
+                    _fpsText = $"{1f / _smoothedFrameTime:0} FPS  ({_smoothedFrameTime * 1000f:0.0} ms)";
+                }
+                GUI.Label(new Rect(width - 190f, 8f, 180f, 26f), _fpsText, _label);
             }
         }
 

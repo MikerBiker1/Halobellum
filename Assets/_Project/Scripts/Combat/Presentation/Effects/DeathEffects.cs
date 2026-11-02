@@ -55,6 +55,9 @@ namespace Halobellum.Presentation
         private const float InfantryCorpseSeconds = 2.4f;
         private const float SinkSeconds = 1.6f;
         private const float FallGravity = 15f;
+        private const float DivePuffsPerSecond = 60f;
+        /// <summary>Where a wreck's hull is, as a share of the height of the whole body with its turret and antennas.</summary>
+        private const float HullTopShare = 0.7f;
         private static readonly int TintId = Shader.PropertyToID("_BaseColor");
         private static readonly Color Burnt = new Color(0.13f, 0.12f, 0.11f);
 
@@ -64,6 +67,8 @@ namespace Halobellum.Presentation
             public float Until;
             public float BodyRadius;
             public float NextPuff;
+            /// <summary>How high the fire starts: on top of a wreck's hull; on the ground if nothing is left standing.</summary>
+            public float Top;
         }
 
         private readonly EffectRecipes _recipes;
@@ -75,6 +80,7 @@ namespace Halobellum.Presentation
         private readonly Stack<Corpse> _spareCorpses = new Stack<Corpse>();
         private readonly BurningSpot[] _fires = new BurningSpot[MostFires];
         private int _nextFire;
+        private float _divePuffs;
         private readonly List<Renderer> _renderers = new List<Renderer>();
         private readonly MaterialPropertyBlock _block = new MaterialPropertyBlock();
         private BattleSimulation _shown;
@@ -144,7 +150,7 @@ namespace Halobellum.Presentation
                     if (!rises)
                     {
                         Keep(unit, CorpseKind.Wreck, titan ? TitanWreckSeconds : WreckSeconds, position, false);
-                        AddFire(position, radius, titan ? TitanWreckSeconds : WreckSeconds);
+                        AddFire(position, radius, titan ? TitanWreckSeconds : WreckSeconds, _units.BodyTopOf(unit) * HullTopShare);
                     }
                     break;
 
@@ -185,6 +191,10 @@ namespace Halobellum.Presentation
         private void DiveTrails(float battleDelta)
         {
             if (_shown == null || battleDelta <= 0f) return;
+            // Enough to look solid, and the same at any frame rate: the part of a puff left over waits for the next frame.
+            _divePuffs += battleDelta * DivePuffsPerSecond;
+            int puffs = Mathf.Min((int)_divePuffs, 4);
+            _divePuffs -= (int)_divePuffs;
             IReadOnlyList<SimUnit> units = _shown.Units;
             for (int i = 0; i < units.Count; i++)
             {
@@ -192,8 +202,6 @@ namespace Halobellum.Presentation
                 if (!unit.HasDived || !unit.IsLeaping || !unit.IsAlive) continue;
                 Vector3 position = _units.ShownPosition(unit);
                 float radius = unit.Stats.CollisionRadius;
-                // Enough to look solid at any speed and frame rate.
-                int puffs = Mathf.Clamp(Mathf.CeilToInt(battleDelta * 45f), 1, 4);
                 for (int p = 0; p < puffs; p++) _recipes.BurningTrail(position + Random.insideUnitSphere * radius * 0.4f, radius, EffectPriority.Huge);
                 _kit.HeadGlow(position, radius * 2f, new Color(1f, 0.72f, 0.38f, 0.5f));
             }
@@ -318,9 +326,9 @@ namespace Halobellum.Presentation
 
         // ------------------------------------------------------------------ what goes on burning
 
-        private void AddFire(Vector3 position, float bodyRadius, float seconds)
+        private void AddFire(Vector3 position, float bodyRadius, float seconds, float top = 0f)
         {
-            _fires[_nextFire] = new BurningSpot { Position = position, Until = _kit.BattleTime + seconds, BodyRadius = bodyRadius, NextPuff = _kit.BattleTime + 0.6f };
+            _fires[_nextFire] = new BurningSpot { Position = position, Until = _kit.BattleTime + seconds, BodyRadius = bodyRadius, NextPuff = _kit.BattleTime + 0.6f, Top = top };
             _nextFire = (_nextFire + 1) % MostFires;
         }
 
@@ -331,14 +339,21 @@ namespace Halobellum.Presentation
             {
                 ref BurningSpot fire = ref _fires[i];
                 if (fire.Until <= now || now < fire.NextPuff) continue;
-                fire.NextPuff = now + Mathf.Lerp(0.5f, 0.22f, Mathf.Clamp01(fire.BodyRadius / 5f));
+                fire.NextPuff = now + Mathf.Lerp(0.3f, 0.16f, Mathf.Clamp01(fire.BodyRadius / 5f));
                 float left = (fire.Until - now) / 4f; // Dies down over the last few seconds.
                 float strength = Mathf.Clamp01(left);
-                Vector3 spot = fire.Position + new Vector3(Random.Range(-1f, 1f), 0.3f, Random.Range(-1f, 1f)) * fire.BodyRadius * 0.7f;
+                // From the top of the hull: below that the flames are hidden inside it. Flames are read from the game camera too, so they grow with its distance.
+                Vector3 spot = fire.Position + new Vector3(Random.Range(-0.6f, 0.6f) * fire.BodyRadius, fire.Top + 0.3f, Random.Range(-0.6f, 0.6f) * fire.BodyRadius);
                 float size = fire.BodyRadius * 0.8f + 0.7f;
+                float flames = size * Mathf.Max(1f, _kit.ReadScale);
                 // A thin column, rising quickly, so that it marks the wreck and doesn't hide what is fighting around it.
-                _kit.Smoke(EffectPriority.Small, spot + Vector3.up * fire.BodyRadius * 0.5f, Vector3.up * Random.Range(4f, 6.5f) + Random.insideUnitSphere * 0.4f, size * Random.Range(0.9f, 1.3f), new Color(0.2f, 0.195f, 0.19f, 0.3f * strength), Random.Range(1.8f, 2.8f));
-                if (strength >= 1f) _kit.Fire(EffectPriority.Small, spot, Vector3.up * Random.Range(1f, 2.5f), size * Random.Range(0.45f, 0.8f), Random.Range(0.45f, 0.8f));
+                _kit.Smoke(EffectPriority.Small, spot + Vector3.up * 1.2f, Vector3.up * Random.Range(4f, 6.5f) + Random.insideUnitSphere * 0.4f, size * Random.Range(0.9f, 1.3f), new Color(0.17f, 0.165f, 0.16f, 0.42f * strength), Random.Range(1.8f, 2.8f));
+                if (strength >= 1f)
+                {
+                    _kit.Fire(EffectPriority.Small, spot, Vector3.up * Random.Range(2f, 4f), flames * Random.Range(0.7f, 1.15f), Random.Range(0.55f, 0.95f));
+                    Vector3 other = fire.Position + new Vector3(Random.Range(-0.6f, 0.6f) * fire.BodyRadius, fire.Top + 0.3f, Random.Range(-0.6f, 0.6f) * fire.BodyRadius);
+                    _kit.Fire(EffectPriority.Small, other, Vector3.up * Random.Range(2f, 4f), flames * Random.Range(0.45f, 0.8f), Random.Range(0.45f, 0.8f));
+                }
                 if (Random.value < 0.15f) _kit.Spark(EffectPriority.Small, spot, Vector3.up * Random.Range(3f, 7f) + Random.insideUnitSphere * 1.5f, 0.05f * _kit.ReadScale, EffectRecipes.SparkHot, Random.Range(0.4f, 0.9f));
             }
         }

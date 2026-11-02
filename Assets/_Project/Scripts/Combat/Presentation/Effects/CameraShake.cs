@@ -66,6 +66,7 @@ namespace Halobellum.Presentation
         {
             _instance = this;
             _control = GetComponent<BattleCameraController>();
+            useGUILayout = false; // Nothing here uses GUILayout. With the layout pass on, Unity makes new layout groups for this script every frame, which is garbage at every frame rate.
         }
 
         private void OnDestroy()

@@ -76,7 +76,7 @@ namespace Halobellum.Presentation
         {
             yield return new WaitForSecondsRealtime(1f);
             EffectsGallery effects = gameObject.AddComponent<EffectsGallery>();
-            effects.Prepare(_shots);
+            effects.Prepare(_shots, _only);
             yield return _benchOnly ? effects.Benchmark() : effects.TakeAll();
             Application.Quit();
         }
