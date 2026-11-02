@@ -75,7 +75,7 @@ namespace Halobellum.Presentation
         public static WeaponLook For(WeaponStats weapon, UnitStats shooter, string faction, Team team, bool mirror)
         {
             WeaponFeelKind kind = WeaponFeel.For(weapon);
-            // A cannon the simulation hits with at once (an autocannon) can't have a slow shell in flight.
+            // A cannon the simulation hits with at once can't have a slow shell in flight.
             if (kind == WeaponFeelKind.Cannon && weapon.IsInstant) kind = WeaponFeelKind.HeavyBullet;
             string name = (weapon.Name ?? "").ToLowerInvariant();
             bool flood = (shooter != null && shooter.IsFlood) || (shooter != null && shooter.InfectedFrom != null) || faction == BattleFactions.Flood;

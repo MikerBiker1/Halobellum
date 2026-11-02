@@ -160,6 +160,21 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void Autocannons_SoundLikeHeavyBullets_NotLikeATankCannon()
+        {
+            foreach (string name in new[] { "M370 Autocannon", "Heavy Autocannon", "Twin Autocannons", "Chopper Autocannons" })
+            {
+                WeaponFeelKind kind = WeaponFeel.FromName(name).Value;
+                Assert.AreEqual(WeaponFeelKind.HeavyBullet, kind, name);
+                Assert.AreEqual("sfx_fire_heavybullet", AudioCatalog.Fire(kind, "UNSC").Slot, name);
+                Assert.IsNull(AudioCatalog.LandingOf(kind), name + ": no explosion on every hit.");
+            }
+            Assert.AreEqual("sfx_fire_cannon", AudioCatalog.Fire(WeaponFeel.FromName("M512 Cannon").Value, "UNSC").Slot, "A real cannon stays one.");
+            Assert.AreEqual(WeaponFeelKind.Plasma, WeaponFeel.FromName("Plasma Cannons"), "Other cannons keep their own kinds.");
+            Assert.AreEqual(WeaponFeelKind.Needle, WeaponFeel.FromName("Needle Cannons"));
+        }
+
+        [Test]
         public void EverySpellInTheGame_HasASound()
         {
             string[] guids = AssetDatabase.FindAssets("t:SpellDefinition");
