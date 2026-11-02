@@ -30,6 +30,8 @@ namespace Halobellum.UI
         [SerializeField] private Color blueColor = new Color(0.35f, 0.55f, 1f);
         [SerializeField] private Color redColor = new Color(1f, 0.4f, 0.32f);
 
+        private const float ItemsLeft = 10f, ItemsWidth = 330f, BarHalfWidth = 560f, BarTop = 92f, BarHeight = 64f;
+
         private GUIStyle _text, _small, _smallCentered, _button, _bigButton, _header, _wrapDim;
         private float _scale;
         private Vector2 _scroll;
@@ -73,9 +75,7 @@ namespace Halobellum.UI
         private void DrawItems(float width)
         {
             if (sandbox.Items.Count == 0) return;
-            // Top left, unless the window is too narrow for the bar to leave room: then under the bar, level with the unit list.
-            float top = TopBar(width).x >= 350f ? 8f : 204f;
-            var panel = new Rect(10f, top, 330f, 44f + ItemHud.GridHeight(sandbox.Items.Count) + 44f);
+            var panel = new Rect(ItemsLeft, ItemsPanelTop(width), ItemsWidth, 44f + ItemHud.GridHeight(sandbox.Items.Count) + 44f);
             Panel(panel);
             GUI.Label(new Rect(panel.x + 12f, panel.y + 8f, panel.width - 24f, 28f), "Items", _header);
             string hovered = ItemHud.DrawItemGrid(panel.x + 12f, panel.y + 40f, sandbox.Items, sandbox.PlacingItem, sandbox.IconFor, sandbox.BeginPlacingItem);
@@ -89,11 +89,14 @@ namespace Halobellum.UI
         /// </summary>
         private static Rect TopBar(float width)
         {
-            const float barWidth = 1120f, clearOfItems = 350f;
-            float centred = (width - barWidth) * 0.5f;
-            bool roomToMove = clearOfItems + barWidth + 10f <= width;
-            return new Rect(roomToMove ? Mathf.Max(centred, clearOfItems) : centred, 92f, barWidth, 64f);
+            float centred = width * 0.5f - BarHalfWidth, clearOfItems = ItemsLeft + ItemsWidth + 6f;
+            bool roomToMove = clearOfItems + 2f * BarHalfWidth + ItemsLeft <= width;
+            return new Rect(roomToMove ? Mathf.Max(centred, clearOfItems) : centred, BarTop, 2f * BarHalfWidth, BarHeight);
         }
+
+        /// <summary>The top of the Items panel: the top-left corner, or under the top bar when the two can't sit side by side. `screenWidth` is in HUD units.</summary>
+        public static float ItemsPanelTop(float screenWidth) =>
+            TopBar(screenWidth).x < ItemsLeft + ItemsWidth + 6f ? BarTop + BarHeight + 8f : 8f;
 
         private void DrawTopBar(float width)
         {

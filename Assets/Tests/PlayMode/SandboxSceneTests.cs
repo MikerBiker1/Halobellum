@@ -36,6 +36,26 @@ namespace Halobellum.Tests
 
         private UnitStats Unit(string name) => _sandbox.Units.Single(u => u.Stats.Name == name).Stats;
 
+        [UnityTest]
+        public IEnumerator TheMouseWheel_ZoomsTheCamera_OnlyWhenThePointerIsNotOverAWindow()
+        {
+            yield return LoadSandbox();
+            var cameraController = Object.FindAnyObjectByType<BattleCameraController>();
+            Assert.IsNotNull(cameraController);
+            yield return null;
+            float top = Screen.height;
+            UiHitAreas.Add(new Rect(0f, 0f, 100f, 100f));
+            float before = cameraController.Distance;
+
+            // Over the window (GUI rows run from the top, the pointer's from the bottom).
+            cameraController.Wheel(-1f, new Vector2(50f, top - 50f));
+            Assert.AreEqual(before, cameraController.Distance, "The wheel scrolled a list: the view must stay.");
+
+            // Over the battlefield.
+            cameraController.Wheel(-1f, new Vector2(300f, top - 300f));
+            Assert.Greater(cameraController.Distance, before, "The wheel over the battlefield zooms.");
+        }
+
         private static int CountViews()
         {
             GameObject units = GameObject.Find("Units");

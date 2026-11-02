@@ -11,6 +11,9 @@
 // itself: a first render finds where the model is, the camera moves to fill the frame with it, and so on a few times. So a
 // model's own bounds don't matter. Rendered once on black and once on white: a pixel that changes is background. That
 // doesn't depend on how the render pipeline treats alpha. Then it is shrunk by 4 with premultiplied colours for clean edges.
+// Two things are there so that a picture still reads at the size of a shop row (about 40 pixels). A tall thin figure, like a
+// soldier, is framed from the waist up. A dark picture is brightened to a common level (Brighten).
+// A baked body wears its unit's bakedTint, as it does in battle.
 // It also writes UnitIcons/index.txt: each unit, and how its icon was made. Needs a GPU, which batch mode has here (d3d12).
 // Depends on: Halobellum.Units, Halobellum.UI (UnitIcons), UnityEditor, UnityEngine.
 
@@ -37,6 +40,14 @@ namespace Halobellum.EditorTools
         /// <summary>How much of the frame the model fills.</summary>
         private const float Fill = 0.92f;
         private const float YawDegrees = 35f, PitchDegrees = 12f, AirPitchDegrees = 20f;
+        /// <summary>A figure narrower than this for its height (width / height) is framed from the waist up.</summary>
+        private const float TallFigure = 0.5f;
+        /// <summary>How much of a tall figure's height shows, from the top, and how much of the frame's height that fills.</summary>
+        private const float PortraitKeep = 0.6f, PortraitFill = 0.96f;
+        /// <summary>The part of a waist-up picture, at the bottom, over which the figure fades out instead of being cut off.</summary>
+        private const float PortraitFade = 0.2f;
+        /// <summary>The average brightness (0 to 255, as displayed) a darker picture is brought up to, and the most it may be multiplied by.</summary>
+        private const float WantedBrightness = 100f, MostBrighten = 2.6f;
         /// <summary>A layer nothing else uses, so that only the unit is drawn and lit.</summary>
         private const int RenderLayer = 31;
 
@@ -71,7 +82,7 @@ namespace Halobellum.EditorTools
                 string source = "fallback";
                 if (unit.bakedBody != null && unit.bakedBody.IsReady)
                 {
-                    png = RenderBody(unit, BuildBaked(unit.bakedBody));
+                    png = RenderBody(unit, BuildBaked(unit));
                     source = "baked";
                 }
                 else if (unit.prefab != null && unit.keepsOwnMaterials)
@@ -146,8 +157,9 @@ namespace Halobellum.EditorTools
             return result;
         }
 
-        private static GameObject BuildBaked(BakedBodyDefinition baked)
+        private static GameObject BuildBaked(UnitDefinition unit)
         {
+            BakedBodyDefinition baked = unit.bakedBody;
             var body = new GameObject("Icon subject");
             body.AddComponent<MeshFilter>().sharedMesh = baked.mesh;
             var renderer = body.AddComponent<MeshRenderer>();
@@ -158,7 +170,7 @@ namespace Halobellum.EditorTools
             block.SetVector(AnimNowId, frame);
             block.SetVector(AnimOldId, frame);
             block.SetVector(AnimBlendId, Vector4.zero);
-            block.SetColor(TintId, new Color(1f, 1f, 1f, 0f));
+            block.SetColor(TintId, unit.bakedTint);
             renderer.SetPropertyBlock(block);
             Shader.SetGlobalFloat(BattleTimeId, 0f);
             return body;
@@ -224,17 +236,75 @@ namespace Halobellum.EditorTools
                     float size = Mathf.Max(maxX - minX + 1, maxY - minY + 1) / (float)probe;
                     distance = touchesEdge ? distance * 1.6f : distance * Mathf.Clamp(size / Fill, 0.2f, 1.6f);
                 }
+                bool portrait = FrameTallFigure(camera, ref target, forward, ref distance);
                 PlaceCamera(camera, target, forward, distance);
 
                 int big = IconSize * Supersample;
                 bool[] final = RenderSolid(camera, big, out Color32[] colors);
                 if (!SolidBounds(final, big, out _, out _, out _, out _)) return null;
-                return Shrink(final, colors, big);
+                Brighten(final, colors);
+                return Shrink(final, colors, big, portrait ? PortraitFade : 0f);
             }
             finally
             {
                 Object.DestroyImmediate(rig);
                 Object.DestroyImmediate(subject);
+            }
+        }
+
+        /// <summary>
+        /// A tall thin figure that fills the frame from top to bottom is a sliver at the size of a shop row. This moves the camera
+        /// in, to show it from the waist up. Returns false, and leaves the camera alone, for any other shape.
+        /// </summary>
+        private static bool FrameTallFigure(Camera camera, ref Vector3 target, Vector3 forward, ref float distance)
+        {
+            const int probe = IconSize;
+            PlaceCamera(camera, target, forward, distance);
+            if (!SolidBounds(RenderSolid(camera, probe, out _), probe, out int minX, out int minY, out int maxX, out int maxY)) return false;
+            float figureHeight = maxY - minY + 1;
+            if ((maxX - minX + 1) / figureHeight >= TallFigure) return false;
+
+            float viewHeight = 2f * distance * Mathf.Tan(CameraFov * 0.5f * Mathf.Deg2Rad);
+            float perPixel = viewHeight / probe;
+            float newViewHeight = PortraitKeep * figureHeight * perPixel / PortraitFill;
+            // The top of the head a little under the top of the frame. Rows run from the bottom.
+            float figureTop = (maxY + 1 - probe * 0.5f) * perPixel;
+            target += camera.transform.up * (figureTop + (1f - PortraitFill) * newViewHeight - newViewHeight * 0.5f);
+            distance *= newViewHeight / viewHeight;
+
+            // Centre what still shows, from side to side.
+            PlaceCamera(camera, target, forward, distance);
+            if (SolidBounds(RenderSolid(camera, probe, out _), probe, out minX, out _, out maxX, out _))
+            {
+                target += camera.transform.right * (((minX + maxX + 1) * 0.5f - probe * 0.5f) / probe * newViewHeight);
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Brings a dark picture up to a common brightness. A real model's own paint can be nearly black, which is lost on a dark
+        /// row. The curve lifts shadows and midtones, and can't blow out what is already bright. A bright picture is left alone.
+        /// </summary>
+        private static void Brighten(bool[] solid, Color32[] colors)
+        {
+            long sum = 0, count = 0;
+            for (int i = 0; i < colors.Length; i++)
+            {
+                if (!solid[i]) continue;
+                sum += colors[i].r * 30 + colors[i].g * 59 + colors[i].b * 11;
+                count += 100;
+            }
+            if (count == 0) return;
+            float mean = sum / (float)count;
+            if (mean >= WantedBrightness) return;
+            float gain = Mathf.Min(WantedBrightness / Mathf.Max(1f, mean), MostBrighten);
+            var curve = new byte[256];
+            for (int i = 0; i < 256; i++) curve[i] = (byte)Mathf.RoundToInt(255f * (1f - Mathf.Pow(1f - i / 255f, gain)));
+            for (int i = 0; i < colors.Length; i++)
+            {
+                if (!solid[i]) continue;
+                Color32 c = colors[i];
+                colors[i] = new Color32(curve[c.r], curve[c.g], curve[c.b], c.a);
             }
         }
 
@@ -326,7 +396,8 @@ namespace Halobellum.EditorTools
             return maxX >= 0;
         }
 
-        private static byte[] Shrink(bool[] solid, Color32[] colors, int big)
+        /// <summary>Shrinks the picture by Supersample. `fadeBottom` is the part of its height, at the bottom, that fades out.</summary>
+        private static byte[] Shrink(bool[] solid, Color32[] colors, int big, float fadeBottom)
         {
             var pixels = new Color32[IconSize * IconSize];
             long allR = 0, allG = 0, allB = 0, allCount = 0;
@@ -353,7 +424,9 @@ namespace Halobellum.EditorTools
                     allG += g;
                     allB += b;
                     allCount += count;
-                    pixels[y * IconSize + x] = new Color32((byte)(r / count), (byte)(g / count), (byte)(b / count), (byte)(count * 255 / samples));
+                    int alpha = count * 255 / samples;
+                    if (fadeBottom > 0f) alpha = Mathf.RoundToInt(alpha * Mathf.SmoothStep(0f, 1f, (y + 0.5f) / (fadeBottom * IconSize)));
+                    pixels[y * IconSize + x] = new Color32((byte)(r / count), (byte)(g / count), (byte)(b / count), (byte)alpha);
                 }
             }
             if (allCount > 0)

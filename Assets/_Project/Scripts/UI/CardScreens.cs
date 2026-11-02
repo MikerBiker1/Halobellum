@@ -2,7 +2,8 @@
 // Draws one card of the card screens (M10): a draft card, a spell, item, economy, buff or training card, and a
 // reinforcement card. Each has its kind's frame and ribbon (CardArt) and a big picture (UnitIcons, or CardArt's emblems).
 // MatchHud lays the cards out (CardLayout) and handles what a click does. The text shrinks to fit its place on a narrow
-// card, down to a size still legible: Fit counts anything that still didn't fit, and the demo (CardScreensDemo) reports it.
+// card, down to a size still legible: Fit counts anything that still didn't fit, or only just did at that smallest size,
+// and the demo (CardScreensDemo) reports both. The cards of a draft row share one size of text and one height for it (MeasureDraftRow).
 // Drawn with Unity's immediate-mode GUI. These screens aren't on during a battle, so they may allocate a little.
 // Depends on: CardArt, UnitIcons, HudTheme, Halobellum.Core, Halobellum.Economy, UnityEngine.
 
@@ -14,24 +15,47 @@ using UnityEngine;
 
 namespace Halobellum.UI
 {
+    /// <summary>What the cards of one draft row share, so that their text is one size and their squads line up.</summary>
+    public readonly struct DraftRowText
+    {
+        public readonly float Height;
+        public readonly int FirstSize, SecondSize;
+
+        public DraftRowText(float height, int firstSize, int secondSize)
+        {
+            Height = height;
+            FirstSize = firstSize;
+            SecondSize = secondSize;
+        }
+    }
+
     public static class CardScreens
     {
         /// <summary>How many labels could not fit their place, even at the smallest size, since this was last reset (for the demo).</summary>
         public static int TextThatDidNotFit;
         /// <summary>The last label that didn't fit (for the demo).</summary>
         public static string LastTextThatDidNotFit;
+        /// <summary>How many labels fit only at the smallest size, since this was last reset (for the demo).</summary>
+        public static int TextAtTheFloor;
+        /// <summary>The last label that fit only at the smallest size (for the demo).</summary>
+        public static string LastTextAtTheFloor;
         /// <summary>Where the demo pretends the mouse is (HUD units), to take a picture of a hovered card. Null in the game.</summary>
         public static Vector2? DemoMouse;
-        /// <summary>A sub-faction text for the demo, to check that it fits. Null in the game.</summary>
-        public static string DemoSubFactionText;
 
         private const float ButtonHeight = 42f;
         /// <summary>A draft card's squads go side by side with their text from this width of contents up.</summary>
         private const float WideEnoughForSideBySide = 300f;
 
         private const float PairGap = 6f;
-        /// <summary>The most a draft card gives to the text about its sub-faction.</summary>
-        private const float BlurbHeight = 92f;
+        /// <summary>
+        /// The most of a draft card's free height that the text about its sub-faction takes before it shrinks (the squads need the
+        /// rest), and the most it takes at its smallest size, on the narrowest cards (a 5:4 window at a high UI scale).
+        /// </summary>
+        private const float BlurbShare = 0.32f, MostBlurbShare = 0.42f;
+        /// <summary>The sizes that text starts from (its exclusive units, its description), and the smallest it goes.</summary>
+        private const int BlurbFirstSize = 16, BlurbSecondSize = 15, LeastBlurbSize = 13;
+        /// <summary>The smallest a pair of text blocks goes (FitPair): below this it can't be read at 1280 x 720.</summary>
+        private const int LeastPairFirst = 13, LeastPairSecond = 12;
 
         private static readonly GUIContent Content = new GUIContent();
         private static GUIStyle _wrap, _line, _title, _ribbon, _button;
@@ -40,10 +64,52 @@ namespace Halobellum.UI
         // ------------------------------------------------------------------ the cards
 
         /// <summary>
-        /// A starting draft card: its faction's frame, the sub-faction on a big banner, what is special about it, and its
-        /// squads. `description` is the sub-faction's own text, if it has one. Returns true when chosen.
+        /// The size of the sub-faction text for a whole row of draft cards: the largest at which the wordiest card fits, in what
+        /// the squads can spare. `card` is any card of the row.
         /// </summary>
-        public static bool DrawDraftCard(Rect card, DraftCard draft, string description = null)
+        public static DraftRowText MeasureDraftRow(List<DraftCard> cards, Rect card)
+        {
+            EnsureStyles();
+            Rect area = CardArt.ContentArea(card);
+            float free = DraftBottom(area) - DraftTextTop(card, area);
+            float most = free * BlurbShare;
+            int first = BlurbFirstSize, second = BlurbSecondSize;
+            float tallest;
+            while (true)
+            {
+                tallest = 0f;
+                foreach (DraftCard draft in cards)
+                {
+                    string exclusive = ExclusiveLine(draft);
+                    if (exclusive == null && string.IsNullOrEmpty(draft.SubFaction.Description)) continue;
+                    tallest = Mathf.Max(tallest, PairHeight(exclusive, first, draft.SubFaction.Description, second, area.width));
+                }
+                if (tallest <= most || (first <= LeastBlurbSize && second <= LeastBlurbSize)) break;
+                if (first > LeastBlurbSize) first--;
+                if (second > LeastBlurbSize) second--;
+            }
+            return new DraftRowText(Mathf.Min(tallest, free * MostBlurbShare), first, second);
+        }
+
+        private static float DraftHeaderHeight(Rect area) => Mathf.Clamp(area.width * 0.17f, 34f, 50f);
+
+        private static float DraftBannerHeight(Rect area) => Mathf.Clamp(area.width * 0.2f, 46f, 62f);
+
+        /// <summary>Where a draft card's text starts: under its header and banner.</summary>
+        private static float DraftTextTop(Rect card, Rect area) => area.y + 2f + DraftHeaderHeight(area) + 6f + DraftBannerHeight(area) + 4f;
+
+        /// <summary>Where a draft card's squads end: above its button.</summary>
+        private static float DraftBottom(Rect area) => area.yMax - ButtonHeight - 6f;
+
+        private static string ExclusiveLine(DraftCard draft) => draft.SubFaction.ExclusiveUnits.Count > 0
+            ? "Exclusive: " + string.Join(", ", draft.SubFaction.ExclusiveUnits.ConvertAll(u => u.Name))
+            : null;
+
+        /// <summary>
+        /// A starting draft card: its faction's frame, the sub-faction on a big banner, what is special about it, and its
+        /// squads. `text` is what the cards of its row share (MeasureDraftRow). Returns true when chosen.
+        /// </summary>
+        public static bool DrawDraftCard(Rect card, DraftCard draft, DraftRowText text)
         {
             EnsureStyles();
             string faction = draft.Faction.Name;
@@ -54,7 +120,7 @@ namespace Halobellum.UI
             float y = area.y + 2f;
 
             // The faction, with its emblem.
-            float headerHeight = Mathf.Clamp(area.width * 0.17f, 34f, 50f);
+            float headerHeight = DraftHeaderHeight(area);
             Texture2D emblem = CardArt.FactionEmblem(faction);
             if (emblem != null) DrawTinted(new Rect(area.x, y, headerHeight, headerHeight), emblem, accent);
             float textX = area.x + headerHeight + 8f;
@@ -62,24 +128,21 @@ namespace Halobellum.UI
             y += headerHeight + 6f;
 
             // The sub-faction: the thing to read first.
-            float bannerHeight = Mathf.Clamp(area.width * 0.2f, 46f, 62f);
+            float bannerHeight = DraftBannerHeight(area);
             var banner = new Rect(card.x + 8f, y, card.width - 16f, bannerHeight);
             CardArt.DrawRibbon(banner, kind);
             float bannerText = Mathf.Max(48f, bannerHeight * 0.8f);
             Fit(new Rect(banner.x + bannerText * 0.5f, banner.y, banner.width - bannerText, banner.height), draft.SubFaction.Name, _ribbon, 26, 14, TextAnchor.MiddleCenter, Color.white, shadow: true);
-            y = banner.yMax + 4f;
+            y = DraftTextTop(card, area);
 
             // What is special about it: its text and its own units. Standard cards have neither, and the squads get the room.
-            float bottom = area.yMax - ButtonHeight - 6f;
-            description = string.IsNullOrEmpty(description) ? DemoSubFactionText : description;
-            string exclusive = draft.SubFaction.ExclusiveUnits.Count > 0
-                ? "Exclusive: " + string.Join(", ", draft.SubFaction.ExclusiveUnits.ConvertAll(u => u.Name))
-                : null;
+            float bottom = DraftBottom(area);
+            string description = draft.SubFaction.Description;
+            string exclusive = ExclusiveLine(draft);
             if (!string.IsNullOrEmpty(description) || exclusive != null)
             {
-                float height = Mathf.Min(area.width < WideEnoughForSideBySide * 0.75f ? BlurbHeight * 1.3f : BlurbHeight, (bottom - y) * 0.3f);
-                FitPair(new Rect(area.x, y, area.width, height), exclusive, 15, description, 14, TextAnchor.MiddleCenter);
-                y += height + 2f;
+                FitPair(new Rect(area.x, y, area.width, text.Height), exclusive, text.FirstSize, description, text.SecondSize, TextAnchor.UpperCenter, brightSecond: true);
+                y += text.Height + 2f;
             }
 
             Fit(new Rect(area.x, y, area.width, 22f), "Free starting squads", _line, 15, 12, TextAnchor.MiddleCenter, HudTheme.DimText);
@@ -326,7 +389,9 @@ namespace Halobellum.UI
             for (int s = size; s >= least; s--)
             {
                 style.fontSize = s;
-                if (Fits(rect, style)) return s;
+                if (!Fits(rect, style)) continue;
+                if (s == least && least < size) NoteAtTheFloor(Content.text);
+                return s;
             }
             style.fontSize = least;
             if (Event.current.type == EventType.Repaint)
@@ -335,6 +400,13 @@ namespace Halobellum.UI
                 LastTextThatDidNotFit = Content.text;
             }
             return least;
+        }
+
+        private static void NoteAtTheFloor(string text)
+        {
+            if (Event.current.type != EventType.Repaint) return;
+            TextAtTheFloor++;
+            LastTextAtTheFloor = text;
         }
 
         private static bool Fits(Rect rect, GUIStyle style)
@@ -355,15 +427,16 @@ namespace Halobellum.UI
         /// Two blocks of text, one under the other: the first bright, the second dimmer. They shrink together until both fit.
         /// A middle anchor centres the pair in its place, top to bottom.
         /// </summary>
-        private static void FitPair(Rect rect, string first, int firstSize, string second, int secondSize, TextAnchor anchor, bool boldFirst = false)
+        private static void FitPair(Rect rect, string first, int firstSize, string second, int secondSize, TextAnchor anchor, bool boldFirst = false, bool brightSecond = false)
         {
             GUIStyle style = _wrap;
-            int a = HudTheme.Size(firstSize), b = HudTheme.Size(secondSize), leastA = HudTheme.Size(12), leastB = HudTheme.Size(11);
+            int a = HudTheme.Size(firstSize), b = HudTheme.Size(secondSize), leastA = HudTheme.Size(LeastPairFirst), leastB = HudTheme.Size(LeastPairSecond);
             style.fontStyle = boldFirst ? FontStyle.Bold : FontStyle.Normal;
             float firstHeight = HeightAt(first, style, a, rect.width);
             style.fontStyle = FontStyle.Normal;
             float secondHeight = HeightAt(second, style, b, rect.width);
-            while (firstHeight + PairGap + secondHeight > rect.height || !WordsFit(first, style, a, rect.width, boldFirst))
+            // The half unit is as in Fits: rounding must not shrink the wordiest card of a draft row, whose text exactly fills its place.
+            while (firstHeight + PairGap + secondHeight > rect.height + 0.5f || !WordsFit(first, style, a, rect.width, boldFirst))
             {
                 if (a <= leastA && b <= leastB)
                 {
@@ -381,6 +454,7 @@ namespace Halobellum.UI
                 style.fontStyle = FontStyle.Normal;
                 secondHeight = HeightAt(second, style, b, rect.width);
             }
+            if (a <= leastA && b <= leastB) NoteAtTheFloor(first + " / " + second);
 
             bool middle = anchor == TextAnchor.MiddleLeft || anchor == TextAnchor.MiddleCenter || anchor == TextAnchor.MiddleRight;
             float y = middle ? rect.y + Mathf.Max(0f, (rect.height - firstHeight - PairGap - secondHeight) * 0.5f) : rect.y;
@@ -399,7 +473,7 @@ namespace Halobellum.UI
             {
                 Content.text = second;
                 style.fontSize = b;
-                style.normal.textColor = HudTheme.DimText;
+                style.normal.textColor = brightSecond ? Color.Lerp(HudTheme.DimText, HudTheme.Text, 0.5f) : HudTheme.DimText;
                 HudTheme.Fit(style);
                 GUI.Label(new Rect(rect.x, y + firstHeight + PairGap, rect.width, secondHeight + 2f), Content, style);
             }

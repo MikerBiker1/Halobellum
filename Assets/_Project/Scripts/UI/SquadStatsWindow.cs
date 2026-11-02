@@ -77,8 +77,8 @@ namespace Halobellum.UI
             GUI.Label(new Rect(window.x + PictureSize + 18f, window.y + 6f, windowWidth - PictureSize - 56f, 30f), s.Name, _title);
             GUI.Label(new Rect(window.x + PictureSize + 18f, window.y + 34f, windowWidth - PictureSize - 56f, 24f), _side, _small);
             if (GUI.Button(new Rect(window.xMax - 34f, window.y + 8f, 24f, 22f), "x")) _selection.Select(-1);
-            GUI.Label(new Rect(window.x + 12f, window.y + HeaderHeight - 6f, windowWidth - 24f, textHeight), body, _text);
-            if (progress != null) DrawProgress(progress, window.x + 12f, window.y + HeaderHeight - 2f + textHeight, windowWidth - 24f);
+            GUI.Label(new Rect(window.x + TextInset, window.y + HeaderHeight - 6f, windowWidth - 2f * TextInset, textHeight), body, _text);
+            if (progress != null) DrawProgress(progress, window.x + TextInset, window.y + HeaderHeight - 2f + textHeight, windowWidth - 2f * TextInset);
             if (Event.current.type == EventType.MouseUp || Event.current.type == EventType.Used) _nextRefresh = 0f;
         }
 
@@ -91,7 +91,7 @@ namespace Halobellum.UI
             _shownStyles = _styleVersion;
             _body = BuildText(sample.Stats, alive, totalHealth);
             _measure.text = _body;
-            _textHeight = _text.CalcHeight(_measure, windowWidth - 24f);
+            _textHeight = _text.CalcHeight(_measure, windowWidth - 2f * TextInset);
             _progress = _progression?.DescribeProgress(_shownSquad);
             _side = _progress?.SideLabel ?? $"Team {sample.Team}";
             _techNames.Clear();
@@ -107,11 +107,13 @@ namespace Halobellum.UI
         }
 
         private const float LineHeight = 24f, TechRowHeight = 44f, PictureSize = 56f, HeaderHeight = 72f;
+        /// <summary>Room under the last line of the progress part, and at the sides of the text, so that the window's frame doesn't cover them.</summary>
+        private const float BottomPadding = 14f, TextInset = 18f;
 
         private static float ProgressHeight(SquadProgressView p)
         {
             if (p == null) return 0f;
-            float height = 10f + 30f; // Gap, level line (with buttons).
+            float height = 10f + 30f + BottomPadding; // Gap, level line (with buttons).
             if (p.ShowXp) height += 22f;
             if (!string.IsNullOrEmpty(p.Note)) height += LineHeight;
             if (!string.IsNullOrEmpty(p.ItemText)) height += LineHeight * 2f;
@@ -165,7 +167,7 @@ namespace Halobellum.UI
             for (int i = 0; i < p.Techs.Count; i++)
             {
                 TechLine line = p.Techs[i];
-                GUI.Label(new Rect(x, y, width - 110f, 22f), _techNames[i], _techName);
+                GUI.Label(new Rect(x, y, width - 110f, 26f), _techNames[i], _techName); // Taller than its row's line: tails of letters (g, p) would be cut.
                 GUI.Label(new Rect(x, y + 20f, width - 110f, 22f), _techEffects[i], _small);
                 if (line.ButtonLabel != null)
                 {

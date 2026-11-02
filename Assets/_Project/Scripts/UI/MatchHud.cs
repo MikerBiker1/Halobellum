@@ -107,9 +107,10 @@ namespace Halobellum.UI
 
             int count = m.PlayerDraft.Count;
             CardRow row = CardLayout.Arrange(count, width, bar.yMax + 14f, sandbox.y - 14f);
+            DraftRowText text = count > 0 ? CardScreens.MeasureDraftRow(m.PlayerDraft, row.CardAt(0)) : default;
             for (int i = 0; i < count; i++)
             {
-                if (CardScreens.DrawDraftCard(row.CardAt(i), m.PlayerDraft[i], m.PlayerDraft[i].SubFaction.Description)) match.ChooseDraft(i);
+                if (CardScreens.DrawDraftCard(row.CardAt(i), m.PlayerDraft[i], text)) match.ChooseDraft(i);
             }
         }
 
@@ -347,7 +348,7 @@ namespace Halobellum.UI
                 CardScreens.DrawUnitPicture(new Rect(row.x + 4f, row.y + 2f, picture, picture), unit, player.Faction.Name, UnitIcons.FactionColor(player.Faction.Name));
                 float textX = row.x + picture + 8f, textWidth = ShopTextWidth;
                 GUI.Label(new Rect(textX, row.y + 2f, textWidth, 28f), $"{unit.Name} - {unit.Cost} cr", _text);
-                CardScreens.Fit(new Rect(textX, row.y + 28f, textWidth, 22f), ShopLine(unit, player.SubFaction.ExclusiveUnits.Contains(unit)), _shopLine, 15, ShopLineLeastSize, TextAnchor.MiddleLeft, HudTheme.DimText);
+                CardScreens.Fit(new Rect(textX, row.y + 25f, textWidth, 28f), ShopLine(unit, player.SubFaction.ExclusiveUnits.Contains(unit)), _shopLine, 15, ShopLineLeastSize, TextAnchor.MiddleLeft, HudTheme.DimText);
 
                 var button = new Rect(row.xMax - 118f, row.y + 9f, 110f, 36f);
                 if (player.Unlocked.Contains(unit))
