@@ -11,6 +11,7 @@
 //     a grey cloud for as long as it hangs. Drop-pod squads fall from the sky (UnitViewManager).
 //   Line-shaped spells (smoke, later a napalm strike) are placed in two clicks (decision D35): the
 //     first sets one end, the other end then follows the mouse, a second click confirms.
+// SpellEffects (run by CombatEffectsView, so that spells also show in a sandbox or test scene) draws what each strike looks like: M10.
 // Discs are flat quads with a texture drawn in code and the built-in Sprites/Default shader (always
 // included in builds), so no material assets are needed. Looks only; the simulation is unchanged.
 // Depends on: MatchController, BattleController, UiHitAreas, PlaceholderArt, Halobellum.Combat,
@@ -195,15 +196,7 @@ namespace Halobellum.Presentation
             switch (stats.Effect)
             {
                 case SpellEffect.Damage:
-                    // A single strike gets one big burst; zone ticks smaller ones at random spots inside.
-                    if (stats.Ticks <= 1) AddFlash(spell.Position, stats.Radius * 1.15f, EffectColor(stats), false);
-                    else
-                    {
-                        float angle = spell.TicksDone * 2.4f, distance = stats.Radius * 0.5f * ((spell.TicksDone * 37 % 10) / 10f);
-                        var offset = new Vec2(Mathf.Cos(angle) * distance, Mathf.Sin(angle) * distance);
-                        AddFlash(spell.Position + offset, stats.Radius * 0.55f, EffectColor(stats), false);
-                    }
-                    break;
+                    break; // SpellEffects draws the strike itself (M10).
                 case SpellEffect.Buff:
                 case SpellEffect.Disrupt:
                     AddFlash(spell.Position, stats.Radius, EffectColor(stats), true);

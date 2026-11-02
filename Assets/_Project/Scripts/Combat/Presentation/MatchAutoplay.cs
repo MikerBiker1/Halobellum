@@ -6,7 +6,7 @@
 // buys up to 2 squads per round of the first affordable unlocked unit type, places every ready spell
 // (offensive ones on the enemy's last-seen army, defensive ones on its own first squad), puts items
 // on its squads, uses Intensive Training, presses Ready, saves screenshots of the draft, each card screen, the bought squads falling in, each
-// deployment, battle (at 1.2 s of battle time, when spells go off) and result, then quits after the
+// deployment, battle (at 1.2 s of battle time, when spells go off, and again at 8, 16 and 26 s, for the effects) and result, then quits after the
 // given number of rounds (or when the match ends).
 // With "-sandboxDemo <folder>" it opens the Sandbox scene instead (see SandboxAutoplay).
 // Depends on: MatchController, BattleController, SandboxAutoplay, Halobellum.Economy, UnityEngine.
@@ -150,6 +150,12 @@ namespace Halobellum.Presentation
                     {
                         Shot($"r{m.Round:00}_2_battle");
                         _battleShotTaken = true;
+                        _nextLaterShot = 0;
+                    }
+                    if (_battleShotTaken && _nextLaterShot < LaterShotSeconds.Length && _battle.Simulation != null && _battle.Simulation.ElapsedSeconds >= LaterShotSeconds[_nextLaterShot])
+                    {
+                        Shot($"r{m.Round:00}_2_battle_{LaterShotSeconds[_nextLaterShot]:00}s");
+                        _nextLaterShot++;
                     }
                     break;
                 case MatchPhase.Result:
@@ -164,6 +170,8 @@ namespace Halobellum.Presentation
             }
         }
 
+        private static readonly float[] LaterShotSeconds = { 8f, 16f, 26f };
+        private int _nextLaterShot;
         private bool _phaseShotTaken;
         private int _inventoryShotRound = -1;
 
