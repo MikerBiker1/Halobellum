@@ -94,7 +94,7 @@ namespace Halobellum.Tests
             yield return WaitForScene(GameFlow.MatchScene);
             var match = Object.FindAnyObjectByType<MatchController>();
             Assert.AreEqual(MatchPhase.Draft, match.Match.Phase);
-            Assert.AreEqual(3, match.Match.PlayerDraft.Count);
+            Assert.AreEqual(5, match.Match.PlayerDraft.Count);
             Assert.AreEqual(AiDifficulty.Hard, match.Difficulty);
             Assert.IsTrue(match.ChooseDraft(0).Ok);
             Assert.AreEqual(MatchPhase.Deployment, match.Match.Phase);
