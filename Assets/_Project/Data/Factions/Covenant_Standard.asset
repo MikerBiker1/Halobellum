@@ -29,9 +29,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f456f983b2e848fd27010f8edd11ed95, type: 2}
   - {fileID: 11400000, guid: 9404075fd6bb3f19513e98b949f4be10, type: 2}
   subFactions:
-  - subFactionName: Standard
-    description: 
-    exclusiveUnits: []
+  - subFactionName: Banished
+    description: 'Brute war machines: ramming Choppers, heavy armor and flying artillery.'
+    exclusiveUnits:
+    - {fileID: 11400000, guid: bccceeaed7049cb3ad89b249a0bbd0ab, type: 2}
+    - {fileID: 11400000, guid: 9632cde31b594755fb790af06ea396f3, type: 2}
+    - {fileID: 11400000, guid: 62ca927056fbfddd24672c8fc9053324, type: 2}
+    - {fileID: 11400000, guid: 1c66024e41737ce62090f0849764b2cd, type: 2}
+    - {fileID: 11400000, guid: 45933187cc8b339c430814f92b0e987e, type: 2}
   spells:
   - {fileID: 11400000, guid: 24a845a0a64ea7ba8aa2e5b11b160884, type: 2}
   - {fileID: 11400000, guid: 17439d7a16746d79c5dc9837fcf3127a, type: 2}

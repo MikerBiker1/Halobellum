@@ -1,0 +1,123 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48a24a6f0743ea50b653bb6800d1d896, type: 3}
+  m_Name: Blisterback
+  m_EditorClassIdentifier: 
+  unitName: Blisterback
+  role: 7
+  tier: 3
+  unlockCost: 225
+  squadSize: 1
+  cost: 450
+  baseDamage: 90
+  maxHealth: 1400
+  armorType: 1
+  maxShield: 0
+  shieldRegenPerSecond: 0
+  moveSpeed: 1.75
+  collisionRadius: 3
+  turnTime180: 1.5
+  isAir: 1
+  targetFilter: 0
+  weapons:
+  - weaponName: Plasma Missile Barrage
+    damagePerShot: 75
+    fireInterval: 4
+    range: 30
+    minRange: 5
+    projectileSpeed: 20
+    splashRadius: 3.5
+    damageType: 1
+    isAntiArmor: 0
+    canBeBlocked: 0
+    hasOwnTargetFilter: 1
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    lobbed: 1
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+  - weaponName: Plasma Turret
+    damagePerShot: 10
+    fireInterval: 0.3
+    range: 12
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 0
+    damageType: 2
+    isAntiArmor: 0
+    canBeBlocked: 0
+    hasOwnTargetFilter: 1
+    targetFilter: 2
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+  hasDefenseArc: 0
+  defenseArc:
+    arcDegrees: 0
+    frontDamageMultiplier: 1
+    rearDamageMultiplier: 1
+    blockChance: 0
+    blockedDamageTypes: 
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
+  reinforcementNeedsUpgrade: 0
+  formsPerBody: 1
+  isFlood: 0
+  infects: 0
+  immuneToInfection: 0
+  selfDestructs: 0
+  seeksDensestCluster: 0
+  deathBurstDamage: 0
+  deathBurstRadius: 0
+  deathBurstDamageType: 0
+  deathBurstAntiArmor: 0
+  deathSpawns: []
+  spawnedUnit: {fileID: 0}
+  spawnedBodies: 0
+  spawnIntervalSeconds: 0
+  auraRadius: 0
+  auraSpeedMultiplier: 1
+  auraHealPerSecondShare: 0
+  lifestealShare: 0
+  leapRange: 0
+  leapSpeed: 0
+  leapCooldownSeconds: 0
+  techUpgrades:
+  - {fileID: 11400000, guid: 315639bf6c30a76dcecd98a542fc115b, type: 2}
+  - {fileID: 11400000, guid: a35b1c5e57f9af421ee52aef8397be5b, type: 2}
+  - {fileID: 11400000, guid: 2d92e167cc335fcaaa494e1697d416be, type: 2}
+  prefab: {fileID: 7209106518527570493, guid: 14777034d3ad91e43b846900fc6d48a8, type: 3}
+  keepsOwnMaterials: 0
+  bakedBody: {fileID: 0}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
+  strongAgainst: Ground armies without anti-air
+  weakAgainst: Anti-air
+  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Vampire (100%). A heavy flyer that shells the ground from far away. Anti-air, not flankers, is the answer. First-pass M10 values, Banished (Docs/M10/subfactions.md).'

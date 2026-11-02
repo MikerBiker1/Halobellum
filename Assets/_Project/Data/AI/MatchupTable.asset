@@ -155,6 +155,21 @@ MonoBehaviour:
   - attacker: Marine
     defender: Condor Gunship
     winRate: 1
+  - attacker: Marine
+    defender: Chopper
+    winRate: 1
+  - attacker: Marine
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Marine
+    defender: Marauder
+    winRate: 0
+  - attacker: Marine
+    defender: Reaver
+    winRate: 1
+  - attacker: Marine
+    defender: Blisterback
+    winRate: 0
   - attacker: Flamethrower Trooper
     defender: Marine
     winRate: 0
@@ -295,6 +310,21 @@ MonoBehaviour:
     winRate: 0
   - attacker: Flamethrower Trooper
     defender: Condor Gunship
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Chopper
+    winRate: 1
+  - attacker: Flamethrower Trooper
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Marauder
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Reaver
+    winRate: 1
+  - attacker: Flamethrower Trooper
+    defender: Blisterback
     winRate: 0
   - attacker: Warthog
     defender: Marine
@@ -437,6 +467,21 @@ MonoBehaviour:
   - attacker: Warthog
     defender: Condor Gunship
     winRate: 0.9
+  - attacker: Warthog
+    defender: Chopper
+    winRate: 0
+  - attacker: Warthog
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Warthog
+    defender: Marauder
+    winRate: 0
+  - attacker: Warthog
+    defender: Reaver
+    winRate: 1
+  - attacker: Warthog
+    defender: Blisterback
+    winRate: 1
   - attacker: Gauss Warthog
     defender: Marine
     winRate: 0
@@ -577,6 +622,21 @@ MonoBehaviour:
     winRate: 0
   - attacker: Gauss Warthog
     defender: Condor Gunship
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Chopper
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Marauder
+    winRate: 1
+  - attacker: Gauss Warthog
+    defender: Reaver
+    winRate: 1
+  - attacker: Gauss Warthog
+    defender: Blisterback
     winRate: 0
   - attacker: Scorpion
     defender: Marine
@@ -719,6 +779,21 @@ MonoBehaviour:
   - attacker: Scorpion
     defender: Condor Gunship
     winRate: 0.8
+  - attacker: Scorpion
+    defender: Chopper
+    winRate: 1
+  - attacker: Scorpion
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Scorpion
+    defender: Marauder
+    winRate: 1
+  - attacker: Scorpion
+    defender: Reaver
+    winRate: 1
+  - attacker: Scorpion
+    defender: Blisterback
+    winRate: 0
   - attacker: Wolverine
     defender: Marine
     winRate: 0.9
@@ -859,6 +934,21 @@ MonoBehaviour:
     winRate: 1
   - attacker: Wolverine
     defender: Condor Gunship
+    winRate: 1
+  - attacker: Wolverine
+    defender: Chopper
+    winRate: 0
+  - attacker: Wolverine
+    defender: Brute Grenadier
+    winRate: 0.7
+  - attacker: Wolverine
+    defender: Marauder
+    winRate: 0
+  - attacker: Wolverine
+    defender: Reaver
+    winRate: 0
+  - attacker: Wolverine
+    defender: Blisterback
     winRate: 1
   - attacker: Hornet
     defender: Marine
@@ -1001,6 +1091,21 @@ MonoBehaviour:
   - attacker: Hornet
     defender: Condor Gunship
     winRate: 0
+  - attacker: Hornet
+    defender: Chopper
+    winRate: 1
+  - attacker: Hornet
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Hornet
+    defender: Marauder
+    winRate: 1
+  - attacker: Hornet
+    defender: Reaver
+    winRate: 0
+  - attacker: Hornet
+    defender: Blisterback
+    winRate: 1
   - attacker: Archer Missile Pod
     defender: Marine
     winRate: 1
@@ -1142,6 +1247,21 @@ MonoBehaviour:
   - attacker: Archer Missile Pod
     defender: Condor Gunship
     winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Chopper
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Archer Missile Pod
+    defender: Marauder
+    winRate: 0.4
+  - attacker: Archer Missile Pod
+    defender: Reaver
+    winRate: 1
+  - attacker: Archer Missile Pod
+    defender: Blisterback
+    winRate: 0
   - attacker: Pelican
     defender: Marine
     winRate: 0
@@ -1283,6 +1403,21 @@ MonoBehaviour:
   - attacker: Pelican
     defender: Condor Gunship
     winRate: 0
+  - attacker: Pelican
+    defender: Chopper
+    winRate: 1
+  - attacker: Pelican
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Pelican
+    defender: Marauder
+    winRate: 0
+  - attacker: Pelican
+    defender: Reaver
+    winRate: 0
+  - attacker: Pelican
+    defender: Blisterback
+    winRate: 0.4
   - attacker: Spartan
     defender: Marine
     winRate: 0
@@ -1424,6 +1559,21 @@ MonoBehaviour:
   - attacker: Spartan
     defender: Condor Gunship
     winRate: 0.1
+  - attacker: Spartan
+    defender: Chopper
+    winRate: 1
+  - attacker: Spartan
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Spartan
+    defender: Marauder
+    winRate: 1
+  - attacker: Spartan
+    defender: Reaver
+    winRate: 1
+  - attacker: Spartan
+    defender: Blisterback
+    winRate: 1
   - attacker: Mantis
     defender: Marine
     winRate: 1
@@ -1565,6 +1715,21 @@ MonoBehaviour:
   - attacker: Mantis
     defender: Condor Gunship
     winRate: 1
+  - attacker: Mantis
+    defender: Chopper
+    winRate: 1
+  - attacker: Mantis
+    defender: Brute Grenadier
+    winRate: 0.6
+  - attacker: Mantis
+    defender: Marauder
+    winRate: 1
+  - attacker: Mantis
+    defender: Reaver
+    winRate: 1
+  - attacker: Mantis
+    defender: Blisterback
+    winRate: 1
   - attacker: Elephant
     defender: Marine
     winRate: 1
@@ -1705,6 +1870,21 @@ MonoBehaviour:
     winRate: 1
   - attacker: Elephant
     defender: Condor Gunship
+    winRate: 1
+  - attacker: Elephant
+    defender: Chopper
+    winRate: 1
+  - attacker: Elephant
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Elephant
+    defender: Marauder
+    winRate: 1
+  - attacker: Elephant
+    defender: Reaver
+    winRate: 1
+  - attacker: Elephant
+    defender: Blisterback
     winRate: 1
   - attacker: Grunt
     defender: Marine
@@ -1847,6 +2027,21 @@ MonoBehaviour:
   - attacker: Grunt
     defender: Condor Gunship
     winRate: 1
+  - attacker: Grunt
+    defender: Chopper
+    winRate: 1
+  - attacker: Grunt
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Grunt
+    defender: Marauder
+    winRate: 0
+  - attacker: Grunt
+    defender: Reaver
+    winRate: 1
+  - attacker: Grunt
+    defender: Blisterback
+    winRate: 0
   - attacker: Fuel Rod Grunt
     defender: Marine
     winRate: 1
@@ -1987,6 +2182,21 @@ MonoBehaviour:
     winRate: 0
   - attacker: Fuel Rod Grunt
     defender: Condor Gunship
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Chopper
+    winRate: 1
+  - attacker: Fuel Rod Grunt
+    defender: Brute Grenadier
+    winRate: 0.9
+  - attacker: Fuel Rod Grunt
+    defender: Marauder
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Reaver
+    winRate: 0.5
+  - attacker: Fuel Rod Grunt
+    defender: Blisterback
     winRate: 0
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Marine
@@ -2129,6 +2339,21 @@ MonoBehaviour:
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Condor Gunship
     winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Chopper
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Marauder
+    winRate: 0
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Reaver
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Blisterback
+    winRate: 0
   - attacker: 'Jackal (Shield)'
     defender: Marine
     winRate: 0
@@ -2269,6 +2494,21 @@ MonoBehaviour:
     winRate: 0.1
   - attacker: 'Jackal (Shield)'
     defender: Condor Gunship
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Chopper
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Marauder
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Reaver
+    winRate: 1
+  - attacker: 'Jackal (Shield)'
+    defender: Blisterback
     winRate: 0
   - attacker: Ghost
     defender: Marine
@@ -2411,6 +2651,21 @@ MonoBehaviour:
   - attacker: Ghost
     defender: Condor Gunship
     winRate: 1
+  - attacker: Ghost
+    defender: Chopper
+    winRate: 0
+  - attacker: Ghost
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Ghost
+    defender: Marauder
+    winRate: 0
+  - attacker: Ghost
+    defender: Reaver
+    winRate: 1
+  - attacker: Ghost
+    defender: Blisterback
+    winRate: 0.8
   - attacker: Elite
     defender: Marine
     winRate: 0
@@ -2552,6 +2807,21 @@ MonoBehaviour:
   - attacker: Elite
     defender: Condor Gunship
     winRate: 1
+  - attacker: Elite
+    defender: Chopper
+    winRate: 1
+  - attacker: Elite
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Elite
+    defender: Marauder
+    winRate: 0.3
+  - attacker: Elite
+    defender: Reaver
+    winRate: 1
+  - attacker: Elite
+    defender: Blisterback
+    winRate: 1
   - attacker: Wraith
     defender: Marine
     winRate: 1
@@ -2693,6 +2963,21 @@ MonoBehaviour:
   - attacker: Wraith
     defender: Condor Gunship
     winRate: 0
+  - attacker: Wraith
+    defender: Chopper
+    winRate: 1
+  - attacker: Wraith
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Wraith
+    defender: Marauder
+    winRate: 0
+  - attacker: Wraith
+    defender: Reaver
+    winRate: 0.8
+  - attacker: Wraith
+    defender: Blisterback
+    winRate: 0
   - attacker: Vampire
     defender: Marine
     winRate: 0
@@ -2834,6 +3119,21 @@ MonoBehaviour:
   - attacker: Vampire
     defender: Condor Gunship
     winRate: 0
+  - attacker: Vampire
+    defender: Chopper
+    winRate: 1
+  - attacker: Vampire
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Vampire
+    defender: Marauder
+    winRate: 0
+  - attacker: Vampire
+    defender: Reaver
+    winRate: 0
+  - attacker: Vampire
+    defender: Blisterback
+    winRate: 1
   - attacker: Banshee
     defender: Marine
     winRate: 0
@@ -2975,6 +3275,21 @@ MonoBehaviour:
   - attacker: Banshee
     defender: Condor Gunship
     winRate: 0
+  - attacker: Banshee
+    defender: Chopper
+    winRate: 1
+  - attacker: Banshee
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Banshee
+    defender: Marauder
+    winRate: 1
+  - attacker: Banshee
+    defender: Reaver
+    winRate: 0
+  - attacker: Banshee
+    defender: Blisterback
+    winRate: 1
   - attacker: Hunter Pair
     defender: Marine
     winRate: 1
@@ -3115,6 +3430,21 @@ MonoBehaviour:
     winRate: 0
   - attacker: Hunter Pair
     defender: Condor Gunship
+    winRate: 0
+  - attacker: Hunter Pair
+    defender: Chopper
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Marauder
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Reaver
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Blisterback
     winRate: 0
   - attacker: Zealot
     defender: Marine
@@ -3257,6 +3587,21 @@ MonoBehaviour:
   - attacker: Zealot
     defender: Condor Gunship
     winRate: 0
+  - attacker: Zealot
+    defender: Chopper
+    winRate: 1
+  - attacker: Zealot
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Zealot
+    defender: Marauder
+    winRate: 1
+  - attacker: Zealot
+    defender: Reaver
+    winRate: 1
+  - attacker: Zealot
+    defender: Blisterback
+    winRate: 0.2
   - attacker: Scarab
     defender: Marine
     winRate: 1
@@ -3397,6 +3742,21 @@ MonoBehaviour:
     winRate: 1
   - attacker: Scarab
     defender: Condor Gunship
+    winRate: 1
+  - attacker: Scarab
+    defender: Chopper
+    winRate: 1
+  - attacker: Scarab
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Scarab
+    defender: Marauder
+    winRate: 1
+  - attacker: Scarab
+    defender: Reaver
+    winRate: 1
+  - attacker: Scarab
+    defender: Blisterback
     winRate: 1
   - attacker: Infection Forms
     defender: Marine
@@ -3539,6 +3899,21 @@ MonoBehaviour:
   - attacker: Infection Forms
     defender: Condor Gunship
     winRate: 0
+  - attacker: Infection Forms
+    defender: Chopper
+    winRate: 0
+  - attacker: Infection Forms
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Infection Forms
+    defender: Marauder
+    winRate: 0
+  - attacker: Infection Forms
+    defender: Reaver
+    winRate: 1
+  - attacker: Infection Forms
+    defender: Blisterback
+    winRate: 0
   - attacker: Carrier Form
     defender: Marine
     winRate: 0.1
@@ -3680,6 +4055,21 @@ MonoBehaviour:
   - attacker: Carrier Form
     defender: Condor Gunship
     winRate: 0
+  - attacker: Carrier Form
+    defender: Chopper
+    winRate: 1
+  - attacker: Carrier Form
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Carrier Form
+    defender: Marauder
+    winRate: 0
+  - attacker: Carrier Form
+    defender: Reaver
+    winRate: 1
+  - attacker: Carrier Form
+    defender: Blisterback
+    winRate: 0
   - attacker: Combat Form
     defender: Marine
     winRate: 0
@@ -3820,6 +4210,21 @@ MonoBehaviour:
     winRate: 0
   - attacker: Combat Form
     defender: Condor Gunship
+    winRate: 0
+  - attacker: Combat Form
+    defender: Chopper
+    winRate: 1
+  - attacker: Combat Form
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Combat Form
+    defender: Marauder
+    winRate: 0.4
+  - attacker: Combat Form
+    defender: Reaver
+    winRate: 1
+  - attacker: Combat Form
+    defender: Blisterback
     winRate: 0
   - attacker: Stalker Form
     defender: Marine
@@ -3962,6 +4367,21 @@ MonoBehaviour:
   - attacker: Stalker Form
     defender: Condor Gunship
     winRate: 0
+  - attacker: Stalker Form
+    defender: Chopper
+    winRate: 1
+  - attacker: Stalker Form
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Stalker Form
+    defender: Marauder
+    winRate: 0
+  - attacker: Stalker Form
+    defender: Reaver
+    winRate: 1
+  - attacker: Stalker Form
+    defender: Blisterback
+    winRate: 0
   - attacker: Pure Form Ranged
     defender: Marine
     winRate: 1
@@ -4102,6 +4522,21 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pure Form Ranged
     defender: Condor Gunship
+    winRate: 0
+  - attacker: Pure Form Ranged
+    defender: Chopper
+    winRate: 1
+  - attacker: Pure Form Ranged
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Pure Form Ranged
+    defender: Marauder
+    winRate: 0.3
+  - attacker: Pure Form Ranged
+    defender: Reaver
+    winRate: 1
+  - attacker: Pure Form Ranged
+    defender: Blisterback
     winRate: 0
   - attacker: Swarm Form
     defender: Marine
@@ -4244,6 +4679,21 @@ MonoBehaviour:
   - attacker: Swarm Form
     defender: Condor Gunship
     winRate: 0
+  - attacker: Swarm Form
+    defender: Chopper
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Marauder
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Reaver
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Blisterback
+    winRate: 1
   - attacker: Pure Form Tank
     defender: Marine
     winRate: 1
@@ -4385,6 +4835,21 @@ MonoBehaviour:
   - attacker: Pure Form Tank
     defender: Condor Gunship
     winRate: 1
+  - attacker: Pure Form Tank
+    defender: Chopper
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Marauder
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Reaver
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Blisterback
+    winRate: 0.9
   - attacker: Seeder
     defender: Marine
     winRate: 0
@@ -4525,6 +4990,21 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Condor Gunship
+    winRate: 0
+  - attacker: Seeder
+    defender: Chopper
+    winRate: 1
+  - attacker: Seeder
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Seeder
+    defender: Marauder
+    winRate: 1
+  - attacker: Seeder
+    defender: Reaver
+    winRate: 1
+  - attacker: Seeder
+    defender: Blisterback
     winRate: 0
   - attacker: Infected Pelican
     defender: Marine
@@ -4667,6 +5147,21 @@ MonoBehaviour:
   - attacker: Infected Pelican
     defender: Condor Gunship
     winRate: 0
+  - attacker: Infected Pelican
+    defender: Chopper
+    winRate: 1
+  - attacker: Infected Pelican
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Marauder
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Reaver
+    winRate: 1
+  - attacker: Infected Pelican
+    defender: Blisterback
+    winRate: 0
   - attacker: Infected Phantom
     defender: Marine
     winRate: 0
@@ -4808,6 +5303,21 @@ MonoBehaviour:
   - attacker: Infected Phantom
     defender: Condor Gunship
     winRate: 0
+  - attacker: Infected Phantom
+    defender: Chopper
+    winRate: 1
+  - attacker: Infected Phantom
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Infected Phantom
+    defender: Marauder
+    winRate: 0.9
+  - attacker: Infected Phantom
+    defender: Reaver
+    winRate: 0
+  - attacker: Infected Phantom
+    defender: Blisterback
+    winRate: 1
   - attacker: Flood Abomination
     defender: Marine
     winRate: 1
@@ -4948,6 +5458,21 @@ MonoBehaviour:
     winRate: 1
   - attacker: Flood Abomination
     defender: Condor Gunship
+    winRate: 0
+  - attacker: Flood Abomination
+    defender: Chopper
+    winRate: 1
+  - attacker: Flood Abomination
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Flood Abomination
+    defender: Marauder
+    winRate: 1
+  - attacker: Flood Abomination
+    defender: Reaver
+    winRate: 1
+  - attacker: Flood Abomination
+    defender: Blisterback
     winRate: 0
   - attacker: Spartan Sniper
     defender: Marine
@@ -5090,6 +5615,21 @@ MonoBehaviour:
   - attacker: Spartan Sniper
     defender: Condor Gunship
     winRate: 0
+  - attacker: Spartan Sniper
+    defender: Chopper
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Marauder
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Reaver
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Blisterback
+    winRate: 1
   - attacker: Spartan Heavy Weapons
     defender: Marine
     winRate: 0.1
@@ -5231,6 +5771,21 @@ MonoBehaviour:
   - attacker: Spartan Heavy Weapons
     defender: Condor Gunship
     winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Chopper
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Marauder
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Reaver
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Blisterback
+    winRate: 1
   - attacker: Spartan Grenadier
     defender: Marine
     winRate: 1
@@ -5372,6 +5927,21 @@ MonoBehaviour:
   - attacker: Spartan Grenadier
     defender: Condor Gunship
     winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Chopper
+    winRate: 0.9
+  - attacker: Spartan Grenadier
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Marauder
+    winRate: 0.6
+  - attacker: Spartan Grenadier
+    defender: Reaver
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Blisterback
+    winRate: 0
   - attacker: Spartan CQB
     defender: Marine
     winRate: 0
@@ -5512,6 +6082,21 @@ MonoBehaviour:
     winRate: 0.1
   - attacker: Spartan CQB
     defender: Condor Gunship
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Chopper
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Marauder
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Reaver
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Blisterback
     winRate: 1
   - attacker: Spartan Fireteam
     defender: Marine
@@ -5654,6 +6239,21 @@ MonoBehaviour:
   - attacker: Spartan Fireteam
     defender: Condor Gunship
     winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Chopper
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Marauder
+    winRate: 1
+  - attacker: Spartan Fireteam
+    defender: Reaver
+    winRate: 1
+  - attacker: Spartan Fireteam
+    defender: Blisterback
+    winRate: 1
   - attacker: Gremlin
     defender: Marine
     winRate: 0
@@ -5795,6 +6395,21 @@ MonoBehaviour:
   - attacker: Gremlin
     defender: Condor Gunship
     winRate: 1
+  - attacker: Gremlin
+    defender: Chopper
+    winRate: 0.9
+  - attacker: Gremlin
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Gremlin
+    defender: Marauder
+    winRate: 1
+  - attacker: Gremlin
+    defender: Reaver
+    winRate: 1
+  - attacker: Gremlin
+    defender: Blisterback
+    winRate: 1
   - attacker: Cobra
     defender: Marine
     winRate: 0
@@ -5936,6 +6551,21 @@ MonoBehaviour:
   - attacker: Cobra
     defender: Condor Gunship
     winRate: 0
+  - attacker: Cobra
+    defender: Chopper
+    winRate: 1
+  - attacker: Cobra
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Cobra
+    defender: Marauder
+    winRate: 1
+  - attacker: Cobra
+    defender: Reaver
+    winRate: 1
+  - attacker: Cobra
+    defender: Blisterback
+    winRate: 0
   - attacker: Rhino
     defender: Marine
     winRate: 1
@@ -6076,6 +6706,21 @@ MonoBehaviour:
     winRate: 0
   - attacker: Rhino
     defender: Condor Gunship
+    winRate: 0
+  - attacker: Rhino
+    defender: Chopper
+    winRate: 1
+  - attacker: Rhino
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Rhino
+    defender: Marauder
+    winRate: 1
+  - attacker: Rhino
+    defender: Reaver
+    winRate: 1
+  - attacker: Rhino
+    defender: Blisterback
     winRate: 0
   - attacker: Grizzly
     defender: Marine
@@ -6218,6 +6863,21 @@ MonoBehaviour:
   - attacker: Grizzly
     defender: Condor Gunship
     winRate: 1
+  - attacker: Grizzly
+    defender: Chopper
+    winRate: 1
+  - attacker: Grizzly
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Grizzly
+    defender: Marauder
+    winRate: 1
+  - attacker: Grizzly
+    defender: Reaver
+    winRate: 1
+  - attacker: Grizzly
+    defender: Blisterback
+    winRate: 0
   - attacker: Sparrowhawk
     defender: Marine
     winRate: 0
@@ -6359,6 +7019,21 @@ MonoBehaviour:
   - attacker: Sparrowhawk
     defender: Condor Gunship
     winRate: 0
+  - attacker: Sparrowhawk
+    defender: Chopper
+    winRate: 1
+  - attacker: Sparrowhawk
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Sparrowhawk
+    defender: Marauder
+    winRate: 1
+  - attacker: Sparrowhawk
+    defender: Reaver
+    winRate: 0
+  - attacker: Sparrowhawk
+    defender: Blisterback
+    winRate: 1
   - attacker: Shortsword
     defender: Marine
     winRate: 0
@@ -6500,6 +7175,21 @@ MonoBehaviour:
   - attacker: Shortsword
     defender: Condor Gunship
     winRate: 0
+  - attacker: Shortsword
+    defender: Chopper
+    winRate: 1
+  - attacker: Shortsword
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Shortsword
+    defender: Marauder
+    winRate: 1
+  - attacker: Shortsword
+    defender: Reaver
+    winRate: 0
+  - attacker: Shortsword
+    defender: Blisterback
+    winRate: 0
   - attacker: Vulture
     defender: Marine
     winRate: 1
@@ -6641,6 +7331,21 @@ MonoBehaviour:
   - attacker: Vulture
     defender: Condor Gunship
     winRate: 0
+  - attacker: Vulture
+    defender: Chopper
+    winRate: 1
+  - attacker: Vulture
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Vulture
+    defender: Marauder
+    winRate: 1
+  - attacker: Vulture
+    defender: Reaver
+    winRate: 0
+  - attacker: Vulture
+    defender: Blisterback
+    winRate: 1
   - attacker: Condor Gunship
     defender: Marine
     winRate: 0
@@ -6782,3 +7487,798 @@ MonoBehaviour:
   - attacker: Condor Gunship
     defender: Vulture
     winRate: 1
+  - attacker: Condor Gunship
+    defender: Chopper
+    winRate: 1
+  - attacker: Condor Gunship
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Condor Gunship
+    defender: Marauder
+    winRate: 0
+  - attacker: Condor Gunship
+    defender: Reaver
+    winRate: 0
+  - attacker: Condor Gunship
+    defender: Blisterback
+    winRate: 1
+  - attacker: Chopper
+    defender: Marine
+    winRate: 0
+  - attacker: Chopper
+    defender: Flamethrower Trooper
+    winRate: 0
+  - attacker: Chopper
+    defender: Warthog
+    winRate: 1
+  - attacker: Chopper
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Chopper
+    defender: Scorpion
+    winRate: 0
+  - attacker: Chopper
+    defender: Wolverine
+    winRate: 1
+  - attacker: Chopper
+    defender: Hornet
+    winRate: 0
+  - attacker: Chopper
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Chopper
+    defender: Pelican
+    winRate: 0
+  - attacker: Chopper
+    defender: Spartan
+    winRate: 0
+  - attacker: Chopper
+    defender: Mantis
+    winRate: 0
+  - attacker: Chopper
+    defender: Elephant
+    winRate: 0
+  - attacker: Chopper
+    defender: Grunt
+    winRate: 0
+  - attacker: Chopper
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: Chopper
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Chopper
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Chopper
+    defender: Ghost
+    winRate: 1
+  - attacker: Chopper
+    defender: Elite
+    winRate: 0
+  - attacker: Chopper
+    defender: Wraith
+    winRate: 0
+  - attacker: Chopper
+    defender: Vampire
+    winRate: 0
+  - attacker: Chopper
+    defender: Banshee
+    winRate: 0
+  - attacker: Chopper
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Chopper
+    defender: Zealot
+    winRate: 0
+  - attacker: Chopper
+    defender: Scarab
+    winRate: 0
+  - attacker: Chopper
+    defender: Infection Forms
+    winRate: 1
+  - attacker: Chopper
+    defender: Carrier Form
+    winRate: 0
+  - attacker: Chopper
+    defender: Combat Form
+    winRate: 0
+  - attacker: Chopper
+    defender: Stalker Form
+    winRate: 0
+  - attacker: Chopper
+    defender: Pure Form Ranged
+    winRate: 0
+  - attacker: Chopper
+    defender: Swarm Form
+    winRate: 1
+  - attacker: Chopper
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: Chopper
+    defender: Seeder
+    winRate: 0
+  - attacker: Chopper
+    defender: Infected Pelican
+    winRate: 0
+  - attacker: Chopper
+    defender: Infected Phantom
+    winRate: 0
+  - attacker: Chopper
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Chopper
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Chopper
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Chopper
+    defender: Spartan Grenadier
+    winRate: 0.1
+  - attacker: Chopper
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Chopper
+    defender: Spartan Fireteam
+    winRate: 1
+  - attacker: Chopper
+    defender: Gremlin
+    winRate: 0.1
+  - attacker: Chopper
+    defender: Cobra
+    winRate: 0
+  - attacker: Chopper
+    defender: Rhino
+    winRate: 0
+  - attacker: Chopper
+    defender: Grizzly
+    winRate: 0
+  - attacker: Chopper
+    defender: Sparrowhawk
+    winRate: 0
+  - attacker: Chopper
+    defender: Shortsword
+    winRate: 0
+  - attacker: Chopper
+    defender: Vulture
+    winRate: 0
+  - attacker: Chopper
+    defender: Condor Gunship
+    winRate: 0
+  - attacker: Chopper
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Chopper
+    defender: Marauder
+    winRate: 0
+  - attacker: Chopper
+    defender: Reaver
+    winRate: 1
+  - attacker: Chopper
+    defender: Blisterback
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Marine
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Warthog
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Scorpion
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Wolverine
+    winRate: 0.3
+  - attacker: Brute Grenadier
+    defender: Hornet
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Archer Missile Pod
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Pelican
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Spartan
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Mantis
+    winRate: 0.4
+  - attacker: Brute Grenadier
+    defender: Elephant
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Grunt
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Fuel Rod Grunt
+    winRate: 0.1
+  - attacker: Brute Grenadier
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Ghost
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Elite
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Wraith
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Vampire
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Banshee
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Zealot
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Scarab
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Infection Forms
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Carrier Form
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Combat Form
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Stalker Form
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Pure Form Ranged
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Swarm Form
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Seeder
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Infected Pelican
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Infected Phantom
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Spartan Fireteam
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Gremlin
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Cobra
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Rhino
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Grizzly
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Sparrowhawk
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Shortsword
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Vulture
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Condor Gunship
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Chopper
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Marauder
+    winRate: 0.9
+  - attacker: Brute Grenadier
+    defender: Reaver
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Blisterback
+    winRate: 0
+  - attacker: Marauder
+    defender: Marine
+    winRate: 1
+  - attacker: Marauder
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Marauder
+    defender: Warthog
+    winRate: 1
+  - attacker: Marauder
+    defender: Gauss Warthog
+    winRate: 0
+  - attacker: Marauder
+    defender: Scorpion
+    winRate: 0
+  - attacker: Marauder
+    defender: Wolverine
+    winRate: 1
+  - attacker: Marauder
+    defender: Hornet
+    winRate: 0
+  - attacker: Marauder
+    defender: Archer Missile Pod
+    winRate: 0.6
+  - attacker: Marauder
+    defender: Pelican
+    winRate: 1
+  - attacker: Marauder
+    defender: Spartan
+    winRate: 0
+  - attacker: Marauder
+    defender: Mantis
+    winRate: 0
+  - attacker: Marauder
+    defender: Elephant
+    winRate: 0
+  - attacker: Marauder
+    defender: Grunt
+    winRate: 1
+  - attacker: Marauder
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Marauder
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: Marauder
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Marauder
+    defender: Ghost
+    winRate: 1
+  - attacker: Marauder
+    defender: Elite
+    winRate: 0.7
+  - attacker: Marauder
+    defender: Wraith
+    winRate: 1
+  - attacker: Marauder
+    defender: Vampire
+    winRate: 1
+  - attacker: Marauder
+    defender: Banshee
+    winRate: 0
+  - attacker: Marauder
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Marauder
+    defender: Zealot
+    winRate: 0
+  - attacker: Marauder
+    defender: Scarab
+    winRate: 0
+  - attacker: Marauder
+    defender: Infection Forms
+    winRate: 1
+  - attacker: Marauder
+    defender: Carrier Form
+    winRate: 1
+  - attacker: Marauder
+    defender: Combat Form
+    winRate: 0.6
+  - attacker: Marauder
+    defender: Stalker Form
+    winRate: 1
+  - attacker: Marauder
+    defender: Pure Form Ranged
+    winRate: 0.7
+  - attacker: Marauder
+    defender: Swarm Form
+    winRate: 1
+  - attacker: Marauder
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: Marauder
+    defender: Seeder
+    winRate: 0
+  - attacker: Marauder
+    defender: Infected Pelican
+    winRate: 1
+  - attacker: Marauder
+    defender: Infected Phantom
+    winRate: 0.1
+  - attacker: Marauder
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Marauder
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Marauder
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Marauder
+    defender: Spartan Grenadier
+    winRate: 0.4
+  - attacker: Marauder
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Marauder
+    defender: Spartan Fireteam
+    winRate: 0
+  - attacker: Marauder
+    defender: Gremlin
+    winRate: 0
+  - attacker: Marauder
+    defender: Cobra
+    winRate: 0
+  - attacker: Marauder
+    defender: Rhino
+    winRate: 0
+  - attacker: Marauder
+    defender: Grizzly
+    winRate: 0
+  - attacker: Marauder
+    defender: Sparrowhawk
+    winRate: 0
+  - attacker: Marauder
+    defender: Shortsword
+    winRate: 0
+  - attacker: Marauder
+    defender: Vulture
+    winRate: 0
+  - attacker: Marauder
+    defender: Condor Gunship
+    winRate: 1
+  - attacker: Marauder
+    defender: Chopper
+    winRate: 1
+  - attacker: Marauder
+    defender: Brute Grenadier
+    winRate: 0.1
+  - attacker: Marauder
+    defender: Reaver
+    winRate: 1
+  - attacker: Marauder
+    defender: Blisterback
+    winRate: 0.2
+  - attacker: Reaver
+    defender: Marine
+    winRate: 0
+  - attacker: Reaver
+    defender: Flamethrower Trooper
+    winRate: 0
+  - attacker: Reaver
+    defender: Warthog
+    winRate: 0
+  - attacker: Reaver
+    defender: Gauss Warthog
+    winRate: 0
+  - attacker: Reaver
+    defender: Scorpion
+    winRate: 0
+  - attacker: Reaver
+    defender: Wolverine
+    winRate: 1
+  - attacker: Reaver
+    defender: Hornet
+    winRate: 1
+  - attacker: Reaver
+    defender: Archer Missile Pod
+    winRate: 0
+  - attacker: Reaver
+    defender: Pelican
+    winRate: 1
+  - attacker: Reaver
+    defender: Spartan
+    winRate: 0
+  - attacker: Reaver
+    defender: Mantis
+    winRate: 0
+  - attacker: Reaver
+    defender: Elephant
+    winRate: 0
+  - attacker: Reaver
+    defender: Grunt
+    winRate: 0
+  - attacker: Reaver
+    defender: Fuel Rod Grunt
+    winRate: 0.5
+  - attacker: Reaver
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Reaver
+    defender: 'Jackal (Shield)'
+    winRate: 0
+  - attacker: Reaver
+    defender: Ghost
+    winRate: 0
+  - attacker: Reaver
+    defender: Elite
+    winRate: 0
+  - attacker: Reaver
+    defender: Wraith
+    winRate: 0.2
+  - attacker: Reaver
+    defender: Vampire
+    winRate: 1
+  - attacker: Reaver
+    defender: Banshee
+    winRate: 1
+  - attacker: Reaver
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Reaver
+    defender: Zealot
+    winRate: 0
+  - attacker: Reaver
+    defender: Scarab
+    winRate: 0
+  - attacker: Reaver
+    defender: Infection Forms
+    winRate: 0
+  - attacker: Reaver
+    defender: Carrier Form
+    winRate: 0
+  - attacker: Reaver
+    defender: Combat Form
+    winRate: 0
+  - attacker: Reaver
+    defender: Stalker Form
+    winRate: 0
+  - attacker: Reaver
+    defender: Pure Form Ranged
+    winRate: 0
+  - attacker: Reaver
+    defender: Swarm Form
+    winRate: 1
+  - attacker: Reaver
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: Reaver
+    defender: Seeder
+    winRate: 0
+  - attacker: Reaver
+    defender: Infected Pelican
+    winRate: 0
+  - attacker: Reaver
+    defender: Infected Phantom
+    winRate: 1
+  - attacker: Reaver
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Reaver
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Reaver
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Reaver
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Reaver
+    defender: Spartan CQB
+    winRate: 0
+  - attacker: Reaver
+    defender: Spartan Fireteam
+    winRate: 0
+  - attacker: Reaver
+    defender: Gremlin
+    winRate: 0
+  - attacker: Reaver
+    defender: Cobra
+    winRate: 0
+  - attacker: Reaver
+    defender: Rhino
+    winRate: 0
+  - attacker: Reaver
+    defender: Grizzly
+    winRate: 0
+  - attacker: Reaver
+    defender: Sparrowhawk
+    winRate: 1
+  - attacker: Reaver
+    defender: Shortsword
+    winRate: 1
+  - attacker: Reaver
+    defender: Vulture
+    winRate: 1
+  - attacker: Reaver
+    defender: Condor Gunship
+    winRate: 1
+  - attacker: Reaver
+    defender: Chopper
+    winRate: 0
+  - attacker: Reaver
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Reaver
+    defender: Marauder
+    winRate: 0
+  - attacker: Reaver
+    defender: Blisterback
+    winRate: 1
+  - attacker: Blisterback
+    defender: Marine
+    winRate: 1
+  - attacker: Blisterback
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Blisterback
+    defender: Warthog
+    winRate: 0
+  - attacker: Blisterback
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Blisterback
+    defender: Scorpion
+    winRate: 1
+  - attacker: Blisterback
+    defender: Wolverine
+    winRate: 0
+  - attacker: Blisterback
+    defender: Hornet
+    winRate: 0
+  - attacker: Blisterback
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Blisterback
+    defender: Pelican
+    winRate: 0.6
+  - attacker: Blisterback
+    defender: Spartan
+    winRate: 0
+  - attacker: Blisterback
+    defender: Mantis
+    winRate: 0
+  - attacker: Blisterback
+    defender: Elephant
+    winRate: 0
+  - attacker: Blisterback
+    defender: Grunt
+    winRate: 1
+  - attacker: Blisterback
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Blisterback
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: Blisterback
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Blisterback
+    defender: Ghost
+    winRate: 0.2
+  - attacker: Blisterback
+    defender: Elite
+    winRate: 0
+  - attacker: Blisterback
+    defender: Wraith
+    winRate: 1
+  - attacker: Blisterback
+    defender: Vampire
+    winRate: 0
+  - attacker: Blisterback
+    defender: Banshee
+    winRate: 0
+  - attacker: Blisterback
+    defender: Hunter Pair
+    winRate: 1
+  - attacker: Blisterback
+    defender: Zealot
+    winRate: 0.8
+  - attacker: Blisterback
+    defender: Scarab
+    winRate: 0
+  - attacker: Blisterback
+    defender: Infection Forms
+    winRate: 1
+  - attacker: Blisterback
+    defender: Carrier Form
+    winRate: 1
+  - attacker: Blisterback
+    defender: Combat Form
+    winRate: 1
+  - attacker: Blisterback
+    defender: Stalker Form
+    winRate: 1
+  - attacker: Blisterback
+    defender: Pure Form Ranged
+    winRate: 1
+  - attacker: Blisterback
+    defender: Swarm Form
+    winRate: 0
+  - attacker: Blisterback
+    defender: Pure Form Tank
+    winRate: 0.1
+  - attacker: Blisterback
+    defender: Seeder
+    winRate: 1
+  - attacker: Blisterback
+    defender: Infected Pelican
+    winRate: 1
+  - attacker: Blisterback
+    defender: Infected Phantom
+    winRate: 0
+  - attacker: Blisterback
+    defender: Flood Abomination
+    winRate: 1
+  - attacker: Blisterback
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Blisterback
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Blisterback
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Blisterback
+    defender: Spartan CQB
+    winRate: 0
+  - attacker: Blisterback
+    defender: Spartan Fireteam
+    winRate: 0
+  - attacker: Blisterback
+    defender: Gremlin
+    winRate: 0
+  - attacker: Blisterback
+    defender: Cobra
+    winRate: 1
+  - attacker: Blisterback
+    defender: Rhino
+    winRate: 1
+  - attacker: Blisterback
+    defender: Grizzly
+    winRate: 1
+  - attacker: Blisterback
+    defender: Sparrowhawk
+    winRate: 0
+  - attacker: Blisterback
+    defender: Shortsword
+    winRate: 1
+  - attacker: Blisterback
+    defender: Vulture
+    winRate: 0
+  - attacker: Blisterback
+    defender: Condor Gunship
+    winRate: 0
+  - attacker: Blisterback
+    defender: Chopper
+    winRate: 1
+  - attacker: Blisterback
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Blisterback
+    defender: Marauder
+    winRate: 0.3
+  - attacker: Blisterback
+    defender: Reaver
+    winRate: 0

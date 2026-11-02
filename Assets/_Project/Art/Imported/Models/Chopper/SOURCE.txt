@@ -1,0 +1,3 @@
+Source: found by the project owner on Sketchfab, file sketchfab.com/For Later/vehiclescovenantgroundchopper.glb in Art_Source.
+Prepared by Tools/Art/units/Chopper.py (M10).
+The repository is private and must stay private.
