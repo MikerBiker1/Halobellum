@@ -107,7 +107,7 @@ namespace Halobellum.Tests
             Assert.Greater(Director.ActiveSfxVoices, 0, "Rebuilding the preview must not cut the drop's sound.");
 
             _played.Clear();
-            controller.Sell(null);
+            controller.UseTraining(null);
             Assert.Contains($"ui_{key}_error", _played, "A failed action is heard as an error.");
 
             // The battle.
