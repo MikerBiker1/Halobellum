@@ -6,8 +6,8 @@
 // Below the stats it shows the squad's level, XP bar, level-up button with its price and its tech
 // upgrades with Buy buttons (Milestone 6), from the scene's ISquadProgression (the Match or the
 // Sandbox); the opponent's squads only show their level.
-// Placeholder UI drawn with Unity's immediate-mode GUI.
-// Depends on: Halobellum.Presentation (BattleController, SquadSelection, ISquadProgression, UiHitAreas), Halobellum.Core.
+// The unit's picture (UnitIcons) is at the top. Placeholder UI drawn with Unity's immediate-mode GUI.
+// Depends on: Halobellum.Presentation (BattleController, SquadSelection, ISquadProgression, UiHitAreas), Halobellum.Core, UnitIcons.
 
 using System.Text;
 using Halobellum.Combat;
@@ -50,18 +50,20 @@ namespace Halobellum.UI
             string body = BuildText(s, alive, totalHealth);
             float textHeight = _text.CalcHeight(new GUIContent(body), windowWidth - 24f);
             SquadProgressView progress = _progression?.DescribeProgress(_selection.SelectedSquadId);
-            float height = 44f + textHeight + ProgressHeight(progress);
+            float height = HeaderHeight + textHeight + ProgressHeight(progress);
             var window = new Rect(10f, HudScale.ScaledHeight(scale) - height - 10f, windowWidth, height);
             UiHitAreas.Add(HudScale.ToScreen(window, scale));
 
             HudTheme.PanelBox(window);
-            GUI.Label(new Rect(window.x + 12f, window.y + 8f, windowWidth - 50f, 26f), $"{s.Name}  ({progress?.SideLabel ?? $"Team {sample.Team}"})", _title);
+            CardScreens.DrawUnitPicture(new Rect(window.x + 10f, window.y + 6f, PictureSize, PictureSize), s, null, HudTheme.Accent);
+            GUI.Label(new Rect(window.x + PictureSize + 18f, window.y + 6f, windowWidth - PictureSize - 56f, 30f), s.Name, _title);
+            GUI.Label(new Rect(window.x + PictureSize + 18f, window.y + 34f, windowWidth - PictureSize - 56f, 24f), progress?.SideLabel ?? $"Team {sample.Team}", _small);
             if (GUI.Button(new Rect(window.xMax - 34f, window.y + 8f, 24f, 22f), "x")) _selection.Select(-1);
-            GUI.Label(new Rect(window.x + 12f, window.y + 38f, windowWidth - 24f, textHeight), body, _text);
-            if (progress != null) DrawProgress(progress, window.x + 12f, window.y + 42f + textHeight, windowWidth - 24f);
+            GUI.Label(new Rect(window.x + 12f, window.y + HeaderHeight - 6f, windowWidth - 24f, textHeight), body, _text);
+            if (progress != null) DrawProgress(progress, window.x + 12f, window.y + HeaderHeight - 2f + textHeight, windowWidth - 24f);
         }
 
-        private const float LineHeight = 24f, TechRowHeight = 44f;
+        private const float LineHeight = 24f, TechRowHeight = 44f, PictureSize = 56f, HeaderHeight = 72f;
 
         private static float ProgressHeight(SquadProgressView p)
         {

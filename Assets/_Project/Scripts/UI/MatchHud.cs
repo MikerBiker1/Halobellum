@@ -1,11 +1,12 @@
 // MatchHud.cs
 // The match screens (Bible Section 13), one per phase:
 //   Draft: the starting draft cards (faction, sub-faction, 2 free squads) to choose from, and a
-//     button to the Sandbox.
+//     button to the Sandbox. Up to 5 cards fit (CardLayout); each is drawn by CardScreens.
 //   Deployment: credits and next income, squads bought (x of 2), unlocks (x of 1), both bases, the
 //     unit shop (Buy / Unlock), actions for the selected squad (Move, Turn, Sell) and Ready. No timer.
 //   Cards (from round 2, Milestone 7): 3 cards with their prices (spells, items, economy, buffs,
-//     training, or reinforcements every other round from round 4), and Skip with its bonus.
+//     training, or reinforcements every other round from round 4), and Skip with its bonus. Each card has
+//     its kind's border and a big picture (CardScreens, CardArt, UnitIcons).
 //     During deployment a spell bar (left) lists owned spells: Place / Move, take back, or how many
 //     rounds until recharged. Under it the Inventory holds items: drag one, and an empty hexagon
 //     appears over every squad without an item; drop it on one (squads with an item show it; see
@@ -17,7 +18,7 @@
 // The look follows the player's faction (HudTheme: UNSC or Covenant style); the draft screen is neutral.
 // Drawn with Unity's immediate-mode GUI; scales with the screen height.
 // Depends on: Halobellum.Presentation (MatchController, BattleController, UiHitAreas),
-//             Halobellum.Economy (Match, PlayerState, RoundSummary), HudScale.
+//             Halobellum.Economy (Match, PlayerState, RoundSummary), HudScale, CardLayout, CardScreens, UnitIcons.
 
 using System.Collections.Generic;
 using System.Linq;
@@ -71,56 +72,42 @@ namespace Halobellum.UI
         {
             Match m = match.Match;
             float width = HudScale.ScaledWidth(_scale), height = HudScale.ScaledHeight(_scale);
-            const float cardWidth = 320f, cardHeight = 360f, gap = 24f;
-            int count = m.PlayerDraft.Count;
-            float total = count * cardWidth + (count - 1) * gap;
-            float x = (width - total) * 0.5f, y = height * 0.5f - cardHeight * 0.5f;
+            DimTheField(width, height);
 
-            var title = new Rect(width * 0.5f - 400f, y - 90f, 800f, 70f);
-            Panel(title);
-            GUI.Label(new Rect(title.x, title.y + 6f, title.width, 34f), "Starting draft", _centered);
-            GUI.Label(new Rect(title.x, title.y + 38f, title.width, 26f), "Pick a faction and sub-faction. Its 2 squads are free and start unlocked.", _smallCentered);
-
-            for (int i = 0; i < count; i++)
-            {
-                DraftCard card = m.PlayerDraft[i];
-                var rect = new Rect(x + i * (cardWidth + gap), y, cardWidth, cardHeight);
-                Panel(rect);
-                GUI.Label(new Rect(rect.x + 16f, rect.y + 12f, rect.width - 32f, 34f), card.Faction.Name, _big);
-                GUI.Label(new Rect(rect.x + 16f, rect.y + 48f, rect.width - 32f, 24f), "Sub-faction: " + card.SubFaction.Name, _text);
-                GUI.Label(new Rect(rect.x + 16f, rect.y + 72f, rect.width - 32f, 46f), card.SubFaction.Description, _wrapDim);
-                GUI.Label(new Rect(rect.x + 16f, rect.y + 118f, rect.width - 32f, 64f), "Exclusive: " + string.Join(", ", card.SubFaction.ExclusiveUnits.ConvertAll(u => u.Name)), _wrap);
-                GUI.Label(new Rect(rect.x + 16f, rect.y + 182f, rect.width - 32f, 24f), "Starting squads:", _text);
-                for (int s = 0; s < card.Squads.Count; s++)
-                {
-                    UnitStats unit = card.Squads[s];
-                    bool exclusive = card.SubFaction.ExclusiveUnits.Contains(unit);
-                    GUI.Label(new Rect(rect.x + 28f, rect.y + 208f + s * 44f, rect.width - 44f, 44f),
-                        $"{unit.Name}{(exclusive ? " (exclusive)" : "")}\n{RoleName(unit.Role)}, {Bodies(unit.FormsInSquad)}, worth {unit.Cost}", _small);
-                }
-                if (GUI.Button(new Rect(rect.x + 16f, rect.yMax - 52f, rect.width - 32f, 38f), "Choose", _bigButton)) match.ChooseDraft(i);
-            }
-
-            // AI difficulty (Milestone 5): only changes how well the AI decides, never what it knows or earns.
-            var difficulty = new Rect(width * 0.5f - 300f, y - 150f, 600f, 50f);
-            Panel(difficulty);
-            GUI.Label(new Rect(difficulty.x + 14f, difficulty.y + 10f, 140f, 30f), "AI difficulty:", _text);
+            // Top bar: what this screen is, and the AI's difficulty (Milestone 5: it only changes how well the
+            // AI decides, never what it knows or earns).
+            float barWidth = Mathf.Min(1180f, width - 28f);
+            var bar = new Rect((width - barWidth) * 0.5f, 10f, barWidth, 84f);
+            Panel(bar);
+            const float difficultyWidth = 590f;
+            float titleWidth = bar.width - difficultyWidth - 34f;
+            CardScreens.Fit(new Rect(bar.x + 18f, bar.y + 8f, titleWidth, 36f), "Starting draft", CardScreens.TitleStyle, 28, 18, TextAnchor.MiddleLeft, HudTheme.TitleColor);
+            CardScreens.Fit(new Rect(bar.x + 18f, bar.y + 44f, titleWidth, 32f), "Pick a faction and sub-faction. Its squads are free and start unlocked.", CardScreens.LineStyle, 15, 11, TextAnchor.MiddleLeft, HudTheme.DimText);
+            float difficultyX = bar.xMax - difficultyWidth - 8f;
+            GUI.Label(new Rect(difficultyX, bar.y + 26f, 140f, 30f), "AI difficulty:", _text);
             string[] names = { "Easy", "Normal", "Hard" };
             for (int d = 0; d < names.Length; d++)
             {
                 bool selected = (int)match.Difficulty == d;
                 Color old = GUI.backgroundColor;
                 if (selected) GUI.backgroundColor = new Color(0.45f, 0.75f, 1f);
-                if (GUI.Button(new Rect(difficulty.x + 160f + d * 145f, difficulty.y + 7f, 135f, 36f), selected ? $"[ {names[d]} ]" : names[d], _button))
+                if (GUI.Button(new Rect(difficultyX + 145f + d * 148f, bar.y + 22f, 138f, 40f), selected ? $"[ {names[d]} ]" : names[d], _button))
                     match.SetDifficulty((AiDifficulty)d);
                 GUI.backgroundColor = old;
             }
 
             // The sandbox (Milestone 4): place any two armies and watch them fight.
-            var sandbox = new Rect(width * 0.5f - 200f, y + cardHeight + 30f, 400f, 50f);
+            var sandbox = new Rect(width * 0.5f - 200f, height - 62f, 400f, 52f);
             Panel(sandbox);
-            if (GUI.Button(new Rect(sandbox.x + 8f, sandbox.y + 6f, sandbox.width - 16f, 38f), "Sandbox: test any two armies", _button))
+            if (GUI.Button(new Rect(sandbox.x + 8f, sandbox.y + 6f, sandbox.width - 16f, 40f), "Sandbox: test any two armies", _button))
                 SceneManager.LoadScene(SandboxSceneName);
+
+            int count = m.PlayerDraft.Count;
+            CardRow row = CardLayout.Arrange(count, width, bar.yMax + 14f, sandbox.y - 14f);
+            for (int i = 0; i < count; i++)
+            {
+                if (CardScreens.DrawDraftCard(row.CardAt(i), m.PlayerDraft[i], m.PlayerDraft[i].SubFaction.Description)) match.ChooseDraft(i);
+            }
         }
 
         // ------------------------------------------------------------------ deployment
@@ -166,92 +153,53 @@ namespace Halobellum.UI
             Match m = match.Match;
             CardOffer offer = m.Player.Offer;
             if (offer == null) return;
+            float width = HudScale.ScaledWidth(_scale), height = HudScale.ScaledHeight(_scale);
+            DimTheField(width, height);
             bool general = offer.Kind == CardKind.General;
-            const float cardWidth = 310f, cardHeight = 330f, gap = 20f;
-            float panelWidth = Mathf.Max(3, offer.Count) * (cardWidth + gap) + gap;
-            Rect panel = CenteredPanel(panelWidth, cardHeight + 170f);
-            GUI.Label(new Rect(panel.x, panel.y + 14f, panel.width, 34f),
-                HudTheme.Title(general ? $"Round {m.Round}: choose a card" : $"Round {m.Round}: choose reinforcements"), _centered);
-            GUI.Label(new Rect(panel.x, panel.y + 50f, panel.width, 24f), $"Credits {m.Player.Credits}", _smallCentered);
+
+            float barWidth = Mathf.Min(760f, width - 28f);
+            var bar = new Rect((width - barWidth) * 0.5f, 10f, barWidth, 84f);
+            Panel(bar);
+            GUI.Label(new Rect(bar.x, bar.y + 8f, bar.width, 40f), HudTheme.Title(general ? $"Round {m.Round}: choose a card" : $"Round {m.Round}: choose reinforcements"), _centered);
+            GUI.Label(new Rect(bar.x, bar.y + 48f, bar.width, 26f), $"Credits {m.Player.Credits}", _smallCentered);
+
+            var skip = new Rect(width * 0.5f - 150f, height - 62f, 300f, 52f);
+            if (GUI.Button(skip, $"Skip (+{offer.SkipBonus} credits)", _bigButton)) match.SkipCards();
+            float bottom = skip.y - 12f;
+            if (!string.IsNullOrEmpty(match.Message))
+            {
+                var message = new Rect(width * 0.5f - 400f, skip.y - 36f, 800f, 30f);
+                Panel(message);
+                GUI.Label(message, match.Message, _smallCentered);
+                bottom = message.y - 8f;
+            }
 
             if (offer.Count == 0)
-                GUI.Label(new Rect(panel.x, panel.y + 160f, panel.width, 30f), "No cards left to offer.", _smallCentered);
-            float x = panel.x + gap + (panelWidth - gap - offer.Count * (cardWidth + gap)) * 0.5f;
+                GUI.Label(new Rect(0f, height * 0.5f - 20f, width, 40f), "No cards left to offer.", _centered);
+            string faction = m.Player.Faction?.Name;
+            CardRow row = CardLayout.Arrange(offer.Count, width, bar.yMax + 14f, bottom);
             for (int i = 0; i < offer.Count; i++)
             {
-                var card = new Rect(x + i * (cardWidth + gap), panel.y + 86f, cardWidth, cardHeight);
-                HudTheme.RowBox(card);
-                if (general) DrawGeneralCard(card, offer.Cards[i], m.Player.CopiesOwned(offer.Cards[i]));
-                else DrawReinforcementCard(card, offer.Reinforcements[i]);
+                Rect card = row.CardAt(i);
                 int price = offer.PriceOf(i);
-                GUI.enabled = m.Player.Credits >= price;
-                string label = price > 0 ? $"Take ({price})" : "Take (free)";
-                if (GUI.Button(new Rect(card.x + 14f, card.yMax - 52f, card.width - 28f, 40f), label, _bigButton)) match.ChooseCard(i);
-                GUI.enabled = true;
+                bool canAfford = m.Player.Credits >= price;
+                bool taken = general
+                    ? CardScreens.DrawGeneralCard(card, offer.Cards[i], m.Player.CopiesOwned(offer.Cards[i]), match.IconFor(offer.Cards[i]), price, canAfford)
+                    : CardScreens.DrawReinforcementCard(card, offer.Reinforcements[i], faction, m.Player.Unlocked.Contains(offer.Reinforcements[i].Type), price, canAfford);
+                if (taken) match.ChooseCard(i);
             }
-            if (GUI.Button(new Rect(panel.center.x - 120f, panel.yMax - 62f, 240f, 44f), $"Skip (+{offer.SkipBonus} credits)", _bigButton)) match.SkipCards();
-            if (!string.IsNullOrEmpty(match.Message))
-                GUI.Label(new Rect(panel.x, panel.yMax - 92f, panel.width, 26f), match.Message, _smallCentered);
         }
 
-        /// <summary>A spell, item, economy, buff or training card: what kind it is, what it does, its limits.</summary>
-        private void DrawGeneralCard(Rect card, CardStats stats, int owned)
+        /// <summary>Darkens the battlefield behind a card screen, and keeps clicks from reaching it.</summary>
+        private void DimTheField(float width, float height)
         {
-            float x = card.x + 14f, w = card.width - 28f, y = card.y + 12f;
-            Texture2D icon = match.IconFor(stats);
-            if (icon != null) ItemHud.DrawHexIcon(new Rect(card.xMax - 56f, card.y + 8f, 44f, 44f), icon);
-            GUI.Label(new Rect(x, y, w - (icon != null ? 44f : 0f), 30f), stats.Name, _header);
-            y += 32f;
+            var screen = new Rect(0f, 0f, width, height);
+            UiHitAreas.Add(HudScale.ToScreen(screen, _scale));
+            if (Event.current.type != EventType.Repaint) return;
             Color old = GUI.color;
-            GUI.color = CardKindColor(stats);
-            GUI.Label(new Rect(x, y, w, 24f), CardKindText(stats), _text);
+            GUI.color = new Color(0.01f, 0.012f, 0.02f, 0.72f);
+            GUI.DrawTexture(screen, Texture2D.whiteTexture);
             GUI.color = old;
-            y += 28f;
-            GUI.Label(new Rect(x, y, w, 66f), stats.EffectsText(), _wrap);
-            y += 70f;
-            GUI.Label(new Rect(x, y, w, 66f), stats.Description, _wrapDim);
-            y += 70f;
-            if (stats.Spell != null)
-                GUI.Label(new Rect(x, y, w, 24f), $"Recharge: {stats.Spell.CooldownRounds} round{(stats.Spell.CooldownRounds == 1 ? "" : "s")} after use", _small);
-            y += 24f;
-            if (stats.MaxOwnedCopies < 99) GUI.Label(new Rect(x, y, w, 24f), $"Owned: {owned} of {stats.MaxOwnedCopies}", _small);
-        }
-
-        private static string CardKindText(CardStats card)
-        {
-            switch (card.Type)
-            {
-                case CardType.Spell: return card.Spell.Offensive ? "Offensive: anywhere on the field" : "Defensive: on your own side";
-                case CardType.Item: return "Item: goes on one squad";
-                case CardType.Economy: return "Economy";
-                case CardType.Training: return "Ability: use it on a squad";
-                default: return "Buff: for your whole army";
-            }
-        }
-
-        private static Color CardKindColor(CardStats card)
-        {
-            switch (card.Type)
-            {
-                case CardType.Spell: return SpellView.ColorFor(card.Spell);
-                case CardType.Item: return new Color(1f, 0.82f, 0.35f);
-                case CardType.Economy: return new Color(0.45f, 0.95f, 0.5f);
-                case CardType.Training: return new Color(0.5f, 0.9f, 1f);
-                default: return new Color(0.95f, 0.75f, 1f);
-            }
-        }
-
-        private void DrawReinforcementCard(Rect card, ReinforcementCard reinforcement)
-        {
-            float x = card.x + 14f, w = card.width - 28f, y = card.y + 12f;
-            UnitStats unit = reinforcement.Type;
-            GUI.Label(new Rect(x, y, w, 30f), unit.Name, _header); y += 34f;
-            GUI.Label(new Rect(x, y, w, 24f), $"{reinforcement.Squads} squad{(reinforcement.Squads == 1 ? "" : "s")} at level {reinforcement.Level}", _text); y += 28f;
-            GUI.Label(new Rect(x, y, w, 24f), $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.FormsInSquad)} each", _small); y += 30f;
-            GUI.Label(new Rect(x, y, w, 24f), $"Worth {reinforcement.TotalWorth} ({reinforcement.SquadWorth} per squad)", _text); y += 26f;
-            bool unlocked = match.Match.Player.Unlocked.Contains(unit);
-            GUI.Label(new Rect(x, y, w, 48f), unlocked ? "Placed like squads bought this round, on top of your squad limit."
-                                                       : "Also unlocks the unit for the rest of the match.", _wrapDim);
         }
 
         // ------------------------------------------------------------------ items and training (D33)
@@ -369,7 +317,7 @@ namespace Halobellum.UI
             Match m = match.Match;
             PlayerState player = m.Player;
             List<UnitStats> roster = player.Roster;
-            const float panelWidth = 460f, rowHeight = 58f;
+            const float panelWidth = 500f, rowHeight = 58f, picture = 50f;
             float panelHeight = Mathf.Min(height - 200f, 50f + roster.Count * rowHeight);
             var panel = new Rect(width - panelWidth - 10f, 110f, panelWidth, panelHeight);
             Panel(panel);
@@ -383,8 +331,10 @@ namespace Halobellum.UI
                 UnitStats unit = roster[i];
                 var row = new Rect(0f, i * rowHeight, content.width, rowHeight - 4f);
                 HudTheme.RowBox(row);
-                GUI.Label(new Rect(row.x + 8f, row.y + 4f, row.width - 130f, 24f), $"{unit.Name} - {unit.Cost} cr", _text);
-                GUI.Label(new Rect(row.x + 8f, row.y + 28f, row.width - 130f, 22f), $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.FormsInSquad)}{(player.SubFaction.ExclusiveUnits.Contains(unit) ? ", exclusive" : "")}", _small);
+                CardScreens.DrawUnitPicture(new Rect(row.x + 4f, row.y + 2f, picture, picture), unit, player.Faction.Name, UnitIcons.FactionColor(player.Faction.Name));
+                float textX = row.x + picture + 8f, textWidth = row.width - picture - 134f;
+                GUI.Label(new Rect(textX, row.y + 2f, textWidth, 28f), $"{unit.Name} - {unit.Cost} cr", _text);
+                GUI.Label(new Rect(textX, row.y + 28f, textWidth, 22f), $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.FormsInSquad)}{(player.SubFaction.ExclusiveUnits.Contains(unit) ? ", exclusive" : "")}", _small);
 
                 var button = new Rect(row.xMax - 118f, row.y + 9f, 110f, 36f);
                 if (player.Unlocked.Contains(unit))

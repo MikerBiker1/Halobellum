@@ -1,0 +1,39 @@
+Banshee	model
+Elite	fallback
+Fuel Rod Grunt	baked
+Ghost	fallback
+Grunt	baked
+Hunter Pair	fallback
+Jackal (Plasma Rifle)	fallback
+Jackal (Shield)	fallback
+Scarab	model
+Vampire	fallback
+Wraith	model
+Zealot	fallback
+Flood Abomination	fallback
+Carrier Form	model
+Combat Form	fallback
+Infected Pelican	model
+Infected Phantom	model
+Infection Forms	model
+Pure Form Ranged	model
+Pure Form Tank	model
+Seeder	fallback
+Stalker Form	model
+Swarm Form	fallback
+Placeholder Heavy Tank	fallback
+Placeholder Infantry	fallback
+Placeholder Light Vehicle	fallback
+ODST	fallback
+Archer Missile Pod	fallback
+Elephant	model
+Flamethrower Trooper	fallback
+Gauss Warthog	model
+Hornet	model
+Mantis	fallback
+Marine	baked
+Pelican	model
+Scorpion	model
+Spartan	fallback
+Warthog	model
+Wolverine	fallback
