@@ -232,6 +232,15 @@ namespace Halobellum.Presentation
         /// <summary>World position of a unit's base as of the latest tick (air units at flying height).</summary>
         public Vector3 WorldPosition(SimUnit unit) => ToWorld(unit);
 
+        /// <summary>Where a body is drawn this frame (smoothed between ticks), for things that follow it on the ground; false if it has no view.</summary>
+        public bool TryBodyPosition(SimUnit unit, out Vector3 position)
+        {
+            position = default;
+            if (unit.Id < 0 || unit.Id >= _views.Count) return false;
+            position = _views[unit.Id].Root.transform.position;
+            return true;
+        }
+
         private BattleSimulation _shown;
         private Transform _container;
         private static readonly int BattleTimeId = Shader.PropertyToID("_BattleTime");
