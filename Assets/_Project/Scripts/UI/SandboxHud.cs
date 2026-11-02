@@ -70,7 +70,7 @@ namespace Halobellum.UI
         private void DrawItems(float width)
         {
             if (sandbox.Items.Count == 0) return;
-            // Top left if the bar leaves room for it. If not (a higher UI scale, a narrower window), under the bar, level with the unit list.
+            // Top left, unless the window is too narrow for the bar to leave room: then under the bar, level with the unit list.
             float top = TopBar(width).x >= 350f ? 8f : 204f;
             var panel = new Rect(10f, top, 330f, 44f + ItemHud.GridHeight(sandbox.Items.Count) + 44f);
             Panel(panel);
@@ -80,8 +80,17 @@ namespace Halobellum.UI
             GUI.Label(new Rect(panel.x + 12f, panel.yMax - 46f, panel.width - 24f, 42f), caption, _wrapDim);
         }
 
-        /// <summary>Below BattleHud's speed controls and result line (top centre).</summary>
-        private static Rect TopBar(float width) => new Rect(width * 0.5f - 560f, 92f, 1120f, 64f);
+        /// <summary>
+        /// Below BattleHud's speed controls and result line: centred, or moved right if that would run under the Items panel.
+        /// A window too narrow for that keeps it centred, and the Items panel goes under the bar instead.
+        /// </summary>
+        private static Rect TopBar(float width)
+        {
+            const float barWidth = 1120f, clearOfItems = 350f;
+            float centred = (width - barWidth) * 0.5f;
+            bool roomToMove = clearOfItems + barWidth + 10f <= width;
+            return new Rect(roomToMove ? Mathf.Max(centred, clearOfItems) : centred, 92f, barWidth, 64f);
+        }
 
         private void DrawTopBar(float width)
         {
