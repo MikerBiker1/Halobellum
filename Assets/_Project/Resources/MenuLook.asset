@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8e7d25c69e6e0c59dc2837534cd3b6f, type: 3}
+  m_Name: MenuLook
+  m_EditorClassIdentifier: Halobellum.UI::Halobellum.UI.MenuLook
+  titleFont: {fileID: 12800000, guid: 1e9bd503d20ed6d2d62e0466c84463c0, type: 3}
+  headingFont: {fileID: 12800000, guid: 77faddaf3ec1a6e8cf0a39117bdcaa93, type: 3}
+  textFont: {fileID: 12800000, guid: 67493f62478c22fbdf15cf833f07c10a, type: 3}

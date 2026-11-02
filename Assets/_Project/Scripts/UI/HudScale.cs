@@ -1,8 +1,10 @@
 // HudScale.cs
 // Shared helper for the placeholder HUD: lays the GUI out on a 1080-pixel-tall virtual screen and
 // scales it to the real screen, so the HUD looks the same size at any resolution.
-// Depends on: UnityEngine.
+// The player's UI scale (Settings) multiplies it. Menus use ApplyFit, which also keeps a whole layout inside a narrow or tiny window.
+// Depends on: GameSettings (the player's UI scale), UnityEngine.
 
+using Halobellum.Presentation;
 using UnityEngine;
 
 namespace Halobellum.UI
@@ -14,7 +16,20 @@ namespace Halobellum.UI
         /// <summary>Sets GUI.matrix for the current screen and returns the scale factor.</summary>
         public static float Apply()
         {
-            float scale = Mathf.Max(0.5f, Screen.height / ReferenceHeight);
+            float scale = Mathf.Max(0.5f, Screen.height / ReferenceHeight) * GameSettings.UiScale;
+            GUI.matrix = Matrix4x4.Scale(new Vector3(scale, scale, 1f));
+            return scale;
+        }
+
+        /// <summary>
+        /// Like Apply, for a menu: makes sure at least this many virtual units fit across and down, however small or narrow
+        /// the window is, and sets GUI.matrix. Returns the scale factor.
+        /// </summary>
+        public static float ApplyFit(float leastWidth, float leastHeight)
+        {
+            float wanted = Screen.height / ReferenceHeight * GameSettings.UiScale;
+            float scale = Mathf.Min(wanted, Mathf.Min(Screen.width / leastWidth, Screen.height / leastHeight));
+            scale = Mathf.Max(0.2f, scale);
             GUI.matrix = Matrix4x4.Scale(new Vector3(scale, scale, 1f));
             return scale;
         }

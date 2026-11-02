@@ -21,12 +21,13 @@ using System.Text;
 using Halobellum.Units;
 using Unity.Profiling;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Halobellum.Presentation
 {
     public sealed class CrowdBenchmark : MonoBehaviour
     {
-        private const string Flag = "-crowdBench";
+        public const string Flag = "-crowdBench";
         private const int Frames = 30, Fps = 30, RingSides = 10, RingCount = 5, BatchSize = 1023;
         private static readonly int[] Counts = { 300, 600, 1200 };
 
@@ -72,6 +73,9 @@ namespace Halobellum.Presentation
 
         private IEnumerator Start()
         {
+            // A build starts in the main menu, which hands over to the Match scene at once (GameFlow).
+            while (SceneManager.GetActiveScene().name == GameFlow.MainMenuScene) yield return null;
+            yield return null;
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = -1;
             // Only the crowd counts: no HUD, no match, no camera control.

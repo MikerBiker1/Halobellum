@@ -1,0 +1,230 @@
+// MenuSceneTests.cs
+// Plays the real menu and pause flow (M10): the MainMenu scene opens with its camera moving and its Pelicans flying; New Match reaches a
+// working draft; pausing truly stops a battle in every phase and resumes where it was, at the same speed; the HUD and field input are
+// off while paused and back after; leaving for the menu puts time right; the Sandbox's Back button goes where it came from.
+// Depends on: Halobellum.Presentation, Halobellum.UI, Halobellum.Economy, NUnit, Unity Test Framework.
+
+using System.Collections;
+using Halobellum.Economy;
+using Halobellum.Presentation;
+using Halobellum.UI;
+using NUnit.Framework;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.TestTools;
+
+namespace Halobellum.Tests
+{
+    public class MenuSceneTests
+    {
+        private MatchController _match;
+        private BattleController _battle;
+
+        [UnityTearDown]
+        public IEnumerator LeaveNothingPaused()
+        {
+            GamePause.Resume();
+            Assert.AreEqual(1f, Time.timeScale);
+            yield return null;
+        }
+
+        private static IEnumerator WaitForScene(string name)
+        {
+            float limit = Time.realtimeSinceStartup + 60f;
+            while (SceneManager.GetActiveScene().name != name && Time.realtimeSinceStartup < limit) yield return null;
+            Assert.AreEqual(name, SceneManager.GetActiveScene().name);
+            yield return null;
+            yield return null;
+        }
+
+        private IEnumerator LoadMatch()
+        {
+            yield return SceneManager.LoadSceneAsync(GameFlow.MatchScene, LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+            _match = Object.FindAnyObjectByType<MatchController>();
+            _battle = Object.FindAnyObjectByType<BattleController>();
+            _match.NewMatch(3);
+            yield return null;
+        }
+
+        private static IEnumerator WaitRealSeconds(float seconds)
+        {
+            float until = Time.realtimeSinceStartup + seconds;
+            while (Time.realtimeSinceStartup < until) yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator MainMenu_Opens_WithItsPictureMoving()
+        {
+            yield return SceneManager.LoadSceneAsync(GameFlow.MainMenuScene, LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+            Assert.IsNotNull(Object.FindAnyObjectByType<MainMenuHud>());
+            var backdrop = Object.FindAnyObjectByType<MenuBackdrop>();
+            Assert.IsNotNull(backdrop);
+            Assert.IsNotNull(Camera.main);
+            Assert.IsNull(PauseMenu.Current, "The menu has no battle to pause.");
+            Assert.Greater(backdrop.flyers.Length, 2);
+
+            Vector3 before = Camera.main.transform.position;
+            yield return WaitRealSeconds(1f);
+            Assert.AreNotEqual(before, Camera.main.transform.position, "The camera drifts.");
+
+            backdrop.ApplyAt(10f);
+            bool seen = false;
+            foreach (MenuBackdrop.Flyer flyer in backdrop.flyers) seen |= flyer.body.gameObject.activeSelf;
+            Assert.IsTrue(seen, "Some Pelican is in the air soon after the menu opens.");
+            foreach (Renderer renderer in Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None))
+            {
+                Assert.IsNotNull(renderer.sharedMaterial, renderer.name + " has no material.");
+                Assert.AreNotEqual("Hidden/InternalErrorShader", renderer.sharedMaterial.shader.name, renderer.name);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator LeavingTheMenu_ReachesAWorkingDraft_WithTheChosenDifficulty()
+        {
+            int stored = PlayerPrefs.GetInt(MatchController.DifficultyKey, (int)AiDifficulty.Normal);
+            PlayerPrefs.SetInt(MatchController.DifficultyKey, (int)AiDifficulty.Hard);
+            yield return SceneManager.LoadSceneAsync(GameFlow.MainMenuScene, LoadSceneMode.Single);
+            yield return null;
+
+            GameFlow.NewMatch();
+            yield return WaitForScene(GameFlow.MatchScene);
+            var match = Object.FindAnyObjectByType<MatchController>();
+            Assert.AreEqual(MatchPhase.Draft, match.Match.Phase);
+            Assert.AreEqual(3, match.Match.PlayerDraft.Count);
+            Assert.AreEqual(AiDifficulty.Hard, match.Difficulty);
+            Assert.IsTrue(match.ChooseDraft(0).Ok);
+            Assert.AreEqual(MatchPhase.Deployment, match.Match.Phase);
+            PlayerPrefs.SetInt(MatchController.DifficultyKey, stored);
+        }
+
+        [UnityTest]
+        public IEnumerator Pausing_StopsTheBattle_AndResumesItAtTheSameSpeed()
+        {
+            yield return LoadMatch();
+            _match.ChooseDraft(0);
+            yield return null;
+            _battle.Speed = 2f;
+            _match.Ready();
+            Assert.AreEqual(MatchPhase.Battle, _match.Match.Phase);
+            yield return WaitRealSeconds(0.5f);
+
+            PauseMenu.Current.Open();
+            Assert.IsTrue(GamePause.IsPaused);
+            Assert.AreEqual(0f, Time.timeScale);
+            yield return null; // A frame already under way may finish.
+            int tick = _battle.Simulation.Tick;
+            yield return WaitRealSeconds(1f);
+            Assert.AreEqual(tick, _battle.Simulation.Tick, "No tick runs while paused.");
+
+            PauseMenu.Current.Close();
+            Assert.IsFalse(GamePause.IsPaused);
+            Assert.AreEqual(1f, Time.timeScale);
+            Assert.AreEqual(2f, _battle.Speed, "It keeps its speed.");
+            yield return WaitRealSeconds(0.5f);
+            Assert.Greater(_battle.Simulation.Tick, tick, "The battle runs on.");
+        }
+
+        [UnityTest]
+        public IEnumerator Pausing_IsSafeInEveryPhase()
+        {
+            yield return LoadMatch();
+            yield return PauseAndResume(); // Draft.
+            Assert.AreEqual(MatchPhase.Draft, _match.Match.Phase);
+
+            _match.ChooseDraft(0);
+            yield return null;
+            yield return PauseAndResume(); // Deployment.
+            Assert.AreEqual(MatchPhase.Deployment, _match.Match.Phase);
+
+            _battle.Speed = 16f;
+            _match.Ready();
+            yield return null;
+            yield return PauseAndResume(); // Battle.
+            float limit = Time.realtimeSinceStartup + 120f;
+            while (_match.Match.Phase == MatchPhase.Battle && Time.realtimeSinceStartup < limit) yield return null;
+            Assert.AreNotEqual(MatchPhase.Battle, _match.Match.Phase, "The battle ended after its pause.");
+
+            yield return PauseAndResume(); // Result, or the end of the match.
+            if (_match.Match.Phase == MatchPhase.Result)
+            {
+                _match.Continue();
+                yield return null;
+                yield return PauseAndResume(); // Cards.
+            }
+        }
+
+        private static IEnumerator PauseAndResume()
+        {
+            PauseMenu.Current.Open();
+            yield return null;
+            yield return null;
+            Assert.IsTrue(GamePause.IsPaused);
+            PauseMenu.Current.Close();
+            yield return null;
+            Assert.IsFalse(GamePause.IsPaused);
+        }
+
+        [UnityTest]
+        public IEnumerator WhilePaused_TheHudAndFieldInputAreOff_AndComeBack()
+        {
+            yield return LoadMatch();
+            _match.ChooseDraft(0);
+            yield return null;
+            var hud = Object.FindAnyObjectByType<MatchHud>();
+            var input = _battle.GetComponent<DeploymentInput>();
+            var selection = _battle.GetComponent<SquadSelection>();
+            var camera = Camera.main.GetComponent<BattleCameraController>();
+            Assert.IsNotNull(GameObject.Find(PauseMenu.HudObjectName), "The HUD object is found by this name.");
+
+            PauseMenu.Current.Open();
+            Assert.IsFalse(hud.enabled);
+            Assert.IsFalse(input.enabled);
+            Assert.IsFalse(selection.enabled);
+            Assert.IsFalse(camera.enabled);
+            yield return null;
+
+            PauseMenu.Current.Close();
+            Assert.IsTrue(hud.enabled);
+            Assert.IsTrue(input.enabled);
+            Assert.IsTrue(selection.enabled);
+            Assert.IsTrue(camera.enabled);
+        }
+
+        [UnityTest]
+        public IEnumerator LeavingWhilePaused_PutsTimeRight()
+        {
+            yield return LoadMatch();
+            PauseMenu.Current.Open();
+            yield return null;
+            GameFlow.OpenMainMenu();
+            yield return WaitForScene(GameFlow.MainMenuScene);
+            Assert.IsFalse(GamePause.IsPaused);
+            Assert.AreEqual(1f, Time.timeScale);
+        }
+
+        [UnityTest]
+        public IEnumerator TheSandbox_HasAPauseMenu_AndGoesBackWhereItCameFrom()
+        {
+            yield return SceneManager.LoadSceneAsync(GameFlow.MainMenuScene, LoadSceneMode.Single);
+            yield return null;
+            GameFlow.OpenSandbox();
+            yield return WaitForScene(GameFlow.SandboxScene);
+            Assert.IsNotNull(PauseMenu.Current);
+            Assert.AreEqual(GameFlow.MainMenuScene, GameFlow.SandboxCameFrom);
+            GameFlow.LeaveSandbox();
+            yield return WaitForScene(GameFlow.MainMenuScene);
+
+            GameFlow.NewMatch();
+            yield return WaitForScene(GameFlow.MatchScene);
+            SceneManager.LoadScene(MatchHud.SandboxSceneName); // The draft screen's own button.
+            yield return WaitForScene(GameFlow.SandboxScene);
+            Assert.AreEqual(GameFlow.MatchScene, GameFlow.SandboxCameFrom);
+            GameFlow.LeaveSandbox();
+            yield return WaitForScene(GameFlow.MatchScene);
+        }
+    }
+}
