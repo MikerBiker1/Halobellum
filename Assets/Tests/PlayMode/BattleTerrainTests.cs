@@ -112,6 +112,29 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void TheFloodsFloors_HaveNoSolidPatchesOfNearBlack()
+        {
+            // Dark Flood forms stand on these floors: a nearly black, nearly opaque patch hides them, and at a distance it looks like a vehicle.
+            foreach (string layout in new[] { "Creep", "Wreck", "Hive" })
+            {
+                int index = 0;
+                while (TerrainLayouts.For(BattleFactions.Flood)[index].Name != layout) index++;
+                TerrainMap map = Build(BattleFactions.Flood, BattleFactions.Flood, 4242, index, index);
+                Vector3[] vertices = map.Decals.vertices;
+                Color32[] colors = map.Decals.colors32;
+                for (int i = 0; i < vertices.Length; i++)
+                {
+                    if (Mathf.Abs(vertices[i].x) > HalfWidth || Mathf.Abs(vertices[i].z) > HalfLength) continue;
+                    if (Mathf.Abs(vertices[i].z) < 21f) continue; // The shell holes of no man's land: every map has them, and they are small.
+                    Color32 color = colors[i];
+                    float light = 0.3f * color.r + 0.59f * color.g + 0.11f * color.b;
+                    if (color.a >= 180) Assert.GreaterOrEqual(light, 50f, $"{layout}: {color} at {vertices[i]} is too dark and too solid.");
+                }
+                map.Destroy();
+            }
+        }
+
+        [Test]
         public void NothingToTheSouth_CanHideTheFloorFromTheCamera()
         {
             // The camera stands to the south of the floor, inside its width, and looks north. Solid things south of the floor and in line with it must stand back.

@@ -91,6 +91,7 @@ namespace Halobellum.Presentation
                 new WeaponShot("EmpRailgun", "Gremlin", tough, 0.03f),
                 new WeaponShot("Rocket", "Wolverine", "Hornet", 0.25f),
                 new WeaponShot("RocketLobbed", "Archer Missile Pod", tough, 0.9f),
+                new WeaponShot("BombFlight", "Hornet", tough, 0.04f),
                 new WeaponShot("Bomb", "Hornet", tough, 0.2f),
                 new WeaponShot("SporeBombFlight", "Infested Hornet", tough, 0.3f, "Spore Bombs"),
                 new WeaponShot("SporeBombBlast", "Infested Hornet", tough, 1.05f, "Spore Bombs"),
@@ -299,7 +300,7 @@ namespace Halobellum.Presentation
             SpellShot[] list =
             {
                 new SpellShot(new SpellStats { Name = "MAC Strike", Offensive = true, Radius = 4f, DamagePerTick = 800f, DamageType = DamageType.Explosive, IsAntiArmor = true, DelaySeconds = 1f }, 0.05f, 0.35f, 1f, 3f),
-                new SpellShot(new SpellStats { Name = "HAVOK Nuke", Offensive = true, Radius = 14f, DamagePerTick = 2500f, DamageType = DamageType.Explosive, DelaySeconds = 4f }, -1f, 0.08f, 0.45f, 1.5f, 3f, 5f),
+                new SpellShot(new SpellStats { Name = "HAVOK Nuke", Offensive = true, Radius = 14f, DamagePerTick = 2500f, DamageType = DamageType.Explosive, DelaySeconds = 4f }, -1f, 0.08f, 0.45f, 1.5f, 3f, 5f, 7f),
                 new SpellShot(new SpellStats { Name = "Plasma Bombardment", Offensive = true, Radius = 5f, DamagePerTick = 450f, DamageType = DamageType.Energy, DelaySeconds = 1f }, 0.1f, 0.5f, 1.5f),
                 new SpellShot(new SpellStats { Name = "Plasma Storm", Offensive = true, Radius = 10f, DamagePerTick = 40f, DamageType = DamageType.Energy, Ticks = 8, TickInterval = 0.5f, DelaySeconds = 1f, Targets = TargetFilter.Both }, 0.3f, 1.5f, 3.2f),
                 new SpellShot(new SpellStats { Name = "Glassing Beam", Offensive = true, Radius = 12f, DamagePerTick = 600f, DamageType = DamageType.Energy, Ticks = 5, TickInterval = 0.6f, DelaySeconds = 4f, Targets = TargetFilter.Both }, -1f, 0.2f, 1.5f, 3.5f, 6f),
@@ -340,14 +341,20 @@ namespace Halobellum.Presentation
             GameCamera(place);
             string label = shot.Stats.Name.Replace(" ", "").Replace("'", "");
             float radius = Mathf.Max(5f, shot.Stats.Radius);
+            var frames = new List<float>();
 
             foreach (float at in shot.Times)
             {
                 // A negative time: the warning, half a second before it goes off. The effects' clock goes on after the battle has ended.
                 float battleTime = at < 0f ? shot.Stats.DelaySeconds - 0.6f : shot.Stats.DelaySeconds + at;
-                while (Kit.BattleTime < battleTime) yield return null;
+                while (Kit.BattleTime < battleTime)
+                {
+                    if (Kit.BattleTime > shot.Stats.DelaySeconds) frames.Add(Time.unscaledDeltaTime);
+                    yield return null;
+                }
                 yield return Capture($"s_{label}_{(at < 0f ? "warn" : at.ToString("0.00"))}", place + Vector3.up * radius * 0.3f, radius * 4.2f);
             }
+            Debug.Log($"Effects gallery: {label} after it went off: {Summary(frames)}");
             _sandbox.ResetBattle();
             yield return null;
         }
@@ -360,7 +367,7 @@ namespace Halobellum.Presentation
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = -1;
             var report = new StringBuilder();
-            report.AppendLine($"Effects benchmark, {Screen.width}x{Screen.height}, {SystemInfo.graphicsDeviceName}, {SystemInfo.processorType}");
+            report.AppendLine($"Effects benchmark, {Screen.width}x{Screen.height}, {SystemInfo.graphicsDeviceName}, {SystemInfo.processorType}, quality {QualitySettings.names[QualitySettings.GetQualityLevel()]}, MSAA {SandboxAutoplay.ShownMsaa}x");
             yield return OnAgainstOff(report);
             yield return BenchmarkOne(1f, report, "bench_1x", false);
             yield return BenchmarkOne(4f, report, "bench_4x", false);

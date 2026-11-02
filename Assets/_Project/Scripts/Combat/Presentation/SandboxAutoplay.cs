@@ -19,6 +19,7 @@ using Halobellum.Combat;
 using Halobellum.Core;
 using Halobellum.Units;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 namespace Halobellum.Presentation
 {
@@ -61,7 +62,13 @@ namespace Halobellum.Presentation
             if (only >= 0 && only + 1 < args.Length) _only = args[only + 1];
             _effectsOnly = Array.IndexOf(args, EffectsFlag) >= 0;
             _benchOnly = Array.IndexOf(args, BenchFlag) >= 0;
+            // Measures one setting of anti-aliasing against another on one build. For this run only: nothing is saved.
+            int msaa = Array.IndexOf(args, "-msaa");
+            if (msaa >= 0 && msaa + 1 < args.Length && int.TryParse(args[msaa + 1], out int samples) && UniversalRenderPipeline.asset != null) UniversalRenderPipeline.asset.msaaSampleCount = samples;
         }
+
+        /// <summary>The anti-aliasing the game's render pipeline is set to now: 1 is none.</summary>
+        public static int ShownMsaa => UniversalRenderPipeline.asset != null ? UniversalRenderPipeline.asset.msaaSampleCount : 1;
 
         private void Start()
         {

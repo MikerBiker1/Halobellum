@@ -2,8 +2,9 @@
 // The drawing tools of the battle effects (M10). One shared ParticleSystem per kind of particle (glow, streak, fire, smoke...), so that
 // every effect on the field is only a few Emit calls: no objects are made during battle, and each kind is one draw call however many
 // effects use it. Particles run on battle time, so they pause and speed up with the battle.
-// Three kinds of thing are redrawn every frame instead, from whatever the simulation says now: "heads" (a shell in flight),
-// flat "ground heads" (the burning spot of a beam), and lines (beams, lasers, lightning), which are a pool of LineRenderers.
+// Some things are redrawn every frame instead, from whatever the simulation says now: "heads" (a shell in flight), flat "ground heads"
+// (the burning spot of a beam), "cloud puffs" (a nuke's cloud, which holds a shape no flying particle could), and lines (beams, lasers,
+// lightning), which are a pool of LineRenderers.
 // EffectBudget decides what may still start; its limits are per layer. Nothing in here knows what a weapon or a unit is.
 // Depends on: EffectAssets, EffectBudget, UnityEngine (ParticleSystem module).
 
@@ -32,6 +33,9 @@ namespace Halobellum.Presentation
 
         private const int HeadCapacity = 400;
         private const int GroundHeadCapacity = 40;
+        /// <summary>The most puffs of big clouds at once.</summary>
+        public const int CloudSmokeCapacity = 320;
+        public const int CloudFireCapacity = 140;
         private const int LinePool = 64;
         private const int FlashedLineCapacity = 40;
 
@@ -44,12 +48,14 @@ namespace Halobellum.Presentation
         private readonly Transform _root;
         private readonly Layer _glow, _orb, _streak, _bolt, _sparks, _fire, _flame, _smoke, _dust, _ring, _groundGlow, _scorch, _chunks, _heat, _slash, _spores;
         private readonly Layer[] _layers;
-        private readonly Layer _headGlow, _headStreak, _groundHead;
+        private readonly Layer _headGlow, _headStreak, _groundHead, _cloudSmoke, _cloudFire;
         private readonly ParticleSystem.Particle[] _headGlowData = new ParticleSystem.Particle[HeadCapacity];
         private readonly ParticleSystem.Particle[] _headStreakData = new ParticleSystem.Particle[HeadCapacity];
         private readonly ParticleSystem.Particle[] _groundHeadData = new ParticleSystem.Particle[GroundHeadCapacity];
-        private int _headGlowCount, _headStreakCount, _groundHeadCount;
-        private int _headGlowShown, _headStreakShown, _groundHeadShown;
+        private readonly ParticleSystem.Particle[] _cloudSmokeData = new ParticleSystem.Particle[CloudSmokeCapacity];
+        private readonly ParticleSystem.Particle[] _cloudFireData = new ParticleSystem.Particle[CloudFireCapacity];
+        private int _headGlowCount, _headStreakCount, _groundHeadCount, _cloudSmokeCount, _cloudFireCount;
+        private int _headGlowShown, _headStreakShown, _groundHeadShown, _cloudSmokeShown, _cloudFireShown;
 
         private readonly LineRenderer[] _lines = new LineRenderer[LinePool];
         private readonly Material _lineMaterial, _chunkMaterial;
@@ -111,6 +117,8 @@ namespace Halobellum.Presentation
             _slash = Billboard("Slash", EffectAssets.ParticleMaterial("Effect Slash", EffectAssets.Slash, 2.6f, 0f, 0f, 3035), 240);
             _headGlow = Billboard("Head Glow", EffectAssets.ParticleMaterial("Effect Head Glow", EffectAssets.Soft, 3f, 0f, 0f, 3036, true), HeadCapacity);
             _headStreak = Stretched("Head Streak", EffectAssets.ParticleMaterial("Effect Head Streak", EffectAssets.Streak, 3.4f, 0f, 0f, 3037), HeadCapacity, HeadStretch);
+            _cloudSmoke = Cloud("Cloud Smoke", EffectAssets.ParticleMaterial("Effect Cloud Smoke", EffectAssets.Smoke, 1f, 1f, 2f, 3002), CloudSmokeCapacity);
+            _cloudFire = Cloud("Cloud Fire", EffectAssets.ParticleMaterial("Effect Cloud Fire", EffectAssets.Flame, 2.2f, 0.55f, 0.6f, 3022), CloudFireCapacity);
             _chunkMaterial = EffectAssets.ChunkMaterial();
             _chunks = MakeChunks("Chunks", _chunkMaterial, 320);
 
@@ -184,6 +192,8 @@ namespace Halobellum.Presentation
             _headGlow.System.Play();
             _headStreak.System.Play();
             _groundHead.System.Play();
+            _cloudSmoke.System.Play();
+            _cloudFire.System.Play();
         }
 
         public void Destroy()
@@ -192,6 +202,8 @@ namespace Halobellum.Presentation
             if (_headGlow.Material != null) Object.Destroy(_headGlow.Material);
             if (_headStreak.Material != null) Object.Destroy(_headStreak.Material);
             if (_groundHead.Material != null) Object.Destroy(_groundHead.Material);
+            if (_cloudSmoke.Material != null) Object.Destroy(_cloudSmoke.Material);
+            if (_cloudFire.Material != null) Object.Destroy(_cloudFire.Material);
             if (_lineMaterial != null) Object.Destroy(_lineMaterial);
             if (_root != null) Object.Destroy(_root.gameObject);
         }
@@ -225,7 +237,7 @@ namespace Halobellum.Presentation
             if (_camera == null) _camera = Camera.main;
             if (_camera != null) ReadScale = Mathf.Clamp(_camera.transform.position.y / 90f, 0.5f, 1.9f);
 
-            _headGlowCount = _headStreakCount = _groundHeadCount = 0;
+            _headGlowCount = _headStreakCount = _groundHeadCount = _cloudSmokeCount = _cloudFireCount = 0;
             _linesUsed = 0;
         }
 
@@ -254,6 +266,8 @@ namespace Halobellum.Presentation
             Hand(_headGlow, _headGlowData, _headGlowCount, ref _headGlowShown);
             Hand(_headStreak, _headStreakData, _headStreakCount, ref _headStreakShown);
             Hand(_groundHead, _groundHeadData, _groundHeadCount, ref _groundHeadShown);
+            Hand(_cloudSmoke, _cloudSmokeData, _cloudSmokeCount, ref _cloudSmokeShown);
+            Hand(_cloudFire, _cloudFireData, _cloudFireCount, ref _cloudFireShown);
         }
 
         private static void Hand(Layer layer, ParticleSystem.Particle[] data, int count, ref int shown)
@@ -442,6 +456,38 @@ namespace Halobellum.Presentation
             head.rotation3D = Vector3.zero;
         }
 
+        /// <summary>A puff of a big cloud's smoke for this frame only. The same seed keeps the same shape of puff.</summary>
+        public void CloudSmoke(Vector3 position, float size, Color color, float degrees, uint seed)
+        {
+            if (Muted || _cloudSmokeCount >= CloudSmokeCapacity) return;
+            SetCloudPuff(ref _cloudSmokeData[_cloudSmokeCount++], position, size, color, degrees, seed);
+        }
+
+        /// <summary>A lick of a big cloud's fire for this frame only.</summary>
+        public void CloudFire(Vector3 position, float size, Color color, float degrees, uint seed)
+        {
+            if (Muted || _cloudFireCount >= CloudFireCapacity) return;
+            SetCloudPuff(ref _cloudFireData[_cloudFireCount++], position, size, color, degrees, seed);
+        }
+
+        private void SetCloudPuff(ref ParticleSystem.Particle puff, Vector3 position, float size, Color color, float degrees, uint seed)
+        {
+            // A puff the camera is inside fades, so that zooming in on a cloud doesn't turn the whole screen to smoke.
+            if (_camera != null)
+            {
+                float distance = Vector3.Distance(position, _camera.transform.position);
+                color.a *= Mathf.Clamp01((distance - size * 0.55f) / (size * 0.75f));
+            }
+            puff.position = position;
+            puff.velocity = Vector3.zero;
+            puff.startSize = size;
+            puff.startColor = color;
+            puff.startLifetime = 10f;
+            puff.remainingLifetime = 10f;
+            puff.rotation = degrees;
+            puff.randomSeed = seed;
+        }
+
         /// <summary>A glowing line for this frame only.</summary>
         public void Line(Vector3 from, Vector3 to, float width, Color color)
         {
@@ -512,6 +558,15 @@ namespace Halobellum.Presentation
             renderer.lengthScale = 1f;
             renderer.velocityScale = stretch;
             renderer.cameraVelocityScale = 0f;
+            return layer;
+        }
+
+        /// <summary>Puffs of a cloud held in shape from outside. They overlap heavily, so the far ones are drawn first.</summary>
+        private Layer Cloud(string name, Material material, int max)
+        {
+            Layer layer = Billboard(name, material, max);
+            layer.System.GetComponent<ParticleSystemRenderer>().sortMode = ParticleSystemSortMode.Distance;
+            Sheet(layer);
             return layer;
         }
 
