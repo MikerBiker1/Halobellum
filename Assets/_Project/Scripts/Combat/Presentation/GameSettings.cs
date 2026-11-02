@@ -64,6 +64,9 @@ namespace Halobellum.Presentation
             }
         }
 
+        /// <summary>Uses this UI scale until the game closes, without saving it (a test tool's way to look at every screen at another size).</summary>
+        public static void UseUiScaleForThisRun(float scale) => _uiScale = ClampUiScale(scale);
+
         public static float ClampUiScale(float scale)
         {
             if (float.IsNaN(scale)) return 1f;

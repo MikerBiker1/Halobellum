@@ -7,12 +7,14 @@
 //   match and its Main Menu button; the menu again; Sandbox; Esc; its Back button; Quit.
 // It writes "MenuDemo: ..." lines in the player's log, one for each thing checked, and ends with how many went wrong. It never changes
 // a setting, because PlayerPrefs are shared by every build on this PC.
-// With "-menuDemoWatch" it presses nothing: for 90 seconds it logs and pictures every change of scene, pause, settings panel or music
-// volume, so that clicks sent from outside the game (a real mouse, say) can be checked. It puts the music volume back at the end.
+// With "-menuDemoUiScale 1.25" it looks at every screen at that UI scale, without saving it.
+// With "-menuDemoWatch" it presses nothing: for 90 seconds it logs and pictures every change of scene, pause, settings panel, window or
+// setting, so that clicks sent from outside the game (a real mouse, say) can be checked. It puts every setting back at the end.
 // Depends on: GameFlow, GamePause, MatchController, SandboxController, BattleController, PauseMenu, MainMenuHud, MenuStyle, Input System.
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using Halobellum.Economy;
 using Halobellum.Presentation;
@@ -27,6 +29,16 @@ namespace Halobellum.UI
     {
         private const string ShortFlag = "-menuDemoShort";
         private const string WatchFlag = "-menuDemoWatch";
+        private const string UiScaleFlag = "-menuDemoUiScale";
+        private static readonly string[] FloatKeys =
+        {
+            GameSettings.MasterVolumeKey, GameSettings.MusicVolumeKey, GameSettings.SfxVolumeKey, GameSettings.UiVolumeKey, GameSettings.UiScaleKey,
+        };
+        private static readonly string[] IntKeys =
+        {
+            GameSettings.CameraShakeKey, GameSettings.FullscreenKey, GameSettings.WidthKey, GameSettings.HeightKey, GameSettings.QualityKey, GameSettings.VSyncKey,
+            MatchController.DifficultyKey,
+        };
         private const float WatchSeconds = 90f;
 
         private string _folder;
@@ -45,35 +57,55 @@ namespace Halobellum.UI
             demo._folder = index + 1 < args.Length ? args[index + 1] : "MenuShots";
             demo._short = Array.IndexOf(args, ShortFlag) >= 0;
             Directory.CreateDirectory(demo._folder);
+            int scale = Array.IndexOf(args, UiScaleFlag);
+            if (scale >= 0 && scale + 1 < args.Length && float.TryParse(args[scale + 1], NumberStyles.Float, CultureInfo.InvariantCulture, out float factor))
+                GameSettings.UseUiScaleForThisRun(factor);
         }
 
         private IEnumerator Watch()
         {
-            float music = GameSettings.MusicVolume;
-            string lastScene = null;
-            bool lastPaused = false, lastSettings = false;
-            float lastMusic = music, until = Time.realtimeSinceStartup + WatchSeconds;
+            // Whatever the clicks change, it goes back at the end: PlayerPrefs are shared by every build on this PC.
+            var savedFloats = new float?[FloatKeys.Length];
+            var savedInts = new int?[IntKeys.Length];
+            for (int i = 0; i < FloatKeys.Length; i++) savedFloats[i] = PlayerPrefs.HasKey(FloatKeys[i]) ? PlayerPrefs.GetFloat(FloatKeys[i]) : (float?)null;
+            for (int i = 0; i < IntKeys.Length; i++) savedInts[i] = PlayerPrefs.HasKey(IntKeys[i]) ? PlayerPrefs.GetInt(IntKeys[i]) : (int?)null;
+            int startWidth = Screen.width, startHeight = Screen.height;
+            FullScreenMode startMode = Screen.fullScreenMode;
+            int startQuality = QualitySettings.GetQualityLevel();
+
+            string last = null;
+            float until = Time.realtimeSinceStartup + WatchSeconds;
             int number = 0;
             while (Time.realtimeSinceStartup < until)
             {
-                string scene = SceneManager.GetActiveScene().name;
                 var menu = FindAnyObjectByType<MainMenuHud>();
-                bool settings = menu != null && menu.ShowingSettings;
-                float volume = GameSettings.MusicVolume;
-                if (scene != lastScene || GamePause.IsPaused != lastPaused || settings != lastSettings || !Mathf.Approximately(volume, lastMusic))
+                string now = $"scene {SceneManager.GetActiveScene().name}, paused {GamePause.IsPaused}, settings {menu != null && menu.ShowingSettings}, " +
+                             $"window {Screen.width}x{Screen.height} {Screen.fullScreenMode}, quality {QualitySettings.GetQualityLevel()}, vsync {QualitySettings.vSyncCount}, " +
+                             $"music {GameSettings.MusicVolume:0.00}, ui {GameSettings.UiScale:0.00}, shake {GameSettings.CameraShake}";
+                if (now != last)
                 {
-                    lastScene = scene;
-                    lastPaused = GamePause.IsPaused;
-                    lastSettings = settings;
-                    lastMusic = volume;
-                    Debug.Log($"MenuDemo watch: {Time.realtimeSinceStartup:0.0} s: scene {scene}, paused {lastPaused}, settings {settings}, music {volume:0.00}");
+                    last = now;
+                    Debug.Log($"MenuDemo watch: {Time.realtimeSinceStartup:0.0} s: {now}");
                     yield return Wait(0.3f);
                     yield return Shot($"watch_{number++:00}");
                 }
                 yield return null;
             }
-            GameSettings.MusicVolume = music;
-            GameSettings.Save();
+
+            for (int i = 0; i < FloatKeys.Length; i++)
+            {
+                if (savedFloats[i].HasValue) PlayerPrefs.SetFloat(FloatKeys[i], savedFloats[i].Value);
+                else PlayerPrefs.DeleteKey(FloatKeys[i]);
+            }
+            for (int i = 0; i < IntKeys.Length; i++)
+            {
+                if (savedInts[i].HasValue) PlayerPrefs.SetInt(IntKeys[i], savedInts[i].Value);
+                else PlayerPrefs.DeleteKey(IntKeys[i]);
+            }
+            PlayerPrefs.Save();
+            QualitySettings.SetQualityLevel(startQuality, true);
+            Screen.SetResolution(startWidth, startHeight, startMode);
+            yield return Wait(1f);
             Application.Quit();
         }
 
