@@ -98,7 +98,7 @@ What 4x MSAA cost on this PC (Radeon RX 7800 XT), on one build, runs one after a
 | 1600 x 900, second pair | 1.99 ms | 1.64 ms | 2.25 ms | 1.87 ms |
 | 2560 x 1200 | 2.19 ms | 2.13 ms | 2.45 ms | 8.39 ms (see below) |
 
-The 8.39 ms is one 23 seconds of one run: the same run's 90 seconds at 1x were normal, and the same setting and speed at 1600 x 900 were not slow. It looks like something else on the PC, but that isn't proved. So the cost is too small to measure here, about 0.2 ms at most; it has not been measured on a weaker graphics card. Soft smoke, the heat shimmer, the deployment squares and screenshots were all looked at with it on and are unchanged.
+The 8.39 ms is one 23 seconds of one run: the same run's 90 seconds at 1x were normal, and the same setting and speed at 1600 x 900 were not slow. It looks like something else on the PC, but that isn't proved. So the cost is too small to measure here, about 0.2 ms at most; it has not been measured on a weaker graphics card. Soft smoke against the ground, the heat shimmer, the deployment squares and screenshots were all looked at in stills with it on, and no fault shows.
 
 ## Garbage during battle
 
