@@ -56,7 +56,7 @@ namespace Halobellum.Tests
                 .Select(AssetDatabase.GUIDToAssetPath)
                 .Select(AssetDatabase.LoadAssetAtPath<FactionDefinition>)
                 .ToList();
-            Assert.GreaterOrEqual(factions.Count, 2, "Expected at least Standard UNSC and Standard Covenant.");
+            Assert.AreEqual(3, factions.Count, "UNSC, Covenant and Flood.");
 
             var cache = new Dictionary<UnitDefinition, UnitStats>();
             var infos = factions.Select(f => f.ToInfo(cache)).ToList();
@@ -67,7 +67,8 @@ namespace Halobellum.Tests
             }
 
             List<DraftCard> cards = StartingDraft.Draw(infos, TestMatch.Rules(), new SimRandom(1));
-            Assert.AreEqual(infos.Sum(i => i.SubFactions.Count), cards.Count);
+            Assert.AreEqual(8, infos.Sum(i => i.SubFactions.Count), "The Bible's 8 sub-factions.");
+            Assert.AreEqual(5, cards.Count);
             foreach (DraftCard card in cards) Assert.AreEqual(2, card.Squads.Count);
         }
     }

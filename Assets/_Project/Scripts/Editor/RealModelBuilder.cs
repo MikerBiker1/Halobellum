@@ -54,6 +54,17 @@ namespace Halobellum.EditorTools
             new Entry { Unit = "Flood/StalkerForm", Folder = "StalkerForm", Height = 2.4f, Tint = new Color(1.4f, 1.4f, 1.3f) },
             new Entry { Unit = "Flood/PureFormRanged", Folder = "PureFormRanged", Height = 2.9f, Tint = new Color(1.6f, 1.6f, 1.45f) },
             new Entry { Unit = "Flood/PureFormTank", Folder = "PureFormTank", Height = 3.8f },
+            // Sub-factions (M10): their own models, and real models over again where that is honest.
+            new Entry { Unit = "ArmoredDivision/Grizzly", Folder = "Grizzly", Length = 7.2f },
+            new Entry { Unit = "Banished/Chopper", Folder = "Chopper", Length = 4.8f },
+            new Entry { Unit = "AerospaceCommand/CondorGunship", Folder = "Pelican", Length = 11f, Tint = new Color(0.62f, 0.66f, 0.74f) },
+            new Entry { Unit = "FloodUNSC/InfestedWarthog", Folder = "Warthog", Length = 4.6f, Tint = Infested },
+            new Entry { Unit = "FloodUNSC/InfestedScorpion", Folder = "Scorpion", Length = 6.2f, Tint = Infested },
+            new Entry { Unit = "FloodUNSC/InfestedHornet", Folder = "Hornet", Length = 6f, Tint = Infested },
+            new Entry { Unit = "FloodUNSC/InfestedElephant", Folder = "Elephant", Length = 10f, Tint = Infested },
+            new Entry { Unit = "FloodCovenant/InfestedWraith", Folder = "Wraith", Length = 6.2f, Tint = Infested },
+            new Entry { Unit = "FloodCovenant/InfestedBanshee", Folder = "Banshee", Length = 6.6f, Tint = Infested },
+            new Entry { Unit = "FloodCovenant/InfestedScarab", Folder = "Scarab", Length = 14f, Tint = Infested },
         };
 
         [Serializable]
@@ -81,6 +92,24 @@ namespace Halobellum.EditorTools
                 if (AssetDatabase.IsValidFolder($"{AnimationBaker.ModelsFolder}/{entry.Folder}")) Build(entry);
             }
             AssetDatabase.SaveAssets();
+        }
+
+        /// <summary>Builds only what has no real prefab yet, leaving the others as they are (M10).</summary>
+        public static void BuildNewFromCommandLine()
+        {
+            int exit = 0;
+            try
+            {
+                foreach (Entry entry in Models)
+                {
+                    var unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>($"{UnitsFolder}/{entry.Unit}.asset");
+                    if (unit != null && unit.prefab != null && unit.prefab.name.EndsWith("_Model")) continue;
+                    if (AssetDatabase.IsValidFolder($"{AnimationBaker.ModelsFolder}/{entry.Folder}")) Build(entry);
+                }
+                AssetDatabase.SaveAssets();
+            }
+            catch (Exception e) { Debug.LogError("Building real models failed: " + e); exit = 1; }
+            EditorApplication.Exit(exit);
         }
 
         public static void BuildAllFromCommandLine()

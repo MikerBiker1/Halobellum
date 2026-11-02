@@ -56,7 +56,7 @@ namespace Halobellum.Tests
         {
             yield return LoadMatch();
             Assert.AreEqual(MatchPhase.Draft, _match.Match.Phase);
-            Assert.AreEqual(3, _match.Match.PlayerDraft.Count, "Standard UNSC, Covenant and Flood.");
+            Assert.AreEqual(5, _match.Match.PlayerDraft.Count, "5 of the 8 sub-factions (M10).");
 
             _match.ChooseDraft(0);
             yield return null;

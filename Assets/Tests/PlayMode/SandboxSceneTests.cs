@@ -46,10 +46,12 @@ namespace Halobellum.Tests
         public IEnumerator OffersEverySliceUnit_FromBothFactions_PlusThePlaceholders()
         {
             yield return LoadSandbox();
-            Assert.AreEqual(38, _sandbox.Units.Count);
+            Assert.AreEqual(76, _sandbox.Units.Count, "38 base units, 38 exclusive to a sub-faction, and the placeholders.");
             Assert.AreEqual(11, _sandbox.Units.Count(u => u.Faction == "Flood"));
             Assert.AreEqual(12, _sandbox.Units.Count(u => u.Faction == "UNSC"));
             Assert.AreEqual(12, _sandbox.Units.Count(u => u.Faction == "Covenant"));
+            Assert.AreEqual(5, _sandbox.Units.Count(u => u.Faction == "UNSC: Noble"));
+            Assert.AreEqual(7, _sandbox.Units.Count(u => u.Faction == "Flood: Covenant-based"));
             Assert.AreEqual(3, _sandbox.Units.Count(u => u.Faction == SandboxController.ExtraUnitsLabel));
             Assert.IsTrue(_sandbox.IsDeploying);
         }
