@@ -3,9 +3,9 @@
 // It does nothing unless the game is started with "-cardsDemo <screenshot folder>", e.g.
 //   Halobellum.exe -screen-fullscreen 0 -screen-width 1600 -screen-height 900 -cardsDemo C:\temp\shots
 // At each of several window sizes it goes through: the starting draft with 2, 3, 4 and 5 cards (with the long sub-faction
-// names of the final game), 5 cards with sub-faction texts and exclusive units, and for each faction a general offer of each kind of card, a reinforcement offer, and the shop
+// names of the final game), the 5 wordiest real sub-factions with their own texts and exclusive units, and for each faction a general offer of each kind of card, a reinforcement offer, and the shop
 // with the squad window. Then the sandbox's unit list. It logs how many labels could not fit at any size for each screen
-// (CardScreens.TextThatDidNotFit), and a summary line at the end. To reach those screens it builds offers and sets the match's phase
+// (CardScreens.TextThatDidNotFit), which screens have text that only fits at the smallest size (CardScreens.TextAtTheFloor), and a summary line at the end. To reach those screens it builds offers and sets the match's phase
 // directly: this never happens in a real match. Looks only: nothing here runs without the flag.
 // Depends on: CardScreens, Halobellum.Presentation (MatchController, BattleController, SquadSelection), Halobellum.Economy, UnityEngine.
 
@@ -42,7 +42,7 @@ namespace Halobellum.UI
 
         private string _folder;
         private MatchController _match;
-        private int _totalDidNotFit;
+        private int _totalDidNotFit, _totalAtTheFloor;
         private readonly List<string> _problems = new List<string>();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -72,19 +72,17 @@ namespace Halobellum.UI
                 for (int count = full ? 2 : 5; count <= 5; count++)
                 {
                     _match.NewMatch(1);
-                    SetDraft(count, false);
+                    SetDraft(count);
                     yield return Shot(prefix + $"draft{count}");
                 }
-                // With sub-faction texts and exclusive units, as the final game will have.
+                // The real sub-factions with the most to say, as the game draws them.
                 _match.NewMatch(1);
-                SetDraft(5, true);
-                CardScreens.DemoSubFactionText = "Long-range armour and heavy support: slow to start, hard to stop once its tanks are in place.";
+                SetWordiestDraft();
                 yield return Shot(prefix + "draft5_exclusive");
-                CardScreens.DemoSubFactionText = null;
                 foreach (string faction in full ? new[] { "UNSC", "Covenant", "Flood" } : new[] { "Flood" })
                 {
                     _match.NewMatch(1);
-                    SetDraft(5, false);
+                    SetDraft(5);
                     Match m = _match.Match;
                     _match.ChooseDraft(m.PlayerDraft.FindIndex(c => c.Faction.Name == faction));
                     m.Player.Credits = 400;
@@ -125,7 +123,7 @@ namespace Halobellum.UI
             yield return new WaitForSecondsRealtime(1.5f);
             yield return Shot("1600x900_sandbox_list");
 
-            Debug.Log($"Card demo finished: {_totalDidNotFit} label draws did not fit.\n" + string.Join("\n", _problems));
+            Debug.Log($"Card demo finished: {_totalDidNotFit} screens have text that did not fit, {_totalAtTheFloor} have text only at the smallest size.\n" + string.Join("\n", _problems));
             Application.Quit();
         }
 
@@ -133,6 +131,8 @@ namespace Halobellum.UI
         {
             CardScreens.TextThatDidNotFit = 0;
             CardScreens.LastTextThatDidNotFit = null;
+            CardScreens.TextAtTheFloor = 0;
+            CardScreens.LastTextAtTheFloor = null;
             yield return new WaitForSecondsRealtime(0.35f);
             yield return new WaitForEndOfFrame();
             if (CardScreens.TextThatDidNotFit > 0)
@@ -140,13 +140,18 @@ namespace Halobellum.UI
                 _totalDidNotFit++;
                 _problems.Add($"{name}: did not fit: {CardScreens.LastTextThatDidNotFit}");
             }
+            if (CardScreens.TextAtTheFloor > 0)
+            {
+                _totalAtTheFloor++;
+                _problems.Add($"{name}: only at the smallest size: {CardScreens.LastTextAtTheFloor}");
+            }
             ScreenCapture.CaptureScreenshot(Path.Combine(_folder, name + ".png"));
             yield return null;
             yield return null;
         }
 
         /// <summary>A draw of this many cards, one per faction first, with the final game's sub-faction names.</summary>
-        private void SetDraft(int count, bool exclusive)
+        private void SetDraft(int count)
         {
             Match m = _match.Match;
             var factions = m.PlayerDraft.Select(c => c.Faction).Distinct().ToList();
@@ -158,13 +163,26 @@ namespace Halobellum.UI
                 string[] names = SubFactionNames.TryGetValue(faction.Name, out string[] list) ? list : new[] { "Standard" };
                 var squads = faction.BaseRoster.Where(u => u.Tier == 1).OrderByDescending(u => u.Name.Length).Skip(nth).Take(2).ToList();
                 var subFaction = new SubFactionInfo { Name = names[nth % names.Length] };
-                if (exclusive && squads.Count > 0)
-                {
-                    subFaction.ExclusiveUnits.Add(squads[0]);
-                    subFaction.ExclusiveUnits.AddRange(faction.BaseRoster.OrderByDescending(u => u.Name.Length).Take(2));
-                }
                 cards.Add(new DraftCard { Faction = faction, SubFaction = subFaction, Squads = squads });
             }
+            m.PlayerDraft.Clear();
+            m.PlayerDraft.AddRange(cards);
+        }
+
+        /// <summary>A draw of the 5 real sub-factions with the most to say, with their own texts and exclusive units.</summary>
+        private void SetWordiestDraft()
+        {
+            Match m = _match.Match;
+            var wordiest = m.PlayerDraft.Select(c => c.Faction).Distinct()
+                .SelectMany(f => f.SubFactions.Select(s => (faction: f, subFaction: s)))
+                .OrderByDescending(p => p.subFaction.Description.Length + p.subFaction.ExclusiveUnits.Sum(u => u.Name.Length + 2))
+                .Take(5).ToList();
+            var cards = wordiest.Select(p => new DraftCard
+            {
+                Faction = p.faction,
+                SubFaction = p.subFaction,
+                Squads = p.subFaction.ExclusiveUnits.Concat(p.faction.BaseRoster).Where(u => u.Tier == 1).Take(2).ToList(),
+            }).ToList();
             m.PlayerDraft.Clear();
             m.PlayerDraft.AddRange(cards);
         }

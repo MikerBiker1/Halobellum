@@ -89,6 +89,56 @@ namespace Halobellum.Tests
             }
         }
 
+        [TestCase("Hunter Captain", "Hulk")]
+        [TestCase("Goliath", "Hulk")]
+        [TestCase("Reaver", "Walker")]
+        [TestCase("Grunt Goblin", "Walker")]
+        [TestCase("Infested Ghost", "Speeder")]
+        [TestCase("Skitterer", "FloodSwarm")]
+        [TestCase("Methane Wagon", "Pod")]
+        public void AUnitWhoseStatsHideItsShape_IsNamed(string unitName, string shape)
+        {
+            foreach (UnitDefinition unit in AllAssets<UnitDefinition>())
+            {
+                if (unit.unitName == unitName)
+                {
+                    Assert.AreEqual(shape, UnitIcons.BodyShapeFor(unit.ToStats()));
+                    return;
+                }
+            }
+            Assert.Fail("No unit is called " + unitName);
+        }
+
+        [Test]
+        public void UnitsThatShareABody_ButNotATint_HaveDifferentPictures()
+        {
+            var units = new List<UnitDefinition>();
+            foreach (UnitDefinition unit in AllAssets<UnitDefinition>())
+            {
+                if (unit.bakedBody != null && unit.bakedBody.IsReady) units.Add(unit);
+            }
+            foreach (UnitDefinition a in units)
+            {
+                foreach (UnitDefinition b in units)
+                {
+                    if (a.bakedBody != b.bakedBody || a.bakedTint == b.bakedTint) continue;
+                    CollectionAssert.AreNotEqual(IconFile(a), IconFile(b), $"{a.unitName} and {b.unitName} look different in battle. Run Render Unit Icons.");
+                }
+            }
+        }
+
+        private static byte[] IconFile(UnitDefinition unit) =>
+            File.ReadAllBytes($"Assets/_Project/Resources/UnitIcons/{UnitIcons.FileName(unit.unitName)}.png");
+
+        [TestCase(1920f, 8f)]  // 16:9 at 100%.
+        [TestCase(1536f, 164f)] // 16:9 at 125%.
+        [TestCase(1440f, 164f)] // 4:3.
+        [TestCase(1350f, 164f)] // 5:4.
+        public void TheSandboxItemsPanel_GoesUnderTheTopBar_OnANarrowWindow(float screenWidth, float top)
+        {
+            Assert.AreEqual(top, SandboxHud.ItemsPanelTop(screenWidth));
+        }
+
         [Test]
         public void TheFallback_IsClearAtItsCorners_AndHasSomethingInTheMiddle()
         {

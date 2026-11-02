@@ -1,10 +1,10 @@
 // BattleCameraController.cs
 // The fixed, angled top-down battle camera seen from a distance (Bible Section 3): pan and zoom only.
 //   Pan:  W A S D or the arrow keys, or hold the middle mouse button and drag.
-//   Zoom: mouse scroll wheel.
+//   Zoom: mouse scroll wheel, unless the pointer is over a HUD window (it scrolls the window's list instead: UiHitAreas).
 // The camera never rotates. Its focus point stays inside the arena.
 // Put it on the Main Camera. Values are camera feel settings, adjustable in the Inspector.
-// Depends on: BattleController (arena size), Unity Input System.
+// Depends on: BattleController (arena size), UiHitAreas, Unity Input System.
 
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -63,7 +63,7 @@ namespace Halobellum.Presentation
                 }
 
                 float scroll = mouse.scroll.ReadValue().y;
-                if (Mathf.Abs(scroll) > 0.01f)
+                if (Mathf.Abs(scroll) > 0.01f && !UiHitAreas.Contains(mouse.position.ReadValue()))
                 {
                     _distance *= scroll > 0f ? 1f - zoomStep : 1f + zoomStep;
                     _distance = Mathf.Clamp(_distance, minDistance, maxDistance);

@@ -15,6 +15,8 @@ using Halobellum.Presentation;
 using Halobellum.Units;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 
@@ -35,6 +37,37 @@ namespace Halobellum.Tests
         }
 
         private UnitStats Unit(string name) => _sandbox.Units.Single(u => u.Stats.Name == name).Stats;
+
+        [UnityTest]
+        public IEnumerator TheMouseWheel_ZoomsTheCamera_OnlyWhenThePointerIsNotOverAWindow()
+        {
+            yield return LoadSandbox();
+            var cameraController = Object.FindAnyObjectByType<BattleCameraController>();
+            Assert.IsNotNull(cameraController);
+            Mouse mouse = InputSystem.AddDevice<Mouse>();
+            try
+            {
+                mouse.MakeCurrent();
+                yield return null;
+                float top = Screen.height;
+                UiHitAreas.Add(new Rect(0f, 0f, 100f, 100f));
+                Vector3 before = cameraController.transform.position;
+
+                // Over the window (GUI rows run from the top, the pointer's from the bottom).
+                InputState.Change(mouse, new MouseState { position = new Vector2(50f, top - 50f), scroll = new Vector2(0f, 120f) });
+                cameraController.SendMessage("LateUpdate");
+                Assert.AreEqual(before, cameraController.transform.position, "The wheel scrolled a list: the view must stay.");
+
+                // Over the battlefield.
+                InputState.Change(mouse, new MouseState { position = new Vector2(300f, top - 300f), scroll = new Vector2(0f, 120f) });
+                cameraController.SendMessage("LateUpdate");
+                Assert.AreNotEqual(before, cameraController.transform.position, "The wheel over the battlefield zooms.");
+            }
+            finally
+            {
+                InputSystem.RemoveDevice(mouse);
+            }
+        }
 
         private static int CountViews()
         {

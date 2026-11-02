@@ -85,6 +85,13 @@ namespace Halobellum.UI
                 case "Mantis": return "Walker";
                 case "Archer Missile Pod": return "Pod";
                 case "Hunter Pair": return "Hulk";
+                case "Hunter Captain": return "Hulk";
+                case "Goliath": return "Hulk"; // Worm colonies in a suit, not a vehicle.
+                case "Reaver": return "Walker";
+                case "Grunt Goblin": return "Walker"; // A Grunt in a mech.
+                case "Methane Wagon": return "Pod"; // A mortar rack on a cart: no shape of its own yet.
+                case "Skitterer": return "FloodSwarm"; // Small spider-like machines: the closest shape is the cluster of little crawling bodies.
+                case "Infested Ghost": return "Speeder"; // A vehicle, though it is Flood.
             }
             if (unit.IsFlood)
             {

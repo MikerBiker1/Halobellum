@@ -104,9 +104,10 @@ namespace Halobellum.UI
 
             int count = m.PlayerDraft.Count;
             CardRow row = CardLayout.Arrange(count, width, bar.yMax + 14f, sandbox.y - 14f);
+            DraftRowText text = count > 0 ? CardScreens.MeasureDraftRow(m.PlayerDraft, row.CardAt(0)) : default;
             for (int i = 0; i < count; i++)
             {
-                if (CardScreens.DrawDraftCard(row.CardAt(i), m.PlayerDraft[i], m.PlayerDraft[i].SubFaction.Description)) match.ChooseDraft(i);
+                if (CardScreens.DrawDraftCard(row.CardAt(i), m.PlayerDraft[i], text)) match.ChooseDraft(i);
             }
         }
 
