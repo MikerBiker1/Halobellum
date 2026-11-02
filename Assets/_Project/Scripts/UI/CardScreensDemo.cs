@@ -4,7 +4,7 @@
 //   Halobellum.exe -screen-fullscreen 0 -screen-width 1600 -screen-height 900 -cardsDemo C:\temp\shots
 // At each of several window sizes it goes through: the starting draft with 2, 3, 4 and 5 cards (with the long sub-faction
 // names of the final game), the 5 wordiest real sub-factions with their own texts and exclusive units, and for each faction a general offer of each kind of card, a reinforcement offer, and the shop
-// with the squad window. Then the sandbox's unit list. It logs how many labels could not fit at any size for each screen
+// with the squad window. Then the sandbox's unit list at 16:9, 4:3 and 5:4. It logs how many labels could not fit at any size for each screen
 // (CardScreens.TextThatDidNotFit), which screens have text that only fits at the smallest size (CardScreens.TextAtTheFloor), and a summary line at the end. To reach those screens it builds offers and sets the match's phase
 // directly: this never happens in a real match. Looks only: nothing here runs without the flag.
 // Depends on: CardScreens, Halobellum.Presentation (MatchController, BattleController, SquadSelection), Halobellum.Economy, UnityEngine.
@@ -122,6 +122,12 @@ namespace Halobellum.UI
             SceneManager.LoadScene("Sandbox");
             yield return new WaitForSecondsRealtime(1.5f);
             yield return Shot("1600x900_sandbox_list");
+            foreach ((int w, int h) in new[] { (1024, 768), (1280, 1024) })
+            {
+                Screen.SetResolution(w, h, FullScreenMode.Windowed);
+                yield return new WaitForSecondsRealtime(0.8f);
+                yield return Shot($"{w}x{h}_sandbox_list");
+            }
 
             Debug.Log($"Card demo finished: {_totalDidNotFit} screens have text that did not fit, {_totalAtTheFloor} have text only at the smallest size.\n" + string.Join("\n", _problems));
             Application.Quit();

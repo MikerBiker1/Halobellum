@@ -47,8 +47,11 @@ namespace Halobellum.UI
         private const float WideEnoughForSideBySide = 300f;
 
         private const float PairGap = 6f;
-        /// <summary>The most of a draft card's free height that the text about its sub-faction takes. The squads need the rest.</summary>
-        private const float BlurbShare = 0.32f;
+        /// <summary>
+        /// The most of a draft card's free height that the text about its sub-faction takes before it shrinks (the squads need the
+        /// rest), and the most it takes at its smallest size, on the narrowest cards (a 5:4 window at a high UI scale).
+        /// </summary>
+        private const float BlurbShare = 0.32f, MostBlurbShare = 0.42f;
         /// <summary>The sizes that text starts from (its exclusive units, its description), and the smallest it goes.</summary>
         private const int BlurbFirstSize = 16, BlurbSecondSize = 15, LeastBlurbSize = 13;
         /// <summary>The smallest a pair of text blocks goes (FitPair): below this it can't be read at 1280 x 720.</summary>
@@ -68,7 +71,8 @@ namespace Halobellum.UI
         {
             EnsureStyles();
             Rect area = CardArt.ContentArea(card);
-            float most = (DraftBottom(area) - DraftTextTop(card, area)) * BlurbShare;
+            float free = DraftBottom(area) - DraftTextTop(card, area);
+            float most = free * BlurbShare;
             int first = BlurbFirstSize, second = BlurbSecondSize;
             float tallest;
             while (true)
@@ -84,7 +88,7 @@ namespace Halobellum.UI
                 if (first > LeastBlurbSize) first--;
                 if (second > LeastBlurbSize) second--;
             }
-            return new DraftRowText(Mathf.Min(tallest, most), first, second);
+            return new DraftRowText(Mathf.Min(tallest, free * MostBlurbShare), first, second);
         }
 
         private static float DraftHeaderHeight(Rect area) => Mathf.Clamp(area.width * 0.17f, 34f, 50f);

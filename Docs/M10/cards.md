@@ -32,7 +32,15 @@ The **Unit Icon Renderer** makes those files (Halobellum > Art > Render Unit Ico
 
 A unit added since the tool last ran still gets its fallback, put together at run time from the same parts, so nothing breaks while new units come in.
 
-**The fallback** is a dark shape of the unit's kind of body with an edge of light, on a glow in the faction's colour, with its role's emblem in a badge. The shape comes from its stats (`UnitIcons.BodyShapeFor`): trooper, heavy trooper, shield trooper, hulk, speeder, tank, walker, flyer, pod, Flood form, Flood beast or Flood swarm.
+Three things keep the pictures readable at the size of a shop row, about 40 pixels:
+
+- A baked body wears its unit's `bakedTint`, as in battle, so an Infested Marine doesn't look like a Marine.
+- A tall thin figure (narrower than half its height: the soldiers) is framed from the waist up, and fades out at the bottom instead of being cut off.
+- A picture darker than a common level is brightened to it. The curve lifts shadows and midtones and can't blow out highlights.
+
+Units with the same body and tint have the same picture, as they look the same in battle: Spartan Sniper and Fireteam, Spartan Grenadier and Heavy Weapons. A test checks that units sharing a body but not a tint have different pictures.
+
+**The fallback** is a dark shape of the unit's kind of body with an edge of light, on a glow in the faction's colour, with its role's emblem in a badge. The shape comes from its stats (`UnitIcons.BodyShapeFor`): trooper, heavy trooper, shield trooper, hulk, speeder, tank, walker, flyer, pod, Flood form, Flood beast or Flood swarm. Units whose stats hide their shape are named there, such as the Goliath (a hulk) and the Reaver (a walker). Two borrow the closest shape there is: the Skitterer uses the cluster of small crawling bodies, and the Methane Wagon the launcher pod.
 
 Units that fall back today (20): Archer Missile Pod, Combat Form, Elite, Flamethrower Trooper, Flood Abomination, Ghost, Hunter Pair, Jackal (Plasma Rifle), Jackal (Shield), Mantis, ODST, Placeholder Heavy Tank, Placeholder Infantry, Placeholder Light Vehicle, Seeder, Spartan, Swarm Form, Vampire, Wolverine, Zealot.
 
@@ -50,9 +58,11 @@ All of it is original and drawn by code, nothing downloaded: `Tools/UI/make_card
 
 `CardLayout.Arrange` fits 1 to 5 cards across any screen. A test checks every count at 16:9, 4:3, 5:4, 21:9 and a tiny window. Text shrinks to fit its place on a narrow card, down to a size that is still legible. It never breaks a word in the middle if a smaller size would avoid it. Narrow draft cards put each squad's text under its picture; wide ones put it beside.
 
+The sub-faction text on a draft card is measured for the whole row (`CardScreens.MeasureDraftRow`): every card has the same size of text and the same height for it, so nothing jumps between neighbours and the squads line up. It takes up to 32% of the card's free height, from sizes 16 and 15 down to 13.
+
 ## Looking at it
 
-`Halobellum.exe -screen-fullscreen 0 -screen-width 1600 -screen-height 900 -cardsDemo <folder>` takes a picture of every card screen for all three factions, at several window sizes: the draft with 2 to 5 cards, every kind of card, reinforcements, the hover glow, the shop and squad window, and the sandbox's list. It logs how many labels did not fit (`Card demo finished: ...`). It builds offers and sets the phase directly, which never happens in a real match.
+`Halobellum.exe -screen-fullscreen 0 -screen-width 1600 -screen-height 900 -cardsDemo <folder>` takes a picture of every card screen for all three factions, at several window sizes: the draft with 2 to 5 cards, every kind of card, reinforcements, the hover glow, the shop and squad window, and the sandbox's list. It logs which screens have text that did not fit, and which have text that fits only at the smallest size (`Card demo finished: ...`). Its fullest draft uses the 5 real sub-factions with the most to say. It builds offers and sets the phase directly, which never happens in a real match.
 
 `Tools/UI/icon_sheet.py` makes a contact sheet of the unit pictures. `make_card_art.py --sheet out.png` makes one of the frames, with edges tiled as in the game.
 
