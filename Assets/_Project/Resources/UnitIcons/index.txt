@@ -1,3 +1,16 @@
+Condor Gunship	model
+Shortsword	fallback
+Sparrowhawk	fallback
+Vulture	fallback
+Cobra	fallback
+Gremlin	fallback
+Grizzly	model
+Rhino	fallback
+Blisterback	fallback
+Brute Grenadier	fallback
+Chopper	model
+Marauder	fallback
+Reaver	fallback
 Banshee	model
 Elite	fallback
 Fuel Rod Grunt	baked
@@ -21,10 +34,35 @@ Pure Form Tank	model
 Seeder	fallback
 Stalker Form	model
 Swarm Form	fallback
+Infested Banshee	model
+Infested Elite	fallback
+Infested Ghost	fallback
+Infested Grunt	baked
+Infested Scarab	model
+Infested Wraith	model
+Spawner	fallback
+Infested Elephant	model
+Infested Hornet	model
+Infested Marine	baked
+Infested Scorpion	model
+Infested Warthog	model
+Juggernaut	fallback
+Goliath	fallback
+Hunter Captain	fallback
+Skitterer	fallback
+Spartan CQB	baked
+Spartan Fireteam	baked
+Spartan Grenadier	baked
+Spartan Heavy Weapons	baked
+Spartan Sniper	baked
 Placeholder Heavy Tank	fallback
 Placeholder Infantry	fallback
 Placeholder Light Vehicle	fallback
 ODST	fallback
+Cannon Fodder	baked
+Grunt Goblin	fallback
+Heavy Grunts	baked
+Methane Wagon	fallback
 Archer Missile Pod	fallback
 Elephant	model
 Flamethrower Trooper	fallback
