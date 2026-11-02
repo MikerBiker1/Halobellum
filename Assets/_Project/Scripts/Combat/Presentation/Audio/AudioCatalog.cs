@@ -96,11 +96,11 @@ namespace Halobellum.Presentation
         private static readonly SfxCue FireBio = Cue("sfx_fire_bio", SfxGroup.Bio, 0.65f, 0.1f, 1);
 
         // What a hit sounds like.
-        public static readonly SfxCue ImpactFlesh = Cue("sfx_impact_flesh", SfxGroup.Impacts, 0.5f, 0.1f, 0);
-        public static readonly SfxCue ImpactArmor = Cue("sfx_impact_armor", SfxGroup.Impacts, 0.5f, 0.1f, 0);
+        public static readonly SfxCue ImpactFlesh = Cue("sfx_impact_flesh", SfxGroup.Impacts, 0.4f, 0.1f, 0);
+        public static readonly SfxCue ImpactArmor = Cue("sfx_impact_armor", SfxGroup.Impacts, 0.4f, 0.1f, 0);
         public static readonly SfxCue ImpactShield = Cue("sfx_impact_shield", SfxGroup.Shields, 0.5f, 0.1f, 0);
         public static readonly SfxCue ImpactBlock = Cue("sfx_impact_block", SfxGroup.Shields, 0.6f, 0.1f, 1);
-        public static readonly SfxCue ImpactWet = Cue("sfx_impact_wet", SfxGroup.Impacts, 0.5f, 0.12f, 0);
+        public static readonly SfxCue ImpactWet = Cue("sfx_impact_wet", SfxGroup.Impacts, 0.4f, 0.12f, 0);
 
         // Explosions by size, and deaths.
         public static readonly SfxCue ExplosionSmall = Cue("sfx_explosion_small", SfxGroup.Explosions, 0.75f, 0.08f, 3);
@@ -139,18 +139,18 @@ namespace Halobellum.Presentation
 
         public static void SetLimits(VoiceLimiter limiter)
         {
-            Limit(limiter, SfxGroup.SmallArms, 4, 0.05f);
+            Limit(limiter, SfxGroup.SmallArms, 4, 0.07f);
             Limit(limiter, SfxGroup.HeavyArms, 3, 0.07f);
             Limit(limiter, SfxGroup.BigGuns, 3, 0.14f);
             Limit(limiter, SfxGroup.Rockets, 3, 0.12f);
             Limit(limiter, SfxGroup.Flame, 2, 0.2f);
-            Limit(limiter, SfxGroup.Plasma, 4, 0.05f);
+            Limit(limiter, SfxGroup.Plasma, 4, 0.07f);
             Limit(limiter, SfxGroup.HeavyPlasma, 3, 0.15f);
             Limit(limiter, SfxGroup.Needles, 3, 0.06f);
             Limit(limiter, SfxGroup.Beams, 2, 0.2f);
             Limit(limiter, SfxGroup.Melee, 3, 0.08f);
             Limit(limiter, SfxGroup.Bio, 3, 0.07f);
-            Limit(limiter, SfxGroup.Impacts, 3, 0.08f);
+            Limit(limiter, SfxGroup.Impacts, 3, 0.1f);
             Limit(limiter, SfxGroup.Shields, 2, 0.1f);
             Limit(limiter, SfxGroup.Explosions, 4, 0.1f);
             Limit(limiter, SfxGroup.InfantryDeaths, 3, 0.11f);

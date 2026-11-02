@@ -1,10 +1,12 @@
 // AudioCapture.cs
 // Test tool: records what the game really outputs to a WAV file, and keeps the room silent while it does. It does nothing unless the
 // game is started with "-audioCapture <file.wav>". It lets someone who can't hear check by measurement that the right things play at
-// sensible levels. It sits on the scene's AudioListener and copies each block of the final mix.
+// sensible levels. It sits on the scene's AudioListener and copies each block of the final mix. Next to the file it writes a cue sheet: what
+// was asked for and when, in seconds of the recording.
 // Depends on: UnityEngine.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -22,6 +24,16 @@ namespace Halobellum.Presentation
         private static int _channels = 2;
         private static int _rate = 48000;
         private static bool _saved;
+        private static readonly List<string> CueSheet = new List<string>();
+
+        /// <summary>True if this run records.</summary>
+        public static bool IsRecording => _path != null;
+
+        /// <summary>Writes a line in the cue sheet.</summary>
+        public static void Note(string what)
+        {
+            if (_path != null) CueSheet.Add($"{_written / (float)(Math.Max(1, _channels) * _rate):0.00} {what}");
+        }
 
         /// <summary>Puts the recorder on the listener in use (fallback, or else the one the scene has), if this run records at all.</summary>
         public static void AttachToActiveListener(AudioListener fallback)
@@ -95,6 +107,7 @@ namespace Halobellum.Presentation
                     }
                 }
             }
+            File.WriteAllLines(_path + ".txt", CueSheet);
             Debug.Log($"Audio capture: {frames / (float)_rate:0.0} s saved to {_path}");
         }
     }

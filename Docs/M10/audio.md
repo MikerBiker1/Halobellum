@@ -46,7 +46,7 @@ Code is in `Scripts/Combat/Presentation/Audio/`, created at run time, with no sc
 - `AudioSlots`: the names, and which name goes with which faction, screen or spell.
 - `AudioCatalog`: every battle sound: its group, volume, pitch spread and priority; and the limits per group. **This is the file to tune the mix in.**
 - `AudioLibrary`: finds the file behind a name: the owner's first, then the generated one.
-- `VoiceLimiter`: at most so many at once and a shortest gap per group (rifles: 4 at once, 50 ms apart). 200 rifles cost the same as 4.
+- `VoiceLimiter`: at most so many at once and a shortest gap per group (rifles: 4 at once, 70 ms apart). 200 rifles cost the same as 4.
 - `MusicDeck`: the crossfades, resuming, and stingers.
 - `BattleAudio`: listens to the simulation's events. It only reads. Added to the object with the `BattleController`.
 - `MatchAudio`, `SandboxAudio`: screens and player actions.

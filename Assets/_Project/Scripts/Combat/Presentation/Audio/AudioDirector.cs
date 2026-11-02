@@ -31,6 +31,9 @@ namespace Halobellum.Presentation
     {
         private const int SfxVoices = 20, UiVoices = 5;
         private const float PollSeconds = 0.5f;
+        /// <summary>All effects together, so that they sit over the music with room to spare.</summary>
+        private const float SfxTrim = 0.7f;
+        private const int CrowdStarts = 5;
         public const string KeyMaster = "Volume.Master", KeyMusic = "Volume.Music", KeySfx = "Volume.Sfx", KeyUi = "Volume.Ui";
         public const float DefaultMaster = 1f, DefaultMusic = 0.6f, DefaultSfx = 1f, DefaultUi = 1f;
 
@@ -78,6 +81,8 @@ namespace Halobellum.Presentation
         private uint _random = 2463534242u;
         private AudioListener _ownListener;
         private bool _checkListener;
+        private bool _notingCues;
+        private string _notedMusic, _notedStinger;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Create()
@@ -221,6 +226,11 @@ namespace Halobellum.Presentation
             }
             _ownListener.enabled = !other;
             AudioCapture.AttachToActiveListener(other ? null : _ownListener);
+            if (AudioCapture.IsRecording && !_notingCues)
+            {
+                _notingCues = true;
+                SlotPlayed += AudioCapture.Note;
+            }
         }
 
         // ------------------------------------------------------------------ playing
@@ -275,7 +285,9 @@ namespace Halobellum.Presentation
             voice.Priority = cue.Priority;
             voice.Started = _battleClock;
             voice.EndsAt = _battleClock + clip.length / Mathf.Max(0.1f, pitch);
-            voice.Volume = cue.Volume * gain;
+            // In the thick of it each new sound is a little quieter, so that the sum stays under the ceiling: a recorded big battle reached 0 dB before this.
+            float crowd = ActiveSfxVoices <= CrowdStarts ? 1f : Mathf.Sqrt((float)CrowdStarts / ActiveSfxVoices);
+            voice.Volume = cue.Volume * gain * crowd * SfxTrim;
             AudioSource source = voice.Source;
             source.Stop();
             source.clip = clip;
@@ -378,6 +390,12 @@ namespace Halobellum.Presentation
             UpdateHum(_engineHum, AudioCatalog.HumEngine, ref _engineLevel, _engineTarget, dt);
             UpdateHum(_hoverHum, AudioCatalog.HumHover, ref _hoverLevel, _hoverTarget, dt);
             Music.Tick(dt, VolumeMaster * VolumeMusic);
+            if (_notingCues && (_notedMusic != Music.CurrentSlot || _notedStinger != Music.LastStinger))
+            {
+                _notedMusic = Music.CurrentSlot;
+                _notedStinger = Music.LastStinger;
+                AudioCapture.Note($"MUSIC {_notedMusic} stinger {_notedStinger}");
+            }
         }
 
         private void FinishVoices()
