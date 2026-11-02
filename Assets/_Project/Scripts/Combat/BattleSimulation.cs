@@ -762,6 +762,13 @@ namespace Halobellum.Combat
             {
                 float range = unit.Stats.LeapRange;
                 if (range <= 0f || !unit.IsAlive || unit.IsLeaping) continue;
+                // A flying unit's "leap" is a dive that ends in the ground (Infected Pelican, D46).
+                if (unit.HasDived)
+                {
+                    unit.Health = 0f;
+                    continue;
+                }
+                bool dives = unit.IsAir;
                 if (unit.State != UnitState.Move)
                 {
                     unit.HeldUpSeconds = 0f;
@@ -777,9 +784,10 @@ namespace Halobellum.Combat
                 if (Targeting.IsTargetableEnemy(unit, target) && Targeting.EdgeDistance(unit, target) <= range)
                 {
                     Vec2 fromTarget = (unit.Position - target.Position).Normalized;
-                    StartLeap(unit, target.Position + fromTarget * (target.Radius + unit.Radius));
+                    StartLeap(unit, dives ? target.Position : target.Position + fromTarget * (target.Radius + unit.Radius));
+                    unit.HasDived = dives;
                 }
-                else if (unit.HeldUpSeconds >= _rules.LeapWhenHeldUpSeconds)
+                else if (!dives && unit.HeldUpSeconds >= _rules.LeapWhenHeldUpSeconds)
                 {
                     StartLeap(unit, unit.Position + way * range);
                 }

@@ -754,14 +754,16 @@ namespace Halobellum.Presentation
             if (unit.IsLeaping)
             {
                 float t = unit.LeapProgress;
-                height += 4f * leapHeightShare * Vec2.Distance(unit.LeapFrom, unit.LeapTo) * t * (1f - t);
+                // A flier dives, falling faster and faster; anything else jumps in an arc.
+                if (unit.IsAir) height *= 1f - t * t;
+                else height += 4f * leapHeightShare * Vec2.Distance(unit.LeapFrom, unit.LeapTo) * t * (1f - t);
             }
             return new Vector3(unit.Position.X, height, unit.Position.Y);
         }
 
         private static Quaternion ToRotation(SimUnit unit)
         {
-            var forward = new Vector3(unit.Facing.X, 0f, unit.Facing.Y);
+            var forward = new Vector3(unit.Facing.X, unit.IsAir && unit.IsLeaping ? -0.7f : 0f, unit.Facing.Y); // Nose down in a dive.
             return forward.sqrMagnitude > 1e-6f ? Quaternion.LookRotation(forward, Vector3.up) : Quaternion.identity;
         }
     }

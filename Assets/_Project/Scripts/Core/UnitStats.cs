@@ -234,6 +234,7 @@ namespace Halobellum.Core
         public float AuraHealPerSecondShare;
         /// <summary>
         /// Leap (Infection Forms, D39): it pounces on a target within this many metres of its edge, and
+        /// (a unit in the air, D46) falls out of the sky at it instead, past other air units, and dies on landing.
         /// jumps this far over anything that holds it up. It flies over bodies and cannot attack in the air. 0 = never.
         /// </summary>
         public float LeapRange;

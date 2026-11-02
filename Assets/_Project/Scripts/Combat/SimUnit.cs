@@ -100,6 +100,8 @@ namespace Halobellum.Combat
 
         /// <summary>True while it is in the air on a leap (D39): it flies over bodies and cannot attack.</summary>
         public bool IsLeaping;
+        /// <summary>A flying unit has started its dive: when it lands, it dies (D46).</summary>
+        public bool HasDived;
         public Vec2 LeapFrom;
         public Vec2 LeapTo;
         /// <summary>Battle time from which it can leap again.</summary>

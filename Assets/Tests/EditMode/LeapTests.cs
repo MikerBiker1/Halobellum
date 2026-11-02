@@ -43,6 +43,49 @@ namespace Halobellum.Tests
                 weapon: TestUnits.Weapon(damage: 0f, range: 0.1f)), Team.A, position);
         }
 
+        private static UnitStats Diver()
+        {
+            UnitStats unit = TestUnits.Unit("Diver", health: 1000f, speed: 6f, radius: 2.5f, filter: TargetFilter.Ground,
+                weapon: TestUnits.Weapon(damage: 0f, range: 1f, interval: 1f, type: DamageType.Explosive));
+            unit.IsAir = true;
+            unit.SelfDestructs = true;
+            unit.LeapRange = 20f;
+            unit.LeapSpeed = 16f;
+            return unit;
+        }
+
+        [Test]
+        public void AFlyingBomb_DivesPastOtherAirUnits_AndDiesAtItsTarget()
+        {
+            var sim = NewSim();
+            SimUnit diver = sim.AddUnit(Diver(), Team.A, Vec2.Zero);
+            // Another flier right in its way, which would hold it up if the dive touched it.
+            UnitStats escort = TestUnits.Unit("Escort", health: 1000f, speed: 0f, radius: 3f, filter: TargetFilter.Air, weapon: TestUnits.Weapon(damage: 0f, range: 0.1f));
+            escort.IsAir = true;
+            sim.AddUnit(escort, Team.A, new Vec2(0f, 7f));
+            Enemy(sim, new Vec2(0f, 15f));
+
+            sim.Step();
+            Assert.IsTrue(diver.IsLeaping, "In range: it dives at once.");
+            RunSeconds(sim, 0.7f);
+            Assert.IsTrue(diver.IsAlive, "Still falling.");
+            Assert.Greater(diver.Position.Y, 7f, "Straight through where the other flier is.");
+            RunSeconds(sim, 0.5f);
+            Assert.IsFalse(diver.IsAlive, "It dies where it lands.");
+            Assert.AreEqual(15f, diver.Position.Y, 0.2f, "On its target.");
+        }
+
+        [Test]
+        public void AFlyingBomb_FarFromAnyTarget_DoesNotDive()
+        {
+            var sim = NewSim();
+            SimUnit diver = sim.AddUnit(Diver(), Team.A, Vec2.Zero);
+            Enemy(sim, new Vec2(0f, 40f));
+            sim.Step();
+            Assert.IsFalse(diver.IsLeaping);
+            Assert.IsTrue(diver.IsAlive);
+        }
+
         [Test]
         public void PouncesOnATargetInRange_AndLandsAgainstIt()
         {

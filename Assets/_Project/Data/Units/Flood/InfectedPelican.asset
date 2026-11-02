@@ -83,8 +83,8 @@ MonoBehaviour:
   auraRadius: 0
   auraSpeedMultiplier: 1
   auraHealPerSecondShare: 0
-  leapRange: 0
-  leapSpeed: 0
+  leapRange: 22
+  leapSpeed: 16
   leapCooldownSeconds: 0
   techUpgrades:
   - {fileID: 11400000, guid: 5c53849a324ec38f13975c3ac675e85c, type: 2}

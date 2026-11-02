@@ -144,6 +144,7 @@ namespace Halobellum.Presentation
             Report(result);
             if (result.Ok)
             {
+                BattleFactions.Set(Match.Player.Faction?.Name, Match.Enemy.Faction?.Name);
                 RefreshPreview();
                 PhaseChanged?.Invoke();
             }
