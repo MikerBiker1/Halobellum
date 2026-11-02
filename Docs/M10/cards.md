@@ -68,3 +68,11 @@ All of it is original and drawn by code, nothing downloaded: `Tools/UI/make_card
 - `Tests/EditMode/Unity/CardArtTests.cs`.
 
 The simulation was not touched.
+
+## When this is merged with the sub-factions work
+
+Both branches change `MatchHud.DrawDraft` and the shop rows. Keep this branch's `DrawDraft`, and then:
+
+- In `DrawDraft`, pass the sub-faction's text: `CardScreens.DrawDraftCard(row.CardAt(i), m.PlayerDraft[i], m.PlayerDraft[i].SubFaction.Description)`. It has a parameter ready for it. (This branch can't use that field yet: the sub-factions branch adds it.) The card already lists the exclusive units and marks an exclusive squad.
+- In `DrawShop`, keep the picture and the moved text from this branch, and add the sub-factions branch's `player.Label` and ", exclusive".
+- Then run Render Unit Icons, and `-cardsDemo` to look at the result. New units with no model get their fallback at run time until then.

@@ -21,12 +21,16 @@ namespace Halobellum.UI
         public static string LastTextThatDidNotFit;
         /// <summary>Where the demo pretends the mouse is (HUD units), to take a picture of a hovered card. Null in the game.</summary>
         public static Vector2? DemoMouse;
+        /// <summary>A sub-faction text for the demo, to check that it fits. Null in the game.</summary>
+        public static string DemoSubFactionText;
 
         private const float ButtonHeight = 42f;
         /// <summary>A draft card's squads go side by side with their text from this width of contents up.</summary>
         private const float WideEnoughForSideBySide = 300f;
 
         private const float PairGap = 6f;
+        /// <summary>The most a draft card gives to the text about its sub-faction.</summary>
+        private const float BlurbHeight = 92f;
 
         private static readonly GUIContent Content = new GUIContent();
         private static GUIStyle _wrap, _line, _title, _ribbon, _button;
@@ -34,8 +38,11 @@ namespace Halobellum.UI
 
         // ------------------------------------------------------------------ the cards
 
-        /// <summary>A starting draft card: its faction's frame, the sub-faction on a big banner, and its squads. Returns true when chosen.</summary>
-        public static bool DrawDraftCard(Rect card, DraftCard draft)
+        /// <summary>
+        /// A starting draft card: its faction's frame, the sub-faction on a big banner, what is special about it, and its
+        /// squads. `description` is the sub-faction's own text, if it has one. Returns true when chosen.
+        /// </summary>
+        public static bool DrawDraftCard(Rect card, DraftCard draft, string description = null)
         {
             EnsureStyles();
             string faction = draft.Faction.Name;
@@ -61,32 +68,45 @@ namespace Halobellum.UI
             Fit(new Rect(banner.x + bannerText * 0.5f, banner.y, banner.width - bannerText, banner.height), draft.SubFaction.Name, _ribbon, 26, 14, TextAnchor.MiddleCenter, Color.white, shadow: true);
             y = banner.yMax + 4f;
 
+            // What is special about it: its text and its own units. Standard cards have neither, and the squads get the room.
+            float bottom = area.yMax - ButtonHeight - 6f;
+            description = string.IsNullOrEmpty(description) ? DemoSubFactionText : description;
+            string exclusive = draft.SubFaction.ExclusiveUnits.Count > 0
+                ? "Exclusive: " + string.Join(", ", draft.SubFaction.ExclusiveUnits.ConvertAll(u => u.Name))
+                : null;
+            if (!string.IsNullOrEmpty(description) || exclusive != null)
+            {
+                float height = Mathf.Min(area.width < WideEnoughForSideBySide * 0.75f ? BlurbHeight * 1.3f : BlurbHeight, (bottom - y) * 0.3f);
+                FitPair(new Rect(area.x, y, area.width, height), exclusive, 15, description, 14, TextAnchor.MiddleCenter);
+                y += height + 2f;
+            }
+
             Fit(new Rect(area.x, y, area.width, 22f), "Free starting squads", _line, 15, 12, TextAnchor.MiddleCenter, HudTheme.DimText);
             y += 24f;
 
-            float bottom = area.yMax - ButtonHeight - 6f;
-            DrawSquads(new Rect(area.x, y, area.width, bottom - y), draft.Squads, faction, accent);
+            DrawSquads(new Rect(area.x, y, area.width, bottom - y), draft, faction, accent);
 
             return Button(new Rect(area.x, area.yMax - ButtonHeight, area.width, ButtonHeight), "Choose", true);
         }
 
         /// <summary>The squads of a draft card, one above the other.</summary>
-        private static void DrawSquads(Rect area, List<UnitStats> squads, string faction, Color accent)
+        private static void DrawSquads(Rect area, DraftCard draft, string faction, Color accent)
         {
+            List<UnitStats> squads = draft.Squads;
             int count = squads.Count;
             if (count == 0) return;
             const float gap = 4f;
             float height = (area.height - (count - 1) * gap) / count;
             for (int i = 0; i < count; i++)
             {
-                DrawSquadCell(new Rect(area.x, area.y + i * (height + gap), area.width, height), squads[i], faction, accent);
+                DrawSquadCell(new Rect(area.x, area.y + i * (height + gap), area.width, height), squads[i], draft.SubFaction.ExclusiveUnits.Contains(squads[i]), faction, accent);
             }
         }
 
         /// <summary>One squad: on a wide card its picture beside its text, on a narrow one above it.</summary>
-        private static void DrawSquadCell(Rect cell, UnitStats unit, string faction, Color accent)
+        private static void DrawSquadCell(Rect cell, UnitStats unit, bool exclusive, string faction, Color accent)
         {
-            string numbers = $"{RoleName(unit.Role)}\n{Bodies(unit.FormsInSquad)}, worth {unit.Cost}";
+            string numbers = (exclusive ? "Exclusive, " : "") + $"{RoleName(unit.Role)}\n{Bodies(unit.FormsInSquad)}, worth {unit.Cost}";
             if (cell.width >= WideEnoughForSideBySide)
             {
                 float size = Mathf.Min(cell.height, cell.width * 0.55f);
