@@ -193,10 +193,11 @@ namespace Halobellum.Presentation
             }
         }
 
-        /// <summary>The explosion a shot from this weapon makes where it lands, or null. A plasma shot with a blast is drawn going off, so it is heard going off too; so is a lobbed Flood shot (Bone Shards), wetly.</summary>
+        /// <summary>The explosion a shot from this weapon makes where it lands, or null. A plasma shot with a blast is drawn going off, so it is heard going off too; so is a lobbed Flood shot (Bone Shards) or a Spore Bomb, wetly.</summary>
         public static SfxCue LandingOf(WeaponStats weapon)
         {
             WeaponFeelKind kind = WeaponFeel.For(weapon);
+            if (kind == WeaponFeelKind.Bomb && weapon.Name.IndexOf("spore", System.StringComparison.OrdinalIgnoreCase) >= 0) return FloodBurst;
             if (weapon.SplashRadius > 0f)
             {
                 if (kind == WeaponFeelKind.Plasma) return ExplosionSmall;

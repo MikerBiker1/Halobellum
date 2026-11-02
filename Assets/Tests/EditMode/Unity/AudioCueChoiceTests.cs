@@ -136,6 +136,8 @@ namespace Halobellum.Tests
         public void ALobbedFloodShot_BurstsWhereItLands()
         {
             Assert.AreEqual("sfx_flood_burst", Landing("Flood/PureFormRanged", "Bone Shards"));
+            Assert.AreEqual("sfx_flood_burst", Landing("FloodCovenant/InfestedBanshee", "Spore Bomb"), "Drawn bursting in gore and spores.");
+            Assert.AreEqual("sfx_flood_burst", Landing("FloodUNSC/InfestedHornet", "Spore Bombs"));
             Assert.IsNull(Landing("Flood/SwarmForm", "Spat Bone"), "It has no blast.");
             Assert.IsNull(Landing("FloodCovenant/Spawner", "Spore Lash"), "Its burst comes with the lash.");
         }
