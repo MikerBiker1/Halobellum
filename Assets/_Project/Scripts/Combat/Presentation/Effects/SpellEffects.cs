@@ -36,6 +36,7 @@ namespace Halobellum.Presentation
 
         private const int MostRunning = 24;
         private const float SkyHeight = 170f;
+        private const float StormHeight = 18f;
         private const float WarnSeconds = 3f;
         private const float SmokeEverySeconds = 0.55f;
 
@@ -168,8 +169,8 @@ namespace Halobellum.Presentation
                     float fade = Mathf.Clamp01((run.Until - now) / 0.4f) * Mathf.Clamp01((now - run.Started) / 0.15f);
                     _kit.Line(top, run.Position, run.Radius * 1.5f * pulse * fade, new Color(run.Color.r, run.Color.g, run.Color.b, 0.75f * fade));
                     _kit.Line(top, run.Position, run.Radius * 0.55f * pulse * fade, new Color(0.9f, 1f, 1f, fade));
-                    _kit.GroundHead(run.Position, run.Radius * 3.2f * fade, new Color(1f, 0.82f, 0.5f, fade));
-                    _kit.HeadGlow(run.Position + Vector3.up * 2f, run.Radius * 2.2f * fade, new Color(0.8f, 1f, 1f, 0.75f * fade));
+                    _kit.GroundHead(run.Position, run.Radius * 3.2f * fade, new Color(1f, 0.72f, 0.4f, 0.8f * fade));
+                    _kit.HeadGlow(run.Position + Vector3.up * 2f, run.Radius * 2f * fade, new Color(0.8f, 1f, 1f, 0.4f * fade));
                     break;
                 }
             }
@@ -234,8 +235,8 @@ namespace Halobellum.Presentation
                 for (int p = 0; p < puffs; p++)
                 {
                     Vec2 local = new Vec2(Random.Range(-0.5f, 0.5f) * width, Random.Range(-0.5f, 0.5f) * depth).Rotated(spell.AngleDegrees);
-                    Vector3 spot = new Vector3(spell.Position.X + local.X, Random.Range(0.4f, 2f), spell.Position.Y + local.Y);
-                    _kit.Smoke(EffectPriority.Medium, spot, Random.insideUnitSphere * 0.5f + Vector3.up * 0.35f, Random.Range(4.5f, 7f), color, Random.Range(3f, 4.2f));
+                    Vector3 spot = new Vector3(spell.Position.X + local.X, Random.Range(0.4f, 1.6f), spell.Position.Y + local.Y);
+                    _kit.Smoke(EffectPriority.Medium, spot, Random.insideUnitSphere * 0.5f + Vector3.down * 1.5f, Random.Range(4.5f, 7f), color, Random.Range(3f, 4.2f));
                 }
             }
         }
@@ -283,7 +284,7 @@ namespace Halobellum.Presentation
         {
             const EffectPriority huge = EffectPriority.Huge;
             Vector3 middle = at + Vector3.up * radius * 0.35f;
-            _kit.Glow(huge, middle, radius * 14f, Color.white, 0.5f);
+            _kit.Glow(huge, middle, radius * 12f, new Color(1f, 1f, 1f, 0.9f), 0.45f);
             _kit.Glow(huge, middle, radius * 6f, new Color(1f, 0.92f, 0.7f), 0.8f);
             _kit.GroundGlow(huge, at, radius * 9f, new Color(1f, 0.62f, 0.25f, 1f), 2.2f);
             _kit.Ring(huge, at, radius * 2f, Color.white, 0.5f);
@@ -362,7 +363,7 @@ namespace Halobellum.Presentation
         private void StormBolts(Vector3 at, float radius, int bolts, Color color)
         {
             bool blight = color == FloodGreen;
-            float height = 26f;
+            const float height = StormHeight;
             for (int i = 0; i < bolts; i++)
             {
                 Vector3 hit = Inside(at, radius);
@@ -387,12 +388,12 @@ namespace Halobellum.Presentation
             Color cloud = plasma ? StormCloud : new Color(0.16f, 0.22f, 0.06f, 0.72f);
             for (int i = 0; i < 5; i++)
             {
-                Vector3 spot = Inside(at, radius * 1.15f) + Vector3.up * Random.Range(24f, 29f);
-                _kit.Smoke(EffectPriority.Big, spot, Random.insideUnitSphere * 1.2f, radius * Random.Range(0.8f, 1.25f), cloud, Random.Range(1.8f, 2.8f));
+                Vector3 spot = Inside(at, radius * 1.1f) + Vector3.up * (StormHeight + Random.Range(-1.5f, 2.5f));
+                _kit.Smoke(EffectPriority.Big, spot, Random.insideUnitSphere * 1.2f + Vector3.down, radius * Random.Range(0.8f, 1.25f), cloud, Random.Range(1.8f, 2.8f));
             }
             if (plasma && Random.value < 0.6f)
             {
-                Vector3 a = Inside(at, radius) + Vector3.up * 26f, b = Inside(at, radius) + Vector3.up * 25f;
+                Vector3 a = Inside(at, radius) + Vector3.up * StormHeight, b = Inside(at, radius) + Vector3.up * (StormHeight - 1f);
                 Lightning(a, b, CovenantViolet, 0.5f * _kit.ReadScale, 0.14f);
             }
         }

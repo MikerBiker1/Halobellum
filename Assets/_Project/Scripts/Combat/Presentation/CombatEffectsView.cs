@@ -61,6 +61,10 @@ namespace Halobellum.Presentation
         private readonly HashSet<string> _typesA = new HashSet<string>();
         private bool _mirror;
         private int _instantShots, _projectileShots, _frame;
+        private readonly System.Diagnostics.Stopwatch _cost = new System.Diagnostics.Stopwatch();
+
+        /// <summary>Main-thread time the effects took last frame, in milliseconds (for the benchmark). Not the time on the graphics card.</summary>
+        public float LastFrameCostMilliseconds { get; private set; }
 
         /// <summary>The drawing tools (for tests and the benchmark).</summary>
         public EffectKit Kit => _kit;
@@ -156,6 +160,7 @@ namespace Halobellum.Presentation
         {
             WeaponStats weapon = attacker.Weapons[weaponIndex].Stats;
             if (weapon.IsBeam) return; // Beams are drawn in LateUpdate.
+            _cost.Start();
             WeaponLook look = LookOf(attacker, weaponIndex);
 
             // This counts shots in the same order as the simulation does, so a shot's muzzle flash is at the muzzle it leaves from.
@@ -167,9 +172,12 @@ namespace Halobellum.Presentation
             to.x += Random.Range(-scatter, scatter);
             to.z += Random.Range(-scatter, scatter);
             Vector3 line = to - from;
-            if (line.sqrMagnitude < 1e-4f) return;
-            Vector3 direction = line.normalized;
+            if (line.sqrMagnitude >= 1e-4f) DrawFiring(weapon, look, target, from, to, line.normalized);
+            _cost.Stop();
+        }
 
+        private void DrawFiring(WeaponStats weapon, in WeaponLook look, SimUnit target, Vector3 from, Vector3 to, Vector3 direction)
+        {
             switch (look.Kind)
             {
                 case WeaponFeelKind.Burst:
@@ -214,6 +222,7 @@ namespace Halobellum.Presentation
         private void LateUpdate()
         {
             if (_kit == null) return;
+            _cost.Start();
             float speed = _battle.Speed;
             _kit.BeginFrame(speed, Time.deltaTime, Time.unscaledDeltaTime);
             _frame++;
@@ -226,6 +235,9 @@ namespace Halobellum.Presentation
             _deaths.Tick(battleDelta);
             _spells.Tick();
             _kit.EndFrame();
+            _cost.Stop();
+            LastFrameCostMilliseconds = (float)_cost.Elapsed.TotalMilliseconds;
+            _cost.Reset();
         }
 
         private void DrawShots()
@@ -416,9 +428,9 @@ namespace Halobellum.Presentation
 
             // Firing: a thick glowing beam with a white core, on a burning spot that throws sparks and fire.
             float pulse = 0.88f + 0.12f * Mathf.Sin(time * 38f) * Mathf.Sin(time * 23f);
-            _kit.Line(from, to, look.ShotWidth * 2.4f * pulse * read, new Color(color.r, color.g, color.b, 0.45f));
-            _kit.Line(from, to, look.ShotWidth * pulse * read, new Color(color.r, color.g, color.b, 0.9f));
-            _kit.Line(from, to, look.ShotWidth * 0.38f * pulse * read, new Color(0.92f, 0.98f, 1f, 1f));
+            _kit.Line(from, to, look.ShotWidth * 3.6f * pulse * read, new Color(color.r, color.g, color.b, 0.45f));
+            _kit.Line(from, to, look.ShotWidth * 1.8f * pulse * read, new Color(color.r, color.g, color.b, 0.9f));
+            _kit.Line(from, to, look.ShotWidth * 0.8f * pulse * read, new Color(0.92f, 0.98f, 1f, 1f));
             _kit.HeadGlow(from, 5f * pulse * read, color);
             _kit.HeadGlow(to + Vector3.up * 0.6f, beam.Radius * 3.4f * pulse, new Color(1f, 0.88f, 0.65f, 0.95f));
             _kit.GroundHead(to, beam.Radius * 4.5f * pulse, new Color(1f, 0.52f, 0.16f, 1f));

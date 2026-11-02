@@ -36,18 +36,18 @@ namespace Halobellum.Presentation
 
         private const int DelayedCapacity = 700;
 
-        public static readonly Color SmokeDark = new Color(0.1f, 0.095f, 0.09f, 0.72f);
+        public static readonly Color SmokeDark = new Color(0.1f, 0.095f, 0.09f, 0.6f);
         public static readonly Color SmokeGrey = new Color(0.34f, 0.33f, 0.32f, 0.5f);
         public static readonly Color SmokeThin = new Color(0.42f, 0.41f, 0.4f, 0.3f);
-        public static readonly Color DustTan = new Color(0.62f, 0.56f, 0.46f, 0.42f);
-        public static readonly Color DirtBrown = new Color(0.3f, 0.25f, 0.19f, 0.7f);
+        public static readonly Color DustTan = new Color(0.66f, 0.6f, 0.5f, 0.6f);
+        public static readonly Color DirtBrown = new Color(0.22f, 0.18f, 0.13f, 0.9f);
         public static readonly Color FireGlow = new Color(1f, 0.72f, 0.38f);
         public static readonly Color GroundFire = new Color(1f, 0.5f, 0.18f, 0.8f);
         public static readonly Color SparkHot = new Color(1f, 0.82f, 0.45f);
         public static readonly Color ShieldBlue = new Color(0.4f, 0.72f, 1f);
         public static readonly Color ScorchBlack = new Color(0.03f, 0.028f, 0.025f, 0.88f);
         public static readonly Color MetalDark = new Color(0.14f, 0.14f, 0.13f);
-        public static readonly Color MetalHot = new Color(0.55f, 0.28f, 0.12f);
+        public static readonly Color MetalHot = new Color(0.4f, 0.2f, 0.1f);
         public static readonly Color FleshPink = new Color(0.62f, 0.32f, 0.26f);
         public static readonly Color FleshSick = new Color(0.56f, 0.6f, 0.26f);
         public static readonly Color SporeGreen = new Color(0.72f, 0.95f, 0.3f, 0.75f);
@@ -185,10 +185,10 @@ namespace Halobellum.Presentation
             Vector3 direction = (to - from).normalized;
             float spread = Mathf.Tan(Mathf.Max(6f, coneDegrees) * 0.5f * Mathf.Deg2Rad);
             float speed = range * 2.9f; // With the fire's drag it comes to rest at the end of its range.
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 4; i++)
             {
                 Vector3 way = (direction + Random.insideUnitSphere * spread).normalized;
-                _kit.Fire(EffectPriority.Medium, from + direction * 0.3f, way * speed * Random.Range(0.75f, 1.05f), Random.Range(1.3f, 2.5f), Random.Range(0.5f, 0.72f));
+                _kit.Flame(i == 0 ? EffectPriority.Medium : EffectPriority.Small, from + direction * 0.2f, way * speed * Random.Range(0.7f, 1.05f), Random.Range(2.2f, 3.8f), Random.Range(0.5f, 0.75f));
             }
             _kit.Glow(EffectPriority.Small, from, 1.3f * _kit.ReadScale, FireGlow, 0.09f);
             if (Random.value < 0.35f) _kit.Heat(EffectPriority.Small, from + direction * range * Random.Range(0.3f, 0.8f) + Vector3.up * 0.6f, Vector3.up * 2.5f, Random.Range(2.5f, 4f), 0.6f);
@@ -329,7 +329,7 @@ namespace Halobellum.Presentation
                 _kit.Fire(priority, position + out3 * radius * Random.Range(0.1f, 0.5f), out3 * radius * Random.Range(1.5f, 3.6f), radius * Random.Range(0.75f, 1.3f), Random.Range(0.5f, 1.05f));
             }
             int smoke = Mathf.Clamp(Mathf.RoundToInt(radius * 2f) + 4, 6, 22);
-            for (int i = 0; i < smoke; i++) _kit.Smoke(lesser, position + Random.insideUnitSphere * radius * 0.5f, Random.onUnitSphere * radius * 0.8f + Vector3.up * radius * Random.Range(0.8f, 1.6f), radius * Random.Range(1.1f, 1.9f), SmokeDark, Random.Range(1.6f, 3.2f));
+            for (int i = 0; i < smoke; i++) _kit.Smoke(lesser, position + Random.insideUnitSphere * radius * 0.5f, Random.onUnitSphere * radius * 0.8f + Vector3.up * radius * Random.Range(0.8f, 1.6f), radius * Random.Range(1.1f, 1.9f), SmokeDark, Random.Range(1.4f, 2.6f));
             int sparks = Mathf.Clamp(Mathf.RoundToInt(radius * 7f), 12, 60);
             for (int i = 0; i < sparks; i++) _kit.Spark(lesser, position, Random.onUnitSphere * radius * Random.Range(3f, 8f) + Vector3.up * radius * 2f, 0.085f * _kit.ReadScale, SparkHot, Random.Range(0.4f, 1.1f));
             _kit.Heat(lesser, position + Vector3.up * radius, Vector3.up * 3f, radius * 4f, 0.9f);
@@ -362,7 +362,7 @@ namespace Halobellum.Presentation
                 Vector3 out3 = Random.onUnitSphere;
                 out3.y = Mathf.Abs(out3.y) + 0.5f;
                 Color color = i % 3 == 0 ? MetalHot : MetalDark;
-                _kit.Chunk(priority, middle + out3 * bodyRadius * 0.3f, out3 * Random.Range(7f, 18f), Random.Range(0.25f, 0.5f + bodyRadius * 0.14f), color, Random.Range(1.8f, 3.6f));
+                _kit.Chunk(priority, middle + out3 * bodyRadius * 0.3f, out3 * Random.Range(7f, 18f), Random.Range(0.18f, 0.32f + bodyRadius * 0.12f), color, Random.Range(1.8f, 3.6f));
             }
             CameraShake.Kick(position, titan ? 0.8f : 0.3f);
             if (!titan) return;
@@ -431,6 +431,17 @@ namespace Halobellum.Presentation
             int clouds = small ? 2 : Mathf.Clamp(Mathf.RoundToInt(bodyRadius * 2f), 3, 14);
             for (int i = 0; i < clouds; i++) _kit.Smoke(priority, middle, Random.insideUnitSphere * bodyRadius + Vector3.up * 0.8f, Mathf.Max(1.2f, bodyRadius * Random.Range(1.3f, 2f)), SporeCloud, Random.Range(0.9f, 2.2f));
             if (!inAir) _kit.Scorch(small ? EffectPriority.Small : EffectPriority.Big, position, Mathf.Max(1.4f, bodyRadius * 2.6f), SplatterDark, 25f);
+            if (bodyRadius >= 4f)
+            {
+                // A giant comes apart in several heaves, with a wave of spores going out.
+                _kit.Ring(EffectPriority.Huge, new Vector3(position.x, 0.12f, position.z), bodyRadius * 3.6f, new Color(0.75f, 1f, 0.4f, 0.8f), 0.8f);
+                _kit.GroundGlow(EffectPriority.Huge, new Vector3(position.x, 0.12f, position.z), bodyRadius * 4.5f, new Color(0.5f, 0.85f, 0.2f, 0.7f), 1f);
+                for (int i = 0; i < 6; i++)
+                {
+                    Vector3 spot = position + new Vector3(Random.Range(-bodyRadius, bodyRadius), Random.Range(0.5f, bodyRadius * 1.2f), Random.Range(-bodyRadius, bodyRadius));
+                    BlastAfter(0.12f + i * 0.2f, spot, bodyRadius * Random.Range(0.35f, 0.6f), BlastStyle.Bio, WeaponLooks.FloodPlasma, EffectPriority.Big);
+                }
+            }
             if (!small) CameraShake.Kick(position, Mathf.Clamp(bodyRadius * 0.1f, 0.1f, 0.5f));
         }
 
@@ -474,7 +485,7 @@ namespace Halobellum.Presentation
                 Vector3 out3 = Random.onUnitSphere;
                 out3.y = Mathf.Abs(out3.y) + 0.6f;
                 Color color = i % 3 == 0 ? MetalHot : i % 3 == 1 ? MetalDark : FleshSick;
-                _kit.Chunk(huge, low, out3 * Random.Range(10f, 28f), Random.Range(0.3f, 1.05f), color, Random.Range(2.2f, 4.5f));
+                _kit.Chunk(huge, low, out3 * Random.Range(10f, 28f), Random.Range(0.25f, 0.8f), color, Random.Range(2.2f, 4.5f));
             }
             for (int i = 0; i < 4; i++) _kit.Heat(huge, low + Vector3.up * radius * (0.4f + i * 0.5f) + Random.insideUnitSphere * radius * 0.5f, Vector3.up * 4f, radius * 3f, 1.2f);
 

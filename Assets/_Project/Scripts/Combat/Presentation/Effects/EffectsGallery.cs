@@ -94,7 +94,7 @@ namespace Halobellum.Presentation
                 new WeaponShot("Sword", "Zealot", tough, 0.05f),
                 new WeaponShot("Claw", "Combat Form", tough, 0.05f),
                 new WeaponShot("Slam", "Flood Abomination", "Scorpion", 0.1f),
-                new WeaponShot("SpatBone", "Swarm Form", tough, 0.1f),
+                new WeaponShot("SpatBone", "Swarm Form", "Hornet", 0.1f),
                 new WeaponShot("SeedSpore", "Seeder", "Marine", 0.2f),
                 new WeaponShot("BoneShards", "Pure Form Ranged", tough, 0.8f),
                 new WeaponShot("FloodPlasma", "Infected Phantom", tough, 0.08f),
@@ -128,7 +128,7 @@ namespace Halobellum.Presentation
             else
             {
                 yield return new WaitForSecondsRealtime(shot.Delay);
-                yield return Capture("w_" + shot.Label, Middle(_firedBy, _firedAt), Mathf.Max(13f, Vector3.Distance(_views.WorldPosition(_firedBy), _views.WorldPosition(_firedAt)) * 1.05f));
+                yield return Capture("w_" + shot.Label, Middle(_firedBy, _firedAt), Mathf.Max(13f, Mathf.Max(_firedBy.Radius, _firedAt.Radius) * 5f, Vector3.Distance(_views.WorldPosition(_firedBy), _views.WorldPosition(_firedAt)) * 1.05f));
             }
             _battle.Simulation.Events.WeaponFired -= OnFired;
             _sandbox.ResetBattle();
@@ -217,14 +217,13 @@ namespace Halobellum.Presentation
                 killed++;
             }
             string label = name.Replace(" ", "");
-            float close = Mathf.Max(16f, victim.Radius * 9f);
+            float close = Mathf.Max(18f, victim.Radius * 9f);
             float[] times = { 0.12f, 0.4f, 1f, 3.5f };
-            float waited = 0f;
+            float start = Kit.BattleTime;
             foreach (float at in times)
             {
-                yield return new WaitForSecondsRealtime(at - waited);
-                waited = at;
-                yield return Capture($"d_{label}_{at:0.0}", place + Vector3.up * (victim.IsAir ? 4f : 0f), close);
+                while (Kit.BattleTime - start < at) yield return null;
+                yield return Capture($"d_{label}_{at:0.0}", place + Vector3.up * (victim.IsAir ? 7f : 0f), close);
             }
             _sandbox.ResetBattle();
             yield return null;
@@ -251,11 +250,10 @@ namespace Halobellum.Presentation
             if (pelican.IsAlive) yield return Capture("crash_1_dive", landing, 46f);
             while (pelican.IsAlive) yield return null;
             float[] times = { 0.08f, 0.35f, 1f, 2.2f, 5f };
-            float waited = 0f;
+            float start = Kit.BattleTime;
             foreach (float at in times)
             {
-                yield return new WaitForSecondsRealtime(at - waited);
-                waited = at;
+                while (Kit.BattleTime - start < at) yield return null;
                 yield return Capture($"crash_2_{at:0.00}", landing, 60f);
             }
             _sandbox.ResetBattle();
@@ -320,13 +318,11 @@ namespace Halobellum.Presentation
             string label = shot.Stats.Name.Replace(" ", "").Replace("'", "");
             float radius = Mathf.Max(5f, shot.Stats.Radius);
 
-            float start = _battle.Simulation.ElapsedSeconds;
             foreach (float at in shot.Times)
             {
-                // A negative time: the warning, half a second before it goes off.
+                // A negative time: the warning, half a second before it goes off. The effects' clock goes on after the battle has ended.
                 float battleTime = at < 0f ? shot.Stats.DelaySeconds - 0.6f : shot.Stats.DelaySeconds + at;
-                float limit = 20f;
-                while (_battle.Simulation.ElapsedSeconds < battleTime && !_battle.Simulation.IsFinished && limit > 0f) { limit -= Time.unscaledDeltaTime; yield return null; }
+                while (Kit.BattleTime < battleTime) yield return null;
                 yield return Capture($"s_{label}_{(at < 0f ? "warn" : at.ToString("0.00"))}", place + Vector3.up * radius * 0.3f, radius * 4.2f);
             }
             _sandbox.ResetBattle();
@@ -362,13 +358,21 @@ namespace Halobellum.Presentation
             float elapsed = 0f;
             int mostLive = 0;
             bool pictured = false;
+            float mostCost = 0f;
+            double totalCost = 0;
+            int collectionsAtStart = System.GC.CollectionCount(0);
             yield return null;
             while (!_battle.Simulation.IsFinished && elapsed < 90f)
             {
                 float delta = Time.unscaledDeltaTime;
                 elapsed += delta;
                 // Only once the two armies are fighting.
-                if (_battle.Simulation.ProjectileCount > 0 || mostLive > 400) times.Add(delta);
+                if (_battle.Simulation.ProjectileCount > 0 || mostLive > 400)
+                {
+                    times.Add(delta);
+                    totalCost += view.LastFrameCostMilliseconds;
+                    mostCost = Mathf.Max(mostCost, view.LastFrameCostMilliseconds);
+                }
                 int live = view.Kit.LiveParticles;
                 if (live > mostLive) mostLive = live;
                 if (!pictured && live > 1200)
@@ -388,6 +392,7 @@ namespace Halobellum.Presentation
             foreach (float t in times) if (t > 1f / 60f) slow++;
             EffectBudget budget = view.Kit.Budget;
             report.AppendLine(FormattableString($"Speed {speed}x: {bodies} bodies at the start, {times.Count} frames in {elapsed:0.0} s; average {average * 1000f:0.00} ms ({(average > 0f ? 1f / average : 0f):0} FPS), 1% slowest {p99 * 1000f:0.00} ms ({(p99 > 0f ? 1f / p99 : 0f):0} FPS), worst {worst * 1000f:0.00} ms; frames over 16.7 ms: {slow}"));
+            report.AppendLine(FormattableString($"  effects' own main-thread time: average {(times.Count > 0 ? totalCost / times.Count : 0):0.00} ms, worst {mostCost:0.00} ms; garbage collections during the battle: {System.GC.CollectionCount(0) - collectionsAtStart}"));
             report.AppendLine($"  most particles alive {mostLive}; dropped small {budget.Dropped[0]}, medium {budget.Dropped[1]}, big {budget.Dropped[2]}, huge {budget.Dropped[3]}; result: {(_battle.Simulation.IsFinished ? _battle.Simulation.Result.ToSummaryLine() : "still fighting")}");
             _sandbox.ResetBattle();
             yield return null;
@@ -427,10 +432,10 @@ namespace Halobellum.Presentation
 
         private Vector3 Middle(SimUnit a, SimUnit b)
         {
-            Vector3 middle = (_views.WorldPosition(a) + _views.WorldPosition(b)) * 0.5f;
-            middle.y = 0f;
-            return middle;
+            return (_views.WorldPosition(a) + _views.WorldPosition(b)) * 0.5f;
         }
+
+        private EffectKit Kit => GetComponent<CombatEffectsView>().Kit;
 
         private void GameCamera(Vector3 focus)
         {

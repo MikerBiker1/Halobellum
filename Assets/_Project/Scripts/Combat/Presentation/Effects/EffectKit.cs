@@ -35,14 +35,14 @@ namespace Halobellum.Presentation
         private const int LinePool = 64;
         private const int FlashedLineCapacity = 40;
 
-        // Length of a stretched particle: its width x (LengthScale + speed x this).
-        private const float StreakStretch = 0.28f;
-        private const float BoltStretch = 0.06f;
-        private const float SparkStretch = 0.5f;
+        // Length of a stretched particle in metres: its width + its speed x this.
+        private const float StreakStretch = 0.032f;
+        private const float BoltStretch = 0.04f;
+        private const float SparkStretch = 0.055f;
         private const float HeadStretch = 1f;
 
         private readonly Transform _root;
-        private readonly Layer _glow, _orb, _streak, _bolt, _sparks, _fire, _smoke, _dust, _ring, _groundGlow, _scorch, _chunks, _heat, _slash, _spores;
+        private readonly Layer _glow, _orb, _streak, _bolt, _sparks, _fire, _flame, _smoke, _dust, _ring, _groundGlow, _scorch, _chunks, _heat, _slash, _spores;
         private readonly Layer[] _layers;
         private readonly Layer _headGlow, _headStreak, _groundHead;
         private readonly ParticleSystem.Particle[] _headGlowData = new ParticleSystem.Particle[HeadCapacity];
@@ -98,19 +98,20 @@ namespace Halobellum.Presentation
             _smoke = Billboard("Smoke", EffectAssets.ParticleMaterial("Effect Smoke", EffectAssets.Smoke, 1f, 1f, 2f, 3000), 900);
             _dust = Billboard("Dust", EffectAssets.ParticleMaterial("Effect Dust", EffectAssets.Smoke, 1f, 1f, 0.8f, 3001), 700);
             _spores = Billboard("Spores", EffectAssets.ParticleMaterial("Effect Spores", EffectAssets.Soft, 1.5f, 0.1f, 0f, 3010), 600);
-            _fire = Billboard("Fire", EffectAssets.ParticleMaterial("Effect Fire", EffectAssets.Flame, 2.4f, 0.3f, 0.6f, 3020), 1800);
-            _glow = Billboard("Glow", EffectAssets.ParticleMaterial("Effect Glow", EffectAssets.Soft, 3f, 0f, 0f, 3030), 1500);
+            _fire = Billboard("Fire", EffectAssets.ParticleMaterial("Effect Fire", EffectAssets.Flame, 2.2f, 0.55f, 0.6f, 3020), 1300);
+            _flame = Billboard("Flame", EffectAssets.ParticleMaterial("Effect Flame", EffectAssets.Flame, 1.9f, 0.4f, 0.3f, 3021), 1500);
+            _glow = Billboard("Glow", EffectAssets.ParticleMaterial("Effect Glow", EffectAssets.Soft, 3f, 0f, 0f, 3030, true), 1500);
             _orb = Billboard("Orb", EffectAssets.ParticleMaterial("Effect Orb", EffectAssets.Soft, 3f, 0f, 0f, 3031), 500);
             _bolt = Stretched("Bolt", EffectAssets.ParticleMaterial("Effect Bolt", EffectAssets.Streak, 3.4f, 0f, 0f, 3032), 900, BoltStretch);
             _streak = Stretched("Streak", EffectAssets.ParticleMaterial("Effect Streak", EffectAssets.Streak, 3.6f, 0f, 0f, 3033), 1500, StreakStretch);
             _sparks = Stretched("Sparks", EffectAssets.ParticleMaterial("Effect Sparks", EffectAssets.Streak, 3.6f, 0f, 0f, 3034), 1600, SparkStretch);
             _slash = Billboard("Slash", EffectAssets.ParticleMaterial("Effect Slash", EffectAssets.Slash, 2.6f, 0f, 0f, 3035), 240);
-            _headGlow = Billboard("Head Glow", EffectAssets.ParticleMaterial("Effect Head Glow", EffectAssets.Soft, 3f, 0f, 0f, 3036), HeadCapacity);
+            _headGlow = Billboard("Head Glow", EffectAssets.ParticleMaterial("Effect Head Glow", EffectAssets.Soft, 3f, 0f, 0f, 3036, true), HeadCapacity);
             _headStreak = Stretched("Head Streak", EffectAssets.ParticleMaterial("Effect Head Streak", EffectAssets.Streak, 3.4f, 0f, 0f, 3037), HeadCapacity, HeadStretch);
             _chunkMaterial = EffectAssets.ChunkMaterial();
             _chunks = MakeChunks("Chunks", _chunkMaterial, 320);
 
-            _layers = new[] { _scorch, _heat, _groundGlow, _ring, _smoke, _dust, _spores, _fire, _glow, _orb, _bolt, _streak, _sparks, _slash, _chunks };
+            _layers = new[] { _scorch, _heat, _groundGlow, _ring, _smoke, _dust, _spores, _fire, _flame, _glow, _orb, _bolt, _streak, _sparks, _slash, _chunks };
 
             Fades(_glow, Fade(1f, 0.25f, 0.8f, 0f), Grow(0.55f, 0.2f, 1f));
             Fades(_orb, Fade(1f, 0.85f, 1f, 0f), null);
@@ -122,14 +123,26 @@ namespace Halobellum.Presentation
 
             var fire = new Gradient();
             fire.SetKeys(
-                new[] { new GradientColorKey(new Color(1f, 0.92f, 0.65f), 0f), new GradientColorKey(new Color(1f, 0.6f, 0.16f), 0.28f), new GradientColorKey(new Color(0.82f, 0.2f, 0.05f), 0.62f), new GradientColorKey(new Color(0.2f, 0.06f, 0.03f), 1f) },
-                new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(1f, 0.05f), new GradientAlphaKey(0.75f, 0.55f), new GradientAlphaKey(0f, 1f) });
+                new[] { new GradientColorKey(new Color(1f, 0.92f, 0.65f), 0f), new GradientColorKey(new Color(1f, 0.58f, 0.14f), 0.25f), new GradientColorKey(new Color(0.42f, 0.11f, 0.03f), 0.55f), new GradientColorKey(new Color(0.05f, 0.03f, 0.025f), 0.85f) },
+                new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(1f, 0.05f), new GradientAlphaKey(0.7f, 0.6f), new GradientAlphaKey(0f, 1f) });
             ColorOverLife(_fire, fire);
             SizeOverLife(_fire, Grow(0.45f, 0.45f, 1f));
             Drag(_fire, 2.4f);
             Gravity(_fire, -0.25f);
             Sheet(_fire);
             Spin(_fire, 1.2f);
+
+            // Flamethrower fire: small at the muzzle, growing all the way to the end of its range.
+            var flame = new Gradient();
+            flame.SetKeys(
+                new[] { new GradientColorKey(new Color(1f, 0.86f, 0.5f), 0f), new GradientColorKey(new Color(1f, 0.55f, 0.12f), 0.35f), new GradientColorKey(new Color(0.65f, 0.16f, 0.03f), 0.7f), new GradientColorKey(new Color(0.08f, 0.04f, 0.03f), 1f) },
+                new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(0.95f, 0.06f), new GradientAlphaKey(0.7f, 0.55f), new GradientAlphaKey(0f, 1f) });
+            ColorOverLife(_flame, flame);
+            SizeOverLife(_flame, Ease(new Keyframe(0f, 0.12f), new Keyframe(1f, 1f)));
+            Drag(_flame, 2.4f);
+            Gravity(_flame, -0.35f);
+            Sheet(_flame);
+            Spin(_flame, 1.6f);
 
             ColorOverLife(_smoke, Rise(0.07f, 0.3f));
             SizeOverLife(_smoke, Grow(0.35f, 0.45f, 0.82f));
@@ -139,7 +152,7 @@ namespace Halobellum.Presentation
             Spin(_smoke, 0.5f);
             Wander(_smoke, 0.5f, 0.3f);
 
-            ColorOverLife(_dust, Rise(0.1f, 0.35f));
+            ColorOverLife(_dust, Rise(0.06f, 0.5f));
             SizeOverLife(_dust, Grow(0.4f, 0.4f, 0.85f));
             Drag(_dust, 2.2f);
             Sheet(_dust);
@@ -295,6 +308,13 @@ namespace Halobellum.Presentation
 
         public void Fire(EffectPriority priority, Vector3 position, Vector3 velocity, float size, float life) => Fire(priority, position, velocity, size, life, Color.white);
 
+        /// <summary>A puff of a flamethrower's flame: it grows as it flies.</summary>
+        public void Flame(EffectPriority priority, Vector3 position, Vector3 velocity, float size, float life)
+        {
+            var emit = new ParticleSystem.EmitParams { position = position, velocity = velocity, startSize = size, startColor = Color.white, startLifetime = life, rotation = Random.value * 360f };
+            Emit(_flame, priority, ref emit);
+        }
+
         /// <summary>A lick of fire, white-hot through orange to dark red. The tint can make it plasma or sick green.</summary>
         public void Fire(EffectPriority priority, Vector3 position, Vector3 velocity, float size, float life, Color tint)
         {
@@ -397,8 +417,8 @@ namespace Halobellum.Presentation
             if (_headStreakCount >= HeadCapacity) return;
             ref ParticleSystem.Particle head = ref _headStreakData[_headStreakCount++];
             head.position = position;
-            // The renderer stretches a particle by its speed: this speed gives this length (see StretchedLength).
-            head.velocity = direction * (Mathf.Max(0f, length / Mathf.Max(0.01f, width) - 1f) / HeadStretch);
+            // The renderer stretches a particle by its speed: this speed gives this length.
+            head.velocity = direction * (Mathf.Max(0f, length - width) / HeadStretch);
             head.startSize = width;
             head.startColor = color;
             head.startLifetime = 10f;

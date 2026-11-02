@@ -21,7 +21,7 @@ namespace Halobellum.Presentation
         /// <summary>Two by two soft puffs of smoke.</summary>
         public static Texture2D Smoke => _smoke != null ? _smoke : (_smoke = MakeSheet(256, 2, 0.55f, 3.2f, "Effect Smoke"));
         /// <summary>Two by two torn licks of flame.</summary>
-        public static Texture2D Flame => _flame != null ? _flame : (_flame = MakeSheet(256, 2, 1.0f, 5f, "Effect Flame"));
+        public static Texture2D Flame => _flame != null ? _flame : (_flame = MakeSheet(256, 2, 1.0f, 6.5f, "Effect Flame"));
         /// <summary>A thin bright ring with a soft inside, for shock waves.</summary>
         public static Texture2D Ring => _ring != null ? _ring : (_ring = MakeRing(256));
         /// <summary>A blotchy dark burn mark.</summary>
@@ -61,13 +61,14 @@ namespace Halobellum.Presentation
         }
 
         /// <summary>A new material for one layer of particles. renderQueue decides what is drawn over what.</summary>
-        public static Material ParticleMaterial(string name, Texture texture, float boost, float occlude, float softFade, int renderQueue)
+        public static Material ParticleMaterial(string name, Texture texture, float boost, float occlude, float softFade, int renderQueue, bool ignoreDepth = false)
         {
             Material material = new Material(FindShader("Halobellum/EffectParticle")) { name = name, renderQueue = renderQueue };
             material.mainTexture = texture;
             material.SetFloat("_Boost", boost);
             material.SetFloat("_Occlude", occlude);
             material.SetFloat("_SoftFade", softFade);
+            material.SetFloat("_ZTest", (float)(ignoreDepth ? UnityEngine.Rendering.CompareFunction.Always : UnityEngine.Rendering.CompareFunction.LessEqual));
             return material;
         }
 
@@ -154,7 +155,7 @@ namespace Halobellum.Presentation
                     float noise = Fbm(u * frequency + seed, v * frequency + seed * 1.7f, 4);
                     float edge = Mathf.Clamp01(1f - r);
                     float shape = Mathf.Clamp01(edge * (1f + erosion) - (1f - noise) * erosion);
-                    shape = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(shape * 2.2f));
+                    shape = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(shape * 1.6f));
                     float shade = Mathf.Lerp(0.72f, 1f, noise);
                     pixels[y * size + x] = new Color(shade, shade, shade, shape);
                 }

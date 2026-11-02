@@ -63,11 +63,18 @@ namespace Halobellum.Tests
             while (!battle.Simulation.IsFinished && Time.realtimeSinceStartup < deadline) yield return null;
             Assert.IsTrue(battle.Simulation.IsFinished, "The battle did not finish in time.");
 
-            // Dead units' views are hidden; living units' views are shown.
+            // Dead units' views are hidden once their wrecks have burned out (M10); living units' views are shown.
             Transform units = GameObject.Find("Units").transform;
-            int shown = 0;
-            for (int i = 0; i < units.childCount; i++) if (units.GetChild(i).gameObject.activeSelf) shown++;
             int alive = battle.CountAlive(Halobellum.Core.Team.A) + battle.CountAlive(Halobellum.Core.Team.B);
+            int shown = 0;
+            deadline = Time.realtimeSinceStartup + 30f;
+            do
+            {
+                yield return null;
+                shown = 0;
+                for (int i = 0; i < units.childCount; i++) if (units.GetChild(i).gameObject.activeSelf) shown++;
+            }
+            while (shown != alive && Time.realtimeSinceStartup < deadline);
             Assert.AreEqual(alive, shown);
             Assert.Less(alive, 600, "Nobody died.");
 

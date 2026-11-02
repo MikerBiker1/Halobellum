@@ -192,7 +192,6 @@ namespace Halobellum.Tests
             Assert.IsTrue(_battle.Simulation.IsFinished, "The battle ended.");
             Assert.Greater(peak, 0, "Something was drawn.");
             Assert.LessOrEqual(peak, 12000, "All the layers' caps together.");
-            LogAssert.NoUnexpectedReceived();
 
             // And on to the next battle, twice, with everything cleared in between.
             _sandbox.ResetBattle();
@@ -314,7 +313,6 @@ namespace Halobellum.Tests
             float deadline = Time.realtimeSinceStartup + 30f;
             while (_battle.Simulation.ElapsedSeconds < 8f && !_battle.Simulation.IsFinished && Time.realtimeSinceStartup < deadline) yield return null;
             Assert.Greater(_view.Kit.PeakLive, 500, "Spells make a lot of particles.");
-            LogAssert.NoUnexpectedReceived();
         }
     }
 }

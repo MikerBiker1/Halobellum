@@ -3,6 +3,7 @@
 // be fire, glow or smoke without any variants: _Occlude 0 adds light, 1 is ordinary see-through smoke, between is flame with a body.
 // _Boost lifts the colour above 1, which is what the bloom picks up (particle colours themselves stop at 1).
 // _SoftFade is how many metres before the ground or a body a particle fades out, so big smoke has no hard edge where it meets them.
+// _ZTest 8 (always) is for glows: light is not cut off by the ground it passes in front of.
 // Depends on: URP's core library and the scene depth texture (without one, nothing fades).
 Shader "Halobellum/EffectParticle"
 {
@@ -12,6 +13,7 @@ Shader "Halobellum/EffectParticle"
         _Boost("Brightness", Float) = 1
         _Occlude("How much it hides what is behind it", Range(0, 1)) = 0
         _SoftFade("Soft edge, metres", Float) = 0
+        [Enum(UnityEngine.Rendering.CompareFunction)] _ZTest("Depth test", Float) = 4
     }
 
     SubShader
@@ -23,6 +25,7 @@ Shader "Halobellum/EffectParticle"
             Name "Effect"
             Blend One OneMinusSrcAlpha
             ZWrite Off
+            ZTest [_ZTest]
             Cull Off
 
             HLSLPROGRAM
