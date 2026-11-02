@@ -100,8 +100,11 @@ namespace Halobellum.Presentation
         /// <summary>The player clicked a squad on the field.</summary>
         public static void SquadSelected() => GameAudio.Ui(UiSound.Click, SelectedVolume);
 
-        /// <summary>A squad turned, or its ghost while it is being moved.</summary>
-        public static void SquadTurned() => GameAudio.Ui(UiSound.Click, TurnedVolume);
+        /// <summary>A squad turned, or its ghost while it is being moved. From the R key: the Turn button is drawn in OnGUI, and it already clicked as it went down (AudioDirector).</summary>
+        public static void SquadTurned()
+        {
+            if (Event.current == null) GameAudio.Ui(UiSound.Click, TurnedVolume);
+        }
 
         /// <summary>A squad set down in a new spot.</summary>
         public static void SquadMoved() => GameAudio.Ui(UiSound.Skip, MovedVolume);

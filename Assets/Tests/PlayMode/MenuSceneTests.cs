@@ -20,6 +20,12 @@ namespace Halobellum.Tests
         private MatchController _match;
         private BattleController _battle;
 
+        [Test]
+        public void ThePlayModeTests_KeepOffTheSavedSettings()
+        {
+            Assert.IsTrue(GameSettings.HeldInMemory, "SettingsHeldForTests holds them in memory for the whole run.");
+        }
+
         [UnityTearDown]
         public IEnumerator LeaveNothingPaused()
         {

@@ -118,7 +118,7 @@ namespace Halobellum.Core
             var parts = new List<string>();
             if (AllDamageMultiplier != 1f) parts.Add($"{ItemStats.Percent(AllDamageMultiplier)} damage for all units");
             if (AllHealthMultiplier != 1f) parts.Add($"{ItemStats.Percent(AllHealthMultiplier)} health for all units");
-            if (AllRangeBonus != 0f) parts.Add($"+{AllRangeBonus:0.#}00A0m range for all ranged units");
+            if (AllRangeBonus != 0f) parts.Add($"+{AllRangeBonus:0.#} m range for all ranged units");
             if (BonusIncome != 0) parts.Add($"+{BonusIncome} credits every round");
             if (ExtraSquadsPerRound != 0) parts.Add($"+{ExtraSquadsPerRound} squad per round");
             return string.Join(", ", parts);

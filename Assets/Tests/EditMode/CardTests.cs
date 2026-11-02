@@ -46,6 +46,7 @@ namespace Halobellum.Tests
                 StringAssert.IsMatch("\\d\u00A0[ms]\\b", text);
             }
             StringAssert.Contains("8\u00A0x\u00A040\u00A0m line", spells[4].EffectsText());
+            Assert.AreEqual("+2\u00A0m range for all ranged units", new CardStats { Type = CardType.Buff, AllDamageMultiplier = 1f, AllHealthMultiplier = 1f, AllRangeBonus = 2f }.EffectsText());
         }
 
         private List<FactionInfo> Factions()
