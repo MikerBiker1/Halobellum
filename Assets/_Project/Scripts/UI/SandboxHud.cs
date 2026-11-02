@@ -3,10 +3,10 @@
 // on that side, both armies' totals, actions for the selected squad (Move, Turn, Remove), and Run /
 // Reset, Clear side, Copy side, the battle seed and a Back button (to the match or the main menu, whichever opened it: GameFlow). An Items panel on the
 // left offers every item for free (decision D34): drag one onto the hexagon over a squad of either
-// side. Speed controls and the battle result line come from BattleHud; the squad stats window from
-// SquadStatsWindow.
+// side. Speed controls and the battle result line come from BattleHud, which puts that line under this screen's bar; the squad stats window from
+// SquadStatsWindow. A tall stats window pushes the Items panel to its right.
 // Placeholder UI drawn with Unity's immediate-mode GUI; scales with the screen height.
-// Depends on: Halobellum.Presentation (SandboxController, BattleController, UiHitAreas), HudScale,
+// Depends on: Halobellum.Presentation (SandboxController, BattleController, UiHitAreas), BattleHud, SquadStatsWindow, HudScale,
 //             Halobellum.Core, UnityEngine (SceneManagement).
 
 using System.Collections.Generic;
@@ -31,13 +31,24 @@ namespace Halobellum.UI
         [SerializeField] private Color redColor = new Color(1f, 0.4f, 0.32f);
 
         private const float ItemsLeft = 10f, ItemsWidth = 330f, BarHalfWidth = 560f, BarTop = 92f, BarHeight = 64f;
+        /// <summary>Under the bar, where BattleHud puts the result line in this scene.</summary>
+        public const float ResultLineTop = BarTop + BarHeight + 8f;
+        /// <summary>Under the bar and its message line, level with the unit list.</summary>
+        private const float BelowTheMessage = 204f;
 
         private GUIStyle _text, _small, _smallCentered, _button, _bigButton, _header, _wrapDim;
         private float _scale;
         private Vector2 _scroll;
         private readonly HudLine _seedLine = new HudLine(), _aliveLine = new HudLine(), _blueLine = new HudLine(), _redLine = new HudLine();
+        private SquadStatsWindow _statsWindow;
 
-        private void Awake() => useGUILayout = false; // Nothing here uses GUILayout. With the layout pass on, Unity makes new layout groups for this script every frame, which is garbage at every frame rate.
+        private void Awake()
+        {
+            useGUILayout = false; // Nothing here uses GUILayout. With the layout pass on, Unity makes new layout groups for this script every frame, which is garbage at every frame rate.
+            _statsWindow = FindAnyObjectByType<SquadStatsWindow>();
+            var battleHud = FindAnyObjectByType<BattleHud>();
+            if (battleHud != null) battleHud.ResultLineTop = ResultLineTop;
+        }
 
         private void OnGUI()
         {
@@ -59,7 +70,7 @@ namespace Halobellum.UI
             }
             if (!string.IsNullOrEmpty(sandbox.Message))
             {
-                var message = new Rect(width * 0.5f - 400f, 164f, 800f, 30f);
+                var message = new Rect(width * 0.5f - 400f, sandbox.IsBattle ? BelowTheMessage : ResultLineTop, 800f, 30f); // In battle the result line has the place under the bar.
                 Panel(message);
                 GUI.Label(message, sandbox.Message, _smallCentered);
             }
@@ -75,7 +86,9 @@ namespace Halobellum.UI
         private void DrawItems(float width)
         {
             if (sandbox.Items.Count == 0) return;
-            var panel = new Rect(ItemsLeft, ItemsPanelTop(width), ItemsWidth, 44f + ItemHud.GridHeight(sandbox.Items.Count) + 44f);
+            float panelHeight = 44f + ItemHud.GridHeight(sandbox.Items.Count) + 44f;
+            Rect? stats = _statsWindow != null && _statsWindow.TryGetWindow(out Rect window) ? window : (Rect?)null;
+            Rect panel = ItemsPanel(width, panelHeight, stats);
             Panel(panel);
             GUI.Label(new Rect(panel.x + 12f, panel.y + 8f, panel.width - 24f, 28f), "Items", _header);
             string hovered = ItemHud.DrawItemGrid(panel.x + 12f, panel.y + 40f, sandbox.Items, sandbox.PlacingItem, sandbox.IconFor, sandbox.BeginPlacingItem);
@@ -84,10 +97,10 @@ namespace Halobellum.UI
         }
 
         /// <summary>
-        /// Below BattleHud's speed controls and result line: centred, or moved right if that would run under the Items panel.
+        /// Below BattleHud's speed controls: centred, or moved right if that would run under the Items panel.
         /// A window too narrow for that keeps it centred, and the Items panel goes under the bar instead.
         /// </summary>
-        private static Rect TopBar(float width)
+        public static Rect TopBar(float width)
         {
             float centred = width * 0.5f - BarHalfWidth, clearOfItems = ItemsLeft + ItemsWidth + 6f;
             bool roomToMove = clearOfItems + 2f * BarHalfWidth + ItemsLeft <= width;
@@ -97,6 +110,17 @@ namespace Halobellum.UI
         /// <summary>The top of the Items panel: the top-left corner, or under the top bar when the two can't sit side by side. `screenWidth` is in HUD units.</summary>
         public static float ItemsPanelTop(float screenWidth) =>
             TopBar(screenWidth).x < ItemsLeft + ItemsWidth + 6f ? BarTop + BarHeight + 8f : 8f;
+
+        /// <summary>
+        /// Where the Items panel goes: its usual place, or, when the squad stats window (null if none is showing) would cover that, to the right of that
+        /// window, level with the unit list. On the narrowest windows it may then lie over the left edge of the list, where only the units' pictures are.
+        /// </summary>
+        public static Rect ItemsPanel(float screenWidth, float panelHeight, Rect? statsWindow)
+        {
+            var usual = new Rect(ItemsLeft, ItemsPanelTop(screenWidth), ItemsWidth, panelHeight);
+            if (statsWindow == null || !usual.Overlaps(statsWindow.Value)) return usual;
+            return new Rect(statsWindow.Value.xMax + 6f, BelowTheMessage, ItemsWidth, panelHeight);
+        }
 
         private void DrawTopBar(float width)
         {
@@ -215,7 +239,7 @@ namespace Halobellum.UI
         {
             PlacedSquad squad = sandbox.SelectedPlacedSquad;
             if (squad == null || sandbox.IsPlacing) return;
-            var panel = new Rect(width * 0.5f - 260f, height - 70f, 520f, 58f);
+            var panel = new Rect(SquadStatsWindow.ActionsPanelLeft(width, 520f), height - 70f, 520f, 58f);
             Panel(panel);
             if (GUI.Button(new Rect(panel.x + 10f, panel.y + 10f, 160f, 38f), "Move (M)", _button)) sandbox.BeginMoving(squad);
             if (GUI.Button(new Rect(panel.x + 180f, panel.y + 10f, 160f, 38f), "Turn (R)", _button)) sandbox.ToggleRotation();

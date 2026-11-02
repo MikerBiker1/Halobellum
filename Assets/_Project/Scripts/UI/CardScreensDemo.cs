@@ -7,6 +7,8 @@
 // with the squad window. Then the sandbox's unit list at 16:9, 4:3 and 5:4. It logs how many labels could not fit at any size for each screen
 // (CardScreens.TextThatDidNotFit), which screens have text that only fits at the smallest size (CardScreens.TextAtTheFloor), and a summary line at the end. To reach those screens it builds offers and sets the match's phase
 // directly: this never happens in a real match. Looks only: nothing here runs without the flag.
+// With "-cardsDemoLayout" as well it takes only the pictures for the narrowest windows and largest UI scales (without saving any of them): the deployment bar and shop, the Sandbox with its
+// squad window at its tallest next to the Items panel, and its result line; and for each faction a close look at the selection ring on that faction's ground.
 // Depends on: CardScreens, Halobellum.Presentation (MatchController, BattleController, SquadSelection), Halobellum.Economy, UnityEngine.
 
 using System;
@@ -27,6 +29,12 @@ namespace Halobellum.UI
     public sealed class CardScreensDemo : MonoBehaviour
     {
         public const string Flag = "-cardsDemo";
+        private const string LayoutFlag = "-cardsDemoLayout";
+
+        private static readonly (int w, int h, float ui)[] LayoutSizes =
+        {
+            (1280, 1024, 1.25f), (1280, 1024, 1.1f), (1024, 768, 1.25f), (1024, 768, 1.1f), (1600, 900, 1.25f), (1920, 1080, 1f),
+        };
 
         private static readonly (int w, int h, bool full)[] Sizes =
         {
@@ -63,6 +71,13 @@ namespace Halobellum.UI
             _match = FindFirstObjectByType<MatchController>();
             if (_match == null) { Debug.LogError("Card demo: no MatchController in this scene."); yield break; }
             while (_match.Match == null) yield return null;
+
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), LayoutFlag) >= 0)
+            {
+                yield return LayoutPictures();
+                Application.Quit();
+                yield break;
+            }
 
             foreach ((int w, int h, bool full) in Sizes)
             {
@@ -134,6 +149,78 @@ namespace Halobellum.UI
 
             Debug.Log($"Card demo finished: {_totalDidNotFit} screens have text that did not fit, {_totalAtTheFloor} have text only at the smallest size.\n" + string.Join("\n", _problems));
             Application.Quit();
+        }
+
+        /// <summary>The pictures of "-cardsDemoLayout".</summary>
+        private IEnumerator LayoutPictures()
+        {
+            foreach (string faction in new[] { "UNSC", "Covenant", "Flood" })
+            {
+                Screen.SetResolution(1600, 900, FullScreenMode.Windowed);
+                _match.NewMatch(1);
+                SetDraft(5);
+                _match.ChooseDraft(_match.Match.PlayerDraft.FindIndex(c => c.Faction.Name == faction));
+                yield return new WaitForSecondsRealtime(1f);
+                BattleController field = _match.GetComponent<BattleController>();
+                SquadSelection chosen = _match.GetComponent<SquadSelection>();
+                chosen.Select(field.Simulation.Squads[0].Id);
+                yield return new WaitForSecondsRealtime(0.3f);
+                yield return Shot(faction + "_ring_field");
+                Camera view = Camera.main;
+                var control = view.GetComponent<BattleCameraController>();
+                control.enabled = false;
+                Vector3 body = _match.GetComponent<UnitViewManager>().WorldPosition(chosen.FirstAliveOfSelected());
+                view.transform.position = body + new Vector3(0f, 16f, -10f);
+                view.transform.LookAt(body);
+                yield return Shot(faction + "_ring_close");
+                control.enabled = true;
+            }
+
+            foreach ((int w, int h, float ui) in LayoutSizes)
+            {
+                Screen.SetResolution(w, h, FullScreenMode.Windowed);
+                GameSettings.UseUiScaleForThisRun(ui);
+                yield return new WaitForSecondsRealtime(0.8f);
+                _match.NewMatch(1);
+                _match.ChooseDraft(0);
+                yield return Shot($"{w}x{h}_ui{ui * 100f:0}_deployment");
+            }
+
+            SceneManager.LoadScene("Sandbox");
+            yield return new WaitForSecondsRealtime(1.5f);
+            var sandbox = FindFirstObjectByType<SandboxController>();
+            var battle = sandbox.GetComponent<BattleController>();
+            var selection = sandbox.GetComponent<SquadSelection>();
+            UnitStats wordiest = sandbox.Units.Select(u => u.Stats).OrderByDescending(u => u.TechUpgrades?.Length ?? 0).ThenBy(u => u.Cost).First();
+            UnitStats enemy = sandbox.Units.Select(u => u.Stats).First();
+            sandbox.AddSquad(Team.A, wordiest);
+            sandbox.AddSquad(Team.B, enemy);
+            yield return null;
+            int squad = battle.Simulation.Squads[0].Id;
+            foreach ((int w, int h, float ui) in LayoutSizes)
+            {
+                Screen.SetResolution(w, h, FullScreenMode.Windowed);
+                GameSettings.UseUiScaleForThisRun(ui);
+                selection.Select(-1);
+                yield return new WaitForSecondsRealtime(0.8f);
+                yield return Shot($"{w}x{h}_ui{ui * 100f:0}_sandbox");
+                selection.Select(squad);
+                yield return new WaitForSecondsRealtime(0.3f);
+                yield return Shot($"{w}x{h}_ui{ui * 100f:0}_sandbox_squad");
+            }
+            selection.Select(-1);
+            battle.Speed = 16f;
+            sandbox.Run();
+            float limit = Time.realtimeSinceStartup + 120f;
+            while (!battle.Simulation.IsFinished && Time.realtimeSinceStartup < limit) yield return null;
+            foreach ((int w, int h, float ui) in LayoutSizes)
+            {
+                Screen.SetResolution(w, h, FullScreenMode.Windowed);
+                GameSettings.UseUiScaleForThisRun(ui);
+                yield return new WaitForSecondsRealtime(0.8f);
+                yield return Shot($"{w}x{h}_ui{ui * 100f:0}_sandbox_result");
+            }
+            Debug.Log("Card demo's layout pictures finished.");
         }
 
         private IEnumerator Shot(string name)

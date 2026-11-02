@@ -16,7 +16,7 @@ namespace Halobellum.Presentation
 {
     public sealed class TerrainGallery : MonoBehaviour
     {
-        private const string Flag = "-terrainGallery";
+        private const string Flag = GameFlow.TerrainGalleryFlag;
 
         private string _folder;
         private SandboxController _sandbox;

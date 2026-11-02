@@ -4,7 +4,7 @@
 // The test tools (-autoplay, -sandboxDemo, -gallery, -crowdBench, -benchmark) skip the menu: as soon as MainMenu has loaded, the
 // game moves on to the scene that tool has always run in. -menuDemo stays in the menu, because the menu is what it tests.
 // It also remembers where the Sandbox was opened from, for the Sandbox's Back button.
-// Depends on: GamePause, SandboxAutoplay and CrowdBenchmark (their flags), UnityEngine.
+// Depends on: GamePause, SandboxAutoplay, CrowdBenchmark and AudioCapture (their flags), UnityEngine.
 
 using System;
 using UnityEngine;
@@ -24,6 +24,7 @@ namespace Halobellum.Presentation
         public const string BenchmarkFlag = "-benchmark";
         public const string MenuDemoFlag = "-menuDemo";
         public const string CardsDemoFlag = "-cardsDemo";
+        public const string TerrainGalleryFlag = "-terrainGallery";
 
         private static string _lastScene;
 
@@ -45,8 +46,8 @@ namespace Halobellum.Presentation
         /// <summary>True for a run that measures frame times: nothing extra is attached to the scene.</summary>
         public static bool IsMeasuring(string[] args) => Has(args, CrowdBenchmark.Flag) || Has(args, BenchmarkFlag);
 
-        /// <summary>True for a run of any test tool: the player's saved window and VSync settings are left alone.</summary>
-        public static bool IsTestRun(string[] args) => DirectSceneFor(args) != null || Has(args, MenuDemoFlag);
+        /// <summary>True for a run of any test tool: the player's saved settings are not applied, and nothing it does reaches them (GameSettings).</summary>
+        public static bool IsTestRun(string[] args) => DirectSceneFor(args) != null || Has(args, MenuDemoFlag) || Has(args, TerrainGalleryFlag) || Has(args, AudioCapture.Flag);
 
         /// <summary>True if the command line itself sets the window, which the saved settings must not undo.</summary>
         public static bool CommandLineSetsWindow(string[] args)

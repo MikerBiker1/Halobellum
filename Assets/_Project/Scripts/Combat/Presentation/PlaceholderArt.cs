@@ -15,7 +15,10 @@ namespace Halobellum.Presentation
 {
     public static class PlaceholderArt
     {
-        private static Mesh _capsule, _cube, _sphere, _quad, _cylinder;
+        /// <summary>How far out the hole of the selection ring reaches, as a share of the ring's radius.</summary>
+        public const float RingHoleShare = 0.72f;
+
+        private static Mesh _capsule, _cube, _sphere, _quad, _cylinder, _ring;
         private static Material _baseMaterial;
         private static readonly Dictionary<Color, Material> Materials = new Dictionary<Color, Material>();
 
@@ -24,6 +27,34 @@ namespace Halobellum.Presentation
         public static Mesh Sphere { get { Load(); return _sphere; } }
         public static Mesh Quad { get { Load(); return _quad; } }
         public static Mesh Cylinder { get { Load(); return _cylinder; } }
+        /// <summary>A flat ring 1 unit across, lying on its XZ plane and facing up.</summary>
+        public static Mesh Ring => _ring != null ? _ring : (_ring = MakeRing(48));
+
+        private static Mesh MakeRing(int segments)
+        {
+            var vertices = new Vector3[segments * 2];
+            var normals = new Vector3[segments * 2];
+            var triangles = new int[segments * 6];
+            for (int i = 0; i < segments; i++)
+            {
+                float angle = i * Mathf.PI * 2f / segments;
+                var way = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * 0.5f;
+                vertices[i * 2] = way;
+                vertices[i * 2 + 1] = way * RingHoleShare;
+                normals[i * 2] = normals[i * 2 + 1] = Vector3.up;
+                int next = (i + 1) % segments;
+                int t = i * 6;
+                triangles[t] = i * 2;
+                triangles[t + 1] = i * 2 + 1;
+                triangles[t + 2] = next * 2;
+                triangles[t + 3] = next * 2;
+                triangles[t + 4] = i * 2 + 1;
+                triangles[t + 5] = next * 2 + 1;
+            }
+            var mesh = new Mesh { name = "Selection Ring", vertices = vertices, normals = normals, triangles = triangles };
+            mesh.RecalculateBounds();
+            return mesh;
+        }
 
         /// <summary>A shared material of this color (one per color, reused by every caller).</summary>
         public static Material MaterialFor(Color color)

@@ -47,10 +47,10 @@ namespace Halobellum.Core
             if (HealthMultiplier != 1f) parts.Add(Percent(HealthMultiplier) + " health");
             if (DamageMultiplier != 1f) parts.Add(Percent(DamageMultiplier) + " damage");
             if (FireRateMultiplier != 1f) parts.Add(Percent(FireRateMultiplier) + " rate of fire");
-            if (RangeBonus != 0f) parts.Add($"+{RangeBonus:0.#} m range");
+            if (RangeBonus != 0f) parts.Add($"+{RangeBonus:0.#}\u00A0m range");
             if (MoveSpeedMultiplier != 1f) parts.Add(Percent(MoveSpeedMultiplier) + " speed");
             if (ShieldBonus != 0f) parts.Add($"+{ShieldBonus:0} shield");
-            if (SplashRadiusBonus != 0f) parts.Add($"+{SplashRadiusBonus:0.#} m splash");
+            if (SplashRadiusBonus != 0f) parts.Add($"+{SplashRadiusBonus:0.#}\u00A0m splash");
             if (ConeDegreesBonus != 0f) parts.Add($"+{ConeDegreesBonus:0} degree cone");
             if (AirDamageMultiplier != 1f) parts.Add(Percent(AirDamageMultiplier) + " damage vs air");
             if (AddsAirTargeting) parts.Add("can shoot air");

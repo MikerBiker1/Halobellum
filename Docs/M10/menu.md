@@ -66,9 +66,30 @@ To change the picture, edit `MainMenuSceneBuilder.cs` and run it (Halobellum > S
 - **Camera shake** has one saved value, `Fx.CameraShake`. `CameraShake.ShakeEnabled` reads and writes `GameSettings.CameraShake`, so the K key, the Settings row and Reset to defaults all agree. The old key, `Halobellum.CameraShake`, is no longer read, so a K-off saved before this comes back on once.
 - **Sound stops with Esc.** `BattleAudio` pauses battle sounds, including the engine and hover hums, when `GamePause.IsPaused` is true, as well as at battle speed 0. Music and UI sounds go on.
 - **The Sandbox sets its own factions.** `SandboxController.FactionOf(team)` is the faction most of a side's squads belong to. A sub-faction's unit counts as its parent faction, a placeholder counts as nothing, and an empty side is UNSC for blue and Covenant for red. It sets `BattleFactions` when the scene starts and before each change of army is shown. The map, sound and weapon looks all read that, so nothing is left over from a match.
-- **Items panel.** At widths under 1820 the Sandbox bar moves right to clear it. Under 1480 the bar can't fit there, so it stays centred and the panel goes under it, level with the unit list. There, at UI scale 110% or more, a tall squad stats window can overlap the panel's lower part.
+- **Items panel.** At widths under 1820 the Sandbox bar moves right to clear it. Under 1480 the bar can't fit there, so it stays centred and the panel goes under it, level with the unit list. A squad stats window tall enough to cover the panel now pushes it to the right of that window (second round, below).
 - **The menu Scarab.** Its glowing materials keep 12% of their colour and 3% of their glow, and the glow rises to 50% only as the beam fires. It uses a property block found at run time, so the shared materials, the battle's Scarab and the scene file are untouched. The numbers are `panelColorShare`, `panelGlowAtRest` and `panelGlowFiring` on `MenuBackdrop`.
 - **Small ones.** The round and match summaries show bases at 0 or more. The match bar's title has a taller rect: Unity's clip moves up with the theme's text shift, and at small scales it cut the bottom of the letters.
+
+## Second round of fixes
+
+- **AI difficulty label.** It stands past the left side's darkness, on the bright picture, so it now uses the bright text colour on a little darkness of its own that fades to the right.
+- **Spell text.** "1 x ODST squad lands" and "2 x ODST squads land". A number and its unit are joined by a non-breaking space (U+00A0) in the text of spells, items and techs, so that a line never ends between "8" and "m". A test measures this with all five fonts the game uses: the space is the same width as a plain one, and a wrapped line does not break at it.
+- **Shop order.** A sub-faction's own units come first in the shop list (`MatchHud.FillShopRows`). This is the display only: `PlayerState.Roster` keeps its order, and with it unlocking, prices, card offers and the AI stay the same.
+- **Result line in the Sandbox.** BattleHud drew it at y 90, and the Sandbox's bar is at y 92. `SandboxHud` now tells BattleHud to draw it under the bar (y 164). The speed controls did not move. A message during a battle moves one line further down. The Battle scene keeps the line where it was, and the Match scene has its own result screen.
+- **Selection marker.** A flat ring instead of a solid disc (`PlaceholderArt.Ring`), open in the middle and a little wider than the disc was, 2.6 times the collision radius. It is only a mesh in the view.
+- **Narrow windows.** `HudScale.ScaleFor` lets the UI scale grow only as far as 1140 units still fit across the window, so that the 1120-unit bars of the Match and the Sandbox stay on the screen. The only size in the Settings list that this changes is 125% at 5:4, which shows as about 118%. Every HUD of a scene uses the same scale, so they stay in line.
+- **Items panel and squad window.** See above. On the narrowest windows (under about 1200 units) the moved panel lies over the left edge of the unit list, where the pictures and the "Place for" label are. The Place buttons stay clear.
+- **Squad actions and squad window.** Under about 1420 units wide the Move / Turn / Sell panel ran under the stats window and hid the Move button. It now stands right of that window (`SquadStatsWindow.ActionsPanelLeft`), in the Match and the Sandbox.
+
+## Test tools and the player's settings
+
+A run of a test tool (`GameFlow.IsTestRun`: all the flags below, `-menuDemo`, `-terrainGallery` and `-audioCapture`) holds every setting in memory (`GameSettings.HoldInMemory`). It starts from what was saved. What it changes, by a click or a K press that reaches its window, lasts only as long as the run, and Reset to defaults and Save do nothing to the saved values. Each such run ends its log with `GameSettings: this test run changed no saved setting.`, or a `PROBLEM` line with both sets of values. The AI's difficulty goes through `GameSettings.Difficulty` too. The PlayMode tests hold the settings the same way (`SettingsHeldForTests`), and the menu's EditMode tests do it test by test. Tests that are about PlayerPrefs itself still touch it and put back what they found, including that a key did not exist: two in `MenuFlowTests` and one in `AudioSceneTests`, because the sound code reads the saved volumes itself. So a volume changed in a test run is not heard.
+
+The tests run in the editor, whose PlayerPrefs are under another key from a built game's: `Software\Unity\UnityEditor\DefaultCompany\Halobellum`, against `Software\DefaultCompany\Halobellum`. They never touched the built game's settings, only those used when pressing Play in the editor.
+
+Unity's own remembered window can't be held from inside the game. It lies in the same PlayerPrefs (`Screenmanager Resolution Width` and so on), and `-screen-width` and the like are already written there when the first game code runs: a run at 1280x1024 logged those values at BeforeSceneLoad. Unity also remembers each later change of window size. So any run of a normal build with a window size on its command line changes what the next start of that build uses.
+
+The way out is a build of its own. `PlayerBuildTool` with `-testBuild` names the product "Halobellum Test", and Unity keeps PlayerPrefs and the window under the product's name (`Software\DefaultCompany\Halobellum Test`), so a run of that build can't reach the player's key at all. Only the build differs: the project's name goes back afterward. Workstream builds that are only for test tools should use it.
 
 ## Test tools
 
@@ -80,7 +101,10 @@ Every tool skips the menu and goes where it went before:
 | `-crowdBench` | Match, and waits for it |
 | `-sandboxDemo`, with or without `-gallery` | Sandbox |
 | `-benchmark` | Battle (it used to do nothing in a normal build, whose first scene was Match) |
+| `-cardsDemo` | Match |
 
-A test run also leaves the saved window, quality and VSync alone, and `-screen-width` and so on are never undone by saved settings.
+A test run also doesn't apply the saved window, quality and VSync, and `-screen-width` and so on are never undone by saved settings. `-terrainGallery` finds its own way to the Sandbox, and is now counted as a test run too.
 
-New: **`-menuDemo <folder>`** walks through the whole flow, presses the real buttons and a real Esc through the Input System, and saves a picture of each screen. It writes `MenuDemo: ok: ...` or `MenuDemo: PROBLEM: ...` to the player's log, and ends with `MenuDemo finished: N problems.` Add `-menuDemoShort` for the menu and settings only, or `-menuDemoWatch` to press nothing and log what clicks sent from outside the game do. It never changes a setting, because PlayerPrefs are shared by every build on the PC.
+`-cardsDemo <folder> -cardsDemoLayout` takes only the pictures of the narrow windows and large UI scales (5:4 and 4:3 at 110% and 125%): the deployment bar and shop, the Sandbox with and without a squad window, and its result line. It also takes each faction's selection ring on that faction's ground.
+
+New: **`-menuDemo <folder>`** walks through the whole flow, presses the real buttons and a real Esc through the Input System, and saves a picture of each screen. It writes `MenuDemo: ok: ...` or `MenuDemo: PROBLEM: ...` to the player's log, and ends with `MenuDemo finished: N problems.` Add `-menuDemoShort` for the menu and settings only, or `-menuDemoWatch` to press nothing and log what clicks sent from outside the game do. It never changes a saved setting, because PlayerPrefs are shared by every build on the PC.

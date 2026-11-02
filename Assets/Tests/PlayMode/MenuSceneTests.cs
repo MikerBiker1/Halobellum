@@ -124,8 +124,7 @@ namespace Halobellum.Tests
         [UnityTest]
         public IEnumerator LeavingTheMenu_ReachesAWorkingDraft_WithTheChosenDifficulty()
         {
-            int stored = PlayerPrefs.GetInt(MatchController.DifficultyKey, (int)AiDifficulty.Normal);
-            PlayerPrefs.SetInt(MatchController.DifficultyKey, (int)AiDifficulty.Hard);
+            GameSettings.Difficulty = AiDifficulty.Hard;
             yield return SceneManager.LoadSceneAsync(GameFlow.MainMenuScene, LoadSceneMode.Single);
             yield return null;
 
@@ -137,7 +136,7 @@ namespace Halobellum.Tests
             Assert.AreEqual(AiDifficulty.Hard, match.Difficulty);
             Assert.IsTrue(match.ChooseDraft(0).Ok);
             Assert.AreEqual(MatchPhase.Deployment, match.Match.Phase);
-            PlayerPrefs.SetInt(MatchController.DifficultyKey, stored);
+            GameSettings.Difficulty = AiDifficulty.Normal;
         }
 
         [UnityTest]
