@@ -86,6 +86,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 353d851cb080a420b6755e2d5c6b62a5, type: 2}
   - {fileID: 11400000, guid: 8e787041f2dbb72c72d7c75304b54bc8, type: 2}
   prefab: {fileID: 5837781860510122022, guid: 6bf481148443ec9408c301ea109a225d, type: 3}
+  keepsOwnMaterials: 0
   bakedBody: {fileID: 0}
   strongAgainst: 'Slow, grouped units'
   weakAgainst: 'Flankers, air'

@@ -133,7 +133,9 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 - [ ] **A fallen Marine's rifle** stands upright through the floor. Is that acceptable for now?
 - [ ] **A real rifle, when you like:** generate one in Meshy as a separate unrigged FBX and put it in `Assets/_Project/Art/Imported/Models/Marine/`. It replaces the boxes.
 
-## 2026-11-01 (M9): download the Scorpion
+## 2026-11-01 (M9): models
 
-- [ ] **Log in to CGTrader and download** [the free Sci-Fi Tank](https://www.cgtrader.com/free-3d-models/vehicle/sci-fi-vehicle/armored-light-tank-inspired-by-halo-scorpion). It needs an account, and I don't log in for you.
-- [ ] **Put the .blend file in `E:\AI\Halobellum\Art_Source\Scorpion\`** (unzip it if needed). That folder is outside `Assets` on purpose, and Git ignores it, because the file is huge. Then tell me.
+- [ ] **Look at the Scorpion in the Sandbox.** Is the paint too dark? Is 6.2 m the right size next to Marines?
+- [ ] **Animate the Grunt.** `Art_Source/Grunt/grunt.glb` has textures and a rig, but no animations. Upload it to Meshy's Animate tool, pick the same clips as the Marine, and export an FBX.
+- [ ] **Keep adding models** to `Art_Source/<UnitName>/`, with a note of where each came from.
+

@@ -86,6 +86,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fd950abb020e37f409a23522894d5147, type: 2}
   - {fileID: 11400000, guid: 733fca66d70b9ba41043efdb9a1295eb, type: 2}
   prefab: {fileID: 3760541862654182237, guid: 5eed2f1c115c1fc4f8bb9dcd850d8f8c, type: 3}
+  keepsOwnMaterials: 0
   bakedBody: {fileID: 0}
   strongAgainst: 'Tanks, heavy units'
   weakAgainst: 'Chaff swarms, flankers'

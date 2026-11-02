@@ -1,0 +1,3 @@
+Source: found by the project owner: https://sketchfab.com/3d-models/scorpion-42a37126ded5424980bb870b4be7a3eb#download
+The original had no textures. Plain paint per part was added in Blender, and its blank decal parts removed (Art_Source/Scorpion/scorpion_painted.glb).
+Used by: Prefabs/Units/Scorpion_Model.prefab (decision D44).

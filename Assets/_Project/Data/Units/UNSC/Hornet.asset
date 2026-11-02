@@ -108,6 +108,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ae80eba8c13463de96f45e7f4cd2f2ab, type: 2}
   - {fileID: 11400000, guid: 6bcceb419abe17999cb28979f4aafc9c, type: 2}
   prefab: {fileID: 6683260802297900999, guid: d0452180e823bc64cafbb877f53a53fd, type: 3}
+  keepsOwnMaterials: 0
   bakedBody: {fileID: 0}
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air

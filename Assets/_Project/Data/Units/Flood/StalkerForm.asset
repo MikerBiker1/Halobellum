@@ -86,6 +86,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5150b3773445547fb12d314c019d8881, type: 2}
   - {fileID: 11400000, guid: 32ae200db525e65002431cd43837d91e, type: 2}
   prefab: {fileID: 2244507251472126464, guid: f365e5b4967f47548b0c1e782cec42fd, type: 3}
+  keepsOwnMaterials: 0
   bakedBody: {fileID: 0}
   strongAgainst: 'Artillery, DPS'
   weakAgainst: 'Chaff clear, tanks'

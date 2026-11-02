@@ -79,6 +79,18 @@ namespace Halobellum.Presentation
             return null;
         }
 
+        /// <summary>True if this unit type's prefab is a real model that keeps its own materials.</summary>
+        public bool KeepsOwnMaterials(UnitStats stats)
+        {
+            if (stats == null) return false;
+            if (_unitSources.TryGetValue(stats, out UnitDefinition definition)) return definition.keepsOwnMaterials;
+            foreach (var pair in _unitSources)
+            {
+                if (pair.Key.Name == stats.Name) return pair.Value.keepsOwnMaterials;
+            }
+            return false;
+        }
+
         /// <summary>The baked animated model of this unit type, or null if it has none yet.</summary>
         public BakedBodyDefinition BakedBodyFor(UnitStats stats)
         {

@@ -479,6 +479,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-01 | M8 confirmed. M9 runs in approved stages: pipeline proof, combat identity, balance, models and animation, effects and audio, menus | Agreed with the project owner (D40) |
 | 2026-11-01 | Animated models are baked into textures and keep one object per body; animations cross-fade in the shader on battle time; real models keep their own colours | Measured, then approved by the project owner (D41, D42, D43) |
 | 2026-11-01 | Health bars tell the sides apart: green for your units, red for the enemy's | Per the project owner (D43) |
+| 2026-11-01 | Unanimated real models, such as vehicles, are scaled prefabs with their parts kept separate and their own materials | Per the project owner (D44) |
 
 ## 18. Assumptions to confirm
 

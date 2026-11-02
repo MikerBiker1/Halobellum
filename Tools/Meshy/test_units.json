@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Grunt",
+    "prompt": "Small stocky alien foot soldier, about the height of a child, wide flat head with six small dark eyes, thick short limbs, leathery teal skin, simple rust-red padded armor and a small rectangular satchel on the back, original sci-fi creature design, game asset",
+    "polycount": 5000,
+    "pose": "t-pose",
+    "height": 1.2
+  },
+  {
+    "name": "Elite",
+    "prompt": "Tall slender alien warrior, smooth elongated insect-like head with large amber eyes, long arms and legs, layered bronze and deep violet ceremonial plate armor with a short cape, imposing upright posture, original sci-fi creature design, game asset",
+    "polycount": 5000,
+    "pose": "t-pose",
+    "height": 2.4
+  },
+  {
+    "name": "Scorpion",
+    "prompt": "Futuristic military battle tank, low wide angular hull in olive green and grey, one long continuous track along each side, a central turret with a single cannon, clean hard surface design, original sci-fi vehicle, game asset",
+    "polycount": 15000,
+    "parts": "hull, turret with cannon, left track, right track"
+  }
+]

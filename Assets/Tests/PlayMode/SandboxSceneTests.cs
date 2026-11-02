@@ -136,6 +136,23 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
+        public IEnumerator Scorpion_KeepsItsPaint_AndItsBarSitsAboveIt_ButItsGhostIsGrey()
+        {
+            yield return LoadSandbox();
+            _sandbox.AddSquad(Team.A, Unit("Scorpion"));
+            _sandbox.AddSquad(Team.B, Unit("Scorpion"));
+            yield return null;
+
+            var views = _battle.GetComponent<UnitViewManager>();
+            SimUnit blue = _battle.Simulation.Units.First(u => u.Team == Team.A);
+            SimUnit red = _battle.Simulation.Units.First(u => u.Team == Team.B);
+            Assert.AreEqual(views.BodyColor(blue), views.BodyColor(red), "Both sides have the same paint.");
+            Assert.Greater(views.BodyColor(blue).g, views.BodyColor(blue).b, "Olive, not the side's blue.");
+            Transform bar = GameObject.Find("Units").transform.GetChild(blue.Id).Find("Health Bar");
+            Assert.Greater(bar.localPosition.y, 2f, "Above the top of the real model.");
+        }
+
+        [UnityTest]
         public IEnumerator PlacesOnBothSides_OnEachSidesGrid()
         {
             yield return LoadSandbox();

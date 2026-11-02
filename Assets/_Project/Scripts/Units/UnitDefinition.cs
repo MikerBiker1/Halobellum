@@ -110,6 +110,8 @@ namespace Halobellum.Units
         [Header("Visuals")]
         [Tooltip("Model shown for each body in the battle scene. Tinted with the side's color. If empty, a placeholder primitive sized from the collision radius is used.")]
         public GameObject prefab;
+        [Tooltip("The prefab is a real model: it keeps its own materials instead of being tinted with the side's colour (D43, D44).")]
+        public bool keepsOwnMaterials;
         [Tooltip("Its real animated model, baked for big armies (D41). If set, it is shown instead of the prefab.")]
         public BakedBodyDefinition bakedBody;
 

@@ -5,7 +5,7 @@
 // the placement, runs the battle at 4x, saves screenshots at 3 s and 12 s of battle time and at the
 // end, then quits. It also saves one screenshot of a lobbed shot at the top of its arc, one of a beam
 // charging, one of a beam firing, one of the first infected body and one of a unit leaping, the first time each is
-// seen, and close-ups of a baked Marine: held still, in the middle of a cross-fade, running, shooting and falling.
+// seen, close-ups of a baked Marine: held still, in the middle of a cross-fade, running, shooting and falling, and one of the Scorpion.
 // Depends on: SandboxController, BattleController, Halobellum.Combat, Halobellum.Core, UnityEngine.
 
 using System;
@@ -55,7 +55,7 @@ namespace Halobellum.Presentation
             _battle = GetComponent<BattleController>();
         }
 
-        private bool _closeUp, _shotFade;
+        private bool _closeUp, _shotFade, _shotTank;
         private readonly HashSet<BakedAnimation> _shotRoles = new HashSet<BakedAnimation>();
 
         /// <summary>Freezes the battle, looks closely at a body, saves a screenshot, and carries on.</summary>
@@ -70,7 +70,8 @@ namespace Halobellum.Presentation
             view.transform.GetPositionAndRotation(out Vector3 position, out Quaternion rotation);
             var body = new Vector3(unit.Position.X, 0.8f, unit.Position.Y);
             var facing = new Vector3(unit.Facing.X, 0f, unit.Facing.Y);
-            view.transform.position = body + facing * 3.4f + Vector3.Cross(facing, Vector3.up) * 1.8f + Vector3.up * 0.9f;
+            float reach = Mathf.Max(1f, unit.Radius); // Further back for something big.
+            view.transform.position = body + (facing * 3.4f + Vector3.Cross(facing, Vector3.up) * 1.8f + Vector3.up * 0.9f) * reach;
             view.transform.LookAt(body);
             yield return null;
             Shot(name);
@@ -89,6 +90,12 @@ namespace Halobellum.Presentation
             var views = GetComponent<UnitViewManager>();
             foreach (SimUnit unit in simulation.Units)
             {
+                if (unit.Stats.Name == "Scorpion" && !_shotTank && unit.IsAlive && simulation.ElapsedSeconds >= 1f)
+                {
+                    _shotTank = true;
+                    StartCoroutine(CloseUp(unit, "scorpion"));
+                    return;
+                }
                 if (unit.Stats.Name != "Marine") continue;
                 BakedAnimation? playing = views.PlayingAnimation(unit);
                 if (playing == null) return;

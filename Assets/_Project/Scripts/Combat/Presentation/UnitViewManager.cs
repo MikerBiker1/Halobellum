@@ -78,6 +78,8 @@ namespace Halobellum.Presentation
             public BakedAnimation Playing;
             public Vector4 AnimNow;
             public Color BakedTint;
+            /// <summary>Height of a real model's top above its base, or 0 for a body sized from its unit's data.</summary>
+            public float ModelTop;
             /// <summary>Battle time at which a fallen body disappears.</summary>
             public float HideAt;
             /// <summary>The tiny forms of a pack, or null for a normal body.</summary>
@@ -186,13 +188,21 @@ namespace Halobellum.Presentation
                 if (!member.IsAlive || member.Id < 0 || member.Id >= _views.Count) continue;
                 Vector3 body = _views[member.Id].Root.transform.position;
                 sum += body;
-                top = Mathf.Max(top, body.y + PlaceholderArt.BodyHeight(member.Stats) * (member.Stats.IsAir ? 0.5f : 1f));
+                top = Mathf.Max(top, body.y + BodyTop(_views[member.Id]));
                 alive++;
             }
             if (alive == 0) return false;
             Vector3 centre = sum / alive;
             position = new Vector3(centre.x, top, centre.z);
             return true;
+        }
+
+        /// <summary>How far above its base the top of a body is.</summary>
+        private static float BodyTop(View view)
+        {
+            UnitStats stats = view.Unit.Stats;
+            if (view.ModelTop > 0f) return view.ModelTop;
+            return PlaceholderArt.BodyHeight(stats) * (stats.IsAir ? 0.5f : 1f);
         }
 
         /// <summary>World position of a unit's base as of the latest tick (air units at flying height).</summary>
@@ -362,7 +372,15 @@ namespace Halobellum.Presentation
                 // The unit's prefab (from its data asset), tinted with the side's color.
                 GameObject body = Instantiate(prefab, view.Root.transform, false);
                 body.name = "Body";
-                foreach (Renderer renderer in body.GetComponentsInChildren<Renderer>()) renderer.sharedMaterial = teamMaterial;
+                // A real model keeps its own paint, except as a grey ghost.
+                if (!_battle.KeepsOwnMaterials(stats.InfectedFrom ?? stats) || GhostTeam == unit.Team)
+                {
+                    foreach (Renderer renderer in body.GetComponentsInChildren<Renderer>()) renderer.sharedMaterial = teamMaterial;
+                }
+                else
+                {
+                    foreach (Renderer renderer in body.GetComponentsInChildren<Renderer>()) view.ModelTop = Mathf.Max(view.ModelTop, renderer.bounds.max.y - view.Root.transform.position.y);
+                }
             }
             else
             {
@@ -373,7 +391,7 @@ namespace Halobellum.Presentation
 
             // Health bar: a dark background quad and a colored fill quad that shrinks from the right.
             view.BarWidth = Mathf.Max(healthBarMinWidth, stats.CollisionRadius * 2f);
-            float barY = (stats.IsAir ? PlaceholderArt.BodyHeight(stats) * 0.5f : PlaceholderArt.BodyHeight(stats)) + healthBarGap;
+            float barY = BodyTop(view) + healthBarGap;
             view.Bar = new GameObject("Health Bar").transform;
             view.Bar.SetParent(view.Root.transform, false);
             view.Bar.localPosition = new Vector3(0f, barY, 0f);
@@ -615,7 +633,7 @@ namespace Halobellum.Presentation
                     if (!member.IsAlive || member.Id < 0 || member.Id >= _views.Count) continue;
                     Vector3 position = _views[member.Id].Root.transform.position;
                     sum += position;
-                    top = Mathf.Max(top, position.y + PlaceholderArt.BodyHeight(member.Stats) * (member.Stats.IsAir ? 0.5f : 1f));
+                    top = Mathf.Max(top, position.y + BodyTop(_views[member.Id]));
                     widest = Mathf.Max(widest, member.Stats.CollisionRadius);
                     alive++;
                 }

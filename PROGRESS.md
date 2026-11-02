@@ -104,7 +104,7 @@ Order agreed with the owner (D40), with approval between stages:
   - [x] Crowd benchmark: baked animation draws 1200 bodies in 1.53 ms a frame, normal animation in 12.64 ms (D41)
   - [x] The Marine, a real model made with Meshy, in the game: baker, cross-fades, death, placeholder rifle; 1200 of them in 2.00 ms a frame (D42)
   - [x] Real models keep their colours, black rifle, green and red health bars (D43); the owner approved the Marine's animations
-  - [ ] One vehicle, to learn how a model with moving parts comes in: the Scorpion with animated tracks (waiting for its download)
+  - [x] One vehicle: the owner's Scorpion, painted, sized and in the game, not animated, by the owner's choice (D44)
   - [ ] Sound on a real unit
 - [ ] Combat identity (Pass 1): every weapon behaves as intended, with placeholder effects and sounds
 - [ ] Balance pass

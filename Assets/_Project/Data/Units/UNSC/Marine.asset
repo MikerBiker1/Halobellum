@@ -86,6 +86,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 073353503a5bd4f3515e6cea24b5947d, type: 2}
   - {fileID: 11400000, guid: b8f5a5b202723a76d0ac19975684d35e, type: 2}
   prefab: {fileID: 6296176566533914639, guid: 2aa85012d6ad165469c26b164c71e977, type: 3}
+  keepsOwnMaterials: 0
   bakedBody: {fileID: 11400000, guid: b0c8cf6e56807b5c59eb2c7f1e0dc9b2, type: 2}
   strongAgainst: Single-target DPS
   weakAgainst: Chaff clear
