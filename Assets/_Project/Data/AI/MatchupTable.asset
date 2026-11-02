@@ -170,6 +170,15 @@ MonoBehaviour:
   - attacker: Marine
     defender: Blisterback
     winRate: 0
+  - attacker: Marine
+    defender: Skitterer
+    winRate: 1
+  - attacker: Marine
+    defender: Goliath
+    winRate: 0
+  - attacker: Marine
+    defender: Hunter Captain
+    winRate: 1
   - attacker: Flamethrower Trooper
     defender: Marine
     winRate: 0
@@ -325,6 +334,15 @@ MonoBehaviour:
     winRate: 1
   - attacker: Flamethrower Trooper
     defender: Blisterback
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Skitterer
+    winRate: 1
+  - attacker: Flamethrower Trooper
+    defender: Goliath
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Hunter Captain
     winRate: 0
   - attacker: Warthog
     defender: Marine
@@ -482,6 +500,15 @@ MonoBehaviour:
   - attacker: Warthog
     defender: Blisterback
     winRate: 1
+  - attacker: Warthog
+    defender: Skitterer
+    winRate: 0
+  - attacker: Warthog
+    defender: Goliath
+    winRate: 0
+  - attacker: Warthog
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Gauss Warthog
     defender: Marine
     winRate: 0
@@ -637,6 +664,15 @@ MonoBehaviour:
     winRate: 1
   - attacker: Gauss Warthog
     defender: Blisterback
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Skitterer
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Goliath
+    winRate: 1
+  - attacker: Gauss Warthog
+    defender: Hunter Captain
     winRate: 0
   - attacker: Scorpion
     defender: Marine
@@ -794,6 +830,15 @@ MonoBehaviour:
   - attacker: Scorpion
     defender: Blisterback
     winRate: 0
+  - attacker: Scorpion
+    defender: Skitterer
+    winRate: 1
+  - attacker: Scorpion
+    defender: Goliath
+    winRate: 1
+  - attacker: Scorpion
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Wolverine
     defender: Marine
     winRate: 0.9
@@ -950,6 +995,15 @@ MonoBehaviour:
   - attacker: Wolverine
     defender: Blisterback
     winRate: 1
+  - attacker: Wolverine
+    defender: Skitterer
+    winRate: 0
+  - attacker: Wolverine
+    defender: Goliath
+    winRate: 0
+  - attacker: Wolverine
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Hornet
     defender: Marine
     winRate: 0
@@ -1105,6 +1159,15 @@ MonoBehaviour:
     winRate: 0
   - attacker: Hornet
     defender: Blisterback
+    winRate: 1
+  - attacker: Hornet
+    defender: Skitterer
+    winRate: 1
+  - attacker: Hornet
+    defender: Goliath
+    winRate: 1
+  - attacker: Hornet
+    defender: Hunter Captain
     winRate: 1
   - attacker: Archer Missile Pod
     defender: Marine
@@ -1262,6 +1325,15 @@ MonoBehaviour:
   - attacker: Archer Missile Pod
     defender: Blisterback
     winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Skitterer
+    winRate: 1
+  - attacker: Archer Missile Pod
+    defender: Goliath
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Pelican
     defender: Marine
     winRate: 0
@@ -1418,6 +1490,15 @@ MonoBehaviour:
   - attacker: Pelican
     defender: Blisterback
     winRate: 0.4
+  - attacker: Pelican
+    defender: Skitterer
+    winRate: 0
+  - attacker: Pelican
+    defender: Goliath
+    winRate: 0
+  - attacker: Pelican
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Spartan
     defender: Marine
     winRate: 0
@@ -1573,6 +1654,15 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan
     defender: Blisterback
+    winRate: 1
+  - attacker: Spartan
+    defender: Skitterer
+    winRate: 0
+  - attacker: Spartan
+    defender: Goliath
+    winRate: 1
+  - attacker: Spartan
+    defender: Hunter Captain
     winRate: 1
   - attacker: Mantis
     defender: Marine
@@ -1730,6 +1820,15 @@ MonoBehaviour:
   - attacker: Mantis
     defender: Blisterback
     winRate: 1
+  - attacker: Mantis
+    defender: Skitterer
+    winRate: 0.2
+  - attacker: Mantis
+    defender: Goliath
+    winRate: 0
+  - attacker: Mantis
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Elephant
     defender: Marine
     winRate: 1
@@ -1886,6 +1985,15 @@ MonoBehaviour:
   - attacker: Elephant
     defender: Blisterback
     winRate: 1
+  - attacker: Elephant
+    defender: Skitterer
+    winRate: 1
+  - attacker: Elephant
+    defender: Goliath
+    winRate: 1
+  - attacker: Elephant
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Grunt
     defender: Marine
     winRate: 0
@@ -2042,6 +2150,15 @@ MonoBehaviour:
   - attacker: Grunt
     defender: Blisterback
     winRate: 0
+  - attacker: Grunt
+    defender: Skitterer
+    winRate: 1
+  - attacker: Grunt
+    defender: Goliath
+    winRate: 1
+  - attacker: Grunt
+    defender: Hunter Captain
+    winRate: 1
   - attacker: Fuel Rod Grunt
     defender: Marine
     winRate: 1
@@ -2198,6 +2315,15 @@ MonoBehaviour:
   - attacker: Fuel Rod Grunt
     defender: Blisterback
     winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Skitterer
+    winRate: 1
+  - attacker: Fuel Rod Grunt
+    defender: Goliath
+    winRate: 1
+  - attacker: Fuel Rod Grunt
+    defender: Hunter Captain
+    winRate: 0.5
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Marine
     winRate: 0
@@ -2354,6 +2480,15 @@ MonoBehaviour:
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Blisterback
     winRate: 0
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Skitterer
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Goliath
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Hunter Captain
+    winRate: 1
   - attacker: 'Jackal (Shield)'
     defender: Marine
     winRate: 0
@@ -2509,6 +2644,15 @@ MonoBehaviour:
     winRate: 1
   - attacker: 'Jackal (Shield)'
     defender: Blisterback
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Skitterer
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Goliath
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Hunter Captain
     winRate: 0
   - attacker: Ghost
     defender: Marine
@@ -2666,6 +2810,15 @@ MonoBehaviour:
   - attacker: Ghost
     defender: Blisterback
     winRate: 0.8
+  - attacker: Ghost
+    defender: Skitterer
+    winRate: 0
+  - attacker: Ghost
+    defender: Goliath
+    winRate: 0
+  - attacker: Ghost
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Elite
     defender: Marine
     winRate: 0
@@ -2822,6 +2975,15 @@ MonoBehaviour:
   - attacker: Elite
     defender: Blisterback
     winRate: 1
+  - attacker: Elite
+    defender: Skitterer
+    winRate: 1
+  - attacker: Elite
+    defender: Goliath
+    winRate: 0
+  - attacker: Elite
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Wraith
     defender: Marine
     winRate: 1
@@ -2978,6 +3140,15 @@ MonoBehaviour:
   - attacker: Wraith
     defender: Blisterback
     winRate: 0
+  - attacker: Wraith
+    defender: Skitterer
+    winRate: 1
+  - attacker: Wraith
+    defender: Goliath
+    winRate: 0
+  - attacker: Wraith
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Vampire
     defender: Marine
     winRate: 0
@@ -3134,6 +3305,15 @@ MonoBehaviour:
   - attacker: Vampire
     defender: Blisterback
     winRate: 1
+  - attacker: Vampire
+    defender: Skitterer
+    winRate: 0
+  - attacker: Vampire
+    defender: Goliath
+    winRate: 1
+  - attacker: Vampire
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Banshee
     defender: Marine
     winRate: 0
@@ -3290,6 +3470,15 @@ MonoBehaviour:
   - attacker: Banshee
     defender: Blisterback
     winRate: 1
+  - attacker: Banshee
+    defender: Skitterer
+    winRate: 1
+  - attacker: Banshee
+    defender: Goliath
+    winRate: 1
+  - attacker: Banshee
+    defender: Hunter Captain
+    winRate: 1
   - attacker: Hunter Pair
     defender: Marine
     winRate: 1
@@ -3445,6 +3634,15 @@ MonoBehaviour:
     winRate: 1
   - attacker: Hunter Pair
     defender: Blisterback
+    winRate: 0
+  - attacker: Hunter Pair
+    defender: Skitterer
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Goliath
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Hunter Captain
     winRate: 0
   - attacker: Zealot
     defender: Marine
@@ -3602,6 +3800,15 @@ MonoBehaviour:
   - attacker: Zealot
     defender: Blisterback
     winRate: 0.2
+  - attacker: Zealot
+    defender: Skitterer
+    winRate: 0
+  - attacker: Zealot
+    defender: Goliath
+    winRate: 1
+  - attacker: Zealot
+    defender: Hunter Captain
+    winRate: 1
   - attacker: Scarab
     defender: Marine
     winRate: 1
@@ -3757,6 +3964,15 @@ MonoBehaviour:
     winRate: 1
   - attacker: Scarab
     defender: Blisterback
+    winRate: 1
+  - attacker: Scarab
+    defender: Skitterer
+    winRate: 1
+  - attacker: Scarab
+    defender: Goliath
+    winRate: 1
+  - attacker: Scarab
+    defender: Hunter Captain
     winRate: 1
   - attacker: Infection Forms
     defender: Marine
@@ -3914,6 +4130,15 @@ MonoBehaviour:
   - attacker: Infection Forms
     defender: Blisterback
     winRate: 0
+  - attacker: Infection Forms
+    defender: Skitterer
+    winRate: 1
+  - attacker: Infection Forms
+    defender: Goliath
+    winRate: 0
+  - attacker: Infection Forms
+    defender: Hunter Captain
+    winRate: 1
   - attacker: Carrier Form
     defender: Marine
     winRate: 0.1
@@ -4070,6 +4295,15 @@ MonoBehaviour:
   - attacker: Carrier Form
     defender: Blisterback
     winRate: 0
+  - attacker: Carrier Form
+    defender: Skitterer
+    winRate: 1
+  - attacker: Carrier Form
+    defender: Goliath
+    winRate: 0
+  - attacker: Carrier Form
+    defender: Hunter Captain
+    winRate: 1
   - attacker: Combat Form
     defender: Marine
     winRate: 0
@@ -4226,6 +4460,15 @@ MonoBehaviour:
   - attacker: Combat Form
     defender: Blisterback
     winRate: 0
+  - attacker: Combat Form
+    defender: Skitterer
+    winRate: 1
+  - attacker: Combat Form
+    defender: Goliath
+    winRate: 0
+  - attacker: Combat Form
+    defender: Hunter Captain
+    winRate: 1
   - attacker: Stalker Form
     defender: Marine
     winRate: 0
@@ -4381,6 +4624,15 @@ MonoBehaviour:
     winRate: 1
   - attacker: Stalker Form
     defender: Blisterback
+    winRate: 0
+  - attacker: Stalker Form
+    defender: Skitterer
+    winRate: 0
+  - attacker: Stalker Form
+    defender: Goliath
+    winRate: 0
+  - attacker: Stalker Form
+    defender: Hunter Captain
     winRate: 0
   - attacker: Pure Form Ranged
     defender: Marine
@@ -4538,6 +4790,15 @@ MonoBehaviour:
   - attacker: Pure Form Ranged
     defender: Blisterback
     winRate: 0
+  - attacker: Pure Form Ranged
+    defender: Skitterer
+    winRate: 1
+  - attacker: Pure Form Ranged
+    defender: Goliath
+    winRate: 0
+  - attacker: Pure Form Ranged
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Swarm Form
     defender: Marine
     winRate: 0
@@ -4694,6 +4955,15 @@ MonoBehaviour:
   - attacker: Swarm Form
     defender: Blisterback
     winRate: 1
+  - attacker: Swarm Form
+    defender: Skitterer
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Goliath
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Pure Form Tank
     defender: Marine
     winRate: 1
@@ -4850,6 +5120,15 @@ MonoBehaviour:
   - attacker: Pure Form Tank
     defender: Blisterback
     winRate: 0.9
+  - attacker: Pure Form Tank
+    defender: Skitterer
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Goliath
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Seeder
     defender: Marine
     winRate: 0
@@ -5006,6 +5285,15 @@ MonoBehaviour:
   - attacker: Seeder
     defender: Blisterback
     winRate: 0
+  - attacker: Seeder
+    defender: Skitterer
+    winRate: 0
+  - attacker: Seeder
+    defender: Goliath
+    winRate: 1
+  - attacker: Seeder
+    defender: Hunter Captain
+    winRate: 1
   - attacker: Infected Pelican
     defender: Marine
     winRate: 0
@@ -5162,6 +5450,15 @@ MonoBehaviour:
   - attacker: Infected Pelican
     defender: Blisterback
     winRate: 0
+  - attacker: Infected Pelican
+    defender: Skitterer
+    winRate: 1
+  - attacker: Infected Pelican
+    defender: Goliath
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Hunter Captain
+    winRate: 1
   - attacker: Infected Phantom
     defender: Marine
     winRate: 0
@@ -5317,6 +5614,15 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infected Phantom
     defender: Blisterback
+    winRate: 1
+  - attacker: Infected Phantom
+    defender: Skitterer
+    winRate: 0
+  - attacker: Infected Phantom
+    defender: Goliath
+    winRate: 0
+  - attacker: Infected Phantom
+    defender: Hunter Captain
     winRate: 1
   - attacker: Flood Abomination
     defender: Marine
@@ -5474,6 +5780,15 @@ MonoBehaviour:
   - attacker: Flood Abomination
     defender: Blisterback
     winRate: 0
+  - attacker: Flood Abomination
+    defender: Skitterer
+    winRate: 1
+  - attacker: Flood Abomination
+    defender: Goliath
+    winRate: 0
+  - attacker: Flood Abomination
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Spartan Sniper
     defender: Marine
     winRate: 0
@@ -5630,6 +5945,15 @@ MonoBehaviour:
   - attacker: Spartan Sniper
     defender: Blisterback
     winRate: 1
+  - attacker: Spartan Sniper
+    defender: Skitterer
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Goliath
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Hunter Captain
+    winRate: 0.6
   - attacker: Spartan Heavy Weapons
     defender: Marine
     winRate: 0.1
@@ -5786,6 +6110,15 @@ MonoBehaviour:
   - attacker: Spartan Heavy Weapons
     defender: Blisterback
     winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Skitterer
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Goliath
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Spartan Grenadier
     defender: Marine
     winRate: 1
@@ -5941,6 +6274,15 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan Grenadier
     defender: Blisterback
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Skitterer
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Goliath
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Hunter Captain
     winRate: 0
   - attacker: Spartan CQB
     defender: Marine
@@ -6098,6 +6440,15 @@ MonoBehaviour:
   - attacker: Spartan CQB
     defender: Blisterback
     winRate: 1
+  - attacker: Spartan CQB
+    defender: Skitterer
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Goliath
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Spartan Fireteam
     defender: Marine
     winRate: 0
@@ -6254,6 +6605,15 @@ MonoBehaviour:
   - attacker: Spartan Fireteam
     defender: Blisterback
     winRate: 1
+  - attacker: Spartan Fireteam
+    defender: Skitterer
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Goliath
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Gremlin
     defender: Marine
     winRate: 0
@@ -6410,6 +6770,15 @@ MonoBehaviour:
   - attacker: Gremlin
     defender: Blisterback
     winRate: 1
+  - attacker: Gremlin
+    defender: Skitterer
+    winRate: 0
+  - attacker: Gremlin
+    defender: Goliath
+    winRate: 1
+  - attacker: Gremlin
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Cobra
     defender: Marine
     winRate: 0
@@ -6566,6 +6935,15 @@ MonoBehaviour:
   - attacker: Cobra
     defender: Blisterback
     winRate: 0
+  - attacker: Cobra
+    defender: Skitterer
+    winRate: 0
+  - attacker: Cobra
+    defender: Goliath
+    winRate: 1
+  - attacker: Cobra
+    defender: Hunter Captain
+    winRate: 0.2
   - attacker: Rhino
     defender: Marine
     winRate: 1
@@ -6721,6 +7099,15 @@ MonoBehaviour:
     winRate: 1
   - attacker: Rhino
     defender: Blisterback
+    winRate: 0
+  - attacker: Rhino
+    defender: Skitterer
+    winRate: 1
+  - attacker: Rhino
+    defender: Goliath
+    winRate: 0
+  - attacker: Rhino
+    defender: Hunter Captain
     winRate: 0
   - attacker: Grizzly
     defender: Marine
@@ -6878,6 +7265,15 @@ MonoBehaviour:
   - attacker: Grizzly
     defender: Blisterback
     winRate: 0
+  - attacker: Grizzly
+    defender: Skitterer
+    winRate: 1
+  - attacker: Grizzly
+    defender: Goliath
+    winRate: 0
+  - attacker: Grizzly
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Sparrowhawk
     defender: Marine
     winRate: 0
@@ -7033,6 +7429,15 @@ MonoBehaviour:
     winRate: 0
   - attacker: Sparrowhawk
     defender: Blisterback
+    winRate: 1
+  - attacker: Sparrowhawk
+    defender: Skitterer
+    winRate: 0
+  - attacker: Sparrowhawk
+    defender: Goliath
+    winRate: 1
+  - attacker: Sparrowhawk
+    defender: Hunter Captain
     winRate: 1
   - attacker: Shortsword
     defender: Marine
@@ -7190,6 +7595,15 @@ MonoBehaviour:
   - attacker: Shortsword
     defender: Blisterback
     winRate: 0
+  - attacker: Shortsword
+    defender: Skitterer
+    winRate: 1
+  - attacker: Shortsword
+    defender: Goliath
+    winRate: 1
+  - attacker: Shortsword
+    defender: Hunter Captain
+    winRate: 1
   - attacker: Vulture
     defender: Marine
     winRate: 1
@@ -7345,6 +7759,15 @@ MonoBehaviour:
     winRate: 0
   - attacker: Vulture
     defender: Blisterback
+    winRate: 1
+  - attacker: Vulture
+    defender: Skitterer
+    winRate: 0
+  - attacker: Vulture
+    defender: Goliath
+    winRate: 0
+  - attacker: Vulture
+    defender: Hunter Captain
     winRate: 1
   - attacker: Condor Gunship
     defender: Marine
@@ -7502,6 +7925,15 @@ MonoBehaviour:
   - attacker: Condor Gunship
     defender: Blisterback
     winRate: 1
+  - attacker: Condor Gunship
+    defender: Skitterer
+    winRate: 0
+  - attacker: Condor Gunship
+    defender: Goliath
+    winRate: 0
+  - attacker: Condor Gunship
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Chopper
     defender: Marine
     winRate: 0
@@ -7657,6 +8089,15 @@ MonoBehaviour:
     winRate: 1
   - attacker: Chopper
     defender: Blisterback
+    winRate: 0
+  - attacker: Chopper
+    defender: Skitterer
+    winRate: 0
+  - attacker: Chopper
+    defender: Goliath
+    winRate: 0
+  - attacker: Chopper
+    defender: Hunter Captain
     winRate: 0
   - attacker: Brute Grenadier
     defender: Marine
@@ -7814,6 +8255,15 @@ MonoBehaviour:
   - attacker: Brute Grenadier
     defender: Blisterback
     winRate: 0
+  - attacker: Brute Grenadier
+    defender: Skitterer
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Goliath
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Hunter Captain
+    winRate: 1
   - attacker: Marauder
     defender: Marine
     winRate: 1
@@ -7970,6 +8420,15 @@ MonoBehaviour:
   - attacker: Marauder
     defender: Blisterback
     winRate: 0.2
+  - attacker: Marauder
+    defender: Skitterer
+    winRate: 1
+  - attacker: Marauder
+    defender: Goliath
+    winRate: 0
+  - attacker: Marauder
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Reaver
     defender: Marine
     winRate: 0
@@ -8126,6 +8585,15 @@ MonoBehaviour:
   - attacker: Reaver
     defender: Blisterback
     winRate: 1
+  - attacker: Reaver
+    defender: Skitterer
+    winRate: 0
+  - attacker: Reaver
+    defender: Goliath
+    winRate: 0
+  - attacker: Reaver
+    defender: Hunter Captain
+    winRate: 0
   - attacker: Blisterback
     defender: Marine
     winRate: 1
@@ -8282,3 +8750,507 @@ MonoBehaviour:
   - attacker: Blisterback
     defender: Reaver
     winRate: 0
+  - attacker: Blisterback
+    defender: Skitterer
+    winRate: 1
+  - attacker: Blisterback
+    defender: Goliath
+    winRate: 1
+  - attacker: Blisterback
+    defender: Hunter Captain
+    winRate: 0
+  - attacker: Skitterer
+    defender: Marine
+    winRate: 0
+  - attacker: Skitterer
+    defender: Flamethrower Trooper
+    winRate: 0
+  - attacker: Skitterer
+    defender: Warthog
+    winRate: 1
+  - attacker: Skitterer
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Skitterer
+    defender: Scorpion
+    winRate: 0
+  - attacker: Skitterer
+    defender: Wolverine
+    winRate: 1
+  - attacker: Skitterer
+    defender: Hornet
+    winRate: 0
+  - attacker: Skitterer
+    defender: Archer Missile Pod
+    winRate: 0
+  - attacker: Skitterer
+    defender: Pelican
+    winRate: 1
+  - attacker: Skitterer
+    defender: Spartan
+    winRate: 1
+  - attacker: Skitterer
+    defender: Mantis
+    winRate: 0.8
+  - attacker: Skitterer
+    defender: Elephant
+    winRate: 0
+  - attacker: Skitterer
+    defender: Grunt
+    winRate: 0
+  - attacker: Skitterer
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: Skitterer
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Skitterer
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Skitterer
+    defender: Ghost
+    winRate: 1
+  - attacker: Skitterer
+    defender: Elite
+    winRate: 0
+  - attacker: Skitterer
+    defender: Wraith
+    winRate: 0
+  - attacker: Skitterer
+    defender: Vampire
+    winRate: 1
+  - attacker: Skitterer
+    defender: Banshee
+    winRate: 0
+  - attacker: Skitterer
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Skitterer
+    defender: Zealot
+    winRate: 1
+  - attacker: Skitterer
+    defender: Scarab
+    winRate: 0
+  - attacker: Skitterer
+    defender: Infection Forms
+    winRate: 0
+  - attacker: Skitterer
+    defender: Carrier Form
+    winRate: 0
+  - attacker: Skitterer
+    defender: Combat Form
+    winRate: 0
+  - attacker: Skitterer
+    defender: Stalker Form
+    winRate: 1
+  - attacker: Skitterer
+    defender: Pure Form Ranged
+    winRate: 0
+  - attacker: Skitterer
+    defender: Swarm Form
+    winRate: 1
+  - attacker: Skitterer
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: Skitterer
+    defender: Seeder
+    winRate: 1
+  - attacker: Skitterer
+    defender: Infected Pelican
+    winRate: 0
+  - attacker: Skitterer
+    defender: Infected Phantom
+    winRate: 1
+  - attacker: Skitterer
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Skitterer
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Skitterer
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Skitterer
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Skitterer
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Skitterer
+    defender: Spartan Fireteam
+    winRate: 1
+  - attacker: Skitterer
+    defender: Gremlin
+    winRate: 1
+  - attacker: Skitterer
+    defender: Cobra
+    winRate: 1
+  - attacker: Skitterer
+    defender: Rhino
+    winRate: 0
+  - attacker: Skitterer
+    defender: Grizzly
+    winRate: 0
+  - attacker: Skitterer
+    defender: Sparrowhawk
+    winRate: 1
+  - attacker: Skitterer
+    defender: Shortsword
+    winRate: 0
+  - attacker: Skitterer
+    defender: Vulture
+    winRate: 1
+  - attacker: Skitterer
+    defender: Condor Gunship
+    winRate: 1
+  - attacker: Skitterer
+    defender: Chopper
+    winRate: 1
+  - attacker: Skitterer
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Skitterer
+    defender: Marauder
+    winRate: 0
+  - attacker: Skitterer
+    defender: Reaver
+    winRate: 1
+  - attacker: Skitterer
+    defender: Blisterback
+    winRate: 0
+  - attacker: Skitterer
+    defender: Goliath
+    winRate: 0
+  - attacker: Skitterer
+    defender: Hunter Captain
+    winRate: 0
+  - attacker: Goliath
+    defender: Marine
+    winRate: 1
+  - attacker: Goliath
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Goliath
+    defender: Warthog
+    winRate: 1
+  - attacker: Goliath
+    defender: Gauss Warthog
+    winRate: 0
+  - attacker: Goliath
+    defender: Scorpion
+    winRate: 0
+  - attacker: Goliath
+    defender: Wolverine
+    winRate: 1
+  - attacker: Goliath
+    defender: Hornet
+    winRate: 0
+  - attacker: Goliath
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Goliath
+    defender: Pelican
+    winRate: 1
+  - attacker: Goliath
+    defender: Spartan
+    winRate: 0
+  - attacker: Goliath
+    defender: Mantis
+    winRate: 1
+  - attacker: Goliath
+    defender: Elephant
+    winRate: 0
+  - attacker: Goliath
+    defender: Grunt
+    winRate: 0
+  - attacker: Goliath
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: Goliath
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Goliath
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Goliath
+    defender: Ghost
+    winRate: 1
+  - attacker: Goliath
+    defender: Elite
+    winRate: 1
+  - attacker: Goliath
+    defender: Wraith
+    winRate: 1
+  - attacker: Goliath
+    defender: Vampire
+    winRate: 0
+  - attacker: Goliath
+    defender: Banshee
+    winRate: 0
+  - attacker: Goliath
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Goliath
+    defender: Zealot
+    winRate: 0
+  - attacker: Goliath
+    defender: Scarab
+    winRate: 0
+  - attacker: Goliath
+    defender: Infection Forms
+    winRate: 1
+  - attacker: Goliath
+    defender: Carrier Form
+    winRate: 1
+  - attacker: Goliath
+    defender: Combat Form
+    winRate: 1
+  - attacker: Goliath
+    defender: Stalker Form
+    winRate: 1
+  - attacker: Goliath
+    defender: Pure Form Ranged
+    winRate: 1
+  - attacker: Goliath
+    defender: Swarm Form
+    winRate: 1
+  - attacker: Goliath
+    defender: Pure Form Tank
+    winRate: 1
+  - attacker: Goliath
+    defender: Seeder
+    winRate: 0
+  - attacker: Goliath
+    defender: Infected Pelican
+    winRate: 1
+  - attacker: Goliath
+    defender: Infected Phantom
+    winRate: 1
+  - attacker: Goliath
+    defender: Flood Abomination
+    winRate: 1
+  - attacker: Goliath
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Goliath
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Goliath
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Goliath
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Goliath
+    defender: Spartan Fireteam
+    winRate: 1
+  - attacker: Goliath
+    defender: Gremlin
+    winRate: 0
+  - attacker: Goliath
+    defender: Cobra
+    winRate: 0
+  - attacker: Goliath
+    defender: Rhino
+    winRate: 1
+  - attacker: Goliath
+    defender: Grizzly
+    winRate: 1
+  - attacker: Goliath
+    defender: Sparrowhawk
+    winRate: 0
+  - attacker: Goliath
+    defender: Shortsword
+    winRate: 0
+  - attacker: Goliath
+    defender: Vulture
+    winRate: 1
+  - attacker: Goliath
+    defender: Condor Gunship
+    winRate: 1
+  - attacker: Goliath
+    defender: Chopper
+    winRate: 1
+  - attacker: Goliath
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Goliath
+    defender: Marauder
+    winRate: 1
+  - attacker: Goliath
+    defender: Reaver
+    winRate: 1
+  - attacker: Goliath
+    defender: Blisterback
+    winRate: 0
+  - attacker: Goliath
+    defender: Skitterer
+    winRate: 1
+  - attacker: Goliath
+    defender: Hunter Captain
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Marine
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Warthog
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Scorpion
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Wolverine
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Hornet
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Pelican
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Spartan
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Mantis
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Elephant
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Grunt
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Fuel Rod Grunt
+    winRate: 0.5
+  - attacker: Hunter Captain
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Ghost
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Elite
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Wraith
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Vampire
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Banshee
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Hunter Pair
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Zealot
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Scarab
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Infection Forms
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Carrier Form
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Combat Form
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Stalker Form
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Pure Form Ranged
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Swarm Form
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Pure Form Tank
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Seeder
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Infected Pelican
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Infected Phantom
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Flood Abomination
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Spartan Sniper
+    winRate: 0.4
+  - attacker: Hunter Captain
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Spartan Fireteam
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Gremlin
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Cobra
+    winRate: 0.8
+  - attacker: Hunter Captain
+    defender: Rhino
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Grizzly
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Sparrowhawk
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Shortsword
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Vulture
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Condor Gunship
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Chopper
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Marauder
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Reaver
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Blisterback
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Skitterer
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Goliath
+    winRate: 1

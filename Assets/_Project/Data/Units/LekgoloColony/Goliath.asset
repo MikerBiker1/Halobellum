@@ -1,0 +1,122 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48a24a6f0743ea50b653bb6800d1d896, type: 3}
+  m_Name: Goliath
+  m_EditorClassIdentifier: 
+  unitName: Goliath
+  role: 3
+  tier: 3
+  unlockCost: 250
+  squadSize: 1
+  cost: 500
+  baseDamage: 250
+  maxHealth: 2200
+  armorType: 2
+  maxShield: 0
+  shieldRegenPerSecond: 0
+  moveSpeed: 1.1
+  collisionRadius: 2.4
+  turnTime180: 2.5
+  isAir: 0
+  targetFilter: 0
+  weapons:
+  - weaponName: Fist Slam
+    damagePerShot: 120
+    fireInterval: 2
+    range: 3
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 3.5
+    damageType: 4
+    isAntiArmor: 0
+    canBeBlocked: 0
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+  - weaponName: Fuel Rod Cannon
+    damagePerShot: 55
+    fireInterval: 2.5
+    range: 14
+    minRange: 0
+    projectileSpeed: 30
+    splashRadius: 2
+    damageType: 1
+    isAntiArmor: 0
+    canBeBlocked: 0
+    hasOwnTargetFilter: 1
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+  hasDefenseArc: 1
+  defenseArc:
+    arcDegrees: 240
+    frontDamageMultiplier: 0.7
+    rearDamageMultiplier: 1.5
+    blockChance: 0
+    blockedDamageTypes: 
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
+  reinforcementNeedsUpgrade: 0
+  formsPerBody: 1
+  isFlood: 0
+  infects: 0
+  immuneToInfection: 0
+  selfDestructs: 0
+  seeksDensestCluster: 0
+  deathBurstDamage: 0
+  deathBurstRadius: 0
+  deathBurstDamageType: 0
+  deathBurstAntiArmor: 0
+  deathSpawns: []
+  spawnedUnit: {fileID: 0}
+  spawnedBodies: 0
+  spawnIntervalSeconds: 0
+  auraRadius: 0
+  auraSpeedMultiplier: 1
+  auraHealPerSecondShare: 0
+  lifestealShare: 0
+  leapRange: 0
+  leapSpeed: 0
+  leapCooldownSeconds: 0
+  techUpgrades:
+  - {fileID: 11400000, guid: a0dd02b91aba05353b35fbcf888a43cd, type: 2}
+  - {fileID: 11400000, guid: 8963651bd85ce490f434cac123cd2f89, type: 2}
+  prefab: {fileID: 2038136081938272653, guid: 1944c17a6efe94940af5a1a6cb5b2295, type: 3}
+  keepsOwnMaterials: 0
+  bakedBody: {fileID: 0}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
+  strongAgainst: Chaff clear
+  weakAgainst: Single-target DPS
+  notes: 'Best counters (headless runner, equal cost): Gauss Warthog (100%), Spartan (100%). Two colonies in one suit. Its old job as a building-killer shows as 2.5 times the base damage if it survives a battle. First-pass M10 values, Lekgolo Colony (Docs/M10/subfactions.md).'

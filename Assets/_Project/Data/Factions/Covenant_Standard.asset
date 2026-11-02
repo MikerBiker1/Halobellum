@@ -37,6 +37,12 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 62ca927056fbfddd24672c8fc9053324, type: 2}
     - {fileID: 11400000, guid: 1c66024e41737ce62090f0849764b2cd, type: 2}
     - {fileID: 11400000, guid: 45933187cc8b339c430814f92b0e987e, type: 2}
+  - subFactionName: Lekgolo Colony
+    description: 'Worm colonies in armor: a tough front line that heals itself, and scuttling Skitterers.'
+    exclusiveUnits:
+    - {fileID: 11400000, guid: 313886d58ce2a8b6401c2f0bcdb20b14, type: 2}
+    - {fileID: 11400000, guid: d89c0d6831282aca1768c93e6668d9d1, type: 2}
+    - {fileID: 11400000, guid: da44bff4a932fb55e659036654835d85, type: 2}
   spells:
   - {fileID: 11400000, guid: 24a845a0a64ea7ba8aa2e5b11b160884, type: 2}
   - {fileID: 11400000, guid: 17439d7a16746d79c5dc9837fcf3127a, type: 2}
