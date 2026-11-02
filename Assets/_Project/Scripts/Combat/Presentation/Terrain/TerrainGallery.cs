@@ -137,6 +137,21 @@ namespace Halobellum.Presentation
             Shot(name + "_d_wide");
             yield return new WaitForSecondsRealtime(0.3f);
 
+            // Halfway in on the fight, at the game's pitch: can one see the units on this ground?
+            Vector3 fight = Vector3.zero;
+            int fighters = 0;
+            foreach (Combat.SimUnit unit in _battle.Simulation.Units)
+            {
+                if (!unit.IsAlive) continue;
+                fight += new Vector3(unit.Position.X, 0f, unit.Position.Y);
+                fighters++;
+            }
+            if (fighters > 0) fight /= fighters;
+            view.transform.SetPositionAndRotation(fight + Quaternion.Euler(55f, 0f, 0f) * Vector3.back * 62f, Quaternion.Euler(55f, 0f, 0f));
+            yield return null;
+            Shot(name + "_h_units");
+            yield return new WaitForSecondsRealtime(0.3f);
+
             // Zoomed in on a corner of the floor and what stands beyond it, on Team B's side.
             view.transform.SetPositionAndRotation(new Vector3(60f, 31f, 56f), Quaternion.Euler(55f, 0f, 0f));
             yield return null;

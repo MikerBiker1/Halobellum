@@ -1,5 +1,5 @@
 // TerrainLayout.cs
-// One way of laying out one faction's half of the field (M10): which grounds lie where, what is painted on the floor, what stands around it. Each faction has at least two, and the match seed picks one
+// One way of laying out one faction's half of the field (M10): which grounds lie where, what is painted on the floor, what stands around it. Each faction has three, and the match seed picks one
 // for each side, so that there are more maps. Layouts only draw on a TerrainCanvas; each works on either side of the field, since the canvas says which side it is on.
 // Looks only: nothing here touches the simulation. Depends on: TerrainCanvas, TerrainTheme, BattleFactions, Halobellum.Core (Team), UnityEngine.
 
@@ -113,9 +113,9 @@ namespace Halobellum.Presentation
     /// <summary>Which layouts each faction has, and how a seed picks one.</summary>
     public static class TerrainLayouts
     {
-        private static readonly TerrainLayout[] UnscLayouts = { new FirebaseLayout(), new ColonyLayout() };
-        private static readonly TerrainLayout[] CovenantLayouts = { new SeamFlatsLayout(), new SanctumLayout() };
-        private static readonly TerrainLayout[] FloodLayouts = { new CreepLayout(), new WreckLayout() };
+        private static readonly TerrainLayout[] UnscLayouts = { new FirebaseLayout(), new ColonyLayout(), new QuarryLayout() };
+        private static readonly TerrainLayout[] CovenantLayouts = { new SeamFlatsLayout(), new SanctumLayout(), new CrystalGardenLayout() };
+        private static readonly TerrainLayout[] FloodLayouts = { new CreepLayout(), new WreckLayout(), new HiveLayout() };
 
         public static IReadOnlyList<TerrainLayout> For(string faction)
         {

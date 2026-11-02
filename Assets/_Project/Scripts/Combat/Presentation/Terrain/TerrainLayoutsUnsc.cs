@@ -1,6 +1,6 @@
 // TerrainLayoutsUnsc.cs
-// The UNSC's two layouts (M10). Firebase: a military base: a broken concrete apron with painted lines, gravel roads, barricades, containers, floodlights, huts, a radio mast. Colony: a farming settlement: mown grass with
-// dirt tracks, crop fields, silos, round prefab homes, wind turbines, fences and trees. Original shapes and plain paint: no logos or markings from anywhere.
+// The UNSC's three layouts (M10). Firebase: a military base: a broken concrete apron with painted lines, gravel roads, barricades, containers, floodlights, huts, a radio mast. Colony: a farming settlement: mown grass with
+// dirt tracks, crop fields, silos, round prefab homes, wind turbines, fences and trees. Quarry: a mining site on bare rock under a dusty sun: haul roads, steel road plates, heaps of spoil, gantries and conveyors. Original shapes and plain paint: no logos or markings from anywhere.
 // Looks only. Depends on: TerrainLayout, TerrainProps, TerrainCanvas, UnityEngine.
 
 using System.Collections.Generic;
@@ -366,6 +366,148 @@ namespace Halobellum.Presentation
                 else c.Decals.FlatRect(D, x, z + t * depth, width - 0.6f, 1.1f, 0f, color);
             }
             c.Decals.Uv = Vector2.zero;
+        }
+    }
+
+    public sealed class QuarryLayout : TerrainLayout
+    {
+        private static readonly Color32 Rock = new Color32(126, 116, 100, 0);
+        private static readonly Color32 Spoil = new Color32(110, 92, 70, 0);
+
+        public override string Name => "Quarry";
+        public override float FlatBand => 24f;
+
+        public override TerrainTheme Mood(TerrainTheme theme)
+        {
+            TerrainTheme mood = theme.Clone();
+            mood.SunColor = new Color(1f, 0.92f, 0.78f);
+            mood.SunAngles = new Vector2(48f, -18f);
+            mood.SkyTop = new Color(0.36f, 0.5f, 0.66f);
+            mood.SkyHorizon = new Color(0.85f, 0.74f, 0.58f);
+            mood.FogColor = new Color(0.78f, 0.68f, 0.54f);
+            mood.Haze = new Color(0.8f, 0.68f, 0.5f);
+            mood.HazeAmount = 0.26f;
+            return mood;
+        }
+
+        public override void BaseWeights(float x, float z, float height, float outside, float seedX, float seedZ, out float second, out float third)
+        {
+            float green = TerrainNoise.Fbm((x + seedX) / 50f, (z + seedZ) / 50f, 3);
+            second = TerrainNoise.Smooth(0.62f, 0.72f, green) * TerrainNoise.Smooth(30f, 80f, outside);
+            float rock = TerrainNoise.Fbm((x - seedZ) / 24f, (z + seedX) / 24f, 3);
+            third = TerrainNoise.Smooth(0.42f, 0.5f, rock) * 0.95f;
+        }
+
+        public override void Furnish(TerrainCanvas c, TerrainRandom r)
+        {
+            float W = c.HalfWidth, E = c.EdgeV;
+            var path = new List<Vector2>();
+
+            // Haul roads across the floor: packed dirt with dark ruts.
+            for (int i = 0; i < 4; i++)
+            {
+                float heading = (c.Side > 0 ? 3.14f : 0f) + r.Range(-0.7f, 0.7f);
+                TerrainCanvas.Wander(path, r, new Vector2(r.Range(-W, W), c.Z(E + 20f)), heading, 7f, 16, 0.2f);
+                for (int p = 0; p + 1 < path.Count; p++)
+                    c.PaintLine(path[p].x, path[p].y, path[p + 1].x, path[p + 1].y, 7f, 0, 0.95f);
+                c.KeepOnFloor(path, 1f);
+                c.Decals.Uv = new Vector2(0.2f, 0.4f);
+                if (path.Count >= 2)
+                {
+                    var left = new List<Vector2>();
+                    var right = new List<Vector2>();
+                    for (int p = 0; p < path.Count; p++)
+                    {
+                        Vector2 along = (p + 1 < path.Count ? path[p + 1] : path[p]) - (p > 0 ? path[p - 1] : path[p]);
+                        Vector2 side = new Vector2(along.y, -along.x).normalized * 1.3f;
+                        left.Add(path[p] - side);
+                        right.Add(path[p] + side);
+                    }
+                    c.Decals.FlatRibbon(D, left, 0.9f, 0.9f, C(30, 24, 20, 90), true);
+                    c.Decals.FlatRibbon(D, right, 0.9f, 0.9f, C(30, 24, 20, 90), true);
+                }
+                c.Decals.Uv = Vector2.zero;
+            }
+
+            // Steel road plates, laid in short runs.
+            for (int run = 0; run < 7; run++)
+            {
+                float x = r.Range(-70f, 70f), v = r.Range(18f, 76f);
+                bool along = r.Chance(0.5f);
+                int plates = 2 + r.Int(4);
+                float yaw = r.Range(-6f, 6f);
+                c.Decals.Uv = new Vector2(0f, 0.9f);
+                for (int i = 0; i < plates; i++)
+                {
+                    float px = x + (along ? i * 6.3f : 0f), pv = v + (along ? 0f : i * 6.3f);
+                    if (Mathf.Abs(px) > 76f || pv > 78f) continue;
+                    c.Decals.FlatRect(D, px, c.Z(pv), 6f, 6f, yaw + r.Range(-2f, 2f), Grey(r, 86, 108, 2));
+                }
+                c.Decals.Uv = Vector2.zero;
+            }
+
+            // Spills of rock, oil stains, and survey marks in paint.
+            for (int i = 0; i < 20; i++) c.PaintDisc(r.Range(-76f, 76f), c.Z(r.Range(8f, 78f)), r.Range(3f, 7f), 2, 0.8f);
+            for (int i = 0; i < 22; i++) Stain(c, r.Range(-76f, 76f), c.Z(r.Range(8f, 78f)), r.Range(1.2f, 4f), C(24, 20, 18, 120));
+            c.Decals.Uv = new Vector2(0.3f, 0.2f);
+            for (int i = 0; i < 12; i++)
+            {
+                float x = r.Range(-74f, 74f), z = c.Z(r.Range(10f, 78f));
+                Color32 paint = r.Chance(0.5f) ? C(226, 104, 44) : C(232, 226, 210);
+                c.Decals.FlatRect(D, x, z, 2.2f, 0.28f, 0f, paint);
+                c.Decals.FlatRect(D, x, z, 0.28f, 2.2f, 0f, paint);
+            }
+            c.Decals.Uv = Vector2.zero;
+
+            // Low earth bunds and boulders right around the floor.
+            for (int k = -1; k <= 1; k += 2)
+            {
+                for (float v = 4f; v < E + 5f; v += 9f)
+                    if (r.Chance(0.75f)) TerrainProps.Heap(c, r, k * (W + r.Range(4f, 7f)), c.Z(v), r.Range(2f, 3.6f), Spoil);
+                TerrainProps.LightMast(c, r, k * (W + 11f), c.Z(r.Range(20f, 40f)), 0f, 12f);
+                TerrainProps.LightMast(c, r, k * (W + 11f), c.Z(r.Range(56f, 78f)), 0f, 12f);
+            }
+            for (float x = -W; x < W + 1f; x += 9f)
+                if (r.Chance(0.7f)) TerrainProps.Heap(c, r, x, c.Z(E + (c.Side > 0 ? r.Range(4f, 7f) : r.Range(5.5f, 8f))), r.Range(1.6f, c.Side > 0 ? 3.4f : 2.2f), Spoil);
+
+            // The works.
+            for (int k = -1; k <= 1; k += 2)
+            {
+                TerrainProps.Gantry(c, r, k * (W + 28f), c.Z(r.Range(20f, 70f)), 90f);
+                TerrainProps.Conveyor(c, r, k * (W + 22f), c.Z(r.Range(10f, 80f)), 90f + r.Range(-14f, 14f));
+                TerrainProps.Hut(c, r, k * (W + r.Range(20f, 34f)), c.Z(r.Range(10f, 90f)), r.Int(4) * 90f);
+                TerrainProps.FuelTanks(c, r, k * (W + r.Range(36f, 50f)), c.Z(r.Range(10f, 90f)), r.Int(4) * 90f);
+                for (int i = 0; i < 3; i++)
+                    TerrainProps.Containers(c, r, k * (W + r.Range(16f, 40f)), c.Z(r.Range(6f, E)), r.Range(0f, 360f), 1 + r.Int(2), 1 + r.Int(2));
+            }
+            if (c.Side > 0)
+            {
+                TerrainProps.Gantry(c, r, r.Range(-60f, -20f), c.Z(E + 26f), 0f, 30f, 16f);
+                TerrainProps.Gantry(c, r, r.Range(30f, 70f), c.Z(E + 32f), 0f, 26f, 14f);
+                TerrainProps.Conveyor(c, r, r.Range(-20f, 20f), c.Z(E + 22f), r.Range(-20f, 20f), 34f, 11f);
+                TerrainProps.RadioMast(c, r, r.Range(-100f, 100f), c.Z(E + 40f), 30f);
+            }
+            else
+            {
+                for (int i = 0; i < 4; i++) TerrainProps.Containers(c, r, r.Range(-W, W), c.Z(E + r.Range(18f, 30f)), r.Range(-20f, 20f), 1, 1 + r.Int(2));
+            }
+
+            // Spoil heaps and boulders over the land.
+            for (int i = 0; i < 44; i++)
+            {
+                AroundArena(c, r, 16f, 240f, out float x, out float z);
+                TerrainProps.Heap(c, r, x, z, r.Range(3f, 13f), r.Chance(0.5f) ? Spoil : Rock);
+            }
+            for (int i = 0; i < 40; i++)
+            {
+                AroundArena(c, r, 14f, 200f, out float x, out float z);
+                TerrainProps.Boulder(c, r, x, z, r.Range(0.8f, 3.2f), Rock);
+            }
+            for (int i = 0; i < 24; i++)
+            {
+                AroundArena(c, r, 70f, 240f, out float x, out float z);
+                TerrainProps.Tree(c, r, x, z, r.Range(0.8f, 1.4f));
+            }
         }
     }
 }

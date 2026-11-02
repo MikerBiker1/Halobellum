@@ -1,6 +1,6 @@
 // TerrainLayoutsCovenant.cs
-// The Covenant's two layouts (M10). Seam Flats: smooth violet rock split by thin glowing cyan seams, drifted with pale sand, ringed by crystal shards and curved pylons. Sanctum: a built site: dark polished plates set in great
-// rings with magenta light, with tall curved gates, obelisks and stepped daises around it. All shapes are original and only meant to feel alien.
+// The Covenant's three layouts (M10). Seam Flats: smooth violet rock split by thin glowing cyan seams, drifted with pale sand, ringed by crystal shards and curved pylons. Sanctum: a built site: dark polished plates set in great
+// rings with magenta light, with tall curved gates, obelisks and stepped daises around it. Crystal Garden: pale drifted sand and a slowly turning spiral of seams, in a field of tall crystals, under a cooler sky. All shapes are original and only meant to feel alien.
 // Looks only. Depends on: TerrainLayout, TerrainProps, TerrainCanvas, UnityEngine.
 
 using System.Collections.Generic;
@@ -224,6 +224,109 @@ namespace Halobellum.Presentation
             }
             c.Glow.FlatDisc(G, x, z, radius * 0.11f, radius * 0.11f, new Color32(Magenta.r, Magenta.g, Magenta.b, 70), new Color32(Magenta.r, Magenta.g, Magenta.b, 0), 12);
             c.Glow.Uv = Vector2.zero;
+        }
+    }
+
+    public sealed class CrystalGardenLayout : TerrainLayout
+    {
+        private static readonly Color32 Teal = new Color32(90, 255, 214, 255);
+        private static readonly Color32 CrystalBody = new Color32(70, 120, 150, 80);
+        private static readonly Color32 CrystalTip = new Color32(190, 255, 240, 255);
+        private static readonly Color32 VioletBody = new Color32(110, 90, 170, 80);
+        private static readonly Color32 VioletTip = new Color32(214, 196, 255, 255);
+        private static readonly Color32 Metal = new Color32(86, 84, 118, 0);
+
+        public override string Name => "Crystal Garden";
+
+        public override TerrainTheme Mood(TerrainTheme theme)
+        {
+            TerrainTheme mood = theme.Clone();
+            mood.SkyTop = new Color(0.08f, 0.14f, 0.3f);
+            mood.SkyHorizon = new Color(0.56f, 0.66f, 0.76f);
+            mood.FogColor = new Color(0.5f, 0.58f, 0.68f);
+            mood.Cloud = new Color(0.72f, 0.82f, 0.88f);
+            mood.Haze = new Color(0.66f, 0.76f, 0.84f);
+            mood.SunColor = new Color(0.94f, 0.97f, 1f);
+            mood.SunAngles = new Vector2(38f, -58f);
+            mood.MoteColor = new Color(0.6f, 1f, 0.9f);
+            return mood;
+        }
+
+        public override void BaseWeights(float x, float z, float height, float outside, float seedX, float seedZ, out float second, out float third)
+        {
+            float plates = TerrainNoise.Fbm((x + seedX) / 38f, (z + seedZ) / 38f, 3);
+            second = TerrainNoise.Smooth(0.6f, 0.68f, plates) * 0.8f;
+            float drifts = TerrainNoise.Fbm((x * 0.6f - seedZ) / 40f, (z + seedX) / 26f, 3);
+            third = TerrainNoise.Smooth(0.34f, 0.46f, drifts) * 0.9f; // Mostly sand.
+        }
+
+        public override void Furnish(TerrainCanvas c, TerrainRandom r)
+        {
+            float W = c.HalfWidth, E = c.EdgeV;
+            Color32 groove = C(30, 40, 62);
+            var path = new List<Vector2>();
+
+            // A slowly opening spiral of seams in the middle of the zone, with two smaller ones.
+            Spiral(c, r, 0f, c.Z(44f), 34f, 2.6f, groove, path);
+            for (int k = -1; k <= 1; k += 2) Spiral(c, r, k * 56f, c.Z(r.Range(24f, 60f)), 15f, 1.7f, groove, path);
+
+            // Fine flat shards glinting in the sand.
+            for (int i = 0; i < 110; i++)
+            {
+                float x = r.Range(-78f, 78f), z = c.Z(r.Range(5f, 80f));
+                float length = r.Range(0.5f, 1.8f);
+                float yaw = r.Range(0f, 180f);
+                c.Decals.FlatRect(D, x, z, 0.2f, length, yaw, C(206, 226, 240, 130));
+            }
+            for (int i = 0; i < 14; i++) Stain(c, r.Range(-76f, 76f), c.Z(r.Range(8f, 78f)), r.Range(1.2f, 4f), C(30, 30, 56, 80));
+
+            // The garden: low clusters close by, standing back from the floor, tall ones behind them.
+            for (int i = 0; i < 46; i++)
+            {
+                AroundArena(c, r, 4f, 60f, out float x, out float z);
+                bool violet = r.Chance(0.3f);
+                TerrainProps.CrystalCluster(c, r, x, z, r.Range(0.6f, 1.8f), violet ? VioletTip : CrystalTip, violet ? VioletBody : CrystalBody);
+            }
+            for (int i = 0; i < 34; i++)
+            {
+                AroundArena(c, r, 34f, 340f, out float x, out float z);
+                bool violet = r.Chance(0.3f);
+                TerrainProps.CrystalCluster(c, r, x, z, r.Range(2.2f, 5.5f), violet ? VioletTip : CrystalTip, violet ? VioletBody : CrystalBody);
+            }
+
+            // A few slim markers, and worked stone among the crystals.
+            for (int k = -1; k <= 1; k += 2)
+            {
+                for (float v = 24f; v < E; v += 40f)
+                    TerrainProps.CurvedPylon(c, r, k * (W + 6f), c.Z(v), k * 90f, 13f, Metal, Teal);
+            }
+            for (int i = 0; i < 6; i++)
+            {
+                AroundArena(c, r, 18f, 90f, out float x, out float z);
+                TerrainProps.Obelisk(c, r, x, z, r.Range(6f, 11f), Metal, Teal);
+            }
+            Color32 fin = C(92, 92, 124);
+            for (int i = 0; i < 26; i++)
+            {
+                AroundArena(c, r, 24f, 280f, out float x, out float z);
+                TerrainProps.RockFin(c, r, x, z, r.Range(0f, 360f), r.Range(4f, 15f), fin);
+            }
+        }
+
+        private static void Spiral(TerrainCanvas c, TerrainRandom r, float x, float z, float radius, float turns, Color32 groove, List<Vector2> path)
+        {
+            path.Clear();
+            float start = r.Range(0f, 6.28f);
+            float direction = r.Sign();
+            int steps = Mathf.RoundToInt(turns * 26f);
+            for (int i = 0; i <= steps; i++)
+            {
+                float t = i / (float)steps;
+                float a = start + direction * t * turns * 6.283f;
+                path.Add(new Vector2(x + Mathf.Cos(a) * radius * t, z + Mathf.Sin(a) * radius * t));
+            }
+            c.KeepOnFloor(path, 2f);
+            Seam(c, path, Teal, 0.26f, r.Range(0f, 6.28f), groove);
         }
     }
 }

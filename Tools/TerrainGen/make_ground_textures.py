@@ -294,7 +294,8 @@ def cov_sand():
     ripple = 0.5 + 0.5 * np.sin(phase + warp * 0.11)
     grain = band_noise(62, 80, 400, 0.4)
     broad = band_noise(63, 2, 8)
-    color = ramp(broad, (110, 100, 144), (136, 126, 168), (160, 152, 188))
+    mid = band_noise(65, 18, 70)
+    color = ramp(broad * 0.45 + mid * 0.3 + 0.12, (110, 100, 144), (136, 126, 168), (160, 152, 188))
     color *= (0.94 + 0.11 * ripple)[..., None]
     color *= (0.9 + 0.2 * grain)[..., None]
     shards = blur(dots(64, 1600, 0.7, 2.0), 0.5)
@@ -354,18 +355,18 @@ def flood_sinew():
     veins = np.clip(smooth(0.86, 0.98, vein_a) + smooth(0.88, 0.98, vein_b) * 0.7, 0, 1)
     tissue = band_noise(95, 4, 30)
     fine = band_noise(96, 60, 300, 0.5)
-    color = ramp(tissue, (96, 74, 54), (128, 100, 68), (150, 124, 82), (170, 148, 98))
-    color *= (0.88 + 0.24 * fine)[..., None]
-    color = blend(color, (168, 76, 66), blur(veins, 2.0) * 0.5)
-    color = blend(color, (70, 26, 30), veins * 0.75)
+    color = ramp(tissue, (92, 72, 56), (110, 88, 64), (124, 102, 74), (138, 118, 86))
+    color *= (0.92 + 0.16 * fine)[..., None]
+    color = blend(color, (136, 82, 66), blur(veins, 2.0) * 0.4)
+    color = blend(color, (84, 44, 40), veins * 0.55)
 
-    # Pustules: a pale, wet head in a dark ring.
-    heads = blur(dots(97, 170, 5, 13), 1.6)
-    ring = np.clip(blur(dots(97, 170, 7, 17), 2.2) - heads, 0, 1)
-    color = blend(color, (58, 36, 26), ring * 0.8)
-    color = blend(color, (206, 200, 96), np.clip(heads * 1.1, 0, 1) * 0.9)
+    # Pustules: a pale, wet head in a dark ring. Few and dull: they must not look like units.
+    heads = blur(dots(97, 60, 5, 12), 1.6)
+    ring = np.clip(blur(dots(97, 60, 7, 16), 2.2) - heads, 0, 1)
+    color = blend(color, (70, 48, 36), ring * 0.6)
+    color = blend(color, (172, 164, 96), np.clip(heads * 1.1, 0, 1) * 0.7)
     height = np.clip(tissue * 0.5 + veins * 0.25 + heads * 0.6, 0, 1)
-    color *= relief(height, 12.0)[..., None]
+    color *= relief(height, 7.0)[..., None]
     return color, height
 
 

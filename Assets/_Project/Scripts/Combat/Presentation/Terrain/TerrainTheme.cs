@@ -128,7 +128,7 @@ namespace Halobellum.Presentation
         {
             Faction = BattleFactions.Covenant,
             Layers = new[] { "GroundCovenantRock", "GroundCovenantPlate", "GroundCovenantSand" },
-            Tiles = new Vector3(1f / 30f, 1f / 34f, 1f / 16f),
+            Tiles = new Vector3(1f / 30f, 1f / 34f, 1f / 27f),
             Hills = TerrainHillStyle.Terraced,
             HillHeight = 24f,
             HillSize = 120f,

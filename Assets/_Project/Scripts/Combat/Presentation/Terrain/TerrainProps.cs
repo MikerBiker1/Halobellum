@@ -91,7 +91,7 @@ namespace Halobellum.Presentation
             c.Solid.Box(new Vector3(0f, height + 0.08f, -0.26f), new Vector3(2.7f, 0.5f, 0.06f), C(255, 244, 210, 255));
             Vector3 lamp = new Vector3(x, c.GroundAt(x, z) + height + 0.3f, z);
             c.Glow.Uv = Vector2.zero;
-            c.Glow.Halo(lamp, 7f, C(255, 232, 180, 110));
+            c.Glow.Halo(lamp, 3.2f, C(255, 232, 180, 80));
             c.Decals.FlatDisc(TerrainCanvas.DecalHeight, x, z - 7f, 16f, 16f, new Color32(255, 240, 200, 26), new Color32(255, 240, 200, 0));
             return true;
         }
@@ -364,6 +364,56 @@ namespace Halobellum.Presentation
             return true;
         }
 
+        // ------------------------------------------------------------------ UNSC: the quarry
+
+        /// <summary>A rolling crane: two legged frames and a beam across them. Only for the land to the north and sides.</summary>
+        public static bool Gantry(TerrainCanvas c, TerrainRandom r, float x, float z, float yaw, float span = 22f, float height = 13f)
+        {
+            if (!c.Stand(x, z, span * 0.62f, height + 1f, 0.5f)) return false;
+            c.PlaceSolid(x, z, yaw);
+            Color32 paint = Vary(r, C(196, 150, 44), 0.08f);
+            Color32 steel = C(88, 90, 92);
+            for (int k = -1; k <= 1; k += 2)
+            {
+                float lx = k * span * 0.5f;
+                c.Solid.Box(new Vector3(lx, 0f, 0f), new Vector3(1.6f, 0.6f, 7f), steel);
+                c.Solid.Tube(new[] { new Vector3(lx, 0f, -3f), new Vector3(lx, height, 0f) }, new[] { 0.3f, 0.2f }, 4, paint, paint);
+                c.Solid.Tube(new[] { new Vector3(lx, 0f, 3f), new Vector3(lx, height, 0f) }, new[] { 0.3f, 0.2f }, 4, paint, paint);
+            }
+            c.Solid.Box(new Vector3(0f, height, 0f), new Vector3(span + 3f, 1.1f, 1.1f), paint);
+            float cart = r.Range(-span * 0.35f, span * 0.35f);
+            c.Solid.Box(new Vector3(cart, height - 1.1f, 0f), new Vector3(2.4f, 1.1f, 1.8f), steel);
+            return true;
+        }
+
+        /// <summary>A long sloping conveyor on legs, from low at one end to high at the other.</summary>
+        public static bool Conveyor(TerrainCanvas c, TerrainRandom r, float x, float z, float yaw, float length = 26f, float height = 8f)
+        {
+            if (!c.Stand(x, z, length * 0.55f, height, 0.4f)) return false;
+            c.PlaceSolid(x, z, yaw);
+            float half = length * 0.5f;
+            Vector3 low = new Vector3(-half, 1.2f, 0f), high = new Vector3(half, height, 0f);
+            c.Solid.Tube(new[] { low, high }, new[] { 0.9f, 0.9f }, 4, C(92, 96, 94), C(116, 118, 112), false, 0.9f);
+            for (int i = 1; i <= 3; i++)
+            {
+                float t = i / 3.6f;
+                Vector3 at = Vector3.Lerp(low, high, t);
+                c.Solid.Box(new Vector3(at.x, 0f, 0f), new Vector3(0.35f, at.y, 1.5f), C(76, 78, 78), 0.7f);
+            }
+            return true;
+        }
+
+        /// <summary>A heap of broken rock or spoil.</summary>
+        public static bool Heap(TerrainCanvas c, TerrainRandom r, float x, float z, float size, Color32 color)
+        {
+            if (!c.Stand(x, z, size, size * 0.7f, 0.5f)) return false;
+            c.PlaceSolid(x, z, r.Range(0f, 360f));
+            color.a = 0;
+            Color32 top = new Color32((byte)Mathf.Min(255, color.r * 1.2f), (byte)Mathf.Min(255, color.g * 1.2f), (byte)Mathf.Min(255, color.b * 1.2f), 0);
+            c.Solid.Lump(Vector3.zero, new Vector3(size, size * 0.65f, size * 0.9f), color, 10, 0.2f, r.Int(100), top);
+            return true;
+        }
+
         // ------------------------------------------------------------------ Covenant
 
         /// <summary>A cluster of glowing crystal shards.</summary>
@@ -384,7 +434,7 @@ namespace Halobellum.Presentation
                 c.Solid.Shard(foot, (i == 0 ? 0.95f : r.Range(0.35f, 0.7f)) * size, h, lean, 5, body, glow, r.Range(0f, 6.28f));
             }
             c.Glow.Uv = new Vector2(0.35f, r.Range(0f, 6.28f));
-            c.Glow.Halo(new Vector3(x, c.GroundAt(x, z) + height * 0.55f, z), 5.5f * size, new Color32(glow.r, glow.g, glow.b, 60));
+            c.Glow.Halo(new Vector3(x, c.GroundAt(x, z) + height * 0.5f, z), 4.2f * size, new Color32(glow.r, glow.g, glow.b, 26));
             c.Glow.Uv = Vector2.zero;
             c.Decals.FlatDisc(TerrainCanvas.DecalHeight, x, z, 7f * size, 7f * size, new Color32(glow.r, glow.g, glow.b, 46), new Color32(glow.r, glow.g, glow.b, 0));
             return true;
@@ -414,7 +464,7 @@ namespace Halobellum.Presentation
             }
             Vector3 world = TipWorld(x, z, yaw, Path[steps], c);
             c.Glow.Uv = new Vector2(0.4f, r.Range(0f, 6.28f));
-            c.Glow.Halo(world, 4f, new Color32(glow.r, glow.g, glow.b, 170));
+            c.Glow.Halo(world, 2.2f, new Color32(glow.r, glow.g, glow.b, 100));
             c.Glow.Uv = Vector2.zero;
             return true;
         }
@@ -448,7 +498,7 @@ namespace Halobellum.Presentation
             c.Solid.Lump(Vector3.up * (height + 2f), Vector3.one * 0.85f, glow, 8);
             c.Solid.Uv = Vector2.zero;
             c.Glow.Uv = new Vector2(0.45f, r.Range(0f, 6.28f));
-            c.Glow.Halo(new Vector3(x, c.GroundAt(x, z) + height + 2f, z), 5.5f, new Color32(glow.r, glow.g, glow.b, 150));
+            c.Glow.Halo(new Vector3(x, c.GroundAt(x, z) + height + 2f, z), 2.6f, new Color32(glow.r, glow.g, glow.b, 90));
             c.Glow.Uv = Vector2.zero;
             return true;
         }
@@ -476,7 +526,7 @@ namespace Halobellum.Presentation
             }
             Vector3 top = new Vector3(x, c.GroundAt(x, z) + height * 0.9f, z);
             c.Glow.Uv = new Vector2(0.5f, r.Range(0f, 6.28f));
-            c.Glow.Halo(top, height * 0.28f, new Color32(glow.r, glow.g, glow.b, 80));
+            c.Glow.Halo(top, height * 0.12f, new Color32(glow.r, glow.g, glow.b, 46));
             c.Glow.Uv = Vector2.zero;
             return true;
         }
@@ -551,8 +601,38 @@ namespace Halobellum.Presentation
             c.PlaceSolid(x, z, r.Range(0f, 360f));
             c.Solid.Lump(Vector3.up * (size * 0.8f), new Vector3(size, size * 1.15f, size), skin, 10, 0.18f, r.Int(100), glow);
             c.Glow.Uv = new Vector2(0.5f, r.Range(0f, 6.28f));
-            c.Glow.Halo(new Vector3(x, c.GroundAt(x, z) + size * 1.6f, z), size * 2.4f, new Color32(glow.r, glow.g, glow.b, 70));
+            c.Glow.Halo(new Vector3(x, c.GroundAt(x, z) + size * 1.6f, z), size * 1.5f, new Color32(glow.r, glow.g, glow.b, 36));
             c.Glow.Uv = Vector2.zero;
+            return true;
+        }
+
+        /// <summary>A tall ribbed spire of hardened biomass with a glowing crown of pods. Only for the land to the north and sides.</summary>
+        public static bool HiveSpire(TerrainCanvas c, TerrainRandom r, float x, float z, float height, Color32 skin, Color32 pale, Color32 glow)
+        {
+            float bend = height * 0.12f;
+            if (!c.Stand(x, z, height * 0.22f + bend, height, 0.55f)) return false;
+            c.PlaceSolid(x, z, r.Range(0f, 360f));
+            Path.Clear();
+            Radii.Clear();
+            int steps = 10;
+            float width = height * 0.14f;
+            float phase = r.Range(0f, 6.28f);
+            for (int i = 0; i <= steps; i++)
+            {
+                float t = i / (float)steps;
+                Path.Add(new Vector3(Mathf.Sin(t * 3f + phase) * bend * t, t * height, Mathf.Cos(t * 2.3f + phase) * bend * t));
+                float rib = 1f + 0.18f * Mathf.Sin(t * 28f);
+                Radii.Add(width * Mathf.Lerp(1f, 0.28f, t) * rib);
+            }
+            c.Solid.Tube(Path, Radii, 7, skin, pale);
+            Vector3 crown = Path[steps];
+            int pods = 3 + r.Int(3);
+            for (int i = 0; i < pods; i++)
+            {
+                float a = i * 6.28f / pods;
+                var at = crown + new Vector3(Mathf.Cos(a) * width * 0.4f, r.Range(-1.4f, 0.6f), Mathf.Sin(a) * width * 0.4f);
+                c.Solid.Lump(at, Vector3.one * width * 0.3f, pale, 6, 0f, 0, glow);
+            }
             return true;
         }
 
