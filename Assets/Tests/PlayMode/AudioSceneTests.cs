@@ -261,6 +261,8 @@ namespace Halobellum.Tests
         public IEnumerator Volumes_AreReadFromTheSettings()
         {
             yield return Load("Sandbox");
+            // The sound code reads the saved value itself, so this one test writes it, and leaves it as it found it.
+            bool had = PlayerPrefs.HasKey(AudioDirector.KeyMusic);
             float was = PlayerPrefs.GetFloat(AudioDirector.KeyMusic, AudioDirector.DefaultMusic);
             try
             {
@@ -271,7 +273,8 @@ namespace Halobellum.Tests
             }
             finally
             {
-                PlayerPrefs.SetFloat(AudioDirector.KeyMusic, was);
+                if (had) PlayerPrefs.SetFloat(AudioDirector.KeyMusic, was);
+                else PlayerPrefs.DeleteKey(AudioDirector.KeyMusic);
             }
         }
 

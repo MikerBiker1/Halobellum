@@ -134,27 +134,27 @@ namespace Halobellum.Core
         /// <summary>Seconds from the battle start to its last effect.</summary>
         public float LastEffectSeconds => DelaySeconds + (Effect == SpellEffect.Damage ? (System.Math.Max(1, Ticks) - 1) * TickInterval : 0f);
 
-        /// <summary>A short line describing what it does, for card and tooltip text.</summary>
+        /// <summary>A short line describing what it does, for card and tooltip text. A number and its unit are joined by a non-breaking space, so that a line never ends between them.</summary>
         public string EffectsText()
         {
             switch (Effect)
             {
                 case SpellEffect.Damage:
                     string type = IsAntiArmor ? "anti-armor" : DamageType.ToString();
-                    string hits = Ticks > 1 ? $"{DamagePerTick:0} {type} damage x{Ticks} over {(Ticks - 1) * TickInterval:0.#} s" : $"{DamagePerTick:0} {type} damage";
-                    return $"{hits} in {Radius:0} m ({TargetsText()})";
+                    string hits = Ticks > 1 ? $"{DamagePerTick:0} {type} damage x{Ticks} over {(Ticks - 1) * TickInterval:0.#}\u00A0s" : $"{DamagePerTick:0} {type} damage";
+                    return $"{hits} in {Radius:0}\u00A0m ({TargetsText()})";
                 case SpellEffect.Buff:
                     var parts = new List<string>();
                     if (ShieldBonusShare > 0f) parts.Add($"+{ShieldBonusShare * 100f:0}% health as shield");
                     if (DamageMultiplier > 1f) parts.Add($"+{(DamageMultiplier - 1f) * 100f:0}% damage");
-                    return $"{string.Join(", ", parts)} for your units in {Radius:0} m";
+                    return $"{string.Join(", ", parts)} for your units in {Radius:0}\u00A0m";
                 case SpellEffect.Disrupt:
-                    return $"{ShieldDamage:0} damage to shields, disables techs for {TechDisableSeconds:0} s, armored units {SlowShare * 100f:0}% slower for {SlowSeconds:0} s, in {Radius:0} m";
+                    return $"{ShieldDamage:0} damage to shields, disables techs for {TechDisableSeconds:0}\u00A0s, armored units {SlowShare * 100f:0}% slower for {SlowSeconds:0}\u00A0s, in {Radius:0}\u00A0m";
                 case SpellEffect.Smoke:
-                    string lasts = DurationSeconds > 0f ? $"for {DurationSeconds:0} s" : "for the whole round";
-                    return $"Smoke in a {AreaDepth:0} x {AreaWidth:0} m line {lasts}: units inside have {(1f - RangeMultiplier) * 100f:0}% less range";
+                    string lasts = DurationSeconds > 0f ? $"for {DurationSeconds:0}\u00A0s" : "for the whole round";
+                    return $"Smoke in a {AreaDepth:0}\u00A0x\u00A0{AreaWidth:0}\u00A0m line {lasts}: units inside have {(1f - RangeMultiplier) * 100f:0}% less range";
                 default:
-                    return $"{DropSquads} x {DropUnit?.Name ?? "?"} squad{(DropSquads == 1 ? "" : "s")} land for this battle";
+                    return $"{DropSquads}\u00A0x {DropUnit?.Name ?? "?"} {(DropSquads == 1 ? "squad lands" : "squads land")} for this battle";
             }
         }
 

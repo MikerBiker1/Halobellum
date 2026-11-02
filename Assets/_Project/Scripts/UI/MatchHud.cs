@@ -46,6 +46,7 @@ namespace Halobellum.UI
         private GUIStyle _title, _big, _text, _small, _smallCentered, _button, _bigButton, _centered, _header, _barLabel, _wrap, _wrapDim, _shopLine;
         private float _scale;
         private Vector2 _shopScroll;
+        private readonly List<UnitStats> _shopRows = new List<UnitStats>();
         private readonly HudLine _yourBaseLine = new HudLine(), _enemyBaseLine = new HudLine(), _yourValueLine = new HudLine(), _enemyValueLine = new HudLine();
 
         private void Awake() => useGUILayout = false; // Nothing here uses GUILayout. With the layout pass on, Unity makes new layout groups for this script every frame, which is garbage at every frame rate.
@@ -326,11 +327,23 @@ namespace Halobellum.UI
         /// <summary>The second line of a shop row.</summary>
         public static string ShopLine(UnitStats unit, bool exclusive) => $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.FormsInSquad)}{(exclusive ? ", exclusive" : "")}";
 
+        /// <summary>
+        /// The shop's rows from the top: the sub-faction's own units first, since they are the reason to pick that card, and then the rest as the
+        /// roster has them. For the display only: unlocking, prices, card offers and the AI go by the roster itself.
+        /// </summary>
+        public static void FillShopRows(List<UnitStats> roster, List<UnitStats> exclusive, List<UnitStats> rows)
+        {
+            rows.Clear();
+            foreach (UnitStats unit in roster) if (exclusive.Contains(unit)) rows.Add(unit);
+            foreach (UnitStats unit in roster) if (!exclusive.Contains(unit)) rows.Add(unit);
+        }
+
         private void DrawShop(float width, float height)
         {
             Match m = match.Match;
             PlayerState player = m.Player;
-            List<UnitStats> roster = player.Roster;
+            List<UnitStats> roster = _shopRows;
+            FillShopRows(player.Roster, player.SubFaction.ExclusiveUnits, roster);
             const float panelWidth = ShopPanelWidth, rowHeight = 58f, picture = ShopPicture;
             float panelHeight = Mathf.Min(height - 200f, 50f + roster.Count * rowHeight);
             var panel = new Rect(width - panelWidth - 10f, 110f, panelWidth, panelHeight);
@@ -375,7 +388,7 @@ namespace Halobellum.UI
             PlacedSquad squad = match.SelectedPlacedSquad;
             if (squad == null || match.IsPlacing) return;
             bool movable = match.Match.CanMove(squad);
-            var panel = new Rect(width * 0.5f - 260f, height - 70f, 520f, 58f);
+            var panel = new Rect(SquadStatsWindow.ActionsPanelLeft(width, 520f), height - 70f, 520f, 58f);
             Panel(panel);
             GUI.enabled = movable;
             if (GUI.Button(new Rect(panel.x + 10f, panel.y + 10f, 150f, 38f), "Move (M)", _button)) match.BeginMoving(squad);

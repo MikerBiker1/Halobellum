@@ -37,6 +37,15 @@ namespace Halobellum.Tests
         private UnitStats Unit(string name) => _sandbox.Units.Single(u => u.Stats.Name == name).Stats;
 
         [UnityTest]
+        public IEnumerator TheResultLine_StandsUnderTheSandboxBar()
+        {
+            yield return LoadSandbox();
+            var hud = Object.FindAnyObjectByType<Halobellum.UI.BattleHud>();
+            Assert.IsNotNull(hud);
+            Assert.AreEqual(Halobellum.UI.SandboxHud.ResultLineTop, hud.ResultLineTop);
+        }
+
+        [UnityTest]
         public IEnumerator TheMouseWheel_ZoomsTheCamera_OnlyWhenThePointerIsNotOverAWindow()
         {
             yield return LoadSandbox();

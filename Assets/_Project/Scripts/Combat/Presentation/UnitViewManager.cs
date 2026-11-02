@@ -484,11 +484,11 @@ namespace Halobellum.Presentation
             view.ShieldBar = shieldBar.gameObject;
             view.ShieldBar.SetActive(false);
 
-            // Selection ring: a thin flat cylinder under the body.
-            Transform ring = PlaceholderArt.CreatePart("Selection Ring", view.Root.transform, PlaceholderArt.Cylinder, PlaceholderArt.MaterialFor(selectionColor));
-            float ringSize = stats.CollisionRadius * 2.4f;
-            ring.localScale = new Vector3(ringSize, 0.02f, ringSize);
-            ring.localPosition = new Vector3(0f, stats.IsAir ? -airHeight + 0.03f : 0.03f, 0f);
+            // Selection ring: flat on the ground around the body, open in the middle so that it hides nothing that stands on it.
+            Transform ring = PlaceholderArt.CreatePart("Selection Ring", view.Root.transform, PlaceholderArt.Ring, PlaceholderArt.MaterialFor(selectionColor));
+            float ringSize = stats.CollisionRadius * 2.6f;
+            ring.localScale = new Vector3(ringSize, 1f, ringSize);
+            ring.localPosition = new Vector3(0f, stats.IsAir ? -airHeight + 0.05f : 0.05f, 0f);
             view.Ring = ring.gameObject;
             view.Ring.SetActive(false);
 

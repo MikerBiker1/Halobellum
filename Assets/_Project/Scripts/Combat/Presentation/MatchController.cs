@@ -103,7 +103,7 @@ namespace Halobellum.Presentation
             foreach (var pair in cache) _sources[pair.Value] = pair.Key;
 
             int matchSeed = fixedSeed ?? (seed != 0 ? seed : Environment.TickCount & 0x7FFFFFFF);
-            Difficulty = (AiDifficulty)Mathf.Clamp(PlayerPrefs.GetInt(DifficultyKey, (int)AiDifficulty.Normal), 0, 2);
+            Difficulty = GameSettings.Difficulty;
             _matchups = matchupTable != null ? matchupTable.ToTable() : null;
             Match = new Match(matchRules.ToRules(), _battle.Rules, infos, matchSeed, new RuleBasedAi(Difficulty, matchSeed, _matchups));
             CancelPlacement();
@@ -138,7 +138,7 @@ namespace Halobellum.Presentation
             if (Match == null || Match.Phase != MatchPhase.Draft) return;
             if (!Match.SetEnemyAi(new RuleBasedAi(difficulty, Match.Seed, _matchups))) return;
             Difficulty = difficulty;
-            PlayerPrefs.SetInt(DifficultyKey, (int)difficulty);
+            GameSettings.Difficulty = difficulty;
         }
 
         public ActionResult ChooseDraft(int cardIndex)

@@ -44,7 +44,7 @@ namespace Halobellum.Core
         public string EffectsText()
         {
             var parts = new List<string>();
-            if (RangeBonus != 0f) parts.Add($"+{RangeBonus:0.#} m range");
+            if (RangeBonus != 0f) parts.Add($"+{RangeBonus:0.#}\u00A0m range");
             if (HealthMultiplier != 1f) parts.Add(Percent(HealthMultiplier) + " health");
             if (DamageMultiplier != 1f) parts.Add(Percent(DamageMultiplier) + " damage");
             if (MoveSpeedMultiplier != 1f) parts.Add(Percent(MoveSpeedMultiplier) + " speed");

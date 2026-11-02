@@ -24,6 +24,30 @@ namespace Halobellum.Tests
         private CardStats _strikeCard, _nukeCard, _domeCard, _podsCard, _heavyArmorCard, _moduleCard, _supplyCard, _tacticsCard, _slotCard, _trainingCard;
         private UnitStats _infantry, _buggy, _tank, _walker;
 
+        [Test]
+        public void SpellText_ReadsRightForOneSquadOrMore_AndKeepsNumbersWithTheirUnits()
+        {
+            var unit = new UnitStats { Name = "ODST" };
+            Assert.AreEqual("1\u00A0x ODST squad lands for this battle", new SpellStats { Effect = SpellEffect.DropSquad, DropUnit = unit, DropSquads = 1 }.EffectsText());
+            Assert.AreEqual("2\u00A0x ODST squads land for this battle", new SpellStats { Effect = SpellEffect.DropSquad, DropUnit = unit, DropSquads = 2 }.EffectsText());
+
+            var spells = new[]
+            {
+                new SpellStats { Effect = SpellEffect.Damage, DamagePerTick = 50f, Ticks = 4, TickInterval = 2f, Radius = 8f },
+                new SpellStats { Effect = SpellEffect.Damage, DamagePerTick = 50f, Radius = 8f },
+                new SpellStats { Effect = SpellEffect.Buff, ShieldBonusShare = 0.5f, Radius = 8f },
+                new SpellStats { Effect = SpellEffect.Disrupt, ShieldDamage = 100f, TechDisableSeconds = 10f, SlowShare = 0.4f, SlowSeconds = 10f, Radius = 10f },
+                new SpellStats { Effect = SpellEffect.Smoke, AreaDepth = 8f, AreaWidth = 40f, DurationSeconds = 15f, RangeMultiplier = 0.5f },
+            };
+            foreach (SpellStats spell in spells)
+            {
+                string text = spell.EffectsText();
+                StringAssert.DoesNotMatch(@"\d [ms]\b", text, "A line must not end between a number and its unit.");
+                StringAssert.IsMatch("\\d\u00A0[ms]\\b", text);
+            }
+            StringAssert.Contains("8\u00A0x\u00A040\u00A0m line", spells[4].EffectsText());
+        }
+
         private List<FactionInfo> Factions()
         {
             List<FactionInfo> factions = TestMatch.StandardFactions(out _infantry, out _buggy, out _tank, out _walker);

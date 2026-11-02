@@ -20,8 +20,10 @@ namespace Halobellum.UI
 {
     public sealed class SquadStatsWindow : MonoBehaviour
     {
+        private const float ScreenLeft = 10f, DefaultWidth = 440f;
+
         [SerializeField] private BattleController battle;
-        [SerializeField] private float windowWidth = 440f;
+        [SerializeField] private float windowWidth = DefaultWidth;
 
         private SquadSelection _selection;
         private ISquadProgression _progression;
@@ -40,6 +42,20 @@ namespace Halobellum.UI
         private SquadProgressView _progress;
         private readonly GUIContent _measure = new GUIContent();
         private readonly List<string> _techNames = new List<string>(), _techEffects = new List<string>();
+        private Rect _window;
+        private int _windowFrame = -1;
+
+        /// <summary>
+        /// The left edge of the Move / Turn / Sell panel, which comes with this window: centred at the bottom of the screen, or right of this window where it would run under it.
+        /// </summary>
+        public static float ActionsPanelLeft(float screenWidth, float panelWidth) => Mathf.Max((screenWidth - panelWidth) * 0.5f, ScreenLeft + DefaultWidth + 6f);
+
+        /// <summary>Where the window is, in HUD units, if it is showing (the Sandbox's Items panel keeps clear of it).</summary>
+        public bool TryGetWindow(out Rect window)
+        {
+            window = _window;
+            return _windowFrame >= 0 && Time.frameCount - _windowFrame <= 1;
+        }
 
         private void Awake() => useGUILayout = false; // Nothing here uses GUILayout. With the layout pass on, Unity makes new layout groups for this script every frame, which is garbage at every frame rate.
 
@@ -69,8 +85,10 @@ namespace Halobellum.UI
             float textHeight = _textHeight;
             SquadProgressView progress = _progress;
             float height = HeaderHeight + textHeight + ProgressHeight(progress);
-            var window = new Rect(10f, HudScale.ScaledHeight(scale) - height - 10f, windowWidth, height);
+            var window = new Rect(ScreenLeft, HudScale.ScaledHeight(scale) - height - 10f, windowWidth, height);
             UiHitAreas.Add(HudScale.ToScreen(window, scale));
+            _window = window;
+            _windowFrame = Time.frameCount;
 
             HudTheme.PanelBox(window);
             CardScreens.DrawUnitPicture(new Rect(window.x + 10f, window.y + 6f, PictureSize, PictureSize), s, null, HudTheme.Accent);

@@ -19,6 +19,7 @@ namespace Halobellum.UI
         private static readonly float[] Speeds = { 1f, 2f, 4f };
         private static readonly string[] SpeedNames = { "1x", "2x", "4x" };
         private const float FpsTextSeconds = 0.25f;
+        private const float ResultLineWidth = 600f, ResultLineHeight = 34f;
 
         [SerializeField] private BattleController battle;
         [Tooltip("Show the frames-per-second counter.")]
@@ -32,6 +33,12 @@ namespace Halobellum.UI
         private readonly HudLine _topLine = new HudLine();
         private string _fpsText;
         private float _nextFpsText;
+
+        /// <summary>How far down the result line stands. Under the speed controls, unless a scene's own HUD has something there (the Sandbox's bar).</summary>
+        public float ResultLineTop { get; set; } = 90f;
+
+        /// <summary>Where the result line is, in HUD units.</summary>
+        public static Rect ResultLine(float screenWidth, float top) => new Rect(screenWidth * 0.5f - ResultLineWidth * 0.5f, top, ResultLineWidth, ResultLineHeight);
 
         private void Awake() => useGUILayout = false; // Nothing here uses GUILayout. With the layout pass on, Unity makes new layout groups for this script every frame, which is garbage at every frame rate.
 
@@ -90,7 +97,8 @@ namespace Halobellum.UI
 
             if (showResultLine && sim.IsFinished && sim.Result != null)
             {
-                var result = new Rect(width * 0.5f - 300f, 90f, 600f, 34f);
+                Rect result = ResultLine(width, ResultLineTop);
+                UiHitAreas.Add(HudScale.ToScreen(result, scale));
                 HudTheme.PanelBox(result);
                 GUI.Label(result, ResultText(sim.Result), _centered);
             }

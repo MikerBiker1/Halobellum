@@ -1,8 +1,8 @@
 // MainMenuHud.cs
 // The main menu's screen (M10), in the MainMenu scene over MenuBackdrop's picture: the title, New Match with the AI's difficulty next to it,
 // Sandbox, Settings and Quit. It fades in from black and fades out before a scene change. Esc closes Settings. It scales to any window
-// (HudScale.ApplyFit). The difficulty is the one the draft screen also shows: MatchController reads it from the same PlayerPrefs key.
-// Depends on: GameFlow, GameSettings, MatchController (difficulty key), MenuStyle, SettingsScreen, Halobellum.Economy, Unity Input System.
+// (HudScale.ApplyFit). The difficulty is the one the draft screen also shows: both go through GameSettings.Difficulty.
+// Depends on: GameFlow, GameSettings, MenuStyle, SettingsScreen, Halobellum.Economy, Unity Input System.
 
 using System;
 using Halobellum.Economy;
@@ -25,6 +25,7 @@ namespace Halobellum.UI
         private float _shownAt;
         private Action _leaving;
         private float _leavingAt;
+        private GUIStyle _difficultyLabel;
 
         /// <summary>True while the settings panel is showing (for the test tool).</summary>
         public bool ShowingSettings => _showSettings;
@@ -110,12 +111,15 @@ namespace Halobellum.UI
         }
 
         /// <summary>The AI's difficulty, next to New Match.</summary>
-        private static void DrawDifficulty(Rect rect)
+        private void DrawDifficulty(Rect rect)
         {
-            int current = Mathf.Clamp(PlayerPrefs.GetInt(MatchController.DifficultyKey, (int)AiDifficulty.Normal), 0, Difficulties.Length - 1);
-            GUI.Label(new Rect(rect.x, rect.y - 24f, rect.width, 22f), "AI difficulty", MenuStyle.Small);
+            int current = Mathf.Clamp((int)GameSettings.Difficulty, 0, Difficulties.Length - 1);
+            // This row stands past the left side's darkness, on the bright picture, so it has a little of its own.
+            if (_difficultyLabel == null) _difficultyLabel = new GUIStyle(MenuStyle.Small) { normal = { textColor = MenuStyle.Ink } };
+            MenuStyle.FadeRight(new Rect(rect.x - 10f, rect.y - 25f, 190f, 24f), new Color(0.015f, 0.015f, 0.03f, 0.8f));
+            GUI.Label(new Rect(rect.x, rect.y - 24f, rect.width, 22f), "AI difficulty", _difficultyLabel);
             int wanted = MenuStyle.Choice(rect, "Difficulty", Difficulties, current);
-            if (wanted != current) PlayerPrefs.SetInt(MatchController.DifficultyKey, wanted);
+            if (wanted != current) GameSettings.Difficulty = (AiDifficulty)wanted;
         }
 
         private void DrawFade(float width, float height)
