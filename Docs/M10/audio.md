@@ -74,7 +74,7 @@ including ones not written yet, clicks by itself on the mouse press, as long as 
 buttons, draft cards and Ready only.
 
 **Lines changed in shared files** (everything else is new files): `MatchController.cs` (+4, for `ActionTaken`), `MatchHud.cs` (+5, `UiAudio.Watch`), `ItemHud.cs` (+1, an item picked up clicks),
-`Halobellum.Tests.EditMode.asmdef` (+1).
+`Halobellum.Tests.EditMode.asmdef` (+1). Later: `BattleEvents.cs` and `BattleSimulation.cs` (the `ShotLanded` event, which changes nothing in a battle), `SandboxController.cs` (tells `BattleFactions` about the armies), `WeaponFeel.cs` and `WeaponLooks.cs` (autocannons and the Hunter's assault cannon).
 
 **No noise in test runs.** When the game runs in batch mode, or with `-autoplay`, `-sandboxDemo` and the like, the director sets the listener's volume to 0, so that runs at night don't fill the room. Add `-audioOn` to hear them.
 
@@ -117,6 +117,6 @@ The battle and menu tracks and Flood deployment are mono: 90 s of 16-bit 44.1 kH
 - no quiet second in any track (all above about -35 dB);
 - level over time and spectrograms show the sections actually changing.
 
-Tests: `Assets/Tests/EditMode/Unity/AudioTests.cs`, `Assets/Tests/PlayMode/AudioSceneTests.cs`.
+Tests: `Assets/Tests/EditMode/Unity/AudioTests.cs`, `Assets/Tests/EditMode/Unity/AudioCueChoiceTests.cs` (real weapons and units), `Assets/Tests/EditMode/ShotLandedTests.cs`, `Assets/Tests/PlayMode/AudioSceneTests.cs`, `Assets/Tests/PlayMode/AudioFlowTests.cs` (pause, stingers, Sandbox factions).
 
 **To record what the game outputs:** start it with `-audioCapture out.wav` (with `-autoplay`, for example). It saves the final mix to a file at the end and keeps the room silent while it does.
