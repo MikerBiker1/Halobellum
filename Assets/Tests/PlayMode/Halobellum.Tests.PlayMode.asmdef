@@ -8,7 +8,8 @@
         "Halobellum.Combat",
         "Halobellum.Economy",
         "Halobellum.Units",
-        "Halobellum.Presentation"
+        "Halobellum.Presentation",
+        "Halobellum.UI"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

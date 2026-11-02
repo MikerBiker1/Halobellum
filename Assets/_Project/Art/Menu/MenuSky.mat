@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: MenuSky
+  m_Shader: {fileID: 4800000, guid: 25ef75d484090084d8195785005a5524, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _CloudAmount: 0.55
+    m_Colors:
+    - _CloudDark: {r: 0.16999996, g: 0.12999997, b: 0.21999997, a: 1}
+    - _CloudLit: {r: 1.5, g: 0.62, b: 0.33999997, a: 1}
+    - _Horizon: {r: 0.72, g: 0.41999996, b: 0.37999994, a: 1}
+    - _HorizonSun: {r: 1.45, g: 0.5, b: 0.15999997, a: 1}
+    - _Middle: {r: 0.35999998, g: 0.26999995, b: 0.41999996, a: 1}
+    - _SunColor: {r: 3.6000001, g: 1.55, b: 0.54999995, a: 1}
+    - _SunDirection: {r: 0.40226904, g: 0.14780942, b: 0.9035109, a: 0}
+    - _Zenith: {r: 0.079999976, g: 0.09999997, b: 0.23999995, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

@@ -13,7 +13,7 @@
 //     an icon at the top left: select a squad, click it, confirm (decision D33).
 //   Battle: both base health bars and a live army-value comparison (speed controls are in BattleHud).
 //   Result: base damage dealt by each side, income, survivors, top damage dealers, what killed what.
-//   Match over: the winner and a New match button.
+//   Match over: the winner, a New match button and a Main Menu button.
 // The look follows the player's faction (HudTheme: UNSC or Covenant style); the draft screen is neutral.
 // Drawn with Unity's immediate-mode GUI; scales with the screen height.
 // Depends on: Halobellum.Presentation (MatchController, BattleController, UiHitAreas),
@@ -468,7 +468,8 @@ namespace Halobellum.UI
                 won ? $"The enemy base fell in round {m.Round}." : $"Your base fell in round {m.Round}.", _text);
             y += 34f;
             if (s != null) SummaryLines(s, panel, y);
-            if (GUI.Button(new Rect(panel.x + panel.width * 0.5f - 110f, panel.yMax - 58f, 220f, 44f), "New match", _bigButton)) match.NewMatch();
+            if (GUI.Button(new Rect(panel.x + panel.width * 0.5f - 230f, panel.yMax - 58f, 220f, 44f), "New match", _bigButton)) match.NewMatch();
+            if (MenuStyle.Button(new Rect(panel.x + panel.width * 0.5f + 10f, panel.yMax - 58f, 220f, 44f), "Main Menu", _bigButton)) GameFlow.OpenMainMenu();
         }
 
         /// <summary>Base damage, bases, survivors, top damage dealers and what killed what. Returns the next y.</summary>

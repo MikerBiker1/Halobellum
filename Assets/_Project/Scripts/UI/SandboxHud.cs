@@ -110,7 +110,7 @@ namespace Halobellum.UI
                 if (GUI.Button(new Rect(bar.x + 640f, bar.y + 10f, 170f, 44f), $"Copy to {other}", _button)) sandbox.CopyToOtherSide(sandbox.EditingTeam);
                 if (GUI.Button(new Rect(bar.xMax - 300f, bar.y + 10f, 140f, 44f), "Run battle", _bigButton)) sandbox.Run();
             }
-            if (GUI.Button(new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f), "Back to match", _button)) SceneManager.LoadScene(MatchSceneName);
+            if (GUI.Button(new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f), GameFlow.SandboxBackLabel, _button)) GameFlow.LeaveSandbox();
         }
 
         private void ArmyLabel(Rect rect, Team team, Color color)

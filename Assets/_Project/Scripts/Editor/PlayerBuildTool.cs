@@ -4,7 +4,7 @@
 //   Command line: -executeMethod Halobellum.EditorTools.PlayerBuildTool.BuildWindowsFromCommandLine
 //                 -buildOutput C:\path\Halobellum.exe
 // Run a -battleScene build with -benchmark (see BattleBenchmark), or a normal build with -autoplay
-// (see MatchAutoplay).
+// (see MatchAutoplay). A normal build starts in the main menu; the test tools skip it (see GameFlow).
 // Depends on: BattleSceneBuilder (scene path), UnityEditor.
 
 using System;

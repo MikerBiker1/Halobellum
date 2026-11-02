@@ -7,7 +7,9 @@
         "Halobellum.Economy",
         "Halobellum.Presentation",
         "Halobellum.Units",
-        "Unity.InputSystem"
+        "Unity.InputSystem",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.RenderPipelines.Core.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

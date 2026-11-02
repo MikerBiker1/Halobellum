@@ -6,8 +6,8 @@
 //   Sandbox.unity - place two armies from every faction freely and run the battle (SandboxController,
 //                  DeploymentInput, SandboxHud); reached from the draft screen.
 // Both have a directional light, the Main Camera with the pan/zoom controller, the "Battle" object
-// (BattleController and its views, wired to the Combat Rules asset) and a HUD. The Match scene is
-// put first in the build settings, so a built game starts with a match.
+// (BattleController and its views, wired to the Combat Rules asset) and a HUD. The MainMenu scene
+// (MainMenuSceneBuilder) is put first in the build settings, so a built game starts in the menu.
 //   Menu: Halobellum > Scenes > Rebuild Match Scene / Rebuild Battle Scene / Rebuild Sandbox Scene
 //   Command line: -executeMethod Halobellum.EditorTools.BattleSceneBuilder.BuildFromCommandLine (all three)
 // Depends on: Halobellum.Presentation, Halobellum.UI, Halobellum.Units, UnityEditor.
@@ -27,6 +27,7 @@ namespace Halobellum.EditorTools
 {
     public static class BattleSceneBuilder
     {
+        public const string MainMenuScenePath = "Assets/_Project/Scenes/MainMenu.unity";
         public const string ScenePath = "Assets/_Project/Scenes/Battle.unity";
         public const string MatchScenePath = "Assets/_Project/Scenes/Match.unity";
         public const string SandboxScenePath = "Assets/_Project/Scenes/Sandbox.unity";
@@ -194,11 +195,11 @@ namespace Halobellum.EditorTools
             return battle;
         }
 
-        /// <summary>The game's scenes in build order: the Match first (a built game starts with a match).</summary>
-        public static readonly string[] GameScenes = { MatchScenePath, SandboxScenePath, ScenePath };
+        /// <summary>The game's scenes in build order: the main menu first (a built game starts there; MainMenuSceneBuilder makes it).</summary>
+        public static readonly string[] GameScenes = { MainMenuScenePath, MatchScenePath, SandboxScenePath, ScenePath };
 
-        /// <summary>Match scene first (the game), then the Sandbox and the Battle test scene.</summary>
-        private static void UpdateBuildSettings()
+        /// <summary>The main menu first, then the Match, the Sandbox and the Battle test scene.</summary>
+        public static void UpdateBuildSettings()
         {
             var ordered = new List<EditorBuildSettingsScene>();
             foreach (string path in GameScenes)

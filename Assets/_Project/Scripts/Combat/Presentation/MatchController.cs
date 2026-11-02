@@ -54,7 +54,7 @@ namespace Halobellum.Presentation
         /// <summary>Raised after every phase change (draft chosen, battle started or finished, next round).</summary>
         public event Action PhaseChanged;
 
-        private const string DifficultyKey = "Halobellum.AiDifficulty";
+        public const string DifficultyKey = "Halobellum.AiDifficulty";
         private MatchupTable _matchups;
 
         /// <summary>The AI's difficulty (chosen on the draft screen, remembered between matches).</summary>
