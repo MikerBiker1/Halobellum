@@ -1,7 +1,7 @@
 // SpellEffects.cs
 // What spells look like when they go off (M10). Each spell is big and looks like nothing else:
 //   MAC Strike: one white-blue line from orbit, a hard flash and a crown of thrown earth, no fire.
-//   HAVOK Nuke: a white flash over half the field, a fireball, shock rings, a dust wave and a mushroom cloud that keeps rising.
+//   HAVOK Nuke: a white flash over half the field, a fireball, shock rings, a dust wave, and a mushroom cloud with a stem and a rolling cap (MushroomCloud).
 //   Plasma Bombardment: a violet column from the sky and a splash of plasma.
 //   Plasma Storm: a dark violet cloud overhead, bolts and lightning coming down from it for as long as it lasts.
 //   Glassing Beam: a thick blue-white beam from orbit; the ground below it goes molten and stays glowing.
@@ -11,7 +11,7 @@
 // In the seconds before a spell with a long delay goes off, a warning shows (a thin line growing from the sky, or stirring spores).
 // It reads the simulation's SpellTriggered event; a running spell's later stages are kept in a fixed list on battle time. Its random numbers
 // are Unity's, not the simulation's, so the battle's outcome can't change. The spell's gameplay is untouched. Any random spot is looks only.
-// Depends on: EffectRecipes, EffectKit, WeaponLooks (SpellLooks), CameraShake, Halobellum.Combat, Halobellum.Core, UnityEngine.
+// Depends on: EffectRecipes, EffectKit, MushroomCloud, WeaponLooks (SpellLooks), CameraShake, Halobellum.Combat, Halobellum.Core, UnityEngine.
 
 using System.Collections.Generic;
 using Halobellum.Combat;
@@ -30,7 +30,6 @@ namespace Halobellum.Presentation
             public float Started;
             public float Until;
             public float NextStep;
-            public int Step;
             public Color Color;
         }
 
@@ -147,11 +146,7 @@ namespace Halobellum.Presentation
             switch (run.Look)
             {
                 case SpellLook.Nuke:
-                    if (now >= run.NextStep)
-                    {
-                        run.NextStep = now + 0.22f;
-                        MushroomStep(run.Position, run.Radius, run.Step++);
-                    }
+                    DrawMushroom(run.Position, run.Radius, now - run.Started, (int)(run.Started * 97f));
                     break;
                 case SpellLook.PlasmaStorm:
                 case SpellLook.BlightRain:
@@ -313,34 +308,22 @@ namespace Halobellum.Presentation
                 _kit.Chunk(huge, at, out3 * Random.Range(12f, 34f), Random.Range(0.3f, 1.1f), i % 2 == 0 ? EffectRecipes.MetalHot : EffectRecipes.MetalDark, Random.Range(2.5f, 5f));
             }
             for (int i = 0; i < 6; i++) _kit.Heat(huge, at + Vector3.up * (radius * 0.4f + i * 3f) + Random.insideUnitSphere * radius * 0.5f, Vector3.up * 5f, radius * 3.4f, 1.6f);
-            Start(SpellLook.Nuke, at, radius, 4.4f, Color.white);
+            Start(SpellLook.Nuke, at, radius, MushroomCloud.Seconds, Color.white);
             CameraShake.Kick(at, 1f);
         }
 
-        /// <summary>One moment of the rising mushroom: a stem of fire and smoke, and a cap that spreads at the top.</summary>
-        private void MushroomStep(Vector3 at, float radius, int step)
+        /// <summary>The mushroom as it is at this moment after the blast, redrawn each frame from MushroomCloud, so it holds its shape and rolls.</summary>
+        private void DrawMushroom(Vector3 at, float radius, float age, int seed)
         {
-            const EffectPriority huge = EffectPriority.Huge;
-            float capHeight = Mathf.Min(radius * 3f, 8f + step * radius * 0.28f);
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < MushroomCloud.SmokePuffs; i++)
             {
-                Vector2 off = Random.insideUnitCircle * radius * 0.3f;
-                var stem = new Vector3(at.x + off.x, Random.Range(1f, capHeight * 0.7f), at.z + off.y);
-                _kit.Smoke(huge, stem, Vector3.up * Random.Range(8f, 13f), radius * Random.Range(0.55f, 0.85f), EffectRecipes.SmokeDark, Random.Range(1.6f, 2.4f));
+                MushroomCloud.Puff puff = MushroomCloud.Smoke(i, age, radius, seed);
+                if (puff.Color.a > 0.004f) _kit.CloudSmoke(at + puff.Offset, puff.Size, puff.Color, puff.Degrees, puff.Seed);
             }
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < MushroomCloud.FirePuffs; i++)
             {
-                Vector2 off = Random.insideUnitCircle * radius * 0.2f;
-                _kit.Fire(huge, new Vector3(at.x + off.x, Random.Range(1f, capHeight * 0.5f), at.z + off.y), Vector3.up * Random.Range(10f, 18f), radius * Random.Range(0.4f, 0.7f), Random.Range(0.7f, 1.1f));
-            }
-            int cap = 8;
-            for (int i = 0; i < cap; i++)
-            {
-                float angle = (i + Random.value) * Mathf.PI * 2f / cap;
-                var out3 = new Vector3(Mathf.Cos(angle), 0.1f, Mathf.Sin(angle));
-                Vector3 spot = at + Vector3.up * capHeight + out3 * radius * Random.Range(0.3f, 0.7f);
-                _kit.Smoke(huge, spot, out3 * radius * Random.Range(0.5f, 1.1f) + Vector3.up * Random.Range(2f, 5f), radius * Random.Range(0.75f, 1.2f), i % 2 == 0 ? EffectRecipes.SmokeDark : new Color(0.28f, 0.2f, 0.15f, 0.72f), Random.Range(2.6f, 4.4f));
-                if (step < 8) _kit.Fire(huge, spot, out3 * radius * 0.7f + Vector3.up * 3f, radius * Random.Range(0.4f, 0.7f), Random.Range(0.6f, 1f));
+                MushroomCloud.Puff puff = MushroomCloud.Fire(i, age, radius, seed);
+                if (puff.Color.a > 0.004f) _kit.CloudFire(at + puff.Offset, puff.Size, puff.Color, puff.Degrees, puff.Seed);
             }
         }
 

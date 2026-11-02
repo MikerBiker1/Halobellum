@@ -160,7 +160,7 @@ namespace Halobellum.Presentation
             }
             c.Decals.Uv = Vector2.zero;
 
-            // Pools of slime: dark and wet, in overlapping uneven blobs, with a faint sheen.
+            // Pools of slime: wet and olive, in overlapping uneven blobs, with a faint sheen. Mid-toned and see-through: a dark form must show on them, and they must not look like vehicles.
             for (int i = 0; i < 9; i++)
             {
                 float x = r.Range(-70f, 70f), z = c.Z(r.Range(12f, 76f));
@@ -168,12 +168,12 @@ namespace Halobellum.Presentation
                 for (int lobe = 0; lobe < 3; lobe++)
                 {
                     float lx = x + r.Range(-radius, radius) * 0.7f, lz = z + r.Range(-radius, radius) * 0.5f, lr = radius * r.Range(0.55f, 0.95f);
-                    c.Decals.FlatDisc(D, lx, lz, lr * 1.45f, lr * 1.15f, C(44, 40, 22, 170), C(44, 40, 22, 0), 10, lx * 3f);
+                    c.Decals.FlatDisc(D, lx, lz, lr * 1.45f, lr * 1.15f, C(74, 72, 38, 110), C(74, 72, 38, 0), 10, lx * 3f);
                 }
                 for (int lobe = 0; lobe < 3; lobe++)
                 {
                     float lx = x + r.Range(-radius, radius) * 0.5f, lz = z + r.Range(-radius, radius) * 0.35f, lr = radius * r.Range(0.5f, 0.8f);
-                    c.Decals.FlatDisc(D, lx, lz, lr, lr * 0.75f, C(32, 34, 18, 255), C(38, 40, 20, 255), 10, lx * 3f);
+                    c.Decals.FlatDisc(D, lx, lz, lr, lr * 0.75f, C(88, 94, 48, 150), C(84, 88, 44, 95), 10, lx * 3f);
                 }
                 c.Glow.Uv = new Vector2(0.6f, r.Range(0f, 6.28f));
                 c.Glow.FlatDisc(G, x - radius * 0.2f, z + radius * 0.15f, radius * 0.5f, radius * 0.3f, C(150, 170, 80, 26), C(150, 170, 80, 0), 8, x * 3f);
@@ -309,7 +309,7 @@ namespace Halobellum.Presentation
                 if (path.Count < 2) continue;
                 c.Decals.Uv = new Vector2(0f, 0.3f);
                 c.Decals.FlatRibbon(D, path, 4.2f, 2.2f, C(142, 118, 80, 90), true, taperEnds: TrenchTaper);
-                c.Decals.FlatRibbon(D, path, 2.4f, 0.9f, C(30, 18, 14, 225), true, taperEnds: TrenchTaper);
+                c.Decals.FlatRibbon(D, path, 2.4f, 0.9f, C(72, 46, 36, 185), true, taperEnds: TrenchTaper);
                 c.Decals.Uv = Vector2.zero;
             }
 

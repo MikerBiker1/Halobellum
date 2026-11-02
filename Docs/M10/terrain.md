@@ -25,7 +25,7 @@ Each faction has three layouts (the brief asked for at least two). The match see
 | Covenant | Sanctum | A built site: rings of pale plates set in the floor with magenta light, tall curved gates, obelisks with floating lights, stepped daises. A deeper, redder sky. |
 | Covenant | Crystal Garden | Pale drifted sand and slowly opening spirals of teal seams, in a field of tall crystals, under a cooler blue-grey sky. |
 | Flood | Creep | Living biomass, brown rot and sinew. Nests of pustules with veins spreading from them, a lumpy wall around the field, arching and rearing tendrils, swollen pods, spores in the air, a dark sky. |
-| Flood | Wreck | A place the Flood has taken: rot and pools of slime over the broken slabs of a dead base, burst barriers, rusted containers, strangled masts, the great ribs of a hull. A browner sky. |
+| Flood | Wreck | A place the Flood has taken: rot and see-through olive pools of slime over the broken slabs of a dead base, burst barriers, rusted containers, strangled masts, the great ribs of a hull. A browner sky. |
 | Flood | Hive | Raw sinew under a bruised red-brown sky, cut by trenches of rot, with tall ribbed spires standing over it. |
 
 All shapes and textures are original. Nothing was downloaded, and there are no logos or markings from anywhere.
@@ -45,6 +45,7 @@ All shapes and textures are original. Nothing was downloaded, and there are no l
 ## What keeps the game readable and fast
 
 - **The floor is exactly flat.** Hills start only outside the arena and a flat band around it. Everything on the floor is flat paint, drawn before any unit, and it can't hide anything.
+- **No solid patches of near-black on the Flood's floors.** Dark Flood forms stand there. The Wreck's pools were opaque and near black, 8 to 12 m across, so forms vanished on them and from a distance they looked like vehicles. They are now a mid-toned olive you can see through, and the Hive's trenches are a mid brown. A test checks it. The shell holes of no man's land stay dark on every map: they are small.
 - **Nothing solid can hide the floor.** The camera always stands inside the arena's width and to the south. So only things to the south of the floor and in line with it could get in the way, and they must stand back by 0.75 m per metre of height. `TerrainCanvas.Stand` refuses anything else. Hills to the south are capped low for the same reason. The tests check this on the final meshes of every layout.
 - **Triangles:** 55,000 to 85,000 for a whole map, under the 150,000 limit.
 - **Draw calls:** one each for the ground, paint, solid things, light, haze and sky, plus two overlays and the blobs.
@@ -59,6 +60,8 @@ Untouched. Nothing here reads anything but the factions, the seed and where bodi
 `Halobellum.exe -terrainGallery <folder>` goes through every layout of every faction, plus a Flood mirror match, and saves for each: bare ground, armies in deployment, battle, zoomed all the way out, close up on each side, and looking low at the horizon. It logs triangles and frame time. Add `-terrainMaps 2` for a quick look.
 
 ## Known limits
+
+- Glowing seams and veins are thin flat ribbons. On the High quality level (4x MSAA) they stay whole at the game camera. On Low there is no anti-aliasing, and the thinnest still break into dashes.
 
 - At the game's camera the sky itself is out of view: the camera's top edge looks 30 degrees below the horizon. It is there, and it shows in low views, and its colour reaches the far land through the haze. If the camera ever tilts up, the horizon is ready.
 - Models don't get the haze, on purpose: units stay clear. Terrain shaders do it themselves, and the scene's Unity fog stays off.

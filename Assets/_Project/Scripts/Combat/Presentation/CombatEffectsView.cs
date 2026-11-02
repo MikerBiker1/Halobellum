@@ -4,8 +4,8 @@
 //   - a flash at the muzzle of each shot, and what WeaponLooks says the weapon's shot looks like. Shots start at the muzzle of the model
 //     that fires them, if it has one (D45), and fly from that height to the height of what they aim at; the simulation knows only the ground;
 //   - shots the simulation hits with at once still appear to fly for a moment, and their impact comes when they arrive;
-//   - projectiles at their real place in flight, in an arc if they are lobbed, with smoke trails where the look asks for one, and a blast
-//     as wide as their splash where they land;
+//   - projectiles at their real place in flight, in an arc if they are lobbed, blended between ticks as bodies are, with trails laid by
+//     distance where the look asks for one, and a blast as wide as their splash where they land;
 //   - beams: a thin line and a growing spot while charging, then a thick glowing beam with a burning spot, sparks and scorched ground;
 //   - dust behind moving ground units. Deaths are DeathEffects and spells are SpellEffects.
 // All of it is pooled: nothing is created during battle. Everything runs on battle time: it pauses with the battle and runs faster at
@@ -27,13 +27,21 @@ namespace Halobellum.Presentation
         private struct ShotTrack
         {
             public int Serial;
-            public Vector3 World;
+            /// <summary>Where it was at the last two ticks; it is drawn between them, as a body is.</summary>
+            public Vector3 Previous, Current;
+            /// <summary>Where it is drawn this frame.</summary>
+            public Vector3 Shown;
             public Vector3 LastPuff;
         }
 
         private const int TrackSize = 1024;
+        /// <summary>The most puffs one shot's trail lays in one frame. A frame that long has hitched, and the trail may as well skip.</summary>
+        public const int MostTrailPuffsAtOnce = 6;
         /// <summary>Each body is looked at for dust this often, in seconds of battle time.</summary>
         public const float DustLookSeconds = 7f / 60f;
+
+        /// <summary>Paler than other smoke: from the game's camera a rocket's trail has to show against dark ground as well as light.</summary>
+        private static readonly Color RocketSmoke = new Color(0.72f, 0.7f, 0.66f, 0.62f);
 
         [Tooltip("How high a lobbed shot flies at its peak, as a share of the distance it travels.")]
         [SerializeField] private float lobHeightShare = 0.3f;
@@ -53,6 +61,7 @@ namespace Halobellum.Presentation
 
         private readonly List<ShotInFlight> _shots = new List<ShotInFlight>();
         private readonly List<ShotInFlight> _lastShots = new List<ShotInFlight>();
+        private readonly List<ShotInFlight> _tickShots = new List<ShotInFlight>();
         private readonly ShotTrack[] _tracks = new ShotTrack[TrackSize];
         private readonly List<BeamShot> _beams = new List<BeamShot>();
         private readonly float[] _beamEmit = new float[16];
@@ -101,6 +110,7 @@ namespace Halobellum.Presentation
             {
                 _shown.Events.WeaponFired -= OnWeaponFired;
                 _shown.Events.AttackBlocked -= OnAttackBlocked;
+                _shown.Events.Ticked -= OnTicked;
             }
             _deaths?.Show(null);
             _spells?.Show(null);
@@ -116,6 +126,7 @@ namespace Halobellum.Presentation
             {
                 _shown.Events.WeaponFired -= OnWeaponFired;
                 _shown.Events.AttackBlocked -= OnAttackBlocked;
+                _shown.Events.Ticked -= OnTicked;
             }
             _shown = simulation;
             _kit.Clear();
@@ -135,6 +146,7 @@ namespace Halobellum.Presentation
             if (_shown == null) return;
             _shown.Events.WeaponFired += OnWeaponFired;
             _shown.Events.AttackBlocked += OnAttackBlocked;
+            _shown.Events.Ticked += OnTicked;
         }
 
         /// <summary>The same faction on both sides, or (in the sandbox) the same unit type on both sides.</summary>
@@ -274,22 +286,54 @@ namespace Halobellum.Presentation
             }
         }
 
+        /// <summary>After every tick: where each shot now is, so that frames can draw it between its last two places. Called more than once in a frame at high speed.</summary>
+        private void OnTicked(int tick)
+        {
+            _cost.Start();
+            _shown.GetProjectiles(_tickShots);
+            for (int i = 0; i < _tickShots.Count; i++)
+            {
+                ShotInFlight shot = _tickShots[i];
+                ref ShotTrack track = ref _tracks[shot.Serial & (TrackSize - 1)];
+                if (track.Serial != shot.Serial)
+                {
+                    StartTrack(ref track, shot);
+                    continue;
+                }
+                track.Previous = track.Current;
+                track.Current = ShotWorld(shot);
+            }
+            _cost.Stop();
+        }
+
+        /// <summary>A shot's first tick: it flies from where it left, and its trail starts there.</summary>
+        private void StartTrack(ref ShotTrack track, in ShotInFlight shot)
+        {
+            Vector3 start = _units.TryMuzzle(shot.Attacker, shot.WeaponIndex, shot.Serial, out Vector3 muzzle) ? muzzle : ShotPoint(shot.Attacker);
+            track.Serial = shot.Serial;
+            track.Previous = start;
+            track.Current = ShotWorld(shot);
+            track.Shown = start;
+            track.LastPuff = start;
+        }
+
+        /// <summary>Where a shot is drawn this frame (for tests). False if there is no such shot on the track.</summary>
+        public bool TryShownShot(int serial, out Vector3 place)
+        {
+            ref ShotTrack track = ref _tracks[serial & (TrackSize - 1)];
+            place = track.Shown;
+            return track.Serial == serial;
+        }
+
         private void DrawShot(in ShotInFlight shot)
         {
             WeaponLook look = LookOf(shot.Attacker, shot.WeaponIndex);
-            float arc = 4f * lobHeightShare * shot.ArcLength * shot.Progress * (1f - shot.Progress);
-            Vector3 world = ShotPosition(shot) + Vector3.up * arc;
-
             ref ShotTrack track = ref _tracks[shot.Serial & (TrackSize - 1)];
-            bool isNew = track.Serial != shot.Serial;
-            Vector3 previous = isNew ? world : track.World;
-            if (isNew)
-            {
-                track.Serial = shot.Serial;
-                track.LastPuff = world;
-            }
-            track.World = world;
-            Vector3 moved = world - previous;
+            if (track.Serial != shot.Serial) StartTrack(ref track, shot);
+            Vector3 world = Vector3.LerpUnclamped(track.Previous, track.Current, _battle.IsPlaying ? _battle.Clock.Alpha : 1f);
+            track.Shown = world;
+
+            Vector3 moved = track.Current - track.Previous;
             Vector3 direction = moved.sqrMagnitude > 1e-6f ? moved.normalized : Vector3.forward;
             if (moved.sqrMagnitude <= 1e-6f && shot.AimedAt != null)
             {
@@ -312,43 +356,89 @@ namespace Halobellum.Presentation
                     float pulse = 1f + 0.12f * Mathf.Sin(_kit.BattleTime * 26f + shot.Serial);
                     _kit.HeadGlow(world, size * 2.3f * pulse, new Color(look.Shot.r, look.Shot.g, look.Shot.b, 0.65f));
                     _kit.HeadGlow(world, size * 0.9f, Color.Lerp(look.Shot, Color.white, 0.65f));
-                    if ((world - track.LastPuff).sqrMagnitude > 0.8f)
-                    {
-                        track.LastPuff = world;
-                        _kit.Orb(EffectPriority.Small, world + Random.insideUnitSphere * size * 0.3f, Random.insideUnitSphere * 1.2f + Vector3.down * 0.6f, size * 0.4f, new Color(look.Shot.r, look.Shot.g, look.Shot.b, 0.7f), 0.38f);
-                    }
+                    int drips = TrailPuffsDue(track.LastPuff, world, 1.2f, out Vector3 step);
+                    for (int p = 1; p <= drips; p++)
+                        _kit.Orb(EffectPriority.Small, track.LastPuff + step * p + Random.insideUnitSphere * size * 0.3f, Random.insideUnitSphere * 1.2f + Vector3.down * 0.6f, size * 0.4f, new Color(look.Shot.r, look.Shot.g, look.Shot.b, 0.7f), 0.38f);
+                    MoveLastPuff(ref track, world, drips, step);
                     return;
                 }
                 case WeaponFeelKind.Bio:
                 {
                     _kit.HeadStreak(world, direction, 1.1f * read, look.ShotWidth * read, look.Shot);
                     _kit.HeadGlow(world, 0.9f * read, new Color(0.65f, 0.9f, 0.3f, 0.55f));
-                    if ((world - track.LastPuff).sqrMagnitude > 1.2f)
-                    {
-                        track.LastPuff = world;
-                        _kit.Spore(EffectPriority.Small, world, Random.insideUnitSphere * 0.8f, 0.35f * read, EffectRecipes.SporeGreen, 0.9f);
-                    }
+                    int motes = TrailPuffsDue(track.LastPuff, world, 1.2f, out Vector3 step);
+                    for (int p = 1; p <= motes; p++)
+                        _kit.Spore(EffectPriority.Small, track.LastPuff + step * p, Random.insideUnitSphere * 0.8f, 0.35f * read, EffectRecipes.SporeGreen, 0.9f);
+                    MoveLastPuff(ref track, world, motes, step);
                     return;
                 }
                 case WeaponFeelKind.Rocket:
+                {
+                    // A short hot flame with a wide glow, on a thick pale trail that shows from the game's camera.
+                    _kit.HeadStreak(world, direction, 1.5f * read, look.ShotWidth * read, look.Shot);
+                    _kit.HeadGlow(world, 1.9f * read, new Color(look.Shot.r, look.Shot.g, look.Shot.b, 0.8f));
+                    _kit.HeadGlow(world, 0.7f * read, Color.Lerp(look.Shot, Color.white, 0.6f));
+                    if (!look.SmokeTrail) return;
+                    int puffs = TrailPuffsDue(track.LastPuff, world, 1f * read, out Vector3 step);
+                    // It rises a little, or the soft edge against the ground eats the trail of a rocket fired low.
+                    for (int p = 1; p <= puffs; p++)
+                        _kit.Smoke(EffectPriority.Medium, track.LastPuff + step * p - direction * 0.4f, Random.insideUnitSphere * 0.3f + Vector3.up * 1.6f, Random.Range(2.3f, 3.1f) * read, RocketSmoke, Random.Range(1f, 1.6f));
+                    MoveLastPuff(ref track, world, puffs, step);
+                    return;
+                }
                 case WeaponFeelKind.Cannon:
+                {
+                    // A long thin tracer, nearly white, with hardly any glow: a shell is fast and straight.
+                    _kit.HeadStreak(world, direction, 4f * read, look.ShotWidth * 0.8f * read, Color.Lerp(look.Shot, Color.white, 0.45f));
+                    _kit.HeadGlow(world, 0.7f * read, new Color(look.Shot.r, look.Shot.g, look.Shot.b, 0.5f));
+                    if (!look.SmokeTrail) return;
+                    int puffs = TrailPuffsDue(track.LastPuff, world, 2.2f * read, out Vector3 step);
+                    for (int p = 1; p <= puffs; p++)
+                        _kit.Smoke(EffectPriority.Small, track.LastPuff + step * p - direction * 0.4f, Random.insideUnitSphere * 0.3f, 0.5f * read, EffectRecipes.SmokeThin, 0.5f);
+                    MoveLastPuff(ref track, world, puffs, step);
+                    return;
+                }
                 case WeaponFeelKind.Bomb:
                 {
-                    bool rocket = look.Kind == WeaponFeelKind.Rocket;
-                    _kit.HeadStreak(world, direction, (rocket ? 1.5f : 2.4f) * read, look.ShotWidth * read, look.Shot);
-                    _kit.HeadGlow(world, (rocket ? 1.5f : 1.1f) * read, new Color(look.Shot.r, look.Shot.g, look.Shot.b, 0.7f));
-                    if (look.SmokeTrail && (world - track.LastPuff).sqrMagnitude > (rocket ? 0.7f : 2.2f))
-                    {
-                        track.LastPuff = world;
-                        Color smoke = rocket ? EffectRecipes.SmokeGrey : EffectRecipes.SmokeThin;
-                        _kit.Smoke(rocket ? EffectPriority.Medium : EffectPriority.Small, world - direction * 0.4f, Random.insideUnitSphere * 0.3f, rocket ? Random.Range(1.3f, 2f) : 0.8f, smoke, rocket ? Random.Range(1f, 1.6f) : 0.6f);
-                    }
+                    // A short fat shape with a slow pulse, coming down: the one to watch for. A fire bomb glows redder than a rocket.
+                    float pulse = 0.75f + 0.25f * Mathf.Sin(_kit.BattleTime * 15f + shot.Serial);
+                    Color glow = look.SmokeTrail ? new Color(look.Shot.r, look.Shot.g * 0.55f, look.Shot.b * 0.55f, 0.8f) : new Color(look.Shot.r, look.Shot.g, look.Shot.b, 0.7f);
+                    _kit.HeadStreak(world, direction, 1.5f * read, look.ShotWidth * 1.5f * read, look.Shot);
+                    _kit.HeadGlow(world, 1.6f * read * pulse, glow);
+                    if (!look.SmokeTrail) return;
+                    int puffs = TrailPuffsDue(track.LastPuff, world, 1.8f * read, out Vector3 step);
+                    for (int p = 1; p <= puffs; p++)
+                        _kit.Smoke(EffectPriority.Small, track.LastPuff + step * p - direction * 0.4f, Random.insideUnitSphere * 0.3f, 0.7f * read, EffectRecipes.SmokeThin, 0.6f);
+                    MoveLastPuff(ref track, world, puffs, step);
                     return;
                 }
                 default:
                     _kit.HeadStreak(world, direction, 3f * read, look.ShotWidth * read, look.Shot);
                     return;
             }
+        }
+
+        /// <summary>
+        /// How many puffs a trail owes between its last puff and where the shot is now, and the step between them, so that a trail is spaced by
+        /// distance at any frame rate and battle speed. Never more than MostTrailPuffsAtOnce.
+        /// </summary>
+        public static int TrailPuffsDue(Vector3 lastPuff, Vector3 now, float spacing, out Vector3 step)
+        {
+            Vector3 way = now - lastPuff;
+            float distance = way.magnitude;
+            if (distance < spacing)
+            {
+                step = Vector3.zero;
+                return 0;
+            }
+            step = way / distance * spacing;
+            return Mathf.Min((int)(distance / spacing), MostTrailPuffsAtOnce);
+        }
+
+        private static void MoveLastPuff(ref ShotTrack track, Vector3 now, int puffs, Vector3 step)
+        {
+            if (puffs == 0) return;
+            track.LastPuff = puffs >= MostTrailPuffsAtOnce ? now : track.LastPuff + step * puffs;
         }
 
         /// <summary>A shot has reached the end of its flight: its impact, and a blast as wide as its splash.</summary>
@@ -361,7 +451,7 @@ namespace Halobellum.Presentation
             bool airborne = shot.AimedAt != null && shot.AimedAt.IsAir && shot.ArcLength <= 0f;
 
             Vector3 at = new Vector3(shot.Position.X, shotHeight, shot.Position.Y);
-            if (known) at = track.World;
+            if (known) at = track.Current;
             if (airborne) at.y = _units.AimPoint(shot.AimedAt, shotHeight).y;
             else if (shot.ArcLength > 0f) at.y = 0.3f; // Lobbed: it comes down on the ground, hit or miss.
             else if (shot.AimedAt != null) at.y = Mathf.Min(at.y, _units.AimPoint(shot.AimedAt, shotHeight).y);
@@ -373,8 +463,15 @@ namespace Halobellum.Presentation
                 return;
             }
             SimUnit target = shot.AimedAt;
-            Vector3 direction = known ? (at - track.LastPuff).normalized : Vector3.down;
+            Vector3 direction = known ? (at - track.Previous).normalized : Vector3.down;
             _recipes.Impact(at, direction, look.Impact, target != null ? target.Stats.ArmorType : ArmorType.Unarmored, target != null && target.Shield > 0f, look.Shot);
+        }
+
+        /// <summary>Where a shot is at this tick, with its arc if it is lobbed.</summary>
+        private Vector3 ShotWorld(in ShotInFlight shot)
+        {
+            float arc = 4f * lobHeightShare * shot.ArcLength * shot.Progress * (1f - shot.Progress);
+            return ShotPosition(shot) + Vector3.up * arc;
         }
 
         /// <summary>A shot starts at its muzzle and closes in on where the simulation says it is, at the height of its target.</summary>
