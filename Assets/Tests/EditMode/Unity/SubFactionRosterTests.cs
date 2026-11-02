@@ -11,9 +11,11 @@ using System.Linq;
 using Halobellum.Core;
 using Halobellum.Economy;
 using Halobellum.EditorTools;
+using Halobellum.UI;
 using Halobellum.Units;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEngine;
 
 namespace Halobellum.Tests
 {
@@ -33,6 +35,33 @@ namespace Halobellum.Tests
         };
 
         private static FactionDefinition Faction(string asset) => AssetDatabase.LoadAssetAtPath<FactionDefinition>($"Assets/_Project/Data/Factions/{asset}.asset");
+
+        [TestCase("UNSC_Standard")]
+        [TestCase("Covenant_Standard")]
+        [TestCase("Flood_Standard")]
+        public void EveryShopRow_FitsOnOneLine_InItsFactionsFont(string asset)
+        {
+            FactionDefinition faction = Faction(asset);
+            FactionInfo info = faction.ToInfo(new Dictionary<UnitDefinition, UnitStats>());
+            Assert.IsNotNull(faction.uiTheme.fontAsset);
+            var style = new GUIStyle { font = faction.uiTheme.fontAsset, fontSize = Mathf.RoundToInt(MatchHud.ShopLineLeastSize * faction.uiTheme.fontScale), wordWrap = false };
+            string widest = null;
+            float widestWidth = 0f;
+            void Check(UnitStats unit, bool exclusive)
+            {
+                string line = MatchHud.ShopLine(unit, exclusive);
+                float needed = style.CalcSize(new GUIContent(line)).x;
+                if (needed > widestWidth) { widestWidth = needed; widest = line; }
+            }
+            foreach (UnitStats unit in info.BaseRoster) Check(unit, false);
+            foreach (SubFactionInfo sub in info.SubFactions)
+            {
+                foreach (UnitStats unit in sub.ExclusiveUnits) Check(unit, true);
+            }
+            Assert.Greater(widestWidth, 0f, "The font measured something.");
+            TestContext.WriteLine($"{asset}: widest is {widest}, {widestWidth} of {MatchHud.ShopTextWidth}");
+            Assert.LessOrEqual(widestWidth, MatchHud.ShopTextWidth, widest);
+        }
 
         private static List<UnitDefinition> Exclusive() => Table.SelectMany(row => HeadlessRunnerTool.LoadUnitsInFolder("Assets/_Project/Data/Units/" + row.folder)).ToList();
 

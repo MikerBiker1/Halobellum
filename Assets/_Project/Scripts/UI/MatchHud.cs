@@ -43,7 +43,7 @@ namespace Halobellum.UI
         [SerializeField] private Color playerColor = new Color(0.35f, 0.55f, 1f);
         [SerializeField] private Color enemyColor = new Color(1f, 0.4f, 0.32f);
 
-        private GUIStyle _title, _big, _text, _small, _smallCentered, _button, _bigButton, _centered, _header, _barLabel, _wrap, _wrapDim;
+        private GUIStyle _title, _big, _text, _small, _smallCentered, _button, _bigButton, _centered, _header, _barLabel, _wrap, _wrapDim, _shopLine;
         private float _scale;
         private Vector2 _shopScroll;
 
@@ -313,12 +313,21 @@ namespace Halobellum.UI
             return panel.yMax + 6f;
         }
 
+        private const float ShopPanelWidth = 500f, ShopPicture = 50f;
+        /// <summary>How wide the text of a shop row can be: the panel without its margins and scroll bar, the picture and the button.</summary>
+        public const float ShopTextWidth = ShopPanelWidth - 30f - ShopPicture - 134f;
+        /// <summary>The smallest a shop row's second line may shrink to, to stay on one line.</summary>
+        public const int ShopLineLeastSize = 13;
+
+        /// <summary>The second line of a shop row.</summary>
+        public static string ShopLine(UnitStats unit, bool exclusive) => $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.FormsInSquad)}{(exclusive ? ", exclusive" : "")}";
+
         private void DrawShop(float width, float height)
         {
             Match m = match.Match;
             PlayerState player = m.Player;
             List<UnitStats> roster = player.Roster;
-            const float panelWidth = 500f, rowHeight = 58f, picture = 50f;
+            const float panelWidth = ShopPanelWidth, rowHeight = 58f, picture = ShopPicture;
             float panelHeight = Mathf.Min(height - 200f, 50f + roster.Count * rowHeight);
             var panel = new Rect(width - panelWidth - 10f, 110f, panelWidth, panelHeight);
             Panel(panel);
@@ -333,9 +342,9 @@ namespace Halobellum.UI
                 var row = new Rect(0f, i * rowHeight, content.width, rowHeight - 4f);
                 HudTheme.RowBox(row);
                 CardScreens.DrawUnitPicture(new Rect(row.x + 4f, row.y + 2f, picture, picture), unit, player.Faction.Name, UnitIcons.FactionColor(player.Faction.Name));
-                float textX = row.x + picture + 8f, textWidth = row.width - picture - 134f;
+                float textX = row.x + picture + 8f, textWidth = ShopTextWidth;
                 GUI.Label(new Rect(textX, row.y + 2f, textWidth, 28f), $"{unit.Name} - {unit.Cost} cr", _text);
-                GUI.Label(new Rect(textX, row.y + 28f, textWidth, 22f), $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.FormsInSquad)}{(player.SubFaction.ExclusiveUnits.Contains(unit) ? ", exclusive" : "")}", _small);
+                CardScreens.Fit(new Rect(textX, row.y + 28f, textWidth, 22f), ShopLine(unit, player.SubFaction.ExclusiveUnits.Contains(unit)), _shopLine, 15, ShopLineLeastSize, TextAnchor.MiddleLeft, HudTheme.DimText);
 
                 var button = new Rect(row.xMax - 118f, row.y + 9f, 110f, 36f);
                 if (player.Unlocked.Contains(unit))
@@ -516,6 +525,7 @@ namespace Halobellum.UI
             _button = new GUIStyle(GUI.skin.button) { fontSize = HudTheme.Size(15) };
             _bigButton = new GUIStyle(GUI.skin.button) { fontSize = HudTheme.Size(19), fontStyle = FontStyle.Bold };
             _smallCentered = new GUIStyle(_small) { alignment = TextAnchor.MiddleCenter };
+            _shopLine = new GUIStyle(_small) { wordWrap = false };
             _wrap = new GUIStyle(_text) { fontSize = HudTheme.Size(15), wordWrap = true };
             _wrapDim = new GUIStyle(_small) { wordWrap = true, alignment = TextAnchor.UpperLeft };
             HudTheme.Fit(_wrap, _wrapDim);
