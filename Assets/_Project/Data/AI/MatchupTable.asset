@@ -209,6 +209,27 @@ MonoBehaviour:
   - attacker: Marine
     defender: Infested Elephant
     winRate: 0
+  - attacker: Marine
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Marine
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Marine
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Marine
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Marine
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Marine
+    defender: Spawner
+    winRate: 1
+  - attacker: Marine
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Flamethrower Trooper
     defender: Marine
     winRate: 0
@@ -403,6 +424,27 @@ MonoBehaviour:
     winRate: 0
   - attacker: Flamethrower Trooper
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Flamethrower Trooper
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Flamethrower Trooper
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Flamethrower Trooper
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Spawner
+    winRate: 1
+  - attacker: Flamethrower Trooper
+    defender: Infested Scarab
     winRate: 0
   - attacker: Warthog
     defender: Marine
@@ -599,6 +641,27 @@ MonoBehaviour:
   - attacker: Warthog
     defender: Infested Elephant
     winRate: 0
+  - attacker: Warthog
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Warthog
+    defender: Infested Ghost
+    winRate: 0
+  - attacker: Warthog
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Warthog
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Warthog
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Warthog
+    defender: Spawner
+    winRate: 0
+  - attacker: Warthog
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Gauss Warthog
     defender: Marine
     winRate: 0
@@ -794,6 +857,27 @@ MonoBehaviour:
   - attacker: Gauss Warthog
     defender: Infested Elephant
     winRate: 0
+  - attacker: Gauss Warthog
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Infested Ghost
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Gauss Warthog
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Spawner
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Scorpion
     defender: Marine
     winRate: 1
@@ -988,6 +1072,27 @@ MonoBehaviour:
     winRate: 1
   - attacker: Scorpion
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Scorpion
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Scorpion
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Scorpion
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Scorpion
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Scorpion
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Scorpion
+    defender: Spawner
+    winRate: 1
+  - attacker: Scorpion
+    defender: Infested Scarab
     winRate: 0
   - attacker: Wolverine
     defender: Marine
@@ -1184,6 +1289,27 @@ MonoBehaviour:
   - attacker: Wolverine
     defender: Infested Elephant
     winRate: 0
+  - attacker: Wolverine
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Wolverine
+    defender: Infested Ghost
+    winRate: 0
+  - attacker: Wolverine
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Wolverine
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Wolverine
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Wolverine
+    defender: Spawner
+    winRate: 0
+  - attacker: Wolverine
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Hornet
     defender: Marine
     winRate: 0
@@ -1378,6 +1504,27 @@ MonoBehaviour:
     winRate: 1
   - attacker: Hornet
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Hornet
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Hornet
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Hornet
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Hornet
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Hornet
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Hornet
+    defender: Spawner
+    winRate: 1
+  - attacker: Hornet
+    defender: Infested Scarab
     winRate: 0
   - attacker: Archer Missile Pod
     defender: Marine
@@ -1574,6 +1721,27 @@ MonoBehaviour:
   - attacker: Archer Missile Pod
     defender: Infested Elephant
     winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Infested Grunt
+    winRate: 0.8
+  - attacker: Archer Missile Pod
+    defender: Infested Ghost
+    winRate: 0.2
+  - attacker: Archer Missile Pod
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Archer Missile Pod
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Spawner
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Pelican
     defender: Marine
     winRate: 0
@@ -1769,6 +1937,27 @@ MonoBehaviour:
   - attacker: Pelican
     defender: Infested Elephant
     winRate: 0
+  - attacker: Pelican
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Pelican
+    defender: Infested Ghost
+    winRate: 0
+  - attacker: Pelican
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Pelican
+    defender: Infested Wraith
+    winRate: 0.3
+  - attacker: Pelican
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Pelican
+    defender: Spawner
+    winRate: 0
+  - attacker: Pelican
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Spartan
     defender: Marine
     winRate: 0
@@ -1963,6 +2152,27 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Spartan
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Spartan
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Spartan
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Spartan
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Spartan
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Spartan
+    defender: Spawner
+    winRate: 0
+  - attacker: Spartan
+    defender: Infested Scarab
     winRate: 0
   - attacker: Mantis
     defender: Marine
@@ -2159,6 +2369,27 @@ MonoBehaviour:
   - attacker: Mantis
     defender: Infested Elephant
     winRate: 0
+  - attacker: Mantis
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Mantis
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Mantis
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Mantis
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Mantis
+    defender: Infested Banshee
+    winRate: 0.7
+  - attacker: Mantis
+    defender: Spawner
+    winRate: 1
+  - attacker: Mantis
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Elephant
     defender: Marine
     winRate: 1
@@ -2353,6 +2584,27 @@ MonoBehaviour:
     winRate: 1
   - attacker: Elephant
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Elephant
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Elephant
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Elephant
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Elephant
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Elephant
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Elephant
+    defender: Spawner
+    winRate: 1
+  - attacker: Elephant
+    defender: Infested Scarab
     winRate: 0
   - attacker: Grunt
     defender: Marine
@@ -2549,6 +2801,27 @@ MonoBehaviour:
   - attacker: Grunt
     defender: Infested Elephant
     winRate: 0
+  - attacker: Grunt
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Grunt
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Grunt
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Grunt
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Grunt
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Grunt
+    defender: Spawner
+    winRate: 1
+  - attacker: Grunt
+    defender: Infested Scarab
+    winRate: 0.8
   - attacker: Fuel Rod Grunt
     defender: Marine
     winRate: 1
@@ -2744,6 +3017,27 @@ MonoBehaviour:
   - attacker: Fuel Rod Grunt
     defender: Infested Elephant
     winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Fuel Rod Grunt
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Fuel Rod Grunt
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Fuel Rod Grunt
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Spawner
+    winRate: 1
+  - attacker: Fuel Rod Grunt
+    defender: Infested Scarab
+    winRate: 0
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Marine
     winRate: 0
@@ -2939,6 +3233,27 @@ MonoBehaviour:
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Infested Elephant
     winRate: 0
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Infested Elite
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Spawner
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Infested Scarab
+    winRate: 0
   - attacker: 'Jackal (Shield)'
     defender: Marine
     winRate: 0
@@ -3133,6 +3448,27 @@ MonoBehaviour:
     winRate: 0
   - attacker: 'Jackal (Shield)'
     defender: Infested Elephant
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Infested Ghost
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Infested Elite
+    winRate: 0.9
+  - attacker: 'Jackal (Shield)'
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: 'Jackal (Shield)'
+    defender: Spawner
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Infested Scarab
     winRate: 0
   - attacker: Ghost
     defender: Marine
@@ -3329,6 +3665,27 @@ MonoBehaviour:
   - attacker: Ghost
     defender: Infested Elephant
     winRate: 0
+  - attacker: Ghost
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Ghost
+    defender: Infested Ghost
+    winRate: 0
+  - attacker: Ghost
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Ghost
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Ghost
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Ghost
+    defender: Spawner
+    winRate: 0
+  - attacker: Ghost
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Elite
     defender: Marine
     winRate: 0
@@ -3523,6 +3880,27 @@ MonoBehaviour:
     winRate: 0
   - attacker: Elite
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Elite
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Elite
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Elite
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Elite
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Elite
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Elite
+    defender: Spawner
+    winRate: 1
+  - attacker: Elite
+    defender: Infested Scarab
     winRate: 0
   - attacker: Wraith
     defender: Marine
@@ -3719,6 +4097,27 @@ MonoBehaviour:
   - attacker: Wraith
     defender: Infested Elephant
     winRate: 0
+  - attacker: Wraith
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Wraith
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Wraith
+    defender: Infested Elite
+    winRate: 0.9
+  - attacker: Wraith
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Wraith
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Wraith
+    defender: Spawner
+    winRate: 0.5
+  - attacker: Wraith
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Vampire
     defender: Marine
     winRate: 0
@@ -3914,6 +4313,27 @@ MonoBehaviour:
   - attacker: Vampire
     defender: Infested Elephant
     winRate: 0
+  - attacker: Vampire
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Vampire
+    defender: Infested Ghost
+    winRate: 0.9
+  - attacker: Vampire
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Vampire
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Vampire
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Vampire
+    defender: Spawner
+    winRate: 0
+  - attacker: Vampire
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Banshee
     defender: Marine
     winRate: 0
@@ -4109,6 +4529,27 @@ MonoBehaviour:
   - attacker: Banshee
     defender: Infested Elephant
     winRate: 0
+  - attacker: Banshee
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Banshee
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Banshee
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Banshee
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Banshee
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Banshee
+    defender: Spawner
+    winRate: 1
+  - attacker: Banshee
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Hunter Pair
     defender: Marine
     winRate: 1
@@ -4303,6 +4744,27 @@ MonoBehaviour:
     winRate: 1
   - attacker: Hunter Pair
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Hunter Pair
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Hunter Pair
+    defender: Spawner
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Infested Scarab
     winRate: 0
   - attacker: Zealot
     defender: Marine
@@ -4499,6 +4961,27 @@ MonoBehaviour:
   - attacker: Zealot
     defender: Infested Elephant
     winRate: 0
+  - attacker: Zealot
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Zealot
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Zealot
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Zealot
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Zealot
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Zealot
+    defender: Spawner
+    winRate: 0
+  - attacker: Zealot
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Scarab
     defender: Marine
     winRate: 1
@@ -4694,6 +5177,27 @@ MonoBehaviour:
   - attacker: Scarab
     defender: Infested Elephant
     winRate: 0
+  - attacker: Scarab
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Scarab
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Scarab
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Scarab
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Scarab
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Scarab
+    defender: Spawner
+    winRate: 1
+  - attacker: Scarab
+    defender: Infested Scarab
+    winRate: 1
   - attacker: Infection Forms
     defender: Marine
     winRate: 1
@@ -4889,6 +5393,27 @@ MonoBehaviour:
   - attacker: Infection Forms
     defender: Infested Elephant
     winRate: 0
+  - attacker: Infection Forms
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Infection Forms
+    defender: Infested Ghost
+    winRate: 0.1
+  - attacker: Infection Forms
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Infection Forms
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Infection Forms
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Infection Forms
+    defender: Spawner
+    winRate: 0
+  - attacker: Infection Forms
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Carrier Form
     defender: Marine
     winRate: 0.1
@@ -5083,6 +5608,27 @@ MonoBehaviour:
     winRate: 0
   - attacker: Carrier Form
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Carrier Form
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Carrier Form
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Carrier Form
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Carrier Form
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Carrier Form
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Carrier Form
+    defender: Spawner
+    winRate: 0
+  - attacker: Carrier Form
+    defender: Infested Scarab
     winRate: 0
   - attacker: Combat Form
     defender: Marine
@@ -5279,6 +5825,27 @@ MonoBehaviour:
   - attacker: Combat Form
     defender: Infested Elephant
     winRate: 1
+  - attacker: Combat Form
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Combat Form
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Combat Form
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Combat Form
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Combat Form
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Combat Form
+    defender: Spawner
+    winRate: 1
+  - attacker: Combat Form
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Stalker Form
     defender: Marine
     winRate: 0
@@ -5473,6 +6040,27 @@ MonoBehaviour:
     winRate: 0
   - attacker: Stalker Form
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Stalker Form
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Stalker Form
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Stalker Form
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Stalker Form
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Stalker Form
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Stalker Form
+    defender: Spawner
+    winRate: 0.7
+  - attacker: Stalker Form
+    defender: Infested Scarab
     winRate: 0
   - attacker: Pure Form Ranged
     defender: Marine
@@ -5669,6 +6257,27 @@ MonoBehaviour:
   - attacker: Pure Form Ranged
     defender: Infested Elephant
     winRate: 0
+  - attacker: Pure Form Ranged
+    defender: Infested Grunt
+    winRate: 0.7
+  - attacker: Pure Form Ranged
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Pure Form Ranged
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Pure Form Ranged
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Pure Form Ranged
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Pure Form Ranged
+    defender: Spawner
+    winRate: 0
+  - attacker: Pure Form Ranged
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Swarm Form
     defender: Marine
     winRate: 0
@@ -5863,6 +6472,27 @@ MonoBehaviour:
     winRate: 0
   - attacker: Swarm Form
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Infested Ghost
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Swarm Form
+    defender: Spawner
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Infested Scarab
     winRate: 0
   - attacker: Pure Form Tank
     defender: Marine
@@ -6059,6 +6689,27 @@ MonoBehaviour:
   - attacker: Pure Form Tank
     defender: Infested Elephant
     winRate: 0
+  - attacker: Pure Form Tank
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: Spawner
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Seeder
     defender: Marine
     winRate: 0
@@ -6253,6 +6904,27 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Seeder
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Seeder
+    defender: Infested Ghost
+    winRate: 0
+  - attacker: Seeder
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Seeder
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Seeder
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Seeder
+    defender: Spawner
+    winRate: 0
+  - attacker: Seeder
+    defender: Infested Scarab
     winRate: 0
   - attacker: Infected Pelican
     defender: Marine
@@ -6449,6 +7121,27 @@ MonoBehaviour:
   - attacker: Infected Pelican
     defender: Infested Elephant
     winRate: 0
+  - attacker: Infected Pelican
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Infected Pelican
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Infected Pelican
+    defender: Infested Wraith
+    winRate: 0.8
+  - attacker: Infected Pelican
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Spawner
+    winRate: 1
+  - attacker: Infected Pelican
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Infected Phantom
     defender: Marine
     winRate: 0
@@ -6644,6 +7337,27 @@ MonoBehaviour:
   - attacker: Infected Phantom
     defender: Infested Elephant
     winRate: 0
+  - attacker: Infected Phantom
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Infected Phantom
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Infected Phantom
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Infected Phantom
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Infected Phantom
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Infected Phantom
+    defender: Spawner
+    winRate: 0
+  - attacker: Infected Phantom
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Flood Abomination
     defender: Marine
     winRate: 1
@@ -6838,6 +7552,27 @@ MonoBehaviour:
     winRate: 0.4
   - attacker: Flood Abomination
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Flood Abomination
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Flood Abomination
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Flood Abomination
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Flood Abomination
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Flood Abomination
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Flood Abomination
+    defender: Spawner
+    winRate: 1
+  - attacker: Flood Abomination
+    defender: Infested Scarab
     winRate: 0
   - attacker: Spartan Sniper
     defender: Marine
@@ -7034,6 +7769,27 @@ MonoBehaviour:
   - attacker: Spartan Sniper
     defender: Infested Elephant
     winRate: 0.2
+  - attacker: Spartan Sniper
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Infested Ghost
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Spawner
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Spartan Heavy Weapons
     defender: Marine
     winRate: 0.1
@@ -7229,6 +7985,27 @@ MonoBehaviour:
   - attacker: Spartan Heavy Weapons
     defender: Infested Elephant
     winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Infested Wraith
+    winRate: 0.9
+  - attacker: Spartan Heavy Weapons
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Spawner
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Spartan Grenadier
     defender: Marine
     winRate: 1
@@ -7423,6 +8200,27 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Grenadier
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Spawner
+    winRate: 0.4
+  - attacker: Spartan Grenadier
+    defender: Infested Scarab
     winRate: 0
   - attacker: Spartan CQB
     defender: Marine
@@ -7619,6 +8417,27 @@ MonoBehaviour:
   - attacker: Spartan CQB
     defender: Infested Elephant
     winRate: 0
+  - attacker: Spartan CQB
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Infested Ghost
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Infested Banshee
+    winRate: 0.5
+  - attacker: Spartan CQB
+    defender: Spawner
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Spartan Fireteam
     defender: Marine
     winRate: 0
@@ -7814,6 +8633,27 @@ MonoBehaviour:
   - attacker: Spartan Fireteam
     defender: Infested Elephant
     winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Infested Ghost
+    winRate: 0.8
+  - attacker: Spartan Fireteam
+    defender: Infested Elite
+    winRate: 0.3
+  - attacker: Spartan Fireteam
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Spartan Fireteam
+    defender: Spawner
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Gremlin
     defender: Marine
     winRate: 0
@@ -8009,6 +8849,27 @@ MonoBehaviour:
   - attacker: Gremlin
     defender: Infested Elephant
     winRate: 0
+  - attacker: Gremlin
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Gremlin
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Gremlin
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Gremlin
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Gremlin
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Gremlin
+    defender: Spawner
+    winRate: 0
+  - attacker: Gremlin
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Cobra
     defender: Marine
     winRate: 0
@@ -8204,6 +9065,27 @@ MonoBehaviour:
   - attacker: Cobra
     defender: Infested Elephant
     winRate: 0
+  - attacker: Cobra
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Cobra
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Cobra
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Cobra
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Cobra
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Cobra
+    defender: Spawner
+    winRate: 0
+  - attacker: Cobra
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Rhino
     defender: Marine
     winRate: 1
@@ -8398,6 +9280,27 @@ MonoBehaviour:
     winRate: 0.4
   - attacker: Rhino
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Rhino
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Rhino
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Rhino
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Rhino
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Rhino
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Rhino
+    defender: Spawner
+    winRate: 0
+  - attacker: Rhino
+    defender: Infested Scarab
     winRate: 0
   - attacker: Grizzly
     defender: Marine
@@ -8594,6 +9497,27 @@ MonoBehaviour:
   - attacker: Grizzly
     defender: Infested Elephant
     winRate: 0
+  - attacker: Grizzly
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Grizzly
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Grizzly
+    defender: Infested Elite
+    winRate: 0.1
+  - attacker: Grizzly
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Grizzly
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Grizzly
+    defender: Spawner
+    winRate: 1
+  - attacker: Grizzly
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Sparrowhawk
     defender: Marine
     winRate: 0
@@ -8788,6 +9712,27 @@ MonoBehaviour:
     winRate: 1
   - attacker: Sparrowhawk
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Sparrowhawk
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Sparrowhawk
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Sparrowhawk
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Sparrowhawk
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Sparrowhawk
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Sparrowhawk
+    defender: Spawner
+    winRate: 1
+  - attacker: Sparrowhawk
+    defender: Infested Scarab
     winRate: 0
   - attacker: Shortsword
     defender: Marine
@@ -8984,6 +9929,27 @@ MonoBehaviour:
   - attacker: Shortsword
     defender: Infested Elephant
     winRate: 0
+  - attacker: Shortsword
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Shortsword
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Shortsword
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Shortsword
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Shortsword
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Shortsword
+    defender: Spawner
+    winRate: 1
+  - attacker: Shortsword
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Vulture
     defender: Marine
     winRate: 1
@@ -9178,6 +10144,27 @@ MonoBehaviour:
     winRate: 1
   - attacker: Vulture
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Vulture
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Vulture
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Vulture
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Vulture
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Vulture
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Vulture
+    defender: Spawner
+    winRate: 1
+  - attacker: Vulture
+    defender: Infested Scarab
     winRate: 0
   - attacker: Condor Gunship
     defender: Marine
@@ -9374,6 +10361,27 @@ MonoBehaviour:
   - attacker: Condor Gunship
     defender: Infested Elephant
     winRate: 0
+  - attacker: Condor Gunship
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Condor Gunship
+    defender: Infested Ghost
+    winRate: 0.6
+  - attacker: Condor Gunship
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Condor Gunship
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Condor Gunship
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Condor Gunship
+    defender: Spawner
+    winRate: 0
+  - attacker: Condor Gunship
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Chopper
     defender: Marine
     winRate: 0
@@ -9568,6 +10576,27 @@ MonoBehaviour:
     winRate: 0
   - attacker: Chopper
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Chopper
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Chopper
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Chopper
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Chopper
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Chopper
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Chopper
+    defender: Spawner
+    winRate: 1
+  - attacker: Chopper
+    defender: Infested Scarab
     winRate: 0
   - attacker: Brute Grenadier
     defender: Marine
@@ -9764,6 +10793,27 @@ MonoBehaviour:
   - attacker: Brute Grenadier
     defender: Infested Elephant
     winRate: 0
+  - attacker: Brute Grenadier
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Spawner
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Marauder
     defender: Marine
     winRate: 1
@@ -9958,6 +11008,27 @@ MonoBehaviour:
     winRate: 1
   - attacker: Marauder
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Marauder
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Marauder
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Marauder
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Marauder
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Marauder
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Marauder
+    defender: Spawner
+    winRate: 1
+  - attacker: Marauder
+    defender: Infested Scarab
     winRate: 0
   - attacker: Reaver
     defender: Marine
@@ -10154,6 +11225,27 @@ MonoBehaviour:
   - attacker: Reaver
     defender: Infested Elephant
     winRate: 0
+  - attacker: Reaver
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Reaver
+    defender: Infested Ghost
+    winRate: 0
+  - attacker: Reaver
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Reaver
+    defender: Infested Wraith
+    winRate: 0.3
+  - attacker: Reaver
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Reaver
+    defender: Spawner
+    winRate: 0
+  - attacker: Reaver
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Blisterback
     defender: Marine
     winRate: 1
@@ -10349,6 +11441,27 @@ MonoBehaviour:
   - attacker: Blisterback
     defender: Infested Elephant
     winRate: 0
+  - attacker: Blisterback
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Blisterback
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Blisterback
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Blisterback
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Blisterback
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Blisterback
+    defender: Spawner
+    winRate: 1
+  - attacker: Blisterback
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Skitterer
     defender: Marine
     winRate: 0
@@ -10544,6 +11657,27 @@ MonoBehaviour:
   - attacker: Skitterer
     defender: Infested Elephant
     winRate: 0
+  - attacker: Skitterer
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Skitterer
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Skitterer
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Skitterer
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Skitterer
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Skitterer
+    defender: Spawner
+    winRate: 1
+  - attacker: Skitterer
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Goliath
     defender: Marine
     winRate: 1
@@ -10738,6 +11872,27 @@ MonoBehaviour:
     winRate: 1
   - attacker: Goliath
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Goliath
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Goliath
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Goliath
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Goliath
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Goliath
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Goliath
+    defender: Spawner
+    winRate: 1
+  - attacker: Goliath
+    defender: Infested Scarab
     winRate: 0
   - attacker: Hunter Captain
     defender: Marine
@@ -10934,6 +12089,27 @@ MonoBehaviour:
   - attacker: Hunter Captain
     defender: Infested Elephant
     winRate: 1
+  - attacker: Hunter Captain
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Spawner
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Infested Scarab
+    winRate: 1
   - attacker: Cannon Fodder
     defender: Marine
     winRate: 0
@@ -11129,6 +12305,27 @@ MonoBehaviour:
   - attacker: Cannon Fodder
     defender: Infested Elephant
     winRate: 0
+  - attacker: Cannon Fodder
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Spawner
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Heavy Grunts
     defender: Marine
     winRate: 0
@@ -11323,6 +12520,27 @@ MonoBehaviour:
     winRate: 0
   - attacker: Heavy Grunts
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Spawner
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Infested Scarab
     winRate: 0
   - attacker: Methane Wagon
     defender: Marine
@@ -11519,6 +12737,27 @@ MonoBehaviour:
   - attacker: Methane Wagon
     defender: Infested Elephant
     winRate: 0
+  - attacker: Methane Wagon
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Methane Wagon
+    defender: Infested Ghost
+    winRate: 0.3
+  - attacker: Methane Wagon
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Methane Wagon
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Spawner
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Grunt Goblin
     defender: Marine
     winRate: 1
@@ -11713,6 +12952,27 @@ MonoBehaviour:
     winRate: 0.9
   - attacker: Grunt Goblin
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Spawner
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Infested Scarab
     winRate: 0
   - attacker: Infested Marine
     defender: Marine
@@ -11909,6 +13169,27 @@ MonoBehaviour:
   - attacker: Infested Marine
     defender: Infested Elephant
     winRate: 0
+  - attacker: Infested Marine
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Infested Marine
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Infested Marine
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Infested Marine
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Infested Marine
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Infested Marine
+    defender: Spawner
+    winRate: 1
+  - attacker: Infested Marine
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Infested Warthog
     defender: Marine
     winRate: 0
@@ -12103,6 +13384,27 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Warthog
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Infested Warthog
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Infested Warthog
+    defender: Infested Ghost
+    winRate: 0.7
+  - attacker: Infested Warthog
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Infested Warthog
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Infested Warthog
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Infested Warthog
+    defender: Spawner
+    winRate: 1
+  - attacker: Infested Warthog
+    defender: Infested Scarab
     winRate: 0
   - attacker: Infested Scorpion
     defender: Marine
@@ -12299,6 +13601,27 @@ MonoBehaviour:
   - attacker: Infested Scorpion
     defender: Infested Elephant
     winRate: 0
+  - attacker: Infested Scorpion
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Infested Scorpion
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Infested Scorpion
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Infested Scorpion
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Infested Scorpion
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Infested Scorpion
+    defender: Spawner
+    winRate: 1
+  - attacker: Infested Scorpion
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Infested Hornet
     defender: Marine
     winRate: 0
@@ -12493,6 +13816,27 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Hornet
     defender: Infested Elephant
+    winRate: 0
+  - attacker: Infested Hornet
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Infested Hornet
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Infested Hornet
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Infested Hornet
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Infested Hornet
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Infested Hornet
+    defender: Spawner
+    winRate: 1
+  - attacker: Infested Hornet
+    defender: Infested Scarab
     winRate: 0
   - attacker: Juggernaut
     defender: Marine
@@ -12689,6 +14033,27 @@ MonoBehaviour:
   - attacker: Juggernaut
     defender: Infested Elephant
     winRate: 0
+  - attacker: Juggernaut
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Juggernaut
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Juggernaut
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Juggernaut
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Juggernaut
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Juggernaut
+    defender: Spawner
+    winRate: 1
+  - attacker: Juggernaut
+    defender: Infested Scarab
+    winRate: 0
   - attacker: Infested Elephant
     defender: Marine
     winRate: 1
@@ -12883,4 +14248,1537 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Elephant
     defender: Juggernaut
+    winRate: 1
+  - attacker: Infested Elephant
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Infested Elephant
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Infested Elephant
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Infested Elephant
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Infested Elephant
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Infested Elephant
+    defender: Spawner
+    winRate: 1
+  - attacker: Infested Elephant
+    defender: Infested Scarab
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Marine
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Flamethrower Trooper
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Warthog
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Scorpion
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Wolverine
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Hornet
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Archer Missile Pod
+    winRate: 0.2
+  - attacker: Infested Grunt
+    defender: Pelican
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Spartan
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Mantis
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Elephant
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Grunt
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Ghost
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Elite
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Wraith
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Vampire
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Banshee
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Zealot
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Scarab
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Infection Forms
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Carrier Form
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Combat Form
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Stalker Form
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Pure Form Ranged
+    winRate: 0.3
+  - attacker: Infested Grunt
+    defender: Swarm Form
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Seeder
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Infected Pelican
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Infected Phantom
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Spartan Fireteam
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Gremlin
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Cobra
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Rhino
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Grizzly
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Sparrowhawk
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Shortsword
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Vulture
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Condor Gunship
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Chopper
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Marauder
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Reaver
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Blisterback
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Skitterer
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Goliath
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Hunter Captain
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Methane Wagon
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Grunt Goblin
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Infested Marine
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Infested Warthog
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Infested Scorpion
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Infested Hornet
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Juggernaut
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Infested Elephant
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Infested Grunt
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Spawner
+    winRate: 0
+  - attacker: Infested Grunt
+    defender: Infested Scarab
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Marine
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Flamethrower Trooper
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Warthog
+    winRate: 1
+  - attacker: Infested Ghost
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Infested Ghost
+    defender: Scorpion
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Wolverine
+    winRate: 1
+  - attacker: Infested Ghost
+    defender: Hornet
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Archer Missile Pod
+    winRate: 0.8
+  - attacker: Infested Ghost
+    defender: Pelican
+    winRate: 0.6
+  - attacker: Infested Ghost
+    defender: Spartan
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Mantis
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Elephant
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Grunt
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Infested Ghost
+    defender: Ghost
+    winRate: 1
+  - attacker: Infested Ghost
+    defender: Elite
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Wraith
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Vampire
+    winRate: 0.1
+  - attacker: Infested Ghost
+    defender: Banshee
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Zealot
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Scarab
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Infection Forms
+    winRate: 0.9
+  - attacker: Infested Ghost
+    defender: Carrier Form
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Combat Form
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Stalker Form
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Pure Form Ranged
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Swarm Form
+    winRate: 1
+  - attacker: Infested Ghost
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Seeder
+    winRate: 1
+  - attacker: Infested Ghost
+    defender: Infected Pelican
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Infected Phantom
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Infested Ghost
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Infested Ghost
+    defender: Spartan Fireteam
+    winRate: 0.2
+  - attacker: Infested Ghost
+    defender: Gremlin
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Cobra
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Rhino
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Grizzly
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Sparrowhawk
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Shortsword
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Vulture
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Condor Gunship
+    winRate: 0.4
+  - attacker: Infested Ghost
+    defender: Chopper
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Marauder
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Reaver
+    winRate: 1
+  - attacker: Infested Ghost
+    defender: Blisterback
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Skitterer
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Goliath
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Hunter Captain
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Methane Wagon
+    winRate: 0.7
+  - attacker: Infested Ghost
+    defender: Grunt Goblin
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Infested Marine
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Infested Warthog
+    winRate: 0.3
+  - attacker: Infested Ghost
+    defender: Infested Scorpion
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Infested Hornet
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Juggernaut
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Infested Elephant
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Infested Ghost
+    defender: Spawner
+    winRate: 1
+  - attacker: Infested Ghost
+    defender: Infested Scarab
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Marine
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Flamethrower Trooper
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Warthog
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Scorpion
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Wolverine
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Hornet
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Archer Missile Pod
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Pelican
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Spartan
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Mantis
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Elephant
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Grunt
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: Infested Elite
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Infested Elite
+    defender: 'Jackal (Shield)'
+    winRate: 0.1
+  - attacker: Infested Elite
+    defender: Ghost
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Elite
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Wraith
+    winRate: 0.1
+  - attacker: Infested Elite
+    defender: Vampire
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Banshee
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Zealot
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Scarab
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Infection Forms
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Carrier Form
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Combat Form
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Stalker Form
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Pure Form Ranged
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Swarm Form
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Seeder
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Infected Pelican
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Infected Phantom
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Spartan Fireteam
+    winRate: 0.7
+  - attacker: Infested Elite
+    defender: Gremlin
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Cobra
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Rhino
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Grizzly
+    winRate: 0.9
+  - attacker: Infested Elite
+    defender: Sparrowhawk
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Shortsword
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Vulture
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Condor Gunship
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Chopper
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Marauder
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Reaver
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Blisterback
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Skitterer
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Goliath
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Hunter Captain
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Methane Wagon
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Grunt Goblin
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Infested Marine
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Infested Warthog
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Infested Scorpion
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Infested Hornet
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Juggernaut
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Infested Elephant
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Infested Elite
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Infested Elite
+    defender: Spawner
+    winRate: 0.8
+  - attacker: Infested Elite
+    defender: Infested Scarab
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Marine
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Warthog
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Gauss Warthog
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Scorpion
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Wolverine
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Hornet
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Pelican
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Spartan
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Mantis
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Elephant
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Grunt
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Ghost
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Elite
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Wraith
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Vampire
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Banshee
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Zealot
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Scarab
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Infection Forms
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Carrier Form
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Combat Form
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Stalker Form
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Pure Form Ranged
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Swarm Form
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Seeder
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Infected Pelican
+    winRate: 0.2
+  - attacker: Infested Wraith
+    defender: Infected Phantom
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Spartan Heavy Weapons
+    winRate: 0.1
+  - attacker: Infested Wraith
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Spartan Fireteam
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Gremlin
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Cobra
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Rhino
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Grizzly
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Sparrowhawk
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Shortsword
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Vulture
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Condor Gunship
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Chopper
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Marauder
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Reaver
+    winRate: 0.7
+  - attacker: Infested Wraith
+    defender: Blisterback
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Skitterer
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Goliath
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Hunter Captain
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Grunt Goblin
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Infested Marine
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Infested Warthog
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Infested Scorpion
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Infested Hornet
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Juggernaut
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Infested Elephant
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Infested Wraith
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Spawner
+    winRate: 0.1
+  - attacker: Infested Wraith
+    defender: Infested Scarab
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Marine
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Warthog
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Scorpion
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Wolverine
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Hornet
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Pelican
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Spartan
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Mantis
+    winRate: 0.3
+  - attacker: Infested Banshee
+    defender: Elephant
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Grunt
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: 'Jackal (Shield)'
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Ghost
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Elite
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Wraith
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Vampire
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Banshee
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Hunter Pair
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Zealot
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Scarab
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Infection Forms
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Carrier Form
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Combat Form
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Stalker Form
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Pure Form Ranged
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Swarm Form
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Pure Form Tank
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Seeder
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Infected Pelican
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Infected Phantom
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Spartan CQB
+    winRate: 0.5
+  - attacker: Infested Banshee
+    defender: Spartan Fireteam
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Gremlin
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Cobra
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Rhino
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Grizzly
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Sparrowhawk
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Shortsword
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Vulture
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Condor Gunship
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Chopper
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Marauder
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Reaver
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Blisterback
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Skitterer
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Goliath
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Hunter Captain
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Grunt Goblin
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Infested Marine
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Infested Warthog
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Infested Scorpion
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Infested Hornet
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Juggernaut
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Infested Elephant
+    winRate: 0
+  - attacker: Infested Banshee
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Spawner
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Infested Scarab
+    winRate: 0
+  - attacker: Spawner
+    defender: Marine
+    winRate: 0
+  - attacker: Spawner
+    defender: Flamethrower Trooper
+    winRate: 0
+  - attacker: Spawner
+    defender: Warthog
+    winRate: 1
+  - attacker: Spawner
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Spawner
+    defender: Scorpion
+    winRate: 0
+  - attacker: Spawner
+    defender: Wolverine
+    winRate: 1
+  - attacker: Spawner
+    defender: Hornet
+    winRate: 0
+  - attacker: Spawner
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Spawner
+    defender: Pelican
+    winRate: 1
+  - attacker: Spawner
+    defender: Spartan
+    winRate: 1
+  - attacker: Spawner
+    defender: Mantis
+    winRate: 0
+  - attacker: Spawner
+    defender: Elephant
+    winRate: 0
+  - attacker: Spawner
+    defender: Grunt
+    winRate: 0
+  - attacker: Spawner
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: Spawner
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Spawner
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Spawner
+    defender: Ghost
+    winRate: 1
+  - attacker: Spawner
+    defender: Elite
+    winRate: 0
+  - attacker: Spawner
+    defender: Wraith
+    winRate: 0.5
+  - attacker: Spawner
+    defender: Vampire
+    winRate: 1
+  - attacker: Spawner
+    defender: Banshee
+    winRate: 0
+  - attacker: Spawner
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Spawner
+    defender: Zealot
+    winRate: 1
+  - attacker: Spawner
+    defender: Scarab
+    winRate: 0
+  - attacker: Spawner
+    defender: Infection Forms
+    winRate: 1
+  - attacker: Spawner
+    defender: Carrier Form
+    winRate: 1
+  - attacker: Spawner
+    defender: Combat Form
+    winRate: 0
+  - attacker: Spawner
+    defender: Stalker Form
+    winRate: 0.3
+  - attacker: Spawner
+    defender: Pure Form Ranged
+    winRate: 1
+  - attacker: Spawner
+    defender: Swarm Form
+    winRate: 1
+  - attacker: Spawner
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: Spawner
+    defender: Seeder
+    winRate: 1
+  - attacker: Spawner
+    defender: Infected Pelican
+    winRate: 0
+  - attacker: Spawner
+    defender: Infected Phantom
+    winRate: 1
+  - attacker: Spawner
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Spawner
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Spawner
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Spawner
+    defender: Spartan Grenadier
+    winRate: 0.6
+  - attacker: Spawner
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Spawner
+    defender: Spartan Fireteam
+    winRate: 1
+  - attacker: Spawner
+    defender: Gremlin
+    winRate: 1
+  - attacker: Spawner
+    defender: Cobra
+    winRate: 1
+  - attacker: Spawner
+    defender: Rhino
+    winRate: 1
+  - attacker: Spawner
+    defender: Grizzly
+    winRate: 0
+  - attacker: Spawner
+    defender: Sparrowhawk
+    winRate: 0
+  - attacker: Spawner
+    defender: Shortsword
+    winRate: 0
+  - attacker: Spawner
+    defender: Vulture
+    winRate: 0
+  - attacker: Spawner
+    defender: Condor Gunship
+    winRate: 1
+  - attacker: Spawner
+    defender: Chopper
+    winRate: 0
+  - attacker: Spawner
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Spawner
+    defender: Marauder
+    winRate: 0
+  - attacker: Spawner
+    defender: Reaver
+    winRate: 1
+  - attacker: Spawner
+    defender: Blisterback
+    winRate: 0
+  - attacker: Spawner
+    defender: Skitterer
+    winRate: 0
+  - attacker: Spawner
+    defender: Goliath
+    winRate: 0
+  - attacker: Spawner
+    defender: Hunter Captain
+    winRate: 1
+  - attacker: Spawner
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Spawner
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Spawner
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Spawner
+    defender: Grunt Goblin
+    winRate: 0
+  - attacker: Spawner
+    defender: Infested Marine
+    winRate: 0
+  - attacker: Spawner
+    defender: Infested Warthog
+    winRate: 0
+  - attacker: Spawner
+    defender: Infested Scorpion
+    winRate: 0
+  - attacker: Spawner
+    defender: Infested Hornet
+    winRate: 0
+  - attacker: Spawner
+    defender: Juggernaut
+    winRate: 0
+  - attacker: Spawner
+    defender: Infested Elephant
+    winRate: 0
+  - attacker: Spawner
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Spawner
+    defender: Infested Ghost
+    winRate: 0
+  - attacker: Spawner
+    defender: Infested Elite
+    winRate: 0.2
+  - attacker: Spawner
+    defender: Infested Wraith
+    winRate: 0.9
+  - attacker: Spawner
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Spawner
+    defender: Infested Scarab
+    winRate: 0
+  - attacker: Infested Scarab
+    defender: Marine
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Warthog
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Scorpion
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Wolverine
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Hornet
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Pelican
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Spartan
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Mantis
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Elephant
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Grunt
+    winRate: 0.2
+  - attacker: Infested Scarab
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Ghost
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Elite
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Wraith
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Vampire
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Banshee
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Hunter Pair
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Zealot
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Scarab
+    winRate: 0
+  - attacker: Infested Scarab
+    defender: Infection Forms
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Carrier Form
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Combat Form
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Stalker Form
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Pure Form Ranged
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Swarm Form
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Pure Form Tank
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Seeder
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Infected Pelican
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Infected Phantom
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Infested Scarab
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Spartan Fireteam
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Gremlin
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Cobra
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Rhino
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Grizzly
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Sparrowhawk
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Shortsword
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Vulture
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Condor Gunship
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Chopper
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Marauder
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Reaver
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Blisterback
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Skitterer
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Goliath
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Hunter Captain
+    winRate: 0
+  - attacker: Infested Scarab
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Grunt Goblin
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Infested Marine
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Infested Warthog
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Infested Scorpion
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Infested Hornet
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Juggernaut
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Infested Elephant
+    winRate: 0
+  - attacker: Infested Scarab
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Infested Scarab
+    defender: Spawner
     winRate: 1
