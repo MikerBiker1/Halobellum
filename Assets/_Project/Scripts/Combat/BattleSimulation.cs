@@ -432,7 +432,7 @@ namespace Halobellum.Combat
                     if (Vec2.Distance(unit.Position, source.Position) - unit.Radius > source.Stats.AuraRadius) continue;
                     unit.AuraTick = Tick;
                     unit.SpeedMultiplier *= source.Stats.AuraSpeedMultiplier;
-                    if (unit.Health > 0f) unit.Health = Math.Min(unit.Stats.MaxHealth, unit.Health + unit.Stats.MaxHealth * source.Stats.AuraHealPerSecondShare * _dt);
+                    if (unit.Health > 0f) unit.Health = Math.Min(Math.Max(unit.Health, unit.Stats.MaxHealth), unit.Health + unit.Stats.MaxHealth * source.Stats.AuraHealPerSecondShare * _dt);
                 }
             }
             foreach (SimSpell spell in _spells)
@@ -1192,7 +1192,7 @@ namespace Halobellum.Combat
             MarkEngaged(target);
             Events.RaiseUnitDamaged(target, attacker, dealt);
             if (attacker.Stats.LifestealShare > 0f && attacker.IsAlive && attacker.Health > 0f)
-                attacker.Health = Math.Min(attacker.Stats.MaxHealth, attacker.Health + dealt * attacker.Stats.LifestealShare);
+                attacker.Health = Math.Min(Math.Max(attacker.Health, attacker.Stats.MaxHealth), attacker.Health + dealt * attacker.Stats.LifestealShare);
 
             if (target.Health <= 0f && target.KilledById < 0 && target.KilledBySpell == null)
             {

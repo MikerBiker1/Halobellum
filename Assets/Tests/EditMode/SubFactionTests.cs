@@ -195,5 +195,56 @@ namespace Halobellum.Tests
             UnitStats strongItem = UnitUpgrades.Apply(captain, 1, null, new ItemStats { Name = "Strong", LifestealShare = 0.5f }, null);
             Assert.AreEqual(0.5f, strongItem.LifestealShare, 1e-5f);
         }
+
+        /// <summary>A unit whose +25% health tech is switched off by an EMP, from the first step on, so that its health is over its maximum for now.</summary>
+        private static SimUnit WithTechOff(BattleSimulation sim, UnitStats type, Vec2 position)
+        {
+            UnitStats upgraded = UnitUpgrades.Apply(type, 1, new[] { new TechUpgrade { Name = "Bond Armor", Cost = 250, HealthMultiplier = 1.25f } }, null, null);
+            SimUnit unit = sim.AddUnit(upgraded, Team.A, position);
+            unit.TechsDisabledUntil = 9999f;
+            return unit;
+        }
+
+        [Test]
+        public void Lifesteal_UnderAnEmp_DoesNotTakeHealthAway()
+        {
+            UnitStats captain = TestUnits.Unit(name: "Captain", health: 2000f, weapon: TestUnits.Weapon(damage: 72f, range: 30f, interval: 0.75f), speed: 0f);
+            captain.LifestealShare = 0.3f;
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            SimUnit unit = WithTechOff(sim, captain, Vec2.Zero);
+            sim.AddUnit(TestUnits.Unit(name: "Target", health: 100000f, weapon: TestUnits.Weapon(damage: 0f, range: 1f), speed: 0f), Team.B, new Vec2(0f, 20f));
+            Assert.AreEqual(2500f, unit.Health, 1e-2f);
+            float targetHealth = 100000f;
+            for (int i = 0; i < 60; i++) sim.Step();
+            Assert.Less(sim.Units[1].Health, targetHealth, "It has hit its target by now.");
+            Assert.AreEqual(2000f, unit.Stats.MaxHealth, 1e-2f, "The EMP has switched the tech off.");
+            Assert.AreEqual(2500f, unit.Health, 1e-2f, "Above its maximum for now: no heal, and no loss either.");
+
+            // And below the lower maximum it still heals, up to that maximum and no further.
+            unit.Health = 1990f;
+            for (int i = 0; i < 200 && unit.Health < 2000f; i++) sim.Step();
+            Assert.AreEqual(2000f, unit.Health, 1e-2f);
+        }
+
+        [Test]
+        public void HealingAura_UnderAnEmp_DoesNotTakeHealthAway()
+        {
+            UnitStats goblin = TestUnits.Unit(name: "Goblin", health: 1000f, weapon: TestUnits.Weapon(damage: 0f, range: 1f), speed: 0f);
+            goblin.AuraRadius = 14f;
+            goblin.AuraSpeedMultiplier = 1.2f;
+            goblin.AuraHealPerSecondShare = 0.01f;
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            sim.AddUnit(goblin, Team.A, Vec2.Zero);
+            SimUnit friend = WithTechOff(sim, TestUnits.Unit(name: "Friend", health: 2000f, weapon: TestUnits.Weapon(damage: 0f, range: 1f), speed: 0f), new Vec2(5f, 0f));
+            sim.AddUnit(TestUnits.Unit(name: "Far", health: 100000f, weapon: TestUnits.Weapon(damage: 0f, range: 1f), speed: 0f), Team.B, new Vec2(0f, 60f));
+            for (int i = 0; i < 10; i++) sim.Step();
+            Assert.AreEqual(2000f, friend.Stats.MaxHealth, 1e-2f, "The EMP has switched the tech off.");
+            Assert.AreEqual(2500f, friend.Health, 1e-2f, "Above its maximum for now: no heal, and no loss either.");
+
+            friend.Health = 1000f;
+            for (int i = 0; i < 10; i++) sim.Step();
+            Assert.Greater(friend.Health, 1000f, "Below the lower maximum the aura still heals.");
+            Assert.Less(friend.Health, 2000f);
+        }
     }
 }
