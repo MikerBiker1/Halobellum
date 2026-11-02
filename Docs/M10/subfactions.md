@@ -23,7 +23,7 @@ The owner said "Go for M10" and left the design open, in the spirit of the Flood
 The brief says to prefer what exists, and almost every unit does. Only two things are new in the simulation, both data-driven:
 
 1. **A hit that slows** (`hitSlowSeconds`, `hitSlowShare` on a weapon). The Gremlin's EMP. Titans shrug it off. It uses the slow an EMP spell already uses.
-2. **Lifesteal from a unit's own data** (`lifestealShare`). Lifesteal already existed for items. The Hunter Captain's siphon laser uses it. An item on the same squad doesn't lower it: the stronger of the two applies.
+2. **Lifesteal from a unit's own data** (`lifestealShare`). Lifesteal already existed for items. The Hunter Captain's siphon laser uses it. An item on the same squad doesn't lower it: the stronger of the two applies. While an EMP has a +health tech switched off, a unit can be above its lower maximum for now: lifesteal and healing auras then simply don't add to it, and never take health away.
 
 A third field is looks only: `bakedTint` and `bakedScale` let units that share a baked body look different.
 
