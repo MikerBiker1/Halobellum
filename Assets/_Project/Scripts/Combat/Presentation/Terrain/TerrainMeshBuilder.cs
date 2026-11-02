@@ -349,7 +349,7 @@ namespace Halobellum.Presentation
         public void Halo(Vector3 centre, float radius, Color32 color, int segments = 8)
         {
             Vector3 right = Vector3.right * radius;
-            Vector3 up = new Vector3(0f, 0.82f, -0.57f) * radius; // Up along the screen at the battle camera's pitch.
+            Vector3 up = new Vector3(0f, 0.57f, 0.82f) * radius; // Up along the screen at the battle camera's pitch.
             Color32 clear = new Color32(color.r, color.g, color.b, 0);
             int middle = Vertex(centre, Vector3.zero, color);
             int first = _positions.Count;
@@ -371,7 +371,7 @@ namespace Halobellum.Presentation
         {
             Uv = new Vector2(0.4f, phase);
             Vector3 r = new Vector3(size, 0f, 0f);
-            Vector3 u = new Vector3(0f, 0.82f, -0.57f) * size;
+            Vector3 u = new Vector3(0f, 0.57f, 0.82f) * size;
             var clear = new Color32(color.r, color.g, color.b, 0);
             int middle = Vertex(position, drift, color);
             int a = Vertex(position + r, drift, clear);

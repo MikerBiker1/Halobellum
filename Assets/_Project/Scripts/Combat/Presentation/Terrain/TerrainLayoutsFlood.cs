@@ -36,12 +36,12 @@ namespace Halobellum.Presentation
             for (int nest = 0; nest < 8; nest++)
             {
                 float nx = r.Range(-74f, 74f), nz = c.Z(r.Range(14f, 78f));
-                int veins = 3 + r.Int(4);
+                int veins = 3 + r.Int(3);
                 for (int v = 0; v < veins; v++)
                 {
                     TerrainCanvas.Wander(path, r, new Vector2(nx, nz), r.Range(0f, 6.28f), 4f, 7 + r.Int(10), 0.42f);
                     c.KeepOnFloor(path, 0.5f);
-                    float width = r.Range(0.5f, 1.05f);
+                    float width = r.Range(0.4f, 0.85f);
                     Vein(c, path, width);
                     if (path.Count > 4)
                     {
@@ -160,15 +160,23 @@ namespace Halobellum.Presentation
             }
             c.Decals.Uv = Vector2.zero;
 
-            // Pools of slime, dark and wet with a pale rim.
+            // Pools of slime: dark and wet, in overlapping uneven blobs, with a faint sheen.
             for (int i = 0; i < 9; i++)
             {
                 float x = r.Range(-70f, 70f), z = c.Z(r.Range(12f, 76f));
-                float radius = r.Range(2.5f, 6.5f);
-                c.Decals.FlatDisc(D, x, z, radius * 1.3f, radius * 1.05f, C(150, 150, 72, 180), C(150, 150, 72, 0), 12, x * 3f);
-                c.Decals.FlatDisc(D, x, z, radius, radius * 0.8f, C(34, 44, 18, 255), C(56, 68, 26, 255), 12, x * 3f);
+                float radius = r.Range(2.2f, 5.5f);
+                for (int lobe = 0; lobe < 3; lobe++)
+                {
+                    float lx = x + r.Range(-radius, radius) * 0.7f, lz = z + r.Range(-radius, radius) * 0.5f, lr = radius * r.Range(0.55f, 0.95f);
+                    c.Decals.FlatDisc(D, lx, lz, lr * 1.45f, lr * 1.15f, C(44, 40, 22, 170), C(44, 40, 22, 0), 10, lx * 3f);
+                }
+                for (int lobe = 0; lobe < 3; lobe++)
+                {
+                    float lx = x + r.Range(-radius, radius) * 0.5f, lz = z + r.Range(-radius, radius) * 0.35f, lr = radius * r.Range(0.5f, 0.8f);
+                    c.Decals.FlatDisc(D, lx, lz, lr, lr * 0.75f, C(32, 34, 18, 255), C(38, 40, 20, 255), 10, lx * 3f);
+                }
                 c.Glow.Uv = new Vector2(0.6f, r.Range(0f, 6.28f));
-                c.Glow.FlatDisc(G, x - radius * 0.2f, z + radius * 0.15f, radius * 0.5f, radius * 0.34f, C(170, 200, 80, 44), C(170, 200, 80, 0), 8, x * 3f);
+                c.Glow.FlatDisc(G, x - radius * 0.2f, z + radius * 0.15f, radius * 0.5f, radius * 0.3f, C(150, 170, 80, 26), C(150, 170, 80, 0), 8, x * 3f);
                 c.Glow.Uv = Vector2.zero;
             }
 

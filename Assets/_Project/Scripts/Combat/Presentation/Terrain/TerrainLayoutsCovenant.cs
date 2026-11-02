@@ -143,7 +143,7 @@ namespace Halobellum.Presentation
             {
                 float mid = c.Z(46f);
                 c.Decals.Uv = new Vector2(0f, 0.7f);
-                c.Decals.FlatRect(D, k * 62f, mid, 5f, 14f, 0f, C(50, 40, 76));
+                c.Decals.FlatRect(D, k * 62f, mid, 5f, 14f, 0f, C(92, 84, 114));
                 c.Decals.Uv = Vector2.zero;
                 c.Glow.FlatRect(G, k * 62f, mid, 0.25f, 14f, 0f, new Color32(Magenta.r, Magenta.g, Magenta.b, 190));
             }
@@ -209,7 +209,7 @@ namespace Halobellum.Presentation
                 {
                     float from = p * each + 0.6f;
                     float tone = (r.Value() - 0.5f) * 12f;
-                    c.Decals.FlatRing(D, x, z, inner, outer, C(Mathf.RoundToInt(62 + tone), Mathf.RoundToInt(50 + tone), Mathf.RoundToInt(92 + tone)), 4, from, from + each - 1.2f);
+                    c.Decals.FlatRing(D, x, z, inner, outer, C(Mathf.RoundToInt(92 + tone), Mathf.RoundToInt(84 + tone), Mathf.RoundToInt(114 + tone)), 4, from, from + each - 1.2f);
                 }
             }
             c.Decals.Uv = Vector2.zero;
@@ -217,12 +217,12 @@ namespace Halobellum.Presentation
             for (int i = 0; i < count; i++)
             {
                 float outer = radius * (1f - i / (float)count);
-                float line = i == 0 ? 0.22f : 0.14f;
-                c.Glow.FlatRing(G, x, z, outer - line, outer + line, new Color32(Magenta.r, Magenta.g, Magenta.b, 215), 56);
-                c.Glow.FlatRing(G, x, z, outer + line, outer + line + 1.8f, new Color32(Magenta.r, Magenta.g, Magenta.b, 40), 56, 0f, 360f, new Color32(Magenta.r, Magenta.g, Magenta.b, 0));
-                c.Glow.FlatRing(G, x, z, outer - line - 1.8f, outer - line, new Color32(Magenta.r, Magenta.g, Magenta.b, 0), 56, 0f, 360f, new Color32(Magenta.r, Magenta.g, Magenta.b, 40));
+                float line = i == 0 ? 0.17f : 0.11f;
+                c.Glow.FlatRing(G, x, z, outer - line, outer + line, new Color32(Magenta.r, Magenta.g, Magenta.b, 150), 56);
+                c.Glow.FlatRing(G, x, z, outer + line, outer + line + 1.8f, new Color32(Magenta.r, Magenta.g, Magenta.b, 22), 56, 0f, 360f, new Color32(Magenta.r, Magenta.g, Magenta.b, 0));
+                c.Glow.FlatRing(G, x, z, outer - line - 1.8f, outer - line, new Color32(Magenta.r, Magenta.g, Magenta.b, 0), 56, 0f, 360f, new Color32(Magenta.r, Magenta.g, Magenta.b, 22));
             }
-            c.Glow.FlatDisc(G, x, z, radius * 0.11f, radius * 0.11f, new Color32(Magenta.r, Magenta.g, Magenta.b, 120), new Color32(Magenta.r, Magenta.g, Magenta.b, 0), 12);
+            c.Glow.FlatDisc(G, x, z, radius * 0.11f, radius * 0.11f, new Color32(Magenta.r, Magenta.g, Magenta.b, 70), new Color32(Magenta.r, Magenta.g, Magenta.b, 0), 12);
             c.Glow.Uv = Vector2.zero;
         }
     }

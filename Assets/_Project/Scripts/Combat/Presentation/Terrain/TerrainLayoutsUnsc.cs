@@ -266,21 +266,21 @@ namespace Halobellum.Presentation
 
             // Dirt tracks crossing the field, as ruts.
             var path = new List<Vector2>();
-            for (int i = 0; i < 5; i++)
-            {
-                float z0 = c.Z(r.Range(14f, 74f));
-                float heading = 1.57f + r.Range(-0.35f, 0.35f);
-                TerrainCanvas.Wander(path, r, new Vector2(-W - 2f, z0), heading, 12f, 15, 0.14f);
-                for (int p = 0; p + 1 < path.Count; p++)
-                    c.PaintLine(path[p].x, path[p].y, path[p + 1].x, path[p + 1].y, 6f, 0, 0.9f);
-            }
             for (int i = 0; i < 3; i++)
+            {
+                float z0 = c.Z(r.Range(18f, 72f));
+                float heading = 1.57f + r.Range(-0.3f, 0.3f);
+                TerrainCanvas.Wander(path, r, new Vector2(-W - 2f, z0), heading, 6f, 30, 0.2f);
+                for (int p = 0; p + 1 < path.Count; p++)
+                    c.PaintLine(path[p].x, path[p].y, path[p + 1].x, path[p + 1].y, 4.4f, 0, 0.75f);
+            }
+            for (int i = 0; i < 2; i++)
             {
                 float x0 = r.Range(-60f, 60f);
                 float heading = (c.Side > 0 ? 0f : 3.14f) + r.Range(-0.3f, 0.3f);
-                TerrainCanvas.Wander(path, r, new Vector2(x0, c.Z(10f)), heading, 12f, 12, 0.12f);
+                TerrainCanvas.Wander(path, r, new Vector2(x0, c.Z(10f)), heading, 6f, 22, 0.2f);
                 for (int p = 0; p + 1 < path.Count; p++)
-                    c.PaintLine(path[p].x, path[p].y, path[p + 1].x, path[p + 1].y, 5f, 0, 0.9f);
+                    c.PaintLine(path[p].x, path[p].y, path[p + 1].x, path[p + 1].y, 3.6f, 0, 0.75f);
             }
 
             // Small concrete pads at the back of the field, with a painted edge.

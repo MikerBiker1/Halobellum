@@ -107,7 +107,7 @@ Shader "Halobellum/TerrainGround"
                 half4 macro2 = SAMPLE_TEXTURE2D(_Macro, sampler_Macro, xz * 0.0137);
 
                 // The control map is soft: fine noise roughens the edges where one ground meets another, and leaves weights of exactly 0 and 1 alone.
-                half rough = (sqrt(SAMPLE_TEXTURE2D(_Macro, sampler_Macro, xz * 0.083).b) - 0.46) * 1.5;
+                half rough = (sqrt(SAMPLE_TEXTURE2D(_Macro, sampler_Macro, xz * 0.083).b) - 0.46) * 1.0;
                 control.r = saturate(control.r + rough * 4.0 * control.r * (1.0 - control.r));
                 control.g = saturate(control.g + rough * 4.0 * control.g * (1.0 - control.g));
                 control.b = saturate(control.b + rough * 4.0 * control.b * (1.0 - control.b));

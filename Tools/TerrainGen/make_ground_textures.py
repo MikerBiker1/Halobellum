@@ -108,6 +108,12 @@ def blend(base, color, mask):
     return base * (1 - mask[..., None]) + np.array(color, dtype=np.float32) * mask[..., None]
 
 
+def desaturate(color, amount, lift=1.0):
+    """Moves a colour towards its own grey, and optionally brightens it."""
+    grey = color.mean(axis=-1, keepdims=True)
+    return (color * (1 - amount) + grey * amount) * lift
+
+
 def smooth(low, high, value):
     t = np.clip((value - low) / (high - low), 0, 1)
     return t * t * (3 - 2 * t)
@@ -257,7 +263,7 @@ def cov_rock():
     color = blend(color, (48, 40, 68), joint * 0.5)
     height = np.clip(height - joint * 0.25, 0, 1)
     color *= relief(height, 3.5)[..., None]
-    return color, height
+    return desaturate(color, 0.42, 1.04), height
 
 
 def cov_plate():
@@ -276,7 +282,7 @@ def cov_plate():
     color = blend(color, (104, 96, 148), gloss * 0.22)
     height = np.clip(0.6 + grooves * 0.25 - (1 - grooves) * 0.3 + (fine - 0.5) * 0.1, 0, 1)
     color *= relief(height, 6.0)[..., None]
-    return color, height
+    return desaturate(color, 0.38, 1.18), height
 
 
 def cov_sand():
@@ -294,7 +300,7 @@ def cov_sand():
     shards = blur(dots(64, 1600, 0.7, 2.0), 0.5)
     color = blend(color, (206, 216, 240), np.clip(shards, 0, 1) * 0.55)
     height = np.clip(ripple * 0.5 + broad * 0.3 + grain * 0.2, 0, 1) * 0.7
-    return color, height
+    return desaturate(color, 0.4, 0.92), height
 
 
 # ---------------------------------------------------------------------------- Flood
@@ -309,12 +315,12 @@ def flood_mass():
     fine = band_noise(73, 50, 260, 0.6)
     mottled = band_noise(74, 10, 50)
     height = np.clip(lump * 0.7 + big * 0.25 + fine * 0.05 - crease * 0.3, 0, 1)
-    color = ramp(big * 0.45 + mottled * 0.55, (74, 84, 40), (104, 112, 50), (134, 136, 62), (166, 160, 84))
-    color = blend(color, (52, 34, 26), crease * 0.82)
+    color = ramp(big * 0.45 + mottled * 0.55, (72, 76, 44), (92, 96, 52), (112, 112, 62), (134, 128, 78))
+    color = blend(color, (58, 42, 32), crease * 0.62)
     pale = smooth(0.55, 0.95, lump) * smooth(0.5, 0.8, mottled)
-    color = blend(color, (182, 176, 104), pale * 0.45)
-    color *= (0.88 + 0.24 * fine)[..., None]
-    color *= relief(height, 18.0)[..., None]
+    color = blend(color, (156, 148, 96), pale * 0.25)
+    color *= (0.92 + 0.16 * fine)[..., None]
+    color *= relief(height, 9.0)[..., None]
     return color, height
 
 

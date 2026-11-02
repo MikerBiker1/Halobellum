@@ -6,7 +6,7 @@ Shader "Halobellum/UnitBlob"
 {
     Properties
     {
-        _Strength("Darkness", Range(0, 1)) = 0.5
+        _Strength("Darkness", Range(0, 1)) = 0.65
     }
 
     SubShader
