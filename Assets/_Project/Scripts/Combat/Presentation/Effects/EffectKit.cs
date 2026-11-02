@@ -62,6 +62,9 @@ namespace Halobellum.Presentation
 
         public readonly EffectBudget Budget = new EffectBudget();
 
+        /// <summary>True draws nothing at all (the benchmark's measure of a battle without effects).</summary>
+        public bool Muted { get; set; }
+
         /// <summary>The battle's clock for effects: stands still when the battle is paused.</summary>
         public float BattleTime { get; private set; }
 
@@ -390,7 +393,7 @@ namespace Halobellum.Presentation
 
         private void Emit(Layer layer, EffectPriority priority, ref ParticleSystem.EmitParams emit)
         {
-            if (!Budget.Allow(priority, layer.Fill)) return;
+            if (Muted || !Budget.Allow(priority, layer.Fill)) return;
             layer.Fill += layer.Step;
             layer.System.Emit(emit, 1);
         }
@@ -400,7 +403,7 @@ namespace Halobellum.Presentation
         /// <summary>A glow for this frame only.</summary>
         public void HeadGlow(Vector3 position, float size, Color color)
         {
-            if (_headGlowCount >= HeadCapacity) return;
+            if (Muted || _headGlowCount >= HeadCapacity) return;
             ref ParticleSystem.Particle head = ref _headGlowData[_headGlowCount++];
             head.position = position;
             head.velocity = Vector3.zero;
@@ -414,7 +417,7 @@ namespace Halobellum.Presentation
         /// <summary>A streak for this frame only, pointing along direction, this long and this wide (metres).</summary>
         public void HeadStreak(Vector3 position, Vector3 direction, float length, float width, Color color)
         {
-            if (_headStreakCount >= HeadCapacity) return;
+            if (Muted || _headStreakCount >= HeadCapacity) return;
             ref ParticleSystem.Particle head = ref _headStreakData[_headStreakCount++];
             head.position = position;
             // The renderer stretches a particle by its speed: this speed gives this length.
@@ -428,7 +431,7 @@ namespace Halobellum.Presentation
         /// <summary>A flat glow on the ground for this frame only.</summary>
         public void GroundHead(Vector3 position, float diameter, Color color)
         {
-            if (_groundHeadCount >= GroundHeadCapacity) return;
+            if (Muted || _groundHeadCount >= GroundHeadCapacity) return;
             ref ParticleSystem.Particle head = ref _groundHeadData[_groundHeadCount++];
             head.position = position;
             head.velocity = Vector3.zero;
@@ -442,7 +445,7 @@ namespace Halobellum.Presentation
         /// <summary>A glowing line for this frame only.</summary>
         public void Line(Vector3 from, Vector3 to, float width, Color color)
         {
-            if (_linesUsed >= LinePool) return;
+            if (Muted || _linesUsed >= LinePool) return;
             LineRenderer line = _lines[_linesUsed++];
             line.SetPosition(0, from);
             line.SetPosition(1, to);

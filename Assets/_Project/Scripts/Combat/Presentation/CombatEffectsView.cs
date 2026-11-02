@@ -331,8 +331,7 @@ namespace Halobellum.Presentation
                     {
                         track.LastPuff = world;
                         Color smoke = rocket ? EffectRecipes.SmokeGrey : EffectRecipes.SmokeThin;
-                        _kit.Smoke(rocket ? EffectPriority.Medium : EffectPriority.Small, world - direction * 0.4f, Random.insideUnitSphere * 0.3f, rocket ? Random.Range(0.8f, 1.2f) : 0.7f, smoke, rocket ? Random.Range(0.9f, 1.5f) : 0.6f);
-                        if (rocket) _kit.Fire(EffectPriority.Small, world - direction * 0.3f, -direction * 2f, 0.7f, 0.14f);
+                        _kit.Smoke(rocket ? EffectPriority.Medium : EffectPriority.Small, world - direction * 0.4f, Random.insideUnitSphere * 0.3f, rocket ? Random.Range(1.3f, 2f) : 0.8f, smoke, rocket ? Random.Range(1f, 1.6f) : 0.6f);
                     }
                     return;
                 }

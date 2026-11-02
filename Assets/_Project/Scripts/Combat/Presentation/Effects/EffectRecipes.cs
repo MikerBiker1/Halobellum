@@ -45,7 +45,7 @@ namespace Halobellum.Presentation
         public static readonly Color GroundFire = new Color(1f, 0.5f, 0.18f, 0.8f);
         public static readonly Color SparkHot = new Color(1f, 0.82f, 0.45f);
         public static readonly Color ShieldBlue = new Color(0.4f, 0.72f, 1f);
-        public static readonly Color ScorchBlack = new Color(0.03f, 0.028f, 0.025f, 0.88f);
+        public static readonly Color ScorchBlack = new Color(0.03f, 0.028f, 0.025f, 0.72f);
         public static readonly Color MetalDark = new Color(0.14f, 0.14f, 0.13f);
         public static readonly Color MetalHot = new Color(0.4f, 0.2f, 0.1f);
         public static readonly Color FleshPink = new Color(0.62f, 0.32f, 0.26f);
@@ -281,7 +281,7 @@ namespace Halobellum.Presentation
                     for (int i = 0; i < count / 3 + 1; i++) _kit.Smoke(lesser, position + Random.insideUnitSphere * radius * 0.4f, Random.onUnitSphere * radius * 0.7f + Vector3.up * radius * 0.9f, radius * Random.Range(1.2f, 1.9f), SmokeDark, Random.Range(1.1f, 2.1f));
                     for (int i = 0; i < count; i++) _kit.Spark(lesser, position, Random.onUnitSphere * radius * Random.Range(3f, 7f) + Vector3.up * radius * 1.5f, 0.075f * _kit.ReadScale, SparkHot, Random.Range(0.3f, 0.8f));
                     for (int i = 0; i < count / 4; i++) _kit.Chunk(lesser, position, Random.onUnitSphere * radius * 3f + Vector3.up * radius * 3f, Random.Range(0.14f, 0.34f), MetalDark, Random.Range(1f, 1.8f));
-                    if (grounded) _kit.Scorch(lesser, ground, radius * 1.7f, ScorchBlack, 45f);
+                    if (grounded) _kit.Scorch(lesser, ground, radius * 1.5f, ScorchBlack, 30f);
                     _kit.Heat(lesser, position + Vector3.up * radius * 0.5f, Vector3.up * 2f, radius * 3f, 0.6f);
                     break;
 
@@ -349,13 +349,13 @@ namespace Halobellum.Presentation
         public void VehicleDeath(Vector3 position, float bodyRadius, bool titan)
         {
             Vector3 middle = position + Vector3.up * Mathf.Max(0.8f, bodyRadius * 0.45f);
-            float radius = bodyRadius * 1.7f + 1f;
+            float radius = (titan ? bodyRadius * 1.2f : bodyRadius * 1.7f) + 1f;
             EffectPriority priority = titan ? EffectPriority.Huge : EffectPriority.Big;
             Fireball(middle, radius, priority);
             Vector3 ground = new Vector3(position.x, 0.12f, position.z);
             _kit.Ring(priority, ground, radius * 3.4f, new Color(1f, 0.8f, 0.55f, 0.85f), 0.65f);
             _kit.GroundGlow(priority, ground, radius * 5f, GroundFire, 0.7f);
-            _kit.Scorch(priority, ground, radius * 3.2f, ScorchBlack, 60f);
+            _kit.Scorch(priority, ground, radius * 2.1f, ScorchBlack, 60f);
             int chunks = Mathf.Clamp(Mathf.RoundToInt(bodyRadius * 7f) + 6, 8, 40);
             for (int i = 0; i < chunks; i++)
             {
@@ -372,7 +372,7 @@ namespace Halobellum.Presentation
                 Vector3 spot = position + new Vector3(Random.Range(-bodyRadius, bodyRadius), Random.Range(1f, bodyRadius), Random.Range(-bodyRadius, bodyRadius));
                 FireballAfter(0.2f + i * 0.28f, spot, bodyRadius * Random.Range(0.45f, 0.75f), EffectPriority.Big);
             }
-            FireballAfter(2f, position + Vector3.up * bodyRadius * 0.6f, bodyRadius * 1.5f, EffectPriority.Huge);
+            FireballAfter(2f, position + Vector3.up * bodyRadius * 0.6f, bodyRadius * 1.2f, EffectPriority.Huge);
         }
 
         /// <summary>An air unit blows up where it flies; burning pieces rain down. The body itself falls too (DeathEffects).</summary>
@@ -407,7 +407,7 @@ namespace Halobellum.Presentation
             Fireball(ground, radius, EffectPriority.Big);
             _kit.Ring(EffectPriority.Big, new Vector3(position.x, 0.12f, position.z), radius * 3f, new Color(1f, 0.8f, 0.55f, 0.8f), 0.55f);
             _kit.GroundGlow(EffectPriority.Big, new Vector3(position.x, 0.12f, position.z), radius * 4f, GroundFire, 0.55f);
-            _kit.Scorch(EffectPriority.Big, ground, radius * 2.6f, ScorchBlack, 50f);
+            _kit.Scorch(EffectPriority.Big, ground, radius * 2.1f, ScorchBlack, 50f);
             CameraShake.Kick(position, 0.3f);
         }
 
@@ -453,17 +453,18 @@ namespace Halobellum.Presentation
         {
             Vector3 ground = new Vector3(position.x, 0.14f, position.z);
             Vector3 low = new Vector3(position.x, 1.5f, position.z);
-            float radius = Mathf.Max(burstRadius, bodyRadius * 2f);
+            // The first ring shows what the burst really reaches; everything else is made to dwarf any other death on the field.
+            _kit.Ring(EffectPriority.Huge, ground, burstRadius * 2f, new Color(1f, 0.9f, 0.65f, 1f), 0.45f);
+            float radius = Mathf.Max(burstRadius, bodyRadius * 2f) * 1.7f;
             const EffectPriority huge = EffectPriority.Huge;
 
-            _kit.Glow(huge, low + Vector3.up * radius * 0.4f, radius * 7f, Color.white, 0.14f);
-            _kit.Glow(huge, low, radius * 5f, new Color(0.85f, 1f, 0.5f), 0.4f);
-            _kit.GroundGlow(huge, ground, radius * 7f, new Color(1f, 0.6f, 0.2f, 0.9f), 1.1f);
-            _kit.GroundGlow(huge, ground, radius * 4.5f, new Color(0.55f, 0.95f, 0.2f, 0.7f), 2f);
-            _kit.Ring(huge, ground, radius * 2f, new Color(1f, 0.9f, 0.65f, 1f), 0.45f);
+            _kit.Glow(huge, low + Vector3.up * radius * 0.4f, radius * 6f, Color.white, 0.14f);
+            _kit.Glow(huge, low, radius * 4.5f, new Color(0.85f, 1f, 0.5f), 0.4f);
+            _kit.GroundGlow(huge, ground, radius * 6f, new Color(1f, 0.6f, 0.2f, 0.9f), 1.1f);
+            _kit.GroundGlow(huge, ground, radius * 4f, new Color(0.55f, 0.95f, 0.2f, 0.7f), 2f);
             _kit.Ring(huge, ground, radius * 3.6f, new Color(0.8f, 1f, 0.5f, 0.7f), 0.85f);
-            _kit.Scorch(huge, ground, radius * 3.2f, ScorchBlack, 90f);
-            _kit.Scorch(huge, ground, radius * 2f, SplatterDark, 90f);
+            _kit.Scorch(huge, ground, radius * 2.6f, ScorchBlack, 90f);
+            _kit.Scorch(huge, ground, radius * 1.6f, SplatterDark, 90f);
 
             for (int i = 0; i < 56; i++)
             {

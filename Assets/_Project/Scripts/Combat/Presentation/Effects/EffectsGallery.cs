@@ -338,26 +338,78 @@ namespace Halobellum.Presentation
             Application.targetFrameRate = -1;
             var report = new StringBuilder();
             report.AppendLine($"Effects benchmark, {Screen.width}x{Screen.height}, {SystemInfo.graphicsDeviceName}, {SystemInfo.processorType}");
-            yield return BenchmarkOne(1f, report, "bench_1x");
-            yield return BenchmarkOne(4f, report, "bench_4x");
+            yield return OnAgainstOff(report);
+            yield return BenchmarkOne(1f, report, "bench_1x", false);
+            yield return BenchmarkOne(4f, report, "bench_4x", false);
             string text = report.ToString();
             Debug.Log(text);
             File.WriteAllText(Path.Combine(_shots, "bench.txt"), text);
         }
 
-        private IEnumerator BenchmarkOne(float speed, StringBuilder report, string picture)
+        /// <summary>
+        /// One battle with effects going on and off every few seconds. Whatever else the PC is doing falls on both alike, so the difference
+        /// between the two lists of frame times is what the effects cost, all of it: scripts, particle work and the graphics card.
+        /// </summary>
+        private IEnumerator OnAgainstOff(StringBuilder report)
         {
-            string[] blue = { "Marine", "Marine", "Marine", "Flamethrower Trooper", "Flamethrower Trooper", "Scorpion", "Scorpion", "Warthog", "Gauss Warthog", "Wolverine", "Hornet", "Pelican", "Spartan", "Archer Missile Pod" };
-            string[] red = { "Grunt", "Grunt", "Fuel Rod Grunt", "Jackal (Plasma Rifle)", "Jackal (Plasma Rifle)", "Elite", "Elite", "Ghost", "Wraith", "Banshee", "Vampire", "Hunter Pair", "Scarab", "Zealot" };
-            yield return Setup(blue, red);
+            yield return Setup(BenchBlue, BenchRed);
+            _battle.Speed = 1f;
+            _sandbox.Run();
+            CombatEffectsView view = GetComponent<CombatEffectsView>();
+            var on = new List<float>();
+            var off = new List<float>();
+            const float Each = 6f, Settle = 2.5f;
+            float elapsed = 0f;
+            yield return null;
+            while (!_battle.Simulation.IsFinished && elapsed < 90f)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float inTurn = Mathf.Repeat(elapsed, Each);
+                bool muted = Mathf.FloorToInt(elapsed / Each) % 2 == 1;
+                view.Kit.Muted = muted;
+                // Only in the fighting, and not while what the last turn left is still dying away.
+                if (inTurn > Settle && elapsed > 12f) (muted ? off : on).Add(Time.unscaledDeltaTime);
+                yield return null;
+            }
+            view.Kit.Muted = false;
+            report.AppendLine("Same battle, effects going on and off in turns, 1x:");
+            report.AppendLine("  on:  " + Summary(on));
+            report.AppendLine("  off: " + Summary(off));
+            _sandbox.ResetBattle();
+            yield return null;
+        }
+
+        private static string Summary(List<float> times)
+        {
+            if (times.Count == 0) return "no frames";
+            times.Sort();
+            double total = 0;
+            int slow = 0;
+            foreach (float t in times)
+            {
+                total += t;
+                if (t > 1f / 60f) slow++;
+            }
+            float average = (float)(total / times.Count);
+            float median = times[times.Count / 2], p99 = times[Mathf.Min(times.Count - 1, (int)(times.Count * 0.99f))];
+            return FormattableString($"{times.Count} frames, average {average * 1000f:0.00} ms, middle {median * 1000f:0.00} ms, 1% slowest {p99 * 1000f:0.00} ms, over 16.7 ms: {slow} ({100f * slow / times.Count:0.0}%)");
+        }
+
+        private static readonly string[] BenchBlue = { "Marine", "Marine", "Marine", "Marine", "Flamethrower Trooper", "Flamethrower Trooper", "Scorpion", "Scorpion", "Warthog", "Gauss Warthog", "Wolverine", "Hornet", "Pelican", "Spartan", "Archer Missile Pod" };
+        private static readonly string[] BenchRed = { "Grunt", "Grunt", "Grunt", "Fuel Rod Grunt", "Jackal (Plasma Rifle)", "Jackal (Plasma Rifle)", "Elite", "Elite", "Ghost", "Wraith", "Banshee", "Vampire", "Hunter Pair", "Scarab", "Zealot" };
+
+        private IEnumerator BenchmarkOne(float speed, StringBuilder report, string picture, bool muted)
+        {
+            yield return Setup(BenchBlue, BenchRed);
             _battle.Speed = speed;
             _sandbox.Run();
             int bodies = _battle.Simulation.Units.Count;
             var times = new List<float>();
             CombatEffectsView view = GetComponent<CombatEffectsView>();
-            float elapsed = 0f;
+            view.Kit.Muted = muted;
+            float elapsed = 0f, nextPicture = 12f / speed;
+            int pictures = 0;
             int mostLive = 0;
-            bool pictured = false;
             float mostCost = 0f;
             double totalCost = 0;
             int collectionsAtStart = System.GC.CollectionCount(0);
@@ -375,10 +427,10 @@ namespace Halobellum.Presentation
                 }
                 int live = view.Kit.LiveParticles;
                 if (live > mostLive) mostLive = live;
-                if (!pictured && live > 1200)
+                if (elapsed >= nextPicture)
                 {
-                    pictured = true;
-                    ScreenCapture.CaptureScreenshot(Path.Combine(_shots, picture + ".png"));
+                    nextPicture += 7f / speed;
+                    ScreenCapture.CaptureScreenshot(Path.Combine(_shots, $"{picture}_{++pictures}.png"));
                 }
                 yield return null;
             }
@@ -391,7 +443,8 @@ namespace Halobellum.Presentation
             int slow = 0;
             foreach (float t in times) if (t > 1f / 60f) slow++;
             EffectBudget budget = view.Kit.Budget;
-            report.AppendLine(FormattableString($"Speed {speed}x: {bodies} bodies at the start, {times.Count} frames in {elapsed:0.0} s; average {average * 1000f:0.00} ms ({(average > 0f ? 1f / average : 0f):0} FPS), 1% slowest {p99 * 1000f:0.00} ms ({(p99 > 0f ? 1f / p99 : 0f):0} FPS), worst {worst * 1000f:0.00} ms; frames over 16.7 ms: {slow}"));
+            view.Kit.Muted = false;
+            report.AppendLine(FormattableString($"{(muted ? "No effects, " : "")}Speed {speed}x: {bodies} bodies at the start, {times.Count} frames in {elapsed:0.0} s; average {average * 1000f:0.00} ms ({(average > 0f ? 1f / average : 0f):0} FPS), 1% slowest {p99 * 1000f:0.00} ms ({(p99 > 0f ? 1f / p99 : 0f):0} FPS), worst {worst * 1000f:0.00} ms; frames over 16.7 ms: {slow}"));
             report.AppendLine(FormattableString($"  effects' own main-thread time: average {(times.Count > 0 ? totalCost / times.Count : 0):0.00} ms, worst {mostCost:0.00} ms; garbage collections during the battle: {System.GC.CollectionCount(0) - collectionsAtStart}"));
             report.AppendLine($"  most particles alive {mostLive}; dropped small {budget.Dropped[0]}, medium {budget.Dropped[1]}, big {budget.Dropped[2]}, huge {budget.Dropped[3]}; result: {(_battle.Simulation.IsFinished ? _battle.Simulation.Result.ToSummaryLine() : "still fighting")}");
             _sandbox.ResetBattle();

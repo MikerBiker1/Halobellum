@@ -121,7 +121,7 @@ namespace Halobellum.Presentation
                     Color heavy = flood ? FloodPlasma : name.Contains("mortar") ? MortarBlue : FuelRodGreen;
                     return new WeaponLook { Shot = heavy, Flash = heavy, FlashSize = 2.8f, ShotWidth = name.Contains("mortar") ? 2.6f : 1.7f, Impact = ImpactStyle.Plasma, Blast = BlastStyle.Plasma, Ball = true };
                 case WeaponFeelKind.Needle:
-                    return new WeaponLook { Shot = NeedlePink, Flash = NeedlePink, FlashSize = 1.4f, ShotWidth = 0.22f, DrawnSpeed = 75f, Impact = ImpactStyle.Needle };
+                    return new WeaponLook { Shot = NeedlePink, Flash = NeedlePink, FlashSize = 1.4f, ShotWidth = 0.3f, DrawnSpeed = 75f, Impact = ImpactStyle.Needle };
                 case WeaponFeelKind.Laser:
                     return new WeaponLook { Shot = LaserRed, Flash = LaserRed, FlashSize = 2.4f, ShotWidth = 0.5f, Impact = ImpactStyle.Laser };
                 case WeaponFeelKind.Beam:

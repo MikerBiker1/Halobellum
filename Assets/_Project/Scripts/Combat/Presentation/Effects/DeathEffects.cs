@@ -195,7 +195,7 @@ namespace Halobellum.Presentation
                 // Enough to look solid at any speed and frame rate.
                 int puffs = Mathf.Clamp(Mathf.CeilToInt(battleDelta * 45f), 1, 4);
                 for (int p = 0; p < puffs; p++) _recipes.BurningTrail(position + Random.insideUnitSphere * radius * 0.4f, radius, EffectPriority.Huge);
-                _kit.Glow(EffectPriority.Big, position, radius * 3f, EffectRecipes.FireGlow, 0.1f);
+                _kit.HeadGlow(position, radius * 2f, new Color(1f, 0.72f, 0.38f, 0.5f));
             }
         }
 
@@ -335,8 +335,9 @@ namespace Halobellum.Presentation
                 float left = (fire.Until - now) / 4f; // Dies down over the last few seconds.
                 float strength = Mathf.Clamp01(left);
                 Vector3 spot = fire.Position + new Vector3(Random.Range(-1f, 1f), 0.3f, Random.Range(-1f, 1f)) * fire.BodyRadius * 0.7f;
-                float size = fire.BodyRadius * 1.1f + 0.8f;
-                _kit.Smoke(EffectPriority.Small, spot + Vector3.up * fire.BodyRadius * 0.5f, Vector3.up * Random.Range(2f, 3.5f) + Random.insideUnitSphere * 0.4f, size * Random.Range(1f, 1.5f), new Color(0.12f, 0.115f, 0.11f, 0.45f * strength), Random.Range(2.2f, 3.6f));
+                float size = fire.BodyRadius * 0.8f + 0.7f;
+                // A thin column, rising quickly, so that it marks the wreck and doesn't hide what is fighting around it.
+                _kit.Smoke(EffectPriority.Small, spot + Vector3.up * fire.BodyRadius * 0.5f, Vector3.up * Random.Range(4f, 6.5f) + Random.insideUnitSphere * 0.4f, size * Random.Range(0.9f, 1.3f), new Color(0.2f, 0.195f, 0.19f, 0.3f * strength), Random.Range(1.8f, 2.8f));
                 if (strength >= 1f) _kit.Fire(EffectPriority.Small, spot, Vector3.up * Random.Range(1f, 2.5f), size * Random.Range(0.45f, 0.8f), Random.Range(0.45f, 0.8f));
                 if (Random.value < 0.15f) _kit.Spark(EffectPriority.Small, spot, Vector3.up * Random.Range(3f, 7f) + Random.insideUnitSphere * 1.5f, 0.05f * _kit.ReadScale, EffectRecipes.SparkHot, Random.Range(0.4f, 0.9f));
             }
