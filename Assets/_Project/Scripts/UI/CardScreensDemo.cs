@@ -128,6 +128,9 @@ namespace Halobellum.UI
                 yield return new WaitForSecondsRealtime(0.8f);
                 yield return Shot($"{w}x{h}_sandbox_list");
             }
+            // Unity remembers the last window size for the next run.
+            Screen.SetResolution(1600, 900, FullScreenMode.Windowed);
+            yield return new WaitForSecondsRealtime(0.5f);
 
             Debug.Log($"Card demo finished: {_totalDidNotFit} screens have text that did not fit, {_totalAtTheFloor} have text only at the smallest size.\n" + string.Join("\n", _problems));
             Application.Quit();

@@ -42,7 +42,7 @@ Units with the same body and tint have the same picture, as they look the same i
 
 **The fallback** is a dark shape of the unit's kind of body with an edge of light, on a glow in the faction's colour, with its role's emblem in a badge. The shape comes from its stats (`UnitIcons.BodyShapeFor`): trooper, heavy trooper, shield trooper, hulk, speeder, tank, walker, flyer, pod, Flood form, Flood beast or Flood swarm. Units whose stats hide their shape are named there, such as the Goliath (a hulk) and the Reaver (a walker). Two borrow the closest shape there is: the Skitterer uses the cluster of small crawling bodies, and the Methane Wagon the launcher pod.
 
-Units that fall back today (20): Archer Missile Pod, Combat Form, Elite, Flamethrower Trooper, Flood Abomination, Ghost, Hunter Pair, Jackal (Plasma Rifle), Jackal (Shield), Mantis, ODST, Placeholder Heavy Tank, Placeholder Infantry, Placeholder Light Vehicle, Seeder, Spartan, Swarm Form, Vampire, Wolverine, Zealot.
+39 units fall back today, because they have no model yet. `UnitIcons/index.txt` lists them.
 
 ## The art
 
