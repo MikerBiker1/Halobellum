@@ -99,7 +99,7 @@ namespace Halobellum.Tests
             SimUnit first = _battle.Simulation.Units.First(u => u.Stats.Name == "Marine");
             Assert.AreEqual(BakedAnimation.Still, views.PlayingAnimation(first), "Time stands still in deployment.");
             SimUnit grunt = _battle.Simulation.Units.First(u => u.Stats.Name == "Grunt");
-            Assert.IsNull(views.PlayingAnimation(grunt), "No real model yet.");
+            Assert.AreEqual(BakedAnimation.Still, views.PlayingAnimation(grunt), "Grunts have their own animated body too.");
             Assert.Greater(views.HealthBarColor(first).g, 0.6f, "Your units have green health bars.");
             Assert.Greater(views.HealthBarColor(grunt).r, 0.6f, "The enemy's are red.");
             Assert.Less(views.HealthBarColor(grunt).g, 0.5f);
@@ -150,6 +150,59 @@ namespace Halobellum.Tests
             Assert.Greater(views.BodyColor(blue).g, views.BodyColor(blue).b, "Olive, not the side's blue.");
             Transform bar = GameObject.Find("Units").transform.GetChild(blue.Id).Find("Health Bar");
             Assert.Greater(bar.localPosition.y, 2f, "Above the top of the real model.");
+        }
+
+        [UnityTest]
+        public IEnumerator AirUnits_Fly13MetresUp_AndAMuzzleSaysWhereShotsStart()
+        {
+            yield return LoadSandbox();
+            _sandbox.AddSquad(Team.A, Unit("Hornet"));
+            _sandbox.AddSquad(Team.A, Unit("Wraith"));
+            _sandbox.AddSquad(Team.A, Unit("Marine"));
+            _sandbox.AddSquad(Team.B, Unit("Scorpion"));
+            yield return null;
+
+            var views = _battle.GetComponent<UnitViewManager>();
+            Assert.AreEqual(13f, views.AirHeight);
+            SimUnit hornet = _battle.Simulation.Units.First(u => u.Stats.Name == "Hornet");
+            Assert.AreEqual(13f, views.WorldPosition(hornet).y);
+
+            SimUnit wraith = _battle.Simulation.Units.First(u => u.Stats.Name == "Wraith");
+            Assert.IsTrue(views.TryMuzzle(wraith, 0, 0, out Vector3 muzzle));
+            Assert.Greater(muzzle.y, 1.5f, "From its gun, not from the ground.");
+            SimUnit marine = _battle.Simulation.Units.First(u => u.Stats.Name == "Marine");
+            Assert.IsTrue(views.TryMuzzle(marine, 0, 0, out muzzle));
+            Assert.Greater(muzzle.y, 0.8f);
+        }
+
+        [UnityTest]
+        public IEnumerator Wraith_TurnsItsGunTowardItsTarget()
+        {
+            yield return LoadSandbox();
+            _sandbox.AddSquad(Team.A, Unit("Wraith"));
+            _sandbox.AddSquad(Team.B, Unit("Marine"));
+            yield return null;
+            _battle.Speed = 4f;
+            _sandbox.Run();
+            yield return null;
+            SimUnit wraith = _battle.Simulation.Units.First(u => u.Stats.Name == "Wraith");
+            Transform view = GameObject.Find("Units").transform.GetChild(wraith.Id);
+            Transform gun = view.GetComponentsInChildren<Transform>().Single(t => t.name == "Turret_0");
+
+            float give = 30f;
+            while (give > 0f && wraith.IsAlive && wraith.Weapons[0].Target == null)
+            {
+                give -= Time.deltaTime;
+                yield return null;
+            }
+            Assert.IsNotNull(wraith.Weapons[0].Target, "It should have found a target.");
+            for (int frame = 0; frame < 120 && wraith.IsAlive && wraith.Weapons[0].Target != null; frame++) yield return null;
+            if (wraith.IsAlive && wraith.Weapons[0].Target != null)
+            {
+                SimUnit target = wraith.Weapons[0].Target;
+                var towards = new Vector3(target.Position.X - view.position.x, 0f, target.Position.Y - view.position.z);
+                Assert.Less(Vector3.Angle(towards, gun.forward), 60f, "The gun points about at its target.");
+            }
         }
 
         [UnityTest]

@@ -1,0 +1,16 @@
+{
+ "materials": [
+  {
+   "name": "Wraith_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Wraith_0.png",
+   "glowTexture": "Wraith_0_emit.png"
+  }
+ ]
+}

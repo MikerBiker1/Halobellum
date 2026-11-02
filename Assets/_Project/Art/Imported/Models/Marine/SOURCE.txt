@@ -1,2 +1,2 @@
 Source: made by the project owner with Meshy AI (meshy.ai), including rig and animations.
-Used by: Resources/BakedBodies/Marine (decision D42). The rifle is a plain placeholder made of boxes by the Animation Baker.
+Used by: Resources/BakedBodies/Marine (decision D42). It holds the owner's assault rifle, from Models/Weapon_AssaultRifle (decision D45).

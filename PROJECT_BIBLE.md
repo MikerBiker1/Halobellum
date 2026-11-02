@@ -480,6 +480,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-01 | Animated models are baked into textures and keep one object per body; animations cross-fade in the shader on battle time; real models keep their own colours | Measured, then approved by the project owner (D41, D42, D43) |
 | 2026-11-01 | Health bars tell the sides apart: green for your units, red for the enemy's | Per the project owner (D43) |
 | 2026-11-01 | Unanimated real models, such as vehicles, are scaled prefabs with their parts kept separate and their own materials | Per the project owner (D44) |
+| 2026-11-01 | Air units fly at 13 m. Named nodes on real models say where shots start and what turns; shots fly from the muzzle's height to the target's | Per the project owner (D45) |
 
 ## 18. Assumptions to confirm
 

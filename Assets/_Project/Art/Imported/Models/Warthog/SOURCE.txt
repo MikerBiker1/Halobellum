@@ -1,0 +1,3 @@
+Source: found by the project owner on Sketchfab, file sketchfab.com/vehicleshumangroundwarthogshalo_2.glb in Art_Source.
+Prepared by Tools/Art/units/Warthog.py (decision D45).
+The repository is private and must stay private.

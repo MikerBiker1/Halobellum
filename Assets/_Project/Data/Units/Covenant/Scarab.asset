@@ -129,8 +129,8 @@ MonoBehaviour:
   techUpgrades:
   - {fileID: 11400000, guid: 97ad07379e511319140f46b5855a8494, type: 2}
   - {fileID: 11400000, guid: 9f1639418395e56709e955b69c8cdeb9, type: 2}
-  prefab: {fileID: 1194748871548261961, guid: 3c8e98ecf3d641b498f89055340c1705, type: 3}
-  keepsOwnMaterials: 0
+  prefab: {fileID: 1160791278423369671, guid: c8189d8901bee2a4bb411e769c376579, type: 3}
+  keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
   strongAgainst: Most things in a straight fight
   weakAgainst: 'Single-target DPS, large chaff swarms'

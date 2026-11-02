@@ -85,8 +85,8 @@ MonoBehaviour:
   techUpgrades:
   - {fileID: 11400000, guid: d83f41988c543208d9d48b8c5ce6cf05, type: 2}
   - {fileID: 11400000, guid: c304c35beac678cf2c77eef4a9f17304, type: 2}
-  prefab: {fileID: 1517541303986435123, guid: 343cbe8ecb9cfd14084c77b3a0b9f73f, type: 3}
-  keepsOwnMaterials: 0
+  prefab: {fileID: 2024070957535163712, guid: ac830c0758d72e140ac0b233f115d888, type: 3}
+  keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air

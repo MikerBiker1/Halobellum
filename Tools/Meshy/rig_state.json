@@ -1,0 +1,67 @@
+{
+ "Grunt": {
+  "attempts": [
+   {
+    "started": "22:22:28",
+    "id": "01a19a47-aeab-7549-b3fe-d2112ff0481e",
+    "finished": true,
+    "status": "SUCCEEDED",
+    "credits": 5
+   }
+  ],
+  "credits": 17,
+  "rig": "01a19a47-aeab-7549-b3fe-d2112ff0481e",
+  "animation": "01a19a48-f1e6-7601-8ccd-54417ca4f6dc",
+  "actions": [
+   98,
+   234,
+   8,
+   566
+  ],
+  "animation_credits": 12
+ },
+ "StalkerForm": {
+  "attempts": [
+   {
+    "started": "22:24:02",
+    "id": "01a19a49-1f8c-7190-9bb2-3d55fe7194d6",
+    "finished": true,
+    "status": "SUCCEEDED",
+    "credits": 5
+   }
+  ],
+  "credits": 5,
+  "rig": "01a19a49-1f8c-7190-9bb2-3d55fe7194d6"
+ },
+ "PureFormRanged": {
+  "attempts": [
+   {
+    "started": "22:24:16",
+    "finished": true,
+    "refused": "HTTP 422: {\"message\":\"Pose estimation failed, please provide a valid model URL\"}"
+   }
+  ],
+  "credits": 0
+ },
+ "PureFormTank": {
+  "attempts": [
+   {
+    "started": "22:24:20",
+    "id": "01a19a49-6675-7493-989f-a5f24b6dca2b",
+    "finished": true,
+    "status": "SUCCEEDED",
+    "credits": 5
+   }
+  ],
+  "credits": 17,
+  "rig": "01a19a49-6675-7493-989f-a5f24b6dca2b",
+  "animation": "01a19a4b-5aba-74e1-8e56-da40e8891a02",
+  "actions": [
+   112,
+   198,
+   8,
+   566
+  ],
+  "animation_credits": 12
+ }
+}

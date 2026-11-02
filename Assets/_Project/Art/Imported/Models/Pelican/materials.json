@@ -1,0 +1,47 @@
+{
+ "materials": [
+  {
+   "name": "Pelican_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Pelican_0.png"
+  },
+  {
+   "name": "Pelican_1",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Pelican_1.png"
+  },
+  {
+   "name": "Pelican_2",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Pelican_2.png"
+  },
+  {
+   "name": "Pelican_3",
+   "colour": [
+    0.03,
+    0.08,
+    0.12
+   ],
+   "glass": true,
+   "cutout": false
+  }
+ ]
+}

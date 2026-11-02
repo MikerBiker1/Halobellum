@@ -2,7 +2,7 @@
 // Turns a rigged model and its clips into what BakedCrowd.shader draws (M9, decisions D41 and D42), for every
 // Baked Body asset in Resources/BakedBodies:
 //   - a mesh that names two bones per vertex, with finger bones merged into the hands (too small to see at
-//     game distance) and, if asked, a plain rifle made of boxes merged into the right hand;
+//     game distance) and, if it has one, a prepared weapon merged into the right hand;
 //   - a texture holding every kept bone's matrix for every frame of every clip;
 //   - the clip table, and a material.
 // Moving and shooting clips play on the spot: the battle moves the unit, so any forward drift in the clip is
@@ -49,10 +49,10 @@ namespace Halobellum.EditorTools
             EditorApplication.Exit(exit);
         }
 
-        /// <summary>A body with no source set uses the FBX and PNG in Art/Imported/Models/&lt;its name&gt;.</summary>
+        /// <summary>A body with no source set uses the FBX and PNG in Art/Imported/Models/&lt;its model folder, or else its name&gt;.</summary>
         private static void FindSource(BakedBodyDefinition body)
         {
-            string folder = $"{ModelsFolder}/{body.name}";
+            string folder = $"{ModelsFolder}/{(string.IsNullOrEmpty(body.modelFolder) ? body.name : body.modelFolder)}";
             if (!AssetDatabase.IsValidFolder(folder)) return;
             foreach (string file in Directory.GetFiles(folder))
             {
@@ -86,10 +86,16 @@ namespace Halobellum.EditorTools
                 var rows = new List<Color[]>();
                 Matrix4x4[] Pose() => kept.Select(b => model.transform.worldToLocalMatrix * bones[b].localToWorldMatrix * bindPoses[b]).ToArray();
 
-                BuildMesh(body, mesh, skin, keptIndex, bones, bindPoses, Source, model);
+                Vector3? muzzle = BuildMesh(body, mesh, skin, keptIndex, bones, bindPoses, Source, model);
 
                 int hips = Array.IndexOf(bones, skin.rootBone);
                 Vector3 restHips = bindPoses[hips].inverse.MultiplyPoint3x4(Vector3.zero);
+                body.hasMuzzle = muzzle.HasValue;
+                if (muzzle.HasValue)
+                {
+                    // BuildMesh left the model in the pose the weapon was aimed in; shooting plays on the spot.
+                    body.muzzle = Drift(model, bones[hips], restHips).MultiplyPoint3x4(model.transform.InverseTransformPoint(muzzle.Value));
+                }
 
                 void AddClip(BakedAnimation role, AnimationClip source, bool loops, bool onTheSpot)
                 {
@@ -198,7 +204,8 @@ namespace Halobellum.EditorTools
             return result;
         }
 
-        private static void BuildMesh(BakedBodyDefinition body, Mesh mesh, SkinnedMeshRenderer skin, int[] keptIndex, Transform[] bones,
+        /// <summary>Builds the mesh. Returns where the weapon's muzzle is in the world in the shooting pose, if it holds one.</summary>
+        private static Vector3? BuildMesh(BakedBodyDefinition body, Mesh mesh, SkinnedMeshRenderer skin, int[] keptIndex, Transform[] bones,
             Matrix4x4[] bindPoses, Func<string, AnimationClip> source, GameObject model)
         {
             Mesh from = skin.sharedMesh;
@@ -230,25 +237,21 @@ namespace Halobellum.EditorTools
             }
             var triangles = new List<int>(from.triangles);
 
-            if (body.holdsRifle)
+            Vector3? muzzle = null;
+            if (!string.IsNullOrEmpty(body.weaponName))
             {
                 int hand = Array.FindIndex(bones, b => b.name == "RightHand");
                 int otherHand = Array.FindIndex(bones, b => b.name == "LeftHand");
-                if (hand < 0 || otherHand < 0) throw new InvalidOperationException($"{body.name}: a rifle needs RightHand and LeftHand bones.");
+                if (hand < 0 || otherHand < 0) throw new InvalidOperationException($"{body.name}: a weapon needs RightHand and LeftHand bones.");
 
                 // Aim along the line between the hands, halfway through the shooting clip, then keep it fixed to the hand.
                 AnimationClip aim = source(body.shootingClip);
                 aim.SampleAnimation(model, aim.length * 0.5f);
-                Vector3 direction = (bones[otherHand].position - bones[hand].position).normalized;
-                Matrix4x4 rifleToWorld = Matrix4x4.TRS(bones[hand].position, Quaternion.LookRotation(direction, Vector3.up), Vector3.one);
-                Matrix4x4 rifleToMesh = bindPoses[hand].inverse * bones[hand].worldToLocalMatrix * rifleToWorld;
-                var dark = new Color(0.015f, 0.015f, 0.018f, 1f); // Black.
-                void Box(Vector3 centre, Vector3 size) => AddBox(positions, normals, uvs, colors, boneIds, weights, triangles, rifleToMesh, centre, size, dark, keptIndex[hand]);
-                Box(new Vector3(0f, 0.03f, 0.14f), new Vector3(0.05f, 0.08f, 0.42f));   // Body.
-                Box(new Vector3(0f, 0.04f, 0.46f), new Vector3(0.025f, 0.025f, 0.24f)); // Barrel.
-                Box(new Vector3(0f, 0.01f, -0.16f), new Vector3(0.04f, 0.09f, 0.2f));   // Stock.
-                Box(new Vector3(0f, -0.06f, 0.16f), new Vector3(0.035f, 0.13f, 0.06f)); // Magazine.
-                Box(new Vector3(0f, -0.05f, 0f), new Vector3(0.035f, 0.1f, 0.04f));     // Grip.
+                // A small weapon in the forward hand simply points forward: the line between the hands means nothing for it.
+                Vector3 direction = body.weaponInForwardHand ? model.transform.forward : (bones[otherHand].position - bones[hand].position).normalized;
+                int holding = body.weaponInForwardHand ? otherHand : hand;
+                Matrix4x4 weaponToWorld = Matrix4x4.TRS(bones[holding].position, Quaternion.LookRotation(direction, Vector3.up), Vector3.one);
+                muzzle = AddWeapon(body, weaponToWorld, bindPoses[holding].inverse * bones[holding].worldToLocalMatrix, keptIndex[holding], positions, normals, uvs, colors, boneIds, weights, triangles);
             }
 
             mesh.SetVertices(positions);
@@ -260,29 +263,58 @@ namespace Halobellum.EditorTools
             mesh.SetTriangles(triangles, 0);
             // Generous: the shader moves the vertices, and a falling body leaves its rest pose far behind.
             mesh.bounds = new Bounds(Vector3.up, new Vector3(5f, 5f, 5f));
+            return muzzle;
         }
 
-        private static void AddBox(List<Vector3> positions, List<Vector3> normals, List<Vector2> uvs, List<Color> colors, List<Vector2> boneIds,
-            List<Vector2> weights, List<int> triangles, Matrix4x4 toMesh, Vector3 centre, Vector3 size, Color color, int bone)
+        /// <summary>
+        /// Merges a prepared weapon into the mesh, fixed to one bone. Its origin is its grip, it points along +Z, and a node
+        /// "Muzzle" marks the tip of its barrel. Returns where that tip is in the world.
+        /// </summary>
+        private static Vector3 AddWeapon(BakedBodyDefinition body, Matrix4x4 weaponToWorld, Matrix4x4 worldToMesh, int bone, List<Vector3> positions, List<Vector3> normals,
+            List<Vector2> uvs, List<Color> colors, List<Vector2> boneIds, List<Vector2> weights, List<int> triangles)
         {
-            Vector3[] faces = { Vector3.right, Vector3.left, Vector3.up, Vector3.down, Vector3.forward, Vector3.back };
-            foreach (Vector3 face in faces)
+            string path = $"{ModelsFolder}/{body.weaponName}/{body.weaponName}.fbx";
+            var importer = (ModelImporter)AssetImporter.GetAtPath(path);
+            if (importer == null) throw new InvalidOperationException($"{body.name}: no weapon at {path}.");
+            if (!importer.isReadable)
             {
-                Vector3 u = Mathf.Abs(face.y) > 0.5f ? Vector3.right : Vector3.up;
-                Vector3 v = Vector3.Cross(face, u);
+                importer.isReadable = true;
+                importer.SaveAndReimport();
+            }
+            GameObject weapon = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(path));
+            try
+            {
+                weapon.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+                MeshFilter filter = weapon.GetComponentInChildren<MeshFilter>();
+                Transform tip = weapon.GetComponentsInChildren<Transform>().FirstOrDefault(t => t.name == "Muzzle");
+                if (filter == null || tip == null) throw new InvalidOperationException($"{body.name}: {path} needs a mesh and a node named Muzzle.");
+
+                Mesh from = filter.sharedMesh;
+                Matrix4x4 meshToWeapon = filter.transform.localToWorldMatrix;
+                Vector3[] vertices = from.vertices;
+                float length = vertices.Select(v => meshToWeapon.MultiplyPoint3x4(v).z).Max() - vertices.Select(v => meshToWeapon.MultiplyPoint3x4(v).z).Min();
+                Matrix4x4 sized = Matrix4x4.Scale(Vector3.one * (body.weaponLength / length));
+                Matrix4x4 toMesh = worldToMesh * weaponToWorld * sized * meshToWeapon;
+
                 int first = positions.Count;
-                for (int corner = 0; corner < 4; corner++)
+                Vector3[] fromNormals = from.normals;
+                Color[] fromColors = from.colors;
+                for (int i = 0; i < vertices.Length; i++)
                 {
-                    float a = corner == 0 || corner == 3 ? -0.5f : 0.5f, b = corner < 2 ? -0.5f : 0.5f;
-                    Vector3 local = centre + Vector3.Scale(face * 0.5f + u * a + v * b, size);
-                    positions.Add(toMesh.MultiplyPoint3x4(local));
-                    normals.Add(toMesh.MultiplyVector(face).normalized);
+                    positions.Add(toMesh.MultiplyPoint3x4(vertices[i]));
+                    normals.Add(toMesh.MultiplyVector(fromNormals[i]).normalized);
                     uvs.Add(Vector2.zero);
-                    colors.Add(color);
+                    Color colour = fromColors.Length > i ? fromColors[i] : new Color(0.02f, 0.02f, 0.02f);
+                    colors.Add(new Color(colour.r, colour.g, colour.b, 1f)); // Alpha above 0 tells the shader to use this colour.
                     boneIds.Add(new Vector2(bone, bone));
                     weights.Add(new Vector2(1f, 0f));
                 }
-                triangles.AddRange(new[] { first, first + 2, first + 1, first, first + 3, first + 2 });
+                foreach (int index in from.triangles) triangles.Add(first + index);
+                return (weaponToWorld * sized).MultiplyPoint3x4(tip.position);
+            }
+            finally
+            {
+                Object.DestroyImmediate(weapon);
             }
         }
     }

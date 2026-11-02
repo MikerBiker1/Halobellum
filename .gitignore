@@ -80,3 +80,11 @@ Thumbs.db
 
 # Huge source models; what the game uses is made from them and lives in Assets.
 Art_Source/
+
+# What the Unity editor extracts from a model when it opens it; the game doesn't use these.
+Assets/_Project/Art/Imported/Models/**/*.fbm/
+Assets/_Project/Art/Imported/Models/**/*.fbm.meta
+Assets/_Project/Art/Imported/Models/**/Materials/
+Assets/_Project/Art/Imported/Models/**/Materials.meta
+
+__pycache__/

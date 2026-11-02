@@ -1,0 +1,3 @@
+Source: found by the project owner on Sketchfab, file sketchfab.com/space_phantom_hr.glb in Art_Source.
+Prepared by Tools/Art/units/Phantom.py (decision D45).
+The repository is private and must stay private.

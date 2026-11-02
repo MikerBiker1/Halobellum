@@ -135,7 +135,6 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 
 ## 2026-11-01 (M9): models
 
-- [ ] **Look at the Scorpion in the Sandbox.** Is the paint too dark? Is 6.2 m the right size next to Marines?
-- [ ] **Animate the Grunt.** `Art_Source/Grunt/grunt.glb` has textures and a rig, but no animations. Upload it to Meshy's Animate tool, pick the same clips as the Marine, and export an FBX.
-- [ ] **Keep adding models** to `Art_Source/<UnitName>/`, with a note of where each came from.
+- [ ] **Look at the new models in the Sandbox** (D45). Pictures of each are made by running the built game with `-sandboxDemo <folder> -gallery`.
+- [ ] **Models still wanted**, if you find them: Archer Missile Pod, Flamethrower Trooper, Mantis, Spartan, Wolverine, Elite, Ghost, Hunter Pair, both Jackals, Vampire, Zealot, Flood Abomination, Combat Form, Seeder, Swarm Form. Put each in `Art_Source/sketchfab.com/` as before.
 

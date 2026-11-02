@@ -1,0 +1,26 @@
+{
+ "materials": [
+  {
+   "name": "StalkerForm_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": true,
+   "texture": "StalkerForm_0.png"
+  },
+  {
+   "name": "StalkerForm_1",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "StalkerForm_1.png"
+  }
+ ]
+}

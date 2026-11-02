@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d50c9e005dbc80ecacdbb7a00a0ff15, type: 3}
+  m_Name: Grunt
+  m_EditorClassIdentifier: 
+  modelFolder: Grunt
+  sourceModel: {fileID: 919132149155446097, guid: 25779c82adbe6cc4ba2ff355c632faac, type: 3}
+  albedo: {fileID: 2800000, guid: d3b0525b77b34f64c96456da2ff0f8ef, type: 3}
+  movingClip: Run_and_Shoot
+  shootingClip: Walk_Forward_While_Shooting
+  deathClip: Dead
+  stillClip: walking_2
+  weaponName: Weapon_PlasmaPistol
+  weaponLength: 0.45
+  weaponInForwardHand: 1
+  transitionSeconds: 0.2
+  corpseSeconds: 1.5
+  bakedFps: 30
+  mesh: {fileID: 4300000, guid: 696c5037c1dc9ff4498725781776033d, type: 2}
+  material: {fileID: 2100000, guid: 76fa9d8e63014734ebb7079c0868cba0, type: 2}
+  clips:
+  - role: 1
+    firstRow: 0
+    frames: 20
+    loops: 1
+  - role: 2
+    firstRow: 20
+    frames: 98
+    loops: 1
+  - role: 3
+    firstRow: 118
+    frames: 89
+    loops: 0
+  - role: 0
+    firstRow: 207
+    frames: 1
+    loops: 0
+  muzzle: {x: 0.050018765, y: 1.0143865, z: 1.0048342}
+  hasMuzzle: 1

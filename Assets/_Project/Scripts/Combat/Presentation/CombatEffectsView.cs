@@ -3,6 +3,8 @@
 //   - instant-hit weapons draw a short tracer from the shooter to the target (WeaponFired event);
 //   - projectile weapons show a small sphere for every projectile in flight; lobbed ones fly in an arc;
 //   - beam weapons draw a thin line while charging, then a thick beam with a glowing spot on the ground.
+// Shots and beams start at the muzzle of the model that fires them, if it has one (D45), and fly from that height to
+// the height of what they aim at. The simulation knows only the ground, so this is looks only.
 // Tracers, projectile spheres and beams come from fixed-size pools, so nothing is created during battle.
 // Tracer lifetime counts in battle time: it pauses with the battle and runs faster at 2x and 4x.
 // Depends on: BattleController, UnitViewManager, PlaceholderArt, Halobellum.Combat, UnityEngine.
@@ -44,6 +46,7 @@ namespace Halobellum.Presentation
         private Transform[] _tracers;
         private float[] _tracerTimeLeft;
         private int _nextTracer;
+        private int _instantShots;
         private Transform[] _projectiles;
         private readonly List<ShotInFlight> _shots = new List<ShotInFlight>();
         private Transform[] _beams;
@@ -119,8 +122,8 @@ namespace Halobellum.Presentation
             WeaponStats weapon = attacker.Weapons[weaponIndex].Stats;
             if (!weapon.IsInstant || weapon.IsBeam) return; // Projectiles and beams are drawn in LateUpdate.
 
-            Vector3 from = ShotPoint(attacker);
-            Vector3 to = ShotPoint(target);
+            Vector3 from = _units.TryMuzzle(attacker, weaponIndex, _instantShots++, out Vector3 muzzle) ? muzzle : ShotPoint(attacker);
+            Vector3 to = _units.AimPoint(target, shotHeight);
             Vector3 line = to - from;
             if (line.sqrMagnitude < 1e-4f) return;
 
@@ -153,13 +156,29 @@ namespace Halobellum.Presentation
                 {
                     ShotInFlight shot = _shots[i];
                     float arc = 4f * lobHeightShare * shot.ArcLength * shot.Progress * (1f - shot.Progress);
-                    _projectiles[i].position = new Vector3(shot.Position.X, shotHeight + arc, shot.Position.Y);
+                    _projectiles[i].position = ShotPosition(shot) + Vector3.up * arc;
                     _projectiles[i].localScale = Vector3.one * (shot.ArcLength > 0f ? lobbedSize : projectileSize);
                 }
                 if (_projectiles[i].gameObject.activeSelf != active) _projectiles[i].gameObject.SetActive(active);
             }
 
             DrawBeams();
+        }
+
+        /// <summary>A shot starts at its muzzle and closes in on where the simulation says it is, at the height of its target.</summary>
+        private Vector3 ShotPosition(ShotInFlight shot)
+        {
+            float left = 1f - shot.Progress;
+            float endHeight = shot.AimedAt != null ? _units.AimPoint(shot.AimedAt, shotHeight).y : shotHeight;
+            float startHeight = ShotPoint(shot.Attacker).y;
+            float x = shot.Position.X, z = shot.Position.Y;
+            if (_units.TryMuzzle(shot.Attacker, shot.WeaponIndex, shot.Serial, out Vector3 muzzle))
+            {
+                startHeight = muzzle.y;
+                x += (muzzle.x - shot.Attacker.Position.X) * left;
+                z += (muzzle.z - shot.Attacker.Position.Y) * left;
+            }
+            return new Vector3(x, Mathf.Lerp(startHeight, endHeight, shot.Progress), z);
         }
 
         private void DrawBeams()
@@ -177,8 +196,11 @@ namespace Halobellum.Presentation
 
         private void DrawBeam(int index, BeamShot beam)
         {
-            Vector3 from = _units.WorldPosition(beam.Attacker);
-            if (!beam.Attacker.IsAir) from.y = beamOriginHeight;
+            if (!_units.TryMuzzle(beam.Attacker, beam.WeaponIndex, 0, out Vector3 from))
+            {
+                from = _units.WorldPosition(beam.Attacker);
+                if (!beam.Attacker.IsAir) from.y = beamOriginHeight;
+            }
             Vector3 to = new Vector3(beam.Point.X, 0.1f, beam.Point.Y);
             Vector3 line = to - from;
             Material material = beam.Attacker.Team == Team.A ? _beamA : _beamB;

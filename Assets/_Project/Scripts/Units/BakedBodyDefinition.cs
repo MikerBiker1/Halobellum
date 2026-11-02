@@ -35,6 +35,8 @@ namespace Halobellum.Units
     public sealed class BakedBodyDefinition : ScriptableObject
     {
         [Header("Source (set by hand)")]
+        [Tooltip("Folder in Art/Imported/Models holding its FBX and texture, if not named after this asset. Two units can share a body.")]
+        public string modelFolder;
         [Tooltip("The rigged FBX with its animations.")]
         public GameObject sourceModel;
         public Texture2D albedo;
@@ -46,8 +48,12 @@ namespace Halobellum.Units
         public string deathClip;
         [Tooltip("Clip that the held standing frame is taken from (the moment its feet are closest together).")]
         public string stillClip;
-        [Tooltip("Merge a plain rifle made of boxes into the right hand, aimed along the shooting pose.")]
-        public bool holdsRifle;
+        [Tooltip("Folder in Art/Imported/Models of a prepared weapon (Tools/Art), merged into the right hand and aimed along the shooting pose. Empty for none.")]
+        public string weaponName;
+        [Tooltip("Length of the weapon in the game, in metres.")]
+        public float weaponLength = 0.8f;
+        [Tooltip("Hold it in the hand reaching forward instead of the one at the chest, where a small weapon would be hidden by the arm.")]
+        public bool weaponInForwardHand;
 
         [Header("Playing")]
         [Tooltip("Battle seconds a cross-fade from one animation to the next takes.")]
@@ -60,6 +66,9 @@ namespace Halobellum.Units
         public Mesh mesh;
         public Material material;
         public List<BakedClip> clips = new List<BakedClip>();
+        [Tooltip("Where shots start: the tip of the weapon in the shooting pose, in the body's own space.")]
+        public Vector3 muzzle;
+        public bool hasMuzzle;
 
         public bool IsReady => mesh != null && material != null && clips.Count > 0;
 

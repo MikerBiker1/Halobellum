@@ -1,0 +1,48 @@
+{
+ "materials": [
+  {
+   "name": "GaussWarthog_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "GaussWarthog_0.png"
+  },
+  {
+   "name": "GaussWarthog_1",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "GaussWarthog_1.png"
+  },
+  {
+   "name": "GaussWarthog_2",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "GaussWarthog_2.png"
+  },
+  {
+   "name": "GaussWarthog_3",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "GaussWarthog_3.png"
+  }
+ ]
+}

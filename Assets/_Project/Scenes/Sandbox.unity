@@ -485,7 +485,7 @@ MonoBehaviour:
   healthBackColor: {r: 0.08, g: 0.08, b: 0.08, a: 1}
   friendlyHealthColor: {r: 0.3, g: 0.9, b: 0.3, a: 1}
   enemyHealthColor: {r: 0.95, g: 0.25, b: 0.2, a: 1}
-  airHeight: 8
+  airHeight: 13
   healthBarHeight: 0.25
   healthBarMinWidth: 1.2
   healthBarGap: 0.6

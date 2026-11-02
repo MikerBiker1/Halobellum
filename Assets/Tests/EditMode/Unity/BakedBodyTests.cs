@@ -54,6 +54,33 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void Marine_FiresFromTheTipOfItsRifle()
+        {
+            BakedBodyDefinition marine = Marine();
+            Assert.IsTrue(marine.hasMuzzle);
+            Assert.AreEqual("Weapon_AssaultRifle", marine.weaponName);
+            Assert.Greater(marine.muzzle.z, 0.3f, "Out in front of the body.");
+            Assert.Greater(marine.muzzle.y, 0.8f);
+            Assert.Less(marine.muzzle.y, 2f);
+            Assert.Less(Mathf.Abs(marine.muzzle.x), 0.5f);
+        }
+
+        [TestCase("Grunt", "Weapon_PlasmaPistol")]
+        [TestCase("FuelRodGrunt", "Weapon_FuelRod")]
+        public void Grunts_ShareABody_EachWithItsOwnWeapon(string name, string weapon)
+        {
+            BakedBodyDefinition body = Resources.Load<BakedBodyDefinition>("BakedBodies/" + name);
+            Assert.IsTrue(body.IsReady, "Run Halobellum > Art > Bake Animated Bodies.");
+            Assert.AreEqual(weapon, body.weaponName);
+            Assert.AreEqual("Grunt", body.modelFolder);
+            Assert.IsTrue(body.hasMuzzle);
+            Assert.Greater(body.muzzle.z, 0.1f, "Out in front of the body.");
+            Assert.Less(body.muzzle.y, 1.5f, "A Grunt is short.");
+            Assert.Less(body.mesh.triangles.Length / 3, 4600);
+            Assert.IsNotNull(body.Clip(BakedAnimation.Dead));
+        }
+
+        [Test]
         public void Marine_Mesh_NamesBonesInTheTexture_AndHoldsARifle()
         {
             BakedBodyDefinition marine = Marine();

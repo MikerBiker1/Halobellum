@@ -45,7 +45,7 @@ namespace Halobellum.Presentation
 
         [Header("Layout (metres)")]
         [Tooltip("Height at which air units fly.")]
-        [SerializeField] private float airHeight = 8f;
+        [SerializeField] private float airHeight = 13f;
         [SerializeField] private float healthBarHeight = 0.25f;
         [SerializeField] private float healthBarMinWidth = 1.2f;
         [SerializeField] private float healthBarGap = 0.6f;
@@ -80,6 +80,10 @@ namespace Halobellum.Presentation
             public Color BakedTint;
             /// <summary>Height of a real model's top above its base, or 0 for a body sized from its unit's data.</summary>
             public float ModelTop;
+            /// <summary>What its real model's nodes do, or null if it has none (D45).</summary>
+            public ModelParts Parts;
+            /// <summary>The same for each tiny form of a pack.</summary>
+            public ModelParts[] FormParts;
             /// <summary>Battle time at which a fallen body disappears.</summary>
             public float HideAt;
             /// <summary>The tiny forms of a pack, or null for a normal body.</summary>
@@ -203,6 +207,26 @@ namespace Halobellum.Presentation
             UnitStats stats = view.Unit.Stats;
             if (view.ModelTop > 0f) return view.ModelTop;
             return PlaceholderArt.BodyHeight(stats) * (stats.IsAir ? 0.5f : 1f);
+        }
+
+        /// <summary>Where a weapon's given shot leaves a body, if its model says (D45). Otherwise the caller picks a point.</summary>
+        public bool TryMuzzle(SimUnit unit, int weapon, int shot, out Vector3 position)
+        {
+            position = default;
+            if (unit.Id < 0 || unit.Id >= _views.Count) return false;
+            View view = _views[unit.Id];
+            if (view.Parts != null && view.Parts.TryMuzzle(weapon, shot, out position)) return true;
+            if (view.Baked == null || !view.Baked.hasMuzzle) return false;
+            position = view.Root.transform.TransformPoint(view.Baked.muzzle);
+            return true;
+        }
+
+        /// <summary>The point of a body that shots aim at: the middle of what is drawn.</summary>
+        public Vector3 AimPoint(SimUnit unit, float least)
+        {
+            Vector3 position = ToWorld(unit);
+            if (!unit.IsAir && unit.Id >= 0 && unit.Id < _views.Count) position.y += Mathf.Max(least, BodyTop(_views[unit.Id]) * 0.5f);
+            return position;
         }
 
         /// <summary>World position of a unit's base as of the latest tick (air units at flying height).</summary>
@@ -365,21 +389,31 @@ namespace Halobellum.Presentation
             }
             else if (stats.FormsPerBody > 1)
             {
-                CreateForms(view, stats, prefab, teamMaterial);
+                bool keepsPaint = _battle.KeepsOwnMaterials(stats.InfectedFrom ?? stats) && GhostTeam != unit.Team;
+                CreateForms(view, stats, prefab, keepsPaint ? null : teamMaterial);
             }
             else if (prefab != null)
             {
                 // The unit's prefab (from its data asset), tinted with the side's color.
                 GameObject body = Instantiate(prefab, view.Root.transform, false);
                 body.name = "Body";
+                view.Parts = ModelParts.Find(view.Root.transform, body.transform, stats.IsAir, unit.Id * 0.73f);
                 // A real model keeps its own paint, except as a grey ghost.
                 if (!_battle.KeepsOwnMaterials(stats.InfectedFrom ?? stats) || GhostTeam == unit.Team)
                 {
-                    foreach (Renderer renderer in body.GetComponentsInChildren<Renderer>()) renderer.sharedMaterial = teamMaterial;
+                    foreach (Renderer renderer in body.GetComponentsInChildren<Renderer>()) Repaint(renderer, teamMaterial);
                 }
                 else
                 {
-                    foreach (Renderer renderer in body.GetComponentsInChildren<Renderer>()) view.ModelTop = Mathf.Max(view.ModelTop, renderer.bounds.max.y - view.Root.transform.position.y);
+                    foreach (Renderer renderer in body.GetComponentsInChildren<Renderer>())
+                    {
+                        view.ModelTop = Mathf.Max(view.ModelTop, renderer.bounds.max.y - view.Root.transform.position.y);
+                        // A vehicle that rose infected keeps its model, in a sick colour (D43).
+                        if (stats.InfectedFrom == null) continue;
+                        _block.Clear();
+                        _block.SetColor(TintId, Color.Lerp(Color.white, infectedColor, 0.7f));
+                        renderer.SetPropertyBlock(_block);
+                    }
                 }
             }
             else
@@ -427,10 +461,11 @@ namespace Halobellum.Presentation
             return view;
         }
 
-        /// <summary>A pack shows each of its tiny forms: one in the middle, the others around it.</summary>
+        /// <summary>A pack shows each of its tiny forms: one in the middle, the others around it. A null material keeps a model's own.</summary>
         private void CreateForms(View view, UnitStats stats, GameObject prefab, Material material)
         {
             view.Forms = new GameObject[stats.FormsPerBody];
+            view.FormParts = new ModelParts[stats.FormsPerBody];
             view.FormsShown = stats.FormsPerBody;
             for (int i = 0; i < stats.FormsPerBody; i++)
             {
@@ -438,11 +473,14 @@ namespace Halobellum.Presentation
                 if (prefab != null)
                 {
                     form = Instantiate(prefab, view.Root.transform, false);
-                    foreach (Renderer renderer in form.GetComponentsInChildren<Renderer>()) renderer.sharedMaterial = material;
+                    if (material != null)
+                    {
+                        foreach (Renderer renderer in form.GetComponentsInChildren<Renderer>()) Repaint(renderer, material);
+                    }
                 }
                 else
                 {
-                    Transform part = PlaceholderArt.CreatePart("Form", view.Root.transform, PlaceholderArt.BodyMesh(stats), material);
+                    Transform part = PlaceholderArt.CreatePart("Form", view.Root.transform, PlaceholderArt.BodyMesh(stats), material != null ? material : PlaceholderArt.MaterialFor(Color.white));
                     part.localScale = PlaceholderArt.BodyScale(stats);
                     part.localPosition = new Vector3(0f, stats.IsAir ? 0f : PlaceholderArt.BodyHeight(stats) * 0.5f, 0f);
                     form = part.gameObject;
@@ -457,7 +495,18 @@ namespace Halobellum.Presentation
                     t.localPosition += new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * (stats.CollisionRadius * (1f - formScale));
                 }
                 view.Forms[i] = form;
+                view.FormParts[i] = ModelParts.Find(view.Root.transform, t, stats.IsAir, FormPhase(view.Unit.Id, i));
             }
+        }
+
+        private static float FormPhase(int id, int form) => id * 0.73f + form * 0.41f;
+
+        /// <summary>One material over all of a part's slots (a part of a real model can have several).</summary>
+        private static void Repaint(Renderer renderer, Material material)
+        {
+            var materials = new Material[renderer.sharedMaterials.Length];
+            for (int i = 0; i < materials.Length; i++) materials[i] = material;
+            renderer.sharedMaterials = materials;
         }
 
         private void OnTicked(int tick)
@@ -511,7 +560,7 @@ namespace Halobellum.Presentation
                 return;
             }
             Material material = PlaceholderArt.MaterialFor(infectedColor);
-            foreach (Renderer renderer in view.Root.GetComponentsInChildren<Renderer>()) renderer.sharedMaterial = material;
+            foreach (Renderer renderer in view.Root.GetComponentsInChildren<Renderer>()) Repaint(renderer, material);
         }
 
         private void OnUnitRose(SimUnit corpse, SimUnit risen)
@@ -576,6 +625,13 @@ namespace Halobellum.Presentation
                 {
                     BakedAnimation wanted = WantedAnimation(unit);
                     if (wanted != view.Playing) Play(view, wanted, true);
+                }
+
+                float motionDelta = _battle.IsPlaying ? Time.deltaTime * _battle.Speed : 0f;
+                view.Parts?.Animate(unit, motionDelta, _animationTime);
+                if (view.FormParts != null)
+                {
+                    foreach (ModelParts form in view.FormParts) form?.Animate(unit, motionDelta, _animationTime);
                 }
 
                 if (view.Forms != null && unit.FormsAlive != view.FormsShown)

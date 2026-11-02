@@ -1,0 +1,26 @@
+{
+ "materials": [
+  {
+   "name": "Hornet_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Hornet_0.png",
+   "glowTexture": "Hornet_0_emit.png"
+  },
+  {
+   "name": "Hornet_1",
+   "colour": [
+    0.05,
+    0.13,
+    0.19
+   ],
+   "glass": true,
+   "cutout": false
+  }
+ ]
+}

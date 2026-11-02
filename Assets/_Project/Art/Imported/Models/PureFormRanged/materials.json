@@ -1,0 +1,27 @@
+{
+ "materials": [
+  {
+   "name": "PureFormRanged_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": true,
+   "texture": "PureFormRanged_0.png"
+  },
+  {
+   "name": "PureFormRanged_1",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "PureFormRanged_1.png",
+   "glowTexture": "PureFormRanged_1_emit.png"
+  }
+ ]
+}

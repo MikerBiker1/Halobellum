@@ -109,6 +109,8 @@ Order agreed with the owner (D40), with approval between stages:
 - [ ] Combat identity (Pass 1): every weapon behaves as intended, with placeholder effects and sounds
 - [ ] Balance pass
 - [ ] Models and animation (Pass 2)
+  - [x] The owner's first big batch: 18 models, weapons reduced, muzzles, turrets, code motion, air units at 13 m, baked Grunts (D45)
+  - [ ] Models for the units that still have none (see HUMAN_TODO)
 - [ ] Effects, audio and music (Pass 3)
 - [ ] Menus and settings
 

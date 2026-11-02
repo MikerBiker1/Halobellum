@@ -6,6 +6,8 @@
 // end, then quits. It also saves one screenshot of a lobbed shot at the top of its arc, one of a beam
 // charging, one of a beam firing, one of the first infected body and one of a unit leaping, the first time each is
 // seen, close-ups of a baked Marine: held still, in the middle of a cross-fade, running, shooting and falling, and one of the Scorpion.
+// With "-gallery" as well, it instead goes through every unit that has a real model (M9, D45): each one standing, moving
+// and firing, close up and from the game's camera, so that a person can judge them from pictures.
 // Depends on: SandboxController, BattleController, Halobellum.Combat, Halobellum.Core, UnityEngine.
 
 using System;
@@ -23,6 +25,7 @@ namespace Halobellum.Presentation
     public sealed class SandboxAutoplay : MonoBehaviour
     {
         public const string Flag = "-sandboxDemo";
+        private const string GalleryFlag = "-gallery";
 
         private static readonly string[] Blue = { "Marine", "Marine", "Marine", "Marine", "Scorpion", "Spartan" };
         private static readonly string[] Red = { "Infection Forms", "Infection Forms", "Infection Forms", "Infection Forms", "Carrier Form", "Flood Abomination", "Scarab", "Wraith" };
@@ -30,6 +33,7 @@ namespace Halobellum.Presentation
         private SandboxController _sandbox;
         private BattleController _battle;
         private string _shots;
+        private bool _gallery;
         private int _step;
         private float _wait = 1f;
         private bool _shotArc, _shotCharge, _shotBeam, _shotInfected, _shotLeap;
@@ -47,12 +51,95 @@ namespace Halobellum.Presentation
             }
             _shots = index + 1 < args.Length ? args[index + 1] : "SandboxShots";
             Directory.CreateDirectory(_shots);
+            _gallery = Array.IndexOf(args, GalleryFlag) >= 0;
         }
 
         private void Start()
         {
             _sandbox = GetComponent<SandboxController>();
             _battle = GetComponent<BattleController>();
+            if (_gallery) StartCoroutine(Gallery());
+        }
+
+        /// <summary>Every unit with a real model, on its own against a small enemy force.</summary>
+        private IEnumerator Gallery()
+        {
+            yield return new WaitForSecondsRealtime(1f);
+            var views = GetComponent<UnitViewManager>();
+            var shown = new List<UnitStats>();
+            foreach (SandboxController.SandboxUnit entry in _sandbox.Units)
+            {
+                UnitStats type = entry.Stats;
+                _sandbox.Clear(Team.A);
+                _sandbox.Clear(Team.B);
+                _sandbox.AddSquad(Team.A, type);
+                _sandbox.AddSquad(Team.B, Find("Marine"));
+                _sandbox.AddSquad(Team.B, Find("Hornet"));
+                yield return null;
+                if (!_battle.KeepsOwnMaterials(type) && _battle.BakedBodyFor(type) == null) continue;
+                shown.Add(type);
+                string name = type.Name.Replace(" ", "");
+
+                SimUnit Body() => FirstOf(type);
+                yield return CloseUp(Body(), name + "_still");
+                yield return new WaitForSecondsRealtime(0.1f);
+                Shot(name + "_field");
+                yield return new WaitForSecondsRealtime(0.2f);
+
+                _battle.Speed = 2f;
+                _sandbox.Run();
+                yield return null;
+                float limit = 20f;
+                while (limit > 0f && Body() != null && Body().State != UnitState.Move)
+                {
+                    limit -= Time.unscaledDeltaTime;
+                    yield return null;
+                }
+                yield return new WaitForSecondsRealtime(0.4f);
+                if (Body() != null) yield return CloseUp(Body(), name + "_moving");
+                limit = 25f;
+                while (limit > 0f && Body() != null && Body().State != UnitState.Attack && !_battle.Simulation.IsFinished)
+                {
+                    limit -= Time.unscaledDeltaTime;
+                    yield return null;
+                }
+                for (int i = 0; i < 3 && Body() != null && !_battle.Simulation.IsFinished; i++)
+                {
+                    yield return new WaitForSecondsRealtime(0.35f);
+                    if (Body() != null) yield return CloseUp(Body(), $"{name}_firing{i}");
+                }
+                yield return new WaitForSecondsRealtime(0.1f);
+                Shot(name + "_field_firing");
+                yield return new WaitForSecondsRealtime(0.2f);
+                _sandbox.ResetBattle();
+                yield return null;
+            }
+
+            // All of them together, as they would stand on the field.
+            _sandbox.Clear(Team.A);
+            _sandbox.Clear(Team.B);
+            foreach (UnitStats type in shown) _sandbox.AddSquad(Team.A, type);
+            foreach (UnitStats type in shown) _sandbox.AddSquad(Team.B, type);
+            yield return new WaitForSecondsRealtime(0.5f);
+            Shot("all_field");
+            yield return new WaitForSecondsRealtime(0.3f);
+            _battle.Speed = 2f;
+            _sandbox.Run();
+            yield return new WaitForSecondsRealtime(5f);
+            Shot("all_battle");
+            yield return new WaitForSecondsRealtime(0.3f);
+            Debug.Log($"Model gallery finished: {shown.Count} units with real models.");
+            Application.Quit();
+        }
+
+        private SimUnit FirstOf(UnitStats type)
+        {
+            if (_battle.Simulation == null) return null;
+            foreach (SimUnit unit in _battle.Simulation.Units)
+            {
+                if (unit.IsAlive && unit.Team == Team.A && unit.Stats.Name == type.Name) return unit;
+            }
+            return null;
         }
 
         private bool _closeUp, _shotFade, _shotTank;
@@ -68,7 +155,7 @@ namespace Halobellum.Presentation
             var control = view.GetComponent<BattleCameraController>();
             if (control != null) control.enabled = false;
             view.transform.GetPositionAndRotation(out Vector3 position, out Quaternion rotation);
-            var body = new Vector3(unit.Position.X, 0.8f, unit.Position.Y);
+            var body = GetComponent<UnitViewManager>().WorldPosition(unit) + Vector3.up * 0.8f;
             var facing = new Vector3(unit.Facing.X, 0f, unit.Facing.Y);
             float reach = Mathf.Max(1f, unit.Radius); // Further back for something big.
             view.transform.position = body + (facing * 3.4f + Vector3.Cross(facing, Vector3.up) * 1.8f + Vector3.up * 0.9f) * reach;
@@ -147,6 +234,7 @@ namespace Halobellum.Presentation
 
         private void Update()
         {
+            if (_gallery) return;
             if (_step >= 4) ShootMarine();
             if (_closeUp) return;
             if (_step >= 5) ShootWeaponMechanics();

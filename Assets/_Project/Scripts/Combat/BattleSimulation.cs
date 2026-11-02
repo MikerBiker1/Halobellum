@@ -38,12 +38,19 @@ namespace Halobellum.Combat
         public float ArcLength;
         /// <summary>How far along its flight the shot is, 0 to 1.</summary>
         public float Progress;
+        public SimUnit Attacker;
+        public int WeaponIndex;
+        /// <summary>What it was fired at, even if that has since died; null if it flies at a point on the ground.</summary>
+        public SimUnit AimedAt;
+        /// <summary>Counts every shot of the battle, so that a model's muzzles can take turns.</summary>
+        public int Serial;
     }
 
     /// <summary>A beam charging or firing, for drawing.</summary>
     public struct BeamShot
     {
         public SimUnit Attacker;
+        public int WeaponIndex;
         public Vec2 Point;
         public float Radius;
         public bool Firing;
@@ -91,14 +98,26 @@ namespace Halobellum.Combat
         public int ProjectileCount => _projectiles.Count;
 
         /// <summary>Fills the list with the position of every projectile in flight (for visuals).</summary>
+        private int _shotsFired;
+
         public void GetProjectiles(List<ShotInFlight> shots)
         {
             shots.Clear();
             foreach (Projectile projectile in _projectiles)
             {
-                float total = projectile.Weapon.Lobbed ? Vec2.Distance(projectile.Origin, projectile.AimPoint) : 0f;
-                float progress = total > 1e-4f ? Math.Min(1f, Vec2.Distance(projectile.Origin, projectile.Position) / total) : 0f;
-                shots.Add(new ShotInFlight { Position = projectile.Position, ArcLength = total, Progress = progress });
+                float flown = Vec2.Distance(projectile.Origin, projectile.Position);
+                Vec2 goal = projectile.Target != null ? projectile.Target.Position : projectile.AimPoint;
+                float whole = flown + Vec2.Distance(projectile.Position, goal);
+                shots.Add(new ShotInFlight
+                {
+                    Position = projectile.Position,
+                    ArcLength = projectile.Weapon.Lobbed ? Vec2.Distance(projectile.Origin, projectile.AimPoint) : 0f,
+                    Progress = whole > 1e-4f ? Math.Min(1f, flown / whole) : 0f,
+                    Attacker = projectile.Attacker,
+                    WeaponIndex = projectile.WeaponIndex,
+                    AimedAt = projectile.AimedAt,
+                    Serial = projectile.Serial,
+                });
             }
         }
         /// <summary>Number of ticks simulated so far.</summary>
@@ -955,7 +974,7 @@ namespace Halobellum.Combat
                     }
                     else
                     {
-                        _projectiles.Add(new Projectile(unit, weapon.Stats, target, unit.Position));
+                        _projectiles.Add(new Projectile(unit, weapon.Stats, target, unit.Position, w, _shotsFired++));
                     }
                 }
             }
@@ -1032,13 +1051,15 @@ namespace Halobellum.Combat
             foreach (SimUnit unit in _units)
             {
                 if (!unit.IsAlive) continue;
-                foreach (SimWeapon weapon in unit.Weapons)
+                for (int w = 0; w < unit.Weapons.Length; w++)
                 {
+                    SimWeapon weapon = unit.Weapons[w];
                     if (weapon.BeamPhase == BeamPhase.Off) continue;
                     bool firing = weapon.BeamPhase == BeamPhase.Firing;
                     beams.Add(new BeamShot
                     {
                         Attacker = unit,
+                        WeaponIndex = w,
                         Point = weapon.BeamPoint,
                         Radius = weapon.Stats.SplashRadius,
                         Firing = firing,
@@ -1303,16 +1324,21 @@ namespace Halobellum.Combat
             public readonly SimUnit Attacker;
             public readonly WeaponStats Weapon;
             public readonly Vec2 Origin;
+            public readonly int WeaponIndex, Serial;
+            public readonly SimUnit AimedAt;
             public SimUnit Target;
             public Vec2 Position;
             public Vec2 AimPoint;
             public bool Done;
 
-            public Projectile(SimUnit attacker, WeaponStats weapon, SimUnit target, Vec2 origin)
+            public Projectile(SimUnit attacker, WeaponStats weapon, SimUnit target, Vec2 origin, int weaponIndex, int serial)
             {
+                WeaponIndex = weaponIndex;
+                Serial = serial;
                 Attacker = attacker;
                 Weapon = weapon;
                 Target = weapon.Lobbed ? null : target;
+                AimedAt = Target;
                 Origin = origin;
                 Position = origin;
                 AimPoint = weapon.Lobbed ? LeadPoint(origin, target, weapon.ProjectileSpeed) : target.Position;

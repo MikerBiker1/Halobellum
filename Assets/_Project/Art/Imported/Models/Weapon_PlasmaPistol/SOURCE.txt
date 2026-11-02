@@ -1,0 +1,3 @@
+Source: found by the project owner on Sketchfab, file sketchfab.com/halo_-_plasma_pistol.glb in Art_Source.
+Prepared by Tools/Art/units/Weapon_PlasmaPistol.py (decision D45).
+The repository is private and must stay private.

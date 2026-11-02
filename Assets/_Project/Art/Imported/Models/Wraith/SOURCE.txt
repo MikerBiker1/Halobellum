@@ -1,0 +1,3 @@
+Source: found by the project owner on Sketchfab, file sketchfab.com/halo_fangame_vehicle_wraith.glb in Art_Source.
+Prepared by Tools/Art/units/Wraith.py (decision D45).
+The repository is private and must stay private.

@@ -12,13 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d50c9e005dbc80ecacdbb7a00a0ff15, type: 3}
   m_Name: Marine
   m_EditorClassIdentifier: 
+  modelFolder: 
   sourceModel: {fileID: -927199367670048503, guid: 3347dcd200a4f5cf25613a4ae8c78457, type: 3}
   albedo: {fileID: 2800000, guid: 3566b12b06bf22015de86840bf9adad3, type: 3}
   movingClip: Run_and_Shoot
   shootingClip: Walk_Forward_While_Shooting
   deathClip: Dead
   stillClip: Walking
-  holdsRifle: 1
+  weaponName: Weapon_AssaultRifle
+  weaponLength: 0.8
+  weaponInForwardHand: 0
   transitionSeconds: 0.2
   corpseSeconds: 1.5
   bakedFps: 30
@@ -41,3 +44,5 @@ MonoBehaviour:
     firstRow: 207
     frames: 1
     loops: 0
+  muzzle: {x: 0.010976225, y: 1.5530018, z: 0.6032895}
+  hasMuzzle: 1

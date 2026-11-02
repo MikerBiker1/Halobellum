@@ -1,0 +1,52 @@
+{
+ "materials": [
+  {
+   "name": "Phantom_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Phantom_0.png"
+  },
+  {
+   "name": "Phantom_1",
+   "colour": [
+    0.0,
+    0.42,
+    0.55
+   ],
+   "glass": false,
+   "cutout": false,
+   "glow": [
+    0.0,
+    0.42,
+    0.55
+   ]
+  },
+  {
+   "name": "Phantom_2",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Phantom_2.png"
+  },
+  {
+   "name": "Phantom_3",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Phantom_3.png"
+  }
+ ]
+}

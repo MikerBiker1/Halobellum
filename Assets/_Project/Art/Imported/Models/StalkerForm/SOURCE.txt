@@ -1,0 +1,3 @@
+Source: found by the project owner on Sketchfab, file sketchfab.com/enemieshalo_3the_floodpure_stalker.glb in Art_Source.
+Prepared by Tools/Art/units/StalkerForm.py (decision D45).
+The repository is private and must stay private.

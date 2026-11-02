@@ -1,0 +1,16 @@
+{
+ "materials": [
+  {
+   "name": "Banshee_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Banshee_0.png",
+   "glowTexture": "Banshee_0_emit.png"
+  }
+ ]
+}

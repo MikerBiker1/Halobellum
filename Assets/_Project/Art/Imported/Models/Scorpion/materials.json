@@ -1,0 +1,64 @@
+{
+ "materials": [
+  {
+   "name": "Scorpion_0",
+   "colour": [
+    0.098,
+    0.138,
+    0.041
+   ],
+   "glass": false,
+   "cutout": false
+  },
+  {
+   "name": "Scorpion_1",
+   "colour": [
+    0.026,
+    0.06,
+    0.063
+   ],
+   "glass": true,
+   "cutout": false
+  },
+  {
+   "name": "Scorpion_2",
+   "colour": [
+    0.084,
+    0.12,
+    0.036
+   ],
+   "glass": false,
+   "cutout": false
+  },
+  {
+   "name": "Scorpion_3",
+   "colour": [
+    0.052,
+    0.072,
+    0.025
+   ],
+   "glass": false,
+   "cutout": false
+  },
+  {
+   "name": "Scorpion_4",
+   "colour": [
+    0.012,
+    0.012,
+    0.012
+   ],
+   "glass": false,
+   "cutout": false
+  },
+  {
+   "name": "Scorpion_5",
+   "colour": [
+    0.039,
+    0.04,
+    0.027
+   ],
+   "glass": false,
+   "cutout": false
+  }
+ ]
+}

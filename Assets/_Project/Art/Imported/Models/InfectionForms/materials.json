@@ -1,0 +1,26 @@
+{
+ "materials": [
+  {
+   "name": "InfectionForms_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": true,
+   "texture": "InfectionForms_0.png"
+  },
+  {
+   "name": "InfectionForms_1",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "InfectionForms_1.png"
+  }
+ ]
+}

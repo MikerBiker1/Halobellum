@@ -1,0 +1,4 @@
+Link: https://sketchfab.com/3d-models/grunt-14962147399146168969f0915d93fc0a#download
+Source: found by the project owner on Sketchfab, file Grunt/grunt.glb, rigged through Meshy by Tools/Meshy/meshy_rig.py in Art_Source.
+Prepared by Tools/Meshy/rig_inputs.py and meshy_rig.py (decision D45).
+The repository is private and must stay private.

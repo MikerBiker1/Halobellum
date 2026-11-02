@@ -87,8 +87,8 @@ MonoBehaviour:
   techUpgrades:
   - {fileID: 11400000, guid: 55bb29302536c35b7c8e2f72fefefbb6, type: 2}
   - {fileID: 11400000, guid: 6349a1ef988d4e419283b92a6e1040b7, type: 2}
-  prefab: {fileID: 620299582148083718, guid: f1e6a11e062ca5d4192194cc9ca7c504, type: 3}
-  keepsOwnMaterials: 0
+  prefab: {fileID: 8661881900918577439, guid: b6f07450b088568469c5e5373011f97a, type: 3}
+  keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
   strongAgainst: Chaff
   weakAgainst: 'Tanks, flankers'

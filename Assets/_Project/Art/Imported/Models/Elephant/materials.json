@@ -1,0 +1,171 @@
+{
+ "materials": [
+  {
+   "name": "Elephant_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Elephant_0.png",
+   "glowTexture": "Elephant_0_emit.png"
+  },
+  {
+   "name": "Elephant_1",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Elephant_1.png"
+  },
+  {
+   "name": "Elephant_2",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Elephant_2.png"
+  },
+  {
+   "name": "Elephant_3",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Elephant_3.png"
+  },
+  {
+   "name": "Elephant_4",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Elephant_4.png"
+  },
+  {
+   "name": "Elephant_5",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Elephant_5.png"
+  },
+  {
+   "name": "Elephant_6",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Elephant_6.png",
+   "glowTexture": "Elephant_6_emit.png"
+  },
+  {
+   "name": "Elephant_7",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": true,
+   "cutout": false,
+   "texture": "Elephant_7.png"
+  },
+  {
+   "name": "Elephant_8",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Elephant_8.png"
+  },
+  {
+   "name": "Elephant_9",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Elephant_9.png"
+  },
+  {
+   "name": "Elephant_10",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Elephant_10.png"
+  },
+  {
+   "name": "Elephant_11",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Elephant_11.png"
+  },
+  {
+   "name": "Elephant_12",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Elephant_12.png"
+  },
+  {
+   "name": "Elephant_13",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Elephant_13.png"
+  },
+  {
+   "name": "Elephant_14",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Elephant_14.png"
+  }
+ ]
+}

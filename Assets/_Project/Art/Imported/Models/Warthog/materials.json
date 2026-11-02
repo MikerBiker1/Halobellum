@@ -1,0 +1,48 @@
+{
+ "materials": [
+  {
+   "name": "Warthog_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Warthog_0.png"
+  },
+  {
+   "name": "Warthog_1",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Warthog_1.png"
+  },
+  {
+   "name": "Warthog_2",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Warthog_2.png"
+  },
+  {
+   "name": "Warthog_3",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Warthog_3.png"
+  }
+ ]
+}

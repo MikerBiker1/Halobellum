@@ -1,0 +1,26 @@
+{
+ "materials": [
+  {
+   "name": "PureFormTank_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": true,
+   "texture": "PureFormTank_0.png"
+  },
+  {
+   "name": "PureFormTank_1",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "PureFormTank_1.png"
+  }
+ ]
+}
