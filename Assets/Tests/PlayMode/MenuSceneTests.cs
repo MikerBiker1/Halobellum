@@ -111,12 +111,13 @@ namespace Halobellum.Tests
             Assert.AreEqual(0f, backdrop.PanelStrength);
             panel.GetPropertyBlock(block, index);
             float atRest = block.GetColor(emission).maxColorComponent;
+            Assert.Greater(atRest, 0f, "The panel has its dim glow set.");
             Assert.Less(atRest, own * 0.1f, "Dim while nothing fires.");
 
             backdrop.ApplyAt(backdrop.beamStart + backdrop.beamSeconds * 0.5f);
             Assert.AreEqual(1f, backdrop.PanelStrength);
             panel.GetPropertyBlock(block, index);
-            Assert.Greater(block.GetColor(emission).maxColorComponent, atRest * 2f, "It rises as the beam fires.");
+            Assert.Greater(block.GetColor(emission).maxColorComponent, atRest * 2f, $"It rises as the beam fires (block empty: {block.isEmpty}, {panel.name} slot {index}).");
             Assert.AreEqual(own, panel.sharedMaterials[index].GetColor(emission).maxColorComponent, "The shared material is not touched.");
         }
 

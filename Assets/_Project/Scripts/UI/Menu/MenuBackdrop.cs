@@ -268,7 +268,7 @@ namespace Halobellum.UI
                     Material[] materials = renderer.sharedMaterials;
                     for (int i = 0; i < materials.Length; i++)
                     {
-                        if (materials[i] == null || !materials[i].IsKeywordEnabled("_EMISSION")) continue;
+                        if (materials[i] == null || materials[i].GetColor(EmissionId).maxColorComponent <= 0f) continue;
                         found.Add(new GlowingPanel { renderer = renderer, materialIndex = i, color = materials[i].GetColor(TintId), glow = materials[i].GetColor(EmissionId) });
                     }
                 }
