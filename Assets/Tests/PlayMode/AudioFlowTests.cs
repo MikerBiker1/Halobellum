@@ -172,6 +172,66 @@ namespace Halobellum.Tests
             Assert.Less(UiLevelOf($"ui_{_key}_skip"), 1f);
         }
 
+        /// <summary>The first card of the draft and the first squad the player can buy, as -menuDemoSounds does, without drawing them.</summary>
+        private static PlacedSquad DraftAndBuy(MatchController match, int seed)
+        {
+            match.NewMatch(seed);
+            Match game = match.Match;
+            Assert.IsTrue(game.ChooseDraft(0).Ok, $"Seed {seed}.");
+            PlayerState player = game.Player;
+            UnitStats unit = player.Roster.Find(u => player.Unlocked.Contains(u) && u.Cost <= player.Credits);
+            Assert.IsNotNull(unit, $"Seed {seed}: nothing to buy.");
+            Assert.IsTrue(game.Buy(Team.A, unit).Ok, $"Seed {seed}.");
+            return player.Squads[player.Squads.Count - 1];
+        }
+
+        // What -menuDemoSounds meets in some of its runs: the draft is random, and the bought squad can land with no room to turn. The game
+        // must refuse that and sound its error, and the tool must find a spot where the turn works, whichever draft it is.
+        [UnityTest]
+        public IEnumerator TurningWithNoRoom_SoundsTheError_AndTheToolFindsRoom()
+        {
+            yield return Load("Match");
+            var match = Object.FindAnyObjectByType<MatchController>();
+            int blockedSeed = -1;
+            for (int seed = 1; seed <= 200; seed++)
+            {
+                PlacedSquad bought = DraftAndBuy(match, seed);
+                Match game = match.Match;
+                if (MenuDemo.HasRoomToTurn(game.Player, bought, game.CombatRules)) continue;
+                if (blockedSeed < 0) blockedSeed = seed;
+                Assert.IsTrue(MenuDemo.FindRoomToTurn(game.Player, bought, game.CombatRules, out _, out _), $"Seed {seed}: {bought.Type.Name} has no spot to turn in.");
+            }
+            if (blockedSeed < 0) Assert.Inconclusive("No draft in 200 leaves the bought squad without room to turn, so there is nothing to check.");
+
+            match.NewMatch(blockedSeed);
+            Assert.IsTrue(match.ChooseDraft(0).Ok, match.Message);
+            PlayerState player = match.Match.Player;
+            Assert.IsTrue(match.Buy(player.Roster.Find(u => player.Unlocked.Contains(u) && u.Cost <= player.Credits)).Ok, match.Message);
+            float deadline = Time.realtimeSinceStartup + 10f;
+            while (match.IsDropping && Time.realtimeSinceStartup < deadline) yield return null;
+            yield return null;
+            string key = AudioSlots.FactionKey(player.Faction.Name);
+
+            PlacedSquad squad = match.SelectedPlacedSquad;
+            Assert.IsNotNull(squad, "A bought squad is selected when it lands.");
+            bool rotated = squad.Rotated90;
+            _played.Clear();
+            match.ToggleRotation();
+            Assert.AreEqual(1, Count($"ui_{key}_error"), string.Join(", ", _played));
+            Assert.AreEqual(0, Count($"ui_{key}_click"), string.Join(", ", _played));
+            Assert.AreEqual(rotated, squad.Rotated90, "A refused turn changes nothing.");
+
+            Assert.IsTrue(MenuDemo.FindRoomToTurn(player, squad, match.Match.CombatRules, out int column, out int row));
+            match.BeginMoving(squad);
+            Assert.IsTrue(match.PlaceAt(column, row).Ok, match.Message);
+            _played.Clear();
+            match.ToggleRotation();
+            yield return null;
+            Assert.AreEqual(1, Count($"ui_{key}_click"), match.Message);
+            Assert.AreEqual(0, Count($"ui_{key}_error"), match.Message);
+            Assert.AreNotEqual(rotated, squad.Rotated90, "From there it does turn.");
+        }
+
         [UnityTest]
         public IEnumerator TakingASpellBack_IsHeardSoftly_AndEachFactionHasItsOwn([Values("UNSC", "Covenant", "Flood")] string faction)
         {

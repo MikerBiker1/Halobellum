@@ -8,7 +8,8 @@
 // It writes "MenuDemo: ..." lines in the player's log, one for each thing checked, and ends with how many went wrong. It never changes
 // a setting, because PlayerPrefs are shared by every build on this PC.
 // With "-menuDemoSounds" it checks the small sounds instead, with no real mouse or keyboard: a pointer of its own goes over the buttons of the menu, Settings and
-// the pause menu (it never presses them), and in a match it selects, moves and turns a squad and takes a spell back. Add "-audioCapture out.wav" to record it.
+// the pause menu (it never presses them), and in a match it selects, moves and turns a squad and takes a spell back. A squad with no room to turn must sound the
+// error instead, and is then turned from a spot with room, so two checks more are logged in those runs. Add "-audioCapture out.wav" to record it.
 // With "-menuDemoUiScale 1.25" it looks at every screen at that UI scale, without saving it.
 // With "-menuDemoWatch" it presses nothing: for 90 seconds it logs and pictures every change of scene, pause, settings panel, window or
 // setting, so that clicks sent from outside the game (a real mouse, say) can be checked. It puts every setting back at the end.
@@ -331,8 +332,24 @@ namespace Halobellum.UI
             int selected = selection.SelectedSquadId;
             selection.Select(-1);
             yield return Heard("selecting a squad", heard, () => selection.SelectByPlayer(selected), "_click", 1);
-            yield return Heard("turning a squad", heard, () => match.ToggleRotation(), "_click", 1);
+            // The draft is random, so the bought squad may have landed where the squads beside it leave no room to turn. The game is right
+            // to refuse that and sound its error, so that is what is checked then, and the turn is tried again from a spot with room.
             PlacedSquad squad = match.SelectedPlacedSquad;
+            bool roomToTurn = HasRoomToTurn(game.Player, squad, game.CombatRules);
+            if (!roomToTurn)
+            {
+                Debug.Log($"MenuDemo: {squad.Type.Name} has no room to turn at column {squad.Column}, row {squad.Row}, so its turn should be refused.");
+                yield return Heard("turning a squad with no room", heard, () => match.ToggleRotation(), "_error", 1);
+                Debug.Log($"MenuDemo: the game said: {match.Message}");
+                roomToTurn = FindRoomToTurn(game.Player, squad, game.CombatRules, out int roomyColumn, out int roomyRow);
+                Check("a spot with room to turn was found", roomToTurn);
+                if (roomToTurn)
+                {
+                    match.BeginMoving(squad);
+                    match.PlaceAt(roomyColumn, roomyRow);
+                }
+            }
+            if (roomToTurn) yield return Heard("turning a squad", heard, () => match.ToggleRotation(), "_click", 1);
             match.BeginMoving(squad);
             yield return Heard("turning the ghost", heard, () => match.ToggleRotation(), "_click", 1);
             match.ToggleRotation();
@@ -368,6 +385,25 @@ namespace Halobellum.UI
             UiAudio.PointerByTest = null;
             PauseMenu.Current.Close();
             yield return Wait(0.3f);
+        }
+
+        /// <summary>True if this squad can be turned where it stands.</summary>
+        public static bool HasRoomToTurn(PlayerState player, PlacedSquad squad, CombatRules rules) =>
+            DeploymentGrid.CanPlace(player, squad.Type, squad.Column, squad.Row, !squad.Rotated90, rules, squad.Id);
+
+        /// <summary>The first spot where this squad could stand and also turn. Returns false if the zone has none.</summary>
+        public static bool FindRoomToTurn(PlayerState player, PlacedSquad squad, CombatRules rules, out int column, out int row)
+        {
+            for (row = 0; row < rules.DeploymentDepthSquares; row++)
+            {
+                for (column = 0; column < rules.ArenaWidthSquares; column++)
+                {
+                    if (DeploymentGrid.CanPlace(player, squad.Type, column, row, false, rules, squad.Id)
+                        && DeploymentGrid.CanPlace(player, squad.Type, column, row, true, rules, squad.Id)) return true;
+                }
+            }
+            column = row = -1;
+            return false;
         }
 
         /// <summary>Moves the pointer onto each of these buttons in turn: each must be heard exactly once.</summary>
