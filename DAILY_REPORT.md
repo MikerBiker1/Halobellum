@@ -1,49 +1,34 @@
-# Daily report: 2026-11-01 (evening), M8: Flood
+# Daily report: 2026-11-02 (overnight), M10
 
-Today's earlier report (M7, D33 to D37) is in this file's Git history. You confirmed M7. **M8 is built**: the Flood are playable in matches and the Sandbox, for you and the AI. All tests pass. It is waiting for your play test and confirmation.
+Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
-## What M8 adds
-- **Packs (your idea):** Infection Forms come as 50 forms in 10 packs of 5. A pack moves as one body and shows and deals less as its forms die. A bullet hurts one form; splash, flame, beams and spells hurt all of them.
-- **Infection:** an Unarmored unit killed within 2 m of Infection Forms turns green, gets up 2 s later at 60% health and charges its old friends.
-- **11 units:** Infection Forms and Carrier Form (Tier 1); Combat Form, Stalker Form, Pure Form Ranged and Swarm Form (Tier 2); Pure Form Tank, Seeder, Infected Pelican and Infected Phantom (Tier 3); Flood Abomination (Tier 4).
-- **Choices I made (D38):** the Swarm Form fills the open anti-air slot. The Seeder plants a seed that eats its host, and a host that dies seeded rises whatever its armor. The Abomination speeds up and heals nearby Flood and keeps releasing forms.
-- **8 Flood spells,** three of which raise the Unarmored units they kill. Items, economy and buff cards are shared.
-- **AI:** Normal and Hard avoid Unarmored squads once they have seen your Flood. Easy doesn't care.
-- **Look:** a Flood UI theme with its own textures and title font. Units are placeholder art.
+## What M10 adds
+- **Infected Pelican:** falls out of the sky at a target within 22 m, past other air units, and dies where it lands (D46).
+- **Sub-factions:** all 8, with 38 exclusive units on top of the base roster, so 73 units in all, and the real 5-card draft (D52).
+- **Terrain:** each side stands on its own faction's ground, with 3 layouts per faction, land out to the horizon, and sky and light following the player (D47).
+- **Effects:** a look per weapon kind, impacts, blasts sized to splash, deaths by kind, burning wrecks, a look per spell, the Pelican's crash as the biggest thing a unit can do, camera shake you can turn off (D48).
+- **Sound and music:** a complete system with UI sounds and music per faction and a main menu track of its own (D49). **It is original placeholder audio, not Halo's.** I don't download copyrighted files. Yours replace mine by being dropped in a folder.
+- **Main menu, settings, pause:** a dusk battlefield behind the menu, every setting saved, Esc pausing in any phase (D50).
+- **Cards:** pictures of each unit, and borders by kind and by faction (D51).
 
-## After you watched it (D39)
-- **Infection Forms leap:** they pounce from 6 m, flying over bodies, and jump over whatever holds them up, Carrier Forms included.
-- **The pause is fixed:** units entering the enemy's zone stood idle for up to half a second. That was a bug for every unit.
-- **Anti-chaff still holds,** so I changed no stats.
-
-## How powerful infection is (measured, with the leap)
-One battle per line, about 1800 credits per side, Infection Forms only:
-
-| Against | Bodies that rose | Left at the end |
-| --- | --- | --- |
-| Marines | 300 of 324 (93%) | 139 of 180 packs, 298 risen Marines |
-| Grunts | 335 of 360 (93%) | 133 of 180 packs, 327 risen Grunts |
-| Jackals (Plasma Rifle) | 47 of 96 (49%) | 152 of 180 packs, 47 risen Jackals |
-| Elites | 8 of 18 (44%) | 169 of 180 packs, 8 risen Elites |
-| Flamethrower Troopers | 0 of 72 | All Forms dead, all 72 Troopers alive |
-| Scorpions | 0 of 6 | All Forms dead, all 6 Scorpions alive |
-
-In a mixed army it is much smaller: in the Sandbox demo, 4 squads of Forms against 4 of Marines plus a Scorpion and a Spartan got 22 bodies up (7 before the leap).
+## What isn't done
+- **No Halo music or sound is in the game.** See above.
+- **19 of the new units are placeholder shapes,** waiting for models, along with 17 older ones.
+- **M9's combat identity stage and balance pass** weren't done as stages of their own.
 
 ## Balance (first pass)
-- **Infection Forms at equal cost:** beat Marines, Grunts, Jackals and Elites. Lose to Flamethrowers, Fuel Rod Grunts, Scorpions, Wraiths, Mantises and Elephants.
-- **Counter web:** 35 of 35 units have a counter winning at least 90%. The Abomination's listed counter is now the Zealot (the Spartan wins 70%).
-- **For the balance pass:** the Scarab beats 33 of 34. Warthog and Ghost each beat only 1 of the 11 Flood units. Infection Forms also beat Spartans and Warthogs. 49 of 595 pairs reach the 90 s limit (it was 4 of 276).
+- **Counter web:** 73 of 73 units have a counter winning at least 90%.
+- **AI against itself,** 216 matches, none unfinished, 6 to 10 rounds on average. Hard beat Normal 17 of 24 and Easy 24 of 24. Normal beat Easy 21 of 24.
+- **To watch:** Banished looks strongest and Covenant-based and Noble weakest, on a small sample. Six older units are over 60% average against the bigger field.
 
 ## Decisions needing your approval
-**D38** in `DECISIONS.md` lists everything I decided on your carte blanche. Change anything you like.
+**D46 to D52** in `DECISIONS.md`, and the list in `MORNING_DECISIONS.md`.
 
 ## Test results
-- **Unity:** EditMode **420 / 420**, PlayMode **25 / 25**. **.NET harness:** **372 / 372**.
-- **New tests:** packs, infection rules (armor, shields, Spartans, range, no second infection), the Seeder, death bursts, the crash dive, spawning, the aura, the Flood data, the AI's reaction, and a scene test in which a Marine really rises.
-- **Built game:** 3 rounds of autoplay as UNSC, Covenant and Flood, plus the Sandbox demo, with no errors.
-- **Not tested automatically:** how it feels. The balance numbers come from armies of a single unit type, so mixed armies may play differently.
-- **Small note:** at the bottom of a long stats window, the last tech's description can touch the frame.
+- **Unity:** EditMode **535 / 535**, PlayMode **70 / 70**. **.NET harness:** **382 / 382**.
+- **Built game:** real matches as UNSC, Covenant, Flood, Noble and Banished, the menu demo through every screen (0 problems), the effects and terrain galleries and the card demo, with no exceptions in any log.
+- **Speed:** 192 bodies at 1x average 1.5 ms a frame with effects on, 7.7 ms for the slowest 1% of frames, on your PC.
+- **Not tested:** how anything sounds, since nobody has heard it, and how it moves or feels, since I only see still pictures.
 
 ## Blockers
-None.
+**Pushing:** a safety check blocked pushing the models, so all of this is only on your PC. See item 2 of `MORNING_DECISIONS.md`.

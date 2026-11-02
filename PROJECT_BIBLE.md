@@ -481,6 +481,8 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-01 | Health bars tell the sides apart: green for your units, red for the enemy's | Per the project owner (D43) |
 | 2026-11-01 | Unanimated real models, such as vehicles, are scaled prefabs with their parts kept separate and their own materials | Per the project owner (D44) |
 | 2026-11-01 | Air units fly at 13 m. Named nodes on real models say where shots start and what turns; shots fly from the muzzle's height to the target's | Per the project owner (D45) |
+| 2026-11-02 | The Infected Pelican dives from 22 m past other air units and dies on landing | Per the project owner (D46) |
+| 2026-11-02 | M10: 8 sub-factions and the real 5-card draft; terrain by faction with 3 layouts each; effects by weapon kind; original placeholder sound and music with slots for the owner's files; main menu, settings and pause; cards with unit pictures and borders by kind | Asked by the project owner, first-pass designs for review (D47 to D52) |
 
 ## 18. Assumptions to confirm
 

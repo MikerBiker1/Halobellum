@@ -138,3 +138,11 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 - [ ] **Look at the new models in the Sandbox** (D45). Pictures of each are made by running the built game with `-sandboxDemo <folder> -gallery`.
 - [ ] **Models still wanted**, if you find them: Archer Missile Pod, Flamethrower Trooper, Mantis, Spartan, Wolverine, Elite, Ghost, Hunter Pair, both Jackals, Vampire, Zealot, Flood Abomination, Combat Form, Seeder, Swarm Form. Put each in `Art_Source/sketchfab.com/` as before.
 
+## 2026-11-02 (M10): play it and decide
+
+- [ ] **Read `MORNING_DECISIONS.md`.** It lists every choice I made for you.
+- [ ] **Play a match from the main menu** with sound on. Does the sound fit each faction? Are the Covenant and Flood floors too busy behind units?
+- [ ] **Your Halo music and sounds:** drop files in `Assets/_Project/Art/Imported/Audio/Resources/AudioOverride/`, named after their slot (`Assets/_Project/Art/Imported/Audio/README.txt`).
+- [ ] **Watch the Infected Pelican dive** at 1x, against other air units.
+- [ ] **Try each sub-faction** in the draft. The Sandbox lists exclusive units under their own headings.
+- [ ] **Models wanted:** see item 14 in `MORNING_DECISIONS.md`.

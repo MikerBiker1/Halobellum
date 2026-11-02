@@ -111,6 +111,6 @@ The battle and menu tracks and Flood deployment are mono: 90 s of 16-bit 44.1 kH
 - no quiet second in any track (all above about -35 dB);
 - level over time and spectrograms show the sections actually changing.
 
-Tests: `Assets/Tests/EditMode/AudioTests.cs`, `Assets/Tests/PlayMode/AudioSceneTests.cs`.
+Tests: `Assets/Tests/EditMode/Unity/AudioTests.cs`, `Assets/Tests/PlayMode/AudioSceneTests.cs`.
 
 **To record what the game outputs:** start it with `-audioCapture out.wav` (with `-autoplay`, for example). It saves the final mix to a file at the end and keeps the room silent while it does.

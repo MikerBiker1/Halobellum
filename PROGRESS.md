@@ -105,12 +105,28 @@ Order agreed with the owner (D40), with approval between stages:
   - [x] The Marine, a real model made with Meshy, in the game: baker, cross-fades, death, placeholder rifle; 1200 of them in 2.00 ms a frame (D42)
   - [x] Real models keep their colours, black rifle, green and red health bars (D43); the owner approved the Marine's animations
   - [x] One vehicle: the owner's Scorpion, painted, sized and in the game, not animated, by the owner's choice (D44)
-  - [ ] Sound on a real unit
+  - [x] Sound on a real unit, done with M10 (D49)
 - [ ] Combat identity (Pass 1): every weapon behaves as intended, with placeholder effects and sounds
 - [ ] Balance pass
 - [ ] Models and animation (Pass 2)
   - [x] The owner's first big batch: 18 models, weapons reduced, muzzles, turrets, code motion, air units at 13 m, baked Grunts (D45)
   - [ ] Models for the units that still have none (see HUMAN_TODO)
-- [ ] Effects, audio and music (Pass 3)
-- [ ] Menus and settings
+- [x] Effects, audio and music (Pass 3), done with M10 (D48, D49): placeholder sound and music until the owner's files come
+- [x] Menus and settings, done with M10 (D50)
+
+## M10: Sub-factions and faction-themed content
+
+Asked for by the owner as one overnight job. Built in parallel, then merged and tested together.
+
+- [x] The Infected Pelican dives past other air units (D46)
+- [x] The 8 sub-factions, 38 exclusive units, the real 5-card draft; reinforcements, shop, Sandbox and AI know them (D52)
+- [x] Terrain by faction, 3 layouts each ("more maps"), sky and light, blobs under units (D47)
+- [x] Effects: weapon kinds, impacts, deaths, wrecks, spells, camera shake (D48)
+- [x] Sound and music: complete system with original placeholders and the owner's slots (D49)
+- [x] Main menu, settings, pause, game flow (D50)
+- [x] Cards with unit pictures and borders by kind and faction (D51)
+- [x] Merged: all tests, real matches for each faction and sub-faction tests, menu flow, card demo
+- [ ] The owner's own Halo music and sound, in the slots (see MORNING_DECISIONS.md)
+- [ ] Models for the new units (see MORNING_DECISIONS.md)
+- [ ] The owner's play test of M10
 
