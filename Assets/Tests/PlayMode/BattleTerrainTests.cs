@@ -222,5 +222,34 @@ namespace Halobellum.Tests
             while (field.ShownFactionA != BattleFactions.Flood && Time.realtimeSinceStartup < deadline) yield return null;
             Assert.AreEqual(BattleFactions.Flood, field.ShownFactionA, "Blue is all Flood now.");
         }
+
+        [UnityTest]
+        public IEnumerator SandboxScene_AnExclusiveUnit_GetsItsBaseFactionsLand()
+        {
+            yield return SceneManager.LoadSceneAsync("Sandbox", LoadSceneMode.Single);
+            yield return null;
+            var sandbox = Object.FindAnyObjectByType<SandboxController>();
+            var field = Object.FindAnyObjectByType<BattlefieldView>();
+
+            // Listed under its sub-faction's heading, but on its faction's land. Two sub-factions and the base roster count as one faction.
+            SandboxController.SandboxUnit banished = sandbox.Units.Find(u => u.Faction == "Covenant: Banished");
+            SandboxController.SandboxUnit lekgolo = sandbox.Units.Find(u => u.Faction == "Covenant: Lekgolo Colony");
+            Assert.IsNotNull(banished.Stats);
+            Assert.AreEqual(BattleFactions.Covenant, banished.BaseFaction);
+            sandbox.AddSquad(Team.B, banished.Stats);
+            sandbox.AddSquad(Team.A, lekgolo.Stats);
+            float deadline = Time.realtimeSinceStartup + 3f;
+            while (field.ShownFactionA != BattleFactions.Covenant && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.AreEqual(BattleFactions.Covenant, field.ShownFactionA);
+            Assert.AreEqual(BattleFactions.Covenant, field.ShownFactionB);
+
+            SandboxController.SandboxUnit flood = sandbox.Units.Find(u => u.Faction == "Flood: Covenant-based");
+            Assert.AreEqual(BattleFactions.Flood, flood.BaseFaction);
+            sandbox.Clear(Team.A);
+            sandbox.AddSquad(Team.A, flood.Stats);
+            deadline = Time.realtimeSinceStartup + 3f;
+            while (field.ShownFactionA != BattleFactions.Flood && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.AreEqual(BattleFactions.Flood, field.ShownFactionA);
+        }
     }
 }
