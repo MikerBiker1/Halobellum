@@ -83,6 +83,13 @@ namespace Halobellum.Core
         public float SeedDamageSharePerSecond;
         /// <summary>A seeded unit moves this share slower (0.3 = 30% slower).</summary>
         public float SeedSlowShare;
+        /// <summary>
+        /// Hit slow (the Gremlin's EMP, M10): if above 0, a direct hit slows the target for this many seconds.
+        /// Titans shrug it off. A new hit starts the time again; the strongest slow in force applies.
+        /// </summary>
+        public float HitSlowSeconds;
+        /// <summary>A unit slowed by a hit moves this share slower (0.4 = 40% slower).</summary>
+        public float HitSlowShare;
 
         public float ShotsPerSecond => FireInterval > 0f ? 1f / FireInterval : 0f;
         public bool IsInstant => ProjectileSpeed <= 0f;
@@ -292,6 +299,7 @@ namespace Halobellum.Core
                     if (w.IsBeam && w.SplashRadius <= 0f) problems.Add($"{wl}: a beam needs a splash radius.");
                     if (w.IsBeam && w.ProjectileSpeed > 0f) problems.Add($"{wl}: a beam cannot have a projectile speed.");
                     if (w.SeedSeconds < 0f || w.SeedDamageSharePerSecond < 0f || w.SeedSlowShare < 0f || w.SeedSlowShare > 1f) problems.Add($"{wl}: seed values are out of range.");
+                    if (w.HitSlowSeconds < 0f || w.HitSlowShare < 0f || w.HitSlowShare > 1f) problems.Add($"{wl}: hit slow values are out of range.");
                     if (w.BeamSeconds < 0f || w.BeamChargeSeconds < 0f || w.BeamRestSeconds < 0f || w.BeamSweepSpeed < 0f) problems.Add($"{wl}: beam values cannot be negative.");
                 }
             }
@@ -299,6 +307,7 @@ namespace Halobellum.Core
             if (LeapRange < 0f || LeapCooldownSeconds < 0f || (LeapRange > 0f && LeapSpeed <= 0f)) problems.Add($"{label}: a leap needs a range and a speed above 0.");
             if (SelfDestructs && DeathBurst == null) problems.Add($"{label}: a unit that self-destructs needs a death burst.");
             if (SpawnedUnit != null && SpawnIntervalSeconds <= 0f) problems.Add($"{label}: a spawn needs an interval above 0.");
+            if (LifestealShare < 0f) problems.Add($"{label}: lifesteal cannot be negative.");
             if (AuraRadius < 0f || AuraHealPerSecondShare < 0f || AuraSpeedMultiplier <= 0f) problems.Add($"{label}: aura values are out of range.");
             if (DefenseArc != null)
             {
@@ -336,7 +345,7 @@ namespace Halobellum.Core
             }
         }
 
-        /// <summary>Share of the damage dealt that comes back as health (from items).</summary>
+        /// <summary>Share of the damage dealt that comes back as health (from its data, such as the Hunter Captain's siphon beam, or from items).</summary>
         public float LifestealShare;
         /// <summary>Share of its maximum health a body recovers per second (from items).</summary>
         public float HealPerSecondShare;

@@ -51,6 +51,8 @@ MonoBehaviour:
     seedSeconds: 0
     seedDamageSharePerSecond: 0
     seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -79,6 +81,7 @@ MonoBehaviour:
   auraRadius: 0
   auraSpeedMultiplier: 1
   auraHealPerSecondShare: 0
+  lifestealShare: 0
   leapRange: 0
   leapSpeed: 0
   leapCooldownSeconds: 0
@@ -88,6 +91,8 @@ MonoBehaviour:
   prefab: {fileID: 6296176566533914639, guid: 2aa85012d6ad165469c26b164c71e977, type: 3}
   keepsOwnMaterials: 0
   bakedBody: {fileID: 11400000, guid: b0c8cf6e56807b5c59eb2c7f1e0dc9b2, type: 2}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
   strongAgainst: Single-target DPS
   weakAgainst: Chaff clear
-  notes: 'Best counters (headless runner, equal cost): Fuel Rod Grunt (100%), Carrier Form (10%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Fuel Rod Grunt (100%), Spartan Grenadier (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

@@ -475,6 +475,15 @@ namespace Halobellum.Combat
             target.SeededById = attacker.Id;
         }
 
+        /// <summary>A hit from a weapon that slows (the Gremlin's EMP, M10). Titans shrug it off; the strongest slow in force applies.</summary>
+        private void ApplyHitSlow(SimUnit target, WeaponStats weapon)
+        {
+            if (target.Stats.Role == UnitRole.Titan) return;
+            float now = ElapsedSeconds, multiplier = 1f - weapon.HitSlowShare;
+            target.SlowMultiplier = now < target.SlowedUntil ? Math.Min(target.SlowMultiplier, multiplier) : multiplier;
+            target.SlowedUntil = Math.Max(target.SlowedUntil, now + weapon.HitSlowSeconds);
+        }
+
         /// <summary>An EMP: every unit in the area loses shield and its techs for a while; armored units are slowed.</summary>
         private void ApplySpellDisruption(SimSpell spell)
         {
@@ -1125,6 +1134,7 @@ namespace Halobellum.Combat
                 }
                 DealDamage(directTarget, attacker, weapon, defense.DamageMultiplier, weapon.IsCone || weapon.SplashRadius > 0f);
                 if (weapon.SeedSeconds > 0f) PlantSeed(directTarget, attacker, weapon);
+                if (weapon.HitSlowSeconds > 0f) ApplyHitSlow(directTarget, weapon);
             }
 
             if (weapon.IsCone)

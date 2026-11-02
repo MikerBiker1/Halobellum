@@ -1,8 +1,15 @@
 # Generates the M4 slice roster: unit assets (Data/Units/UNSC, Data/Units/Covenant), faction rosters,
 # balance.csv and a JSON copy for the tuning console. Section 8 numbers (role, tier, unlock, squad,
 # cost, health, armor) are the Bible's; everything else is a first-pass value (DECISIONS D21).
-import hashlib, json, os, re, struct
+# The 8 sub-factions' exclusive units (M10) come from the sub_*.py modules, one each: SUBFACTIONS below says which are in.
+# Usage: python gen_roster.py
+import hashlib, importlib, json, os, re, struct
 from techs import TECHS
+
+# Which sub-factions are in the game, in draft-list order. A faction with none here keeps a plain "Standard" card.
+SUBFACTIONS = ["sub_noble", "sub_armored", "sub_aerospace", "sub_banished", "sub_lekgolo", "sub_unggoy", "sub_flood_unsc", "sub_flood_covenant"]
+SUBFACTIONS = SUBFACTIONS[:int(os.environ.get("HB_SUBFACTION_COUNT", len(SUBFACTIONS)))]  # Only to bring them in one by one.
+SUBFACTIONS = [importlib.import_module(m) for m in SUBFACTIONS]
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 SCRATCH = os.path.dirname(os.path.abspath(__file__))
@@ -28,19 +35,20 @@ ROLE_TEXT = {
 
 
 def W(name, dmg, interval, rng, type, proj=0, splash=0, minr=0, aa=False, block=False, own=None, air=1, cone=0,
-      lob=False, beam=0, charge=0, rest=0, sweep=0, seed=0, seedshare=0, seedslow=0):
+      lob=False, beam=0, charge=0, rest=0, sweep=0, seed=0, seedshare=0, seedslow=0, slow=0, slowshare=0):
     return dict(name=name, dmg=dmg, interval=interval, range=rng, minr=minr, proj=proj, splash=splash, type=type,
                 aa=aa, block=block, own=own, air=air, cone=cone, lob=lob, beam=beam, charge=charge, rest=rest, sweep=sweep,
-                seed=seed, seedshare=seedshare, seedslow=seedslow)
+                seed=seed, seedshare=seedshare, seedslow=seedslow, slow=slow, slowshare=slowshare)
 
 
 def U(id, name, faction, role, tier, unlock, squad, cost, hp, armor, speed, radius, turn, filter, weapons,
       shield=0, regen=0, airu=False, arc=None, drop=None, note="", forms=1, flood=False, infects=False, immune=False,
-      selfd=False, seek=False, burst=None, spawn=None, aura=None, leap=None):
+      selfd=False, seek=False, burst=None, spawn=None, aura=None, leap=None, lifesteal=0, basedmg=None, tint=None, scale=1, sub=None, folder=None, baked=None):
     return dict(id=id, name=name, faction=faction, role=role, tier=tier, unlock=unlock, squad=squad, cost=cost,
                 hp=hp, armor=armor, speed=speed, radius=radius, turn=turn, filter=filter, weapons=weapons,
                 shield=shield, regen=regen, air=airu, arc=arc, drop=drop, note=note, forms=forms, flood=flood, infects=infects,
-                immune=immune, selfd=selfd, seek=seek, burst=burst, spawn=spawn, aura=aura, leap=leap)
+                immune=immune, selfd=selfd, seek=seek, burst=burst, spawn=spawn, aura=aura, leap=leap, lifesteal=lifesteal,
+                basedmg=basedmg, tint=tint, scale=scale, sub=sub, folder=folder or faction, baked=baked)
 
 
 UNITS = [
@@ -136,6 +144,13 @@ UNITS = [
        W("Tendril Whip", 20, 0.8, 10, "Melee")], flood=True, spawn=("InfectionForms", 2, 14), aura=(14, 1.2, 0.01)),
 ]
 
+# The sub-factions' exclusive units and their techs. Their speeds are final, not halved (see D36 below).
+for _module in SUBFACTIONS:
+    for _unit in _module.units(U, W):
+        _unit.update(sub=_module.NAME, folder=_module.FOLDER)
+        UNITS.append(_unit)
+    TECHS.update(_module.TECHS)
+
 # Best counters from the latest counter-web run (filled in by hand after each run; Bible Section 7 rule).
 COUNTERS = {}
 try:
@@ -164,11 +179,11 @@ def yaml_str(s):
 
 
 def base_damage(u):
-    return round(u["cost"] / u["squad"] / 5.0, 4)
+    return u["basedmg"] if u["basedmg"] is not None else round(u["cost"] / u["squad"] / 5.0, 4)
 
 
 def asset_path(u):
-    return os.path.join(ROOT, "Assets", "_Project", "Data", "Units", u["faction"], u["id"] + ".asset")
+    return os.path.join(ROOT, "Assets", "_Project", "Data", "Units", u["folder"], u["id"] + ".asset")
 
 
 def existing_prefab(path):
@@ -192,6 +207,12 @@ def existing_baked(path):
     return m.group(1) if m else "{fileID: 0}"
 
 
+def baked_ref(u):
+    """A reference to a baked body in Resources/BakedBodies, by its name."""
+    meta = os.path.join(ROOT, "Assets", "_Project", "Resources", "BakedBodies", u["baked"] + ".asset.meta")
+    return "{fileID: 11400000, guid: " + re.search(r"^guid: (\w+)", open(meta, encoding="utf-8").read(), re.M).group(1) + ", type: 2}"
+
+
 def unit_yaml(u):
     lines = ["%YAML 1.1", "%TAG !u! tag:unity3d.com,2011:", "--- !u!114 &11400000", "MonoBehaviour:",
              "  m_ObjectHideFlags: 0", "  m_CorrespondingSourceObject: {fileID: 0}", "  m_PrefabInstance: {fileID: 0}",
@@ -213,7 +234,8 @@ def unit_yaml(u):
                   f"    airDamageMultiplier: {fmt(w['air'])}", f"    coneDegrees: {fmt(w['cone'])}",
                   f"    lobbed: {fmt(w['lob'])}", f"    beamSeconds: {fmt(w['beam'])}", f"    beamChargeSeconds: {fmt(w['charge'])}",
                   f"    beamRestSeconds: {fmt(w['rest'])}", f"    beamSweepSpeed: {fmt(w['sweep'])}",
-                  f"    seedSeconds: {fmt(w['seed'])}", f"    seedDamageSharePerSecond: {fmt(w['seedshare'])}", f"    seedSlowShare: {fmt(w['seedslow'])}"]
+                  f"    seedSeconds: {fmt(w['seed'])}", f"    seedDamageSharePerSecond: {fmt(w['seedshare'])}", f"    seedSlowShare: {fmt(w['seedslow'])}",
+                  f"    hitSlowSeconds: {fmt(w['slow'])}", f"    hitSlowShare: {fmt(w['slowshare'])}"]
     arc = u["arc"]
     hexes = "".join(struct.pack("<i", DTYPE[t]).hex() for t in (arc["types"] if arc else []))
     lines += [f"  hasDefenseArc: {fmt(arc is not None)}", "  defenseArc:",
@@ -246,7 +268,7 @@ def unit_yaml(u):
               f"  spawnedBodies: {sp[1] if sp else 0}", f"  spawnIntervalSeconds: {fmt(sp[2] if sp else 0)}"]
     au = u["aura"]
     lines += [f"  auraRadius: {fmt(au[0] if au else 0)}", f"  auraSpeedMultiplier: {fmt(au[1] if au else 1)}",
-              f"  auraHealPerSecondShare: {fmt(au[2] if au else 0)}"]
+              f"  auraHealPerSecondShare: {fmt(au[2] if au else 0)}", f"  lifestealShare: {fmt(u['lifesteal'])}"]
     lp = u["leap"]
     lines += [f"  leapRange: {fmt(lp[0] if lp else 0)}", f"  leapSpeed: {fmt(lp[1] if lp else 0)}", f"  leapCooldownSeconds: {fmt(lp[2] if lp else 0)}"]
     techs = TECHS.get(u["id"], [])
@@ -259,14 +281,17 @@ def unit_yaml(u):
     notes = ("Best counters (headless runner, equal cost): " + counters + "." if counters else "Best counters: not measured yet.")
     if u["note"]:
         notes += " " + u["note"]
-    notes += " First-pass M8 values (DECISIONS D38)." if u["flood"] else " First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible."
-    lines += [f"  prefab: {existing_prefab(asset_path(u))}", f"  keepsOwnMaterials: {existing_keeps(asset_path(u))}", f"  bakedBody: {existing_baked(asset_path(u))}", f"  strongAgainst: {yaml_str(strong)}",
+    notes += (f" First-pass M10 values, {u['sub']} (Docs/M10/subfactions.md)." if u["sub"] else
+              " First-pass M8 values (DECISIONS D38)." if u["flood"] else " First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.")
+    tint = u["tint"] or (1, 1, 1, 0)
+    lines += [f"  prefab: {existing_prefab(asset_path(u))}", f"  keepsOwnMaterials: {existing_keeps(asset_path(u))}", f"  bakedBody: {baked_ref(u) if u['baked'] else existing_baked(asset_path(u))}",
+              f"  bakedTint: {{r: {fmt(tint[0])}, g: {fmt(tint[1])}, b: {fmt(tint[2])}, a: {fmt(tint[3])}}}", f"  bakedScale: {fmt(u['scale'])}", f"  strongAgainst: {yaml_str(strong)}",
               f"  weakAgainst: {yaml_str(weak)}", f"  notes: {yaml_str(notes)}"]
     return "\n".join(lines) + "\n"
 
 
 def tech_path(u, t):
-    return os.path.join(ROOT, "Assets", "_Project", "Data", "Upgrades", u["faction"], f"{u['id']}_{t['id']}.asset")
+    return os.path.join(ROOT, "Assets", "_Project", "Data", "Upgrades", u["folder"], f"{u['id']}_{t['id']}.asset")
 
 
 def tech_yaml(u, t):
@@ -329,27 +354,40 @@ MonoBehaviour:
 """
 
 
+def subfaction_yaml(faction):
+    """A faction's subFactions list: its sub-factions with their exclusive units, or the temporary Standard card if it has none."""
+    modules = [m for m in SUBFACTIONS if m.FACTION == faction]
+    if not modules:
+        return "  subFactions:\n  - subFactionName: Standard\n    description: \n    exclusiveUnits: []\n"
+    text = "  subFactions:\n"
+    for m in modules:
+        text += f"  - subFactionName: {yaml_str(m.NAME)}\n    description: {yaml_str(m.DESCRIPTION)}\n    exclusiveUnits:\n"
+        text += "".join(f"    - {{fileID: 11400000, guid: {guid('unit-' + u['id'])}, type: 2}}\n" for u in UNITS if u["sub"] == m.NAME)
+    return text
+
+
 # Decision D36: every unit moves at half the speed listed above; the fast ground vehicles get 1 m/s back.
 FAST_VEHICLES = {"Warthog": 1, "Ghost": 1, "Gauss Warthog": 1}
 
 
 def apply_speed_decision():
     for u in UNITS:
-        if u["flood"]:
+        if u["flood"] or u["sub"]:
             continue  # Their speeds were set after the change.
         u["speed"] = u["speed"] * 0.5 + FAST_VEHICLES.get(u["name"], 0)
 
 
 def main():
     apply_speed_decision()
-    for faction in ("UNSC", "Covenant", "Flood"):
+    unit_folders = ["UNSC", "Covenant", "Flood"] + [m.FOLDER for m in SUBFACTIONS]
+    for faction in unit_folders:
         folder = os.path.join(ROOT, "Assets", "_Project", "Data", "Units", faction)
         os.makedirs(folder, exist_ok=True)
         write_meta(folder, guid("folder-" + faction), folder=True)
     for u in UNITS:
         write(asset_path(u), unit_yaml(u))
         write_meta(asset_path(u), guid("unit-" + u["id"]))
-    for faction in ("UNSC", "Covenant", "Flood"):
+    for faction in unit_folders:
         folder = os.path.join(ROOT, "Assets", "_Project", "Data", "Upgrades", faction)
         os.makedirs(folder, exist_ok=True)
         write_meta(folder, guid("upgrades-folder-" + faction), folder=True)
@@ -366,8 +404,9 @@ def main():
     for faction, asset in (("UNSC", "UNSC_Standard.asset"), ("Covenant", "Covenant_Standard.asset"), ("Flood", "Flood_Standard.asset")):
         path = os.path.join(ROOT, "Assets", "_Project", "Data", "Factions", asset)
         text = open(path, encoding="utf-8").read()
-        roster = "".join(f"  - {{fileID: 11400000, guid: {guid('unit-' + u['id'])}, type: 2}}\n" for u in UNITS if u["faction"] == faction)
-        text = re.sub(r"  baseRoster:\n(?:  - .*\n)*", "  baseRoster:\n" + roster, text)
+        roster = "".join(f"  - {{fileID: 11400000, guid: {guid('unit-' + u['id'])}, type: 2}}\n" for u in UNITS if u["faction"] == faction and not u["sub"])
+        text = re.sub(r"  baseRoster:\n(?:  - .*\n)*", lambda m: "  baseRoster:\n" + roster, text)
+        text = re.sub(r"  subFactions:\n(?:  - .*\n|    .*\n)*", lambda m: subfaction_yaml(faction), text)
         write(path, text)
 
     # balance.csv (Bible Section 15).
@@ -378,11 +417,11 @@ def main():
             mult = (.5, 1.2, 1.5)
         uptime = w["beam"] / (w["beam"] + w["charge"] + w["rest"]) if w["beam"] else 1  # Average over a beam's whole cycle.
         return w["dmg"] / w["interval"] * mult[armor] * uptime
-    rows = ["unit,faction,role,tier,unlock,squad_size,cost,health,armor,shield,move_speed,main_range,"
+    rows = ["unit,faction,sub_faction,role,tier,unlock,squad_size,cost,health,armor,shield,move_speed,main_range,"
             "squad_dps_vs_unarmored,squad_dps_vs_light,squad_dps_vs_heavy,squad_health,base_damage_per_body,best_counters"]
     for u in UNITS:
         d = [sum(dps(w, a) for w in u["weapons"]) * u["squad"] for a in range(3)]
-        rows.append(",".join([u["name"].replace(",", ""), u["faction"], u["role"], str(u["tier"]), str(u["unlock"]),
+        rows.append(",".join([u["name"].replace(",", ""), u["faction"], u["sub"] or "", u["role"], str(u["tier"]), str(u["unlock"]),
                               str(u["squad"]), str(u["cost"]), fmt(u["hp"]), {"U": "Unarmored", "L": "Light", "H": "Heavy"}[u["armor"]],
                               fmt(u["shield"]), fmt(u["speed"]), fmt(u["weapons"][0]["range"]),
                               f"{d[0]:.0f}", f"{d[1]:.0f}", f"{d[2]:.0f}", fmt(u["hp"] * u["squad"] + u["shield"] * u["squad"]),

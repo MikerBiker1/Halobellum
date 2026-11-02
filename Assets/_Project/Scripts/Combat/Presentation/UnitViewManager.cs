@@ -217,7 +217,7 @@ namespace Halobellum.Presentation
             View view = _views[unit.Id];
             if (view.Parts != null && view.Parts.TryMuzzle(weapon, shot, out position)) return true;
             if (view.Baked == null || !view.Baked.hasMuzzle) return false;
-            position = view.Root.transform.TransformPoint(view.Baked.muzzle);
+            position = view.BakedRenderer.transform.TransformPoint(view.Baked.muzzle);
             return true;
         }
 
@@ -382,9 +382,13 @@ namespace Halobellum.Presentation
                 view.BakedRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 view.BakedRenderer.receiveShadows = false;
                 view.Baked = baked;
-                // A real model keeps its own colours (D43); only a ghost or an infected body is tinted.
+                // A real model keeps its own colours (D43); only a ghost or an infected body is tinted, or a unit whose
+                // data says so, because it shares its body with another unit (M10).
                 float strength = GhostTeam == unit.Team ? 0.9f : stats.InfectedFrom != null ? 0.75f : 0f;
-                view.BakedTint = new Color(color.r, color.g, color.b, strength);
+                UnitDefinition source = _battle.DefinitionFor(stats.InfectedFrom ?? stats);
+                if (strength > 0f || source == null) view.BakedTint = new Color(color.r, color.g, color.b, strength);
+                else view.BakedTint = source.bakedTint;
+                if (source != null && source.bakedScale > 0f) body.transform.localScale = Vector3.one * source.bakedScale;
                 Play(view, WantedAnimation(unit), false);
             }
             else if (stats.FormsPerBody > 1)

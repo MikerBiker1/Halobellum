@@ -28,6 +28,8 @@ static class Program
         string dir = AppContext.BaseDirectory;
         while (!File.Exists(Path.Combine(dir, "units.json"))) dir = Path.GetDirectoryName(dir.TrimEnd('\\', '/'));
         using JsonDocument doc = JsonDocument.Parse(File.ReadAllText(Path.Combine(dir, "units.json")));
+        _doc = doc;
+        _dir = dir;
         var byId = new Dictionary<string, UnitStats>();
         var units = new List<UnitStats>();
         var ids = new List<string>();
@@ -81,15 +83,19 @@ static class Program
                 flood.AuraSpeedMultiplier = aura[1].GetSingle();
                 flood.AuraHealPerSecondShare = aura[2].GetSingle();
             }
+            flood.LifestealShare = u.GetProperty("lifesteal").GetSingle();
         }
         foreach (JsonElement u in doc.RootElement.EnumerateArray())
         {
             if (u.GetProperty("drop").ValueKind != JsonValueKind.Array) continue;
             var d = u.GetProperty("drop");
             UnitStats carrier = byId[u.GetProperty("id").GetString()];
-            carrier.Reinforcement = byId[d[0].GetString()].Clone();
-            carrier.Reinforcement.SquadSize = d[1].GetInt32();
+            UnitStats dropped = byId[d[0].GetString()].Clone();
+            dropped.SquadSize = d[1].GetInt32();
             carrier.ReinforcementDelaySeconds = d[2].GetSingle();
+            // A drop that needs a tech (the Pelican's Troop Bay) is not there at the start, in the game or here.
+            if (d.GetArrayLength() > 3 && d[3].GetBoolean()) carrier.LockedReinforcement = dropped;
+            else carrier.Reinforcement = dropped;
         }
         foreach (UnitStats s in units)
         {
@@ -204,8 +210,31 @@ static class Program
             i => results[i] = CounterWeb.RunPair(rules, pairs[i].a, pairs[i].b, settings));
         CounterWebReport report = CounterWeb.BuildReport(units, results.ToList(), settings.Threshold);
         Console.WriteLine($"{pairs.Count} pairs x {battles} battles in {watch.Elapsed.TotalSeconds:0.0} s");
-        Console.Write(CounterWeb.FormatReport(report));
-        File.WriteAllText(Path.Combine(dir, "matrix.csv"), CounterWeb.MatrixCsv(report));
+        if (args.Length <= 1)
+        {
+            Console.Write(CounterWeb.FormatReport(report));
+            File.WriteAllText(Path.Combine(dir, "matrix.csv"), CounterWeb.MatrixCsv(report));
+        }
+        else
+        {
+            // Only some units were measured again: the rest of the table stays as it was.
+            string path = Path.Combine(dir, "matrix.csv");
+            List<string[]> old = File.Exists(path) ? File.ReadAllLines(path).Select(l => l.Split(',')).ToList() : new List<string[]>();
+            var known = new Dictionary<(string, string), string>();
+            if (old.Count > 0)
+            {
+                for (int r = 1; r < old.Count; r++) for (int c = 1; c < old[r].Length && c < old[0].Length; c++) known[(old[r][0], old[0][c])] = old[r][c];
+            }
+            foreach (CounterMatchup m in results)
+            {
+                known[(Csv(m.A.Name), Csv(m.B.Name))] = m.WinRateA.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+                known[(Csv(m.B.Name), Csv(m.A.Name))] = m.WinRateB.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+            }
+            var names = units.Select(u => Csv(u.Name)).ToList();
+            var rows = new List<string> { "unit \\ against," + string.Join(",", names) };
+            foreach (string row in names) rows.Add(row + "," + string.Join(",", names.Select(column => row != column && known.TryGetValue((row, column), out string v) ? v : "")));
+            File.WriteAllLines(path, rows);
+        }
 
         // Two best counters per unit, for the asset notes.
         var counters = new Dictionary<string, string>();
@@ -221,19 +250,33 @@ static class Program
     static readonly Dictionary<string, Dictionary<string, int>> Armies = new();
     static void Add(string who, string unit) { if (!Armies.TryGetValue(who, out var d)) Armies[who] = d = new(); d[unit] = d.GetValueOrDefault(unit) + 1; }
 
+    static string Csv(string name) => name.Replace(",", ";");
+
+    static JsonDocument _doc;
+    static string _dir;
+
     static int AiMatches(List<UnitStats> units, List<string> ids, int matches)
     {
-        var unsc = new Halobellum.Economy.FactionInfo { Name = "UNSC" };
-        var cov = new Halobellum.Economy.FactionInfo { Name = "Covenant" };
-        for (int i = 0; i < units.Count; i++) (i < 12 ? unsc : cov).BaseRoster.Add(units[i]);
-        unsc.SubFactions.Add(new Halobellum.Economy.SubFactionInfo { Name = "Standard" });
-        cov.SubFactions.Add(new Halobellum.Economy.SubFactionInfo { Name = "Standard" });
-        var factions = new List<Halobellum.Economy.FactionInfo> { unsc, cov };
+        var factions = new List<Halobellum.Economy.FactionInfo>();
+        foreach (JsonElement u in _doc.RootElement.EnumerateArray())
+        {
+            string factionName = u.GetProperty("faction").GetString();
+            if (factionName == null) continue;
+            var faction = factions.Find(f => f.Name == factionName);
+            if (faction == null) factions.Add(faction = new Halobellum.Economy.FactionInfo { Name = factionName });
+            UnitStats stats = units[ids.IndexOf(u.GetProperty("id").GetString())];
+            var subValue = u.GetProperty("sub");
+            if (subValue.ValueKind != JsonValueKind.String) { faction.BaseRoster.Add(stats); continue; }
+            var sub = faction.SubFactions.Find(s => s.Name == subValue.GetString());
+            if (sub == null) faction.SubFactions.Add(sub = new Halobellum.Economy.SubFactionInfo { Name = subValue.GetString() });
+            sub.ExclusiveUnits.Add(stats);
+        }
+        foreach (var faction in factions) if (faction.SubFactions.Count == 0) faction.SubFactions.Add(new Halobellum.Economy.SubFactionInfo { Name = "Standard" });
         var rules = new Halobellum.Economy.MatchRules { StartingCredits = 200, BaseIncome = 400, IncomeIncreasePerRound = 200, IncomeCap = 1600, BaseHealth = 2000,
             NewSquadsPerRound = 2, UnlocksPerRound = 1, RefundBeforeBattle = 1f, RefundAfterBattle = 0.5f, DraftCardCount = 5, DraftSquadsPerCard = 2 };
         var combat = TestRules.Default();
         var table = new Halobellum.Economy.MatchupTable();
-        var lines = File.ReadAllLines(Path.Combine(MatrixDirectory, "matrix.csv"));
+        var lines = File.ReadAllLines(Path.Combine(_dir, "matrix.csv"));
         var cols = lines[0].Split(',');
         foreach (var line in lines.Skip(1))
         {
@@ -255,6 +298,11 @@ static class Program
                 int rounds = 0;
                 while (match.Phase != Halobellum.Economy.MatchPhase.MatchOver && rounds < 60)
                 {
+                    if (match.Phase == Halobellum.Economy.MatchPhase.Cards)
+                    {
+                        int choice = player.ChooseCard(new Halobellum.Economy.AiView(match, Team.A), match.Player.Offer);
+                        if (choice < 0 || !match.ChooseCard(Team.A, choice).Ok) match.SkipCards(Team.A);
+                    }
                     player.Deploy(new Halobellum.Economy.AiView(match, Team.A));
                     match.StartBattle().Run();
                     match.FinishBattle();
@@ -264,6 +312,14 @@ static class Program
                 results[m] = (match.Winner == Team.A ? 1 : match.Winner == Team.B ? 2 : 0, rounds);
                 lock (Armies)
                 {
+                    Add("subs", match.Player.SubFaction.Name);
+                    Add("subs", match.Enemy.SubFaction.Name);
+                    if (match.Winner == Team.A) Add("wins", match.Player.SubFaction.Name);
+                    if (match.Winner == Team.B) Add("wins", match.Enemy.SubFaction.Name);
+                    foreach (var side in new[] { match.Player, match.Enemy })
+                    {
+                        foreach (var sq in side.Squads) if (side.SubFaction.ExclusiveUnits.Contains(sq.Type)) Add("exclusive squads", sq.Type.Name);
+                    }
                     foreach (var sq in match.Player.Squads) Add(a + "", sq.Type.Name);
                     foreach (var sq in match.Enemy.Squads) Add(b + "", sq.Type.Name);
                 }
@@ -295,7 +351,7 @@ static class Program
             IsAir = u.GetProperty("air").GetBoolean(),
             TargetFilter = (TargetFilter)"GAB".IndexOf(u.GetProperty("filter").GetString()[0]),
         };
-        s.BaseDamage = s.Cost / (float)s.SquadSize / 5f;
+        s.BaseDamage = u.GetProperty("basedmg").ValueKind == JsonValueKind.Number ? u.GetProperty("basedmg").GetSingle() : s.Cost / (float)s.SquadSize / 5f;
         var weapons = new List<WeaponStats>();
         foreach (JsonElement w in u.GetProperty("weapons").EnumerateArray())
         {
@@ -324,6 +380,8 @@ static class Program
                 SeedSeconds = w.GetProperty("seed").GetSingle(),
                 SeedDamageSharePerSecond = w.GetProperty("seedshare").GetSingle(),
                 SeedSlowShare = w.GetProperty("seedslow").GetSingle(),
+                HitSlowSeconds = w.GetProperty("slow").GetSingle(),
+                HitSlowShare = w.GetProperty("slowshare").GetSingle(),
             });
         }
         s.Weapons = weapons.ToArray();

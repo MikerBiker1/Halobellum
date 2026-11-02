@@ -4,7 +4,8 @@
 //     Runs every placeholder unit (Data/Units/Placeholder) against every other with equal budgets,
 //     prints the report to the Console and writes a CSV to <project>/BalanceReports/.
 //   Menu: Halobellum > Headless Runner > Run Counter Web
-//     Runs every slice unit (Data/Units/UNSC and Covenant) against every other at equal cost and
+//     Runs every unit of every faction and sub-faction against every other at equal cost (about 30 minutes with the
+//     sub-factions; the console in Tools/Data/cw does the same in 2) and
 //     checks that each unit has a counter winning at least 90% (CounterWeb, decision D23). Report to the Console,
 //     win-rate matrix CSV to <project>/BalanceReports/, and the measured win rates into
 //     Data/AI/MatchupTable.asset (used by the Hard AI).
@@ -37,6 +38,13 @@ namespace Halobellum.EditorTools
         public const string PlaceholderFolder = "Assets/_Project/Data/Units/Placeholder";
         /// <summary>The slice rosters (Bible Section 8), UNSC first.</summary>
         public static readonly string[] SliceFolders = { "Assets/_Project/Data/Units/UNSC", "Assets/_Project/Data/Units/Covenant", "Assets/_Project/Data/Units/Flood" };
+        /// <summary>The 8 sub-factions' exclusive units (M10).</summary>
+        public static readonly string[] SubFactionFolders =
+        {
+            "Assets/_Project/Data/Units/Noble", "Assets/_Project/Data/Units/ArmoredDivision", "Assets/_Project/Data/Units/AerospaceCommand",
+            "Assets/_Project/Data/Units/Banished", "Assets/_Project/Data/Units/LekgoloColony", "Assets/_Project/Data/Units/UnggoyRebellion",
+            "Assets/_Project/Data/Units/FloodUNSC", "Assets/_Project/Data/Units/FloodCovenant",
+        };
         public const int DefaultCounterWebBudget = 1800;
 
         // Default runner options (tool settings, not balance values).
@@ -158,6 +166,10 @@ namespace Halobellum.EditorTools
         {
             var units = new List<UnitDefinition>();
             foreach (string folder in SliceFolders) units.AddRange(LoadUnitsInFolder(folder));
+            foreach (string folder in SubFactionFolders)
+            {
+                if (AssetDatabase.IsValidFolder(folder)) units.AddRange(LoadUnitsInFolder(folder));
+            }
             return units;
         }
 

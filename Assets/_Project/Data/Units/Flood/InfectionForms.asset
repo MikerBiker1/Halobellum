@@ -51,6 +51,8 @@ MonoBehaviour:
     seedSeconds: 0
     seedDamageSharePerSecond: 0
     seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -79,6 +81,7 @@ MonoBehaviour:
   auraRadius: 0
   auraSpeedMultiplier: 1
   auraHealPerSecondShare: 0
+  lifestealShare: 0
   leapRange: 6
   leapSpeed: 14
   leapCooldownSeconds: 2.5
@@ -88,6 +91,8 @@ MonoBehaviour:
   prefab: {fileID: 1684789204149948678, guid: e73c3e97bd4548b4c83edae73796bf83, type: 3}
   keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
   strongAgainst: Single-target DPS
   weakAgainst: Chaff clear
   notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Fuel Rod Grunt (100%). First-pass M8 values (DECISIONS D38).'

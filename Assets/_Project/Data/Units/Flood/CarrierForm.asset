@@ -51,6 +51,8 @@ MonoBehaviour:
     seedSeconds: 0
     seedDamageSharePerSecond: 0
     seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -81,6 +83,7 @@ MonoBehaviour:
   auraRadius: 0
   auraSpeedMultiplier: 1
   auraHealPerSecondShare: 0
+  lifestealShare: 0
   leapRange: 0
   leapSpeed: 0
   leapCooldownSeconds: 0
@@ -90,6 +93,8 @@ MonoBehaviour:
   prefab: {fileID: 8661881900918577439, guid: b6f07450b088568469c5e5373011f97a, type: 3}
   keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
   strongAgainst: Chaff
   weakAgainst: 'Tanks, flankers'
-  notes: 'Best counters (headless runner, equal cost): Scorpion (100%), Mantis (100%). First-pass M8 values (DECISIONS D38).'
+  notes: 'Best counters (headless runner, equal cost): Spawner (100%), Scorpion (100%). First-pass M8 values (DECISIONS D38).'

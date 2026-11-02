@@ -51,6 +51,8 @@ MonoBehaviour:
     seedSeconds: 0
     seedDamageSharePerSecond: 0
     seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -79,6 +81,7 @@ MonoBehaviour:
   auraRadius: 0
   auraSpeedMultiplier: 1
   auraHealPerSecondShare: 0
+  lifestealShare: 0
   leapRange: 0
   leapSpeed: 0
   leapCooldownSeconds: 0
@@ -89,6 +92,8 @@ MonoBehaviour:
   prefab: {fileID: 3509483001527763620, guid: cf4b615a56a73d84888675b8a42645d0, type: 3}
   keepsOwnMaterials: 0
   bakedBody: {fileID: 0}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
   strongAgainst: Aerial
   weakAgainst: Ground units
-  notes: 'Best counters (headless runner, equal cost): Ghost (100%), Pure Form Tank (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Spartan Heavy Weapons (100%), Spartan Grenadier (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

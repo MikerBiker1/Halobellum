@@ -95,6 +95,8 @@ namespace Halobellum.Units
         public float auraSpeedMultiplier = 1f;
         [Tooltip("Share of its maximum health a unit in the aura regains per second.")]
         public float auraHealPerSecondShare;
+        [Tooltip("Share of the damage it deals that comes back as health (the Hunter Captain's siphon beam). 0 = none.")]
+        public float lifestealShare;
 
         [Header("Leap (D39)")]
         [Tooltip("It pounces on a target within this many metres, and jumps this far over anything that holds it up. 0 = never.")]
@@ -114,6 +116,10 @@ namespace Halobellum.Units
         public bool keepsOwnMaterials;
         [Tooltip("Its real animated model, baked for big armies (D41). If set, it is shown instead of the prefab.")]
         public BakedBodyDefinition bakedBody;
+        [Tooltip("A colour over a baked body, so that units sharing a body can be told apart (its alpha is how strong). Alpha 0 = its own colours.")]
+        public Color bakedTint = new Color(1f, 1f, 1f, 0f);
+        [Tooltip("How much bigger than its model a baked body is drawn.")]
+        public float bakedScale = 1f;
 
         [Header("Design notes (shown in tooltips)")]
         [TextArea] public string strongAgainst;
@@ -155,6 +161,7 @@ namespace Halobellum.Units
                 AuraRadius = auraRadius,
                 AuraSpeedMultiplier = auraSpeedMultiplier,
                 AuraHealPerSecondShare = auraHealPerSecondShare,
+                LifestealShare = lifestealShare,
                 LeapRange = leapRange,
                 LeapSpeed = leapSpeed,
                 LeapCooldownSeconds = leapCooldownSeconds,
@@ -261,6 +268,10 @@ namespace Halobellum.Units
         public float seedDamageSharePerSecond;
         [Tooltip("Seed: the target moves this share slower (0.3 = 30% slower).")]
         public float seedSlowShare;
+        [Tooltip("Hit slow: seconds a direct hit slows the target (not Titans). 0 = none.")]
+        public float hitSlowSeconds;
+        [Tooltip("Hit slow: the target moves this share slower (0.4 = 40% slower).")]
+        public float hitSlowShare;
 
         public WeaponStats ToStats()
         {
@@ -289,6 +300,8 @@ namespace Halobellum.Units
                 SeedSeconds = seedSeconds,
                 SeedDamageSharePerSecond = seedDamageSharePerSecond,
                 SeedSlowShare = seedSlowShare,
+                HitSlowSeconds = hitSlowSeconds,
+                HitSlowShare = hitSlowShare,
             };
         }
     }

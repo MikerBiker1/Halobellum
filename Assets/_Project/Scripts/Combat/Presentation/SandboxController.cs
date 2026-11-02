@@ -1,5 +1,5 @@
 // SandboxController.cs
-// Sandbox mode (Milestone 4, used for balancing): pick two armies from every faction's roster
+// Sandbox mode (Milestone 4, used for balancing): pick two armies from every faction's and sub-faction's roster
 // (plus the placeholder test units, which never appear in matches),
 // place them freely in both deployment zones (no credits, no limits, every squad movable), run the
 // battle, then reset to the same placement and try again. Both armies are shown while placing.
@@ -96,6 +96,10 @@ namespace Halobellum.Presentation
                 if (faction == null) continue;
                 FactionInfo info = faction.ToInfo(cache, _cardSources);
                 foreach (UnitStats unit in info.BaseRoster) Units.Add(new SandboxUnit(info.Name, unit));
+                foreach (SubFactionInfo sub in info.SubFactions)
+                {
+                    foreach (UnitStats unit in sub.ExclusiveUnits) Units.Add(new SandboxUnit($"{info.Name}: {sub.Name}", unit));
+                }
                 foreach (CardStats card in info.Cards)
                 {
                     // Factions share their items: list each one once.

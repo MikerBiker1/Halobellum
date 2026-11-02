@@ -91,6 +91,18 @@ namespace Halobellum.Presentation
             return false;
         }
 
+        /// <summary>The data asset behind this unit type, or null if there is none.</summary>
+        public UnitDefinition DefinitionFor(UnitStats stats)
+        {
+            if (stats == null) return null;
+            if (_unitSources.TryGetValue(stats, out UnitDefinition definition)) return definition;
+            foreach (var pair in _unitSources)
+            {
+                if (pair.Key.Name == stats.Name) return pair.Value;
+            }
+            return null;
+        }
+
         /// <summary>The baked animated model of this unit type, or null if it has none yet.</summary>
         public BakedBodyDefinition BakedBodyFor(UnitStats stats)
         {

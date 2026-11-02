@@ -1,8 +1,8 @@
 // StartingDraft.cs
 // The starting draft (Bible Section 5): before round 1 each player is offered up to 5 cards. Each
 // card shows a faction, a sub-faction and 2 random Tier 1 squads from that sub-faction's roster
-// (base roster plus exclusive units). The same sub-faction never appears twice in one draw, so with
-// only 2 sub-factions in the game (the temporary "Standard" UNSC and Covenant cards) a draw has 2 cards.
+// (base roster plus exclusive units). The same sub-faction never appears twice in one draw, and with the
+// game's 8 sub-factions a faction may not appear at all.
 // Picking a card fixes the faction and sub-faction for the match; the 2 squads are free and their
 // unit types start unlocked. Draws use the match's seeded random generator.
 // Depends on: FactionInfo, MatchRules, Halobellum.Core (UnitStats, SimRandom).

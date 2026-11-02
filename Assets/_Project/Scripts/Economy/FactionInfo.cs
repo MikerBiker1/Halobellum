@@ -12,6 +12,8 @@ namespace Halobellum.Economy
     public sealed class SubFactionInfo
     {
         public string Name = "";
+        /// <summary>One line for the draft card: what this sub-faction is about.</summary>
+        public string Description = "";
         public List<UnitStats> ExclusiveUnits = new List<UnitStats>();
     }
 

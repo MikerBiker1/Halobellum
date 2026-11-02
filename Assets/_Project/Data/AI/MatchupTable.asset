@@ -211,7 +211,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Flamethrower Trooper
     defender: Infected Pelican
-    winRate: 0.7
+    winRate: 1
   - attacker: Flamethrower Trooper
     defender: Infected Phantom
     winRate: 0
@@ -517,7 +517,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Scorpion
     defender: Infected Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Scorpion
     defender: Infected Phantom
     winRate: 0
@@ -649,7 +649,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Hornet
     defender: Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Hornet
     defender: Spartan
     winRate: 0
@@ -823,7 +823,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Archer Missile Pod
     defender: Infected Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Archer Missile Pod
     defender: Infected Phantom
     winRate: 0
@@ -850,7 +850,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pelican
     defender: Hornet
-    winRate: 1
+    winRate: 0
   - attacker: Pelican
     defender: Archer Missile Pod
     winRate: 1
@@ -886,10 +886,10 @@ MonoBehaviour:
     winRate: 1
   - attacker: Pelican
     defender: Vampire
-    winRate: 1
+    winRate: 0
   - attacker: Pelican
     defender: Banshee
-    winRate: 1
+    winRate: 0
   - attacker: Pelican
     defender: Hunter Pair
     winRate: 0.2
@@ -916,7 +916,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Pelican
     defender: Swarm Form
-    winRate: 0.2
+    winRate: 0
   - attacker: Pelican
     defender: Pure Form Tank
     winRate: 0
@@ -1435,7 +1435,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Fuel Rod Grunt
     defender: Infected Pelican
-    winRate: 0.4
+    winRate: 1
   - attacker: Fuel Rod Grunt
     defender: Infected Phantom
     winRate: 0
@@ -1945,7 +1945,7 @@ MonoBehaviour:
     winRate: 0.7
   - attacker: Wraith
     defender: Infected Pelican
-    winRate: 0
+    winRate: 0.5
   - attacker: Wraith
     defender: Infected Phantom
     winRate: 0
@@ -1978,7 +1978,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Vampire
     defender: Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Vampire
     defender: Spartan
     winRate: 0
@@ -2080,7 +2080,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Banshee
     defender: Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Banshee
     defender: Spartan
     winRate: 0
@@ -2251,7 +2251,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Hunter Pair
     defender: Infected Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Hunter Pair
     defender: Infected Phantom
     winRate: 0
@@ -2353,7 +2353,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Zealot
     defender: Infected Pelican
-    winRate: 0.1
+    winRate: 0
   - attacker: Zealot
     defender: Infected Phantom
     winRate: 0
@@ -2761,7 +2761,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Combat Form
     defender: Infected Pelican
-    winRate: 0
+    winRate: 0.4
   - attacker: Combat Form
     defender: Infected Phantom
     winRate: 0
@@ -2965,7 +2965,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Pure Form Ranged
     defender: Infected Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Pure Form Ranged
     defender: Infected Phantom
     winRate: 0
@@ -2998,178 +2998,178 @@ MonoBehaviour:
     winRate: 0
   - attacker: Swarm Form
     defender: Pelican
+    winRate: 1
+  - attacker: Swarm Form
+    defender: Spartan
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Mantis
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Elephant
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Grunt
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: Swarm Form
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Swarm Form
+    defender: 'Jackal (Shield)'
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Ghost
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Elite
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Wraith
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Vampire
+    winRate: 1
+  - attacker: Swarm Form
+    defender: Banshee
+    winRate: 1
+  - attacker: Swarm Form
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Zealot
+    winRate: 1
+  - attacker: Swarm Form
+    defender: Scarab
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Infection Forms
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Carrier Form
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Combat Form
+    winRate: 1
+  - attacker: Swarm Form
+    defender: Stalker Form
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Pure Form Ranged
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Seeder
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Infected Pelican
+    winRate: 1
+  - attacker: Swarm Form
+    defender: Infected Phantom
+    winRate: 1
+  - attacker: Swarm Form
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: Marine
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Warthog
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Gauss Warthog
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: Scorpion
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: Wolverine
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Hornet
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Pelican
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: Spartan
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: Mantis
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: Elephant
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: Grunt
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: Fuel Rod Grunt
+    winRate: 0.9
+  - attacker: Pure Form Tank
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Ghost
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Elite
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Wraith
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Vampire
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: Banshee
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: Zealot
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: Scarab
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: Infection Forms
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Carrier Form
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Combat Form
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Stalker Form
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Pure Form Ranged
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Swarm Form
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: Seeder
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Infected Pelican
     winRate: 0.8
-  - attacker: Swarm Form
-    defender: Spartan
-    winRate: 0
-  - attacker: Swarm Form
-    defender: Mantis
-    winRate: 0
-  - attacker: Swarm Form
-    defender: Elephant
-    winRate: 0
-  - attacker: Swarm Form
-    defender: Grunt
-    winRate: 0
-  - attacker: Swarm Form
-    defender: Fuel Rod Grunt
-    winRate: 0
-  - attacker: Swarm Form
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 0
-  - attacker: Swarm Form
-    defender: 'Jackal (Shield)'
-    winRate: 0
-  - attacker: Swarm Form
-    defender: Ghost
-    winRate: 0
-  - attacker: Swarm Form
-    defender: Elite
-    winRate: 0
-  - attacker: Swarm Form
-    defender: Wraith
-    winRate: 0
-  - attacker: Swarm Form
-    defender: Vampire
-    winRate: 1
-  - attacker: Swarm Form
-    defender: Banshee
-    winRate: 1
-  - attacker: Swarm Form
-    defender: Hunter Pair
-    winRate: 0
-  - attacker: Swarm Form
-    defender: Zealot
-    winRate: 1
-  - attacker: Swarm Form
-    defender: Scarab
-    winRate: 0
-  - attacker: Swarm Form
-    defender: Infection Forms
-    winRate: 0
-  - attacker: Swarm Form
-    defender: Carrier Form
-    winRate: 0
-  - attacker: Swarm Form
-    defender: Combat Form
-    winRate: 1
-  - attacker: Swarm Form
-    defender: Stalker Form
-    winRate: 0
-  - attacker: Swarm Form
-    defender: Pure Form Ranged
-    winRate: 0
-  - attacker: Swarm Form
-    defender: Pure Form Tank
-    winRate: 0
-  - attacker: Swarm Form
-    defender: Seeder
-    winRate: 0
-  - attacker: Swarm Form
-    defender: Infected Pelican
-    winRate: 1
-  - attacker: Swarm Form
-    defender: Infected Phantom
-    winRate: 1
-  - attacker: Swarm Form
-    defender: Flood Abomination
-    winRate: 0
-  - attacker: Pure Form Tank
-    defender: Marine
-    winRate: 1
-  - attacker: Pure Form Tank
-    defender: Flamethrower Trooper
-    winRate: 1
-  - attacker: Pure Form Tank
-    defender: Warthog
-    winRate: 1
-  - attacker: Pure Form Tank
-    defender: Gauss Warthog
-    winRate: 0
-  - attacker: Pure Form Tank
-    defender: Scorpion
-    winRate: 0
-  - attacker: Pure Form Tank
-    defender: Wolverine
-    winRate: 1
-  - attacker: Pure Form Tank
-    defender: Hornet
-    winRate: 0
-  - attacker: Pure Form Tank
-    defender: Archer Missile Pod
-    winRate: 1
-  - attacker: Pure Form Tank
-    defender: Pelican
-    winRate: 0
-  - attacker: Pure Form Tank
-    defender: Spartan
-    winRate: 0
-  - attacker: Pure Form Tank
-    defender: Mantis
-    winRate: 0
-  - attacker: Pure Form Tank
-    defender: Elephant
-    winRate: 0
-  - attacker: Pure Form Tank
-    defender: Grunt
-    winRate: 0
-  - attacker: Pure Form Tank
-    defender: Fuel Rod Grunt
-    winRate: 0.9
-  - attacker: Pure Form Tank
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 0
-  - attacker: Pure Form Tank
-    defender: 'Jackal (Shield)'
-    winRate: 1
-  - attacker: Pure Form Tank
-    defender: Ghost
-    winRate: 1
-  - attacker: Pure Form Tank
-    defender: Elite
-    winRate: 1
-  - attacker: Pure Form Tank
-    defender: Wraith
-    winRate: 1
-  - attacker: Pure Form Tank
-    defender: Vampire
-    winRate: 0
-  - attacker: Pure Form Tank
-    defender: Banshee
-    winRate: 0
-  - attacker: Pure Form Tank
-    defender: Hunter Pair
-    winRate: 0
-  - attacker: Pure Form Tank
-    defender: Zealot
-    winRate: 0
-  - attacker: Pure Form Tank
-    defender: Scarab
-    winRate: 0
-  - attacker: Pure Form Tank
-    defender: Infection Forms
-    winRate: 1
-  - attacker: Pure Form Tank
-    defender: Carrier Form
-    winRate: 1
-  - attacker: Pure Form Tank
-    defender: Combat Form
-    winRate: 1
-  - attacker: Pure Form Tank
-    defender: Stalker Form
-    winRate: 1
-  - attacker: Pure Form Tank
-    defender: Pure Form Ranged
-    winRate: 1
-  - attacker: Pure Form Tank
-    defender: Swarm Form
-    winRate: 0
-  - attacker: Pure Form Tank
-    defender: Seeder
-    winRate: 1
-  - attacker: Pure Form Tank
-    defender: Infected Pelican
-    winRate: 0.9
   - attacker: Pure Form Tank
     defender: Infected Phantom
     winRate: 0
@@ -3283,7 +3283,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infected Pelican
     defender: Flamethrower Trooper
-    winRate: 0.3
+    winRate: 0
   - attacker: Infected Pelican
     defender: Warthog
     winRate: 1
@@ -3292,7 +3292,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infected Pelican
     defender: Scorpion
-    winRate: 1
+    winRate: 0
   - attacker: Infected Pelican
     defender: Wolverine
     winRate: 1
@@ -3301,7 +3301,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infected Pelican
     defender: Archer Missile Pod
-    winRate: 1
+    winRate: 0
   - attacker: Infected Pelican
     defender: Pelican
     winRate: 0
@@ -3319,58 +3319,58 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infected Pelican
     defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Infected Pelican
+    defender: Ghost
+    winRate: 1
+  - attacker: Infected Pelican
+    defender: Elite
+    winRate: 1
+  - attacker: Infected Pelican
+    defender: Wraith
+    winRate: 0.5
+  - attacker: Infected Pelican
+    defender: Vampire
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Banshee
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Zealot
+    winRate: 1
+  - attacker: Infected Pelican
+    defender: Scarab
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Infection Forms
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Carrier Form
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Combat Form
     winRate: 0.6
   - attacker: Infected Pelican
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 0
-  - attacker: Infected Pelican
-    defender: 'Jackal (Shield)'
-    winRate: 1
-  - attacker: Infected Pelican
-    defender: Ghost
-    winRate: 1
-  - attacker: Infected Pelican
-    defender: Elite
-    winRate: 1
-  - attacker: Infected Pelican
-    defender: Wraith
-    winRate: 1
-  - attacker: Infected Pelican
-    defender: Vampire
-    winRate: 0
-  - attacker: Infected Pelican
-    defender: Banshee
-    winRate: 0
-  - attacker: Infected Pelican
-    defender: Hunter Pair
-    winRate: 1
-  - attacker: Infected Pelican
-    defender: Zealot
-    winRate: 0.9
-  - attacker: Infected Pelican
-    defender: Scarab
-    winRate: 0
-  - attacker: Infected Pelican
-    defender: Infection Forms
-    winRate: 0
-  - attacker: Infected Pelican
-    defender: Carrier Form
-    winRate: 0
-  - attacker: Infected Pelican
-    defender: Combat Form
-    winRate: 1
-  - attacker: Infected Pelican
     defender: Stalker Form
     winRate: 1
   - attacker: Infected Pelican
     defender: Pure Form Ranged
-    winRate: 1
+    winRate: 0
   - attacker: Infected Pelican
     defender: Swarm Form
     winRate: 0
   - attacker: Infected Pelican
     defender: Pure Form Tank
-    winRate: 0.1
+    winRate: 0.2
   - attacker: Infected Pelican
     defender: Seeder
     winRate: 1

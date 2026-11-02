@@ -32,7 +32,7 @@ from mathutils.interpolate import poly_3d_calc
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 SOURCE = os.path.join(ROOT, "Art_Source")
-PREPARED = os.path.join(SOURCE, "Prepared")
+PREPARED = os.environ.get("HB_PREPARED") or os.path.join(SOURCE, "Prepared")  # A worktree shares Art_Source with the main project, so it can prepare elsewhere.
 
 MOVING_PART = re.compile(r"^(Turret_|Wheel_|Swing_)")
 _state = {"name": None, "folder": None, "source": None, "tris_before": 0, "flags": {}, "high": None}

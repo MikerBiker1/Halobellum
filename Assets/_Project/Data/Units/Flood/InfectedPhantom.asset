@@ -51,6 +51,8 @@ MonoBehaviour:
     seedSeconds: 0
     seedDamageSharePerSecond: 0
     seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -79,6 +81,7 @@ MonoBehaviour:
   auraRadius: 0
   auraSpeedMultiplier: 1
   auraHealPerSecondShare: 0
+  lifestealShare: 0
   leapRange: 0
   leapSpeed: 0
   leapCooldownSeconds: 0
@@ -88,6 +91,8 @@ MonoBehaviour:
   prefab: {fileID: 2024070957535163712, guid: ac830c0758d72e140ac0b233f115d888, type: 3}
   keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air
-  notes: 'Best counters (headless runner, equal cost): Swarm Form (100%), Wolverine (60%). First-pass M8 values (DECISIONS D38).'
+  notes: 'Best counters (headless runner, equal cost): Swarm Form (100%), Reaver (100%). First-pass M8 values (DECISIONS D38).'

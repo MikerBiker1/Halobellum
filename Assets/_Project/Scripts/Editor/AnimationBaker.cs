@@ -41,6 +41,25 @@ namespace Halobellum.EditorTools
             AssetDatabase.SaveAssets();
         }
 
+        /// <summary>Bakes only the bodies that have never been baked, leaving the others as they are (M10).</summary>
+        public static void BakeNewFromCommandLine()
+        {
+            int exit = 0;
+            try
+            {
+                foreach (string guid in AssetDatabase.FindAssets("t:" + nameof(BakedBodyDefinition), new[] { BodiesFolder }))
+                {
+                    var body = AssetDatabase.LoadAssetAtPath<BakedBodyDefinition>(AssetDatabase.GUIDToAssetPath(guid));
+                    if (body.IsReady) continue;
+                    Bake(body);
+                    Debug.Log($"Baked {body.name}: {body.mesh.triangles.Length / 3} triangles.");
+                }
+                AssetDatabase.SaveAssets();
+            }
+            catch (Exception e) { Debug.LogError("Baking failed: " + e); exit = 1; }
+            EditorApplication.Exit(exit);
+        }
+
         public static void BakeAllFromCommandLine()
         {
             int exit = 0;

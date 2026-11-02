@@ -5,7 +5,7 @@
 //   2. Picks a strategy: swarm, armor push, air raid or balanced. Each strategy prefers some roles.
 //   3. Scores every unit type in its roster: the strategy's preference for the unit's role, plus a
 //      bonus if the unit counters what the opponent fields (Section 7 counter table), plus a small
-//      bonus for higher tiers.
+//      bonus for higher tiers and, on Normal and Hard, for its sub-faction's exclusive units (M10).
 //   4. Unlocks at most one unit type and buys at most 2 squads (the same limits as the player),
 //      using the same Match actions. Then it spends what is left on level-ups (squads with a full
 //      XP bar, most valuable first) and tech upgrades (for the unit type it has the most of).
@@ -66,6 +66,15 @@ namespace Halobellum.Economy
         }
 
         private bool UsesMatchups => Difficulty == AiDifficulty.Hard && _matchups != null;
+
+        /// <summary>What a draft card's free squad is worth extra to Normal and Hard if it is an exclusive unit, in credits (M10).</summary>
+        private const int ExclusiveDraftBonus = 40;
+        /// <summary>How much more Normal and Hard want their sub-faction's exclusive units, on the same scale as the strategy's weights (M10).</summary>
+        private const float ExclusiveScoreBonus = 0.6f;
+        /// <summary>The player this AI is deploying for right now.</summary>
+        private PlayerState _self;
+
+        private bool IsExclusive(UnitStats unit) => _self?.SubFaction != null && _self.SubFaction.ExclusiveUnits.Contains(unit);
 
         /// <summary>
         /// How much better than even this unit does against the revealed army (-0.5 to +0.5), from the
@@ -140,7 +149,11 @@ namespace Halobellum.Economy
             for (int i = 0; i < cards.Count; i++)
             {
                 int value = 0;
-                foreach (UnitStats squad in cards[i].Squads) value += squad.Cost;
+                foreach (UnitStats squad in cards[i].Squads)
+                {
+                    value += squad.Cost;
+                    if (cards[i].SubFaction != null && cards[i].SubFaction.ExclusiveUnits.Contains(squad)) value += ExclusiveDraftBonus;
+                }
                 if (value > bestValue) { bestValue = value; best = i; }
             }
             return best;
@@ -317,6 +330,7 @@ namespace Halobellum.Economy
         {
             PlayerState self = view.Self;
             if (!self.HasFaction) return;
+            _self = self;
 
             // 1. What did the opponent field last battle?
             var seen = view.SeenOpponentArmy;
@@ -486,6 +500,8 @@ namespace Halobellum.Economy
         private float Score(UnitStats unit, IReadOnlyList<SeenSquad> seen, float totalSeen)
         {
             float score = StrategyWeights[(int)Strategy][(int)unit.Role] + 0.4f * unit.Tier;
+            float exclusive = Difficulty != AiDifficulty.Easy && IsExclusive(unit) ? ExclusiveScoreBonus : 0f;
+            score += exclusive;
             if (totalSeen > 0f)
             {
                 switch (Difficulty)
@@ -504,7 +520,7 @@ namespace Halobellum.Economy
                             // Measured counters dominate; the strategy only nudges.
                             score = 0.5f * StrategyWeights[(int)Strategy][(int)unit.Role] + 0.4f * unit.Tier
                                     + 8f * MatchupAdvantage(unit, seen) + 4f * (_matchups.OverallStrength(unit) - 0.5f)
-                                    + _random.Range(-0.1f, 0.1f);
+                                    + exclusive + _random.Range(-0.1f, 0.1f);
                             break;
                         }
                         float counters = 0f, countered = 0f;

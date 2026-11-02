@@ -51,6 +51,8 @@ MonoBehaviour:
     seedSeconds: 0
     seedDamageSharePerSecond: 0
     seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
   - weaponName: Fuel Rod Bomb
     damagePerShot: 50
     fireInterval: 2.5
@@ -73,6 +75,8 @@ MonoBehaviour:
     seedSeconds: 0
     seedDamageSharePerSecond: 0
     seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -101,6 +105,7 @@ MonoBehaviour:
   auraRadius: 0
   auraSpeedMultiplier: 1
   auraHealPerSecondShare: 0
+  lifestealShare: 0
   leapRange: 0
   leapSpeed: 0
   leapCooldownSeconds: 0
@@ -110,6 +115,8 @@ MonoBehaviour:
   prefab: {fileID: 7917191540482023606, guid: bd520ff56d3cda947909df93eb532aaa, type: 3}
   keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air
   notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Vampire (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

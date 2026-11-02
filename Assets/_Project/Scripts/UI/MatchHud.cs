@@ -71,7 +71,7 @@ namespace Halobellum.UI
         {
             Match m = match.Match;
             float width = HudScale.ScaledWidth(_scale), height = HudScale.ScaledHeight(_scale);
-            const float cardWidth = 320f, cardHeight = 260f, gap = 24f;
+            const float cardWidth = 320f, cardHeight = 360f, gap = 24f;
             int count = m.PlayerDraft.Count;
             float total = count * cardWidth + (count - 1) * gap;
             float x = (width - total) * 0.5f, y = height * 0.5f - cardHeight * 0.5f;
@@ -88,12 +88,15 @@ namespace Halobellum.UI
                 Panel(rect);
                 GUI.Label(new Rect(rect.x + 16f, rect.y + 12f, rect.width - 32f, 34f), card.Faction.Name, _big);
                 GUI.Label(new Rect(rect.x + 16f, rect.y + 48f, rect.width - 32f, 24f), "Sub-faction: " + card.SubFaction.Name, _text);
-                GUI.Label(new Rect(rect.x + 16f, rect.y + 84f, rect.width - 32f, 24f), "Starting squads:", _text);
+                GUI.Label(new Rect(rect.x + 16f, rect.y + 72f, rect.width - 32f, 46f), card.SubFaction.Description, _wrapDim);
+                GUI.Label(new Rect(rect.x + 16f, rect.y + 118f, rect.width - 32f, 64f), "Exclusive: " + string.Join(", ", card.SubFaction.ExclusiveUnits.ConvertAll(u => u.Name)), _wrap);
+                GUI.Label(new Rect(rect.x + 16f, rect.y + 182f, rect.width - 32f, 24f), "Starting squads:", _text);
                 for (int s = 0; s < card.Squads.Count; s++)
                 {
                     UnitStats unit = card.Squads[s];
-                    GUI.Label(new Rect(rect.x + 28f, rect.y + 110f + s * 44f, rect.width - 44f, 44f),
-                        $"{unit.Name}\n{RoleName(unit.Role)}, {Bodies(unit.FormsInSquad)}, worth {unit.Cost}", _small);
+                    bool exclusive = card.SubFaction.ExclusiveUnits.Contains(unit);
+                    GUI.Label(new Rect(rect.x + 28f, rect.y + 208f + s * 44f, rect.width - 44f, 44f),
+                        $"{unit.Name}{(exclusive ? " (exclusive)" : "")}\n{RoleName(unit.Role)}, {Bodies(unit.FormsInSquad)}, worth {unit.Cost}", _small);
                 }
                 if (GUI.Button(new Rect(rect.x + 16f, rect.yMax - 52f, rect.width - 32f, 38f), "Choose", _bigButton)) match.ChooseDraft(i);
             }
@@ -370,7 +373,7 @@ namespace Halobellum.UI
             float panelHeight = Mathf.Min(height - 200f, 50f + roster.Count * rowHeight);
             var panel = new Rect(width - panelWidth - 10f, 110f, panelWidth, panelHeight);
             Panel(panel);
-            GUI.Label(new Rect(panel.x + 12f, panel.y + 8f, panel.width - 24f, 28f), HudTheme.Title($"Shop: {player.Faction.Name}"), _header);
+            GUI.Label(new Rect(panel.x + 12f, panel.y + 8f, panel.width - 24f, 28f), HudTheme.Title($"Shop: {player.Label}"), _header);
 
             var view = new Rect(panel.x + 6f, panel.y + 40f, panel.width - 12f, panel.height - 46f);
             var content = new Rect(0f, 0f, view.width - 18f, roster.Count * rowHeight);
@@ -381,7 +384,7 @@ namespace Halobellum.UI
                 var row = new Rect(0f, i * rowHeight, content.width, rowHeight - 4f);
                 HudTheme.RowBox(row);
                 GUI.Label(new Rect(row.x + 8f, row.y + 4f, row.width - 130f, 24f), $"{unit.Name} - {unit.Cost} cr", _text);
-                GUI.Label(new Rect(row.x + 8f, row.y + 28f, row.width - 130f, 22f), $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.FormsInSquad)}", _small);
+                GUI.Label(new Rect(row.x + 8f, row.y + 28f, row.width - 130f, 22f), $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.FormsInSquad)}{(player.SubFaction.ExclusiveUnits.Contains(unit) ? ", exclusive" : "")}", _small);
 
                 var button = new Rect(row.xMax - 118f, row.y + 9f, 110f, 36f);
                 if (player.Unlocked.Contains(unit))

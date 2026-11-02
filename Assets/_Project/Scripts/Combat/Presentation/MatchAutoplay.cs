@@ -30,6 +30,7 @@ namespace Halobellum.Presentation
         private float _speed = 4f;
         private int _card;
         private string _faction;
+        private string _subFaction;
         private float _wait;
         private int _lastShotRound = -1;
         private MatchPhase _lastPhase = (MatchPhase)(-1);
@@ -56,6 +57,7 @@ namespace Halobellum.Presentation
             if (float.TryParse(Argument(args, "-autoplaySpeed"), NumberStyles.Float, CultureInfo.InvariantCulture, out float speed)) _speed = speed;
             if (int.TryParse(Argument(args, "-autoplayCard"), out int card)) _card = card; // Which draft card to pick (default 0).
             _faction = Argument(args, "-autoplayFaction"); // Or the first card of this faction, e.g. UNSC.
+            _subFaction = Argument(args, "-autoplaySubFaction"); // Or of this sub-faction, e.g. Noble. If the draw has none, a new match is drawn.
             if (_shots != null) Directory.CreateDirectory(_shots);
         }
 
@@ -85,7 +87,13 @@ namespace Halobellum.Presentation
             {
                 case MatchPhase.Draft:
                     if (ShotFirst("01_draft")) return;
+                    if (!string.IsNullOrEmpty(_subFaction) && !m.PlayerDraft.Exists(c => c.SubFaction.Name == _subFaction))
+                    {
+                        _match.NewMatch();
+                        return;
+                    }
                     int pick = Mathf.Clamp(_card, 0, m.PlayerDraft.Count - 1);
+                    if (!string.IsNullOrEmpty(_subFaction)) _card = pick = m.PlayerDraft.FindIndex(c => c.SubFaction.Name == _subFaction);
                     if (!string.IsNullOrEmpty(_faction))
                     {
                         int byFaction = m.PlayerDraft.FindIndex(c => c.Faction.Name == _faction);
@@ -214,6 +222,20 @@ namespace Halobellum.Presentation
 
         private void BuySquads(Match m)
         {
+            // Asked for a sub-faction: show its exclusive units first.
+            if (!string.IsNullOrEmpty(_subFaction))
+            {
+                foreach (UnitStats type in m.Player.SubFaction.ExclusiveUnits)
+                {
+                    if (m.Player.Unlocked.Contains(type)) continue;
+                    if (m.Player.Credits >= type.UnlockCost + type.Cost && _match.Unlock(type).Ok) break;
+                }
+                for (int i = m.Player.SubFaction.ExclusiveUnits.Count - 1; i >= 0; i--)
+                {
+                    UnitStats type = m.Player.SubFaction.ExclusiveUnits[i];
+                    if (m.Player.Unlocked.Contains(type) && m.Player.Credits >= type.Cost) _match.Buy(type);
+                }
+            }
             for (int i = 0; i < m.Rules.NewSquadsPerRound; i++)
             {
                 foreach (UnitStats type in m.Player.Roster)

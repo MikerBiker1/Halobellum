@@ -118,7 +118,7 @@ namespace Halobellum.Core
             {
                 stats.MaxHealth *= item.HealthMultiplier;
                 stats.MoveSpeed *= item.MoveSpeedMultiplier;
-                stats.LifestealShare = item.LifestealShare;
+                stats.LifestealShare = Math.Max(stats.LifestealShare, item.LifestealShare);
                 stats.HealPerSecondShare = item.HealPerSecondShare;
                 foreach (WeaponStats weapon in stats.Weapons)
                 {

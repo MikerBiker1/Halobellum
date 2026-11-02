@@ -30,6 +30,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c0ea203c825d770707d27469369bf520, type: 2}
   subFactions:
   - subFactionName: Standard
+    description: 
     exclusiveUnits: []
   spells:
   - {fileID: 11400000, guid: 5451f873c026b5e85899a826e3e97dff, type: 2}

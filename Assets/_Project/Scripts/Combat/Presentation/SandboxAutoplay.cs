@@ -33,7 +33,8 @@ namespace Halobellum.Presentation
         private SandboxController _sandbox;
         private BattleController _battle;
         private string _shots;
-        private bool _gallery;
+        private bool _gallery, _all;
+        private string _only;
         private int _step;
         private float _wait = 1f;
         private bool _shotArc, _shotCharge, _shotBeam, _shotInfected, _shotLeap;
@@ -52,6 +53,9 @@ namespace Halobellum.Presentation
             _shots = index + 1 < args.Length ? args[index + 1] : "SandboxShots";
             Directory.CreateDirectory(_shots);
             _gallery = Array.IndexOf(args, GalleryFlag) >= 0;
+            _all = Array.IndexOf(args, "-galleryAll") >= 0; // Placeholder bodies too.
+            int only = Array.IndexOf(args, "-galleryOnly"); // Only the units listed under this name, such as a sub-faction ("Noble").
+            if (only >= 0 && only + 1 < args.Length) _only = args[only + 1];
         }
 
         private void Start()
@@ -76,7 +80,8 @@ namespace Halobellum.Presentation
                 _sandbox.AddSquad(Team.B, Find("Marine"));
                 _sandbox.AddSquad(Team.B, Find("Hornet"));
                 yield return null;
-                if (!_battle.KeepsOwnMaterials(type) && _battle.BakedBodyFor(type) == null) continue;
+                if (!_all && !_battle.KeepsOwnMaterials(type) && _battle.BakedBodyFor(type) == null) continue;
+                if (_only != null && !entry.Faction.Contains(_only)) continue;
                 shown.Add(type);
                 string name = type.Name.Replace(" ", "");
 

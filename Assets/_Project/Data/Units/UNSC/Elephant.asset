@@ -51,6 +51,8 @@ MonoBehaviour:
     seedSeconds: 0
     seedDamageSharePerSecond: 0
     seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
   - weaponName: Turret (left)
     damagePerShot: 8
     fireInterval: 0.2
@@ -73,6 +75,8 @@ MonoBehaviour:
     seedSeconds: 0
     seedDamageSharePerSecond: 0
     seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
   - weaponName: Turret (right)
     damagePerShot: 8
     fireInterval: 0.2
@@ -95,6 +99,8 @@ MonoBehaviour:
     seedSeconds: 0
     seedDamageSharePerSecond: 0
     seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -123,6 +129,7 @@ MonoBehaviour:
   auraRadius: 0
   auraSpeedMultiplier: 1
   auraHealPerSecondShare: 0
+  lifestealShare: 0
   leapRange: 0
   leapSpeed: 0
   leapCooldownSeconds: 0
@@ -132,6 +139,8 @@ MonoBehaviour:
   prefab: {fileID: 9155767775915828780, guid: 21914af10fa4ce948b809977e52d2ffd, type: 3}
   keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
   strongAgainst: Most things in a straight fight
   weakAgainst: 'Single-target DPS, large chaff swarms'
-  notes: 'Best counters (headless runner, equal cost): Spartan (100%), Zealot (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Spartan (100%), Hunter Captain (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

@@ -1,8 +1,8 @@
 // FactionDefinition.cs
 // The data asset for one faction (Bible Section 8): its base roster and its sub-factions, each with
 // its own exclusive units added on top of the base roster. Factions feed the starting draft.
-// Until the real sub-factions are built, each faction has one temporary "Standard" sub-faction with
-// no exclusive units (Bible Section 5). It also lists the faction's spell cards (Milestone 7). Create one with right-click > Create > Halobellum > Faction.
+// The file names still say "Standard" from before the sub-factions were built (M10): keeping them keeps every reference.
+// It also lists the faction's spell cards (Milestone 7). Create one with right-click > Create > Halobellum > Faction.
 // Depends on: UnitDefinition, Halobellum.Economy (FactionInfo), Halobellum.Core, UnityEngine.
 
 using System;
@@ -20,6 +20,8 @@ namespace Halobellum.Units
         public sealed class SubFactionEntry
         {
             public string subFactionName;
+            [Tooltip("One line for the draft card: what this sub-faction is about.")]
+            [TextArea] public string description;
             [Tooltip("Units only this sub-faction can use, on top of the base roster.")]
             public List<UnitDefinition> exclusiveUnits = new List<UnitDefinition>();
         }
@@ -49,7 +51,7 @@ namespace Halobellum.Units
             }
             foreach (SubFactionEntry entry in subFactions)
             {
-                var sub = new SubFactionInfo { Name = entry.subFactionName };
+                var sub = new SubFactionInfo { Name = entry.subFactionName, Description = entry.description ?? "" };
                 foreach (UnitDefinition unit in entry.exclusiveUnits)
                 {
                     if (unit != null) sub.ExclusiveUnits.Add(StatsFor(unit, statsCache));

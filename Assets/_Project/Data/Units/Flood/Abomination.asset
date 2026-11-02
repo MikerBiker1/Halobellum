@@ -51,6 +51,8 @@ MonoBehaviour:
     seedSeconds: 0
     seedDamageSharePerSecond: 0
     seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
   - weaponName: Tendril Whip
     damagePerShot: 20
     fireInterval: 0.8
@@ -73,6 +75,8 @@ MonoBehaviour:
     seedSeconds: 0
     seedDamageSharePerSecond: 0
     seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -101,6 +105,7 @@ MonoBehaviour:
   auraRadius: 14
   auraSpeedMultiplier: 1.2
   auraHealPerSecondShare: 0.01
+  lifestealShare: 0
   leapRange: 0
   leapSpeed: 0
   leapCooldownSeconds: 0
@@ -110,6 +115,8 @@ MonoBehaviour:
   prefab: {fileID: 7363495293459576789, guid: 0b9f0a72c4fd9234983765dfae34baec, type: 3}
   keepsOwnMaterials: 0
   bakedBody: {fileID: 0}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
   strongAgainst: Most things in a straight fight
   weakAgainst: 'Single-target DPS, large chaff swarms'
-  notes: 'Best counters (headless runner, equal cost): Zealot (100%), Spartan (70%). First-pass M8 values (DECISIONS D38).'
+  notes: 'Best counters (headless runner, equal cost): Hunter Captain (100%), Zealot (100%). First-pass M8 values (DECISIONS D38).'

@@ -51,6 +51,8 @@ MonoBehaviour:
     seedSeconds: 0
     seedDamageSharePerSecond: 0
     seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
   hasDefenseArc: 1
   defenseArc:
     arcDegrees: 120
@@ -79,6 +81,7 @@ MonoBehaviour:
   auraRadius: 0
   auraSpeedMultiplier: 1
   auraHealPerSecondShare: 0
+  lifestealShare: 0
   leapRange: 0
   leapSpeed: 0
   leapCooldownSeconds: 0
@@ -88,6 +91,8 @@ MonoBehaviour:
   prefab: {fileID: 1656974460176144887, guid: 31186ad0e8cb7934ea8dc16f92b9f807, type: 3}
   keepsOwnMaterials: 0
   bakedBody: {fileID: 0}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
   notes: 'Best counters (headless runner, equal cost): Jackal (Plasma Rifle) (100%), Elite (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
