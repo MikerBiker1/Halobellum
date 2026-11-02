@@ -32,7 +32,8 @@ namespace Halobellum.Presentation
         }
 
         private const int TrackSize = 1024;
-        private const int DustStagger = 7;
+        /// <summary>Each body is looked at for dust this often, in seconds of battle time.</summary>
+        public const float DustLookSeconds = 7f / 60f;
 
         [Tooltip("How high a lobbed shot flies at its peak, as a share of the distance it travels.")]
         [SerializeField] private float lobHeightShare = 0.3f;
@@ -60,7 +61,9 @@ namespace Halobellum.Presentation
         private readonly Dictionary<WeaponStats, WeaponLook> _looksB = new Dictionary<WeaponStats, WeaponLook>();
         private readonly HashSet<string> _typesA = new HashSet<string>();
         private bool _mirror;
-        private int _instantShots, _projectileShots, _frame;
+        private int _instantShots, _projectileShots;
+        private float _dustDue;
+        private int _dustNext;
         private readonly System.Diagnostics.Stopwatch _cost = new System.Diagnostics.Stopwatch();
 
         /// <summary>Main-thread time the effects took last frame, in milliseconds (for the benchmark). Not the time on the graphics card.</summary>
@@ -125,6 +128,8 @@ namespace Halobellum.Presentation
             _lastShots.Clear();
             _instantShots = 0;
             _projectileShots = 0;
+            _dustDue = 0f;
+            _dustNext = 0;
             for (int i = 0; i < TrackSize; i++) _tracks[i].Serial = -1;
             _mirror = BothSidesLookAlike(simulation);
             if (_shown == null) return;
@@ -199,6 +204,12 @@ namespace Halobellum.Presentation
                     _recipes.Muzzle(from, direction, look);
                     _kit.FlashLine(from, to, look.ShotWidth * _kit.ReadScale, look.Shot, 0.3f);
                     _kit.FlashLine(from, to, look.ShotWidth * 0.3f * _kit.ReadScale, Color.white, 0.18f);
+                    // A railgun the simulation hits with at once has no projectile to land later, so its impact comes with the line.
+                    if (weapon.IsInstant)
+                    {
+                        _recipes.Impact(to, direction, look.Impact, target.Stats.ArmorType, target.Shield > 0f, look.Shot);
+                        if (weapon.SplashRadius > 0f) _recipes.Blast(to, weapon.SplashRadius, look.Blast, look.Shot, EffectPriority.Big);
+                    }
                     return;
             }
 
@@ -225,13 +236,12 @@ namespace Halobellum.Presentation
             _cost.Start();
             float speed = _battle.Speed;
             _kit.BeginFrame(speed, Time.deltaTime, Time.unscaledDeltaTime);
-            _frame++;
             _recipes.RunDue();
 
             float battleDelta = Time.deltaTime * speed;
             DrawShots();
             DrawBeams(battleDelta);
-            if (speed > 0f && _battle.IsPlaying) KickUpDust();
+            if (speed > 0f && _battle.IsPlaying) KickUpDust(battleDelta);
             _deaths.Tick(battleDelta);
             _spells.Tick();
             _kit.EndFrame();
@@ -454,14 +464,28 @@ namespace Halobellum.Presentation
 
         // ------------------------------------------------------------------ dust
 
-        /// <summary>Vehicles and hovering craft kick up dust while they move; infantry a little now and then. Each body is looked at every few frames.</summary>
-        private void KickUpDust()
+        /// <summary>
+        /// How many bodies to look at for dust this frame, so that each is looked at once per DustLookSeconds of battle time at any frame rate and any speed.
+        /// due carries the part of a body left over to the next frame. Never more than all of them in one frame.
+        /// </summary>
+        public static int DustLooksThisFrame(float battleDelta, int bodies, ref float due)
+        {
+            due += battleDelta / DustLookSeconds * bodies;
+            int looks = (int)due;
+            due -= looks;
+            return Mathf.Min(looks, bodies);
+        }
+
+        /// <summary>Vehicles and hovering craft kick up dust while they move; infantry a little now and then. The bodies take turns, spread over the time between looks.</summary>
+        private void KickUpDust(float battleDelta)
         {
             if (_shown == null) return;
             IReadOnlyList<SimUnit> units = _shown.Units;
-            for (int i = (_frame % DustStagger); i < units.Count; i += DustStagger)
+            int looks = DustLooksThisFrame(battleDelta, units.Count, ref _dustDue);
+            for (int look = 0; look < looks; look++)
             {
-                SimUnit unit = units[i];
+                _dustNext = (_dustNext + 1) % units.Count;
+                SimUnit unit = units[_dustNext];
                 if (!unit.IsAlive || unit.State != UnitState.Move || unit.IsAir || unit.IsLeaping) continue;
                 if (unit.Velocity.LengthSquared < 0.25f) continue;
                 float radius = unit.Radius;

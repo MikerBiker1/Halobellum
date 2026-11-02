@@ -165,14 +165,18 @@ namespace Halobellum.UI
         /// pixels on each side are drawn at `scale`, the edges stretch along their length and the
         /// middle stretches both ways (or is skipped).
         /// </summary>
+        private static readonly float[] SliceXs = new float[4], SliceYs = new float[4], SliceUs = new float[4], SliceVs = new float[4];
+
         private static void DrawNineSlice(Rect rect, Texture2D texture, int border, float scale, bool drawMiddle)
         {
             float b = border * scale;
             float u = border / (float)texture.width, v = border / (float)texture.height;
-            float[] xs = { rect.xMin, rect.xMin + b, rect.xMax - b, rect.xMax };
-            float[] ys = { rect.yMin, rect.yMin + b, rect.yMax - b, rect.yMax };
-            float[] us = { 0f, u, 1f - u, 1f };
-            float[] vs = { 1f, 1f - v, v, 0f }; // Texture coordinates start at the bottom, screen rows at the top.
+            // Kept, not made anew: the battle's HUD draws panels and bars like this every frame.
+            float[] xs = SliceXs, ys = SliceYs, us = SliceUs, vs = SliceVs;
+            xs[0] = rect.xMin; xs[1] = rect.xMin + b; xs[2] = rect.xMax - b; xs[3] = rect.xMax;
+            ys[0] = rect.yMin; ys[1] = rect.yMin + b; ys[2] = rect.yMax - b; ys[3] = rect.yMax;
+            us[0] = 0f; us[1] = u; us[2] = 1f - u; us[3] = 1f;
+            vs[0] = 1f; vs[1] = 1f - v; vs[2] = v; vs[3] = 0f; // Texture coordinates start at the bottom, screen rows at the top.
             for (int row = 0; row < 3; row++)
             {
                 for (int column = 0; column < 3; column++)

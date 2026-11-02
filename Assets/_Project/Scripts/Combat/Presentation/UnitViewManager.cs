@@ -209,6 +209,9 @@ namespace Halobellum.Presentation
             return PlaceholderArt.BodyHeight(stats) * (stats.IsAir ? 0.5f : 1f);
         }
 
+        /// <summary>How far above its base the top of this body is.</summary>
+        public float BodyTopOf(SimUnit unit) => unit.Id >= 0 && unit.Id < _views.Count ? BodyTop(_views[unit.Id]) : 0f;
+
         /// <summary>Where a weapon's given shot leaves a body, if its model says (D45). Otherwise the caller picks a point.</summary>
         public bool TryMuzzle(SimUnit unit, int weapon, int shot, out Vector3 position)
         {
@@ -711,8 +714,10 @@ namespace Halobellum.Presentation
 
             float phase = arrowPulseSeconds > 0f ? Time.unscaledTime / arrowPulseSeconds : 0f;
             float bob = Mathf.Sin(phase * 2f * Mathf.PI) * 0.15f;
-            foreach (SimSquad squad in _shown.Squads)
+            IReadOnlyList<SimSquad> squads = _shown.Squads; // By index: this runs every frame, and foreach here would box an enumerator.
+            for (int s = 0; s < squads.Count; s++)
             {
+                SimSquad squad = squads[s];
                 if (!LevelUpReady(squad.Id)) continue;
                 // Above the middle of the squad's living bodies, over the tallest one.
                 Vector3 sum = Vector3.zero;

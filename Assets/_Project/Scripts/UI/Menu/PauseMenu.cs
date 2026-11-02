@@ -54,7 +54,11 @@ namespace Halobellum.UI
             host.AddComponent<PauseMenu>()._battle = battle;
         }
 
-        private void Awake() => Current = this;
+        private void Awake()
+        {
+            Current = this;
+            useGUILayout = false; // Nothing here uses GUILayout. With the layout pass on, Unity makes new layout groups for this script every frame, which is garbage at every frame rate.
+        }
 
         private void Start() => _selection = _battle != null ? _battle.GetComponent<SquadSelection>() : null;
 

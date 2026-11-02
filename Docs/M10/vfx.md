@@ -21,9 +21,9 @@ Colour says who fired: UNSC warm yellow, Covenant blue, with green fuel rods and
 |---|---|---|
 | Bullet, heavy bullet | Flash, hot streak; sparks on armour, dust on anything else, a blue flash on a shield that is up | Marine, Warthog, turrets |
 | Cannon | Hard flash, smoke and sparks at the muzzle, a shell with a thin trail, a blast as wide as its splash | Scorpion, Elephant |
-| Gauss | A bright straight line from muzzle to target at once, white core | Gauss Warthog |
+| Gauss | A bright straight line from muzzle to target at once, white core; an impact where it hits | Gauss Warthog, Cobra, Gremlin |
 | Rocket | Flame at the head, a thick smoke trail, a blast | Wolverine, Mantis, Hornet, Archer (in an arc) |
-| Bomb | Falling streak, or a green ball for a fuel rod bomb | Hornet, Banshee |
+| Bomb | Falling streak, or a green ball for a fuel rod bomb. Flood bombs are a sick green and burst in gore and spores | Hornet, Banshee, Infested Hornet, Infested Banshee |
 | Plasma | Fat glowing bolt, splash of droplets | Grunt, Jackal, Elite, Ghost; green on Flood craft |
 | Heavy plasma | Big glowing ball that drips light, plasma blast | Fuel Rod Grunt (green), Wraith mortar (blue), Hunter (green) |
 | Needle | Thin pink streak, pink shards on impact | Vampire |
@@ -62,7 +62,7 @@ A spell with an unknown name goes by what it does, so a new spell looks sensible
 
 ## Other
 
-- **Dust**: vehicles kick up dust while moving, infantry a little now and then. Each body is looked at every seven frames.
+- **Dust**: vehicles kick up dust while moving, infantry a little now and then. Each body is looked at once per 7/60 of a second of battle time, so the amount doesn't change with the frame rate or the speed of the battle.
 - **Bloom**: `EffectsPostProcess` turns on the camera's post-processing and adds a global bloom with a threshold above white. Only effects draw above white, so units and the ground are untouched. Its priority is low, so another volume that sets bloom wins.
 - **Camera shake**: small, on big blasts, scaled to the camera's distance. **The K key turns it off**, and it is remembered between runs. Any settings screen can use `CameraShake.ShakeEnabled`. It runs after `BattleCameraController` and only adds an offset, so that script is unchanged.
 - Small things are drawn a little bigger the further the camera is (`EffectKit.ReadScale`), so that a tracer stays visible from the game camera without looking like a searchlight close up.

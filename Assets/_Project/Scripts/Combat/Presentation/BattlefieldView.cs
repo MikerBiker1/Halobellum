@@ -140,7 +140,7 @@ namespace Halobellum.Presentation
             {
                 foreach (SandboxController.SandboxUnit unit in _sandbox.Units)
                 {
-                    if (unit.Faction != SandboxController.ExtraUnitsLabel) _factionOfUnit[unit.Stats.Name] = unit.Faction;
+                    if (unit.Faction != SandboxController.ExtraUnitsLabel) _factionOfUnit[unit.Stats.Name] = unit.BaseFaction;
                 }
             }
             _counting.Clear();

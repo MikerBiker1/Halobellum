@@ -33,6 +33,9 @@ namespace Halobellum.UI
         private GUIStyle _text, _small, _smallCentered, _button, _bigButton, _header, _wrapDim;
         private float _scale;
         private Vector2 _scroll;
+        private readonly HudLine _seedLine = new HudLine(), _aliveLine = new HudLine(), _blueLine = new HudLine(), _redLine = new HudLine();
+
+        private void Awake() => useGUILayout = false; // Nothing here uses GUILayout. With the layout pass on, Unity makes new layout groups for this script every frame, which is garbage at every frame rate.
 
         private void OnGUI()
         {
@@ -84,7 +87,8 @@ namespace Halobellum.UI
             var bar = new Rect(width * 0.5f - 560f, 92f, 1120f, 64f);
             Panel(bar);
             GUI.Label(new Rect(bar.x + 16f, bar.y + 6f, 160f, 26f), "Sandbox", _header);
-            GUI.Label(new Rect(bar.x + 16f, bar.y + 34f, 160f, 24f), $"Seed {sandbox.Seed}", _small);
+            if (_seedLine.Changed(sandbox.Seed)) _seedLine.Text = $"Seed {sandbox.Seed}";
+            GUI.Label(new Rect(bar.x + 16f, bar.y + 34f, 160f, 24f), _seedLine.Text, _small);
             if (!sandbox.IsBattle)
             {
                 if (GUI.Button(new Rect(bar.x + 110f, bar.y + 34f, 30f, 24f), "-", _button)) sandbox.Seed--;
@@ -98,8 +102,11 @@ namespace Halobellum.UI
             {
                 if (battle != null && battle.Simulation != null)
                 {
-                    GUI.Label(new Rect(bar.x + 500f, bar.y + 6f, 300f, 52f),
-                        $"Alive: blue {battle.CountAlive(Team.A)}, red {battle.CountAlive(Team.B)}\nValue: blue {battle.AliveValue(Team.A):0}, red {battle.AliveValue(Team.B):0}", _small);
+                    int aliveA = battle.CountAlive(Team.A), aliveB = battle.CountAlive(Team.B);
+                    float valueA = battle.AliveValue(Team.A), valueB = battle.AliveValue(Team.B);
+                    if (_aliveLine.Changed(aliveA, aliveB, HudLine.Whole(valueA), HudLine.Whole(valueB)))
+                        _aliveLine.Text = $"Alive: blue {aliveA}, red {aliveB}\nValue: blue {valueA:0}, red {valueB:0}";
+                    GUI.Label(new Rect(bar.x + 500f, bar.y + 6f, 300f, 52f), _aliveLine.Text, _small);
                 }
                 if (GUI.Button(new Rect(bar.xMax - 300f, bar.y + 10f, 140f, 44f), "Reset", _bigButton)) sandbox.ResetBattle();
             }
@@ -120,8 +127,11 @@ namespace Halobellum.UI
             GUI.color = color;
             GUI.DrawTexture(new Rect(rect.x, rect.y + 6f, 14f, 14f), Texture2D.whiteTexture);
             GUI.color = old;
-            GUI.Label(new Rect(rect.x + 22f, rect.y, rect.width - 22f, rect.height),
-                $"{(team == Team.A ? "Blue" : "Red")}: {army.Squads.Count} squads, {sandbox.ArmyCost(team)} credits", _small);
+            HudLine line = team == Team.A ? _blueLine : _redLine;
+            int cost = sandbox.ArmyCost(team);
+            if (line.Changed(army.Squads.Count, cost))
+                line.Text = $"{(team == Team.A ? "Blue" : "Red")}: {army.Squads.Count} squads, {cost} credits";
+            GUI.Label(new Rect(rect.x + 22f, rect.y, rect.width - 22f, rect.height), line.Text, _small);
         }
 
         private void DrawUnitList(float width, float height)
@@ -165,7 +175,7 @@ namespace Halobellum.UI
                 bool placing = sandbox.PlacingType == stats;
                 HudTheme.RowBox(row);
                 if (placing) HudTheme.RowBox(row);
-                CardScreens.DrawUnitPicture(new Rect(row.x + 3f, row.y + 2f, 42f, 42f), stats, unit.Faction, UnitIcons.FactionColor(unit.Faction));
+                CardScreens.DrawUnitPicture(new Rect(row.x + 3f, row.y + 2f, 42f, 42f), stats, unit.BaseFaction, UnitIcons.FactionColor(unit.BaseFaction));
                 GUI.Label(new Rect(row.x + 50f, row.y, row.width - 150f, 27f), stats.Name, _text);
                 GUI.Label(new Rect(row.x + 50f, row.y + 24f, row.width - 150f, 20f), $"{RoleName(stats.Role)}, {Bodies(stats.FormsInSquad)}, {stats.Cost}", _small);
                 if (GUI.Button(new Rect(row.xMax - 92f, row.y + 7f, 86f, 32f), placing ? "Placing" : "Place", _button))

@@ -9,8 +9,8 @@ The field is no longer two flat grey-blue and grey-red zones. Each side of it lo
 - **Your half** (south, Team A) is your faction's ground. **The enemy's half** (north, Team B) is theirs. They meet in a rough, wandering line across no man's land, scattered with shell holes.
 - **The sky, sun, ambient light and haze** come from the player's faction.
 - **Deployment squares** are a separate overlay, in light and dark squares with a border in the team's colour. They are clear while placing and fade out over 0.8 s when a battle runs. They come back at the next deployment.
-- **Every unit has a soft blob** on the ground under it. A flyer's is fainter and wider, and it is thrown aside by the sun, so that one can see where it is over the ground.
-- **Before the draft** there is a default backdrop (whatever the last factions were, UNSC against Covenant at first). **In the Sandbox** the map follows the faction with the most squads on each side, a moment after the armies stop changing. It never changes during a battle.
+- **Every unit has a soft blob** on the ground under it. A flyer's is fainter and wider, and it is thrown aside by the sun in proportion to how high it really is, so that one can see where it is over the ground, and the blob closes in on a flyer as it dives.
+- **Before the draft** there is a default backdrop (whatever the last factions were, UNSC against Covenant at first). **In the Sandbox** the map follows the faction with the most squads on each side (a sub-faction's units count for the faction it belongs to), a moment after the armies stop changing. It never changes during a battle.
 
 ## The maps
 

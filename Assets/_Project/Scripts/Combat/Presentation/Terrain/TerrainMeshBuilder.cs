@@ -296,14 +296,17 @@ namespace Halobellum.Presentation
 
         /// <summary>
         /// A flat ribbon along points (x, z), its width running from start to end. soft fades both of its edges out; otherwise it is hard-edged.
+        /// taperEnds is how many metres each end takes to narrow and fade away to nothing, instead of stopping square; 0 keeps them square.
         /// </summary>
-        public void FlatRibbon(float y, IList<Vector2> points, float widthStart, float widthEnd, Color32 color, bool soft = false, Color32? endColor = null)
+        public void FlatRibbon(float y, IList<Vector2> points, float widthStart, float widthEnd, Color32 color, bool soft = false, Color32? endColor = null, float taperEnds = 0f)
         {
             int count = points.Count;
             if (count < 2) return;
             Color32 last = endColor ?? color;
             int across = soft ? 4 : 2;
             int first = _positions.Count;
+            float length = 0f, walked = 0f;
+            if (taperEnds > 0f) for (int i = 1; i < count; i++) length += Vector2.Distance(points[i - 1], points[i]);
             for (int i = 0; i < count; i++)
             {
                 Vector2 along = i == 0 ? points[1] - points[0] : i == count - 1 ? points[i] - points[i - 1] : points[i + 1] - points[i - 1];
@@ -312,6 +315,13 @@ namespace Halobellum.Presentation
                 float t = i / (float)(count - 1);
                 float half = Mathf.Lerp(widthStart, widthEnd, t) * 0.5f;
                 Color32 c = Color32.Lerp(color, last, t);
+                if (taperEnds > 0f)
+                {
+                    if (i > 0) walked += Vector2.Distance(points[i - 1], points[i]);
+                    float fade = Mathf.SmoothStep(0f, 1f, Mathf.Min(walked, length - walked) / taperEnds);
+                    half *= Mathf.Lerp(0.15f, 1f, fade);
+                    c.a = (byte)(c.a * fade);
+                }
                 Vector2 p = points[i];
                 if (soft)
                 {

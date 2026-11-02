@@ -71,7 +71,6 @@ namespace Halobellum.Presentation
             int shown = 0;
             if (simulation != null)
             {
-                float air = _views.AirHeight;
                 var units = simulation.Units;
                 for (int i = 0; i < units.Count && shown < Capacity; i++)
                 {
@@ -84,8 +83,9 @@ namespace Halobellum.Presentation
                     {
                         radius *= 1.35f;
                         strength = 0.5f;
-                        at.x += ThrowPerMetre.x * air;
-                        at.z += ThrowPerMetre.y * air;
+                        // From how high it really is: the blob closes in on a flyer as it dives.
+                        at.x += ThrowPerMetre.x * at.y;
+                        at.z += ThrowPerMetre.y * at.y;
                     }
                     int v = shown * 4;
                     float x0 = at.x - radius, x1 = at.x + radius, z0 = at.z - radius, z1 = at.z + radius;

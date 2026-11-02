@@ -46,6 +46,9 @@ namespace Halobellum.UI
         private GUIStyle _title, _big, _text, _small, _smallCentered, _button, _bigButton, _centered, _header, _barLabel, _wrap, _wrapDim;
         private float _scale;
         private Vector2 _shopScroll;
+        private readonly HudLine _yourBaseLine = new HudLine(), _enemyBaseLine = new HudLine(), _yourValueLine = new HudLine(), _enemyValueLine = new HudLine();
+
+        private void Awake() => useGUILayout = false; // Nothing here uses GUILayout. With the layout pass on, Unity makes new layout groups for this script every frame, which is garbage at every frame rate.
 
         private void OnGUI()
         {
@@ -125,8 +128,8 @@ namespace Halobellum.UI
             GUI.Label(new Rect(bar.x + 16f, bar.y + 32f, 260f, 26f), $"Credits {player.Credits}  (+{m.NextIncomeFor(Team.A)} next round)", _text);
             GUI.Label(new Rect(bar.x + 290f, bar.y + 6f, 220f, 26f), $"Squads bought: {player.SquadsBoughtThisRound} of {m.SquadsPerRound(Team.A)}", _text);
             GUI.Label(new Rect(bar.x + 290f, bar.y + 32f, 220f, 26f), $"Unlocks: {player.UnlocksThisRound} of {m.Rules.UnlocksPerRound}", _text);
-            BaseBar(new Rect(bar.x + 520f, bar.y + 10f, 220f, 20f), "Your base", player.BaseHealth, m.Rules.BaseHealth, playerColor);
-            BaseBar(new Rect(bar.x + 520f, bar.y + 36f, 220f, 20f), "Enemy base", m.Enemy.BaseHealth, m.Rules.BaseHealth, enemyColor);
+            BaseBar(new Rect(bar.x + 520f, bar.y + 10f, 220f, 20f), _yourBaseLine, "Your base", player.BaseHealth, m.Rules.BaseHealth, playerColor);
+            BaseBar(new Rect(bar.x + 520f, bar.y + 36f, 220f, 20f), _enemyBaseLine, "Enemy base", m.Enemy.BaseHealth, m.Rules.BaseHealth, enemyColor);
             GUI.Label(new Rect(bar.x + 760f, bar.y + 6f, 200f, 26f), $"{player.Faction.Name} vs {m.Enemy.Faction?.Name ?? "?"}", _small);
             GUI.Label(new Rect(bar.x + 760f, bar.y + 32f, 200f, 26f), m.EnemyAi.Label, _small);
             if (GUI.Button(new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f), "Ready", _bigButton)) match.Ready();
@@ -379,13 +382,20 @@ namespace Halobellum.UI
             float width = HudScale.ScaledWidth(_scale);
             var left = new Rect(10f, 8f, 280f, 64f);
             Panel(left);
-            BaseBar(new Rect(left.x + 12f, left.y + 10f, 256f, 20f), "Your base", m.Player.BaseHealth, m.Rules.BaseHealth, playerColor);
-            GUI.Label(new Rect(left.x + 12f, left.y + 34f, 256f, 24f), $"Army value {battle.AliveValue(Team.A):0}", _small);
+            BaseBar(new Rect(left.x + 12f, left.y + 10f, 256f, 20f), _yourBaseLine, "Your base", m.Player.BaseHealth, m.Rules.BaseHealth, playerColor);
+            GUI.Label(new Rect(left.x + 12f, left.y + 34f, 256f, 24f), ArmyValueText(_yourValueLine, Team.A), _small);
 
             var right = new Rect(width - 290f, 40f, 280f, 64f);
             Panel(right);
-            BaseBar(new Rect(right.x + 12f, right.y + 10f, 256f, 20f), "Enemy base", m.Enemy.BaseHealth, m.Rules.BaseHealth, enemyColor);
-            GUI.Label(new Rect(right.x + 12f, right.y + 34f, 256f, 24f), $"Army value {battle.AliveValue(Team.B):0}", _small);
+            BaseBar(new Rect(right.x + 12f, right.y + 10f, 256f, 20f), _enemyBaseLine, "Enemy base", m.Enemy.BaseHealth, m.Rules.BaseHealth, enemyColor);
+            GUI.Label(new Rect(right.x + 12f, right.y + 34f, 256f, 24f), ArmyValueText(_enemyValueLine, Team.B), _small);
+        }
+
+        private string ArmyValueText(HudLine line, Team team)
+        {
+            float value = battle.AliveValue(team);
+            if (line.Changed(HudLine.Whole(value))) line.Text = $"Army value {value:0}";
+            return line.Text;
         }
 
         // ------------------------------------------------------------------ result and match over
@@ -481,10 +491,11 @@ namespace Halobellum.UI
             HudTheme.PanelBox(rect);
         }
 
-        private void BaseBar(Rect rect, string label, int health, int maxHealth, Color color)
+        private void BaseBar(Rect rect, HudLine line, string label, int health, int maxHealth, Color color)
         {
             HudTheme.Bar(rect, maxHealth > 0 ? health / (float)maxHealth : 0f, color);
-            GUI.Label(rect, $"{label}: {Mathf.Max(0, health)} / {maxHealth}", _barLabel);
+            if (line.Changed(health, maxHealth)) line.Text = $"{label}: {Mathf.Max(0, health)} / {maxHealth}";
+            GUI.Label(rect, line.Text, _barLabel);
         }
 
         private static string Bodies(int count) => count == 1 ? "1 body" : $"{count} bodies";

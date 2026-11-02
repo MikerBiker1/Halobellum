@@ -9,6 +9,7 @@
 // The unit's picture (UnitIcons) is at the top. Placeholder UI drawn with Unity's immediate-mode GUI.
 // Depends on: Halobellum.Presentation (BattleController, SquadSelection, ISquadProgression, UiHitAreas), Halobellum.Core, UnitIcons.
 
+using System.Collections.Generic;
 using System.Text;
 using Halobellum.Combat;
 using Halobellum.Core;
@@ -26,6 +27,21 @@ namespace Halobellum.UI
         private ISquadProgression _progression;
         private GUIStyle _title, _text, _small, _center, _techName;
         private readonly StringBuilder _builder = new StringBuilder();
+
+        // OnGUI runs at least twice a frame, and what it shows here means a lot of new strings and a new view from the Match or Sandbox.
+        // So all of that is kept, and worked out again a few times a second, or at once if something a click could have changed.
+        private const float RefreshSeconds = 0.2f;
+        private float _nextRefresh;
+        private int _shownSquad = -1, _shownStyles = -1;
+        private UnitStats _shownStats;
+        private BattleSimulation _shownBattle;
+        private string _body, _side, _levelLine, _xpLine;
+        private float _textHeight;
+        private SquadProgressView _progress;
+        private readonly GUIContent _measure = new GUIContent();
+        private readonly List<string> _techNames = new List<string>(), _techEffects = new List<string>();
+
+        private void Awake() => useGUILayout = false; // Nothing here uses GUILayout. With the layout pass on, Unity makes new layout groups for this script every frame, which is garbage at every frame rate.
 
         private void Start()
         {
@@ -47,9 +63,11 @@ namespace Halobellum.UI
             if (sample == null) return;
             UnitStats s = sample.Stats;
 
-            string body = BuildText(s, alive, totalHealth);
-            float textHeight = _text.CalcHeight(new GUIContent(body), windowWidth - 24f);
-            SquadProgressView progress = _progression?.DescribeProgress(_selection.SelectedSquadId);
+            if (Time.unscaledTime >= _nextRefresh || _selection.SelectedSquadId != _shownSquad || s != _shownStats || _shownBattle != battle.Simulation || _shownStyles != _styleVersion)
+                Refresh(sample, alive, totalHealth);
+            string body = _body;
+            float textHeight = _textHeight;
+            SquadProgressView progress = _progress;
             float height = HeaderHeight + textHeight + ProgressHeight(progress);
             var window = new Rect(10f, HudScale.ScaledHeight(scale) - height - 10f, windowWidth, height);
             UiHitAreas.Add(HudScale.ToScreen(window, scale));
@@ -57,10 +75,35 @@ namespace Halobellum.UI
             HudTheme.PanelBox(window);
             CardScreens.DrawUnitPicture(new Rect(window.x + 10f, window.y + 6f, PictureSize, PictureSize), s, null, HudTheme.Accent);
             GUI.Label(new Rect(window.x + PictureSize + 18f, window.y + 6f, windowWidth - PictureSize - 56f, 30f), s.Name, _title);
-            GUI.Label(new Rect(window.x + PictureSize + 18f, window.y + 34f, windowWidth - PictureSize - 56f, 24f), progress?.SideLabel ?? $"Team {sample.Team}", _small);
+            GUI.Label(new Rect(window.x + PictureSize + 18f, window.y + 34f, windowWidth - PictureSize - 56f, 24f), _side, _small);
             if (GUI.Button(new Rect(window.xMax - 34f, window.y + 8f, 24f, 22f), "x")) _selection.Select(-1);
             GUI.Label(new Rect(window.x + 12f, window.y + HeaderHeight - 6f, windowWidth - 24f, textHeight), body, _text);
             if (progress != null) DrawProgress(progress, window.x + 12f, window.y + HeaderHeight - 2f + textHeight, windowWidth - 24f);
+            if (Event.current.type == EventType.MouseUp || Event.current.type == EventType.Used) _nextRefresh = 0f;
+        }
+
+        private void Refresh(SimUnit sample, int alive, float totalHealth)
+        {
+            _nextRefresh = Time.unscaledTime + RefreshSeconds;
+            _shownSquad = _selection.SelectedSquadId;
+            _shownStats = sample.Stats;
+            _shownBattle = battle.Simulation;
+            _shownStyles = _styleVersion;
+            _body = BuildText(sample.Stats, alive, totalHealth);
+            _measure.text = _body;
+            _textHeight = _text.CalcHeight(_measure, windowWidth - 24f);
+            _progress = _progression?.DescribeProgress(_shownSquad);
+            _side = _progress?.SideLabel ?? $"Team {sample.Team}";
+            _techNames.Clear();
+            _techEffects.Clear();
+            if (_progress == null) return;
+            _levelLine = $"Level {_progress.Level} of {_progress.MaxLevel}";
+            _xpLine = $"XP {_progress.Xp:0} / {_progress.XpNeeded:0}";
+            foreach (TechLine line in _progress.Techs)
+            {
+                _techNames.Add(line.Owned ? $"{line.Tech.Name}  (researched)" : line.Tech.Name);
+                _techEffects.Add(line.Tech.EffectsText());
+            }
         }
 
         private const float LineHeight = 24f, TechRowHeight = 44f, PictureSize = 56f, HeaderHeight = 72f;
@@ -80,7 +123,7 @@ namespace Halobellum.UI
         private void DrawProgress(SquadProgressView p, float x, float y, float width)
         {
             y += 10f;
-            GUI.Label(new Rect(x, y, 170f, LineHeight + 6f), $"Level {p.Level} of {p.MaxLevel}", _title);
+            GUI.Label(new Rect(x, y, 170f, LineHeight + 6f), _levelLine, _title);
             float buttonX = x + width;
             if (p.LevelUpLabel != null)
             {
@@ -100,7 +143,7 @@ namespace Halobellum.UI
             {
                 var bar = new Rect(x, y + 3f, width, 16f);
                 HudTheme.Bar(bar, p.XpNeeded > 0f ? p.Xp / p.XpNeeded : 0f, HudTheme.Accent);
-                GUI.Label(bar, $"XP {p.Xp:0} / {p.XpNeeded:0}", _center);
+                GUI.Label(bar, _xpLine, _center);
                 y += 22f;
             }
             if (!string.IsNullOrEmpty(p.Note))
@@ -119,11 +162,11 @@ namespace Halobellum.UI
 
             GUI.Label(new Rect(x, y, width, LineHeight), "Tech upgrades (every squad of this type):", _text);
             y += LineHeight;
-            foreach (TechLine line in p.Techs)
+            for (int i = 0; i < p.Techs.Count; i++)
             {
-                string name = line.Owned ? $"{line.Tech.Name}  (researched)" : line.Tech.Name;
-                GUI.Label(new Rect(x, y, width - 110f, 22f), name, _techName);
-                GUI.Label(new Rect(x, y + 20f, width - 110f, 22f), line.Tech.EffectsText(), _small);
+                TechLine line = p.Techs[i];
+                GUI.Label(new Rect(x, y, width - 110f, 22f), _techNames[i], _techName);
+                GUI.Label(new Rect(x, y + 20f, width - 110f, 22f), _techEffects[i], _small);
                 if (line.ButtonLabel != null)
                 {
                     GUI.enabled = line.ButtonEnabled;
@@ -208,8 +251,10 @@ namespace Halobellum.UI
             SimUnit sample = null;
             alive = 0;
             totalHealth = 0f;
-            foreach (SimUnit unit in battle.Simulation.Units)
+            IReadOnlyList<SimUnit> units = battle.Simulation.Units; // By index: this runs every frame, and foreach here would box an enumerator.
+            for (int i = 0; i < units.Count; i++)
             {
+                SimUnit unit = units[i];
                 if (unit.SquadId != squadId) continue;
                 if (sample == null) sample = unit;
                 if (!unit.IsAlive) continue;

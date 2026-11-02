@@ -178,8 +178,10 @@ namespace Halobellum.Presentation
         private void UpdateBattle()
         {
             float now = _shown.ElapsedSeconds;
-            foreach (SimSpell spell in _shown.Spells)
+            IReadOnlyList<SimSpell> spells = _shown.Spells; // By index: this runs every frame, and foreach here would box an enumerator.
+            for (int i = 0; i < spells.Count; i++)
             {
+                SimSpell spell = spells[i];
                 if (spell.IsOverAt(now)) continue;
                 // Revealed at the start: the area is outlined until it goes off; a running zone pulses.
                 bool active = spell.TicksDone > 0;

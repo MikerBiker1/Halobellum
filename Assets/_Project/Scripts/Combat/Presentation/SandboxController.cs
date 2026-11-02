@@ -28,12 +28,16 @@ namespace Halobellum.Presentation
         /// <summary>One unit type the sandbox offers, with the faction it comes from.</summary>
         public readonly struct SandboxUnit
         {
+            /// <summary>The heading it is listed under, such as "Covenant: Banished". Only a label.</summary>
             public readonly string Faction;
+            /// <summary>The faction itself, such as "Covenant": what terrain, icons and so on go by.</summary>
+            public readonly string BaseFaction;
             public readonly UnitStats Stats;
 
-            public SandboxUnit(string faction, UnitStats stats)
+            public SandboxUnit(string faction, UnitStats stats, string baseFaction = null)
             {
                 Faction = faction;
+                BaseFaction = baseFaction ?? faction;
                 Stats = stats;
             }
         }
@@ -98,7 +102,7 @@ namespace Halobellum.Presentation
                 foreach (UnitStats unit in info.BaseRoster) Units.Add(new SandboxUnit(info.Name, unit));
                 foreach (SubFactionInfo sub in info.SubFactions)
                 {
-                    foreach (UnitStats unit in sub.ExclusiveUnits) Units.Add(new SandboxUnit($"{info.Name}: {sub.Name}", unit));
+                    foreach (UnitStats unit in sub.ExclusiveUnits) Units.Add(new SandboxUnit($"{info.Name}: {sub.Name}", unit, info.Name));
                 }
                 foreach (CardStats card in info.Cards)
                 {

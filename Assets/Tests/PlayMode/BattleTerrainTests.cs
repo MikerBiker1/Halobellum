@@ -5,6 +5,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using Halobellum.Combat;
 using Halobellum.Core;
 using Halobellum.Economy;
 using Halobellum.Presentation;
@@ -221,6 +222,93 @@ namespace Halobellum.Tests
             float deadline = Time.realtimeSinceStartup + 3f;
             while (field.ShownFactionA != BattleFactions.Flood && Time.realtimeSinceStartup < deadline) yield return null;
             Assert.AreEqual(BattleFactions.Flood, field.ShownFactionA, "Blue is all Flood now.");
+        }
+
+        [UnityTest]
+        public IEnumerator SandboxScene_ASubFactionsArmyFightsOnItsFactionsGround()
+        {
+            yield return SceneManager.LoadSceneAsync("Sandbox", LoadSceneMode.Single);
+            yield return null;
+            var sandbox = Object.FindAnyObjectByType<SandboxController>();
+            var field = Object.FindAnyObjectByType<BattlefieldView>();
+
+            // Banished and plain Covenant squads count as one faction; a sub-faction's Flood is Flood.
+            SandboxController.SandboxUnit banished = sandbox.Units.Find(u => u.Faction.EndsWith("Banished"));
+            SandboxController.SandboxUnit covenant = sandbox.Units.Find(u => u.Faction == BattleFactions.Covenant);
+            SandboxController.SandboxUnit unsc = sandbox.Units.Find(u => u.Faction == BattleFactions.Unsc);
+            SandboxController.SandboxUnit infested = sandbox.Units.Find(u => u.Faction.StartsWith(BattleFactions.Flood + ":"));
+            Assert.AreEqual(BattleFactions.Covenant, banished.BaseFaction);
+            Assert.AreEqual(BattleFactions.Flood, infested.BaseFaction);
+            sandbox.AddSquad(Team.A, banished.Stats);
+            sandbox.AddSquad(Team.A, covenant.Stats);
+            sandbox.AddSquad(Team.A, unsc.Stats);
+            sandbox.AddSquad(Team.B, infested.Stats);
+            float deadline = Time.realtimeSinceStartup + 3f;
+            while (field.ShownFactionB != BattleFactions.Flood && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.AreEqual(BattleFactions.Covenant, field.ShownFactionA, "2 Covenant squads, one of them Banished, against 1 UNSC.");
+            Assert.AreEqual(BattleFactions.Flood, field.ShownFactionB);
+        }
+
+        [UnityTest]
+        public IEnumerator AFlyersBlob_IsThrownByItsRealHeight_SoItClosesInAsItDives()
+        {
+            yield return SceneManager.LoadSceneAsync("Sandbox", LoadSceneMode.Single);
+            yield return null;
+            var sandbox = Object.FindAnyObjectByType<SandboxController>();
+            var battle = Object.FindAnyObjectByType<BattleController>();
+            var views = battle.GetComponent<UnitViewManager>();
+            var blobs = Object.FindAnyObjectByType<UnitBlobShadows>();
+            sandbox.AddSquad(Team.A, sandbox.Units.Find(u => u.Stats.Name == "Infected Pelican").Stats);
+            sandbox.AddSquad(Team.B, sandbox.Units.Find(u => u.Stats.Name == "Marine").Stats);
+            sandbox.AddSquad(Team.B, sandbox.Units.Find(u => u.Stats.Name == "Marine").Stats);
+            yield return null;
+            battle.Speed = 4f;
+            sandbox.Run();
+            yield return null;
+            SimUnit pelican = null;
+            foreach (SimUnit unit in battle.Simulation.Units) if (unit.Stats.Name == "Infected Pelican") pelican = unit;
+            float deadline = Time.realtimeSinceStartup + 60f;
+            while (pelican.IsAlive && !(pelican.IsLeaping && pelican.LeapProgress > 0.5f) && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.IsTrue(pelican.IsAlive && pelican.IsLeaping, "It is on its way down.");
+            battle.Speed = 0f;
+            yield return null;
+            yield return null;
+
+            Assert.IsTrue(views.TryBodyPosition(pelican, out Vector3 at));
+            Assert.Less(at.y, views.AirHeight * 0.9f, "Well below its flying height.");
+            // The blobs are in the order of the living bodies.
+            int blob = 0;
+            foreach (SimUnit unit in battle.Simulation.Units)
+            {
+                if (unit == pelican) break;
+                if (unit.IsAlive) blob++;
+            }
+            Vector3[] vertices = GameObject.Find("Unit Blobs").GetComponent<MeshFilter>().sharedMesh.vertices;
+            Vector3 middle = (vertices[blob * 4] + vertices[blob * 4 + 2]) * 0.5f;
+            Assert.AreEqual(at.x + blobs.ThrowPerMetre.x * at.y, middle.x, 0.01f);
+            Assert.AreEqual(at.z + blobs.ThrowPerMetre.y * at.y, middle.z, 0.01f);
+        }
+
+        [Test]
+        public void ARibbonWithTaperedEnds_ComesToNothingAtBothEnds()
+        {
+            var points = new List<Vector2>();
+            for (int i = 0; i < 9; i++) points.Add(new Vector2(0f, i * 7f));
+            var builder = new TerrainMeshBuilder();
+            builder.FlatRibbon(0f, points, 4f, 4f, new Color32(10, 10, 10, 200), true, taperEnds: 14f);
+            Mesh mesh = builder.ToMesh("ribbon");
+            Color32[] colors = mesh.colors32;
+            Vector3[] vertices = mesh.vertices;
+            const int across = 4;
+            Assert.AreEqual(9 * across, vertices.Length);
+            Assert.AreEqual(0, colors[1].a, "The start has faded out.");
+            Assert.AreEqual(0, colors[8 * across + 1].a, "So has the end.");
+            Assert.AreEqual(200, colors[4 * across + 1].a, "The middle is as painted.");
+            float WidthAt(int row) => Mathf.Abs(vertices[row * across].x - vertices[row * across + 3].x);
+            Assert.Less(WidthAt(0), WidthAt(1));
+            Assert.Less(WidthAt(1), WidthAt(2));
+            Assert.AreEqual(4f, WidthAt(4), 0.001f);
+            Object.Destroy(mesh);
         }
     }
 }

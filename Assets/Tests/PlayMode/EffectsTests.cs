@@ -68,6 +68,51 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void FloodBombs_AreSickGreen_AndBurstInSpores_OthersStayFire()
+        {
+            var flood = new UnitStats { Name = "Infested Hornet", IsFlood = true };
+            WeaponLook spores = LookFor("Spore Bombs", 20f, shooter: flood, faction: BattleFactions.Flood);
+            Assert.AreEqual(WeaponFeelKind.Bomb, spores.Kind);
+            Assert.AreEqual(WeaponLooks.FloodPlasma, spores.Shot);
+            Assert.AreEqual(BlastStyle.Bio, spores.Blast);
+            Assert.AreEqual(ImpactStyle.Bio, spores.Impact);
+            Assert.AreEqual(WeaponLooks.RocketOrange, LookFor("Bombs", 20f).Shot, "A UNSC bomb is unchanged.");
+            Assert.AreEqual(BlastStyle.Fire, LookFor("Bombs", 20f).Blast);
+        }
+
+        [TestCase(30f, 1f)]
+        [TestCase(60f, 1f)]
+        [TestCase(165f, 1f)]
+        [TestCase(630f, 1f)]
+        [TestCase(60f, 2f)]
+        [TestCase(60f, 4f)]
+        [TestCase(165f, 4f)]
+        public void Dust_LooksAtEachBodyAsOftenAtAnyFrameRateAndSpeed(float framesPerSecond, float speed)
+        {
+            const int bodies = 192;
+            const float battleSeconds = 20f;
+            float delta = speed / framesPerSecond, due = 0f;
+            int looks = 0;
+            for (int frame = 0; frame < battleSeconds / delta; frame++) looks += CombatEffectsView.DustLooksThisFrame(delta, bodies, ref due);
+            float perBodyPerSecond = looks / (float)bodies / battleSeconds;
+            Assert.AreEqual(1f / CombatEffectsView.DustLookSeconds, perBodyPerSecond, 0.1f);
+        }
+
+        [Test]
+        public void HudLine_IsRebuiltOnlyWhenItsNumbersChange()
+        {
+            var line = new Halobellum.UI.HudLine();
+            Assert.IsTrue(line.Changed(0L), "Never built yet, even for a zero.");
+            Assert.IsFalse(line.Changed(0L));
+            Assert.IsTrue(line.Changed(1L, 2L));
+            Assert.IsFalse(line.Changed(1L, 2L));
+            Assert.IsTrue(line.Changed(1L, 2L, 3L, 4L));
+            Assert.AreEqual(line.Changed(1L, 2L, 3L, 4L), false);
+            Assert.AreEqual(3L, Halobellum.UI.HudLine.Whole(2.5f), "As the text rounds it.");
+            Assert.AreEqual(25L, Halobellum.UI.HudLine.Tenths(2.5f));
+        }
+
+        [Test]
         public void EachKindOfUnitDiesItsOwnWay()
         {
             Assert.AreEqual(DeathStyle.Infantry, DeathLooks.For(new UnitStats { ArmorType = ArmorType.Unarmored }));
@@ -291,6 +336,33 @@ namespace Halobellum.Tests
                 recipes.FloodBurst(to, 1f, false);
                 recipes.RunDue();
             }, Is.Not.AllocatingGCMemory());
+        }
+
+        [UnityTest]
+        public IEnumerator WhatTheHudAsksEveryFrameAllocatesNothing()
+        {
+            yield return LoadSandbox();
+            _sandbox.AddSquad(Team.A, Unit("Marine"));
+            _sandbox.AddSquad(Team.B, Unit("Grunt"));
+            yield return null;
+            _sandbox.Run();
+            yield return null;
+            _battle.CountAlive(Team.A);
+            _battle.AliveValue(Team.A);
+            Assert.That(() =>
+            {
+                _battle.CountAlive(Team.A);
+                _battle.CountAlive(Team.B);
+                _battle.AliveValue(Team.A);
+                _battle.AliveValue(Team.B);
+            }, Is.Not.AllocatingGCMemory());
+
+            // A script with OnGUI and the layout pass on makes new layout groups every frame.
+            foreach (MonoBehaviour hud in new MonoBehaviour[] { Object.FindAnyObjectByType<Halobellum.UI.BattleHud>(), Object.FindAnyObjectByType<Halobellum.UI.SandboxHud>(), Object.FindAnyObjectByType<Halobellum.UI.SquadStatsWindow>(), Object.FindAnyObjectByType<Halobellum.UI.PauseMenu>(), Object.FindAnyObjectByType<CameraShake>() })
+            {
+                Assert.IsNotNull(hud);
+                Assert.IsFalse(hud.useGUILayout, hud.GetType().Name);
+            }
         }
 
         [UnityTest]

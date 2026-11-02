@@ -191,8 +191,10 @@ namespace Halobellum.Presentation
         {
             int count = 0;
             if (Simulation == null) return count;
-            foreach (SimUnit unit in Simulation.Units)
+            IReadOnlyList<SimUnit> units = Simulation.Units; // By index: the HUD calls this every frame, and foreach here would box an enumerator.
+            for (int i = 0; i < units.Count; i++)
             {
+                SimUnit unit = units[i];
                 if (unit.Team == team && unit.IsAlive) count++;
             }
             return count;
@@ -203,8 +205,10 @@ namespace Halobellum.Presentation
         {
             float value = 0f;
             if (Simulation == null) return value;
-            foreach (SimUnit unit in Simulation.Units)
+            IReadOnlyList<SimUnit> units = Simulation.Units;
+            for (int i = 0; i < units.Count; i++)
             {
+                SimUnit unit = units[i];
                 if (unit.Team == team && unit.IsAlive) value += unit.Stats.Cost / (float)Math.Max(1, unit.Stats.SquadSize);
             }
             return value;
