@@ -26,6 +26,7 @@ Full tables and reasons are in `Docs/M10/subfactions.md`. Every number is in `ba
     - In AI-only matches Banished won 69% and Armored Division 62%, while Noble won 33% and Covenant-based 29%. The sample is small and it mixes in how well the AI plays each roster.
     - The Reaver, Chopper, Infested Warthog and Infested Ghost are weak, as flankers are across the game.
     - An older note: the Scarab beat 33 of 34 before the new units.
+    - Also over 60% average: Infested Elephant 91% and Infested Scarab 90% (above the real Elephant's 88% at the same 800 credits, with less health, because they release chaff), Vulture and Goliath 62%, Grizzly, Rhino and Sparrowhawk 60%.
 
 ## Models
 
@@ -46,11 +47,34 @@ Full tables and reasons are in `Docs/M10/subfactions.md`. Every number is in `ba
 ## Things you may want changed
 
 20. **Terrain:** each side shows its own faction's ground, and the sky and light follow the player. There are 3 layouts per faction, and the seed picks one for each side. Are the Covenant and Flood floors too busy behind units? That's the first thing to judge in a real game.
-21. **Wrecks:** a dead vehicle now stays as a burning wreck for 14 seconds of battle time (24 for a Titan), where it used to vanish at once. Keep it?
+21. **Wrecks:** a dead vehicle now stays as a burning wreck for 14 seconds of battle time (24 for a Titan), where it used to vanish at once. A reviewer found the fire was hidden inside the hull, so it now starts at the top of the hull and is bigger. Keep it?
 22. **Camera shake** is on, for big blasts. It can be turned off in Settings or with the K key. Too much?
 23. **Pause** is on Esc, and there's also a small Menu button at the bottom right. Keep the button?
 24. **Faction marks on the cards** are plain abstract shapes I made, on purpose nothing like the real insignia. You can replace them with your own (`Assets/_Project/Resources/CardArt/Emblems`).
 25. **Settings:** quality offers Low and High only (the project's two levels). UI scale runs 75% to 125%.
+
+## From the independent review
+
+Five reviewers played the merged game, and fixers corrected what they confirmed: 31 problems, all fixed and tested. These are the questions that were left.
+
+27. **Floor paint that looks like game markers.** The Quarry's survey crosses look like waypoints, and the Firebase's landing rings and the Sanctum's magenta rings look like spell areas. Nobody has tried a spell outline on top of them. Keep them, or change the shapes?
+28. **Massed flamethrowers** make a wall of orange that hides the fight behind it. It clearly reads as flamethrowers. Keep it, or thin the flames when many fire at once?
+29. **Flood's scavenged rockets and cannon shells** (Infested Hornet, Scorpion, Elephant) stay orange, as captured UNSC weapons, while other Flood shots are green. Keep, or make them green?
+30. **Dust** no longer depends on frame rate. I fixed it at what a 60 Hz screen used to get, so your 165 Hz screen shows less than it did. If it looks thin, it is one number: `DustLookSeconds` in `CombatEffectsView.cs`.
+31. **Hunters and Goliaths.** They die as a burning vehicle wreck, with the Covenant soldier's death sound, though they are colonies of worms. Do you want a gore death and a sound of their own?
+32. **Sound while paused or away.** Music keeps playing at full level behind the pause menu, and the game keeps running and sounding when you alt-tab. Dim it, or mute it?
+33. **Screens.** The frame-rate counter still shows in every battle. Hide it, or put it behind a setting? The draft screen still has its own Sandbox button and AI difficulty row, which the main menu now has too. Keep both?
+34. **Menu Scarab:** its panels now stay dark and glow only while the beam fires. Is that the look you want? The numbers are on `MenuBackdrop`.
+35. **Sandbox bar:** at UI scale 110% and up on a 16:9 window it sits right of centre to clear the Items panel, so it no longer lines up with the speed controls above it. Fine?
+36. **Unit pictures.** The Infested Marine is now an almost solid green soldier, at the battle tint's full strength. Soldiers are shown from the waist up everywhere, even on large cards. Spartan Sniper and Fireteam look the same, as do Grenadier and Heavy Weapons, because they share a body. The Skitterer and Methane Wagon borrow the nearest placeholder shapes. Any of these to change?
+37. **Infested vehicles differ only by a green tint.** At the game camera an Infested Scorpion looks much like a Scorpion. Do you want a stronger colour or growths, or wait for models?
+38. **Battle HUD garbage.** Collections fell by about 70%, to one every 2.7 s at 165 Hz. What's left is inside Unity's text drawing and would take rewriting the battle HUD. I recommend leaving it unless you feel hitches.
+
+## Things my test runs did to your PC
+
+- **Your game settings:** a fixer's test pressed Reset to defaults in a real run, so volumes and UI scale are at their defaults. Any values you had set are lost, because they weren't recorded first. Camera shake is on.
+- **The game's window:** test runs leave the game windowed at 1600 x 900. Change it in Settings if you want fullscreen.
+- **Real mouse input:** one fixer sent real clicks and wheel notches to test scrolling. Before it added a guard, a few may have landed on another open window. No harm was seen, but it can't be ruled out.
 
 ## Still to do from M9
 
@@ -61,4 +85,6 @@ Full tables and reasons are in `Docs/M10/subfactions.md`. Every number is in `ba
 - The selection marker is a solid bright yellow disc, not a ring.
 - Air units overlap into a blob in big fights.
 - The result line is hidden behind the Sandbox bar.
+- At exactly a 5:4 window with 125% UI, about 20 units of the Sandbox bar fall off each side.
+- At under 1480 units wide and UI scale 110% or more, a tall squad window can overlap the Sandbox's Items panel.
 - The faction asset files are still named `*_Standard.asset`. Only the file name is left over.

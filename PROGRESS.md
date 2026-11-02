@@ -126,6 +126,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] Main menu, settings, pause, game flow (D50)
 - [x] Cards with unit pictures and borders by kind and faction (D51)
 - [x] Merged: all tests, real matches for each faction and sub-faction tests, menu flow, card demo
+- [x] Independent review by area, and fixes for the 31 problems it confirmed
 - [ ] The owner's own Halo music and sound, in the slots (see MORNING_DECISIONS.md)
 - [ ] Models for the new units (see MORNING_DECISIONS.md)
 - [ ] The owner's play test of M10

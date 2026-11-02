@@ -25,10 +25,12 @@ Earlier reports are in this file's Git history. **M10 is built and merged**, and
 **D46 to D52** in `DECISIONS.md`, and the list in `MORNING_DECISIONS.md`.
 
 ## Test results
-- **Unity:** EditMode **535 / 535**, PlayMode **70 / 70**. **.NET harness:** **382 / 382**.
+- **Unity:** EditMode **591 / 591**, PlayMode **94 / 94**. **.NET harness:** **387 / 387**.
 - **Built game:** real matches as UNSC, Covenant, Flood, Noble and Banished, the menu demo through every screen (0 problems), the effects and terrain galleries and the card demo, with no exceptions in any log.
-- **Speed:** 192 bodies at 1x average 1.5 ms a frame with effects on, 7.7 ms for the slowest 1% of frames, on your PC.
+- **Independent review:** five reviewers played the merged game, and fixers corrected the 31 problems they confirmed. Among them: wrecks that didn't visibly burn, the camera shake setting doing nothing, battle sound carrying on through Esc, the Sandbox's wrong ground for exclusive units, and the mouse wheel zooming the camera while scrolling a list. Questions left are items 27 to 38.
+- **Speed:** 192 bodies at 1x average 1.35 ms a frame, 4.0 ms for the slowest 1% of frames (7.7 before the review), on your PC. Garbage collections fell from 492 to 144 in the same battle. The PC's load differed between the two measurements, so frame times are indicative.
 - **Not tested:** how anything sounds, since nobody has heard it, and how it moves or feels, since I only see still pictures.
+- **Check your settings:** my test runs reset your volumes and UI scale and left the window at 1600 x 900. See `MORNING_DECISIONS.md`.
 
 ## Blockers
 **Pushing:** a safety check blocked pushing the models, so all of this is only on your PC. See item 2 of `MORNING_DECISIONS.md`.
