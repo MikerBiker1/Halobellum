@@ -70,6 +70,10 @@ namespace Halobellum.Tests
             ("Cobra", "Marine"),
             ("Rhino", "Hornet"),
             ("Grizzly", "Gauss Warthog"),
+            ("Sparrowhawk", "Wolverine"),
+            ("Shortsword", "Wolverine"),
+            ("Vulture", "Wolverine"),
+            ("Condor Gunship", "Wolverine"),
         };
 
         // With the sub-factions there are 73 pairs: they run side by side, and may take longer than a test's usual 3 minutes on a busy machine.
@@ -78,7 +82,7 @@ namespace Halobellum.Tests
         {
             Dictionary<string, UnitStats> units = HeadlessRunnerTool.LoadSliceUnits()
                 .ToDictionary(u => u.unitName, HeadlessRunnerTool.ValidatedStats);
-            Assert.AreEqual(44, units.Count);
+            Assert.AreEqual(48, units.Count);
             CollectionAssert.AreEquivalent(units.Keys, BestCounters.Select(p => p.unit), "One line per slice unit.");
 
             CombatRules rules = HeadlessRunnerTool.LoadRules();

@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48a24a6f0743ea50b653bb6800d1d896, type: 3}
+  m_Name: Shortsword
+  m_EditorClassIdentifier: 
+  unitName: Shortsword
+  role: 7
+  tier: 2
+  unlockCost: 50
+  squadSize: 1
+  cost: 300
+  baseDamage: 60
+  maxHealth: 500
+  armorType: 1
+  maxShield: 0
+  shieldRegenPerSecond: 0
+  moveSpeed: 6
+  collisionRadius: 2.2
+  turnTime180: 1
+  isAir: 1
+  targetFilter: 0
+  weapons:
+  - weaponName: Carpet Bombs
+    damagePerShot: 150
+    fireInterval: 2.5
+    range: 5
+    minRange: 0
+    projectileSpeed: 18
+    splashRadius: 4.5
+    damageType: 1
+    isAntiArmor: 0
+    canBeBlocked: 0
+    hasOwnTargetFilter: 1
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+  hasDefenseArc: 0
+  defenseArc:
+    arcDegrees: 0
+    frontDamageMultiplier: 1
+    rearDamageMultiplier: 1
+    blockChance: 0
+    blockedDamageTypes: 
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
+  reinforcementNeedsUpgrade: 0
+  formsPerBody: 1
+  isFlood: 0
+  infects: 0
+  immuneToInfection: 0
+  selfDestructs: 0
+  seeksDensestCluster: 0
+  deathBurstDamage: 0
+  deathBurstRadius: 0
+  deathBurstDamageType: 0
+  deathBurstAntiArmor: 0
+  deathSpawns: []
+  spawnedUnit: {fileID: 0}
+  spawnedBodies: 0
+  spawnIntervalSeconds: 0
+  auraRadius: 0
+  auraSpeedMultiplier: 1
+  auraHealPerSecondShare: 0
+  lifestealShare: 0
+  leapRange: 0
+  leapSpeed: 0
+  leapCooldownSeconds: 0
+  techUpgrades:
+  - {fileID: 11400000, guid: 5818399dec2da06bc7f5178e4c81415b, type: 2}
+  - {fileID: 11400000, guid: 82bcf133f7bae7c09c2b2d808e3794ea, type: 2}
+  - {fileID: 11400000, guid: 5f9cdf7253d790b133f653f1e69336bc, type: 2}
+  prefab: {fileID: 6396316152911016219, guid: a54e6b344d286f94f8781d1a3c4d39a1, type: 3}
+  keepsOwnMaterials: 0
+  bakedBody: {fileID: 0}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
+  strongAgainst: Ground armies without anti-air
+  weakAgainst: Anti-air
+  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Vampire (100%). Bomber. It has to fly over its target, and cannot fight other aircraft at all. First-pass M10 values, Aerospace Command (Docs/M10/subfactions.md).'

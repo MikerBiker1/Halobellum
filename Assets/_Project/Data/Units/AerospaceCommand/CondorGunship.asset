@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48a24a6f0743ea50b653bb6800d1d896, type: 3}
+  m_Name: CondorGunship
+  m_EditorClassIdentifier: 
+  unitName: Condor Gunship
+  role: 7
+  tier: 3
+  unlockCost: 225
+  squadSize: 1
+  cost: 450
+  baseDamage: 90
+  maxHealth: 1500
+  armorType: 1
+  maxShield: 0
+  shieldRegenPerSecond: 0
+  moveSpeed: 3.25
+  collisionRadius: 3
+  turnTime180: 1.5
+  isAir: 1
+  targetFilter: 2
+  weapons:
+  - weaponName: Twin Autocannons
+    damagePerShot: 20
+    fireInterval: 0.25
+    range: 16
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 0
+    damageType: 0
+    isAntiArmor: 0
+    canBeBlocked: 0
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+  hasDefenseArc: 0
+  defenseArc:
+    arcDegrees: 0
+    frontDamageMultiplier: 1
+    rearDamageMultiplier: 1
+    blockChance: 0
+    blockedDamageTypes: 
+  reinforcementUnit: {fileID: 11400000, guid: 63fe08127caa6095039aa26ce7f4e1c8, type: 2}
+  reinforcementBodies: 6
+  reinforcementDelaySeconds: 7
+  reinforcementNeedsUpgrade: 0
+  formsPerBody: 1
+  isFlood: 0
+  infects: 0
+  immuneToInfection: 0
+  selfDestructs: 0
+  seeksDensestCluster: 0
+  deathBurstDamage: 0
+  deathBurstRadius: 0
+  deathBurstDamageType: 0
+  deathBurstAntiArmor: 0
+  deathSpawns: []
+  spawnedUnit: {fileID: 0}
+  spawnedBodies: 0
+  spawnIntervalSeconds: 0
+  auraRadius: 0
+  auraSpeedMultiplier: 1
+  auraHealPerSecondShare: 0
+  lifestealShare: 0
+  leapRange: 0
+  leapSpeed: 0
+  leapCooldownSeconds: 0
+  techUpgrades:
+  - {fileID: 11400000, guid: 5cfb2a00ab6505104641697605f3029b, type: 2}
+  - {fileID: 11400000, guid: 76f76226365fbb866a15928665b1a8cc, type: 2}
+  prefab: {fileID: 1959006208111979667, guid: 6a0e9c7d3028e1c498ddf62740276e95, type: 3}
+  keepsOwnMaterials: 1
+  bakedBody: {fileID: 0}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
+  strongAgainst: Ground armies without anti-air
+  weakAgainst: Anti-air
+  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Reaver (100%). A gunship that also drops 6 Marines after 7 seconds, without needing a tech. First-pass M10 values, Aerospace Command (Docs/M10/subfactions.md).'
