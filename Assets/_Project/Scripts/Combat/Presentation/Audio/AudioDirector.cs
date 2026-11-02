@@ -241,12 +241,12 @@ namespace Halobellum.Presentation
         }
 
         /// <summary>An effect with no place: centred, at its own loudness.</summary>
-        public void PlaySfx(SfxCue cue) => Start(cue, false, default);
+        public void PlaySfx(SfxCue cue) => Begin(cue, false, default);
 
         /// <summary>An effect from a place in the world: panned by where it is on screen.</summary>
-        public void PlaySfx(SfxCue cue, Vector3 world) => Start(cue, true, world);
+        public void PlaySfx(SfxCue cue, Vector3 world) => Begin(cue, true, world);
 
-        private void Start(SfxCue cue, bool placed, Vector3 world)
+        private void Begin(SfxCue cue, bool placed, Vector3 world)
         {
             if (cue == null || BattlePaused) return;
             if (!_limiter.TryStart((int)cue.Group, _battleClock))
