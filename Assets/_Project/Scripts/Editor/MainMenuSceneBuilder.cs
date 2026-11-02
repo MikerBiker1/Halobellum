@@ -825,7 +825,7 @@ namespace Halobellum.EditorTools
             Group("Pelican_Model", new Vector3(-235f, 40f, 84f), new Vector3(330f, 56f, 138f), 46f, 7f, 21f, -7f, 1.5f,
                 Vector3.zero, new Vector3(-30f, -5f, 24f), new Vector3(-62f, 6f, -20f));
             // Two passing right overhead, going away toward the Scarab.
-            Group("Pelican_Model", new Vector3(-38f, 16f, -75f), new Vector3(70f, 72f, 420f), 73f, -18f, 24f, 8f, 1.5f,
+            Group("Pelican_Model", new Vector3(14f, 15f, -75f), new Vector3(120f, 74f, 420f), 73f, -18f, 24f, 8f, 1.5f,
                 Vector3.zero, new Vector3(26f, 6f, -22f));
             // A long way off, the other way across the sky.
             Group("Pelican_Model", new Vector3(560f, 118f, 480f), new Vector3(-560f, 92f, 430f), 61f, -6f, 40f, 0f, 1.5f,

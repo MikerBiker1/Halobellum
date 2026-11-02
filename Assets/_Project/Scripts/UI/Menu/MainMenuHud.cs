@@ -82,7 +82,7 @@ namespace Halobellum.UI
 
             float left = Mathf.Max(56f, width * 0.05f);
             float top = height * 0.13f;
-            float titleWidth = MenuStyle.SpacedText(left, top, Title, MenuStyle.Title, 7f, MenuStyle.Ink);
+            float titleWidth = MenuStyle.SpacedText(left, top, Title, MenuStyle.Title, 7f, Color.white);
             float underTitle = top + MenuStyle.Title.CalcSize(new GUIContent("H")).y + 6f;
             MenuStyle.FadeRight(new Rect(left, underTitle, titleWidth, 2f), MenuStyle.Accent);
 

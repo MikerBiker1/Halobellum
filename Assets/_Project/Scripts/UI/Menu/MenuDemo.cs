@@ -57,6 +57,18 @@ namespace Halobellum.UI
             yield return Wait(0.4f);
             Check("Settings opens from the menu", FindAnyObjectByType<MainMenuHud>().ShowingSettings);
             yield return Shot("04_settings");
+
+            // The Low quality level, without saving it: it must still draw the whole picture.
+            int quality = QualitySettings.GetQualityLevel();
+            if (QualitySettings.names.Length > 1)
+            {
+                QualitySettings.SetQualityLevel(0, true);
+                yield return Wait(1f);
+                yield return Shot("04b_settings_low_quality");
+                QualitySettings.SetQualityLevel(quality, true);
+                QualitySettings.vSyncCount = 0;
+                yield return Wait(0.3f);
+            }
             yield return Press("Back");
             yield return Wait(0.3f);
             Check("Back closes Settings", !FindAnyObjectByType<MainMenuHud>().ShowingSettings);

@@ -68,9 +68,9 @@ namespace Halobellum.UI
         public Transform walker;
         public Vector3 walkerStart;
         public Vector3 walkerDirection = Vector3.back;
-        public float walkerSpeed = 1.2f;
+        public float walkerSpeed = 0.9f;
         [Tooltip("It stops after this many metres, so that it never reaches the camera.")]
-        public float walkerDistance = 90f;
+        public float walkerDistance = 60f;
         public Leg[] legs = Array.Empty<Leg>();
         public float legDegrees = 5f;
 

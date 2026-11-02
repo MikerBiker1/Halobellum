@@ -189,6 +189,14 @@ namespace Halobellum.UI
             return pressed;
         }
 
+        /// <summary>An invisible button over something drawn by hand: its label is not drawn, but the test tool can still find it.</summary>
+        private static bool HiddenButton(Rect rect, string key)
+        {
+            bool pressed = GUI.Button(rect, GUIContent.none, _clear) || TestPressed(key);
+            if (pressed) Clicked?.Invoke();
+            return pressed;
+        }
+
         private static bool TestPressed(string key)
         {
             if (PressedByTest != key || Event.current.type != EventType.Repaint || !GUI.enabled) return false;
@@ -210,7 +218,7 @@ namespace Halobellum.UI
                 style.Draw(new Rect(rect.x + (hover ? 30f : 24f), rect.y, rect.width - 30f, rect.height), label, false, false, false, false);
                 style.normal.textColor = old;
             }
-            return Button(rect, label, _clear);
+            return HiddenButton(rect, label);
         }
 
         /// <summary>A small framed button, lit when selected or hovered.</summary>
@@ -219,15 +227,16 @@ namespace Halobellum.UI
             bool hover = rect.Contains(Event.current.mousePosition);
             if (Event.current.type == EventType.Repaint)
             {
-                Fill(rect, selected ? new Color(Accent.r, Accent.g, Accent.b, 0.26f) : new Color(1f, 1f, 1f, hover ? 0.1f : 0.035f));
+                Fill(rect, new Color(0.03f, 0.03f, 0.045f, 0.62f));
+                Fill(rect, selected ? new Color(Accent.r, Accent.g, Accent.b, 0.26f) : new Color(1f, 1f, 1f, hover ? 0.1f : 0.03f));
                 Outline(rect, selected ? Accent : hover ? new Color(Accent.r, Accent.g, Accent.b, 0.7f) : Edge);
                 GUIStyle style = SmallButton;
                 Color old = style.normal.textColor;
-                style.normal.textColor = selected || hover ? Ink : DimInk;
+                style.normal.textColor = selected || hover ? Ink : Color.Lerp(DimInk, Ink, 0.45f);
                 style.Draw(rect, label, false, false, false, false);
                 style.normal.textColor = old;
             }
-            return Button(rect, label, _clear, key);
+            return HiddenButton(rect, key ?? label);
         }
 
         /// <summary>Side-by-side choices. Returns the one selected now. The key of each is its row's name and its label.</summary>

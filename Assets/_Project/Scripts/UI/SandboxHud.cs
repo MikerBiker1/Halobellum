@@ -1,7 +1,7 @@
 // SandboxHud.cs
 // The sandbox screen (Milestone 4): a side switch (blue / red), the units of every faction to place
 // on that side, both armies' totals, actions for the selected squad (Move, Turn, Remove), and Run /
-// Reset, Clear side, Copy side, the battle seed and a button back to the match. An Items panel on the
+// Reset, Clear side, Copy side, the battle seed and a Back button (to the match or the main menu, whichever opened it: GameFlow). An Items panel on the
 // left offers every item for free (decision D34): drag one onto the hexagon over a squad of either
 // side. Speed controls and the battle result line come from BattleHud; the squad stats window from
 // SquadStatsWindow.

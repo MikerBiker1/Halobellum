@@ -24,7 +24,7 @@ namespace Halobellum.Presentation
         public const string UiScaleKey = "Ui.Scale";
 
         public const float DefaultMasterVolume = 1f, DefaultMusicVolume = 0.6f, DefaultSfxVolume = 1f, DefaultUiVolume = 1f;
-        public const float SmallestUiScale = 0.75f, LargestUiScale = 1.5f, UiScaleStep = 0.05f;
+        public const float SmallestUiScale = 0.75f, LargestUiScale = 1.25f, UiScaleStep = 0.05f;
 
         private static float _uiScale = -1f;
 
