@@ -1136,6 +1136,7 @@ namespace Halobellum.Combat
                 if (weapon.SeedSeconds > 0f) PlantSeed(directTarget, attacker, weapon);
                 if (weapon.HitSlowSeconds > 0f) ApplyHitSlow(directTarget, weapon);
             }
+            Events.RaiseShotLanded(attacker, weapon, impactPoint);
 
             if (weapon.IsCone)
             {

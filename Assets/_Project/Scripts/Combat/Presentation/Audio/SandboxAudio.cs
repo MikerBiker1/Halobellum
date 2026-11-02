@@ -1,5 +1,5 @@
 // SandboxAudio.cs
-// The sound of the Sandbox: its music follows BattleFactions (deployment while placing, battle while fighting), a squad placed drops in, a squad
+// The sound of the Sandbox: its music follows BattleFactions, which the SandboxController keeps up with the armies placed (deployment while placing, battle while fighting), a squad placed drops in, a squad
 // removed sounds sold, and pressing Run starts the battle with its sound. The SandboxController has no events, so its state is watched here each frame.
 // Added at run time to the object with the SandboxController (see AudioDirector).
 // Depends on: AudioDirector, AudioSlots, SandboxController, WeaponFeel (BattleFactions), UnityEngine.

@@ -3,9 +3,10 @@
 // events; visuals, sound, UI and statistics subscribe to them instead of reading the simulation
 // directly. Unit positions change every tick, so instead of one event per unit move there is a
 // single Ticked event after each tick; listeners then read unit positions.
-// Depends on: SimUnit, BattleResult.
+// Depends on: SimUnit, BattleResult, Halobellum.Core (WeaponStats, Vec2).
 
 using System;
+using Halobellum.Core;
 
 namespace Halobellum.Combat
 {
@@ -17,6 +18,8 @@ namespace Halobellum.Combat
         public event Action<SimUnit, int> ReinforcementDropped;
         /// <summary>A weapon fired: attacker, weapon index on the attacker, target.</summary>
         public event Action<SimUnit, int, SimUnit> WeaponFired;
+        /// <summary>A shot arrived and was not blocked: attacker, the weapon that fired it, where. Once per shot, however many it hits, and also if it hits nothing.</summary>
+        public event Action<SimUnit, WeaponStats, Vec2> ShotLanded;
         /// <summary>A unit took damage: target, attacker, damage removed from shield and health.</summary>
         public event Action<SimUnit, SimUnit, float> UnitDamaged;
         /// <summary>A defense arc blocked a projectile: target, attacker.</summary>
@@ -37,6 +40,7 @@ namespace Halobellum.Combat
         internal void RaiseUnitSpawned(SimUnit unit) => UnitSpawned?.Invoke(unit);
         internal void RaiseReinforcementDropped(SimUnit carrier, int squadId) => ReinforcementDropped?.Invoke(carrier, squadId);
         internal void RaiseWeaponFired(SimUnit attacker, int weaponIndex, SimUnit target) => WeaponFired?.Invoke(attacker, weaponIndex, target);
+        internal void RaiseShotLanded(SimUnit attacker, WeaponStats weapon, Vec2 point) => ShotLanded?.Invoke(attacker, weapon, point);
         internal void RaiseUnitDamaged(SimUnit target, SimUnit attacker, float amount) => UnitDamaged?.Invoke(target, attacker, amount);
         internal void RaiseAttackBlocked(SimUnit target, SimUnit attacker) => AttackBlocked?.Invoke(target, attacker);
         internal void RaiseUnitDied(SimUnit unit, SimUnit killer) => UnitDied?.Invoke(unit, killer);

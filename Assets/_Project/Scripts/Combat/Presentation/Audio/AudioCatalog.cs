@@ -191,6 +191,13 @@ namespace Halobellum.Presentation
             }
         }
 
+        /// <summary>The explosion a shot from this weapon makes where it lands, or null. A plasma shot with a blast is drawn going off, so it is heard going off too.</summary>
+        public static SfxCue LandingOf(WeaponStats weapon)
+        {
+            WeaponFeelKind kind = WeaponFeel.For(weapon);
+            return kind == WeaponFeelKind.Plasma && weapon.SplashRadius > 0f ? ExplosionSmall : LandingOf(kind);
+        }
+
         /// <summary>The explosion a hit from this weapon kind makes where it lands, or null.</summary>
         public static SfxCue LandingOf(WeaponFeelKind kind)
         {

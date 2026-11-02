@@ -2,7 +2,7 @@
 // All the sound of the game comes out of here (M10). Made at run time before the first scene, it survives scene loads. It keeps
 // a fixed pool of AudioSources: nothing is created during a battle. The camera is high and far, so sounds are not placed in 3D: they
 // are 2D, panned by where they are on screen, a little quieter off screen. Each kind of sound has a limit on how many may play at
-// once (AudioCatalog) and a random pitch, so that 200 rifles neither deafen nor cost much. Battle sounds pause with the battle;
+// once (AudioCatalog) and a random pitch, so that 200 rifles neither deafen nor cost much. Battle sounds pause with the battle or the game;
 // music and UI sounds do not. The volumes are read from PlayerPrefs every half second ("Volume.Master", "Volume.Music", "Volume.Sfx",
 // "Volume.Ui"), so the settings screen only has to write them.
 // Clicks are found without touching any HUD code: an IMGUI button takes "hot control" when the mouse goes down on it, and that is watched here.
@@ -57,6 +57,8 @@ namespace Halobellum.Presentation
         public bool BattlePaused { get; private set; }
         public bool IsMuted { get; private set; }
         public int ActiveSfxVoices { get; private set; }
+        /// <summary>True while an engine or hover hum is really sounding (not held by a pause).</summary>
+        public bool AnyHumPlaying => _engineHum.isPlaying || _hoverHum.isPlaying;
 
         private sealed class Voice
         {
@@ -171,6 +173,7 @@ namespace Halobellum.Presentation
             _camera = null;
             _checkListener = true;
             StopBattleSounds();
+            Music.StopStinger(); // It belongs to the screen that was left.
             HandleScene(scene.name);
         }
 
@@ -429,6 +432,13 @@ namespace Halobellum.Presentation
             }
             if (!source.isPlaying)
             {
+                // Nothing wants it any more, and it's still held from a pause the battle was left in: it must not start again just to fade out.
+                if (target <= 0f)
+                {
+                    level = 0f;
+                    source.Stop();
+                    return;
+                }
                 AudioClip clip = cue.Clips.Pick(0f);
                 if (clip == null) return;
                 source.clip = clip;

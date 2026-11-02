@@ -42,7 +42,7 @@ namespace Halobellum.Presentation
             string n = (name ?? "").ToLowerInvariant();
             if (n.Contains("crash") || n == "burst" || n.Contains("explo") || n.Contains("self")) return WeaponFeelKind.Burst;
             if (n.Contains("fuel rod bomb") || n.Contains("bomb")) return WeaponFeelKind.Bomb;
-            if (n.Contains("fuel rod") || n.Contains("mortar")) return WeaponFeelKind.PlasmaHeavy;
+            if (n.Contains("fuel rod") || n.Contains("mortar") || n.Contains("assault cannon")) return WeaponFeelKind.PlasmaHeavy; // The Hunter's assault cannon is a heavy plasma gun, whatever its name says.
             if (n.Contains("needle")) return WeaponFeelKind.Needle;
             if (n.Contains("plasma")) return WeaponFeelKind.Plasma;
             if (n.Contains("flame") || n.Contains("fire") || n.Contains("m7057")) return WeaponFeelKind.Flame;
