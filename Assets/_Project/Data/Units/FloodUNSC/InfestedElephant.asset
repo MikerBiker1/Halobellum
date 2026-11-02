@@ -1,0 +1,146 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48a24a6f0743ea50b653bb6800d1d896, type: 3}
+  m_Name: InfestedElephant
+  m_EditorClassIdentifier: 
+  unitName: Infested Elephant
+  role: 8
+  tier: 4
+  unlockCost: 350
+  squadSize: 1
+  cost: 800
+  baseDamage: 160
+  maxHealth: 8500
+  armorType: 2
+  maxShield: 0
+  shieldRegenPerSecond: 0
+  moveSpeed: 0.6
+  collisionRadius: 5
+  turnTime180: 3
+  isAir: 0
+  targetFilter: 2
+  weapons:
+  - weaponName: Scavenged Main Cannon
+    damagePerShot: 180
+    fireInterval: 3
+    range: 18
+    minRange: 0
+    projectileSpeed: 40
+    splashRadius: 2
+    damageType: 1
+    isAntiArmor: 1
+    canBeBlocked: 0
+    hasOwnTargetFilter: 1
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+  - weaponName: Scavenged Turret (left)
+    damagePerShot: 7
+    fireInterval: 0.2
+    range: 13
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 0
+    damageType: 0
+    isAntiArmor: 0
+    canBeBlocked: 1
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+  - weaponName: Scavenged Turret (right)
+    damagePerShot: 7
+    fireInterval: 0.2
+    range: 13
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 0
+    damageType: 0
+    isAntiArmor: 0
+    canBeBlocked: 1
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+  hasDefenseArc: 0
+  defenseArc:
+    arcDegrees: 0
+    frontDamageMultiplier: 1
+    rearDamageMultiplier: 1
+    blockChance: 0
+    blockedDamageTypes: 
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
+  reinforcementNeedsUpgrade: 0
+  formsPerBody: 1
+  isFlood: 1
+  infects: 0
+  immuneToInfection: 0
+  selfDestructs: 0
+  seeksDensestCluster: 0
+  deathBurstDamage: 0
+  deathBurstRadius: 0
+  deathBurstDamageType: 0
+  deathBurstAntiArmor: 0
+  deathSpawns: []
+  spawnedUnit: {fileID: 11400000, guid: c70a94de2cd0e45ae6e3484b1029decd, type: 2}
+  spawnedBodies: 4
+  spawnIntervalSeconds: 12
+  auraRadius: 0
+  auraSpeedMultiplier: 1
+  auraHealPerSecondShare: 0
+  lifestealShare: 0
+  leapRange: 0
+  leapSpeed: 0
+  leapCooldownSeconds: 0
+  techUpgrades:
+  - {fileID: 11400000, guid: f77a4eb9548202ed3b7d45c05836b31f, type: 2}
+  - {fileID: 11400000, guid: 53cd34846da323f637060949536a0ede, type: 2}
+  prefab: {fileID: 8511184404057770477, guid: 1ab041763d476a143a0e8077bc6f768c, type: 3}
+  keepsOwnMaterials: 1
+  bakedBody: {fileID: 0}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
+  strongAgainst: Most things in a straight fight
+  weakAgainst: 'Single-target DPS, large chaff swarms'
+  notes: 'Best counters (headless runner, equal cost): Hunter Captain (100%), Combat Form (100%). A rolling hive: it releases 4 Infested Marines every 12 seconds. First-pass M10 values, UNSC-based (Docs/M10/subfactions.md).'

@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48a24a6f0743ea50b653bb6800d1d896, type: 3}
+  m_Name: Juggernaut
+  m_EditorClassIdentifier: 
+  unitName: Juggernaut
+  role: 4
+  tier: 3
+  unlockCost: 225
+  squadSize: 1
+  cost: 450
+  baseDamage: 90
+  maxHealth: 2300
+  armorType: 2
+  maxShield: 0
+  shieldRegenPerSecond: 0
+  moveSpeed: 3.25
+  collisionRadius: 1.8
+  turnTime180: 1
+  isAir: 0
+  targetFilter: 0
+  weapons:
+  - weaponName: Crushing Charge
+    damagePerShot: 130
+    fireInterval: 1.2
+    range: 2.5
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 2.5
+    damageType: 4
+    isAntiArmor: 0
+    canBeBlocked: 0
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+  hasDefenseArc: 0
+  defenseArc:
+    arcDegrees: 0
+    frontDamageMultiplier: 1
+    rearDamageMultiplier: 1
+    blockChance: 0
+    blockedDamageTypes: 
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
+  reinforcementNeedsUpgrade: 0
+  formsPerBody: 1
+  isFlood: 1
+  infects: 0
+  immuneToInfection: 0
+  selfDestructs: 0
+  seeksDensestCluster: 0
+  deathBurstDamage: 0
+  deathBurstRadius: 0
+  deathBurstDamageType: 0
+  deathBurstAntiArmor: 0
+  deathSpawns: []
+  spawnedUnit: {fileID: 0}
+  spawnedBodies: 0
+  spawnIntervalSeconds: 0
+  auraRadius: 0
+  auraSpeedMultiplier: 1
+  auraHealPerSecondShare: 0
+  lifestealShare: 0
+  leapRange: 10
+  leapSpeed: 14
+  leapCooldownSeconds: 6
+  techUpgrades:
+  - {fileID: 11400000, guid: c0c8b66a106906b38ab80e685bfe35cf, type: 2}
+  - {fileID: 11400000, guid: 6a30c760c5c89937a42234f1586f0b9e, type: 2}
+  - {fileID: 11400000, guid: a877b4fd9c5c4a05cf348f8bad157da3, type: 2}
+  prefab: {fileID: 1263869980934676208, guid: 59a58553801f92542bb8cba426182048, type: 3}
+  keepsOwnMaterials: 0
+  bakedBody: {fileID: 0}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
+  strongAgainst: 'Artillery, DPS'
+  weakAgainst: 'Chaff clear, tanks'
+  notes: 'Best counters (headless runner, equal cost): Scorpion (100%), Mantis (100%). A pure form the size of a tank that moves like a flanker and leaps onto what it hunts. First-pass M10 values, UNSC-based (Docs/M10/subfactions.md).'

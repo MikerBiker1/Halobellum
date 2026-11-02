@@ -1,0 +1,122 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48a24a6f0743ea50b653bb6800d1d896, type: 3}
+  m_Name: InfestedMarine
+  m_EditorClassIdentifier: 
+  unitName: Infested Marine
+  role: 0
+  tier: 1
+  unlockCost: 0
+  squadSize: 12
+  cost: 100
+  baseDamage: 1.6667
+  maxHealth: 110
+  armorType: 0
+  maxShield: 0
+  shieldRegenPerSecond: 0
+  moveSpeed: 2.25
+  collisionRadius: 0.5
+  turnTime180: 0.25
+  isAir: 0
+  targetFilter: 0
+  weapons:
+  - weaponName: Scythe Limb
+    damagePerShot: 20
+    fireInterval: 0.8
+    range: 1.5
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 0
+    damageType: 4
+    isAntiArmor: 0
+    canBeBlocked: 0
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+  - weaponName: Scavenged Rifle
+    damagePerShot: 4
+    fireInterval: 0.5
+    range: 10
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 0
+    damageType: 0
+    isAntiArmor: 0
+    canBeBlocked: 1
+    hasOwnTargetFilter: 1
+    targetFilter: 2
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+  hasDefenseArc: 0
+  defenseArc:
+    arcDegrees: 0
+    frontDamageMultiplier: 1
+    rearDamageMultiplier: 1
+    blockChance: 0
+    blockedDamageTypes: 
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
+  reinforcementNeedsUpgrade: 0
+  formsPerBody: 1
+  isFlood: 1
+  infects: 0
+  immuneToInfection: 0
+  selfDestructs: 0
+  seeksDensestCluster: 0
+  deathBurstDamage: 0
+  deathBurstRadius: 0
+  deathBurstDamageType: 0
+  deathBurstAntiArmor: 0
+  deathSpawns: []
+  spawnedUnit: {fileID: 0}
+  spawnedBodies: 0
+  spawnIntervalSeconds: 0
+  auraRadius: 0
+  auraSpeedMultiplier: 1
+  auraHealPerSecondShare: 0
+  lifestealShare: 0
+  leapRange: 4
+  leapSpeed: 10
+  leapCooldownSeconds: 4
+  techUpgrades:
+  - {fileID: 11400000, guid: df1f4de72d3c01c4341b8999bdc1bcb4, type: 2}
+  - {fileID: 11400000, guid: 1b4c6b650ed3dd334f13e63d7d424c4f, type: 2}
+  prefab: {fileID: 4340932343587113536, guid: 84696f4d4238fb34fb031899847709e2, type: 3}
+  keepsOwnMaterials: 0
+  bakedBody: {fileID: 11400000, guid: b0c8cf6e56807b5c59eb2c7f1e0dc9b2, type: 2}
+  bakedTint: {r: 0.55, g: 0.68, b: 0.18, a: 0.55}
+  bakedScale: 1
+  strongAgainst: Single-target DPS
+  weakAgainst: Chaff clear
+  notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Fuel Rod Grunt (100%). Fewer bodies than a Marine squad, each much tougher: it leaps in with a scythe limb. Cannot infect, as only Infection Forms do. First-pass M10 values, UNSC-based (Docs/M10/subfactions.md).'

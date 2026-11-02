@@ -28,9 +28,15 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 476b50be0c8c7710d43533097fb7e21f, type: 2}
   - {fileID: 11400000, guid: 427eed8d1c8163c9c22e41c6d4146dcb, type: 2}
   subFactions:
-  - subFactionName: Standard
-    description: 
-    exclusiveUnits: []
+  - subFactionName: UNSC-based
+    description: 'Infested Marines and UNSC vehicles, their guns still working, and the Juggernaut.'
+    exclusiveUnits:
+    - {fileID: 11400000, guid: c70a94de2cd0e45ae6e3484b1029decd, type: 2}
+    - {fileID: 11400000, guid: 90cca3d4c29e01afd35acbb7b00ca977, type: 2}
+    - {fileID: 11400000, guid: 7db5ae7cdb9ed8372ca8da6d09ac3f25, type: 2}
+    - {fileID: 11400000, guid: 7000145f1373bdd0677a388e749f0d83, type: 2}
+    - {fileID: 11400000, guid: ed67b9d67b4f6c50808651e10f9fde4f, type: 2}
+    - {fileID: 11400000, guid: 57b4143a038b36593f3ab7c8c58b0bdb, type: 2}
   spells:
   - {fileID: 11400000, guid: 62bd10625489ba16ead28b4f055c0822, type: 2}
   - {fileID: 11400000, guid: 1d774007a8ec4f044daa6205f6bf9845, type: 2}
