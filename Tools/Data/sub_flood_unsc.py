@@ -23,7 +23,7 @@ def units(U, W):
           note="Drives straight into the enemy, its gun still firing."),
         U("InfestedScorpion", "Infested Scorpion", FACTION, "Tank", 2, 50, 1, 300, 1350, "H", 1.4, 2, 2, "G",
           [W("Scavenged Cannon", 80, 3, 14, "Explosive", proj=35, splash=2.5),
-           W("Tentacle Lash", 30, 1.0, 4, "Melee", own="G")], flood=True,
+           W("Tentacle Whip", 30, 1.0, 4, "Melee", own="G")], flood=True,
           note="A little tougher and shorter-ranged than the real thing, with tentacles for what gets close."),
         U("InfestedHornet", "Infested Hornet", FACTION, "Aerial", 2, 50, 2, 300, 360, "L", 4, 1.5, 1, "B",
           [W("Scavenged Rockets", 20, 1.0, 12, "Explosive", proj=40),
@@ -32,7 +32,7 @@ def units(U, W):
         U("Juggernaut", "Juggernaut", FACTION, "Flanker", 3, 225, 1, 450, 2300, "H", 3.25, 1.8, 1, "G",
           [W("Crushing Charge", 130, 1.2, 2.5, "Melee", splash=2.5)], flood=True, leap=(10, 14, 6),
           note="A pure form the size of a tank that moves like a flanker and leaps onto what it hunts."),
-        U("InfestedElephant", "Infested Elephant", FACTION, "Titan", 4, 350, 1, 800, 8500, "H", 0.6, 5, 3, "B",
+        U("InfestedElephant", "Infested Elephant", FACTION, "Titan", 4, 350, 1, 800, 7500, "H", 0.6, 5, 3, "B",
           [W("Scavenged Main Cannon", 180, 3, 18, "Explosive", proj=40, splash=2, aa=True, own="G"),
            W("Scavenged Turret (left)", 7, 0.2, 13, "Ballistic", block=True),
            W("Scavenged Turret (right)", 7, 0.2, 13, "Ballistic", block=True)], flood=True, spawn=("InfestedMarine", 4, 12),
@@ -51,7 +51,7 @@ TECHS = {
     ],
     "InfestedScorpion": [
         T("BiomassPlates", "Biomass Plates", 200, "Biomass over the hull.", health=1.25),
-        T("LongLash", "Long Lash", 150, "Everything reaches further.", range=3),
+        T("LongWhip", "Long Whip", 150, "Everything reaches further.", range=3),
     ],
     "InfestedHornet": [
         T("BiomassPlates", "Biomass Plates", 150, "Biomass over the airframe.", health=1.3),

@@ -264,6 +264,20 @@ def weld(distance=0.002, pattern=None):
         mesh.free()
 
 
+def fix_normals(pattern=None):
+    """Turns every face of each connected piece the same way, outward. A file made for double-sided drawing can have them any way round, and the game hides back faces."""
+    for o in meshes(pattern):
+        mesh = bmesh.new()
+        mesh.from_mesh(o.data)
+        before = [f.normal.copy() for f in mesh.faces]
+        bmesh.ops.recalc_face_normals(mesh, faces=mesh.faces)
+        mesh.normal_update()
+        flipped = sum(1 for f, n in zip(mesh.faces, before) if f.normal.dot(n) < 0)
+        mesh.to_mesh(o.data)
+        mesh.free()
+        print(f"REPORT {o.name}: turned {flipped} of {len(before)} faces")
+
+
 def reduce(target, pattern=None, flat_angle=1.0):
     """Reduces the matching parts to about this many triangles in total: first flat areas, then everywhere evenly."""
     parts = meshes(pattern)

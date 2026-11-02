@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 1
   cost: 800
   baseDamage: 160
-  maxHealth: 8500
+  maxHealth: 7500
   armorType: 2
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -143,4 +143,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Most things in a straight fight
   weakAgainst: 'Single-target DPS, large chaff swarms'
-  notes: 'Best counters (headless runner, equal cost): Hunter Captain (100%), Grunt (80%). Its beam is weaker and slower than a Scarab''s, but it releases 4 Infested Grunts every 12 seconds. First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Grunt (100%), Hunter Captain (100%). Its beam is weaker and slower than a Scarab''s, but it releases 4 Infested Grunts every 12 seconds. First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'

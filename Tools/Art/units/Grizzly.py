@@ -13,6 +13,8 @@ mt.fit()
 mt.report("turned")
 mt.remove("Object_4")  # The inside of the cockpit, which nobody sees.
 mt.flag("cockpit_glass", glass=True)
+mt.weld(0.003)  # The file's faces come loose and any way round, and the game hides back faces.
+mt.fix_normals()
 mt.smooth(40)
 
 # Everything above the hull's top line, near the middle, is the turret.

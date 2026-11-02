@@ -147,7 +147,12 @@ namespace Halobellum.UI
                 b.AppendLine($"On death: {s.DeathBurst.Damage:0} damage in {s.DeathBurst.Radius:0.#} m{released}");
             }
             if (s.SpawnedUnit != null) b.AppendLine($"Releases {s.SpawnedUnit.Name} every {s.SpawnIntervalSeconds:0.#} s");
-            if (s.AuraRadius > 0f) b.AppendLine($"Friends within {s.AuraRadius:0} m: faster, and they heal");
+            if (s.AuraRadius > 0f)
+            {
+                string aura = s.AuraSpeedMultiplier > 1f && s.AuraHealPerSecondShare > 0f ? "faster, and they heal" : s.AuraSpeedMultiplier > 1f ? "faster" : "they heal";
+                b.AppendLine($"Friends within {s.AuraRadius:0} m: {aura}");
+            }
+            if (s.LifestealShare > 0f) b.AppendLine($"{s.LifestealShare * 100f:0}% of the damage it deals comes back as health");
             if (!s.IsFlood) b.AppendLine(s.ArmorType == ArmorType.Unarmored && !s.ImmuneToInfection ? "Can be infected once its shield is down" : "Infection Forms cannot infect it");
         }
 
@@ -181,6 +186,7 @@ namespace Halobellum.UI
                 }
                 if (w.Lobbed) b.AppendLine("  Lobbed: aims ahead of its target, can miss");
                 if (w.SeedSeconds > 0f) b.AppendLine($"  Seeds its target for {w.SeedSeconds:0.#} s: a host that dies rises as Flood");
+                if (w.HitSlowSeconds > 0f) b.AppendLine($"  A hit slows its target {w.HitSlowShare * 100f:0}% for {w.HitSlowSeconds:0.#} s (not Titans)");
                 string minRange = w.MinRange > 0f ? $" (min {w.MinRange:0.#})" : "";
                 string splash = w.SplashRadius > 0f ? $"{w.SplashRadius:0.#} m" : "none";
                 b.AppendLine($"  Range {w.Range:0.#} m{minRange}    Splash {splash}");

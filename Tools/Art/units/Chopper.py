@@ -22,6 +22,8 @@ for o in mt.meshes():
         print(f"REPORT piece of {len(faces)} faces from {mt._low(points)} to {mt._high(points)}")
     mesh.free()
 
+mt.weld(0.003)  # The file's faces come loose and any way round, and the game hides back faces.
+mt.fix_normals()
 mt.smooth(40)
 mt.muzzle("Muzzle_1a", (1.45, -4.15, 2.0))
 mt.muzzle("Muzzle_1b", (-1.45, -4.15, 2.0))

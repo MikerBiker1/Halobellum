@@ -35,7 +35,7 @@ def units(U, W):
         U("Spawner", "Spawner", FACTION, "Tank", 3, 225, 1, 450, 2800, "L", 0.9, 2, 2, "G",
           [W("Spore Lash", 40, 1.2, 3, "Melee", splash=2)], flood=True, spawn=("InfectionForms", 2, 6),
           note="A mobile birthing form: it fights badly, and releases 10 Infection Forms every 6 seconds. Kill it first."),
-        U("InfestedScarab", "Infested Scarab", FACTION, "Titan", 4, 350, 1, 800, 8500, "H", 0.6, 5, 3, "B",
+        U("InfestedScarab", "Infested Scarab", FACTION, "Titan", 4, 350, 1, 800, 7500, "H", 0.6, 5, 3, "B",
           [W("Scavenged Focus Beam", 30, 0.1, 20, "Energy", splash=2, aa=True, own="G", beam=3, charge=3, rest=5, sweep=2),
            W("Scavenged Plasma Turret (left)", 8, 0.25, 14, "Energy"),
            W("Scavenged Plasma Turret (right)", 8, 0.25, 14, "Energy")], flood=True, spawn=("InfestedGrunt", 4, 12),

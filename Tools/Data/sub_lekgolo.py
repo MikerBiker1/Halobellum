@@ -12,7 +12,7 @@ HUNTER_ARC = dict(deg=240, front=0.7, rear=1.5, block=0, types=[])
 def units(U, W):
     return [
         U("Skitterer", "Skitterer", FACTION, "Flanker", 1, 0, 6, 150, 100, "L", 4.5, 0.7, 0.3, "B",
-          [W("Spitter Beam", 5, 0.25, 7, "Energy")],
+          [W("Spitter Plasma", 5, 0.25, 7, "Energy")],
           note="Spider-like machines worked by a few worms: a fast, light swarm of a flanker."),
         U("Goliath", "Goliath", FACTION, "Tank", 3, 250, 1, 500, 2200, "H", 1.1, 2.4, 2.5, "G",
           [W("Fist Slam", 120, 2, 3, "Melee", splash=3.5),
@@ -20,9 +20,9 @@ def units(U, W):
           arc=HUNTER_ARC, basedmg=250,
           note="Two colonies in one suit. Its old job as a building-killer shows as 2.5 times the base damage if it survives a battle."),
         U("HunterCaptain", "Hunter Captain", FACTION, "SingleTargetDps", 3, 225, 1, 450, 2000, "H", 1.25, 1.4, 1.5, "G",
-          [W("Siphon Beam", 72, 0.75, 15, "Energy", aa=True)],
+          [W("Siphon Laser", 72, 0.75, 15, "Energy", aa=True)],
           arc=HUNTER_ARC, lifesteal=0.3, aura=(12, 1, 0.01),
-          note="Its siphon beam gives it back 30% of the damage it deals, and friends within 12 m heal 1% per second."),
+          note="Its siphon laser gives it back 30% of the damage it deals, and friends within 12 m heal 1% per second."),
     ]
 
 
@@ -37,7 +37,7 @@ TECHS = {
     ],
     "HunterCaptain": [
         T("BondArmor", "Bond Armor", 250, "Thicker plates over the colony.", health=1.25),
-        T("DeepSiphon", "Deep Siphon", 250, "The beam bites deeper.", damage=1.25),
-        T("LongSiphon", "Long Siphon", 150, "The beam reaches further.", range=4),
+        T("DeepSiphon", "Deep Siphon", 250, "The laser bites deeper.", damage=1.25),
+        T("LongSiphon", "Long Siphon", 150, "The laser reaches further.", range=4),
     ],
 }

@@ -50,7 +50,7 @@ namespace Halobellum.Presentation
             if (n.Contains("beam")) return WeaponFeelKind.Beam;
             if (n.Contains("gauss") || n.Contains("rail")) return WeaponFeelKind.Gauss;
             if (n.Contains("rocket") || n.Contains("missile")) return WeaponFeelKind.Rocket;
-            if (n.Contains("cannon")) return WeaponFeelKind.Cannon;
+            if (n.Contains("cannon") || n.Contains("grenade")) return WeaponFeelKind.Cannon;
             if (n.Contains("chaingun") || n.Contains("machine gun") || n.Contains("autocannon") || n.Contains("turret") || n.Contains("minigun")) return WeaponFeelKind.HeavyBullet;
             if (n.Contains("rifle") || n.Contains("smg") || n.Contains("pistol") || n.Contains("sniper")) return WeaponFeelKind.Bullet;
             if (n.Contains("bone") || n.Contains("spore") || n.Contains("spit")) return WeaponFeelKind.Bio;

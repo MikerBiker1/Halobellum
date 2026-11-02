@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 4
   cost: 150
   baseDamage: 7.5
-  maxHealth: 170
+  maxHealth: 150
   armorType: 0
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -30,7 +30,7 @@ MonoBehaviour:
   targetFilter: 0
   weapons:
   - weaponName: Spike Grenade Launcher
-    damagePerShot: 38
+    damagePerShot: 34
     fireInterval: 2
     range: 13
     minRange: 2
@@ -95,4 +95,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Chaff
   weakAgainst: 'Tanks, flankers'
-  notes: 'Best counters (headless runner, equal cost): Scorpion (100%), Juggernaut (100%). Tough infantry with lobbed grenades. Shorter range than a Fuel Rod Grunt, can miss what moves, but takes much more killing. First-pass M10 values, Banished (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Scorpion (100%), Mantis (100%). Tough infantry with lobbed grenades. Shorter range than a Fuel Rod Grunt, can miss what moves, but takes much more killing. First-pass M10 values, Banished (Docs/M10/subfactions.md).'

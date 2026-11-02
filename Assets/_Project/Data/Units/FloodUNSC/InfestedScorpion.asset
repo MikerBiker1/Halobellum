@@ -53,7 +53,7 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
-  - weaponName: Tentacle Lash
+  - weaponName: Tentacle Whip
     damagePerShot: 30
     fireInterval: 1
     range: 4
@@ -111,7 +111,7 @@ MonoBehaviour:
   leapCooldownSeconds: 0
   techUpgrades:
   - {fileID: 11400000, guid: 53e799932a02594385deceb7c4bb64c2, type: 2}
-  - {fileID: 11400000, guid: 0d6933982651e396cf08b8adc05339ef, type: 2}
+  - {fileID: 11400000, guid: 9ff4aa50773dcc9da0c9f2beb940e6df, type: 2}
   prefab: {fileID: 8628567406527296226, guid: 5acbec33c3a77c34d9171d00503bce4e, type: 3}
   keepsOwnMaterials: 1
   bakedBody: {fileID: 0}

@@ -1240,17 +1240,17 @@ MonoBehaviour:
     winRate: 0
   - attacker: Wolverine
     defender: Brute Grenadier
-    winRate: 0.7
-  - attacker: Wolverine
-    defender: Marauder
-    winRate: 0
-  - attacker: Wolverine
-    defender: Reaver
-    winRate: 0
-  - attacker: Wolverine
-    defender: Blisterback
     winRate: 1
   - attacker: Wolverine
+    defender: Marauder
+    winRate: 0
+  - attacker: Wolverine
+    defender: Reaver
+    winRate: 0
+  - attacker: Wolverine
+    defender: Blisterback
+    winRate: 1
+  - attacker: Wolverine
     defender: Skitterer
     winRate: 0
   - attacker: Wolverine
@@ -2152,7 +2152,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan
     defender: Infested Elephant
-    winRate: 0
+    winRate: 0.2
   - attacker: Spartan
     defender: Infested Grunt
     winRate: 0
@@ -2320,11 +2320,11 @@ MonoBehaviour:
     winRate: 1
   - attacker: Mantis
     defender: Brute Grenadier
-    winRate: 0.6
-  - attacker: Mantis
-    defender: Marauder
     winRate: 1
   - attacker: Mantis
+    defender: Marauder
+    winRate: 1
+  - attacker: Mantis
     defender: Reaver
     winRate: 1
   - attacker: Mantis
@@ -2821,7 +2821,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Grunt
     defender: Infested Scarab
-    winRate: 0.8
+    winRate: 1
   - attacker: Fuel Rod Grunt
     defender: Marine
     winRate: 1
@@ -2968,7 +2968,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Fuel Rod Grunt
     defender: Brute Grenadier
-    winRate: 0.9
+    winRate: 1
   - attacker: Fuel Rod Grunt
     defender: Marauder
     winRate: 0
@@ -3253,7 +3253,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Infested Scarab
-    winRate: 0
+    winRate: 0.3
   - attacker: 'Jackal (Shield)'
     defender: Marine
     winRate: 0
@@ -5560,7 +5560,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Carrier Form
     defender: Brute Grenadier
-    winRate: 0
+    winRate: 0.1
   - attacker: Carrier Form
     defender: Marauder
     winRate: 0
@@ -5845,7 +5845,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Combat Form
     defender: Infested Scarab
-    winRate: 0
+    winRate: 0.1
   - attacker: Stalker Form
     defender: Marine
     winRate: 0
@@ -7768,20 +7768,20 @@ MonoBehaviour:
     winRate: 0.6
   - attacker: Spartan Sniper
     defender: Infested Elephant
-    winRate: 0.2
-  - attacker: Spartan Sniper
-    defender: Infested Grunt
-    winRate: 0
-  - attacker: Spartan Sniper
-    defender: Infested Ghost
-    winRate: 0
-  - attacker: Spartan Sniper
-    defender: Infested Elite
-    winRate: 0
-  - attacker: Spartan Sniper
-    defender: Infested Wraith
     winRate: 1
   - attacker: Spartan Sniper
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Infested Ghost
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Spartan Sniper
     defender: Infested Banshee
     winRate: 1
   - attacker: Spartan Sniper
@@ -7789,7 +7789,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Sniper
     defender: Infested Scarab
-    winRate: 0
+    winRate: 1
   - attacker: Spartan Heavy Weapons
     defender: Marine
     winRate: 0.1
@@ -8368,7 +8368,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan CQB
     defender: Brute Grenadier
-    winRate: 0
+    winRate: 1
   - attacker: Spartan CQB
     defender: Marauder
     winRate: 0
@@ -8584,7 +8584,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Fireteam
     defender: Brute Grenadier
-    winRate: 0
+    winRate: 0.8
   - attacker: Spartan Fireteam
     defender: Marauder
     winRate: 1
@@ -9085,7 +9085,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Cobra
     defender: Infested Scarab
-    winRate: 0
+    winRate: 0.9
   - attacker: Rhino
     defender: Marine
     winRate: 1
@@ -10615,7 +10615,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Brute Grenadier
     defender: Wolverine
-    winRate: 0.3
+    winRate: 0
   - attacker: Brute Grenadier
     defender: Hornet
     winRate: 0
@@ -10630,7 +10630,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Brute Grenadier
     defender: Mantis
-    winRate: 0.4
+    winRate: 0
   - attacker: Brute Grenadier
     defender: Elephant
     winRate: 0
@@ -10639,7 +10639,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Brute Grenadier
     defender: Fuel Rod Grunt
-    winRate: 0.1
+    winRate: 0
   - attacker: Brute Grenadier
     defender: 'Jackal (Plasma Rifle)'
     winRate: 1
@@ -10675,7 +10675,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Brute Grenadier
     defender: Carrier Form
-    winRate: 1
+    winRate: 0.9
   - attacker: Brute Grenadier
     defender: Combat Form
     winRate: 1
@@ -10714,10 +10714,10 @@ MonoBehaviour:
     winRate: 0
   - attacker: Brute Grenadier
     defender: Spartan CQB
-    winRate: 1
+    winRate: 0
   - attacker: Brute Grenadier
     defender: Spartan Fireteam
-    winRate: 1
+    winRate: 0.2
   - attacker: Brute Grenadier
     defender: Gremlin
     winRate: 1
@@ -10747,7 +10747,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Brute Grenadier
     defender: Marauder
-    winRate: 0.9
+    winRate: 0
   - attacker: Brute Grenadier
     defender: Reaver
     winRate: 1
@@ -10759,7 +10759,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Brute Grenadier
     defender: Goliath
-    winRate: 1
+    winRate: 0.6
   - attacker: Brute Grenadier
     defender: Hunter Captain
     winRate: 1
@@ -10774,7 +10774,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Brute Grenadier
     defender: Grunt Goblin
-    winRate: 0.7
+    winRate: 0
   - attacker: Brute Grenadier
     defender: Infested Marine
     winRate: 1
@@ -10783,7 +10783,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Brute Grenadier
     defender: Infested Scorpion
-    winRate: 1
+    winRate: 0
   - attacker: Brute Grenadier
     defender: Infested Hornet
     winRate: 0
@@ -10963,7 +10963,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Marauder
     defender: Brute Grenadier
-    winRate: 0.1
+    winRate: 1
   - attacker: Marauder
     defender: Reaver
     winRate: 1
@@ -11827,7 +11827,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Goliath
     defender: Brute Grenadier
-    winRate: 0
+    winRate: 0.4
   - attacker: Goliath
     defender: Marauder
     winRate: 1
@@ -12520,7 +12520,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Heavy Grunts
     defender: Infested Elephant
-    winRate: 0
+    winRate: 0.4
   - attacker: Heavy Grunts
     defender: Infested Grunt
     winRate: 1
@@ -12907,7 +12907,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Grunt Goblin
     defender: Brute Grenadier
-    winRate: 0.3
+    winRate: 1
   - attacker: Grunt Goblin
     defender: Marauder
     winRate: 0.9
@@ -13555,7 +13555,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Scorpion
     defender: Brute Grenadier
-    winRate: 0
+    winRate: 1
   - attacker: Infested Scorpion
     defender: Marauder
     winRate: 1
@@ -14083,7 +14083,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Elephant
     defender: Spartan
-    winRate: 1
+    winRate: 0.8
   - attacker: Infested Elephant
     defender: Mantis
     winRate: 1
@@ -14161,7 +14161,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Elephant
     defender: Spartan Sniper
-    winRate: 0.8
+    winRate: 0
   - attacker: Infested Elephant
     defender: Spartan Heavy Weapons
     winRate: 1
@@ -14227,7 +14227,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Elephant
     defender: Heavy Grunts
-    winRate: 1
+    winRate: 0.6
   - attacker: Infested Elephant
     defender: Methane Wagon
     winRate: 1
@@ -15604,13 +15604,13 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Scarab
     defender: Grunt
-    winRate: 0.2
+    winRate: 0
   - attacker: Infested Scarab
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Infested Scarab
     defender: 'Jackal (Plasma Rifle)'
-    winRate: 1
+    winRate: 0.7
   - attacker: Infested Scarab
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -15646,7 +15646,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Scarab
     defender: Combat Form
-    winRate: 1
+    winRate: 0.9
   - attacker: Infested Scarab
     defender: Stalker Form
     winRate: 1
@@ -15673,7 +15673,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Scarab
     defender: Spartan Sniper
-    winRate: 1
+    winRate: 0
   - attacker: Infested Scarab
     defender: Spartan Heavy Weapons
     winRate: 1
@@ -15691,7 +15691,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Scarab
     defender: Cobra
-    winRate: 1
+    winRate: 0.1
   - attacker: Infested Scarab
     defender: Rhino
     winRate: 1

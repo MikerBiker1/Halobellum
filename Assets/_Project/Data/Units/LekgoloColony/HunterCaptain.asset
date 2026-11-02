@@ -29,7 +29,7 @@ MonoBehaviour:
   isAir: 0
   targetFilter: 0
   weapons:
-  - weaponName: Siphon Beam
+  - weaponName: Siphon Laser
     damagePerShot: 72
     fireInterval: 0.75
     range: 15
@@ -96,4 +96,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: 'Tanks, heavy units'
   weakAgainst: 'Chaff swarms, flankers'
-  notes: 'Best counters (headless runner, equal cost): Marine (100%), Grunt (100%). Its siphon beam gives it back 30% of the damage it deals, and friends within 12 m heal 1% per second. First-pass M10 values, Lekgolo Colony (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Grunt (100%). Its siphon laser gives it back 30% of the damage it deals, and friends within 12 m heal 1% per second. First-pass M10 values, Lekgolo Colony (Docs/M10/subfactions.md).'

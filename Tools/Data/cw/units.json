@@ -3715,7 +3715,7 @@
   "unlock": 0,
   "squad": 4,
   "cost": 150,
-  "hp": 170,
+  "hp": 150,
   "armor": "U",
   "speed": 1.5,
   "radius": 0.6,
@@ -3724,7 +3724,7 @@
   "weapons": [
    {
     "name": "Spike Grenade Launcher",
-    "dmg": 38,
+    "dmg": 34,
     "interval": 2.0,
     "range": 13,
     "minr": 2,
@@ -4037,7 +4037,7 @@
   "filter": "B",
   "weapons": [
    {
-    "name": "Spitter Beam",
+    "name": "Spitter Plasma",
     "dmg": 5,
     "interval": 0.25,
     "range": 7,
@@ -4200,7 +4200,7 @@
   "filter": "G",
   "weapons": [
    {
-    "name": "Siphon Beam",
+    "name": "Siphon Laser",
     "dmg": 72,
     "interval": 0.75,
     "range": 15,
@@ -4236,7 +4236,7 @@
    "types": []
   },
   "drop": null,
-  "note": "Its siphon beam gives it back 30% of the damage it deals, and friends within 12 m heal 1% per second.",
+  "note": "Its siphon laser gives it back 30% of the damage it deals, and friends within 12 m heal 1% per second.",
   "forms": 1,
   "flood": false,
   "infects": false,
@@ -4805,7 +4805,7 @@
     "slowshare": 0
    },
    {
-    "name": "Tentacle Lash",
+    "name": "Tentacle Whip",
     "dmg": 30,
     "interval": 1.0,
     "range": 4,
@@ -5024,7 +5024,7 @@
   "unlock": 350,
   "squad": 1,
   "cost": 800,
-  "hp": 8500,
+  "hp": 7500,
   "armor": "H",
   "speed": 0.6,
   "radius": 5,
@@ -5657,7 +5657,7 @@
   "unlock": 350,
   "squad": 1,
   "cost": 800,
-  "hp": 8500,
+  "hp": 7500,
   "armor": "H",
   "speed": 0.6,
   "radius": 5,

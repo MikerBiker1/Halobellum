@@ -98,7 +98,7 @@ namespace Halobellum.Tests
             ("Infested Wraith", "Hornet"),
             ("Infested Banshee", "Wolverine"),
             ("Spawner", "Jackal (Plasma Rifle)"),
-            ("Infested Scarab", "Hunter Captain"),
+            ("Infested Scarab", "Grunt"),
         };
 
         // With the sub-factions there are 73 pairs: they run side by side, and may take longer than a test's usual 3 minutes on a busy machine.

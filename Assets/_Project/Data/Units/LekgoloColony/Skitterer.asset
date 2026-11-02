@@ -29,7 +29,7 @@ MonoBehaviour:
   isAir: 0
   targetFilter: 2
   weapons:
-  - weaponName: Spitter Beam
+  - weaponName: Spitter Plasma
     damagePerShot: 5
     fireInterval: 0.25
     range: 7

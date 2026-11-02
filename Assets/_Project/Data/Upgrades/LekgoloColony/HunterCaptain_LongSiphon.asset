@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: HunterCaptain_LongSiphon
   m_EditorClassIdentifier: 
   techName: Long Siphon
-  description: The beam reaches further.
+  description: The laser reaches further.
   cost: 150
   healthMultiplier: 1
   damageMultiplier: 1

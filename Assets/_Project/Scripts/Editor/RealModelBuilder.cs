@@ -56,8 +56,8 @@ namespace Halobellum.EditorTools
             new Entry { Unit = "Flood/PureFormTank", Folder = "PureFormTank", Height = 3.8f },
             // Sub-factions (M10): their own models, and real models over again where that is honest.
             new Entry { Unit = "ArmoredDivision/Grizzly", Folder = "Grizzly", Length = 7.2f },
-            new Entry { Unit = "Banished/Chopper", Folder = "Chopper", Length = 4.8f },
-            new Entry { Unit = "AerospaceCommand/CondorGunship", Folder = "Pelican", Length = 11f, Tint = new Color(0.62f, 0.66f, 0.74f) },
+            new Entry { Unit = "Banished/Chopper", Folder = "Chopper", Length = 4.8f, Tint = new Color(1.4f, 1.35f, 1.25f) }, // A very dark texture: it read as a black shape.
+            new Entry { Unit = "AerospaceCommand/CondorGunship", Folder = "Pelican", Length = 11f, Tint = new Color(0.72f, 0.76f, 0.84f) },
             new Entry { Unit = "FloodUNSC/InfestedWarthog", Folder = "Warthog", Length = 4.6f, Tint = Infested },
             new Entry { Unit = "FloodUNSC/InfestedScorpion", Folder = "Scorpion", Length = 6.2f, Tint = Infested },
             new Entry { Unit = "FloodUNSC/InfestedHornet", Folder = "Hornet", Length = 6f, Tint = Infested },
