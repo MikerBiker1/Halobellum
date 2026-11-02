@@ -192,6 +192,7 @@ namespace Halobellum.Presentation
         {
             AudioDirector director = AudioDirector.Instance;
             if (director == null || _battle == null) return;
+            // Either pause stops the battle's sound: the game's (Esc) and BattleHud's own (speed 0).
             director.SetBattlePaused(GamePause.IsPaused || (_battle.IsPlaying && _battle.Speed <= 0f));
             if (!_battle.IsPlaying) return;
 

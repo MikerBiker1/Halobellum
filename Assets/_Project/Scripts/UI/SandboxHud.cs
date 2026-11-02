@@ -51,7 +51,7 @@ namespace Halobellum.UI
             {
                 ItemHud.DrawSquadSlots(AllSquads(), sandbox.PlacingItem, _scale, sandbox.SquadOnScreen, sandbox.IconFor, squad => sandbox.PlaceItemOn(squad), sandbox.CancelPlacement);
                 DrawUnitList(width, height);
-                DrawItems();
+                DrawItems(width);
                 DrawSelectedSquadActions(width, height);
                 ItemHud.DrawDragged(sandbox.IconFor);
             }
@@ -70,10 +70,12 @@ namespace Halobellum.UI
         }
 
         /// <summary>Every item, free: click one, then the hexagon over a squad.</summary>
-        private void DrawItems()
+        private void DrawItems(float width)
         {
             if (sandbox.Items.Count == 0) return;
-            var panel = new Rect(10f, 8f, 330f, 44f + ItemHud.GridHeight(sandbox.Items.Count) + 44f);
+            // Top left, unless the window is too narrow for the bar to leave room: then under the bar, level with the unit list.
+            float top = TopBar(width).x >= 350f ? 8f : 204f;
+            var panel = new Rect(10f, top, 330f, 44f + ItemHud.GridHeight(sandbox.Items.Count) + 44f);
             Panel(panel);
             GUI.Label(new Rect(panel.x + 12f, panel.y + 8f, panel.width - 24f, 28f), "Items", _header);
             string hovered = ItemHud.DrawItemGrid(panel.x + 12f, panel.y + 40f, sandbox.Items, sandbox.PlacingItem, sandbox.IconFor, sandbox.BeginPlacingItem);
@@ -81,10 +83,21 @@ namespace Halobellum.UI
             GUI.Label(new Rect(panel.x + 12f, panel.yMax - 46f, panel.width - 24f, 42f), caption, _wrapDim);
         }
 
+        /// <summary>
+        /// Below BattleHud's speed controls and result line: centred, or moved right if that would run under the Items panel.
+        /// A window too narrow for that keeps it centred, and the Items panel goes under the bar instead.
+        /// </summary>
+        private static Rect TopBar(float width)
+        {
+            const float barWidth = 1120f, clearOfItems = 350f;
+            float centred = (width - barWidth) * 0.5f;
+            bool roomToMove = clearOfItems + barWidth + 10f <= width;
+            return new Rect(roomToMove ? Mathf.Max(centred, clearOfItems) : centred, 92f, barWidth, 64f);
+        }
+
         private void DrawTopBar(float width)
         {
-            // Below BattleHud's speed controls and result line (top centre).
-            var bar = new Rect(width * 0.5f - 560f, 92f, 1120f, 64f);
+            Rect bar = TopBar(width);
             Panel(bar);
             GUI.Label(new Rect(bar.x + 16f, bar.y + 6f, 160f, 26f), "Sandbox", _header);
             if (_seedLine.Changed(sandbox.Seed)) _seedLine.Text = $"Seed {sandbox.Seed}";
@@ -175,7 +188,7 @@ namespace Halobellum.UI
                 bool placing = sandbox.PlacingType == stats;
                 HudTheme.RowBox(row);
                 if (placing) HudTheme.RowBox(row);
-                CardScreens.DrawUnitPicture(new Rect(row.x + 3f, row.y + 2f, 42f, 42f), stats, unit.BaseFaction, UnitIcons.FactionColor(unit.BaseFaction));
+                CardScreens.DrawUnitPicture(new Rect(row.x + 3f, row.y + 2f, 42f, 42f), stats, (unit.BaseFaction ?? unit.Faction), UnitIcons.FactionColor((unit.BaseFaction ?? unit.Faction)));
                 GUI.Label(new Rect(row.x + 50f, row.y, row.width - 150f, 27f), stats.Name, _text);
                 GUI.Label(new Rect(row.x + 50f, row.y + 24f, row.width - 150f, 20f), $"{RoleName(stats.Role)}, {Bodies(stats.FormsInSquad)}, {stats.Cost}", _small);
                 if (GUI.Button(new Rect(row.xMax - 92f, row.y + 7f, 86f, 32f), placing ? "Placing" : "Place", _button))

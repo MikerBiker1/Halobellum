@@ -83,6 +83,45 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
+        public IEnumerator MainMenu_TheWalkersPanelsStayDim_UntilTheBeamFires()
+        {
+            yield return SceneManager.LoadSceneAsync(GameFlow.MainMenuScene, LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+            var backdrop = Object.FindAnyObjectByType<MenuBackdrop>();
+            int emission = Shader.PropertyToID("_EmissionColor");
+            Renderer panel = null;
+            int index = -1;
+            foreach (Renderer renderer in backdrop.walker.GetComponentsInChildren<Renderer>(true))
+            {
+                Material[] materials = renderer.sharedMaterials;
+                for (int i = 0; i < materials.Length; i++)
+                {
+                    if (materials[i] == null || materials[i].name != "Scarab_1") continue;
+                    panel = renderer;
+                    index = i;
+                }
+            }
+            Assert.IsNotNull(panel, "The walker has its glowing panel.");
+            float own = panel.sharedMaterials[index].GetColor(emission).maxColorComponent;
+            Assert.Greater(own, 1f, "The battle's Scarab keeps its bright material.");
+
+            var block = new MaterialPropertyBlock();
+            backdrop.ApplyAt(backdrop.beamStart - 1f);
+            Assert.AreEqual(0f, backdrop.PanelStrength);
+            panel.GetPropertyBlock(block, index);
+            float atRest = block.GetColor(emission).maxColorComponent;
+            Assert.Greater(atRest, 0f, "The panel has its dim glow set.");
+            Assert.Less(atRest, own * 0.1f, "Dim while nothing fires.");
+
+            backdrop.ApplyAt(backdrop.beamStart + backdrop.beamSeconds * 0.5f);
+            Assert.AreEqual(1f, backdrop.PanelStrength);
+            panel.GetPropertyBlock(block, index);
+            Assert.Greater(block.GetColor(emission).maxColorComponent, atRest * 2f, $"It rises as the beam fires (block empty: {block.isEmpty}, {panel.name} slot {index}).");
+            Assert.AreEqual(own, panel.sharedMaterials[index].GetColor(emission).maxColorComponent, "The shared material is not touched.");
+        }
+
+        [UnityTest]
         public IEnumerator LeavingTheMenu_ReachesAWorkingDraft_WithTheChosenDifficulty()
         {
             int stored = PlayerPrefs.GetInt(MatchController.DifficultyKey, (int)AiDifficulty.Normal);

@@ -124,7 +124,7 @@ namespace Halobellum.UI
             // Top bar.
             var bar = new Rect(width * 0.5f - 560f, 8f, 1120f, 64f);
             Panel(bar);
-            GUI.Label(new Rect(bar.x + 16f, bar.y + 6f, 220f, 26f), HudTheme.Title($"Round {m.Round}: Deployment"), _header);
+            GUI.Label(new Rect(bar.x + 16f, bar.y + 6f, 220f, 30f), HudTheme.Title($"Round {m.Round}: Deployment"), _header);
             GUI.Label(new Rect(bar.x + 16f, bar.y + 32f, 260f, 26f), $"Credits {player.Credits}  (+{m.NextIncomeFor(Team.A)} next round)", _text);
             GUI.Label(new Rect(bar.x + 290f, bar.y + 6f, 220f, 26f), $"Squads bought: {player.SquadsBoughtThisRound} of {m.SquadsPerRound(Team.A)}", _text);
             GUI.Label(new Rect(bar.x + 290f, bar.y + 32f, 220f, 26f), $"Unlocks: {player.UnlocksThisRound} of {m.Rules.UnlocksPerRound}", _text);
@@ -452,7 +452,7 @@ namespace Halobellum.UI
         {
             float x = panel.x + 20f, w = panel.width - 40f;
             GUI.Label(new Rect(x, y, w, 26f), $"Base damage: you dealt {s.BaseDamageByA}, the enemy dealt {s.BaseDamageByB}", _text); y += 28f;
-            GUI.Label(new Rect(x, y, w, 26f), $"Bases: yours {s.BaseHealthA}, enemy {s.BaseHealthB}", _text); y += 28f;
+            GUI.Label(new Rect(x, y, w, 26f), $"Bases: yours {Mathf.Max(0, s.BaseHealthA)}, enemy {Mathf.Max(0, s.BaseHealthB)}", _text); y += 28f;
             GUI.Label(new Rect(x, y, w, 26f),
                 $"Survivors: yours {s.Battle.TeamA.Survivors} of {s.Battle.TeamA.Deployed}, enemy {s.Battle.TeamB.Survivors} of {s.Battle.TeamB.Deployed}" +
                 (s.Battle.TimedOut ? "  (time limit)" : ""), _text);

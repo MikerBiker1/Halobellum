@@ -183,9 +183,11 @@ namespace Halobellum.UI
             int tick = battle.Simulation.Tick;
             yield return Wait(2f);
             Check("no tick runs while paused in battle", GamePause.IsPaused && battle.Simulation.Tick == tick);
+            Check("the battle sounds pause with it", AudioDirector.Instance != null && AudioDirector.Instance.BattlePaused);
             yield return Shot("10_pause_battle");
             yield return PressEscape();
             Check("Esc again resumes", !GamePause.IsPaused);
+            Check("the battle sounds come back", AudioDirector.Instance != null && !AudioDirector.Instance.BattlePaused);
             yield return Wait(1f);
             Check("the battle runs on after the pause", battle.Simulation.IsFinished || battle.Simulation.Tick > tick);
             Check("the battle keeps its speed", Mathf.Approximately(battle.Speed, 2f));
