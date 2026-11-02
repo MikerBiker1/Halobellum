@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48a24a6f0743ea50b653bb6800d1d896, type: 3}
+  m_Name: Gremlin
+  m_EditorClassIdentifier: 
+  unitName: Gremlin
+  role: 4
+  tier: 1
+  unlockCost: 0
+  squadSize: 2
+  cost: 200
+  baseDamage: 20
+  maxHealth: 240
+  armorType: 1
+  maxShield: 0
+  shieldRegenPerSecond: 0
+  moveSpeed: 4.5
+  collisionRadius: 1.1
+  turnTime180: 0.9
+  isAir: 0
+  targetFilter: 2
+  weapons:
+  - weaponName: EMP Railgun
+    damagePerShot: 38
+    fireInterval: 1
+    range: 13
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 0
+    damageType: 2
+    isAntiArmor: 1
+    canBeBlocked: 0
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 2
+    hitSlowShare: 0.4
+  hasDefenseArc: 0
+  defenseArc:
+    arcDegrees: 0
+    frontDamageMultiplier: 1
+    rearDamageMultiplier: 1
+    blockChance: 0
+    blockedDamageTypes: 
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
+  reinforcementNeedsUpgrade: 0
+  formsPerBody: 1
+  isFlood: 0
+  infects: 0
+  immuneToInfection: 0
+  selfDestructs: 0
+  seeksDensestCluster: 0
+  deathBurstDamage: 0
+  deathBurstRadius: 0
+  deathBurstDamageType: 0
+  deathBurstAntiArmor: 0
+  deathSpawns: []
+  spawnedUnit: {fileID: 0}
+  spawnedBodies: 0
+  spawnIntervalSeconds: 0
+  auraRadius: 0
+  auraSpeedMultiplier: 1
+  auraHealPerSecondShare: 0
+  lifestealShare: 0
+  leapRange: 0
+  leapSpeed: 0
+  leapCooldownSeconds: 0
+  techUpgrades:
+  - {fileID: 11400000, guid: b1c69d7c972b76bdb9d986785a6873d7, type: 2}
+  - {fileID: 11400000, guid: 625fcaeea6a73457cce32ce8e98258ba, type: 2}
+  prefab: {fileID: 4328258339522376023, guid: a25a7f7a5d9afa845b402e22710e2ced, type: 3}
+  keepsOwnMaterials: 0
+  bakedBody: {fileID: 0}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
+  strongAgainst: 'Artillery, DPS'
+  weakAgainst: 'Chaff clear, tanks'
+  notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Brute Grenadier (100%). Fast scout whose EMP slows what it hits (Titans shrug it off). Good against vehicles, poor against infantry. First-pass M10 values, Armored Division (Docs/M10/subfactions.md).'

@@ -131,6 +131,18 @@ MonoBehaviour:
   - attacker: Marine
     defender: Spartan Fireteam
     winRate: 1
+  - attacker: Marine
+    defender: Gremlin
+    winRate: 1
+  - attacker: Marine
+    defender: Cobra
+    winRate: 1
+  - attacker: Marine
+    defender: Rhino
+    winRate: 0
+  - attacker: Marine
+    defender: Grizzly
+    winRate: 0
   - attacker: Flamethrower Trooper
     defender: Marine
     winRate: 0
@@ -248,6 +260,18 @@ MonoBehaviour:
   - attacker: Flamethrower Trooper
     defender: Spartan Fireteam
     winRate: 1
+  - attacker: Flamethrower Trooper
+    defender: Gremlin
+    winRate: 1
+  - attacker: Flamethrower Trooper
+    defender: Cobra
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Rhino
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Grizzly
+    winRate: 0
   - attacker: Warthog
     defender: Marine
     winRate: 0
@@ -364,6 +388,18 @@ MonoBehaviour:
     winRate: 1
   - attacker: Warthog
     defender: Spartan Fireteam
+    winRate: 0
+  - attacker: Warthog
+    defender: Gremlin
+    winRate: 0
+  - attacker: Warthog
+    defender: Cobra
+    winRate: 0
+  - attacker: Warthog
+    defender: Rhino
+    winRate: 0
+  - attacker: Warthog
+    defender: Grizzly
     winRate: 0
   - attacker: Gauss Warthog
     defender: Marine
@@ -482,6 +518,18 @@ MonoBehaviour:
   - attacker: Gauss Warthog
     defender: Spartan Fireteam
     winRate: 0
+  - attacker: Gauss Warthog
+    defender: Gremlin
+    winRate: 1
+  - attacker: Gauss Warthog
+    defender: Cobra
+    winRate: 0.5
+  - attacker: Gauss Warthog
+    defender: Rhino
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Grizzly
+    winRate: 1
   - attacker: Scorpion
     defender: Marine
     winRate: 1
@@ -599,6 +647,18 @@ MonoBehaviour:
   - attacker: Scorpion
     defender: Spartan Fireteam
     winRate: 0.4
+  - attacker: Scorpion
+    defender: Gremlin
+    winRate: 0
+  - attacker: Scorpion
+    defender: Cobra
+    winRate: 0
+  - attacker: Scorpion
+    defender: Rhino
+    winRate: 0.3
+  - attacker: Scorpion
+    defender: Grizzly
+    winRate: 0.8
   - attacker: Wolverine
     defender: Marine
     winRate: 0.9
@@ -715,6 +775,18 @@ MonoBehaviour:
     winRate: 0
   - attacker: Wolverine
     defender: Spartan Fireteam
+    winRate: 0
+  - attacker: Wolverine
+    defender: Gremlin
+    winRate: 0
+  - attacker: Wolverine
+    defender: Cobra
+    winRate: 0
+  - attacker: Wolverine
+    defender: Rhino
+    winRate: 0
+  - attacker: Wolverine
+    defender: Grizzly
     winRate: 0
   - attacker: Hornet
     defender: Marine
@@ -833,6 +905,18 @@ MonoBehaviour:
   - attacker: Hornet
     defender: Spartan Fireteam
     winRate: 0
+  - attacker: Hornet
+    defender: Gremlin
+    winRate: 0
+  - attacker: Hornet
+    defender: Cobra
+    winRate: 1
+  - attacker: Hornet
+    defender: Rhino
+    winRate: 1
+  - attacker: Hornet
+    defender: Grizzly
+    winRate: 1
   - attacker: Archer Missile Pod
     defender: Marine
     winRate: 1
@@ -950,6 +1034,18 @@ MonoBehaviour:
   - attacker: Archer Missile Pod
     defender: Spartan Fireteam
     winRate: 1
+  - attacker: Archer Missile Pod
+    defender: Gremlin
+    winRate: 0.5
+  - attacker: Archer Missile Pod
+    defender: Cobra
+    winRate: 0.1
+  - attacker: Archer Missile Pod
+    defender: Rhino
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Grizzly
+    winRate: 0
   - attacker: Pelican
     defender: Marine
     winRate: 0
@@ -1067,6 +1163,18 @@ MonoBehaviour:
   - attacker: Pelican
     defender: Spartan Fireteam
     winRate: 0
+  - attacker: Pelican
+    defender: Gremlin
+    winRate: 0
+  - attacker: Pelican
+    defender: Cobra
+    winRate: 1
+  - attacker: Pelican
+    defender: Rhino
+    winRate: 1
+  - attacker: Pelican
+    defender: Grizzly
+    winRate: 0
   - attacker: Spartan
     defender: Marine
     winRate: 0
@@ -1184,6 +1292,18 @@ MonoBehaviour:
   - attacker: Spartan
     defender: Spartan Fireteam
     winRate: 0
+  - attacker: Spartan
+    defender: Gremlin
+    winRate: 1
+  - attacker: Spartan
+    defender: Cobra
+    winRate: 1
+  - attacker: Spartan
+    defender: Rhino
+    winRate: 1
+  - attacker: Spartan
+    defender: Grizzly
+    winRate: 1
   - attacker: Mantis
     defender: Marine
     winRate: 1
@@ -1301,6 +1421,18 @@ MonoBehaviour:
   - attacker: Mantis
     defender: Spartan Fireteam
     winRate: 0.7
+  - attacker: Mantis
+    defender: Gremlin
+    winRate: 0
+  - attacker: Mantis
+    defender: Cobra
+    winRate: 0
+  - attacker: Mantis
+    defender: Rhino
+    winRate: 0.1
+  - attacker: Mantis
+    defender: Grizzly
+    winRate: 0
   - attacker: Elephant
     defender: Marine
     winRate: 1
@@ -1417,6 +1549,18 @@ MonoBehaviour:
     winRate: 1
   - attacker: Elephant
     defender: Spartan Fireteam
+    winRate: 1
+  - attacker: Elephant
+    defender: Gremlin
+    winRate: 1
+  - attacker: Elephant
+    defender: Cobra
+    winRate: 1
+  - attacker: Elephant
+    defender: Rhino
+    winRate: 1
+  - attacker: Elephant
+    defender: Grizzly
     winRate: 1
   - attacker: Grunt
     defender: Marine
@@ -1535,6 +1679,18 @@ MonoBehaviour:
   - attacker: Grunt
     defender: Spartan Fireteam
     winRate: 1
+  - attacker: Grunt
+    defender: Gremlin
+    winRate: 1
+  - attacker: Grunt
+    defender: Cobra
+    winRate: 1
+  - attacker: Grunt
+    defender: Rhino
+    winRate: 0
+  - attacker: Grunt
+    defender: Grizzly
+    winRate: 0
   - attacker: Fuel Rod Grunt
     defender: Marine
     winRate: 1
@@ -1652,6 +1808,18 @@ MonoBehaviour:
   - attacker: Fuel Rod Grunt
     defender: Spartan Fireteam
     winRate: 0.1
+  - attacker: Fuel Rod Grunt
+    defender: Gremlin
+    winRate: 1
+  - attacker: Fuel Rod Grunt
+    defender: Cobra
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Rhino
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Grizzly
+    winRate: 0
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Marine
     winRate: 0
@@ -1769,6 +1937,18 @@ MonoBehaviour:
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Spartan Fireteam
     winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Gremlin
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Cobra
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Rhino
+    winRate: 0
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Grizzly
+    winRate: 0
   - attacker: 'Jackal (Shield)'
     defender: Marine
     winRate: 0
@@ -1886,6 +2066,18 @@ MonoBehaviour:
   - attacker: 'Jackal (Shield)'
     defender: Spartan Fireteam
     winRate: 1
+  - attacker: 'Jackal (Shield)'
+    defender: Gremlin
+    winRate: 1
+  - attacker: 'Jackal (Shield)'
+    defender: Cobra
+    winRate: 1
+  - attacker: 'Jackal (Shield)'
+    defender: Rhino
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Grizzly
+    winRate: 0
   - attacker: Ghost
     defender: Marine
     winRate: 0
@@ -2002,6 +2194,18 @@ MonoBehaviour:
     winRate: 0.9
   - attacker: Ghost
     defender: Spartan Fireteam
+    winRate: 0
+  - attacker: Ghost
+    defender: Gremlin
+    winRate: 0
+  - attacker: Ghost
+    defender: Cobra
+    winRate: 0
+  - attacker: Ghost
+    defender: Rhino
+    winRate: 0
+  - attacker: Ghost
+    defender: Grizzly
     winRate: 0
   - attacker: Elite
     defender: Marine
@@ -2120,6 +2324,18 @@ MonoBehaviour:
   - attacker: Elite
     defender: Spartan Fireteam
     winRate: 1
+  - attacker: Elite
+    defender: Gremlin
+    winRate: 1
+  - attacker: Elite
+    defender: Cobra
+    winRate: 1
+  - attacker: Elite
+    defender: Rhino
+    winRate: 0
+  - attacker: Elite
+    defender: Grizzly
+    winRate: 0.1
   - attacker: Wraith
     defender: Marine
     winRate: 1
@@ -2237,6 +2453,18 @@ MonoBehaviour:
   - attacker: Wraith
     defender: Spartan Fireteam
     winRate: 1
+  - attacker: Wraith
+    defender: Gremlin
+    winRate: 1
+  - attacker: Wraith
+    defender: Cobra
+    winRate: 0
+  - attacker: Wraith
+    defender: Rhino
+    winRate: 0
+  - attacker: Wraith
+    defender: Grizzly
+    winRate: 0
   - attacker: Vampire
     defender: Marine
     winRate: 0
@@ -2354,6 +2582,18 @@ MonoBehaviour:
   - attacker: Vampire
     defender: Spartan Fireteam
     winRate: 0
+  - attacker: Vampire
+    defender: Gremlin
+    winRate: 0
+  - attacker: Vampire
+    defender: Cobra
+    winRate: 1
+  - attacker: Vampire
+    defender: Rhino
+    winRate: 1
+  - attacker: Vampire
+    defender: Grizzly
+    winRate: 0
   - attacker: Banshee
     defender: Marine
     winRate: 0
@@ -2471,6 +2711,18 @@ MonoBehaviour:
   - attacker: Banshee
     defender: Spartan Fireteam
     winRate: 1
+  - attacker: Banshee
+    defender: Gremlin
+    winRate: 0
+  - attacker: Banshee
+    defender: Cobra
+    winRate: 1
+  - attacker: Banshee
+    defender: Rhino
+    winRate: 1
+  - attacker: Banshee
+    defender: Grizzly
+    winRate: 1
   - attacker: Hunter Pair
     defender: Marine
     winRate: 1
@@ -2587,6 +2839,18 @@ MonoBehaviour:
     winRate: 1
   - attacker: Hunter Pair
     defender: Spartan Fireteam
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Gremlin
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Cobra
+    winRate: 0
+  - attacker: Hunter Pair
+    defender: Rhino
+    winRate: 0.9
+  - attacker: Hunter Pair
+    defender: Grizzly
     winRate: 1
   - attacker: Zealot
     defender: Marine
@@ -2705,6 +2969,18 @@ MonoBehaviour:
   - attacker: Zealot
     defender: Spartan Fireteam
     winRate: 0
+  - attacker: Zealot
+    defender: Gremlin
+    winRate: 1
+  - attacker: Zealot
+    defender: Cobra
+    winRate: 1
+  - attacker: Zealot
+    defender: Rhino
+    winRate: 1
+  - attacker: Zealot
+    defender: Grizzly
+    winRate: 1
   - attacker: Scarab
     defender: Marine
     winRate: 1
@@ -2821,6 +3097,18 @@ MonoBehaviour:
     winRate: 1
   - attacker: Scarab
     defender: Spartan Fireteam
+    winRate: 1
+  - attacker: Scarab
+    defender: Gremlin
+    winRate: 1
+  - attacker: Scarab
+    defender: Cobra
+    winRate: 1
+  - attacker: Scarab
+    defender: Rhino
+    winRate: 1
+  - attacker: Scarab
+    defender: Grizzly
     winRate: 1
   - attacker: Infection Forms
     defender: Marine
@@ -2939,6 +3227,18 @@ MonoBehaviour:
   - attacker: Infection Forms
     defender: Spartan Fireteam
     winRate: 1
+  - attacker: Infection Forms
+    defender: Gremlin
+    winRate: 1
+  - attacker: Infection Forms
+    defender: Cobra
+    winRate: 1
+  - attacker: Infection Forms
+    defender: Rhino
+    winRate: 0.6
+  - attacker: Infection Forms
+    defender: Grizzly
+    winRate: 0
   - attacker: Carrier Form
     defender: Marine
     winRate: 0.1
@@ -3056,6 +3356,18 @@ MonoBehaviour:
   - attacker: Carrier Form
     defender: Spartan Fireteam
     winRate: 1
+  - attacker: Carrier Form
+    defender: Gremlin
+    winRate: 1
+  - attacker: Carrier Form
+    defender: Cobra
+    winRate: 1
+  - attacker: Carrier Form
+    defender: Rhino
+    winRate: 0.1
+  - attacker: Carrier Form
+    defender: Grizzly
+    winRate: 0
   - attacker: Combat Form
     defender: Marine
     winRate: 0
@@ -3173,6 +3485,18 @@ MonoBehaviour:
   - attacker: Combat Form
     defender: Spartan Fireteam
     winRate: 1
+  - attacker: Combat Form
+    defender: Gremlin
+    winRate: 1
+  - attacker: Combat Form
+    defender: Cobra
+    winRate: 1
+  - attacker: Combat Form
+    defender: Rhino
+    winRate: 0
+  - attacker: Combat Form
+    defender: Grizzly
+    winRate: 0.1
   - attacker: Stalker Form
     defender: Marine
     winRate: 0
@@ -3290,6 +3614,18 @@ MonoBehaviour:
   - attacker: Stalker Form
     defender: Spartan Fireteam
     winRate: 1
+  - attacker: Stalker Form
+    defender: Gremlin
+    winRate: 1
+  - attacker: Stalker Form
+    defender: Cobra
+    winRate: 0
+  - attacker: Stalker Form
+    defender: Rhino
+    winRate: 0
+  - attacker: Stalker Form
+    defender: Grizzly
+    winRate: 0
   - attacker: Pure Form Ranged
     defender: Marine
     winRate: 1
@@ -3407,6 +3743,18 @@ MonoBehaviour:
   - attacker: Pure Form Ranged
     defender: Spartan Fireteam
     winRate: 1
+  - attacker: Pure Form Ranged
+    defender: Gremlin
+    winRate: 1
+  - attacker: Pure Form Ranged
+    defender: Cobra
+    winRate: 0
+  - attacker: Pure Form Ranged
+    defender: Rhino
+    winRate: 0
+  - attacker: Pure Form Ranged
+    defender: Grizzly
+    winRate: 0
   - attacker: Swarm Form
     defender: Marine
     winRate: 0
@@ -3523,6 +3871,18 @@ MonoBehaviour:
     winRate: 0
   - attacker: Swarm Form
     defender: Spartan Fireteam
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Gremlin
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Cobra
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Rhino
+    winRate: 1
+  - attacker: Swarm Form
+    defender: Grizzly
     winRate: 0
   - attacker: Pure Form Tank
     defender: Marine
@@ -3641,6 +4001,18 @@ MonoBehaviour:
   - attacker: Pure Form Tank
     defender: Spartan Fireteam
     winRate: 1
+  - attacker: Pure Form Tank
+    defender: Gremlin
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: Cobra
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: Rhino
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Grizzly
+    winRate: 0
   - attacker: Seeder
     defender: Marine
     winRate: 0
@@ -3758,6 +4130,18 @@ MonoBehaviour:
   - attacker: Seeder
     defender: Spartan Fireteam
     winRate: 0
+  - attacker: Seeder
+    defender: Gremlin
+    winRate: 1
+  - attacker: Seeder
+    defender: Cobra
+    winRate: 0
+  - attacker: Seeder
+    defender: Rhino
+    winRate: 0
+  - attacker: Seeder
+    defender: Grizzly
+    winRate: 1
   - attacker: Infected Pelican
     defender: Marine
     winRate: 0
@@ -3875,6 +4259,18 @@ MonoBehaviour:
   - attacker: Infected Pelican
     defender: Spartan Fireteam
     winRate: 1
+  - attacker: Infected Pelican
+    defender: Gremlin
+    winRate: 1
+  - attacker: Infected Pelican
+    defender: Cobra
+    winRate: 1
+  - attacker: Infected Pelican
+    defender: Rhino
+    winRate: 1
+  - attacker: Infected Pelican
+    defender: Grizzly
+    winRate: 1
   - attacker: Infected Phantom
     defender: Marine
     winRate: 0
@@ -3992,6 +4388,18 @@ MonoBehaviour:
   - attacker: Infected Phantom
     defender: Spartan Fireteam
     winRate: 1
+  - attacker: Infected Phantom
+    defender: Gremlin
+    winRate: 0.3
+  - attacker: Infected Phantom
+    defender: Cobra
+    winRate: 1
+  - attacker: Infected Phantom
+    defender: Rhino
+    winRate: 1
+  - attacker: Infected Phantom
+    defender: Grizzly
+    winRate: 0
   - attacker: Flood Abomination
     defender: Marine
     winRate: 1
@@ -4109,6 +4517,18 @@ MonoBehaviour:
   - attacker: Flood Abomination
     defender: Spartan Fireteam
     winRate: 1
+  - attacker: Flood Abomination
+    defender: Gremlin
+    winRate: 1
+  - attacker: Flood Abomination
+    defender: Cobra
+    winRate: 0
+  - attacker: Flood Abomination
+    defender: Rhino
+    winRate: 1
+  - attacker: Flood Abomination
+    defender: Grizzly
+    winRate: 1
   - attacker: Spartan Sniper
     defender: Marine
     winRate: 0
@@ -4226,6 +4646,18 @@ MonoBehaviour:
   - attacker: Spartan Sniper
     defender: Spartan Fireteam
     winRate: 0
+  - attacker: Spartan Sniper
+    defender: Gremlin
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Cobra
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Rhino
+    winRate: 0.1
+  - attacker: Spartan Sniper
+    defender: Grizzly
+    winRate: 1
   - attacker: Spartan Heavy Weapons
     defender: Marine
     winRate: 0.1
@@ -4343,6 +4775,18 @@ MonoBehaviour:
   - attacker: Spartan Heavy Weapons
     defender: Spartan Fireteam
     winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Gremlin
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Cobra
+    winRate: 0.6
+  - attacker: Spartan Heavy Weapons
+    defender: Rhino
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Grizzly
+    winRate: 0.3
   - attacker: Spartan Grenadier
     defender: Marine
     winRate: 1
@@ -4459,6 +4903,18 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Grenadier
     defender: Spartan Fireteam
+    winRate: 0.4
+  - attacker: Spartan Grenadier
+    defender: Gremlin
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Cobra
+    winRate: 0.2
+  - attacker: Spartan Grenadier
+    defender: Rhino
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Grizzly
     winRate: 0.4
   - attacker: Spartan CQB
     defender: Marine
@@ -4577,6 +5033,18 @@ MonoBehaviour:
   - attacker: Spartan CQB
     defender: Spartan Fireteam
     winRate: 0.2
+  - attacker: Spartan CQB
+    defender: Gremlin
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Cobra
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Rhino
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Grizzly
+    winRate: 0
   - attacker: Spartan Fireteam
     defender: Marine
     winRate: 0
@@ -4694,3 +5162,531 @@ MonoBehaviour:
   - attacker: Spartan Fireteam
     defender: Spartan CQB
     winRate: 0.8
+  - attacker: Spartan Fireteam
+    defender: Gremlin
+    winRate: 1
+  - attacker: Spartan Fireteam
+    defender: Cobra
+    winRate: 1
+  - attacker: Spartan Fireteam
+    defender: Rhino
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Grizzly
+    winRate: 0.5
+  - attacker: Gremlin
+    defender: Marine
+    winRate: 0
+  - attacker: Gremlin
+    defender: Flamethrower Trooper
+    winRate: 0
+  - attacker: Gremlin
+    defender: Warthog
+    winRate: 1
+  - attacker: Gremlin
+    defender: Gauss Warthog
+    winRate: 0
+  - attacker: Gremlin
+    defender: Scorpion
+    winRate: 1
+  - attacker: Gremlin
+    defender: Wolverine
+    winRate: 1
+  - attacker: Gremlin
+    defender: Hornet
+    winRate: 1
+  - attacker: Gremlin
+    defender: Archer Missile Pod
+    winRate: 0.5
+  - attacker: Gremlin
+    defender: Pelican
+    winRate: 1
+  - attacker: Gremlin
+    defender: Spartan
+    winRate: 0
+  - attacker: Gremlin
+    defender: Mantis
+    winRate: 1
+  - attacker: Gremlin
+    defender: Elephant
+    winRate: 0
+  - attacker: Gremlin
+    defender: Grunt
+    winRate: 0
+  - attacker: Gremlin
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: Gremlin
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Gremlin
+    defender: 'Jackal (Shield)'
+    winRate: 0
+  - attacker: Gremlin
+    defender: Ghost
+    winRate: 1
+  - attacker: Gremlin
+    defender: Elite
+    winRate: 0
+  - attacker: Gremlin
+    defender: Wraith
+    winRate: 0
+  - attacker: Gremlin
+    defender: Vampire
+    winRate: 1
+  - attacker: Gremlin
+    defender: Banshee
+    winRate: 1
+  - attacker: Gremlin
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Gremlin
+    defender: Zealot
+    winRate: 0
+  - attacker: Gremlin
+    defender: Scarab
+    winRate: 0
+  - attacker: Gremlin
+    defender: Infection Forms
+    winRate: 0
+  - attacker: Gremlin
+    defender: Carrier Form
+    winRate: 0
+  - attacker: Gremlin
+    defender: Combat Form
+    winRate: 0
+  - attacker: Gremlin
+    defender: Stalker Form
+    winRate: 0
+  - attacker: Gremlin
+    defender: Pure Form Ranged
+    winRate: 0
+  - attacker: Gremlin
+    defender: Swarm Form
+    winRate: 1
+  - attacker: Gremlin
+    defender: Pure Form Tank
+    winRate: 1
+  - attacker: Gremlin
+    defender: Seeder
+    winRate: 0
+  - attacker: Gremlin
+    defender: Infected Pelican
+    winRate: 0
+  - attacker: Gremlin
+    defender: Infected Phantom
+    winRate: 0.7
+  - attacker: Gremlin
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Gremlin
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Gremlin
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Gremlin
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Gremlin
+    defender: Spartan CQB
+    winRate: 0
+  - attacker: Gremlin
+    defender: Spartan Fireteam
+    winRate: 0
+  - attacker: Gremlin
+    defender: Cobra
+    winRate: 1
+  - attacker: Gremlin
+    defender: Rhino
+    winRate: 0
+  - attacker: Gremlin
+    defender: Grizzly
+    winRate: 1
+  - attacker: Cobra
+    defender: Marine
+    winRate: 0
+  - attacker: Cobra
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Cobra
+    defender: Warthog
+    winRate: 1
+  - attacker: Cobra
+    defender: Gauss Warthog
+    winRate: 0.5
+  - attacker: Cobra
+    defender: Scorpion
+    winRate: 1
+  - attacker: Cobra
+    defender: Wolverine
+    winRate: 1
+  - attacker: Cobra
+    defender: Hornet
+    winRate: 0
+  - attacker: Cobra
+    defender: Archer Missile Pod
+    winRate: 0.9
+  - attacker: Cobra
+    defender: Pelican
+    winRate: 0
+  - attacker: Cobra
+    defender: Spartan
+    winRate: 0
+  - attacker: Cobra
+    defender: Mantis
+    winRate: 1
+  - attacker: Cobra
+    defender: Elephant
+    winRate: 0
+  - attacker: Cobra
+    defender: Grunt
+    winRate: 0
+  - attacker: Cobra
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Cobra
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Cobra
+    defender: 'Jackal (Shield)'
+    winRate: 0
+  - attacker: Cobra
+    defender: Ghost
+    winRate: 1
+  - attacker: Cobra
+    defender: Elite
+    winRate: 0
+  - attacker: Cobra
+    defender: Wraith
+    winRate: 1
+  - attacker: Cobra
+    defender: Vampire
+    winRate: 0
+  - attacker: Cobra
+    defender: Banshee
+    winRate: 0
+  - attacker: Cobra
+    defender: Hunter Pair
+    winRate: 1
+  - attacker: Cobra
+    defender: Zealot
+    winRate: 0
+  - attacker: Cobra
+    defender: Scarab
+    winRate: 0
+  - attacker: Cobra
+    defender: Infection Forms
+    winRate: 0
+  - attacker: Cobra
+    defender: Carrier Form
+    winRate: 0
+  - attacker: Cobra
+    defender: Combat Form
+    winRate: 0
+  - attacker: Cobra
+    defender: Stalker Form
+    winRate: 1
+  - attacker: Cobra
+    defender: Pure Form Ranged
+    winRate: 1
+  - attacker: Cobra
+    defender: Swarm Form
+    winRate: 0
+  - attacker: Cobra
+    defender: Pure Form Tank
+    winRate: 1
+  - attacker: Cobra
+    defender: Seeder
+    winRate: 1
+  - attacker: Cobra
+    defender: Infected Pelican
+    winRate: 0
+  - attacker: Cobra
+    defender: Infected Phantom
+    winRate: 0
+  - attacker: Cobra
+    defender: Flood Abomination
+    winRate: 1
+  - attacker: Cobra
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Cobra
+    defender: Spartan Heavy Weapons
+    winRate: 0.4
+  - attacker: Cobra
+    defender: Spartan Grenadier
+    winRate: 0.8
+  - attacker: Cobra
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Cobra
+    defender: Spartan Fireteam
+    winRate: 0
+  - attacker: Cobra
+    defender: Gremlin
+    winRate: 0
+  - attacker: Cobra
+    defender: Rhino
+    winRate: 1
+  - attacker: Cobra
+    defender: Grizzly
+    winRate: 1
+  - attacker: Rhino
+    defender: Marine
+    winRate: 1
+  - attacker: Rhino
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Rhino
+    defender: Warthog
+    winRate: 1
+  - attacker: Rhino
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Rhino
+    defender: Scorpion
+    winRate: 0.7
+  - attacker: Rhino
+    defender: Wolverine
+    winRate: 1
+  - attacker: Rhino
+    defender: Hornet
+    winRate: 0
+  - attacker: Rhino
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Rhino
+    defender: Pelican
+    winRate: 0
+  - attacker: Rhino
+    defender: Spartan
+    winRate: 0
+  - attacker: Rhino
+    defender: Mantis
+    winRate: 0.9
+  - attacker: Rhino
+    defender: Elephant
+    winRate: 0
+  - attacker: Rhino
+    defender: Grunt
+    winRate: 1
+  - attacker: Rhino
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Rhino
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: Rhino
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Rhino
+    defender: Ghost
+    winRate: 1
+  - attacker: Rhino
+    defender: Elite
+    winRate: 1
+  - attacker: Rhino
+    defender: Wraith
+    winRate: 1
+  - attacker: Rhino
+    defender: Vampire
+    winRate: 0
+  - attacker: Rhino
+    defender: Banshee
+    winRate: 0
+  - attacker: Rhino
+    defender: Hunter Pair
+    winRate: 0.1
+  - attacker: Rhino
+    defender: Zealot
+    winRate: 0
+  - attacker: Rhino
+    defender: Scarab
+    winRate: 0
+  - attacker: Rhino
+    defender: Infection Forms
+    winRate: 0.4
+  - attacker: Rhino
+    defender: Carrier Form
+    winRate: 0.9
+  - attacker: Rhino
+    defender: Combat Form
+    winRate: 1
+  - attacker: Rhino
+    defender: Stalker Form
+    winRate: 1
+  - attacker: Rhino
+    defender: Pure Form Ranged
+    winRate: 1
+  - attacker: Rhino
+    defender: Swarm Form
+    winRate: 0
+  - attacker: Rhino
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: Rhino
+    defender: Seeder
+    winRate: 1
+  - attacker: Rhino
+    defender: Infected Pelican
+    winRate: 0
+  - attacker: Rhino
+    defender: Infected Phantom
+    winRate: 0
+  - attacker: Rhino
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Rhino
+    defender: Spartan Sniper
+    winRate: 0.9
+  - attacker: Rhino
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Rhino
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Rhino
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Rhino
+    defender: Spartan Fireteam
+    winRate: 1
+  - attacker: Rhino
+    defender: Gremlin
+    winRate: 1
+  - attacker: Rhino
+    defender: Cobra
+    winRate: 0
+  - attacker: Rhino
+    defender: Grizzly
+    winRate: 0.8
+  - attacker: Grizzly
+    defender: Marine
+    winRate: 1
+  - attacker: Grizzly
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Grizzly
+    defender: Warthog
+    winRate: 1
+  - attacker: Grizzly
+    defender: Gauss Warthog
+    winRate: 0
+  - attacker: Grizzly
+    defender: Scorpion
+    winRate: 0.2
+  - attacker: Grizzly
+    defender: Wolverine
+    winRate: 1
+  - attacker: Grizzly
+    defender: Hornet
+    winRate: 0
+  - attacker: Grizzly
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Grizzly
+    defender: Pelican
+    winRate: 1
+  - attacker: Grizzly
+    defender: Spartan
+    winRate: 0
+  - attacker: Grizzly
+    defender: Mantis
+    winRate: 1
+  - attacker: Grizzly
+    defender: Elephant
+    winRate: 0
+  - attacker: Grizzly
+    defender: Grunt
+    winRate: 1
+  - attacker: Grizzly
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Grizzly
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: Grizzly
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Grizzly
+    defender: Ghost
+    winRate: 1
+  - attacker: Grizzly
+    defender: Elite
+    winRate: 0.9
+  - attacker: Grizzly
+    defender: Wraith
+    winRate: 1
+  - attacker: Grizzly
+    defender: Vampire
+    winRate: 1
+  - attacker: Grizzly
+    defender: Banshee
+    winRate: 0
+  - attacker: Grizzly
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Grizzly
+    defender: Zealot
+    winRate: 0
+  - attacker: Grizzly
+    defender: Scarab
+    winRate: 0
+  - attacker: Grizzly
+    defender: Infection Forms
+    winRate: 1
+  - attacker: Grizzly
+    defender: Carrier Form
+    winRate: 1
+  - attacker: Grizzly
+    defender: Combat Form
+    winRate: 0.9
+  - attacker: Grizzly
+    defender: Stalker Form
+    winRate: 1
+  - attacker: Grizzly
+    defender: Pure Form Ranged
+    winRate: 1
+  - attacker: Grizzly
+    defender: Swarm Form
+    winRate: 1
+  - attacker: Grizzly
+    defender: Pure Form Tank
+    winRate: 1
+  - attacker: Grizzly
+    defender: Seeder
+    winRate: 0
+  - attacker: Grizzly
+    defender: Infected Pelican
+    winRate: 0
+  - attacker: Grizzly
+    defender: Infected Phantom
+    winRate: 1
+  - attacker: Grizzly
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Grizzly
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Grizzly
+    defender: Spartan Heavy Weapons
+    winRate: 0.7
+  - attacker: Grizzly
+    defender: Spartan Grenadier
+    winRate: 0.6
+  - attacker: Grizzly
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Grizzly
+    defender: Spartan Fireteam
+    winRate: 0.5
+  - attacker: Grizzly
+    defender: Gremlin
+    winRate: 0
+  - attacker: Grizzly
+    defender: Cobra
+    winRate: 0
+  - attacker: Grizzly
+    defender: Rhino
+    winRate: 0.2

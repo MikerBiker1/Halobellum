@@ -1,0 +1,47 @@
+{
+ "materials": [
+  {
+   "name": "Grizzly_0",
+   "colour": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "glass": true,
+   "cutout": false
+  },
+  {
+   "name": "Grizzly_1",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Grizzly_1.png"
+  },
+  {
+   "name": "Grizzly_2",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Grizzly_2.png"
+  },
+  {
+   "name": "Grizzly_3",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Grizzly_3.png"
+  }
+ ]
+}

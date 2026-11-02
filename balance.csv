@@ -39,3 +39,7 @@ Spartan Heavy Weapons,UNSC,Noble,Tank,3,250,1,500,1700,Unarmored,250,1.3,15,115,
 Spartan Grenadier,UNSC,Noble,ChaffClear,3,200,1,400,1000,Unarmored,300,1.75,19,41,41,41,1300,80,"Scorpion (100%), Juggernaut (100%)"
 Spartan CQB,UNSC,Noble,Flanker,3,200,1,400,1200,Unarmored,450,3.5,6,100,60,25,1650,80,"Flamethrower Trooper (100%), Grunt Goblin (100%)"
 Spartan Fireteam,UNSC,Noble,SingleTargetDps,3,250,3,500,420,Unarmored,140,1.75,16,143,145,127,1680,33.3333,"Marine (100%), Grunt (100%)"
+Gremlin,UNSC,Armored Division,Flanker,1,0,2,200,240,Light,0,4.5,13,38,91,114,480,20,"Flamethrower Trooper (100%), Brute Grenadier (100%)"
+Cobra,UNSC,Armored Division,SingleTargetDps,2,50,1,300,650,Heavy,0,1.75,26,43,104,130,650,60,"Marine (100%), Grunt (100%)"
+Rhino,UNSC,Armored Division,Artillery,3,200,1,400,1000,Heavy,0,1,50,30,30,30,1000,80,"Sparrowhawk (100%), Infested Hornet (100%)"
+Grizzly,UNSC,Armored Division,Tank,3,250,1,500,2100,Heavy,0,1.35,17,80,64,50,2100,100,"Gauss Warthog (100%), Spartan (100%)"

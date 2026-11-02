@@ -37,6 +37,13 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 24c605a8c8846d1a0df350b40c7843b9, type: 2}
     - {fileID: 11400000, guid: a96bafc074f125d18ac9596d2b1f3dab, type: 2}
     - {fileID: 11400000, guid: 947fe31141fe96a81bb132bf0a3c8480, type: 2}
+  - subFactionName: Armored Division
+    description: 'Heavy ground vehicles: the biggest tank, long-range guns and fast EMP scouts.'
+    exclusiveUnits:
+    - {fileID: 11400000, guid: ffe74a1a7a3ffe0c04f2fcb3e613f656, type: 2}
+    - {fileID: 11400000, guid: ad43332f1cd5ff1f2f11a7eb67cf3ae8, type: 2}
+    - {fileID: 11400000, guid: c33f0a2ce151814ed3f79484f3e270a1, type: 2}
+    - {fileID: 11400000, guid: f6faa4c586ec2f9226ad5a2d2ae8d9b1, type: 2}
   spells:
   - {fileID: 11400000, guid: 5451f873c026b5e85899a826e3e97dff, type: 2}
   - {fileID: 11400000, guid: 79141c9de434beef4ba8576c0320d40e, type: 2}
