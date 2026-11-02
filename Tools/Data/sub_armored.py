@@ -4,7 +4,7 @@ from techs import T
 NAME = "Armored Division"
 FACTION = "UNSC"
 FOLDER = "ArmoredDivision"
-DESCRIPTION = "Heavy ground vehicles: the biggest tank, long-range guns and fast EMP scouts."
+DESCRIPTION = "Heavy ground vehicles: the biggest tank, long guns and fast EMP scouts."
 ORDER = 2
 
 

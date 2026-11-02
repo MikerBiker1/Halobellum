@@ -4,7 +4,7 @@ from techs import T
 NAME = "Unggoy Rebellion"
 FACTION = "Covenant"
 FOLDER = "UnggoyRebellion"
-DESCRIPTION = "Grunts, and more Grunts. Huge cheap squads, burning methane and a heroic mech."
+DESCRIPTION = "Grunts, and more Grunts: huge cheap squads, burning methane, a hero's mech."
 ORDER = 6
 
 

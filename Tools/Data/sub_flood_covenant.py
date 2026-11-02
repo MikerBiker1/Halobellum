@@ -6,7 +6,7 @@ from techs import T
 NAME = "Covenant-based"
 FACTION = "Flood"
 FOLDER = "FloodCovenant"
-DESCRIPTION = "Infested Covenant troops and vehicles with their plasma, and the Spawner, which never stops giving birth."
+DESCRIPTION = "Infested Covenant troops with their plasma, and the Spawner."
 ORDER = 8
 INFESTED = (0.55, 0.68, 0.18, 0.55)
 

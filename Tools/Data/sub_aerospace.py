@@ -4,7 +4,7 @@ from techs import T
 NAME = "Aerospace Command"
 FACTION = "UNSC"
 FOLDER = "AerospaceCommand"
-DESCRIPTION = "Aircraft: gunships, bombers and a heavy transport. Nothing here fights a Reaver or a Vampire well."
+DESCRIPTION = "Aircraft: gunships, bombers and a heavy transport."
 ORDER = 3
 
 

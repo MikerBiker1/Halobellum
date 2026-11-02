@@ -38,14 +38,14 @@ MonoBehaviour:
     - {fileID: 11400000, guid: a96bafc074f125d18ac9596d2b1f3dab, type: 2}
     - {fileID: 11400000, guid: 947fe31141fe96a81bb132bf0a3c8480, type: 2}
   - subFactionName: Armored Division
-    description: 'Heavy ground vehicles: the biggest tank, long-range guns and fast EMP scouts.'
+    description: 'Heavy ground vehicles: the biggest tank, long guns and fast EMP scouts.'
     exclusiveUnits:
     - {fileID: 11400000, guid: ffe74a1a7a3ffe0c04f2fcb3e613f656, type: 2}
     - {fileID: 11400000, guid: ad43332f1cd5ff1f2f11a7eb67cf3ae8, type: 2}
     - {fileID: 11400000, guid: c33f0a2ce151814ed3f79484f3e270a1, type: 2}
     - {fileID: 11400000, guid: f6faa4c586ec2f9226ad5a2d2ae8d9b1, type: 2}
   - subFactionName: Aerospace Command
-    description: 'Aircraft: gunships, bombers and a heavy transport. Nothing here fights a Reaver or a Vampire well.'
+    description: 'Aircraft: gunships, bombers and a heavy transport.'
     exclusiveUnits:
     - {fileID: 11400000, guid: 0fff2195f162ab2f6f837d6799dab27e, type: 2}
     - {fileID: 11400000, guid: 1b34bd49865458e4a24a2531dd923446, type: 2}

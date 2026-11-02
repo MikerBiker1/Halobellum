@@ -38,7 +38,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: ed67b9d67b4f6c50808651e10f9fde4f, type: 2}
     - {fileID: 11400000, guid: 57b4143a038b36593f3ab7c8c58b0bdb, type: 2}
   - subFactionName: Covenant-based
-    description: 'Infested Covenant troops and vehicles with their plasma, and the Spawner, which never stops giving birth.'
+    description: 'Infested Covenant troops with their plasma, and the Spawner.'
     exclusiveUnits:
     - {fileID: 11400000, guid: 09779479e562ecde6161d021017a0a5c, type: 2}
     - {fileID: 11400000, guid: 060db707fcadfc366665578dc412abfd, type: 2}

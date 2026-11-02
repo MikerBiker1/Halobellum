@@ -44,7 +44,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: d89c0d6831282aca1768c93e6668d9d1, type: 2}
     - {fileID: 11400000, guid: da44bff4a932fb55e659036654835d85, type: 2}
   - subFactionName: Unggoy Rebellion
-    description: 'Grunts, and more Grunts. Huge cheap squads, burning methane and a heroic mech.'
+    description: 'Grunts, and more Grunts: huge cheap squads, burning methane, a hero''s mech.'
     exclusiveUnits:
     - {fileID: 11400000, guid: 88cf3a21fce74313a25256411c468a76, type: 2}
     - {fileID: 11400000, guid: dc661dd6ecc068e2e4802385ce1677c5, type: 2}
