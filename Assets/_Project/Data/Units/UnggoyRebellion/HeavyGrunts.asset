@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48a24a6f0743ea50b653bb6800d1d896, type: 3}
+  m_Name: HeavyGrunts
+  m_EditorClassIdentifier: 
+  unitName: Heavy Grunts
+  role: 2
+  tier: 1
+  unlockCost: 0
+  squadSize: 8
+  cost: 200
+  baseDamage: 5
+  maxHealth: 100
+  armorType: 0
+  maxShield: 30
+  shieldRegenPerSecond: 10
+  moveSpeed: 1.5
+  collisionRadius: 0.55
+  turnTime180: 0.3
+  isAir: 0
+  targetFilter: 2
+  weapons:
+  - weaponName: Needle Rifle
+    damagePerShot: 6.5
+    fireInterval: 0.25
+    range: 12
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 0
+    damageType: 2
+    isAntiArmor: 0
+    canBeBlocked: 0
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+  hasDefenseArc: 0
+  defenseArc:
+    arcDegrees: 0
+    frontDamageMultiplier: 1
+    rearDamageMultiplier: 1
+    blockChance: 0
+    blockedDamageTypes: 
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
+  reinforcementNeedsUpgrade: 0
+  formsPerBody: 1
+  isFlood: 0
+  infects: 0
+  immuneToInfection: 0
+  selfDestructs: 0
+  seeksDensestCluster: 0
+  deathBurstDamage: 0
+  deathBurstRadius: 0
+  deathBurstDamageType: 0
+  deathBurstAntiArmor: 0
+  deathSpawns: []
+  spawnedUnit: {fileID: 0}
+  spawnedBodies: 0
+  spawnIntervalSeconds: 0
+  auraRadius: 0
+  auraSpeedMultiplier: 1
+  auraHealPerSecondShare: 0
+  lifestealShare: 0
+  leapRange: 0
+  leapSpeed: 0
+  leapCooldownSeconds: 0
+  techUpgrades:
+  - {fileID: 11400000, guid: 469ac2fb4c74616b4319410ebbc56766, type: 2}
+  - {fileID: 11400000, guid: 7c8d1e7259b348a42570e26fe9c601b9, type: 2}
+  prefab: {fileID: 5114197679728133698, guid: 7a01892072107624dbe03cb41511e81e, type: 3}
+  keepsOwnMaterials: 0
+  bakedBody: {fileID: 11400000, guid: 13e5317e800eacd3e477b8d5fbc3e4b1, type: 2}
+  bakedTint: {r: 0.75, g: 0.22, b: 0.2, a: 0.4}
+  bakedScale: 1.1
+  strongAgainst: 'Tanks, heavy units'
+  weakAgainst: 'Chaff swarms, flankers'
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Infection Forms (100%). Grunts in heavy armor with a small shield, at the top of the Tier 1 price band. First-pass M10 values, Unggoy Rebellion (Docs/M10/subfactions.md).'

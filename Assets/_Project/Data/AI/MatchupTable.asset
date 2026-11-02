@@ -179,6 +179,18 @@ MonoBehaviour:
   - attacker: Marine
     defender: Hunter Captain
     winRate: 1
+  - attacker: Marine
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Marine
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Marine
+    defender: Methane Wagon
+    winRate: 0
+  - attacker: Marine
+    defender: Grunt Goblin
+    winRate: 0
   - attacker: Flamethrower Trooper
     defender: Marine
     winRate: 0
@@ -343,6 +355,18 @@ MonoBehaviour:
     winRate: 0
   - attacker: Flamethrower Trooper
     defender: Hunter Captain
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Flamethrower Trooper
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Methane Wagon
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Grunt Goblin
     winRate: 0
   - attacker: Warthog
     defender: Marine
@@ -509,6 +533,18 @@ MonoBehaviour:
   - attacker: Warthog
     defender: Hunter Captain
     winRate: 0
+  - attacker: Warthog
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Warthog
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Warthog
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Warthog
+    defender: Grunt Goblin
+    winRate: 0
   - attacker: Gauss Warthog
     defender: Marine
     winRate: 0
@@ -674,6 +710,18 @@ MonoBehaviour:
   - attacker: Gauss Warthog
     defender: Hunter Captain
     winRate: 0
+  - attacker: Gauss Warthog
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Gauss Warthog
+    defender: Grunt Goblin
+    winRate: 1
   - attacker: Scorpion
     defender: Marine
     winRate: 1
@@ -839,6 +887,18 @@ MonoBehaviour:
   - attacker: Scorpion
     defender: Hunter Captain
     winRate: 0
+  - attacker: Scorpion
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Scorpion
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Scorpion
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Scorpion
+    defender: Grunt Goblin
+    winRate: 1
   - attacker: Wolverine
     defender: Marine
     winRate: 0.9
@@ -1004,6 +1064,18 @@ MonoBehaviour:
   - attacker: Wolverine
     defender: Hunter Captain
     winRate: 0
+  - attacker: Wolverine
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Wolverine
+    defender: Heavy Grunts
+    winRate: 0.2
+  - attacker: Wolverine
+    defender: Methane Wagon
+    winRate: 0
+  - attacker: Wolverine
+    defender: Grunt Goblin
+    winRate: 0
   - attacker: Hornet
     defender: Marine
     winRate: 0
@@ -1169,6 +1241,18 @@ MonoBehaviour:
   - attacker: Hornet
     defender: Hunter Captain
     winRate: 1
+  - attacker: Hornet
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Hornet
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Hornet
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Hornet
+    defender: Grunt Goblin
+    winRate: 0
   - attacker: Archer Missile Pod
     defender: Marine
     winRate: 1
@@ -1334,6 +1418,18 @@ MonoBehaviour:
   - attacker: Archer Missile Pod
     defender: Hunter Captain
     winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Archer Missile Pod
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Archer Missile Pod
+    defender: Methane Wagon
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Grunt Goblin
+    winRate: 0.3
   - attacker: Pelican
     defender: Marine
     winRate: 0
@@ -1499,6 +1595,18 @@ MonoBehaviour:
   - attacker: Pelican
     defender: Hunter Captain
     winRate: 0
+  - attacker: Pelican
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Pelican
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Pelican
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Pelican
+    defender: Grunt Goblin
+    winRate: 0
   - attacker: Spartan
     defender: Marine
     winRate: 0
@@ -1663,6 +1771,18 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan
     defender: Hunter Captain
+    winRate: 1
+  - attacker: Spartan
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Spartan
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Spartan
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Spartan
+    defender: Grunt Goblin
     winRate: 1
   - attacker: Mantis
     defender: Marine
@@ -1829,6 +1949,18 @@ MonoBehaviour:
   - attacker: Mantis
     defender: Hunter Captain
     winRate: 0
+  - attacker: Mantis
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Mantis
+    defender: Heavy Grunts
+    winRate: 0.9
+  - attacker: Mantis
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Mantis
+    defender: Grunt Goblin
+    winRate: 0.4
   - attacker: Elephant
     defender: Marine
     winRate: 1
@@ -1994,6 +2126,18 @@ MonoBehaviour:
   - attacker: Elephant
     defender: Hunter Captain
     winRate: 0
+  - attacker: Elephant
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Elephant
+    defender: Heavy Grunts
+    winRate: 0.9
+  - attacker: Elephant
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Elephant
+    defender: Grunt Goblin
+    winRate: 1
   - attacker: Grunt
     defender: Marine
     winRate: 0
@@ -2159,6 +2303,18 @@ MonoBehaviour:
   - attacker: Grunt
     defender: Hunter Captain
     winRate: 1
+  - attacker: Grunt
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Grunt
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Grunt
+    defender: Methane Wagon
+    winRate: 0
+  - attacker: Grunt
+    defender: Grunt Goblin
+    winRate: 0
   - attacker: Fuel Rod Grunt
     defender: Marine
     winRate: 1
@@ -2324,6 +2480,18 @@ MonoBehaviour:
   - attacker: Fuel Rod Grunt
     defender: Hunter Captain
     winRate: 0.5
+  - attacker: Fuel Rod Grunt
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Fuel Rod Grunt
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Fuel Rod Grunt
+    defender: Methane Wagon
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Grunt Goblin
+    winRate: 0.2
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Marine
     winRate: 0
@@ -2489,6 +2657,18 @@ MonoBehaviour:
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Hunter Captain
     winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Methane Wagon
+    winRate: 0
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Grunt Goblin
+    winRate: 0
   - attacker: 'Jackal (Shield)'
     defender: Marine
     winRate: 0
@@ -2653,6 +2833,18 @@ MonoBehaviour:
     winRate: 0
   - attacker: 'Jackal (Shield)'
     defender: Hunter Captain
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Methane Wagon
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Grunt Goblin
     winRate: 0
   - attacker: Ghost
     defender: Marine
@@ -2819,6 +3011,18 @@ MonoBehaviour:
   - attacker: Ghost
     defender: Hunter Captain
     winRate: 0
+  - attacker: Ghost
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Ghost
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Ghost
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Ghost
+    defender: Grunt Goblin
+    winRate: 0
   - attacker: Elite
     defender: Marine
     winRate: 0
@@ -2984,6 +3188,18 @@ MonoBehaviour:
   - attacker: Elite
     defender: Hunter Captain
     winRate: 0
+  - attacker: Elite
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Elite
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Elite
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Elite
+    defender: Grunt Goblin
+    winRate: 1
   - attacker: Wraith
     defender: Marine
     winRate: 1
@@ -3149,6 +3365,18 @@ MonoBehaviour:
   - attacker: Wraith
     defender: Hunter Captain
     winRate: 0
+  - attacker: Wraith
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Wraith
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Wraith
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Wraith
+    defender: Grunt Goblin
+    winRate: 0
   - attacker: Vampire
     defender: Marine
     winRate: 0
@@ -3314,6 +3542,18 @@ MonoBehaviour:
   - attacker: Vampire
     defender: Hunter Captain
     winRate: 0
+  - attacker: Vampire
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Vampire
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Vampire
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Vampire
+    defender: Grunt Goblin
+    winRate: 0
   - attacker: Banshee
     defender: Marine
     winRate: 0
@@ -3479,6 +3719,18 @@ MonoBehaviour:
   - attacker: Banshee
     defender: Hunter Captain
     winRate: 1
+  - attacker: Banshee
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Banshee
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Banshee
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Banshee
+    defender: Grunt Goblin
+    winRate: 0
   - attacker: Hunter Pair
     defender: Marine
     winRate: 1
@@ -3644,6 +3896,18 @@ MonoBehaviour:
   - attacker: Hunter Pair
     defender: Hunter Captain
     winRate: 0
+  - attacker: Hunter Pair
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Grunt Goblin
+    winRate: 1
   - attacker: Zealot
     defender: Marine
     winRate: 0
@@ -3809,6 +4073,18 @@ MonoBehaviour:
   - attacker: Zealot
     defender: Hunter Captain
     winRate: 1
+  - attacker: Zealot
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Zealot
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Zealot
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Zealot
+    defender: Grunt Goblin
+    winRate: 1
   - attacker: Scarab
     defender: Marine
     winRate: 1
@@ -3973,6 +4249,18 @@ MonoBehaviour:
     winRate: 1
   - attacker: Scarab
     defender: Hunter Captain
+    winRate: 1
+  - attacker: Scarab
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Scarab
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Scarab
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Scarab
+    defender: Grunt Goblin
     winRate: 1
   - attacker: Infection Forms
     defender: Marine
@@ -4139,6 +4427,18 @@ MonoBehaviour:
   - attacker: Infection Forms
     defender: Hunter Captain
     winRate: 1
+  - attacker: Infection Forms
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Infection Forms
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Infection Forms
+    defender: Methane Wagon
+    winRate: 0
+  - attacker: Infection Forms
+    defender: Grunt Goblin
+    winRate: 0
   - attacker: Carrier Form
     defender: Marine
     winRate: 0.1
@@ -4304,6 +4604,18 @@ MonoBehaviour:
   - attacker: Carrier Form
     defender: Hunter Captain
     winRate: 1
+  - attacker: Carrier Form
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Carrier Form
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Carrier Form
+    defender: Methane Wagon
+    winRate: 0.3
+  - attacker: Carrier Form
+    defender: Grunt Goblin
+    winRate: 0.9
   - attacker: Combat Form
     defender: Marine
     winRate: 0
@@ -4468,6 +4780,18 @@ MonoBehaviour:
     winRate: 0
   - attacker: Combat Form
     defender: Hunter Captain
+    winRate: 1
+  - attacker: Combat Form
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Combat Form
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Combat Form
+    defender: Methane Wagon
+    winRate: 0
+  - attacker: Combat Form
+    defender: Grunt Goblin
     winRate: 1
   - attacker: Stalker Form
     defender: Marine
@@ -4634,6 +4958,18 @@ MonoBehaviour:
   - attacker: Stalker Form
     defender: Hunter Captain
     winRate: 0
+  - attacker: Stalker Form
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Stalker Form
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Stalker Form
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Stalker Form
+    defender: Grunt Goblin
+    winRate: 0
   - attacker: Pure Form Ranged
     defender: Marine
     winRate: 1
@@ -4799,6 +5135,18 @@ MonoBehaviour:
   - attacker: Pure Form Ranged
     defender: Hunter Captain
     winRate: 0
+  - attacker: Pure Form Ranged
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Pure Form Ranged
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Pure Form Ranged
+    defender: Methane Wagon
+    winRate: 0.7
+  - attacker: Pure Form Ranged
+    defender: Grunt Goblin
+    winRate: 0.7
   - attacker: Swarm Form
     defender: Marine
     winRate: 0
@@ -4963,6 +5311,18 @@ MonoBehaviour:
     winRate: 0
   - attacker: Swarm Form
     defender: Hunter Captain
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Methane Wagon
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Grunt Goblin
     winRate: 0
   - attacker: Pure Form Tank
     defender: Marine
@@ -5129,6 +5489,18 @@ MonoBehaviour:
   - attacker: Pure Form Tank
     defender: Hunter Captain
     winRate: 0
+  - attacker: Pure Form Tank
+    defender: Cannon Fodder
+    winRate: 0.6
+  - attacker: Pure Form Tank
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Grunt Goblin
+    winRate: 0.4
   - attacker: Seeder
     defender: Marine
     winRate: 0
@@ -5293,6 +5665,18 @@ MonoBehaviour:
     winRate: 1
   - attacker: Seeder
     defender: Hunter Captain
+    winRate: 1
+  - attacker: Seeder
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Seeder
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Seeder
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Seeder
+    defender: Grunt Goblin
     winRate: 1
   - attacker: Infected Pelican
     defender: Marine
@@ -5459,6 +5843,18 @@ MonoBehaviour:
   - attacker: Infected Pelican
     defender: Hunter Captain
     winRate: 1
+  - attacker: Infected Pelican
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Methane Wagon
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Grunt Goblin
+    winRate: 1
   - attacker: Infected Phantom
     defender: Marine
     winRate: 0
@@ -5624,6 +6020,18 @@ MonoBehaviour:
   - attacker: Infected Phantom
     defender: Hunter Captain
     winRate: 1
+  - attacker: Infected Phantom
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Infected Phantom
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Infected Phantom
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Infected Phantom
+    defender: Grunt Goblin
+    winRate: 1
   - attacker: Flood Abomination
     defender: Marine
     winRate: 1
@@ -5789,6 +6197,18 @@ MonoBehaviour:
   - attacker: Flood Abomination
     defender: Hunter Captain
     winRate: 0
+  - attacker: Flood Abomination
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Flood Abomination
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Flood Abomination
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Flood Abomination
+    defender: Grunt Goblin
+    winRate: 1
   - attacker: Spartan Sniper
     defender: Marine
     winRate: 0
@@ -5954,6 +6374,18 @@ MonoBehaviour:
   - attacker: Spartan Sniper
     defender: Hunter Captain
     winRate: 0.6
+  - attacker: Spartan Sniper
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Grunt Goblin
+    winRate: 1
   - attacker: Spartan Heavy Weapons
     defender: Marine
     winRate: 0.1
@@ -6119,6 +6551,18 @@ MonoBehaviour:
   - attacker: Spartan Heavy Weapons
     defender: Hunter Captain
     winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Methane Wagon
+    winRate: 0.9
+  - attacker: Spartan Heavy Weapons
+    defender: Grunt Goblin
+    winRate: 0
   - attacker: Spartan Grenadier
     defender: Marine
     winRate: 1
@@ -6284,6 +6728,18 @@ MonoBehaviour:
   - attacker: Spartan Grenadier
     defender: Hunter Captain
     winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Methane Wagon
+    winRate: 0.2
+  - attacker: Spartan Grenadier
+    defender: Grunt Goblin
+    winRate: 0.8
   - attacker: Spartan CQB
     defender: Marine
     winRate: 0
@@ -6448,6 +6904,18 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan CQB
     defender: Hunter Captain
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Grunt Goblin
     winRate: 0
   - attacker: Spartan Fireteam
     defender: Marine
@@ -6614,6 +7082,18 @@ MonoBehaviour:
   - attacker: Spartan Fireteam
     defender: Hunter Captain
     winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Spartan Fireteam
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Methane Wagon
+    winRate: 0.3
+  - attacker: Spartan Fireteam
+    defender: Grunt Goblin
+    winRate: 1
   - attacker: Gremlin
     defender: Marine
     winRate: 0
@@ -6779,6 +7259,18 @@ MonoBehaviour:
   - attacker: Gremlin
     defender: Hunter Captain
     winRate: 0
+  - attacker: Gremlin
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Gremlin
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Gremlin
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Gremlin
+    defender: Grunt Goblin
+    winRate: 1
   - attacker: Cobra
     defender: Marine
     winRate: 0
@@ -6944,6 +7436,18 @@ MonoBehaviour:
   - attacker: Cobra
     defender: Hunter Captain
     winRate: 0.2
+  - attacker: Cobra
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Cobra
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Cobra
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Cobra
+    defender: Grunt Goblin
+    winRate: 1
   - attacker: Rhino
     defender: Marine
     winRate: 1
@@ -7109,6 +7613,18 @@ MonoBehaviour:
   - attacker: Rhino
     defender: Hunter Captain
     winRate: 0
+  - attacker: Rhino
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Rhino
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Rhino
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Rhino
+    defender: Grunt Goblin
+    winRate: 1
   - attacker: Grizzly
     defender: Marine
     winRate: 1
@@ -7274,6 +7790,18 @@ MonoBehaviour:
   - attacker: Grizzly
     defender: Hunter Captain
     winRate: 0
+  - attacker: Grizzly
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Grizzly
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Grizzly
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Grizzly
+    defender: Grunt Goblin
+    winRate: 0.4
   - attacker: Sparrowhawk
     defender: Marine
     winRate: 0
@@ -7438,6 +7966,18 @@ MonoBehaviour:
     winRate: 1
   - attacker: Sparrowhawk
     defender: Hunter Captain
+    winRate: 1
+  - attacker: Sparrowhawk
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Sparrowhawk
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Sparrowhawk
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Sparrowhawk
+    defender: Grunt Goblin
     winRate: 1
   - attacker: Shortsword
     defender: Marine
@@ -7604,6 +8144,18 @@ MonoBehaviour:
   - attacker: Shortsword
     defender: Hunter Captain
     winRate: 1
+  - attacker: Shortsword
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Shortsword
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Shortsword
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Shortsword
+    defender: Grunt Goblin
+    winRate: 0.3
   - attacker: Vulture
     defender: Marine
     winRate: 1
@@ -7769,6 +8321,18 @@ MonoBehaviour:
   - attacker: Vulture
     defender: Hunter Captain
     winRate: 1
+  - attacker: Vulture
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Vulture
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Vulture
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Vulture
+    defender: Grunt Goblin
+    winRate: 0
   - attacker: Condor Gunship
     defender: Marine
     winRate: 0
@@ -7934,6 +8498,18 @@ MonoBehaviour:
   - attacker: Condor Gunship
     defender: Hunter Captain
     winRate: 0
+  - attacker: Condor Gunship
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Condor Gunship
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Condor Gunship
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Condor Gunship
+    defender: Grunt Goblin
+    winRate: 0
   - attacker: Chopper
     defender: Marine
     winRate: 0
@@ -8098,6 +8674,18 @@ MonoBehaviour:
     winRate: 0
   - attacker: Chopper
     defender: Hunter Captain
+    winRate: 0
+  - attacker: Chopper
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Chopper
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Chopper
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Chopper
+    defender: Grunt Goblin
     winRate: 0
   - attacker: Brute Grenadier
     defender: Marine
@@ -8264,6 +8852,18 @@ MonoBehaviour:
   - attacker: Brute Grenadier
     defender: Hunter Captain
     winRate: 1
+  - attacker: Brute Grenadier
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Brute Grenadier
+    defender: Methane Wagon
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Grunt Goblin
+    winRate: 0.7
   - attacker: Marauder
     defender: Marine
     winRate: 1
@@ -8429,6 +9029,18 @@ MonoBehaviour:
   - attacker: Marauder
     defender: Hunter Captain
     winRate: 0
+  - attacker: Marauder
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Marauder
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Marauder
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Marauder
+    defender: Grunt Goblin
+    winRate: 0.1
   - attacker: Reaver
     defender: Marine
     winRate: 0
@@ -8593,6 +9205,18 @@ MonoBehaviour:
     winRate: 0
   - attacker: Reaver
     defender: Hunter Captain
+    winRate: 0
+  - attacker: Reaver
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Reaver
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Reaver
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Reaver
+    defender: Grunt Goblin
     winRate: 0
   - attacker: Blisterback
     defender: Marine
@@ -8759,6 +9383,18 @@ MonoBehaviour:
   - attacker: Blisterback
     defender: Hunter Captain
     winRate: 0
+  - attacker: Blisterback
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Blisterback
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Blisterback
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Blisterback
+    defender: Grunt Goblin
+    winRate: 0
   - attacker: Skitterer
     defender: Marine
     winRate: 0
@@ -8923,6 +9559,18 @@ MonoBehaviour:
     winRate: 0
   - attacker: Skitterer
     defender: Hunter Captain
+    winRate: 0
+  - attacker: Skitterer
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Skitterer
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Skitterer
+    defender: Methane Wagon
+    winRate: 0.2
+  - attacker: Skitterer
+    defender: Grunt Goblin
     winRate: 0
   - attacker: Goliath
     defender: Marine
@@ -9089,6 +9737,18 @@ MonoBehaviour:
   - attacker: Goliath
     defender: Hunter Captain
     winRate: 0
+  - attacker: Goliath
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Goliath
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Goliath
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Goliath
+    defender: Grunt Goblin
+    winRate: 1
   - attacker: Hunter Captain
     defender: Marine
     winRate: 0
@@ -9253,4 +9913,724 @@ MonoBehaviour:
     winRate: 1
   - attacker: Hunter Captain
     defender: Goliath
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Methane Wagon
+    winRate: 1
+  - attacker: Hunter Captain
+    defender: Grunt Goblin
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Marine
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Flamethrower Trooper
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Warthog
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Scorpion
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Wolverine
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Hornet
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Archer Missile Pod
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Pelican
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Spartan
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Mantis
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Elephant
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Grunt
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Ghost
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Elite
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Wraith
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Vampire
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Banshee
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Zealot
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Scarab
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Infection Forms
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Carrier Form
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Combat Form
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Stalker Form
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Pure Form Ranged
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Swarm Form
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Pure Form Tank
+    winRate: 0.4
+  - attacker: Cannon Fodder
+    defender: Seeder
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Infected Pelican
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Infected Phantom
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Spartan Fireteam
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Gremlin
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Cobra
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Rhino
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Grizzly
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Sparrowhawk
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Shortsword
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Vulture
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Condor Gunship
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Chopper
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Marauder
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Reaver
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Blisterback
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Skitterer
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Goliath
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Hunter Captain
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Methane Wagon
+    winRate: 0
+  - attacker: Cannon Fodder
+    defender: Grunt Goblin
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Marine
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Warthog
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Scorpion
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Wolverine
+    winRate: 0.8
+  - attacker: Heavy Grunts
+    defender: Hornet
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Archer Missile Pod
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Pelican
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Spartan
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Mantis
+    winRate: 0.1
+  - attacker: Heavy Grunts
+    defender: Elephant
+    winRate: 0.1
+  - attacker: Heavy Grunts
+    defender: Grunt
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Fuel Rod Grunt
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Ghost
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Elite
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Wraith
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Vampire
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Banshee
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Zealot
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Scarab
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Infection Forms
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Carrier Form
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Combat Form
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Stalker Form
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Pure Form Ranged
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Swarm Form
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Seeder
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Infected Pelican
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Infected Phantom
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Spartan Fireteam
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Gremlin
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Cobra
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Rhino
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Grizzly
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Sparrowhawk
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Shortsword
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Vulture
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Condor Gunship
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Chopper
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Marauder
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Reaver
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Blisterback
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Skitterer
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Goliath
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Hunter Captain
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Methane Wagon
+    winRate: 0
+  - attacker: Heavy Grunts
+    defender: Grunt Goblin
+    winRate: 0.4
+  - attacker: Methane Wagon
+    defender: Marine
+    winRate: 1
+  - attacker: Methane Wagon
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Methane Wagon
+    defender: Warthog
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Gauss Warthog
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Scorpion
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Wolverine
+    winRate: 1
+  - attacker: Methane Wagon
+    defender: Hornet
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Methane Wagon
+    defender: Pelican
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Spartan
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Mantis
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Elephant
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Grunt
+    winRate: 1
+  - attacker: Methane Wagon
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Methane Wagon
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: Methane Wagon
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Methane Wagon
+    defender: Ghost
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Elite
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Wraith
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Vampire
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Banshee
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Zealot
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Scarab
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Infection Forms
+    winRate: 1
+  - attacker: Methane Wagon
+    defender: Carrier Form
+    winRate: 0.7
+  - attacker: Methane Wagon
+    defender: Combat Form
+    winRate: 1
+  - attacker: Methane Wagon
+    defender: Stalker Form
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Pure Form Ranged
+    winRate: 0.3
+  - attacker: Methane Wagon
+    defender: Swarm Form
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Seeder
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Infected Pelican
+    winRate: 1
+  - attacker: Methane Wagon
+    defender: Infected Phantom
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Spartan Heavy Weapons
+    winRate: 0.1
+  - attacker: Methane Wagon
+    defender: Spartan Grenadier
+    winRate: 0.8
+  - attacker: Methane Wagon
+    defender: Spartan CQB
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Spartan Fireteam
+    winRate: 0.7
+  - attacker: Methane Wagon
+    defender: Gremlin
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Cobra
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Rhino
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Grizzly
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Sparrowhawk
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Shortsword
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Vulture
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Condor Gunship
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Chopper
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Methane Wagon
+    defender: Marauder
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Reaver
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Blisterback
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Skitterer
+    winRate: 0.8
+  - attacker: Methane Wagon
+    defender: Goliath
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Hunter Captain
+    winRate: 0
+  - attacker: Methane Wagon
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Methane Wagon
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Methane Wagon
+    defender: Grunt Goblin
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Marine
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Warthog
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Gauss Warthog
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Scorpion
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Wolverine
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Hornet
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Archer Missile Pod
+    winRate: 0.7
+  - attacker: Grunt Goblin
+    defender: Pelican
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Spartan
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Mantis
+    winRate: 0.6
+  - attacker: Grunt Goblin
+    defender: Elephant
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Grunt
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Fuel Rod Grunt
+    winRate: 0.8
+  - attacker: Grunt Goblin
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Ghost
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Elite
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Wraith
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Vampire
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Banshee
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Zealot
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Scarab
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Infection Forms
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Carrier Form
+    winRate: 0.1
+  - attacker: Grunt Goblin
+    defender: Combat Form
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Stalker Form
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Pure Form Ranged
+    winRate: 0.3
+  - attacker: Grunt Goblin
+    defender: Swarm Form
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Pure Form Tank
+    winRate: 0.6
+  - attacker: Grunt Goblin
+    defender: Seeder
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Infected Pelican
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Infected Phantom
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Spartan Grenadier
+    winRate: 0.2
+  - attacker: Grunt Goblin
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Spartan Fireteam
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Gremlin
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Cobra
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Rhino
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Grizzly
+    winRate: 0.6
+  - attacker: Grunt Goblin
+    defender: Sparrowhawk
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Shortsword
+    winRate: 0.7
+  - attacker: Grunt Goblin
+    defender: Vulture
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Condor Gunship
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Chopper
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Brute Grenadier
+    winRate: 0.3
+  - attacker: Grunt Goblin
+    defender: Marauder
+    winRate: 0.9
+  - attacker: Grunt Goblin
+    defender: Reaver
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Blisterback
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Skitterer
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Goliath
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Hunter Captain
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Heavy Grunts
+    winRate: 0.6
+  - attacker: Grunt Goblin
+    defender: Methane Wagon
     winRate: 1

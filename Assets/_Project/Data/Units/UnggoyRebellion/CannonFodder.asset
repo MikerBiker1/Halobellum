@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48a24a6f0743ea50b653bb6800d1d896, type: 3}
+  m_Name: CannonFodder
+  m_EditorClassIdentifier: 
+  unitName: Cannon Fodder
+  role: 0
+  tier: 1
+  unlockCost: 0
+  squadSize: 30
+  cost: 100
+  baseDamage: 0.6667
+  maxHealth: 20
+  armorType: 0
+  maxShield: 0
+  shieldRegenPerSecond: 0
+  moveSpeed: 1.75
+  collisionRadius: 0.4
+  turnTime180: 0.25
+  isAir: 0
+  targetFilter: 2
+  weapons:
+  - weaponName: Plasma Pistol
+    damagePerShot: 3
+    fireInterval: 0.5
+    range: 9
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 0
+    damageType: 2
+    isAntiArmor: 0
+    canBeBlocked: 0
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+  hasDefenseArc: 0
+  defenseArc:
+    arcDegrees: 0
+    frontDamageMultiplier: 1
+    rearDamageMultiplier: 1
+    blockChance: 0
+    blockedDamageTypes: 
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
+  reinforcementNeedsUpgrade: 0
+  formsPerBody: 1
+  isFlood: 0
+  infects: 0
+  immuneToInfection: 0
+  selfDestructs: 0
+  seeksDensestCluster: 0
+  deathBurstDamage: 0
+  deathBurstRadius: 0
+  deathBurstDamageType: 0
+  deathBurstAntiArmor: 0
+  deathSpawns: []
+  spawnedUnit: {fileID: 0}
+  spawnedBodies: 0
+  spawnIntervalSeconds: 0
+  auraRadius: 0
+  auraSpeedMultiplier: 1
+  auraHealPerSecondShare: 0
+  lifestealShare: 0
+  leapRange: 0
+  leapSpeed: 0
+  leapCooldownSeconds: 0
+  techUpgrades:
+  - {fileID: 11400000, guid: 705e6cabb542920a21d6a57bbc2cbe4f, type: 2}
+  - {fileID: 11400000, guid: 4e5ba9e78915ffaeb29277c7d7d6bff8, type: 2}
+  prefab: {fileID: 4811150776113266073, guid: fa35b714643c0194c847f38b8e0a348e, type: 3}
+  keepsOwnMaterials: 0
+  bakedBody: {fileID: 11400000, guid: 13e5317e800eacd3e477b8d5fbc3e4b1, type: 2}
+  bakedTint: {r: 0.72, g: 0.6, b: 0.42, a: 0.35}
+  bakedScale: 0.9
+  strongAgainst: Single-target DPS
+  weakAgainst: Chaff clear
+  notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Fuel Rod Grunt (100%). The largest squad in the game: 30 Grunts who barely fight. They are there to be shot instead of something else. First-pass M10 values, Unggoy Rebellion (Docs/M10/subfactions.md).'
