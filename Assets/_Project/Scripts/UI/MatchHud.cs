@@ -336,7 +336,7 @@ namespace Halobellum.UI
                 CardScreens.DrawUnitPicture(new Rect(row.x + 4f, row.y + 2f, picture, picture), unit, player.Faction.Name, UnitIcons.FactionColor(player.Faction.Name));
                 float textX = row.x + picture + 8f, textWidth = row.width - picture - 134f;
                 GUI.Label(new Rect(textX, row.y + 2f, textWidth, 28f), $"{unit.Name} - {unit.Cost} cr", _text);
-                CardScreens.Fit(new Rect(textX, row.y + 28f, textWidth, 22f), $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.FormsInSquad)}{(player.SubFaction.ExclusiveUnits.Contains(unit) ? ", exclusive" : "")}", CardScreens.LineStyle, 15, 12, TextAnchor.MiddleLeft, HudTheme.DimText);
+                CardScreens.Fit(new Rect(textX, row.y + 25f, textWidth, 28f), $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.FormsInSquad)}{(player.SubFaction.ExclusiveUnits.Contains(unit) ? ", exclusive" : "")}", CardScreens.LineStyle, 15, 12, TextAnchor.MiddleLeft, HudTheme.DimText);
 
                 var button = new Rect(row.xMax - 118f, row.y + 9f, 110f, 36f);
                 if (player.Unlocked.Contains(unit))
