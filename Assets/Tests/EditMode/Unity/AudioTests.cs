@@ -446,7 +446,7 @@ namespace Halobellum.Tests
         public void EveryTestToolOnTheCommandLine_IsSilent()
         {
             // These only change what a tool that has already been started does, or record it.
-            string[] notTools = { "-effects", "-effectsBench", "-menuDemoShort", "-menuDemoWatch", "-menuDemoSounds", "-menuDemoUiScale", AudioCapture.Flag };
+            string[] notTools = { "-effects", "-effectsBench", "-menuDemoShort", "-menuDemoWatch", "-menuDemoSounds", "-menuDemoUiScale", "-cardsDemoLayout", AudioCapture.Flag };
             var flags = new HashSet<string>();
             var declared = new Regex(@"const string \w*Flag\w* = ""(-\w+)""");
             var checkedByName = new Regex(@"Array\.IndexOf\(args, ""(-\w+)""\) < 0\)");

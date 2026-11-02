@@ -25,12 +25,14 @@ Earlier reports are in this file's Git history. **M10 is built and merged**, and
 **D46 to D52** in `DECISIONS.md`, and the list in `MORNING_DECISIONS.md`.
 
 ## Test results
-- **Unity:** EditMode **591 / 591**, PlayMode **94 / 94**. **.NET harness:** **387 / 387**.
+- **Unity:** EditMode **650 / 650**. PlayMode **115 passed, 0 failed, 1 skipped** of 116: the menu's hover check, because batch runs draw no buttons (the built game's sound tour covers it). **.NET harness:** **388 / 388**.
 - **Built game:** real matches as UNSC, Covenant, Flood, Noble and Banished, the menu demo through every screen (0 problems), the effects and terrain galleries and the card demo, with no exceptions in any log.
 - **Independent review:** five reviewers played the merged game, and fixers corrected the 31 problems they confirmed. Among them: wrecks that didn't visibly burn, the camera shake setting doing nothing, battle sound carrying on through Esc, the Sandbox's wrong ground for exclusive units, and the mouse wheel zooming the camera while scrolling a list. Questions left are items 27 to 38.
-- **Speed:** 192 bodies at 1x average 1.35 ms a frame, 4.0 ms for the slowest 1% of frames (7.7 before the review), on your PC. Garbage collections fell from 492 to 144 in the same battle. The PC's load differed between the two measurements, so frame times are indicative.
+- **Second round:** the reviewers' lesser notes were fixed, and each area got an independent check. It adds anti-aliasing, a real mushroom cloud for the nuke, smooth shots with rockets, cannons and bombs that look different, lighter Flood pools, soft sounds for moving and turning squads, a Scarab beam that can't get dropped, exclusive units first in the shop, and silent test runs. A scheduled power cut interrupted it, and no work was lost. Questions left are items 39 to 46.
+- **Speed:** 192 bodies at 1x average 1.11 ms a frame with 4x anti-aliasing on, 2.9 ms for the slowest 1% of frames (7.7 before the review), and none over 16.7 ms, on your PC. Garbage collections fell from 1 per 115 frames to 1 per 424. The PC's load differed between the measurements, so frame times are indicative. The battle's result line is identical to before, so the simulation didn't change.
 - **Not tested:** how anything sounds, since nobody has heard it, and how it moves or feels, since I only see still pictures.
-- **Check your settings:** my test runs reset your volumes and UI scale and left the window at 1600 x 900. See `MORNING_DECISIONS.md`.
+- **Check your settings:** my test runs reset your volumes and UI scale and left the window at 2560 x 1200. See `MORNING_DECISIONS.md`.
+- **To play it:** `E:\AI\Halobellum_Game\Halobellum.exe`, or open `Assets/_Project/Scenes/MainMenu.unity` in Unity and press Play.
 
 ## Blockers
 **Pushing:** a safety check blocked pushing the models, so all of this is only on your PC. See item 2 of `MORNING_DECISIONS.md`.

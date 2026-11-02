@@ -68,12 +68,29 @@ Five reviewers played the merged game, and fixers corrected what they confirmed:
 35. **Sandbox bar:** at UI scale 110% and up on a 16:9 window it sits right of centre to clear the Items panel, so it no longer lines up with the speed controls above it. Fine?
 36. **Unit pictures.** The Infested Marine is now an almost solid green soldier, at the battle tint's full strength. Soldiers are shown from the waist up everywhere, even on large cards. Spartan Sniper and Fireteam look the same, as do Grenadier and Heavy Weapons, because they share a body. The Skitterer and Methane Wagon borrow the nearest placeholder shapes. Any of these to change?
 37. **Infested vehicles differ only by a green tint.** At the game camera an Infested Scorpion looks much like a Scorpion. Do you want a stronger colour or growths, or wait for models?
-38. **Battle HUD garbage.** Collections fell by about 70%, to one every 2.7 s at 165 Hz. What's left is inside Unity's text drawing and would take rewriting the battle HUD. I recommend leaving it unless you feel hitches.
+38. **Battle HUD garbage.** Collections fell by about two thirds, to one every 2.6 s at 165 Hz. What's left is inside Unity's text drawing and would take rewriting the battle HUD. I recommend leaving it unless you feel hitches.
+
+## From the second round
+
+A second round fixed what the reviewers had noted as lesser, and each area got an independent check. These are choices I made for you, or questions it left.
+
+39. **Anti-aliasing:** 4x MSAA is now on for the High quality level, which fixes the dashed glowing lines. Its cost is too small to measure on your PC, but it wasn't measured on a weaker card. Keep it? Low stays without it.
+40. **The HAVOK Nuke** is rebuilt as a real mushroom cloud on a stem, ending at 8.6 s of battle time. Please watch it, since nobody has seen it move. In stills, the cap's underside at 3 s shows a few round spots, and the dust skirt is patches rather than a ring. The top can run behind the HUD when the nuke lands far up the field. The cap is flattened north to south so that it doesn't hide its stem from the fixed camera, so it would need changing if the camera ever turns around the field.
+41. **Shop order:** a sub-faction's own units now come first in the shop, because they are the reason to pick that card. Only the order on screen changed. Keep it?
+42. **The sounds to judge by ear:**
+    - The new soft sounds for selecting, turning, moving a squad and taking a spell back: are they at the right level? The levels are at the top of `UiAudio.cs`.
+    - The Spartan Sniper now uses the Gauss sound. Too much like a railgun?
+    - The Methane Wagon uses the falling-bomb sound, not one for a mortar.
+    - The main menu's hover sound is much quieter than the factions' hovers, so it may be hard to hear over the music.
+43. **Sounds left as they are:** almost every landing is the same small explosion, even a Rhino's 150 damage at 4.5 m splash. The Spartan and Brute Grenadiers play the tank cannon's sound. Do you want bigger blasts to sound bigger, or the grenades smaller?
+44. **Decimals** follow your PC's language inside the English text, so you see "2,5 s" and "1,8 m/s". Keep it, or always use a point?
+45. **Shell holes:** the small near-black holes in no man's land are unchanged on every map, though they are as dark as the Flood pools that I lightened. They are 2 to 6 m across. Lighten them too?
+46. **Narrow Sandbox windows:** when a squad window would cover the Items panel, the panel now moves to the right of it while the squad is selected. On the narrowest windows at a high UI scale it then covers part of the unit list and the middle of the Red half, until you close the squad window. Fine?
 
 ## Things my test runs did to your PC
 
 - **Your game settings:** a fixer's test pressed Reset to defaults in a real run, so volumes and UI scale are at their defaults. Any values you had set are lost, because they weren't recorded first. Camera shake is on.
-- **The game's window:** test runs leave the game windowed at 1600 x 900. Change it in Settings if you want fullscreen.
+- **The game's window:** test runs left the game windowed, at 2560 x 1200 today. Change it in Settings if you want fullscreen. From now on my test builds run as "Halobellum Test", with their own settings and window (a registry key and a folder in `AppData\LocalLow\DefaultCompany`, both harmless), and they can't change yours.
 - **Real mouse input:** one fixer sent real clicks and wheel notches to test scrolling. Before it added a guard, a few may have landed on another open window. No harm was seen, but it can't be ruled out.
 
 ## Still to do from M9
@@ -82,9 +99,6 @@ Five reviewers played the merged game, and fixers corrected what they confirmed:
 
 ## Small things I noticed and left
 
-- The selection marker is a solid bright yellow disc, not a ring.
+- The menu's hover check is skipped in batch test runs, because they draw no buttons there. A sound tour in the built game covers it, using its own pointer. No real mouse has tried it.
 - Air units overlap into a blob in big fights.
-- The result line is hidden behind the Sandbox bar.
-- At exactly a 5:4 window with 125% UI, about 20 units of the Sandbox bar fall off each side.
-- At under 1480 units wide and UI scale 110% or more, a tall squad window can overlap the Sandbox's Items panel.
 - The faction asset files are still named `*_Standard.asset`. Only the file name is left over.
