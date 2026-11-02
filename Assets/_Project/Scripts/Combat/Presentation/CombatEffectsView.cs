@@ -1,13 +1,18 @@
 // CombatEffectsView.cs
-// Shows who is shooting whom, so fights are readable (Bible pillar "Readable battles"):
-//   - instant-hit weapons draw a short tracer from the shooter to the target (WeaponFired event);
-//   - projectile weapons show a small sphere for every projectile in flight; lobbed ones fly in an arc;
-//   - beam weapons draw a thin line while charging, then a thick beam with a glowing spot on the ground.
-// Shots and beams start at the muzzle of the model that fires them, if it has one (D45), and fly from that height to
-// the height of what they aim at. The simulation knows only the ground, so this is looks only.
-// Tracers, projectile spheres and beams come from fixed-size pools, so nothing is created during battle.
-// Tracer lifetime counts in battle time: it pauses with the battle and runs faster at 2x and 4x.
-// Depends on: BattleController, UnitViewManager, PlaceholderArt, Halobellum.Combat, UnityEngine.
+// Everything you see of a fight besides the bodies themselves (M10), so that fights are readable and exciting (Bible pillar "Readable
+// battles"). It listens to the simulation and draws, through EffectKit and EffectRecipes:
+//   - a flash at the muzzle of each shot, and what WeaponLooks says the weapon's shot looks like. Shots start at the muzzle of the model
+//     that fires them, if it has one (D45), and fly from that height to the height of what they aim at; the simulation knows only the ground;
+//   - shots the simulation hits with at once still appear to fly for a moment, and their impact comes when they arrive;
+//   - projectiles at their real place in flight, in an arc if they are lobbed, with smoke trails where the look asks for one, and a blast
+//     as wide as their splash where they land;
+//   - beams: a thin line and a growing spot while charging, then a thick glowing beam with a burning spot, sparks and scorched ground;
+//   - dust behind moving ground units. Deaths are DeathEffects and spells are SpellEffects.
+// All of it is pooled: nothing is created during battle. Everything runs on battle time: it pauses with the battle and runs faster at
+// 2x and 4x. If the frame rate suffers or too much is going on, EffectBudget drops the small things first. Looks only: nothing here
+// changes the simulation, and its random numbers aren't the simulation's.
+// Depends on: BattleController, UnitViewManager, EffectKit, EffectRecipes, DeathEffects, SpellEffects, WeaponLooks, CameraShake,
+//             EffectsPostProcess, Halobellum.Combat, UnityEngine.
 
 using System.Collections.Generic;
 using Halobellum.Combat;
@@ -16,81 +21,68 @@ using UnityEngine;
 
 namespace Halobellum.Presentation
 {
+    [DefaultExecutionOrder(50)] // After UnitViewManager has moved the bodies and their turrets.
     public sealed class CombatEffectsView : MonoBehaviour
     {
-        [SerializeField] private Color teamATracerColor = new Color(0.6f, 0.8f, 1f);
-        [SerializeField] private Color teamBTracerColor = new Color(1f, 0.7f, 0.4f);
-        [SerializeField] private Color projectileColor = new Color(1f, 0.95f, 0.6f);
-        [Tooltip("Battle seconds a tracer stays visible.")]
-        [SerializeField] private float tracerSeconds = 0.08f;
-        [SerializeField] private float tracerWidth = 0.08f;
-        [SerializeField] private float projectileSize = 0.45f;
-        [Tooltip("Height above the ground where ground units' shots start and land.")]
-        [SerializeField] private float shotHeight = 0.9f;
-        [SerializeField] private int tracerPoolSize = 400;
-        [SerializeField] private int projectilePoolSize = 300;
+        private struct ShotTrack
+        {
+            public int Serial;
+            public Vector3 World;
+            public Vector3 LastPuff;
+        }
+
+        private const int TrackSize = 1024;
+        private const int DustStagger = 7;
+
         [Tooltip("How high a lobbed shot flies at its peak, as a share of the distance it travels.")]
         [SerializeField] private float lobHeightShare = 0.3f;
-        [Tooltip("Size of a lobbed shot, bigger than a normal one so its arc can be followed.")]
-        [SerializeField] private float lobbedSize = 1.4f;
-        [SerializeField] private Color teamABeamColor = new Color(0.45f, 0.75f, 1f);
-        [SerializeField] private Color teamBBeamColor = new Color(0.75f, 0.45f, 1f);
-        [Tooltip("Height of the beam above a ground unit (it comes out of a big walker's body).")]
+        [Tooltip("Height above the ground where ground units' shots start and land.")]
+        [SerializeField] private float shotHeight = 0.9f;
+        [Tooltip("Height of the beam above a ground unit, if its model has no muzzle for it.")]
         [SerializeField] private float beamOriginHeight = 4f;
-        [SerializeField] private float beamChargeWidth = 0.25f;
-        [SerializeField] private float beamWidth = 1.4f;
-        [SerializeField] private int beamPoolSize = 12;
 
         private BattleController _battle;
         private UnitViewManager _units;
-        private Transform[] _tracers;
-        private float[] _tracerTimeLeft;
-        private int _nextTracer;
-        private int _instantShots;
-        private Transform[] _projectiles;
+        private BattleSimulation _shown;
+        private EffectKit _kit;
+        private EffectRecipes _recipes;
+        private DeathEffects _deaths;
+        private SpellEffects _spells;
+        private Transform _container;
+
         private readonly List<ShotInFlight> _shots = new List<ShotInFlight>();
-        private Transform[] _beams;
-        private Transform[] _beamSpots;
-        private readonly List<BeamShot> _shownBeams = new List<BeamShot>();
-        private Material _beamA, _beamB;
-        private Material _tracerA, _tracerB;
+        private readonly List<ShotInFlight> _lastShots = new List<ShotInFlight>();
+        private readonly ShotTrack[] _tracks = new ShotTrack[TrackSize];
+        private readonly List<BeamShot> _beams = new List<BeamShot>();
+        private readonly float[] _beamEmit = new float[16];
+        private readonly Vector3[] _beamLastScorch = new Vector3[16];
+        private readonly Dictionary<WeaponStats, WeaponLook> _looksA = new Dictionary<WeaponStats, WeaponLook>();
+        private readonly Dictionary<WeaponStats, WeaponLook> _looksB = new Dictionary<WeaponStats, WeaponLook>();
+        private readonly HashSet<string> _typesA = new HashSet<string>();
+        private bool _mirror;
+        private int _instantShots, _projectileShots, _frame;
+
+        /// <summary>The drawing tools (for tests and the benchmark).</summary>
+        public EffectKit Kit => _kit;
+        /// <summary>Deaths (for tests).</summary>
+        public DeathEffects Deaths => _deaths;
+        /// <summary>True if both sides could fire the same colours, so that the second side's are pushed to red (for tests).</summary>
+        public bool IsMirror => _mirror;
 
         private void Start()
         {
             _battle = GetComponent<BattleController>();
             _units = GetComponent<UnitViewManager>();
 
-            var container = new GameObject("Combat Effects").transform;
-            _tracerA = PlaceholderArt.MaterialFor(teamATracerColor);
-            _tracerB = PlaceholderArt.MaterialFor(teamBTracerColor);
-            _tracers = new Transform[tracerPoolSize];
-            _tracerTimeLeft = new float[tracerPoolSize];
-            for (int i = 0; i < tracerPoolSize; i++)
-            {
-                _tracers[i] = PlaceholderArt.CreatePart("Tracer", container, PlaceholderArt.Cube, _tracerA);
-                _tracers[i].gameObject.SetActive(false);
-            }
+            _container = new GameObject("Combat Effects").transform;
+            _kit = new EffectKit(_container);
+            _recipes = new EffectRecipes(_kit);
+            _deaths = new DeathEffects(_recipes, _units);
+            _spells = new SpellEffects(_recipes);
 
-            Material projectileMaterial = PlaceholderArt.MaterialFor(projectileColor);
-            _projectiles = new Transform[projectilePoolSize];
-            for (int i = 0; i < projectilePoolSize; i++)
-            {
-                _projectiles[i] = PlaceholderArt.CreatePart("Projectile", container, PlaceholderArt.Sphere, projectileMaterial);
-                _projectiles[i].localScale = Vector3.one * projectileSize;
-                _projectiles[i].gameObject.SetActive(false);
-            }
-
-            _beamA = PlaceholderArt.MaterialFor(teamABeamColor);
-            _beamB = PlaceholderArt.MaterialFor(teamBBeamColor);
-            _beams = new Transform[beamPoolSize];
-            _beamSpots = new Transform[beamPoolSize];
-            for (int i = 0; i < beamPoolSize; i++)
-            {
-                _beams[i] = PlaceholderArt.CreatePart("Beam", container, PlaceholderArt.Cube, _beamA);
-                _beams[i].gameObject.SetActive(false);
-                _beamSpots[i] = PlaceholderArt.CreatePart("Beam Spot", container, PlaceholderArt.Sphere, _beamA);
-                _beamSpots[i].gameObject.SetActive(false);
-            }
+            Camera camera = Camera.main;
+            if (camera != null && camera.GetComponent<CameraShake>() == null) camera.gameObject.AddComponent<CameraShake>();
+            EffectsPostProcess.Apply(_container);
 
             _battle.BattleChanged += OnBattleChanged;
             OnBattleChanged(_battle.Simulation);
@@ -98,75 +90,274 @@ namespace Halobellum.Presentation
 
         private void OnDestroy()
         {
-            if (_shown != null) _shown.Events.WeaponFired -= OnWeaponFired;
+            if (_shown != null)
+            {
+                _shown.Events.WeaponFired -= OnWeaponFired;
+                _shown.Events.AttackBlocked -= OnAttackBlocked;
+            }
+            _deaths?.Show(null);
+            _spells?.Show(null);
             if (_battle != null) _battle.BattleChanged -= OnBattleChanged;
+            _kit?.Destroy();
+            if (_container != null) Destroy(_container.gameObject);
         }
-
-        private BattleSimulation _shown;
 
         /// <summary>Listens to the newly shown battle and clears effects left from the last one.</summary>
         private void OnBattleChanged(BattleSimulation simulation)
         {
-            if (_shown != null) _shown.Events.WeaponFired -= OnWeaponFired;
-            _shown = simulation;
-            if (_shown != null) _shown.Events.WeaponFired += OnWeaponFired;
-            for (int i = 0; i < _tracers.Length; i++)
+            if (_shown != null)
             {
-                _tracerTimeLeft[i] = 0f;
-                _tracers[i].gameObject.SetActive(false);
+                _shown.Events.WeaponFired -= OnWeaponFired;
+                _shown.Events.AttackBlocked -= OnAttackBlocked;
             }
+            _shown = simulation;
+            _kit.Clear();
+            _recipes.Clear();
+            _deaths.Show(simulation);
+            _spells.Show(simulation);
+            _looksA.Clear();
+            _looksB.Clear();
+            _shots.Clear();
+            _lastShots.Clear();
+            _instantShots = 0;
+            _projectileShots = 0;
+            for (int i = 0; i < TrackSize; i++) _tracks[i].Serial = -1;
+            _mirror = BothSidesLookAlike(simulation);
+            if (_shown == null) return;
+            _shown.Events.WeaponFired += OnWeaponFired;
+            _shown.Events.AttackBlocked += OnAttackBlocked;
         }
+
+        /// <summary>The same faction on both sides, or (in the sandbox) the same unit type on both sides.</summary>
+        private bool BothSidesLookAlike(BattleSimulation simulation)
+        {
+            if (simulation == null) return false;
+            if (BattleFactions.TeamA == BattleFactions.TeamB) return true;
+            _typesA.Clear();
+            IReadOnlyList<SimUnit> units = simulation.Units;
+            for (int i = 0; i < units.Count; i++) if (units[i].Team == Team.A) _typesA.Add(units[i].Stats.Name);
+            for (int i = 0; i < units.Count; i++) if (units[i].Team == Team.B && _typesA.Contains(units[i].Stats.Name)) return true;
+            return false;
+        }
+
+        private WeaponLook LookOf(SimUnit unit, int weaponIndex)
+        {
+            WeaponStats weapon = unit.Weapons[weaponIndex].Stats;
+            Dictionary<WeaponStats, WeaponLook> looks = unit.Team == Team.A ? _looksA : _looksB;
+            if (looks.TryGetValue(weapon, out WeaponLook look)) return look;
+            look = WeaponLooks.For(weapon, unit.Stats, BattleFactions.For(unit.Team), unit.Team, _mirror);
+            looks[weapon] = look;
+            return look;
+        }
+
+        // ------------------------------------------------------------------ a weapon fires
 
         private void OnWeaponFired(SimUnit attacker, int weaponIndex, SimUnit target)
         {
             WeaponStats weapon = attacker.Weapons[weaponIndex].Stats;
-            if (!weapon.IsInstant || weapon.IsBeam) return; // Projectiles and beams are drawn in LateUpdate.
+            if (weapon.IsBeam) return; // Beams are drawn in LateUpdate.
+            WeaponLook look = LookOf(attacker, weaponIndex);
 
-            Vector3 from = _units.TryMuzzle(attacker, weaponIndex, _instantShots++, out Vector3 muzzle) ? muzzle : ShotPoint(attacker);
+            // This counts shots in the same order as the simulation does, so a shot's muzzle flash is at the muzzle it leaves from.
+            int shotNumber = weapon.IsInstant ? _instantShots++ : _projectileShots++;
+            Vector3 from = _units.TryMuzzle(attacker, weaponIndex, shotNumber, out Vector3 muzzle) ? muzzle : ShotPoint(attacker);
             Vector3 to = _units.AimPoint(target, shotHeight);
+            // Shots land all over a big body, not on one spot.
+            float scatter = target.Radius * 0.55f;
+            to.x += Random.Range(-scatter, scatter);
+            to.z += Random.Range(-scatter, scatter);
             Vector3 line = to - from;
             if (line.sqrMagnitude < 1e-4f) return;
+            Vector3 direction = line.normalized;
 
-            int index = _nextTracer;
-            _nextTracer = (_nextTracer + 1) % _tracers.Length;
-            Transform tracer = _tracers[index];
-            tracer.SetPositionAndRotation((from + to) * 0.5f, Quaternion.LookRotation(line));
-            tracer.localScale = new Vector3(tracerWidth, tracerWidth, line.magnitude);
-            tracer.GetComponent<MeshRenderer>().sharedMaterial = attacker.Team == Team.A ? _tracerA : _tracerB;
-            tracer.gameObject.SetActive(true);
-            _tracerTimeLeft[index] = tracerSeconds;
+            switch (look.Kind)
+            {
+                case WeaponFeelKind.Burst:
+                    return; // The death effect is all it needs.
+                case WeaponFeelKind.Melee:
+                    _recipes.MeleeHit(to, look, target.Stats.ArmorType);
+                    if (weapon.SplashRadius > 0f)
+                    {
+                        Vector3 slam = new Vector3(target.Position.X, 0.2f, target.Position.Y);
+                        _recipes.Blast(slam, weapon.SplashRadius, BlastStyle.Dust, look.Shot, EffectPriority.Big);
+                        CameraShake.Kick(slam, 0.12f);
+                    }
+                    return;
+                case WeaponFeelKind.Flame:
+                    _recipes.FlameShot(from, to, weapon.ConeDegrees, weapon.Range);
+                    return;
+                case WeaponFeelKind.Gauss:
+                    // A bright straight streak, there at once; the simulation's projectile only says when it lands.
+                    _recipes.Muzzle(from, direction, look);
+                    _kit.FlashLine(from, to, look.ShotWidth * _kit.ReadScale, look.Shot, 0.3f);
+                    _kit.FlashLine(from, to, look.ShotWidth * 0.3f * _kit.ReadScale, Color.white, 0.18f);
+                    return;
+            }
+
+            _recipes.Muzzle(from, direction, look);
+            if (!weapon.IsInstant) return; // Drawn in flight, in LateUpdate.
+
+            float flight = _recipes.InstantShot(from, to, look);
+            if (look.Impact != ImpactStyle.None)
+                _recipes.ImpactAfter(flight, to, direction, look.Impact, target.Stats.ArmorType, target.Shield > 0f, look.Shot);
+            if (weapon.SplashRadius > 0f)
+                _recipes.BlastAfter(flight, to, weapon.SplashRadius, look.Blast, look.Shot, EffectPriority.Big);
         }
+
+        private void OnAttackBlocked(SimUnit target, SimUnit attacker)
+        {
+            _recipes.ShieldHit(_units.AimPoint(target, shotHeight));
+        }
+
+        // ------------------------------------------------------------------ every frame
 
         private void LateUpdate()
         {
-            float battleTime = Time.deltaTime * _battle.Speed;
-            for (int i = 0; i < _tracers.Length; i++)
-            {
-                if (_tracerTimeLeft[i] <= 0f) continue;
-                _tracerTimeLeft[i] -= battleTime;
-                if (_tracerTimeLeft[i] <= 0f) _tracers[i].gameObject.SetActive(false);
-            }
+            if (_kit == null) return;
+            float speed = _battle.Speed;
+            _kit.BeginFrame(speed, Time.deltaTime, Time.unscaledDeltaTime);
+            _frame++;
+            _recipes.RunDue();
 
+            float battleDelta = Time.deltaTime * speed;
+            DrawShots();
+            DrawBeams(battleDelta);
+            if (speed > 0f && _battle.IsPlaying) KickUpDust();
+            _deaths.Tick(battleDelta);
+            _spells.Tick();
+            _kit.EndFrame();
+        }
+
+        private void DrawShots()
+        {
             if (_shown != null) _shown.GetProjectiles(_shots);
             else _shots.Clear();
-            for (int i = 0; i < _projectiles.Length; i++)
+
+            // Shots stay in order of their serial numbers, so one pass over both lists finds those that have landed.
+            int now = 0;
+            for (int last = 0; last < _lastShots.Count; last++)
             {
-                bool active = i < _shots.Count;
-                if (active)
-                {
-                    ShotInFlight shot = _shots[i];
-                    float arc = 4f * lobHeightShare * shot.ArcLength * shot.Progress * (1f - shot.Progress);
-                    _projectiles[i].position = ShotPosition(shot) + Vector3.up * arc;
-                    _projectiles[i].localScale = Vector3.one * (shot.ArcLength > 0f ? lobbedSize : projectileSize);
-                }
-                if (_projectiles[i].gameObject.activeSelf != active) _projectiles[i].gameObject.SetActive(active);
+                ShotInFlight old = _lastShots[last];
+                while (now < _shots.Count && _shots[now].Serial < old.Serial) now++;
+                if (now < _shots.Count && _shots[now].Serial == old.Serial) continue;
+                Land(old);
+            }
+            _lastShots.Clear();
+
+            for (int i = 0; i < _shots.Count; i++)
+            {
+                ShotInFlight shot = _shots[i];
+                _lastShots.Add(shot);
+                DrawShot(shot);
+            }
+        }
+
+        private void DrawShot(in ShotInFlight shot)
+        {
+            WeaponLook look = LookOf(shot.Attacker, shot.WeaponIndex);
+            float arc = 4f * lobHeightShare * shot.ArcLength * shot.Progress * (1f - shot.Progress);
+            Vector3 world = ShotPosition(shot) + Vector3.up * arc;
+
+            ref ShotTrack track = ref _tracks[shot.Serial & (TrackSize - 1)];
+            bool isNew = track.Serial != shot.Serial;
+            Vector3 previous = isNew ? world : track.World;
+            if (isNew)
+            {
+                track.Serial = shot.Serial;
+                track.LastPuff = world;
+            }
+            track.World = world;
+            Vector3 moved = world - previous;
+            Vector3 direction = moved.sqrMagnitude > 1e-6f ? moved.normalized : Vector3.forward;
+            if (moved.sqrMagnitude <= 1e-6f && shot.AimedAt != null)
+            {
+                Vector3 toward = _units.AimPoint(shot.AimedAt, shotHeight) - world;
+                if (toward.sqrMagnitude > 1e-6f) direction = toward.normalized;
             }
 
-            DrawBeams();
+            float read = _kit.ReadScale;
+            switch (look.Kind)
+            {
+                case WeaponFeelKind.Gauss:
+                    return; // Already a line from muzzle to target.
+                case WeaponFeelKind.PlasmaHeavy:
+                case WeaponFeelKind.Plasma when look.Ball:
+                case WeaponFeelKind.Bomb when look.Ball:
+                case WeaponFeelKind.Cannon when look.Ball:
+                {
+                    // A big glowing ball with a white heart, dripping light.
+                    float size = look.ShotWidth * Mathf.Max(1f, read * 0.8f);
+                    float pulse = 1f + 0.12f * Mathf.Sin(_kit.BattleTime * 26f + shot.Serial);
+                    _kit.HeadGlow(world, size * 2.3f * pulse, new Color(look.Shot.r, look.Shot.g, look.Shot.b, 0.65f));
+                    _kit.HeadGlow(world, size * 0.9f, Color.Lerp(look.Shot, Color.white, 0.65f));
+                    if ((world - track.LastPuff).sqrMagnitude > 0.8f)
+                    {
+                        track.LastPuff = world;
+                        _kit.Orb(EffectPriority.Small, world + Random.insideUnitSphere * size * 0.3f, Random.insideUnitSphere * 1.2f + Vector3.down * 0.6f, size * 0.4f, new Color(look.Shot.r, look.Shot.g, look.Shot.b, 0.7f), 0.38f);
+                    }
+                    return;
+                }
+                case WeaponFeelKind.Bio:
+                {
+                    _kit.HeadStreak(world, direction, 1.1f * read, look.ShotWidth * read, look.Shot);
+                    _kit.HeadGlow(world, 0.9f * read, new Color(0.65f, 0.9f, 0.3f, 0.55f));
+                    if ((world - track.LastPuff).sqrMagnitude > 1.2f)
+                    {
+                        track.LastPuff = world;
+                        _kit.Spore(EffectPriority.Small, world, Random.insideUnitSphere * 0.8f, 0.35f * read, EffectRecipes.SporeGreen, 0.9f);
+                    }
+                    return;
+                }
+                case WeaponFeelKind.Rocket:
+                case WeaponFeelKind.Cannon:
+                case WeaponFeelKind.Bomb:
+                {
+                    bool rocket = look.Kind == WeaponFeelKind.Rocket;
+                    _kit.HeadStreak(world, direction, (rocket ? 1.5f : 2.4f) * read, look.ShotWidth * read, look.Shot);
+                    _kit.HeadGlow(world, (rocket ? 1.5f : 1.1f) * read, new Color(look.Shot.r, look.Shot.g, look.Shot.b, 0.7f));
+                    if (look.SmokeTrail && (world - track.LastPuff).sqrMagnitude > (rocket ? 0.7f : 2.2f))
+                    {
+                        track.LastPuff = world;
+                        Color smoke = rocket ? EffectRecipes.SmokeGrey : EffectRecipes.SmokeThin;
+                        _kit.Smoke(rocket ? EffectPriority.Medium : EffectPriority.Small, world - direction * 0.4f, Random.insideUnitSphere * 0.3f, rocket ? Random.Range(0.8f, 1.2f) : 0.7f, smoke, rocket ? Random.Range(0.9f, 1.5f) : 0.6f);
+                        if (rocket) _kit.Fire(EffectPriority.Small, world - direction * 0.3f, -direction * 2f, 0.7f, 0.14f);
+                    }
+                    return;
+                }
+                default:
+                    _kit.HeadStreak(world, direction, 3f * read, look.ShotWidth * read, look.Shot);
+                    return;
+            }
+        }
+
+        /// <summary>A shot has reached the end of its flight: its impact, and a blast as wide as its splash.</summary>
+        private void Land(in ShotInFlight shot)
+        {
+            WeaponStats weapon = shot.Attacker.Weapons[shot.WeaponIndex].Stats;
+            WeaponLook look = LookOf(shot.Attacker, shot.WeaponIndex);
+            ref ShotTrack track = ref _tracks[shot.Serial & (TrackSize - 1)];
+            bool known = track.Serial == shot.Serial;
+            bool airborne = shot.AimedAt != null && shot.AimedAt.IsAir && shot.ArcLength <= 0f;
+
+            Vector3 at = new Vector3(shot.Position.X, shotHeight, shot.Position.Y);
+            if (known) at = track.World;
+            if (airborne) at.y = _units.AimPoint(shot.AimedAt, shotHeight).y;
+            else if (shot.ArcLength > 0f) at.y = 0.3f; // Lobbed: it comes down on the ground, hit or miss.
+            else if (shot.AimedAt != null) at.y = Mathf.Min(at.y, _units.AimPoint(shot.AimedAt, shotHeight).y);
+
+            if (weapon.SplashRadius > 0f)
+            {
+                _recipes.Blast(at, weapon.SplashRadius, look.Blast, look.Shot, EffectPriority.Big);
+                if (weapon.SplashRadius >= 3f) CameraShake.Kick(at, 0.05f + weapon.SplashRadius * 0.015f);
+                return;
+            }
+            SimUnit target = shot.AimedAt;
+            Vector3 direction = known ? (at - track.LastPuff).normalized : Vector3.down;
+            _recipes.Impact(at, direction, look.Impact, target != null ? target.Stats.ArmorType : ArmorType.Unarmored, target != null && target.Shield > 0f, look.Shot);
         }
 
         /// <summary>A shot starts at its muzzle and closes in on where the simulation says it is, at the height of its target.</summary>
-        private Vector3 ShotPosition(ShotInFlight shot)
+        private Vector3 ShotPosition(in ShotInFlight shot)
         {
             float left = 1f - shot.Progress;
             float endHeight = shot.AimedAt != null ? _units.AimPoint(shot.AimedAt, shotHeight).y : shotHeight;
@@ -181,42 +372,99 @@ namespace Halobellum.Presentation
             return new Vector3(x, Mathf.Lerp(startHeight, endHeight, shot.Progress), z);
         }
 
-        private void DrawBeams()
+        // ------------------------------------------------------------------ beams
+
+        private void DrawBeams(float battleDelta)
         {
-            if (_shown != null) _shown.GetBeams(_shownBeams);
-            else _shownBeams.Clear();
-            for (int i = 0; i < _beams.Length; i++)
-            {
-                bool active = i < _shownBeams.Count;
-                if (active) DrawBeam(i, _shownBeams[i]);
-                if (_beams[i].gameObject.activeSelf != active) _beams[i].gameObject.SetActive(active);
-                if (_beamSpots[i].gameObject.activeSelf != active) _beamSpots[i].gameObject.SetActive(active);
-            }
+            if (_shown != null) _shown.GetBeams(_beams);
+            else _beams.Clear();
+            for (int i = 0; i < _beams.Count && i < _beamEmit.Length; i++) DrawBeam(i, _beams[i], battleDelta);
         }
 
-        private void DrawBeam(int index, BeamShot beam)
+        private void DrawBeam(int index, in BeamShot beam, float battleDelta)
         {
+            WeaponLook look = LookOf(beam.Attacker, beam.WeaponIndex);
             if (!_units.TryMuzzle(beam.Attacker, beam.WeaponIndex, 0, out Vector3 from))
             {
                 from = _units.WorldPosition(beam.Attacker);
                 if (!beam.Attacker.IsAir) from.y = beamOriginHeight;
             }
-            Vector3 to = new Vector3(beam.Point.X, 0.1f, beam.Point.Y);
-            Vector3 line = to - from;
-            Material material = beam.Attacker.Team == Team.A ? _beamA : _beamB;
+            Vector3 to = new Vector3(beam.Point.X, 0.12f, beam.Point.Y);
+            float read = Mathf.Max(1f, _kit.ReadScale * 0.8f);
+            Color color = look.Shot;
+            float time = _kit.BattleTime;
 
-            float width = beam.Firing ? beamWidth : beamChargeWidth * beam.Charge;
-            Transform body = _beams[index];
-            body.SetPositionAndRotation((from + to) * 0.5f, Quaternion.LookRotation(line));
-            body.localScale = new Vector3(width, width, line.magnitude);
-            body.GetComponent<MeshRenderer>().sharedMaterial = material;
+            if (!beam.Firing)
+            {
+                // Charging: a thin wavering line, light gathering at the muzzle, the target spot growing to what it will hit.
+                float charge = Mathf.Clamp01(beam.Charge);
+                float flicker = 0.75f + 0.25f * Mathf.Sin(time * 45f);
+                _kit.Line(from, to, Mathf.Lerp(0.08f, 0.5f, charge) * read * flicker, new Color(color.r, color.g, color.b, 0.35f + 0.5f * charge));
+                _kit.HeadGlow(from, Mathf.Lerp(0.8f, 4.5f, charge * charge) * read, new Color(color.r, color.g, color.b, 0.8f));
+                _kit.HeadGlow(from, Mathf.Lerp(0.3f, 1.6f, charge) * read, Color.white);
+                _kit.GroundHead(to, beam.Radius * 2.6f * charge, new Color(color.r, color.g, color.b, 0.75f));
+                _beamEmit[index] += battleDelta * 26f;
+                while (_beamEmit[index] >= 1f)
+                {
+                    _beamEmit[index] -= 1f;
+                    Vector3 away = Random.onUnitSphere * Random.Range(2f, 4f);
+                    _kit.Orb(EffectPriority.Medium, from + away, -away * 2.4f, 0.3f * read, color, 0.4f);
+                }
+                _beamLastScorch[index] = to;
+                return;
+            }
 
-            // The spot grows to the area the beam will hit, so the target can be read before it fires.
-            float size = beam.Radius * 2f * (beam.Firing ? 1f : beam.Charge);
-            Transform spot = _beamSpots[index];
-            spot.position = to;
-            spot.localScale = new Vector3(size, 0.3f, size);
-            spot.GetComponent<MeshRenderer>().sharedMaterial = material;
+            // Firing: a thick glowing beam with a white core, on a burning spot that throws sparks and fire.
+            float pulse = 0.88f + 0.12f * Mathf.Sin(time * 38f) * Mathf.Sin(time * 23f);
+            _kit.Line(from, to, look.ShotWidth * 2.4f * pulse * read, new Color(color.r, color.g, color.b, 0.45f));
+            _kit.Line(from, to, look.ShotWidth * pulse * read, new Color(color.r, color.g, color.b, 0.9f));
+            _kit.Line(from, to, look.ShotWidth * 0.38f * pulse * read, new Color(0.92f, 0.98f, 1f, 1f));
+            _kit.HeadGlow(from, 5f * pulse * read, color);
+            _kit.HeadGlow(to + Vector3.up * 0.6f, beam.Radius * 3.4f * pulse, new Color(1f, 0.88f, 0.65f, 0.95f));
+            _kit.GroundHead(to, beam.Radius * 4.5f * pulse, new Color(1f, 0.52f, 0.16f, 1f));
+
+            _beamEmit[index] += battleDelta * 60f;
+            while (_beamEmit[index] >= 1f)
+            {
+                _beamEmit[index] -= 1f;
+                float roll = Random.value;
+                Vector2 around = Random.insideUnitCircle * beam.Radius;
+                Vector3 spot = to + new Vector3(around.x, 0.2f, around.y);
+                if (roll < 0.55f) _kit.Spark(EffectPriority.Big, spot, Random.onUnitSphere * 9f + Vector3.up * 11f, 0.085f * _kit.ReadScale, EffectRecipes.SparkHot, Random.Range(0.35f, 0.9f));
+                else if (roll < 0.85f) _kit.Fire(EffectPriority.Big, spot, Vector3.up * Random.Range(3f, 8f) + Random.insideUnitSphere * 2f, beam.Radius * Random.Range(0.6f, 1f), Random.Range(0.35f, 0.7f));
+                else _kit.Smoke(EffectPriority.Medium, spot, Vector3.up * Random.Range(3f, 6f), beam.Radius * Random.Range(1f, 1.5f), EffectRecipes.SmokeDark, Random.Range(1.2f, 2.4f));
+            }
+            if ((to - _beamLastScorch[index]).sqrMagnitude > 1.5f)
+            {
+                _beamLastScorch[index] = to;
+                _kit.Scorch(EffectPriority.Medium, to, beam.Radius * 2.2f, EffectRecipes.ScorchBlack, 35f);
+            }
+        }
+
+        // ------------------------------------------------------------------ dust
+
+        /// <summary>Vehicles and hovering craft kick up dust while they move; infantry a little now and then. Each body is looked at every few frames.</summary>
+        private void KickUpDust()
+        {
+            if (_shown == null) return;
+            IReadOnlyList<SimUnit> units = _shown.Units;
+            for (int i = (_frame % DustStagger); i < units.Count; i += DustStagger)
+            {
+                SimUnit unit = units[i];
+                if (!unit.IsAlive || unit.State != UnitState.Move || unit.IsAir || unit.IsLeaping) continue;
+                if (unit.Velocity.LengthSquared < 0.25f) continue;
+                float radius = unit.Radius;
+                var base3 = new Vector3(unit.Position.X, 0.25f, unit.Position.Y);
+                if (unit.Stats.ArmorType != ArmorType.Unarmored || radius >= 1f)
+                {
+                    Vector2 off = Random.insideUnitCircle * radius * 0.7f;
+                    _kit.Dust(EffectPriority.Small, base3 + new Vector3(off.x, 0f, off.y), Vector3.up * 0.5f, radius * Random.Range(1.2f, 1.9f), new Color(0.6f, 0.55f, 0.46f, 0.22f), Random.Range(0.8f, 1.3f));
+                }
+                else if (Random.value < 0.08f)
+                {
+                    _kit.Dust(EffectPriority.Small, base3, Vector3.up * 0.3f, 0.9f, new Color(0.6f, 0.55f, 0.46f, 0.16f), 0.6f);
+                }
+            }
         }
 
         private Vector3 ShotPoint(SimUnit unit)

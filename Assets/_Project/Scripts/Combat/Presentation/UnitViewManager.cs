@@ -229,6 +229,27 @@ namespace Halobellum.Presentation
             return position;
         }
 
+        /// <summary>Where a body is drawn right now, even if it has just died.</summary>
+        public Vector3 ShownPosition(SimUnit unit)
+        {
+            return unit.Id >= 0 && unit.Id < _views.Count ? _views[unit.Id].Root.transform.position : ToWorld(unit);
+        }
+
+        /// <summary>
+        /// A dead body stays on the field a while, for DeathEffects to move and burn (M10): its root, or null if it plays its own
+        /// death (a baked body). DeathEffects hides it again. Health bar and selection ring stay off.
+        /// </summary>
+        public Transform KeepCorpse(SimUnit unit)
+        {
+            if (unit.Id < 0 || unit.Id >= _views.Count) return null;
+            View view = _views[unit.Id];
+            if (view.Baked != null && view.Baked.Clip(BakedAnimation.Dead) != null) return null;
+            view.Bar.gameObject.SetActive(false);
+            view.Ring.SetActive(false);
+            view.Root.SetActive(true);
+            return view.Root.transform;
+        }
+
         /// <summary>World position of a unit's base as of the latest tick (air units at flying height).</summary>
         public Vector3 WorldPosition(SimUnit unit) => ToWorld(unit);
 

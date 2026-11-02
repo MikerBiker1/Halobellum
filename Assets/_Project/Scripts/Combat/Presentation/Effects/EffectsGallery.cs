@@ -1,0 +1,464 @@
+// EffectsGallery.cs
+// Test tool for built games (M10): takes pictures of every effect so that a person can judge them, and measures the frame time of a big
+// battle. SandboxAutoplay starts it:
+//   -sandboxDemo <folder> -effects        every weapon kind firing, every kind of death, the Pelican's crash and every spell
+//   -sandboxDemo <folder> -gallery        the same, after the pictures of the real models
+//   -sandboxDemo <folder> -effectsBench   about 200 bodies at 1x and at 4x; frame times go to bench.txt in the folder and to the log
+// Each picture freezes the battle (particles run on battle time, so they freeze too), and is taken from the game's own camera and from
+// close by. It reaches into the simulation in one way only, to kill a body on demand; battles here are throw-aways for pictures.
+// Depends on: SandboxController, BattleController, UnitViewManager, CombatEffectsView, EffectKit, Halobellum.Combat, Halobellum.Core, UnityEngine.
+
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using Halobellum.Combat;
+using Halobellum.Core;
+using UnityEngine;
+
+namespace Halobellum.Presentation
+{
+    public sealed class EffectsGallery : MonoBehaviour
+    {
+        private const float GameCameraDistance = 150f;
+        private const float GameCameraPitch = 55f;
+
+        private SandboxController _sandbox;
+        private BattleController _battle;
+        private UnitViewManager _views;
+        private string _shots;
+        private BattleCameraController _control;
+        private Camera _camera;
+        private bool _fired;
+        private SimUnit _firedBy;
+        private SimUnit _firedAt;
+        private string _waitFor;
+
+        public void Prepare(string shots)
+        {
+            _shots = shots;
+            _sandbox = GetComponent<SandboxController>();
+            _battle = GetComponent<BattleController>();
+            _views = GetComponent<UnitViewManager>();
+            _camera = Camera.main;
+            _control = _camera.GetComponent<BattleCameraController>();
+        }
+
+        /// <summary>Every picture: weapons, deaths, the crash, spells.</summary>
+        public IEnumerator TakeAll()
+        {
+            if (_control != null) _control.enabled = false;
+            yield return Weapons();
+            yield return Deaths();
+            yield return PelicanCrash();
+            yield return Spells();
+            if (_control != null) _control.enabled = true;
+            Debug.Log("Effects gallery finished.");
+        }
+
+        // ------------------------------------------------------------------ weapons
+
+        private readonly struct WeaponShot
+        {
+            public readonly string Label, Shooter, Target;
+            public readonly float Delay;
+            public WeaponShot(string label, string shooter, string target, float delay)
+            {
+                Label = label;
+                Shooter = shooter;
+                Target = target;
+                Delay = delay;
+            }
+        }
+
+        private IEnumerator Weapons()
+        {
+            const string tough = "Pure Form Tank";
+            WeaponShot[] list =
+            {
+                new WeaponShot("Bullet", "Marine", tough, 0.05f),
+                new WeaponShot("HeavyBullet", "Warthog", tough, 0.05f),
+                new WeaponShot("Cannon", "Scorpion", tough, 0.2f),
+                new WeaponShot("Gauss", "Gauss Warthog", tough, 0.06f),
+                new WeaponShot("Rocket", "Wolverine", "Hornet", 0.25f),
+                new WeaponShot("RocketLobbed", "Archer Missile Pod", tough, 0.9f),
+                new WeaponShot("Bomb", "Hornet", tough, 0.2f),
+                new WeaponShot("Flame", "Flamethrower Trooper", tough, 0.7f),
+                new WeaponShot("Plasma", "Jackal (Plasma Rifle)", tough, 0.08f),
+                new WeaponShot("PlasmaElite", "Elite", tough, 0.08f),
+                new WeaponShot("FuelRod", "Fuel Rod Grunt", tough, 0.3f),
+                new WeaponShot("Mortar", "Wraith", tough, 0.9f),
+                new WeaponShot("HunterCannon", "Hunter Pair", tough, 0.2f),
+                new WeaponShot("Needle", "Vampire", tough, 0.06f),
+                new WeaponShot("Laser", "Spartan", tough, 0.05f),
+                new WeaponShot("Sword", "Zealot", tough, 0.05f),
+                new WeaponShot("Claw", "Combat Form", tough, 0.05f),
+                new WeaponShot("Slam", "Flood Abomination", "Scorpion", 0.1f),
+                new WeaponShot("SpatBone", "Swarm Form", tough, 0.1f),
+                new WeaponShot("SeedSpore", "Seeder", "Marine", 0.2f),
+                new WeaponShot("BoneShards", "Pure Form Ranged", tough, 0.8f),
+                new WeaponShot("FloodPlasma", "Infected Phantom", tough, 0.08f),
+            };
+            foreach (WeaponShot shot in list) yield return OneWeapon(shot);
+            yield return ScarabBeam();
+        }
+
+        private IEnumerator OneWeapon(WeaponShot shot)
+        {
+            yield return Setup(new[] { shot.Shooter }, new[] { shot.Target });
+            _battle.Speed = 6f;
+            _sandbox.Run();
+            _fired = false;
+            _waitFor = shot.Shooter;
+            _battle.Simulation.Events.WeaponFired += OnFired;
+            GameCamera(Vector3.zero);
+            float limit = 45f;
+            // First get to the fighting at speed, then watch the next shot at normal speed.
+            while (!_fired && limit > 0f && !_battle.Simulation.IsFinished) { limit -= Time.unscaledDeltaTime; yield return null; }
+            _battle.Speed = 1f;
+            if (_firedBy != null) GameCamera(Middle(_firedBy, _firedAt));
+            yield return null;
+            _fired = false;
+            limit = 10f;
+            while (!_fired && limit > 0f && !_battle.Simulation.IsFinished) { limit -= Time.unscaledDeltaTime; yield return null; }
+            if (!_fired)
+            {
+                Debug.LogWarning($"Effects gallery: {shot.Shooter} never fired.");
+            }
+            else
+            {
+                yield return new WaitForSecondsRealtime(shot.Delay);
+                yield return Capture("w_" + shot.Label, Middle(_firedBy, _firedAt), Mathf.Max(13f, Vector3.Distance(_views.WorldPosition(_firedBy), _views.WorldPosition(_firedAt)) * 1.05f));
+            }
+            _battle.Simulation.Events.WeaponFired -= OnFired;
+            _sandbox.ResetBattle();
+            yield return null;
+        }
+
+        private void OnFired(SimUnit attacker, int weapon, SimUnit target)
+        {
+            if (attacker.Stats.Name != _waitFor) return;
+            _fired = true;
+            _firedBy = attacker;
+            _firedAt = target;
+        }
+
+        private IEnumerator ScarabBeam()
+        {
+            yield return Setup(new[] { "Scarab" }, new[] { "Pure Form Tank" });
+            _battle.Speed = 6f;
+            _sandbox.Run();
+            var beams = new List<BeamShot>();
+            bool charged = false, fired = false;
+            GameCamera(Vector3.zero);
+            float limit = 45f, firingSeen = 0f;
+            while (limit > 0f && !_battle.Simulation.IsFinished)
+            {
+                limit -= Time.unscaledDeltaTime;
+                _battle.Simulation.GetBeams(beams);
+                if (beams.Count > 0)
+                {
+                    _battle.Speed = 1f;
+                    BeamShot beam = beams[0];
+                    Vector3 focus = (_views.WorldPosition(beam.Attacker) + new Vector3(beam.Point.X, 0f, beam.Point.Y)) * 0.5f;
+                    float distance = Mathf.Max(24f, Vector3.Distance(_views.WorldPosition(beam.Attacker), new Vector3(beam.Point.X, 0f, beam.Point.Y)) * 1.2f);
+                    if (!beam.Firing && beam.Charge > 0.65f && !charged)
+                    {
+                        charged = true;
+                        yield return Capture("w_Beam_charging", focus, distance);
+                    }
+                    if (beam.Firing)
+                    {
+                        firingSeen += Time.unscaledDeltaTime;
+                        if (firingSeen > 1.1f && !fired)
+                        {
+                            fired = true;
+                            yield return Capture("w_Beam_firing", focus, distance);
+                            break;
+                        }
+                    }
+                }
+                yield return null;
+            }
+            _sandbox.ResetBattle();
+            yield return null;
+        }
+
+        // ------------------------------------------------------------------ deaths
+
+        private IEnumerator Deaths()
+        {
+            string[] list =
+            {
+                "Marine", "Placeholder Infantry", "Warthog", "Scorpion", "Elephant", "Scarab", "Hornet", "Pelican", "Banshee",
+                "Infection Forms", "Combat Form", "Stalker Form", "Carrier Form", "Flood Abomination", "Swarm Form", "Infected Phantom",
+            };
+            foreach (string name in list) yield return OneDeath(name);
+        }
+
+        private IEnumerator OneDeath(string name)
+        {
+            yield return Setup(new[] { name, "Marine" }, new[] { "Marine" });
+            _battle.Speed = 1f;
+            _sandbox.Run();
+            yield return new WaitForSecondsRealtime(0.25f);
+            SimUnit victim = FirstAlive(name, Team.A);
+            if (victim == null) yield break;
+            Vector3 place = _views.WorldPosition(victim);
+            place.y = 0f;
+            GameCamera(place);
+            yield return null;
+            // A whole small squad goes at once, or the picture is of one body among many.
+            int killed = 0;
+            foreach (SimUnit unit in _battle.Simulation.Units)
+            {
+                if (unit.Team != Team.A || unit.Stats.Name != name || killed >= 3) continue;
+                unit.Health = 0f;
+                killed++;
+            }
+            string label = name.Replace(" ", "");
+            float close = Mathf.Max(16f, victim.Radius * 9f);
+            float[] times = { 0.12f, 0.4f, 1f, 3.5f };
+            float waited = 0f;
+            foreach (float at in times)
+            {
+                yield return new WaitForSecondsRealtime(at - waited);
+                waited = at;
+                yield return Capture($"d_{label}_{at:0.0}", place + Vector3.up * (victim.IsAir ? 4f : 0f), close);
+            }
+            _sandbox.ResetBattle();
+            yield return null;
+        }
+
+        private IEnumerator PelicanCrash()
+        {
+            yield return Setup(new[] { "Infected Pelican" }, new[] { "Marine", "Marine" });
+            _battle.Speed = 6f;
+            _sandbox.Run();
+            float limit = 60f;
+            SimUnit pelican = FirstAlive("Infected Pelican", Team.A);
+            while (limit > 0f && pelican != null && pelican.IsAlive && !pelican.HasDived) { limit -= Time.unscaledDeltaTime; yield return null; }
+            if (pelican == null || !pelican.HasDived)
+            {
+                Debug.LogWarning("Effects gallery: the Infected Pelican never dived.");
+                yield break;
+            }
+            _battle.Speed = 1f;
+            Vector3 landing = new Vector3(pelican.LeapTo.X, 0f, pelican.LeapTo.Y);
+            GameCamera(landing);
+            yield return null;
+            while (pelican.IsAlive && pelican.LeapProgress < 0.55f) yield return null;
+            if (pelican.IsAlive) yield return Capture("crash_1_dive", landing, 46f);
+            while (pelican.IsAlive) yield return null;
+            float[] times = { 0.08f, 0.35f, 1f, 2.2f, 5f };
+            float waited = 0f;
+            foreach (float at in times)
+            {
+                yield return new WaitForSecondsRealtime(at - waited);
+                waited = at;
+                yield return Capture($"crash_2_{at:0.00}", landing, 60f);
+            }
+            _sandbox.ResetBattle();
+            yield return null;
+        }
+
+        // ------------------------------------------------------------------ spells
+
+        private readonly struct SpellShot
+        {
+            public readonly SpellStats Stats;
+            public readonly float[] Times;
+            public SpellShot(SpellStats stats, params float[] times)
+            {
+                Stats = stats;
+                Times = times;
+            }
+        }
+
+        private IEnumerator Spells()
+        {
+            UnitStats marine = Find("Marine");
+            SpellShot[] list =
+            {
+                new SpellShot(new SpellStats { Name = "MAC Strike", Offensive = true, Radius = 4f, DamagePerTick = 800f, DamageType = DamageType.Explosive, IsAntiArmor = true, DelaySeconds = 1f }, 0.05f, 0.35f, 1f, 3f),
+                new SpellShot(new SpellStats { Name = "HAVOK Nuke", Offensive = true, Radius = 14f, DamagePerTick = 2500f, DamageType = DamageType.Explosive, DelaySeconds = 4f }, -1f, 0.08f, 0.45f, 1.5f, 3f, 5f),
+                new SpellShot(new SpellStats { Name = "Plasma Bombardment", Offensive = true, Radius = 5f, DamagePerTick = 450f, DamageType = DamageType.Energy, DelaySeconds = 1f }, 0.1f, 0.5f, 1.5f),
+                new SpellShot(new SpellStats { Name = "Plasma Storm", Offensive = true, Radius = 10f, DamagePerTick = 40f, DamageType = DamageType.Energy, Ticks = 8, TickInterval = 0.5f, DelaySeconds = 1f, Targets = TargetFilter.Both }, 0.3f, 1.5f, 3.2f),
+                new SpellShot(new SpellStats { Name = "Glassing Beam", Offensive = true, Radius = 12f, DamagePerTick = 600f, DamageType = DamageType.Energy, Ticks = 5, TickInterval = 0.6f, DelaySeconds = 4f, Targets = TargetFilter.Both }, -1f, 0.2f, 1.5f, 3.5f, 6f),
+                new SpellShot(new SpellStats { Name = "Archer Missile Barrage", Offensive = true, Radius = 10f, DamagePerTick = 50f, DamageType = DamageType.Explosive, Ticks = 6, TickInterval = 0.5f, DelaySeconds = 1f, Targets = TargetFilter.Both }, 0.15f, 0.7f, 1.8f),
+                new SpellShot(new SpellStats { Name = "Gravemind's Wrath", Offensive = true, Radius = 13f, DamagePerTick = 1600f, DamageType = DamageType.Explosive, DelaySeconds = 4f, InfectsKills = true }, -1f, 0.1f, 0.6f, 2f, 4f),
+                new SpellShot(new SpellStats { Name = "Spore Burst", Offensive = true, Radius = 5f, DamagePerTick = 350f, DamageType = DamageType.Explosive, DelaySeconds = 1f, InfectsKills = true }, 0.1f, 0.8f),
+                new SpellShot(new SpellStats { Name = "Blight Rain", Offensive = true, Radius = 10f, DamagePerTick = 40f, DamageType = DamageType.Explosive, Ticks = 8, TickInterval = 0.5f, DelaySeconds = 1f, InfectsKills = true, Targets = TargetFilter.Both }, 0.5f, 2f),
+                new SpellShot(new SpellStats { Name = "Electromagnetic Pulse", Offensive = true, Effect = SpellEffect.Disrupt, Radius = 10f, ShieldDamage = 100f, TechDisableSeconds = 5f, DelaySeconds = 1f }, 0.08f, 0.35f),
+                new SpellShot(new SpellStats { Name = "Nerve Spores", Offensive = true, Effect = SpellEffect.Disrupt, Radius = 10f, ShieldDamage = 100f, TechDisableSeconds = 5f, DelaySeconds = 1f }, 0.3f),
+                new SpellShot(new SpellStats { Name = "Battlefield Rally", Effect = SpellEffect.Buff, Radius = 10f, DamageMultiplier = 1.3f, DelaySeconds = 1f }, 0.4f),
+                new SpellShot(new SpellStats { Name = "Bubble Shield", Effect = SpellEffect.Buff, Radius = 8f, ShieldBonusShare = 0.5f, DelaySeconds = 1f }, 0.4f),
+                new SpellShot(new SpellStats { Name = "Smoke Bomb", Offensive = false, Effect = SpellEffect.Smoke, AreaWidth = 15f, AreaDepth = 4f, RangeMultiplier = 0.5f, DelaySeconds = 0.5f }, 2.5f),
+                new SpellShot(new SpellStats { Name = "ODST Drop Pods", Offensive = true, Effect = SpellEffect.DropSquad, Radius = 4f, DropUnit = marine, DropSquads = 1, DelaySeconds = 1f }, 0.1f, 0.5f),
+            };
+            foreach (SpellShot shot in list) yield return OneSpell(shot);
+        }
+
+        private IEnumerator OneSpell(SpellShot shot)
+        {
+            yield return Setup(new[] { "Marine" }, new[] { "Marine", "Scorpion", "Marine" });
+            _battle.Speed = 1f;
+            _sandbox.Run();
+            // Aimed at the middle of the enemy, as a player would.
+            Vector2 sum = Vector2.zero;
+            int count = 0;
+            foreach (SimUnit unit in _battle.Simulation.Units)
+            {
+                if (unit.Team != Team.B) continue;
+                sum += new Vector2(unit.Position.X, unit.Position.Y);
+                count++;
+            }
+            Vector2 middle = count > 0 ? sum / count : Vector2.zero;
+            SimSpell spell = _battle.Simulation.AddSpell(shot.Stats, Team.A, new Vec2(middle.x, middle.y), 20f);
+            var place = new Vector3(middle.x, 0f, middle.y);
+            GameCamera(place);
+            string label = shot.Stats.Name.Replace(" ", "").Replace("'", "");
+            float radius = Mathf.Max(5f, shot.Stats.Radius);
+
+            float start = _battle.Simulation.ElapsedSeconds;
+            foreach (float at in shot.Times)
+            {
+                // A negative time: the warning, half a second before it goes off.
+                float battleTime = at < 0f ? shot.Stats.DelaySeconds - 0.6f : shot.Stats.DelaySeconds + at;
+                float limit = 20f;
+                while (_battle.Simulation.ElapsedSeconds < battleTime && !_battle.Simulation.IsFinished && limit > 0f) { limit -= Time.unscaledDeltaTime; yield return null; }
+                yield return Capture($"s_{label}_{(at < 0f ? "warn" : at.ToString("0.00"))}", place + Vector3.up * radius * 0.3f, radius * 4.2f);
+            }
+            _sandbox.ResetBattle();
+            yield return null;
+        }
+
+        // ------------------------------------------------------------------ the frame-time measurement
+
+        /// <summary>About 200 bodies on the field at 1x and at 4x. The results go to the log and to bench.txt.</summary>
+        public IEnumerator Benchmark()
+        {
+            QualitySettings.vSyncCount = 0;
+            Application.targetFrameRate = -1;
+            var report = new StringBuilder();
+            report.AppendLine($"Effects benchmark, {Screen.width}x{Screen.height}, {SystemInfo.graphicsDeviceName}, {SystemInfo.processorType}");
+            yield return BenchmarkOne(1f, report, "bench_1x");
+            yield return BenchmarkOne(4f, report, "bench_4x");
+            string text = report.ToString();
+            Debug.Log(text);
+            File.WriteAllText(Path.Combine(_shots, "bench.txt"), text);
+        }
+
+        private IEnumerator BenchmarkOne(float speed, StringBuilder report, string picture)
+        {
+            string[] blue = { "Marine", "Marine", "Marine", "Flamethrower Trooper", "Flamethrower Trooper", "Scorpion", "Scorpion", "Warthog", "Gauss Warthog", "Wolverine", "Hornet", "Pelican", "Spartan", "Archer Missile Pod" };
+            string[] red = { "Grunt", "Grunt", "Fuel Rod Grunt", "Jackal (Plasma Rifle)", "Jackal (Plasma Rifle)", "Elite", "Elite", "Ghost", "Wraith", "Banshee", "Vampire", "Hunter Pair", "Scarab", "Zealot" };
+            yield return Setup(blue, red);
+            _battle.Speed = speed;
+            _sandbox.Run();
+            int bodies = _battle.Simulation.Units.Count;
+            var times = new List<float>();
+            CombatEffectsView view = GetComponent<CombatEffectsView>();
+            float elapsed = 0f;
+            int mostLive = 0;
+            bool pictured = false;
+            yield return null;
+            while (!_battle.Simulation.IsFinished && elapsed < 90f)
+            {
+                float delta = Time.unscaledDeltaTime;
+                elapsed += delta;
+                // Only once the two armies are fighting.
+                if (_battle.Simulation.ProjectileCount > 0 || mostLive > 400) times.Add(delta);
+                int live = view.Kit.LiveParticles;
+                if (live > mostLive) mostLive = live;
+                if (!pictured && live > 1200)
+                {
+                    pictured = true;
+                    ScreenCapture.CaptureScreenshot(Path.Combine(_shots, picture + ".png"));
+                }
+                yield return null;
+            }
+            times.Sort();
+            double total = 0;
+            foreach (float t in times) total += t;
+            float average = times.Count > 0 ? (float)(total / times.Count) : 0f;
+            float p99 = times.Count > 0 ? times[Mathf.Min(times.Count - 1, (int)(times.Count * 0.99f))] : 0f;
+            float worst = times.Count > 0 ? times[times.Count - 1] : 0f;
+            int slow = 0;
+            foreach (float t in times) if (t > 1f / 60f) slow++;
+            EffectBudget budget = view.Kit.Budget;
+            report.AppendLine(FormattableString($"Speed {speed}x: {bodies} bodies at the start, {times.Count} frames in {elapsed:0.0} s; average {average * 1000f:0.00} ms ({(average > 0f ? 1f / average : 0f):0} FPS), 1% slowest {p99 * 1000f:0.00} ms ({(p99 > 0f ? 1f / p99 : 0f):0} FPS), worst {worst * 1000f:0.00} ms; frames over 16.7 ms: {slow}"));
+            report.AppendLine($"  most particles alive {mostLive}; dropped small {budget.Dropped[0]}, medium {budget.Dropped[1]}, big {budget.Dropped[2]}, huge {budget.Dropped[3]}; result: {(_battle.Simulation.IsFinished ? _battle.Simulation.Result.ToSummaryLine() : "still fighting")}");
+            _sandbox.ResetBattle();
+            yield return null;
+        }
+
+        private static string FormattableString(System.FormattableString text) => System.FormattableString.Invariant(text);
+
+        // ------------------------------------------------------------------ tools
+
+        private IEnumerator Setup(string[] blue, string[] red)
+        {
+            if (_sandbox.IsBattle) _sandbox.ResetBattle();
+            _sandbox.Clear(Team.A);
+            _sandbox.Clear(Team.B);
+            foreach (string name in blue) _sandbox.AddSquad(Team.A, Find(name));
+            foreach (string name in red) _sandbox.AddSquad(Team.B, Find(name));
+            yield return null;
+        }
+
+        private UnitStats Find(string name)
+        {
+            foreach (SandboxController.SandboxUnit unit in _sandbox.Units)
+            {
+                if (unit.Stats.Name == name) return unit.Stats;
+            }
+            throw new KeyNotFoundException("No sandbox unit named " + name);
+        }
+
+        private SimUnit FirstAlive(string name, Team team)
+        {
+            foreach (SimUnit unit in _battle.Simulation.Units)
+            {
+                if (unit.IsAlive && unit.Team == team && unit.Stats.Name == name) return unit;
+            }
+            return null;
+        }
+
+        private Vector3 Middle(SimUnit a, SimUnit b)
+        {
+            Vector3 middle = (_views.WorldPosition(a) + _views.WorldPosition(b)) * 0.5f;
+            middle.y = 0f;
+            return middle;
+        }
+
+        private void GameCamera(Vector3 focus)
+        {
+            Quaternion rotation = Quaternion.Euler(GameCameraPitch, 0f, 0f);
+            _camera.transform.SetPositionAndRotation(focus - rotation * Vector3.forward * GameCameraDistance, rotation);
+        }
+
+        /// <summary>Freezes the battle, takes the picture from the game's camera and from nearby, and carries on.</summary>
+        private IEnumerator Capture(string name, Vector3 focus, float closeDistance)
+        {
+            float speed = _battle.Speed;
+            _battle.Speed = 0f;
+            yield return null;
+            GameCamera(new Vector3(focus.x, 0f, focus.z));
+            yield return null;
+            Shot(name + "_game");
+            yield return null;
+            yield return null;
+            Quaternion rotation = Quaternion.Euler(33f, -24f, 0f);
+            _camera.transform.SetPositionAndRotation(focus + Vector3.up * 1.5f - rotation * Vector3.forward * closeDistance, rotation);
+            yield return null;
+            Shot(name + "_close");
+            yield return null;
+            yield return null;
+            GameCamera(new Vector3(focus.x, 0f, focus.z));
+            _battle.Speed = speed;
+        }
+
+        private void Shot(string name) => ScreenCapture.CaptureScreenshot(Path.Combine(_shots, name + ".png"));
+    }
+}

@@ -7,7 +7,8 @@
 // charging, one of a beam firing, one of the first infected body and one of a unit leaping, the first time each is
 // seen, close-ups of a baked Marine: held still, in the middle of a cross-fade, running, shooting and falling, and one of the Scorpion.
 // With "-gallery" as well, it instead goes through every unit that has a real model (M9, D45): each one standing, moving
-// and firing, close up and from the game's camera, so that a person can judge them from pictures.
+// and firing, close up and from the game's camera, so that a person can judge them from pictures, and then every effect (EffectsGallery).
+// With "-effects" it only takes the pictures of the effects, and with "-effectsBench" it only measures the frame time of a big battle.
 // Depends on: SandboxController, BattleController, Halobellum.Combat, Halobellum.Core, UnityEngine.
 
 using System;
@@ -26,6 +27,8 @@ namespace Halobellum.Presentation
     {
         public const string Flag = "-sandboxDemo";
         private const string GalleryFlag = "-gallery";
+        private const string EffectsFlag = "-effects";
+        private const string BenchFlag = "-effectsBench";
 
         private static readonly string[] Blue = { "Marine", "Marine", "Marine", "Marine", "Scorpion", "Spartan" };
         private static readonly string[] Red = { "Infection Forms", "Infection Forms", "Infection Forms", "Infection Forms", "Carrier Form", "Flood Abomination", "Scarab", "Wraith" };
@@ -33,7 +36,7 @@ namespace Halobellum.Presentation
         private SandboxController _sandbox;
         private BattleController _battle;
         private string _shots;
-        private bool _gallery;
+        private bool _gallery, _effectsOnly, _benchOnly;
         private int _step;
         private float _wait = 1f;
         private bool _shotArc, _shotCharge, _shotBeam, _shotInfected, _shotLeap;
@@ -52,13 +55,26 @@ namespace Halobellum.Presentation
             _shots = index + 1 < args.Length ? args[index + 1] : "SandboxShots";
             Directory.CreateDirectory(_shots);
             _gallery = Array.IndexOf(args, GalleryFlag) >= 0;
+            _effectsOnly = Array.IndexOf(args, EffectsFlag) >= 0;
+            _benchOnly = Array.IndexOf(args, BenchFlag) >= 0;
         }
 
         private void Start()
         {
             _sandbox = GetComponent<SandboxController>();
             _battle = GetComponent<BattleController>();
-            if (_gallery) StartCoroutine(Gallery());
+            if (_effectsOnly || _benchOnly) StartCoroutine(EffectsOnly());
+            else if (_gallery) StartCoroutine(Gallery());
+        }
+
+        /// <summary>Only the pictures of the effects, or only the frame-time measurement.</summary>
+        private IEnumerator EffectsOnly()
+        {
+            yield return new WaitForSecondsRealtime(1f);
+            EffectsGallery effects = gameObject.AddComponent<EffectsGallery>();
+            effects.Prepare(_shots);
+            yield return _benchOnly ? effects.Benchmark() : effects.TakeAll();
+            Application.Quit();
         }
 
         /// <summary>Every unit with a real model, on its own against a small enemy force.</summary>
@@ -129,6 +145,11 @@ namespace Halobellum.Presentation
             Shot("all_battle");
             yield return new WaitForSecondsRealtime(0.3f);
             Debug.Log($"Model gallery finished: {shown.Count} units with real models.");
+            _sandbox.ResetBattle();
+            yield return null;
+            EffectsGallery effects = gameObject.AddComponent<EffectsGallery>();
+            effects.Prepare(_shots);
+            yield return effects.TakeAll();
             Application.Quit();
         }
 
@@ -234,7 +255,7 @@ namespace Halobellum.Presentation
 
         private void Update()
         {
-            if (_gallery) return;
+            if (_gallery || _effectsOnly || _benchOnly) return;
             if (_step >= 4) ShootMarine();
             if (_closeUp) return;
             if (_step >= 5) ShootWeaponMechanics();
