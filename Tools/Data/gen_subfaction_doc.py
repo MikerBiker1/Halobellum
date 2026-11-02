@@ -62,6 +62,6 @@ parts = []
 for sub in dict.fromkeys(u["sub"] for u in units if u["sub"]):
     parts.append(f"### {sub}\n\n{table(sub)}\n\n" + "\n".join(f"- **{u['name']}.** {u['note']}" for u in units if u["sub"] == sub) + "\n")
 text = open(DOC, encoding="utf-8").read()
-text = re.sub(r"(<!-- tables -->\n).*(\n<!-- end tables -->)", lambda m: m.group(1) + "\n".join(parts) + m.group(2), text, flags=re.S)
+text = re.sub(r"(<!-- tables -->\n).*(<!-- end tables -->)", lambda m: m.group(1) + "\n".join(parts) + "\n" + m.group(2), text, flags=re.S)
 open(DOC, "w", encoding="utf-8", newline="\n").write(text)
 print("written")
