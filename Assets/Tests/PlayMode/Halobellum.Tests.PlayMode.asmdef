@@ -9,8 +9,7 @@
         "Halobellum.Economy",
         "Halobellum.Units",
         "Halobellum.Presentation",
-        "Halobellum.UI",
-        "Unity.InputSystem"
+        "Halobellum.UI"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

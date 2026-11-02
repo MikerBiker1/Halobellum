@@ -62,16 +62,22 @@ namespace Halobellum.Presentation
                     _focus -= delta * metresPerPixel;
                 }
 
-                float scroll = mouse.scroll.ReadValue().y;
-                if (Mathf.Abs(scroll) > 0.01f && !UiHitAreas.Contains(mouse.position.ReadValue()))
-                {
-                    _distance *= scroll > 0f ? 1f - zoomStep : 1f + zoomStep;
-                    _distance = Mathf.Clamp(_distance, minDistance, maxDistance);
-                }
+                Wheel(mouse.scroll.ReadValue().y, mouse.position.ReadValue());
             }
 
             ClampFocus();
             Apply();
+        }
+
+        /// <summary>How far the camera is from its focus point.</summary>
+        public float Distance => _distance;
+
+        /// <summary>One reading of the mouse wheel, with the pointer here (Input System coordinates): zooms, unless a HUD window is under the pointer.</summary>
+        public void Wheel(float scroll, Vector2 pointer)
+        {
+            if (Mathf.Abs(scroll) <= 0.01f || UiHitAreas.Contains(pointer)) return;
+            _distance *= scroll > 0f ? 1f - zoomStep : 1f + zoomStep;
+            _distance = Mathf.Clamp(_distance, minDistance, maxDistance);
         }
 
         private void ClampFocus()
