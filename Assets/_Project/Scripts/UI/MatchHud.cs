@@ -130,6 +130,7 @@ namespace Halobellum.UI
             GUI.Label(new Rect(bar.x + 760f, bar.y + 6f, 200f, 26f), $"{player.Faction.Name} vs {m.Enemy.Faction?.Name ?? "?"}", _small);
             GUI.Label(new Rect(bar.x + 760f, bar.y + 32f, 200f, 26f), m.EnemyAi.Label, _small);
             if (GUI.Button(new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f), "Ready", _bigButton)) match.Ready();
+            UiAudio.Watch(new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f));
 
             if (!string.IsNullOrEmpty(match.Message))
             {
@@ -342,12 +343,14 @@ namespace Halobellum.UI
                     bool canBuy = player.Credits >= unit.Cost && player.SquadsBoughtThisRound < m.SquadsPerRound(Team.A);
                     GUI.enabled = canBuy;
                     if (GUI.Button(button, $"Buy {unit.Cost}", _button)) match.Buy(unit);
+                    UiAudio.Watch(button, canBuy);
                 }
                 else
                 {
                     bool canUnlock = player.Credits >= unit.UnlockCost && player.UnlocksThisRound < m.Rules.UnlocksPerRound;
                     GUI.enabled = canUnlock;
                     if (GUI.Button(button, unit.UnlockCost > 0 ? $"Unlock {unit.UnlockCost}" : "Unlock (free)", _button)) match.Unlock(unit);
+                    UiAudio.Watch(button, canUnlock);
                 }
                 GUI.enabled = true;
             }

@@ -258,6 +258,7 @@ namespace Halobellum.UI
             bool wasEnabled = GUI.enabled;
             GUI.enabled = wasEnabled && enabled;
             bool clicked = GUI.Button(rect, label, _button);
+            UiAudio.Watch(rect, wasEnabled && enabled);
             GUI.enabled = wasEnabled;
             return clicked;
         }
