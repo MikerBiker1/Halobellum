@@ -74,4 +74,4 @@ Every tool skips the menu and goes where it went before:
 
 A test run also leaves the saved window, quality and VSync alone, and `-screen-width` and so on are never undone by saved settings.
 
-New: **`-menuDemo <folder>`** walks through the whole flow, presses the real buttons and a real Esc through the Input System, and saves a picture of each screen. It writes `MenuDemo: ok: ...` or `MenuDemo: PROBLEM: ...` to the player's log, and ends with `MenuDemo finished: N problems.` Add `-menuDemoShort` for the menu and settings only. It never changes a setting, because PlayerPrefs are shared by every build on the PC.
+New: **`-menuDemo <folder>`** walks through the whole flow, presses the real buttons and a real Esc through the Input System, and saves a picture of each screen. It writes `MenuDemo: ok: ...` or `MenuDemo: PROBLEM: ...` to the player's log, and ends with `MenuDemo finished: N problems.` Add `-menuDemoShort` for the menu and settings only, or `-menuDemoWatch` to press nothing and log what clicks sent from outside the game do. It never changes a setting, because PlayerPrefs are shared by every build on the PC.

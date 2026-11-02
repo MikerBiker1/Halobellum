@@ -7,6 +7,8 @@
 //   match and its Main Menu button; the menu again; Sandbox; Esc; its Back button; Quit.
 // It writes "MenuDemo: ..." lines in the player's log, one for each thing checked, and ends with how many went wrong. It never changes
 // a setting, because PlayerPrefs are shared by every build on this PC.
+// With "-menuDemoWatch" it presses nothing: for 90 seconds it logs and pictures every change of scene, pause, settings panel or music
+// volume, so that clicks sent from outside the game (a real mouse, say) can be checked. It puts the music volume back at the end.
 // Depends on: GameFlow, GamePause, MatchController, SandboxController, BattleController, PauseMenu, MainMenuHud, MenuStyle, Input System.
 
 using System;
@@ -24,6 +26,8 @@ namespace Halobellum.UI
     public sealed class MenuDemo : MonoBehaviour
     {
         private const string ShortFlag = "-menuDemoShort";
+        private const string WatchFlag = "-menuDemoWatch";
+        private const float WatchSeconds = 90f;
 
         private string _folder;
         private bool _short;
@@ -43,8 +47,43 @@ namespace Halobellum.UI
             Directory.CreateDirectory(demo._folder);
         }
 
+        private IEnumerator Watch()
+        {
+            float music = GameSettings.MusicVolume;
+            string lastScene = null;
+            bool lastPaused = false, lastSettings = false;
+            float lastMusic = music, until = Time.realtimeSinceStartup + WatchSeconds;
+            int number = 0;
+            while (Time.realtimeSinceStartup < until)
+            {
+                string scene = SceneManager.GetActiveScene().name;
+                var menu = FindAnyObjectByType<MainMenuHud>();
+                bool settings = menu != null && menu.ShowingSettings;
+                float volume = GameSettings.MusicVolume;
+                if (scene != lastScene || GamePause.IsPaused != lastPaused || settings != lastSettings || !Mathf.Approximately(volume, lastMusic))
+                {
+                    lastScene = scene;
+                    lastPaused = GamePause.IsPaused;
+                    lastSettings = settings;
+                    lastMusic = volume;
+                    Debug.Log($"MenuDemo watch: {Time.realtimeSinceStartup:0.0} s: scene {scene}, paused {lastPaused}, settings {settings}, music {volume:0.00}");
+                    yield return Wait(0.3f);
+                    yield return Shot($"watch_{number++:00}");
+                }
+                yield return null;
+            }
+            GameSettings.MusicVolume = music;
+            GameSettings.Save();
+            Application.Quit();
+        }
+
         private IEnumerator Start()
         {
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), WatchFlag) >= 0)
+            {
+                yield return Watch();
+                yield break;
+            }
             Check("the game starts in the main menu", SceneManager.GetActiveScene().name == GameFlow.MainMenuScene);
             yield return Wait(3.5f);
             yield return Shot("01_menu_a");
