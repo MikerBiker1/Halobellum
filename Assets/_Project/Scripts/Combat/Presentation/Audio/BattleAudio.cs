@@ -3,7 +3,7 @@
 // deaths by size and kind, Flood bursts, infection rising, spells, drops, the Infected Pelican's dive. Added at run time to the object with
 // the BattleController (see AudioDirector). It only reads the simulation's events and never changes anything, so battles play out the
 // same with or without it. What a weapon sounds like is worked out once per weapon and kept: the many shots of a battle allocate nothing.
-// Depends on: AudioDirector, AudioCatalog, WeaponFeel, BattleController, Halobellum.Combat (BattleSimulation, SimUnit, SimSpell), Halobellum.Core, UnityEngine.
+// Depends on: AudioDirector, AudioCatalog, GamePause, WeaponFeel, BattleController, Halobellum.Combat (BattleSimulation, SimUnit, SimSpell), Halobellum.Core, UnityEngine.
 
 using System.Collections.Generic;
 using Halobellum.Combat;
@@ -181,7 +181,8 @@ namespace Halobellum.Presentation
         {
             AudioDirector director = AudioDirector.Instance;
             if (director == null || _battle == null) return;
-            director.SetBattlePaused(_battle.IsPlaying && _battle.Speed <= 0f);
+            // Either pause stops the battle's sound: the game's (Esc) and BattleHud's own (speed 0).
+            director.SetBattlePaused(GamePause.IsPaused || (_battle.IsPlaying && _battle.Speed <= 0f));
             if (!_battle.IsPlaying) return;
 
             // A flying unit that has started its dive has no event of its own.

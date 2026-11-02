@@ -48,7 +48,7 @@ namespace Halobellum.UI
             {
                 ItemHud.DrawSquadSlots(AllSquads(), sandbox.PlacingItem, _scale, sandbox.SquadOnScreen, sandbox.IconFor, squad => sandbox.PlaceItemOn(squad), sandbox.CancelPlacement);
                 DrawUnitList(width, height);
-                DrawItems();
+                DrawItems(width);
                 DrawSelectedSquadActions(width, height);
                 ItemHud.DrawDragged(sandbox.IconFor);
             }
@@ -67,10 +67,12 @@ namespace Halobellum.UI
         }
 
         /// <summary>Every item, free: click one, then the hexagon over a squad.</summary>
-        private void DrawItems()
+        private void DrawItems(float width)
         {
             if (sandbox.Items.Count == 0) return;
-            var panel = new Rect(10f, 8f, 330f, 44f + ItemHud.GridHeight(sandbox.Items.Count) + 44f);
+            // Top left if the bar leaves room for it. If not (a higher UI scale, a narrower window), under the bar, level with the unit list.
+            float top = TopBar(width).x >= 350f ? 8f : 204f;
+            var panel = new Rect(10f, top, 330f, 44f + ItemHud.GridHeight(sandbox.Items.Count) + 44f);
             Panel(panel);
             GUI.Label(new Rect(panel.x + 12f, panel.y + 8f, panel.width - 24f, 28f), "Items", _header);
             string hovered = ItemHud.DrawItemGrid(panel.x + 12f, panel.y + 40f, sandbox.Items, sandbox.PlacingItem, sandbox.IconFor, sandbox.BeginPlacingItem);
@@ -78,10 +80,12 @@ namespace Halobellum.UI
             GUI.Label(new Rect(panel.x + 12f, panel.yMax - 46f, panel.width - 24f, 42f), caption, _wrapDim);
         }
 
+        /// <summary>Below BattleHud's speed controls and result line (top centre).</summary>
+        private static Rect TopBar(float width) => new Rect(width * 0.5f - 560f, 92f, 1120f, 64f);
+
         private void DrawTopBar(float width)
         {
-            // Below BattleHud's speed controls and result line (top centre).
-            var bar = new Rect(width * 0.5f - 560f, 92f, 1120f, 64f);
+            Rect bar = TopBar(width);
             Panel(bar);
             GUI.Label(new Rect(bar.x + 16f, bar.y + 6f, 160f, 26f), "Sandbox", _header);
             GUI.Label(new Rect(bar.x + 16f, bar.y + 34f, 160f, 24f), $"Seed {sandbox.Seed}", _small);

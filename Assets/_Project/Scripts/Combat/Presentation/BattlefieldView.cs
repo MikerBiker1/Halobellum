@@ -111,9 +111,7 @@ namespace Halobellum.Presentation
             seed = 1;
             if (_sandbox != null)
             {
-                seed = _sandbox.Seed;
-                a = MostCommonFaction(Team.A) ?? BattleFactions.Unsc;
-                b = MostCommonFaction(Team.B) ?? BattleFactions.Covenant;
+                seed = _sandbox.Seed; // SandboxController sets BattleFactions from its armies.
                 return;
             }
             if (_match != null && _match.Match != null)
@@ -128,37 +126,6 @@ namespace Halobellum.Presentation
                 }
                 seed = _match.Match.Seed;
             }
-        }
-
-        private readonly Dictionary<string, string> _factionOfUnit = new Dictionary<string, string>();
-        private readonly Dictionary<string, int> _counting = new Dictionary<string, int>();
-
-        /// <summary>The faction most of this side's squads belong to in the Sandbox, or null if it has none.</summary>
-        private string MostCommonFaction(Team team)
-        {
-            if (_factionOfUnit.Count == 0)
-            {
-                foreach (SandboxController.SandboxUnit unit in _sandbox.Units)
-                {
-                    if (unit.Faction != SandboxController.ExtraUnitsLabel) _factionOfUnit[unit.Stats.Name] = unit.Faction;
-                }
-            }
-            _counting.Clear();
-            string best = null;
-            int bestCount = 0;
-            foreach (PlacedSquad squad in _sandbox.Army(team).Squads)
-            {
-                if (!_factionOfUnit.TryGetValue(squad.Type.Name, out string faction)) continue;
-                _counting.TryGetValue(faction, out int count);
-                count++;
-                _counting[faction] = count;
-                if (count > bestCount)
-                {
-                    bestCount = count;
-                    best = faction;
-                }
-            }
-            return best;
         }
 
         private void Show(string factionA, string factionB, int seed)

@@ -117,6 +117,18 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void CameraShake_IsTheSettingsSwitch_ForTheKKeyAndForReset()
+        {
+            GameSettings.CameraShake = false;
+            Assert.IsFalse(CameraShake.ShakeEnabled, "Off in Settings is off.");
+            CameraShake.ShakeEnabled = true; // What the K key does.
+            Assert.IsTrue(GameSettings.CameraShake, "Settings shows what K did.");
+            CameraShake.ShakeEnabled = false;
+            GameSettings.ResetToDefaults();
+            Assert.IsTrue(CameraShake.ShakeEnabled, "Reset to defaults turns it back on.");
+        }
+
+        [Test]
         public void Volumes_StayBetween0And1()
         {
             GameSettings.MasterVolume = 3f;

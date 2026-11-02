@@ -3,9 +3,12 @@
 // Marines' idle animation. All of it runs from one clock with no objects made and nothing allocated while it plays. MainMenuSceneBuilder
 // makes the scene and fills in the fields here. ApplyAt shows any moment, so the builder can take a preview picture.
 // Shadows have to reach the far-off Scarab here, so it widens the shadow distance while the menu is open and puts it back afterwards.
+// The Scarab's glowing panels are made for the battle's bright day and would burn flat white against this dusk, so here they stay dim
+// and rise only as the beam fires. Only these renderers change (a property block): the battle's Scarab shares the materials.
 // Depends on: UnityEngine, URP (the shadow distance).
 
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -84,6 +87,12 @@ namespace Halobellum.UI
         public float beamStart = 8f;
         public float beamWidth = 2.4f;
         public float beamLightIntensity = 60f;
+        [Tooltip("The walker's glowing panels at rest: this share of their material's colour.")]
+        public float panelColorShare = 0.12f;
+        [Tooltip("The share of their material's glow at rest.")]
+        public float panelGlowAtRest = 0.03f;
+        [Tooltip("The share of their material's glow at the height of the beam.")]
+        public float panelGlowFiring = 0.5f;
 
         [Header("Rendering")]
         public Color ambientAbove = new Color(0.5f, 0.47f, 0.72f);
@@ -93,11 +102,23 @@ namespace Halobellum.UI
 
         private static readonly int BattleTimeId = Shader.PropertyToID("_BattleTime");
         private static readonly int TintId = Shader.PropertyToID("_BaseColor");
+        private static readonly int EmissionId = Shader.PropertyToID("_EmissionColor");
         private static readonly int AnimNowId = Shader.PropertyToID("_AnimNow");
         private static readonly int AnimOldId = Shader.PropertyToID("_AnimOld");
         private static readonly int AnimBlendId = Shader.PropertyToID("_AnimBlend");
 
+        /// <summary>One glowing material on one of the walker's renderers.</summary>
+        private struct GlowingPanel
+        {
+            public Renderer renderer;
+            public int materialIndex;
+            public Color color, glow;
+        }
+
         private readonly Vector3[] _beamPoints = new Vector3[2];
+        private GlowingPanel[] _panels;
+        private MaterialPropertyBlock _panelBlock;
+        private float _panelStrength = -1f;
         private UniversalRenderPipelineAsset _pipeline;
         private float _oldShadowDistance;
         private float _clockStart;
@@ -217,9 +238,51 @@ namespace Halobellum.UI
             }
         }
 
+        /// <summary>How far the walker's panels have risen toward their firing glow, 0 at rest to 1. For tests.</summary>
+        public float PanelStrength => _panelStrength;
+
+        /// <summary>Dims the walker's glowing panels, or raises them by this much (0 to 1) as the beam fires. Allocates nothing once they are found.</summary>
+        private void ShowPanels(float strength)
+        {
+            if (_panels == null) FindPanels();
+            if (strength == _panelStrength) return;
+            _panelStrength = strength;
+            float glow = Mathf.Lerp(panelGlowAtRest, panelGlowFiring, strength);
+            for (int i = 0; i < _panels.Length; i++)
+            {
+                _panelBlock.Clear();
+                _panelBlock.SetColor(TintId, _panels[i].color * panelColorShare);
+                _panelBlock.SetColor(EmissionId, _panels[i].glow * glow);
+                _panels[i].renderer.SetPropertyBlock(_panelBlock, _panels[i].materialIndex);
+            }
+        }
+
+        private void FindPanels()
+        {
+            _panelBlock = new MaterialPropertyBlock();
+            var found = new List<GlowingPanel>();
+            if (walker != null)
+            {
+                foreach (Renderer renderer in walker.GetComponentsInChildren<Renderer>(true))
+                {
+                    Material[] materials = renderer.sharedMaterials;
+                    for (int i = 0; i < materials.Length; i++)
+                    {
+                        if (materials[i] == null || !materials[i].IsKeywordEnabled("_EMISSION")) continue;
+                        found.Add(new GlowingPanel { renderer = renderer, materialIndex = i, color = materials[i].GetColor(TintId), glow = materials[i].GetColor(EmissionId) });
+                    }
+                }
+            }
+            _panels = found.ToArray();
+        }
+
         private void FireBeam(float time)
         {
-            if (beam == null || beamFrom == null) return;
+            if (beam == null || beamFrom == null)
+            {
+                ShowPanels(0f);
+                return;
+            }
             float cycle = Mathf.Repeat(time - beamStart, Mathf.Max(1f, beamPeriod));
             bool firing = time >= beamStart && cycle < beamSeconds;
             if (beam.enabled != firing)
@@ -227,7 +290,11 @@ namespace Halobellum.UI
                 beam.enabled = firing;
                 if (beamLight != null) beamLight.enabled = firing;
             }
-            if (!firing) return;
+            if (!firing)
+            {
+                ShowPanels(0f);
+                return;
+            }
 
             // Up quickly, a flicker while it burns, and down again; its end sweeps along the ground.
             float strength = Mathf.Clamp01(cycle / 0.25f) * Mathf.Clamp01((beamSeconds - cycle) / 0.5f);
@@ -238,6 +305,7 @@ namespace Halobellum.UI
             _beamPoints[0] = beamFrom.position;
             _beamPoints[1] = beamTo + new Vector3((cycle / beamSeconds - 0.5f) * 36f, 0f, 0f);
             beam.SetPositions(_beamPoints);
+            ShowPanels(strength);
             if (beamLight != null)
             {
                 beamLight.transform.position = _beamPoints[1] + Vector3.up * 6f;

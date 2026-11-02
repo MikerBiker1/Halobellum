@@ -1,9 +1,9 @@
 // CameraShake.cs
-// A small camera shake on big blasts (M10) that can be turned off with the K key (remembered between runs). BattleCameraController
+// A small camera shake on big blasts (M10) that can be turned off in Settings or with the K key: both are the one saved setting in GameSettings. BattleCameraController
 // sets the camera's position from nothing every frame, so this runs after it and adds a small offset that can't add up. It leaves the
 // camera alone whenever BattleCameraController is off (test tools looking closely at something). It shakes by a share of the distance
 // to the ground, so that it feels the same at every zoom, and less the further the blast is from the middle of the view.
-// Depends on: BattleCameraController, Unity Input System, UnityEngine.
+// Depends on: BattleCameraController, GameSettings, Unity Input System, UnityEngine.
 
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -13,36 +13,24 @@ namespace Halobellum.Presentation
     [DefaultExecutionOrder(1000)]
     public sealed class CameraShake : MonoBehaviour
     {
-        private const string SettingKey = "Halobellum.CameraShake";
         private const float DecayPerSecond = 1.6f;
         private const float MostShare = 0.012f;
         private const float MessageSeconds = 2f;
 
         private static CameraShake _instance;
-        private static bool _loaded, _enabled;
 
         private BattleCameraController _control;
         private float _trauma;
         private float _messageUntil;
 
-        /// <summary>Whether big blasts shake the camera. Kept between runs; a settings screen can set it too.</summary>
+        /// <summary>Whether big blasts shake the camera. This is the Settings switch itself, so that K and Settings can never disagree.</summary>
         public static bool ShakeEnabled
         {
-            get
-            {
-                if (!_loaded)
-                {
-                    _enabled = PlayerPrefs.GetInt(SettingKey, 1) != 0;
-                    _loaded = true;
-                }
-                return _enabled;
-            }
+            get => GameSettings.CameraShake;
             set
             {
-                _enabled = value;
-                _loaded = true;
-                PlayerPrefs.SetInt(SettingKey, value ? 1 : 0);
-                PlayerPrefs.Save();
+                GameSettings.CameraShake = value;
+                GameSettings.Save();
             }
         }
 

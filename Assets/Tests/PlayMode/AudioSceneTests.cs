@@ -147,20 +147,25 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
-        public IEnumerator Sandbox_FollowsBattleFactions()
+        public IEnumerator Sandbox_FollowsItsArmies_NotTheMatchBeforeIt()
         {
-            BattleFactions.Set(BattleFactions.Covenant, BattleFactions.Flood);
+            BattleFactions.Set(BattleFactions.Covenant, BattleFactions.Flood); // What a match leaves behind.
             yield return Load("Sandbox");
             var sandbox = UnityEngine.Object.FindAnyObjectByType<SandboxController>();
             Assert.IsNotNull(sandbox.GetComponent<SandboxAudio>());
-            Assert.AreEqual("music_covenant_deployment", Director.Music.CurrentSlot);
-            Assert.AreEqual(BattleFactions.Covenant, Director.UiFaction);
+            Assert.AreEqual("music_unsc_deployment", Director.Music.CurrentSlot, "An empty Sandbox has the defaults, whatever was played before.");
+            Assert.AreEqual(BattleFactions.Unsc, Director.UiFaction);
+            Assert.AreEqual(BattleFactions.Covenant, BattleFactions.TeamB);
 
-            BattleFactions.Set(BattleFactions.Flood, BattleFactions.Unsc);
+            sandbox.AddSquad(Team.A, sandbox.Units.Find(u => u.Faction == BattleFactions.Flood).Stats);
+            Assert.AreEqual(BattleFactions.Flood, BattleFactions.TeamA);
+            Assert.AreEqual(BattleFactions.Covenant, BattleFactions.TeamB, "Each side has its own faction.");
             Assert.AreEqual("music_flood_deployment", Director.Music.CurrentSlot, "A change of faction changes the music.");
+            Assert.AreEqual(BattleFactions.Flood, Director.UiFaction);
 
-            sandbox.AddSquad(Team.A, sandbox.Units[0].Stats);
-            sandbox.AddSquad(Team.B, sandbox.Units[0].Stats);
+            sandbox.AddSquad(Team.B, sandbox.Units.Find(u => u.Faction == BattleFactions.Unsc).Stats);
+            Assert.AreEqual(BattleFactions.Flood, BattleFactions.TeamA);
+            Assert.AreEqual(BattleFactions.Unsc, BattleFactions.TeamB);
             yield return null;
             yield return null;
             Assert.Contains("sfx_drop_in", _played);
@@ -171,6 +176,53 @@ namespace Halobellum.Tests
             Assert.AreEqual("music_flood_battle", Director.Music.CurrentSlot);
             Assert.Contains("ui_flood_battlestart", _played);
             BattleFactions.Set(BattleFactions.Unsc, BattleFactions.Covenant);
+        }
+
+        [UnityTest]
+        public IEnumerator Sandbox_SubFactionUnits_CountAsTheirFaction()
+        {
+            yield return Load("Sandbox");
+            var sandbox = UnityEngine.Object.FindAnyObjectByType<SandboxController>();
+            SandboxController.SandboxUnit exclusive = sandbox.Units.Find(u => u.BaseFaction == BattleFactions.Covenant && u.Faction != u.BaseFaction);
+            Assert.IsNotNull(exclusive.Stats, "A Covenant sub-faction has its own units.");
+            sandbox.AddSquad(Team.A, exclusive.Stats);
+            Assert.AreEqual(BattleFactions.Covenant, BattleFactions.TeamA, "The faction, not the list's heading.");
+            Assert.AreEqual("music_covenant_deployment", Director.Music.CurrentSlot);
+
+            sandbox.Clear(Team.A);
+            sandbox.AddSquad(Team.A, sandbox.Units.Find(u => u.BaseFaction == null).Stats);
+            Assert.AreEqual(BattleFactions.Unsc, BattleFactions.TeamA, "A placeholder unit has no faction: the default stands.");
+        }
+
+        [UnityTest]
+        public IEnumerator PausingTheGame_PausesTheBattlesSound_InAndOutOfBattle()
+        {
+            yield return Load("Sandbox");
+            var sandbox = UnityEngine.Object.FindAnyObjectByType<SandboxController>();
+            GamePause.Pause();
+            yield return null;
+            Assert.IsTrue(Director.BattlePaused, "While placing.");
+            GamePause.Resume();
+            yield return null;
+            Assert.IsFalse(Director.BattlePaused);
+
+            sandbox.AddSquad(Team.A, sandbox.Units[0].Stats);
+            sandbox.AddSquad(Team.B, sandbox.Units[0].Stats);
+            sandbox.Run();
+            yield return null;
+            GamePause.Pause();
+            yield return null;
+            Assert.IsTrue(Director.BattlePaused, "In a running battle.");
+            GamePause.Resume();
+            yield return null;
+            Assert.IsFalse(Director.BattlePaused);
+
+            GamePause.Pause();
+            yield return null;
+            Assert.IsTrue(Director.BattlePaused);
+            GameFlow.OpenMainMenu(); // Leaving from the pause menu.
+            yield return Load(GameFlow.MainMenuScene);
+            Assert.IsFalse(Director.BattlePaused, "Nothing is left paused for the next battle.");
         }
 
         [UnityTest]
