@@ -3,7 +3,8 @@
 // deaths by size and kind, Flood bursts, infection rising, spells, drops, the Infected Pelican's dive. Added at run time to the object with
 // the BattleController (see AudioDirector). It only reads the simulation's events and never changes anything, so battles play out the
 // same with or without it. What a weapon sounds like is worked out once per weapon and kept: the many shots of a battle allocate nothing.
-// Depends on: AudioDirector, AudioCatalog, WeaponFeel, BattleController, Halobellum.Combat (BattleSimulation, SimUnit, SimSpell), Halobellum.Core, UnityEngine.
+// The battle's sounds stop while it stands still, by the battle's own speed or by the game's pause (GamePause).
+// Depends on: AudioDirector, AudioCatalog, WeaponFeel, GamePause, BattleController, Halobellum.Combat (BattleSimulation, SimUnit, SimSpell), Halobellum.Core, UnityEngine.
 
 using System.Collections.Generic;
 using Halobellum.Combat;
@@ -18,7 +19,7 @@ namespace Halobellum.Presentation
         private BattleSimulation _shown;
         private readonly Dictionary<WeaponStats, SfxCue> _fireA = new Dictionary<WeaponStats, SfxCue>();
         private readonly Dictionary<WeaponStats, SfxCue> _fireB = new Dictionary<WeaponStats, SfxCue>();
-        private readonly Dictionary<UnitStats, SfxCue> _landings = new Dictionary<UnitStats, SfxCue>();
+        private readonly Dictionary<WeaponStats, SfxCue> _landings = new Dictionary<WeaponStats, SfxCue>();
         private readonly List<SimUnit> _divers = new List<SimUnit>();
         private float _nextHumCheck;
         private bool _wasPlaying;
@@ -66,6 +67,7 @@ namespace Halobellum.Presentation
             {
                 BattleEvents events = _shown.Events;
                 events.WeaponFired -= OnWeaponFired;
+                events.ShotLanded -= OnShotLanded;
                 events.UnitDamaged -= OnUnitDamaged;
                 events.AttackBlocked -= OnAttackBlocked;
                 events.UnitDied -= OnUnitDied;
@@ -80,6 +82,7 @@ namespace Halobellum.Presentation
             {
                 BattleEvents events = _shown.Events;
                 events.WeaponFired += OnWeaponFired;
+                events.ShotLanded += OnShotLanded;
                 events.UnitDamaged += OnUnitDamaged;
                 events.AttackBlocked += OnAttackBlocked;
                 events.UnitDied += OnUnitDied;
@@ -113,24 +116,23 @@ namespace Halobellum.Presentation
             if (cue != null) GameAudio.Sfx(cue, Place(attacker));
         }
 
-        /// <summary>A rocket or a shell going off where it lands. Worked out once per unit type.</summary>
-        private SfxCue LandingCue(SimUnit attacker)
+        /// <summary>A rocket or a shell going off where it lands: by the weapon that fired it, once per shot, however many it hits.</summary>
+        private void OnShotLanded(SimUnit attacker, WeaponStats weapon, Vec2 point)
         {
-            UnitStats stats = attacker.Stats;
-            if (_landings.TryGetValue(stats, out SfxCue cue)) return cue;
-            if (stats.Weapons != null && attacker.MainWeaponIndex < stats.Weapons.Length) cue = AudioCatalog.LandingOf(WeaponFeel.For(stats.Weapons[attacker.MainWeaponIndex]));
-            _landings[stats] = cue;
-            return cue;
+            if (!_landings.TryGetValue(weapon, out SfxCue cue))
+            {
+                cue = AudioCatalog.LandingOf(weapon);
+                _landings[weapon] = cue;
+            }
+            if (cue != null) GameAudio.Sfx(cue, new Vector3(point.X, 0f, point.Y));
         }
 
         private void OnUnitDamaged(SimUnit target, SimUnit attacker, float amount)
         {
             if (amount <= 0f || attacker == null) return; // Damage with no attacker is a slow burn, not a hit.
-            SfxCue landing = LandingCue(attacker);
-            if (landing != null) GameAudio.Sfx(landing, Place(target));
             SfxCue cue;
             if (target.Shield > 0f) cue = AudioCatalog.ImpactShield;
-            else if (BattleFactions.For(target.Team) == BattleFactions.Flood) cue = AudioCatalog.ImpactWet;
+            else if (IsFloodBody(target.Stats)) cue = AudioCatalog.ImpactWet;
             else cue = target.Stats.ArmorType == ArmorType.Unarmored ? AudioCatalog.ImpactFlesh : AudioCatalog.ImpactArmor;
             GameAudio.Sfx(cue, Place(target));
         }
@@ -143,19 +145,28 @@ namespace Halobellum.Presentation
         public static SfxCue DeathCue(SimUnit unit)
         {
             if (unit.HasDived) return AudioCatalog.PelicanCrash;
-            if (unit.Stats.DeathBurst != null) return AudioCatalog.FloodBurst;
-            string faction = BattleFactions.For(unit.Team);
-            bool flood = faction == BattleFactions.Flood;
-            if (unit.IsAir) return AudioCatalog.DeathAir;
+            bool flood = IsFloodBody(unit.Stats);
+            if (flood && unit.Stats.DeathBurst != null) return AudioCatalog.FloodBurst;
+            bool living = IsLiving(unit.Stats);
+            if (unit.IsAir && !living) return AudioCatalog.DeathAir;
             float radius = unit.Radius;
-            if (unit.Stats.ArmorType == ArmorType.Unarmored || radius < 1f)
+            if (living || radius < 1f)
             {
                 if (flood) return radius >= 3f ? AudioCatalog.PelicanCrash : AudioCatalog.DeathFlood;
-                return faction == BattleFactions.Covenant ? AudioCatalog.DeathInfantryCovenant : AudioCatalog.DeathInfantry;
+                return BattleFactions.For(unit.Team) == BattleFactions.Covenant ? AudioCatalog.DeathInfantryCovenant : AudioCatalog.DeathInfantry;
             }
             if (flood) return radius >= 3f ? AudioCatalog.PelicanCrash : AudioCatalog.FloodBurst;
             if (radius >= 3f) return AudioCatalog.ExplosionLarge;
             return radius >= 1.6f ? AudioCatalog.ExplosionMedium : AudioCatalog.DeathVehicle;
+        }
+
+        /// <summary>A Flood form or something it has taken over, whichever side it is on: in the Sandbox, an army can be a mix.</summary>
+        private static bool IsFloodBody(UnitStats stats) => stats.IsFlood || stats.InfectedFrom != null;
+
+        /// <summary>Flesh rather than a machine: it has no engine and doesn't go up in flames. Whatever flies unarmored is a creature (Swarm Form); a Hunter is worms in armour plates.</summary>
+        private static bool IsLiving(UnitStats stats)
+        {
+            return stats.ArmorType == ArmorType.Unarmored || stats.Name.IndexOf("Hunter", System.StringComparison.Ordinal) >= 0;
         }
 
         private void OnUnitInfected(SimUnit corpse) => GameAudio.Sfx(AudioCatalog.InfectionStart, Place(corpse));
@@ -181,7 +192,7 @@ namespace Halobellum.Presentation
         {
             AudioDirector director = AudioDirector.Instance;
             if (director == null || _battle == null) return;
-            director.SetBattlePaused(_battle.IsPlaying && _battle.Speed <= 0f);
+            director.SetBattlePaused(GamePause.IsPaused || (_battle.IsPlaying && _battle.Speed <= 0f));
             if (!_battle.IsPlaying) return;
 
             // A flying unit that has started its dive has no event of its own.
@@ -205,9 +216,9 @@ namespace Halobellum.Presentation
             int engines = 0, hovers = 0;
             foreach (SimUnit unit in _shown.Units)
             {
-                if (!unit.IsAlive) continue;
+                if (!unit.IsAlive || IsLiving(unit.Stats)) continue;
                 if (unit.IsAir) hovers++;
-                else if (unit.Stats.ArmorType != ArmorType.Unarmored && unit.Radius >= 1f)
+                else if (unit.Radius >= 1f)
                 {
                     string faction = BattleFactions.For(unit.Team);
                     if (faction == BattleFactions.Unsc) engines++;

@@ -11,6 +11,7 @@ namespace Halobellum.Presentation
 {
     public sealed class MusicDeck
     {
+        private const float StingerFadeSeconds = 0.25f;
         private readonly AudioSource[] _sources;
         private readonly float[] _gains = new float[2];
         private readonly AudioSource _stinger;
@@ -19,6 +20,8 @@ namespace Halobellum.Presentation
         private float _fadeSeconds = 2.5f;
         private float _duck = 1f;
         private float _stingerEnds;
+        private float _stingerGain = 1f;
+        private bool _stingerStopping;
         private float _clock;
         private float _volume;
         private bool _silent = true;
@@ -37,6 +40,10 @@ namespace Halobellum.Presentation
         /// <summary>The clip on the source the track is fading in on, or null.</summary>
         public AudioClip CurrentClip => _sources[_current].clip;
         public float CurrentGain => _gains[_current];
+        /// <summary>How far the track is ducked: 1 is not at all.</summary>
+        public float Duck => _duck;
+        /// <summary>True from a stinger's start until it ends or is stopped.</summary>
+        public bool StingerOn => _clock < _stingerEnds;
 
         /// <summary>Crossfades to a track, resuming where it last was. The same track again does nothing.</summary>
         public void Play(string slot, float fadeSeconds = 2.5f)
@@ -70,10 +77,20 @@ namespace Halobellum.Presentation
             if (clip == null) return;
             _stinger.Stop();
             _stinger.clip = clip;
+            _stingerStopping = false;
+            _stingerGain = 1f;
             _stinger.volume = _volume;
             if (delaySeconds > 0f) _stinger.PlayDelayed(delaySeconds);
             else _stinger.Play();
             _stingerEnds = _clock + delaySeconds + clip.length;
+        }
+
+        /// <summary>Lets go of a stinger when its screen has been left: gone in a moment, and the track comes back up.</summary>
+        public void StopStinger()
+        {
+            if (!StingerOn) return;
+            _stingerEnds = _clock;
+            _stingerStopping = true;
         }
 
         /// <summary>Forgets where every track had got to (a new match starts them from the top).</summary>
@@ -88,7 +105,16 @@ namespace Halobellum.Presentation
             _volume = volume;
             float duckTarget = _clock < _stingerEnds ? 0.2f : 1f;
             _duck = Mathf.MoveTowards(_duck, duckTarget, dt / 0.6f);
-            _stinger.volume = volume;
+            if (_stingerStopping)
+            {
+                _stingerGain = Mathf.MoveTowards(_stingerGain, 0f, dt / StingerFadeSeconds);
+                if (_stingerGain <= 0f)
+                {
+                    _stinger.Stop();
+                    _stingerStopping = false;
+                }
+            }
+            _stinger.volume = volume * _stingerGain;
 
             for (int i = 0; i < 2; i++)
             {

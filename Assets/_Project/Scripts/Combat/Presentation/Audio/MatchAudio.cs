@@ -37,6 +37,7 @@ namespace Halobellum.Presentation
             MatchPhase phase = match.Phase;
             string faction = match.Player.Faction?.Name;
             if (phase == MatchPhase.Draft && _lastPhase != MatchPhase.Draft) director.Music.ForgetPositions();
+            if (phase != MatchPhase.MatchOver && _lastPhase == MatchPhase.MatchOver) director.Music.StopStinger(); // A new match, in the same scene.
             director.UiFaction = phase == MatchPhase.Draft ? null : faction ?? BattleFactions.TeamA;
             director.Music.Play(AudioSlots.MusicForPhase(phase, faction), phase == MatchPhase.Battle ? 1.5f : 2.5f);
 

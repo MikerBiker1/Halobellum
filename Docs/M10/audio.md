@@ -27,8 +27,8 @@ Put the file in `Assets/_Project/Art/Imported/Audio/Resources/AudioOverride/`, n
 | Cards, round result, match over | the player's faction's menu track |
 | Deployment | the player's faction's deployment track |
 | Battle | the player's faction's battle track |
-| Match won or lost | the faction's victory or defeat stinger, with the track ducked under it |
-| Sandbox | deployment and battle tracks of `BattleFactions.TeamA` |
+| Match won or lost | the faction's victory or defeat stinger, with the track ducked under it. It stops when the match-over screen is left (new match, main menu, any scene load) |
+| Sandbox | deployment and battle tracks of the blue side's faction, or UNSC while blue is empty |
 | Battle scene | battle track of `BattleFactions.TeamA` |
 | Any other scene (a settings screen) | whatever is playing carries on; the main menu's if nothing is |
 
@@ -56,7 +56,13 @@ Code is in `Scripts/Combat/Presentation/Audio/`, created at run time, with no sc
 **Sound at a high camera.** Sounds aren't placed in 3D: at that height 3D falloff would make everything equally far and quiet. They are 2D, panned by where the
 thing is on screen, and quieter when it is off screen.
 
-**Battle time.** Effects and hums pause with the battle (speed 0). Music and UI sounds go on.
+**Battle time.** Effects and hums pause with the battle: BattleHud's speed 0, and the game's pause (Esc, the Menu button; `GamePause`). Music and UI sounds go on. Leaving from the pause leaves nothing behind.
+
+**Which faction.** `BattleFactions` says who is fighting. A match sets it when the draft is chosen. The Sandbox sets it from the armies placed, each time they change: the faction most of a side's squads belong to (a sub-faction's units count for their faction, placeholder units for none), or UNSC and Covenant for an empty side. Whether a body sounds wet goes by the body itself (`IsFlood` or infected), so a mixed Sandbox army is right unit by unit.
+
+**Landings.** A rocket, a bomb, a cannon shell, a heavy plasma shot or a plasma shot with a blast makes a small explosion where it lands. The simulation raises `ShotLanded(attacker, weapon, point)` for each shot that isn't blocked, so this goes by the weapon that really fired, once per shot however many it hits, and also when the target died while the shot was in the air. The event changes nothing in the simulation. A coaxial gun makes no explosion, and a second weapon's rockets do.
+
+**Deaths.** By what died: an armoured flier crashes, Swarm Forms die as small Flood forms, Hunters die as creatures and make no engine or hover hum, and small and large vehicles go up by size. Only a Flood unit's death burst sounds like a Flood burst: the Methane Wagon explodes as a vehicle.
 
 **Clicks with almost no HUD changes.** An IMGUI button takes `GUIUtility.hotControl` when the mouse goes down on it. The director watches that each frame, so every button in every HUD,
 including ones not written yet, clicks by itself on the mouse press, as long as it is IMGUI. A uGUI screen would need `GameAudio.Ui(UiSound.Click)` in its buttons.
@@ -85,7 +91,7 @@ Generators are in `Tools/Audio/` (Python with numpy; run with the venv):
 Files are in `Assets/_Project/Audio/Generated/Resources/GeneratedAudio/` (a `Resources` folder so that they load by name).
 
 **Weapons.** UNSC ballistic: a crack, a body of filtered noise, a pitched thump, a room slap. Covenant: FM sweeps, buzz and fizz for plasma, glassy pings for needles, a bending buzz for the sword.
-Flood: wet squelches with bubbles in them (the ear takes many tiny rising chirps for liquid), a bone-hard tick for spat bone. Explosions in three sizes, and rockets and shells make a small one where they land.
+Flood: wet squelches with bubbles in them (the ear takes many tiny rising chirps for liquid), a bone-hard tick for spat bone. Explosions in three sizes.
 
 **UI sets.** UNSC: short ticks and square-ish data beeps, mechanical latches, short horn calls. Covenant: inharmonic glass chimes with slow beating, using the scale of the Covenant music, low choir. Flood: squelches, bubbles, heartbeats, growls.
 

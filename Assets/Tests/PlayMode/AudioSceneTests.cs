@@ -147,19 +147,22 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
-        public IEnumerator Sandbox_FollowsBattleFactions()
+        public IEnumerator Sandbox_FollowsTheFactionsPlaced()
         {
-            BattleFactions.Set(BattleFactions.Covenant, BattleFactions.Flood);
             yield return Load("Sandbox");
             var sandbox = UnityEngine.Object.FindAnyObjectByType<SandboxController>();
             Assert.IsNotNull(sandbox.GetComponent<SandboxAudio>());
+            UnitStats covenant = sandbox.Units.Find(u => u.Faction == BattleFactions.Covenant).Stats;
+            UnitStats flood = sandbox.Units.Find(u => u.Faction == BattleFactions.Flood).Stats;
+
+            sandbox.AddSquad(Team.A, covenant);
             Assert.AreEqual("music_covenant_deployment", Director.Music.CurrentSlot);
             Assert.AreEqual(BattleFactions.Covenant, Director.UiFaction);
 
-            BattleFactions.Set(BattleFactions.Flood, BattleFactions.Unsc);
+            sandbox.Clear(Team.A);
+            sandbox.AddSquad(Team.A, flood);
             Assert.AreEqual("music_flood_deployment", Director.Music.CurrentSlot, "A change of faction changes the music.");
 
-            sandbox.AddSquad(Team.A, sandbox.Units[0].Stats);
             sandbox.AddSquad(Team.B, sandbox.Units[0].Stats);
             yield return null;
             yield return null;

@@ -101,9 +101,6 @@ namespace Halobellum.Presentation
                 case WeaponFeelKind.HeavyBullet:
                     return new WeaponLook { Shot = tracer, Flash = tracer, FlashSize = 1.7f, ShotWidth = 0.2f, DrawnSpeed = 130f, Impact = ImpactStyle.Bullet };
                 case WeaponFeelKind.Cannon:
-                    // The Hunter's assault cannon is a heavy plasma gun, whatever its name says.
-                    if (name.Contains("assault cannon"))
-                        return new WeaponLook { Shot = flood ? FloodPlasma : FuelRodGreen, Flash = flood ? FloodPlasma : FuelRodGreen, FlashSize = 3f, ShotWidth = 1.5f, Impact = ImpactStyle.Plasma, Blast = BlastStyle.Plasma, Ball = true };
                     return new WeaponLook { Shot = new Color(1f, 0.78f, 0.42f), Flash = new Color(1f, 0.75f, 0.4f), FlashSize = 4.5f, ShotWidth = 0.42f, Impact = ImpactStyle.Bullet, Blast = BlastStyle.Fire, HeavyMuzzle = true, SmokeTrail = true };
                 case WeaponFeelKind.Gauss:
                     return new WeaponLook { Shot = GaussWhite, Flash = GaussWhite, FlashSize = 3.5f, ShotWidth = 0.34f, Impact = ImpactStyle.Bullet, HeavyMuzzle = true };

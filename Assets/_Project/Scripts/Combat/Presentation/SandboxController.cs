@@ -9,7 +9,7 @@
 // item per squad, and the stats window can take it off again. Spells are not in the sandbox.
 // The HUD (Scripts/UI/SandboxHud) and DeploymentInput call the public methods here; tests do too.
 // Depends on: BattleController, SquadSelection, IDeploymentPlacement, Halobellum.Economy
-//             (PlayerState, DeploymentGrid), Halobellum.Units (FactionDefinition, UnitDefinition), UnityEngine.
+//             (PlayerState, DeploymentGrid), Halobellum.Units (FactionDefinition, UnitDefinition), BattleFactions, UnityEngine.
 
 using System;
 using System.Collections.Generic;
@@ -28,12 +28,16 @@ namespace Halobellum.Presentation
         /// <summary>One unit type the sandbox offers, with the faction it comes from.</summary>
         public readonly struct SandboxUnit
         {
+            /// <summary>The heading it is listed under: a faction, or a faction and sub-faction such as "UNSC: Noble".</summary>
             public readonly string Faction;
+            /// <summary>The faction alone, such as "UNSC": what its land, sky and colours follow.</summary>
+            public readonly string BaseFaction;
             public readonly UnitStats Stats;
 
-            public SandboxUnit(string faction, UnitStats stats)
+            public SandboxUnit(string faction, UnitStats stats, string baseFaction = null)
             {
                 Faction = faction;
+                BaseFaction = baseFaction ?? faction;
                 Stats = stats;
             }
         }
@@ -51,6 +55,8 @@ namespace Halobellum.Presentation
         private readonly Dictionary<CardStats, CardDefinition> _cardSources = new Dictionary<CardStats, CardDefinition>();
         private readonly Dictionary<UnitStats, UnitDefinition> _sources = new Dictionary<UnitStats, UnitDefinition>();
         private readonly List<PlacedSquad> _previewOrder = new List<PlacedSquad>();
+        private readonly Dictionary<string, string> _baseFactionOf = new Dictionary<string, string>();
+        private readonly Dictionary<string, int> _squadsOfFaction = new Dictionary<string, int>();
         private int _nextSquadId = 1;
 
         public PlayerState ArmyA { get; } = new PlayerState(Team.A);
@@ -98,7 +104,7 @@ namespace Halobellum.Presentation
                 foreach (UnitStats unit in info.BaseRoster) Units.Add(new SandboxUnit(info.Name, unit));
                 foreach (SubFactionInfo sub in info.SubFactions)
                 {
-                    foreach (UnitStats unit in sub.ExclusiveUnits) Units.Add(new SandboxUnit($"{info.Name}: {sub.Name}", unit));
+                    foreach (UnitStats unit in sub.ExclusiveUnits) Units.Add(new SandboxUnit($"{info.Name}: {sub.Name}", unit, info.Name));
                 }
                 foreach (CardStats card in info.Cards)
                 {
@@ -116,6 +122,11 @@ namespace Halobellum.Presentation
                 Units.Add(new SandboxUnit(ExtraUnitsLabel, stats));
             }
             foreach (var pair in cache) _sources[pair.Value] = pair.Key;
+            foreach (SandboxUnit unit in Units)
+            {
+                if (unit.Faction != ExtraUnitsLabel) _baseFactionOf[unit.Stats.Name] = unit.BaseFaction;
+            }
+            FollowArmies();
         }
 
         private void Start() => Refresh();
@@ -432,10 +443,34 @@ namespace Halobellum.Presentation
             }
         }
 
+        /// <summary>The faction most of a side's squads belong to, or null if it has none (or only placeholder units).</summary>
+        public string MostCommonFaction(Team team)
+        {
+            _squadsOfFaction.Clear();
+            string best = null;
+            int bestCount = 0;
+            foreach (PlacedSquad squad in Army(team).Squads)
+            {
+                if (!_baseFactionOf.TryGetValue(squad.Type.Name, out string faction)) continue;
+                _squadsOfFaction.TryGetValue(faction, out int count);
+                _squadsOfFaction[faction] = ++count;
+                if (count > bestCount)
+                {
+                    bestCount = count;
+                    best = faction;
+                }
+            }
+            return best;
+        }
+
+        /// <summary>Tells sound and effects which factions are fighting here. Nothing else says so in the Sandbox, and what the last match left must not stay.</summary>
+        private void FollowArmies() => BattleFactions.Set(MostCommonFaction(Team.A), MostCommonFaction(Team.B));
+
         /// <summary>Shows both armies as a battle that isn't running, optionally selecting one placed squad.</summary>
         private void Refresh(int selectPlacedSquadId = -1)
         {
             if (IsBattle || _battle == null) return;
+            FollowArmies();
             BattleSimulation preview = DeploymentGrid.CreateBattle(_battle.Rules, ArmyA, ArmyB, seed);
             _previewOrder.Clear();
             _previewOrder.AddRange(ArmyA.Squads); // Team A's squads come first in the battle, then Team B's.
