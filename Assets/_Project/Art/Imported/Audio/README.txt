@@ -47,25 +47,25 @@ BATTLE SOUNDS
   sfx_drop_in                      A squad falling into place: it lands 0.6 s in.
   sfx_explosion_large              The biggest units going up.
   sfx_explosion_medium             Medium vehicles and walkers going up.
-  sfx_explosion_small              Rockets, shells and fuel rods landing.
+  sfx_explosion_small              Rockets, shells, kegs and fuel rods landing.
   sfx_fire_beam                    The Scarab's beam: 2 s of charging, then 3 s of firing, 5.5 s in all.
   sfx_fire_bio                     Flood spat bone, bone shards and spores.
-  sfx_fire_bomb                    Bombs, the release.
+  sfx_fire_bomb                    Bombs, the release, and the Methane Wagon's burning kegs.
   sfx_fire_bullet                  Rifles, SMGs, pistols. Plays very often: keep it short and not too bright.
   sfx_fire_bullet_flood            A rifle in Flood hands (Scavenged Rifle).
   sfx_fire_cannon                  Tank and other cannons.
   sfx_fire_flame                   Flamethrowers.
-  sfx_fire_gauss                   Gauss guns.
-  sfx_fire_heavybullet             Machine guns, chainguns, autocannons, turrets.
-  sfx_fire_laser                   The Spartan Laser.
+  sfx_fire_gauss                   Gauss guns and the sniper rifle: one hard shot.
+  sfx_fire_heavybullet             Machine guns, chainguns, autocannons, turrets, shotguns.
+  sfx_fire_laser                   The Spartan Laser and the Hunter Captain's Siphon Laser.
   sfx_fire_melee                   Melee with no faction of its own.
   sfx_fire_melee_covenant          Covenant melee (energy sword, talons).
   sfx_fire_melee_flood             Flood melee (claws, tendrils, bites).
   sfx_fire_needle                  Needle weapons.
   sfx_fire_plasma                  Plasma rifles, pistols, turrets.
-  sfx_fire_plasmaheavy             Fuel rod guns and plasma mortars.
+  sfx_fire_plasmaheavy             Fuel rod guns, plasma mortars, and plasma shots that fly and burst (Blisterback, Marauder).
   sfx_fire_rocket                  Rocket launchers and missiles, the launch.
-  sfx_flood_burst                  A carrier form going off, or a Flood unit bursting.
+  sfx_flood_burst                  A carrier form going off, a Flood unit bursting, or Bone Shards landing.
   sfx_hum_engine                   A loop: the engines of all UNSC ground vehicles, as loud as how many are alive.
   sfx_hum_hover                    A loop: what flies or floats (aircraft, Covenant vehicles). Loops must close without a click.
   sfx_impact_armor                 A hit on armor.
@@ -96,13 +96,13 @@ BATTLE SOUNDS
   sfx_spell_wrath                  Gravemind's Wrath.
 
 UI SOUNDS (each faction has its own set)
-  any button:
+  any button; quieter, a squad selected or turned:
     ui_unsc_click  ui_covenant_click  ui_flood_click
-  the mouse going over a shop or card button:
+  the mouse going over a button:
     ui_unsc_hover  ui_covenant_hover  ui_flood_hover
   a squad bought:
     ui_unsc_buy  ui_covenant_buy  ui_flood_buy
-  a squad sold:
+  a squad sold; quieter, a spell taken back:
     ui_unsc_sell  ui_covenant_sell  ui_flood_sell
   a unit unlocked or a tech bought:
     ui_unsc_unlock  ui_covenant_unlock  ui_flood_unlock
@@ -110,7 +110,7 @@ UI SOUNDS (each faction has its own set)
     ui_unsc_error  ui_covenant_error  ui_flood_error
   a card taken:
     ui_unsc_cardpick  ui_covenant_cardpick  ui_flood_cardpick
-  the cards skipped:
+  the cards skipped; quieter, a squad moved:
     ui_unsc_skip  ui_covenant_skip  ui_flood_skip
   a spell or an item placed:
     ui_unsc_spellplaced  ui_covenant_spellplaced  ui_flood_spellplaced

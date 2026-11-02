@@ -1,6 +1,7 @@
 // AudioFlowTests.cs
 // Sound at the edges of a battle (M10): the game's pause holds the battle's sounds, leaving from the pause leaves nothing behind, a
-// stinger doesn't follow the player off its screen, and the Sandbox's sound goes by the armies really placed.
+// stinger doesn't follow the player off its screen, the Sandbox's sound goes by the armies really placed, what is done to a squad each round is heard
+// softly, and menu buttons sound when the pointer goes over them (with a test's pointer, never the real mouse).
 // These can only check what is asked for and what is playing, not how it sounds. The tests run in batch mode, where the room stays silent.
 // Depends on: Halobellum.Presentation, Halobellum.Economy, Halobellum.Core, NUnit, Unity Test Framework.
 
@@ -10,6 +11,7 @@ using System.Reflection;
 using Halobellum.Core;
 using Halobellum.Economy;
 using Halobellum.Presentation;
+using Halobellum.UI;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -29,6 +31,8 @@ namespace Halobellum.Tests
         public void TearDown()
         {
             GamePause.Resume();
+            UiAudio.PointerByTest = null;
+            MenuStyle.ButtonDrawnForTest -= NoteButton;
             if (Director != null) Director.SlotPlayed -= Heard;
             BattleFactions.Set(BattleFactions.Unsc, BattleFactions.Covenant);
         }
@@ -62,6 +66,247 @@ namespace Halobellum.Tests
             float deadline = Time.realtimeSinceStartup + 20f;
             while (!_played.Contains("sfx_hum_engine") && Time.realtimeSinceStartup < deadline) yield return null;
             Assert.Contains("sfx_hum_engine", _played);
+        }
+
+        private int Count(string slot) => _played.FindAll(s => s == slot).Count;
+
+        /// <summary>How loud a UI sound was asked to be, of the player's UI volume.</summary>
+        private static float UiLevelOf(string slot)
+        {
+            foreach (AudioSource source in Director.GetComponents<AudioSource>())
+            {
+                if (source.isPlaying && source.clip != null && source.clip.name == slot) return source.volume / (Director.VolumeMaster * Director.VolumeUi);
+            }
+            Assert.Fail(slot + " is not playing.");
+            return 0f;
+        }
+
+        /// <summary>A match in deployment with one squad bought and landed. Returns the squad's faction key in key.</summary>
+        private IEnumerator MatchWithASquad(string faction)
+        {
+            yield return Load("Match");
+            var match = Object.FindAnyObjectByType<MatchController>();
+            for (int seed = 1; seed < 200 && _key == null; seed++)
+            {
+                match.NewMatch(seed);
+                for (int i = 0; i < match.Match.PlayerDraft.Count && _key == null; i++)
+                {
+                    if (match.Match.PlayerDraft[i].Faction.Name != faction) continue;
+                    Assert.IsTrue(match.ChooseDraft(i).Ok);
+                    _key = AudioSlots.FactionKey(faction);
+                }
+            }
+            PlayerState player = match.Match.Player;
+            Assert.IsTrue(match.Buy(player.Roster.Find(u => player.Unlocked.Contains(u) && u.Cost <= player.Credits)).Ok);
+            float deadline = Time.realtimeSinceStartup + 10f;
+            while (match.IsDropping && Time.realtimeSinceStartup < deadline) yield return null;
+            yield return null;
+        }
+
+        private string _key;
+
+        [SetUp]
+        public void ForgetTheFaction() => _key = null;
+
+        [UnityTest]
+        public IEnumerator SelectingAndMovingASquad_AreHeardSoftly_AndNothingElseIs()
+        {
+            yield return MatchWithASquad(BattleFactions.Unsc);
+            var match = Object.FindAnyObjectByType<MatchController>();
+            var selection = match.GetComponent<SquadSelection>();
+            Assert.AreEqual(0, Count($"ui_{_key}_click"), "A bought squad is selected when it lands: that isn't the player's doing.");
+            int squad = selection.SelectedSquadId;
+            Assert.GreaterOrEqual(squad, 0);
+
+            selection.Select(-1);
+            selection.Select(squad);
+            Assert.AreEqual(0, Count($"ui_{_key}_click"), "Select alone also runs for each preview rebuilt.");
+
+            selection.Select(-1);
+            selection.SelectByPlayer(squad);
+            Assert.AreEqual(1, Count($"ui_{_key}_click"), "The player's click on a squad.");
+            Assert.Less(UiLevelOf($"ui_{_key}_click"), 1f);
+            selection.SelectByPlayer(squad);
+            Assert.AreEqual(1, Count($"ui_{_key}_click"), "Clicking it again changes nothing.");
+            selection.SelectByPlayer(-1);
+            Assert.AreEqual(1, Count($"ui_{_key}_click"), "Clearing it is silent.");
+            selection.SelectByPlayer(squad);
+            _played.Clear();
+
+            // Turning where it stands, which rebuilds the preview and selects it again: one sound, no more.
+            match.ToggleRotation();
+            yield return null;
+            Assert.AreEqual(1, Count($"ui_{_key}_click"), match.Message);
+            Assert.AreEqual(1, _played.Count, string.Join(", ", _played));
+
+            // Moving: turning the ghost, then setting it down.
+            _played.Clear();
+            PlacedSquad placed = match.SelectedPlacedSquad;
+            match.BeginMoving(placed);
+            Assert.IsEmpty(_played, "Picking it up has its button's click only.");
+            string message = match.Message;
+            match.ToggleRotation();
+            Assert.AreEqual(1, Count($"ui_{_key}_click"), "The ghost turning.");
+            Assert.AreEqual(message, match.Message, "The placing message stays.");
+            match.ToggleRotation();
+            _played.Clear();
+            Assert.IsFalse(match.PlaceAt(-50, -50).Ok);
+            Assert.AreEqual(1, Count($"ui_{_key}_error"), "A failure is still heard.");
+            _played.Clear();
+            int column = -1, row = -1;
+            for (int c = 0; c < 40 && column < 0; c++)
+            {
+                for (int r = 0; r < 40 && column < 0; r++)
+                {
+                    if ((c != placed.Column || r != placed.Row) && match.CanPlaceAt(c, r))
+                    {
+                        column = c;
+                        row = r;
+                    }
+                }
+            }
+            Assert.GreaterOrEqual(column, 0);
+            Assert.IsTrue(match.PlaceAt(column, row).Ok, match.Message);
+            Assert.AreEqual(1, Count($"ui_{_key}_skip"), string.Join(", ", _played));
+            Assert.AreEqual(1, _played.Count, "Only that: " + string.Join(", ", _played));
+            Assert.Less(UiLevelOf($"ui_{_key}_skip"), 1f);
+        }
+
+        [UnityTest]
+        public IEnumerator TakingASpellBack_IsHeardSoftly_AndEachFactionHasItsOwn([Values("UNSC", "Covenant", "Flood")] string faction)
+        {
+            yield return MatchWithASquad(faction);
+            var match = Object.FindAnyObjectByType<MatchController>();
+            var spell = new OwnedSpell { Id = 9001, Stats = new SpellStats { Name = "Test" }, IsPlaced = true };
+            match.Match.Player.Spells.Add(spell);
+            _played.Clear();
+            Assert.IsTrue(match.UnplaceSpell(spell).Ok, match.Message);
+            Assert.AreEqual(1, Count($"ui_{_key}_sell"), string.Join(", ", _played));
+            Assert.Less(UiLevelOf($"ui_{_key}_sell"), 1f);
+            Assert.IsFalse(spell.IsPlaced);
+        }
+
+        [UnityTest]
+        public IEnumerator Sandbox_MovingAndTurning_SoundAsInAMatch()
+        {
+            yield return Load("Sandbox");
+            var sandbox = Object.FindAnyObjectByType<SandboxController>();
+            Assert.IsTrue(sandbox.AddSquad(Team.A, UnitNamed(sandbox, "Marine")).Ok);
+            yield return null;
+            string key = AudioSlots.FactionKey(BattleFactions.TeamA);
+            _played.Clear();
+
+            PlacedSquad squad = sandbox.ArmyA.Squads[0];
+            sandbox.BeginMoving(squad);
+            sandbox.ToggleRotation();
+            Assert.AreEqual(1, Count($"ui_{key}_click"), "The ghost turning.");
+            Assert.IsFalse(sandbox.PlaceAt(-50, -50).Ok);
+            Assert.AreEqual(1, Count($"ui_{key}_error"), "A spot it can't go to.");
+            _played.Clear();
+            int column = -1, row = -1;
+            for (int c = 0; c < 40 && column < 0; c++)
+            {
+                for (int r = 0; r < 40 && column < 0; r++)
+                {
+                    if ((c != squad.Column || r != squad.Row) && sandbox.CanPlaceAt(c, r))
+                    {
+                        column = c;
+                        row = r;
+                    }
+                }
+            }
+            Assert.IsTrue(sandbox.PlaceAt(column, row).Ok, sandbox.Message);
+            Assert.AreEqual(1, Count($"ui_{key}_skip"), string.Join(", ", _played));
+            yield return null;
+            Assert.AreEqual(0, Count("sfx_drop_in"), "Moved, not new.");
+
+            // A new squad placed by hand drops in, and doesn't sound moved as well. (After the shortest gap between two drops, which has its own limit.)
+            yield return new WaitForSecondsRealtime(0.2f);
+            _played.Clear();
+            sandbox.BeginPlacing(UnitNamed(sandbox, "Marine"));
+            bool placed = false;
+            for (int c = 0; c < 40 && !placed; c++)
+            {
+                for (int r = 0; r < 40 && !placed; r++)
+                {
+                    if (sandbox.CanPlaceAt(c, r)) placed = sandbox.PlaceAt(c, r).Ok;
+                }
+            }
+            sandbox.CancelPlacement();
+            yield return null;
+            Assert.IsTrue(placed);
+            Assert.AreEqual(1, Count("sfx_drop_in"));
+            Assert.AreEqual(0, Count($"ui_{key}_skip"));
+        }
+
+        [UnityTest]
+        public IEnumerator AScarabsBeam_IsHeard_WhileHunterCaptainsFireTheirLasers()
+        {
+            yield return Load("Sandbox");
+            var sandbox = Object.FindAnyObjectByType<SandboxController>();
+            Assert.IsTrue(sandbox.AddSquad(Team.A, UnitNamed(sandbox, "Scarab")).Ok);
+            for (int i = 0; i < 4; i++) Assert.IsTrue(sandbox.AddSquad(Team.B, UnitNamed(sandbox, "Hunter Captain")).Ok);
+            yield return null;
+            Object.FindAnyObjectByType<BattleController>().Speed = 3f;
+            sandbox.Run();
+            _played.Clear();
+
+            // A beam started after the lasers have begun, which is when it used to find their group full.
+            float deadline = Time.realtimeSinceStartup + 60f;
+            bool heard = false;
+            while (!heard && Time.realtimeSinceStartup < deadline)
+            {
+                int laser = _played.IndexOf("sfx_fire_laser");
+                heard = laser >= 0 && _played.LastIndexOf("sfx_fire_beam") > laser;
+                yield return null;
+            }
+            Assert.Greater(Count("sfx_fire_laser"), 3, "The lasers should be firing.");
+            Assert.IsTrue(heard, "The beam should be heard over them.");
+            Object.FindAnyObjectByType<BattleController>().Speed = 1f;
+        }
+
+        private readonly Dictionary<string, Rect> _buttons = new Dictionary<string, Rect>();
+
+        private void NoteButton(string key, Rect rect) => _buttons[key] = rect;
+
+        private int Hovers => _played.FindAll(s => s.EndsWith("_hover", System.StringComparison.Ordinal)).Count;
+
+        private static IEnumerator Frames(int count)
+        {
+            for (int i = 0; i < count; i++) yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator MenuButtons_SoundOnceWhenThePointerMovesOntoThem_AndNeverOtherwise()
+        {
+            UiAudio.PointerByTest = Vector2.one;
+            MenuStyle.ButtonDrawnForTest += NoteButton;
+            _buttons.Clear();
+            yield return SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);
+            Director.SlotPlayed -= Heard;
+            Director.SlotPlayed += Heard;
+            _played.Clear();
+            yield return Frames(30);
+            Assert.AreEqual(0, Hovers, "A pointer standing still.");
+            // A batch run draws no IMGUI at all, so this says something only in the Editor's Test Runner. In a built game, -menuDemo -menuDemoSounds checks the same on real screens.
+            if (Application.isBatchMode && _buttons.Count == 0) Assert.Ignore("Batch mode draws no IMGUI.");
+            Assert.IsTrue(_buttons.ContainsKey("Sandbox") && _buttons.ContainsKey("Settings"), "The menu should have drawn its buttons.");
+
+            UiAudio.PointerByTest = _buttons["Sandbox"].center;
+            yield return Frames(3);
+            Assert.AreEqual(1, Hovers, "It moved onto a button.");
+            yield return Frames(120);
+            Assert.AreEqual(1, Hovers, "Resting on it, not every frame.");
+            Assert.AreEqual(1, _played.Count, string.Join(", ", _played));
+
+            UiAudio.PointerByTest = _buttons["Settings"].center;
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.AreEqual(2, Hovers, "On to the next one.");
+
+            // The scene opens again under the pointer, which is resting on a button.
+            yield return SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);
+            yield return Frames(60);
+            Assert.AreEqual(2, Hovers, "The scene opening under it makes no sound.");
         }
 
         [UnityTest]

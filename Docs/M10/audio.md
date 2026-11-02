@@ -46,7 +46,7 @@ Code is in `Scripts/Combat/Presentation/Audio/`, created at run time, with no sc
 - `AudioSlots`: the names, and which name goes with which faction, screen or spell.
 - `AudioCatalog`: every battle sound: its group, volume, pitch spread and priority; and the limits per group. **This is the file to tune the mix in.**
 - `AudioLibrary`: finds the file behind a name: the owner's first, then the generated one.
-- `VoiceLimiter`: at most so many at once and a shortest gap per group (rifles: 4 at once, 70 ms apart). 200 rifles cost the same as 4.
+- `VoiceLimiter`: at most so many at once and a shortest gap per group (rifles: 4 at once, 70 ms apart). 200 rifles cost the same as 4. A limit doesn't look at a sound's priority, so what must not be dropped has a group of its own: the Scarab's beam (5.5 s, one chance to start) isn't with the lasers, which overlap themselves (Siphon Laser: 0.95 s every 0.75 s).
 - `MusicDeck`: the crossfades, resuming, and stingers.
 - `BattleAudio`: listens to the simulation's events. It only reads. Added to the object with the `BattleController`.
 - `MatchAudio`, `SandboxAudio`: screens and player actions.
@@ -60,7 +60,22 @@ thing is on screen, and quieter when it is off screen.
 
 **Which faction.** `BattleFactions` says who is fighting. A match sets it when the draft is chosen. The Sandbox sets it from the armies placed, each time they change: the faction most of a side's squads belong to (a sub-faction's units count for their faction, placeholder units for none), or UNSC and Covenant for an empty side. Whether a body sounds wet goes by the body itself (`IsFlood` or infected), so a mixed Sandbox army is right unit by unit.
 
-**Landings.** A rocket, a bomb, a cannon shell, a heavy plasma shot or a plasma shot with a blast makes a small explosion where it lands. The simulation raises `ShotLanded(attacker, weapon, point)` for each shot that isn't blocked, so this goes by the weapon that really fired, once per shot however many it hits, and also when the target died while the shot was in the air. The event changes nothing in the simulation. A coaxial gun makes no explosion, and a second weapon's rockets do.
+**Which sound a weapon has.** `WeaponFeel` says what kind of thing it is, from its name and then from what it does; sound (`AudioCatalog.Fire`) and look (`WeaponLooks`) both read that. All 109 weapons in the data were printed with their kinds, and read through, which is where this table comes from; a test also goes through all of them, so that a big hit can't have a small sound and what flies and bursts is heard landing. A plasma shot that flies and has a splash is heavy plasma. The sniper rifle has the Gauss sound (one hard shot, the same weight as the Gauss Warthog's) and a thin line in its side's tracer colour. Shotguns and the Vulture's chin gun are heavy bullets. The Methane Wagon's mortar is a bomb: a burning orange ball with embers, a fire blast, the bomb sound. An Infested Scarab's beam is Flood green.
+
+| Weapon | Was | Now |
+|---|---|---|
+| Blisterback, Plasma Missile Barrage (75, lobbed, splash 3.5) | small plasma sound, small bolt; its landing was already heard | heavy plasma sound, blue ball, same landing |
+| Marauder, Plasma Cannon (80, splash 2) | small plasma sound, small bolt | heavy plasma sound, blue ball, same landing |
+| Spartan Sniper, SRS99 (220 every 3 s) | small rifle sound, thin streak | Gauss sound, heavy muzzle, straight line |
+| Spartan CQB, M45 Shotgun (80 every 0.8 s) | small rifle sound, by falling through to the default | heavy gun sound, wide flash, thick streak |
+| Vulture, Chin Gun (10 every 0.2 s) | small rifle sound, by falling through to the default | heavy gun sound, as other 8 to 10 damage guns on vehicles |
+| Methane Wagon, Methane Mortar (60, Fire, lobbed) | the Wraith's blue ball and plasma sound | burning keg, bomb sound, fire blast |
+| Pure Form Ranged, Bone Shards (60, lobbed, splash 3) | no sound where it landed, though a blast is drawn | a Flood burst where it lands |
+| Infested Scarab, Scavenged Focus Beam | Scarab blue | Flood green |
+
+Left as they are, for the owner's ears: every landing but Bone Shards is the same small explosion, even a Rhino's 150 at splash 4.5 (there is a medium one that would fit from splash 4 up). Grenade launchers have the tank cannon's sound, which may be too big. The Methane Wagon's sound is a falling whistle and a thud, written for a bomb, not a mortar. Spore Lash (Spawner, 3 m) is a Bio shot rather than melee, because what it does is burst in spores.
+
+**Landings.** A rocket, a bomb, a cannon shell, a heavy plasma shot or a plasma shot with a blast makes a small explosion where it lands; a lobbed Flood shot with a blast makes a Flood burst. The simulation raises `ShotLanded(attacker, weapon, point)` for each shot that isn't blocked, so this goes by the weapon that really fired, once per shot however many it hits, and also when the target died while the shot was in the air. The event changes nothing in the simulation. A coaxial gun makes no explosion, and a second weapon's rockets do.
 
 **Deaths.** By what died: an armoured flier crashes, Swarm Forms die as small Flood forms, Hunters die as creatures and make no engine or hover hum, and small and large vehicles go up by size. Only a Flood unit's death burst sounds like a Flood burst: the Methane Wagon explodes as a vehicle.
 
@@ -68,15 +83,26 @@ thing is on screen, and quieter when it is off screen.
 including ones not written yet, clicks by itself on the mouse press, as long as it is IMGUI. A uGUI screen would need `GameAudio.Ui(UiSound.Click)` in its buttons.
 
 **What the player did.** `MatchController.Report` is the one place all actions pass through. It now raises `ActionTaken(name of the method, result)`, using the compiler's
-`CallerMemberName`, so `MatchAudio` knows Buy from Sell from a failed action, with no change in each action.
+`CallerMemberName`, so `MatchAudio` knows Buy from Sell from a failed action, with no change in each action. Turning the ghost of a squad being moved has nothing to report, so it raises `ActionTaken` itself.
+
+**What is done every round** is below the sound of buying (its loudest moment is about -20 dB in the file) and uses existing slots, each faction's own, through `GameAudio.Ui(sound, volume)`. All of it is in one place, `UiAudio`:
+
+| What | Sound | Level of its own | Loudest moment, about |
+|---|---|---|---|
+| A squad selected by a click on the field | click | 0.6 | -28 dB |
+| A squad turned, or its ghost | click | 0.8 | -26 dB |
+| A squad set down in a new spot | skip | 0.6 | -25 dB |
+| A placed spell taken back | sell | 0.5 | -26 dB |
+
+Only the player's own click on a squad is heard (`SquadSelection.SelectByPlayer`): `Select` itself stays silent, because it also runs for every preview rebuilt and when a bought squad lands. Clearing a selection is silent. The Sandbox has the same sounds for moving and turning, through events of its controller, and now its refusals are heard too. Picking a squad up (Move) has its button's click and nothing else. Those are figures from the files; the deployment music was around -30 dB (RMS) under them in a recording. Whether they sit right is for the owner's ears: all four are the constants at the top of `UiAudio`.
 
 **Hover** can't be seen from outside IMGUI, so it takes one line per button (`UiAudio.Watch(rect, enabled)`), which also gives the error sound for a click on a greyed-out button. It is on the shop's buttons, card
-buttons, draft cards and Ready only.
+buttons, draft cards and Ready, and on every button of the main menu, Settings and the pause menu (all through `MenuStyle`). A hover is the pointer *moving* onto a button (`HoverWatch`, plain C#, tested): nothing sounds when a screen opens under a mouse standing still, or a scene loads under it, or while it rests on a button, and two overlapping buttons can't set each other off. Hovers are at least 50 ms apart. A greyed-out menu button (the menu fading away) makes no sound at all. Sliders have no hover sound.
 
 **Lines changed in shared files** (everything else is new files): `MatchController.cs` (+4, for `ActionTaken`), `MatchHud.cs` (+5, `UiAudio.Watch`), `ItemHud.cs` (+1, an item picked up clicks),
-`Halobellum.Tests.EditMode.asmdef` (+1). Later: `BattleEvents.cs` and `BattleSimulation.cs` (the `ShotLanded` event, which changes nothing in a battle), `SandboxController.cs` (tells `BattleFactions` about the armies), `WeaponFeel.cs` and `WeaponLooks.cs` (autocannons and the Hunter's assault cannon).
+`Halobellum.Tests.EditMode.asmdef` (+1). Later: `BattleEvents.cs` and `BattleSimulation.cs` (the `ShotLanded` event, which changes nothing in a battle), `SandboxController.cs` (tells `BattleFactions` about the armies), `WeaponFeel.cs` and `WeaponLooks.cs` (autocannons and the Hunter's assault cannon). Later still: `SquadSelection.cs` (`SelectByPlayer`), `MatchController.cs` (+1, the ghost turning), `MenuStyle.cs` (hover), `MenuDemo.cs` (`-menuDemoSounds`), `EffectsGallery.cs` (pictures of the weapons above).
 
-**No noise in test runs.** When the game runs in batch mode, or with `-autoplay`, `-sandboxDemo` and the like, the director sets the listener's volume to 0, so that runs at night don't fill the room. Add `-audioOn` to hear them.
+**No noise in test runs.** When the game runs in batch mode, or with any test tool's flag (`AudioDirector.TestRunFlags`: `-autoplay`, `-sandboxDemo`, `-gallery`, `-crowdBench`, `-benchmark`, `-menuDemo`, `-cardsDemo`, `-terrainGallery`), the director sets the listener's volume to 0 and says so in the log, so that runs at night don't fill the room. Add `-audioOn` to hear them. A test reads the flags from the code, so a new tool that isn't on the list fails it. `-audioCapture` still goes first: the capture needs the mix and silences the room itself.
 
 **Volumes.** Reads PlayerPrefs `Volume.Master` (1), `Volume.Music` (0.6), `Volume.Sfx` (1), `Volume.Ui` (1) every half second, without depending on the settings screen's code.
 
@@ -120,3 +146,5 @@ The battle and menu tracks and Flood deployment are mono: 90 s of 16-bit 44.1 kH
 Tests: `Assets/Tests/EditMode/Unity/AudioTests.cs`, `Assets/Tests/EditMode/Unity/AudioCueChoiceTests.cs` (real weapons and units), `Assets/Tests/EditMode/ShotLandedTests.cs`, `Assets/Tests/PlayMode/AudioSceneTests.cs`, `Assets/Tests/PlayMode/AudioFlowTests.cs` (pause, stingers, Sandbox factions).
 
 **To record what the game outputs:** start it with `-audioCapture out.wav` (with `-autoplay`, for example). It saves the final mix to a file at the end and keeps the room silent while it does.
+
+**To check the small sounds with nobody at the mouse:** `-menuDemo <folder> -menuDemoSounds` (and `-audioCapture out.wav` to record it). A pointer of the tool's own, in place of the real mouse, goes over the buttons of the menu, Settings and the pause menu without pressing them, and the tool selects, moves and turns a squad and takes a spell back. It writes one `MenuDemo:` line per check.

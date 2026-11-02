@@ -32,6 +32,8 @@ namespace Halobellum.Presentation
         {
             if (weapon.IsBeam) return WeaponFeelKind.Beam;
             WeaponFeelKind? named = FromName(weapon.Name);
+            // A plasma shot that flies and bursts is a heavy gun, not a pistol (the Blisterback's missiles, the Marauder's cannon).
+            if (named == WeaponFeelKind.Plasma && !weapon.IsInstant && weapon.SplashRadius > 0f) return WeaponFeelKind.PlasmaHeavy;
             if (named.HasValue) return named.Value;
             return weapon.Range <= 3f ? WeaponFeelKind.Melee : WeaponFeelKind.Bullet;
         }
@@ -41,19 +43,19 @@ namespace Halobellum.Presentation
         {
             string n = (name ?? "").ToLowerInvariant();
             if (n.Contains("crash") || n == "burst" || n.Contains("explo") || n.Contains("self")) return WeaponFeelKind.Burst;
-            if (n.Contains("fuel rod bomb") || n.Contains("bomb")) return WeaponFeelKind.Bomb;
+            if (n.Contains("fuel rod bomb") || n.Contains("bomb") || n.Contains("methane")) return WeaponFeelKind.Bomb; // The Methane Wagon's mortar lobs burning kegs, not plasma.
             if (n.Contains("fuel rod") || n.Contains("mortar") || n.Contains("assault cannon")) return WeaponFeelKind.PlasmaHeavy; // The Hunter's assault cannon is a heavy plasma gun, whatever its name says.
             if (n.Contains("needle")) return WeaponFeelKind.Needle;
             if (n.Contains("plasma")) return WeaponFeelKind.Plasma;
             if (n.Contains("flame") || n.Contains("fire") || n.Contains("m7057")) return WeaponFeelKind.Flame;
             if (n.Contains("laser")) return WeaponFeelKind.Laser;
             if (n.Contains("beam")) return WeaponFeelKind.Beam;
-            if (n.Contains("gauss") || n.Contains("rail")) return WeaponFeelKind.Gauss;
+            if (n.Contains("gauss") || n.Contains("rail") || n.Contains("sniper")) return WeaponFeelKind.Gauss; // One hard shot and a straight line. Before "rifle", which a sniper rifle also contains.
             if (n.Contains("rocket") || n.Contains("missile")) return WeaponFeelKind.Rocket;
             if (n.Contains("autocannon")) return WeaponFeelKind.HeavyBullet; // Before "cannon", which it also contains.
             if (n.Contains("cannon") || n.Contains("grenade")) return WeaponFeelKind.Cannon;
-            if (n.Contains("chaingun") || n.Contains("machine gun") || n.Contains("turret") || n.Contains("minigun")) return WeaponFeelKind.HeavyBullet;
-            if (n.Contains("rifle") || n.Contains("smg") || n.Contains("pistol") || n.Contains("sniper")) return WeaponFeelKind.Bullet;
+            if (n.Contains("chaingun") || n.Contains("machine gun") || n.Contains("turret") || n.Contains("minigun") || n.Contains("chin gun") || n.Contains("shotgun")) return WeaponFeelKind.HeavyBullet;
+            if (n.Contains("rifle") || n.Contains("smg") || n.Contains("pistol")) return WeaponFeelKind.Bullet;
             if (n.Contains("bone") || n.Contains("spore") || n.Contains("spit")) return WeaponFeelKind.Bio;
             if (n.Contains("sword") || n.Contains("claw") || n.Contains("talon") || n.Contains("slam") || n.Contains("whip") || n.Contains("bite") || n.Contains("hammer") || n.Contains("melee") || n.Contains("punch")) return WeaponFeelKind.Melee;
             return null;

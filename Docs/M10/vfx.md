@@ -19,13 +19,13 @@ Colour says who fired: UNSC warm yellow, Covenant blue, with green fuel rods and
 
 | Kind | Look | Who |
 |---|---|---|
-| Bullet, heavy bullet | Flash, hot streak; sparks on armour, dust on anything else, a blue flash on a shield that is up | Marine, Warthog, turrets |
+| Bullet, heavy bullet | Flash, hot streak; sparks on armour, dust on anything else, a blue flash on a shield that is up. A shotgun has a wide flash, smoke at the muzzle and a thick streak | Marine, Warthog, turrets, Spartan CQB |
 | Cannon | Hard flash, smoke and sparks at the muzzle, a shell with a thin trail, a blast as wide as its splash | Scorpion, Elephant |
-| Gauss | A bright straight line from muzzle to target at once, white core; an impact where it hits | Gauss Warthog, Cobra, Gremlin |
+| Gauss | A bright straight line from muzzle to target at once, white core; an impact where it hits. A sniper's is thinner, in its side's tracer colour | Gauss Warthog, Cobra, Gremlin, Spartan Sniper |
 | Rocket | Flame at the head, a thick smoke trail, a blast | Wolverine, Mantis, Hornet, Archer (in an arc) |
-| Bomb | Falling streak, or a green ball for a fuel rod bomb. Flood bombs are a sick green and burst in gore and spores | Hornet, Banshee, Infested Hornet, Infested Banshee |
+| Bomb | Falling streak, or a green ball for a fuel rod bomb. Flood bombs are a sick green and burst in gore and spores. The Methane Wagon's burning keg is an orange ball dripping embers, with a fire blast | Hornet, Banshee, Infested Hornet, Infested Banshee, Methane Wagon |
 | Plasma | Fat glowing bolt, splash of droplets | Grunt, Jackal, Elite, Ghost; green on Flood craft |
-| Heavy plasma | Big glowing ball that drips light, plasma blast | Fuel Rod Grunt (green), Wraith mortar (blue), Hunter (green) |
+| Heavy plasma | Big glowing ball that drips light, plasma blast | Fuel Rod Grunt (green), Wraith mortar (blue), Hunter (green), Blisterback's missiles and Marauder's cannon (blue) |
 | Needle | Thin pink streak, pink shards on impact | Vampire |
 | Laser | One straight red line with a white-hot core; burning spot and sparks | Spartan |
 | Flame | A real cone of fire, small at the muzzle and growing to the end of its range, sparks, heat shimmer | Flamethrower Trooper |

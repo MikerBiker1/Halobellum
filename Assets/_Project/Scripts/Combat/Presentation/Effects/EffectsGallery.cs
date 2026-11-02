@@ -110,12 +110,20 @@ namespace Halobellum.Presentation
                 new WeaponShot("SeedSpore", "Seeder", "Marine", 0.2f),
                 new WeaponShot("BoneShards", "Pure Form Ranged", tough, 0.8f),
                 new WeaponShot("FloodPlasma", "Infected Phantom", tough, 0.08f),
+                new WeaponShot("PlasmaMissile", "Blisterback", tough, 0.9f, "Plasma Missile Barrage"),
+                new WeaponShot("PlasmaCannon", "Marauder", tough, 0.25f, "Plasma Cannon"),
+                new WeaponShot("MethaneKeg", "Methane Wagon", tough, 0.9f),
+                new WeaponShot("MethaneKegBlast", "Methane Wagon", tough, 1.3f),
+                new WeaponShot("Sniper", "Spartan Sniper", tough, 0.05f),
+                new WeaponShot("Shotgun", "Spartan CQB", tough, 0.04f),
+                new WeaponShot("ChinGun", "Vulture", tough, 0.05f, "Chin Gun"),
             };
             foreach (WeaponShot shot in list)
             {
                 if (Wanted("w_" + shot.Label)) yield return OneWeapon(shot);
             }
             if (Wanted("w_Beam")) yield return ScarabBeam();
+            if (Wanted("w_FloodBeam")) yield return ScarabBeam("Infested Scarab", "w_FloodBeam");
         }
 
         private IEnumerator OneWeapon(WeaponShot shot)
@@ -160,9 +168,9 @@ namespace Halobellum.Presentation
             _firedAt = target;
         }
 
-        private IEnumerator ScarabBeam()
+        private IEnumerator ScarabBeam(string shooter = "Scarab", string picture = "w_Beam")
         {
-            yield return Setup(new[] { "Scarab" }, new[] { "Pure Form Tank" });
+            yield return Setup(new[] { shooter }, new[] { "Pure Form Tank" });
             _battle.Speed = 6f;
             _sandbox.Run();
             var beams = new List<BeamShot>();
@@ -182,7 +190,7 @@ namespace Halobellum.Presentation
                     if (!beam.Firing && beam.Charge > 0.65f && !charged)
                     {
                         charged = true;
-                        yield return Capture("w_Beam_charging", focus, distance);
+                        yield return Capture(picture + "_charging", focus, distance);
                     }
                     if (beam.Firing)
                     {
@@ -190,7 +198,7 @@ namespace Halobellum.Presentation
                         if (firingSeen > 1.1f && !fired)
                         {
                             fired = true;
-                            yield return Capture("w_Beam_firing", focus, distance);
+                            yield return Capture(picture + "_firing", focus, distance);
                             break;
                         }
                     }

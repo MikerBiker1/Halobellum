@@ -64,6 +64,7 @@ To change the picture, edit `MainMenuSceneBuilder.cs` and run it (Halobellum > S
 ## Fixed after the review
 
 - **Camera shake** has one saved value, `Fx.CameraShake`. `CameraShake.ShakeEnabled` reads and writes `GameSettings.CameraShake`, so the K key, the Settings row and Reset to defaults all agree. The old key, `Halobellum.CameraShake`, is no longer read, so a K-off saved before this comes back on once.
+- **Going over a button sounds.** Every button of the menu, Settings and the pause menu now has the hover sound the HUD has (see `audio.md`), only when the pointer moves onto it. The check is `-menuDemo <folder> -menuDemoSounds`.
 - **Sound stops with Esc.** `BattleAudio` pauses battle sounds, including the engine and hover hums, when `GamePause.IsPaused` is true, as well as at battle speed 0. Music and UI sounds go on.
 - **The Sandbox sets its own factions.** `SandboxController.FactionOf(team)` is the faction most of a side's squads belong to. A sub-faction's unit counts as its parent faction, a placeholder counts as nothing, and an empty side is UNSC for blue and Covenant for red. It sets `BattleFactions` when the scene starts and before each change of army is shown. The map, sound and weapon looks all read that, so nothing is left over from a match.
 - **Items panel.** At widths under 1820 the Sandbox bar moves right to clear it. Under 1480 the bar can't fit there, so it stays centred and the panel goes under it, level with the unit list. There, at UI scale 110% or more, a tall squad stats window can overlap the panel's lower part.

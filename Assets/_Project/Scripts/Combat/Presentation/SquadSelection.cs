@@ -53,7 +53,14 @@ namespace Halobellum.Presentation
             Camera camera = Camera.main;
             if (camera == null) return;
             SimUnit picked = Pick(camera.ScreenPointToRay(pointer));
-            Select(picked != null ? picked.SquadId : -1);
+            SelectByPlayer(picked != null ? picked.SquadId : -1);
+        }
+
+        /// <summary>The player's own click on a squad: like Select, and heard. Select alone stays silent, because it also runs each time a preview is rebuilt and when a bought squad lands.</summary>
+        public void SelectByPlayer(int squadId)
+        {
+            if (squadId >= 0 && squadId != SelectedSquadId) UiAudio.SquadSelected();
+            Select(squadId);
         }
 
         /// <summary>Selects a squad by id (-1 clears the selection).</summary>

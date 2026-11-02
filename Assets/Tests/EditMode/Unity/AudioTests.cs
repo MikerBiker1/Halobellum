@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Halobellum.Core;
 using Halobellum.Economy;
 using Halobellum.Presentation;
@@ -63,6 +64,109 @@ namespace Halobellum.Tests
                 if (limiter.TryStart((int)SfxGroup.SmallArms, 5f + i * 0.01f)) started++;
             }
             Assert.LessOrEqual(limiter.ActiveIn((int)SfxGroup.SmallArms), 4);
+        }
+
+        [Test]
+        public void LasersOverlappingThemselves_LeaveRoomForABeam()
+        {
+            var limiter = new VoiceLimiter((int)SfxGroup.Count);
+            AudioCatalog.SetLimits(limiter);
+            SfxCue laser = AudioCatalog.Fire(WeaponFeelKind.Laser, BattleFactions.Covenant), beam = AudioCatalog.Fire(WeaponFeelKind.Beam, BattleFactions.Covenant);
+            Assert.AreNotEqual(laser.Group, beam.Group);
+
+            // Siphon Lasers: a sound of 0.95 s every 0.75 s from each of them, for as long as it takes to fill the group.
+            float now = 0f;
+            int refused = 0;
+            for (int i = 0; i < 40; i++, now += 0.1f)
+            {
+                if (!limiter.TryStart((int)laser.Group, now)) refused++;
+            }
+            Assert.Greater(refused, 0, "The lasers should have filled their own group.");
+            Assert.IsTrue(limiter.TryStart((int)beam.Group, now), "The Scarab's one long beam has one chance to start.");
+        }
+
+        // ------------------------------------------------------------------ going over a button
+
+        [Test]
+        public void Hover_IsHeardOnce_WhenThePointerMovesOntoAButton()
+        {
+            var watch = new HoverWatch();
+            int frame = 100;
+            float now = 1f;
+            bool Step(float x, int button = 7)
+            {
+                frame++;
+                now += 0.02f;
+                watch.NotePointer(x, 0f, frame);
+                return watch.PointerOver(button, frame, now);
+            }
+            watch.NotePointer(0f, 0f, frame);
+            Assert.IsTrue(Step(5f), "It moved onto the button.");
+            Assert.IsFalse(Step(5f), "Resting on it.");
+            for (int i = 0; i < 300; i++) Assert.IsFalse(Step(5f), "Resting on it, however long.");
+            Assert.IsFalse(Step(6f), "Moving within it.");
+
+            // Off it for a while, and back.
+            for (int i = 0; i < 10; i++)
+            {
+                frame++;
+                watch.NotePointer(50f, 0f, frame);
+            }
+            now += 1f;
+            Assert.IsTrue(Step(5f));
+            Assert.IsFalse(Step(5f));
+        }
+
+        [Test]
+        public void Hover_IsSilent_WhenAButtonOpensUnderAPointerStandingStill()
+        {
+            var watch = new HoverWatch();
+            watch.NotePointer(5f, 5f, 1);
+            Assert.IsFalse(watch.PointerOver(7, 1, 1f), "The very first frame: nothing has moved.");
+            watch.NotePointer(5f, 5f, 2);
+            watch.PointerOver(7, 2, 1.02f);
+            watch.NotePointer(5f, 5f, 3);
+            Assert.IsFalse(watch.PointerOver(8, 3, 1.04f), "A screen changed under it.");
+
+            // A scene opening: even if the mouse was on its way, what is under it didn't come there by moving.
+            watch.ForgetPointer();
+            watch.NotePointer(90f, 90f, 4);
+            Assert.IsFalse(watch.PointerOver(9, 4, 2f));
+            watch.NotePointer(91f, 90f, 5);
+            Assert.IsFalse(watch.PointerOver(9, 5, 2.02f), "Still on the same button.");
+            watch.NotePointer(120f, 90f, 6);
+            Assert.IsTrue(watch.PointerOver(10, 6, 2.04f), "Now it moved onto one.");
+        }
+
+        [Test]
+        public void Hover_TwoOverlappingButtons_DoNotSetEachOtherOff()
+        {
+            var watch = new HoverWatch();
+            watch.NotePointer(0f, 0f, 1);
+            int heard = 0;
+            float now = 1f;
+            for (int frame = 2; frame < 200; frame++, now += 0.02f)
+            {
+                watch.NotePointer(frame, 0f, frame); // The mouse keeps moving, which is the worst case.
+                if (watch.PointerOver(1, frame, now)) heard++;
+                if (watch.PointerOver(2, frame, now)) heard++;
+            }
+            Assert.LessOrEqual(heard, 2);
+        }
+
+        [Test]
+        public void Hover_SweptAcrossARowOfSmallButtons_KeepsAGap()
+        {
+            var watch = new HoverWatch();
+            watch.NotePointer(0f, 0f, 1);
+            int heard = 0;
+            for (int frame = 2; frame < 62; frame++) // A second, at 60 frames a second, a new button every frame.
+            {
+                watch.NotePointer(frame, 0f, frame);
+                if (watch.PointerOver(frame, frame, frame / 60f)) heard++;
+            }
+            Assert.LessOrEqual(heard, 1f / HoverWatch.MinGapSeconds + 1f);
+            Assert.Greater(heard, 5);
         }
 
         // ------------------------------------------------------------------ the slots have files
@@ -323,6 +427,40 @@ namespace Halobellum.Tests
         [TestCase(new[] { "-sandboxDemo", "x" }, false, true)]
         [TestCase(new[] { "-autoplay", "-audioOn" }, false, false)]
         [TestCase(new[] { "-audioCapture", "x.wav" }, true, false)]
+        [TestCase(new[] { "-crowdBench", "x.txt" }, false, true)]
+        [TestCase(new[] { "-menuDemo", "x" }, false, true)]
+        [TestCase(new[] { "-cardsDemo", "x" }, false, true)]
+        [TestCase(new[] { "-terrainGallery", "x" }, false, true)]
+        [TestCase(new[] { "-sandboxDemo", "x", "-effectsBench" }, false, true)]
+        [TestCase(new[] { "-crowdBenchmark" }, false, false)] // Not a flag of the game.
+        [TestCase(new[] { "-menuDemo", "x", "-audioOn" }, false, false)]
+        [TestCase(new[] { "-menuDemo", "x", "-audioCapture", "x.wav" }, false, false)] // The capture silences the room itself, and needs the mix.
+        [TestCase(new[] { "-crowdBench", "x.txt", "-audioCapture", "x.wav" }, true, false)]
         public void TestRunsMakeNoNoise(string[] arguments, bool batchMode, bool muted) => Assert.AreEqual(muted, AudioDirector.ShouldMute(arguments, batchMode));
+
+        /// <summary>
+        /// Goes by the code, not by a list of its own: every flag a test tool starts on must silence a run, and every flag that silences a
+        /// run must be one the game knows. (It said -crowdBenchmark for a tool called -crowdBench, and had never heard of three others.)
+        /// </summary>
+        [Test]
+        public void EveryTestToolOnTheCommandLine_IsSilent()
+        {
+            // These only change what a tool that has already been started does, or record it.
+            string[] notTools = { "-effects", "-effectsBench", "-menuDemoShort", "-menuDemoWatch", "-menuDemoSounds", "-menuDemoUiScale", AudioCapture.Flag };
+            var flags = new HashSet<string>();
+            var declared = new Regex(@"const string \w*Flag\w* = ""(-\w+)""");
+            var checkedByName = new Regex(@"Array\.IndexOf\(args, ""(-\w+)""\) < 0\)");
+            foreach (string file in Directory.GetFiles("Assets/_Project/Scripts", "*.cs", SearchOption.AllDirectories))
+            {
+                string text = File.ReadAllText(file);
+                foreach (System.Text.RegularExpressions.Match match in declared.Matches(text)) flags.Add(match.Groups[1].Value);
+                foreach (System.Text.RegularExpressions.Match match in checkedByName.Matches(text)) flags.Add(match.Groups[1].Value);
+            }
+            CollectionAssert.IsSubsetOf(notTools, flags, "A flag named here no longer exists: this list is out of date.");
+            CollectionAssert.IsSubsetOf(AudioDirector.TestRunFlags, flags, "A flag that silences a run but that no tool starts on.");
+            foreach (string flag in flags.Except(notTools))
+                Assert.IsTrue(AudioDirector.ShouldMute(new[] { flag, "x" }, false), flag + " would play aloud in the room.");
+            Assert.GreaterOrEqual(flags.Except(notTools).Count(), 8);
+        }
     }
 }

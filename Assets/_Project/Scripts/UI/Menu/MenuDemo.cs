@@ -7,15 +7,19 @@
 //   match and its Main Menu button; the menu again; Sandbox; Esc; its Back button; Quit.
 // It writes "MenuDemo: ..." lines in the player's log, one for each thing checked, and ends with how many went wrong. It never changes
 // a setting, because PlayerPrefs are shared by every build on this PC.
+// With "-menuDemoSounds" it checks the small sounds instead, with no real mouse or keyboard: a pointer of its own goes over the buttons of the menu, Settings and
+// the pause menu (it never presses them), and in a match it selects, moves and turns a squad and takes a spell back. Add "-audioCapture out.wav" to record it.
 // With "-menuDemoUiScale 1.25" it looks at every screen at that UI scale, without saving it.
 // With "-menuDemoWatch" it presses nothing: for 90 seconds it logs and pictures every change of scene, pause, settings panel, window or
 // setting, so that clicks sent from outside the game (a real mouse, say) can be checked. It puts every setting back at the end.
-// Depends on: GameFlow, GamePause, MatchController, SandboxController, BattleController, PauseMenu, MainMenuHud, MenuStyle, Input System.
+// Depends on: GameFlow, GamePause, MatchController, SandboxController, BattleController, PauseMenu, MainMenuHud, MenuStyle, AudioDirector, UiAudio, Input System.
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using Halobellum.Core;
 using Halobellum.Economy;
 using Halobellum.Presentation;
 using UnityEngine;
@@ -29,6 +33,7 @@ namespace Halobellum.UI
     {
         private const string ShortFlag = "-menuDemoShort";
         private const string WatchFlag = "-menuDemoWatch";
+        private const string SoundsFlag = "-menuDemoSounds";
         private const string UiScaleFlag = "-menuDemoUiScale";
         private static readonly string[] FloatKeys =
         {
@@ -114,6 +119,13 @@ namespace Halobellum.UI
             if (Array.IndexOf(Environment.GetCommandLineArgs(), WatchFlag) >= 0)
             {
                 yield return Watch();
+                yield break;
+            }
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), SoundsFlag) >= 0)
+            {
+                yield return Sounds();
+                Finish();
+                Application.Quit();
                 yield break;
             }
             Check("the game starts in the main menu", SceneManager.GetActiveScene().name == GameFlow.MainMenuScene);
@@ -260,6 +272,132 @@ namespace Halobellum.UI
             yield return Wait(1f);
             Finish();
             yield return Press("Quit");
+        }
+
+        /// <summary>Goes through what makes a small sound, and counts what is heard.</summary>
+        private IEnumerator Sounds()
+        {
+            var heard = new List<string>();
+            var buttons = new Dictionary<string, Rect>();
+            AudioDirector.Instance.SlotPlayed += heard.Add;
+            MenuStyle.ButtonDrawnForTest += (key, rect) => buttons[key] = rect;
+            int Hovers() => heard.FindAll(slot => slot.EndsWith("_hover", StringComparison.Ordinal)).Count;
+
+            // A pointer in a corner, standing still, while the menu opens.
+            UiAudio.PointerByTest = Vector2.one;
+            yield return Wait(3f);
+            Check("no hover sound with the pointer standing still", Hovers() == 0);
+            yield return Sweep("the main menu", buttons, new[] { "New Match", "Sandbox", "Settings", "Quit", "Difficulty/Normal" }, Hovers);
+            yield return Shot("s1_menu");
+
+            // Resting on a button: not heard again, not even when the scene it is in opens again under it.
+            UiAudio.PointerByTest = buttons["Settings"].center;
+            yield return Wait(0.3f);
+            int before = Hovers();
+            yield return Wait(2f);
+            Check("a pointer resting on a button is heard no more", Hovers() == before);
+            GameFlow.OpenMainMenu();
+            yield return Wait(0.5f);
+            yield return WaitForScene(GameFlow.MainMenuScene);
+            yield return Wait(2.5f);
+            Check("nothing is heard when the menu opens under a pointer on a button", Hovers() == before);
+
+            yield return Press("Settings");
+            yield return Wait(0.5f);
+            Check("nothing is heard when Settings opens under a pointer", Hovers() == before);
+            buttons.Clear();
+            yield return Wait(0.2f);
+            // Only hovers: Reset to defaults is never pressed.
+            yield return Sweep("Settings", buttons, new[] { "Back", "Reset to defaults", "VSync/On", "VSync/Off" }, Hovers);
+            yield return Shot("s2_settings");
+            UiAudio.PointerByTest = Vector2.one;
+            yield return Wait(0.1f);
+            yield return Press("Back");
+            yield return Wait(0.3f);
+
+            yield return Press("New Match");
+            yield return WaitForScene(GameFlow.MatchScene);
+            yield return Wait(1f);
+            var match = FindAnyObjectByType<MatchController>();
+            match.ChooseDraft(0);
+            yield return Wait(1f);
+            Match game = match.Match;
+            UnitStats unit = game.Player.Roster.Find(u => game.Player.Unlocked.Contains(u) && u.Cost <= game.Player.Credits);
+            yield return Heard("buying", heard, () => match.Buy(unit), "_buy", 1);
+            while (match.IsDropping) yield return null;
+            yield return Wait(0.5f);
+            Check("a bought squad being selected as it lands is silent", !heard.Exists(slot => slot.EndsWith("_click", StringComparison.Ordinal)));
+            var selection = match.GetComponent<SquadSelection>();
+            int selected = selection.SelectedSquadId;
+            selection.Select(-1);
+            yield return Heard("selecting a squad", heard, () => selection.SelectByPlayer(selected), "_click", 1);
+            yield return Heard("turning a squad", heard, () => match.ToggleRotation(), "_click", 1);
+            PlacedSquad squad = match.SelectedPlacedSquad;
+            match.BeginMoving(squad);
+            yield return Heard("turning the ghost", heard, () => match.ToggleRotation(), "_click", 1);
+            match.ToggleRotation();
+            yield return Wait(0.3f);
+            int column = -1, row = -1;
+            for (int c = 0; c < 40 && column < 0; c++)
+            {
+                for (int r = 0; r < 40 && column < 0; r++)
+                {
+                    if ((c != squad.Column || r != squad.Row) && match.CanPlaceAt(c, r))
+                    {
+                        column = c;
+                        row = r;
+                    }
+                }
+            }
+            Check("a spot to move to was found", column >= 0);
+            yield return Heard("moving a squad", heard, () => match.PlaceAt(column, row), "_skip", 1);
+            yield return Shot("s3_moved");
+
+            // A spell of its own, for this match only.
+            var spell = new OwnedSpell { Id = 9001, Stats = new SpellStats { Name = "Sound check" }, IsPlaced = true };
+            game.Player.Spells.Add(spell);
+            yield return Heard("taking a spell back", heard, () => match.UnplaceSpell(spell), "_sell", 1);
+            game.Player.Spells.Remove(spell);
+
+            PauseMenu.Current.Open();
+            yield return Wait(0.4f);
+            buttons.Clear();
+            yield return Wait(0.2f);
+            yield return Sweep("the pause menu", buttons, new[] { "Resume", "Settings", "Quit to Main Menu", "Quit Game" }, Hovers);
+            yield return Shot("s4_pause");
+            UiAudio.PointerByTest = null;
+            PauseMenu.Current.Close();
+            yield return Wait(0.3f);
+        }
+
+        /// <summary>Moves the pointer onto each of these buttons in turn: each must be heard exactly once.</summary>
+        private IEnumerator Sweep(string where, Dictionary<string, Rect> buttons, string[] keys, Func<int> hovers)
+        {
+            foreach (string key in keys)
+            {
+                if (!buttons.TryGetValue(key, out Rect rect))
+                {
+                    Check($"{key} is drawn on {where}", false);
+                    continue;
+                }
+                UiAudio.PointerByTest = Vector2.one;
+                yield return Wait(0.15f);
+                int before = hovers();
+                UiAudio.PointerByTest = rect.center;
+                yield return Wait(0.5f);
+                Check($"going over {key} on {where} is heard once (heard {hovers() - before})", hovers() - before == 1);
+            }
+        }
+
+        /// <summary>Does something and checks how many times a slot with this ending is heard for it.</summary>
+        private IEnumerator Heard(string what, List<string> heard, Action action, string ending, int count)
+        {
+            yield return Wait(0.7f);
+            heard.Clear();
+            action();
+            yield return Wait(0.3f);
+            int found = heard.FindAll(slot => slot.EndsWith(ending, StringComparison.Ordinal)).Count;
+            Check($"{what} sounds {ending} (heard {string.Join(", ", heard)})", found == count);
         }
 
         /// <summary>Pauses by Esc on this screen, checks and pictures it, and resumes by Esc.</summary>

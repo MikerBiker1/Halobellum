@@ -1,6 +1,6 @@
 // SandboxAudio.cs
 // The sound of the Sandbox: its music follows BattleFactions, which the SandboxController keeps up with the armies placed (deployment while placing, battle while fighting), a squad placed drops in, a squad
-// removed sounds sold, and pressing Run starts the battle with its sound. The SandboxController has no events, so its state is watched here each frame.
+// moved or turned sounds as in a match, a squad removed sounds sold, what can't be done sounds so, and pressing Run starts the battle with its sound. Squads coming and going and the battle starting are watched here each frame; the rest are the SandboxController's events.
 // Added at run time to the object with the SandboxController (see AudioDirector).
 // Depends on: AudioDirector, AudioSlots, SandboxController, WeaponFeel (BattleFactions), UnityEngine.
 
@@ -18,10 +18,22 @@ namespace Halobellum.Presentation
         {
             _sandbox = GetComponent<SandboxController>();
             BattleFactions.Changed += Refresh;
+            _sandbox.SquadMoved += UiAudio.SquadMoved;
+            _sandbox.SquadTurned += UiAudio.SquadTurned;
+            _sandbox.ActionRefused += OnRefused;
             Refresh();
         }
 
-        private void OnDestroy() => BattleFactions.Changed -= Refresh;
+        private void OnDestroy()
+        {
+            BattleFactions.Changed -= Refresh;
+            if (_sandbox == null) return;
+            _sandbox.SquadMoved -= UiAudio.SquadMoved;
+            _sandbox.SquadTurned -= UiAudio.SquadTurned;
+            _sandbox.ActionRefused -= OnRefused;
+        }
+
+        private static void OnRefused() => GameAudio.Ui(UiSound.Error);
 
         private void Refresh()
         {

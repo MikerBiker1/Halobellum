@@ -224,6 +224,7 @@ namespace Halobellum.Presentation
             if (IsPlacing)
             {
                 PlacingRotated = !PlacingRotated;
+                ActionTaken?.Invoke(nameof(ToggleRotation), ActionResult.Success()); // Not through Report: the placing message stays.
                 return;
             }
             PlacedSquad squad = SelectedPlacedSquad;

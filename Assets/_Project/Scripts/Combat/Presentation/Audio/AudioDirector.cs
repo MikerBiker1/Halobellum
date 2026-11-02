@@ -20,7 +20,7 @@ namespace Halobellum.Presentation
     /// <summary>The way the rest of the game asks for sound. Safe to call when there is no director (tests in edit mode).</summary>
     public static class GameAudio
     {
-        public static void Ui(UiSound sound) => AudioDirector.Instance?.PlayUi(sound);
+        public static void Ui(UiSound sound, float volume = 1f) => AudioDirector.Instance?.PlayUi(sound, volume);
 
         public static void Sfx(SfxCue cue) => AudioDirector.Instance?.PlaySfx(cue);
 
@@ -95,13 +95,19 @@ namespace Halobellum.Presentation
             go.AddComponent<AudioDirector>();
         }
 
+        /// <summary>The test tools that run the game by themselves: each of these makes a run silent. A tool's flag belongs here as soon as the tool exists (AudioTests reads them from the code).</summary>
+        public static readonly string[] TestRunFlags =
+        {
+            GameFlow.AutoplayFlag, SandboxAutoplay.Flag, GameFlow.GalleryFlag, CrowdBenchmark.Flag, GameFlow.BenchmarkFlag, GameFlow.MenuDemoFlag, GameFlow.CardsDemoFlag, "-terrainGallery",
+        };
+
         /// <summary>True if this run should make no sound in the room: a test or a batch run, unless asked with -audioOn.</summary>
         public static bool ShouldMute(string[] commandLine, bool batchMode)
         {
             if (Array.IndexOf(commandLine, "-audioOn") >= 0) return false;
             if (Array.IndexOf(commandLine, AudioCapture.Flag) >= 0) return false; // The capture silences the room itself.
             if (batchMode) return true;
-            foreach (string flag in new[] { "-autoplay", "-sandboxDemo", "-gallery", "-crowdBenchmark", "-benchmark" })
+            foreach (string flag in TestRunFlags)
             {
                 if (Array.IndexOf(commandLine, flag) >= 0) return true;
             }
@@ -118,7 +124,11 @@ namespace Halobellum.Presentation
             Instance = this;
             AudioCatalog.SetLimits(_limiter);
             IsMuted = ShouldMute(Environment.GetCommandLineArgs(), Application.isBatchMode);
-            if (IsMuted) AudioListener.volume = 0f;
+            if (IsMuted)
+            {
+                AudioListener.volume = 0f;
+                Debug.Log("Audio: a test run, so the room stays silent (-audioOn to hear it).");
+            }
 
             for (int i = 0; i < SfxVoices; i++)
             {
@@ -172,6 +182,7 @@ namespace Halobellum.Presentation
         {
             _camera = null;
             _checkListener = true;
+            UiAudio.ForgetPointer();
             StopBattleSounds();
             Music.StopStinger(); // It belongs to the screen that was left.
             HandleScene(scene.name);
@@ -238,7 +249,8 @@ namespace Halobellum.Presentation
 
         // ------------------------------------------------------------------ playing
 
-        public void PlayUi(UiSound sound)
+        /// <param name="volume">Of its own loudness, for something done so often that it should sit lower.</param>
+        public void PlayUi(UiSound sound, float volume = 1f)
         {
             string slot = AudioSlots.Ui(UiFaction, sound);
             AudioClip clip = AudioLibrary.Get(slot).Pick(NextRandom());
@@ -248,7 +260,7 @@ namespace Halobellum.Presentation
             source.Stop();
             source.clip = clip;
             source.pitch = 1f;
-            source.volume = VolumeMaster * VolumeUi;
+            source.volume = VolumeMaster * VolumeUi * volume;
             source.Play();
             SlotPlayed?.Invoke(slot);
         }

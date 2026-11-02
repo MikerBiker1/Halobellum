@@ -66,6 +66,7 @@ namespace Halobellum.Presentation
         public static readonly Color LaserRed = new Color(1f, 0.1f, 0.12f);
         public static readonly Color GaussWhite = new Color(0.72f, 0.9f, 1f);
         public static readonly Color RocketOrange = new Color(1f, 0.62f, 0.22f);
+        public static readonly Color BurningKeg = new Color(1f, 0.48f, 0.1f);
         public static readonly Color ScarabBeam = new Color(0.42f, 0.78f, 1f);
         public static readonly Color Bone = new Color(1f, 0.92f, 0.72f);
         public static readonly Color MirrorRed = new Color(1f, 0.2f, 0.16f);
@@ -99,14 +100,22 @@ namespace Halobellum.Presentation
             switch (kind)
             {
                 case WeaponFeelKind.HeavyBullet:
+                    if (name.Contains("shotgun"))
+                        return new WeaponLook { Shot = tracer, Flash = tracer, FlashSize = 2.6f, ShotWidth = 0.34f, DrawnSpeed = 90f, Impact = ImpactStyle.Bullet, HeavyMuzzle = true };
                     return new WeaponLook { Shot = tracer, Flash = tracer, FlashSize = 1.7f, ShotWidth = 0.2f, DrawnSpeed = 130f, Impact = ImpactStyle.Bullet };
                 case WeaponFeelKind.Cannon:
                     return new WeaponLook { Shot = new Color(1f, 0.78f, 0.42f), Flash = new Color(1f, 0.75f, 0.4f), FlashSize = 4.5f, ShotWidth = 0.42f, Impact = ImpactStyle.Bullet, Blast = BlastStyle.Fire, HeavyMuzzle = true, SmokeTrail = true };
                 case WeaponFeelKind.Gauss:
+                    // A sniper's round is a gun's, not a railgun's: the same straight line, but thin and the colour of its side's tracers.
+                    if (name.Contains("sniper"))
+                        return new WeaponLook { Shot = Color.Lerp(tracer, Color.white, 0.45f), Flash = tracer, FlashSize = 2.4f, ShotWidth = 0.2f, Impact = ImpactStyle.Bullet, HeavyMuzzle = true };
                     return new WeaponLook { Shot = GaussWhite, Flash = GaussWhite, FlashSize = 3.5f, ShotWidth = 0.34f, Impact = ImpactStyle.Bullet, HeavyMuzzle = true };
                 case WeaponFeelKind.Rocket:
                     return new WeaponLook { Shot = RocketOrange, Flash = RocketOrange, FlashSize = 2.2f, ShotWidth = 0.5f, Impact = ImpactStyle.Bullet, Blast = BlastStyle.Fire, SmokeTrail = true };
                 case WeaponFeelKind.Bomb:
+                    // A burning keg, dripping embers on its way down.
+                    if (name.Contains("methane"))
+                        return new WeaponLook { Shot = BurningKeg, Flash = RocketOrange, FlashSize = 2f, ShotWidth = 1.1f, Impact = ImpactStyle.Bullet, Blast = BlastStyle.Fire, Ball = true };
                     if (name.Contains("fuel rod"))
                         return new WeaponLook { Shot = flood ? FloodPlasma : FuelRodGreen, Flash = flood ? FloodPlasma : FuelRodGreen, FlashSize = 1.8f, ShotWidth = 1.5f, Impact = ImpactStyle.Plasma, Blast = BlastStyle.Plasma, Ball = true };
                     // Flood bombs (Spore Bombs) burst in gore and spores, not fire.
@@ -118,14 +127,14 @@ namespace Halobellum.Presentation
                 case WeaponFeelKind.Plasma:
                     return new WeaponLook { Shot = plasma, Flash = plasma, FlashSize = 1.5f, ShotWidth = 0.55f, DrawnSpeed = 60f, Impact = ImpactStyle.Plasma, Blast = BlastStyle.Plasma };
                 case WeaponFeelKind.PlasmaHeavy:
-                    Color heavy = flood ? FloodPlasma : name.Contains("mortar") ? MortarBlue : FuelRodGreen;
+                    Color heavy = flood ? FloodPlasma : name.Contains("mortar") ? MortarBlue : name.Contains("plasma") ? plasma : FuelRodGreen;
                     return new WeaponLook { Shot = heavy, Flash = heavy, FlashSize = 2.8f, ShotWidth = name.Contains("mortar") ? 2.6f : 1.7f, Impact = ImpactStyle.Plasma, Blast = BlastStyle.Plasma, Ball = true };
                 case WeaponFeelKind.Needle:
                     return new WeaponLook { Shot = NeedlePink, Flash = NeedlePink, FlashSize = 1.4f, ShotWidth = 0.3f, DrawnSpeed = 75f, Impact = ImpactStyle.Needle };
                 case WeaponFeelKind.Laser:
                     return new WeaponLook { Shot = LaserRed, Flash = LaserRed, FlashSize = 2.4f, ShotWidth = 0.5f, Impact = ImpactStyle.Laser };
                 case WeaponFeelKind.Beam:
-                    return new WeaponLook { Shot = ScarabBeam, Flash = ScarabBeam, FlashSize = 3f, ShotWidth = 1.6f, Impact = ImpactStyle.None };
+                    return new WeaponLook { Shot = flood ? FloodPlasma : ScarabBeam, Flash = flood ? FloodPlasma : ScarabBeam, FlashSize = 3f, ShotWidth = 1.6f, Impact = ImpactStyle.None };
                 case WeaponFeelKind.Melee:
                     if (name.Contains("sword"))
                         return new WeaponLook { Shot = new Color(0.45f, 0.75f, 1f), Flash = new Color(0.45f, 0.75f, 1f), FlashSize = 3f, ShotWidth = 3f, Impact = ImpactStyle.Slash, Blast = BlastStyle.Dust };

@@ -3,10 +3,11 @@
 // buttons that light up from the left, thin sliders. It is its own look rather than a faction's theme, because these screens belong to
 // no faction, and it leaves GUI.skin and HudTheme alone. Call Ensure at the start of OnGUI.
 // Every button comes through Button, so that the test tool (-menuDemo) can press one by its label, down the same path as a mouse click.
-// Clicked is raised for every press, for sound. Lay out in virtual units from HudScale.
-// Depends on: MenuLook, UnityEngine.
+// Clicked is raised for every press, for sound. Going over a button sounds as on the HUD (UiAudio.Watch); clicks are heard by themselves. Lay out in virtual units from HudScale.
+// Depends on: MenuLook, UiAudio, UnityEngine.
 
 using System;
+using Halobellum.Presentation;
 using UnityEngine;
 
 namespace Halobellum.UI
@@ -25,6 +26,9 @@ namespace Halobellum.UI
 
         /// <summary>A button a test tool has asked to press, by its label or key.</summary>
         public static string PressedByTest { get; set; }
+
+        /// <summary>For a test tool: told of every button as it is drawn, by its label or key, with where it is in pixels of IMGUI's screen.</summary>
+        public static event Action<string, Rect> ButtonDrawnForTest;
 
         public static GUIStyle Title { get; private set; }
         public static GUIStyle Heading { get; private set; }
@@ -184,6 +188,7 @@ namespace Halobellum.UI
         /// <summary>GUI.Button that a test tool can also press. Use it for any button the tool must reach. The key defaults to the label.</summary>
         public static bool Button(Rect rect, string label, GUIStyle style, string key = null)
         {
+            Watch(rect, key ?? label);
             bool pressed = GUI.Button(rect, label, style) || TestPressed(key ?? label);
             if (pressed) Clicked?.Invoke();
             return pressed;
@@ -192,9 +197,19 @@ namespace Halobellum.UI
         /// <summary>An invisible button over something drawn by hand: its label is not drawn, but the test tool can still find it.</summary>
         private static bool HiddenButton(Rect rect, string key)
         {
+            Watch(rect, key);
             bool pressed = GUI.Button(rect, GUIContent.none, _clear) || TestPressed(key);
             if (pressed) Clicked?.Invoke();
             return pressed;
+        }
+
+        /// <summary>The hover sound of a button. A greyed-out one here is only the menu fading away, so it stays silent, with no "can't do that" either.</summary>
+        private static void Watch(Rect rect, string key)
+        {
+            if (GUI.enabled) UiAudio.Watch(rect);
+            if (ButtonDrawnForTest == null || Event.current.type != EventType.Repaint) return;
+            Vector2 corner = GUI.matrix.MultiplyPoint3x4(rect.position), far = GUI.matrix.MultiplyPoint3x4(rect.max);
+            ButtonDrawnForTest(key, new Rect(corner, far - corner));
         }
 
         private static bool TestPressed(string key)

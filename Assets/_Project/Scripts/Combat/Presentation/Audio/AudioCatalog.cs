@@ -21,6 +21,7 @@ namespace Halobellum.Presentation
         Plasma,
         HeavyPlasma,
         Needles,
+        Lasers,
         Beams,
         Melee,
         Bio,
@@ -88,7 +89,7 @@ namespace Halobellum.Presentation
         private static readonly SfxCue FirePlasma = Cue("sfx_fire_plasma", SfxGroup.Plasma, 0.6f, 0.09f, 1);
         private static readonly SfxCue FirePlasmaHeavy = Cue("sfx_fire_plasmaheavy", SfxGroup.HeavyPlasma, 0.9f, 0.05f, 5);
         private static readonly SfxCue FireNeedle = Cue("sfx_fire_needle", SfxGroup.Needles, 0.55f, 0.1f, 1);
-        private static readonly SfxCue FireLaser = Cue("sfx_fire_laser", SfxGroup.Beams, 1f, 0.02f, 7);
+        private static readonly SfxCue FireLaser = Cue("sfx_fire_laser", SfxGroup.Lasers, 1f, 0.02f, 7);
         private static readonly SfxCue FireBeam = Cue("sfx_fire_beam", SfxGroup.Beams, 1f, 0f, 8);
         private static readonly SfxCue FireMelee = Cue("sfx_fire_melee", SfxGroup.Melee, 0.6f, 0.09f, 1);
         private static readonly SfxCue FireMeleeCovenant = Cue("sfx_fire_melee_covenant", SfxGroup.Melee, 0.6f, 0.08f, 1);
@@ -147,7 +148,8 @@ namespace Halobellum.Presentation
             Limit(limiter, SfxGroup.Plasma, 4, 0.07f);
             Limit(limiter, SfxGroup.HeavyPlasma, 3, 0.15f);
             Limit(limiter, SfxGroup.Needles, 3, 0.06f);
-            Limit(limiter, SfxGroup.Beams, 2, 0.2f);
+            Limit(limiter, SfxGroup.Lasers, 3, 0.2f);
+            Limit(limiter, SfxGroup.Beams, 2, 0.2f); // Apart from the lasers: a limit doesn't look at priority, and a Scarab's one long beam must not lose its only start to Siphon Lasers overlapping themselves.
             Limit(limiter, SfxGroup.Melee, 3, 0.08f);
             Limit(limiter, SfxGroup.Bio, 3, 0.07f);
             Limit(limiter, SfxGroup.Impacts, 3, 0.1f);
@@ -191,11 +193,16 @@ namespace Halobellum.Presentation
             }
         }
 
-        /// <summary>The explosion a shot from this weapon makes where it lands, or null. A plasma shot with a blast is drawn going off, so it is heard going off too.</summary>
+        /// <summary>The explosion a shot from this weapon makes where it lands, or null. A plasma shot with a blast is drawn going off, so it is heard going off too; so is a lobbed Flood shot (Bone Shards), wetly.</summary>
         public static SfxCue LandingOf(WeaponStats weapon)
         {
             WeaponFeelKind kind = WeaponFeel.For(weapon);
-            return kind == WeaponFeelKind.Plasma && weapon.SplashRadius > 0f ? ExplosionSmall : LandingOf(kind);
+            if (weapon.SplashRadius > 0f)
+            {
+                if (kind == WeaponFeelKind.Plasma) return ExplosionSmall;
+                if (kind == WeaponFeelKind.Bio && !weapon.IsInstant) return FloodBurst;
+            }
+            return LandingOf(kind);
         }
 
         /// <summary>The explosion a hit from this weapon kind makes where it lands, or null.</summary>

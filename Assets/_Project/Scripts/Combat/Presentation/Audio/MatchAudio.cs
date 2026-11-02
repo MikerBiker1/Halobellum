@@ -1,6 +1,6 @@
 // MatchAudio.cs
 // The sound of a match: which music plays on which screen, which UI sound goes with what the player does (buy, sell, unlock, a card, a
-// spell, a level, a mistake) and with how a round or a match ends. Added at run time to the object with the MatchController (see AudioDirector).
+// spell, a level, a move, a mistake) and with how a round or a match ends. Added at run time to the object with the MatchController (see AudioDirector).
 // Depends on: AudioDirector, AudioSlots, MatchController, Halobellum.Economy (Match, RoundSummary), UnityEngine.
 
 using Halobellum.Core;
@@ -88,6 +88,9 @@ namespace Halobellum.Presentation
                 case nameof(MatchController.SkipCards): GameAudio.Ui(UiSound.Skip); break;
                 case nameof(MatchController.PlaceSpellAt):
                 case nameof(MatchController.PlaceItemOn): GameAudio.Ui(UiSound.SpellPlaced); break;
+                case nameof(MatchController.PlaceAt): UiAudio.SquadMoved(); break;
+                case nameof(MatchController.ToggleRotation): UiAudio.SquadTurned(); break;
+                case nameof(MatchController.UnplaceSpell): UiAudio.SpellTakenBack(); break;
             }
         }
     }

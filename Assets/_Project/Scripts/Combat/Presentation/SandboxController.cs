@@ -59,6 +59,13 @@ namespace Halobellum.Presentation
         private readonly Dictionary<string, int> _counting = new Dictionary<string, int>();
         private int _nextSquadId = 1;
 
+        /// <summary>A squad on the field was set down in a new spot. For sound.</summary>
+        public event Action SquadMoved;
+        /// <summary>A squad on the field, or the ghost of one being placed, was turned. For sound.</summary>
+        public event Action SquadTurned;
+        /// <summary>Something asked for couldn't be done. For sound.</summary>
+        public event Action ActionRefused;
+
         public PlayerState ArmyA { get; } = new PlayerState(Team.A);
         public PlayerState ArmyB { get; } = new PlayerState(Team.B);
         public List<SandboxUnit> Units { get; } = new List<SandboxUnit>();
@@ -178,6 +185,7 @@ namespace Halobellum.Presentation
             if (IsPlacing)
             {
                 PlacingRotated = !PlacingRotated;
+                SquadTurned?.Invoke();
                 return;
             }
             PlacedSquad squad = SelectedPlacedSquad;
@@ -187,8 +195,13 @@ namespace Halobellum.Presentation
             {
                 squad.Rotated90 = !squad.Rotated90;
                 Refresh(squad.Id);
+                SquadTurned?.Invoke();
             }
-            else Message = "No room to turn it there.";
+            else
+            {
+                Message = "No room to turn it there.";
+                ActionRefused?.Invoke();
+            }
         }
 
         public bool CanPlaceAt(int column, int row)
@@ -217,6 +230,7 @@ namespace Halobellum.Presentation
                 squad.Row = row;
                 squad.Rotated90 = PlacingRotated;
                 placedId = squad.Id;
+                SquadMoved?.Invoke();
             }
             // Keep placing the same type (handy for building an army); moving ends after one click.
             bool keepPlacing = PlacingType != null;
@@ -493,6 +507,7 @@ namespace Halobellum.Presentation
         private ActionResult Report(ActionResult result)
         {
             Message = result.Message ?? "";
+            if (!result.Ok) ActionRefused?.Invoke();
             return result;
         }
     }
