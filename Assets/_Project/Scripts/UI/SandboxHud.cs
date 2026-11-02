@@ -165,8 +165,9 @@ namespace Halobellum.UI
                 bool placing = sandbox.PlacingType == stats;
                 HudTheme.RowBox(row);
                 if (placing) HudTheme.RowBox(row);
-                GUI.Label(new Rect(row.x + 8f, row.y + 2f, row.width - 110f, 22f), stats.Name, _text);
-                GUI.Label(new Rect(row.x + 8f, row.y + 24f, row.width - 110f, 20f), $"{RoleName(stats.Role)}, {Bodies(stats.FormsInSquad)}, {stats.Cost}", _small);
+                CardScreens.DrawUnitPicture(new Rect(row.x + 3f, row.y + 2f, 42f, 42f), stats, unit.Faction, UnitIcons.FactionColor(unit.Faction));
+                GUI.Label(new Rect(row.x + 50f, row.y, row.width - 150f, 27f), stats.Name, _text);
+                GUI.Label(new Rect(row.x + 50f, row.y + 24f, row.width - 150f, 20f), $"{RoleName(stats.Role)}, {Bodies(stats.FormsInSquad)}, {stats.Cost}", _small);
                 if (GUI.Button(new Rect(row.xMax - 92f, row.y + 7f, 86f, 32f), placing ? "Placing" : "Place", _button))
                 {
                     if (placing) sandbox.CancelPlacement();
