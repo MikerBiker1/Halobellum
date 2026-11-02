@@ -83,7 +83,14 @@ Live things are capped too: 48 corpses, 28 burning spots, 700 waiting effects, 6
 
 - `-sandboxDemo <folder> -effects`: pictures of every weapon kind firing, every kind of death, the crash and every spell, each from the game camera and close by.
 - `-sandboxDemo <folder> -gallery`: the same, after the real models.
+- `-sandboxDemo <folder> -effects -galleryOnly <text>`: only the pictures whose names contain that text, such as `w_Railgun`, `d_Scorpion`, `crash` or `s_`.
 - `-sandboxDemo <folder> -effectsBench`: a battle of about 200 bodies with effects off, on at 1x and on at 4x. Frame times go to `bench.txt`.
+
+## Garbage during battle
+
+Effects, blobs and sound make none per shot or per frame. What the battle still makes comes from the HUD, about 1.2 KB a frame, and all of that is inside Unity: in Unity 6 every piece of text IMGUI draws costs about 85 bytes, even the same text in the same place (measured: GUI.Label, GUI.Button and GUIStyle.Draw alike, nothing for textures, GUI.color or our own HUD helpers). The battle's screen draws about 14 pieces of text. Going further means a battle HUD that isn't IMGUI.
+
+So, for what is ours: no OnGUI script of the battle has the layout pass on (`useGUILayout = false`: it made new layout groups for each script every frame), HUD text comes from `HudLine`, which builds a string only when its numbers change, the stats window works out its text a few times a second, and panels keep their arrays.
 
 ## Shared files touched
 
