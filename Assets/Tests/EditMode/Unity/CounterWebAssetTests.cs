@@ -61,6 +61,11 @@ namespace Halobellum.Tests
             ("Infected Pelican", "Vampire"),
             ("Infected Phantom", "Swarm Form"),
             ("Flood Abomination", "Zealot"),
+            ("Spartan Sniper", "Marine"),
+            ("Spartan Heavy Weapons", "Elite"),
+            ("Spartan Grenadier", "Scorpion"),
+            ("Spartan CQB", "Flamethrower Trooper"),
+            ("Spartan Fireteam", "Marine"),
         };
 
         // With the sub-factions there are 73 pairs: they run side by side, and may take longer than a test's usual 3 minutes on a busy machine.
@@ -69,7 +74,7 @@ namespace Halobellum.Tests
         {
             Dictionary<string, UnitStats> units = HeadlessRunnerTool.LoadSliceUnits()
                 .ToDictionary(u => u.unitName, HeadlessRunnerTool.ValidatedStats);
-            Assert.AreEqual(35, units.Count);
+            Assert.AreEqual(40, units.Count);
             CollectionAssert.AreEquivalent(units.Keys, BestCounters.Select(p => p.unit), "One line per slice unit.");
 
             CombatRules rules = HeadlessRunnerTool.LoadRules();

@@ -116,6 +116,21 @@ MonoBehaviour:
   - attacker: Marine
     defender: Flood Abomination
     winRate: 0
+  - attacker: Marine
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Marine
+    defender: Spartan Heavy Weapons
+    winRate: 0.9
+  - attacker: Marine
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Marine
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Marine
+    defender: Spartan Fireteam
+    winRate: 1
   - attacker: Flamethrower Trooper
     defender: Marine
     winRate: 0
@@ -218,6 +233,21 @@ MonoBehaviour:
   - attacker: Flamethrower Trooper
     defender: Flood Abomination
     winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Flamethrower Trooper
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Flamethrower Trooper
+    defender: Spartan Fireteam
+    winRate: 1
   - attacker: Warthog
     defender: Marine
     winRate: 0
@@ -320,6 +350,21 @@ MonoBehaviour:
   - attacker: Warthog
     defender: Flood Abomination
     winRate: 0
+  - attacker: Warthog
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Warthog
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Warthog
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Warthog
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Warthog
+    defender: Spartan Fireteam
+    winRate: 0
   - attacker: Gauss Warthog
     defender: Marine
     winRate: 0
@@ -421,6 +466,21 @@ MonoBehaviour:
     winRate: 0
   - attacker: Gauss Warthog
     defender: Flood Abomination
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Spartan CQB
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Spartan Fireteam
     winRate: 0
   - attacker: Scorpion
     defender: Marine
@@ -524,6 +584,21 @@ MonoBehaviour:
   - attacker: Scorpion
     defender: Flood Abomination
     winRate: 0
+  - attacker: Scorpion
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Scorpion
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Scorpion
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Scorpion
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Scorpion
+    defender: Spartan Fireteam
+    winRate: 0.4
   - attacker: Wolverine
     defender: Marine
     winRate: 0.9
@@ -625,6 +700,21 @@ MonoBehaviour:
     winRate: 0.6
   - attacker: Wolverine
     defender: Flood Abomination
+    winRate: 0
+  - attacker: Wolverine
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Wolverine
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Wolverine
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Wolverine
+    defender: Spartan CQB
+    winRate: 0
+  - attacker: Wolverine
+    defender: Spartan Fireteam
     winRate: 0
   - attacker: Hornet
     defender: Marine
@@ -728,6 +818,21 @@ MonoBehaviour:
   - attacker: Hornet
     defender: Flood Abomination
     winRate: 1
+  - attacker: Hornet
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Hornet
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Hornet
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Hornet
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Hornet
+    defender: Spartan Fireteam
+    winRate: 0
   - attacker: Archer Missile Pod
     defender: Marine
     winRate: 1
@@ -830,6 +935,21 @@ MonoBehaviour:
   - attacker: Archer Missile Pod
     defender: Flood Abomination
     winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Spartan Heavy Weapons
+    winRate: 0.9
+  - attacker: Archer Missile Pod
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Archer Missile Pod
+    defender: Spartan CQB
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Spartan Fireteam
+    winRate: 1
   - attacker: Pelican
     defender: Marine
     winRate: 0
@@ -932,6 +1052,21 @@ MonoBehaviour:
   - attacker: Pelican
     defender: Flood Abomination
     winRate: 0
+  - attacker: Pelican
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Pelican
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Pelican
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Pelican
+    defender: Spartan CQB
+    winRate: 0
+  - attacker: Pelican
+    defender: Spartan Fireteam
+    winRate: 0
   - attacker: Spartan
     defender: Marine
     winRate: 0
@@ -1034,6 +1169,21 @@ MonoBehaviour:
   - attacker: Spartan
     defender: Flood Abomination
     winRate: 0.7
+  - attacker: Spartan
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Spartan
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Spartan
+    defender: Spartan Grenadier
+    winRate: 0.9
+  - attacker: Spartan
+    defender: Spartan CQB
+    winRate: 0
+  - attacker: Spartan
+    defender: Spartan Fireteam
+    winRate: 0
   - attacker: Mantis
     defender: Marine
     winRate: 1
@@ -1136,6 +1286,21 @@ MonoBehaviour:
   - attacker: Mantis
     defender: Flood Abomination
     winRate: 0
+  - attacker: Mantis
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Mantis
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Mantis
+    defender: Spartan Grenadier
+    winRate: 0.9
+  - attacker: Mantis
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Mantis
+    defender: Spartan Fireteam
+    winRate: 0.7
   - attacker: Elephant
     defender: Marine
     winRate: 1
@@ -1238,6 +1403,21 @@ MonoBehaviour:
   - attacker: Elephant
     defender: Flood Abomination
     winRate: 0
+  - attacker: Elephant
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Elephant
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Elephant
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Elephant
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Elephant
+    defender: Spartan Fireteam
+    winRate: 1
   - attacker: Grunt
     defender: Marine
     winRate: 0
@@ -1340,6 +1520,21 @@ MonoBehaviour:
   - attacker: Grunt
     defender: Flood Abomination
     winRate: 0
+  - attacker: Grunt
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Grunt
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Grunt
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Grunt
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Grunt
+    defender: Spartan Fireteam
+    winRate: 1
   - attacker: Fuel Rod Grunt
     defender: Marine
     winRate: 1
@@ -1442,6 +1637,21 @@ MonoBehaviour:
   - attacker: Fuel Rod Grunt
     defender: Flood Abomination
     winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Spartan CQB
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Spartan Fireteam
+    winRate: 0.1
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Marine
     winRate: 0
@@ -1544,6 +1754,21 @@ MonoBehaviour:
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Flood Abomination
     winRate: 0
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: 'Jackal (Plasma Rifle)'
+    defender: Spartan Fireteam
+    winRate: 1
   - attacker: 'Jackal (Shield)'
     defender: Marine
     winRate: 0
@@ -1646,6 +1871,21 @@ MonoBehaviour:
   - attacker: 'Jackal (Shield)'
     defender: Flood Abomination
     winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: 'Jackal (Shield)'
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: 'Jackal (Shield)'
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: 'Jackal (Shield)'
+    defender: Spartan Fireteam
+    winRate: 1
   - attacker: Ghost
     defender: Marine
     winRate: 0
@@ -1747,6 +1987,21 @@ MonoBehaviour:
     winRate: 0
   - attacker: Ghost
     defender: Flood Abomination
+    winRate: 0
+  - attacker: Ghost
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Ghost
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Ghost
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Ghost
+    defender: Spartan CQB
+    winRate: 0.9
+  - attacker: Ghost
+    defender: Spartan Fireteam
     winRate: 0
   - attacker: Elite
     defender: Marine
@@ -1850,6 +2105,21 @@ MonoBehaviour:
   - attacker: Elite
     defender: Flood Abomination
     winRate: 0
+  - attacker: Elite
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Elite
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Elite
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Elite
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Elite
+    defender: Spartan Fireteam
+    winRate: 1
   - attacker: Wraith
     defender: Marine
     winRate: 1
@@ -1952,6 +2222,21 @@ MonoBehaviour:
   - attacker: Wraith
     defender: Flood Abomination
     winRate: 0
+  - attacker: Wraith
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Wraith
+    defender: Spartan Heavy Weapons
+    winRate: 0.2
+  - attacker: Wraith
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Wraith
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Wraith
+    defender: Spartan Fireteam
+    winRate: 1
   - attacker: Vampire
     defender: Marine
     winRate: 0
@@ -2054,6 +2339,21 @@ MonoBehaviour:
   - attacker: Vampire
     defender: Flood Abomination
     winRate: 0
+  - attacker: Vampire
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Vampire
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Vampire
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Vampire
+    defender: Spartan CQB
+    winRate: 0
+  - attacker: Vampire
+    defender: Spartan Fireteam
+    winRate: 0
   - attacker: Banshee
     defender: Marine
     winRate: 0
@@ -2155,6 +2455,21 @@ MonoBehaviour:
     winRate: 1
   - attacker: Banshee
     defender: Flood Abomination
+    winRate: 1
+  - attacker: Banshee
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Banshee
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Banshee
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Banshee
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Banshee
+    defender: Spartan Fireteam
     winRate: 1
   - attacker: Hunter Pair
     defender: Marine
@@ -2258,6 +2573,21 @@ MonoBehaviour:
   - attacker: Hunter Pair
     defender: Flood Abomination
     winRate: 0.4
+  - attacker: Hunter Pair
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Hunter Pair
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Hunter Pair
+    defender: Spartan Fireteam
+    winRate: 1
   - attacker: Zealot
     defender: Marine
     winRate: 0
@@ -2360,6 +2690,21 @@ MonoBehaviour:
   - attacker: Zealot
     defender: Flood Abomination
     winRate: 1
+  - attacker: Zealot
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Zealot
+    defender: Spartan Heavy Weapons
+    winRate: 0.5
+  - attacker: Zealot
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Zealot
+    defender: Spartan CQB
+    winRate: 0.7
+  - attacker: Zealot
+    defender: Spartan Fireteam
+    winRate: 0
   - attacker: Scarab
     defender: Marine
     winRate: 1
@@ -2461,6 +2806,21 @@ MonoBehaviour:
     winRate: 1
   - attacker: Scarab
     defender: Flood Abomination
+    winRate: 1
+  - attacker: Scarab
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Scarab
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Scarab
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Scarab
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Scarab
+    defender: Spartan Fireteam
     winRate: 1
   - attacker: Infection Forms
     defender: Marine
@@ -2564,6 +2924,21 @@ MonoBehaviour:
   - attacker: Infection Forms
     defender: Flood Abomination
     winRate: 0
+  - attacker: Infection Forms
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Infection Forms
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Infection Forms
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Infection Forms
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Infection Forms
+    defender: Spartan Fireteam
+    winRate: 1
   - attacker: Carrier Form
     defender: Marine
     winRate: 0.1
@@ -2666,6 +3041,21 @@ MonoBehaviour:
   - attacker: Carrier Form
     defender: Flood Abomination
     winRate: 0
+  - attacker: Carrier Form
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Carrier Form
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Carrier Form
+    defender: Spartan Grenadier
+    winRate: 0.4
+  - attacker: Carrier Form
+    defender: Spartan CQB
+    winRate: 0.9
+  - attacker: Carrier Form
+    defender: Spartan Fireteam
+    winRate: 1
   - attacker: Combat Form
     defender: Marine
     winRate: 0
@@ -2768,6 +3158,21 @@ MonoBehaviour:
   - attacker: Combat Form
     defender: Flood Abomination
     winRate: 0
+  - attacker: Combat Form
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Combat Form
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Combat Form
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Combat Form
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Combat Form
+    defender: Spartan Fireteam
+    winRate: 1
   - attacker: Stalker Form
     defender: Marine
     winRate: 0
@@ -2870,6 +3275,21 @@ MonoBehaviour:
   - attacker: Stalker Form
     defender: Flood Abomination
     winRate: 0
+  - attacker: Stalker Form
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Stalker Form
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Stalker Form
+    defender: Spartan Grenadier
+    winRate: 0.1
+  - attacker: Stalker Form
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Stalker Form
+    defender: Spartan Fireteam
+    winRate: 1
   - attacker: Pure Form Ranged
     defender: Marine
     winRate: 1
@@ -2972,6 +3392,21 @@ MonoBehaviour:
   - attacker: Pure Form Ranged
     defender: Flood Abomination
     winRate: 0
+  - attacker: Pure Form Ranged
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Pure Form Ranged
+    defender: Spartan Heavy Weapons
+    winRate: 0.5
+  - attacker: Pure Form Ranged
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Pure Form Ranged
+    defender: Spartan CQB
+    winRate: 0.5
+  - attacker: Pure Form Ranged
+    defender: Spartan Fireteam
+    winRate: 1
   - attacker: Swarm Form
     defender: Marine
     winRate: 0
@@ -3073,6 +3508,21 @@ MonoBehaviour:
     winRate: 1
   - attacker: Swarm Form
     defender: Flood Abomination
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Swarm Form
+    defender: Spartan CQB
+    winRate: 0
+  - attacker: Swarm Form
+    defender: Spartan Fireteam
     winRate: 0
   - attacker: Pure Form Tank
     defender: Marine
@@ -3176,6 +3626,21 @@ MonoBehaviour:
   - attacker: Pure Form Tank
     defender: Flood Abomination
     winRate: 0
+  - attacker: Pure Form Tank
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Pure Form Tank
+    defender: Spartan Fireteam
+    winRate: 1
   - attacker: Seeder
     defender: Marine
     winRate: 0
@@ -3277,6 +3742,21 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Flood Abomination
+    winRate: 0
+  - attacker: Seeder
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Seeder
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Seeder
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Seeder
+    defender: Spartan CQB
+    winRate: 0
+  - attacker: Seeder
+    defender: Spartan Fireteam
     winRate: 0
   - attacker: Infected Pelican
     defender: Marine
@@ -3380,6 +3860,21 @@ MonoBehaviour:
   - attacker: Infected Pelican
     defender: Flood Abomination
     winRate: 0
+  - attacker: Infected Pelican
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Infected Pelican
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Infected Pelican
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Infected Pelican
+    defender: Spartan CQB
+    winRate: 0.7
+  - attacker: Infected Pelican
+    defender: Spartan Fireteam
+    winRate: 1
   - attacker: Infected Phantom
     defender: Marine
     winRate: 0
@@ -3482,6 +3977,21 @@ MonoBehaviour:
   - attacker: Infected Phantom
     defender: Flood Abomination
     winRate: 0
+  - attacker: Infected Phantom
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Infected Phantom
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Infected Phantom
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Infected Phantom
+    defender: Spartan CQB
+    winRate: 0.5
+  - attacker: Infected Phantom
+    defender: Spartan Fireteam
+    winRate: 1
   - attacker: Flood Abomination
     defender: Marine
     winRate: 1
@@ -3584,3 +4094,603 @@ MonoBehaviour:
   - attacker: Flood Abomination
     defender: Infected Phantom
     winRate: 1
+  - attacker: Flood Abomination
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Flood Abomination
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Flood Abomination
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Flood Abomination
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Flood Abomination
+    defender: Spartan Fireteam
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Marine
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Flamethrower Trooper
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Warthog
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Scorpion
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Wolverine
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Hornet
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Pelican
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Spartan
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Mantis
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Elephant
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Grunt
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: 'Jackal (Shield)'
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Ghost
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Elite
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Wraith
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Vampire
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Banshee
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Hunter Pair
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Zealot
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Scarab
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Infection Forms
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Carrier Form
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Combat Form
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Stalker Form
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Pure Form Ranged
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Swarm Form
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Pure Form Tank
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Seeder
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Infected Pelican
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Infected Phantom
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Spartan Grenadier
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Spartan CQB
+    winRate: 0
+  - attacker: Spartan Sniper
+    defender: Spartan Fireteam
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Marine
+    winRate: 0.1
+  - attacker: Spartan Heavy Weapons
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Warthog
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Scorpion
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Wolverine
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Hornet
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Archer Missile Pod
+    winRate: 0.1
+  - attacker: Spartan Heavy Weapons
+    defender: Pelican
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Spartan
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Mantis
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Elephant
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Grunt
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Ghost
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Elite
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Wraith
+    winRate: 0.8
+  - attacker: Spartan Heavy Weapons
+    defender: Vampire
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Banshee
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Zealot
+    winRate: 0.5
+  - attacker: Spartan Heavy Weapons
+    defender: Scarab
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Infection Forms
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Carrier Form
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Combat Form
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Stalker Form
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Pure Form Ranged
+    winRate: 0.5
+  - attacker: Spartan Heavy Weapons
+    defender: Swarm Form
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Seeder
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Infected Pelican
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Infected Phantom
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Spartan CQB
+    winRate: 0.9
+  - attacker: Spartan Heavy Weapons
+    defender: Spartan Fireteam
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Marine
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Warthog
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Scorpion
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Wolverine
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Hornet
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Archer Missile Pod
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Pelican
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Spartan
+    winRate: 0.1
+  - attacker: Spartan Grenadier
+    defender: Mantis
+    winRate: 0.1
+  - attacker: Spartan Grenadier
+    defender: Elephant
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Grunt
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Ghost
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Elite
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Wraith
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Vampire
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Banshee
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Zealot
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Scarab
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Infection Forms
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Carrier Form
+    winRate: 0.6
+  - attacker: Spartan Grenadier
+    defender: Combat Form
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Stalker Form
+    winRate: 0.9
+  - attacker: Spartan Grenadier
+    defender: Pure Form Ranged
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Swarm Form
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Seeder
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Infected Pelican
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Infected Phantom
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Spartan CQB
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Spartan Fireteam
+    winRate: 0.4
+  - attacker: Spartan CQB
+    defender: Marine
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Flamethrower Trooper
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Warthog
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Scorpion
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Wolverine
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Hornet
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Pelican
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Spartan
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Mantis
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Elephant
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Grunt
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: 'Jackal (Shield)'
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Ghost
+    winRate: 0.1
+  - attacker: Spartan CQB
+    defender: Elite
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Wraith
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Vampire
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Banshee
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Zealot
+    winRate: 0.3
+  - attacker: Spartan CQB
+    defender: Scarab
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Infection Forms
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Carrier Form
+    winRate: 0.1
+  - attacker: Spartan CQB
+    defender: Combat Form
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Stalker Form
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Pure Form Ranged
+    winRate: 0.5
+  - attacker: Spartan CQB
+    defender: Swarm Form
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Seeder
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Infected Pelican
+    winRate: 0.3
+  - attacker: Spartan CQB
+    defender: Infected Phantom
+    winRate: 0.5
+  - attacker: Spartan CQB
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Spartan Heavy Weapons
+    winRate: 0.1
+  - attacker: Spartan CQB
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Spartan Fireteam
+    winRate: 0.2
+  - attacker: Spartan Fireteam
+    defender: Marine
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Flamethrower Trooper
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Warthog
+    winRate: 1
+  - attacker: Spartan Fireteam
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Spartan Fireteam
+    defender: Scorpion
+    winRate: 0.6
+  - attacker: Spartan Fireteam
+    defender: Wolverine
+    winRate: 1
+  - attacker: Spartan Fireteam
+    defender: Hornet
+    winRate: 1
+  - attacker: Spartan Fireteam
+    defender: Archer Missile Pod
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Pelican
+    winRate: 1
+  - attacker: Spartan Fireteam
+    defender: Spartan
+    winRate: 1
+  - attacker: Spartan Fireteam
+    defender: Mantis
+    winRate: 0.3
+  - attacker: Spartan Fireteam
+    defender: Elephant
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Grunt
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Fuel Rod Grunt
+    winRate: 0.9
+  - attacker: Spartan Fireteam
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: 'Jackal (Shield)'
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Ghost
+    winRate: 1
+  - attacker: Spartan Fireteam
+    defender: Elite
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Wraith
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Vampire
+    winRate: 1
+  - attacker: Spartan Fireteam
+    defender: Banshee
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Zealot
+    winRate: 1
+  - attacker: Spartan Fireteam
+    defender: Scarab
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Infection Forms
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Carrier Form
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Combat Form
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Stalker Form
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Pure Form Ranged
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Swarm Form
+    winRate: 1
+  - attacker: Spartan Fireteam
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Seeder
+    winRate: 1
+  - attacker: Spartan Fireteam
+    defender: Infected Pelican
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Infected Phantom
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Spartan Fireteam
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Spartan Grenadier
+    winRate: 0.6
+  - attacker: Spartan Fireteam
+    defender: Spartan CQB
+    winRate: 0.8

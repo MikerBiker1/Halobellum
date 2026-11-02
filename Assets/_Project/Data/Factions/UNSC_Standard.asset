@@ -29,9 +29,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a480e72bceb9cb554de068cabc52ac61, type: 2}
   - {fileID: 11400000, guid: c0ea203c825d770707d27469369bf520, type: 2}
   subFactions:
-  - subFactionName: Standard
-    description: 
-    exclusiveUnits: []
+  - subFactionName: Noble
+    description: Spartan specialists. Every unit is Tier 3 and expensive to unlock.
+    exclusiveUnits:
+    - {fileID: 11400000, guid: d12235b690d21812440dcff40d3af51f, type: 2}
+    - {fileID: 11400000, guid: aa9355df96e667514d83ec0cf6e3c1de, type: 2}
+    - {fileID: 11400000, guid: 24c605a8c8846d1a0df350b40c7843b9, type: 2}
+    - {fileID: 11400000, guid: a96bafc074f125d18ac9596d2b1f3dab, type: 2}
+    - {fileID: 11400000, guid: 947fe31141fe96a81bb132bf0a3c8480, type: 2}
   spells:
   - {fileID: 11400000, guid: 5451f873c026b5e85899a826e3e97dff, type: 2}
   - {fileID: 11400000, guid: 79141c9de434beef4ba8576c0320d40e, type: 2}

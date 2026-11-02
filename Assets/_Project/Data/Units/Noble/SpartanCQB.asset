@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48a24a6f0743ea50b653bb6800d1d896, type: 3}
+  m_Name: SpartanCQB
+  m_EditorClassIdentifier: 
+  unitName: Spartan CQB
+  role: 4
+  tier: 3
+  unlockCost: 200
+  squadSize: 1
+  cost: 400
+  baseDamage: 80
+  maxHealth: 1200
+  armorType: 0
+  maxShield: 450
+  shieldRegenPerSecond: 80
+  moveSpeed: 3.5
+  collisionRadius: 0.6
+  turnTime180: 0.35
+  isAir: 0
+  targetFilter: 2
+  weapons:
+  - weaponName: M45 Shotgun
+    damagePerShot: 80
+    fireInterval: 0.8
+    range: 6
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 0
+    damageType: 0
+    isAntiArmor: 0
+    canBeBlocked: 1
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 25
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+  hasDefenseArc: 0
+  defenseArc:
+    arcDegrees: 0
+    frontDamageMultiplier: 1
+    rearDamageMultiplier: 1
+    blockChance: 0
+    blockedDamageTypes: 
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
+  reinforcementNeedsUpgrade: 0
+  formsPerBody: 1
+  isFlood: 0
+  infects: 0
+  immuneToInfection: 1
+  selfDestructs: 0
+  seeksDensestCluster: 0
+  deathBurstDamage: 0
+  deathBurstRadius: 0
+  deathBurstDamageType: 0
+  deathBurstAntiArmor: 0
+  deathSpawns: []
+  spawnedUnit: {fileID: 0}
+  spawnedBodies: 0
+  spawnIntervalSeconds: 0
+  auraRadius: 0
+  auraSpeedMultiplier: 1
+  auraHealPerSecondShare: 0
+  lifestealShare: 0
+  leapRange: 9
+  leapSpeed: 16
+  leapCooldownSeconds: 5
+  techUpgrades:
+  - {fileID: 11400000, guid: 8316b531ae98ba7ebaba259f15f42902, type: 2}
+  - {fileID: 11400000, guid: e37a60d4aaf64a65806d3ceb5cc656b2, type: 2}
+  - {fileID: 11400000, guid: 573524e9764b3c2e2fa3c97240be0ec4, type: 2}
+  prefab: {fileID: 4034653889104178569, guid: 26c2ae64396aa874cb03eb47a09f2503, type: 3}
+  keepsOwnMaterials: 0
+  bakedBody: {fileID: 11400000, guid: 1565005b675e29e35dd8c578e2584d33, type: 2}
+  bakedTint: {r: 0.32, g: 0.42, b: 0.3, a: 0.45}
+  bakedScale: 1.2
+  strongAgainst: 'Artillery, DPS'
+  weakAgainst: 'Chaff clear, tanks'
+  notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Grunt Goblin (100%). A thruster pack jumps it onto its target. Very strong against artillery and DPS once there; short reach. First-pass M10 values, Noble (Docs/M10/subfactions.md).'
