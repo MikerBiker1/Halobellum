@@ -428,6 +428,7 @@ namespace Halobellum.Presentation
                 if (strength > 0f || source == null) view.BakedTint = new Color(color.r, color.g, color.b, strength);
                 else view.BakedTint = source.bakedTint;
                 if (source != null && source.bakedScale > 0f) body.transform.localScale = Vector3.one * source.bakedScale;
+                view.ModelTop = baked.bodyHeight * body.transform.localScale.y;
                 Play(view, WantedAnimation(unit), false);
             }
             else if (stats.FormsPerBody > 1)

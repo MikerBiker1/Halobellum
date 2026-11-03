@@ -21,7 +21,7 @@ def units(U, W):
           note="Two colonies in one suit. Its old job as a building-killer shows as 2.5 times the base damage if it survives a battle."),
         U("HunterCaptain", "Hunter Captain", FACTION, "SingleTargetDps", 3, 225, 1, 450, 2000, "H", 1.25, 1.4, 1.5, "G",
           [W("Siphon Laser", 72, 0.75, 15, "Energy", aa=True)],
-          arc=HUNTER_ARC, lifesteal=0.3, aura=(12, 1, 0.01),
+          arc=HUNTER_ARC, lifesteal=0.3, aura=(12, 1, 0.01), baked="HunterCaptain",
           note="Its siphon laser gives it back 30% of the damage it deals, and friends within 12 m heal 1% per second."),
     ]
 

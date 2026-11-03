@@ -91,9 +91,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: be77211d02078424a13d3a92badaf47d, type: 2}
   prefab: {fileID: 4912702105506396310, guid: dba231210ccb5034b92131970f003582, type: 3}
   keepsOwnMaterials: 0
-  bakedBody: {fileID: 11400000, guid: b2d4e273888b9ab1ce8bc7014b19666e, type: 2}
-  bakedTint: {r: 0.32, g: 0.42, b: 0.3, a: 0.45}
-  bakedScale: 1.25
+  bakedBody: {fileID: 11400000, guid: 2d72cb3b5490df88aeebff6db0435957, type: 2}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
   strongAgainst: Chaff
   weakAgainst: 'Tanks, flankers'
   notes: 'Best counters (headless runner, equal cost): Scorpion (100%), Juggernaut (100%). Lobbed grenades: strong against slow crowds, misses fast targets, weak against tanks and flankers. First-pass M10 values, Noble (Docs/M10/subfactions.md).'

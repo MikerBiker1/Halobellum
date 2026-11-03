@@ -115,9 +115,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d7ad3170e6d8837b1b1527b608677182, type: 2}
   prefab: {fileID: 3443605851021848446, guid: 7bf7e1fa7cd972b4c96f61185bdeda38, type: 3}
   keepsOwnMaterials: 0
-  bakedBody: {fileID: 11400000, guid: b2d4e273888b9ab1ce8bc7014b19666e, type: 2}
-  bakedTint: {r: 0.32, g: 0.42, b: 0.3, a: 0.45}
-  bakedScale: 1.25
+  bakedBody: {fileID: 11400000, guid: 0732c076f16837aca945f1ab5a20fec9, type: 2}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
   notes: 'Best counters (headless runner, equal cost): Elite (100%), Combat Form (100%). A walking wall with a chaingun: mows down infantry, does little to armor. Its Unarmored body makes it weak to anti-infantry weapons once the shield is down. First-pass M10 values, Noble (Docs/M10/subfactions.md).'

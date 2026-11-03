@@ -91,9 +91,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2f3bfa7b5ccc5e6adeab8de8b31f3f7d, type: 2}
   prefab: {fileID: 8383331191323339942, guid: ab86fe6c7d5ac3444a084f342247b41f, type: 3}
   keepsOwnMaterials: 0
-  bakedBody: {fileID: 11400000, guid: b0c8cf6e56807b5c59eb2c7f1e0dc9b2, type: 2}
-  bakedTint: {r: 0.32, g: 0.42, b: 0.3, a: 0.45}
-  bakedScale: 1.2
+  bakedBody: {fileID: 11400000, guid: ebecb180a63422d0b459168179a470cd, type: 2}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
   strongAgainst: 'Tanks, heavy units'
   weakAgainst: 'Chaff swarms, flankers'
-  notes: 'Best counters (headless runner, equal cost): Marine (100%), Warthog (100%). Kills one armored target at a time from very far away; has no answer to a crowd or to anything that reaches it. Reused Marine body with a rifle. First-pass M10 values, Noble (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Warthog (100%). Kills one armored target at a time from very far away; has no answer to a crowd or to anything that reaches it. First-pass M10 values, Noble (Docs/M10/subfactions.md).'

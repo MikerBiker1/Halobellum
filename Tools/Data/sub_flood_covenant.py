@@ -23,7 +23,7 @@ def units(U, W):
           note="Faster and lighter than the Infested Warthog."),
         U("InfestedElite", "Infested Elite", FACTION, "SingleTargetDps", 2, 50, 3, 300, 420, "U", 2, 0.6, 0.35, "G",
           [W("Scythe Claw", 42, 0.7, 1.5, "Melee", aa=True),
-           W("Scavenged Plasma Rifle", 10, 0.5, 11, "Energy", own="B")], flood=True, leap=(5, 12, 4),
+           W("Scavenged Plasma Rifle", 10, 0.5, 11, "Energy", own="B")], flood=True, leap=(5, 12, 4), tint=INFESTED, baked="InfestedElite",
           note="The classic combat form: no shield, more health, and a claw that opens armor."),
         U("InfestedWraith", "Infested Wraith", FACTION, "Artillery", 2, 50, 1, 300, 1000, "H", 1, 2, 2, "G",
           [W("Scavenged Mortar", 70, 3.5, 34, "Explosive", proj=20, splash=4, minr=10, lob=True)], flood=True,

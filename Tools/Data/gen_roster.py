@@ -75,7 +75,7 @@ UNITS = [
       [W("M370 Autocannon", 14, 0.3, 14, "Ballistic")], airu=True, drop=("Marine", 6, 10, True),
       note="Drops 6 Marines at 10 s only after its Troop Bay tech (D22)."),
     U("Spartan", "Spartan", "UNSC", "SingleTargetDps", 3, 225, 1, 450, 1500, "U", 3.5, 0.6, 0.5, "B",
-      [W("Spartan Laser", 450, 4.0, 24, "Energy", aa=True)], shield=400, regen=80, immune=True),
+      [W("Spartan Laser", 450, 4.0, 24, "Energy", aa=True)], shield=400, regen=80, immune=True, baked="Spartan"),
     U("Mantis", "Mantis", "UNSC", "Tank", 3, 250, 1, 500, 2500, "H", 3, 2, 2, "B",
       [W("Chaingun", 8, 0.2, 14, "Ballistic", block=True),
        W("Rockets", 60, 2.5, 18, "Explosive", proj=35, splash=2, own="G")]),
@@ -97,7 +97,7 @@ UNITS = [
     U("Ghost", "Ghost", "Covenant", "Flanker", 1, 0, 2, 200, 250, "L", 9, 1.2, 0.8, "B",
       [W("Plasma Bolts", 9, 0.25, 10, "Energy")]),
     U("Elite", "Elite", "Covenant", "SingleTargetDps", 2, 50, 3, 300, 200, "U", 3.5, 0.6, 0.4, "B",
-      [W("Plasma Rifle", 24, 0.5, 12, "Energy")], shield=200, regen=50),
+      [W("Plasma Rifle", 24, 0.5, 12, "Energy")], shield=200, regen=50, baked="Elite"),
     U("Wraith", "Wraith", "Covenant", "Artillery", 2, 50, 1, 300, 900, "H", 2, 2, 2, "G",
       [W("Plasma Mortar", 80, 3.5, 38, "Explosive", proj=20, splash=4, minr=10, lob=True)]),
     U("Vampire", "Vampire", "Covenant", "AntiAir", 2, 50, 1, 300, 500, "L", 7, 1.8, 1, "B",
@@ -107,9 +107,9 @@ UNITS = [
        W("Fuel Rod Bomb", 50, 2.5, 8, "Explosive", proj=30, splash=3, own="G")], airu=True),
     U("HunterPair", "Hunter Pair", "Covenant", "Tank", 3, 225, 2, 450, 1500, "H", 2.2, 1.2, 1.5, "G",
       [W("Assault Cannon", 60, 2.0, 16, "Explosive", proj=30, splash=2.5)],
-      arc=dict(deg=240, front=0.7, rear=1.5, block=0, types=[])),
+      arc=dict(deg=240, front=0.7, rear=1.5, block=0, types=[]), baked="Hunter"),
     U("Zealot", "Zealot", "Covenant", "SingleTargetDps", 3, 200, 1, 400, 1400, "U", 6, 0.6, 0.3, "G",
-      [W("Energy Sword", 160, 0.9, 1.5, "Melee", aa=True)], shield=600, regen=120),
+      [W("Energy Sword", 160, 0.9, 1.5, "Melee", aa=True)], shield=600, regen=120, baked="Zealot"),
     U("Scarab", "Scarab", "Covenant", "Titan", 4, 350, 1, 800, 9000, "H", 1.5, 5, 3, "B",
       [W("Focus Beam", 40, 0.1, 24, "Energy", splash=2, aa=True, own="G", beam=3, charge=2, rest=3, sweep=2),
        W("Plasma Turret (left)", 10, 0.25, 16, "Energy"),
@@ -141,7 +141,7 @@ UNITS = [
       [W("Plasma Turrets", 12, 0.3, 14, "Energy")], airu=True, flood=True, drop=("CombatForm", 5, 8)),
     U("Abomination", "Flood Abomination", "Flood", "Titan", 4, 350, 1, 800, 7000, "H", 1, 5, 3, "B",
       [W("Tendril Slam", 160, 2.5, 7, "Melee", splash=5, own="G"),
-       W("Tendril Whip", 20, 0.8, 10, "Melee")], flood=True, spawn=("InfectionForms", 2, 14), aura=(14, 1.2, 0.01)),
+       W("Tendril Whip", 20, 0.8, 10, "Melee")], flood=True, spawn=("InfectionForms", 2, 14), aura=(14, 1.2, 0.01), baked="Abomination"),
 ]
 
 # The sub-factions' exclusive units and their techs. Their speeds are final, not halved (see D36 below).

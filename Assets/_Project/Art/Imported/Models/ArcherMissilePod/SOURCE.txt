@@ -1,0 +1,3 @@
+Source: made by the project owner with Meshy AI, file Meshy/Meshy_AI_Missile_pod.glb in Art_Source, with no colours.
+Painted by Meshy (Tools/Meshy/texture_inputs.py, meshy_paint.py) and prepared by Tools/Art/units/ArcherMissilePod.py (decision D57).
+The repository is private and must stay private.

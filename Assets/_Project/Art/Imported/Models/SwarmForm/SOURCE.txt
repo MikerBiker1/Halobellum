@@ -1,0 +1,3 @@
+Source: made by the project owner with Meshy AI, folder Meshy/Meshy_AI_Swarmform in Art_Source.
+Prepared by Tools/Art/units/SwarmForm.py (decision D57).
+The repository is private and must stay private.

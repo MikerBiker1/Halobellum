@@ -115,9 +115,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a9da5b3758541317d8fb9baca5fed27f, type: 2}
   prefab: {fileID: 393544156150413185, guid: eef37cd52fb4fe241b2cb56fe357a5e7, type: 3}
   keepsOwnMaterials: 0
-  bakedBody: {fileID: 11400000, guid: b0c8cf6e56807b5c59eb2c7f1e0dc9b2, type: 2}
-  bakedTint: {r: 0.32, g: 0.42, b: 0.3, a: 0.45}
-  bakedScale: 1.2
+  bakedBody: {fileID: 11400000, guid: 172a43ba57350c0b3161bc4bebc253bf, type: 2}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
   strongAgainst: 'Tanks, heavy units'
   weakAgainst: 'Chaff swarms, flankers'
   notes: 'Best counters (headless runner, equal cost): Marine (100%), Grunt (100%). Three Spartans: an all-round squad with rifles and a rocket each. No single strength, no single weakness. First-pass M10 values, Noble (Docs/M10/subfactions.md).'

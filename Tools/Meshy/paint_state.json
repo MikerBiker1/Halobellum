@@ -1,0 +1,14 @@
+{
+ "ArcherMissilePod": {
+  "id": "01a19f9d-5960-729f-b5a1-583840890586",
+  "prompt": "Military missile launcher on a tripod, matte olive green painted armor, dark grey metal launch tube and legs, small yellow warning stripes, science fiction, clean hard surface"
+ },
+ "RhinoHull": {
+  "id": "01a19f9f-ae1f-7364-8f4c-f2e1d420a101",
+  "prompt": "Heavy military tank hull, matte olive green painted armor plates with panel lines and worn edges, dark grey metal tracks and vents, science fiction, clean hard surface"
+ },
+ "RhinoTurret": {
+  "id": "01a19fa0-1f76-70a7-b60f-4b91346715ab",
+  "prompt": "Heavy military tank turret and long cannon, matte olive green painted armor plates with panel lines and worn edges, dark grey metal barrel, science fiction, clean hard surface"
+ }
+}

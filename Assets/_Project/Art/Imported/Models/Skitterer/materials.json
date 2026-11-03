@@ -1,0 +1,16 @@
+{
+ "materials": [
+  {
+   "name": "Skitterer_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Skitterer_0.png",
+   "glowTexture": "Skitterer_0_emit.png"
+  }
+ ]
+}

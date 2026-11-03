@@ -712,7 +712,7 @@
   "scale": 1,
   "sub": null,
   "folder": "UNSC",
-  "baked": null
+  "baked": "Spartan"
  },
  {
   "id": "Mantis",
@@ -1323,7 +1323,7 @@
   "scale": 1,
   "sub": null,
   "folder": "Covenant",
-  "baked": null
+  "baked": "Elite"
  },
  {
   "id": "Wraith",
@@ -1618,7 +1618,7 @@
   "scale": 1,
   "sub": null,
   "folder": "Covenant",
-  "baked": null
+  "baked": "Hunter"
  },
  {
   "id": "Zealot",
@@ -1684,7 +1684,7 @@
   "scale": 1,
   "sub": null,
   "folder": "Covenant",
-  "baked": null
+  "baked": "Zealot"
  },
  {
   "id": "Scarab",
@@ -2622,7 +2622,7 @@
   "scale": 1,
   "sub": null,
   "folder": "Flood",
-  "baked": null
+  "baked": "Abomination"
  },
  {
   "id": "SpartanSniper",
@@ -2671,7 +2671,7 @@
   "air": false,
   "arc": null,
   "drop": null,
-  "note": "Kills one armored target at a time from very far away; has no answer to a crowd or to anything that reaches it. Reused Marine body with a rifle.",
+  "note": "Kills one armored target at a time from very far away; has no answer to a crowd or to anything that reaches it.",
   "forms": 1,
   "flood": false,
   "infects": false,
@@ -2684,16 +2684,11 @@
   "leap": null,
   "lifesteal": 0,
   "basedmg": null,
-  "tint": [
-   0.32,
-   0.42,
-   0.3,
-   0.45
-  ],
-  "scale": 1.2,
+  "tint": null,
+  "scale": 1,
   "sub": "Noble",
   "folder": "Noble",
-  "baked": "Marine"
+  "baked": "SpartanSniper"
  },
  {
   "id": "SpartanHeavyWeapons",
@@ -2780,16 +2775,11 @@
   "leap": null,
   "lifesteal": 0,
   "basedmg": null,
-  "tint": [
-   0.32,
-   0.42,
-   0.3,
-   0.45
-  ],
-  "scale": 1.25,
+  "tint": null,
+  "scale": 1,
   "sub": "Noble",
   "folder": "Noble",
-  "baked": "SpartanRocket"
+  "baked": "SpartanHeavyWeapons"
  },
  {
   "id": "SpartanGrenadier",
@@ -2851,16 +2841,11 @@
   "leap": null,
   "lifesteal": 0,
   "basedmg": null,
-  "tint": [
-   0.32,
-   0.42,
-   0.3,
-   0.45
-  ],
-  "scale": 1.25,
+  "tint": null,
+  "scale": 1,
   "sub": "Noble",
   "folder": "Noble",
-  "baked": "SpartanRocket"
+  "baked": "SpartanGrenadier"
  },
  {
   "id": "SpartanCQB",
@@ -2926,16 +2911,11 @@
   ],
   "lifesteal": 0,
   "basedmg": null,
-  "tint": [
-   0.32,
-   0.42,
-   0.3,
-   0.45
-  ],
-  "scale": 1.2,
+  "tint": null,
+  "scale": 1,
   "sub": "Noble",
   "folder": "Noble",
-  "baked": "SpartanSMG"
+  "baked": "SpartanCQB"
  },
  {
   "id": "SpartanFireteam",
@@ -3022,16 +3002,11 @@
   "leap": null,
   "lifesteal": 0,
   "basedmg": null,
-  "tint": [
-   0.32,
-   0.42,
-   0.3,
-   0.45
-  ],
-  "scale": 1.2,
+  "tint": null,
+  "scale": 1,
   "sub": "Noble",
   "folder": "Noble",
-  "baked": "Marine"
+  "baked": "SpartanFireteam"
  },
  {
   "id": "Gremlin",
@@ -3406,7 +3381,7 @@
   "weapons": [
    {
     "name": "Carpet Bombs",
-    "dmg": 160,
+    "dmg": 150,
     "interval": 2.5,
     "range": 5,
     "minr": 0,
@@ -4166,7 +4141,7 @@
   "scale": 1,
   "sub": "Lekgolo Colony",
   "folder": "LekgoloColony",
-  "baked": null
+  "baked": "HunterCaptain"
  },
  {
   "id": "CannonFodder",
@@ -4403,7 +4378,7 @@
   "scale": 1,
   "sub": "Unggoy Rebellion",
   "folder": "UnggoyRebellion",
-  "baked": null
+  "baked": "GruntGoblin"
  },
  {
   "id": "InfestedMarine",
@@ -5128,11 +5103,16 @@
   ],
   "lifesteal": 0,
   "basedmg": null,
-  "tint": null,
+  "tint": [
+   0.55,
+   0.68,
+   0.18,
+   0.55
+  ],
   "scale": 1,
   "sub": "Covenant-based",
   "folder": "FloodCovenant",
-  "baked": null
+  "baked": "InfestedElite"
  },
  {
   "id": "InfestedWraith",

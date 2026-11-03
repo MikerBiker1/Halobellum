@@ -1,11 +1,12 @@
 # rig_inputs.py
-# Prepares the four models that Meshy rigs: facing -Y in Blender (+Z in glTF), upright, on the ground, at their real
+# Prepares the models that Meshy rigs: facing -Y in Blender (+Z in glTF), upright, on the ground, at their real
 # height, with one material and one base colour texture of at most 1024.
 # Writes Art_Source/Prepared/<Unit>_Rig/input.glb, <Unit>.png and shots/. It wipes that folder first, so it refuses to
 # run for a unit that Meshy has already rigged, unless told --force.
 #   blender --background --factory-startup --python Tools/Meshy/rig_inputs.py -- [Unit ...] [--force]
 import json
 import os
+import re
 import sys
 
 import bpy
@@ -20,6 +21,12 @@ MODELS = {
     "StalkerForm": {"source": "sketchfab.com/enemieshalo_3the_floodpure_stalker.glb", "height": 2.4},
     "PureFormRanged": {"source": "sketchfab.com/enemieshalo_3the_floodpure_ranged.glb", "height": 2.9},
     "PureFormTank": {"source": "sketchfab.com/enemieshalo_3the_floodpure_tank.glb", "height": 3.8},
+    # M11: "keep" picks the figure out of a file that holds several, "tris" reduces it, and "bake" joins several materials into one texture.
+    "Spartan": {"source": "Meshy/Meshy_AI_halo_Spartan/Meshy_AI_halo_biped_Character_output.fbx", "height": 2.3, "tris": 6000},
+    "Elite": {"source": "sketchfab.com/enemieshalo_3covenantelitesminor.glb", "height": 2.6, "tris": 7000, "bake": True},
+    "Hunter": {"source": "sketchfab.com/enemiesmulticovenanthunters.glb", "height": 3.6, "keep": r"^Object_(10|11|12|13|14|15)$", "bake": True},
+    "HunterCaptain": {"source": "sketchfab.com/enemiesmulticovenanthunters.glb", "height": 3.8, "keep": r"^Object_(27|28|29|30|31)$", "tris": 8000, "bake": True},
+    "GruntGoblin": {"source": "sketchfab.com/enemiesbanishedgoblin.glb", "height": 4.4, "tris": 8000, "bake": True},
 }
 SIZE = 1024
 
@@ -117,14 +124,25 @@ def prepare(unit, spec):
     name = unit + "_Rig"
     mt.start(name, spec["source"])
     folder = mt._state["folder"]
+    if "keep" in spec:
+        for o in mt.meshes():
+            if not re.match(spec["keep"], o.name):
+                bpy.data.objects.remove(o)
+    if "tris" in spec:
+        mt.weld(0.002)
+        mt.reduce(spec["tris"], flat_angle=0)
     if unit == "Grunt":
         mt.remove("Icosphere")
         image = atlas_grunt(folder)
+    elif spec.get("bake"):
+        baked = mt.bake_one(SIZE)
+        image = write_png(read(baked, SIZE, SIZE), os.path.join(folder, unit + ".png"))
     else:
         mt.remove("fronds")
         source = mt._input_image(mt.meshes()[0].data.materials[0], "Base Color")
         print(f"REPORT   {unit} texture {tuple(source.size)}")
-        image = write_png(read(source, *source.size), os.path.join(folder, unit + ".png"))
+        width, height = (min(n, SIZE) for n in source.size)
+        image = write_png(read(source, width, height), os.path.join(folder, unit + ".png"))
     one_material(image)
     mt.weld(0.002)
     if unit == "Grunt":

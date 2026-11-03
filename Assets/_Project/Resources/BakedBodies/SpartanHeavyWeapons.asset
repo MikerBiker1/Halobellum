@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d50c9e005dbc80ecacdbb7a00a0ff15, type: 3}
+  m_Name: SpartanHeavyWeapons
+  m_EditorClassIdentifier: 
+  modelFolder: Spartan
+  sourceModel: {fileID: 919132149155446097, guid: 4424365796ebe9948a5ae74cb23a1922, type: 3}
+  albedo: {fileID: 2800000, guid: f39e15f8ce6f0584eb8c14d5b3910220, type: 3}
+  albedoFile: Spartan_HeavyWeapons.png
+  movingClip: Run_and_Shoot
+  shootingClip: Walk_Forward_While_Shooting
+  deathClip: Dead
+  stillClip: walking_2
+  weaponName: Weapon_RocketLauncher
+  weaponLength: 1.2
+  weaponInForwardHand: 0
+  weaponAlongForearm: 0
+  muzzleInRightHand: 0
+  transitionSeconds: 0.2
+  corpseSeconds: 14
+  bakedFps: 30
+  mesh: {fileID: 4300000, guid: f4e2e4a99dd48464d9ed3e1da29062f6, type: 2}
+  material: {fileID: 2100000, guid: 0eb5c164f0e65b74c88f893ba74be276, type: 2}
+  clips:
+  - role: 1
+    firstRow: 0
+    frames: 20
+    loops: 1
+  - role: 2
+    firstRow: 20
+    frames: 98
+    loops: 1
+  - role: 3
+    firstRow: 118
+    frames: 89
+    loops: 0
+  - role: 0
+    firstRow: 207
+    frames: 1
+    loops: 0
+  muzzle: {x: 0.051356588, y: 2.075755, z: 0.6990632}
+  hasMuzzle: 1
+  bodyHeight: 2.3

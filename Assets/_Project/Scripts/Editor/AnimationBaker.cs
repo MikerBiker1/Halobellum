@@ -73,6 +73,7 @@ namespace Halobellum.EditorTools
         {
             string folder = $"{ModelsFolder}/{(string.IsNullOrEmpty(body.modelFolder) ? body.name : body.modelFolder)}";
             if (!AssetDatabase.IsValidFolder(folder)) return;
+            if (body.albedo == null && !string.IsNullOrEmpty(body.albedoFile)) body.albedo = AssetDatabase.LoadAssetAtPath<Texture2D>($"{folder}/{body.albedoFile}");
             foreach (string file in Directory.GetFiles(folder))
             {
                 string path = file.Replace('\\', '/');
@@ -87,7 +88,7 @@ namespace Halobellum.EditorTools
             if (body.sourceModel == null) throw new InvalidOperationException($"{body.name}: no source model, and none in {ModelsFolder}/{body.name}.");
             string modelPath = AssetDatabase.GetAssetPath(body.sourceModel);
             AnimationClip[] sources = AssetDatabase.LoadAllAssetsAtPath(modelPath).OfType<AnimationClip>().Where(c => !c.name.StartsWith("__preview__")).ToArray();
-            AnimationClip Source(string name) => sources.FirstOrDefault(c => c.name == name) ?? throw new InvalidOperationException($"{body.name}: no clip named {name} in {modelPath}.");
+            AnimationClip Source(string name) => sources.FirstOrDefault(c => c.name == name) ?? throw new InvalidOperationException($"{body.name}: no clip named {name} in {modelPath}. It has: {string.Join(", ", sources.Select(c => c.name))}.");
 
             GameObject model = Object.Instantiate(body.sourceModel);
             try
@@ -257,7 +258,15 @@ namespace Halobellum.EditorTools
             var triangles = new List<int>(from.triangles);
 
             Vector3? muzzle = null;
-            if (!string.IsNullOrEmpty(body.weaponName))
+            if (string.IsNullOrEmpty(body.weaponName) && body.muzzleInRightHand)
+            {
+                int hand = Array.FindIndex(bones, b => b.name == "RightHand");
+                if (hand < 0) throw new InvalidOperationException($"{body.name}: shots from the right hand need a RightHand bone.");
+                AnimationClip aim = source(body.shootingClip);
+                aim.SampleAnimation(model, aim.length * 0.5f);
+                muzzle = bones[hand].position;
+            }
+            else if (!string.IsNullOrEmpty(body.weaponName))
             {
                 int hand = Array.FindIndex(bones, b => b.name == "RightHand");
                 int otherHand = Array.FindIndex(bones, b => b.name == "LeftHand");
@@ -269,6 +278,11 @@ namespace Halobellum.EditorTools
                 // A small weapon in the forward hand simply points forward: the line between the hands means nothing for it.
                 Vector3 direction = body.weaponInForwardHand ? model.transform.forward : (bones[otherHand].position - bones[hand].position).normalized;
                 int holding = body.weaponInForwardHand ? otherHand : hand;
+                if (body.weaponAlongForearm)
+                {
+                    direction = (bones[hand].position - bones[hand].parent.position).normalized;
+                    holding = hand;
+                }
                 Matrix4x4 weaponToWorld = Matrix4x4.TRS(bones[holding].position, Quaternion.LookRotation(direction, Vector3.up), Vector3.one);
                 muzzle = AddWeapon(body, weaponToWorld, bindPoses[holding].inverse * bones[holding].worldToLocalMatrix, keptIndex[holding], positions, normals, uvs, colors, boneIds, weights, triangles);
             }
@@ -281,7 +295,10 @@ namespace Halobellum.EditorTools
             mesh.SetColors(colors);
             mesh.SetTriangles(triangles, 0);
             // Generous: the shader moves the vertices, and a falling body leaves its rest pose far behind.
-            mesh.bounds = new Bounds(Vector3.up, new Vector3(5f, 5f, 5f));
+            float highest = positions.Max(p => p.y), lowest = positions.Min(p => p.y);
+            body.bodyHeight = highest - lowest;
+            float reach = Mathf.Max(5f, body.bodyHeight * 2.5f);
+            mesh.bounds = new Bounds(Vector3.up * Mathf.Max(1f, body.bodyHeight * 0.5f), new Vector3(reach, reach, reach));
             return muzzle;
         }
 

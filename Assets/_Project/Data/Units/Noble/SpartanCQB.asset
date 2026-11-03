@@ -91,9 +91,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 573524e9764b3c2e2fa3c97240be0ec4, type: 2}
   prefab: {fileID: 4034653889104178569, guid: 26c2ae64396aa874cb03eb47a09f2503, type: 3}
   keepsOwnMaterials: 0
-  bakedBody: {fileID: 11400000, guid: 1565005b675e29e35dd8c578e2584d33, type: 2}
-  bakedTint: {r: 0.32, g: 0.42, b: 0.3, a: 0.45}
-  bakedScale: 1.2
+  bakedBody: {fileID: 11400000, guid: ee2f48452d3a2934bf8e6bba1611e320, type: 2}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
   strongAgainst: 'Artillery, DPS'
   weakAgainst: 'Chaff clear, tanks'
   notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Grunt Goblin (100%). A thruster pack jumps it onto its target. Very strong against artillery and DPS once there; short reach. First-pass M10 values, Noble (Docs/M10/subfactions.md).'

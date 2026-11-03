@@ -1,0 +1,3 @@
+Source: found by the project owner on Sketchfab, a model for 3D printing with no colours, folder sketchfab.com/1-100-unsc-rhino in Art_Source.
+Painted by Meshy (Tools/Meshy/texture_inputs.py, meshy_paint.py) and prepared by Tools/Art/units/Rhino.py (decision D57).
+The repository is private and must stay private.

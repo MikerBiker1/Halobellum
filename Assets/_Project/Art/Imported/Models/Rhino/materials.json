@@ -1,0 +1,26 @@
+{
+ "materials": [
+  {
+   "name": "Rhino_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Rhino_0.png"
+  },
+  {
+   "name": "Rhino_1",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Rhino_1.png"
+  }
+ ]
+}

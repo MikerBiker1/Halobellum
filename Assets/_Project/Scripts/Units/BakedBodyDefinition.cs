@@ -40,6 +40,8 @@ namespace Halobellum.Units
         [Tooltip("The rigged FBX with its animations.")]
         public GameObject sourceModel;
         public Texture2D albedo;
+        [Tooltip("Which PNG in the model's folder is its albedo, when bodies share a model in different colours. Empty for the first one.")]
+        public string albedoFile;
         [Tooltip("Clip played while moving.")]
         public string movingClip;
         [Tooltip("Clip played while shooting.")]
@@ -54,6 +56,10 @@ namespace Halobellum.Units
         public float weaponLength = 0.8f;
         [Tooltip("Hold it in the hand reaching forward instead of the one at the chest, where a small weapon would be hidden by the arm.")]
         public bool weaponInForwardHand;
+        [Tooltip("Hold it in the right hand, in line with the forearm, like a blade.")]
+        public bool weaponAlongForearm;
+        [Tooltip("With no weapon of its own: shots start from the right hand, where the model has its gun.")]
+        public bool muzzleInRightHand;
 
         [Header("Playing")]
         [Tooltip("Battle seconds a cross-fade from one animation to the next takes.")]
@@ -69,6 +75,8 @@ namespace Halobellum.Units
         [Tooltip("Where shots start: the tip of the weapon in the shooting pose, in the body's own space.")]
         public Vector3 muzzle;
         public bool hasMuzzle;
+        [Tooltip("How tall the body is at its rest pose, in metres, before the unit's scale.")]
+        public float bodyHeight;
 
         public bool IsReady => mesh != null && material != null && clips.Count > 0;
 

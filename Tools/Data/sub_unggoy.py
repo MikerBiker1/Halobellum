@@ -18,7 +18,7 @@ def units(U, W):
           note="Grunts in heavy armor with a small shield, at the top of the Tier 1 price band."),
         U("GruntGoblin", "Grunt Goblin", FACTION, "Tank", 3, 225, 1, 450, 1250, "H", 2, 1.5, 1, "B",
           [W("Goblin Plasma Cannons", 9, 0.2, 14, "Energy"),
-           W("Goblin Fuel Rod", 60, 3, 16, "Explosive", proj=30, splash=2.5, own="G")], aura=(14, 1.2, 0.01),
+           W("Goblin Fuel Rod", 60, 3, 16, "Explosive", proj=30, splash=2.5, own="G")], aura=(14, 1.2, 0.01), baked="GruntGoblin",
           note="A Grunt in a hero's mech. A quick tank with a strong aura: friends within 14 m move 20% faster and heal 1% per second."),
     ]
 

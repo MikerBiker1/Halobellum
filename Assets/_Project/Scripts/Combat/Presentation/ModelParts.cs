@@ -3,7 +3,8 @@
 //   Muzzle_<weapon>[letter]  where that weapon's shots start; several letters take turns
 //   Turret_<weapon>[letter]  turns toward that weapon's target, around its own origin
 //   Wheel_<n>                spins with the distance the unit moves
-//   Swing_<n>_<phase %>      swings to and fro while the unit moves, like a leg, around its own origin
+//   Swing_<n>_<phase %>[_<degrees>[_<cycles per second>]]  swings to and fro while the unit moves, like a leg, around its own origin
+//   Flap_L, Flap_R           beats up and down all the time, like a wing, around its own origin
 //   Motion_Hover             the whole body bobs a little, as a hover vehicle does
 //   Motion_Wobble            the whole body sways and squashes, as a Flood form does
 // Air units always bob, and bank into their turns. All of this is looks only: it reads the simulation and changes nothing.
@@ -11,6 +12,7 @@
 // Depends on: Halobellum.Combat, UnityEngine.
 
 using System.Collections.Generic;
+using System.Globalization;
 using Halobellum.Combat;
 using UnityEngine;
 
@@ -22,6 +24,8 @@ namespace Halobellum.Presentation
         // A big walker's legs are long: much more than this and its feet go through the ground.
         private const float SwingAngle = 4f;
         private const float SwingCyclesPerSecond = 0.5f;
+        private const float FlapAngle = 30f;
+        private const float FlapCyclesPerSecond = 2.2f;
         private const float AirBobHeight = 0.3f;
         private const float HoverBobHeight = 0.07f;
         private const float BobSpeed = 1.3f;
@@ -48,6 +52,15 @@ namespace Halobellum.Presentation
             public Transform Node;
             public Quaternion Rest;
             public float Phase;
+            public float Angle, Cycles;
+        }
+
+        private sealed class Flap
+        {
+            public Transform Node;
+            public Quaternion Rest;
+            /// <summary>The line from nose to tail, in the wing's own axes, and which way round it beats.</summary>
+            public Vector3 Axis;
         }
 
         private readonly Transform _root, _body;
@@ -55,6 +68,7 @@ namespace Halobellum.Presentation
         private readonly List<Turret> _turrets = new List<Turret>();
         private readonly List<Wheel> _wheels = new List<Wheel>();
         private readonly List<Swing> _swings = new List<Swing>();
+        private readonly List<Flap> _flaps = new List<Flap>();
         private readonly Vector3 _restPosition, _restScale;
         private readonly Quaternion _restRotation;
         private readonly float _phase;
@@ -98,15 +112,23 @@ namespace Halobellum.Presentation
                 }
                 else if (name.StartsWith("Swing_"))
                 {
-                    int split = name.LastIndexOf('_');
-                    int.TryParse(name.Substring(split + 1), out int percent);
-                    parts._swings.Add(new Swing { Node = node, Rest = inverseRoot * node.rotation, Phase = percent / 100f });
+                    string[] words = name.Split('_');
+                    int.TryParse(words[2], out int percent);
+                    float angle = SwingAngle, cycles = SwingCyclesPerSecond;
+                    if (words.Length > 3) float.TryParse(words[3], NumberStyles.Float, CultureInfo.InvariantCulture, out angle);
+                    if (words.Length > 4) float.TryParse(words[4], NumberStyles.Float, CultureInfo.InvariantCulture, out cycles);
+                    parts._swings.Add(new Swing { Node = node, Rest = inverseRoot * node.rotation, Phase = percent / 100f, Angle = angle, Cycles = cycles });
+                }
+                else if (name.StartsWith("Flap_"))
+                {
+                    float sign = name.StartsWith("Flap_L") ? 1f : -1f;
+                    parts._flaps.Add(new Flap { Node = node, Rest = node.localRotation, Axis = Quaternion.Inverse(node.rotation) * root.forward * sign });
                 }
                 else if (name == "Motion_Hover") parts._hover = true;
                 else if (name == "Motion_Wobble") parts._wobble = true;
             }
             foreach (List<Transform> list in parts._muzzles.Values) list.Sort((a, b) => string.CompareOrdinal(a.name, b.name));
-            bool any = parts._air || parts._hover || parts._wobble || parts._muzzles.Count > 0 || parts._turrets.Count > 0 || parts._wheels.Count > 0 || parts._swings.Count > 0;
+            bool any = parts._air || parts._hover || parts._wobble || parts._muzzles.Count > 0 || parts._turrets.Count > 0 || parts._wheels.Count > 0 || parts._swings.Count > 0 || parts._flaps.Count > 0;
             return any ? parts : null;
         }
 
@@ -146,8 +168,13 @@ namespace Halobellum.Presentation
             foreach (Wheel wheel in _wheels) wheel.Node.Rotate(_root.right, moved / wheel.Radius * Mathf.Rad2Deg, Space.World);
             foreach (Swing swing in _swings)
             {
-                float angle = Mathf.Sin((time * SwingCyclesPerSecond + swing.Phase) * Mathf.PI * 2f) * SwingAngle * _moving;
+                float angle = Mathf.Sin((time * swing.Cycles + swing.Phase) * Mathf.PI * 2f) * swing.Angle * _moving;
                 swing.Node.rotation = Quaternion.AngleAxis(angle, _root.right) * _root.rotation * swing.Rest;
+            }
+            foreach (Flap flap in _flaps)
+            {
+                float beat = Mathf.Sin((time + _phase) * FlapCyclesPerSecond * Mathf.PI * 2f) * FlapAngle;
+                flap.Node.localRotation = flap.Rest * Quaternion.AngleAxis(beat, flap.Axis);
             }
 
             if (_air) Fly(time, turned / delta, delta);

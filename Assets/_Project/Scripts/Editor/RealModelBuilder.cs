@@ -63,6 +63,17 @@ namespace Halobellum.EditorTools
             new Entry { Unit = "FloodUNSC/InfestedHornet", Folder = "Hornet", Length = 6f, Tint = Infested },
             new Entry { Unit = "FloodCovenant/InfestedWraith", Folder = "Wraith", Length = 6.2f, Tint = Infested },
             new Entry { Unit = "FloodCovenant/InfestedBanshee", Folder = "Banshee", Length = 6.6f, Tint = Infested },
+            // The owner's second batch (M11).
+            new Entry { Unit = "UNSC/ArcherMissilePod", Folder = "ArcherMissilePod", Height = 3.6f },
+            new Entry { Unit = "ArmoredDivision/Cobra", Folder = "Cobra", Length = 6f },
+            new Entry { Unit = "ArmoredDivision/Rhino", Folder = "Rhino", Length = 9.5f },
+            new Entry { Unit = "AerospaceCommand/Sparrowhawk", Folder = "Sparrowhawk", Length = 7f },
+            new Entry { Unit = "AerospaceCommand/Vulture", Folder = "Vulture", Length = 10f },
+            new Entry { Unit = "AerospaceCommand/Longsword", Folder = "Longsword", Length = 11f },
+            new Entry { Unit = "Covenant/Ghost", Folder = "Ghost", Length = 4.4f },
+            new Entry { Unit = "FloodCovenant/InfestedGhost", Folder = "Ghost", Length = 4.4f, Tint = Infested },
+            new Entry { Unit = "LekgoloColony/Skitterer", Folder = "Skitterer", Length = 2.6f },
+            new Entry { Unit = "Flood/SwarmForm", Folder = "SwarmForm", Length = 3f },
         };
 
         [Serializable]

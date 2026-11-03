@@ -1,0 +1,3 @@
+Source: made by the project owner with Meshy AI, file Meshy/Abomination_Meshy.glb in Art_Source, with Meshy's smart rig.
+Its clips are made by Tools/Art/units/Abomination.py (decision D57).
+The repository is private and must stay private.

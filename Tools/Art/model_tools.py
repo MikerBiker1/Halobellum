@@ -9,7 +9,9 @@
 #   - A node "Muzzle_<weapon>" or "Muzzle_<weapon><letter>" is where that weapon's shots start; several letters
 #     take turns. Put a muzzle inside the turret that carries it (muzzle(..., parent="Turret_0")).
 #   - A node "Wheel_<n>" spins while the unit moves, around the axis across the vehicle.
-#   - A node "Swing_<n>_<phase>" swings to and fro while it moves, like a leg. Its origin is the joint.
+#   - A node "Swing_<n>_<phase>" swings to and fro while it moves, like a leg. Its origin is the joint. It can go on with
+#     "_<degrees>" and "_<cycles per second>", for legs that aren't a big walker's.
+#   - A node "Flap_L" or "Flap_R" beats up and down all the time, like a wing. Its origin is the wing's root.
 #   - A node "Motion_Hover" or "Motion_Wobble" says how the whole body moves (motion("Hover")).
 #   - Everything else is merged by material, to keep the number of draw calls down.
 #
@@ -34,7 +36,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 SOURCE = os.path.join(ROOT, "Art_Source")
 PREPARED = os.environ.get("HB_PREPARED") or os.path.join(SOURCE, "Prepared")  # A worktree shares Art_Source with the main project, so it can prepare elsewhere.
 
-MOVING_PART = re.compile(r"^(Turret_|Wheel_|Swing_)")
+MOVING_PART = re.compile(r"^(Turret_|Wheel_|Swing_|Flap_)")
 _state = {"name": None, "folder": None, "source": None, "tris_before": 0, "flags": {}, "high": None}
 
 
@@ -46,6 +48,8 @@ def start(name, source):
     path = os.path.join(SOURCE, source)
     if path.lower().endswith(".fbx"):
         bpy.ops.import_scene.fbx(filepath=path)
+    elif path.lower().endswith(".stl"):
+        bpy.ops.wm.stl_import(filepath=path)
     else:
         bpy.ops.import_scene.gltf(filepath=path)
     folder = os.path.join(PREPARED, name)
@@ -71,9 +75,16 @@ def start(name, source):
     # A model can come in any size: first bring it to about 10 units, so that the pictures and welds work the same.
     size = _bounds()[1] - _bounds()[0]
     biggest = max(size) or 1.0
+    _state["to_ten"] = 10.0 / biggest
     scale(10.0 / biggest)
     report("as loaded")
     look("before")
+
+
+def source_size():
+    """Back to the sizes in the file, so that a script can use the numbers read from it. Unity sets the final size anyway."""
+    scale(1.0 / _state["to_ten"])
+    _state["to_ten"] = 1.0
 
 
 def meshes(pattern=None):
@@ -337,6 +348,127 @@ def smooth(angle=35.0, pattern=None):
             bpy.ops.mesh.customdata_custom_splitnormals_clear()
         o.data.shade_smooth()
         o.data.set_sharp_from_angle(angle=math.radians(angle))
+
+
+def bake_one(size=1024, angle=66.0, island_margin=0.004):
+    """
+    Joins everything and paints all its materials' colours into one new texture, on a new UV map. It costs one draw call, and it is
+    what Meshy's rigging asks for. Glow and normal maps are left behind. Do it after reduce, and before cutting out moving parts.
+    """
+    parts = meshes()
+    _select(parts)
+    if len(parts) > 1:
+        bpy.ops.object.join()
+    o = bpy.context.view_layer.objects.active
+    o.name = "Body"
+    old = o.data.uv_layers.active
+    old_name = old.name if old else None
+    baked = o.data.uv_layers.new(name="Baked")
+    o.data.uv_layers.active = baked
+    if old_name:
+        o.data.uv_layers[old_name].active_render = True
+    bpy.ops.object.mode_set(mode="EDIT")
+    bpy.ops.mesh.select_all(action="SELECT")
+    bpy.ops.uv.smart_project(angle_limit=math.radians(angle), island_margin=island_margin)
+    bpy.ops.object.mode_set(mode="OBJECT")
+    image = bpy.data.images.new(_state["name"] + "_baked", size, size, alpha=False)
+    for m in o.data.materials:
+        if m is None:
+            continue
+        m.use_nodes = True
+        node = m.node_tree.nodes.new("ShaderNodeTexImage")
+        node.image = image
+        node.select = True
+        m.node_tree.nodes.active = node
+    scene = bpy.context.scene
+    scene.render.engine = "CYCLES"
+    scene.cycles.device = "CPU"
+    scene.cycles.samples = 1
+    settings = scene.render.bake
+    settings.use_pass_direct = False
+    settings.use_pass_indirect = False
+    settings.use_pass_color = True
+    settings.margin = 8
+    bpy.ops.object.bake(type="DIFFUSE")
+    image.pack()
+    print(f"REPORT baked {len(o.data.materials)} materials into one {size} texture")
+    material = bpy.data.materials.new("baked")
+    material.use_nodes = True
+    node = material.node_tree.nodes.new("ShaderNodeTexImage")
+    node.image = image
+    material.node_tree.links.new(node.outputs["Color"], material.node_tree.nodes["Principled BSDF"].inputs["Base Color"])
+    o.data.materials.clear()
+    o.data.materials.append(material)
+    for polygon in o.data.polygons:
+        polygon.material_index = 0
+    for layer in [l for l in o.data.uv_layers if l.name != "Baked"]:
+        o.data.uv_layers.remove(layer)
+    o.data.uv_layers["Baked"].active_render = True
+    return image
+
+
+def reduce_and_repaint(target, size=1024, weld_distance=0.0004, reach=0.02):
+    """
+    For a model with far too many triangles whose surface is split along its texture's seams, as Meshy's are: reducing that tears
+    cracks along every seam. So it is welded whole, reduced, unwrapped afresh, and the detailed model's colours are painted onto it.
+    Distances are in the model's present size.
+    """
+    parts = meshes()
+    _select(parts)
+    if len(parts) > 1:
+        bpy.ops.object.join()
+    high = bpy.context.view_layer.objects.active
+    high.name = "High"
+    low = high.copy()
+    low.data = high.data.copy()
+    low.name = "Body"
+    bpy.context.scene.collection.objects.link(low)
+    for layer in list(low.data.uv_layers):
+        low.data.uv_layers.remove(layer)
+    low.data.materials.clear()
+    weld(weld_distance, "^Body$")
+    _select([low])
+    modifier = low.modifiers.new("less", "DECIMATE")
+    modifier.decimate_type = "COLLAPSE"
+    modifier.ratio = min(1.0, target / max(1, tris([low])))
+    bpy.ops.object.modifier_apply(modifier="less")
+    print(f"REPORT repainting: {tris([high])} to {tris([low])} triangles")
+    low.data.uv_layers.new(name="Baked")
+    bpy.ops.object.mode_set(mode="EDIT")
+    bpy.ops.mesh.select_all(action="SELECT")
+    bpy.ops.mesh.normals_make_consistent(inside=False)
+    bpy.ops.uv.smart_project(angle_limit=math.radians(66), island_margin=0.004)
+    bpy.ops.object.mode_set(mode="OBJECT")
+    image = bpy.data.images.new(_state["name"] + "_baked", size, size, alpha=False)
+    material = bpy.data.materials.new("baked")
+    material.use_nodes = True
+    node = material.node_tree.nodes.new("ShaderNodeTexImage")
+    node.image = image
+    node.select = True
+    material.node_tree.nodes.active = node
+    material.node_tree.links.new(node.outputs["Color"], material.node_tree.nodes["Principled BSDF"].inputs["Base Color"])
+    low.data.materials.append(material)
+    scene = bpy.context.scene
+    scene.render.engine = "CYCLES"
+    scene.cycles.device = "CPU"
+    scene.cycles.samples = 1
+    settings = scene.render.bake
+    settings.use_pass_direct = False
+    settings.use_pass_indirect = False
+    settings.use_pass_color = True
+    settings.margin = 8
+    settings.use_selected_to_active = True
+    settings.cage_extrusion = reach
+    settings.max_ray_distance = reach * 4
+    bpy.ops.object.select_all(action="DESELECT")
+    high.select_set(True)
+    low.select_set(True)
+    bpy.context.view_layer.objects.active = low
+    bpy.ops.object.bake(type="DIFFUSE")
+    settings.use_selected_to_active = False
+    image.pack()
+    bpy.data.objects.remove(high)
+    return image
 
 
 # ---- Moving parts and muzzles ----

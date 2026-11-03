@@ -1,0 +1,3 @@
+Source: made by the project owner with Meshy AI, file Meshy/Meshy_AI_halo_Spartan in Art_Source. Rigged and animated by Meshy (Tools/Meshy/rig_inputs.py, meshy_rig.py, rig_finish.py, decision D57).
+The Noble colours come from Tools/Art/recolour.py.
+The repository is private and must stay private.

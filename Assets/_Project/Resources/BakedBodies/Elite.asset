@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d50c9e005dbc80ecacdbb7a00a0ff15, type: 3}
+  m_Name: Elite
+  m_EditorClassIdentifier: 
+  modelFolder: Elite
+  sourceModel: {fileID: 919132149155446097, guid: 37a35d96d7eae024daf98c924a1ad388, type: 3}
+  albedo: {fileID: 2800000, guid: 994b6333d9096f34eb59e43edd05372d, type: 3}
+  albedoFile: Elite.png
+  movingClip: Run_and_Shoot
+  shootingClip: Walk_Forward_While_Shooting
+  deathClip: Dead
+  stillClip: walking_2
+  weaponName: Weapon_PlasmaPistol
+  weaponLength: 0.7
+  weaponInForwardHand: 1
+  weaponAlongForearm: 0
+  muzzleInRightHand: 0
+  transitionSeconds: 0.2
+  corpseSeconds: 14
+  bakedFps: 30
+  mesh: {fileID: 4300000, guid: 96bca8d0b4095524da70f49dbc898cf4, type: 2}
+  material: {fileID: 2100000, guid: 79e9bbd524a7af64c87cfc05de8e59b1, type: 2}
+  clips:
+  - role: 1
+    firstRow: 0
+    frames: 20
+    loops: 1
+  - role: 2
+    firstRow: 20
+    frames: 98
+    loops: 1
+  - role: 3
+    firstRow: 118
+    frames: 89
+    loops: 0
+  - role: 0
+    firstRow: 207
+    frames: 1
+    loops: 0
+  muzzle: {x: 0.09010948, y: 2.3808115, z: 1.1672685}
+  hasMuzzle: 1
+  bodyHeight: 2.5999997

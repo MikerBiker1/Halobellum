@@ -25,6 +25,11 @@ target = os.path.join(folder, unit + ".fbx")
 ROLES = {
     "Grunt": {"moving": "Run_and_Shoot", "shooting": "Walk_Forward_While_Shooting", "dead": "Dead", "still": "walking_2"},
     "PureFormTank": {"moving": "Monster_Walk", "shooting": "Punch_Combo", "dead": "Dead", "still": "walking_2"},
+    "Spartan": {"moving": "Run_and_Shoot", "shooting": "Walk_Forward_While_Shooting", "dead": "Dead", "still": "walking_2"},
+    "Elite": {"moving": "Run_and_Shoot", "shooting": "Walk_Forward_While_Shooting", "dead": "Dead", "still": "walking_2"},
+    "Hunter": {"moving": "Monster_Walk", "shooting": "Walk_Forward_While_Shooting", "dead": "Dead", "still": "walking_2"},
+    "HunterCaptain": {"moving": "Monster_Walk", "shooting": "Walk_Forward_While_Shooting", "dead": "Dead", "still": "walking_2"},
+    "GruntGoblin": {"moving": "Monster_Walk", "shooting": "Walk_Forward_While_Shooting", "dead": "Dead", "still": "walking_2"},
 }
 REQUIRED = ("RightHand", "LeftHand", "LeftFoot", "RightFoot")
 

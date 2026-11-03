@@ -63,5 +63,113 @@
    566
   ],
   "animation_credits": 12
+ },
+ "Spartan": {
+  "attempts": [
+   {
+    "started": "23:07:49",
+    "id": "01a19f97-8498-73fa-8bb4-5893b5e34dc8",
+    "finished": true,
+    "status": "SUCCEEDED",
+    "credits": 5
+   }
+  ],
+  "credits": 17,
+  "rig": "01a19f97-8498-73fa-8bb4-5893b5e34dc8",
+  "animation": "01a19f9a-0e2e-7186-ace4-96344ad8bfd2",
+  "actions": [
+   98,
+   234,
+   8,
+   566
+  ],
+  "animation_credits": 12
+ },
+ "Elite": {
+  "attempts": [
+   {
+    "started": "23:08:04",
+    "id": "01a19f97-c036-7337-a47f-1c19b6cb8965",
+    "finished": true,
+    "status": "SUCCEEDED",
+    "credits": 5
+   }
+  ],
+  "credits": 26,
+  "rig": "01a19f97-c036-7337-a47f-1c19b6cb8965",
+  "animation": "01a19f9a-3b89-701e-bcb5-f9af4cc29d28",
+  "actions": [
+   98,
+   234,
+   8,
+   566,
+   219,
+   112,
+   198
+  ],
+  "animation_credits": 21
+ },
+ "Hunter": {
+  "attempts": [
+   {
+    "started": "23:08:20",
+    "id": "01a19f97-fded-72ae-967b-17698a103547",
+    "finished": true,
+    "status": "SUCCEEDED",
+    "credits": 5
+   }
+  ],
+  "credits": 17,
+  "rig": "01a19f97-fded-72ae-967b-17698a103547",
+  "animation": "01a19f9a-7d39-71f1-b833-48f30ff633be",
+  "actions": [
+   112,
+   234,
+   8,
+   566
+  ],
+  "animation_credits": 12
+ },
+ "HunterCaptain": {
+  "attempts": [
+   {
+    "started": "23:08:34",
+    "id": "01a19f98-3610-770f-aebf-fb9394f60dbf",
+    "finished": true,
+    "status": "SUCCEEDED",
+    "credits": 5
+   }
+  ],
+  "credits": 17,
+  "rig": "01a19f98-3610-770f-aebf-fb9394f60dbf",
+  "animation": "01a19f9a-aa8c-709b-a4b1-ef3712fdb8a5",
+  "actions": [
+   112,
+   234,
+   8,
+   566
+  ],
+  "animation_credits": 12
+ },
+ "GruntGoblin": {
+  "attempts": [
+   {
+    "started": "23:08:50",
+    "id": "01a19f98-72a7-72b0-a5e4-bacee7acb411",
+    "finished": true,
+    "status": "SUCCEEDED",
+    "credits": 5
+   }
+  ],
+  "credits": 17,
+  "rig": "01a19f98-72a7-72b0-a5e4-bacee7acb411",
+  "animation": "01a19f9b-2919-76ec-b060-87d187fdf57b",
+  "actions": [
+   112,
+   234,
+   8,
+   566
+  ],
+  "animation_credits": 12
  }
 }

@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d50c9e005dbc80ecacdbb7a00a0ff15, type: 3}
+  m_Name: SpartanCQB
+  m_EditorClassIdentifier: 
+  modelFolder: Spartan
+  sourceModel: {fileID: 919132149155446097, guid: 4424365796ebe9948a5ae74cb23a1922, type: 3}
+  albedo: {fileID: 2800000, guid: 5c4f72f69a7726c4ea483a525d741f89, type: 3}
+  albedoFile: Spartan_CQB.png
+  movingClip: Run_and_Shoot
+  shootingClip: Walk_Forward_While_Shooting
+  deathClip: Dead
+  stillClip: walking_2
+  weaponName: Weapon_SMG
+  weaponLength: 0.75
+  weaponInForwardHand: 0
+  weaponAlongForearm: 0
+  muzzleInRightHand: 0
+  transitionSeconds: 0.2
+  corpseSeconds: 14
+  bakedFps: 30
+  mesh: {fileID: 4300000, guid: ff65c74a690a8d3478dfeadb6ff736ea, type: 2}
+  material: {fileID: 2100000, guid: a301695551535604882a644a8493ebdf, type: 2}
+  clips:
+  - role: 1
+    firstRow: 0
+    frames: 20
+    loops: 1
+  - role: 2
+    firstRow: 20
+    frames: 98
+    loops: 1
+  - role: 3
+    firstRow: 118
+    frames: 89
+    loops: 0
+  - role: 0
+    firstRow: 207
+    frames: 1
+    loops: 0
+  muzzle: {x: 0.16552657, y: 1.9900542, z: 0.48077458}
+  hasMuzzle: 1
+  bodyHeight: 2.3

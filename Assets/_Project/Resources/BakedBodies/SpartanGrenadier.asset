@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d50c9e005dbc80ecacdbb7a00a0ff15, type: 3}
+  m_Name: SpartanGrenadier
+  m_EditorClassIdentifier: 
+  modelFolder: Spartan
+  sourceModel: {fileID: 919132149155446097, guid: 4424365796ebe9948a5ae74cb23a1922, type: 3}
+  albedo: {fileID: 2800000, guid: bce2ca7cc902c414a997dd9fdff08edf, type: 3}
+  albedoFile: Spartan_Grenadier.png
+  movingClip: Run_and_Shoot
+  shootingClip: Walk_Forward_While_Shooting
+  deathClip: Dead
+  stillClip: walking_2
+  weaponName: Weapon_RocketLauncher
+  weaponLength: 0.95
+  weaponInForwardHand: 0
+  weaponAlongForearm: 0
+  muzzleInRightHand: 0
+  transitionSeconds: 0.2
+  corpseSeconds: 14
+  bakedFps: 30
+  mesh: {fileID: 4300000, guid: 6133c170a006f594899cc1b7f255d294, type: 2}
+  material: {fileID: 2100000, guid: af0d50b3f7e3a0b4fb90679fc9c6d0c0, type: 2}
+  clips:
+  - role: 1
+    firstRow: 0
+    frames: 20
+    loops: 1
+  - role: 2
+    firstRow: 20
+    frames: 98
+    loops: 1
+  - role: 3
+    firstRow: 118
+    frames: 89
+    loops: 0
+  - role: 0
+    firstRow: 207
+    frames: 1
+    loops: 0
+  muzzle: {x: 0.10715586, y: 2.0215108, z: 0.59237707}
+  hasMuzzle: 1
+  bodyHeight: 2.3

@@ -14,7 +14,7 @@ def units(U, W):
           [W("Heavy Autocannon", 18, 0.3, 14, "Ballistic", aa=True)], airu=True,
           note="Gunship that hunts vehicles. Its gun is poor against infantry."),
         U("Longsword", "Longsword", FACTION, "Aerial", 2, 50, 1, 300, 600, "L", 5, 2.8, 1, "G",
-          [W("Carpet Bombs", 160, 2.5, 5, "Explosive", proj=18, splash=5, own="G")], airu=True,
+          [W("Carpet Bombs", 150, 2.5, 5, "Explosive", proj=18, splash=5, own="G")], airu=True,
           note="Heavy bomber. It has to fly over its target, and cannot fight other aircraft at all."),
         U("Vulture", "Vulture", FACTION, "Aerial", 3, 250, 1, 500, 900, "H", 2.5, 3, 1.5, "B",
           [W("Missile Barrage", 55, 3, 22, "Explosive", proj=40, splash=3),

@@ -5,6 +5,7 @@ Everything in the game that is still a stand-in, for you to replace. Tick things
 - **Sound and music:** put the file in `Assets/_Project/Art/Imported/Audio/Resources/AudioOverride/`, named after its slot, such as `music_unsc_battle.ogg`. No code changes are needed, and the game uses it from its next start. Use `.ogg` or `.wav` for music, since `.mp3` usually doesn't loop cleanly.
 - **Several files for one slot:** name them `slot_1`, `slot_2` and so on, up to 12. One is picked each time.
 - **Models:** tell me where you put them and I'll fit them to their units.
+- **Ground textures:** see their section at the end.
 - Please leave a `SOURCE.txt` note saying where each came from, in `Art/Imported/Audio` for sound (not in `AudioOverride`).
 
 ## Music (10 tracks)
@@ -98,17 +99,19 @@ Spells and interface sounds have slots too, listed in `Assets/_Project/Art/Impor
 
 These units are placeholder shapes, or borrow another unit's body. Weapons on a model are welcome, because shots leave from its muzzles.
 
-### Your Spartan download
+### Spartan weapons
 
-| Done | What | For |
-| --- | --- | --- |
-| [ ] | Base Spartan | Spartan, and the five Noble units, which use the Marine's body for now. |
-| [ ] | Spartan Laser | Spartan. |
-| [ ] | SRS99 sniper rifle | Spartan Sniper. |
-| [ ] | M247H chaingun and Hydra rocket pod | Spartan Heavy Weapons. |
-| [ ] | M319 grenade launcher | Spartan Grenadier. |
-| [ ] | Shotgun | Spartan CQB. |
-| [ ] | BR85 battle rifle and M41 rocket launcher | Spartan Fireteam. |
+The Spartans have your model now, each with a placeholder weapon from the game's own set. Real ones would replace these.
+
+| Done | What | For | Placeholder for now |
+| --- | --- | --- | --- |
+| [ ] | Spartan Laser | Spartan. | Rocket launcher |
+| [ ] | SRS99 sniper rifle | Spartan Sniper. | Assault rifle, drawn long |
+| [ ] | M247H chaingun and Hydra rocket pod | Spartan Heavy Weapons. | Rocket launcher |
+| [ ] | M319 grenade launcher | Spartan Grenadier. | Rocket launcher, drawn short |
+| [ ] | Shotgun | Spartan CQB. | SMG |
+| [ ] | BR85 battle rifle and M41 rocket launcher | Spartan Fireteam. | Assault rifle |
+| [ ] | Plasma rifle | Elite. | Plasma pistol, drawn big |
 
 ### UNSC
 
@@ -116,46 +119,32 @@ These units are placeholder shapes, or borrow another unit's body. Weapons on a 
 | --- | --- | --- |
 | [ ] | Flamethrower Trooper | A soldier with a flamethrower. |
 | [ ] | Wolverine | Anti-air vehicle. |
-| [ ] | Archer Missile Pod | |
 | [ ] | Mantis | Walker. |
 | [ ] | ODST | Only lands from the drop pod spell. |
 | [ ] | Gremlin | Armored Division. |
-| [ ] | Cobra | Armored Division. |
-| [ ] | Rhino | Armored Division. |
-| [ ] | Sparrowhawk | Aerospace Command. |
-| [ ] | Vulture | Aerospace Command. |
-| [ ] | Longsword | Aerospace Command. |
 | [ ] | Condor Gunship | Aerospace Command. It is a grey Pelican for now. |
 
 ### Covenant
 
 | Done | Unit | Notes |
 | --- | --- | --- |
-| [ ] | Elite | Infested Elite can reuse it, tinted. |
-| [ ] | Zealot | An Elite with a sword could do. |
-| [ ] | Ghost | Infested Ghost can reuse it, tinted. |
 | [ ] | Jackal | Two units, with a rifle and with a shield. |
-| [ ] | Hunter | Hunter Pair, and Hunter Captain can reuse it. |
 | [ ] | Vampire | Aircraft. |
 | [ ] | Marauder | Banished. |
 | [ ] | Reaver | Banished. |
 | [ ] | Brute | Brute Grenadier, Banished. |
 | [ ] | Goliath | Lekgolo Colony. |
-| [ ] | Skitterer | Lekgolo Colony. |
-| [ ] | Grunt Goblin | Unggoy Rebellion: a Grunt in a mech. |
 
 ### Flood
 
 | Done | Unit | Notes |
 | --- | --- | --- |
-| [ ] | Flood Abomination | Their only Titan, very tall and large. |
 | [ ] | Combat Form | |
 | [ ] | Seeder | |
-| [ ] | Swarm Form | Flies. |
 | [ ] | Juggernaut | You may remove it if you can't find one. |
 | [ ] | Spawner | You may remove it if you can't find one. |
 
-### Towers (new)
+### Towers
 
 | Done | What | Notes |
 | --- | --- | --- |
@@ -163,3 +152,31 @@ These units are placeholder shapes, or borrow another unit's body. Weapons on a 
 | [ ] | Research Center | Stands on each side's right. For now it is a lab with a glowing dome. |
 
 Only about 6 m of ground is free for each tower, though it can be as tall as you like.
+
+## Ground textures (11)
+
+These are the game's own drawn tiles. To replace one, save yours over the file of the same name in `Assets/_Project/Resources/Terrain/`, as a PNG that tiles seamlessly. The game uses it from the next build, and no code changes are needed. Keep the same size if you can.
+
+| Done | File | Where it shows | Size now |
+| --- | --- | --- | --- |
+| [ ] | `GroundUnscDirt.png` | UNSC: bare earth. | 1024 x 1024 |
+| [ ] | `GroundUnscGrass.png` | UNSC: grass. | 1024 x 1024 |
+| [ ] | `GroundUnscRock.png` | UNSC: rock. | 1024 x 1024 |
+| [ ] | `GroundCovenantPlate.png` | Covenant: metal plates. | 1024 x 1024 |
+| [ ] | `GroundCovenantRock.png` | Covenant: rock. | 1024 x 1024 |
+| [ ] | `GroundCovenantSand.png` | Covenant: sand. | 1024 x 1024 |
+| [ ] | `GroundFloodMass.png` | Flood: the main living mass. | 1024 x 1024 |
+| [ ] | `GroundFloodRot.png` | Flood: rot. | 1024 x 1024 |
+| [ ] | `GroundFloodSinew.png` | Flood: sinew. | 1024 x 1024 |
+| [ ] | `GroundGrain.png` | All maps: a grey grain over concrete and metal. Keep it close to plain grey, as colour comes from elsewhere. | 1024 x 1024 |
+| [ ] | `GroundMacro.png` | All maps: large soft patches, so that the tiling doesn't show. Keep it close to plain grey too. | 512 x 512 |
+
+The colours of the sky, sun and haze for each faction are in `Presentation/Terrain/TerrainTheme.cs`, if new ground wants a different light.
+
+## Models you already gave me
+
+Fitted to their units, so there is nothing left to do here.
+
+- **UNSC:** Spartan (and the 5 Noble Spartans, recoloured), Archer Missile Pod, Cobra, Rhino, Sparrowhawk, Vulture, Longsword (in place of the Shortsword).
+- **Covenant:** Elite, Zealot (the Elite in gold), Ghost, Hunter Pair, Hunter Captain, Grunt Goblin, Skitterer.
+- **Flood:** Flood Abomination, Swarm Form, Infested Elite and Infested Ghost (the Elite and Ghost, tinted).

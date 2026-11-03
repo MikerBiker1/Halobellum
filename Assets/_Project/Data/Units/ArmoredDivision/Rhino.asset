@@ -89,8 +89,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 55eb2524ec7c2f79d1df3375896c25b4, type: 2}
   - {fileID: 11400000, guid: 521ab49439acdf6fdce56318d825ac5c, type: 2}
   - {fileID: 11400000, guid: f918d46a282506afdd789075858c88fa, type: 2}
-  prefab: {fileID: 5401602701124383526, guid: f99693f1b5a97404eafcfdac5bd21ca2, type: 3}
-  keepsOwnMaterials: 0
+  prefab: {fileID: 1592399577847213402, guid: fcee611766709a346a82a01f0341fd70, type: 3}
+  keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
   bakedTint: {r: 1, g: 1, b: 1, a: 0}
   bakedScale: 1
