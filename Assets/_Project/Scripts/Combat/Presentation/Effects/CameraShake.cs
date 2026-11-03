@@ -2,7 +2,7 @@
 // A small camera shake on big blasts (M10) that can be turned off in Settings or with the K key: both are the one saved setting in GameSettings. BattleCameraController
 // sets the camera's position from nothing every frame, so this runs after it and adds a small offset that can't add up. It leaves the
 // camera alone whenever BattleCameraController is off (test tools looking closely at something). It shakes by a share of the distance
-// to the ground, so that it feels the same at every zoom, and less the further the blast is from the middle of the view.
+// to the ground, so that it feels the same at every zoom and every turn of the camera, and less the further the blast is from the middle of the view.
 // Depends on: BattleCameraController, GameSettings, Unity Input System, UnityEngine.
 
 using UnityEngine;
@@ -86,7 +86,7 @@ namespace Halobellum.Presentation
             _trauma = Mathf.Max(0f, _trauma - DecayPerSecond * Time.unscaledDeltaTime);
             if (_control == null || !_control.isActiveAndEnabled || !ShakeEnabled) return;
 
-            float amount = ShakeShare(_trauma) * Mathf.Max(20f, transform.position.y / 0.82f);
+            float amount = ShakeShare(_trauma) * Mathf.Max(20f, _control.Distance);
             float time = Time.unscaledTime * 21f;
             float x = (Mathf.PerlinNoise(time, 0.3f) - 0.5f) * 2f;
             float y = (Mathf.PerlinNoise(0.7f, time) - 0.5f) * 2f;

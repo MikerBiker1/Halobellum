@@ -101,6 +101,7 @@ Shader "Halobellum/TerrainGround"
 
             half4 Fragment(Varyings input) : SV_Target
             {
+                KeepFloorInView(input.positionWS, input.positionCS.xy);
                 float2 xz = input.positionWS.xz;
                 half4 control = SAMPLE_TEXTURE2D(_Control, sampler_Control, input.uv);
                 half4 macro = SAMPLE_TEXTURE2D(_Macro, sampler_Macro, xz * 0.0031);
@@ -141,6 +142,7 @@ Shader "Halobellum/TerrainGround"
 
             half4 Fragment(Varyings input) : SV_Target
             {
+                KeepFloorInView(input.positionWS, input.positionCS.xy);
                 return 0;
             }
             ENDHLSL

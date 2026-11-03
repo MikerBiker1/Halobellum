@@ -74,6 +74,7 @@ Shader "Halobellum/TerrainProp"
 
             half4 Fragment(Varyings input) : SV_Target
             {
+                KeepFloorInView(input.positionWS, input.positionCS.xy);
                 half3 normal = normalize(input.normalWS);
                 float3 p = input.positionWS;
                 // Read the grain from whichever side the surface mostly faces.
@@ -101,6 +102,7 @@ Shader "Halobellum/TerrainProp"
 
             half4 Fragment(Varyings input) : SV_Target
             {
+                KeepFloorInView(input.positionWS, input.positionCS.xy);
                 return 0;
             }
             ENDHLSL

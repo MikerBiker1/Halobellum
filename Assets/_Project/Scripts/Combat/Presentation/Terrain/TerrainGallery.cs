@@ -1,8 +1,9 @@
 // TerrainGallery.cs
 // Test tool for built games: goes through every faction and every layout at the game's camera and saves pictures, so that a person can judge the terrain without playing. It does nothing unless the game is started with
 // "-terrainGallery <folder>". For each map it takes a picture with bare ground, one with armies placed during deployment, one in battle, a wide one zoomed out, a close one, and one looking low at the horizon, and logs the triangle count and build time.
-// Add "-terrainMaps 2" to only do that many maps, for a quick look.
-// Depends on: SandboxController, BattleController, BattlefieldView, Halobellum.Core, UnityEngine.
+// Add "-terrainMaps 2" to only do that many maps, for a quick look. Add "-terrainRing" to take instead, for each map, pictures from all round: the bare squares and the ghost of a squad being
+// placed and the hexagons of an item being picked from four sides, then in battle from 8 directions at the camera's default tilt and at both of its limits, zoomed out, and from 8 directions close up across the floor's edge nearest the camera.
+// Depends on: SandboxController, BattleController, BattlefieldView, BattleCameraController, DeploymentInput, Halobellum.Core, UnityEngine.
 
 using System;
 using System.Collections;
@@ -23,6 +24,7 @@ namespace Halobellum.Presentation
         private BattleController _battle;
         private BattlefieldView _field;
         private int _limit = int.MaxValue;
+        private bool _ring;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Hook()
@@ -52,6 +54,7 @@ namespace Halobellum.Presentation
             Directory.CreateDirectory(_folder);
             int limitAt = Array.IndexOf(args, "-terrainMaps");
             if (limitAt >= 0 && limitAt + 1 < args.Length && int.TryParse(args[limitAt + 1], out int limit)) _limit = limit;
+            _ring = Array.IndexOf(args, "-terrainRing") >= 0;
 
             _sandbox = GetComponent<SandboxController>();
             _battle = GetComponent<BattleController>();
@@ -73,11 +76,12 @@ namespace Halobellum.Presentation
                     string other = factions[(f + 1 + l) % factions.Length];
                     if (other == factions[f]) other = factions[(f + 1) % factions.Length];
                     int otherLayouts = TerrainLayouts.For(other).Count;
-                    yield return Pictures(factions[f], l, other, (l + f) % otherLayouts, $"{factions[f]}{l}_{layouts[l].Name.Replace(" ", "")}");
+                    string name = $"{factions[f]}{l}_{layouts[l].Name.Replace(" ", "")}";
+                    yield return _ring ? Ring(factions[f], l, other, (l + f) % otherLayouts, name) : Pictures(factions[f], l, other, (l + f) % otherLayouts, name);
                     done++;
                 }
             }
-            if (done < _limit)
+            if (done < _limit && !_ring)
             {
                 // A mirror match, and the Flood's dark units on their own ground.
                 yield return Pictures(BattleFactions.Flood, 0, BattleFactions.Flood, 1, "FloodMirror");
@@ -173,6 +177,117 @@ namespace Halobellum.Presentation
             view.transform.SetPositionAndRotation(position, rotation);
             control.enabled = true;
             _battle.Speed = speed;
+        }
+
+        /// <summary>The same map from all round, through the real camera controller.</summary>
+        private IEnumerator Ring(string a, int layoutA, string b, int layoutB, string name)
+        {
+            _sandbox.ResetBattle();
+            _sandbox.Clear(Team.A);
+            _sandbox.Clear(Team.B);
+            yield return null;
+            _field.ShowExactly(a, b, 12345, layoutA, layoutB);
+            Army(Team.A, a);
+            Army(Team.B, b);
+            yield return new WaitForSecondsRealtime(1f);
+
+            Camera view = Camera.main;
+            var control = view.GetComponent<BattleCameraController>();
+            var input = GetComponent<DeploymentInput>();
+            float tilt = BattleCameraController.DefaultPitch;
+
+            // Placing a squad: the ghost must land under the pointer, whichever way the camera faces.
+            foreach (SandboxController.SandboxUnit unit in _sandbox.Units)
+            {
+                if (unit.Faction != a) continue;
+                _sandbox.BeginPlacing(unit.Stats);
+                break;
+            }
+            for (int yaw = 0; yaw < 360; yaw += 90)
+            {
+                control.SetView(Vector2.zero, yaw, tilt, 130f);
+                yield return null;
+                yield return null;
+                // A point towards the back of the player's zone, away from the army that is already there.
+                input.PointAt(view.WorldToScreenPoint(new Vector3(30f, 0f, -50f)), false);
+                Shot($"{name}_place_y{yaw:000}");
+                yield return null;
+                yield return null;
+            }
+            _sandbox.CancelPlacement();
+
+            // Picking an item: the hexagons must stand over their squads from every side.
+            _sandbox.BeginPlacingItem(_sandbox.Items[0]);
+            for (int yaw = 45; yaw < 360; yaw += 90)
+            {
+                control.SetView(new Vector2(0f, -30f), yaw, tilt, 70f);
+                yield return null;
+                yield return null;
+                Shot($"{name}_hex_y{yaw:000}");
+                yield return null;
+                yield return null;
+            }
+            _sandbox.CancelPlacement();
+
+            _battle.Speed = 2f;
+            _sandbox.Run();
+            float limit = 40f;
+            while (limit > 0f && _battle.Simulation != null && _battle.Simulation.ElapsedSeconds < 9f && !_battle.Simulation.IsFinished)
+            {
+                limit -= Time.unscaledDeltaTime;
+                yield return null;
+            }
+            float speed = _battle.Speed;
+            _battle.Speed = 0f;
+            yield return new WaitForSecondsRealtime(1.1f);
+
+            foreach (float t in new[] { tilt, control.MinPitch, control.MaxPitch })
+            {
+                for (int yaw = 0; yaw < 360; yaw += 45)
+                {
+                    control.SetView(Vector2.zero, yaw, t, control.MaxDistance);
+                    yield return null;
+                    Shot($"{name}_wide_p{t:00}_y{yaw:000}");
+                    yield return null;
+                    yield return null;
+                }
+            }
+            for (int yaw = 0; yaw < 360; yaw += 45)
+            {
+                // The edge of the floor nearest the camera: where something standing outside it could get in the way.
+                float towards = yaw * Mathf.Deg2Rad;
+                control.SetView(new Vector2(-Mathf.Sin(towards), -Mathf.Cos(towards)) * 300f, yaw, control.MinPitch, 70f);
+                yield return null;
+                Shot($"{name}_near_y{yaw:000}");
+                yield return null;
+                yield return null;
+                // Lower and closer, where the camera could stand among the hills.
+                control.SetView(new Vector2(-Mathf.Sin(towards), -Mathf.Cos(towards)) * 300f, yaw, control.MinPitch, 45f);
+                yield return null;
+                Shot($"{name}_low_y{yaw:000}");
+                yield return null;
+                yield return null;
+            }
+            // What the turned view costs against the default one, with nothing being saved.
+            control.ResetView();
+            yield return FrameTime($"{name}, default view");
+            control.SetView(Vector2.zero, 180f, control.MinPitch, control.MaxDistance);
+            yield return FrameTime($"{name}, from the far side at the lowest tilt, zoomed out");
+            control.ResetView();
+            _battle.Speed = speed;
+        }
+
+        private static IEnumerator FrameTime(string what)
+        {
+            yield return new WaitForSecondsRealtime(0.5f);
+            float started = Time.realtimeSinceStartup;
+            int frames = 0;
+            while (Time.realtimeSinceStartup - started < 2f)
+            {
+                frames++;
+                yield return null;
+            }
+            Debug.Log($"Terrain frame time, {what}: {(Time.realtimeSinceStartup - started) * 1000f / Mathf.Max(1, frames):0.0} ms.");
         }
 
         private void Army(Team team, string faction)

@@ -119,7 +119,7 @@ namespace Halobellum.Presentation
             if (toB > 0f) h += themeB.HillAt(x, z, outside, seedBx, seedBz) * toB;
 
             h *= TerrainNoise.Smooth(flat, flat + 34f, outside);
-            // The south never rises in front of the camera: keep a low slope in line with the floor.
+            // The south never rises in front of the camera's default view: keep a low slope in line with the floor.
             if (z < -halfLength)
             {
                 float sideways = Mathf.Max(0f, Mathf.Abs(x) - halfWidth);

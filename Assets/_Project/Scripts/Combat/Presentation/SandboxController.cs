@@ -8,7 +8,7 @@
 // Every item is free to use (decision D34): pick one from Items, then a squad on either side; one
 // item per squad, and the stats window can take it off again. Spells are not in the sandbox.
 // The HUD (Scripts/UI/SandboxHud) and DeploymentInput call the public methods here; tests do too.
-// Depends on: BattleController, SquadSelection, IDeploymentPlacement, Halobellum.Economy
+// Depends on: BattleController, SquadSelection, IDeploymentPlacement, RightClick, Halobellum.Economy
 //             (PlayerState, DeploymentGrid), Halobellum.Units (FactionDefinition, UnitDefinition), BattleFactions, UnityEngine.
 
 using System;
@@ -144,8 +144,7 @@ namespace Halobellum.Presentation
         {
             if (PlacingItem == null) return;
             Keyboard keyboard = Keyboard.current;
-            Mouse mouse = Mouse.current;
-            if ((keyboard != null && keyboard.escapeKey.wasPressedThisFrame) || (mouse != null && mouse.rightButton.wasPressedThisFrame)) CancelPlacement();
+            if ((keyboard != null && keyboard.escapeKey.wasPressedThisFrame) || RightClick.WasClicked) CancelPlacement();
         }
 
         // ------------------------------------------------------------------ placing

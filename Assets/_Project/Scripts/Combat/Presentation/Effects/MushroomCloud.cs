@@ -4,8 +4,8 @@
 // The whole shape is worked out from the cloud's age for every puff, each frame: flying particles can't hold a stem and a cap together, and this way
 // it freezes and speeds up with the battle like everything else. Puffs that flow (up the stem, out over the cap's crown) fade at both ends of their
 // run, so nothing pops. Plain numbers: no random numbers (each puff's differences come from its index and the cloud's seed), nothing allocated.
-// The camera stands to the south and looks down at 55 degrees, so a round cap would cover its own stem. The cap is narrower north to south than east
-// to west (CapDepthShare) to leave the stem in view. No camera ever goes round to see it.
+// The camera looks down at it at a slant, so a round cap would cover its own stem. The cap is narrower along the way the camera faces at the blast than across it (CapDepthShare)
+// to leave the stem in view. It keeps that shape if the camera turns afterwards: a cloud that turned with the camera would look wrong.
 // Looks only. Depends on: UnityEngine.
 
 using UnityEngine;
@@ -41,7 +41,26 @@ namespace Halobellum.Presentation
 
         public const float CapDepthShare = 0.68f;
 
+        /// <summary>Facing north, as the camera does when the game starts.</summary>
+        public static readonly Vector2 North = new Vector2(0f, 1f);
+
         private const float TwoPi = Mathf.PI * 2f;
+
+        /// <summary>The way a camera faces along the ground, for a blast seen from it: north if it looks straight down.</summary>
+        public static Vector2 FacingOf(Vector3 cameraForward)
+        {
+            var facing = new Vector2(cameraForward.x, cameraForward.z);
+            return facing.sqrMagnitude > 1e-4f ? facing.normalized : North;
+        }
+
+        /// <summary>Squeezes a part of the cap along the way the camera faces.</summary>
+        private static Vector3 Narrowed(Vector3 offset, Vector2 facing)
+        {
+            float along = (offset.x * facing.x + offset.z * facing.y) * (1f - CapDepthShare);
+            offset.x -= facing.x * along;
+            offset.z -= facing.y * along;
+            return offset;
+        }
 
         /// <summary>The height of the cap's middle above the ground.</summary>
         public static float CapHeight(float age, float radius) => radius * (0.6f + 2.9f * Rise(age) + 0.05f * age);
@@ -66,7 +85,10 @@ namespace Halobellum.Presentation
         private static float SmokeLeft(float age, float goesFrom, float goneBy) => Mathf.SmoothStep(0f, 1f, age / 0.45f) * (1f - Mathf.SmoothStep(0f, 1f, (age - goesFrom) / (goneBy - goesFrom)));
 
         /// <summary>One puff of smoke, by index from 0 to SmokePuffs.</summary>
-        public static Puff Smoke(int index, float age, float radius, int seed)
+        public static Puff Smoke(int index, float age, float radius, int seed) => Smoke(index, age, radius, seed, North);
+
+        /// <summary>One puff of smoke, by index from 0 to SmokePuffs, of a cloud seen from a camera that faced this way at the blast.</summary>
+        public static Puff Smoke(int index, float age, float radius, int seed, Vector2 facing)
         {
             uint id = (uint)(index + seed * 131);
             float a = Hash(id), b = Hash(id + 1000u), c = Hash(id + 2000u);
@@ -74,19 +96,22 @@ namespace Halobellum.Presentation
             index -= StemPuffs;
             if (index < SkirtPuffs) return SkirtSmoke(index, id, a, b, c, age, radius);
             index -= SkirtPuffs;
-            if (index < RimAround * RimAcross) return RimSmoke(index, id, a, b, c, age, radius);
-            return CrownSmoke(index - RimAround * RimAcross, id, a, b, c, age, radius);
+            if (index < RimAround * RimAcross) return RimSmoke(index, id, a, b, c, age, radius, facing);
+            return CrownSmoke(index - RimAround * RimAcross, id, a, b, c, age, radius, facing);
         }
 
         /// <summary>One lick of fire, by index from 0 to FirePuffs.</summary>
-        public static Puff Fire(int index, float age, float radius, int seed)
+        public static Puff Fire(int index, float age, float radius, int seed) => Fire(index, age, radius, seed, North);
+
+        /// <summary>One lick of fire, by index from 0 to FirePuffs, of a cloud seen from a camera that faced this way at the blast.</summary>
+        public static Puff Fire(int index, float age, float radius, int seed, Vector2 facing)
         {
             uint id = (uint)(index + seed * 137 + 5000);
             float a = Hash(id), b = Hash(id + 1000u), c = Hash(id + 2000u);
             if (index < StemFires) return StemFire(index, id, a, b, c, age, radius);
             index -= StemFires;
             if (index < BallFires) return BallFire(id, a, b, c, age, radius);
-            return RimFire(index - BallFires, id, a, b, c, age, radius);
+            return RimFire(index - BallFires, id, a, b, c, age, radius, facing);
         }
 
         // ------------------------------------------------------------------ smoke
@@ -117,7 +142,7 @@ namespace Halobellum.Presentation
             return new Puff { Offset = offset, Size = radius * Mathf.Lerp(0.95f, 1.4f, b), Color = color, Degrees = b * 360f + age * 9f, Seed = id };
         }
 
-        private static Puff RimSmoke(int index, uint id, float a, float b, float c, float age, float radius)
+        private static Puff RimSmoke(int index, uint id, float a, float b, float c, float age, float radius, Vector2 facing)
         {
             int ring = index / RimAcross, across = index % RimAcross;
             float around = (ring + (across % 2) * 0.5f + a * 0.3f) / RimAround * TwoPi + age * 0.05f;
@@ -126,12 +151,12 @@ namespace Halobellum.Presentation
             float cosRoll = Mathf.Cos(roll), sinRoll = Mathf.Sin(roll);
             float thick = RimThickness(age, radius);
             float reach = RimRadius(age, radius) + thick * cosRoll;
-            var offset = new Vector3(Mathf.Cos(around) * reach, CapHeight(age, radius) + thick * 0.85f * sinRoll, Mathf.Sin(around) * reach * CapDepthShare);
+            var offset = Narrowed(new Vector3(Mathf.Cos(around) * reach, CapHeight(age, radius) + thick * 0.85f * sinRoll, Mathf.Sin(around) * reach), facing);
             float size = radius * (0.62f + 0.42f * Spread(age)) * Mathf.Lerp(0.88f, 1.12f, c);
             return CapPuff(offset, size, sinRoll, around, a, b, c, age, id);
         }
 
-        private static Puff CrownSmoke(int index, uint id, float a, float b, float c, float age, float radius)
+        private static Puff CrownSmoke(int index, uint id, float a, float b, float c, float age, float radius, Vector2 facing)
         {
             // Out from the middle of the top, to where the rim takes over.
             float flow = Mathf.Repeat((index + a * 0.7f) / CrownPuffs + age * 0.11f, 1f);
@@ -139,7 +164,7 @@ namespace Halobellum.Presentation
             float around = b * TwoPi + age * 0.1f;
             float reach = RimRadius(age, radius) * outward;
             float thick = RimThickness(age, radius);
-            var offset = new Vector3(Mathf.Cos(around) * reach, CapHeight(age, radius) + thick * (1.25f - 0.4f * flow), Mathf.Sin(around) * reach * CapDepthShare);
+            var offset = Narrowed(new Vector3(Mathf.Cos(around) * reach, CapHeight(age, radius) + thick * (1.25f - 0.4f * flow), Mathf.Sin(around) * reach), facing);
             float size = radius * (0.58f + 0.36f * Spread(age)) * Mathf.Lerp(0.88f, 1.12f, c);
             Puff puff = CapPuff(offset, size, 1f, around, a, b, c, age, id);
             puff.Color.a *= Flowing(flow);
@@ -196,14 +221,14 @@ namespace Halobellum.Presentation
             return FirePuff(offset, radius * Mathf.Lerp(0.8f, 1.2f, c), strength, age * 0.3f + 0.1f, a, b, age, id);
         }
 
-        private static Puff RimFire(int index, uint id, float a, float b, float c, float age, float radius)
+        private static Puff RimFire(int index, uint id, float a, float b, float c, float age, float radius, Vector2 facing)
         {
             float around = (index + a * 0.9f) / RimFires * TwoPi + age * 0.07f;
             float roll = (index * 2.4f + b) - Rolled(age);
             float cosRoll = Mathf.Cos(roll), sinRoll = Mathf.Sin(roll);
             float thick = RimThickness(age, radius);
             float reach = RimRadius(age, radius) + thick * cosRoll * 0.85f;
-            var offset = new Vector3(Mathf.Cos(around) * reach, CapHeight(age, radius) + thick * 0.8f * sinRoll, Mathf.Sin(around) * reach * CapDepthShare);
+            var offset = Narrowed(new Vector3(Mathf.Cos(around) * reach, CapHeight(age, radius) + thick * 0.8f * sinRoll, Mathf.Sin(around) * reach), facing);
             // Fire goes out on the top first. By the time it has gone everywhere, CapPuff's smoke has taken over the glow.
             float up = sinRoll * 0.5f + 0.5f;
             float strength = FireLeft(age, Mathf.Lerp(1.3f, 1f, up), Mathf.Lerp(2.7f, 2f, up));

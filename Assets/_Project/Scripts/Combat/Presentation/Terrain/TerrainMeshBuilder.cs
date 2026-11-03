@@ -15,6 +15,8 @@ namespace Halobellum.Presentation
         private readonly List<Vector3> _normals = new List<Vector3>();
         private readonly List<Color32> _colors = new List<Color32>();
         private readonly List<Vector2> _uvs = new List<Vector2>();
+        private readonly List<Vector2> _faces = new List<Vector2>();
+        private bool _anyFace;
         private readonly List<int> _triangles = new List<int>();
 
         // Where the next solid thing stands.
@@ -47,6 +49,7 @@ namespace Halobellum.Presentation
             mesh.SetNormals(_normals);
             mesh.SetColors(_colors);
             mesh.SetUVs(0, _uvs);
+            if (_anyFace) mesh.SetUVs(1, _faces);
             mesh.SetTriangles(_triangles, 0, true);
             return mesh;
         }
@@ -70,7 +73,17 @@ namespace Halobellum.Presentation
             _normals.Add(normal);
             _colors.Add(color);
             _uvs.Add(Uv);
+            _faces.Add(Vector2.zero);
             return _positions.Count - 1;
+        }
+
+        /// <summary>A vertex of something that always faces the camera: it stands at its middle, and the shader moves it this far right and up along the screen (TerrainGlow).</summary>
+        private int FacingVertex(Vector3 middle, Vector2 face, Vector3 normal, Color32 color)
+        {
+            int vertex = Vertex(middle, normal, color);
+            _faces[vertex] = face;
+            _anyFace = true;
+            return vertex;
         }
 
         // ------------------------------------------------------------------ solid things
@@ -355,18 +368,16 @@ namespace Halobellum.Presentation
 
         // ------------------------------------------------------------------ light
 
-        /// <summary>A soft round glow in the air around a world point, tilted to face the fixed battle camera.</summary>
+        /// <summary>A soft round glow in the air around a world point, always facing the camera.</summary>
         public void Halo(Vector3 centre, float radius, Color32 color, int segments = 8)
         {
-            Vector3 right = Vector3.right * radius;
-            Vector3 up = new Vector3(0f, 0.57f, 0.82f) * radius; // Up along the screen at the battle camera's pitch.
             Color32 clear = new Color32(color.r, color.g, color.b, 0);
             int middle = Vertex(centre, Vector3.zero, color);
             int first = _positions.Count;
             for (int i = 0; i < segments; i++)
             {
                 float a = i * Mathf.PI * 2f / segments;
-                Vertex(centre + right * Mathf.Cos(a) + up * Mathf.Sin(a), Vector3.zero, clear);
+                FacingVertex(centre, new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * radius, Vector3.zero, clear);
             }
             for (int i = 0; i < segments; i++)
             {
@@ -380,14 +391,12 @@ namespace Halobellum.Presentation
         public void Mote(Vector3 position, float size, Color32 color, Vector3 drift, float phase)
         {
             Uv = new Vector2(0.4f, phase);
-            Vector3 r = new Vector3(size, 0f, 0f);
-            Vector3 u = new Vector3(0f, 0.57f, 0.82f) * size;
             var clear = new Color32(color.r, color.g, color.b, 0);
             int middle = Vertex(position, drift, color);
-            int a = Vertex(position + r, drift, clear);
-            int b = Vertex(position + u, drift, clear);
-            int c = Vertex(position - r, drift, clear);
-            int d = Vertex(position - u, drift, clear);
+            int a = FacingVertex(position, new Vector2(size, 0f), drift, clear);
+            int b = FacingVertex(position, new Vector2(0f, size), drift, clear);
+            int c = FacingVertex(position, new Vector2(-size, 0f), drift, clear);
+            int d = FacingVertex(position, new Vector2(0f, -size), drift, clear);
             _triangles.Add(middle); _triangles.Add(b); _triangles.Add(a);
             _triangles.Add(middle); _triangles.Add(c); _triangles.Add(b);
             _triangles.Add(middle); _triangles.Add(d); _triangles.Add(c);

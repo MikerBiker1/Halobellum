@@ -31,6 +31,8 @@ namespace Halobellum.Presentation
             public float Until;
             public float NextStep;
             public Color Color;
+            /// <summary>The way the camera faced when it started: a mushroom cloud's cap is narrowed along it.</summary>
+            public Vector2 Facing;
         }
 
         private const int MostRunning = 24;
@@ -118,7 +120,13 @@ namespace Halobellum.Presentation
         private void Start(SpellLook look, Vector3 at, float radius, float seconds, Color color)
         {
             if (_runningCount >= MostRunning) return;
-            _running[_runningCount++] = new Running { Look = look, Position = at, Radius = radius, Started = _kit.BattleTime, Until = _kit.BattleTime + seconds, Color = color };
+            _running[_runningCount++] = new Running { Look = look, Position = at, Radius = radius, Started = _kit.BattleTime, Until = _kit.BattleTime + seconds, Color = color, Facing = CameraFacing() };
+        }
+
+        private static Vector2 CameraFacing()
+        {
+            Camera camera = Camera.main;
+            return camera != null ? MushroomCloud.FacingOf(camera.transform.forward) : MushroomCloud.North;
         }
 
         // ------------------------------------------------------------------ every frame
@@ -146,7 +154,7 @@ namespace Halobellum.Presentation
             switch (run.Look)
             {
                 case SpellLook.Nuke:
-                    DrawMushroom(run.Position, run.Radius, now - run.Started, (int)(run.Started * 97f));
+                    DrawMushroom(run.Position, run.Radius, now - run.Started, (int)(run.Started * 97f), run.Facing);
                     break;
                 case SpellLook.PlasmaStorm:
                 case SpellLook.BlightRain:
@@ -313,16 +321,16 @@ namespace Halobellum.Presentation
         }
 
         /// <summary>The mushroom as it is at this moment after the blast, redrawn each frame from MushroomCloud, so it holds its shape and rolls.</summary>
-        private void DrawMushroom(Vector3 at, float radius, float age, int seed)
+        private void DrawMushroom(Vector3 at, float radius, float age, int seed, Vector2 facing)
         {
             for (int i = 0; i < MushroomCloud.SmokePuffs; i++)
             {
-                MushroomCloud.Puff puff = MushroomCloud.Smoke(i, age, radius, seed);
+                MushroomCloud.Puff puff = MushroomCloud.Smoke(i, age, radius, seed, facing);
                 if (puff.Color.a > 0.004f) _kit.CloudSmoke(at + puff.Offset, puff.Size, puff.Color, puff.Degrees, puff.Seed);
             }
             for (int i = 0; i < MushroomCloud.FirePuffs; i++)
             {
-                MushroomCloud.Puff puff = MushroomCloud.Fire(i, age, radius, seed);
+                MushroomCloud.Puff puff = MushroomCloud.Fire(i, age, radius, seed, facing);
                 if (puff.Color.a > 0.004f) _kit.CloudFire(at + puff.Offset, puff.Size, puff.Color, puff.Degrees, puff.Seed);
             }
         }

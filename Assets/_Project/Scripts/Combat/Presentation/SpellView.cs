@@ -4,7 +4,7 @@
 //   Deployment: each of the player's placed spells shows its area as a transparent disc with a ring,
 //     red for offensive spells (anywhere on the field) and blue for defensive ones (your own side).
 //     While a spell is being placed, its outline follows the mouse (grey where it cannot go):
-//     left-click places it, right-click or Escape cancels. The enemy's spells are never shown here.
+//     left-click places it, a right-click (not a drag: RightClick) or Escape cancels. The enemy's spells are never shown here.
 //   Battle: when the battle starts, every spell of both sides shows its outline (they are revealed
 //     now) until it has gone off. Each effect flashes: strikes and zone ticks a bright burst in the
 //     colour of their damage type, buffs and EMPs a ring pulse; zones glow while they last; smoke is
@@ -14,7 +14,7 @@
 // SpellEffects (run by CombatEffectsView, so that spells also show in a sandbox or test scene) draws what each strike looks like: M10.
 // Discs are flat quads with a texture drawn in code and the built-in Sprites/Default shader (always
 // included in builds), so no material assets are needed. Looks only; the simulation is unchanged.
-// Depends on: MatchController, BattleController, UiHitAreas, PlaceholderArt, Halobellum.Combat,
+// Depends on: MatchController, BattleController, RightClick, UiHitAreas, PlaceholderArt, Halobellum.Combat,
 //             Halobellum.Economy (OwnedSpell), Halobellum.Core (SpellStats), Unity Input System.
 
 using System.Collections.Generic;
@@ -113,8 +113,7 @@ namespace Halobellum.Presentation
             if (_match.PlacingItem != null)
             {
                 Keyboard itemKeyboard = Keyboard.current;
-                Mouse itemMouse = Mouse.current;
-                if ((itemKeyboard != null && itemKeyboard.escapeKey.wasPressedThisFrame) || (itemMouse != null && itemMouse.rightButton.wasPressedThisFrame))
+                if ((itemKeyboard != null && itemKeyboard.escapeKey.wasPressedThisFrame) || RightClick.WasClicked)
                     _match.CancelItemPlacement();
             }
 
@@ -127,7 +126,7 @@ namespace Halobellum.Presentation
             if (placing == null) return;
             Keyboard keyboard = Keyboard.current;
             Mouse mouse = Mouse.current;
-            if ((keyboard != null && keyboard.escapeKey.wasPressedThisFrame) || (mouse != null && mouse.rightButton.wasPressedThisFrame))
+            if ((keyboard != null && keyboard.escapeKey.wasPressedThisFrame) || RightClick.WasClicked)
             {
                 if (_match.PlacingLineStart != null) _match.ClearLineStart(); // Back one step.
                 else _match.CancelSpellPlacement();
@@ -159,7 +158,8 @@ namespace Halobellum.Presentation
             if (click && lineValid) _match.PlaceLineTowards(position);
         }
 
-        private static bool PointerOnGround(Vector2 pointer, out Vec2 position)
+        /// <summary>The point on the ground under the pointer, seen from wherever the camera is now.</summary>
+        public static bool PointerOnGround(Vector2 pointer, out Vec2 position)
         {
             position = Vec2.Zero;
             Camera camera = Camera.main;

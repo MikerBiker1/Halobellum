@@ -1,9 +1,9 @@
 // SquadSelection.cs
 // Lets the player select a squad by left-clicking any of its bodies (Bible Section 13: selecting a
-// squad opens the stats window). Right-click or Escape clears the selection. Picking uses the
+// squad opens the stats window). A right-click (not a drag, which turns the camera: RightClick) or Escape clears the selection. Picking uses the
 // simulation's positions and collision sizes, so no physics colliders are needed. Clicks on HUD
 // windows are ignored (see UiHitAreas).
-// Depends on: BattleController, UnitViewManager, UiHitAreas, Halobellum.Combat, Unity Input System.
+// Depends on: BattleController, UnitViewManager, RightClick, UiHitAreas, Halobellum.Combat, Unity Input System.
 
 using System;
 using Halobellum.Combat;
@@ -42,18 +42,21 @@ namespace Halobellum.Presentation
             Mouse mouse = Mouse.current;
             Keyboard keyboard = Keyboard.current;
 
-            if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) Select(-1);
-            if (mouse == null) return;
-            if (mouse.rightButton.wasPressedThisFrame) Select(-1);
-            if (!mouse.leftButton.wasPressedThisFrame) return;
+            if ((keyboard != null && keyboard.escapeKey.wasPressedThisFrame) || RightClick.WasClicked) Select(-1);
+            if (mouse == null || !mouse.leftButton.wasPressedThisFrame) return;
 
             Vector2 pointer = mouse.position.ReadValue();
             if (UiHitAreas.Contains(pointer)) return;
 
-            Camera camera = Camera.main;
-            if (camera == null) return;
-            SimUnit picked = Pick(camera.ScreenPointToRay(pointer));
+            SimUnit picked = BodyAt(pointer);
             SelectByPlayer(picked != null ? picked.SquadId : -1);
+        }
+
+        /// <summary>The living body under the pointer, seen from wherever the camera is now, or null.</summary>
+        public SimUnit BodyAt(Vector2 pointer)
+        {
+            Camera camera = Camera.main;
+            return camera != null ? Pick(camera.ScreenPointToRay(pointer)) : null;
         }
 
         /// <summary>The player's own click on a squad: like Select, and heard. Select alone stays silent, because it also runs each time a preview is rebuilt and when a bought squad lands.</summary>
