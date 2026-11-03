@@ -17,9 +17,9 @@ MonoBehaviour:
   tier: 2
   unlockCost: 50
   squadSize: 1
-  cost: 350
-  baseDamage: 70
-  maxHealth: 650
+  cost: 300
+  baseDamage: 60
+  maxHealth: 600
   armorType: 1
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -30,7 +30,7 @@ MonoBehaviour:
   targetFilter: 0
   weapons:
   - weaponName: Carpet Bombs
-    damagePerShot: 170
+    damagePerShot: 160
     fireInterval: 2.5
     range: 5
     minRange: 0

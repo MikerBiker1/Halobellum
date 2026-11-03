@@ -3396,8 +3396,8 @@
   "tier": 2,
   "unlock": 50,
   "squad": 1,
-  "cost": 350,
-  "hp": 650,
+  "cost": 300,
+  "hp": 600,
   "armor": "L",
   "speed": 5,
   "radius": 2.8,
@@ -3406,7 +3406,7 @@
   "weapons": [
    {
     "name": "Carpet Bombs",
-    "dmg": 170,
+    "dmg": 160,
     "interval": 2.5,
     "range": 5,
     "minr": 0,

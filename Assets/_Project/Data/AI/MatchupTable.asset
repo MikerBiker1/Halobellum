@@ -3412,7 +3412,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Ghost
     defender: Longsword
-    winRate: 1
+    winRate: 0
   - attacker: Ghost
     defender: Vulture
     winRate: 1
@@ -7491,416 +7491,416 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Spartan Heavy Weapons
+    defender: Longsword
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Vulture
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Condor Gunship
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Chopper
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Marauder
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Reaver
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Skitterer
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Goliath
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Hunter Captain
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Grunt Goblin
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Infested Marine
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Infested Warthog
+    winRate: 0.2
+  - attacker: Spartan Heavy Weapons
+    defender: Infested Scorpion
+    winRate: 0.7
+  - attacker: Spartan Heavy Weapons
+    defender: Infested Hornet
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Juggernaut
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Spartan Heavy Weapons
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Infested Wraith
+    winRate: 0.9
+  - attacker: Spartan Heavy Weapons
+    defender: Infested Banshee
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Spawner
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Marine
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Warthog
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Scorpion
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Wolverine
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Hornet
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Archer Missile Pod
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Pelican
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Spartan
+    winRate: 0.1
+  - attacker: Spartan Grenadier
+    defender: Mantis
+    winRate: 0.1
+  - attacker: Spartan Grenadier
+    defender: Elephant
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Grunt
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Ghost
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Elite
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Wraith
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Vampire
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Banshee
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Zealot
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Scarab
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Infection Forms
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Carrier Form
+    winRate: 0.6
+  - attacker: Spartan Grenadier
+    defender: Combat Form
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Stalker Form
+    winRate: 0.9
+  - attacker: Spartan Grenadier
+    defender: Pure Form Ranged
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Swarm Form
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Seeder
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Infected Pelican
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Infected Phantom
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Spartan CQB
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Spartan Fireteam
+    winRate: 0.4
+  - attacker: Spartan Grenadier
+    defender: Gremlin
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Cobra
+    winRate: 0.2
+  - attacker: Spartan Grenadier
+    defender: Rhino
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Grizzly
+    winRate: 0.4
+  - attacker: Spartan Grenadier
+    defender: Sparrowhawk
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Longsword
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Vulture
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Condor Gunship
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Chopper
+    winRate: 0.9
+  - attacker: Spartan Grenadier
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Marauder
+    winRate: 0.6
+  - attacker: Spartan Grenadier
+    defender: Reaver
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Skitterer
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Goliath
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Hunter Captain
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Grunt Goblin
+    winRate: 0.8
+  - attacker: Spartan Grenadier
+    defender: Infested Marine
+    winRate: 0.8
+  - attacker: Spartan Grenadier
+    defender: Infested Warthog
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Infested Scorpion
+    winRate: 0.8
+  - attacker: Spartan Grenadier
+    defender: Infested Hornet
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Juggernaut
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Infested Grunt
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Infested Elite
+    winRate: 1
+  - attacker: Spartan Grenadier
+    defender: Infested Wraith
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Spawner
+    winRate: 0.4
+  - attacker: Spartan CQB
+    defender: Marine
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Flamethrower Trooper
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Warthog
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Scorpion
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Wolverine
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Hornet
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Pelican
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Spartan
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Mantis
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Elephant
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Grunt
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: 'Jackal (Shield)'
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Ghost
+    winRate: 0.1
+  - attacker: Spartan CQB
+    defender: Elite
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Wraith
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Vampire
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Banshee
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Zealot
+    winRate: 0.3
+  - attacker: Spartan CQB
+    defender: Scarab
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Infection Forms
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Carrier Form
+    winRate: 0.1
+  - attacker: Spartan CQB
+    defender: Combat Form
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Stalker Form
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Pure Form Ranged
+    winRate: 0.5
+  - attacker: Spartan CQB
+    defender: Swarm Form
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Seeder
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Infected Pelican
+    winRate: 0.3
+  - attacker: Spartan CQB
+    defender: Infected Phantom
+    winRate: 0.5
+  - attacker: Spartan CQB
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Spartan Sniper
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Spartan Heavy Weapons
+    winRate: 0.1
+  - attacker: Spartan CQB
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Spartan Fireteam
+    winRate: 0.2
+  - attacker: Spartan CQB
+    defender: Gremlin
+    winRate: 1
+  - attacker: Spartan CQB
+    defender: Cobra
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Rhino
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Grizzly
+    winRate: 0
+  - attacker: Spartan CQB
+    defender: Sparrowhawk
+    winRate: 1
+  - attacker: Spartan CQB
     defender: Longsword
     winRate: 0.67
-  - attacker: Spartan Heavy Weapons
-    defender: Vulture
-    winRate: 1
-  - attacker: Spartan Heavy Weapons
-    defender: Condor Gunship
-    winRate: 0
-  - attacker: Spartan Heavy Weapons
-    defender: Chopper
-    winRate: 0
-  - attacker: Spartan Heavy Weapons
-    defender: Brute Grenadier
-    winRate: 1
-  - attacker: Spartan Heavy Weapons
-    defender: Marauder
-    winRate: 0
-  - attacker: Spartan Heavy Weapons
-    defender: Reaver
-    winRate: 1
-  - attacker: Spartan Heavy Weapons
-    defender: Skitterer
-    winRate: 0
-  - attacker: Spartan Heavy Weapons
-    defender: Goliath
-    winRate: 0
-  - attacker: Spartan Heavy Weapons
-    defender: Hunter Captain
-    winRate: 0
-  - attacker: Spartan Heavy Weapons
-    defender: Cannon Fodder
-    winRate: 1
-  - attacker: Spartan Heavy Weapons
-    defender: Heavy Grunts
-    winRate: 1
-  - attacker: Spartan Heavy Weapons
-    defender: Grunt Goblin
-    winRate: 0
-  - attacker: Spartan Heavy Weapons
-    defender: Infested Marine
-    winRate: 0
-  - attacker: Spartan Heavy Weapons
-    defender: Infested Warthog
-    winRate: 0.2
-  - attacker: Spartan Heavy Weapons
-    defender: Infested Scorpion
-    winRate: 0.7
-  - attacker: Spartan Heavy Weapons
-    defender: Infested Hornet
-    winRate: 1
-  - attacker: Spartan Heavy Weapons
-    defender: Juggernaut
-    winRate: 0
-  - attacker: Spartan Heavy Weapons
-    defender: Infested Grunt
-    winRate: 0
-  - attacker: Spartan Heavy Weapons
-    defender: Infested Ghost
-    winRate: 1
-  - attacker: Spartan Heavy Weapons
-    defender: Infested Elite
-    winRate: 1
-  - attacker: Spartan Heavy Weapons
-    defender: Infested Wraith
-    winRate: 0.9
-  - attacker: Spartan Heavy Weapons
-    defender: Infested Banshee
-    winRate: 1
-  - attacker: Spartan Heavy Weapons
-    defender: Spawner
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Marine
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Flamethrower Trooper
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Warthog
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Gauss Warthog
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Scorpion
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Wolverine
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Hornet
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Archer Missile Pod
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Pelican
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Spartan
-    winRate: 0.1
-  - attacker: Spartan Grenadier
-    defender: Mantis
-    winRate: 0.1
-  - attacker: Spartan Grenadier
-    defender: Elephant
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Grunt
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Fuel Rod Grunt
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: 'Jackal (Shield)'
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Ghost
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Elite
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Wraith
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Vampire
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Banshee
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Hunter Pair
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Zealot
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Scarab
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Infection Forms
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Carrier Form
-    winRate: 0.6
-  - attacker: Spartan Grenadier
-    defender: Combat Form
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Stalker Form
-    winRate: 0.9
-  - attacker: Spartan Grenadier
-    defender: Pure Form Ranged
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Swarm Form
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Pure Form Tank
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Seeder
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Infected Pelican
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Infected Phantom
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Flood Abomination
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Spartan Sniper
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Spartan Heavy Weapons
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Spartan CQB
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Spartan Fireteam
-    winRate: 0.4
-  - attacker: Spartan Grenadier
-    defender: Gremlin
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Cobra
-    winRate: 0.2
-  - attacker: Spartan Grenadier
-    defender: Rhino
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Grizzly
-    winRate: 0.4
-  - attacker: Spartan Grenadier
-    defender: Sparrowhawk
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Longsword
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Vulture
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Condor Gunship
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Chopper
-    winRate: 0.9
-  - attacker: Spartan Grenadier
-    defender: Brute Grenadier
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Marauder
-    winRate: 0.6
-  - attacker: Spartan Grenadier
-    defender: Reaver
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Skitterer
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Goliath
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Hunter Captain
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Cannon Fodder
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Heavy Grunts
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Grunt Goblin
-    winRate: 0.8
-  - attacker: Spartan Grenadier
-    defender: Infested Marine
-    winRate: 0.8
-  - attacker: Spartan Grenadier
-    defender: Infested Warthog
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Infested Scorpion
-    winRate: 0.8
-  - attacker: Spartan Grenadier
-    defender: Infested Hornet
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Juggernaut
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Infested Grunt
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Infested Ghost
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Infested Elite
-    winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Infested Wraith
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Infested Banshee
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Spawner
-    winRate: 0.4
-  - attacker: Spartan CQB
-    defender: Marine
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Flamethrower Trooper
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Warthog
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Gauss Warthog
-    winRate: 1
-  - attacker: Spartan CQB
-    defender: Scorpion
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Wolverine
-    winRate: 1
-  - attacker: Spartan CQB
-    defender: Hornet
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Archer Missile Pod
-    winRate: 1
-  - attacker: Spartan CQB
-    defender: Pelican
-    winRate: 1
-  - attacker: Spartan CQB
-    defender: Spartan
-    winRate: 1
-  - attacker: Spartan CQB
-    defender: Mantis
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Elephant
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Grunt
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Fuel Rod Grunt
-    winRate: 1
-  - attacker: Spartan CQB
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: 'Jackal (Shield)'
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Ghost
-    winRate: 0.1
-  - attacker: Spartan CQB
-    defender: Elite
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Wraith
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Vampire
-    winRate: 1
-  - attacker: Spartan CQB
-    defender: Banshee
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Hunter Pair
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Zealot
-    winRate: 0.3
-  - attacker: Spartan CQB
-    defender: Scarab
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Infection Forms
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Carrier Form
-    winRate: 0.1
-  - attacker: Spartan CQB
-    defender: Combat Form
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Stalker Form
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Pure Form Ranged
-    winRate: 0.5
-  - attacker: Spartan CQB
-    defender: Swarm Form
-    winRate: 1
-  - attacker: Spartan CQB
-    defender: Pure Form Tank
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Seeder
-    winRate: 1
-  - attacker: Spartan CQB
-    defender: Infected Pelican
-    winRate: 0.3
-  - attacker: Spartan CQB
-    defender: Infected Phantom
-    winRate: 0.5
-  - attacker: Spartan CQB
-    defender: Flood Abomination
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Spartan Sniper
-    winRate: 1
-  - attacker: Spartan CQB
-    defender: Spartan Heavy Weapons
-    winRate: 0.1
-  - attacker: Spartan CQB
-    defender: Spartan Grenadier
-    winRate: 1
-  - attacker: Spartan CQB
-    defender: Spartan Fireteam
-    winRate: 0.2
-  - attacker: Spartan CQB
-    defender: Gremlin
-    winRate: 1
-  - attacker: Spartan CQB
-    defender: Cobra
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Rhino
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Grizzly
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Sparrowhawk
-    winRate: 1
-  - attacker: Spartan CQB
-    defender: Longsword
-    winRate: 0.67
   - attacker: Spartan CQB
     defender: Vulture
     winRate: 0.1
@@ -9244,7 +9244,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Longsword
     defender: Ghost
-    winRate: 0
+    winRate: 1
   - attacker: Longsword
     defender: Elite
     winRate: 0
@@ -9304,7 +9304,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Longsword
     defender: Spartan Heavy Weapons
-    winRate: 0.33
+    winRate: 1
   - attacker: Longsword
     defender: Spartan Grenadier
     winRate: 1
@@ -9367,7 +9367,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Longsword
     defender: Infested Marine
-    winRate: 0.33
+    winRate: 1
   - attacker: Longsword
     defender: Infested Warthog
     winRate: 1
@@ -11983,7 +11983,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Marine
     defender: Longsword
-    winRate: 0.67
+    winRate: 0
   - attacker: Infested Marine
     defender: Vulture
     winRate: 0
