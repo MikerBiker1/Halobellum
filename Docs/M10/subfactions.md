@@ -129,14 +129,12 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 | Infested Scorpion | Tank | 2 | 50 | 1 | 300 | 1350 | Heavy | 0 | 1.4 | Scavenged Cannon (80 per 3 s, Explosive, 14 m, splash 2.5 m); Tentacle Whip (30 per 1 s, Melee, 4 m) | 33 of 72, 47% | Gauss Warthog 100%, Spartan 100% |
 | Infested Hornet | Aerial | 2 | 50 | 2 | 300 | 360 | Light | 0 | 4 | Scavenged Rockets (20 per 1 s, Explosive, 12 m); Spore Bombs (40 per 2 s, Explosive, 8 m, splash 3 m) | 40 of 72, 55% | Wolverine 100%, Vampire 100% |
 | Juggernaut | Flanker | 3 | 225 | 1 | 450 | 2300 | Heavy | 0 | 3.25 | Crushing Charge (130 per 1.2 s, Melee, 2.5 m, splash 2.5 m) | 35 of 72, 49% | Scorpion 100%, Mantis 100% |
-| Infested Elephant | Titan | 4 | 350 | 1 | 800 | 7500 | Heavy | 0 | 0.6 | Scavenged Main Cannon (180 per 3 s, Explosive, anti-armor, 18 m, splash 2 m); Scavenged Turret (left) (7 per 0.2 s, Ballistic, 13 m); Scavenged Turret (right) (7 per 0.2 s, Ballistic, 13 m) | 66 of 72, 91% | Combat Form 100%, Spartan Sniper 100% |
 
 - **Infested Marine.** Fewer bodies than a Marine squad, each much tougher: it leaps in with a scythe limb. Cannot infect, as only Infection Forms do.
 - **Infested Warthog.** Drives straight into the enemy, its gun still firing.
 - **Infested Scorpion.** A little tougher and shorter-ranged than the real thing, with tentacles for what gets close.
 - **Infested Hornet.** Barely flying, still bombing.
 - **Juggernaut.** A pure form the size of a tank that moves like a flanker and leaps onto what it hunts.
-- **Infested Elephant.** A rolling hive: it releases 4 Infested Marines every 12 seconds.
 
 ### Covenant-based
 
@@ -148,7 +146,6 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 | Infested Wraith | Artillery | 2 | 50 | 1 | 300 | 1000 | Heavy | 0 | 1 | Scavenged Mortar (70 per 3.5 s, Explosive, 34 m, splash 4 m, lobbed) | 30 of 72, 42% | Hornet 100%, Banshee 100% |
 | Infested Banshee | Aerial | 2 | 50 | 2 | 300 | 360 | Light | 0 | 4.5 | Scavenged Plasma Cannons (8 per 0.3 s, Energy, 10 m); Spore Bomb (45 per 2.5 s, Explosive, 8 m, splash 3 m) | 41 of 72, 58% | Wolverine 100%, Vampire 100% |
 | Spawner | Tank | 3 | 225 | 1 | 450 | 2800 | Light | 0 | 0.9 | Spore Lash (40 per 1.2 s, Melee, 3 m, splash 2 m) | 30 of 72, 42% | Jackal (Plasma Rifle) 100%, Elite 100% |
-| Infested Scarab | Titan | 4 | 350 | 1 | 800 | 7500 | Heavy | 0 | 0.6 | Scavenged Focus Beam (30 per 0.1 s, Energy, anti-armor, 20 m, splash 2 m, beam); Scavenged Plasma Turret (left) (8 per 0.25 s, Energy, 14 m); Scavenged Plasma Turret (right) (8 per 0.25 s, Energy, 14 m) | 65 of 72, 90% | Grunt 100%, Spartan Sniper 100% |
 
 - **Infested Grunt.** A rushing crowd with claws. Cannot infect, as only Infection Forms do.
 - **Infested Ghost.** Faster and lighter than the Infested Warthog.
@@ -156,7 +153,6 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 - **Infested Wraith.** A little tougher and shorter-ranged than the real thing.
 - **Infested Banshee.** Barely flying, still bombing.
 - **Spawner.** A mobile birthing form: it fights badly, and releases 10 Infection Forms every 6 seconds. Kill it first.
-- **Infested Scarab.** Its beam is weaker and slower than a Scarab's, but it releases 4 Infested Grunts every 12 seconds.
 
 <!-- end tables -->
 
@@ -165,7 +161,7 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 - **Names: "Infested", not "Infected".** "Infected Marine" is what the simulation already calls a Marine that rises in battle. The two would share results lines and model lookups, so the units you buy are "Infested".
 - **Grunts as Flood.** In Halo's lore Grunts are poor hosts. I kept "Infested Grunt" because the Bible asks for variants of the Covenant roster, and Grunts already rise as infected in this game. Easy to swap for something else.
 - **No infested Spartans**, because the Bible says Spartans can't be infected.
-- **Two extra Titans.** Infested Elephant and Infested Scarab give the Flood sub-factions a Titan each that plays differently from the Abomination: both release infested chaff.
+- **No infested Titans.** I first gave each Flood sub-faction one. The owner removed them after playing (D54), so the Abomination is the Flood's only Titan. The tables' win counts here were measured with those two still in the web (out of 72 opponents); nothing else about them changed.
 - **Pure forms.** The base Flood already has the Stalker, Ranged and Tank forms. So the sub-factions add two from Halo Wars 2's own logs: the **Juggernaut** (UNSC-based) and the **Spawner** (Covenant-based).
 - **Goliath's base damage is 250**, against the Bible default of 100. It stands for its Halo Wars 2 job as a building-killer. It is the only exception to the default, and easy to remove.
 - **Hunter Captain has no taunt**, though it does in Halo Wars 2. Targeting is always "the closest enemy" (Bible Section 6), and a taunt would break that rule. It has its siphon and a healing aura instead.
@@ -179,7 +175,7 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 
 ## Balance, first pass
 
-- The counter web passes for all 73 units: every unit has a counter by the Section 7 table that wins at least 90%. It runs in about 2 minutes in the console (`Tools/Data/cw`), against about 30 in Unity.
+- The counter web passed for all 73 units, before the two infested Titans went (D54), which were no other unit's best counter,: every unit has a counter by the Section 7 table that wins at least 90%. It runs in about 2 minutes in the console (`Tools/Data/cw`), against about 30 in Unity.
 - New units I tuned to stay under 60% average where I could. See the report (`python report.py` in `Tools/Data/cw`).
 - **Over the 60% line now (not Titans), units I did not change:** Hunter Pair, Banshee, Scorpion, Spartan, Hornet, Marine. They are measured against a bigger field now, and I left their numbers alone as told.
 - **Weak, as flankers and anti-air are across the game:** Reaver, Chopper, Infested Warthog and Ghost are level with Warthog and Ghost.

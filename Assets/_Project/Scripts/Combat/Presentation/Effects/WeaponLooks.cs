@@ -164,7 +164,7 @@ namespace Halobellum.Presentation
         FloodAirBurst,
         /// <summary>A big Flood flier: blows up and falls burning, spilling spores (Infected Phantom).</summary>
         FloodAir,
-        /// <summary>The biggest blast on the field: a flier with a death burst comes down on the enemy (Infected Pelican).</summary>
+        /// <summary>About a titan's blast: a flier with a death burst comes down on the enemy (Infected Pelican).</summary>
         CrashBurst,
     }
 

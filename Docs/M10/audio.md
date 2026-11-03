@@ -71,7 +71,6 @@ thing is on screen, and quieter when it is off screen.
 | Vulture, Chin Gun (10 every 0.2 s) | small rifle sound, by falling through to the default | heavy gun sound, as other 8 to 10 damage guns on vehicles |
 | Methane Wagon, Methane Mortar (60, Fire, lobbed) | the Wraith's blue ball and plasma sound | burning keg, bomb sound, fire blast |
 | Pure Form Ranged, Bone Shards (60, lobbed, splash 3) | no sound where it landed, though a blast is drawn | a Flood burst where it lands |
-| Infested Scarab, Scavenged Focus Beam | Scarab blue | Flood green |
 
 Left as they are, for the owner's ears: every landing but Bone Shards is the same small explosion, even a Rhino's 150 at splash 4.5 (there is a medium one that would fit from splash 4 up). Grenade launchers have the tank cannon's sound, which may be too big. The Methane Wagon's sound is a falling whistle and a thud, written for a bomb, not a mortar. Spore Lash (Spawner, 3 m) is a Bio shot rather than melee, because what it does is burst in spores.
 

@@ -16,7 +16,7 @@ Full tables and reasons are in `Docs/M10/subfactions.md`. Every number is in `ba
 5. **Aerospace Command** also has no Tier 1 exclusive, because cheap aircraft seemed wrong. Keep it that way?
 6. **"Infested", not "Infected".** The units you buy are "Infested Marine" and so on, because "Infected Marine" is already what the game calls a Marine that rises in battle. Keep the names?
 7. **Infested Grunts.** In Halo's lore, Grunts are poor hosts. I kept them because the Bible asks for variants of the Covenant roster. Keep or swap?
-8. **Two extra Flood Titans:** Infested Elephant and Infested Scarab, both releasing infested chaff. Keep?
+8. **Two extra Flood Titans:** you said no, so they are gone (D54). The Abomination is the Flood's only Titan.
 9. **New pure forms:** Juggernaut (UNSC-based) and Spawner (Covenant-based), from Halo Wars 2's logs. Keep?
 10. **Goliath's base damage is 250**, against the default of 100, for its job as a building-killer. It is the only exception to the default. Keep?
 11. **Simplified abilities:** the Hunter Captain has no taunt, because targeting is always "the closest enemy". The Cobra has no lockdown mode. The Gremlin's EMP slows rather than stuns. The Blisterback is an air unit with no ground mode. The Methane Wagon has no debuff cloud. Want any of these built?
@@ -26,7 +26,7 @@ Full tables and reasons are in `Docs/M10/subfactions.md`. Every number is in `ba
     - In AI-only matches Banished won 69% and Armored Division 62%, while Noble won 33% and Covenant-based 29%. The sample is small and it mixes in how well the AI plays each roster.
     - The Reaver, Chopper, Infested Warthog and Infested Ghost are weak, as flankers are across the game.
     - An older note: the Scarab beat 33 of 34 before the new units.
-    - Also over 60% average: Infested Elephant 91% and Infested Scarab 90% (above the real Elephant's 88% at the same 800 credits, with less health, because they release chaff), Vulture and Goliath 62%, Grizzly, Rhino and Sparrowhawk 60%.
+    - Also over 60% average: Vulture and Goliath 62%, Grizzly, Rhino and Sparrowhawk 60%.
 
 ## Models
 
@@ -75,7 +75,7 @@ Five reviewers played the merged game, and fixers corrected what they confirmed:
 A second round fixed what the reviewers had noted as lesser, and each area got an independent check. These are choices I made for you, or questions it left.
 
 39. **Anti-aliasing:** 4x MSAA is now on for the High quality level, which fixes the dashed glowing lines. Its cost is too small to measure on your PC, but it wasn't measured on a weaker card. Keep it? Low stays without it.
-40. **The HAVOK Nuke** is rebuilt as a real mushroom cloud on a stem, ending at 8.6 s of battle time. Please watch it, since nobody has seen it move. In stills, the cap's underside at 3 s shows a few round spots, and the dust skirt is patches rather than a ring. The top can run behind the HUD when the nuke lands far up the field. The cap is flattened north to south so that it doesn't hide its stem from the fixed camera, so it would need changing if the camera ever turns around the field.
+40. **The HAVOK Nuke** is rebuilt as a real mushroom cloud on a stem, ending at 8.6 s of battle time. Please watch it, since nobody has seen it move. In stills, the cap's underside at 3 s shows a few round spots, and the dust skirt is patches rather than a ring. The top can run behind the HUD when the nuke lands far up the field. The cap is flattened along the way the camera faces at the blast, so that it doesn't hide its stem. It doesn't turn afterwards, so turning the camera during the blast shows it from another side.
 41. **Shop order:** a sub-faction's own units now come first in the shop, because they are the reason to pick that card. Only the order on screen changed. Keep it?
 42. **The sounds to judge by ear:**
     - The new soft sounds for selecting, turning, moving a squad and taking a spell back: are they at the right level? The levels are at the top of `UiAudio.cs`.
@@ -87,8 +87,17 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 45. **Shell holes:** the small near-black holes in no man's land are unchanged on every map, though they are as dark as the Flood pools that I lightened. They are 2 to 6 m across. Lighten them too?
 46. **Narrow Sandbox windows:** when a squad window would cover the Items panel, the panel now moves to the right of it while the squad is selected. On the narrowest windows at a high UI scale it then covers part of the unit list and the middle of the Red half, until you close the squad window. Fine?
 
+## From your play test (D54)
+
+47. **The 55 new third techs** are first-pass, and they are all in `Tools/Data/techs.py` under `THIRD_TECHS`. Each does something the unit's other two don't, and costs about what they cost. No existing tech or unit number changed. Nothing has measured them in battle, because the counter web runs without techs. Tell me which feel wrong.
+48. **Damage techs and death bursts:** Volatile Bladder promised "a much bigger explosion" but never changed the Carrier Form's burst. Damage techs now raise death bursts, so that tech gives +40% and the Infected Pelican's new Volatile Cargo +25%. Keep it?
+49. **The Pelican's crash** is half its old size, about a Titan's blast, and it still deals 900 damage across 7 m. The sound didn't change, so it may now sound too big. Is the look right, and do you also want the real blast smaller?
+50. **The camera:** please judge the turning speed (0.2 degrees per pixel) and direction. The mouse pointer isn't locked during a drag, so a long drag can run into a screen edge or onto another screen, and whether it keeps turning there hasn't been tried. A right-click now acts when the button comes up, and a press of over half a second doesn't cancel anything.
+51. **The screen:** until you choose one in Settings, every start goes to Windows's main screen, even if you dragged the window elsewhere. A start that has to change screens shows the old screen for about 3.5 seconds first. Your saved 2560 x 1200 window fits none of your screens, so it should now open at about 1920 x 992 on the Dell. If you drag the window after choosing a screen, the next start goes back to the one you chose.
+
 ## Things my test runs did to your PC
 
+- **Windows moving, and possibly music:** while the Screen setting was being checked, a test window moved across all three of your screens and briefly went fullscreen on each. Some of those runs weren't silent, so menu music may have played for about 25 seconds at a time. Those checks have finished.
 - **Your game settings:** a fixer's test pressed Reset to defaults in a real run, so volumes and UI scale are at their defaults. Any values you had set are lost, because they weren't recorded first. Camera shake is on.
 - **The game's window:** test runs left the game windowed, at 2560 x 1200 today. Change it in Settings if you want fullscreen. From now on my test builds run as "Halobellum Test", with their own settings and window (a registry key and a folder in `AppData\LocalLow\DefaultCompany`, both harmless), and they can't change yours.
 - **Real mouse input:** one fixer sent real clicks and wheel notches to test scrolling. Before it added a guard, a few may have landed on another open window. No harm was seen, but it can't be ruled out.

@@ -2,11 +2,18 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## After your play test (D54)
+- **Your five quick wins:** a smaller Pelican crash (look only), a turning and tilting camera (C resets it), Level all, a Screen setting, and a still menu Scarab.
+- **Your roster notes:** every unit now has 3 techs (most had 2), and the two infested Titans are gone, which puts a Flood player at 16 or 17 units, in line with the others.
+- **A bug found on the way:** damage techs never reached death bursts, so Volatile Bladder did nothing. Fixed.
+- **Testing this time** covered only what these changes touch, as you asked. See the end of this report's Test results.
+- Questions are items 47 to 51 of `MORNING_DECISIONS.md`.
+
 ## What M10 adds
 - **Infected Pelican:** falls out of the sky at a target within 22 m, past other air units, and dies where it lands (D46).
-- **Sub-factions:** all 8, with 38 exclusive units on top of the base roster, so 73 units in all, and the real 5-card draft (D52).
+- **Sub-factions:** all 8, with 36 exclusive units on top of the base roster, so 71 units in all, and the real 5-card draft (D52, D54).
 - **Terrain:** each side stands on its own faction's ground, with 3 layouts per faction, land out to the horizon, and sky and light following the player (D47).
-- **Effects:** a look per weapon kind, impacts, blasts sized to splash, deaths by kind, burning wrecks, a look per spell, the Pelican's crash as the biggest thing a unit can do, camera shake you can turn off (D48).
+- **Effects:** a look per weapon kind, impacts, blasts sized to splash, deaths by kind, burning wrecks, a look per spell, the Pelican's crash, now about the size of a Titan's blast, camera shake you can turn off (D48).
 - **Sound and music:** a complete system with UI sounds and music per faction and a main menu track of its own (D49). **It is original placeholder audio, not Halo's.** I don't download copyrighted files. Yours replace mine by being dropped in a folder.
 - **Main menu, settings, pause:** a dusk battlefield behind the menu, every setting saved, Esc pausing in any phase (D50).
 - **Cards:** pictures of each unit, and borders by kind and by faction (D51).
@@ -17,7 +24,7 @@ Earlier reports are in this file's Git history. **M10 is built and merged**, and
 - **M9's combat identity stage and balance pass** weren't done as stages of their own.
 
 ## Balance (first pass)
-- **Counter web:** 73 of 73 units have a counter winning at least 90%.
+- **Counter web:** 73 of 73 units had a counter winning at least 90%. It wasn't run again after the two infested Titans were removed, since neither was another unit's best counter.
 - **AI against itself,** 216 matches, none unfinished, 6 to 10 rounds on average. Hard beat Normal 17 of 24 and Easy 24 of 24. Normal beat Easy 21 of 24.
 - **To watch:** Banished looks strongest and Covenant-based and Noble weakest, on a small sample. Six older units are over 60% average against the bigger field.
 

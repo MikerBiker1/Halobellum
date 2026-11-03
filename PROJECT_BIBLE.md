@@ -45,7 +45,7 @@ A single-player 3D auto battler based on the mechanics of Mechabellum, with the 
 
 - **Engine:** Unity, latest LTS release, Universal Render Pipeline, C#. The game, the Unity project, and the Git repository are all named Halobellum.
 - **Do not use** ECS/DOTS, third-party networking, or paid plugins.
-- **Camera:** fixed angled top-down camera seen from a distance, like Mechabellum. Pan and zoom only.
+- **Camera:** angled top-down camera seen from a distance, like Mechabellum. Pan, zoom, and hold the right mouse button and drag to turn around the point on the ground it looks at (a full circle) and tilt it (35 to 75 degrees, starting at 55). C returns to the starting view.
 - **Visual target:** realistic but unpolished. Models only need to be recognizable at a distance.
 - **Platform:** Windows desktop. "E:\AI\Halobellum"
 - **Source control:** Git. One commit per completed item. Never commit the `Library`, `Temp`, or `Logs` folders.
@@ -233,7 +233,7 @@ The Covenant has no dedicated anti-armor unit. Elites, Zealots, and Wraith splas
 
 ### 8.3 Flood
 
-The Flood win by spreading. They have a roster of their own, plus temporary infected versions of other units. They have fewer unit types per tier than the other factions, because they will get more exclusive sub-faction units (M10). First-pass stats are in the unit assets and `balance.csv` (D38).
+The Flood win by spreading. They have a roster of their own, plus temporary infected versions of other units. They have fewer base unit types than the other factions and more exclusive sub-faction units, so a Flood player has about as many units as anyone (16 or 17, against 15 to 17). The Flood Abomination is their only Titan: there is no infested Titan. First-pass stats are in the unit assets and `balance.csv` (D38).
 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -277,7 +277,7 @@ Sub-factions **add** exclusive units on top of the base faction roster. They do 
 
 ## 9. Tech upgrades
 
-Each unit type has up to 3 tech upgrade slots bought with credits, such as armor plating, range increase, fire rate, or a special weapon. Upgrades are data assets and apply to all squads of that type for the rest of the match. Some units can unlock anti-air upgrades where it makes sense for them, usually a range and damage bonus against air. Built in Milestone 6.
+Each unit type has 3 tech upgrades bought with credits, such as armor plating, range increase, fire rate, or a special weapon. Upgrades are data assets and apply to all squads of that type for the rest of the match. Some units can unlock anti-air upgrades where it makes sense for them, usually a range and damage bonus against air. Built in Milestone 6.
 
 ## 10. Cards: spells and reinforcements
 
@@ -349,7 +349,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 **M2: Battle in the scene**
 
 - Placeholder prefabs spawn from data, move through the simulation’s free-movement system (no NavMeshAgent), target and fight, show health bars when damaged, and die.
-- Camera pan and zoom. Speed controls. Selecting a squad opens the bottom-left stats window.
+- Camera pan, zoom, turn and tilt. Speed controls. Selecting a squad opens the bottom-left stats window.
 - 300 vs 300 units (600 total) runs at 60 FPS on a mid-range PC, with placeholder art. For the same armies and seed, the game and the headless runner produce the same result.
 
 **M3: Round loop**
@@ -484,6 +484,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-02 | The Infected Pelican dives from 22 m past other air units and dies on landing | Per the project owner (D46) |
 | 2026-11-02 | M10: 8 sub-factions and the real 5-card draft; terrain by faction with 3 layouts each; effects by weapon kind; original placeholder sound and music with slots for the owner's files; main menu, settings and pause; cards with unit pictures and borders by kind | Asked by the project owner, first-pass designs for review (D47 to D52) |
 | 2026-11-02 | M10 second round: anti-aliasing on High, smoothed shots, the nuke's mushroom cloud, soft sounds for moving and turning squads, a sub-faction's own units first in the shop | Proposed from the M10 review, for review (D53) |
+| 2026-11-02 | The camera turns and tilts on a right-mouse drag. Every unit has 3 techs. No infested Titans: the Abomination is the Flood's only Titan. Level all button and Screen setting | Per the project owner (D54) |
 
 ## 18. Assumptions to confirm
 
