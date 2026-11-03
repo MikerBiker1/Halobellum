@@ -133,7 +133,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] Towers: targets, shockwave, levels, Command Center and Research Center, the AI by difficulty, placeholder models (D55)
 - [x] The owner's morning answers: Pelican blast of 3.5 m, Blisterback and Methane Wagon removed, `Assets_to_Download.md` (D56)
 - [ ] The owner's own Halo music and sound, in the slots (see MORNING_DECISIONS.md)
-- [x] The owner's second batch of models: 21 units fitted, animated, icons redone (D57)
+- [x] The owner's second batch of models: 23 units fitted, animated, icons redone (D57)
 - [x] Dead ground units stay 14 seconds, Shortsword to Longsword (D57)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
