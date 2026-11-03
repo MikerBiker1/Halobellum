@@ -18,7 +18,8 @@
 //     started, plus whatever was bought (round reset). Squads keep their level and XP.
 //   - Leveling (Section 5): squads earn XP from kills (the victim's worth per body); when the bar
 //     (XpBarPerSquadCost x the squad's price, the same at every level) is full, LevelUp costs half
-//     the base price and raises the level (health and damage x level, up to 5).
+//     the base price and raises the level (health and damage x level, up to 5). LevelUpAll does that for
+//     every ready squad of a unit type at once, all or nothing.
 //   - Tech upgrades (Section 9): BuyTech buys one of a unit type's techs for every squad of that type.
 //   - Cards (Section 10, Milestone 7): from round 2, each round starts with a card offer (Cards phase
 //     for the player; the AI decides at once): reinforcements every other round from round 4, general
@@ -283,6 +284,42 @@ namespace Halobellum.Economy
             squad.Xp = 0f;
             squad.LevelUpSpent += cost;
             return ActionResult.Success($"{squad.Type.Name} is now level {squad.Level}.");
+        }
+
+        /// <summary>How many of this side's squads of this type are ready to level up now, and what leveling them all costs.</summary>
+        public int SquadsReadyToLevel(Team team, UnitStats type, out int totalPrice)
+        {
+            int count = 0;
+            totalPrice = 0;
+            List<PlacedSquad> squads = Get(team).Squads;
+            for (int i = 0; i < squads.Count; i++)
+            {
+                if (squads[i].Type != type || !CanLevelUp(squads[i])) continue;
+                count++;
+                totalPrice += LevelUpCost(squads[i]);
+            }
+            return count;
+        }
+
+        /// <summary>Levels up every ready squad of this type, or none if the credits don't cover them all. Squads whose XP bar isn't full or at the maximum level are left out.</summary>
+        public ActionResult LevelUpAll(Team team, UnitStats type)
+        {
+            PlayerState player = Get(team);
+            if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Squads can only be leveled up during deployment.");
+            int count = SquadsReadyToLevel(team, type, out int totalPrice);
+            if (count == 0) return ActionResult.Fail($"No {type?.Name} squad is ready to level up.");
+            if (player.Credits < totalPrice) return ActionResult.Fail($"Not enough credits ({totalPrice} needed).");
+
+            foreach (PlacedSquad squad in player.Squads)
+            {
+                if (squad.Type != type || !CanLevelUp(squad)) continue;
+                int cost = LevelUpCost(squad);
+                player.Credits -= cost;
+                squad.Level++;
+                squad.Xp = 0f;
+                squad.LevelUpSpent += cost;
+            }
+            return ActionResult.Success($"{count} x {type.Name} leveled up for {totalPrice}.");
         }
 
         /// <summary>Buys one of a unit type's tech upgrades; it applies to every squad of that type for the rest of the match.</summary>

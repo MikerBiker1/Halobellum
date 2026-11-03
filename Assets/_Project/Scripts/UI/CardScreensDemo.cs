@@ -9,6 +9,8 @@
 // directly: this never happens in a real match. Looks only: nothing here runs without the flag.
 // With "-cardsDemoLayout" as well it takes only the pictures for the narrowest windows and largest UI scales (without saving any of them): the deployment bar and shop, the Sandbox with its
 // squad window at its tallest next to the Items panel, and its result line; and for each faction a close look at the selection ring on that faction's ground.
+// With "-cardsDemoLevelAll" as well it takes only the pictures of the Level all button: for each faction 3 squads of a type with full XP bars, with enough credits, too few, with the selected squad
+// not ready, and after pressing it (through the view's action, as a click does), and logs "Level all: ..." checks of the prices, the levels and that the buttons fit, at every UI scale.
 // Depends on: CardScreens, Halobellum.Presentation (MatchController, BattleController, SquadSelection), Halobellum.Economy, UnityEngine.
 
 using System;
@@ -30,6 +32,7 @@ namespace Halobellum.UI
     {
         public const string Flag = "-cardsDemo";
         private const string LayoutFlag = "-cardsDemoLayout";
+        private const string LevelAllFlag = "-cardsDemoLevelAll";
 
         private static readonly (int w, int h, float ui)[] LayoutSizes =
         {
@@ -71,6 +74,13 @@ namespace Halobellum.UI
             _match = FindFirstObjectByType<MatchController>();
             if (_match == null) { Debug.LogError("Card demo: no MatchController in this scene."); yield break; }
             while (_match.Match == null) yield return null;
+
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), LevelAllFlag) >= 0)
+            {
+                yield return LevelAllPictures();
+                Application.Quit();
+                yield break;
+            }
 
             if (Array.IndexOf(Environment.GetCommandLineArgs(), LayoutFlag) >= 0)
             {
@@ -149,6 +159,113 @@ namespace Halobellum.UI
 
             Debug.Log($"Card demo finished: {_totalDidNotFit} screens have text that did not fit, {_totalAtTheFloor} have text only at the smallest size.\n" + string.Join("\n", _problems));
             Application.Quit();
+        }
+
+        /// <summary>The pictures of "-cardsDemoLevelAll".</summary>
+        private IEnumerator LevelAllPictures()
+        {
+            int problems = 0;
+            void Check(string what, bool ok)
+            {
+                Debug.Log($"Level all: {(ok ? "ok" : "PROBLEM")}: {what}");
+                if (!ok) problems++;
+            }
+
+            var stats = FindFirstObjectByType<SquadStatsWindow>();
+            BattleController battle = _match.GetComponent<BattleController>();
+            SquadSelection selection = _match.GetComponent<SquadSelection>();
+            int SimSquadOf(PlacedSquad squad) => battle.Simulation.Squads[_match.Match.Player.Squads.IndexOf(squad)].Id; // Simulation squad i is placed squad i, in deployment.
+            void CheckRow(string where)
+            {
+                bool showing = stats.TryGetWindow(out Rect window);
+                Rect up = stats.LevelUpShown, all = stats.LevelAllShown, line = stats.LevelLineShown;
+                bool upShown = up.width > 0f;
+                float tall = HudScale.ScaledHeight(HudScale.ScaleFor(Screen.width, Screen.height, GameSettings.UiScale));
+                Check($"{where}: the window is showing, its top {window.y:0} of {tall:0} units", showing && window.y >= 0f);
+                Check($"{where}: Level all is inside the window", all.width > 0f && all.xMin >= window.xMin && all.xMax <= window.xMax && all.yMax <= window.yMax);
+                Check($"{where}: no overlap (line to {line.xMax:0}, up {up.xMin:0} to {up.xMax:0}, all {all.xMin:0} to {all.xMax:0}, own row {stats.LevelButtonsOwnRow})",
+                    stats.LevelButtonsOwnRow ? line.yMax <= all.y + 2f : (!upShown || (line.xMax <= up.xMin && up.xMax <= all.xMin)) && line.xMax <= all.xMin);
+            }
+
+            foreach (string faction in new[] { "UNSC", "Covenant", "Flood" })
+            {
+                Screen.SetResolution(1600, 900, FullScreenMode.Windowed);
+                GameSettings.UseUiScaleForThisRun(1f);
+                _match.NewMatch(1);
+                SetDraft(5);
+                _match.ChooseDraft(_match.Match.PlayerDraft.FindIndex(c => c.Faction.Name == faction));
+                yield return new WaitForSecondsRealtime(1f);
+                Match m = _match.Match;
+                UnitStats type = m.Player.Squads[0].Type;
+                m.Player.Credits = 5000;
+                while (m.Player.Squads.Count(s => s.Type == type) < 3)
+                {
+                    m.Player.SquadsBoughtThisRound = 0;
+                    if (!_match.Buy(type).Ok) break;
+                }
+                while (_match.IsDropping) yield return null;
+                List<PlacedSquad> same = m.Player.Squads.Where(s => s.Type == type).ToList();
+                Check($"{faction}: 3 squads of {type.Name}", same.Count == 3);
+                UnitStats other = m.Player.Squads.FirstOrDefault(s => s.Type != type)?.Type;
+                int price = 3 * m.LevelUpCost(same[0]);
+
+                // The window is already up and showing no such button when the bars fill: nothing but its 5 refreshes a second can bring the button.
+                selection.Select(SimSquadOf(same[0]));
+                yield return new WaitForSecondsRealtime(0.3f);
+                Check($"{faction}: no button before the bars are full", stats.LevelAllShown.width <= 0f);
+                foreach (PlacedSquad squad in m.Player.Squads) squad.Xp = m.XpNeeded(squad);
+                float shownAfter = Time.realtimeSinceStartup;
+                while (stats.LevelAllShown.width <= 0f && Time.realtimeSinceStartup - shownAfter < 2f) yield return null;
+                Check($"{faction}: the button appears {Time.realtimeSinceStartup - shownAfter:0.00} s after the bars are full", stats.LevelAllShown.width > 0f);
+                SquadProgressView view = _match.DescribeProgress(SimSquadOf(same[0]));
+                Check($"{faction}: it says {view.LevelAllLabel}, the price of 3 at {m.LevelUpCost(same[0])}", view.LevelAllLabel == $"Level all 3 ({price})" && view.LevelAllEnabled);
+                yield return Shot($"{faction}_levelall_enough");
+                foreach (float ui in new[] { 0.75f, 1f, 1.25f })
+                {
+                    foreach ((int w, int h) in new[] { (1600, 900), (1024, 768), (1280, 1024), (800, 500) })
+                    {
+                        Screen.SetResolution(w, h, FullScreenMode.Windowed);
+                        GameSettings.UseUiScaleForThisRun(ui);
+                        yield return new WaitForSecondsRealtime(0.5f);
+                        CheckRow($"{faction} {w}x{h} ui {ui * 100f:0}%");
+                        if (faction == "UNSC" || (w == 1024 && ui > 1f)) yield return Shot($"{faction}_levelall_{w}x{h}_ui{ui * 100f:0}");
+                    }
+                }
+                Screen.SetResolution(1600, 900, FullScreenMode.Windowed);
+                GameSettings.UseUiScaleForThisRun(1f);
+                yield return new WaitForSecondsRealtime(0.5f);
+
+                m.Player.Credits = price - 1;
+                yield return new WaitForSecondsRealtime(0.3f);
+                Check($"{faction}: it is greyed out with {m.Player.Credits} credits", !_match.DescribeProgress(SimSquadOf(same[0])).LevelAllEnabled);
+                yield return Shot($"{faction}_levelall_too_few_credits");
+
+                m.Player.Credits = price + 40;
+                same[0].Xp = 0f;
+                yield return new WaitForSecondsRealtime(0.3f);
+                view = _match.DescribeProgress(SimSquadOf(same[0]));
+                Check($"{faction}: from a squad that isn't ready, it says {view.LevelAllLabel}", view.LevelAllLabel == $"Level all 2 ({2 * m.LevelUpCost(same[0])})" && view.LevelAllEnabled && !view.LevelUpEnabled);
+                yield return Shot($"{faction}_levelall_selected_not_ready");
+
+                same[0].Xp = m.XpNeeded(same[0]);
+                PlacedSquad otherSquad = other != null ? m.Player.Squads.First(s => s.Type == other) : null;
+                int otherLevel = otherSquad?.Level ?? 0;
+                yield return new WaitForSecondsRealtime(0.3f);
+                string heard = null;
+                void Listen(string action, ActionResult result) => heard = action;
+                _match.ActionTaken += Listen;
+                _match.DescribeProgress(SimSquadOf(same[0])).OnLevelAll();
+                _match.ActionTaken -= Listen;
+                Check($"{faction}: all 3 are level 2, {m.Player.Credits} credits left: {_match.Message}", same.All(s => s.Level == 2 && s.Xp == 0f && s.LevelUpSpent == m.LevelUpCost(s)) && m.Player.Credits == 40);
+                Check($"{faction}: the action path was {heard}", heard == nameof(MatchController.LevelUpAll));
+                if (otherSquad != null) Check($"{faction}: {other.Name} is untouched", otherSquad.Level == otherLevel);
+                yield return null;
+                Check($"{faction}: the same squad is still selected", _match.SelectedPlacedSquad == same[0]);
+                yield return new WaitForSecondsRealtime(0.05f);
+                Check($"{faction}: the button has gone at once", stats.LevelAllShown.width <= 0f);
+                yield return Shot($"{faction}_levelall_after");
+            }
+            Debug.Log($"Level all finished: {problems} problems.");
         }
 
         /// <summary>The pictures of "-cardsDemoLayout".</summary>

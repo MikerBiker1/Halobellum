@@ -1,10 +1,11 @@
 // SettingsScreen.cs
-// The settings panel (M10), one and the same from the main menu and from the pause menu: four volumes, window or fullscreen, resolution,
-// quality, VSync, UI scale and camera shake. Each change is applied and written to PlayerPrefs at once (GameSettings); the file on disk
+// The settings panel (M10), one and the same from the main menu and from the pause menu: four volumes, the screen, window or fullscreen, resolution,
+// quality, VSync, UI scale and camera shake. The Screen row lists the PC's screens by name and size and marks the main one (GameDisplays moves the window); with one screen it just says so. Each change is applied and written to PlayerPrefs at once (GameSettings); the file on disk
 // is saved when the panel closes. The owner of the panel calls Open when it opens, and Draw in OnGUI until Draw says it is done.
-// Depends on: GameSettings, MenuStyle, UnityEngine.
+// Depends on: GameDisplays, GameSettings, MenuStyle, Halobellum.Core (DisplayChoice), UnityEngine.
 
 using System.Collections.Generic;
+using Halobellum.Core;
 using Halobellum.Presentation;
 using UnityEngine;
 
@@ -13,22 +14,38 @@ namespace Halobellum.UI
     public sealed class SettingsScreen
     {
         /// <summary>The virtual size of the panel. Menus fit their scale to this.</summary>
-        public const float PanelWidth = 760f, PanelHeight = 714f;
+        public const float PanelWidth = 760f, PanelHeight = 758f;
 
         private const float Margin = 34f, RowHeight = 44f, LabelWidth = 230f;
+
+        /// <summary>For a test tool: the widest text of the Screen row, and the room it has between the arrows, in panel units.</summary>
+        public static float WidestScreenLabel { get; private set; }
+        public const float ScreenLabelRoom = PanelWidth - 2f * Margin - LabelWidth - 2f * MenuStyle.StepperArrowWidth;
+
         private static readonly string[] WindowLabels = { "Windowed", "Fullscreen" };
         private static readonly string[] OffOn = { "Off", "On" };
 
         private readonly List<Vector2Int> _sizes = new List<Vector2Int>();
+        private List<DisplayOption> _displays = new List<DisplayOption>();
+        private readonly List<string> _displayLabels = new List<string>();
+        private int _displayIndex, _listedForMoves = -1;
+        private float _lookAgainAt;
 
-        /// <summary>Call when the panel opens: lists the window sizes this screen can show.</summary>
+        /// <summary>Call when the panel opens: lists the PC's screens, and the window sizes the screen the game is on can show.</summary>
         public void Open()
         {
+            _listedForMoves = GameDisplays.MovesFinished;
+            _displays = GameDisplays.List();
+            _displayLabels.Clear();
+            _displayIndex = GameDisplays.CurrentIn(_displays);
+            int biggestWidth = _displayIndex >= 0 ? _displays[_displayIndex].Width : int.MaxValue;
+            int biggestHeight = _displayIndex >= 0 ? _displays[_displayIndex].Height : int.MaxValue;
+
             _sizes.Clear();
             foreach (Resolution resolution in Screen.resolutions)
             {
                 var size = new Vector2Int(resolution.width, resolution.height);
-                if (!_sizes.Contains(size)) _sizes.Add(size);
+                if (size.x <= biggestWidth && size.y <= biggestHeight && !_sizes.Contains(size)) _sizes.Add(size);
             }
             var current = new Vector2Int(Screen.width, Screen.height);
             if (!_sizes.Contains(current)) _sizes.Add(current);
@@ -53,6 +70,7 @@ namespace Halobellum.UI
             y = VolumeRow(panel, y, "Interface", GameSettings.UiVolume, v => GameSettings.UiVolume = v);
 
             y = Section(panel, y + 4f, "DISPLAY");
+            y = ScreenRow(panel, y);
             y = WindowRows(panel, y);
             y = QualityRow(panel, y);
             bool vSync = MenuStyle.Choice(ControlRect(panel, y, "VSync"), "VSync", OffOn, GameSettings.VSync ? 1 : 0) == 1;
@@ -104,6 +122,50 @@ namespace Halobellum.UI
             if (!Mathf.Approximately(changed, value)) set(changed);
             GUI.Label(new Rect(control.xMax - 64f, control.y, 64f, control.height), $"{changed * 100f:0}%", MenuStyle.BodyRight);
             return y + RowHeight;
+        }
+
+        private float ScreenRow(Rect panel, float y)
+        {
+            // A move has ended: the sizes are those of another screen now. A window dragged to another screen shows in a moment too.
+            if (_listedForMoves != GameDisplays.MovesFinished) Open();
+            else if (Time.unscaledTime >= _lookAgainAt)
+            {
+                _lookAgainAt = Time.unscaledTime + 0.5f;
+                _displayIndex = GameDisplays.CurrentIn(_displays);
+            }
+            if (_displayLabels.Count != _displays.Count) MakeDisplayLabels();
+
+            Rect control = ControlRect(panel, y, "Screen");
+            if (_displays.Count < 2)
+            {
+                GUI.Label(control, _displays.Count == 1 ? "Only one: " + _displayLabels[0] : "Only one screen", MenuStyle.SmallButton);
+                return y + RowHeight;
+            }
+            int shown = Mathf.Max(0, _displayIndex);
+            int step = MenuStyle.Stepper(control, "Screen", _displayLabels[shown]);
+            if (step != 0 && !GameDisplays.Moving) GameDisplays.ChooseByPlayer(_displays, (shown + step + _displays.Count) % _displays.Count);
+            return y + RowHeight;
+        }
+
+        /// <summary>The row's text for each screen, its name cut short if it would not fit between the arrows.</summary>
+        private void MakeDisplayLabels()
+        {
+            _displayLabels.Clear();
+            WidestScreenLabel = 0f;
+            var measure = new GUIContent();
+            float room = ScreenLabelRoom - 8f;
+            for (int i = 0; i < _displays.Count; i++)
+            {
+                string label = DisplayChoice.Label(_displays, i);
+                measure.text = label;
+                for (int limit = _displays[i].Name?.Length ?? 0; limit > 6 && MenuStyle.SmallButton.CalcSize(measure).x > room; limit--)
+                {
+                    label = DisplayChoice.Label(_displays, i, limit);
+                    measure.text = label;
+                }
+                WidestScreenLabel = Mathf.Max(WidestScreenLabel, MenuStyle.SmallButton.CalcSize(measure).x);
+                _displayLabels.Add(label);
+            }
         }
 
         private float WindowRows(Rect panel, float y)

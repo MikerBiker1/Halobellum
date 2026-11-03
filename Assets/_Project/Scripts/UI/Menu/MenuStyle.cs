@@ -266,10 +266,13 @@ namespace Halobellum.UI
             return selected;
         }
 
+        /// <summary>How wide each arrow of a Stepper is.</summary>
+        public const float StepperArrowWidth = 44f;
+
         /// <summary>A value with an arrow on each side. Returns -1, 0 or +1.</summary>
         public static int Stepper(Rect rect, string row, string value)
         {
-            const float arrow = 44f;
+            const float arrow = StepperArrowWidth;
             int step = 0;
             if (SmallFramedButton(new Rect(rect.x, rect.y, arrow, rect.height), "<", false, row + "/<")) step = -1;
             if (SmallFramedButton(new Rect(rect.xMax - arrow, rect.y, arrow, rect.height), ">", false, row + "/>")) step = 1;

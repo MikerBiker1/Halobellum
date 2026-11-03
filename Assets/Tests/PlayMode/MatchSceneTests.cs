@@ -8,6 +8,7 @@
 // Depends on: Halobellum.Presentation, Halobellum.Economy, Halobellum.Core, NUnit, Unity Test Framework.
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Halobellum.Combat;
 using Halobellum.Core;
@@ -176,6 +177,64 @@ namespace Halobellum.Tests
             yield return null;
             Assert.IsTrue(m.Player.HasTech(squad.Type, first.Tech));
             Assert.IsTrue(_match.DescribeProgress(_battle.Simulation.Squads[0].Id).Techs[0].Owned);
+        }
+
+        [UnityTest]
+        public IEnumerator LevelAll_ShowsFromTwoReadySquads_WhicheverIsSelected_AndGoesTheWayLevelUpGoes()
+        {
+            yield return LoadMatch();
+            _match.ChooseDraft(0);
+            yield return null;
+            Match m = _match.Match;
+            UnitStats type = m.Player.Squads[0].Type;
+            m.Player.Credits = 5000;
+            while (m.Player.Squads.FindAll(s => s.Type == type).Count < 3)
+            {
+                m.Player.SquadsBoughtThisRound = 0;
+                Assert.IsTrue(_match.Buy(type).Ok, _match.Message);
+            }
+            yield return null;
+            List<PlacedSquad> same = m.Player.Squads.FindAll(s => s.Type == type);
+            int cost = m.LevelUpCost(same[0]);
+            int SimSquad(PlacedSquad squad) => _battle.Simulation.Squads[m.Player.Squads.IndexOf(squad)].Id;
+
+            Assert.IsNull(_match.DescribeProgress(SimSquad(same[0])).LevelAllLabel, "Nobody is ready.");
+            same[1].Xp = m.XpNeeded(same[1]);
+            Assert.IsNull(_match.DescribeProgress(SimSquad(same[0])).LevelAllLabel, "One ready squad has Level up, not this.");
+
+            same[2].Xp = m.XpNeeded(same[2]);
+            SquadProgressView view = _match.DescribeProgress(SimSquad(same[0]));
+            Assert.AreEqual($"Level all 2 ({2 * cost})", view.LevelAllLabel, "The selected squad isn't ready itself.");
+            Assert.IsTrue(view.LevelAllEnabled);
+            Assert.IsFalse(view.LevelUpEnabled);
+
+            same[0].Level = UnitUpgrades.MaxLevel;
+            view = _match.DescribeProgress(SimSquad(same[0]));
+            Assert.IsNull(view.LevelUpLabel, "No Level up at the maximum level.");
+            Assert.AreEqual($"Level all 2 ({2 * cost})", view.LevelAllLabel, "Still reachable from it.");
+            same[0].Level = 1;
+
+            same[0].Xp = m.XpNeeded(same[0]);
+            m.Player.Credits = 3 * cost - 1;
+            view = _match.DescribeProgress(SimSquad(same[0]));
+            Assert.AreEqual($"Level all 3 ({3 * cost})", view.LevelAllLabel);
+            Assert.IsFalse(view.LevelAllEnabled, "Too few credits.");
+
+            m.Player.Credits = 3 * cost;
+            _match.GetComponent<SquadSelection>().Select(SimSquad(same[0]));
+            view = _match.DescribeProgress(SimSquad(same[0]));
+            Assert.IsTrue(view.LevelAllEnabled);
+            string action = null;
+            _match.ActionTaken += (name, result) => action = name;
+            view.OnLevelAll();
+            yield return null;
+
+            Assert.AreEqual(nameof(MatchController.LevelUpAll), action, "So the sound of a level-up plays.");
+            Assert.AreEqual(0, m.Player.Credits);
+            foreach (PlacedSquad squad in same) Assert.AreEqual(2, squad.Level);
+            Assert.AreEqual(same[0], _match.SelectedPlacedSquad, "Still selected after it.");
+            Assert.AreEqual(same[0].Type.MaxHealth * 2f, _battle.Simulation.Squads[m.Player.Squads.IndexOf(same[0])].Members[0].Stats.MaxHealth, 1e-3f, "The field shows level 2.");
+            Assert.IsNull(_match.DescribeProgress(SimSquad(same[0])).LevelAllLabel);
         }
 
         [UnityTest]

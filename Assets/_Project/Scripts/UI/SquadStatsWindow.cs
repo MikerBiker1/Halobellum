@@ -5,7 +5,9 @@
 // damage, rate of fire, range, splash radius and damage type, plus any defense arc.
 // Below the stats it shows the squad's level, XP bar, level-up button with its price and its tech
 // upgrades with Buy buttons (Milestone 6), from the scene's ISquadProgression (the Match or the
-// Sandbox); the opponent's squads only show their level.
+// Sandbox); the opponent's squads only show their level. Beside Level up, a button that levels every
+// ready squad of the type, when there are 2 or more. The two share the row with the level line, and
+// go on a row of their own if a theme's fonts leave no room for that.
 // The unit's picture (UnitIcons) is at the top. Placeholder UI drawn with Unity's immediate-mode GUI.
 // Depends on: Halobellum.Presentation (BattleController, SquadSelection, ISquadProgression, UiHitAreas), Halobellum.Core, UnitIcons.
 
@@ -44,6 +46,15 @@ namespace Halobellum.UI
         private readonly List<string> _techNames = new List<string>(), _techEffects = new List<string>();
         private Rect _window;
         private int _windowFrame = -1;
+        private bool _levelButtonsOwnRow;
+        private float _levelUpWidth, _levelAllWidth, _levelLineWidth;
+
+        /// <summary>For a test tool: where the level line and the two buttons were last drawn, in HUD units. Width 0 when not drawn.</summary>
+        public Rect LevelLineShown { get; private set; }
+        public Rect LevelUpShown { get; private set; }
+        public Rect LevelAllShown { get; private set; }
+        /// <summary>For a test tool: the two buttons are on a row of their own.</summary>
+        public bool LevelButtonsOwnRow => _levelButtonsOwnRow;
 
         /// <summary>
         /// The left edge of the Move / Turn / Sell panel, which comes with this window: centred at the bottom of the screen, or right of this window where it would run under it.
@@ -84,7 +95,7 @@ namespace Halobellum.UI
             string body = _body;
             float textHeight = _textHeight;
             SquadProgressView progress = _progress;
-            float height = HeaderHeight + textHeight + ProgressHeight(progress);
+            float height = HeaderHeight + textHeight + ProgressHeight(progress) + (progress != null && _levelButtonsOwnRow ? LevelRowHeight : 0f);
             var window = new Rect(ScreenLeft, HudScale.ScaledHeight(scale) - height - 10f, windowWidth, height);
             UiHitAreas.Add(HudScale.ToScreen(window, scale));
             _window = window;
@@ -114,6 +125,7 @@ namespace Halobellum.UI
             _side = _progress?.SideLabel ?? $"Team {sample.Team}";
             _techNames.Clear();
             _techEffects.Clear();
+            _levelButtonsOwnRow = false;
             if (_progress == null) return;
             _levelLine = $"Level {_progress.Level} of {_progress.MaxLevel}";
             _xpLine = $"XP {_progress.Xp:0} / {_progress.XpNeeded:0}";
@@ -122,8 +134,35 @@ namespace Halobellum.UI
                 _techNames.Add(line.Owned ? $"{line.Tech.Name}  (researched)" : line.Tech.Name);
                 _techEffects.Add(line.Tech.EffectsText());
             }
+            MeasureLevelRow(_progress, windowWidth - 2f * TextInset);
         }
 
+        /// <summary>The widths of the level line and buttons, and whether they all fit on one row. Sizes differ from theme to theme, so this measures them.</summary>
+        private void MeasureLevelRow(SquadProgressView p, float width)
+        {
+            _levelUpWidth = LevelUpWidth;
+            _levelAllWidth = 0f;
+            _measure.text = _levelLine;
+            _levelLineWidth = _title.CalcSize(_measure).x + 4f;
+            if (p.LevelAllLabel == null) return;
+
+            _measure.text = p.LevelAllLabel;
+            _levelAllWidth = GUI.skin.button.CalcSize(_measure).x + ButtonRoom;
+            _levelUpWidth = 0f;
+            if (p.LevelUpLabel != null)
+            {
+                _measure.text = p.LevelUpLabel;
+                _levelUpWidth = GUI.skin.button.CalcSize(_measure).x + ButtonRoom;
+            }
+            float taken = _levelLineWidth + RowGap + _levelAllWidth + (_levelUpWidth > 0f ? RowGap + _levelUpWidth : 0f);
+            _levelButtonsOwnRow = taken > width;
+            if (!_levelButtonsOwnRow) return;
+            float each = _levelUpWidth > 0f ? (width - RowGap) * 0.5f : width;
+            _levelAllWidth = each;
+            if (_levelUpWidth > 0f) _levelUpWidth = each;
+        }
+
+        private const float LevelUpWidth = 150f, LevelRowHeight = 30f, RowGap = 6f, ButtonRoom = 12f;
         private const float LineHeight = 24f, TechRowHeight = 44f, PictureSize = 56f, HeaderHeight = 72f;
         /// <summary>Room under the last line of the progress part, and at the sides of the text, so that the window's frame doesn't cover them.</summary>
         private const float BottomPadding = 14f, TextInset = 18f;
@@ -143,14 +182,31 @@ namespace Halobellum.UI
         private void DrawProgress(SquadProgressView p, float x, float y, float width)
         {
             y += 10f;
-            GUI.Label(new Rect(x, y, 170f, LineHeight + 6f), _levelLine, _title);
+            var levelLine = new Rect(x, y, p.LevelAllLabel != null ? _levelLineWidth : 170f, LineHeight + 6f);
+            GUI.Label(levelLine, _levelLine, _title);
+            LevelLineShown = levelLine;
+            if (_levelButtonsOwnRow) y += LevelRowHeight;
             float buttonX = x + width;
+            LevelAllShown = default;
+            LevelUpShown = default;
+            if (p.LevelAllLabel != null)
+            {
+                buttonX -= _levelAllWidth;
+                var levelAll = new Rect(buttonX, y, _levelAllWidth, 28f);
+                buttonX -= RowGap;
+                GUI.enabled = p.LevelAllEnabled;
+                if (GUI.Button(levelAll, p.LevelAllLabel) && p.OnLevelAll != null) p.OnLevelAll();
+                GUI.enabled = true;
+                LevelAllShown = levelAll;
+            }
             if (p.LevelUpLabel != null)
             {
-                buttonX -= 150f;
+                buttonX -= _levelUpWidth;
+                var levelUp = new Rect(buttonX, y, _levelUpWidth, 28f);
                 GUI.enabled = p.LevelUpEnabled;
-                if (GUI.Button(new Rect(buttonX, y, 150f, 28f), p.LevelUpLabel) && p.OnLevelUp != null) p.OnLevelUp();
+                if (GUI.Button(levelUp, p.LevelUpLabel) && p.OnLevelUp != null) p.OnLevelUp();
                 GUI.enabled = true;
+                LevelUpShown = levelUp;
             }
             if (p.OnLevelDown != null)
             {

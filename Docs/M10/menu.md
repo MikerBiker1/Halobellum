@@ -11,6 +11,7 @@ On the left, under a soft darkness so the text stands out: the title **HALOBELLU
 | Setting | PlayerPrefs key | Default |
 |---|---|---|
 | Master, Music, Effects, Interface volume | `Volume.Master`, `Volume.Music`, `Volume.Sfx`, `Volume.Ui` (floats, 0 to 1) | 1, 0.6, 1, 1 |
+| Screen | `Video.Screen` (string: name, width, height and place in Unity's list) | Windows's main screen |
 | Windowed or fullscreen | `Video.Fullscreen` (int) | as Unity remembers it |
 | Resolution | `Video.Width`, `Video.Height` (ints) | as Unity remembers it |
 | Quality (Low or High: the project's Mobile and PC levels) | `Video.Quality` (int) | the project's (High) |
@@ -18,7 +19,7 @@ On the left, under a soft darkness so the text stands out: the title **HALOBELLU
 | UI scale, 75% to 125% | `Ui.Scale` (float) | 100% |
 | Camera shake | `Fx.CameraShake` (int) | on |
 
-Each is applied at once and again when the game starts. "Reset to defaults" puts back sound, camera shake and UI scale, and leaves the window and quality alone.
+Each is applied at once and again when the game starts. "Reset to defaults" puts back sound, camera shake and UI scale, and leaves the window, the screen and quality alone.
 
 **Pause.** Esc in a match or the Sandbox opens Resume, Settings, Quit to Main Menu, Quit Game. So does a small **Menu** button at the bottom right of the screen, for those who don't know about Esc. Leaving asks "Yes, leave / Stay" first.
 
@@ -82,6 +83,20 @@ To change the picture, edit `MainMenuSceneBuilder.cs` and run it (Halobellum > S
 - **Items panel and squad window.** See above. On the narrowest windows (under about 1200 units) the moved panel lies over the left edge of the unit list, where the pictures and the "Place for" label are. The Place buttons stay clear.
 - **Squad actions and squad window.** Under about 1420 units wide the Move / Turn / Sell panel ran under the stats window and hid the Move button. It now stands right of that window (`SquadStatsWindow.ActionsPanelLeft`), in the Match and the Sandbox.
 
+## Owner's quick wins: Level all, and the Screen setting
+
+**Level all.** Beside Level up in the squad window, a button such as "Level all 3 (225)" levels every ready squad of the selected squad's unit type at once. It shows when 2 or more squads of the type are ready, whether or not the selected one is, also from a squad at the maximum level, which has no Level up. It is greyed out when the credits fall short, and outside deployment. It is all or nothing (`Match.LevelUpAll`, with `Match.SquadsReadyToLevel` for the count and price). Each squad's own `LevelUpSpent` goes up, so refunds stay right. A squad whose bar isn't full or at level 5 is left out. It goes the way Level up goes in `MatchController`, so it has the message, `ActionTaken` and the level-up sound (`MatchAudio`), and the field is rebuilt with the same squad selected. The Sandbox doesn't have it: its Level + is free. The window measures the level line and the two buttons with the theme's fonts. They all fit on one row in all three themes, with about 40 units to spare, so the window doesn't grow. If a theme's fonts ever left no room, the two buttons would go on a row of their own under the level line.
+
+**Screen.** A row in Settings, first under Display, lists the PC's screens by name and size, the main one first and marked "(main)". The arrows move the game there at once, and the choice is saved. With one screen the row has no arrows and says "Only one: ...". `Core/DisplayChoice.cs` has the rules, in plain C# with tests, and `Presentation/GameDisplays.cs` does the moving.
+
+- **At start** (`GameSettings.ApplyAtStart`, not in a test run, not in the editor, and not with `-screen-width`, `-monitor` and so on on the command line) the game goes to the saved screen. If none was ever chosen, or the saved one is gone, it goes to Windows's main screen. So a window dragged to another screen by hand goes back to the main one at the next start, until a screen is chosen in Settings.
+- **The main screen.** Unity doesn't say which it is. On Windows, `DisplayInfo.workArea` starts at 0,0 for every screen, wherever it is on the desktop, so that can't tell them apart: logged on this PC, all three say x 0, y 0. `GameDisplays` asks Windows for the main screen's size (`MonitorFromPoint` and `GetMonitorInfo`, read only), and takes the first screen of that size in Unity's list. If there are two screens of that size, and the main one is the second in Unity's list, it takes the wrong one. On this PC the sizes all differ, and Unity's first is the main one.
+- **A saved choice** is `name|width|height|place`. The same name, size and place comes first, then the same name and size, then the same name at another resolution. The place only tells two screens of one model apart.
+- **Sizes.** `Screen.resolutions` follows the screen the window is on (measured: 15 sizes on the Dell, 20 on the LG, 17 on the HP), so the Resolution row lists them again after a move, and only those that fit. A window too big for the new screen shrinks to the work area less a title bar. Fullscreen at the old screen's own size takes the new screen's own size. Fullscreen at a smaller chosen size keeps it.
+- **Unity's own memory.** `UnitySelectMonitor` is the window's place in Unity's list, and `Screenmanager Window Position X/Y` is its corner on that screen. Unity keeps them up to date as the window moves, even in a run that is killed. It opens the next start there before any game code runs, so a start that has to move sees the window on the old screen for about 3.5 seconds (measured from the window appearing). The move then updates Unity's memory, so the next start opens on the right screen.
+
+The check is **`-screenDemo <folder>`**, on a test build only, and silent like the other tools. It presses the row's own buttons (no real mouse) and really moves its window to each screen in turn, windowed and fullscreen, logging `Screen.mainWindowDisplayInfo` before and after. `-screenDemoEndOn <n>` ends on the n-th screen of the row, so that the next start opens there. `-screenDemo <folder> -screenDemoFake` looks at the row with made-up lists at every UI scale and at five window sizes. `-cardsDemo <folder> -cardsDemoLevelAll` does the same job for Level all: prices, greying out, no overlap at every UI scale and theme, and pictures.
+
 ## Test tools and the player's settings
 
 A run of a test tool (`GameFlow.IsTestRun`: all the flags below, `-menuDemo`, `-terrainGallery` and `-audioCapture`) holds every setting in memory (`GameSettings.HoldInMemory`). It starts from what was saved. What it changes, by a click or a K press that reaches its window, lasts only as long as the run, and Reset to defaults and Save do nothing to the saved values. Each such run ends its log with `GameSettings: this test run changed no saved setting.`, or a `PROBLEM` line with both sets of values. The AI's difficulty goes through `GameSettings.Difficulty` too. The PlayMode tests hold the settings the same way (`SettingsHeldForTests`), and the menu's EditMode tests do it test by test. Tests that are about PlayerPrefs itself still touch it and put back what they found, including that a key did not exist: two in `MenuFlowTests` and one in `AudioSceneTests`, because the sound code reads the saved volumes itself. So a volume changed in a test run is not heard.
@@ -103,6 +118,7 @@ Every tool skips the menu and goes where it went before:
 | `-sandboxDemo`, with or without `-gallery` | Sandbox |
 | `-benchmark` | Battle (it used to do nothing in a normal build, whose first scene was Match) |
 | `-cardsDemo` | Match |
+| `-screenDemo` | stays in the menu, as `-menuDemo` does |
 
 A test run also doesn't apply the saved window, quality and VSync, and `-screen-width` and so on are never undone by saved settings. `-terrainGallery` finds its own way to the Sandbox, and is now counted as a test run too.
 

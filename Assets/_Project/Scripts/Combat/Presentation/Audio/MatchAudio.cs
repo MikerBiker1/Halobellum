@@ -82,6 +82,7 @@ namespace Halobellum.Presentation
                 case nameof(MatchController.Unlock):
                 case nameof(MatchController.BuyTech): GameAudio.Ui(UiSound.Unlock); break;
                 case nameof(MatchController.LevelUp):
+                case nameof(MatchController.LevelUpAll):
                 case nameof(MatchController.UseTraining): GameAudio.Ui(UiSound.LevelUp); break;
                 case nameof(MatchController.ChooseCard):
                 case nameof(MatchController.ChooseDraft): GameAudio.Ui(UiSound.CardPick); break;

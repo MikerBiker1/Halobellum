@@ -282,6 +282,14 @@ namespace Halobellum.Presentation
             return result;
         }
 
+        /// <summary>Levels up every ready squad of this type at once (Match.LevelUpAll).</summary>
+        public ActionResult LevelUpAll(UnitStats type, int reselectSquadId = -1)
+        {
+            ActionResult result = Report(Match.LevelUpAll(Team.A, type));
+            if (result.Ok) RefreshPreview(reselectSquadId);
+            return result;
+        }
+
         public ActionResult BuyTech(UnitStats type, TechUpgrade tech, int reselectSquadId = -1)
         {
             ActionResult result = Report(Match.BuyTech(Team.A, type, tech));
@@ -364,6 +372,15 @@ namespace Halobellum.Presentation
                 view.Note = Match.CanLevelUp(squad) ? "XP bar full: ready to level up." : "Earns XP from kills.";
             }
             else view.Note = "Maximum level.";
+
+            // Whether or not this squad is one of them: any squad of the type reaches the others.
+            int ready = Match.SquadsReadyToLevel(Team.A, squad.Type, out int readyPrice);
+            if (ready >= 2)
+            {
+                view.LevelAllLabel = $"Level all {ready} ({readyPrice})";
+                view.LevelAllEnabled = deploying && player.Credits >= readyPrice;
+                view.OnLevelAll = () => LevelUpAll(squad.Type, squad.Id);
+            }
 
             foreach (TechUpgrade tech in squad.Type.TechUpgrades ?? Array.Empty<TechUpgrade>())
             {

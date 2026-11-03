@@ -35,6 +35,10 @@ namespace Halobellum.Presentation
         public string LevelUpLabel;
         public bool LevelUpEnabled;
         public Action OnLevelUp;
+        /// <summary>Button text such as "Level all 3 (225)" for every ready squad of this type, or null for no button.</summary>
+        public string LevelAllLabel;
+        public bool LevelAllEnabled;
+        public Action OnLevelAll;
         /// <summary>Sandbox only: lowers the level. Null = no button.</summary>
         public Action OnLevelDown;
         /// <summary>A short note under the level (e.g. "XP bar full: ready to level up").</summary>
