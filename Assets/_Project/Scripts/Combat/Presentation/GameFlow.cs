@@ -2,7 +2,7 @@
 // Which scene the game goes to, and when (M10). A built game starts in the MainMenu scene; New Match, Sandbox and Quit to Main
 // Menu all come through here, so that the scene names live in one place and leaving a scene always un-pauses first.
 // The test tools (-autoplay, -sandboxDemo, -gallery, -crowdBench, -benchmark) skip the menu: as soon as MainMenu has loaded, the
-// game moves on to the scene that tool has always run in. -menuDemo stays in the menu, because the menu is what it tests.
+// game moves on to the scene that tool has always run in. -menuDemo and -screenDemo stay in the menu, because the menu is what they test.
 // It also remembers where the Sandbox was opened from, for the Sandbox's Back button.
 // Depends on: GamePause, SandboxAutoplay, CrowdBenchmark and AudioCapture (their flags), UnityEngine.
 
@@ -23,6 +23,7 @@ namespace Halobellum.Presentation
         public const string GalleryFlag = "-gallery";
         public const string BenchmarkFlag = "-benchmark";
         public const string MenuDemoFlag = "-menuDemo";
+        public const string ScreenDemoFlag = "-screenDemo";
         public const string CardsDemoFlag = "-cardsDemo";
         public const string TerrainGalleryFlag = "-terrainGallery";
 
@@ -47,12 +48,12 @@ namespace Halobellum.Presentation
         public static bool IsMeasuring(string[] args) => Has(args, CrowdBenchmark.Flag) || Has(args, BenchmarkFlag);
 
         /// <summary>True for a run of any test tool: the player's saved settings are not applied, and nothing it does reaches them (GameSettings).</summary>
-        public static bool IsTestRun(string[] args) => DirectSceneFor(args) != null || Has(args, MenuDemoFlag) || Has(args, TerrainGalleryFlag) || Has(args, AudioCapture.Flag);
+        public static bool IsTestRun(string[] args) => DirectSceneFor(args) != null || Has(args, MenuDemoFlag) || Has(args, ScreenDemoFlag) || Has(args, TerrainGalleryFlag) || Has(args, AudioCapture.Flag);
 
         /// <summary>True if the command line itself sets the window, which the saved settings must not undo.</summary>
         public static bool CommandLineSetsWindow(string[] args)
         {
-            return Has(args, "-screen-width") || Has(args, "-screen-height") || Has(args, "-screen-fullscreen") || Has(args, "-popupwindow");
+            return Has(args, "-screen-width") || Has(args, "-screen-height") || Has(args, "-screen-fullscreen") || Has(args, "-popupwindow") || Has(args, "-monitor");
         }
 
         public static void OpenMainMenu() => Load(MainMenuScene);

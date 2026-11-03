@@ -98,7 +98,7 @@ namespace Halobellum.Presentation
         /// <summary>The test tools that run the game by themselves: each of these makes a run silent. A tool's flag belongs here as soon as the tool exists (AudioTests reads them from the code).</summary>
         public static readonly string[] TestRunFlags =
         {
-            GameFlow.AutoplayFlag, SandboxAutoplay.Flag, GameFlow.GalleryFlag, CrowdBenchmark.Flag, GameFlow.BenchmarkFlag, GameFlow.MenuDemoFlag, GameFlow.CardsDemoFlag, "-terrainGallery",
+            GameFlow.AutoplayFlag, SandboxAutoplay.Flag, GameFlow.GalleryFlag, CrowdBenchmark.Flag, GameFlow.BenchmarkFlag, GameFlow.MenuDemoFlag, GameFlow.ScreenDemoFlag, GameFlow.CardsDemoFlag, "-terrainGallery",
         };
 
         /// <summary>True if this run should make no sound in the room: a test or a batch run, unless asked with -audioOn.</summary>

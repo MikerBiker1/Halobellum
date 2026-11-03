@@ -1,7 +1,8 @@
 // LevelingAndTechTests.cs
 // Tests squad leveling (Bible Section 5, rule 10 "leveling") and tech upgrades (Section 9),
 // Milestone 6: level multipliers, XP from kills (capped at a bar that is the same at every level),
-// level-ups for half the base price, level and XP surviving the round reset, sell value, techs
+// level-ups for half the base price, leveling every ready squad of a type at once, level and XP
+// surviving the round reset, sell value, techs
 // bought once per unit type and applied to every squad of that type, a drop unlocked by a tech,
 // and the AI using both.
 // Depends on: Halobellum.Economy, Halobellum.Combat, Halobellum.Core, NUnit, TestMatch, TestUnits, TestRules.
@@ -146,6 +147,160 @@ namespace Halobellum.Tests
             bought.Xp = match.XpNeeded(bought);
             Assert.IsTrue(match.LevelUp(Team.A, bought.Id).Ok);
             Assert.AreEqual(infantry.Cost + infantry.Cost / 2, match.SellValue(bought), "Full refund before its first battle, level-up included.");
+        }
+
+        // ------------------------------------------------------------------ leveling all of a type
+
+        /// <summary>Round 1 with three squads of a type priced like the Carrier Form, all ready to level up, and one Tank, also ready.</summary>
+        private static Match ThreeCarriers(out UnitStats carrier, out List<PlacedSquad> carriers, out PlacedSquad tank)
+        {
+            Match match = TestMatch.Started(out _, out _, out UnitStats tankType, out _);
+            carrier = TestUnits.Unit(name: "Carrier Form", cost: 150);
+            match.Player.Squads.Clear();
+            match.Enemy.Squads.Clear();
+            carriers = new List<PlacedSquad>();
+            for (int i = 0; i < 3; i++)
+            {
+                var squad = new PlacedSquad { Id = 700 + i, Type = carrier, Column = 2 + 4 * i, Row = 0, RoundBought = 1 };
+                squad.Xp = match.XpNeeded(squad);
+                carriers.Add(squad);
+                match.Player.Squads.Add(squad);
+            }
+            tank = new PlacedSquad { Id = 710, Type = tankType, Column = 30, Row = 0, RoundBought = 1 };
+            tank.Xp = match.XpNeeded(tank);
+            match.Player.Squads.Add(tank);
+            return match;
+        }
+
+        [Test]
+        public void LevelUpAll_ThreeCarrierPricedSquads_Cost225_AndAllLevelUp()
+        {
+            Match match = ThreeCarriers(out UnitStats carrier, out List<PlacedSquad> carriers, out _);
+            match.Player.Credits = 1000;
+
+            Assert.AreEqual(3, match.SquadsReadyToLevel(Team.A, carrier, out int price));
+            Assert.AreEqual(225, price);
+            Assert.IsTrue(match.LevelUpAll(Team.A, carrier).Ok);
+
+            Assert.AreEqual(1000 - 225, match.Player.Credits);
+            foreach (PlacedSquad squad in carriers)
+            {
+                Assert.AreEqual(2, squad.Level);
+                Assert.AreEqual(0f, squad.Xp);
+                Assert.AreEqual(75, squad.LevelUpSpent, "Each squad carries its own share, for its refund.");
+            }
+            Assert.AreEqual(0, match.SquadsReadyToLevel(Team.A, carrier, out price), "Nobody is ready any more.");
+            Assert.AreEqual(0, price);
+            Assert.IsFalse(match.LevelUpAll(Team.A, carrier).Ok, "Nothing left to level.");
+            Assert.AreEqual(1000 - 225, match.Player.Credits);
+        }
+
+        [Test]
+        public void LevelUpAll_TooFewCredits_ChangesNothing()
+        {
+            Match match = ThreeCarriers(out UnitStats carrier, out List<PlacedSquad> carriers, out _);
+            match.Player.Credits = 224; // Enough for two of the three, and that must not happen.
+
+            ActionResult result = match.LevelUpAll(Team.A, carrier);
+
+            Assert.IsFalse(result.Ok);
+            StringAssert.Contains("225", result.Message);
+            Assert.AreEqual(224, match.Player.Credits);
+            foreach (PlacedSquad squad in carriers)
+            {
+                Assert.AreEqual(1, squad.Level);
+                Assert.AreEqual(match.XpNeeded(squad), squad.Xp, 1e-3f);
+                Assert.AreEqual(0, squad.LevelUpSpent);
+            }
+
+            match.Player.Credits = 225;
+            Assert.IsTrue(match.LevelUpAll(Team.A, carrier).Ok, "Exactly the price is enough.");
+            Assert.AreEqual(0, match.Player.Credits);
+        }
+
+        [Test]
+        public void LevelUpAll_LeavesOutSquadsWithoutAFullBar_AndAtTheMaximumLevel()
+        {
+            Match match = ThreeCarriers(out UnitStats carrier, out List<PlacedSquad> carriers, out _);
+            match.Player.Credits = 1000;
+            carriers[1].Xp = match.XpNeeded(carriers[1]) - 1f;
+            carriers[1].Level = 2;
+            carriers[2].Level = UnitUpgrades.MaxLevel;
+            match.Player.Squads.Add(new PlacedSquad { Id = 720, Type = carrier, Column = 20, Row = 0, RoundBought = 1, Level = 3, Xp = match.XpNeeded(carriers[0]) });
+
+            Assert.AreEqual(2, match.SquadsReadyToLevel(Team.A, carrier, out int price), "The first, and the level 3 one.");
+            Assert.AreEqual(150, price);
+            float partial = carriers[1].Xp;
+            Assert.IsTrue(match.LevelUpAll(Team.A, carrier).Ok);
+
+            Assert.AreEqual(1000 - 150, match.Player.Credits);
+            Assert.AreEqual(2, carriers[0].Level);
+            Assert.AreEqual(2, carriers[1].Level, "Its bar is not full.");
+            Assert.AreEqual(partial, carriers[1].Xp, 1e-3f);
+            Assert.AreEqual(0, carriers[1].LevelUpSpent);
+            Assert.AreEqual(UnitUpgrades.MaxLevel, carriers[2].Level);
+            Assert.AreEqual(0, carriers[2].LevelUpSpent);
+            Assert.AreEqual(4, match.Player.FindSquad(720).Level, "The price is the same at every level.");
+        }
+
+        [Test]
+        public void LevelUpAll_LeavesOtherUnitTypes_AndTheOpponent_Alone()
+        {
+            Match match = ThreeCarriers(out UnitStats carrier, out _, out PlacedSquad tank);
+            match.Player.Credits = 1000;
+            match.Enemy.Credits = 1000;
+            var theirs = new PlacedSquad { Id = 730, Type = carrier, Column = 2, Row = 0, RoundBought = 1 };
+            theirs.Xp = match.XpNeeded(theirs);
+            match.Enemy.Squads.Add(theirs);
+            float tankXp = tank.Xp;
+
+            Assert.AreEqual(1, match.SquadsReadyToLevel(Team.A, tank.Type, out int tankPrice));
+            Assert.AreEqual(tank.Type.Cost / 2, tankPrice);
+            Assert.IsTrue(match.LevelUpAll(Team.A, carrier).Ok);
+
+            Assert.AreEqual(1, tank.Level);
+            Assert.AreEqual(tankXp, tank.Xp, 1e-3f);
+            Assert.AreEqual(0, tank.LevelUpSpent);
+            Assert.AreEqual(1, theirs.Level, "The AI's squad of the same type is its own.");
+            Assert.AreEqual(1000, match.Enemy.Credits);
+        }
+
+        [Test]
+        public void LevelUpAll_TheRefundsAreRightAfterwards()
+        {
+            Match match = TestMatch.Started(out UnitStats infantry, out _, out _, out _);
+            match.Player.Squads.Clear();
+            match.Player.Credits = 5000;
+            match.Player.Unlocked.Add(infantry);
+            Assert.IsTrue(match.Buy(Team.A, infantry, 0, 10, false).Ok);
+            Assert.IsTrue(match.Buy(Team.A, infantry, 20, 10, false).Ok);
+            PlacedSquad first = match.Player.Squads[0], second = match.Player.Squads[1];
+            first.Xp = match.XpNeeded(first);
+            second.Xp = match.XpNeeded(second);
+
+            Assert.IsTrue(match.LevelUpAll(Team.A, infantry).Ok);
+            int cost = infantry.Cost / 2;
+            Assert.AreEqual(infantry.Cost + cost, match.SellValue(first), "Full refund before its first battle, level-up included.");
+            int credits = match.Player.Credits;
+            Assert.IsTrue(match.Sell(Team.A, first.Id).Ok);
+            Assert.AreEqual(credits + infantry.Cost + cost, match.Player.Credits);
+
+            match.StartBattle().Run();
+            match.FinishBattle();
+            match.ContinueAfterResult();
+            Assert.AreEqual((int)System.MathF.Round((infantry.Cost + cost) * match.Rules.RefundAfterBattle), match.SellValue(second), "Half of price and level-up after a battle.");
+        }
+
+        [Test]
+        public void LevelUpAll_OnlyDuringDeployment()
+        {
+            Match match = ThreeCarriers(out UnitStats carrier, out List<PlacedSquad> carriers, out _);
+            match.Player.Credits = 1000;
+            match.StartBattle();
+
+            Assert.IsFalse(match.LevelUpAll(Team.A, carrier).Ok);
+            Assert.AreEqual(1000, match.Player.Credits);
+            Assert.AreEqual(1, carriers[0].Level);
         }
 
         // ------------------------------------------------------------------ techs

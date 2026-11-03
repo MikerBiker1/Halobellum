@@ -3,6 +3,7 @@
 //   Volume.Master, Volume.Music, Volume.Sfx, Volume.Ui  floats from 0 to 1. The sound code reads these by itself.
 //   Fx.CameraShake                                      int, 1 on, 0 off. The effects code reads this by itself.
 //   Video.Fullscreen, Video.Width, Video.Height         ints; -1 means never chosen, so Unity's own remembered window stands.
+//   Video.Screen                                        string, the chosen screen in DisplayChoice's saved form; empty means never chosen, so the game starts on Windows's main screen.
 //   Video.Quality                                       int, a level from Project Settings > Quality; -1 means never chosen.
 //   Video.VSync                                         int, 1 on, 0 off.
 //   Ui.Scale                                            float, a factor on top of the HUD's scale to the window.
@@ -15,7 +16,7 @@
 // The sound code keeps reading the saved volumes, so a change to a volume in a test run is not heard.
 // Unity's own remembered window can't be held from here: it writes -screen-width and so on to the same PlayerPrefs before any game code runs. Only a build of
 // its own keeps a test tool away from the player's window: see -testBuild in PlayerBuildTool.
-// Depends on: GameFlow (command line), MatchController (difficulty key), Halobellum.Economy, UnityEngine.
+// Depends on: GameFlow (command line), GameDisplays (the screen), MatchController (difficulty key), Halobellum.Economy, UnityEngine.
 
 using System;
 using System.Collections.Generic;
@@ -30,7 +31,7 @@ namespace Halobellum.Presentation
         public const string MasterVolumeKey = "Volume.Master", MusicVolumeKey = "Volume.Music", SfxVolumeKey = "Volume.Sfx", UiVolumeKey = "Volume.Ui";
         public const string CameraShakeKey = "Fx.CameraShake";
         public const string FullscreenKey = "Video.Fullscreen", WidthKey = "Video.Width", HeightKey = "Video.Height";
-        public const string QualityKey = "Video.Quality", VSyncKey = "Video.VSync";
+        public const string QualityKey = "Video.Quality", VSyncKey = "Video.VSync", ScreenKey = "Video.Screen";
         public const string UiScaleKey = "Ui.Scale";
 
         public const float DefaultMasterVolume = 1f, DefaultMusicVolume = 0.6f, DefaultSfxVolume = 1f, DefaultUiVolume = 1f;
@@ -38,6 +39,8 @@ namespace Halobellum.Presentation
 
         private static readonly string[] SavedFloatKeys = { MasterVolumeKey, MusicVolumeKey, SfxVolumeKey, UiVolumeKey, UiScaleKey };
         private static readonly string[] SavedIntKeys = { CameraShakeKey, FullscreenKey, WidthKey, HeightKey, QualityKey, VSyncKey, MatchController.DifficultyKey };
+
+        private static readonly string[] SavedStringKeys = { ScreenKey };
 
         private static float _uiScale = -1f;
         /// <summary>What a hold has changed so far, by key, or null when nothing is held.</summary>
@@ -134,6 +137,21 @@ namespace Halobellum.Presentation
             }
         }
 
+        /// <summary>The screen the player chose, in DisplayChoice's saved form, or empty if never. GameDisplays moves the window.</summary>
+        public static string ChosenScreen
+        {
+            get
+            {
+                if (_held != null && _held.TryGetValue(ScreenKey, out object value)) return (string)value;
+                return _heldStartedEmpty ? "" : PlayerPrefs.GetString(ScreenKey, "");
+            }
+            set
+            {
+                if (_held != null) _held[ScreenKey] = value;
+                else PlayerPrefs.SetString(ScreenKey, value);
+            }
+        }
+
         /// <summary>Changes the window and remembers it.</summary>
         public static void SetWindow(int width, int height, bool fullscreen)
         {
@@ -194,6 +212,7 @@ namespace Halobellum.Presentation
             var text = new StringBuilder();
             foreach (string key in SavedFloatKeys) text.Append(key).Append('=').Append(PlayerPrefs.HasKey(key) ? PlayerPrefs.GetFloat(key).ToString("R") : "none").Append(' ');
             foreach (string key in SavedIntKeys) text.Append(key).Append('=').Append(PlayerPrefs.HasKey(key) ? PlayerPrefs.GetInt(key).ToString() : "none").Append(' ');
+            foreach (string key in SavedStringKeys) text.Append(key).Append('=').Append(PlayerPrefs.HasKey(key) ? PlayerPrefs.GetString(key) : "none").Append(' ');
             return text.ToString();
         }
 
@@ -231,9 +250,8 @@ namespace Halobellum.Presentation
 
             if (GameFlow.CommandLineSetsWindow(args)) return;
             int width = PlayerPrefs.GetInt(WidthKey, -1), height = PlayerPrefs.GetInt(HeightKey, -1), fullscreen = PlayerPrefs.GetInt(FullscreenKey, -1);
-            if (fullscreen < 0 && width <= 0) return;
             FullScreenMode mode = fullscreen == 1 ? FullScreenMode.FullScreenWindow : fullscreen == 0 ? FullScreenMode.Windowed : Screen.fullScreenMode;
-            Screen.SetResolution(width > 0 ? width : Screen.width, height > 0 ? height : Screen.height, mode);
+            GameDisplays.GoToChosenAtStart(ChosenScreen, width > 0 ? width : Screen.width, height > 0 ? height : Screen.height, mode, fullscreen >= 0 || width > 0);
         }
     }
 }

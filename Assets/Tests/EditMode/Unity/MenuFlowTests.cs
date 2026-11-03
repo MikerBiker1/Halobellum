@@ -34,6 +34,21 @@ namespace Halobellum.Tests
         [TearDown]
         public void LetGo() => GameSettings.ReleaseHold();
 
+        [Test]
+        public void TheChosenScreen_StartsEmpty_StaysInTheHold_AndResetToDefaultsLeavesIt()
+        {
+            bool savedBefore = PlayerPrefs.HasKey(GameSettings.ScreenKey);
+            string valueBefore = PlayerPrefs.GetString(GameSettings.ScreenKey, "");
+            Assert.AreEqual("", GameSettings.ChosenScreen, "Never chosen: the first start goes to the main screen.");
+
+            GameSettings.ChosenScreen = "HP E242|1920|1200|2";
+            GameSettings.ResetToDefaults();
+
+            Assert.AreEqual("HP E242|1920|1200|2", GameSettings.ChosenScreen, "Reset to defaults leaves the window alone, and the screen with it.");
+            Assert.AreEqual(savedBefore, PlayerPrefs.HasKey(GameSettings.ScreenKey), "Nothing reaches PlayerPrefs in a hold.");
+            Assert.AreEqual(valueBefore, PlayerPrefs.GetString(GameSettings.ScreenKey, ""));
+        }
+
         /// <summary>For the tests about PlayerPrefs itself: runs with no hold, and puts back what was stored.</summary>
         private static void WithTheRealStore(Action test)
         {
@@ -124,6 +139,8 @@ namespace Halobellum.Tests
             Assert.IsNull(GameFlow.DirectSceneFor(new[] { "Halobellum.exe", "-screen-width", "800" }));
             Assert.IsNull(GameFlow.DirectSceneFor(new[] { "Halobellum.exe", GameFlow.MenuDemoFlag, "x" }));
             Assert.IsTrue(GameFlow.IsTestRun(new[] { GameFlow.MenuDemoFlag }), "The demo must not change the saved window.");
+            Assert.IsTrue(GameFlow.IsTestRun(new[] { GameFlow.ScreenDemoFlag }), "The screen demo must not move the window at start, or save the screen.");
+            Assert.IsNull(GameFlow.DirectSceneFor(new[] { GameFlow.ScreenDemoFlag }), "It stays in the menu, which is what it tests.");
             Assert.IsFalse(GameFlow.IsTestRun(new[] { "Halobellum.exe" }));
         }
 
@@ -140,6 +157,7 @@ namespace Halobellum.Tests
         {
             Assert.IsTrue(GameFlow.CommandLineSetsWindow(new[] { "-screen-width", "1600" }));
             Assert.IsTrue(GameFlow.CommandLineSetsWindow(new[] { "-screen-fullscreen", "0" }));
+            Assert.IsTrue(GameFlow.CommandLineSetsWindow(new[] { "-monitor", "2" }), "Asking for a monitor on the command line also beats the saved screen.");
             Assert.IsFalse(GameFlow.CommandLineSetsWindow(new[] { "Halobellum.exe" }));
         }
 
