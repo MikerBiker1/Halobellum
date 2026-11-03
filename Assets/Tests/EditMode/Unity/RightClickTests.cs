@@ -34,6 +34,28 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void AClickWithTheMouseStillMoving_IsStillAClick_SinceThePressFramesMovementDoesntCount()
+        {
+            var right = new RightClickTracker();
+            right.Step(new RightButtonReading { Pressed = true, Held = true, Position = Here, Delta = new Vector2(40f, -25f) }, 1f, false);
+            Assert.IsFalse(right.IsDrag, "That movement ended at the press, and none has come since.");
+            Assert.IsFalse(right.IsRotating);
+            right.Step(Release(Here), 1.05f, false);
+            Assert.IsTrue(right.Clicked);
+        }
+
+        [Test]
+        public void ThePressFramesMovement_IsNoHeadStartTowardsADrag()
+        {
+            var right = new RightClickTracker();
+            right.Step(new RightButtonReading { Pressed = true, Held = true, Position = Here, Delta = new Vector2(5f, 0f) }, 1f, false);
+            right.Step(Hold(Here + new Vector2(3f, 0f), new Vector2(3f, 0f)), 1.05f, false);
+            Assert.IsFalse(right.IsDrag, "3 pixels since the press, not 8.");
+            right.Step(Hold(Here + new Vector2(6f, 0f), new Vector2(3f, 0f)), 1.1f, false);
+            Assert.IsTrue(right.IsDrag, "From then on it counts as ever.");
+        }
+
+        [Test]
         public void PressedAndReleasedInOneFrame_IsStillAClick()
         {
             var right = new RightClickTracker();

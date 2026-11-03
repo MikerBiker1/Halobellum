@@ -1,7 +1,7 @@
 // BattleCameraTests.cs
 // The battle camera that turns, in the real scenes. Turning keeps the point looked at in the middle of the screen, tilting stays within its limits, panning follows the way the camera
-// faces, and the five places where a right-click cancels something still do so for a click and not for a drag. Picking with the mouse goes by the turned camera. No mouse is used: the
-// tests feed RightClick what a mouse would have read (RightClick.ReadForTests), and call the methods the mouse would have led to.
+// faces, and the five places where a right-click cancels something still do so for a click and not for a drag. Picking with the mouse goes by the turned camera, and a light goes with
+// what it hangs on where that would hide the floor. No mouse is used: the tests feed RightClick what a mouse would have read (RightClick.ReadForTests), and call the methods the mouse would have led to.
 // Depends on: Halobellum.Presentation, Halobellum.Economy, Halobellum.Combat, Halobellum.Core, NUnit, Unity Test Framework.
 
 using System.Collections;
@@ -96,6 +96,22 @@ namespace Halobellum.Tests
         }
 
         // ------------------------------------------------------------------ turning
+
+        [UnityTest]
+        public IEnumerator APressWithTheMouseStillMoving_TurnsNothing_AndIsStillAClick()
+        {
+            yield return Load("Sandbox");
+            _control.SetView(Vector2.zero, 40f, 60f, 120f);
+            yield return Mouse(true, false, OpenGround, new Vector2(30f, 12f));
+            Assert.AreEqual(40f, _control.Yaw, "It moved up to the press, not during it.");
+            Assert.AreEqual(60f, _control.Pitch);
+            _next = new RightButtonReading { Released = true, Position = OpenGround };
+            _nextFrame = Time.frameCount + 1;
+            yield return null;
+            Assert.IsTrue(RightClick.WasClicked);
+            yield return null;
+            Assert.AreEqual(40f, _control.Yaw);
+        }
 
         [UnityTest]
         public IEnumerator Turning_KeepsTheFocusPoint_InTheMiddleOfTheScreen()
@@ -499,6 +515,67 @@ namespace Halobellum.Tests
             glow.GetUVs(1, faces);
             Assert.AreEqual(glow.vertexCount, faces.Count, "Every vertex says how it faces the camera.");
             Assert.IsTrue(faces.Any(f => f.sqrMagnitude > 0f), "Some of the glow turns to face the camera: the specks of dust on every map at least.");
+        }
+
+        [UnityTest]
+        public IEnumerator ALight_GoesWhereItWouldHideTheFloor_AlongWithWhatItHangsOn()
+        {
+            yield return Load("Sandbox");
+            float edge = Shader.GetGlobalVector("_HBFloor").y;
+            // Beyond the floor's north edge. A camera 80 m up and 60 m beyond that edge looks through it at the floor; from the south, it looks through it at the land behind.
+            var north = new Vector3(0f, 80f, edge + 60f);
+            var south = new Vector3(0f, 80f, -edge - 60f);
+            Vector3 lamp = new Vector3(0f, 20f, edge + 10f), halfway = new Vector3(0f, 17.5f, edge + 10f);
+
+            float whole = GlowSeen(south, lamp, false);
+            Assert.Greater(whole, 0.01f, "From the default side it shines.");
+            Assert.Less(GlowSeen(north, lamp, false), whole * 0.001f, "Its sight line lands 6.7 m inside the floor: gone.");
+            Assert.AreEqual(0.5f, GlowSeen(north, halfway, false) / GlowSeen(south, halfway, false), 0.05f, "Its sight line lands 4 m inside: half way through the thinning, as what stands there is.");
+
+            float speck = GlowSeen(south, lamp, true);
+            Assert.Greater(speck, 0.001f);
+            Assert.Greater(GlowSeen(north, lamp, true) / speck, 0.5f, "A drifting speck hangs on nothing. It may pulse between the two pictures, by less than half.");
+        }
+
+        /// <summary>The brightest light a camera at this place sees of one halo, or of one drifting speck, drawn by TerrainGlow alone.</summary>
+        private static float GlowSeen(Vector3 from, Vector3 at, bool speck)
+        {
+            const int layer = 30, size = 128;
+            var builder = new TerrainMeshBuilder();
+            if (speck) builder.Mote(at, 3f, new Color32(200, 200, 200, 200), new Vector3(0.001f, 0.001f, 0.001f), 0f);
+            else builder.Halo(at, 3f, new Color32(200, 200, 200, 120));
+            Mesh mesh = builder.ToMesh("Test glow");
+            var material = new Material(Resources.Load<Shader>("Terrain/TerrainGlow"));
+            var light = new GameObject("Test glow", typeof(MeshFilter), typeof(MeshRenderer)) { layer = layer };
+            light.GetComponent<MeshFilter>().sharedMesh = mesh;
+            light.GetComponent<MeshRenderer>().sharedMaterial = material;
+            var target = new RenderTexture(size, size, 24, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
+            var eye = new GameObject("Test eye").AddComponent<Camera>();
+            eye.transform.position = from;
+            eye.transform.LookAt(at);
+            eye.fieldOfView = 15f;
+            eye.farClipPlane = 1000f;
+            eye.cullingMask = 1 << layer;
+            eye.clearFlags = CameraClearFlags.SolidColor;
+            eye.backgroundColor = Color.black;
+            eye.targetTexture = target;
+            eye.Render();
+
+            var pixels = new Texture2D(size, size, TextureFormat.RGBAFloat, false, true);
+            RenderTexture.active = target;
+            pixels.ReadPixels(new Rect(0, 0, size, size), 0, 0);
+            RenderTexture.active = null;
+            float brightest = pixels.GetPixels().Max(p => p.r);
+
+            // At once, since a light still there would show in the next picture.
+            eye.targetTexture = null;
+            Object.DestroyImmediate(eye.gameObject);
+            Object.DestroyImmediate(light);
+            Object.DestroyImmediate(target);
+            Object.DestroyImmediate(pixels);
+            Object.DestroyImmediate(material);
+            Object.DestroyImmediate(mesh);
+            return brightest;
         }
     }
 }

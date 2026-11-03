@@ -1,7 +1,8 @@
 // RightClick.cs
 // What the right mouse button means, now that holding it and moving the mouse turns the camera (BattleCameraController). A click is pressed and released with hardly any
 // movement, and short, and it is acted on at the release: that is what cancels a placement or clears a selection. Moving further than that is a drag, which turns the camera
-// and cancels nothing. A drag that starts over a HUD window (UiHitAreas) turns nothing either.
+// and cancels nothing. A drag that starts over a HUD window (UiHitAreas) turns nothing either. What the mouse moved in the frame of the press happened around the press and not
+// during it, so it doesn't count: a right-click with the mouse still on its way somewhere stays a click, and turns nothing.
 // RightClickTracker is the logic, with no mouse in it, so that tests can drive it. RightClick is the one tracker every script reads: the first to ask in a frame moves it on, so all
 // of them get the same answer that frame whatever order they run in. The camera asks every frame, so that no press goes unseen by scripts that only ask while they are placing.
 // Depends on: UiHitAreas, Unity Input System, UnityEngine.
@@ -53,9 +54,12 @@ namespace Halobellum.Presentation
                 _pressedTime = now;
                 _travel = Vector2.zero;
             }
+            else if (IsDown)
+            {
+                _travel += reading.Delta;
+            }
             if (!IsDown) return;
 
-            _travel += reading.Delta;
             if (Mathf.Max((reading.Position - _pressedAt).sqrMagnitude, _travel.sqrMagnitude) >= DragPixels * DragPixels) IsDrag = true;
 
             if (reading.Released) Clicked = !IsDrag && now - _pressedTime < MostClickSeconds;
