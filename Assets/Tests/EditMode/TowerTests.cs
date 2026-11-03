@@ -227,6 +227,73 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void DamageResearch_ReachesDeathBursts()
+        {
+            var carrier = new UnitStats { Name = "Carrier", SquadSize = 1, MaxHealth = 10f, DeathBurst = new DeathBurstStats { Damage = 100f, Radius = 3f } };
+            UnitStats fighting = UnitUpgrades.Apply(carrier, 1, null, null, new ArmyBuffs { DamageMultiplier = 1.24f });
+            Assert.AreEqual(124f, fighting.DeathBurst.Damage, 1e-3f);
+            Assert.AreEqual(100f, carrier.DeathBurst.Damage, "The unit type itself isn't touched.");
+        }
+
+        [Test]
+        public void Research_ReachesWhatAUnitBrings()
+        {
+            var brought = new UnitStats { Name = "Brought", SquadSize = 3, MaxHealth = 100f };
+            var unit = new UnitStats
+            {
+                Name = "Unit", SquadSize = 1, MaxHealth = 10f, Reinforcement = brought, SpawnedUnit = brought,
+                DeathBurst = new DeathBurstStats { Spawns = new[] { new SpawnEntry { Unit = brought, Bodies = 2 } } },
+            };
+            UnitStats fighting = UnitUpgrades.Apply(unit, 1, null, null, new ArmyBuffs { HealthMultiplier = 1.3f });
+            Assert.AreEqual(130f, fighting.Reinforcement.MaxHealth, 1e-3f);
+            Assert.AreEqual(130f, fighting.SpawnedUnit.MaxHealth, 1e-3f);
+            Assert.AreEqual(3, fighting.SpawnedUnit.SquadSize);
+            Assert.AreEqual(130f, fighting.DeathBurst.Spawns[0].Unit.MaxHealth, 1e-3f);
+            Assert.AreEqual(100f, brought.MaxHealth, "The unit type itself isn't touched.");
+        }
+
+        [Test]
+        public void SquadsThatLand_HaveTheirArmysResearch()
+        {
+            Match match = Started(out _);
+            match.Player.Credits = 1000;
+            match.BuyResearch(Team.A, health: true);
+            var trooper = new UnitStats { Name = "Trooper", SquadSize = 2, MaxHealth = 100f, CollisionRadius = 0.5f };
+            var pods = new SpellStats { Name = "Pods", Effect = SpellEffect.DropSquad, Offensive = true, DropUnit = trooper, Radius = 3f };
+            match.Player.Spells.Add(new OwnedSpell { Id = 99, Stats = pods, ReadyRound = match.Round });
+            Assert.IsTrue(match.PlaceSpell(Team.A, 99, new Vec2(0f, -30f)).Ok);
+            BattleSimulation battle = match.StartBattle();
+            Assert.AreEqual(115f, battle.Spells[0].Stats.DropUnit.MaxHealth, 1e-3f);
+            Assert.AreEqual(100f, pods.DropUnit.MaxHealth, "The spell itself isn't touched.");
+        }
+
+        private static int BeamHits(bool shockwave)
+        {
+            WeaponStats beam = TestUnits.Weapon(damage: 1f, range: 30f, interval: 0.1f);
+            beam.BeamSeconds = 3f;
+            beam.BeamChargeSeconds = 2f;
+            beam.BeamRestSeconds = 3f;
+            beam.SplashRadius = 2f;
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            SimUnit shooter = sim.AddUnit(TestUnits.Unit(health: 100000f, speed: 0f, weapon: beam), Team.A, new Vec2(0f, 0f));
+            sim.AddUnit(TestUnits.Unit(health: 100000f, speed: 0f), Team.B, new Vec2(0f, 10f));
+            SimUnit tower = sim.AddUnit(Tower(seconds: 200f, health: 1000f), Team.A, new Vec2(50f, -50f));
+            if (shockwave) tower.Health = 0f;
+            int hits = 0;
+            sim.Events.UnitDamaged += (target, attacker, amount) => { if (attacker == shooter) hits++; };
+            RunSeconds(sim, 40f);
+            return hits;
+        }
+
+        [Test]
+        public void ABeam_FiresSlower_UnderAShockwave()
+        {
+            int normal = BeamHits(false), weakened = BeamHits(true);
+            Assert.Greater(normal, 0);
+            Assert.AreEqual(0.7f, weakened / (float)normal, 0.08f, "About 30% fewer hits: not only a longer rest, and not 30% twice.");
+        }
+
+        [Test]
         public void TheOilZone_IsOneUse()
         {
             Match match = Started(out _);

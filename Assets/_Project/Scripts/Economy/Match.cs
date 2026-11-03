@@ -571,7 +571,11 @@ namespace Halobellum.Economy
             foreach (OwnedSpell spell in player.Spells)
             {
                 if (!spell.IsPlaced) continue;
-                battle.AddSpell(spell.Stats, player.Team, spell.Position, spell.AngleDegrees);
+                // Squads that land fight in this player's army, with its bonuses.
+                SpellStats stats = spell.Stats.DropUnit != null && !player.Buffs.IsNeutral
+                    ? spell.Stats.WithDropUnit(UnitUpgrades.Apply(spell.Stats.DropUnit, 1, null, null, player.Buffs))
+                    : spell.Stats;
+                battle.AddSpell(stats, player.Team, spell.Position, spell.AngleDegrees);
                 spell.IsPlaced = false;
                 spell.ReadyRound = Round + spell.Stats.CooldownRounds + 1;
             }

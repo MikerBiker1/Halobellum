@@ -55,6 +55,9 @@ namespace Halobellum.UI
         private SquadSelection _selection;
         private TowerPanel _towerPanel;
         private float _towerPanelRefresh;
+        private readonly List<Rect> _panelsDrawn = new List<Rect>();
+        private SquadStatsWindow _squadWindow;
+        private Rect _towerWindow;
 
         private void Awake() => useGUILayout = false; // Nothing here uses GUILayout. With the layout pass on, Unity makes new layout groups for this script every frame, which is garbage at every frame rate.
 
@@ -65,6 +68,7 @@ namespace Halobellum.UI
             HudTheme.Apply();
             EnsureStyles();
             _scale = HudScale.Apply();
+            _panelsDrawn.Clear();
 
             switch (match.Match.Phase)
             {
@@ -424,9 +428,19 @@ namespace Halobellum.UI
                 Vector3 screen = camera.WorldToScreenPoint(new Vector3(unit.Position.X, 12f, unit.Position.Y));
                 if (screen.z <= 0f) continue;
                 var rect = new Rect(screen.x / _scale - 80f, height - screen.y / _scale - 16f, 160f, 28f);
+                if (IsUnderAWindow(rect)) continue;
                 UiHitAreas.Add(HudScale.ToScreen(rect, _scale));
                 if (GUI.Button(rect, unit.Stats.Name, _button)) Selection.SelectTower(unit.Team, unit.Stats.Shockwave.Kind);
             }
+        }
+
+        /// <summary>True if something on the HUD covers this spot. A button there would be out of sight and would still take that window's clicks.</summary>
+        private bool IsUnderAWindow(Rect rect)
+        {
+            foreach (Rect panel in _panelsDrawn) if (panel.Overlaps(rect)) return true;
+            if (Selection.SelectedTower != null && _towerWindow.Overlaps(rect)) return true;
+            if (_squadWindow == null) _squadWindow = FindAnyObjectByType<SquadStatsWindow>();
+            return _squadWindow != null && _squadWindow.TryGetWindow(out Rect squad) && squad.Overlaps(rect);
         }
 
         /// <summary>The selected tower's window, where the squad window goes: what it is, and what it sells.</summary>
@@ -448,6 +462,7 @@ namespace Halobellum.UI
             foreach (string line in view.Lines) textHeight += _wrap.CalcHeight(new GUIContent(line), textWidth) + 4f;
             float windowHeight = 62f + textHeight + view.Buttons.Count * rowHeight + 14f;
             var window = new Rect(10f, height - windowHeight - 10f, windowWidth, windowHeight);
+            _towerWindow = window;
             Panel(window);
             GUI.Label(new Rect(window.x + inset, window.y + 8f, textWidth - 30f, 28f), HudTheme.Title(view.Title), _header);
             GUI.Label(new Rect(window.x + inset, window.y + 34f, textWidth - 30f, 22f), view.Side, _small);
@@ -607,6 +622,7 @@ namespace Halobellum.UI
         /// <summary>A dark box that also blocks clicks from reaching the battlefield.</summary>
         private void Panel(Rect rect)
         {
+            _panelsDrawn.Add(rect);
             UiHitAreas.Add(HudScale.ToScreen(rect, _scale));
             HudTheme.PanelBox(rect);
         }

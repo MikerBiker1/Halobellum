@@ -156,8 +156,8 @@ namespace Halobellum.Presentation
             if (BattleFactions.TeamA == BattleFactions.TeamB) return true;
             _typesA.Clear();
             IReadOnlyList<SimUnit> units = simulation.Units;
-            for (int i = 0; i < units.Count; i++) if (units[i].Team == Team.A) _typesA.Add(units[i].Stats.Name);
-            for (int i = 0; i < units.Count; i++) if (units[i].Team == Team.B && _typesA.Contains(units[i].Stats.Name)) return true;
+            for (int i = 0; i < units.Count; i++) if (units[i].Team == Team.A && !units[i].Stats.IsTower) _typesA.Add(units[i].Stats.Name);
+            for (int i = 0; i < units.Count; i++) if (units[i].Team == Team.B && !units[i].Stats.IsTower && _typesA.Contains(units[i].Stats.Name)) return true;
             return false;
         }
 

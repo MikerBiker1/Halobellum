@@ -1040,7 +1040,7 @@ namespace Halobellum.Combat
             if (weapon.BeamPhase == BeamPhase.Charging)
             {
                 if (weapon.BeamTarget != null) weapon.BeamPoint = weapon.BeamTarget.Position;
-                if (++weapon.BeamTicks < TicksFor(stats.BeamChargeSeconds)) return;
+                if (++weapon.BeamTicks < TicksFor(stats.BeamChargeSeconds / unit.ShockwaveFireRate)) return;
                 weapon.BeamPhase = BeamPhase.Firing;
                 weapon.BeamTicks = 0;
                 return;
@@ -1057,8 +1057,8 @@ namespace Halobellum.Combat
             float reach = stats.Range * unit.RangeMultiplier + unit.Radius + stats.SplashRadius;
             if (fromUnit.Length > reach) weapon.BeamPoint = unit.Position + fromUnit.Normalized * reach;
 
-            if (weapon.BeamTicks % TicksFor(stats.FireInterval) == 0) ResolveBeamHit(unit, stats, weapon.BeamPoint);
-            if (++weapon.BeamTicks < TicksFor(stats.BeamSeconds)) return;
+            if (weapon.BeamTicks % TicksFor(stats.FireInterval / unit.ShockwaveFireRate) == 0) ResolveBeamHit(unit, stats, weapon.BeamPoint);
+            if (++weapon.BeamTicks < TicksFor(stats.BeamSeconds / unit.ShockwaveFireRate)) return;
             weapon.BeamPhase = BeamPhase.Off;
             weapon.BeamTarget = null;
             weapon.Cooldown = stats.BeamRestSeconds;
@@ -1108,7 +1108,7 @@ namespace Halobellum.Combat
                         Point = weapon.BeamPoint,
                         Radius = weapon.Stats.SplashRadius,
                         Firing = firing,
-                        Charge = firing ? 1f : (weapon.BeamTicks + 1f) / TicksFor(weapon.Stats.BeamChargeSeconds),
+                        Charge = firing ? 1f : Math.Min(1f, (weapon.BeamTicks + 1f) / TicksFor(weapon.Stats.BeamChargeSeconds)),
                     });
                 }
             }

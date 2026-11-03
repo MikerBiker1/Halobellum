@@ -89,7 +89,7 @@ namespace Halobellum.UI
         private bool EscapeHasOtherWork()
         {
             if (_selection == null) return false;
-            return !_selection.InputEnabled || _selection.SelectedSquadId >= 0;
+            return !_selection.InputEnabled || _selection.SelectedSquadId >= 0 || _selection.SelectedTower != null;
         }
 
         /// <summary>Pauses the game and shows the menu.</summary>

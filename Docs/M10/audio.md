@@ -1,5 +1,7 @@
 # Sound and music (M10)
 
+*The Blisterback and Methane Wagon named below were removed later (D56). This is kept as it was written.*
+
 The game now has sound everywhere: battle sounds, UI sounds that differ by faction, and music that follows the faction and the
 screen. All the audio is **original placeholder work made by a script**: nothing was downloaded and no melody is copied from
 anything. The owner's own files replace any of it just by being dropped in a folder.

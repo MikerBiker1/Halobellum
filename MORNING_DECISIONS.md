@@ -95,7 +95,8 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
     - Oil slows ground units of both sides by 40% and adds 50% fire damage, for 15 s.
     - Each Command Center purchase can be made once a round, and a tower has 6 m of ground it blocks.
 55. **Rapid Resupply** can be used every round, for a net loss of 100 each time. The AI never uses it, since a rule for when it's worthwhile would be a guess. Fine?
-56. **The Sandbox has no towers.** Should it? It would let you test towers against any army, but it would change what every Sandbox fight measures unless it's a switch.
+56. **Army bonuses reach further now.** To make research really reach your whole army, buff cards do too: damage now raises death bursts, and health and damage now reach ODSTs from drop pods, a Pelican's Marines and what the Abomination, Spawner and Infected Pelican release. Item damage also raises a death burst. These cards weren't doing that before, so they are a little stronger. Keep it?
+57. **The Sandbox has no towers.** Should it? It would let you test towers against any army, but it would change what every Sandbox fight measures unless it's a switch.
 
 ## From your play test (D54)
 
@@ -118,6 +119,8 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 
 ## Small things I noticed and left
 
+- Under a shockwave, a leap's speed and a Seeder's seed damage aren't reduced. Infection Forms still cover about 81% of their normal distance rather than 70%.
+- An infected body keeps its size but gets a melee reach of 1.2 m, measured from its centre. A big one, such as a seeded Scorpion, may never reach a target that stands still, a tower included. This comes from before the towers, and nobody has seen it happen in play.
 - The menu's hover check is skipped in batch test runs, because they draw no buttons there. A sound tour in the built game covers it, using its own pointer. No real mouse has tried it.
 - Air units overlap into a blob in big fights.
 - The faction asset files are still named `*_Standard.asset`. Only the file name is left over.

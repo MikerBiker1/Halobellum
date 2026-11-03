@@ -120,6 +120,7 @@ namespace Halobellum.Core
                 stats.MoveSpeed *= item.MoveSpeedMultiplier;
                 stats.LifestealShare = Math.Max(stats.LifestealShare, item.LifestealShare);
                 stats.HealPerSecondShare = item.HealPerSecondShare;
+                if (stats.DeathBurst != null) stats.DeathBurst.Damage *= item.DamageMultiplier;
                 foreach (WeaponStats weapon in stats.Weapons)
                 {
                     weapon.DamagePerShot *= item.DamageMultiplier;
@@ -134,7 +135,25 @@ namespace Halobellum.Core
                     weapon.DamagePerShot *= buffs.DamageMultiplier;
                     if (weapon.Range > MeleeRange) weapon.Range += buffs.RangeBonus;
                 }
+                if (stats.DeathBurst != null) stats.DeathBurst.Damage *= buffs.DamageMultiplier;
+                if (!buffs.IsNeutral) BuffWhatItBrings(stats, buffs);
             }
+        }
+
+        /// <summary>What a unit drops, releases or leaves behind fights in the same army, so it has the army's bonuses too.</summary>
+        private static void BuffWhatItBrings(UnitStats stats, ArmyBuffs buffs)
+        {
+            if (stats.Reinforcement != null) stats.Reinforcement = Apply(stats.Reinforcement, 1, null, null, buffs);
+            if (stats.LockedReinforcement != null) stats.LockedReinforcement = Apply(stats.LockedReinforcement, 1, null, null, buffs);
+            if (stats.SpawnedUnit != null) stats.SpawnedUnit = Apply(stats.SpawnedUnit, 1, null, null, buffs);
+            if (stats.DeathBurst == null || stats.DeathBurst.Spawns.Length == 0) return;
+            var spawns = new SpawnEntry[stats.DeathBurst.Spawns.Length];
+            for (int i = 0; i < spawns.Length; i++)
+            {
+                SpawnEntry spawn = stats.DeathBurst.Spawns[i];
+                spawns[i] = new SpawnEntry { Unit = Apply(spawn.Unit, 1, null, null, buffs), Bodies = spawn.Bodies };
+            }
+            stats.DeathBurst.Spawns = spawns;
         }
 
         /// <summary>Weapons reaching this far or less count as melee, not ranged.</summary>

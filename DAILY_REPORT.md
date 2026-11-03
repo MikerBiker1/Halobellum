@@ -5,7 +5,8 @@ Earlier reports are in this file's Git history. **M10 is built and merged**, and
 ## Towers and your morning answers (D55, D56)
 - **Towers:** a Command Center and a Research Center per side, with levels, a shockwave when one falls, everything they sell, and an AI that uses them by difficulty. The models are plain shapes for now.
 - **Your answers:** the Pelican's blast is 3.5 m in radius, the Blisterback and Methane Wagon are gone, and `Assets_to_Download.md` lists every track, unit sound and model left.
-- Questions are items 52 to 56 of `MORNING_DECISIONS.md`.
+- **A code review of the towers** found 8 real defects, all fixed. The worst were the enemy's shots turning red in every match, because both sides having towers made every match count as a mirror match, and Esc opening the pause menu over a tower's window.
+- Questions are items 52 to 57 of `MORNING_DECISIONS.md`.
 
 ## After your play test (D54)
 - **Your five quick wins:** a smaller Pelican crash (look only), a turning and tilting camera (C resets it), Level all, a Screen setting, and a still menu Scarab.

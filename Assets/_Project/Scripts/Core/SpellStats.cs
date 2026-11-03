@@ -100,6 +100,14 @@ namespace Halobellum.Core
         /// <summary>Fire damage to units inside is multiplied by this.</summary>
         public float FireDamageMultiplier = 1f;
 
+        /// <summary>This spell, dropping these stats: a player's own copy of what its squads land with.</summary>
+        public SpellStats WithDropUnit(UnitStats unit)
+        {
+            var copy = (SpellStats)MemberwiseClone();
+            copy.DropUnit = unit;
+            return copy;
+        }
+
         public bool IsRectangle => AreaWidth > 0f;
         /// <summary>True for a spell whose area stays after it starts (smoke, oil).</summary>
         public bool Lingers => Effect == SpellEffect.Smoke || Effect == SpellEffect.Oil;

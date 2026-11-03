@@ -23,9 +23,9 @@ Colour says who fired: UNSC warm yellow, Covenant blue, with green fuel rods and
 | Cannon | Hard flash, smoke and sparks at the muzzle, a long thin nearly white tracer with hardly any glow and a thin trail, a blast as wide as its splash | Scorpion, Elephant |
 | Gauss | A bright straight line from muzzle to target at once, white core; an impact where it hits. A sniper's is thinner, in its side's tracer colour | Gauss Warthog, Cobra, Gremlin, Spartan Sniper |
 | Rocket | A short flame with a wide glow at the head, a thick pale smoke trail that grows with the camera's distance, a blast | Wolverine, Mantis, Hornet, Archer (in an arc) |
-| Bomb | A short fat falling shape with a slow pulsing glow, redder than a rocket's, or a green ball for a fuel rod bomb. Flood bombs are a sick green and burst in gore and spores. The Methane Wagon's burning keg is an orange ball dripping embers, with a fire blast | Hornet, Banshee, Infested Hornet, Infested Banshee, Methane Wagon |
+| Bomb | A short fat falling shape with a slow pulsing glow, redder than a rocket's, or a green ball for a fuel rod bomb. Flood bombs are a sick green and burst in gore and spores | Hornet, Banshee, Infested Hornet, Infested Banshee |
 | Plasma | Fat glowing bolt, splash of droplets | Grunt, Jackal, Elite, Ghost; green on Flood craft |
-| Heavy plasma | Big glowing ball that drips light, plasma blast | Fuel Rod Grunt (green), Wraith mortar (blue), Hunter (green), Blisterback's missiles and Marauder's cannon (blue) |
+| Heavy plasma | Big glowing ball that drips light, plasma blast | Fuel Rod Grunt (green), Wraith mortar (blue), Hunter (green), Marauder's cannon (blue) |
 | Needle | Thin pink streak, pink shards on impact | Vampire |
 | Laser | One straight red line with a white-hot core; burning spot and sparks | Spartan |
 | Flame | A real cone of fire, small at the muzzle and growing to the end of its range, sparks, heat shimmer | Flamethrower Trooper |

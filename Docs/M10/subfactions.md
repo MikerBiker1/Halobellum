@@ -27,7 +27,7 @@ The brief says to prefer what exists, and almost every unit does. Only two thing
 
 A third field is looks only: `bakedTint` and `bakedScale` let units that share a baked body look different.
 
-What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested Marines, Grunts and Elites), auras (Hunter Captain, Methane Wagon, Grunt Goblin), mid-battle drops (Condor Gunship), spawners (Spawner, Infested Titans), death bursts (Methane Wagon), defense arcs (Goliath, Hunter Captain), lobbed shots, beams, and a melee main weapon with a gun on the side, which makes a unit charge in while firing (Chopper, Infested Warthog and Ghost).
+What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested Marines, Grunts and Elites), auras (Hunter Captain, Grunt Goblin), mid-battle drops (Condor Gunship), spawners (Spawner), death bursts (Methane Wagon), defense arcs (Goliath, Hunter Captain), lobbed shots, beams, and a melee main weapon with a gun on the side, which makes a unit charge in while firing (Chopper, Infested Warthog and Ghost).
 
 ## The units
 
@@ -161,8 +161,6 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 - **Pure forms.** The base Flood already has the Stalker, Ranged and Tank forms. So the sub-factions add two from Halo Wars 2's own logs: the **Juggernaut** (UNSC-based) and the **Spawner** (Covenant-based).
 - **Goliath's base damage is 250**, against the Bible default of 100. It stands for its Halo Wars 2 job as a building-killer. It is the only exception to the default, and easy to remove.
 - **Hunter Captain has no taunt**, though it does in Halo Wars 2. Targeting is always "the closest enemy" (Bible Section 6), and a taunt would break that rule. It has its siphon and a healing aura instead.
-- **Methane Wagon fires Fire damage**, which is what makes it deadly to infantry and weak to armor. It has an aura that speeds and heals, but no debuff cloud or "boosts Grunts only", to avoid a new mechanic.
-- **Blisterback is Aerial, not Artillery.** It's a flyer that shells the ground. As Aerial its counter is anti-air, which is what you'd expect. Its Halo Wars 2 "deploy to the ground" mode isn't built.
 - **Cobra has no lockdown mode**, Gremlin's EMP slows rather than stuns, and the Rhino is Tier 3, more than the Wraith and Archer's Tier 2, because of its reach.
 - **Aerospace Command has no Tier 1 exclusive unit, and neither does Noble.** Their draft cards always give base Tier 1 squads. The Bible's band would allow a cheap one, but air or Spartans at Tier 1 seemed wrong.
 - **Spartan bodies.** Noble's Spartans use the Marine's rig, bigger and darker green, with a rifle, a rocket launcher or an SMG. It reads as "a big soldier", not a Spartan, and the base Spartan is still a capsule: I left that alone, but it now looks worse than its Noble cousins.
@@ -171,7 +169,7 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 
 ## Balance, first pass
 
-- The counter web passed for all 73 units, before the two infested Titans (D54), the Blisterback and the Methane Wagon (D56) went, which were no other unit's best counter,: every unit has a counter by the Section 7 table that wins at least 90%. It runs in about 2 minutes in the console (`Tools/Data/cw`), against about 30 in Unity.
+- The counter web passed for all 73 units, before the two infested Titans (D54), the Blisterback and the Methane Wagon (D56) went, which were no other unit's best counter: every unit has a counter by the Section 7 table that wins at least 90%. It runs in about 2 minutes in the console (`Tools/Data/cw`), against about 30 in Unity.
 - New units I tuned to stay under 60% average where I could. See the report (`python report.py` in `Tools/Data/cw`).
 - **Over the 60% line now (not Titans), units I did not change:** Hunter Pair, Banshee, Scorpion, Spartan, Hornet, Marine. They are measured against a bigger field now, and I left their numbers alone as told.
 - **Weak, as flankers and anti-air are across the game:** Reaver, Chopper, Infested Warthog and Ghost are level with Warthog and Ghost.
@@ -206,9 +204,9 @@ Still placeholder primitives, each needing a model:
 | --- | --- |
 | Armored Division | Cobra, Rhino, Gremlin |
 | Aerospace Command | Sparrowhawk, Vulture, Shortsword (Condor Gunship would also like its own) |
-| Banished | Marauder, Reaver, Blisterback, Brute Grenadier |
+| Banished | Marauder, Reaver, Brute Grenadier |
 | Lekgolo Colony | Goliath, Skitterer, Hunter Captain |
-| Unggoy Rebellion | Methane Wagon, Grunt Goblin |
+| Unggoy Rebellion | Grunt Goblin |
 | Flood, UNSC-based | Juggernaut |
 | Flood, Covenant-based | Infested Ghost (no Ghost model exists yet), Infested Elite, Spawner |
 | Noble | Spartans of their own, if wanted |

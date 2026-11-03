@@ -687,7 +687,7 @@ namespace Halobellum.Presentation
                 float shieldFraction = view.ShieldPeak > 0f ? Mathf.Clamp01(unit.Shield / view.ShieldPeak) : 0f;
                 bool hasShieldBar = view.ShieldPeak > 0f;
                 // A pack's health shows in how many forms are left, so it only has a bar when selected.
-                bool showBar = (fraction < 0.999f && view.Forms == null) || unit.SquadId == selected || (hasShieldBar && shieldFraction < 0.999f);
+                bool showBar = (fraction < 0.999f && view.Forms == null) || (selected >= 0 && unit.SquadId == selected) || (hasShieldBar && shieldFraction < 0.999f);
                 if (view.Bar.gameObject.activeSelf != showBar) view.Bar.gameObject.SetActive(showBar);
                 if (!showBar) continue;
 

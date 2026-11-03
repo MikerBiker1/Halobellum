@@ -110,6 +110,7 @@ namespace Halobellum.Presentation
             CancelPlacement();
             CancelSpellPlacement();
             CancelItemPlacement();
+            _selection?.ClearTower();
             _drops.Clear();
             Message = "";
             _views.GhostTeam = null;
@@ -707,6 +708,7 @@ namespace Halobellum.Presentation
         {
             if (Match == null || Match.Phase != MatchPhase.Battle || _battle.Simulation != Match.CurrentBattle) return;
             Match.FinishBattle();
+            _selection.ClearTower();
             PhaseChanged?.Invoke();
         }
 
@@ -715,6 +717,7 @@ namespace Halobellum.Presentation
         {
             if (Match.Phase != MatchPhase.Result) return;
             Match.ContinueAfterResult();
+            _selection.ClearTower();
             RefreshPreview();
             PhaseChanged?.Invoke();
         }

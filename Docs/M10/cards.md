@@ -1,5 +1,7 @@
 # Cards with unit icons and borders (M10)
 
+*The Blisterback and Methane Wagon named below were removed later (D56). This is kept as it was written.*
+
 The owner's words: "Cards should have icons with the units, different borders of cards depending on spell, econ, buff, reinforcement factions."
 
 ## What you see
