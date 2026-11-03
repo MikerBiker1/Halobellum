@@ -168,6 +168,8 @@ namespace Halobellum.Core
         public float SpeedMultiplier = 1f;
         public float DamageMultiplier = 1f;
         public float FireRateMultiplier = 1f;
+        /// <summary>What the army takes while it suffers this: above 1, it takes more.</summary>
+        public float DamageTakenMultiplier = 1f;
     }
 
     public sealed class DeathBurstStats

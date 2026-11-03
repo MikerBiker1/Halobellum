@@ -423,7 +423,7 @@ namespace Halobellum.Tests
             PlacedSquad enemy = match.Enemy.Squads[0];
             match.Enemy.Inventory.Add(_heavyArmorCard.Item);
             match.PlaceItem(Team.B, _heavyArmorCard.Item, enemy.Id);
-            Assert.IsEmpty(match.SeenArmy(Team.B), "Nothing seen yet.");
+            Assert.IsNull(match.SeenArmy(Team.B)[0].Item, "Not seen yet.");
             PlayRound(match);
             Assert.AreSame(_heavyArmorCard.Item, match.SeenArmy(Team.B)[0].Item);
             PlayerState seen = match.SeenAsDeployment(Team.B);

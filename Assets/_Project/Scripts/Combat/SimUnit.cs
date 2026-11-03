@@ -83,6 +83,8 @@ namespace Halobellum.Combat
         /// <summary>Multiplies the damage it deals, and how fast its weapons come ready (a fallen tower's shockwave, D55). Set every tick.</summary>
         public float ShockwaveDamage = 1f;
         public float ShockwaveFireRate = 1f;
+        /// <summary>Multiplies the damage it takes (a fallen tower's shockwave, D58). Set every tick. The other tower isn't part of the army, and stays as it is.</summary>
+        public float ShockwaveDamageTaken = 1f;
         /// <summary>Multiplies the fire damage it takes (standing in oil). Set every tick.</summary>
         public float FireDamageTaken = 1f;
         /// <summary>The last tick oil slowed it (several pools do not add up).</summary>

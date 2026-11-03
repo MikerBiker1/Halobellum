@@ -39,6 +39,10 @@ namespace Halobellum.Units
         [Header("Starting draft")]
         public int draftCardCount;
         public int draftSquadsPerCard;
+        [Tooltip("What a card's 2 squads are worth together, in credits.")]
+        public int draftCardValue = 300;
+        [Tooltip("How far from that a card may be. 0 = exactly that, if the roster has such a pair.")]
+        public int draftCardValueTolerance = 50;
 
         [Header("Squad leveling")]
         [Tooltip("XP bar size as a share of the squad's base price (2 = kill twice your own price's worth of enemies, D26). Same at every level.")]
@@ -70,9 +74,11 @@ namespace Halobellum.Units
         public int towerLevelUpCost = 100;
         [Tooltip("How many seconds its shockwave lasts at each level. There are as many levels as these.")]
         public float[] towerShockwaveSeconds = { 10f, 8f, 6f, 4f, 2f };
-        [Range(0f, 1f)] public float shockwaveSpeedMultiplier = 0.7f;
-        [Range(0f, 1f)] public float shockwaveDamageMultiplier = 0.7f;
-        [Range(0f, 1f)] public float shockwaveFireRateMultiplier = 0.7f;
+        [Range(0f, 1f)] public float shockwaveSpeedMultiplier = 0.6f;
+        [Range(0f, 1f)] public float shockwaveDamageMultiplier = 0.6f;
+        [Range(0f, 1f)] public float shockwaveFireRateMultiplier = 0.6f;
+        [Tooltip("What the army takes while it suffers a shockwave: 1.4 = 40% more damage.")]
+        public float shockwaveDamageTakenMultiplier = 1.4f;
 
         [Header("Command Center")]
         public int extraSlotCost = 100;
@@ -109,6 +115,8 @@ namespace Halobellum.Units
                 RefundAfterBattle = refundAfterBattle,
                 DraftCardCount = draftCardCount,
                 DraftSquadsPerCard = draftSquadsPerCard,
+                DraftCardValue = draftCardValue,
+                DraftCardValueTolerance = draftCardValueTolerance,
                 XpBarPerSquadCost = xpBarPerSquadCost,
                 LevelUpCostShare = levelUpCostShare,
                 FirstCardRound = firstCardRound,
@@ -128,6 +136,7 @@ namespace Halobellum.Units
                 ShockwaveSpeedMultiplier = shockwaveSpeedMultiplier,
                 ShockwaveDamageMultiplier = shockwaveDamageMultiplier,
                 ShockwaveFireRateMultiplier = shockwaveFireRateMultiplier,
+                ShockwaveDamageTakenMultiplier = shockwaveDamageTakenMultiplier,
                 ExtraSlotCost = extraSlotCost,
                 RapidResupplyCredits = rapidResupplyCredits,
                 RapidResupplyPenalty = rapidResupplyPenalty,

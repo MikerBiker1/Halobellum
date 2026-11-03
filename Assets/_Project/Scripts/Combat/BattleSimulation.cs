@@ -437,6 +437,7 @@ namespace Halobellum.Combat
                 ShockwaveStats shockwave = unit.Team == Team.A ? shockwaveA : shockwaveB;
                 unit.ShockwaveDamage = shockwave?.DamageMultiplier ?? 1f;
                 unit.ShockwaveFireRate = shockwave?.FireRateMultiplier ?? 1f;
+                unit.ShockwaveDamageTaken = shockwave != null && !unit.Stats.IsTower ? shockwave.DamageTakenMultiplier : 1f;
                 if (shockwave != null) unit.SpeedMultiplier *= shockwave.SpeedMultiplier;
                 if (unit.IsSeeded) UpdateSeed(unit, now);
             }
@@ -540,7 +541,7 @@ namespace Halobellum.Combat
                 // Offensive spells hit everyone in the area, the caster's own units too (D33).
                 if (!victim.IsAlive || (victim.Team == spell.Team && (!spell.Stats.Offensive || victim.Stats.IsTower)) || !spell.Stats.Targets.Allows(victim.IsAir)) continue;
                 if (!spell.Covers(victim)) continue;
-                float multiplier = (victim.IsAir ? weapon.AirDamageMultiplier : 1f) * victim.FormsAlive;
+                float multiplier = (victim.IsAir ? weapon.AirDamageMultiplier : 1f) * victim.FormsAlive * victim.ShockwaveDamageTaken;
                 if (weapon.DamageType == DamageType.Fire) multiplier *= victim.FireDamageTaken;
                 float dealt = DamageCalculator.ApplyHit(_rules.DamageTable, weapon, victim.Stats.ArmorType, multiplier, ref victim.Shield, ref victim.Health);
                 victim.SecondsSinceDamaged = 0f;
@@ -1216,7 +1217,7 @@ namespace Halobellum.Combat
         /// <param name="areaHit">An area hit (splash, cone, beam) hurts every tiny form in a pack (D38).</param>
         private void DealDamage(SimUnit target, SimUnit attacker, WeaponStats weapon, float directionalMultiplier, bool areaHit)
         {
-            float multiplier = (target.IsAir ? directionalMultiplier * weapon.AirDamageMultiplier : directionalMultiplier) * attacker.DamageMultiplier * attacker.ShockwaveDamage * attacker.FormsShare;
+            float multiplier = (target.IsAir ? directionalMultiplier * weapon.AirDamageMultiplier : directionalMultiplier) * attacker.DamageMultiplier * attacker.ShockwaveDamage * attacker.FormsShare * target.ShockwaveDamageTaken;
             if (areaHit) multiplier *= target.FormsAlive;
             if (weapon.DamageType == DamageType.Fire) multiplier *= target.FireDamageTaken;
             float dealt = DamageCalculator.ApplyHit(_rules.DamageTable, weapon, target.Stats.ArmorType, multiplier,

@@ -118,7 +118,7 @@ namespace Halobellum.UI
         public static string Describe(ItemStats item) => $"{item.Name}: {item.EffectsText()}";
 
         /// <summary>
-        /// Over each squad: the item it carries, or (while an item is selected) an empty hexagon. Also ends a
+        /// On each squad: the item it carries, or (while an item is selected) an empty hexagon. Also ends a
         /// drag or a click: onPlace when the mouse is released on a hexagon, onCancel when an item is
         /// dropped elsewhere. onScreen gives a squad's screen position in pixels (origin bottom-left),
         /// false if it isn't visible. Call it before the panels.
@@ -136,7 +136,7 @@ namespace Halobellum.UI
                 // Screen pixels (origin bottom-left) to HUD coordinates (origin top-left, scaled).
                 var centre = new Vector2(screen.x / scale, (Screen.height - screen.y) / scale);
                 const float size = 40f;
-                var rect = new Rect(centre.x - size * 0.5f, centre.y - size - 6f, size, size);
+                var rect = new Rect(centre.x - size * 0.5f, centre.y + 2f, size, size); // On the squad: the level-up arrow stands right above its top.
                 if (squad.Item != null)
                 {
                     DrawHexIcon(rect, iconFor(squad.Item));

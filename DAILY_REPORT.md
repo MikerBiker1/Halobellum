@@ -2,6 +2,11 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Your notes from playing (D58)
+- **All 10 are in:** starting cards of 250 to 350, the enemy's 2 starting squads in grey, the shop by price, level 1 stats from a shop click, the tower's 40% debuff plus 40% more damage taken, XP for killing a tower, the item and the arrow both showing, Elite Recruitment's note, the Grenadier's straight rockets and the Abomination's buff.
+- **The Abomination** deals 222 damage/s against Unarmored (was 89) and wins 65 of 68 matchups (was 56). Flood stays the weakest in AI matches.
+- Questions are items 61 to 64 of `MORNING_DECISIONS.md`.
+
 ## Your second batch of models (D57)
 - **23 units have real models now**, each moving as best it can: Spartans, Elites, Hunters and the Goblin run on Meshy's rigs and clips, the Abomination on clips made from its own bones, wings beat, legs scuttle, wheels spin, turrets aim, hover vehicles bob. Their icons are redone.
 - **Colours:** five Noble armours and a gold Zealot are recoloured textures. Each Spartan has a placeholder weapon, and the Zealot has your energy sword.
@@ -45,6 +50,7 @@ Earlier reports are in this file's Git history. **M10 is built and merged**, and
 **D46 to D52** in `DECISIONS.md`, and the list in `MORNING_DECISIONS.md`.
 
 ## Test results
+- **After your notes from playing, only what they touch:** the EditMode tests for the draft, towers, AI, cards, leveling, menus, match data and rosters, and the PlayMode Match scene tests, pass. 4 expectations were out of date and were corrected: nothing of the enemy seen before the first battle (3 tests) and where a bought squad is among the views. A picture run in a test build showed all 3 factions' tower windows, the shop, a shop unit, the grey squads and an item with an arrow, with no exceptions. The Abomination's and Grenadier's rows of the counter web were rerun at 10 battles, and 30 AI matches per pairing at the old and new Abomination. The full suites and the rest of the counter web were **not** run. Nobody has played the tower changes in a real match, so their balance is untested: the counter web has no towers.
 - **After the second batch of models, only what it touches:** the cards, rosters, counter web and baked-body tests, and the Sandbox, effects and match scene tests, pass. 3 expectations were out of date and were corrected: a Spartan with no body, and the Sandbox's two unit counts, which the removal of units had already left wrong. A gallery run took pictures of the units standing, moving and firing with no errors, stopping at my time limit in its later effects pictures. The Longsword's row of the counter web was rerun at 3 battles. The full suites and the rest of the counter web were **not** run. Nobody has judged the motion in play.
 - **After the towers, only what they touch:** the matching Unity and .NET tests passed, including 20 new tower tests in .NET, and one real match ran as UNSC with no errors. A flanker killed a Command Center in it. The speed test's battle gave the same result line as before, so battles without towers still play the same. The Unity run came just before the last beam fix, whose test passed in .NET. The full suites, other factions' matches and the counter web were **not** run on this version. No real mouse has clicked a tower.
 - **After your play test, only what those changes touch:** Unity EditMode 167 of 167 and PlayMode 31 of 31 on the matching tests, .NET 69 of 69 on the matching tests, and one real match as the UNSC-based Flood with no errors, whose picture shows 3 techs in the squad window. The full suites, the other factions' matches, the demos, the speed test and the counter web were **not** run again on this version. The numbers below are from before these changes.

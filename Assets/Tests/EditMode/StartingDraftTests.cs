@@ -53,6 +53,42 @@ namespace Halobellum.Tests
             }
         }
 
+        private static UnitStats TierOne(string name, int cost) => new UnitStats { Name = name, Tier = 1, Cost = cost };
+
+        [Test]
+        public void Draw_EveryCardIsWorthAbout300_AndEveryPriceStillAppears()
+        {
+            var roster = new List<UnitStats> { TierOne("100", 100), TierOne("150a", 150), TierOne("150b", 150), TierOne("200a", 200), TierOne("200b", 200) };
+            var factions = new List<FactionInfo> { TestMatch.Faction("UNSC", roster, "Noble", "Armored Division", "Aerospace Command") };
+            var seen = new HashSet<int>();
+            var names = new HashSet<string>();
+            for (int seed = 0; seed < 100; seed++)
+            {
+                foreach (DraftCard card in StartingDraft.Draw(factions, TestMatch.Rules(), new SimRandom(seed)))
+                {
+                    int value = card.Squads[0].Cost + card.Squads[1].Cost;
+                    Assert.That(value, Is.InRange(250, 350), card.ToString());
+                    Assert.AreNotSame(card.Squads[0], card.Squads[1]);
+                    seen.Add(value);
+                    foreach (UnitStats squad in card.Squads) names.Add(squad.Name);
+                }
+            }
+            CollectionAssert.AreEquivalent(new[] { 250, 300, 350 }, seen);
+            Assert.AreEqual(roster.Count, names.Count, "No unit is left out of the draft by this.");
+        }
+
+        [Test]
+        public void Draw_WithNoFairPair_TakesTheClosest()
+        {
+            var roster = new List<UnitStats> { TierOne("a", 100), TierOne("b", 100), TierOne("c", 120) };
+            var factions = new List<FactionInfo> { TestMatch.Faction("UNSC", roster, "Noble") };
+            foreach (int seed in new[] { 1, 2, 3, 4, 5, 6 })
+            {
+                DraftCard card = StartingDraft.Draw(factions, TestMatch.Rules(), new SimRandom(seed))[0];
+                Assert.AreEqual(220, card.Squads[0].Cost + card.Squads[1].Cost, card.ToString());
+            }
+        }
+
         [Test]
         public void Draw_CanOfferSubFactionExclusiveUnits()
         {

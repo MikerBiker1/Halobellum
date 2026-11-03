@@ -108,7 +108,7 @@ The Spartans have your model now, each with a placeholder weapon from the game's
 | [ ] | Spartan Laser | Spartan. | Rocket launcher |
 | [ ] | SRS99 sniper rifle | Spartan Sniper. | Assault rifle, drawn long |
 | [ ] | M247H chaingun and Hydra rocket pod | Spartan Heavy Weapons. | Rocket launcher |
-| [ ] | M319 grenade launcher | Spartan Grenadier. | Rocket launcher, drawn short |
+| [ ] | M41 rocket launcher | Spartan Grenadier. | Rocket launcher, drawn short |
 | [ ] | Shotgun | Spartan CQB. | SMG |
 | [ ] | BR85 battle rifle and M41 rocket launcher | Spartan Fireteam. | Assault rifle |
 | [ ] | Plasma rifle | Elite. | Plasma pistol, drawn big |

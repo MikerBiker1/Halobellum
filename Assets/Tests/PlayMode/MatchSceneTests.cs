@@ -57,7 +57,7 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
-        public IEnumerator Draft_ThenDeployment_ShowsOnlyThePlayersSquads()
+        public IEnumerator Draft_ThenDeployment_ShowsThePlayersSquads_AndOnlyTheEnemysStartingSquads()
         {
             yield return LoadMatch();
             Assert.AreEqual(MatchPhase.Draft, _match.Match.Phase);
@@ -68,7 +68,10 @@ namespace Halobellum.Tests
             Assert.AreEqual(MatchPhase.Deployment, _match.Match.Phase);
             int playerBodies = 0;
             foreach (PlacedSquad squad in _match.Match.Player.Squads) playerBodies += squad.Type.SquadSize;
-            Assert.AreEqual(playerBodies, CountViews(), "Only the player's squads are shown during deployment.");
+            int startingBodies = 0;
+            foreach (SeenSquad squad in _match.Match.SeenArmy(Team.B)) startingBodies += squad.Type.SquadSize;
+            Assert.AreEqual(2, _match.Match.SeenArmy(Team.B).Count);
+            Assert.AreEqual(playerBodies + startingBodies, CountViews(), "The player's squads, and the enemy's two starting squads in grey (D58).");
             Assert.IsFalse(_battle.IsPlaying);
         }
 
@@ -95,7 +98,9 @@ namespace Halobellum.Tests
             Assert.IsTrue(_match.IsDropping);
             Assert.IsNull(_match.SelectedPlacedSquad, "Selected only once it lands.");
             Transform units = GameObject.Find("Units").transform;
-            Assert.Greater(units.GetChild(units.childCount - 1 - TowersShown).position.y, 50f, "A bought squad starts high above the field.");
+            int playerBodies = 0;
+            foreach (PlacedSquad squad in m.Player.Squads) playerBodies += squad.Type.SquadSize;
+            Assert.Greater(units.GetChild(playerBodies - 1).position.y, 50f, "A bought squad starts high above the field.");
 
             float deadline = Time.realtimeSinceStartup + 5f;
             while (_match.IsDropping && Time.realtimeSinceStartup < deadline) yield return null;

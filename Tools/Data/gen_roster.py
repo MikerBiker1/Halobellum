@@ -140,8 +140,8 @@ UNITS = [
     U("InfectedPhantom", "Infected Phantom", "Flood", "Aerial", 3, 200, 1, 450, 1100, "L", 2.5, 3, 1.5, "B",
       [W("Plasma Turrets", 12, 0.3, 14, "Energy")], airu=True, flood=True, drop=("CombatForm", 5, 8)),
     U("Abomination", "Flood Abomination", "Flood", "Titan", 4, 350, 1, 800, 7000, "H", 1, 5, 3, "B",
-      [W("Tendril Slam", 160, 2.5, 7, "Melee", splash=5, own="G"),
-       W("Tendril Whip", 20, 0.8, 10, "Melee")], flood=True, spawn=("InfectionForms", 2, 14), aura=(14, 1.2, 0.01), baked="Abomination"),
+      [W("Tendril Slam", 400, 2.5, 7, "Melee", splash=5, own="G"),
+       W("Tendril Whip", 50, 0.8, 10, "Melee")], flood=True, spawn=("InfectionForms", 2, 14), aura=(14, 1.2, 0.01), baked="Abomination"),
 ]
 
 # The sub-factions' exclusive units and their techs. Their speeds are final, not halved (see D36 below).

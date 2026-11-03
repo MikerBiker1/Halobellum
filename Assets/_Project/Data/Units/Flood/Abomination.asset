@@ -30,7 +30,7 @@ MonoBehaviour:
   targetFilter: 2
   weapons:
   - weaponName: Tendril Slam
-    damagePerShot: 160
+    damagePerShot: 400
     fireInterval: 2.5
     range: 7
     minRange: 0
@@ -54,7 +54,7 @@ MonoBehaviour:
     hitSlowSeconds: 0
     hitSlowShare: 0
   - weaponName: Tendril Whip
-    damagePerShot: 20
+    damagePerShot: 50
     fireInterval: 0.8
     range: 10
     minRange: 0

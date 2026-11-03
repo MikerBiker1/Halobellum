@@ -112,6 +112,13 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 59. **Clips you may want swapped:** Hunters and the Goblin walk with Meshy's Monster Walk, which holds the Hunter's shield out in front, and fire with the rifle clip. The Zealot swings with a one-handed slash, and the Infested Elite attacks with a punch combo. Meshy has about 680 clips, and a new one costs 3 credits.
 60. **Noble colours:** Sniper blue, Heavy Weapons red, Grenadier orange, CQB near-black, Fireteam green. They are a single line each in `Tools/Art/recolour.py`.
 
+## From your notes after playing (D58)
+
+61. **Starting cards:** I took "about 300" as 250 to 350, which keeps every Tier 1 unit in the draft. Exactly 300 would be fairer, but 150-credit units like the Flamethrower Trooper could then almost never start, as 2 different units are needed. Setting `draftCardValueTolerance` to 0 does that. Which do you prefer?
+62. **XP for a tower:** I read "a squad of its tier per level" as a squad of the killer's own price, per level of the tower: half an XP bar per level, as a bar is twice the price. Towers come back every battle, so a squad that keeps killing a level 1 tower fills its bar in 2 rounds. If you meant a squad of a tier set by the tower's level, tell me what level 5 would be, as there are only 4 tiers.
+63. **Abomination:** 400 per slam and 50 per whip are my numbers: above the Elephant against Unarmored and Light, still well below it against Heavy, as melee does 30% to Heavy. Above about 170 damage/s, more no longer changes who it beats one on one, so this is about how fast it clears a crowd. Good, or more?
+64. **The AI sees your starting squads too,** as the rules are the same for both sides. It can now counter them in round 1, which it couldn't before.
+
 ## Things my test runs did to your PC
 
 - **Windows moving, and possibly music:** while the Screen setting was being checked, a test window moved across all three of your screens and briefly went fullscreen on each. Some of those runs weren't silent, so menu music may have played for about 25 seconds at a time. Those checks have finished.

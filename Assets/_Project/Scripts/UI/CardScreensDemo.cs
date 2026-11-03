@@ -33,6 +33,7 @@ namespace Halobellum.UI
         public const string Flag = "-cardsDemo";
         private const string LayoutFlag = "-cardsDemoLayout";
         private const string LevelAllFlag = "-cardsDemoLevelAll";
+        private const string PlaytestFlag = "-cardsDemoPlaytest";
 
         private static readonly (int w, int h, float ui)[] LayoutSizes =
         {
@@ -78,6 +79,13 @@ namespace Halobellum.UI
             if (Array.IndexOf(Environment.GetCommandLineArgs(), LevelAllFlag) >= 0)
             {
                 yield return LevelAllPictures();
+                Application.Quit();
+                yield break;
+            }
+
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), PlaytestFlag) >= 0)
+            {
+                yield return PlaytestPictures();
                 Application.Quit();
                 yield break;
             }
@@ -266,6 +274,66 @@ namespace Halobellum.UI
                 yield return Shot($"{faction}_levelall_after");
             }
             Debug.Log($"Level all finished: {problems} problems.");
+        }
+
+        /// <summary>
+        /// The pictures of "-cardsDemoPlaytest", of the owner's notes from playing (D58): real draws, the enemy's starting squads in grey, the
+        /// Command Center's window, a unit from the shop, and an item with a level-up arrow on the same squad.
+        /// </summary>
+        private IEnumerator PlaytestPictures()
+        {
+            Screen.SetResolution(1600, 900, FullScreenMode.Windowed);
+            GameSettings.UseUiScaleForThisRun(1f);
+            yield return new WaitForSecondsRealtime(0.8f);
+            foreach (int seed in new[] { 1, 2, 3 })
+            {
+                _match.NewMatch(seed);
+                foreach (DraftCard card in _match.Match.PlayerDraft)
+                    Debug.Log($"Playtest draw {seed}: {card.Squads.Sum(s => s.Cost)} {card}");
+                yield return Shot($"draft_seed{seed}");
+            }
+
+            BattleController battle = _match.GetComponent<BattleController>();
+            SquadSelection selection = _match.GetComponent<SquadSelection>();
+            SquadStatsWindow stats = FindFirstObjectByType<SquadStatsWindow>();
+            foreach (string faction in new[] { "UNSC", "Covenant", "Flood" })
+            {
+                _match.NewMatch(1);
+                SetDraft(5);
+                Match m = _match.Match;
+                _match.ChooseDraft(m.PlayerDraft.FindIndex(c => c.Faction.Name == faction));
+                yield return new WaitForSecondsRealtime(1f);
+                Debug.Log($"Playtest {faction}: the enemy's grey squads: {string.Join(", ", m.SeenArmy(Team.B).Select(s => $"{s.Type.Name} at {s.Column},{s.Row}"))}. It really has: {string.Join(", ", m.Enemy.Squads.Select(s => $"{s.Type.Name} at {s.Column},{s.Row}"))}");
+                yield return Shot(faction + "_round1_enemy_in_grey");
+
+                selection.SelectTower(Team.A, TowerKind.CommandCenter);
+                yield return new WaitForSecondsRealtime(0.4f);
+                yield return Shot(faction + "_command_center");
+                selection.SelectTower(Team.A, TowerKind.ResearchCenter);
+                yield return new WaitForSecondsRealtime(0.4f);
+                yield return Shot(faction + "_research_center");
+                selection.ClearTower();
+
+                stats.ShopUnit = m.Player.Roster.OrderByDescending(u => u.TechUpgrades?.Length ?? 0).ThenByDescending(u => u.Cost).First();
+                yield return new WaitForSecondsRealtime(0.4f);
+                yield return Shot(faction + "_shop_unit");
+                stats.ShopUnit = null;
+
+                PlacedSquad squad = m.Player.Squads[0];
+                CardStats item = m.Player.Faction.Cards.FirstOrDefault(c => c.Type == CardType.Item);
+                squad.Item = item?.Item;
+                squad.Xp = m.XpNeeded(squad);
+                yield return new WaitForSecondsRealtime(0.4f);
+                yield return Shot(faction + "_item_and_arrow");
+                Camera view = Camera.main;
+                var control = view.GetComponent<BattleCameraController>();
+                control.enabled = false;
+                Vector3 body = _match.GetComponent<UnitViewManager>().WorldPosition(battle.Simulation.Units[0]);
+                view.transform.position = body + new Vector3(0f, 22f, -14f);
+                view.transform.LookAt(body);
+                yield return Shot(faction + "_item_and_arrow_close");
+                control.enabled = true;
+            }
         }
 
         /// <summary>The pictures of "-cardsDemoLayout".</summary>

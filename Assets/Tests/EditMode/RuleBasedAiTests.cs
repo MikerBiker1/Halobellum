@@ -288,8 +288,11 @@ namespace Halobellum.Tests
         {
             Match match = NewMatch(new DoNothingAi());
             match.ChooseDraft(0);
-            Assert.IsEmpty(match.SeenArmy(Team.A), "Nothing seen before the first battle.");
-            Assert.IsNull(match.SeenFaction(Team.A));
+            Assert.AreEqual(2, match.SeenArmy(Team.A).Count, "Only the starting squads are seen before the first battle (D58).");
+            Assert.AreEqual("Alpha", match.SeenFaction(Team.A));
+            Assert.IsTrue(match.NoBattleYet);
+            match.Buy(Team.A, match.Player.Squads[0].Type);
+            Assert.AreEqual(2, match.SeenArmy(Team.A).Count, "What is bought stays hidden.");
             int squads = match.Player.Squads.Count;
             match.StartBattle();
             Assert.AreEqual(squads, match.SeenArmy(Team.A).Count);
@@ -303,7 +306,16 @@ namespace Halobellum.Tests
             Match match = NewMatch(new DoNothingAi());
             match.ChooseDraft(0);
             int playerSquads = match.Player.Squads.Count;
-            Assert.AreEqual(playerSquads, match.BuildPreview().Squads.Count, "Round 1: nothing of the enemy seen yet.");
+            Assert.AreEqual(playerSquads + match.Enemy.Squads.Count, match.BuildPreview().Squads.Count, "Round 1: the enemy's starting squads (D58).");
+
+            // They stay in the middle of the zone, wherever the enemy puts them, and nothing it buys shows.
+            PlacedSquad moved = match.Enemy.Squads[0];
+            int column = match.SeenArmy(Team.B)[0].Column, row = match.SeenArmy(Team.B)[0].Row;
+            Assert.IsTrue(match.Move(Team.B, moved.Id, 0, 0, false).Ok);
+            Assert.IsTrue(match.Buy(Team.B, moved.Type).Ok);
+            Assert.AreEqual((column, row), (match.SeenArmy(Team.B)[0].Column, match.SeenArmy(Team.B)[0].Row));
+            Assert.AreEqual(playerSquads + 2, match.BuildPreview().Squads.Count);
+            match.Sell(Team.B, match.Enemy.Squads[match.Enemy.Squads.Count - 1].Id);
 
             PlacedSquad veteran = match.Enemy.Squads[0];
             var plating = new TechUpgrade { Name = "Plating", Cost = 100, HealthMultiplier = 2f };

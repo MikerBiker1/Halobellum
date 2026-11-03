@@ -2543,7 +2543,7 @@
   "weapons": [
    {
     "name": "Tendril Slam",
-    "dmg": 160,
+    "dmg": 400,
     "interval": 2.5,
     "range": 7,
     "minr": 0,
@@ -2568,7 +2568,7 @@
    },
    {
     "name": "Tendril Whip",
-    "dmg": 20,
+    "dmg": 50,
     "interval": 0.8,
     "range": 10,
     "minr": 0,
@@ -2798,7 +2798,7 @@
   "filter": "G",
   "weapons": [
    {
-    "name": "M319 Grenade Launcher",
+    "name": "M41 Rocket Launcher",
     "dmg": 62,
     "interval": 1.5,
     "range": 19,
@@ -2811,7 +2811,7 @@
     "own": null,
     "air": 1,
     "cone": 0,
-    "lob": true,
+    "lob": false,
     "beam": 0,
     "charge": 0,
     "rest": 0,
@@ -2828,7 +2828,7 @@
   "air": false,
   "arc": null,
   "drop": null,
-  "note": "Lobbed grenades: strong against slow crowds, misses fast targets, weak against tanks and flankers.",
+  "note": "Rockets in a straight line: strong against crowds, weak against tanks and flankers.",
   "forms": 1,
   "flood": false,
   "infects": false,

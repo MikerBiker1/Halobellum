@@ -341,14 +341,22 @@ namespace Halobellum.UI
         public static string ShopLine(UnitStats unit, bool exclusive) => $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.FormsInSquad)}{(exclusive ? ", exclusive" : "")}";
 
         /// <summary>
-        /// The shop's rows from the top: the sub-faction's own units first, since they are the reason to pick that card, and then the rest as the
-        /// roster has them. For the display only: unlocking, prices, card offers and the AI go by the roster itself.
+        /// The shop's rows from the top, cheapest first (the owner). At the same price, the sub-faction's own units come first, since they are the
+        /// reason to pick that card, and then the rest as the roster has them. For the display only: unlocking, prices, card offers and the AI go by
+        /// the roster itself. It runs for every OnGUI event, so it sorts in place, and keeps the order of equals.
         /// </summary>
         public static void FillShopRows(List<UnitStats> roster, List<UnitStats> exclusive, List<UnitStats> rows)
         {
             rows.Clear();
             foreach (UnitStats unit in roster) if (exclusive.Contains(unit)) rows.Add(unit);
             foreach (UnitStats unit in roster) if (!exclusive.Contains(unit)) rows.Add(unit);
+            for (int i = 1; i < rows.Count; i++)
+            {
+                UnitStats unit = rows[i];
+                int at = i;
+                for (; at > 0 && rows[at - 1].Cost > unit.Cost; at--) rows[at] = rows[at - 1];
+                rows[at] = unit;
+            }
         }
 
         private void DrawShop(float width, float height)
@@ -378,6 +386,10 @@ namespace Halobellum.UI
                 CardScreens.Fit(new Rect(textX, row.y + 25f, textWidth, 28f), ShopLine(unit, player.SubFaction.ExclusiveUnits.Contains(unit)), _shopLine, 15, ShopLineLeastSize, TextAnchor.MiddleLeft, HudTheme.DimText);
 
                 var button = new Rect(row.xMax - 118f, row.y + 9f, 110f, 36f);
+                // The row's picture and text open the stats window, on a level 1 squad of the type with no techs.
+                var about = new Rect(row.x, row.y, button.x - row.x - 4f, row.height);
+                if (GUI.Button(about, GUIContent.none, GUIStyle.none)) ShowShopUnit(unit);
+                UiAudio.Watch(about);
                 if (player.Unlocked.Contains(unit))
                 {
                     bool canBuy = player.Credits >= price && player.SquadsBoughtThisRound < m.SquadsPerRound(Team.A);
@@ -395,6 +407,17 @@ namespace Halobellum.UI
                 GUI.enabled = true;
             }
             GUI.EndScrollView();
+        }
+
+        private SquadStatsWindow StatsWindow => _squadWindow != null ? _squadWindow : (_squadWindow = FindAnyObjectByType<SquadStatsWindow>());
+
+        /// <summary>A second click on the same row closes it again.</summary>
+        private void ShowShopUnit(UnitStats unit)
+        {
+            if (StatsWindow == null) return;
+            Selection.Select(-1);
+            Selection.ClearTower();
+            StatsWindow.ShopUnit = StatsWindow.ShopUnit == unit ? null : unit;
         }
 
         private void DrawSelectedSquadActions(float width, float height)
@@ -439,8 +462,7 @@ namespace Halobellum.UI
         {
             foreach (Rect panel in _panelsDrawn) if (panel.Overlaps(rect)) return true;
             if (Selection.SelectedTower != null && _towerWindow.Overlaps(rect)) return true;
-            if (_squadWindow == null) _squadWindow = FindAnyObjectByType<SquadStatsWindow>();
-            return _squadWindow != null && _squadWindow.TryGetWindow(out Rect squad) && squad.Overlaps(rect);
+            return StatsWindow != null && StatsWindow.TryGetWindow(out Rect squad) && squad.Overlaps(rect);
         }
 
         /// <summary>The selected tower's window, where the squad window goes: what it is, and what it sells.</summary>
@@ -456,11 +478,12 @@ namespace Halobellum.UI
             TowerPanel view = _towerPanel;
             if (view == null) return;
 
-            const float windowWidth = 440f, inset = 18f, rowHeight = 56f;
+            const float windowWidth = 440f, inset = 18f, buttonHeight = 30f, rowGap = 4f;
             float textWidth = windowWidth - 2f * inset;
             float textHeight = 0f;
             foreach (string line in view.Lines) textHeight += _wrap.CalcHeight(new GUIContent(line), textWidth) + 4f;
-            float windowHeight = 62f + textHeight + view.Buttons.Count * rowHeight + 14f;
+            foreach (TowerButton button in view.Buttons) textHeight += buttonHeight + _wrapDim.CalcHeight(new GUIContent(button.Note), textWidth) + rowGap;
+            float windowHeight = 62f + textHeight + 14f;
             var window = new Rect(10f, height - windowHeight - 10f, windowWidth, windowHeight);
             _towerWindow = window;
             Panel(window);
@@ -477,7 +500,7 @@ namespace Halobellum.UI
             }
             foreach (TowerButton button in view.Buttons)
             {
-                var rect = new Rect(window.x + inset, y, textWidth, 30f);
+                var rect = new Rect(window.x + inset, y, textWidth, buttonHeight);
                 GUI.enabled = button.Enabled;
                 if (GUI.Button(rect, button.Label, _button))
                 {
@@ -486,8 +509,9 @@ namespace Halobellum.UI
                 }
                 UiAudio.Watch(rect, button.Enabled);
                 GUI.enabled = true;
-                GUI.Label(new Rect(window.x + inset, y + 30f, textWidth, 22f), button.Note, _small);
-                y += rowHeight;
+                float noteHeight = _wrapDim.CalcHeight(new GUIContent(button.Note), textWidth);
+                GUI.Label(new Rect(window.x + inset, y + buttonHeight, textWidth, noteHeight), button.Note, _wrapDim);
+                y += buttonHeight + noteHeight + rowGap;
             }
         }
 

@@ -141,10 +141,13 @@ namespace Halobellum.Economy
             return true;
         }
 
-        /// <summary>A team's army as it was when the last battle started (what the other side has seen).</summary>
+        /// <summary>True until the first battle starts: all a side has seen of the other's army is its starting squads.</summary>
+        public bool NoBattleYet => _battleCount == 0;
+
+        /// <summary>A team's army as it was when the last battle started, or its starting squads before the first (what the other side has seen).</summary>
         public IReadOnlyList<SeenSquad> SeenArmy(Team team) => team == Team.A ? _seenA : _seenB;
 
-        /// <summary>A team's faction name once it has been seen in a battle, otherwise null.</summary>
+        /// <summary>A team's faction name once the draft is over, otherwise null.</summary>
         public string SeenFaction(Team team) => team == Team.A ? _seenFactionA : _seenFactionB;
 
         /// <summary>The income both players get at the end of this round, before economy cards.</summary>
@@ -170,6 +173,12 @@ namespace Halobellum.Economy
             ApplyDraftCard(Player, PlayerDraft[cardIndex]);
             int enemyChoice = EnemyDraft.Count > 0 ? Math.Clamp(_enemyAi.ChooseDraftCard(new AiView(this, Team.B), EnemyDraft), 0, EnemyDraft.Count - 1) : -1;
             if (enemyChoice >= 0) ApplyDraftCard(Enemy, EnemyDraft[enemyChoice]);
+
+            // Both sides see each other's starting squads, as they stand in the middle of the zone before anyone deploys (D58).
+            Reveal(Player, _seenA);
+            Reveal(Enemy, _seenB);
+            _seenFactionA = Player.Faction?.Name;
+            _seenFactionB = Enemy.Faction?.Name;
 
             BeginRound(1);
             return ActionResult.Success();
@@ -356,7 +365,8 @@ namespace Halobellum.Economy
 
         /// <summary>
         /// Gives each placed squad the XP its bodies earned in the finished battle: for every enemy body
-        /// killed, the victim's worth (its squad price per body, plus half per level above 1).
+        /// killed, the victim's worth (its squad price per body, plus half per level above 1). A tower is worth
+        /// one squad of the killer's own price per level of the tower (D58).
         /// Simulation squad i is placed squad i (Team A's squads first, then Team B's); units dropped
         /// mid-battle belong to no placed squad and earn nothing.
         /// </summary>
@@ -375,6 +385,11 @@ namespace Halobellum.Economy
                 SimUnit killer = battle.Units[victim.KilledById];
                 if (!bySimSquad.TryGetValue(killer.SquadId, out int index)) continue;
                 UnitStats v = victim.Stats;
+                if (v.IsTower)
+                {
+                    earned[index] += placed[index].squad.Type.Cost * Get(victim.Team).FindTower(v.Shockwave.Kind).Level;
+                    continue;
+                }
                 earned[index] += v.Cost / (float)Math.Max(1, v.SquadSize) * (1f + 0.5f * (v.Level - 1));
             }
             for (int i = 0; i < placed.Count; i++)
@@ -431,6 +446,7 @@ namespace Halobellum.Economy
                 {
                     Kind = kind, Seconds = Rules.TowerShockwaveSeconds[level - 1], SpeedMultiplier = Rules.ShockwaveSpeedMultiplier,
                     DamageMultiplier = Rules.ShockwaveDamageMultiplier, FireRateMultiplier = Rules.ShockwaveFireRateMultiplier,
+                    DamageTakenMultiplier = Rules.ShockwaveDamageTakenMultiplier,
                 },
             };
             _towerStats[(kind, level)] = stats;

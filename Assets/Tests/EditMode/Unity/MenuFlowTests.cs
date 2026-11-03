@@ -326,6 +326,30 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void TheShop_IsInOrderOfPrice_WithTheSubFactionsOwnFirstAtTheSamePrice()
+        {
+            UnitStats One(string name, int cost) => new UnitStats { Name = name, Cost = cost };
+            UnitStats titan = One("titan", 800), tank = One("tank", 300), marine = One("marine", 100), own = One("own", 300), ownCheap = One("ownCheap", 150);
+            var rows = new List<UnitStats>();
+            MatchHud.FillShopRows(new List<UnitStats> { titan, tank, marine, own, ownCheap }, new List<UnitStats> { own, ownCheap }, rows);
+            CollectionAssert.AreEqual(new[] { marine, ownCheap, own, tank, titan }, rows);
+        }
+
+        [Test]
+        public void TheShopsStatsWindow_ShowsLevel1_WithEveryTechLocked()
+        {
+            var tech = new TechUpgrade { Name = "Plates" };
+            SquadProgressView view = SquadStatsWindow.ShopProgress(new UnitStats { Name = "tank", TechUpgrades = new[] { tech } });
+            Assert.AreEqual(1, view.Level);
+            Assert.IsFalse(view.ShowXp);
+            Assert.IsNull(view.LevelUpLabel);
+            Assert.AreEqual(1, view.Techs.Count);
+            Assert.IsTrue(view.Techs[0].Locked);
+            Assert.IsFalse(view.Techs[0].Owned);
+            Assert.IsNull(view.Techs[0].ButtonLabel, "It can't be bought from here.");
+        }
+
+        [Test]
         public void TheSelectionRing_IsOpenInTheMiddle_AndFacesUp()
         {
             Mesh ring = PlaceholderArt.Ring;

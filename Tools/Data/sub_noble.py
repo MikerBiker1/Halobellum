@@ -22,8 +22,8 @@ def units(U, W):
           note="A walking wall with a chaingun: mows down infantry, does little to armor. Its Unarmored body makes it weak to anti-infantry weapons once the shield is down.",
           baked="SpartanHeavyWeapons"),
         U("SpartanGrenadier", "Spartan Grenadier", FACTION, "ChaffClear", 3, 200, 1, 400, 1000, "U", 1.75, 0.6, 0.5, "G",
-          [W("M319 Grenade Launcher", 62, 1.5, 19, "Explosive", proj=22, splash=3.2, minr=3, lob=True)], shield=300, regen=60, immune=True,
-          note="Lobbed grenades: strong against slow crowds, misses fast targets, weak against tanks and flankers.",
+          [W("M41 Rocket Launcher", 62, 1.5, 19, "Explosive", proj=22, splash=3.2, minr=3)], shield=300, regen=60, immune=True,
+          note="Rockets in a straight line: strong against crowds, weak against tanks and flankers.",
           baked="SpartanGrenadier"),
         U("SpartanCQB", "Spartan CQB", FACTION, "Flanker", 3, 200, 1, 400, 1200, "U", 3.5, 0.6, 0.35, "B",
           [W("M45 Shotgun", 80, 0.8, 6, "Ballistic", cone=25, block=True)], shield=450, regen=80, immune=True, leap=(9, 16, 5),
@@ -49,7 +49,7 @@ TECHS = {
     ],
     "SpartanGrenadier": [
         T("Overshield", "Overshield", 200, "A stronger energy shield.", shield=200),
-        T("ClusterGrenades", "Cluster Grenades", 200, "Each grenade covers more ground.", splash=1.2),
+        T("ClusterGrenades", "Cluster Warheads", 200, "Each rocket covers more ground.", splash=1.2),
     ],
     "SpartanCQB": [
         T("Overshield", "Overshield", 200, "A stronger energy shield.", shield=200),

@@ -86,6 +86,70 @@ namespace Halobellum.Tests
             Assert.AreEqual(1f, own.SpeedMultiplier, 1e-3f, "It wore off.");
         }
 
+        private static float DamageTaken(bool towerFalls)
+        {
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            SimUnit target = sim.AddUnit(TestUnits.Unit(health: 100000f, speed: 0f), Team.A, new Vec2(0f, -3f));
+            sim.AddUnit(TestUnits.Unit(health: 100000f, speed: 0f, weapon: TestUnits.Weapon(damage: 10f, range: 20f, interval: 0.5f)), Team.B, new Vec2(0f, 3f));
+            UnitStats stats = Tower();
+            stats.Shockwave.DamageTakenMultiplier = 1.4f;
+            SimUnit tower = sim.AddUnit(stats, Team.A, new Vec2(60f, -60f));
+            if (towerFalls) tower.Health = 0f;
+            RunSeconds(sim, 1f); // The shot of the very first moment comes before the shockwave.
+            float before = target.Health;
+            RunSeconds(sim, 4f);
+            return before - target.Health;
+        }
+
+        [Test]
+        public void AFallenTower_MakesItsArmyTake40PercentMore_AndTheOtherTowerNone()
+        {
+            Assert.AreEqual(1.4f, DamageTaken(true) / DamageTaken(false), 0.02f);
+
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            sim.AddUnit(TestUnits.Unit(health: 100000f, speed: 0f), Team.A, new Vec2(-50f, -50f));
+            sim.AddUnit(TestUnits.Unit(health: 100000f, speed: 0f), Team.B, new Vec2(50f, 50f));
+            UnitStats stats = Tower();
+            stats.Shockwave.DamageTakenMultiplier = 1.4f;
+            SimUnit first = sim.AddUnit(stats, Team.A, new Vec2(50f, -50f));
+            SimUnit second = sim.AddUnit(Tower(kind: TowerKind.ResearchCenter), Team.A, new Vec2(0f, -50f));
+            first.Health = 0f;
+            RunSeconds(sim, 1f);
+            Assert.AreEqual(1.4f, sim.Units[0].ShockwaveDamageTaken, 1e-3f);
+            Assert.AreEqual(1f, second.ShockwaveDamageTaken, 1e-3f);
+        }
+
+        [Test]
+        public void TheRules_Weaken40PercentAcrossTheBoard_And40PercentMoreDamage()
+        {
+            ShockwaveStats shockwave = Started(out _).TowerStats(TowerKind.CommandCenter, 1).Shockwave;
+            Assert.AreEqual(0.6f, shockwave.SpeedMultiplier, 1e-3f);
+            Assert.AreEqual(0.6f, shockwave.DamageMultiplier, 1e-3f);
+            Assert.AreEqual(0.6f, shockwave.FireRateMultiplier, 1e-3f);
+            Assert.AreEqual(1.4f, shockwave.DamageTakenMultiplier, 1e-3f);
+        }
+
+        [TestCase(1)]
+        [TestCase(3)]
+        public void ATower_GivesItsKillerASquadsWorthOfXp_PerLevelOfTheTower(int level)
+        {
+            Match match = Started(out _);
+            match.Enemy.FindTower(TowerKind.CommandCenter).Level = level;
+            PlacedSquad killer = match.Player.Squads[0];
+            BattleSimulation battle = match.StartBattle();
+            SimUnit body = battle.Squads[0].Members[0];
+            foreach (SimUnit unit in battle.Units)
+            {
+                if (unit.Team != Team.B) continue;
+                unit.Health = 0f; // Nobody gets anything for these...
+                if (unit.Stats.IsTower && unit.Stats.Shockwave.Kind == TowerKind.CommandCenter) unit.KilledById = body.Id; // ...but this one.
+            }
+            while (!battle.IsFinished) battle.Step();
+            RoundSummary summary = match.FinishBattle();
+            Assert.AreEqual(killer.Type.Cost * level, summary.XpGained[killer.Id], 1e-3f);
+            Assert.AreEqual(1, summary.XpGained.Count);
+        }
+
         [Test]
         public void ASecondTower_AddsItsTime_NotItsSeverity()
         {

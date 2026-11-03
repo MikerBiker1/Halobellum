@@ -9,6 +9,7 @@
 // ready squad of the type, when there are 2 or more. The two share the row with the level line, and
 // go on a row of their own if a theme's fonts leave no room for that.
 // The unit's picture (UnitIcons) is at the top. Placeholder UI drawn with Unity's immediate-mode GUI.
+// It also shows a unit clicked in the shop (ShopUnit): a level 1 squad of that type, with its techs locked.
 // Depends on: Halobellum.Presentation (BattleController, SquadSelection, ISquadProgression, UiHitAreas), Halobellum.Core, UnitIcons.
 
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ using Halobellum.Combat;
 using Halobellum.Core;
 using Halobellum.Presentation;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Halobellum.UI
 {
@@ -49,6 +51,9 @@ namespace Halobellum.UI
         private bool _levelButtonsOwnRow;
         private float _levelUpWidth, _levelAllWidth, _levelLineWidth;
 
+        /// <summary>The unit in the shop this window is showing, or null. Selecting a squad or a tower, or a click outside, closes it.</summary>
+        public UnitStats ShopUnit { get; set; }
+
         /// <summary>For a test tool: where the level line and the two buttons were last drawn, in HUD units. Width 0 when not drawn.</summary>
         public Rect LevelLineShown { get; private set; }
         public Rect LevelUpShown { get; private set; }
@@ -76,22 +81,47 @@ namespace Halobellum.UI
             {
                 _selection = battle.GetComponent<SquadSelection>();
                 _progression = battle.GetComponent<ISquadProgression>();
+                battle.BattleChanged += _ => ShopUnit = null;
             }
+        }
+
+        private void Update()
+        {
+            if (ShopUnit == null) return;
+            Mouse mouse = Mouse.current;
+            Keyboard keyboard = Keyboard.current;
+            bool clickedOutside = mouse != null && mouse.leftButton.wasPressedThisFrame && !UiHitAreas.Contains(mouse.position.ReadValue());
+            if (clickedOutside || RightClick.WasClicked || (keyboard != null && keyboard.escapeKey.wasPressedThisFrame)) ShopUnit = null;
+        }
+
+        /// <summary>What the window says under the stats of a unit in the shop.</summary>
+        public static SquadProgressView ShopProgress(UnitStats unit)
+        {
+            var view = new SquadProgressView { SideLabel = "In the shop: level 1, no techs", Level = 1 };
+            foreach (TechUpgrade tech in unit.TechUpgrades ?? new TechUpgrade[0])
+            {
+                if (tech != null) view.Techs.Add(new TechLine { Tech = tech, Locked = true });
+            }
+            return view;
         }
 
         private void OnGUI()
         {
-            if (battle == null || battle.Simulation == null || _selection == null || _selection.SelectedSquadId < 0) return;
+            if (battle == null || battle.Simulation == null || _selection == null) return;
+            if (_selection.SelectedSquadId >= 0 || _selection.SelectedTower != null) ShopUnit = null;
+            if (_selection.SelectedSquadId < 0 && ShopUnit == null) return;
             HudTheme.Apply();
             EnsureStyles();
             float scale = HudScale.Apply();
 
-            SimUnit sample = FindAnyOfSquad(_selection.SelectedSquadId, out int alive, out float totalHealth);
-            if (sample == null) return;
-            UnitStats s = sample.Stats;
+            int alive = 0;
+            float totalHealth = 0f;
+            SimUnit sample = ShopUnit != null ? null : FindAnyOfSquad(_selection.SelectedSquadId, out alive, out totalHealth);
+            if (sample == null && ShopUnit == null) return;
+            UnitStats s = ShopUnit ?? sample.Stats;
 
             if (Time.unscaledTime >= _nextRefresh || _selection.SelectedSquadId != _shownSquad || s != _shownStats || _shownBattle != battle.Simulation || _shownStyles != _styleVersion)
-                Refresh(sample, alive, totalHealth);
+                Refresh(s, sample, alive, totalHealth);
             string body = _body;
             float textHeight = _textHeight;
             SquadProgressView progress = _progress;
@@ -105,23 +135,28 @@ namespace Halobellum.UI
             CardScreens.DrawUnitPicture(new Rect(window.x + 10f, window.y + 6f, PictureSize, PictureSize), s, null, HudTheme.Accent);
             GUI.Label(new Rect(window.x + PictureSize + 18f, window.y + 6f, windowWidth - PictureSize - 56f, 30f), s.Name, _title);
             GUI.Label(new Rect(window.x + PictureSize + 18f, window.y + 34f, windowWidth - PictureSize - 56f, 24f), _side, _small);
-            if (GUI.Button(new Rect(window.xMax - 34f, window.y + 8f, 24f, 22f), "x")) _selection.Select(-1);
+            if (GUI.Button(new Rect(window.xMax - 34f, window.y + 8f, 24f, 22f), "x"))
+            {
+                ShopUnit = null;
+                _selection.Select(-1);
+            }
             GUI.Label(new Rect(window.x + TextInset, window.y + HeaderHeight - 6f, windowWidth - 2f * TextInset, textHeight), body, _text);
             if (progress != null) DrawProgress(progress, window.x + TextInset, window.y + HeaderHeight - 2f + textHeight, windowWidth - 2f * TextInset);
             if (Event.current.type == EventType.MouseUp || Event.current.type == EventType.Used) _nextRefresh = 0f;
         }
 
-        private void Refresh(SimUnit sample, int alive, float totalHealth)
+        /// <param name="sample">A body of the selected squad, or null for a unit in the shop.</param>
+        private void Refresh(UnitStats stats, SimUnit sample, int alive, float totalHealth)
         {
             _nextRefresh = Time.unscaledTime + RefreshSeconds;
             _shownSquad = _selection.SelectedSquadId;
-            _shownStats = sample.Stats;
+            _shownStats = stats;
             _shownBattle = battle.Simulation;
             _shownStyles = _styleVersion;
-            _body = BuildText(sample.Stats, alive, totalHealth);
+            _body = BuildText(stats, sample != null, alive, totalHealth);
             _measure.text = _body;
             _textHeight = _text.CalcHeight(_measure, windowWidth - 2f * TextInset);
-            _progress = _progression?.DescribeProgress(_shownSquad);
+            _progress = sample != null ? _progression?.DescribeProgress(_shownSquad) : ShopProgress(stats);
             _side = _progress?.SideLabel ?? $"Team {sample.Team}";
             _techNames.Clear();
             _techEffects.Clear();
@@ -131,7 +166,7 @@ namespace Halobellum.UI
             _xpLine = $"XP {_progress.Xp:0} / {_progress.XpNeeded:0}";
             foreach (TechLine line in _progress.Techs)
             {
-                _techNames.Add(line.Owned ? $"{line.Tech.Name}  (researched)" : line.Tech.Name);
+                _techNames.Add(line.Owned ? $"{line.Tech.Name}  (researched)" : line.Locked ? $"{line.Tech.Name}  (locked)" : line.Tech.Name);
                 _techEffects.Add(line.Tech.EffectsText());
             }
             MeasureLevelRow(_progress, windowWidth - 2f * TextInset);
@@ -277,12 +312,12 @@ namespace Halobellum.UI
             if (!s.IsFlood) b.AppendLine(s.ArmorType == ArmorType.Unarmored && !s.ImmuneToInfection ? "Can be infected once its shield is down" : "Infection Forms cannot infect it");
         }
 
-        private string BuildText(UnitStats s, int alive, float totalHealth)
+        private string BuildText(UnitStats s, bool fielded, int alive, float totalHealth)
         {
             StringBuilder b = _builder.Clear();
             b.AppendLine($"Role: {RoleName(s.Role)}    Tier {s.Tier}    Cost {s.Cost}{(s.Level > 1 ? $"    Level {s.Level}" : "")}");
             string packs = s.FormsPerBody > 1 ? $" in {s.SquadSize} packs" : "";
-            b.AppendLine($"Squad size: {s.FormsInSquad}{packs}  ({alive} alive, {totalHealth:0} health left)");
+            b.AppendLine(fielded ? $"Squad size: {s.FormsInSquad}{packs}  ({alive} alive, {totalHealth:0} health left)" : $"Squad size: {s.FormsInSquad}{packs}");
             b.AppendLine($"Health: {s.MaxHealth:0} per {(s.FormsPerBody > 1 ? "pack" : "body")}    Armor: {s.ArmorType}");
             b.AppendLine(s.HasShield ? $"Shield: {s.MaxShield:0} (regen {s.ShieldRegenPerSecond:0.#}/s)" : "Shield: none");
             b.AppendLine($"Move speed: {s.MoveSpeed:0.#} m/s    Collision size: {s.CollisionRadius * 2f:0.#} m");

@@ -33,6 +33,10 @@ namespace Halobellum.Economy
         public int DraftCardCount;
         /// <summary>Free Tier 1 squads on each draft card (Bible: 2).</summary>
         public int DraftSquadsPerCard;
+        /// <summary>What a card's 2 squads are worth together, in credits (the owner: about 300).</summary>
+        public int DraftCardValue = 300;
+        /// <summary>How far from that a card may be. In a roster with no such pair, the closest pair is taken.</summary>
+        public int DraftCardValueTolerance = 50;
         /// <summary>
         /// Size of the XP bar as a share of the squad's base price (decision D26: 2 = a squad must kill twice
         /// its price's worth of enemies to fill it). The same at every level (Bible Section 5).
@@ -69,9 +73,10 @@ namespace Halobellum.Economy
         public int TowerLevelUpCost = 100;
         /// <summary>How long its shockwave lasts at each level; there are as many levels as these.</summary>
         public float[] TowerShockwaveSeconds = { 10f, 8f, 6f, 4f, 2f };
-        public float ShockwaveSpeedMultiplier = 0.7f;
-        public float ShockwaveDamageMultiplier = 0.7f;
-        public float ShockwaveFireRateMultiplier = 0.7f;
+        public float ShockwaveSpeedMultiplier = 0.6f;
+        public float ShockwaveDamageMultiplier = 0.6f;
+        public float ShockwaveFireRateMultiplier = 0.6f;
+        public float ShockwaveDamageTakenMultiplier = 1.4f;
         public int ExtraSlotCost = 100;
         /// <summary>The spell the Command Center sells; its price is its Cost. It is used once.</summary>
         public SpellStats OilZone;

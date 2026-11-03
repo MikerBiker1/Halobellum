@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SpartanGrenadier_RapidLoader
   m_EditorClassIdentifier: 
   techName: Rapid Loader
-  description: Grenades go out faster.
+  description: Rockets go out faster.
   cost: 200
   healthMultiplier: 1
   damageMultiplier: 1

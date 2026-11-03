@@ -23,6 +23,8 @@ MonoBehaviour:
   refundAfterBattle: 0.5
   draftCardCount: 5
   draftSquadsPerCard: 2
+  draftCardValue: 300
+  draftCardValueTolerance: 50
   xpBarPerSquadCost: 2
   levelUpCostShare: 0.5
   firstCardRound: 2
@@ -44,9 +46,10 @@ MonoBehaviour:
   - 6
   - 4
   - 2
-  shockwaveSpeedMultiplier: 0.7
-  shockwaveDamageMultiplier: 0.7
-  shockwaveFireRateMultiplier: 0.7
+  shockwaveSpeedMultiplier: 0.6
+  shockwaveDamageMultiplier: 0.6
+  shockwaveFireRateMultiplier: 0.6
+  shockwaveDamageTakenMultiplier: 1.4
   extraSlotCost: 100
   rapidResupplyCredits: 200
   rapidResupplyPenalty: 300

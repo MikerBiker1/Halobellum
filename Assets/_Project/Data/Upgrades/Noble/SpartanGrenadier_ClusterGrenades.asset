@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c01f1ec4770119518fc3088b4a52ceeb, type: 3}
   m_Name: SpartanGrenadier_ClusterGrenades
   m_EditorClassIdentifier: 
-  techName: Cluster Grenades
-  description: Each grenade covers more ground.
+  techName: Cluster Warheads
+  description: Each rocket covers more ground.
   cost: 200
   healthMultiplier: 1
   damageMultiplier: 1

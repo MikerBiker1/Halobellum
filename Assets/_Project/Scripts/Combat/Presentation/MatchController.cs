@@ -332,7 +332,7 @@ namespace Halobellum.Presentation
             UnitStats stats = Match.TowerStats(kind, level);
             var panel = new TowerPanel { Title = Match.TowerName(kind), Side = own ? "Your tower" : "Enemy tower, as last seen" };
             panel.Lines.Add($"Level {level} of {rules.TowerMaxLevel}    Health {stats.MaxHealth:0}");
-            panel.Lines.Add($"If it falls, {(own ? "your" : "their")} whole army loses {(1f - rules.ShockwaveSpeedMultiplier) * 100f:0}% speed, {(1f - rules.ShockwaveDamageMultiplier) * 100f:0}% damage and {(1f - rules.ShockwaveFireRateMultiplier) * 100f:0}% rate of fire for {stats.Shockwave.Seconds:0} s. Two falling add up their time, not their severity.");
+            panel.Lines.Add($"If it falls, {(own ? "your" : "their")} whole army loses {(1f - rules.ShockwaveSpeedMultiplier) * 100f:0}% speed, {(1f - rules.ShockwaveDamageMultiplier) * 100f:0}% damage and {(1f - rules.ShockwaveFireRateMultiplier) * 100f:0}% rate of fire, and takes {(rules.ShockwaveDamageTakenMultiplier - 1f) * 100f:0}% more damage, for {stats.Shockwave.Seconds:0} s. Two falling add up their time, not their severity.");
             if (!own) return panel;
 
             bool deploying = Match.Phase == MatchPhase.Deployment;
@@ -444,8 +444,13 @@ namespace Halobellum.Presentation
             SeenSquad ghost = GhostFor(simSquadId);
             if (ghost != null)
             {
-                // What the player saw of this enemy squad when the last battle started (D25).
-                var seen = new SquadProgressView { SideLabel = "enemy, last battle", Level = ghost.Level, Note = "As seen at the start of the last battle.", ItemText = ItemText(ghost.Item) };
+                // What the player saw of this enemy squad when the last battle started (D25), or before the first, of its starting squads (D58).
+                bool first = Match.NoBattleYet;
+                var seen = new SquadProgressView
+                {
+                    SideLabel = first ? "enemy, starting squad" : "enemy, last battle", Level = ghost.Level,
+                    Note = first ? "Where it will stand is hidden." : "As seen at the start of the last battle.", ItemText = ItemText(ghost.Item),
+                };
                 foreach (TechUpgrade tech in ghost.Techs) seen.Techs.Add(new TechLine { Tech = tech, Owned = true });
                 return seen;
             }

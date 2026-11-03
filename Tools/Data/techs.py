@@ -197,7 +197,7 @@ THIRD_TECHS = {
     "Abomination": T("SurgingMass", "Surging Mass", 200, "It drags itself along faster.", speed=1.2),
     # Noble
     "SpartanSniper": T("ArmorPiercing", "Armor-Piercing Rounds", 250, "Heavier sniper rounds.", damage=1.25),
-    "SpartanGrenadier": T("RapidLoader", "Rapid Loader", 200, "Grenades go out faster.", fire=1.25),
+    "SpartanGrenadier": T("RapidLoader", "Rapid Loader", 200, "Rockets go out faster.", fire=1.25),
     "SpartanFireteam": T("Thrusters", "Better Thrusters", 200, "Moves up faster.", speed=1.2),
     # Armored Division
     "Gremlin": T("LongRails", "Long Rails", 150, "The EMP railgun reaches further.", range=3),

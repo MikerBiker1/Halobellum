@@ -15,6 +15,8 @@ namespace Halobellum.Presentation
     {
         public TechUpgrade Tech;
         public bool Owned;
+        /// <summary>Shown as locked: the shop's look at a unit, which has none of its techs yet.</summary>
+        public bool Locked;
         /// <summary>Button text (e.g. "Buy 150", "Remove"), or null for no button.</summary>
         public string ButtonLabel;
         public bool ButtonEnabled;
