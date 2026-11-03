@@ -101,7 +101,7 @@ A match is a series of rounds against an AI opponent. Each round has these phase
 
 **Starting draft.** Before round 1, the player picks one of 5 draft cards. This is the most important decision of the game.
 
-- Each card shows a faction, a sub-faction, and 2 random Tier 1 squads from that faction’s roster, including the sub-faction’s exclusive units, worth about 300 together (250 to 350).
+- Each card shows a faction, a sub-faction, and 2 random Tier 1 squads from that faction’s roster, including the sub-faction’s exclusive units, worth about 300 together (250 to 350). A dearer card means a weaker base: 100 base health per 50 credits from 300, so a card worth 250 starts at 2,100 and one worth 350 at 1,900.
 - Once both have chosen, each player sees the other's faction and 2 starting squads, in grey in the middle of its zone. Where they will stand and what is bought stay hidden.
 - The same sub-faction never appears on two cards in the same draw.
 - The chosen faction and sub-faction are fixed for the match. The 2 squads are free starting squads, and their unit types start unlocked.
@@ -146,6 +146,7 @@ A unit can be unlocked and bought in the same round. Buying a squad is limited t
 **Towers (D55).** Each side has two towers in the middle of its zone, the Command Center on its own left and the Research Center on its own right. They make two lanes to defend. Both are rebuilt for every battle, and levels last for the match. A tower is a ground target like any other, but isn't part of the army: it doesn't keep a battle going, deals no base damage and gives no XP.
 
 - **Level:** 1 to 5, 100 credits each. A level 1 tower dies to one Scorpion shell (100 health), and each level doubles its health.
+- **XP:** the squad that destroys it earns the XP of a level 1 squad of the tier of the tower's level (150, 275, 450, 800), and for level 5, of a level 2 Titan (1,200).
 - **Shockwave:** its fall weakens its side's whole army, by 40% in speed, damage and rate of fire, and makes it take 40% more damage. It lasts 10, 8, 6, 4 or 2 seconds by the tower's level. A second fall adds its time, not its severity.
 - **Command Center sells,** each once a round: an extra squad slot for the round (100), a one-use Oil Zone of 4 x 15 m (150), Rapid Resupply (free: +200 now, 300 less next round), Elite Recruitment (100: squads bought this round are level 2, at half their price more).
 - **Research Center sells** lasting bonuses for the whole army: +15% health (100), another +15% (300); +12% damage (100), another +12% (300).
@@ -497,6 +498,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-02 | The Infected Pelican's blast is 3.5 m in radius. The Blisterback and Methane Wagon are removed | Per the project owner (D56) |
 | 2026-11-03 | Dead ground units stay 14 seconds. The Shortsword is now the Longsword, a slower, tougher bomber at the same price | Per the project owner (D57) |
 | 2026-11-03 | Starting cards worth about 300; the enemy's starting squads seen in grey; shop in order of price; a fallen tower weakens by 40% and adds 40% damage taken, and gives its killer XP; Spartan Grenadier fires rockets; Abomination's attacks raised | Per the project owner (D58) |
+| 2026-11-03 | A dearer starting card means a weaker base; a tower's XP goes by its level | Per the project owner (D59) |
 
 ## 18. Assumptions to confirm
 

@@ -1,0 +1,13 @@
+# Flood's Tier 2 and Tier 3 units at the bottom of their price bands (Bible: balance is done through price).
+Pure Form Ranged|Cost=250
+Swarm Form|Cost=250
+Infested Scorpion|Cost=250
+Infested Hornet|Cost=250
+Infested Elite|Cost=250
+Infested Wraith|Cost=250
+Infested Banshee|Cost=250
+Infected Phantom|Cost=400
+Seeder|Cost=400
+Juggernaut|Cost=400
+Spawner|Cost=400
+Pure Form Tank|Cost=400

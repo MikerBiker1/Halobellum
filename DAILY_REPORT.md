@@ -2,6 +2,13 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The Hard AI tournament (D59)
+- **3,600 whole matches** between two Hard AIs on the game's real data, 100 for each pairing of sub-factions: `Docs/Balance/hard_ai_tournament_baseline.txt`.
+- **Result:** Covenant 74%, UNSC 51%, Flood 19%. The Scarab is the biggest single cause of Covenant's lead, and Flood is weak across its roster.
+- **Suggested changes,** not applied: `Docs/Balance/suggestions.md`. In the same tournament they give Covenant 52%, UNSC 53%, Flood 44%, and every sub-faction 44% to 55%.
+- **Also:** a dearer starting card now means a weaker base, which the tournament shows is fair, and a tower's XP goes by its level.
+- Questions are items 65 to 67 of `MORNING_DECISIONS.md`.
+
 ## Your notes from playing (D58)
 - **All 10 are in:** starting cards of 250 to 350, the enemy's 2 starting squads in grey, the shop by price, level 1 stats from a shop click, the tower's 40% debuff plus 40% more damage taken, XP for killing a tower, the item and the arrow both showing, Elite Recruitment's note, the Grenadier's straight rockets and the Abomination's buff.
 - **The Abomination** deals 222 damage/s against Unarmored (was 89) and wins 65 of 68 matchups (was 56). Flood stays the weakest in AI matches.
@@ -50,6 +57,7 @@ Earlier reports are in this file's Git history. **M10 is built and merged**, and
 **D46 to D52** in `DECISIONS.md`, and the list in `MORNING_DECISIONS.md`.
 
 ## Test results
+- **After the base health and tower XP changes, only what they touch:** the EditMode tests for the draft, towers, round flow, match data, cards, menus, AI and leveling, and the PlayMode Match scene tests, pass. A picture run of a test build had no exceptions, and the draft cards show the new line. The full suites were **not** run. The tournament and its trials ran outside Unity on the game's own code and exported data. The suggested changes have not been run in the game itself.
 - **After your notes from playing, only what they touch:** the EditMode tests for the draft, towers, AI, cards, leveling, menus, match data and rosters, and the PlayMode Match scene tests, pass. 5 expectations were out of date and were corrected: nothing of the enemy seen before the first battle (4 tests) and where a bought squad is among the views. A picture run in a test build showed all 3 factions' tower windows, the shop, a shop unit, the grey squads and an item with an arrow, with no exceptions. The Abomination's and Grenadier's rows of the counter web were rerun at 10 battles, and 30 AI matches per pairing at the old and new Abomination. The full suites and the rest of the counter web were **not** run. Nobody has played the tower changes in a real match, so their balance is untested: the counter web has no towers.
 - **After the second batch of models, only what it touches:** the cards, rosters, counter web and baked-body tests, and the Sandbox, effects and match scene tests, pass. 3 expectations were out of date and were corrected: a Spartan with no body, and the Sandbox's two unit counts, which the removal of units had already left wrong. A gallery run took pictures of the units standing, moving and firing with no errors, stopping at my time limit in its later effects pictures. The Longsword's row of the counter web was rerun at 3 battles. The full suites and the rest of the counter web were **not** run. Nobody has judged the motion in play.
 - **After the towers, only what they touch:** the matching Unity and .NET tests passed, including 20 new tower tests in .NET, and one real match ran as UNSC with no errors. A flanker killed a Command Center in it. The speed test's battle gave the same result line as before, so battles without towers still play the same. The Unity run came just before the last beam fix, whose test passed in .NET. The full suites, other factions' matches and the counter web were **not** run on this version. No real mouse has clicked a tower.

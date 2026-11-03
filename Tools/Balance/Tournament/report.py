@@ -227,19 +227,25 @@ never = None
 heading("Cards the AI takes")
 line("Edge: the side's win rate with the card, minus without it, for the same faction's matches. Late cards mostly go to sides that survive, so compare them with care.")
 card_taken, card_wins = collections.Counter(), collections.Counter()
+faction_games, faction_wins = collections.Counter(), collections.Counter()
 for m in matches:
     if m["winner"] == "none":
         continue
     for sub, faction, side, won in sides(m):
+        faction_games[faction] += 1
+        faction_wins[faction] += won
         for name in set(side["cards"]):
-            card_taken[(name)] += 1
-            card_wins[(name)] += won
-total_sides = sum(games_by_sub.values())
-total_wins = sum(wins_by_sub.values())
-for name in sorted(card_taken, key=lambda n: -card_taken[n])[:45]:
-    w, n = card_wins[name], card_taken[name]
-    without = (total_wins - w) / max(1, total_sides - n)
-    line(f"  {name:<34} taken in {n:>5} sides' matches   win {100 * w / n:>3.0f}%   edge {100 * (w / n - without):+.0f}")
+            card_taken[(faction, name)] += 1
+            card_wins[(faction, name)] += won
+for faction in sorted(faction_games):
+    line()
+    line(f"  {faction}")
+    keys = [k for k in card_taken if k[0] == faction]
+    for key in sorted(keys, key=lambda k: -card_taken[k])[:24]:
+        w, n = card_wins[key], card_taken[key]
+        rest = faction_games[faction] - n
+        without = (faction_wins[faction] - w) / rest if rest else 0
+        line(f"    {key[1]:<34} taken in {100 * n / faction_games[faction]:>3.0f}% of matches   win {100 * w / n:>3.0f}%   edge {100 * (w / n - without):+.0f}")
 
 open(report_path, "w", encoding="utf-8", newline="\n").write("\n".join(out) + "\n")
 print("\n".join(out))

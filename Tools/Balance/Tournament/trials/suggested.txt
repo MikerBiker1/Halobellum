@@ -1,0 +1,27 @@
+# The Scarab deals far more than any other Titan: its beam down 25%, and a little less health.
+Scarab|Focus Beam|DamagePerShot=30
+Scarab|MaxHealth=8500
+# Flood's Tier 2 and Tier 3 units at the bottom of their price bands (Bible: balance is done through price).
+Pure Form Ranged|Cost=250
+Swarm Form|Cost=250
+Infested Scorpion|Cost=250
+Infested Hornet|Cost=250
+Infested Elite|Cost=250
+Infested Wraith|Cost=250
+Infested Banshee|Cost=250
+Infected Phantom|Cost=400
+Seeder|Cost=400
+Juggernaut|Cost=400
+Spawner|Cost=400
+Pure Form Tank|Cost=400
+Flood Abomination|MaxHealth=8500
+Flood Abomination|MoveSpeed=1.25
+Infested Marine|MaxHealth=130
+Infested Marine|MoveSpeed=3
+Infested Grunt|MaxHealth=75
+Infested Grunt|MoveSpeed=3
+Combat Form|MaxHealth=260
+# Aerospace Command, the weakest left: its aircraft at the bottom of their price bands.
+Vulture|Cost=400
+Condor Gunship|Cost=400
+Sparrowhawk|Cost=250

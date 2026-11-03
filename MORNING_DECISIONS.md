@@ -114,10 +114,16 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 
 ## From your notes after playing (D58)
 
-61. **Starting cards:** I took "about 300" as 250 to 350, which keeps every Tier 1 unit in the draft. Exactly 300 would be fairer, but 150-credit units like the Flamethrower Trooper could then almost never start, as 2 different units are needed. Setting `draftCardValueTolerance` to 0 does that. Which do you prefer?
-62. **XP for a tower:** I read "a squad of its tier per level" as a squad of the killer's own price, per level of the tower: half an XP bar per level, as a bar is twice the price. Towers come back every battle, so a squad that keeps killing a level 1 tower fills its bar in 2 rounds. If you meant a squad of a tier set by the tower's level, tell me what level 5 would be, as there are only 4 tiers.
-63. **Abomination:** 400 per slam and 50 per whip are my numbers: above the Elephant against Unarmored and Light, still well below it against Heavy, as melee does 30% to Heavy. Above about 170 damage/s, more no longer changes who it beats one on one, so this is about how fast it clears a crowd. Good, or more?
-64. **The AI sees your starting squads too,** as the rules are the same for both sides. It can now counter them in round 1, which it couldn't before.
+61. *(Answered: a dearer card means a weaker base, 100 health per 50 credits, D59.)* **Starting cards:** I took "about 300" as 250 to 350, which keeps every Tier 1 unit in the draft. Exactly 300 would be fairer, but 150-credit units like the Flamethrower Trooper could then almost never start, as 2 different units are needed. Setting `draftCardValueTolerance` to 0 does that. Which do you prefer?
+62. *(Answered: a level 1 squad of the tier of the tower's level, and for level 5 a level 2 Titan, D59.)* **XP for a tower:** I read "a squad of its tier per level" as a squad of the killer's own price, per level of the tower: half an XP bar per level, as a bar is twice the price. Towers come back every battle, so a squad that keeps killing a level 1 tower fills its bar in 2 rounds. If you meant a squad of a tier set by the tower's level, tell me what level 5 would be, as there are only 4 tiers.
+63. *(Good.)* **Abomination:** 400 per slam and 50 per whip are my numbers: above the Elephant against Unarmored and Light, still well below it against Heavy, as melee does 30% to Heavy. Above about 170 damage/s, more no longer changes who it beats one on one, so this is about how fast it clears a crowd. Good, or more?
+64. *(Keep it.)* **The AI sees your starting squads too,** as the rules are the same for both sides. It can now counter them in round 1, which it couldn't before.
+
+## From the Hard AI tournament (D59)
+
+65. **The suggested balance changes:** `Docs/Balance/suggestions.md`. They take the sub-factions from 23-68% to 44-55%, and the factions from Covenant 74%, UNSC 51%, Flood 19% to 52%, 53%, 44%. Apply them all, or only some?
+66. **A tower's XP in numbers:** 150, 275, 450, 800 and 1,200 by level. A level 1 tower is 150 XP, which fills 3/4 of a Marine squad's bar and under 10% of a Titan's. Good?
+67. **The Hard AI hardly uses towers:** it spends nearly all its credits on squads, so it almost never levels a tower and never buys research. Should it spend on them sooner? That would make it harder to beat, and let the tournament measure them.
 
 ## Things my test runs did to your PC
 

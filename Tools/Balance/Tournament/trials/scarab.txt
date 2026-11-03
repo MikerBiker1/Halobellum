@@ -1,0 +1,3 @@
+# The Scarab deals far more than any other Titan: its beam down 30%, and its health level with the Elephant's.
+Scarab|Focus Beam|DamagePerShot=28
+Scarab|MaxHealth=8000
