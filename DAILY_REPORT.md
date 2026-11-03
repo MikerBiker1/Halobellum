@@ -2,6 +2,13 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Your second batch of models (D57)
+- **21 units have real models now**, each moving as best it can: Spartans, Elites, Hunters and the Goblin run on Meshy's rigs and clips, the Abomination on clips made from its own bones, wings beat, legs scuttle, wheels spin, turrets aim, hover vehicles bob. Their icons are redone.
+- **Colours:** five Noble armours and a gold Zealot are recoloured textures. Each Spartan has a placeholder weapon, and the Zealot has your energy sword.
+- **Meshy:** 5 rigs, 69 credits' worth of clips, and 5 paint jobs (2 of them redone after my reduction crushed the Rhino): about 145 credits, leaving about 1,200.
+- **Also:** dead ground units stay 14 seconds, and the Shortsword became the Longsword.
+- Questions are items 58 to 60 of `MORNING_DECISIONS.md`.
+
 ## Towers and your morning answers (D55, D56)
 - **Towers:** a Command Center and a Research Center per side, with levels, a shockwave when one falls, everything they sell, and an AI that uses them by difficulty. The models are plain shapes for now.
 - **Your answers:** the Pelican's blast is 3.5 m in radius, the Blisterback and Methane Wagon are gone, and `Assets_to_Download.md` lists every track, unit sound and model left.
@@ -38,6 +45,7 @@ Earlier reports are in this file's Git history. **M10 is built and merged**, and
 **D46 to D52** in `DECISIONS.md`, and the list in `MORNING_DECISIONS.md`.
 
 ## Test results
+- **After the second batch of models, only what it touches:** the cards, rosters, counter web and baked-body tests, and the Sandbox, effects and match scene tests, pass. 3 expectations were out of date and were corrected: a Spartan with no body, and the Sandbox's two unit counts, which the removal of units had already left wrong. A gallery run took pictures of the units standing, moving and firing with no errors, stopping at my time limit in its later effects pictures. The Longsword's row of the counter web was rerun at 3 battles. The full suites and the rest of the counter web were **not** run. Nobody has judged the motion in play.
 - **After the towers, only what they touch:** the matching Unity and .NET tests passed, including 20 new tower tests in .NET, and one real match ran as UNSC with no errors. A flanker killed a Command Center in it. The speed test's battle gave the same result line as before, so battles without towers still play the same. The Unity run came just before the last beam fix, whose test passed in .NET. The full suites, other factions' matches and the counter web were **not** run on this version. No real mouse has clicked a tower.
 - **After your play test, only what those changes touch:** Unity EditMode 167 of 167 and PlayMode 31 of 31 on the matching tests, .NET 69 of 69 on the matching tests, and one real match as the UNSC-based Flood with no errors, whose picture shows 3 techs in the squad window. The full suites, the other factions' matches, the demos, the speed test and the counter web were **not** run again on this version. The numbers below are from before these changes.
 - **Unity:** EditMode **650 / 650**. PlayMode **115 passed, 0 failed, 1 skipped** of 116: the menu's hover check, because batch runs draw no buttons (the built game's sound tour covers it). **.NET harness:** **388 / 388**.

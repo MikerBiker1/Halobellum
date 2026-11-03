@@ -95,13 +95,13 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void TheMarineUnit_UsesIt_AndOtherUnitsDoNotYet()
+        public void TheMarineUnit_UsesIt_AndAUnitStillWithoutAModelDoesNot()
         {
             UnitDefinition[] units = Resources.FindObjectsOfTypeAll<UnitDefinition>();
             var marineUnit = UnityEditor.AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/UNSC/Marine.asset");
             Assert.AreSame(Marine(), marineUnit.bakedBody);
-            var spartan = UnityEditor.AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/UNSC/Spartan.asset");
-            Assert.IsNull(spartan.bakedBody);
+            var mantis = UnityEditor.AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/UNSC/Mantis.asset");
+            Assert.IsNull(mantis.bakedBody);
         }
     }
 }

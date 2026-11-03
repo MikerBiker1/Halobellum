@@ -44,12 +44,12 @@ Full tables and reasons are in `Docs/M10/subfactions.md`. Every number is in `ba
 
 ## Things you may want changed
 
-20. **Terrain:** each side shows its own faction's ground, and the sky and light follow the player. There are 3 layouts per faction, and the seed picks one for each side. Are the Covenant and Flood floors too busy behind units? That's the first thing to judge in a real game.
-21. **Wrecks:** a dead vehicle now stays as a burning wreck for 14 seconds of battle time (24 for a Titan), where it used to vanish at once. A reviewer found the fire was hidden inside the hull, so it now starts at the top of the hull and is bigger. Keep it?
-22. **Camera shake** is on, for big blasts. It can be turned off in Settings or with the K key. Too much?
-23. **Pause** is on Esc, and there's also a small Menu button at the bottom right. Keep the button?
-24. **Faction marks on the cards** are plain abstract shapes I made, on purpose nothing like the real insignia. You can replace them with your own (`Assets/_Project/Resources/CardArt/Emblems`).
-25. **Settings:** quality offers Low and High only (the project's two levels). UI scale runs 75% to 125%.
+20. *(You'll replace some ground textures: they are on `Assets_to_Download.md`.)* **Terrain:** each side shows its own faction's ground, and the sky and light follow the player. There are 3 layouts per faction, and the seed picks one for each side. Are the Covenant and Flood floors too busy behind units? That's the first thing to judge in a real game.
+21. *(Kept.)* **Wrecks:** a dead vehicle now stays as a burning wreck for 14 seconds of battle time (24 for a Titan), where it used to vanish at once. A reviewer found the fire was hidden inside the hull, so it now starts at the top of the hull and is bigger. Keep it?
+22. *(Kept.)* **Camera shake** is on, for big blasts. It can be turned off in Settings or with the K key. Too much?
+23. *(Kept.)* **Pause** is on Esc, and there's also a small Menu button at the bottom right. Keep the button?
+24. *(Fine as they are.)* **Faction marks on the cards** are plain abstract shapes I made, on purpose nothing like the real insignia. You can replace them with your own (`Assets/_Project/Resources/CardArt/Emblems`).
+25. *(Kept.)* **Settings:** quality offers Low and High only (the project's two levels). UI scale runs 75% to 125%.
 
 ## From the independent review
 
@@ -105,6 +105,12 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 49. **The Pelican's crash** looks half its old size, and its real blast is now 3.5 m in radius, 7 m across (D56). It still deals 900 damage. The fire draws a little past that, because it goes by the size of the aircraft too. The sound didn't change, so it may now sound too big.
 50. **The camera:** please judge the turning speed (0.2 degrees per pixel) and direction. The mouse pointer isn't locked during a drag, so a long drag can run into a screen edge or onto another screen, and whether it keeps turning there hasn't been tried. A right-click now acts when the button comes up, and a press of over half a second doesn't cancel anything.
 51. **The screen:** until you choose one in Settings, every start goes to Windows's main screen, even if you dragged the window elsewhere. A start that has to change screens shows the old screen for about 3.5 seconds first. Your saved 2560 x 1200 window fits none of your screens, so it should now open at about 1920 x 992 on the Dell. If you drag the window after choosing a screen, the next start goes back to the one you chose.
+
+## From the second batch of models (D57)
+
+58. **Longsword:** a slower, tougher bomber than the Shortsword at the same 300: 600 health, speed 5, 150 per bomb, 5 m splash. It wins 41 of 68 matchups against the roster, in a quick 3-battle run, where the Shortsword won 39. Good, or do you want it more clearly heavier? That would take it over the Bible's 300 limit for tier 2, so it would have to move up to tier 3.
+59. **Clips you may want swapped:** Hunters and the Goblin walk with Meshy's Monster Walk, which holds the Hunter's shield out in front, and fire with the rifle clip. The Zealot swings with a one-handed slash, and the Infested Elite attacks with a punch combo. Meshy has about 680 clips, and a new one costs 3 credits.
+60. **Noble colours:** Sniper blue, Heavy Weapons red, Grenadier orange, CQB near-black, Fireteam green. They are a single line each in `Tools/Art/recolour.py`.
 
 ## Things my test runs did to your PC
 

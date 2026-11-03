@@ -1,28 +1,28 @@
 Condor Gunship	model
-Longsword	fallback
-Sparrowhawk	fallback
-Vulture	fallback
-Cobra	fallback
+Longsword	model
+Sparrowhawk	model
+Vulture	model
+Cobra	model
 Gremlin	fallback
 Grizzly	model
-Rhino	fallback
+Rhino	model
 Brute Grenadier	fallback
 Chopper	model
 Marauder	fallback
 Reaver	fallback
 Banshee	model
-Elite	fallback
+Elite	baked
 Fuel Rod Grunt	baked
-Ghost	fallback
+Ghost	model
 Grunt	baked
-Hunter Pair	fallback
+Hunter Pair	baked
 Jackal (Plasma Rifle)	fallback
 Jackal (Shield)	fallback
 Scarab	model
 Vampire	fallback
 Wraith	model
-Zealot	fallback
-Flood Abomination	fallback
+Zealot	baked
+Flood Abomination	baked
 Carrier Form	model
 Combat Form	fallback
 Infected Pelican	model
@@ -32,10 +32,10 @@ Pure Form Ranged	model
 Pure Form Tank	model
 Seeder	fallback
 Stalker Form	model
-Swarm Form	fallback
+Swarm Form	model
 Infested Banshee	model
-Infested Elite	fallback
-Infested Ghost	fallback
+Infested Elite	baked
+Infested Ghost	model
 Infested Grunt	baked
 Infested Wraith	model
 Spawner	fallback
@@ -45,8 +45,8 @@ Infested Scorpion	model
 Infested Warthog	model
 Juggernaut	fallback
 Goliath	fallback
-Hunter Captain	fallback
-Skitterer	fallback
+Hunter Captain	baked
+Skitterer	model
 Spartan CQB	baked
 Spartan Fireteam	baked
 Spartan Grenadier	baked
@@ -57,9 +57,9 @@ Placeholder Infantry	fallback
 Placeholder Light Vehicle	fallback
 ODST	fallback
 Cannon Fodder	baked
-Grunt Goblin	fallback
+Grunt Goblin	baked
 Heavy Grunts	baked
-Archer Missile Pod	fallback
+Archer Missile Pod	model
 Elephant	model
 Flamethrower Trooper	fallback
 Gauss Warthog	model
@@ -68,6 +68,6 @@ Mantis	fallback
 Marine	baked
 Pelican	model
 Scorpion	model
-Spartan	fallback
+Spartan	baked
 Warthog	model
 Wolverine	fallback

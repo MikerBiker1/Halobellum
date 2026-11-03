@@ -494,6 +494,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-02 | The camera turns and tilts on a right-mouse drag. Every unit has 3 techs. No infested Titans: the Abomination is the Flood's only Titan. Level all button and Screen setting | Per the project owner (D54) |
 | 2026-11-02 | Towers: a Command Center and a Research Center per side, a shockwave when one falls, levels and what they sell | Per the project owner (D55) |
 | 2026-11-02 | The Infected Pelican's blast is 3.5 m in radius. The Blisterback and Methane Wagon are removed | Per the project owner (D56) |
+| 2026-11-03 | Dead ground units stay 14 seconds. The Shortsword is now the Longsword, a slower, tougher bomber at the same price | Per the project owner (D57) |
 
 ## 18. Assumptions to confirm
 
