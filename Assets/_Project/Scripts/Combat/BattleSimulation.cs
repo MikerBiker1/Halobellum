@@ -1057,7 +1057,7 @@ namespace Halobellum.Combat
             float reach = stats.Range * unit.RangeMultiplier + unit.Radius + stats.SplashRadius;
             if (fromUnit.Length > reach) weapon.BeamPoint = unit.Position + fromUnit.Normalized * reach;
 
-            if (weapon.BeamTicks % TicksFor(stats.FireInterval / unit.ShockwaveFireRate) == 0) ResolveBeamHit(unit, stats, weapon.BeamPoint);
+            if (IsBeamHitDue(weapon.BeamTicks, TicksFor(stats.FireInterval), unit.ShockwaveFireRate)) ResolveBeamHit(unit, stats, weapon.BeamPoint);
             if (++weapon.BeamTicks < TicksFor(stats.BeamSeconds / unit.ShockwaveFireRate)) return;
             weapon.BeamPhase = BeamPhase.Off;
             weapon.BeamTarget = null;
@@ -1065,6 +1065,10 @@ namespace Halobellum.Combat
         }
 
         private int TicksFor(float seconds) => Math.Max(1, (int)MathF.Round(seconds / _dt));
+
+        /// <summary>A beam that has slowed down keeps the same hits, further apart. Counted this way, whole ticks don't round its hit spacing.</summary>
+        private static bool IsBeamHitDue(int ticks, int ticksPerHit, float rate) =>
+            ticks == 0 || (int)(ticks * rate / ticksPerHit) != (int)((ticks - 1) * rate / ticksPerHit);
 
         /// <summary>One hit of a beam: every legal enemy around the spot.</summary>
         private void ResolveBeamHit(SimUnit attacker, WeaponStats weapon, Vec2 point)
