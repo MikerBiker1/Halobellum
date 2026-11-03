@@ -27,9 +27,9 @@ namespace Halobellum.Tests
             ("UNSC_Standard", "Noble", "Noble", new[] { "Spartan Sniper", "Spartan Heavy Weapons", "Spartan Grenadier", "Spartan CQB", "Spartan Fireteam" }),
             ("UNSC_Standard", "Armored Division", "ArmoredDivision", new[] { "Grizzly", "Cobra", "Rhino", "Gremlin" }),
             ("UNSC_Standard", "Aerospace Command", "AerospaceCommand", new[] { "Sparrowhawk", "Vulture", "Shortsword", "Condor Gunship" }),
-            ("Covenant_Standard", "Banished", "Banished", new[] { "Chopper", "Marauder", "Reaver", "Blisterback", "Brute Grenadier" }),
+            ("Covenant_Standard", "Banished", "Banished", new[] { "Chopper", "Marauder", "Reaver", "Brute Grenadier" }),
             ("Covenant_Standard", "Lekgolo Colony", "LekgoloColony", new[] { "Goliath", "Skitterer", "Hunter Captain" }),
-            ("Covenant_Standard", "Unggoy Rebellion", "UnggoyRebellion", new[] { "Cannon Fodder", "Heavy Grunts", "Methane Wagon", "Grunt Goblin" }),
+            ("Covenant_Standard", "Unggoy Rebellion", "UnggoyRebellion", new[] { "Cannon Fodder", "Heavy Grunts", "Grunt Goblin" }),
             ("Flood_Standard", "UNSC-based", "FloodUNSC", new[] { "Infested Marine", "Infested Warthog", "Infested Scorpion", "Infested Hornet", "Juggernaut" }),
             ("Flood_Standard", "Covenant-based", "FloodCovenant", new[] { "Infested Grunt", "Infested Ghost", "Infested Elite", "Infested Wraith", "Infested Banshee", "Spawner" }),
         };
@@ -133,7 +133,7 @@ namespace Halobellum.Tests
                 Assert.IsFalse(name.StartsWith("Infected "), name + ": that is what the simulation calls a body that rises, so the two would be mixed up.");
                 if (name != "Goliath") Assert.AreEqual(unit.cost / (float)unit.squadSize / 5f, unit.baseDamage, 1e-3f, name);
             }
-            Assert.AreEqual(36, names.Count);
+            Assert.AreEqual(34, names.Count);
         }
 
         [Test]
@@ -163,7 +163,6 @@ namespace Halobellum.Tests
 
             Assert.Less(u["Chopper"].Weapons[0].Range, 3f, "It rams: its main weapon is melee.");
             Assert.Greater(u["Reaver"].Weapons[0].AirDamageMultiplier, 1f);
-            Assert.IsTrue(u["Blisterback"].IsAir && u["Blisterback"].Weapons[0].Lobbed);
             Assert.IsTrue(u["Brute Grenadier"].Weapons[0].Lobbed);
 
             Assert.AreEqual(250f, u["Goliath"].BaseDamage, 1e-3f, "A building-killer.");
@@ -172,9 +171,6 @@ namespace Halobellum.Tests
             Assert.Greater(u["Hunter Captain"].AuraHealPerSecondShare, 0f);
 
             Assert.AreEqual(30, u["Cannon Fodder"].SquadSize, "The largest squad.");
-            Assert.AreEqual(DamageType.Fire, u["Methane Wagon"].Weapons[0].DamageType);
-            Assert.Greater(u["Methane Wagon"].AuraRadius, 0f);
-            Assert.IsNotNull(u["Methane Wagon"].DeathBurst, "It explodes when destroyed.");
             Assert.Greater(u["Grunt Goblin"].AuraSpeedMultiplier, 1f);
 
             foreach (string flood in Table[6].units.Concat(Table[7].units)) Assert.IsTrue(u[flood].IsFlood, flood);

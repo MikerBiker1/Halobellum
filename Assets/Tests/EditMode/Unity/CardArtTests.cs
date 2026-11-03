@@ -95,7 +95,6 @@ namespace Halobellum.Tests
         [TestCase("Grunt Goblin", "Walker")]
         [TestCase("Infested Ghost", "Speeder")]
         [TestCase("Skitterer", "FloodSwarm")]
-        [TestCase("Methane Wagon", "Pod")]
         public void AUnitWhoseStatsHideItsShape_IsNamed(string unitName, string shape)
         {
             foreach (UnitDefinition unit in AllAssets<UnitDefinition>())

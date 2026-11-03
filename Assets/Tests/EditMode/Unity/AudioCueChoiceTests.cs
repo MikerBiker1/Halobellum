@@ -79,7 +79,6 @@ namespace Halobellum.Tests
 
         private static WeaponLook Look(string path, string weaponName, string faction) => WeaponLooks.For(WeaponOf(path, weaponName), Unit(path), faction, Team.A, false);
 
-        [TestCase("Banished/Blisterback", "Plasma Missile Barrage")]
         [TestCase("Banished/Marauder", "Plasma Cannon")]
         public void AHeavyPlasmaShot_IsNotAPistol_AndIsBlueNotAFuelRod(string path, string weaponName)
         {
@@ -90,7 +89,6 @@ namespace Halobellum.Tests
             Assert.AreEqual(WeaponLooks.CovenantPlasma, look.Shot);
         }
 
-        [TestCase("Banished/Blisterback", "Plasma Turret")]
         [TestCase("Covenant/Grunt", "Plasma Pistol")]
         [TestCase("Covenant/Banshee", "Plasma Cannons")]
         public void SmallPlasmaGuns_StaySmall(string path, string weaponName)
@@ -116,20 +114,6 @@ namespace Halobellum.Tests
         {
             Assert.AreEqual("sfx_fire_heavybullet", Fire(path, weaponName, BattleFactions.Unsc));
             Assert.IsNull(Landing(path, weaponName));
-        }
-
-        [Test]
-        public void TheMethaneWagon_LobsBurningKegs_NotTheWraithsPlasma()
-        {
-            const string wagon = "UnggoyRebellion/MethaneWagon", mortar = "Methane Mortar";
-            Assert.AreEqual("sfx_fire_bomb", Fire(wagon, mortar, BattleFactions.Covenant));
-            Assert.AreEqual("sfx_explosion_small", Landing(wagon, mortar));
-            WeaponLook look = Look(wagon, mortar, BattleFactions.Covenant);
-            Assert.AreEqual(WeaponFeelKind.Bomb, look.Kind);
-            Assert.IsTrue(look.Ball, "A body in the air, not a streak.");
-            Assert.AreEqual(BlastStyle.Fire, look.Blast);
-            Assert.Greater(look.Shot.r, look.Shot.b + 0.5f, "It burns.");
-            Assert.AreEqual(WeaponLooks.MortarBlue, Look("Covenant/Wraith", "Plasma Mortar", BattleFactions.Covenant).Shot, "The Wraith's stays blue.");
         }
 
         [Test]
@@ -178,7 +162,6 @@ namespace Halobellum.Tests
         [TestCase("Covenant/Ghost", "sfx_death_vehicle")]
         [TestCase("Covenant/Wraith", "sfx_explosion_medium")]
         [TestCase("Covenant/Scarab", "sfx_explosion_large")]
-        [TestCase("UnggoyRebellion/MethaneWagon", "sfx_explosion_medium")]
         [TestCase("Flood/CarrierForm", "sfx_flood_burst")]
         [TestCase("Flood/CombatForm", "sfx_death_flood")]
         [TestCase("Flood/Abomination", "sfx_pelican_crash")]

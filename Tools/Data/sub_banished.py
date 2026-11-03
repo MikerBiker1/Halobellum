@@ -24,10 +24,6 @@ def units(U, W):
         U("Reaver", "Reaver", FACTION, "AntiAir", 2, 50, 1, 300, 700, "L", 3, 1.4, 1.2, "B",
           [W("Spike Rockets", 24, 0.5, 20, "Explosive", proj=45, air=3)],
           note="Ground anti-air walker, weak against vehicles."),
-        U("Blisterback", "Blisterback", FACTION, "Aerial", 3, 225, 1, 450, 1400, "L", 1.75, 3, 1.5, "G",
-          [W("Plasma Missile Barrage", 75, 4, 30, "Explosive", proj=20, splash=3.5, minr=5, lob=True, own="G"),
-           W("Plasma Turret", 10, 0.3, 12, "Energy", own="B")], airu=True,
-          note="A heavy flyer that shells the ground from far away. Anti-air, not flankers, is the answer."),
     ]
 
 
@@ -48,10 +44,5 @@ TECHS = {
     "Reaver": [
         T("ArmorPlating", "Armor Plating", 150, "Extra plating on the walker.", health=1.3),
         T("RapidRacks", "Rapid Racks", 200, "Rockets launch faster.", fire=1.25),
-    ],
-    "Blisterback": [
-        T("ArmorPlating", "Armor Plating", 200, "Extra plating on the hull.", health=1.3),
-        T("LongBarrage", "Long Barrage", 200, "Missiles with bigger motors.", range=6),
-        T("WideWarheads", "Wide Warheads", 200, "Each missile covers more ground.", splash=1),
     ],
 }

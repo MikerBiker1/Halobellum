@@ -216,7 +216,6 @@ THIRD_TECHS = {
     # Unggoy Rebellion
     "CannonFodder": T("PanicSprint", "Panic Sprint", 100, "Nobody wants to be last.", speed=1.25),
     "HeavyGrunts": T("HeavyNeedles", "Heavy Needles", 150, "Bigger needles.", damage=1.25),
-    "MethaneWagon": T("FastPump", "Faster Pump", 150, "The mortar fires more often.", fire=1.25),
     # Flood, UNSC-based
     "InfestedMarine": T("BoneBlades", "Bone Blades", 100, "A sharper scythe limb.", damage=1.3),
     "InfestedWarthog": T("RamSpikes", "Ram Spikes", 150, "Bone through the bumper.", damage=1.3),

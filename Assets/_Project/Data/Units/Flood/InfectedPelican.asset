@@ -71,7 +71,7 @@ MonoBehaviour:
   selfDestructs: 1
   seeksDensestCluster: 1
   deathBurstDamage: 900
-  deathBurstRadius: 7
+  deathBurstRadius: 3.5
   deathBurstDamageType: 1
   deathBurstAntiArmor: 0
   deathSpawns:

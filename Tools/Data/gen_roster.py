@@ -136,7 +136,7 @@ UNITS = [
       [W("Seed Spore", 60, 2.5, 24, "Energy", proj=30, seed=8, seedshare=0.08, seedslow=0.4)], flood=True),
     U("InfectedPelican", "Infected Pelican", "Flood", "Aerial", 3, 200, 1, 400, 900, "L", 6, 2.5, 1, "G",
       [W("Crash Dive", 0, 1, 1, "Explosive", own="G")], airu=True, flood=True, selfd=True, seek=True, leap=(22, 16, 0),
-      burst=dict(dmg=900, radius=7, type="Explosive", aa=False, spawns=[("InfectionForms", 2), ("CombatForm", 5)])),
+      burst=dict(dmg=900, radius=3.5, type="Explosive", aa=False, spawns=[("InfectionForms", 2), ("CombatForm", 5)])),
     U("InfectedPhantom", "Infected Phantom", "Flood", "Aerial", 3, 200, 1, 450, 1100, "L", 2.5, 3, 1.5, "B",
       [W("Plasma Turrets", 12, 0.3, 14, "Energy")], airu=True, flood=True, drop=("CombatForm", 5, 8)),
     U("Abomination", "Flood Abomination", "Flood", "Titan", 4, 350, 1, 800, 7000, "H", 1, 5, 3, "B",

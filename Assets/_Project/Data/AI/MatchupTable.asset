@@ -168,9 +168,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Marine
-    defender: Blisterback
-    winRate: 0
-  - attacker: Marine
     defender: Skitterer
     winRate: 1
   - attacker: Marine
@@ -185,9 +182,6 @@ MonoBehaviour:
   - attacker: Marine
     defender: Heavy Grunts
     winRate: 1
-  - attacker: Marine
-    defender: Methane Wagon
-    winRate: 0
   - attacker: Marine
     defender: Grunt Goblin
     winRate: 0
@@ -378,9 +372,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Flamethrower Trooper
-    defender: Blisterback
-    winRate: 0
-  - attacker: Flamethrower Trooper
     defender: Skitterer
     winRate: 1
   - attacker: Flamethrower Trooper
@@ -394,9 +385,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Flamethrower Trooper
     defender: Heavy Grunts
-    winRate: 0
-  - attacker: Flamethrower Trooper
-    defender: Methane Wagon
     winRate: 0
   - attacker: Flamethrower Trooper
     defender: Grunt Goblin
@@ -588,9 +576,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Warthog
-    defender: Blisterback
-    winRate: 1
-  - attacker: Warthog
     defender: Skitterer
     winRate: 0
   - attacker: Warthog
@@ -605,9 +590,6 @@ MonoBehaviour:
   - attacker: Warthog
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Warthog
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Warthog
     defender: Grunt Goblin
     winRate: 0
@@ -798,9 +780,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Gauss Warthog
-    defender: Blisterback
-    winRate: 0
-  - attacker: Gauss Warthog
     defender: Skitterer
     winRate: 0
   - attacker: Gauss Warthog
@@ -815,9 +794,6 @@ MonoBehaviour:
   - attacker: Gauss Warthog
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Gauss Warthog
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Gauss Warthog
     defender: Grunt Goblin
     winRate: 1
@@ -1008,9 +984,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Scorpion
-    defender: Blisterback
-    winRate: 0
-  - attacker: Scorpion
     defender: Skitterer
     winRate: 1
   - attacker: Scorpion
@@ -1024,9 +997,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Scorpion
     defender: Heavy Grunts
-    winRate: 1
-  - attacker: Scorpion
-    defender: Methane Wagon
     winRate: 1
   - attacker: Scorpion
     defender: Grunt Goblin
@@ -1218,9 +1188,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 0
   - attacker: Wolverine
-    defender: Blisterback
-    winRate: 1
-  - attacker: Wolverine
     defender: Skitterer
     winRate: 0
   - attacker: Wolverine
@@ -1235,9 +1202,6 @@ MonoBehaviour:
   - attacker: Wolverine
     defender: Heavy Grunts
     winRate: 0.2
-  - attacker: Wolverine
-    defender: Methane Wagon
-    winRate: 0
   - attacker: Wolverine
     defender: Grunt Goblin
     winRate: 0
@@ -1428,9 +1392,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 0
   - attacker: Hornet
-    defender: Blisterback
-    winRate: 1
-  - attacker: Hornet
     defender: Skitterer
     winRate: 1
   - attacker: Hornet
@@ -1445,9 +1406,6 @@ MonoBehaviour:
   - attacker: Hornet
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Hornet
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Hornet
     defender: Grunt Goblin
     winRate: 0
@@ -1638,9 +1596,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Archer Missile Pod
-    defender: Blisterback
-    winRate: 0
-  - attacker: Archer Missile Pod
     defender: Skitterer
     winRate: 1
   - attacker: Archer Missile Pod
@@ -1655,9 +1610,6 @@ MonoBehaviour:
   - attacker: Archer Missile Pod
     defender: Heavy Grunts
     winRate: 1
-  - attacker: Archer Missile Pod
-    defender: Methane Wagon
-    winRate: 0
   - attacker: Archer Missile Pod
     defender: Grunt Goblin
     winRate: 0.3
@@ -1848,9 +1800,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 0
   - attacker: Pelican
-    defender: Blisterback
-    winRate: 0.4
-  - attacker: Pelican
     defender: Skitterer
     winRate: 0
   - attacker: Pelican
@@ -1865,9 +1814,6 @@ MonoBehaviour:
   - attacker: Pelican
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Pelican
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Pelican
     defender: Grunt Goblin
     winRate: 0
@@ -2058,9 +2004,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Spartan
-    defender: Blisterback
-    winRate: 1
-  - attacker: Spartan
     defender: Skitterer
     winRate: 0
   - attacker: Spartan
@@ -2075,9 +2018,6 @@ MonoBehaviour:
   - attacker: Spartan
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Spartan
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Spartan
     defender: Grunt Goblin
     winRate: 1
@@ -2268,9 +2208,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Mantis
-    defender: Blisterback
-    winRate: 1
-  - attacker: Mantis
     defender: Skitterer
     winRate: 0.2
   - attacker: Mantis
@@ -2285,9 +2222,6 @@ MonoBehaviour:
   - attacker: Mantis
     defender: Heavy Grunts
     winRate: 0.9
-  - attacker: Mantis
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Mantis
     defender: Grunt Goblin
     winRate: 0.4
@@ -2478,9 +2412,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Elephant
-    defender: Blisterback
-    winRate: 1
-  - attacker: Elephant
     defender: Skitterer
     winRate: 1
   - attacker: Elephant
@@ -2495,9 +2426,6 @@ MonoBehaviour:
   - attacker: Elephant
     defender: Heavy Grunts
     winRate: 0.9
-  - attacker: Elephant
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Elephant
     defender: Grunt Goblin
     winRate: 1
@@ -2688,9 +2616,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Grunt
-    defender: Blisterback
-    winRate: 0
-  - attacker: Grunt
     defender: Skitterer
     winRate: 1
   - attacker: Grunt
@@ -2704,9 +2629,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Grunt
     defender: Heavy Grunts
-    winRate: 0
-  - attacker: Grunt
-    defender: Methane Wagon
     winRate: 0
   - attacker: Grunt
     defender: Grunt Goblin
@@ -2898,9 +2820,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 0.5
   - attacker: Fuel Rod Grunt
-    defender: Blisterback
-    winRate: 0
-  - attacker: Fuel Rod Grunt
     defender: Skitterer
     winRate: 1
   - attacker: Fuel Rod Grunt
@@ -2915,9 +2834,6 @@ MonoBehaviour:
   - attacker: Fuel Rod Grunt
     defender: Heavy Grunts
     winRate: 1
-  - attacker: Fuel Rod Grunt
-    defender: Methane Wagon
-    winRate: 0
   - attacker: Fuel Rod Grunt
     defender: Grunt Goblin
     winRate: 0.2
@@ -3108,9 +3024,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: 'Jackal (Plasma Rifle)'
-    defender: Blisterback
-    winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
     defender: Skitterer
     winRate: 1
   - attacker: 'Jackal (Plasma Rifle)'
@@ -3125,9 +3038,6 @@ MonoBehaviour:
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Heavy Grunts
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Methane Wagon
-    winRate: 0
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Grunt Goblin
     winRate: 0
@@ -3318,9 +3228,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: 'Jackal (Shield)'
-    defender: Blisterback
-    winRate: 0
-  - attacker: 'Jackal (Shield)'
     defender: Skitterer
     winRate: 0
   - attacker: 'Jackal (Shield)'
@@ -3334,9 +3241,6 @@ MonoBehaviour:
     winRate: 0
   - attacker: 'Jackal (Shield)'
     defender: Heavy Grunts
-    winRate: 0
-  - attacker: 'Jackal (Shield)'
-    defender: Methane Wagon
     winRate: 0
   - attacker: 'Jackal (Shield)'
     defender: Grunt Goblin
@@ -3528,9 +3432,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Ghost
-    defender: Blisterback
-    winRate: 0.8
-  - attacker: Ghost
     defender: Skitterer
     winRate: 0
   - attacker: Ghost
@@ -3545,9 +3446,6 @@ MonoBehaviour:
   - attacker: Ghost
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Ghost
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Ghost
     defender: Grunt Goblin
     winRate: 0
@@ -3738,9 +3636,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Elite
-    defender: Blisterback
-    winRate: 1
-  - attacker: Elite
     defender: Skitterer
     winRate: 1
   - attacker: Elite
@@ -3755,9 +3650,6 @@ MonoBehaviour:
   - attacker: Elite
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Elite
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Elite
     defender: Grunt Goblin
     winRate: 1
@@ -3948,9 +3840,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 0.8
   - attacker: Wraith
-    defender: Blisterback
-    winRate: 0
-  - attacker: Wraith
     defender: Skitterer
     winRate: 1
   - attacker: Wraith
@@ -3964,9 +3853,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Wraith
     defender: Heavy Grunts
-    winRate: 1
-  - attacker: Wraith
-    defender: Methane Wagon
     winRate: 1
   - attacker: Wraith
     defender: Grunt Goblin
@@ -4158,9 +4044,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 0
   - attacker: Vampire
-    defender: Blisterback
-    winRate: 1
-  - attacker: Vampire
     defender: Skitterer
     winRate: 0
   - attacker: Vampire
@@ -4175,9 +4058,6 @@ MonoBehaviour:
   - attacker: Vampire
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Vampire
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Vampire
     defender: Grunt Goblin
     winRate: 0
@@ -4368,9 +4248,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 0
   - attacker: Banshee
-    defender: Blisterback
-    winRate: 1
-  - attacker: Banshee
     defender: Skitterer
     winRate: 1
   - attacker: Banshee
@@ -4385,9 +4262,6 @@ MonoBehaviour:
   - attacker: Banshee
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Banshee
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Banshee
     defender: Grunt Goblin
     winRate: 0
@@ -4578,9 +4452,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Hunter Pair
-    defender: Blisterback
-    winRate: 0
-  - attacker: Hunter Pair
     defender: Skitterer
     winRate: 1
   - attacker: Hunter Pair
@@ -4594,9 +4465,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Hunter Pair
     defender: Heavy Grunts
-    winRate: 1
-  - attacker: Hunter Pair
-    defender: Methane Wagon
     winRate: 1
   - attacker: Hunter Pair
     defender: Grunt Goblin
@@ -4788,9 +4656,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Zealot
-    defender: Blisterback
-    winRate: 0.2
-  - attacker: Zealot
     defender: Skitterer
     winRate: 0
   - attacker: Zealot
@@ -4805,9 +4670,6 @@ MonoBehaviour:
   - attacker: Zealot
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Zealot
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Zealot
     defender: Grunt Goblin
     winRate: 1
@@ -4998,9 +4860,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Scarab
-    defender: Blisterback
-    winRate: 1
-  - attacker: Scarab
     defender: Skitterer
     winRate: 1
   - attacker: Scarab
@@ -5014,9 +4873,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Scarab
     defender: Heavy Grunts
-    winRate: 1
-  - attacker: Scarab
-    defender: Methane Wagon
     winRate: 1
   - attacker: Scarab
     defender: Grunt Goblin
@@ -5208,9 +5064,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Infection Forms
-    defender: Blisterback
-    winRate: 0
-  - attacker: Infection Forms
     defender: Skitterer
     winRate: 1
   - attacker: Infection Forms
@@ -5225,9 +5078,6 @@ MonoBehaviour:
   - attacker: Infection Forms
     defender: Heavy Grunts
     winRate: 1
-  - attacker: Infection Forms
-    defender: Methane Wagon
-    winRate: 0
   - attacker: Infection Forms
     defender: Grunt Goblin
     winRate: 0
@@ -5418,9 +5268,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Carrier Form
-    defender: Blisterback
-    winRate: 0
-  - attacker: Carrier Form
     defender: Skitterer
     winRate: 1
   - attacker: Carrier Form
@@ -5435,9 +5282,6 @@ MonoBehaviour:
   - attacker: Carrier Form
     defender: Heavy Grunts
     winRate: 1
-  - attacker: Carrier Form
-    defender: Methane Wagon
-    winRate: 0.3
   - attacker: Carrier Form
     defender: Grunt Goblin
     winRate: 0.9
@@ -5628,9 +5472,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Combat Form
-    defender: Blisterback
-    winRate: 0
-  - attacker: Combat Form
     defender: Skitterer
     winRate: 1
   - attacker: Combat Form
@@ -5644,9 +5485,6 @@ MonoBehaviour:
     winRate: 0
   - attacker: Combat Form
     defender: Heavy Grunts
-    winRate: 0
-  - attacker: Combat Form
-    defender: Methane Wagon
     winRate: 0
   - attacker: Combat Form
     defender: Grunt Goblin
@@ -5838,9 +5676,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Stalker Form
-    defender: Blisterback
-    winRate: 0
-  - attacker: Stalker Form
     defender: Skitterer
     winRate: 0
   - attacker: Stalker Form
@@ -5855,9 +5690,6 @@ MonoBehaviour:
   - attacker: Stalker Form
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Stalker Form
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Stalker Form
     defender: Grunt Goblin
     winRate: 0
@@ -6048,9 +5880,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Pure Form Ranged
-    defender: Blisterback
-    winRate: 0
-  - attacker: Pure Form Ranged
     defender: Skitterer
     winRate: 1
   - attacker: Pure Form Ranged
@@ -6065,9 +5894,6 @@ MonoBehaviour:
   - attacker: Pure Form Ranged
     defender: Heavy Grunts
     winRate: 1
-  - attacker: Pure Form Ranged
-    defender: Methane Wagon
-    winRate: 0.7
   - attacker: Pure Form Ranged
     defender: Grunt Goblin
     winRate: 0.7
@@ -6258,9 +6084,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 0
   - attacker: Swarm Form
-    defender: Blisterback
-    winRate: 1
-  - attacker: Swarm Form
     defender: Skitterer
     winRate: 0
   - attacker: Swarm Form
@@ -6274,9 +6097,6 @@ MonoBehaviour:
     winRate: 0
   - attacker: Swarm Form
     defender: Heavy Grunts
-    winRate: 0
-  - attacker: Swarm Form
-    defender: Methane Wagon
     winRate: 0
   - attacker: Swarm Form
     defender: Grunt Goblin
@@ -6468,9 +6288,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Pure Form Tank
-    defender: Blisterback
-    winRate: 0.9
-  - attacker: Pure Form Tank
     defender: Skitterer
     winRate: 1
   - attacker: Pure Form Tank
@@ -6484,9 +6301,6 @@ MonoBehaviour:
     winRate: 0.6
   - attacker: Pure Form Tank
     defender: Heavy Grunts
-    winRate: 1
-  - attacker: Pure Form Tank
-    defender: Methane Wagon
     winRate: 1
   - attacker: Pure Form Tank
     defender: Grunt Goblin
@@ -6678,9 +6492,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Seeder
-    defender: Blisterback
-    winRate: 0
-  - attacker: Seeder
     defender: Skitterer
     winRate: 0
   - attacker: Seeder
@@ -6695,9 +6506,6 @@ MonoBehaviour:
   - attacker: Seeder
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Seeder
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Seeder
     defender: Grunt Goblin
     winRate: 1
@@ -6888,9 +6696,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Infected Pelican
-    defender: Blisterback
-    winRate: 0
-  - attacker: Infected Pelican
     defender: Skitterer
     winRate: 1
   - attacker: Infected Pelican
@@ -6904,9 +6709,6 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infected Pelican
     defender: Heavy Grunts
-    winRate: 0
-  - attacker: Infected Pelican
-    defender: Methane Wagon
     winRate: 0
   - attacker: Infected Pelican
     defender: Grunt Goblin
@@ -7098,9 +6900,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 0
   - attacker: Infected Phantom
-    defender: Blisterback
-    winRate: 1
-  - attacker: Infected Phantom
     defender: Skitterer
     winRate: 0
   - attacker: Infected Phantom
@@ -7115,9 +6914,6 @@ MonoBehaviour:
   - attacker: Infected Phantom
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Infected Phantom
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Infected Phantom
     defender: Grunt Goblin
     winRate: 1
@@ -7308,9 +7104,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Flood Abomination
-    defender: Blisterback
-    winRate: 0
-  - attacker: Flood Abomination
     defender: Skitterer
     winRate: 1
   - attacker: Flood Abomination
@@ -7324,9 +7117,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Flood Abomination
     defender: Heavy Grunts
-    winRate: 1
-  - attacker: Flood Abomination
-    defender: Methane Wagon
     winRate: 1
   - attacker: Flood Abomination
     defender: Grunt Goblin
@@ -7518,9 +7308,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Spartan Sniper
-    defender: Blisterback
-    winRate: 1
-  - attacker: Spartan Sniper
     defender: Skitterer
     winRate: 0
   - attacker: Spartan Sniper
@@ -7535,9 +7322,6 @@ MonoBehaviour:
   - attacker: Spartan Sniper
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Spartan Sniper
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Spartan Sniper
     defender: Grunt Goblin
     winRate: 1
@@ -7728,9 +7512,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Spartan Heavy Weapons
-    defender: Blisterback
-    winRate: 1
-  - attacker: Spartan Heavy Weapons
     defender: Skitterer
     winRate: 0
   - attacker: Spartan Heavy Weapons
@@ -7745,9 +7526,6 @@ MonoBehaviour:
   - attacker: Spartan Heavy Weapons
     defender: Heavy Grunts
     winRate: 1
-  - attacker: Spartan Heavy Weapons
-    defender: Methane Wagon
-    winRate: 0.9
   - attacker: Spartan Heavy Weapons
     defender: Grunt Goblin
     winRate: 0
@@ -7938,9 +7716,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Spartan Grenadier
-    defender: Blisterback
-    winRate: 0
-  - attacker: Spartan Grenadier
     defender: Skitterer
     winRate: 1
   - attacker: Spartan Grenadier
@@ -7955,9 +7730,6 @@ MonoBehaviour:
   - attacker: Spartan Grenadier
     defender: Heavy Grunts
     winRate: 1
-  - attacker: Spartan Grenadier
-    defender: Methane Wagon
-    winRate: 0.2
   - attacker: Spartan Grenadier
     defender: Grunt Goblin
     winRate: 0.8
@@ -8148,9 +7920,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Spartan CQB
-    defender: Blisterback
-    winRate: 1
-  - attacker: Spartan CQB
     defender: Skitterer
     winRate: 0
   - attacker: Spartan CQB
@@ -8165,9 +7934,6 @@ MonoBehaviour:
   - attacker: Spartan CQB
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Spartan CQB
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Spartan CQB
     defender: Grunt Goblin
     winRate: 0
@@ -8358,9 +8124,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Spartan Fireteam
-    defender: Blisterback
-    winRate: 1
-  - attacker: Spartan Fireteam
     defender: Skitterer
     winRate: 0
   - attacker: Spartan Fireteam
@@ -8375,9 +8138,6 @@ MonoBehaviour:
   - attacker: Spartan Fireteam
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Spartan Fireteam
-    defender: Methane Wagon
-    winRate: 0.3
   - attacker: Spartan Fireteam
     defender: Grunt Goblin
     winRate: 1
@@ -8568,9 +8328,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Gremlin
-    defender: Blisterback
-    winRate: 1
-  - attacker: Gremlin
     defender: Skitterer
     winRate: 0
   - attacker: Gremlin
@@ -8585,9 +8342,6 @@ MonoBehaviour:
   - attacker: Gremlin
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Gremlin
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Gremlin
     defender: Grunt Goblin
     winRate: 1
@@ -8778,9 +8532,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Cobra
-    defender: Blisterback
-    winRate: 0
-  - attacker: Cobra
     defender: Skitterer
     winRate: 0
   - attacker: Cobra
@@ -8795,9 +8546,6 @@ MonoBehaviour:
   - attacker: Cobra
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Cobra
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Cobra
     defender: Grunt Goblin
     winRate: 1
@@ -8988,9 +8736,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Rhino
-    defender: Blisterback
-    winRate: 0
-  - attacker: Rhino
     defender: Skitterer
     winRate: 1
   - attacker: Rhino
@@ -9004,9 +8749,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Rhino
     defender: Heavy Grunts
-    winRate: 1
-  - attacker: Rhino
-    defender: Methane Wagon
     winRate: 1
   - attacker: Rhino
     defender: Grunt Goblin
@@ -9198,9 +8940,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Grizzly
-    defender: Blisterback
-    winRate: 0
-  - attacker: Grizzly
     defender: Skitterer
     winRate: 1
   - attacker: Grizzly
@@ -9214,9 +8953,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Grizzly
     defender: Heavy Grunts
-    winRate: 1
-  - attacker: Grizzly
-    defender: Methane Wagon
     winRate: 1
   - attacker: Grizzly
     defender: Grunt Goblin
@@ -9408,9 +9144,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 0
   - attacker: Sparrowhawk
-    defender: Blisterback
-    winRate: 1
-  - attacker: Sparrowhawk
     defender: Skitterer
     winRate: 0
   - attacker: Sparrowhawk
@@ -9425,9 +9158,6 @@ MonoBehaviour:
   - attacker: Sparrowhawk
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Sparrowhawk
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Sparrowhawk
     defender: Grunt Goblin
     winRate: 1
@@ -9618,9 +9348,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 0
   - attacker: Shortsword
-    defender: Blisterback
-    winRate: 0
-  - attacker: Shortsword
     defender: Skitterer
     winRate: 1
   - attacker: Shortsword
@@ -9635,9 +9362,6 @@ MonoBehaviour:
   - attacker: Shortsword
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Shortsword
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Shortsword
     defender: Grunt Goblin
     winRate: 0.3
@@ -9828,9 +9552,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 0
   - attacker: Vulture
-    defender: Blisterback
-    winRate: 1
-  - attacker: Vulture
     defender: Skitterer
     winRate: 0
   - attacker: Vulture
@@ -9845,9 +9566,6 @@ MonoBehaviour:
   - attacker: Vulture
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Vulture
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Vulture
     defender: Grunt Goblin
     winRate: 0
@@ -10038,9 +9756,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 0
   - attacker: Condor Gunship
-    defender: Blisterback
-    winRate: 1
-  - attacker: Condor Gunship
     defender: Skitterer
     winRate: 0
   - attacker: Condor Gunship
@@ -10055,9 +9770,6 @@ MonoBehaviour:
   - attacker: Condor Gunship
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Condor Gunship
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Condor Gunship
     defender: Grunt Goblin
     winRate: 0
@@ -10248,9 +9960,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Chopper
-    defender: Blisterback
-    winRate: 0
-  - attacker: Chopper
     defender: Skitterer
     winRate: 0
   - attacker: Chopper
@@ -10265,9 +9974,6 @@ MonoBehaviour:
   - attacker: Chopper
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Chopper
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Chopper
     defender: Grunt Goblin
     winRate: 0
@@ -10458,9 +10164,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Brute Grenadier
-    defender: Blisterback
-    winRate: 0
-  - attacker: Brute Grenadier
     defender: Skitterer
     winRate: 1
   - attacker: Brute Grenadier
@@ -10475,9 +10178,6 @@ MonoBehaviour:
   - attacker: Brute Grenadier
     defender: Heavy Grunts
     winRate: 1
-  - attacker: Brute Grenadier
-    defender: Methane Wagon
-    winRate: 0
   - attacker: Brute Grenadier
     defender: Grunt Goblin
     winRate: 0
@@ -10668,9 +10368,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Marauder
-    defender: Blisterback
-    winRate: 0.2
-  - attacker: Marauder
     defender: Skitterer
     winRate: 1
   - attacker: Marauder
@@ -10684,9 +10381,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Marauder
     defender: Heavy Grunts
-    winRate: 1
-  - attacker: Marauder
-    defender: Methane Wagon
     winRate: 1
   - attacker: Marauder
     defender: Grunt Goblin
@@ -10878,9 +10572,6 @@ MonoBehaviour:
     defender: Marauder
     winRate: 0
   - attacker: Reaver
-    defender: Blisterback
-    winRate: 1
-  - attacker: Reaver
     defender: Skitterer
     winRate: 0
   - attacker: Reaver
@@ -10895,9 +10586,6 @@ MonoBehaviour:
   - attacker: Reaver
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Reaver
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Reaver
     defender: Grunt Goblin
     winRate: 0
@@ -10934,216 +10622,6 @@ MonoBehaviour:
   - attacker: Reaver
     defender: Spawner
     winRate: 0
-  - attacker: Blisterback
-    defender: Marine
-    winRate: 1
-  - attacker: Blisterback
-    defender: Flamethrower Trooper
-    winRate: 1
-  - attacker: Blisterback
-    defender: Warthog
-    winRate: 0
-  - attacker: Blisterback
-    defender: Gauss Warthog
-    winRate: 1
-  - attacker: Blisterback
-    defender: Scorpion
-    winRate: 1
-  - attacker: Blisterback
-    defender: Wolverine
-    winRate: 0
-  - attacker: Blisterback
-    defender: Hornet
-    winRate: 0
-  - attacker: Blisterback
-    defender: Archer Missile Pod
-    winRate: 1
-  - attacker: Blisterback
-    defender: Pelican
-    winRate: 0.6
-  - attacker: Blisterback
-    defender: Spartan
-    winRate: 0
-  - attacker: Blisterback
-    defender: Mantis
-    winRate: 0
-  - attacker: Blisterback
-    defender: Elephant
-    winRate: 0
-  - attacker: Blisterback
-    defender: Grunt
-    winRate: 1
-  - attacker: Blisterback
-    defender: Fuel Rod Grunt
-    winRate: 1
-  - attacker: Blisterback
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 1
-  - attacker: Blisterback
-    defender: 'Jackal (Shield)'
-    winRate: 1
-  - attacker: Blisterback
-    defender: Ghost
-    winRate: 0.2
-  - attacker: Blisterback
-    defender: Elite
-    winRate: 0
-  - attacker: Blisterback
-    defender: Wraith
-    winRate: 1
-  - attacker: Blisterback
-    defender: Vampire
-    winRate: 0
-  - attacker: Blisterback
-    defender: Banshee
-    winRate: 0
-  - attacker: Blisterback
-    defender: Hunter Pair
-    winRate: 1
-  - attacker: Blisterback
-    defender: Zealot
-    winRate: 0.8
-  - attacker: Blisterback
-    defender: Scarab
-    winRate: 0
-  - attacker: Blisterback
-    defender: Infection Forms
-    winRate: 1
-  - attacker: Blisterback
-    defender: Carrier Form
-    winRate: 1
-  - attacker: Blisterback
-    defender: Combat Form
-    winRate: 1
-  - attacker: Blisterback
-    defender: Stalker Form
-    winRate: 1
-  - attacker: Blisterback
-    defender: Pure Form Ranged
-    winRate: 1
-  - attacker: Blisterback
-    defender: Swarm Form
-    winRate: 0
-  - attacker: Blisterback
-    defender: Pure Form Tank
-    winRate: 0.1
-  - attacker: Blisterback
-    defender: Seeder
-    winRate: 1
-  - attacker: Blisterback
-    defender: Infected Pelican
-    winRate: 1
-  - attacker: Blisterback
-    defender: Infected Phantom
-    winRate: 0
-  - attacker: Blisterback
-    defender: Flood Abomination
-    winRate: 1
-  - attacker: Blisterback
-    defender: Spartan Sniper
-    winRate: 0
-  - attacker: Blisterback
-    defender: Spartan Heavy Weapons
-    winRate: 0
-  - attacker: Blisterback
-    defender: Spartan Grenadier
-    winRate: 1
-  - attacker: Blisterback
-    defender: Spartan CQB
-    winRate: 0
-  - attacker: Blisterback
-    defender: Spartan Fireteam
-    winRate: 0
-  - attacker: Blisterback
-    defender: Gremlin
-    winRate: 0
-  - attacker: Blisterback
-    defender: Cobra
-    winRate: 1
-  - attacker: Blisterback
-    defender: Rhino
-    winRate: 1
-  - attacker: Blisterback
-    defender: Grizzly
-    winRate: 1
-  - attacker: Blisterback
-    defender: Sparrowhawk
-    winRate: 0
-  - attacker: Blisterback
-    defender: Shortsword
-    winRate: 1
-  - attacker: Blisterback
-    defender: Vulture
-    winRate: 0
-  - attacker: Blisterback
-    defender: Condor Gunship
-    winRate: 0
-  - attacker: Blisterback
-    defender: Chopper
-    winRate: 1
-  - attacker: Blisterback
-    defender: Brute Grenadier
-    winRate: 1
-  - attacker: Blisterback
-    defender: Marauder
-    winRate: 0.3
-  - attacker: Blisterback
-    defender: Reaver
-    winRate: 0
-  - attacker: Blisterback
-    defender: Skitterer
-    winRate: 1
-  - attacker: Blisterback
-    defender: Goliath
-    winRate: 1
-  - attacker: Blisterback
-    defender: Hunter Captain
-    winRate: 0
-  - attacker: Blisterback
-    defender: Cannon Fodder
-    winRate: 1
-  - attacker: Blisterback
-    defender: Heavy Grunts
-    winRate: 1
-  - attacker: Blisterback
-    defender: Methane Wagon
-    winRate: 1
-  - attacker: Blisterback
-    defender: Grunt Goblin
-    winRate: 0
-  - attacker: Blisterback
-    defender: Infested Marine
-    winRate: 1
-  - attacker: Blisterback
-    defender: Infested Warthog
-    winRate: 1
-  - attacker: Blisterback
-    defender: Infested Scorpion
-    winRate: 1
-  - attacker: Blisterback
-    defender: Infested Hornet
-    winRate: 0
-  - attacker: Blisterback
-    defender: Juggernaut
-    winRate: 0
-  - attacker: Blisterback
-    defender: Infested Grunt
-    winRate: 1
-  - attacker: Blisterback
-    defender: Infested Ghost
-    winRate: 1
-  - attacker: Blisterback
-    defender: Infested Elite
-    winRate: 1
-  - attacker: Blisterback
-    defender: Infested Wraith
-    winRate: 1
-  - attacker: Blisterback
-    defender: Infested Banshee
-    winRate: 0
-  - attacker: Blisterback
-    defender: Spawner
-    winRate: 1
   - attacker: Skitterer
     defender: Marine
     winRate: 0
@@ -11301,9 +10779,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Skitterer
-    defender: Blisterback
-    winRate: 0
-  - attacker: Skitterer
     defender: Goliath
     winRate: 0
   - attacker: Skitterer
@@ -11315,9 +10790,6 @@ MonoBehaviour:
   - attacker: Skitterer
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Skitterer
-    defender: Methane Wagon
-    winRate: 0.2
   - attacker: Skitterer
     defender: Grunt Goblin
     winRate: 0
@@ -11511,9 +10983,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Goliath
-    defender: Blisterback
-    winRate: 0
-  - attacker: Goliath
     defender: Skitterer
     winRate: 1
   - attacker: Goliath
@@ -11525,9 +10994,6 @@ MonoBehaviour:
   - attacker: Goliath
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Goliath
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Goliath
     defender: Grunt Goblin
     winRate: 1
@@ -11721,9 +11187,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Hunter Captain
-    defender: Blisterback
-    winRate: 0
-  - attacker: Hunter Captain
     defender: Skitterer
     winRate: 1
   - attacker: Hunter Captain
@@ -11735,9 +11198,6 @@ MonoBehaviour:
   - attacker: Hunter Captain
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Hunter Captain
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Hunter Captain
     defender: Grunt Goblin
     winRate: 1
@@ -11931,9 +11391,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Cannon Fodder
-    defender: Blisterback
-    winRate: 0
-  - attacker: Cannon Fodder
     defender: Skitterer
     winRate: 1
   - attacker: Cannon Fodder
@@ -11944,9 +11401,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Cannon Fodder
     defender: Heavy Grunts
-    winRate: 0
-  - attacker: Cannon Fodder
-    defender: Methane Wagon
     winRate: 0
   - attacker: Cannon Fodder
     defender: Grunt Goblin
@@ -12141,9 +11595,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Heavy Grunts
-    defender: Blisterback
-    winRate: 0
-  - attacker: Heavy Grunts
     defender: Skitterer
     winRate: 1
   - attacker: Heavy Grunts
@@ -12155,9 +11606,6 @@ MonoBehaviour:
   - attacker: Heavy Grunts
     defender: Cannon Fodder
     winRate: 1
-  - attacker: Heavy Grunts
-    defender: Methane Wagon
-    winRate: 0
   - attacker: Heavy Grunts
     defender: Grunt Goblin
     winRate: 0.4
@@ -12194,216 +11642,6 @@ MonoBehaviour:
   - attacker: Heavy Grunts
     defender: Spawner
     winRate: 1
-  - attacker: Methane Wagon
-    defender: Marine
-    winRate: 1
-  - attacker: Methane Wagon
-    defender: Flamethrower Trooper
-    winRate: 1
-  - attacker: Methane Wagon
-    defender: Warthog
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Gauss Warthog
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Scorpion
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Wolverine
-    winRate: 1
-  - attacker: Methane Wagon
-    defender: Hornet
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Archer Missile Pod
-    winRate: 1
-  - attacker: Methane Wagon
-    defender: Pelican
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Spartan
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Mantis
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Elephant
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Grunt
-    winRate: 1
-  - attacker: Methane Wagon
-    defender: Fuel Rod Grunt
-    winRate: 1
-  - attacker: Methane Wagon
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 1
-  - attacker: Methane Wagon
-    defender: 'Jackal (Shield)'
-    winRate: 1
-  - attacker: Methane Wagon
-    defender: Ghost
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Elite
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Wraith
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Vampire
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Banshee
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Hunter Pair
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Zealot
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Scarab
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Infection Forms
-    winRate: 1
-  - attacker: Methane Wagon
-    defender: Carrier Form
-    winRate: 0.7
-  - attacker: Methane Wagon
-    defender: Combat Form
-    winRate: 1
-  - attacker: Methane Wagon
-    defender: Stalker Form
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Pure Form Ranged
-    winRate: 0.3
-  - attacker: Methane Wagon
-    defender: Swarm Form
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Pure Form Tank
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Seeder
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Infected Pelican
-    winRate: 1
-  - attacker: Methane Wagon
-    defender: Infected Phantom
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Flood Abomination
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Spartan Sniper
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Spartan Heavy Weapons
-    winRate: 0.1
-  - attacker: Methane Wagon
-    defender: Spartan Grenadier
-    winRate: 0.8
-  - attacker: Methane Wagon
-    defender: Spartan CQB
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Spartan Fireteam
-    winRate: 0.7
-  - attacker: Methane Wagon
-    defender: Gremlin
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Cobra
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Rhino
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Grizzly
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Sparrowhawk
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Shortsword
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Vulture
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Condor Gunship
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Chopper
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Brute Grenadier
-    winRate: 1
-  - attacker: Methane Wagon
-    defender: Marauder
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Reaver
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Blisterback
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Skitterer
-    winRate: 0.8
-  - attacker: Methane Wagon
-    defender: Goliath
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Hunter Captain
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Cannon Fodder
-    winRate: 1
-  - attacker: Methane Wagon
-    defender: Heavy Grunts
-    winRate: 1
-  - attacker: Methane Wagon
-    defender: Grunt Goblin
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Infested Marine
-    winRate: 0.5
-  - attacker: Methane Wagon
-    defender: Infested Warthog
-    winRate: 0.3
-  - attacker: Methane Wagon
-    defender: Infested Scorpion
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Infested Hornet
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Juggernaut
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Infested Grunt
-    winRate: 1
-  - attacker: Methane Wagon
-    defender: Infested Ghost
-    winRate: 0.3
-  - attacker: Methane Wagon
-    defender: Infested Elite
-    winRate: 1
-  - attacker: Methane Wagon
-    defender: Infested Wraith
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Infested Banshee
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Spawner
-    winRate: 0
   - attacker: Grunt Goblin
     defender: Marine
     winRate: 1
@@ -12561,9 +11799,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Grunt Goblin
-    defender: Blisterback
-    winRate: 1
-  - attacker: Grunt Goblin
     defender: Skitterer
     winRate: 1
   - attacker: Grunt Goblin
@@ -12578,9 +11813,6 @@ MonoBehaviour:
   - attacker: Grunt Goblin
     defender: Heavy Grunts
     winRate: 0.6
-  - attacker: Grunt Goblin
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Grunt Goblin
     defender: Infested Marine
     winRate: 0
@@ -12771,9 +12003,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Infested Marine
-    defender: Blisterback
-    winRate: 0
-  - attacker: Infested Marine
     defender: Skitterer
     winRate: 1
   - attacker: Infested Marine
@@ -12788,9 +12017,6 @@ MonoBehaviour:
   - attacker: Infested Marine
     defender: Heavy Grunts
     winRate: 1
-  - attacker: Infested Marine
-    defender: Methane Wagon
-    winRate: 0.5
   - attacker: Infested Marine
     defender: Grunt Goblin
     winRate: 1
@@ -12981,9 +12207,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Infested Warthog
-    defender: Blisterback
-    winRate: 0
-  - attacker: Infested Warthog
     defender: Skitterer
     winRate: 0
   - attacker: Infested Warthog
@@ -12998,9 +12221,6 @@ MonoBehaviour:
   - attacker: Infested Warthog
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Infested Warthog
-    defender: Methane Wagon
-    winRate: 0.7
   - attacker: Infested Warthog
     defender: Grunt Goblin
     winRate: 0
@@ -13191,9 +12411,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 0.9
   - attacker: Infested Scorpion
-    defender: Blisterback
-    winRate: 0
-  - attacker: Infested Scorpion
     defender: Skitterer
     winRate: 1
   - attacker: Infested Scorpion
@@ -13207,9 +12424,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Scorpion
     defender: Heavy Grunts
-    winRate: 1
-  - attacker: Infested Scorpion
-    defender: Methane Wagon
     winRate: 1
   - attacker: Infested Scorpion
     defender: Grunt Goblin
@@ -13401,9 +12615,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 0
   - attacker: Infested Hornet
-    defender: Blisterback
-    winRate: 1
-  - attacker: Infested Hornet
     defender: Skitterer
     winRate: 1
   - attacker: Infested Hornet
@@ -13418,9 +12629,6 @@ MonoBehaviour:
   - attacker: Infested Hornet
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Infested Hornet
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Infested Hornet
     defender: Grunt Goblin
     winRate: 0
@@ -13611,9 +12819,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Juggernaut
-    defender: Blisterback
-    winRate: 0
-  - attacker: Juggernaut
     defender: Skitterer
     winRate: 1
   - attacker: Juggernaut
@@ -13627,9 +12832,6 @@ MonoBehaviour:
     winRate: 0
   - attacker: Juggernaut
     defender: Heavy Grunts
-    winRate: 1
-  - attacker: Juggernaut
-    defender: Methane Wagon
     winRate: 1
   - attacker: Juggernaut
     defender: Grunt Goblin
@@ -13821,9 +13023,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Infested Grunt
-    defender: Blisterback
-    winRate: 0
-  - attacker: Infested Grunt
     defender: Skitterer
     winRate: 1
   - attacker: Infested Grunt
@@ -13837,9 +13036,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Grunt
     defender: Heavy Grunts
-    winRate: 0
-  - attacker: Infested Grunt
-    defender: Methane Wagon
     winRate: 0
   - attacker: Infested Grunt
     defender: Grunt Goblin
@@ -14031,9 +13227,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Infested Ghost
-    defender: Blisterback
-    winRate: 0
-  - attacker: Infested Ghost
     defender: Skitterer
     winRate: 0
   - attacker: Infested Ghost
@@ -14048,9 +13241,6 @@ MonoBehaviour:
   - attacker: Infested Ghost
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Infested Ghost
-    defender: Methane Wagon
-    winRate: 0.7
   - attacker: Infested Ghost
     defender: Grunt Goblin
     winRate: 0
@@ -14241,9 +13431,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Infested Elite
-    defender: Blisterback
-    winRate: 0
-  - attacker: Infested Elite
     defender: Skitterer
     winRate: 0
   - attacker: Infested Elite
@@ -14257,9 +13444,6 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Elite
     defender: Heavy Grunts
-    winRate: 0
-  - attacker: Infested Elite
-    defender: Methane Wagon
     winRate: 0
   - attacker: Infested Elite
     defender: Grunt Goblin
@@ -14451,9 +13635,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 0.7
   - attacker: Infested Wraith
-    defender: Blisterback
-    winRate: 0
-  - attacker: Infested Wraith
     defender: Skitterer
     winRate: 1
   - attacker: Infested Wraith
@@ -14467,9 +13648,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Wraith
     defender: Heavy Grunts
-    winRate: 1
-  - attacker: Infested Wraith
-    defender: Methane Wagon
     winRate: 1
   - attacker: Infested Wraith
     defender: Grunt Goblin
@@ -14661,9 +13839,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 0
   - attacker: Infested Banshee
-    defender: Blisterback
-    winRate: 1
-  - attacker: Infested Banshee
     defender: Skitterer
     winRate: 1
   - attacker: Infested Banshee
@@ -14678,9 +13853,6 @@ MonoBehaviour:
   - attacker: Infested Banshee
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Infested Banshee
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Infested Banshee
     defender: Grunt Goblin
     winRate: 0
@@ -14871,9 +14043,6 @@ MonoBehaviour:
     defender: Reaver
     winRate: 1
   - attacker: Spawner
-    defender: Blisterback
-    winRate: 0
-  - attacker: Spawner
     defender: Skitterer
     winRate: 0
   - attacker: Spawner
@@ -14888,9 +14057,6 @@ MonoBehaviour:
   - attacker: Spawner
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Spawner
-    defender: Methane Wagon
-    winRate: 1
   - attacker: Spawner
     defender: Grunt Goblin
     winRate: 0

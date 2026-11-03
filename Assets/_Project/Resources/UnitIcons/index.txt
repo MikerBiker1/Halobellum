@@ -6,7 +6,6 @@ Cobra	fallback
 Gremlin	fallback
 Grizzly	model
 Rhino	fallback
-Blisterback	fallback
 Brute Grenadier	fallback
 Chopper	model
 Marauder	fallback
@@ -60,7 +59,6 @@ ODST	fallback
 Cannon Fodder	baked
 Grunt Goblin	fallback
 Heavy Grunts	baked
-Methane Wagon	fallback
 Archer Missile Pod	fallback
 Elephant	model
 Flamethrower Trooper	fallback
