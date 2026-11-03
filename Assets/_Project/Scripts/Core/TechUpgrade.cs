@@ -159,6 +159,7 @@ namespace Halobellum.Core
                     stats.MaxShield += tech.ShieldBonus;
                     stats.ShieldRegenPerSecond += tech.ShieldRegenBonus;
                 }
+                if (stats.DeathBurst != null) stats.DeathBurst.Damage *= tech.DamageMultiplier;
                 foreach (WeaponStats weapon in stats.Weapons)
                 {
                     weapon.DamagePerShot *= tech.DamageMultiplier;

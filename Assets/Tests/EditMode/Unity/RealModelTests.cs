@@ -22,8 +22,8 @@ namespace Halobellum.Tests
             "Covenant/Banshee", "Covenant/Wraith", "Covenant/Scarab",
             "Flood/InfectedPelican", "Flood/InfectedPhantom", "Flood/InfectionForms", "Flood/CarrierForm", "Flood/StalkerForm", "Flood/PureFormRanged", "Flood/PureFormTank",
             "ArmoredDivision/Grizzly", "Banished/Chopper", "AerospaceCommand/CondorGunship",
-            "FloodUNSC/InfestedWarthog", "FloodUNSC/InfestedScorpion", "FloodUNSC/InfestedHornet", "FloodUNSC/InfestedElephant",
-            "FloodCovenant/InfestedWraith", "FloodCovenant/InfestedBanshee", "FloodCovenant/InfestedScarab",
+            "FloodUNSC/InfestedWarthog", "FloodUNSC/InfestedScorpion", "FloodUNSC/InfestedHornet",
+            "FloodCovenant/InfestedWraith", "FloodCovenant/InfestedBanshee",
         };
 
         [TestCaseSource(nameof(RealModels))]

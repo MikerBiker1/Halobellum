@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c01f1ec4770119518fc3088b4a52ceeb, type: 3}
+  m_Name: ArcherMissilePod_ArmoredLauncher
+  m_EditorClassIdentifier: 
+  techName: Armored Launcher
+  description: Plating around the pod.
+  cost: 150
+  healthMultiplier: 1.3
+  damageMultiplier: 1
+  fireRateMultiplier: 1
+  moveSpeedMultiplier: 1
+  airDamageMultiplier: 1
+  rangeBonus: 0
+  shieldBonus: 0
+  shieldRegenBonus: 0
+  splashRadiusBonus: 0
+  coneDegreesBonus: 0
+  addsAirTargeting: 0
+  unlocksReinforcement: 0

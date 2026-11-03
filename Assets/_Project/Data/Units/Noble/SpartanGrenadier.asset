@@ -88,6 +88,7 @@ MonoBehaviour:
   techUpgrades:
   - {fileID: 11400000, guid: 8d99f45110199af9d04898e49441d3e7, type: 2}
   - {fileID: 11400000, guid: 37992d74560759ef981ce8a763de21e7, type: 2}
+  - {fileID: 11400000, guid: be77211d02078424a13d3a92badaf47d, type: 2}
   prefab: {fileID: 4912702105506396310, guid: dba231210ccb5034b92131970f003582, type: 3}
   keepsOwnMaterials: 0
   bakedBody: {fileID: 11400000, guid: b2d4e273888b9ab1ce8bc7014b19666e, type: 2}

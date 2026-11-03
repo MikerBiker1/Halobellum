@@ -91,23 +91,21 @@ namespace Halobellum.Tests
             ("Infested Scorpion", "Gauss Warthog"),
             ("Infested Hornet", "Wolverine"),
             ("Juggernaut", "Scorpion"),
-            ("Infested Elephant", "Combat Form"),
             ("Infested Grunt", "Flamethrower Trooper"),
             ("Infested Ghost", "Flamethrower Trooper"),
             ("Infested Elite", "Marine"),
             ("Infested Wraith", "Hornet"),
             ("Infested Banshee", "Wolverine"),
             ("Spawner", "Jackal (Plasma Rifle)"),
-            ("Infested Scarab", "Grunt"),
         };
 
-        // With the sub-factions there are 73 pairs: they run side by side, and may take longer than a test's usual 3 minutes on a busy machine.
+        // With the sub-factions there are 71 pairs: they run side by side, and may take longer than a test's usual 3 minutes on a busy machine.
         [Test, Timeout(600000)]
         public void EveryUnit_HasACounterThatWinsAtLeast90Percent()
         {
             Dictionary<string, UnitStats> units = HeadlessRunnerTool.LoadSliceUnits()
                 .ToDictionary(u => u.unitName, HeadlessRunnerTool.ValidatedStats);
-            Assert.AreEqual(73, units.Count);
+            Assert.AreEqual(71, units.Count);
             CollectionAssert.AreEquivalent(units.Keys, BestCounters.Select(p => p.unit), "One line per slice unit.");
 
             CombatRules rules = HeadlessRunnerTool.LoadRules();

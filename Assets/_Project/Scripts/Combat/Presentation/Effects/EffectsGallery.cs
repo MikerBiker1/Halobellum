@@ -123,7 +123,6 @@ namespace Halobellum.Presentation
                 if (Wanted("w_" + shot.Label)) yield return OneWeapon(shot);
             }
             if (Wanted("w_Beam")) yield return ScarabBeam();
-            if (Wanted("w_FloodBeam")) yield return ScarabBeam("Infested Scarab", "w_FloodBeam");
         }
 
         private IEnumerator OneWeapon(WeaponShot shot)

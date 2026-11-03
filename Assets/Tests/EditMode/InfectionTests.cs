@@ -357,6 +357,14 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void ADamageTech_MakesTheBurstHitHarder()
+        {
+            UnitStats plain = UnitUpgrades.Apply(Carrier(null), 1, null);
+            UnitStats teched = UnitUpgrades.Apply(Carrier(null), 1, new[] { new TechUpgrade { Name = "Volatile Bladder", DamageMultiplier = 1.4f } });
+            Assert.AreEqual(plain.DeathBurst.Damage * 1.4f, teched.DeathBurst.Damage, 1e-3f);
+        }
+
+        [Test]
         public void CrashDive_GoesForTheThickestGroup_NotTheClosestUnit()
         {
             var sim = NewSim();

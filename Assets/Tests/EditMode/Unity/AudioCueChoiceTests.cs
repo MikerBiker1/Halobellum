@@ -143,9 +143,8 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void AnInfestedScarabsBeam_IsTheFloods()
+        public void AScarabsBeam_IsItsOwn()
         {
-            Assert.AreEqual(WeaponLooks.FloodPlasma, Look("FloodCovenant/InfestedScarab", "Scavenged Focus Beam", BattleFactions.Flood).Shot);
             Assert.AreEqual(WeaponLooks.ScarabBeam, Look("Covenant/Scarab", "Focus Beam", BattleFactions.Covenant).Shot);
         }
 

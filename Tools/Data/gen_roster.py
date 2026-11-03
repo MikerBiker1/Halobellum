@@ -4,7 +4,7 @@
 # The 8 sub-factions' exclusive units (M10) come from the sub_*.py modules, one each: SUBFACTIONS below says which are in.
 # Usage: python gen_roster.py
 import hashlib, importlib, json, os, re, struct
-from techs import TECHS
+from techs import TECHS, THIRD_TECHS
 
 # Which sub-factions are in the game, in draft-list order. A faction with none here keeps a plain "Standard" card.
 SUBFACTIONS = ["sub_noble", "sub_armored", "sub_aerospace", "sub_banished", "sub_lekgolo", "sub_unggoy", "sub_flood_unsc", "sub_flood_covenant"]
@@ -150,6 +150,8 @@ for _module in SUBFACTIONS:
         _unit.update(sub=_module.NAME, folder=_module.FOLDER)
         UNITS.append(_unit)
     TECHS.update(_module.TECHS)
+for _id, _tech in THIRD_TECHS.items():
+    TECHS[_id].append(_tech)
 
 # Best counters from the latest counter-web run (filled in by hand after each run; Bible Section 7 rule).
 COUNTERS = {}

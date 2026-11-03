@@ -157,3 +157,75 @@ TECHS = {
         T("FocusBeamUpgrade", "Focus Beam Upgrade", 300, "Stronger weapons all round.", damage=1.3),
     ],
 }
+
+
+# Every fighting unit has 3 techs (the owner, 2026-11-02; D54). These are the third ones, first-pass: each does something its other two don't,
+# and costs about what they cost. gen_roster.py adds them after the sub-factions' own.
+THIRD_TECHS = {
+    # UNSC
+    "Marine": T("ArmorPiercing", "Armor-Piercing Rounds", 120, "Heavier rounds for the MA5.", damage=1.25),
+    "Warthog": T("HeavyRounds", "Heavy Rounds", 150, "Harder-hitting machine gun ammunition.", damage=1.3),
+    "GaussWarthog": T("LongRails", "Long Rails", 200, "Longer rails reach further.", range=4),
+    "Hornet": T("Afterburners", "Afterburners", 120, "Gets over the target faster.", speed=1.25),
+    "ArcherMissilePod": T("ArmoredLauncher", "Armored Launcher", 150, "Plating around the pod.", health=1.3),
+    "Spartan": T("Thrusters", "Better Thrusters", 200, "Moves up faster.", speed=1.2),
+    "Mantis": T("TargetingArray", "Targeting Array", 250, "Everything reaches further.", range=4),
+    "Elephant": T("Autoloaders", "Autoloaders", 300, "Every gun fires faster.", fire=1.2),
+    # Covenant
+    "Grunt": T("HotPlasma", "Hot Plasma", 100, "Hotter pistol bolts.", damage=1.25),
+    "FuelRodGrunt": T("Harness", "Reinforced Harness", 100, "Armor around the gun and tanks.", health=1.3),
+    "JackalPlasmaRifle": T("MarksmanOptics", "Marksman Optics", 120, "Jackal eyes and a better sight reach further.", range=3),
+    "JackalShield": T("HotPlasma", "Hot Plasma", 120, "Hotter pistol bolts.", damage=1.25),
+    "Ghost": T("PlasmaOvercharge", "Plasma Overcharge", 150, "Hotter plasma bolts.", damage=1.25),
+    "Elite": T("CombatStride", "Combat Stride", 150, "Closes the distance faster.", speed=1.2),
+    "Wraith": T("ArmorPlating", "Armor Plating", 200, "Extra plating on the hull.", health=1.25),
+    "Vampire": T("LongNeedlers", "Long Needlers", 150, "Needles that fly further.", range=3),
+    "Banshee": T("Boost", "Boost Engines", 120, "Gets over the target faster.", speed=1.25),
+    "HunterPair": T("LongRods", "Long Fuel Rods", 200, "The cannon reaches further.", range=4),
+    "Zealot": T("HonedBlade", "Honed Blade", 200, "A hotter energy sword.", damage=1.25),
+    "Scarab": T("LongLens", "Long Focus Lens", 300, "Everything reaches further.", range=4),
+    # Flood
+    "InfectionForms": T("Stingers", "Barbed Stingers", 100, "A deeper bite.", damage=1.3),
+    "CarrierForm": T("LongStride", "Long Stride", 100, "Reaches the crowd sooner.", speed=1.25),
+    "StalkerForm": T("ChitinPlates", "Chitin Plates", 120, "Plates grown over the body.", health=1.3),
+    "PureFormRanged": T("RapidShards", "Rapid Shards", 150, "Grows and fires its shards faster.", fire=1.25),
+    "SwarmForm": T("SwiftWings", "Swift Wings", 120, "Faster through the air.", speed=1.25),
+    "PureFormTank": T("CrushingMass", "Crushing Mass", 200, "A heavier slam.", damage=1.3),
+    "Seeder": T("ThickSac", "Thick Spore Sac", 150, "More to shoot through.", health=1.3),
+    "InfectedPelican": T("VolatileCargo", "Volatile Cargo", 200, "A harder blast where it comes down.", damage=1.25),
+    "InfectedPhantom": T("HotEngines", "Overburnt Engines", 120, "Reaches the fight faster.", speed=1.25),
+    "Abomination": T("SurgingMass", "Surging Mass", 200, "It drags itself along faster.", speed=1.2),
+    # Noble
+    "SpartanSniper": T("ArmorPiercing", "Armor-Piercing Rounds", 250, "Heavier sniper rounds.", damage=1.25),
+    "SpartanGrenadier": T("RapidLoader", "Rapid Loader", 200, "Grenades go out faster.", fire=1.25),
+    "SpartanFireteam": T("Thrusters", "Better Thrusters", 200, "Moves up faster.", speed=1.2),
+    # Armored Division
+    "Gremlin": T("LongRails", "Long Rails", 150, "The EMP railgun reaches further.", range=3),
+    "Rhino": T("Autoloader", "Autoloader", 250, "The cannon fires faster.", fire=1.25),
+    # Aerospace Command
+    "Sparrowhawk": T("Afterburners", "Afterburners", 120, "Gets over the target faster.", speed=1.25),
+    "Vulture": T("LongMissiles", "Long-Range Missiles", 200, "Everything reaches further.", range=4),
+    "CondorGunship": T("HeavyRounds", "Heavy Rounds", 200, "Harder-hitting autocannon shells.", damage=1.25),
+    # Banished
+    "Chopper": T("SharpBlades", "Sharpened Blades", 150, "Harder ramming and hotter guns.", damage=1.3),
+    "BruteGrenadier": T("RapidLauncher", "Rapid Launcher", 120, "Spike grenades go out faster.", fire=1.25),
+    "Reaver": T("LongSpikes", "Long Spikes", 150, "Rockets with bigger motors.", range=4),
+    # Lekgolo Colony
+    "Skitterer": T("HotSpit", "Hot Spit", 100, "Hotter plasma.", damage=1.25),
+    "Goliath": T("BondStride", "Bond Stride", 200, "It closes the distance faster.", speed=1.2),
+    # Unggoy Rebellion
+    "CannonFodder": T("PanicSprint", "Panic Sprint", 100, "Nobody wants to be last.", speed=1.25),
+    "HeavyGrunts": T("HeavyNeedles", "Heavy Needles", 150, "Bigger needles.", damage=1.25),
+    "MethaneWagon": T("FastPump", "Faster Pump", 150, "The mortar fires more often.", fire=1.25),
+    # Flood, UNSC-based
+    "InfestedMarine": T("BoneBlades", "Bone Blades", 100, "A sharper scythe limb.", damage=1.3),
+    "InfestedWarthog": T("RamSpikes", "Ram Spikes", 150, "Bone through the bumper.", damage=1.3),
+    "InfestedScorpion": T("OvergrownCannon", "Overgrown Cannon", 200, "Harder hits all round.", damage=1.3),
+    "InfestedHornet": T("HotEngines", "Overburnt Engines", 120, "Barely flying, but faster.", speed=1.25),
+    # Flood, Covenant-based
+    "InfestedGrunt": T("BoneBlades", "Bone Blades", 100, "Sharper claws.", damage=1.3),
+    "InfestedGhost": T("RamSpikes", "Ram Spikes", 150, "Bone through the hull.", damage=1.3),
+    "InfestedWraith": T("LongArc", "Long Arc", 200, "The mortar reaches further.", range=4),
+    "InfestedBanshee": T("HotEngines", "Overburnt Engines", 120, "Barely flying, but faster.", speed=1.25),
+    "Spawner": T("BarbedLash", "Barbed Lash", 150, "A harder lash.", damage=1.3),
+}

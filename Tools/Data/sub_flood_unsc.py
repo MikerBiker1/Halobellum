@@ -32,11 +32,6 @@ def units(U, W):
         U("Juggernaut", "Juggernaut", FACTION, "Flanker", 3, 225, 1, 450, 2300, "H", 3.25, 1.8, 1, "G",
           [W("Crushing Charge", 130, 1.2, 2.5, "Melee", splash=2.5)], flood=True, leap=(10, 14, 6),
           note="A pure form the size of a tank that moves like a flanker and leaps onto what it hunts."),
-        U("InfestedElephant", "Infested Elephant", FACTION, "Titan", 4, 350, 1, 800, 7500, "H", 0.6, 5, 3, "B",
-          [W("Scavenged Main Cannon", 180, 3, 18, "Explosive", proj=40, splash=2, aa=True, own="G"),
-           W("Scavenged Turret (left)", 7, 0.2, 13, "Ballistic", block=True),
-           W("Scavenged Turret (right)", 7, 0.2, 13, "Ballistic", block=True)], flood=True, spawn=("InfestedMarine", 4, 12),
-          note="A rolling hive: it releases 4 Infested Marines every 12 seconds."),
     ]
 
 
@@ -61,9 +56,5 @@ TECHS = {
         T("WarForm", "War Form", 250, "An even larger body.", health=1.25),
         T("RazorMass", "Razor Mass", 250, "It hits harder.", damage=1.3),
         T("Bounding", "Bounding Stride", 150, "It runs faster.", speed=1.2),
-    ],
-    "InfestedElephant": [
-        T("BiomassPlates", "Biomass Plates", 300, "Even more biomass.", health=1.25),
-        T("OvergrownCannon", "Overgrown Cannon", 300, "Bigger guns all round.", damage=1.3),
     ],
 }

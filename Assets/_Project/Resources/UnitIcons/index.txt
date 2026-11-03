@@ -38,10 +38,8 @@ Infested Banshee	model
 Infested Elite	fallback
 Infested Ghost	fallback
 Infested Grunt	baked
-Infested Scarab	model
 Infested Wraith	model
 Spawner	fallback
-Infested Elephant	model
 Infested Hornet	model
 Infested Marine	baked
 Infested Scorpion	model

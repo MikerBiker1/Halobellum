@@ -61,10 +61,8 @@ namespace Halobellum.EditorTools
             new Entry { Unit = "FloodUNSC/InfestedWarthog", Folder = "Warthog", Length = 4.6f, Tint = Infested },
             new Entry { Unit = "FloodUNSC/InfestedScorpion", Folder = "Scorpion", Length = 6.2f, Tint = Infested },
             new Entry { Unit = "FloodUNSC/InfestedHornet", Folder = "Hornet", Length = 6f, Tint = Infested },
-            new Entry { Unit = "FloodUNSC/InfestedElephant", Folder = "Elephant", Length = 10f, Tint = Infested },
             new Entry { Unit = "FloodCovenant/InfestedWraith", Folder = "Wraith", Length = 6.2f, Tint = Infested },
             new Entry { Unit = "FloodCovenant/InfestedBanshee", Folder = "Banshee", Length = 6.6f, Tint = Infested },
-            new Entry { Unit = "FloodCovenant/InfestedScarab", Folder = "Scarab", Length = 14f, Tint = Infested },
         };
 
         [Serializable]

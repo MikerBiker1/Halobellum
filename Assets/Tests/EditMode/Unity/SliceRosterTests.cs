@@ -259,12 +259,12 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void EveryUnit_HasTwoOrThreeValidTechUpgrades()
+        public void EveryUnit_HasThreeValidTechUpgrades()
         {
             foreach (UnitDefinition unit in HeadlessRunnerTool.LoadSliceUnits())
             {
                 UnitStats stats = unit.ToStats();
-                Assert.That(stats.TechUpgrades.Length, Is.InRange(2, UnitUpgrades.MaxTechsPerUnit), unit.unitName);
+                Assert.AreEqual(UnitUpgrades.MaxTechsPerUnit, stats.TechUpgrades.Length, unit.unitName);
                 foreach (TechUpgrade tech in stats.TechUpgrades)
                 {
                     Assert.IsNotNull(tech, unit.unitName + " has an empty tech slot.");

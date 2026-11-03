@@ -35,11 +35,6 @@ def units(U, W):
         U("Spawner", "Spawner", FACTION, "Tank", 3, 225, 1, 450, 2800, "L", 0.9, 2, 2, "G",
           [W("Spore Lash", 40, 1.2, 3, "Melee", splash=2)], flood=True, spawn=("InfectionForms", 2, 6),
           note="A mobile birthing form: it fights badly, and releases 10 Infection Forms every 6 seconds. Kill it first."),
-        U("InfestedScarab", "Infested Scarab", FACTION, "Titan", 4, 350, 1, 800, 7500, "H", 0.6, 5, 3, "B",
-          [W("Scavenged Focus Beam", 30, 0.1, 20, "Energy", splash=2, aa=True, own="G", beam=3, charge=3, rest=5, sweep=2),
-           W("Scavenged Plasma Turret (left)", 8, 0.25, 14, "Energy"),
-           W("Scavenged Plasma Turret (right)", 8, 0.25, 14, "Energy")], flood=True, spawn=("InfestedGrunt", 4, 12),
-          note="Its beam is weaker and slower than a Scarab's, but it releases 4 Infested Grunts every 12 seconds."),
     ]
 
 
@@ -68,9 +63,5 @@ TECHS = {
     "Spawner": [
         T("ThickSac", "Thick Sac", 250, "It takes longer to kill.", health=1.3),
         T("SwiftGait", "Swift Gait", 150, "It moves up faster.", speed=1.3),
-    ],
-    "InfestedScarab": [
-        T("BiomassPlates", "Biomass Plates", 300, "Even more biomass.", health=1.25),
-        T("OvergrownBeam", "Overgrown Beam", 300, "Stronger weapons all round.", damage=1.3),
     ],
 }

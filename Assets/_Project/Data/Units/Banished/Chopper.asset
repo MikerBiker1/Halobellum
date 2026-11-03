@@ -112,6 +112,7 @@ MonoBehaviour:
   techUpgrades:
   - {fileID: 11400000, guid: 62627b8917e7a4efdbad1cfaa2ef0664, type: 2}
   - {fileID: 11400000, guid: ae1bc14622b72021afd17c5e69e98a9f, type: 2}
+  - {fileID: 11400000, guid: 4ffa8f157dc5d035c4db997c2c5b96c2, type: 2}
   prefab: {fileID: 8513576895928435423, guid: da31c4d9ae1a64b46bee2c569130d67e, type: 3}
   keepsOwnMaterials: 1
   bakedBody: {fileID: 0}

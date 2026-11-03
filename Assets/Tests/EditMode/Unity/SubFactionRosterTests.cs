@@ -30,8 +30,8 @@ namespace Halobellum.Tests
             ("Covenant_Standard", "Banished", "Banished", new[] { "Chopper", "Marauder", "Reaver", "Blisterback", "Brute Grenadier" }),
             ("Covenant_Standard", "Lekgolo Colony", "LekgoloColony", new[] { "Goliath", "Skitterer", "Hunter Captain" }),
             ("Covenant_Standard", "Unggoy Rebellion", "UnggoyRebellion", new[] { "Cannon Fodder", "Heavy Grunts", "Methane Wagon", "Grunt Goblin" }),
-            ("Flood_Standard", "UNSC-based", "FloodUNSC", new[] { "Infested Marine", "Infested Warthog", "Infested Scorpion", "Infested Hornet", "Infested Elephant", "Juggernaut" }),
-            ("Flood_Standard", "Covenant-based", "FloodCovenant", new[] { "Infested Grunt", "Infested Ghost", "Infested Elite", "Infested Wraith", "Infested Banshee", "Infested Scarab", "Spawner" }),
+            ("Flood_Standard", "UNSC-based", "FloodUNSC", new[] { "Infested Marine", "Infested Warthog", "Infested Scorpion", "Infested Hornet", "Juggernaut" }),
+            ("Flood_Standard", "Covenant-based", "FloodCovenant", new[] { "Infested Grunt", "Infested Ghost", "Infested Elite", "Infested Wraith", "Infested Banshee", "Spawner" }),
         };
 
         private static FactionDefinition Faction(string asset) => AssetDatabase.LoadAssetAtPath<FactionDefinition>($"Assets/_Project/Data/Factions/{asset}.asset");
@@ -129,11 +129,11 @@ namespace Halobellum.Tests
                 Assert.IsEmpty(problems, string.Join("\n", problems));
                 Assert.IsNotNull(unit.prefab, name + " needs a prefab, even a placeholder.");
                 StringAssert.Contains("Best counters", unit.notes, name + ": Bible Section 7.");
-                Assert.That(unit.techUpgrades.Count, Is.InRange(2, UnitUpgrades.MaxTechsPerUnit), name);
+                Assert.AreEqual(UnitUpgrades.MaxTechsPerUnit, unit.techUpgrades.Count, name);
                 Assert.IsFalse(name.StartsWith("Infected "), name + ": that is what the simulation calls a body that rises, so the two would be mixed up.");
                 if (name != "Goliath") Assert.AreEqual(unit.cost / (float)unit.squadSize / 5f, unit.baseDamage, 1e-3f, name);
             }
-            Assert.AreEqual(38, names.Count);
+            Assert.AreEqual(36, names.Count);
         }
 
         [Test]
@@ -178,8 +178,7 @@ namespace Halobellum.Tests
             Assert.Greater(u["Grunt Goblin"].AuraSpeedMultiplier, 1f);
 
             foreach (string flood in Table[6].units.Concat(Table[7].units)) Assert.IsTrue(u[flood].IsFlood, flood);
-            Assert.AreEqual("Infested Marine", u["Infested Elephant"].SpawnedUnit.Name);
-            Assert.AreEqual("Infested Grunt", u["Infested Scarab"].SpawnedUnit.Name);
+            foreach (string flood in Table[6].units.Concat(Table[7].units)) Assert.AreNotEqual(4, u[flood].Tier, flood + ": the Abomination is the Flood's only Titan.");
             Assert.AreEqual("Infection Forms", u["Spawner"].SpawnedUnit.Name);
             foreach (string flood in Table[6].units.Concat(Table[7].units)) Assert.IsFalse(u[flood].Infects, flood + ": only Infection Forms infect.");
         }

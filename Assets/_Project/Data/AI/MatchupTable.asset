@@ -207,9 +207,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Marine
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Marine
     defender: Infested Grunt
     winRate: 1
   - attacker: Marine
@@ -227,9 +224,6 @@ MonoBehaviour:
   - attacker: Marine
     defender: Spawner
     winRate: 1
-  - attacker: Marine
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Flamethrower Trooper
     defender: Marine
     winRate: 0
@@ -423,9 +417,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Flamethrower Trooper
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Flamethrower Trooper
     defender: Infested Grunt
     winRate: 1
   - attacker: Flamethrower Trooper
@@ -443,9 +434,6 @@ MonoBehaviour:
   - attacker: Flamethrower Trooper
     defender: Spawner
     winRate: 1
-  - attacker: Flamethrower Trooper
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Warthog
     defender: Marine
     winRate: 0
@@ -639,9 +627,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Warthog
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Warthog
     defender: Infested Grunt
     winRate: 0
   - attacker: Warthog
@@ -658,9 +643,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Warthog
     defender: Spawner
-    winRate: 0
-  - attacker: Warthog
-    defender: Infested Scarab
     winRate: 0
   - attacker: Gauss Warthog
     defender: Marine
@@ -855,9 +837,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Gauss Warthog
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Gauss Warthog
     defender: Infested Grunt
     winRate: 0
   - attacker: Gauss Warthog
@@ -875,9 +854,6 @@ MonoBehaviour:
   - attacker: Gauss Warthog
     defender: Spawner
     winRate: 0
-  - attacker: Gauss Warthog
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Scorpion
     defender: Marine
     winRate: 1
@@ -1071,9 +1047,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Scorpion
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Scorpion
     defender: Infested Grunt
     winRate: 1
   - attacker: Scorpion
@@ -1091,9 +1064,6 @@ MonoBehaviour:
   - attacker: Scorpion
     defender: Spawner
     winRate: 1
-  - attacker: Scorpion
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Wolverine
     defender: Marine
     winRate: 0.9
@@ -1287,9 +1257,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Wolverine
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Wolverine
     defender: Infested Grunt
     winRate: 0
   - attacker: Wolverine
@@ -1306,9 +1273,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Wolverine
     defender: Spawner
-    winRate: 0
-  - attacker: Wolverine
-    defender: Infested Scarab
     winRate: 0
   - attacker: Hornet
     defender: Marine
@@ -1503,9 +1467,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Hornet
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Hornet
     defender: Infested Grunt
     winRate: 1
   - attacker: Hornet
@@ -1523,9 +1484,6 @@ MonoBehaviour:
   - attacker: Hornet
     defender: Spawner
     winRate: 1
-  - attacker: Hornet
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Archer Missile Pod
     defender: Marine
     winRate: 1
@@ -1719,9 +1677,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Archer Missile Pod
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Archer Missile Pod
     defender: Infested Grunt
     winRate: 0.8
   - attacker: Archer Missile Pod
@@ -1738,9 +1693,6 @@ MonoBehaviour:
     winRate: 0
   - attacker: Archer Missile Pod
     defender: Spawner
-    winRate: 0
-  - attacker: Archer Missile Pod
-    defender: Infested Scarab
     winRate: 0
   - attacker: Pelican
     defender: Marine
@@ -1933,9 +1885,6 @@ MonoBehaviour:
     winRate: 0.1
   - attacker: Pelican
     defender: Juggernaut
-    winRate: 0
-  - attacker: Pelican
-    defender: Infested Elephant
     winRate: 0
   - attacker: Pelican
     defender: Infested Grunt
@@ -1955,9 +1904,6 @@ MonoBehaviour:
   - attacker: Pelican
     defender: Spawner
     winRate: 0
-  - attacker: Pelican
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Spartan
     defender: Marine
     winRate: 0
@@ -2151,9 +2097,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Spartan
-    defender: Infested Elephant
-    winRate: 0.2
-  - attacker: Spartan
     defender: Infested Grunt
     winRate: 0
   - attacker: Spartan
@@ -2170,9 +2113,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan
     defender: Spawner
-    winRate: 0
-  - attacker: Spartan
-    defender: Infested Scarab
     winRate: 0
   - attacker: Mantis
     defender: Marine
@@ -2367,9 +2307,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Mantis
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Mantis
     defender: Infested Grunt
     winRate: 0
   - attacker: Mantis
@@ -2387,9 +2324,6 @@ MonoBehaviour:
   - attacker: Mantis
     defender: Spawner
     winRate: 1
-  - attacker: Mantis
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Elephant
     defender: Marine
     winRate: 1
@@ -2583,9 +2517,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Elephant
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Elephant
     defender: Infested Grunt
     winRate: 1
   - attacker: Elephant
@@ -2603,9 +2534,6 @@ MonoBehaviour:
   - attacker: Elephant
     defender: Spawner
     winRate: 1
-  - attacker: Elephant
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Grunt
     defender: Marine
     winRate: 0
@@ -2799,9 +2727,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Grunt
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Grunt
     defender: Infested Grunt
     winRate: 1
   - attacker: Grunt
@@ -2818,9 +2743,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Grunt
     defender: Spawner
-    winRate: 1
-  - attacker: Grunt
-    defender: Infested Scarab
     winRate: 1
   - attacker: Fuel Rod Grunt
     defender: Marine
@@ -3015,9 +2937,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Fuel Rod Grunt
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Fuel Rod Grunt
     defender: Infested Grunt
     winRate: 1
   - attacker: Fuel Rod Grunt
@@ -3035,9 +2954,6 @@ MonoBehaviour:
   - attacker: Fuel Rod Grunt
     defender: Spawner
     winRate: 1
-  - attacker: Fuel Rod Grunt
-    defender: Infested Scarab
-    winRate: 0
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Marine
     winRate: 0
@@ -3231,9 +3147,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: 'Jackal (Plasma Rifle)'
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
     defender: Infested Grunt
     winRate: 1
   - attacker: 'Jackal (Plasma Rifle)'
@@ -3251,9 +3164,6 @@ MonoBehaviour:
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Spawner
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Infested Scarab
-    winRate: 0.3
   - attacker: 'Jackal (Shield)'
     defender: Marine
     winRate: 0
@@ -3447,9 +3357,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: 'Jackal (Shield)'
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: 'Jackal (Shield)'
     defender: Infested Grunt
     winRate: 0
   - attacker: 'Jackal (Shield)'
@@ -3466,9 +3373,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: 'Jackal (Shield)'
     defender: Spawner
-    winRate: 0
-  - attacker: 'Jackal (Shield)'
-    defender: Infested Scarab
     winRate: 0
   - attacker: Ghost
     defender: Marine
@@ -3663,9 +3567,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Ghost
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Ghost
     defender: Infested Grunt
     winRate: 0
   - attacker: Ghost
@@ -3682,9 +3583,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Ghost
     defender: Spawner
-    winRate: 0
-  - attacker: Ghost
-    defender: Infested Scarab
     winRate: 0
   - attacker: Elite
     defender: Marine
@@ -3879,9 +3777,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Elite
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Elite
     defender: Infested Grunt
     winRate: 0
   - attacker: Elite
@@ -3899,9 +3794,6 @@ MonoBehaviour:
   - attacker: Elite
     defender: Spawner
     winRate: 1
-  - attacker: Elite
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Wraith
     defender: Marine
     winRate: 1
@@ -4095,9 +3987,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Wraith
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Wraith
     defender: Infested Grunt
     winRate: 1
   - attacker: Wraith
@@ -4115,9 +4004,6 @@ MonoBehaviour:
   - attacker: Wraith
     defender: Spawner
     winRate: 0.5
-  - attacker: Wraith
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Vampire
     defender: Marine
     winRate: 0
@@ -4311,9 +4197,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Vampire
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Vampire
     defender: Infested Grunt
     winRate: 0
   - attacker: Vampire
@@ -4330,9 +4213,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Vampire
     defender: Spawner
-    winRate: 0
-  - attacker: Vampire
-    defender: Infested Scarab
     winRate: 0
   - attacker: Banshee
     defender: Marine
@@ -4527,9 +4407,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Banshee
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Banshee
     defender: Infested Grunt
     winRate: 1
   - attacker: Banshee
@@ -4547,9 +4424,6 @@ MonoBehaviour:
   - attacker: Banshee
     defender: Spawner
     winRate: 1
-  - attacker: Banshee
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Hunter Pair
     defender: Marine
     winRate: 1
@@ -4743,9 +4617,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Hunter Pair
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Hunter Pair
     defender: Infested Grunt
     winRate: 1
   - attacker: Hunter Pair
@@ -4763,9 +4634,6 @@ MonoBehaviour:
   - attacker: Hunter Pair
     defender: Spawner
     winRate: 1
-  - attacker: Hunter Pair
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Zealot
     defender: Marine
     winRate: 0
@@ -4959,9 +4827,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Zealot
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Zealot
     defender: Infested Grunt
     winRate: 0
   - attacker: Zealot
@@ -4978,9 +4843,6 @@ MonoBehaviour:
     winRate: 0
   - attacker: Zealot
     defender: Spawner
-    winRate: 0
-  - attacker: Zealot
-    defender: Infested Scarab
     winRate: 0
   - attacker: Scarab
     defender: Marine
@@ -5175,9 +5037,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Scarab
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Scarab
     defender: Infested Grunt
     winRate: 1
   - attacker: Scarab
@@ -5194,9 +5053,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Scarab
     defender: Spawner
-    winRate: 1
-  - attacker: Scarab
-    defender: Infested Scarab
     winRate: 1
   - attacker: Infection Forms
     defender: Marine
@@ -5391,9 +5247,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Infection Forms
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Infection Forms
     defender: Infested Grunt
     winRate: 1
   - attacker: Infection Forms
@@ -5410,9 +5263,6 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infection Forms
     defender: Spawner
-    winRate: 0
-  - attacker: Infection Forms
-    defender: Infested Scarab
     winRate: 0
   - attacker: Carrier Form
     defender: Marine
@@ -5607,9 +5457,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Carrier Form
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Carrier Form
     defender: Infested Grunt
     winRate: 1
   - attacker: Carrier Form
@@ -5626,9 +5473,6 @@ MonoBehaviour:
     winRate: 0
   - attacker: Carrier Form
     defender: Spawner
-    winRate: 0
-  - attacker: Carrier Form
-    defender: Infested Scarab
     winRate: 0
   - attacker: Combat Form
     defender: Marine
@@ -5823,9 +5667,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Combat Form
-    defender: Infested Elephant
-    winRate: 1
-  - attacker: Combat Form
     defender: Infested Grunt
     winRate: 0
   - attacker: Combat Form
@@ -5843,9 +5684,6 @@ MonoBehaviour:
   - attacker: Combat Form
     defender: Spawner
     winRate: 1
-  - attacker: Combat Form
-    defender: Infested Scarab
-    winRate: 0.1
   - attacker: Stalker Form
     defender: Marine
     winRate: 0
@@ -6039,9 +5877,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Stalker Form
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Stalker Form
     defender: Infested Grunt
     winRate: 0
   - attacker: Stalker Form
@@ -6059,9 +5894,6 @@ MonoBehaviour:
   - attacker: Stalker Form
     defender: Spawner
     winRate: 0.7
-  - attacker: Stalker Form
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Pure Form Ranged
     defender: Marine
     winRate: 1
@@ -6255,9 +6087,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Pure Form Ranged
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Pure Form Ranged
     defender: Infested Grunt
     winRate: 0.7
   - attacker: Pure Form Ranged
@@ -6274,9 +6103,6 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pure Form Ranged
     defender: Spawner
-    winRate: 0
-  - attacker: Pure Form Ranged
-    defender: Infested Scarab
     winRate: 0
   - attacker: Swarm Form
     defender: Marine
@@ -6471,9 +6297,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Swarm Form
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Swarm Form
     defender: Infested Grunt
     winRate: 0
   - attacker: Swarm Form
@@ -6490,9 +6313,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Swarm Form
     defender: Spawner
-    winRate: 0
-  - attacker: Swarm Form
-    defender: Infested Scarab
     winRate: 0
   - attacker: Pure Form Tank
     defender: Marine
@@ -6687,9 +6507,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Pure Form Tank
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Pure Form Tank
     defender: Infested Grunt
     winRate: 1
   - attacker: Pure Form Tank
@@ -6707,9 +6524,6 @@ MonoBehaviour:
   - attacker: Pure Form Tank
     defender: Spawner
     winRate: 1
-  - attacker: Pure Form Tank
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Seeder
     defender: Marine
     winRate: 0
@@ -6903,9 +6717,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Seeder
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Seeder
     defender: Infested Grunt
     winRate: 0
   - attacker: Seeder
@@ -6922,9 +6733,6 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Spawner
-    winRate: 0
-  - attacker: Seeder
-    defender: Infested Scarab
     winRate: 0
   - attacker: Infected Pelican
     defender: Marine
@@ -7119,9 +6927,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0.8
   - attacker: Infected Pelican
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Infected Pelican
     defender: Infested Grunt
     winRate: 0
   - attacker: Infected Pelican
@@ -7139,9 +6944,6 @@ MonoBehaviour:
   - attacker: Infected Pelican
     defender: Spawner
     winRate: 1
-  - attacker: Infected Pelican
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Infected Phantom
     defender: Marine
     winRate: 0
@@ -7335,9 +7137,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Infected Phantom
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Infected Phantom
     defender: Infested Grunt
     winRate: 0
   - attacker: Infected Phantom
@@ -7354,9 +7153,6 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infected Phantom
     defender: Spawner
-    winRate: 0
-  - attacker: Infected Phantom
-    defender: Infested Scarab
     winRate: 0
   - attacker: Flood Abomination
     defender: Marine
@@ -7551,9 +7347,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0.4
   - attacker: Flood Abomination
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Flood Abomination
     defender: Infested Grunt
     winRate: 1
   - attacker: Flood Abomination
@@ -7571,9 +7364,6 @@ MonoBehaviour:
   - attacker: Flood Abomination
     defender: Spawner
     winRate: 1
-  - attacker: Flood Abomination
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Spartan Sniper
     defender: Marine
     winRate: 0
@@ -7767,9 +7557,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0.6
   - attacker: Spartan Sniper
-    defender: Infested Elephant
-    winRate: 1
-  - attacker: Spartan Sniper
     defender: Infested Grunt
     winRate: 0
   - attacker: Spartan Sniper
@@ -7787,9 +7574,6 @@ MonoBehaviour:
   - attacker: Spartan Sniper
     defender: Spawner
     winRate: 0
-  - attacker: Spartan Sniper
-    defender: Infested Scarab
-    winRate: 1
   - attacker: Spartan Heavy Weapons
     defender: Marine
     winRate: 0.1
@@ -7983,9 +7767,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Spartan Heavy Weapons
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Spartan Heavy Weapons
     defender: Infested Grunt
     winRate: 0
   - attacker: Spartan Heavy Weapons
@@ -8002,9 +7783,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan Heavy Weapons
     defender: Spawner
-    winRate: 0
-  - attacker: Spartan Heavy Weapons
-    defender: Infested Scarab
     winRate: 0
   - attacker: Spartan Grenadier
     defender: Marine
@@ -8199,9 +7977,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Spartan Grenadier
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Spartan Grenadier
     defender: Infested Grunt
     winRate: 1
   - attacker: Spartan Grenadier
@@ -8219,9 +7994,6 @@ MonoBehaviour:
   - attacker: Spartan Grenadier
     defender: Spawner
     winRate: 0.4
-  - attacker: Spartan Grenadier
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Spartan CQB
     defender: Marine
     winRate: 0
@@ -8415,9 +8187,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Spartan CQB
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Spartan CQB
     defender: Infested Grunt
     winRate: 0
   - attacker: Spartan CQB
@@ -8434,9 +8203,6 @@ MonoBehaviour:
     winRate: 0.5
   - attacker: Spartan CQB
     defender: Spawner
-    winRate: 0
-  - attacker: Spartan CQB
-    defender: Infested Scarab
     winRate: 0
   - attacker: Spartan Fireteam
     defender: Marine
@@ -8631,9 +8397,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Spartan Fireteam
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Spartan Fireteam
     defender: Infested Grunt
     winRate: 0
   - attacker: Spartan Fireteam
@@ -8650,9 +8413,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan Fireteam
     defender: Spawner
-    winRate: 0
-  - attacker: Spartan Fireteam
-    defender: Infested Scarab
     winRate: 0
   - attacker: Gremlin
     defender: Marine
@@ -8847,9 +8607,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0.7
   - attacker: Gremlin
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Gremlin
     defender: Infested Grunt
     winRate: 0
   - attacker: Gremlin
@@ -8866,9 +8623,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Gremlin
     defender: Spawner
-    winRate: 0
-  - attacker: Gremlin
-    defender: Infested Scarab
     winRate: 0
   - attacker: Cobra
     defender: Marine
@@ -9063,9 +8817,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Cobra
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Cobra
     defender: Infested Grunt
     winRate: 0
   - attacker: Cobra
@@ -9083,9 +8834,6 @@ MonoBehaviour:
   - attacker: Cobra
     defender: Spawner
     winRate: 0
-  - attacker: Cobra
-    defender: Infested Scarab
-    winRate: 0.9
   - attacker: Rhino
     defender: Marine
     winRate: 1
@@ -9279,9 +9027,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0.4
   - attacker: Rhino
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Rhino
     defender: Infested Grunt
     winRate: 1
   - attacker: Rhino
@@ -9298,9 +9043,6 @@ MonoBehaviour:
     winRate: 0
   - attacker: Rhino
     defender: Spawner
-    winRate: 0
-  - attacker: Rhino
-    defender: Infested Scarab
     winRate: 0
   - attacker: Grizzly
     defender: Marine
@@ -9495,9 +9237,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Grizzly
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Grizzly
     defender: Infested Grunt
     winRate: 1
   - attacker: Grizzly
@@ -9515,9 +9254,6 @@ MonoBehaviour:
   - attacker: Grizzly
     defender: Spawner
     winRate: 1
-  - attacker: Grizzly
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Sparrowhawk
     defender: Marine
     winRate: 0
@@ -9711,9 +9447,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Sparrowhawk
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Sparrowhawk
     defender: Infested Grunt
     winRate: 0
   - attacker: Sparrowhawk
@@ -9731,9 +9464,6 @@ MonoBehaviour:
   - attacker: Sparrowhawk
     defender: Spawner
     winRate: 1
-  - attacker: Sparrowhawk
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Shortsword
     defender: Marine
     winRate: 0
@@ -9927,9 +9657,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Shortsword
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Shortsword
     defender: Infested Grunt
     winRate: 0
   - attacker: Shortsword
@@ -9947,9 +9674,6 @@ MonoBehaviour:
   - attacker: Shortsword
     defender: Spawner
     winRate: 1
-  - attacker: Shortsword
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Vulture
     defender: Marine
     winRate: 1
@@ -10143,9 +9867,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Vulture
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Vulture
     defender: Infested Grunt
     winRate: 1
   - attacker: Vulture
@@ -10163,9 +9884,6 @@ MonoBehaviour:
   - attacker: Vulture
     defender: Spawner
     winRate: 1
-  - attacker: Vulture
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Condor Gunship
     defender: Marine
     winRate: 0
@@ -10357,9 +10075,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Condor Gunship
     defender: Juggernaut
-    winRate: 0
-  - attacker: Condor Gunship
-    defender: Infested Elephant
     winRate: 0
   - attacker: Condor Gunship
     defender: Infested Grunt
@@ -10379,9 +10094,6 @@ MonoBehaviour:
   - attacker: Condor Gunship
     defender: Spawner
     winRate: 0
-  - attacker: Condor Gunship
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Chopper
     defender: Marine
     winRate: 0
@@ -10575,9 +10287,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Chopper
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Chopper
     defender: Infested Grunt
     winRate: 0
   - attacker: Chopper
@@ -10595,9 +10304,6 @@ MonoBehaviour:
   - attacker: Chopper
     defender: Spawner
     winRate: 1
-  - attacker: Chopper
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Brute Grenadier
     defender: Marine
     winRate: 1
@@ -10791,9 +10497,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Brute Grenadier
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Brute Grenadier
     defender: Infested Grunt
     winRate: 1
   - attacker: Brute Grenadier
@@ -10811,9 +10514,6 @@ MonoBehaviour:
   - attacker: Brute Grenadier
     defender: Spawner
     winRate: 1
-  - attacker: Brute Grenadier
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Marauder
     defender: Marine
     winRate: 1
@@ -11007,9 +10707,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Marauder
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Marauder
     defender: Infested Grunt
     winRate: 1
   - attacker: Marauder
@@ -11027,9 +10724,6 @@ MonoBehaviour:
   - attacker: Marauder
     defender: Spawner
     winRate: 1
-  - attacker: Marauder
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Reaver
     defender: Marine
     winRate: 0
@@ -11223,9 +10917,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Reaver
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Reaver
     defender: Infested Grunt
     winRate: 0
   - attacker: Reaver
@@ -11242,9 +10933,6 @@ MonoBehaviour:
     winRate: 1
   - attacker: Reaver
     defender: Spawner
-    winRate: 0
-  - attacker: Reaver
-    defender: Infested Scarab
     winRate: 0
   - attacker: Blisterback
     defender: Marine
@@ -11439,9 +11127,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Blisterback
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Blisterback
     defender: Infested Grunt
     winRate: 1
   - attacker: Blisterback
@@ -11459,9 +11144,6 @@ MonoBehaviour:
   - attacker: Blisterback
     defender: Spawner
     winRate: 1
-  - attacker: Blisterback
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Skitterer
     defender: Marine
     winRate: 0
@@ -11655,9 +11337,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Skitterer
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Skitterer
     defender: Infested Grunt
     winRate: 0
   - attacker: Skitterer
@@ -11675,9 +11354,6 @@ MonoBehaviour:
   - attacker: Skitterer
     defender: Spawner
     winRate: 1
-  - attacker: Skitterer
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Goliath
     defender: Marine
     winRate: 1
@@ -11871,9 +11547,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Goliath
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Goliath
     defender: Infested Grunt
     winRate: 1
   - attacker: Goliath
@@ -11891,9 +11564,6 @@ MonoBehaviour:
   - attacker: Goliath
     defender: Spawner
     winRate: 1
-  - attacker: Goliath
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Hunter Captain
     defender: Marine
     winRate: 0
@@ -12087,9 +11757,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Hunter Captain
-    defender: Infested Elephant
-    winRate: 1
-  - attacker: Hunter Captain
     defender: Infested Grunt
     winRate: 0
   - attacker: Hunter Captain
@@ -12107,9 +11774,6 @@ MonoBehaviour:
   - attacker: Hunter Captain
     defender: Spawner
     winRate: 0
-  - attacker: Hunter Captain
-    defender: Infested Scarab
-    winRate: 1
   - attacker: Cannon Fodder
     defender: Marine
     winRate: 0
@@ -12303,9 +11967,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Cannon Fodder
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Cannon Fodder
     defender: Infested Grunt
     winRate: 0
   - attacker: Cannon Fodder
@@ -12323,9 +11984,6 @@ MonoBehaviour:
   - attacker: Cannon Fodder
     defender: Spawner
     winRate: 1
-  - attacker: Cannon Fodder
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Heavy Grunts
     defender: Marine
     winRate: 0
@@ -12519,9 +12177,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Heavy Grunts
-    defender: Infested Elephant
-    winRate: 0.4
-  - attacker: Heavy Grunts
     defender: Infested Grunt
     winRate: 1
   - attacker: Heavy Grunts
@@ -12539,9 +12194,6 @@ MonoBehaviour:
   - attacker: Heavy Grunts
     defender: Spawner
     winRate: 1
-  - attacker: Heavy Grunts
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Methane Wagon
     defender: Marine
     winRate: 1
@@ -12735,9 +12387,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Methane Wagon
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Methane Wagon
     defender: Infested Grunt
     winRate: 1
   - attacker: Methane Wagon
@@ -12754,9 +12403,6 @@ MonoBehaviour:
     winRate: 0
   - attacker: Methane Wagon
     defender: Spawner
-    winRate: 0
-  - attacker: Methane Wagon
-    defender: Infested Scarab
     winRate: 0
   - attacker: Grunt Goblin
     defender: Marine
@@ -12951,9 +12597,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0.9
   - attacker: Grunt Goblin
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Grunt Goblin
     defender: Infested Grunt
     winRate: 0
   - attacker: Grunt Goblin
@@ -12971,9 +12614,6 @@ MonoBehaviour:
   - attacker: Grunt Goblin
     defender: Spawner
     winRate: 1
-  - attacker: Grunt Goblin
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Infested Marine
     defender: Marine
     winRate: 0
@@ -13167,9 +12807,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Infested Marine
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Infested Marine
     defender: Infested Grunt
     winRate: 1
   - attacker: Infested Marine
@@ -13187,9 +12824,6 @@ MonoBehaviour:
   - attacker: Infested Marine
     defender: Spawner
     winRate: 1
-  - attacker: Infested Marine
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Infested Warthog
     defender: Marine
     winRate: 0
@@ -13383,9 +13017,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Infested Warthog
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Infested Warthog
     defender: Infested Grunt
     winRate: 0
   - attacker: Infested Warthog
@@ -13403,9 +13034,6 @@ MonoBehaviour:
   - attacker: Infested Warthog
     defender: Spawner
     winRate: 1
-  - attacker: Infested Warthog
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Infested Scorpion
     defender: Marine
     winRate: 1
@@ -13599,9 +13227,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Infested Scorpion
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Infested Scorpion
     defender: Infested Grunt
     winRate: 1
   - attacker: Infested Scorpion
@@ -13619,9 +13244,6 @@ MonoBehaviour:
   - attacker: Infested Scorpion
     defender: Spawner
     winRate: 1
-  - attacker: Infested Scorpion
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Infested Hornet
     defender: Marine
     winRate: 0
@@ -13815,9 +13437,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Infested Hornet
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Infested Hornet
     defender: Infested Grunt
     winRate: 1
   - attacker: Infested Hornet
@@ -13835,9 +13454,6 @@ MonoBehaviour:
   - attacker: Infested Hornet
     defender: Spawner
     winRate: 1
-  - attacker: Infested Hornet
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Juggernaut
     defender: Marine
     winRate: 1
@@ -14031,9 +13647,6 @@ MonoBehaviour:
     defender: Infested Hornet
     winRate: 0
   - attacker: Juggernaut
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Juggernaut
     defender: Infested Grunt
     winRate: 1
   - attacker: Juggernaut
@@ -14050,225 +13663,6 @@ MonoBehaviour:
     winRate: 0
   - attacker: Juggernaut
     defender: Spawner
-    winRate: 1
-  - attacker: Juggernaut
-    defender: Infested Scarab
-    winRate: 0
-  - attacker: Infested Elephant
-    defender: Marine
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Flamethrower Trooper
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Warthog
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Gauss Warthog
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Scorpion
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Wolverine
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Hornet
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Archer Missile Pod
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Pelican
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Spartan
-    winRate: 0.8
-  - attacker: Infested Elephant
-    defender: Mantis
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Elephant
-    winRate: 0
-  - attacker: Infested Elephant
-    defender: Grunt
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Fuel Rod Grunt
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: 'Jackal (Shield)'
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Ghost
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Elite
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Wraith
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Vampire
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Banshee
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Hunter Pair
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Zealot
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Scarab
-    winRate: 0
-  - attacker: Infested Elephant
-    defender: Infection Forms
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Carrier Form
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Combat Form
-    winRate: 0
-  - attacker: Infested Elephant
-    defender: Stalker Form
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Pure Form Ranged
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Swarm Form
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Pure Form Tank
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Seeder
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Infected Pelican
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Infected Phantom
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Flood Abomination
-    winRate: 0
-  - attacker: Infested Elephant
-    defender: Spartan Sniper
-    winRate: 0
-  - attacker: Infested Elephant
-    defender: Spartan Heavy Weapons
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Spartan Grenadier
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Spartan CQB
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Spartan Fireteam
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Gremlin
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Cobra
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Rhino
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Grizzly
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Sparrowhawk
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Shortsword
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Vulture
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Condor Gunship
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Chopper
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Brute Grenadier
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Marauder
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Reaver
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Blisterback
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Skitterer
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Goliath
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Hunter Captain
-    winRate: 0
-  - attacker: Infested Elephant
-    defender: Cannon Fodder
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Heavy Grunts
-    winRate: 0.6
-  - attacker: Infested Elephant
-    defender: Methane Wagon
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Grunt Goblin
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Infested Marine
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Infested Warthog
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Infested Scorpion
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Infested Hornet
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Juggernaut
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Infested Grunt
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Infested Ghost
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Infested Elite
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Infested Wraith
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Infested Banshee
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Spawner
-    winRate: 1
-  - attacker: Infested Elephant
-    defender: Infested Scarab
     winRate: 1
   - attacker: Infested Grunt
     defender: Marine
@@ -14466,9 +13860,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Infested Grunt
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Infested Grunt
     defender: Infested Ghost
     winRate: 1
   - attacker: Infested Grunt
@@ -14482,9 +13873,6 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Grunt
     defender: Spawner
-    winRate: 0
-  - attacker: Infested Grunt
-    defender: Infested Scarab
     winRate: 0
   - attacker: Infested Ghost
     defender: Marine
@@ -14682,9 +14070,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Infested Ghost
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Infested Ghost
     defender: Infested Grunt
     winRate: 0
   - attacker: Infested Ghost
@@ -14699,9 +14084,6 @@ MonoBehaviour:
   - attacker: Infested Ghost
     defender: Spawner
     winRate: 1
-  - attacker: Infested Ghost
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Infested Elite
     defender: Marine
     winRate: 0
@@ -14898,9 +14280,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Infested Elite
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Infested Elite
     defender: Infested Grunt
     winRate: 0
   - attacker: Infested Elite
@@ -14915,9 +14294,6 @@ MonoBehaviour:
   - attacker: Infested Elite
     defender: Spawner
     winRate: 0.8
-  - attacker: Infested Elite
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Infested Wraith
     defender: Marine
     winRate: 1
@@ -15114,9 +14490,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Infested Wraith
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Infested Wraith
     defender: Infested Grunt
     winRate: 1
   - attacker: Infested Wraith
@@ -15131,9 +14504,6 @@ MonoBehaviour:
   - attacker: Infested Wraith
     defender: Spawner
     winRate: 0.1
-  - attacker: Infested Wraith
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Infested Banshee
     defender: Marine
     winRate: 0
@@ -15330,9 +14700,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 1
   - attacker: Infested Banshee
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Infested Banshee
     defender: Infested Grunt
     winRate: 1
   - attacker: Infested Banshee
@@ -15347,9 +14714,6 @@ MonoBehaviour:
   - attacker: Infested Banshee
     defender: Spawner
     winRate: 1
-  - attacker: Infested Banshee
-    defender: Infested Scarab
-    winRate: 0
   - attacker: Spawner
     defender: Marine
     winRate: 0
@@ -15546,9 +14910,6 @@ MonoBehaviour:
     defender: Juggernaut
     winRate: 0
   - attacker: Spawner
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Spawner
     defender: Infested Grunt
     winRate: 1
   - attacker: Spawner
@@ -15563,222 +14924,3 @@ MonoBehaviour:
   - attacker: Spawner
     defender: Infested Banshee
     winRate: 0
-  - attacker: Spawner
-    defender: Infested Scarab
-    winRate: 0
-  - attacker: Infested Scarab
-    defender: Marine
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Flamethrower Trooper
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Warthog
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Gauss Warthog
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Scorpion
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Wolverine
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Hornet
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Archer Missile Pod
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Pelican
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Spartan
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Mantis
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Elephant
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Grunt
-    winRate: 0
-  - attacker: Infested Scarab
-    defender: Fuel Rod Grunt
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 0.7
-  - attacker: Infested Scarab
-    defender: 'Jackal (Shield)'
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Ghost
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Elite
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Wraith
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Vampire
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Banshee
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Hunter Pair
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Zealot
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Scarab
-    winRate: 0
-  - attacker: Infested Scarab
-    defender: Infection Forms
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Carrier Form
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Combat Form
-    winRate: 0.9
-  - attacker: Infested Scarab
-    defender: Stalker Form
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Pure Form Ranged
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Swarm Form
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Pure Form Tank
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Seeder
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Infected Pelican
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Infected Phantom
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Flood Abomination
-    winRate: 0
-  - attacker: Infested Scarab
-    defender: Spartan Sniper
-    winRate: 0
-  - attacker: Infested Scarab
-    defender: Spartan Heavy Weapons
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Spartan Grenadier
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Spartan CQB
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Spartan Fireteam
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Gremlin
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Cobra
-    winRate: 0.1
-  - attacker: Infested Scarab
-    defender: Rhino
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Grizzly
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Sparrowhawk
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Shortsword
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Vulture
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Condor Gunship
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Chopper
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Brute Grenadier
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Marauder
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Reaver
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Blisterback
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Skitterer
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Goliath
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Hunter Captain
-    winRate: 0
-  - attacker: Infested Scarab
-    defender: Cannon Fodder
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Heavy Grunts
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Methane Wagon
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Grunt Goblin
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Infested Marine
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Infested Warthog
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Infested Scorpion
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Infested Hornet
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Juggernaut
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Infested Elephant
-    winRate: 0
-  - attacker: Infested Scarab
-    defender: Infested Grunt
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Infested Ghost
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Infested Elite
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Infested Wraith
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Infested Banshee
-    winRate: 1
-  - attacker: Infested Scarab
-    defender: Spawner
-    winRate: 1
