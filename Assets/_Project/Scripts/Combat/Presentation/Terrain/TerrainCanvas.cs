@@ -1,7 +1,7 @@
 // TerrainCanvas.cs
 // What a terrain layout draws on (M10). It holds the three meshes (solid things, flat paint, added light), the height of the land, and the control map: a soft
 // picture of which ground lies where and how shaded it is. It also holds the rule that protects the fighting floor: Stand refuses any place where a solid thing would be on
-// the arena or could hide part of it from the camera.
+// the arena or could hide part of it from the camera's default view.
 // Points on the map are in world metres. For a layout, "v" means metres from the middle line towards its own side, so one layout works on either side.
 // Looks only. Depends on: TerrainMeshBuilder, TerrainNoise, UnityEngine.
 
@@ -61,7 +61,7 @@ namespace Halobellum.Presentation
         public const float GlowHeight = -0.035f;
         /// <summary>A solid thing's whole footprint keeps this far from the arena's edge.</summary>
         public const float ArenaMargin = 1.2f;
-        /// <summary>South of the arena, a thing this tall must stand back by this much per metre of height, so that it can't hide the field from the camera.</summary>
+        /// <summary>South of the arena, a thing this tall must stand back by this much per metre of height, so that it can't hide the field from the camera's default view.</summary>
         public const float SouthLean = 0.75f;
 
         public readonly float HalfWidth, HalfLength, ZoneDepth, Gap;
@@ -114,7 +114,8 @@ namespace Halobellum.Presentation
             float reach = radius + ArenaMargin;
             bool overFloorX = Mathf.Abs(x) < HalfWidth + reach;
             if (overFloorX && Mathf.Abs(z) < HalfLength + reach) return false;
-            // The camera always stands inside the arena's width and south of what it looks at, so only things to the south of the floor, in line with it, can hide any of it.
+            // At its default view the camera stands inside the arena's width and south of what it looks at, so only things to the south of the floor, in line with it, can hide any of it.
+            // From other sides the terrain's shaders leave out what hides the floor (KeepFloorInView), so nothing else need stand back.
             if (z < -HalfLength && overFloorX && -z - HalfLength - radius < height * SouthLean + 0.3f) return false;
             foreach (Vector3 other in _occupied)
             {

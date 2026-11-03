@@ -1,6 +1,6 @@
 // TerrainSky.shader
 // The sky of the terrain (M10): a gradient from the horizon up, thin slow clouds, the sun's glow, and on an alien sky a pale disc hanging in it. The
-// mesh is a dome that always stays centred on the camera. At the game's normal camera the sky is out of view; it shows when the camera looks low.
+// mesh is a dome that always stays centred on the camera. At every tilt the game's camera allows the sky is out of view; it shows when a tool looks lower.
 // Depends on: UnityEngine's time, BattlefieldView (sets the colours).
 Shader "Halobellum/TerrainSky"
 {

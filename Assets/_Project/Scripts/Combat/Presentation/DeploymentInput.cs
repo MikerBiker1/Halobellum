@@ -4,8 +4,8 @@
 // "ghost" shows its footprint snapped to the grid squares under the mouse, green where it fits,
 // red where it doesn't. Team B's zone is the mirror image of Team A's.
 //   Selected squad: M moves it, R turns it, Delete sells (match) or removes (sandbox) it.
-//   While placing or moving: left-click puts it there, R turns it, right-click or Escape cancels.
-// Depends on: IDeploymentPlacement, BattleController (rules), UiHitAreas, PlaceholderArt,
+//   While placing or moving: left-click puts it there, R turns it, a right-click (not a drag: RightClick) or Escape cancels.
+// Depends on: IDeploymentPlacement, BattleController (rules), RightClick, UiHitAreas, PlaceholderArt,
 //             Halobellum.Economy (DeploymentGrid), Unity Input System.
 
 using Halobellum.Core;
@@ -62,14 +62,19 @@ namespace Halobellum.Presentation
             }
 
             if (keyboard != null && keyboard.rKey.wasPressedThisFrame) _match.ToggleRotation();
-            if ((keyboard != null && keyboard.escapeKey.wasPressedThisFrame) || (mouse != null && mouse.rightButton.wasPressedThisFrame))
+            if ((keyboard != null && keyboard.escapeKey.wasPressedThisFrame) || RightClick.WasClicked)
             {
                 _match.CancelPlacement();
                 return;
             }
             if (mouse == null) return;
 
-            Vector2 pointer = mouse.position.ReadValue();
+            PointAt(mouse.position.ReadValue(), mouse.leftButton.wasPressedThisFrame);
+        }
+
+        /// <summary>The ghost follows the pointer, and a click puts the squad there. Test tools can call it, since no mouse is used in them.</summary>
+        public void PointAt(Vector2 pointer, bool click)
+        {
             if (UiHitAreas.Contains(pointer) || !PointerCell(pointer, out int column, out int row))
             {
                 _ghost.gameObject.SetActive(false);
@@ -77,11 +82,11 @@ namespace Halobellum.Presentation
             }
 
             ShowGhost(column, row);
-            if (mouse.leftButton.wasPressedThisFrame) _match.PlaceAt(column, row);
+            if (click) _match.PlaceAt(column, row);
         }
 
         /// <summary>The grid spot (left column, front row) that centres the footprint under the mouse.</summary>
-        private bool PointerCell(Vector2 pointer, out int column, out int row)
+        public bool PointerCell(Vector2 pointer, out int column, out int row)
         {
             column = row = 0;
             Camera camera = Camera.main;

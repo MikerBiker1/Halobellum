@@ -46,7 +46,7 @@ All shapes and textures are original. Nothing was downloaded, and there are no l
 
 - **The floor is exactly flat.** Hills start only outside the arena and a flat band around it. Everything on the floor is flat paint, drawn before any unit, and it can't hide anything.
 - **No solid patches of near-black on the Flood's floors.** Dark Flood forms stand there. The Wreck's pools were opaque and near black, 8 to 12 m across, so forms vanished on them and from a distance they looked like vehicles. They are now a mid-toned olive you can see through, and the Hive's trenches are a mid brown. A test checks it. The shell holes of no man's land stay dark on every map: they are small.
-- **Nothing solid can hide the floor.** The camera always stands inside the arena's width and to the south. So only things to the south of the floor and in line with it could get in the way, and they must stand back by 0.75 m per metre of height. `TerrainCanvas.Stand` refuses anything else. Hills to the south are capped low for the same reason. The tests check this on the final meshes of every layout.
+- **Nothing solid can hide the floor.** At the default view the camera stands inside the arena's width and to the south. So only things to the south of the floor and in line with it could get in the way, and they must stand back by 0.75 m per metre of height. `TerrainCanvas.Stand` refuses anything else. Hills to the south are capped low for the same reason. The tests check this on the final meshes of every layout. The camera can now turn (`camera.md`), and from other sides tall things and hills do stand in the way. So the terrain's shaders follow the line from the camera through each pixel of what stands, down to the ground, and leave the pixel out if that line lands on the floor: the outer 2 m of the floor may be hidden, and further in the thing thins out to nothing over 4 m (`KeepFloorInView` in `TerrainCommon.hlsl`). It goes by the deepest that line gets along the ground, from under the point to where it lands, so that the top of a post seen across a corner of the floor goes with the middle below it. A halo fades by the same measure, taken at its middle, so that it goes with the post it hangs on (`FloorHiding`, in `TerrainGlow`). From the default view nothing is in the way, so nothing changes there.
 - **Triangles:** 55,000 to 85,000 for a whole map, under the 150,000 limit.
 - **Draw calls:** one each for the ground, paint, solid things, light, haze and sky, plus two overlays and the blobs.
 - **Frame time** in a built game at the game's camera, with the battle paused and about 50 bodies: 1.0 to 2.4 ms on this PC.
@@ -57,13 +57,13 @@ Untouched. Nothing here reads anything but the factions, the seed and where bodi
 
 ## Seeing every map
 
-`Halobellum.exe -terrainGallery <folder>` goes through every layout of every faction, plus a Flood mirror match, and saves for each: bare ground, armies in deployment, battle, zoomed all the way out, close up on each side, and looking low at the horizon. It logs triangles and frame time. Add `-terrainMaps 2` for a quick look.
+`Halobellum.exe -terrainGallery <folder>` goes through every layout of every faction, plus a Flood mirror match, and saves for each: bare ground, armies in deployment, battle, zoomed all the way out, close up on each side, and looking low at the horizon. It logs triangles and frame time. Add `-terrainMaps 2` for a quick look. Add `-terrainRing` to see each map from all round instead (`camera.md`).
 
 ## Known limits
 
 - Glowing seams and veins are thin flat ribbons. On the High quality level (4x MSAA) they stay whole at the game camera. On Low there is no anti-aliasing, and the thinnest still break into dashes.
 
-- At the game's camera the sky itself is out of view: the camera's top edge looks 30 degrees below the horizon. It is there, and it shows in low views, and its colour reaches the far land through the haze. If the camera ever tilts up, the horizon is ready.
+- At the game's camera the sky itself is out of view: the top edge of the view looks 30 degrees below the horizon at the default tilt, and 10 degrees below it at the lowest tilt the player can reach. It is there, and it shows in low views from tools, and its colour reaches the far land through the haze.
 - Models don't get the haze, on purpose: units stay clear. Terrain shaders do it themselves, and the scene's Unity fog stays off.
 - A change of map costs about 300 ms. It happens only at the draft choice in a match, and when the Sandbox's majority faction changes.
 - The sun's colour and ambient are set for the whole map by the player's faction, so they tint the units too, and the enemy's ground. They are kept mild for that reason.

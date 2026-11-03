@@ -235,10 +235,20 @@ namespace Halobellum.Presentation
             if (live > PeakLive) PeakLive = live;
 
             if (_camera == null) _camera = Camera.main;
-            if (_camera != null) ReadScale = Mathf.Clamp(_camera.transform.position.y / 90f, 0.5f, 1.9f);
+            if (_camera != null) ReadScale = ReadScaleFor(_camera.transform.position.y, _camera.transform.forward.y);
 
             _headGlowCount = _headStreakCount = _groundHeadCount = _cloudSmokeCount = _cloudFireCount = 0;
             _linesUsed = 0;
+        }
+
+        /// <summary>
+        /// ReadScale for a camera this high, looking this far down (forward.y). It goes by how far away the ground is rather than by height, so that tilting the camera doesn't
+        /// resize things. At the default tilt it is the height over 90 m.
+        /// </summary>
+        public static float ReadScaleFor(float height, float forwardY)
+        {
+            float sinDefaultTilt = Mathf.Sin(BattleCameraController.DefaultPitch * Mathf.Deg2Rad);
+            return Mathf.Clamp(height * sinDefaultTilt / Mathf.Max(0.55f, -forwardY) / 90f, 0.5f, 1.9f);
         }
 
         /// <summary>Call last thing each frame: hands over what is redrawn every frame.</summary>

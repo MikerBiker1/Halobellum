@@ -21,7 +21,6 @@ namespace Halobellum.Presentation
     public sealed class EffectsGallery : MonoBehaviour
     {
         private const float GameCameraDistance = 150f;
-        private const float GameCameraPitch = 55f;
 
         private SandboxController _sandbox;
         private BattleController _battle;
@@ -530,7 +529,8 @@ namespace Halobellum.Presentation
 
         private void GameCamera(Vector3 focus)
         {
-            Quaternion rotation = Quaternion.Euler(GameCameraPitch, 0f, 0f);
+            BattleCameraController.ToolView(System.Environment.GetCommandLineArgs(), out float yaw, out float tilt);
+            Quaternion rotation = Quaternion.Euler(tilt, yaw, 0f);
             _camera.transform.SetPositionAndRotation(focus - rotation * Vector3.forward * GameCameraDistance, rotation);
         }
 

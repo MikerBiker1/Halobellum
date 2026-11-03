@@ -2,7 +2,7 @@
 // Shows the ground the battle is fought on (M10): the player's side looks like the player's faction's land, the enemy's side like the enemy's, with no man's land blending between them, real land out to the horizon, and a sky, sun and
 // air set by the player's faction. A map is built by TerrainBuilder from the two factions and the match seed; it rebuilds when those change. In the Sandbox it follows the factions of the units in play.
 // Deployment squares (decision D4) are an overlay: clear during deployment and fading out when a battle runs.
-// The fighting floor stays flat and clear: props stand outside it, and paint on it can't hide a unit. Looks only: it reads the battle and the factions and changes neither.
+// The fighting floor stays flat and clear: props stand outside it, paint on it can't hide a unit, and from wherever the camera has turned the terrain's shaders leave out what would stand in front of it. Looks only: it reads the battle and the factions and changes neither.
 // Depends on: BattleController (Rules), MatchController, SandboxController, BattleFactions, TerrainBuilder, UnitBlobShadows, UnityEngine.
 
 using System.Collections.Generic;
@@ -17,6 +17,7 @@ namespace Halobellum.Presentation
     {
         private static readonly int FogColorId = Shader.PropertyToID("_HBFogColor");
         private static readonly int FogRangeId = Shader.PropertyToID("_HBFogRange");
+        private static readonly int FloorId = Shader.PropertyToID("_HBFloor");
         private static readonly int FadeId = Shader.PropertyToID("_Fade");
 
         [Tooltip("Seconds for the deployment squares to fade away when a battle starts, or back when it ends.")]
@@ -137,6 +138,7 @@ namespace Halobellum.Presentation
 
             Clear();
             CombatRules rules = _battle.Rules;
+            Shader.SetGlobalVector(FloorId, new Vector4(rules.ArenaWidth * 0.5f, rules.DeploymentDepthSquares * rules.SquareSize + rules.NoMansLandSquares * rules.SquareSize * 0.5f, 0f, 0f));
             _map = TerrainBuilder.Build(new TerrainRequest
             {
                 FactionA = factionA,
