@@ -449,6 +449,16 @@ namespace Halobellum.Presentation
         /// The Infected Pelican comes down: a big crash, about what a titan's blast is. burstRadius is the reach of its death burst, the size
         /// of the first ring; the fire and the cloud fill it and go a little beyond, so that the eye can still tell what it damages.
         /// </summary>
+        /// <summary>A tower's fall reaches its whole army (D55): rings that run out across the field, in the cold blue of something switched off.</summary>
+        public void TowerShockwave(Vector3 position)
+        {
+            Vector3 ground = new Vector3(position.x, 0.14f, position.z);
+            _kit.Glow(EffectPriority.Huge, ground + Vector3.up * 2f, 30f, new Color(0.6f, 0.8f, 1f), 0.25f);
+            _kit.Ring(EffectPriority.Huge, ground, 40f, new Color(0.65f, 0.85f, 1f, 1f), 0.55f);
+            _kit.Ring(EffectPriority.Huge, ground, 90f, new Color(0.65f, 0.85f, 1f, 0.7f), 0.9f);
+            _kit.Ring(EffectPriority.Huge, ground, 160f, new Color(0.65f, 0.85f, 1f, 0.4f), 1.3f);
+        }
+
         public void PelicanCrash(Vector3 position, float bodyRadius, float burstRadius)
         {
             Vector3 ground = new Vector3(position.x, 0.14f, position.z);

@@ -80,6 +80,8 @@ namespace Halobellum.Economy
         public Vec2 Position;
         /// <summary>The direction of a line-shaped area (only while IsPlaced).</summary>
         public float AngleDegrees;
+        /// <summary>Gone after its one use, not recharging (the Command Center's oil, D55).</summary>
+        public bool SingleUse;
 
         public bool IsReady(int round) => ReadyRound <= round;
         /// <summary>Rounds until it can be used again (0 = ready).</summary>

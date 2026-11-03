@@ -37,10 +37,14 @@ namespace Halobellum.Tests
             yield return null;
         }
 
+        /// <summary>Both sides' two towers (D55): they stand after the squads, and are always shown.</summary>
+        private const int TowersShown = 4;
+
+        /// <summary>The bodies of squads shown, not counting the towers.</summary>
         private static int CountViews()
         {
             GameObject units = GameObject.Find("Units");
-            return units == null ? 0 : units.transform.childCount;
+            return units == null ? 0 : units.transform.childCount - TowersShown;
         }
 
         private IEnumerator PlayRound()
@@ -91,7 +95,7 @@ namespace Halobellum.Tests
             Assert.IsTrue(_match.IsDropping);
             Assert.IsNull(_match.SelectedPlacedSquad, "Selected only once it lands.");
             Transform units = GameObject.Find("Units").transform;
-            Assert.Greater(units.GetChild(units.childCount - 1).position.y, 50f, "A bought squad starts high above the field.");
+            Assert.Greater(units.GetChild(units.childCount - 1 - TowersShown).position.y, 50f, "A bought squad starts high above the field.");
 
             float deadline = Time.realtimeSinceStartup + 5f;
             while (_match.IsDropping && Time.realtimeSinceStartup < deadline) yield return null;

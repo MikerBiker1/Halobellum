@@ -21,6 +21,9 @@
 //   7. Units at 0 health die. Deaths are applied at the end of the tick, so units that shoot in
 //      the same tick are treated fairly regardless of list order.
 //   8. The battle ends when a side has no units left or the time limit is reached.
+// A tower (D55) is a ground target like any other, the closest enemy being the closest enemy, but it
+// doesn't count as a unit left. When it falls, its side's whole army suffers its shockwave: a second
+// tower adds to how long that lasts, not to how bad it is.
 // Random rolls (shield blocks) use a seeded SimRandom, so the same armies and seed replay the same.
 // Depends on: MovementSystem, Targeting, DamageCalculator, DirectionalDefense, SquadFormation,
 //             BattleEvents, BattleResult, SimUnit, Halobellum.Core.
@@ -78,6 +81,8 @@ namespace Halobellum.Combat
         private readonly float _dt;
         private readonly int _tickLimit;
         private int _nextSquadId;
+        private float _shockwaveUntilA, _shockwaveUntilB;
+        private ShockwaveStats _shockwaveA, _shockwaveB;
 
         public BattleSimulation(CombatRules rules, int seed)
         {
@@ -127,6 +132,12 @@ namespace Halobellum.Combat
         public bool IsFinished { get; private set; }
         /// <summary>Set once the battle is finished.</summary>
         public BattleResult Result { get; private set; }
+
+        /// <summary>Seconds this side's army still suffers a fallen tower's shockwave (0 if it doesn't).</summary>
+        public float ShockwaveSecondsLeft(Team team) => Math.Max(0f, (team == Team.A ? _shockwaveUntilA : _shockwaveUntilB) - ElapsedSeconds);
+
+        /// <summary>The shockwave this side's army suffers now, or null.</summary>
+        public ShockwaveStats ActiveShockwave(Team team) => ShockwaveSecondsLeft(team) > 0f ? (team == Team.A ? _shockwaveA : _shockwaveB) : null;
 
         // ------------------------------------------------------------------ setup
 
@@ -415,12 +426,18 @@ namespace Halobellum.Combat
         private void UpdateStatusEffects()
         {
             float now = ElapsedSeconds;
+            ShockwaveStats shockwaveA = ActiveShockwave(Team.A), shockwaveB = ActiveShockwave(Team.B);
             foreach (SimUnit unit in _units)
             {
                 if (!unit.IsAlive) continue;
                 unit.SetTechsDisabled(now < unit.TechsDisabledUntil);
                 unit.SpeedMultiplier = now < unit.SlowedUntil ? unit.SlowMultiplier : 1f;
                 unit.RangeMultiplier = 1f;
+                unit.FireDamageTaken = 1f;
+                ShockwaveStats shockwave = unit.Team == Team.A ? shockwaveA : shockwaveB;
+                unit.ShockwaveDamage = shockwave?.DamageMultiplier ?? 1f;
+                unit.ShockwaveFireRate = shockwave?.FireRateMultiplier ?? 1f;
+                if (shockwave != null) unit.SpeedMultiplier *= shockwave.SpeedMultiplier;
                 if (unit.IsSeeded) UpdateSeed(unit, now);
             }
             foreach (SimUnit source in _auras)
@@ -428,7 +445,7 @@ namespace Halobellum.Combat
                 if (!source.IsAlive) continue;
                 foreach (SimUnit unit in _units)
                 {
-                    if (!unit.IsAlive || unit.Team != source.Team || unit == source || unit.AuraTick == Tick) continue;
+                    if (!unit.IsAlive || unit.Team != source.Team || unit == source || unit.AuraTick == Tick || unit.Stats.IsTower) continue;
                     if (Vec2.Distance(unit.Position, source.Position) - unit.Radius > source.Stats.AuraRadius) continue;
                     unit.AuraTick = Tick;
                     unit.SpeedMultiplier *= source.Stats.AuraSpeedMultiplier;
@@ -437,10 +454,20 @@ namespace Halobellum.Combat
             }
             foreach (SimSpell spell in _spells)
             {
-                if (spell.Stats.Effect != SpellEffect.Smoke || spell.TicksDone == 0 || spell.IsOverAt(now)) continue;
+                if (!spell.Stats.Lingers || spell.TicksDone == 0 || spell.IsOverAt(now)) continue;
                 foreach (SimUnit unit in _units)
                 {
-                    if (unit.IsAlive && spell.Covers(unit)) unit.RangeMultiplier = Math.Min(unit.RangeMultiplier, spell.Stats.RangeMultiplier);
+                    if (!unit.IsAlive || !spell.Covers(unit)) continue;
+                    if (spell.Stats.Effect == SpellEffect.Smoke)
+                    {
+                        unit.RangeMultiplier = Math.Min(unit.RangeMultiplier, spell.Stats.RangeMultiplier);
+                    }
+                    else if (!unit.IsAir)
+                    {
+                        unit.FireDamageTaken = Math.Max(unit.FireDamageTaken, spell.Stats.FireDamageMultiplier);
+                        if (unit.OilTick != Tick) unit.SpeedMultiplier *= 1f - spell.Stats.SlowShare;
+                        unit.OilTick = Tick;
+                    }
                 }
             }
         }
@@ -511,9 +538,10 @@ namespace Halobellum.Combat
             foreach (SimUnit victim in _nearby)
             {
                 // Offensive spells hit everyone in the area, the caster's own units too (D33).
-                if (!victim.IsAlive || (victim.Team == spell.Team && !spell.Stats.Offensive) || !spell.Stats.Targets.Allows(victim.IsAir)) continue;
+                if (!victim.IsAlive || (victim.Team == spell.Team && (!spell.Stats.Offensive || victim.Stats.IsTower)) || !spell.Stats.Targets.Allows(victim.IsAir)) continue;
                 if (!spell.Covers(victim)) continue;
                 float multiplier = (victim.IsAir ? weapon.AirDamageMultiplier : 1f) * victim.FormsAlive;
+                if (weapon.DamageType == DamageType.Fire) multiplier *= victim.FireDamageTaken;
                 float dealt = DamageCalculator.ApplyHit(_rules.DamageTable, weapon, victim.Stats.ArmorType, multiplier, ref victim.Shield, ref victim.Health);
                 victim.SecondsSinceDamaged = 0f;
                 spell.DamageDealt += dealt;
@@ -534,7 +562,7 @@ namespace Halobellum.Combat
             _movement.Grid.Query(spell.Position, spell.Stats.Radius + _movement.Grid.MaxRadius, _nearby);
             foreach (SimUnit unit in _nearby)
             {
-                if (!unit.IsAlive || unit.Team != spell.Team) continue;
+                if (!unit.IsAlive || unit.Team != spell.Team || unit.Stats.IsTower) continue;
                 if (Vec2.Distance(unit.Position, spell.Position) - unit.Radius > spell.Stats.Radius) continue;
                 if (spell.Stats.ShieldBonusShare > 0f) unit.Shield += unit.Stats.MaxHealth * spell.Stats.ShieldBonusShare;
                 if (spell.Stats.DamageMultiplier > 0f) unit.DamageMultiplier *= spell.Stats.DamageMultiplier;
@@ -949,7 +977,7 @@ namespace Halobellum.Combat
                 for (int w = 0; w < unit.Weapons.Length; w++)
                 {
                     SimWeapon weapon = unit.Weapons[w];
-                    weapon.Cooldown -= _dt;
+                    weapon.Cooldown -= _dt * unit.ShockwaveFireRate;
                     if (weapon.BeamPhase != BeamPhase.Off)
                     {
                         UpdateBeam(unit, weapon);
@@ -1184,8 +1212,9 @@ namespace Halobellum.Combat
         /// <param name="areaHit">An area hit (splash, cone, beam) hurts every tiny form in a pack (D38).</param>
         private void DealDamage(SimUnit target, SimUnit attacker, WeaponStats weapon, float directionalMultiplier, bool areaHit)
         {
-            float multiplier = (target.IsAir ? directionalMultiplier * weapon.AirDamageMultiplier : directionalMultiplier) * attacker.DamageMultiplier * attacker.FormsShare;
+            float multiplier = (target.IsAir ? directionalMultiplier * weapon.AirDamageMultiplier : directionalMultiplier) * attacker.DamageMultiplier * attacker.ShockwaveDamage * attacker.FormsShare;
             if (areaHit) multiplier *= target.FormsAlive;
+            if (weapon.DamageType == DamageType.Fire) multiplier *= target.FireDamageTaken;
             float dealt = DamageCalculator.ApplyHit(_rules.DamageTable, weapon, target.Stats.ArmorType, multiplier,
                 ref target.Shield, ref target.Health);
             target.SecondsSinceDamaged = 0f;
@@ -1215,6 +1244,7 @@ namespace Halobellum.Combat
                 foreach (SimWeapon weapon in unit.Weapons) weapon.Target = null;
                 SimUnit killer = unit.KilledById >= 0 ? _units[unit.KilledById] : null;
                 Events.RaiseUnitDied(unit, killer);
+                if (unit.Stats.Shockwave != null) ReleaseShockwave(unit);
                 if (WillRise(unit))
                 {
                     _rises.Add(new PendingRise { Corpse = unit, Team = unit.Team == Team.A ? Team.B : Team.A, At = ElapsedSeconds + _rules.InfectionDelaySeconds });
@@ -1226,12 +1256,30 @@ namespace Halobellum.Combat
             _bursting.Clear();
         }
 
+        /// <summary>A tower fell: its side's army suffers the shockwave, for longer if it already does (D55).</summary>
+        private void ReleaseShockwave(SimUnit tower)
+        {
+            ShockwaveStats shockwave = tower.Stats.Shockwave;
+            float now = ElapsedSeconds;
+            if (tower.Team == Team.A)
+            {
+                _shockwaveUntilA = Math.Max(_shockwaveUntilA, now) + shockwave.Seconds;
+                _shockwaveA = shockwave;
+            }
+            else
+            {
+                _shockwaveUntilB = Math.Max(_shockwaveUntilB, now) + shockwave.Seconds;
+                _shockwaveB = shockwave;
+            }
+            Events.RaiseShockwaveReleased(tower);
+        }
+
         private void CheckForEnd()
         {
             int aliveA = 0, aliveB = 0;
             foreach (SimUnit unit in _units)
             {
-                if (!unit.IsAlive) continue;
+                if (!unit.IsAlive || unit.Stats.IsTower) continue;
                 if (unit.Team == Team.A) aliveA++;
                 else aliveB++;
             }
@@ -1289,7 +1337,7 @@ namespace Halobellum.Combat
 
             foreach (SimUnit unit in _units)
             {
-                if (unit.Team != team) continue;
+                if (unit.Team != team || unit.Stats.IsTower) continue;
                 UnitTypeResult typeResult = byName[unit.Stats.Name];
                 typeResult.Deployed++;
                 typeResult.DamageDealt += unit.DamageDealt;

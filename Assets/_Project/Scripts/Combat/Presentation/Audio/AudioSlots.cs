@@ -100,7 +100,7 @@ namespace Halobellum.Presentation
             if (name.Contains("missile")) return tick <= 1 ? "sfx_spell_missiles" : null;
             if (name.Contains("wrath")) return "sfx_spell_wrath";
             if (name.Contains("plasma")) return repeats ? "sfx_spell_storm_tick" : "sfx_spell_plasma";
-            if (spell.Effect == SpellEffect.Smoke) return "sfx_spell_smoke";
+            if (spell.Lingers) return "sfx_spell_smoke";
             if (spell.Effect == SpellEffect.Disrupt) return "sfx_spell_emp";
             if (name.Contains("blight") || name.Contains("spore")) return "sfx_spell_spore";
             if (name.Contains("shield") || name.Contains("dome")) return "sfx_spell_shield";

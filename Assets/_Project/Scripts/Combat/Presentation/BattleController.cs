@@ -195,7 +195,7 @@ namespace Halobellum.Presentation
             for (int i = 0; i < units.Count; i++)
             {
                 SimUnit unit = units[i];
-                if (unit.Team == team && unit.IsAlive) count++;
+                if (unit.Team == team && unit.IsAlive && !unit.Stats.IsTower) count++;
             }
             return count;
         }
@@ -217,7 +217,7 @@ namespace Halobellum.Presentation
         private int CountBodies(Team team)
         {
             int count = 0;
-            foreach (SimUnit unit in Simulation.Units) if (unit.Team == team) count++;
+            foreach (SimUnit unit in Simulation.Units) if (unit.Team == team && !unit.Stats.IsTower) count++;
             return count;
         }
 

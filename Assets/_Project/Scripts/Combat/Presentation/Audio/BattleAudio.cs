@@ -217,7 +217,7 @@ namespace Halobellum.Presentation
             int engines = 0, hovers = 0;
             foreach (SimUnit unit in _shown.Units)
             {
-                if (!unit.IsAlive || IsLiving(unit.Stats)) continue;
+                if (!unit.IsAlive || IsLiving(unit.Stats) || unit.Stats.IsTower) continue;
                 if (unit.IsAir) hovers++;
                 else if (unit.Radius >= 1f)
                 {

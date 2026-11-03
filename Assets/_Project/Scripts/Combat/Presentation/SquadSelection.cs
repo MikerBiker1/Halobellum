@@ -2,11 +2,12 @@
 // Lets the player select a squad by left-clicking any of its bodies (Bible Section 13: selecting a
 // squad opens the stats window). A right-click (not a drag, which turns the camera: RightClick) or Escape clears the selection. Picking uses the
 // simulation's positions and collision sizes, so no physics colliders are needed. Clicks on HUD
-// windows are ignored (see UiHitAreas).
-// Depends on: BattleController, UnitViewManager, RightClick, UiHitAreas, Halobellum.Combat, Unity Input System.
+// windows are ignored (see UiHitAreas). A click on a tower (D55) selects that tower instead, for the Match's tower window.
+// Depends on: BattleController, UnitViewManager, RightClick, UiHitAreas, Halobellum.Combat, Halobellum.Core, Unity Input System.
 
 using System;
 using Halobellum.Combat;
+using Halobellum.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -26,6 +27,9 @@ namespace Halobellum.Presentation
         /// <summary>Raised with the new squad id (-1 for none) whenever the selection changes.</summary>
         public event Action<int> SelectionChanged;
 
+        /// <summary>The tower selected, whose unit is rebuilt with every preview, so it is known by side and kind. Null when none is.</summary>
+        public (Team team, TowerKind kind)? SelectedTower { get; private set; }
+
         /// <summary>When false, mouse and keyboard don't change the selection (for example while placing a squad).</summary>
         public bool InputEnabled { get; set; } = true;
 
@@ -42,13 +46,23 @@ namespace Halobellum.Presentation
             Mouse mouse = Mouse.current;
             Keyboard keyboard = Keyboard.current;
 
-            if ((keyboard != null && keyboard.escapeKey.wasPressedThisFrame) || RightClick.WasClicked) Select(-1);
+            if ((keyboard != null && keyboard.escapeKey.wasPressedThisFrame) || RightClick.WasClicked)
+            {
+                Select(-1);
+                SelectedTower = null;
+            }
             if (mouse == null || !mouse.leftButton.wasPressedThisFrame) return;
 
             Vector2 pointer = mouse.position.ReadValue();
             if (UiHitAreas.Contains(pointer)) return;
 
             SimUnit picked = BodyAt(pointer);
+            if (picked != null && picked.Stats.IsTower)
+            {
+                SelectTower(picked.Team, picked.Stats.Shockwave.Kind);
+                return;
+            }
+            SelectedTower = null;
             SelectByPlayer(picked != null ? picked.SquadId : -1);
         }
 
@@ -58,6 +72,16 @@ namespace Halobellum.Presentation
             Camera camera = Camera.main;
             return camera != null ? Pick(camera.ScreenPointToRay(pointer)) : null;
         }
+
+        /// <summary>Selects a tower, and no squad. Null-like clearing goes through ClearTower.</summary>
+        public void SelectTower(Team team, TowerKind kind)
+        {
+            Select(-1);
+            if (SelectedTower != (team, kind)) UiAudio.SquadSelected();
+            SelectedTower = (team, kind);
+        }
+
+        public void ClearTower() => SelectedTower = null;
 
         /// <summary>The player's own click on a squad: like Select, and heard. Select alone stays silent, because it also runs each time a preview is rebuilt and when a bought squad lands.</summary>
         public void SelectByPlayer(int squadId)
@@ -71,6 +95,7 @@ namespace Halobellum.Presentation
         {
             if (squadId == SelectedSquadId) return;
             SelectedSquadId = squadId;
+            if (squadId >= 0) SelectedTower = null;
             SelectionChanged?.Invoke(squadId);
         }
 

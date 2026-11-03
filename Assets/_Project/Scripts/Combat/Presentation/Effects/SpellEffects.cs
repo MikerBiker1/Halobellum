@@ -229,9 +229,10 @@ namespace Halobellum.Presentation
             {
                 SimSpell spell = spells[i];
                 SpellStats stats = spell.Stats;
-                if (stats.Effect != SpellEffect.Smoke || spell.TicksDone == 0 || spell.IsOverAt(battle)) continue;
+                if (!stats.Lingers || spell.TicksDone == 0 || spell.IsOverAt(battle)) continue;
                 bool spores = (stats.Name ?? "").IndexOf("spore", System.StringComparison.OrdinalIgnoreCase) >= 0;
                 Color color = spores ? new Color(0.36f, 0.44f, 0.18f, 0.36f) : new Color(0.62f, 0.63f, 0.65f, 0.34f);
+                if (stats.Effect == SpellEffect.Oil) color = new Color(0.07f, 0.06f, 0.05f, 0.5f);
                 float width = stats.IsRectangle ? stats.AreaWidth : stats.Radius * 2f;
                 float depth = stats.IsRectangle ? stats.AreaDepth : stats.Radius * 2f;
                 int puffs = Mathf.Clamp(Mathf.RoundToInt(width * depth / 22f), 2, 8);

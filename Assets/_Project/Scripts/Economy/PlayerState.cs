@@ -42,6 +42,19 @@ namespace Halobellum.Economy
         public ItemStats Item;
     }
 
+    /// <summary>One of a player's two towers (D55). Every battle builds it afresh; its level stays.</summary>
+    public sealed class PlacedTower
+    {
+        public TowerKind Kind;
+        /// <summary>In the owner's frame, as for a squad.</summary>
+        public int Column;
+        public int Row;
+        public int Squares;
+        public int Level = 1;
+        /// <summary>How many battles it has fallen in, which both sides saw.</summary>
+        public int Falls;
+    }
+
     public sealed class PlayerState
     {
         public readonly Team Team;
@@ -71,6 +84,17 @@ namespace Halobellum.Economy
         public ArmyBuffs Buffs { get; private set; } = new ArmyBuffs();
         /// <summary>Copies of Intensive Training taken; each has its own cooldown.</summary>
         public readonly List<OwnedTraining> Trainings = new List<OwnedTraining>();
+
+        /// <summary>This player's towers, in the order of TowerKind (none in a match without towers, or in the Sandbox).</summary>
+        public readonly List<PlacedTower> Towers = new List<PlacedTower>();
+        /// <summary>This round's Command Center purchases: each once a round (D55).</summary>
+        public bool BoughtExtraSlot, BoughtOilZone, UsedRapidResupply, EliteRecruitment;
+        /// <summary>Credits Rapid Resupply takes from the next round's income.</summary>
+        public int IncomePenalty;
+        /// <summary>Research Center steps bought.</summary>
+        public int ResearchHealthSteps, ResearchDamageSteps;
+
+        public PlacedTower FindTower(TowerKind kind) => Towers.Find(t => t.Kind == kind);
 
         /// <summary>How many times the player took this card.</summary>
         public int CopiesOwned(CardStats card)

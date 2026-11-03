@@ -119,7 +119,7 @@ Order agreed with the owner (D40), with approval between stages:
 Asked for by the owner as one overnight job. Built in parallel, then merged and tested together.
 
 - [x] The Infected Pelican dives past other air units (D46)
-- [x] The 8 sub-factions, 36 exclusive units (38 until D54), the real 5-card draft; reinforcements, shop, Sandbox and AI know them (D52)
+- [x] The 8 sub-factions, 34 exclusive units (38 until D54 and D56), the real 5-card draft; reinforcements, shop, Sandbox and AI know them (D52)
 - [x] Terrain by faction, 3 layouts each ("more maps"), sky and light, blobs under units (D47)
 - [x] Effects: weapon kinds, impacts, deaths, wrecks, spells, camera shake (D48)
 - [x] Sound and music: complete system with original placeholders and the owner's slots (D49)
@@ -130,6 +130,8 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] Second round: the reviewers' lesser notes, each area independently checked (D53)
 - [x] The owner's quick wins: smaller Pelican crash, turning camera, Level all, Screen setting, still menu Scarab (D54)
 - [x] 3 techs on every unit, no infested Titans, damage techs reach death bursts (D54)
+- [x] Towers: targets, shockwave, levels, Command Center and Research Center, the AI by difficulty, placeholder models (D55)
+- [x] The owner's morning answers: Pelican blast of 3.5 m, Blisterback and Methane Wagon removed, `Assets_to_Download.md` (D56)
 - [ ] The owner's own Halo music and sound, in the slots (see MORNING_DECISIONS.md)
 - [ ] Models for the new units (see MORNING_DECISIONS.md)
 - [ ] The owner's play test of M10

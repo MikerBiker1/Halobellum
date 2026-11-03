@@ -64,12 +64,10 @@ thing is on screen, and quieter when it is off screen.
 
 | Weapon | Was | Now |
 |---|---|---|
-| Blisterback, Plasma Missile Barrage (75, lobbed, splash 3.5) | small plasma sound, small bolt; its landing was already heard | heavy plasma sound, blue ball, same landing |
 | Marauder, Plasma Cannon (80, splash 2) | small plasma sound, small bolt | heavy plasma sound, blue ball, same landing |
 | Spartan Sniper, SRS99 (220 every 3 s) | small rifle sound, thin streak | Gauss sound, heavy muzzle, straight line |
 | Spartan CQB, M45 Shotgun (80 every 0.8 s) | small rifle sound, by falling through to the default | heavy gun sound, wide flash, thick streak |
 | Vulture, Chin Gun (10 every 0.2 s) | small rifle sound, by falling through to the default | heavy gun sound, as other 8 to 10 damage guns on vehicles |
-| Methane Wagon, Methane Mortar (60, Fire, lobbed) | the Wraith's blue ball and plasma sound | burning keg, bomb sound, fire blast |
 | Pure Form Ranged, Bone Shards (60, lobbed, splash 3) | no sound where it landed, though a blast is drawn | a Flood burst where it lands |
 
 Left as they are, for the owner's ears: every landing but Bone Shards is the same small explosion, even a Rhino's 150 at splash 4.5 (there is a medium one that would fit from splash 4 up). Grenade launchers have the tank cannon's sound, which may be too big. The Methane Wagon's sound is a falling whistle and a thud, written for a bomb, not a mortar. Spore Lash (Spawner, 3 m) is a Bio shot rather than melee, because what it does is burst in spores.

@@ -47,10 +47,10 @@ BATTLE SOUNDS
   sfx_drop_in                      A squad falling into place: it lands 0.6 s in.
   sfx_explosion_large              The biggest units going up.
   sfx_explosion_medium             Medium vehicles and walkers going up.
-  sfx_explosion_small              Rockets, shells, kegs and fuel rods landing.
+  sfx_explosion_small              Rockets, shells and fuel rods landing.
   sfx_fire_beam                    The Scarab's beam: 2 s of charging, then 3 s of firing, 5.5 s in all.
   sfx_fire_bio                     Flood spat bone, bone shards and spores.
-  sfx_fire_bomb                    Bombs, the release, and the Methane Wagon's burning kegs.
+  sfx_fire_bomb                    Bombs, the release.
   sfx_fire_bullet                  Rifles, SMGs, pistols. Plays very often: keep it short and not too bright.
   sfx_fire_bullet_flood            A rifle in Flood hands (Scavenged Rifle).
   sfx_fire_cannon                  Tank and other cannons.
@@ -63,7 +63,7 @@ BATTLE SOUNDS
   sfx_fire_melee_flood             Flood melee (claws, tendrils, bites).
   sfx_fire_needle                  Needle weapons.
   sfx_fire_plasma                  Plasma rifles, pistols, turrets.
-  sfx_fire_plasmaheavy             Fuel rod guns, plasma mortars, and plasma shots that fly and burst (Blisterback, Marauder).
+  sfx_fire_plasmaheavy             Fuel rod guns, plasma mortars, and plasma shots that fly and burst (Marauder).
   sfx_fire_rocket                  Rocket launchers and missiles, the launch.
   sfx_flood_burst                  A carrier form going off, a Flood unit bursting, or Bone Shards landing.
   sfx_hum_engine                   A loop: the engines of all UNSC ground vehicles, as loud as how many are alive.

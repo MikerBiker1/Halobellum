@@ -86,13 +86,11 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 | Brute Grenadier | Chaff clear | 1 | 0 | 4 | 150 | 150 | Unarmored | 0 | 1.5 | Spike Grenade Launcher (34 per 2 s, Explosive, 13 m, splash 2.8 m, lobbed) | 32 of 72, 44% | Scorpion 100%, Mantis 100% |
 | Marauder | Tank | 2 | 50 | 1 | 300 | 1250 | Heavy | 0 | 1.5 | Plasma Cannon (80 per 2.2 s, Energy, 15 m, splash 2 m); Spike Turret (8 per 0.3 s, Ballistic, 12 m) | 38 of 72, 52% | Gauss Warthog 100%, Spartan 100% |
 | Reaver | Anti-air | 2 | 50 | 1 | 300 | 700 | Light | 0 | 3 | Spike Rockets (24 per 0.5 s, Explosive, 20 m, x3 vs air) | 15 of 72, 22% | Marine 100%, Flamethrower Trooper 100% |
-| Blisterback | Aerial | 3 | 225 | 1 | 450 | 1400 | Light | 0 | 1.75 | Plasma Missile Barrage (75 per 4 s, Explosive, 30 m, splash 3.5 m, lobbed); Plasma Turret (10 per 0.3 s, Energy, 12 m) | 41 of 72, 57% | Wolverine 100%, Vampire 100% |
 
 - **Chopper.** It rams: its main weapon is its front wheel, so it drives straight into the enemy, guns firing on the way.
 - **Brute Grenadier.** Tough infantry with lobbed grenades. Shorter range than a Fuel Rod Grunt, can miss what moves, but takes much more killing.
 - **Marauder.** The Banished battle tank. A plasma main gun, so a little better than a Scorpion against shields.
 - **Reaver.** Ground anti-air walker, weak against vehicles.
-- **Blisterback.** A heavy flyer that shells the ground from far away. Anti-air, not flankers, is the answer.
 
 ### Lekgolo Colony
 
@@ -112,12 +110,10 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Cannon Fodder | Chaff | 1 | 0 | 30 | 100 | 20 | Unarmored | 0 | 1.75 | Plasma Pistol (3 per 0.5 s, Energy, 9 m) | 34 of 72, 48% | Flamethrower Trooper 100%, Fuel Rod Grunt 100% |
 | Heavy Grunts | Single-target DPS | 1 | 0 | 8 | 200 | 100 | Unarmored | 30 | 1.5 | Needle Rifle (6.5 per 0.25 s, Energy, 12 m) | 42 of 72, 59% | Marine 100%, Infection Forms 100% |
-| Methane Wagon | Artillery | 2 | 50 | 1 | 300 | 800 | Light | 0 | 1.5 | Methane Mortar (60 per 3.5 s, Fire, 34 m, splash 4.5 m, lobbed) | 20 of 72, 28% | Warthog 100%, Hornet 100% |
 | Grunt Goblin | Tank | 3 | 225 | 1 | 450 | 1250 | Heavy | 0 | 2 | Goblin Plasma Cannons (9 per 0.2 s, Energy, 14 m); Goblin Fuel Rod (60 per 3 s, Explosive, 16 m, splash 2.5 m) | 43 of 72, 56% | Gauss Warthog 100%, Spartan 100% |
 
 - **Cannon Fodder.** The largest squad in the game: 30 Grunts who barely fight. They are there to be shot instead of something else.
 - **Heavy Grunts.** Grunts in heavy armor with a small shield, at the top of the Tier 1 price band.
-- **Methane Wagon.** Lobs burning kegs, so it is deadly to infantry and poor against armor. Friends within 10 m move 15% faster and heal 1% per second. It explodes when destroyed.
 - **Grunt Goblin.** A Grunt in a hero's mech. A quick tank with a strong aura: friends within 14 m move 20% faster and heal 1% per second.
 
 ### UNSC-based
@@ -175,7 +171,7 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 
 ## Balance, first pass
 
-- The counter web passed for all 73 units, before the two infested Titans went (D54), which were no other unit's best counter,: every unit has a counter by the Section 7 table that wins at least 90%. It runs in about 2 minutes in the console (`Tools/Data/cw`), against about 30 in Unity.
+- The counter web passed for all 73 units, before the two infested Titans (D54), the Blisterback and the Methane Wagon (D56) went, which were no other unit's best counter,: every unit has a counter by the Section 7 table that wins at least 90%. It runs in about 2 minutes in the console (`Tools/Data/cw`), against about 30 in Unity.
 - New units I tuned to stay under 60% average where I could. See the report (`python report.py` in `Tools/Data/cw`).
 - **Over the 60% line now (not Titans), units I did not change:** Hunter Pair, Banshee, Scorpion, Spartan, Hornet, Marine. They are measured against a bigger field now, and I left their numbers alone as told.
 - **Weak, as flankers and anti-air are across the game:** Reaver, Chopper, Infested Warthog and Ghost are level with Warthog and Ghost.

@@ -6,7 +6,7 @@
 //   - the opponent's army only as it was revealed at the start of the last battle (SeenOpponentArmy),
 //     never the opponent's current deployment;
 //   - its own actions, which go through the same Match rules as the player's (Unlock, Buy, Move,
-//     Sell, LevelUp, BuyTech).
+//     Sell, LevelUp, BuyTech, and what the towers sell).
 // The same view can drive the player's side (tests and autoplay let an AI play Team A).
 // Depends on: Match, PlayerState, DeploymentGrid, Halobellum.Core.
 
@@ -76,6 +76,14 @@ namespace Halobellum.Economy
         public int LevelUpCost(PlacedSquad squad) => _match.LevelUpCost(squad);
         public ActionResult LevelUp(PlacedSquad squad) => _match.LevelUp(Team, squad.Id);
         public ActionResult BuyTech(UnitStats type, TechUpgrade tech) => _match.BuyTech(Team, type, tech);
+
+        // Towers (D55).
+        public int SquadPrice(UnitStats type) => _match.SquadPrice(Team, type);
+        public ActionResult LevelUpTower(TowerKind kind) => _match.LevelUpTower(Team, kind);
+        public ActionResult BuyExtraSlot() => _match.BuyExtraSlot(Team);
+        public ActionResult BuyOilZone() => _match.BuyOilZone(Team);
+        public ActionResult BuyEliteRecruitment() => _match.BuyEliteRecruitment(Team);
+        public ActionResult BuyResearch(bool health) => _match.BuyResearch(Team, health);
 
         // Cards and spells (Milestone 7). Only this side's own offer and spells: the opponent's stay hidden.
         public CardOffer Offer => Self.Offer;

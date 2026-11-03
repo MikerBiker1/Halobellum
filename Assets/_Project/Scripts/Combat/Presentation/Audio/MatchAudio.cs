@@ -80,8 +80,14 @@ namespace Halobellum.Presentation
                     break;
                 case nameof(MatchController.Sell): GameAudio.Ui(UiSound.Sell); break;
                 case nameof(MatchController.Unlock):
+                case nameof(MatchController.BuyExtraSlot):
+                case nameof(MatchController.BuyOilZone):
+                case nameof(MatchController.RapidResupply):
+                case nameof(MatchController.BuyEliteRecruitment):
                 case nameof(MatchController.BuyTech): GameAudio.Ui(UiSound.Unlock); break;
                 case nameof(MatchController.LevelUp):
+                case nameof(MatchController.LevelUpTower):
+                case nameof(MatchController.BuyResearch):
                 case nameof(MatchController.LevelUpAll):
                 case nameof(MatchController.UseTraining): GameAudio.Ui(UiSound.LevelUp); break;
                 case nameof(MatchController.ChooseCard):

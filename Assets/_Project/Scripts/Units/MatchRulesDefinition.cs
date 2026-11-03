@@ -3,8 +3,9 @@
 // base health, squads and unlocks per round, sale refunds and starting draft size. There should be
 // exactly one, at Assets/_Project/Data/MatchRules.asset. Change these numbers in the Inspector,
 // never in code. ToRules() copies them into plain C# MatchRules.
-// Depends on: Halobellum.Economy (MatchRules), UnityEngine.
+// Depends on: Halobellum.Economy (MatchRules), Halobellum.Core (SpellStats), UnityEngine.
 
+using Halobellum.Core;
 using Halobellum.Economy;
 using UnityEngine;
 
@@ -60,6 +61,39 @@ namespace Halobellum.Units
         [Tooltip("The possible reinforcement level goes up by 1 every this many rounds.")]
         public int reinforcementLevelEveryRounds = 4;
 
+        [Header("Towers (D55)")]
+        [Tooltip("A level 1 tower's health (a Scorpion's shot kills it). It doubles with each level. 0 = no towers.")]
+        public float towerBaseHealth = 100f;
+        public float towerRadius = 3f;
+        [Tooltip("How many squares wide and deep a tower stands, where ground squads can't be placed.")]
+        public int towerSquares = 3;
+        public int towerLevelUpCost = 100;
+        [Tooltip("How many seconds its shockwave lasts at each level. There are as many levels as these.")]
+        public float[] towerShockwaveSeconds = { 10f, 8f, 6f, 4f, 2f };
+        [Range(0f, 1f)] public float shockwaveSpeedMultiplier = 0.7f;
+        [Range(0f, 1f)] public float shockwaveDamageMultiplier = 0.7f;
+        [Range(0f, 1f)] public float shockwaveFireRateMultiplier = 0.7f;
+
+        [Header("Command Center")]
+        public int extraSlotCost = 100;
+        public int rapidResupplyCredits = 200;
+        public int rapidResupplyPenalty = 300;
+        public int eliteRecruitmentCost = 100;
+        public int oilZoneCost = 150;
+        [Tooltip("Metres along the line.")]
+        public float oilZoneLength = 15f;
+        [Tooltip("Metres across the line.")]
+        public float oilZoneWidth = 4f;
+        public float oilZoneSeconds = 15f;
+        [Range(0f, 1f)] public float oilZoneSlowShare = 0.4f;
+        public float oilZoneFireDamageMultiplier = 1.5f;
+
+        [Header("Research Center")]
+        public float researchHealthShare = 0.15f;
+        public float researchDamageShare = 0.12f;
+        [Tooltip("The price of each research step, for health and for damage alike. There are as many steps as these.")]
+        public int[] researchCosts = { 100, 300 };
+
         public MatchRules ToRules()
         {
             return new MatchRules
@@ -86,6 +120,34 @@ namespace Halobellum.Units
                 ReinforcementBudgetPerRound = reinforcementBudgetPerRound,
                 ReinforcementMaxLevel = reinforcementMaxLevel,
                 ReinforcementLevelEveryRounds = reinforcementLevelEveryRounds,
+                TowerBaseHealth = towerBaseHealth,
+                TowerRadius = towerRadius,
+                TowerSquares = towerSquares,
+                TowerLevelUpCost = towerLevelUpCost,
+                TowerShockwaveSeconds = towerShockwaveSeconds,
+                ShockwaveSpeedMultiplier = shockwaveSpeedMultiplier,
+                ShockwaveDamageMultiplier = shockwaveDamageMultiplier,
+                ShockwaveFireRateMultiplier = shockwaveFireRateMultiplier,
+                ExtraSlotCost = extraSlotCost,
+                RapidResupplyCredits = rapidResupplyCredits,
+                RapidResupplyPenalty = rapidResupplyPenalty,
+                EliteRecruitmentCost = eliteRecruitmentCost,
+                ResearchHealthShare = researchHealthShare,
+                ResearchDamageShare = researchDamageShare,
+                ResearchCosts = researchCosts,
+                OilZone = new SpellStats
+                {
+                    Name = "Oil Zone",
+                    Description = "Click one end, aim the other. Oil slows everything on the ground that crosses it, and fire burns it worse.",
+                    Offensive = true,
+                    Effect = SpellEffect.Oil,
+                    Cost = oilZoneCost,
+                    AreaWidth = oilZoneLength,
+                    AreaDepth = oilZoneWidth,
+                    DurationSeconds = oilZoneSeconds,
+                    SlowShare = oilZoneSlowShare,
+                    FireDamageMultiplier = oilZoneFireDamageMultiplier,
+                },
             };
         }
     }

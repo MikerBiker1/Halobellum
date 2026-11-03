@@ -140,7 +140,14 @@ A unit can be unlocked and bought in the same round. Buying a squad is limited t
 | 4 | 4x | +33% |
 | 5 | 5x | +25% |
 
-**Credit sinks.** Credits are spent on squads, unit unlocks, tech upgrades, squad level-ups, spell cards, and reinforcement cards.
+**Credit sinks.** Credits are spent on squads, unit unlocks, tech upgrades, squad level-ups, spell cards, reinforcement cards, and what the towers sell.
+
+**Towers (D55).** Each side has two towers in the middle of its zone, the Command Center on its own left and the Research Center on its own right. They make two lanes to defend. Both are rebuilt for every battle, and levels last for the match. A tower is a ground target like any other, but isn't part of the army: it doesn't keep a battle going, deals no base damage and gives no XP.
+
+- **Level:** 1 to 5, 100 credits each. A level 1 tower dies to one Scorpion shell (100 health), and each level doubles its health.
+- **Shockwave:** its fall weakens its side's whole army, by 30% in speed, damage and rate of fire (first-pass). It lasts 10, 8, 6, 4 or 2 seconds by the tower's level. A second fall adds its time, not its severity.
+- **Command Center sells,** each once a round: an extra squad slot for the round (100), a one-use Oil Zone of 4 x 15 m (150), Rapid Resupply (free: +200 now, 300 less next round), Elite Recruitment (100: squads bought this round are level 2, at half their price more).
+- **Research Center sells** lasting bonuses for the whole army: +15% health (100), another +15% (300); +12% damage (100), another +12% (300).
 
 ## 6. Combat system
 
@@ -245,7 +252,7 @@ The Flood win by spreading. They have a roster of their own, plus temporary infe
 | Swarm Form | Anti-air | 2 | 50 | 20 forms in 4 packs | 300 | 200 per pack | Flying packs, bonus damage against air |
 | Pure Form Tank | Tank | 3 | 200 | 1 | 500 | 3200 | Heavy armor, splash slam |
 | Seeder | Single-target DPS | 3 | 200 | 2 | 450 | 800 | Seeds enemies from range |
-| Infected Pelican | Aerial | 3 | 200 | 1 | 400 | 900 | One-shot crash dive |
+| Infected Pelican | Aerial | 3 | 200 | 1 | 400 | 900 | One-shot crash dive (900 damage within 3.5 m) |
 | Infected Phantom | Aerial | 3 | 200 | 1 | 450 | 1100 | Drops 5 Combat Forms after 8 seconds |
 | Flood Abomination | Titan | 4 | 350 | 1 | 800 | 7000 | Very tall and large; aura for nearby Flood, keeps releasing Infection Forms |
 
@@ -266,10 +273,10 @@ The Flood win by spreading. They have a roster of their own, plus temporary infe
 
 Sub-factions **add** exclusive units on top of the base faction roster. They do not replace it. Once they exist, they also feed the starting draft (Section 5). The final game has 8 sub-factions: 3 UNSC (Noble, Armored Division, Aerospace Command), 3 Covenant (Banished, Lekgolo Colony, Unggoy Rebellion), and 2 Flood (UNSC-based, Covenant-based).
 
-- **Banished (Covenant):** Choppers, Marauders, Reavers, Blisterbacks, Brute Grenadiers.
+- **Banished (Covenant):** Choppers, Marauders, Reavers, Brute Grenadiers.
 - **Noble (UNSC):** Spartan Sniper, Spartan Heavy Weapons, Spartan Grenadier, Spartan CQB, Spartan Fireteam. Expensive to unlock.
 - **Lekgolo Colony (Covenant):** Goliaths, Skitterers, Hunter Captain.
-- **Unggoy Rebellion (Covenant):** Cannon Fodder, Heavy Grunts, Methane Wagon, Grunt Goblin.
+- **Unggoy Rebellion (Covenant):** Cannon Fodder, Heavy Grunts, Grunt Goblin.
 - **Flood, UNSC-based:** infected variants of the UNSC roster plus pure forms.
 - **Flood, Covenant-based:** infected variants of the Covenant roster plus pure forms.
 - **Armored Division (UNSC):** Grizzly, Cobra, Rhino, Gremlin.
@@ -485,6 +492,8 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-02 | M10: 8 sub-factions and the real 5-card draft; terrain by faction with 3 layouts each; effects by weapon kind; original placeholder sound and music with slots for the owner's files; main menu, settings and pause; cards with unit pictures and borders by kind | Asked by the project owner, first-pass designs for review (D47 to D52) |
 | 2026-11-02 | M10 second round: anti-aliasing on High, smoothed shots, the nuke's mushroom cloud, soft sounds for moving and turning squads, a sub-faction's own units first in the shop | Proposed from the M10 review, for review (D53) |
 | 2026-11-02 | The camera turns and tilts on a right-mouse drag. Every unit has 3 techs. No infested Titans: the Abomination is the Flood's only Titan. Level all button and Screen setting | Per the project owner (D54) |
+| 2026-11-02 | Towers: a Command Center and a Research Center per side, a shockwave when one falls, levels and what they sell | Per the project owner (D55) |
+| 2026-11-02 | The Infected Pelican's blast is 3.5 m in radius. The Blisterback and Methane Wagon are removed | Per the project owner (D56) |
 
 ## 18. Assumptions to confirm
 

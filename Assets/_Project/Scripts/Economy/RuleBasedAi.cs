@@ -367,6 +367,7 @@ namespace Halobellum.Economy
             // 3-4. Unlock at most one unit type, then buy up to the squad limit.
             var bought = new List<string>();
             string unlocked = TryUnlock(view, seen, totalSeen);
+            if (Difficulty == AiDifficulty.Hard && self.Towers.Count > 0 && self.Credits >= HardEliteCredits) view.BuyEliteRecruitment();
             for (int i = 0; i < view.SquadsPerRound; i++)
             {
                 if (Difficulty == AiDifficulty.Easy && _random.NextFloat() < 0.35f) break; // Easy wastes budget.
@@ -377,11 +378,18 @@ namespace Halobellum.Economy
                 bought.Add(choice.Name);
                 if (UsesMatchups) UpdateThreats(view, seen); // The new squad covers part of the threat.
             }
+            // Hard with credits to spare after its squads: one slot more.
+            if (Difficulty == AiDifficulty.Hard && self.Towers.Count > 0 && self.Credits >= HardExtraSlotCredits && view.BuyExtraSlot().Ok)
+            {
+                UnitStats choice = BestAffordable(view, seen, totalSeen, unlockedOnly: true);
+                if (choice != null && FindSpotFor(view, choice, -1, out int column, out int row) && view.Buy(choice, column, row, false).Ok) bought.Add(choice.Name);
+            }
 
             // 5. Level-ups and techs with the credits left, then spells.
             var upgrades = new List<string>();
             UseItemsAndTraining(view, upgrades);
             SpendOnUpgrades(view, upgrades);
+            SpendOnTowers(view, seen, upgrades);
             var spells = new List<string>();
             PlaceSpells(view, spells);
 
@@ -437,6 +445,35 @@ namespace Halobellum.Economy
                     break; // One tech per round keeps money for squads.
                 }
             }
+        }
+
+        private const int HardEliteCredits = 1000, HardExtraSlotCredits = 400, HardOilCredits = 450;
+        private const int NormalTowerCredits = 300, HardTowerCredits = 200;
+
+        /// <summary>
+        /// Credits left after the squads go to the towers. Easy doesn't care about them. Normal and Hard level the tower that falls the
+        /// most, then research health and damage; Hard needs less to spare, and buys oil against an army it has seen. Rapid Resupply is left to the player.
+        /// </summary>
+        private void SpendOnTowers(AiView view, IReadOnlyList<SeenSquad> seen, List<string> upgrades)
+        {
+            PlayerState self = view.Self;
+            if (Difficulty == AiDifficulty.Easy || self.Towers.Count == 0) return;
+            int spare = Difficulty == AiDifficulty.Hard ? HardTowerCredits : NormalTowerCredits;
+
+            PlacedTower weakest = null;
+            foreach (PlacedTower tower in self.Towers)
+            {
+                if (tower.Falls > 0 && (weakest == null || tower.Falls - tower.Level > weakest.Falls - weakest.Level)) weakest = tower;
+            }
+            if (weakest != null && self.Credits >= spare && view.LevelUpTower(weakest.Kind).Ok) upgrades.Add($"{Match.TowerName(weakest.Kind)} to level {weakest.Level}");
+
+            MatchRules rules = view.Rules;
+            bool health = self.ResearchHealthSteps <= self.ResearchDamageSteps;
+            int steps = health ? self.ResearchHealthSteps : self.ResearchDamageSteps;
+            if (steps < rules.ResearchCosts.Length && self.Credits >= rules.ResearchCosts[steps] + spare && view.BuyResearch(health).Ok)
+                upgrades.Add(health ? "health research" : "damage research");
+
+            if (Difficulty == AiDifficulty.Hard && seen.Count >= 3 && self.Credits >= HardOilCredits && view.BuyOilZone().Ok) upgrades.Add("oil");
         }
 
         private AiStrategy ChooseStrategy(AiView view, IReadOnlyList<SeenSquad> seen, float[] valueByRole, float totalSeen)
@@ -576,7 +613,7 @@ namespace Halobellum.Economy
             {
                 bool isUnlocked = self.Unlocked.Contains(unit);
                 if (unlockedOnly && !isUnlocked) continue;
-                int price = unit.Cost + (isUnlocked ? 0 : unit.UnlockCost);
+                int price = view.SquadPrice(unit) + (isUnlocked ? 0 : unit.UnlockCost);
                 if (price > self.Credits) continue;
                 if (Difficulty == AiDifficulty.Easy && _random.NextFloat() < 0.2f) return unit; // Easy sometimes grabs whatever comes first.
                 float score = Score(unit, seen, totalSeen);
@@ -605,6 +642,42 @@ namespace Halobellum.Economy
         }
 
         // ------------------------------------------------------------------ placement
+
+        /// <summary>
+        /// The two lanes that towers make (D55). Easy pays them no attention and fills the middle. Normal defends the side whose tower has
+        /// fallen more. Hard pushes every other squad up the side where the army it last saw is thinner, and defends with the rest.
+        /// </summary>
+        private bool LaneColumn(AiView view, int sameKind, out int column)
+        {
+            column = 0;
+            PlayerState self = view.Self;
+            if (Difficulty == AiDifficulty.Easy || self.Towers.Count < 2) return false;
+            if (Difficulty == AiDifficulty.Hard && sameKind % 2 == 0 && WeakLaneColumn(view, out column)) return true;
+
+            PlacedTower left = self.FindTower(TowerKind.CommandCenter), right = self.FindTower(TowerKind.ResearchCenter);
+            if (left.Falls == right.Falls) return Difficulty == AiDifficulty.Hard && WeakLaneColumn(view, out column);
+            PlacedTower defended = left.Falls > right.Falls ? left : right;
+            column = defended.Column + defended.Squares / 2;
+            return true;
+        }
+
+        /// <summary>The middle column of this side's lane that faces the thinner half of the army it last saw, if one half is thinner.</summary>
+        private static bool WeakLaneColumn(AiView view, out int column)
+        {
+            column = 0;
+            float atLeft = 0f, atRight = 0f;
+            foreach (SeenSquad squad in view.SeenOpponentArmy)
+            {
+                if (view.WorldCentre(squad).X < 0f) atLeft += squad.Value;
+                else atRight += squad.Value;
+            }
+            if (atLeft == atRight) return false;
+            // Battlefield left is this side's own left only for Team A: Team B's grid is the mirror image.
+            bool ownLeft = (atLeft < atRight) == (view.Team == Team.A);
+            int width = view.CombatRules.ArenaWidthSquares;
+            column = ownLeft ? width / 4 : width - width / 4;
+            return true;
+        }
 
         /// <summary>Where this AI would place a new squad of this type now (its role-based spot).</summary>
         public bool ChooseSpot(AiView view, UnitStats type, out int column, out int row) => FindSpotFor(view, type, -1, out column, out row);
@@ -646,6 +719,12 @@ namespace Halobellum.Economy
                 // Centre, then alternately right and left of it.
                 int step = (sameKind + 1) / 2 * (sameKind % 2 == 1 ? 1 : -1);
                 targetColumn = (arenaWidth - width) / 2 + step * (width + 2);
+            }
+
+            if (type.Role != UnitRole.Artillery && LaneColumn(view, sameKind, out int lane))
+            {
+                int spread = (sameKind + 1) / 2 * (sameKind % 2 == 1 ? 1 : -1);
+                targetColumn = lane - width / 2 + spread * (width + 2);
             }
 
             if (Difficulty == AiDifficulty.Easy)

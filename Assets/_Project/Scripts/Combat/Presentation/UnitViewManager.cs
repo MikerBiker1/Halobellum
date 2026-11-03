@@ -400,12 +400,17 @@ namespace Halobellum.Presentation
             view.Root = new GameObject($"{stats.Name} #{unit.Id} ({unit.Team})");
             view.Root.transform.SetParent(container, false);
 
-            Color color = GhostTeam == unit.Team ? ghostColor : unit.Team == Team.A ? teamAColor : teamBColor;
+            // A tower is always there, so it is never a grey memory of the last battle.
+            Color color = GhostTeam == unit.Team && !stats.IsTower ? ghostColor : unit.Team == Team.A ? teamAColor : teamBColor;
             if (stats.InfectedFrom != null) color = Color.Lerp(color, infectedColor, 0.55f);
             Material teamMaterial = PlaceholderArt.MaterialFor(color);
             GameObject prefab = _battle.PrefabFor(stats.InfectedFrom ?? stats);
             BakedBodyDefinition baked = _battle.BakedBodyFor(stats.InfectedFrom ?? stats);
-            if (baked != null && baked.IsReady)
+            if (stats.IsTower)
+            {
+                view.ModelTop = TowerArt.Build(view.Root.transform, stats.Shockwave.Kind, color, stats.CollisionRadius);
+            }
+            else if (baked != null && baked.IsReady)
             {
                 var body = new GameObject("Body");
                 body.transform.SetParent(view.Root.transform, false);

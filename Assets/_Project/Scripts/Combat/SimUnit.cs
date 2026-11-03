@@ -80,6 +80,13 @@ namespace Halobellum.Combat
         public float RangeMultiplier = 1f;
         /// <summary>Multiplies its move speed (units slowed by an EMP). Set every tick.</summary>
         public float SpeedMultiplier = 1f;
+        /// <summary>Multiplies the damage it deals, and how fast its weapons come ready (a fallen tower's shockwave, D55). Set every tick.</summary>
+        public float ShockwaveDamage = 1f;
+        public float ShockwaveFireRate = 1f;
+        /// <summary>Multiplies the fire damage it takes (standing in oil). Set every tick.</summary>
+        public float FireDamageTaken = 1f;
+        /// <summary>The last tick oil slowed it (several pools do not add up).</summary>
+        public int OilTick = -1;
         /// <summary>Battle time until which it stays slowed, and by how much.</summary>
         public float SlowedUntil;
         public float SlowMultiplier = 1f;

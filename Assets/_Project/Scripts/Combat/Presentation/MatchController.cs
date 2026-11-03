@@ -11,6 +11,7 @@
 // deployment (SpellView draws the blue / red outlines and handles the mouse) and go off in battle.
 // Items wait in the Inventory until the player selects one and picks a squad; Intensive Training fills
 // a selected squad's XP bar (decision D33). The HUD draws both and calls the functions here.
+// A click on a tower selects it (SquadSelection), and DescribeTower says what its window shows and sells (D55).
 // The HUD (Scripts/UI/MatchHud) and DeploymentInput call the public methods here; tests do too.
 // Depends on: BattleController, SquadSelection, UnitViewManager,
 //             Halobellum.Economy (Match, RuleBasedAi, DeploymentGrid),
@@ -295,6 +296,105 @@ namespace Halobellum.Presentation
             ActionResult result = Report(Match.BuyTech(Team.A, type, tech));
             if (result.Ok) RefreshPreview(reselectSquadId);
             return result;
+        }
+
+        // ------------------------------------------------------------------ towers (D55)
+
+        public ActionResult LevelUpTower(TowerKind kind)
+        {
+            ActionResult result = Report(Match.LevelUpTower(Team.A, kind));
+            if (result.Ok) RefreshPreview();
+            return result;
+        }
+
+        public ActionResult BuyExtraSlot() => Report(Match.BuyExtraSlot(Team.A));
+        public ActionResult BuyOilZone() => Report(Match.BuyOilZone(Team.A));
+        public ActionResult RapidResupply() => Report(Match.RapidResupply(Team.A));
+        public ActionResult BuyEliteRecruitment() => Report(Match.BuyEliteRecruitment(Team.A));
+
+        public ActionResult BuyResearch(bool health)
+        {
+            ActionResult result = Report(Match.BuyResearch(Team.A, health));
+            if (result.Ok) RefreshPreview();
+            return result;
+        }
+
+        /// <summary>What the window of a tower says. The enemy's show only what the player has seen; only the player's own sell anything, and only during deployment.</summary>
+        public TowerPanel DescribeTower(Team team, TowerKind kind)
+        {
+            PlayerState owner = Match.Get(team);
+            PlacedTower tower = owner.FindTower(kind);
+            if (tower == null) return null;
+            MatchRules rules = Match.Rules;
+            bool own = team == Team.A;
+            int level = own ? tower.Level : Match.SeenEnemyTowerLevel(kind);
+            UnitStats stats = Match.TowerStats(kind, level);
+            var panel = new TowerPanel { Title = Match.TowerName(kind), Side = own ? "Your tower" : "Enemy tower, as last seen" };
+            panel.Lines.Add($"Level {level} of {rules.TowerMaxLevel}    Health {stats.MaxHealth:0}");
+            panel.Lines.Add($"If it falls, {(own ? "your" : "their")} whole army loses {(1f - rules.ShockwaveSpeedMultiplier) * 100f:0}% speed, {(1f - rules.ShockwaveDamageMultiplier) * 100f:0}% damage and {(1f - rules.ShockwaveFireRateMultiplier) * 100f:0}% rate of fire for {stats.Shockwave.Seconds:0} s. Two falling add up their time, not their severity.");
+            if (!own) return panel;
+
+            bool deploying = Match.Phase == MatchPhase.Deployment;
+            int credits = owner.Credits;
+            if (level < rules.TowerMaxLevel)
+            {
+                UnitStats next = Match.TowerStats(kind, level + 1);
+                panel.Buttons.Add(new TowerButton
+                {
+                    Label = $"Level up ({rules.TowerLevelUpCost})",
+                    Note = $"Health {next.MaxHealth:0}, shockwave {next.Shockwave.Seconds:0} s",
+                    Enabled = deploying && credits >= rules.TowerLevelUpCost,
+                    OnPress = () => LevelUpTower(kind),
+                });
+            }
+            if (kind == TowerKind.CommandCenter)
+            {
+                panel.Buttons.Add(new TowerButton
+                {
+                    Label = $"Extra slot ({rules.ExtraSlotCost})", Note = owner.BoughtExtraSlot ? "Bought this round" : "One more squad this round",
+                    Enabled = deploying && !owner.BoughtExtraSlot && credits >= rules.ExtraSlotCost, OnPress = () => BuyExtraSlot(),
+                });
+                if (rules.OilZone != null)
+                {
+                    panel.Buttons.Add(new TowerButton
+                    {
+                        Label = $"Oil zone ({rules.OilZone.Cost})", Note = owner.BoughtOilZone ? "Bought this round" : $"{rules.OilZone.AreaDepth:0} x {rules.OilZone.AreaWidth:0} m, one use: it goes in your spells",
+                        Enabled = deploying && !owner.BoughtOilZone && credits >= rules.OilZone.Cost, OnPress = () => BuyOilZone(),
+                    });
+                }
+                panel.Buttons.Add(new TowerButton
+                {
+                    Label = "Rapid Resupply (free)", Note = owner.UsedRapidResupply ? "Used this round" : $"+{rules.RapidResupplyCredits} now, {rules.RapidResupplyPenalty} less next round",
+                    Enabled = deploying && !owner.UsedRapidResupply, OnPress = () => RapidResupply(),
+                });
+                panel.Buttons.Add(new TowerButton
+                {
+                    Label = $"Elite Recruitment ({rules.EliteRecruitmentCost})", Note = owner.EliteRecruitment ? "On: new squads are level 2" : "New squads this round are level 2, for half their price more",
+                    Enabled = deploying && !owner.EliteRecruitment && credits >= rules.EliteRecruitmentCost, OnPress = () => BuyEliteRecruitment(),
+                });
+                return panel;
+            }
+
+            AddResearch(panel, "Health", rules.ResearchHealthShare, owner.ResearchHealthSteps, true, deploying, credits);
+            AddResearch(panel, "Damage", rules.ResearchDamageShare, owner.ResearchDamageSteps, false, deploying, credits);
+            return panel;
+        }
+
+        private void AddResearch(TowerPanel panel, string name, float share, int steps, bool health, bool deploying, int credits)
+        {
+            int[] costs = Match.Rules.ResearchCosts;
+            string now = steps > 0 ? $"Now +{share * steps * 100f:0}%" : "Your whole army, for the rest of the match";
+            if (steps >= costs.Length)
+            {
+                panel.Buttons.Add(new TowerButton { Label = $"{name}: complete", Note = now, Enabled = false });
+                return;
+            }
+            int cost = costs[steps];
+            panel.Buttons.Add(new TowerButton
+            {
+                Label = $"{name} +{share * 100f:0}% ({cost})", Note = now,
+                Enabled = deploying && credits >= cost, OnPress = () => BuyResearch(health),
+            });
         }
 
         /// <summary>The placed squad behind a simulation squad (preview: the player's; battle: Team A then Team B), or null.</summary>
@@ -598,6 +698,7 @@ namespace Halobellum.Presentation
             _drops.Clear();
             Message = "";
             _views.GhostTeam = null;
+            _selection.ClearTower();
             _battle.ShowBattle(Match.StartBattle(), _sources, play: true);
             PhaseChanged?.Invoke();
         }

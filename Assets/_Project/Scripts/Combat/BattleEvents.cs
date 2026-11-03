@@ -26,6 +26,8 @@ namespace Halobellum.Combat
         public event Action<SimUnit, SimUnit> AttackBlocked;
         /// <summary>A unit died: the unit, the unit that dealt the killing blow (may be null).</summary>
         public event Action<SimUnit, SimUnit> UnitDied;
+        /// <summary>A tower fell, and its side's army now suffers its shockwave (D55).</summary>
+        public event Action<SimUnit> ShockwaveReleased;
         /// <summary>One simulation tick finished; the argument is the number of ticks completed.</summary>
         public event Action<int> Ticked;
         /// <summary>The battle is over.</summary>
@@ -44,6 +46,7 @@ namespace Halobellum.Combat
         internal void RaiseUnitDamaged(SimUnit target, SimUnit attacker, float amount) => UnitDamaged?.Invoke(target, attacker, amount);
         internal void RaiseAttackBlocked(SimUnit target, SimUnit attacker) => AttackBlocked?.Invoke(target, attacker);
         internal void RaiseUnitDied(SimUnit unit, SimUnit killer) => UnitDied?.Invoke(unit, killer);
+        internal void RaiseShockwaveReleased(SimUnit tower) => ShockwaveReleased?.Invoke(tower);
         internal void RaiseTicked(int tick) => Ticked?.Invoke(tick);
         internal void RaiseBattleEnded(BattleResult result) => BattleEnded?.Invoke(result);
         internal void RaiseSpellTriggered(SimSpell spell) => SpellTriggered?.Invoke(spell);

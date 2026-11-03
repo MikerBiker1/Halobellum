@@ -12,7 +12,10 @@
 //     appears over every squad without an item; drop it on one (squads with an item show it; see
 //     ItemHud). Intensive Training is
 //     an icon at the top left: select a squad, click it, confirm (decision D33).
-//   Battle: both base health bars and a live army-value comparison (speed controls are in BattleHud).
+//     Each tower (D55) has a small button above it, and clicking it or the tower opens its window at the bottom
+//     left: its level, what its fall does, and what it sells.
+//   Battle: both base health bars and a live army-value comparison (speed controls are in BattleHud), and how long
+//     a fallen tower's shockwave still weakens each army.
 //   Result: base damage dealt by each side, income, survivors, top damage dealers, what killed what.
 //   Match over: the winner, a New match button and a Main Menu button.
 // The look follows the player's faction (HudTheme: UNSC or Covenant style); the draft screen is neutral.
@@ -48,6 +51,10 @@ namespace Halobellum.UI
         private Vector2 _shopScroll;
         private readonly List<UnitStats> _shopRows = new List<UnitStats>();
         private readonly HudLine _yourBaseLine = new HudLine(), _enemyBaseLine = new HudLine(), _yourValueLine = new HudLine(), _enemyValueLine = new HudLine();
+        private readonly HudLine _yourShockwaveLine = new HudLine(), _enemyShockwaveLine = new HudLine();
+        private SquadSelection _selection;
+        private TowerPanel _towerPanel;
+        private float _towerPanelRefresh;
 
         private void Awake() => useGUILayout = false; // Nothing here uses GUILayout. With the layout pass on, Unity makes new layout groups for this script every frame, which is garbage at every frame rate.
 
@@ -149,6 +156,8 @@ namespace Halobellum.UI
             DrawInventory(DrawSpellBar());
             DrawTrainingIcons();
             DrawSelectedSquadActions(width, height);
+            DrawTowerButtons(height);
+            DrawTowerWindow(height);
             ItemHud.DrawDragged(match.IconFor);
         }
 
@@ -360,15 +369,16 @@ namespace Halobellum.UI
                 HudTheme.RowBox(row);
                 CardScreens.DrawUnitPicture(new Rect(row.x + 4f, row.y + 2f, picture, picture), unit, player.Faction.Name, UnitIcons.FactionColor(player.Faction.Name));
                 float textX = row.x + picture + 8f, textWidth = ShopTextWidth;
-                GUI.Label(new Rect(textX, row.y + 2f, textWidth, 28f), $"{unit.Name} - {unit.Cost} cr", _text);
+                int price = m.SquadPrice(Team.A, unit);
+                GUI.Label(new Rect(textX, row.y + 2f, textWidth, 28f), $"{unit.Name} - {price} cr", _text);
                 CardScreens.Fit(new Rect(textX, row.y + 25f, textWidth, 28f), ShopLine(unit, player.SubFaction.ExclusiveUnits.Contains(unit)), _shopLine, 15, ShopLineLeastSize, TextAnchor.MiddleLeft, HudTheme.DimText);
 
                 var button = new Rect(row.xMax - 118f, row.y + 9f, 110f, 36f);
                 if (player.Unlocked.Contains(unit))
                 {
-                    bool canBuy = player.Credits >= unit.Cost && player.SquadsBoughtThisRound < m.SquadsPerRound(Team.A);
+                    bool canBuy = player.Credits >= price && player.SquadsBoughtThisRound < m.SquadsPerRound(Team.A);
                     GUI.enabled = canBuy;
-                    if (GUI.Button(button, $"Buy {unit.Cost}", _button)) match.Buy(unit);
+                    if (GUI.Button(button, $"Buy {price}", _button)) match.Buy(unit);
                     UiAudio.Watch(button, canBuy);
                 }
                 else
@@ -397,6 +407,90 @@ namespace Halobellum.UI
             if (GUI.Button(new Rect(panel.x + 330f, panel.y + 10f, 180f, 38f), $"Sell +{match.Match.SellValue(squad)} (Del)", _button)) match.Sell(squad);
         }
 
+        // ------------------------------------------------------------------ towers (D55)
+
+        private SquadSelection Selection => _selection != null ? _selection : (_selection = battle.GetComponent<SquadSelection>());
+
+        /// <summary>A small button floating over each tower, so that they can be found. The tower itself can be clicked too.</summary>
+        private void DrawTowerButtons(float height)
+        {
+            Camera camera = Camera.main;
+            if (camera == null || battle.Simulation == null || match.IsPlacing || match.PlacingSpell != null || match.PlacingItem != null) return;
+            IReadOnlyList<SimUnit> units = battle.Simulation.Units;
+            for (int i = 0; i < units.Count; i++)
+            {
+                SimUnit unit = units[i];
+                if (!unit.Stats.IsTower) continue;
+                Vector3 screen = camera.WorldToScreenPoint(new Vector3(unit.Position.X, 12f, unit.Position.Y));
+                if (screen.z <= 0f) continue;
+                var rect = new Rect(screen.x / _scale - 80f, height - screen.y / _scale - 16f, 160f, 28f);
+                UiHitAreas.Add(HudScale.ToScreen(rect, _scale));
+                if (GUI.Button(rect, unit.Stats.Name, _button)) Selection.SelectTower(unit.Team, unit.Stats.Shockwave.Kind);
+            }
+        }
+
+        /// <summary>The selected tower's window, where the squad window goes: what it is, and what it sells.</summary>
+        private void DrawTowerWindow(float height)
+        {
+            if (!(Selection.SelectedTower is (Team team, TowerKind kind) selected)) return;
+            if (Time.unscaledTime >= _towerPanelRefresh || _towerPanel == null || _towerPanelShown != selected)
+            {
+                _towerPanel = match.DescribeTower(team, kind);
+                _towerPanelShown = selected;
+                _towerPanelRefresh = Time.unscaledTime + 0.2f;
+            }
+            TowerPanel view = _towerPanel;
+            if (view == null) return;
+
+            const float windowWidth = 440f, inset = 18f, rowHeight = 56f;
+            float textWidth = windowWidth - 2f * inset;
+            float textHeight = 0f;
+            foreach (string line in view.Lines) textHeight += _wrap.CalcHeight(new GUIContent(line), textWidth) + 4f;
+            float windowHeight = 62f + textHeight + view.Buttons.Count * rowHeight + 14f;
+            var window = new Rect(10f, height - windowHeight - 10f, windowWidth, windowHeight);
+            Panel(window);
+            GUI.Label(new Rect(window.x + inset, window.y + 8f, textWidth - 30f, 28f), HudTheme.Title(view.Title), _header);
+            GUI.Label(new Rect(window.x + inset, window.y + 34f, textWidth - 30f, 22f), view.Side, _small);
+            if (GUI.Button(new Rect(window.xMax - 36f, window.y + 8f, 24f, 22f), "x", _button)) Selection.ClearTower();
+
+            float y = window.y + 60f;
+            foreach (string line in view.Lines)
+            {
+                float lineHeight = _wrap.CalcHeight(new GUIContent(line), textWidth);
+                GUI.Label(new Rect(window.x + inset, y, textWidth, lineHeight), line, _wrap);
+                y += lineHeight + 4f;
+            }
+            foreach (TowerButton button in view.Buttons)
+            {
+                var rect = new Rect(window.x + inset, y, textWidth, 30f);
+                GUI.enabled = button.Enabled;
+                if (GUI.Button(rect, button.Label, _button))
+                {
+                    button.OnPress?.Invoke();
+                    _towerPanelRefresh = 0f;
+                }
+                UiAudio.Watch(rect, button.Enabled);
+                GUI.enabled = true;
+                GUI.Label(new Rect(window.x + inset, y + 30f, textWidth, 22f), button.Note, _small);
+                y += rowHeight;
+            }
+        }
+
+        private (Team team, TowerKind kind)? _towerPanelShown;
+
+        /// <summary>A line under a side's panel while a fallen tower's shockwave weakens its army.</summary>
+        private void DrawShockwave(Rect under, HudLine line, Team team)
+        {
+            BattleSimulation simulation = battle.Simulation;
+            ShockwaveStats shockwave = simulation?.ActiveShockwave(team);
+            if (shockwave == null) return;
+            int seconds = Mathf.CeilToInt(simulation.ShockwaveSecondsLeft(team));
+            if (line.Changed(seconds)) line.Text = $"Shockwave: weakened for {seconds} s";
+            var rect = new Rect(under.x, under.yMax + 4f, under.width, 30f);
+            Panel(rect);
+            GUI.Label(rect, line.Text, _smallCentered);
+        }
+
         // ------------------------------------------------------------------ battle
 
         private void DrawBattle()
@@ -407,11 +501,14 @@ namespace Halobellum.UI
             Panel(left);
             BaseBar(new Rect(left.x + 12f, left.y + 10f, 256f, 20f), _yourBaseLine, "Your base", m.Player.BaseHealth, m.Rules.BaseHealth, playerColor);
             GUI.Label(new Rect(left.x + 12f, left.y + 34f, 256f, 24f), ArmyValueText(_yourValueLine, Team.A), _small);
+            DrawShockwave(left, _yourShockwaveLine, Team.A);
 
             var right = new Rect(width - 290f, 40f, 280f, 64f);
             Panel(right);
             BaseBar(new Rect(right.x + 12f, right.y + 10f, 256f, 20f), _enemyBaseLine, "Enemy base", m.Enemy.BaseHealth, m.Rules.BaseHealth, enemyColor);
             GUI.Label(new Rect(right.x + 12f, right.y + 34f, 256f, 24f), ArmyValueText(_enemyValueLine, Team.B), _small);
+            DrawShockwave(right, _enemyShockwaveLine, Team.B);
+            DrawTowerWindow(HudScale.ScaledHeight(_scale));
         }
 
         private string ArmyValueText(HudLine line, Team team)

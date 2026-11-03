@@ -100,6 +100,7 @@ namespace Halobellum.Presentation
             if (_shown != null)
             {
                 _shown.Events.UnitDied -= OnUnitDied;
+                _shown.Events.ShockwaveReleased -= OnShockwave;
                 _shown.Events.UnitInfected -= OnUnitInfected;
             }
             _shown = simulation;
@@ -111,11 +112,19 @@ namespace Halobellum.Presentation
             if (_shown != null)
             {
                 _shown.Events.UnitDied += OnUnitDied;
+                _shown.Events.ShockwaveReleased += OnShockwave;
                 _shown.Events.UnitInfected += OnUnitInfected;
             }
         }
 
         private void OnUnitDied(SimUnit unit, SimUnit killer) => _pending.Add(new Pending { Unit = unit });
+
+        private void OnShockwave(SimUnit tower)
+        {
+            Vector3 position = _units.ShownPosition(tower);
+            _recipes.TowerShockwave(position);
+            CameraShake.Kick(position, 0.6f);
+        }
 
         private void OnUnitInfected(SimUnit corpse) => _rising.Add(corpse);
 

@@ -13,6 +13,8 @@
 //     for TechDisableSeconds and slows armored units by SlowShare for SlowSeconds.
 //   - Smoke: units inside have their weapon range multiplied by RangeMultiplier, for the rest of the
 //     battle (or only DurationSeconds, if above 0).
+//   - Oil: ground units inside, of both sides, are slowed by SlowShare and take FireDamageMultiplier
+//     from fire, for DurationSeconds (bought from the Command Center, D55).
 // Offensive spells can be placed anywhere on the field (red outline) and can hurt the caster's own
 // units too (decision D33); defensive spells and buffs go only in the caster's own deployment zone
 // (blue outline) and only help the caster. An area is a circle (Radius), or a line when AreaWidth is
@@ -31,6 +33,7 @@ namespace Halobellum.Core
         DropSquad = 2,
         Disrupt = 3,
         Smoke = 4,
+        Oil = 5,
     }
 
     public sealed class SpellStats
@@ -93,7 +96,13 @@ namespace Halobellum.Core
         /// <summary>Weapon range of units inside is multiplied by this (0.5 = half).</summary>
         public float RangeMultiplier = 1f;
 
+        // Oil (uses DurationSeconds and SlowShare too).
+        /// <summary>Fire damage to units inside is multiplied by this.</summary>
+        public float FireDamageMultiplier = 1f;
+
         public bool IsRectangle => AreaWidth > 0f;
+        /// <summary>True for a spell whose area stays after it starts (smoke, oil).</summary>
+        public bool Lingers => Effect == SpellEffect.Smoke || Effect == SpellEffect.Oil;
 
         /// <summary>True if a body at this offset from the area's centre touches the area. angleDegrees: the direction of a line.</summary>
         public bool Covers(Vec2 offset, float bodyRadius, float angleDegrees)
@@ -153,6 +162,8 @@ namespace Halobellum.Core
                 case SpellEffect.Smoke:
                     string lasts = DurationSeconds > 0f ? $"for {DurationSeconds:0}\u00A0s" : "for the whole round";
                     return $"Smoke in a {AreaDepth:0}\u00A0x\u00A0{AreaWidth:0}\u00A0m line {lasts}: units inside have {(1f - RangeMultiplier) * 100f:0}% less range";
+                case SpellEffect.Oil:
+                    return $"Oil in a {AreaDepth:0}\u00A0x\u00A0{AreaWidth:0}\u00A0m line for {DurationSeconds:0}\u00A0s: ground units inside are {SlowShare * 100f:0}% slower and take {(FireDamageMultiplier - 1f) * 100f:0}% more fire damage";
                 default:
                     return $"{DropSquads}\u00A0x {DropUnit?.Name ?? "?"} {(DropSquads == 1 ? "squad lands" : "squads land")} for this battle";
             }
@@ -194,6 +205,10 @@ namespace Halobellum.Core
                 case SpellEffect.Smoke:
                     if (AreaWidth <= 0f && Radius <= 0f) problems.Add($"{label}: smoke needs an area.");
                     if (RangeMultiplier <= 0f || RangeMultiplier >= 1f) problems.Add($"{label}: smoke must reduce range.");
+                    break;
+                case SpellEffect.Oil:
+                    if (AreaWidth <= 0f || AreaDepth <= 0f) problems.Add($"{label}: oil needs an area.");
+                    if (DurationSeconds <= 0f) problems.Add($"{label}: oil needs a duration.");
                     break;
             }
             return problems;

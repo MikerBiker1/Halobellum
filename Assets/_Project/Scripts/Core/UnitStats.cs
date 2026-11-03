@@ -153,6 +153,23 @@ namespace Halobellum.Core
     }
 
     /// <summary>What a unit does when it dies, however it dies: an explosion and units released on the spot (D38).</summary>
+    /// <summary>A side's two towers (D55). The Command Center stands on its owner's left, the Research Center on the right.</summary>
+    public enum TowerKind
+    {
+        CommandCenter = 0,
+        ResearchCenter = 1,
+    }
+
+    /// <summary>What a side's whole army suffers when one of its towers falls (D55). A second tower adds its seconds, not its severity.</summary>
+    public sealed class ShockwaveStats
+    {
+        public TowerKind Kind;
+        public float Seconds;
+        public float SpeedMultiplier = 1f;
+        public float DamageMultiplier = 1f;
+        public float FireRateMultiplier = 1f;
+    }
+
     public sealed class DeathBurstStats
     {
         public float Damage;
@@ -227,6 +244,10 @@ namespace Halobellum.Core
         public bool ImmuneToInfection;
         /// <summary>Null for units without one.</summary>
         public DeathBurstStats DeathBurst;
+        /// <summary>Set on a tower (D55): what its fall does to its own side. Null on every unit.</summary>
+        public ShockwaveStats Shockwave;
+        /// <summary>A tower stands, fires nothing and can be shot like any ground target, but it isn't part of the army: it doesn't keep a battle going or count at round end.</summary>
+        public bool IsTower => Shockwave != null;
         /// <summary>The unit kills itself when its main weapon fires, to set off its death burst (Carrier Form, Infected Pelican).</summary>
         public bool SelfDestructs;
         /// <summary>The unit heads for the thickest group of enemies instead of the closest one (Infected Pelican).</summary>

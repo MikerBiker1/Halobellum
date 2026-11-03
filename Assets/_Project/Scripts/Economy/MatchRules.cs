@@ -2,9 +2,10 @@
 // The match rules from Bible Section 5 (starting credits, income and its cap, base health, squads
 // and unlocks per round, sale refunds, starting draft size). The values come from the Match Rules
 // data asset (Data/MatchRules.asset) through MatchRulesDefinition.ToRules(); tests build their own.
-// Depends on: nothing (plain C#).
+// Depends on: Halobellum.Core (SpellStats).
 
 using System;
+using Halobellum.Core;
 
 namespace Halobellum.Economy
 {
@@ -58,6 +59,32 @@ namespace Halobellum.Economy
         public int ReinforcementMaxLevel = 3;
         /// <summary>The possible reinforcement level goes up by 1 every this many rounds: level 1 in rounds 1-4, up to 2 in 5-8 ... (D32).</summary>
         public int ReinforcementLevelEveryRounds = 4;
+
+        // Towers (D55). No health means a match without towers, as tests that aren't about them play.
+        /// <summary>A level 1 tower's health (the owner: a Scorpion's shot kills it). It doubles with each level.</summary>
+        public float TowerBaseHealth;
+        public float TowerRadius = 3f;
+        /// <summary>How many squares wide and deep a tower stands, where ground squads can't be placed.</summary>
+        public int TowerSquares = 3;
+        public int TowerLevelUpCost = 100;
+        /// <summary>How long its shockwave lasts at each level; there are as many levels as these.</summary>
+        public float[] TowerShockwaveSeconds = { 10f, 8f, 6f, 4f, 2f };
+        public float ShockwaveSpeedMultiplier = 0.7f;
+        public float ShockwaveDamageMultiplier = 0.7f;
+        public float ShockwaveFireRateMultiplier = 0.7f;
+        public int ExtraSlotCost = 100;
+        /// <summary>The spell the Command Center sells; its price is its Cost. It is used once.</summary>
+        public SpellStats OilZone;
+        public int RapidResupplyCredits = 200;
+        public int RapidResupplyPenalty = 300;
+        public int EliteRecruitmentCost = 100;
+        public float ResearchHealthShare = 0.15f;
+        public float ResearchDamageShare = 0.12f;
+        /// <summary>The price of each research step, for health and for damage alike; there are as many steps as these.</summary>
+        public int[] ResearchCosts = { 100, 300 };
+
+        public bool HasTowers => TowerBaseHealth > 0f;
+        public int TowerMaxLevel => TowerShockwaveSeconds.Length;
 
         public bool CardsEnabled => FirstCardRound > 0;
 

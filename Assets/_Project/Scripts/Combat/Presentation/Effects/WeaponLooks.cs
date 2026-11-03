@@ -214,7 +214,8 @@ namespace Halobellum.Presentation
             switch (stats.Effect)
             {
                 case SpellEffect.Buff: return SpellLook.Buff;
-                case SpellEffect.Smoke: return SpellLook.Smoke;
+                case SpellEffect.Smoke:
+                case SpellEffect.Oil: return SpellLook.Smoke;
                 case SpellEffect.DropSquad: return SpellLook.Drop;
                 case SpellEffect.Disrupt: return name.Contains("spore") ? SpellLook.SporeWave : SpellLook.Emp;
             }

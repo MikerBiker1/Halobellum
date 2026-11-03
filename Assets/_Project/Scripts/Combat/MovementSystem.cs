@@ -334,6 +334,12 @@ namespace Halobellum.Combat
         /// </summary>
         private static void PushShares(SimUnit a, SimUnit b, out float aShare, out float bShare)
         {
+            if (a.Stats.IsTower || b.Stats.IsTower) // Nothing moves a tower.
+            {
+                aShare = a.Stats.IsTower ? 0f : 1f;
+                bShare = 1f - aShare;
+                return;
+            }
             bool aAnchored = a.State != UnitState.Move;
             bool bAnchored = b.State != UnitState.Move;
             if (aAnchored && !bAnchored) { aShare = 0f; bShare = 1f; }

@@ -4,36 +4,34 @@ Things that came up while you were away. Each says what I did for now, so nothin
 
 ## Needs you
 
-1. **Halo music and sound effects.** You asked for Halo music, downloaded. I don't download copyrighted game or soundtrack files, so none is in the game. Every slot is ready, though, and the game plays original placeholder music and sound made by a script, so it isn't silent. Drop your files in `Assets/_Project/Art/Imported/Audio/Resources/AudioOverride/`, named after their slot, such as `music_mainmenu.ogg` or `music_unsc_battle.ogg`. No code changes are needed. The slot names are in `Assets/_Project/Art/Imported/Audio/README.txt`.
-2. **Pushing to GitHub.** A safety check blocked the push of the models, most likely because it would publish these files. Everything is committed on your PC, and nothing has been pushed. If you want it on GitHub, run `git push` yourself. The repository must stay private. It has also grown by about 120 MB of generated sound.
-3. **Listen to the placeholder sound.** Are the three factions' sounds and music good enough to keep until you have your own? Are effects too loud against the music? The mix is all in one file, `AudioCatalog.cs`.
+1. **Halo music and sound effects.** You'll download them: `Assets_to_Download.md` lists every track, unit sound and model left, and how to drop them in. None of it is in the game yet, so it still plays original placeholders.
+2. **Pushing to GitHub.** Done.
+3. **The placeholder sound:** you'll replace it (`Assets_to_Download.md`).
 
 ## Sub-factions: first-pass design (you left this open, as with the Flood)
 
 Full tables and reasons are in `Docs/M10/subfactions.md`. Every number is in `balance.csv`. None of the 35 older units' numbers changed.
 
-4. **Noble: "expensive to unlock".** I kept the Bible's price table and made all 5 Spartans Tier 3, so each costs 200 to 250 to unlock. It has no Tier 1 exclusive, so the AI rarely picks it (21 of 432 picks). Should it have something cheap?
-5. **Aerospace Command** also has no Tier 1 exclusive, because cheap aircraft seemed wrong. Keep it that way?
-6. **"Infested", not "Infected".** The units you buy are "Infested Marine" and so on, because "Infected Marine" is already what the game calls a Marine that rises in battle. Keep the names?
-7. **Infested Grunts.** In Halo's lore, Grunts are poor hosts. I kept them because the Bible asks for variants of the Covenant roster. Keep or swap?
+4. **Noble: "expensive to unlock".** Kept as it is. You'll playtest the sub-factions for balance.
+5. **Aerospace Command** has no Tier 1 exclusive: kept.
+6. **"Infested", not "Infected":** kept.
+7. **Infested Grunts:** kept.
 8. **Two extra Flood Titans:** you said no, so they are gone (D54). The Abomination is the Flood's only Titan.
-9. **New pure forms:** Juggernaut (UNSC-based) and Spawner (Covenant-based), from Halo Wars 2's logs. Keep?
-10. **Goliath's base damage is 250**, against the default of 100, for its job as a building-killer. It is the only exception to the default. Keep?
-11. **Simplified abilities:** the Hunter Captain has no taunt, because targeting is always "the closest enemy". The Cobra has no lockdown mode. The Gremlin's EMP slows rather than stuns. The Blisterback is an air unit with no ground mode. The Methane Wagon has no debuff cloud. Want any of these built?
-12. **Two new simulation mechanics:** a hit that slows (Gremlin) and lifesteal from a unit's own data (Hunter Captain). Fine?
+9. **New pure forms:** the Juggernaut and Spawner stay, unless you can't find models for them.
+10. **Goliath's base damage is 250:** kept. Base damage is what a surviving body deals to the enemy base at the end of a round, not what its weapons deal. The default is price / squad size / 5, which is 100 for a Goliath. I set 250 from the start, for its job as a building-killer, so it is the only unit off that formula. No balance pass changed it.
+11. **Simplified abilities:** the Blisterback and Methane Wagon are removed, so Banished has 4 exclusive units and the Unggoy Rebellion 3. That leaves both without artillery of their own, though they keep the Wraith. You asked me to raise it if this unbalances a sub-faction: I can't tell without measuring, so it's in item 53. The Hunter Captain's taunt, the Cobra's lockdown and the Gremlin's stun stay unbuilt.
+12. **Two new simulation mechanics:** a hit that slows and lifesteal: kept.
 13. **Balance, for the balance pass:**
     - Hunter Pair, Banshee, Scorpion, Spartan, Hornet and Marine are now over 60% average against the bigger field. I left them alone, because older units' numbers need your approval.
     - In AI-only matches Banished won 69% and Armored Division 62%, while Noble won 33% and Covenant-based 29%. The sample is small and it mixes in how well the AI plays each roster.
-    - The Reaver, Chopper, Infested Warthog and Infested Ghost are weak, as flankers are across the game.
+    - The Reaver, Chopper, Infested Warthog and Infested Ghost are weak, as flankers are across the game. You suggested doubling flanker squads: see item 52.
     - An older note: the Scarab beat 33 of 34 before the new units.
     - Also over 60% average: Vulture and Goliath 62%, Grizzly, Rhino and Sparrowhawk 60%.
 
 ## Models
 
-14. **Models wanted** (these units stay placeholder shapes until you find them):
-    - New: Cobra, Rhino, Gremlin, Sparrowhawk, Vulture, Shortsword, Marauder, Reaver, Blisterback, Brute Grenadier, Goliath, Skitterer, Hunter Captain, Methane Wagon, Grunt Goblin, Juggernaut, Infested Ghost, Infested Elite, Spawner.
-    - Older: Archer Missile Pod, Flamethrower Trooper, Mantis, Spartan, Wolverine, Elite, Zealot, Ghost, Hunter Pair, both Jackals, Combat Form, Seeder, Swarm Form, Abomination, ODST, Vampire.
-15. **Stopgaps to confirm:** the Condor Gunship is a grey Pelican. Noble's Spartans are the Marine's body, bigger and darker: "a big soldier", not a Spartan. The base Spartan is still a capsule and now looks worse than they do.
+14. **Models wanted:** see `Assets_to_Download.md`.
+15. **Stopgaps:** you'll download a base Spartan with its weapons (`Assets_to_Download.md`). Until then Noble's Spartans are the Marine's body, the base Spartan is a capsule, and the Condor Gunship is a grey Pelican.
 16. **Unused models:** the Mammoth (`vehicleshumangroundmammoth.glb`, 197,535 triangles) has no unit in the Bible. Do you want a unit for it? The energy sword (`halo_3_energy_sword_by_abisv.glb`) would suit melee units later. Both are untouched.
 17. **Where the models came from** is your call, since you found them and the project stays private.
 18. **From the last batch of models:**
@@ -87,11 +85,23 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 45. **Shell holes:** the small near-black holes in no man's land are unchanged on every map, though they are as dark as the Flood pools that I lightened. They are 2 to 6 m across. Lighten them too?
 46. **Narrow Sandbox windows:** when a squad window would cover the Items panel, the panel now moves to the right of it while the squad is selected. On the narrowest windows at a high UI scale it then covers part of the unit list and the middle of the Red half, until you close the squad window. Fine?
 
+## From the towers (D55)
+
+52. **Flankers.** I'd play with towers before doubling flanker squads, because towers are the job flankers were missing. If they're still weak, I'd go from 2 bodies to 3 rather than 4: doubling also doubles their damage and health for the same price, and the counter web would need running again. Which do you want?
+53. **Balance after this:** nothing has measured the towers, the third techs, the smaller Pelican blast, or Banished and the Unggoy Rebellion without their artillery. The AI-only matches and counter web would measure the last three. Do you want them run, or will you playtest first?
+54. **Numbers you left open,** my first pass, all in `Data/MatchRules.asset`:
+    - A shockwave takes 30% off speed, damage and rate of fire.
+    - A tower level costs a flat 100. I read "doubling the HP and price of 100c every time" as the health doubling at 100 each. If the price doubles too (100, 200, 400, 800), tell me and I'll change how it works.
+    - Oil slows ground units of both sides by 40% and adds 50% fire damage, for 15 s.
+    - Each Command Center purchase can be made once a round, and a tower has 6 m of ground it blocks.
+55. **Rapid Resupply** can be used every round, for a net loss of 100 each time. The AI never uses it, since a rule for when it's worthwhile would be a guess. Fine?
+56. **The Sandbox has no towers.** Should it? It would let you test towers against any army, but it would change what every Sandbox fight measures unless it's a switch.
+
 ## From your play test (D54)
 
 47. **The 55 new third techs** are first-pass, and they are all in `Tools/Data/techs.py` under `THIRD_TECHS`. Each does something the unit's other two don't, and costs about what they cost. No existing tech or unit number changed. Nothing has measured them in battle, because the counter web runs without techs. Tell me which feel wrong.
 48. **Damage techs and death bursts:** Volatile Bladder promised "a much bigger explosion" but never changed the Carrier Form's burst. Damage techs now raise death bursts, so that tech gives +40% and the Infected Pelican's new Volatile Cargo +25%. Keep it?
-49. **The Pelican's crash** is half its old size, about a Titan's blast, and it still deals 900 damage across 7 m. The sound didn't change, so it may now sound too big. Is the look right, and do you also want the real blast smaller?
+49. **The Pelican's crash** looks half its old size, and its real blast is now 3.5 m in radius, 7 m across (D56). It still deals 900 damage. The fire draws a little past that, because it goes by the size of the aircraft too. The sound didn't change, so it may now sound too big.
 50. **The camera:** please judge the turning speed (0.2 degrees per pixel) and direction. The mouse pointer isn't locked during a drag, so a long drag can run into a screen edge or onto another screen, and whether it keeps turning there hasn't been tried. A right-click now acts when the button comes up, and a press of over half a second doesn't cancel anything.
 51. **The screen:** until you choose one in Settings, every start goes to Windows's main screen, even if you dragged the window elsewhere. A start that has to change screens shows the old screen for about 3.5 seconds first. Your saved 2560 x 1200 window fits none of your screens, so it should now open at about 1920 x 992 on the Dell. If you drag the window after choosing a screen, the next start goes back to the one you chose.
 

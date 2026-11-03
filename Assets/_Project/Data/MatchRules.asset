@@ -34,3 +34,31 @@ MonoBehaviour:
   reinforcementBudgetPerRound: 50
   reinforcementMaxLevel: 3
   reinforcementLevelEveryRounds: 4
+  towerBaseHealth: 100
+  towerRadius: 3
+  towerSquares: 3
+  towerLevelUpCost: 100
+  towerShockwaveSeconds:
+  - 10
+  - 8
+  - 6
+  - 4
+  - 2
+  shockwaveSpeedMultiplier: 0.7
+  shockwaveDamageMultiplier: 0.7
+  shockwaveFireRateMultiplier: 0.7
+  extraSlotCost: 100
+  rapidResupplyCredits: 200
+  rapidResupplyPenalty: 300
+  eliteRecruitmentCost: 100
+  oilZoneCost: 150
+  oilZoneLength: 15
+  oilZoneWidth: 4
+  oilZoneSeconds: 15
+  oilZoneSlowShare: 0.4
+  oilZoneFireDamageMultiplier: 1.5
+  researchHealthShare: 0.15
+  researchDamageShare: 0.12
+  researchCosts:
+  - 100
+  - 300

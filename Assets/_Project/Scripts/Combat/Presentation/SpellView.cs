@@ -185,7 +185,7 @@ namespace Halobellum.Presentation
                 if (spell.IsOverAt(now)) continue;
                 // Revealed at the start: the area is outlined until it goes off; a running zone pulses.
                 bool active = spell.TicksDone > 0;
-                bool smoke = spell.Stats.Effect == SpellEffect.Smoke;
+                bool smoke = spell.Stats.Lingers;
                 float pulse = active && !smoke ? 0.75f + 0.25f * Mathf.Sin(Time.unscaledTime * 10f) : 1f;
                 Color color = active ? EffectColor(spell.Stats) : ColorFor(spell.Stats);
                 ShowOutline(spell.Position, spell.Stats, spell.AngleDegrees, color, pulse);
@@ -204,7 +204,8 @@ namespace Halobellum.Presentation
                     AddFlash(spell.Position, stats.Radius, EffectColor(stats), true);
                     break;
                 case SpellEffect.Smoke:
-                    break; // The grey area is the effect.
+                case SpellEffect.Oil:
+                    break; // The area is the effect.
                 default:
                     AddFlash(spell.Position, Mathf.Max(3f, stats.Radius), new Color(1f, 0.85f, 0.5f), false);
                     break;
@@ -220,6 +221,7 @@ namespace Halobellum.Presentation
         {
             if (stats.Effect == SpellEffect.Buff) return stats.ShieldBonusShare > 0f ? new Color(0.4f, 0.8f, 1f) : new Color(1f, 0.85f, 0.3f);
             if (stats.Effect == SpellEffect.Smoke) return new Color(0.72f, 0.74f, 0.76f);
+            if (stats.Effect == SpellEffect.Oil) return new Color(0.3f, 0.24f, 0.14f);
             if (stats.Effect == SpellEffect.Disrupt) return new Color(0.5f, 0.95f, 1f);
             switch (stats.IsAntiArmor ? DamageType.Explosive : stats.DamageType)
             {

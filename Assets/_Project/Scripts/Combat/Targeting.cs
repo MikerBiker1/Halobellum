@@ -35,7 +35,7 @@ namespace Halobellum.Combat
         /// <summary>True if a Seeder's seed can take in this unit (D38): not a Titan, not Flood, and no shield up.</summary>
         public static bool CanBeSeeded(SimUnit target)
         {
-            return !target.Stats.IsFlood && target.Stats.Role != UnitRole.Titan && target.Shield <= 0f;
+            return !target.Stats.IsFlood && target.Stats.Role != UnitRole.Titan && !target.Stats.IsTower && target.Shield <= 0f;
         }
 
         /// <summary>True if the shooter may pick this target for this weapon (filter and minimum range).</summary>

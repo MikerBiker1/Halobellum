@@ -53,7 +53,22 @@ namespace Halobellum.Economy
                                && row < other.Row + otherDepth && other.Row < row + depth;
                 if (overlap) return false;
             }
+            if (type.IsAir) return true;
+            foreach (PlacedTower tower in player.Towers)
+            {
+                bool onTower = column < tower.Column + tower.Squares && tower.Column < column + width
+                               && row < tower.Row + tower.Squares && tower.Row < row + depth;
+                if (onTower) return false;
+            }
             return true;
+        }
+
+        /// <summary>A tower's centre on the battlefield, in metres. Team B's is the mirror image, so each side's Command Center is on its own left.</summary>
+        public static Vec2 TowerCentre(PlacedTower tower, Team team, CombatRules rules)
+        {
+            float half = tower.Squares * 0.5f;
+            var teamA = new Vec2((tower.Column + half - rules.ArenaWidthSquares * 0.5f) * rules.SquareSize, -(rules.DeploymentZoneFront + (tower.Row + half) * rules.SquareSize));
+            return team == Team.A ? teamA : -teamA;
         }
 
         /// <summary>

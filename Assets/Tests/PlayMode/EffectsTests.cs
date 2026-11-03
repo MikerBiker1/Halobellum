@@ -260,7 +260,7 @@ namespace Halobellum.Tests
         public void ThePelicansCrash_IsHalfWhatItWas_AndStillFillsWhatItDamages()
         {
             // The Infected Pelican's own numbers.
-            const float burstRadius = 7f, bodyRadius = 2.5f;
+            const float burstRadius = 3.5f, bodyRadius = 2.5f;
             var host = new GameObject("Crash");
             var kit = new EffectKit(host.transform);
             new EffectRecipes(kit).PelicanCrash(Vector3.zero, bodyRadius, burstRadius);

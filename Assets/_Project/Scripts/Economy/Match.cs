@@ -36,6 +36,12 @@
 //   - Result: every surviving body deals its BaseDamage to the enemy base, both at once. A base at
 //     0 or below loses; if both fall, the lower one loses. An exact tie is a tied round: the damage
 //     is undone, income is paid and the match goes on to the next round.
+//   - Towers (D55): each side has a Command Center on its left and a Research Center on its right, in the
+//     middle of its zone. Both are built afresh for every battle; a fallen tower only costs its side the
+//     shockwave. LevelUpTower doubles its health and shortens its shockwave. The Command Center sells, each
+//     once a round: an extra squad slot (BuyExtraSlot), a one-use oil spell (BuyOilZone), credits now
+//     against less income next round (RapidResupply) and squads bought at level 2 for the rest of the
+//     round (BuyEliteRecruitment). The Research Center sells lasting health and damage for the army (BuyResearch).
 // The AI only sees the match through an AiView: its own state, public information, and each army as
 // it was revealed when the last battle started (SeenArmy), never the opponent's current deployment.
 // The player gets the same: BuildPreview shows the enemy's last-battle army as ghosts (D25).
@@ -87,6 +93,8 @@ namespace Halobellum.Economy
         private int _battleCount;
         private int _baseHealthBeforeA, _baseHealthBeforeB;
         private ArmyBuffs _seenBuffsA = new ArmyBuffs(), _seenBuffsB = new ArmyBuffs();
+        private readonly Dictionary<(TowerKind, int), UnitStats> _towerStats = new Dictionary<(TowerKind, int), UnitStats>();
+        private readonly Dictionary<TowerKind, int> _seenEnemyTowerLevels = new Dictionary<TowerKind, int>();
 
         public Match(MatchRules rules, CombatRules combatRules, IReadOnlyList<FactionInfo> factions, int seed, IMatchAi enemyAi)
         {
@@ -97,6 +105,8 @@ namespace Halobellum.Economy
             _enemyAi = enemyAi ?? new DoNothingAi();
             Player = new PlayerState(Team.A);
             Enemy = new PlayerState(Team.B);
+            AddTowers(Player);
+            AddTowers(Enemy);
             PlayerDraft = StartingDraft.Draw(factions, rules, _random);
             EnemyDraft = StartingDraft.Draw(factions, rules, _random);
             Phase = MatchPhase.Draft;
@@ -141,10 +151,13 @@ namespace Halobellum.Economy
         public int NextIncome => Rules.IncomeForRound(Round + 1);
 
         /// <summary>The credits this side receives at the end of this round: on top of the capped income, its economy cards (D33).</summary>
-        public int NextIncomeFor(Team team) => NextIncome + Get(team).BonusIncome;
+        public int NextIncomeFor(Team team) => Math.Max(0, NextIncome + Get(team).BonusIncome - Get(team).IncomePenalty);
 
         /// <summary>How many squads this side may buy per round.</summary>
-        public int SquadsPerRound(Team team) => Rules.NewSquadsPerRound + Get(team).ExtraSquadsPerRound;
+        public int SquadsPerRound(Team team) => Rules.NewSquadsPerRound + Get(team).ExtraSquadsPerRound + (Get(team).BoughtExtraSlot ? 1 : 0);
+
+        /// <summary>What a new squad of this type costs this side right now: more during Elite Recruitment, since it comes at a higher level.</summary>
+        public int SquadPrice(Team team, UnitStats type) => type.Cost + (Get(team).EliteRecruitment ? LevelUpCost(type) : 0);
 
         // ------------------------------------------------------------------ draft
 
@@ -210,15 +223,16 @@ namespace Halobellum.Economy
             if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Squads can only be bought during deployment.");
             if (!player.Unlocked.Contains(type)) return ActionResult.Fail($"Unlock {type.Name} first.");
             if (player.SquadsBoughtThisRound >= SquadsPerRound(team)) return ActionResult.Fail($"You can buy {SquadsPerRound(team)} squads per round.");
-            if (player.Credits < type.Cost) return ActionResult.Fail($"Not enough credits ({type.Cost} needed).");
+            int price = SquadPrice(team, type);
+            if (player.Credits < price) return ActionResult.Fail($"Not enough credits ({price} needed).");
             if (!DeploymentGrid.CanPlace(player, type, column, row, rotated90, CombatRules)) return ActionResult.Fail("That spot is blocked or outside your zone.");
 
-            player.Credits -= type.Cost;
+            player.Credits -= price;
             player.SquadsBoughtThisRound++;
             player.Squads.Add(new PlacedSquad
             {
                 Id = _nextSquadId++, Type = type, Column = column, Row = row, Rotated90 = rotated90,
-                RoundBought = Round, PricePaid = type.Cost,
+                RoundBought = Round, PricePaid = price, Level = player.EliteRecruitment ? 2 : 1,
             });
             return ActionResult.Success($"{type.Name} bought.");
         }
@@ -262,7 +276,9 @@ namespace Halobellum.Economy
         /// <summary>XP needed to fill the squad's bar (the same at every level).</summary>
         public float XpNeeded(PlacedSquad squad) => squad.Type.Cost * Rules.XpBarPerSquadCost;
 
-        public int LevelUpCost(PlacedSquad squad) => (int)MathF.Round(squad.Type.Cost * Rules.LevelUpCostShare);
+        public int LevelUpCost(PlacedSquad squad) => LevelUpCost(squad.Type);
+
+        private int LevelUpCost(UnitStats type) => (int)MathF.Round(type.Cost * Rules.LevelUpCostShare);
 
         /// <summary>True if the squad's XP bar is full and it is below the maximum level.</summary>
         public bool CanLevelUp(PlacedSquad squad) =>
@@ -389,6 +405,143 @@ namespace Halobellum.Economy
             return ActionResult.Success($"{squad.Type.Name} sold for {refund}.");
         }
 
+        // ------------------------------------------------------------------ towers (D55)
+
+        public static string TowerName(TowerKind kind) => kind == TowerKind.CommandCenter ? "Command Center" : "Research Center";
+
+        private void AddTowers(PlayerState player)
+        {
+            if (!Rules.HasTowers) return;
+            int squares = Rules.TowerSquares;
+            int left = CombatRules.ArenaWidthSquares / 4 - squares / 2;
+            int row = (CombatRules.DeploymentDepthSquares - squares) / 2;
+            player.Towers.Add(new PlacedTower { Kind = TowerKind.CommandCenter, Column = left, Row = row, Squares = squares });
+            player.Towers.Add(new PlacedTower { Kind = TowerKind.ResearchCenter, Column = CombatRules.ArenaWidthSquares - left - squares, Row = row, Squares = squares });
+        }
+
+        /// <summary>A tower's stats at a level: its health doubles with each one, and its shockwave gets shorter.</summary>
+        public UnitStats TowerStats(TowerKind kind, int level)
+        {
+            if (_towerStats.TryGetValue((kind, level), out UnitStats stats)) return stats;
+            stats = new UnitStats
+            {
+                Name = TowerName(kind), Role = UnitRole.Tank, SquadSize = 1, MaxHealth = Rules.TowerBaseHealth * MathF.Pow(2f, level - 1),
+                ArmorType = ArmorType.Light, CollisionRadius = Rules.TowerRadius, ImmuneToInfection = true, TargetFilter = TargetFilter.Ground,
+                Shockwave = new ShockwaveStats
+                {
+                    Kind = kind, Seconds = Rules.TowerShockwaveSeconds[level - 1], SpeedMultiplier = Rules.ShockwaveSpeedMultiplier,
+                    DamageMultiplier = Rules.ShockwaveDamageMultiplier, FireRateMultiplier = Rules.ShockwaveFireRateMultiplier,
+                },
+            };
+            _towerStats[(kind, level)] = stats;
+            return stats;
+        }
+
+        /// <summary>A tower's level as this team last saw the other side's (the player's own are always known).</summary>
+        public int SeenEnemyTowerLevel(TowerKind kind) => _seenEnemyTowerLevels.TryGetValue(kind, out int level) ? level : 1;
+
+        /// <summary>Adds a side's towers after its squads, so that squad and unit numbering stay as they were.</summary>
+        private void PlaceTowers(BattleSimulation battle, PlayerState player, bool seenOnly)
+        {
+            foreach (PlacedTower tower in player.Towers)
+            {
+                int level = seenOnly ? SeenEnemyTowerLevel(tower.Kind) : tower.Level;
+                battle.AddUnit(TowerStats(tower.Kind, level), player.Team, DeploymentGrid.TowerCentre(tower, player.Team, CombatRules));
+            }
+        }
+
+        private bool CanBuyFromTower(out ActionResult failed)
+        {
+            failed = ActionResult.Fail("Towers only sell during deployment.");
+            return Phase == MatchPhase.Deployment && Rules.HasTowers;
+        }
+
+        public ActionResult LevelUpTower(Team team, TowerKind kind)
+        {
+            if (!CanBuyFromTower(out ActionResult failed)) return failed;
+            PlayerState player = Get(team);
+            PlacedTower tower = player.FindTower(kind);
+            if (tower.Level >= Rules.TowerMaxLevel) return ActionResult.Fail($"The {TowerName(kind)} is already at the maximum level.");
+            if (player.Credits < Rules.TowerLevelUpCost) return ActionResult.Fail($"Not enough credits ({Rules.TowerLevelUpCost} needed).");
+            player.Credits -= Rules.TowerLevelUpCost;
+            tower.Level++;
+            return ActionResult.Success($"The {TowerName(kind)} is now level {tower.Level}.");
+        }
+
+        public ActionResult BuyExtraSlot(Team team)
+        {
+            if (!CanBuyFromTower(out ActionResult failed)) return failed;
+            PlayerState player = Get(team);
+            if (player.BoughtExtraSlot) return ActionResult.Fail("You already bought an extra slot this round.");
+            if (player.Credits < Rules.ExtraSlotCost) return ActionResult.Fail($"Not enough credits ({Rules.ExtraSlotCost} needed).");
+            player.Credits -= Rules.ExtraSlotCost;
+            player.BoughtExtraSlot = true;
+            return ActionResult.Success("One more squad can be bought this round.");
+        }
+
+        public ActionResult BuyOilZone(Team team)
+        {
+            if (!CanBuyFromTower(out ActionResult failed)) return failed;
+            PlayerState player = Get(team);
+            SpellStats oil = Rules.OilZone;
+            if (oil == null) return ActionResult.Fail("There is no oil to buy.");
+            if (player.BoughtOilZone) return ActionResult.Fail("You already bought oil this round.");
+            if (player.Credits < oil.Cost) return ActionResult.Fail($"Not enough credits ({oil.Cost} needed).");
+            player.Credits -= oil.Cost;
+            player.BoughtOilZone = true;
+            player.Spells.Add(new OwnedSpell { Id = _nextSpellId++, Stats = oil, ReadyRound = Round, SingleUse = true });
+            return ActionResult.Success($"{oil.Name} added to your spells.");
+        }
+
+        public ActionResult RapidResupply(Team team)
+        {
+            if (!CanBuyFromTower(out ActionResult failed)) return failed;
+            PlayerState player = Get(team);
+            if (player.UsedRapidResupply) return ActionResult.Fail("You already used Rapid Resupply this round.");
+            player.UsedRapidResupply = true;
+            player.Credits += Rules.RapidResupplyCredits;
+            player.IncomePenalty += Rules.RapidResupplyPenalty;
+            return ActionResult.Success($"+{Rules.RapidResupplyCredits} credits now, {Rules.RapidResupplyPenalty} less next round.");
+        }
+
+        public ActionResult BuyEliteRecruitment(Team team)
+        {
+            if (!CanBuyFromTower(out ActionResult failed)) return failed;
+            PlayerState player = Get(team);
+            if (player.EliteRecruitment) return ActionResult.Fail("Elite Recruitment is already on this round.");
+            if (player.Credits < Rules.EliteRecruitmentCost) return ActionResult.Fail($"Not enough credits ({Rules.EliteRecruitmentCost} needed).");
+            player.Credits -= Rules.EliteRecruitmentCost;
+            player.EliteRecruitment = true;
+            return ActionResult.Success("Squads bought this round start at level 2, and cost half their price more.");
+        }
+
+        /// <summary>The next step of army-wide health or damage. The steps add up: two of 15% are 30%, not 32%.</summary>
+        public ActionResult BuyResearch(Team team, bool health)
+        {
+            if (!CanBuyFromTower(out ActionResult failed)) return failed;
+            PlayerState player = Get(team);
+            int steps = health ? player.ResearchHealthSteps : player.ResearchDamageSteps;
+            if (steps >= Rules.ResearchCosts.Length) return ActionResult.Fail("That research is complete.");
+            int cost = Rules.ResearchCosts[steps];
+            if (player.Credits < cost) return ActionResult.Fail($"Not enough credits ({cost} needed).");
+            float share = health ? Rules.ResearchHealthShare : Rules.ResearchDamageShare;
+            float gain = (1f + share * (steps + 1)) / (1f + share * steps);
+            player.Credits -= cost;
+            ArmyBuffs buffs = player.Buffs.Clone();
+            if (health)
+            {
+                buffs.HealthMultiplier *= gain;
+                player.ResearchHealthSteps++;
+            }
+            else
+            {
+                buffs.DamageMultiplier *= gain;
+                player.ResearchDamageSteps++;
+            }
+            player.SetBuffs(buffs);
+            return ActionResult.Success($"Your whole army: +{share * (steps + 1) * 100f:0}% {(health ? "health" : "damage")} in all.");
+        }
+
         // ------------------------------------------------------------------ battle and result
 
         /// <summary>The player pressed Ready: builds this round's battle from both deployments.</summary>
@@ -402,6 +555,7 @@ namespace Halobellum.Economy
             Reveal(Enemy, _seenB);
             _seenBuffsA = Player.Buffs.Clone();
             _seenBuffsB = Enemy.Buffs.Clone();
+            foreach (PlacedTower tower in Enemy.Towers) _seenEnemyTowerLevels[tower.Kind] = tower.Level;
             _seenFactionA = Player.Faction?.Name;
             _seenFactionB = Enemy.Faction?.Name;
             foreach (PlacedSquad squad in Player.Squads) squad.HasFought = true;
@@ -421,6 +575,7 @@ namespace Halobellum.Economy
                 spell.IsPlaced = false;
                 spell.ReadyRound = Round + spell.Stats.CooldownRounds + 1;
             }
+            player.Spells.RemoveAll(spell => spell.SingleUse && spell.ReadyRound > Round);
         }
 
         /// <summary>Copies an army as both sides see it when the battle starts.</summary>
@@ -444,7 +599,10 @@ namespace Halobellum.Economy
         /// </summary>
         public BattleSimulation BuildBattle(bool includeEnemy)
         {
-            return DeploymentGrid.CreateBattle(CombatRules, Player, includeEnemy ? Enemy : null, BattleSeed);
+            BattleSimulation battle = DeploymentGrid.CreateBattle(CombatRules, Player, includeEnemy ? Enemy : null, BattleSeed);
+            PlaceTowers(battle, Player, false);
+            if (includeEnemy) PlaceTowers(battle, Enemy, false);
+            return battle;
         }
 
         /// <summary>
@@ -455,7 +613,10 @@ namespace Halobellum.Economy
         public BattleSimulation BuildPreview()
         {
             PlayerState seen = SeenAsDeployment(Team.B);
-            return DeploymentGrid.CreateBattle(CombatRules, Player, seen.Squads.Count > 0 ? seen : null, BattleSeed);
+            BattleSimulation battle = DeploymentGrid.CreateBattle(CombatRules, Player, seen.Squads.Count > 0 ? seen : null, BattleSeed);
+            PlaceTowers(battle, Player, false);
+            PlaceTowers(battle, Enemy, true);
+            return battle;
         }
 
         /// <summary>A side's army as seen at the last battle start, as a deployment (levels and techs included).</summary>
@@ -495,6 +656,10 @@ namespace Halobellum.Economy
                 Kills = RoundSummary.CountKills(CurrentBattle),
             };
             AwardXp(CurrentBattle, summary);
+            foreach (SimUnit unit in CurrentBattle.Units)
+            {
+                if (unit.Stats.IsTower && !unit.IsAlive) Get(unit.Team).FindTower(unit.Stats.Shockwave.Kind).Falls++;
+            }
 
             _baseHealthBeforeA = Player.BaseHealth;
             _baseHealthBeforeB = Enemy.BaseHealth;
@@ -531,6 +696,8 @@ namespace Halobellum.Economy
                 summary.IncomeAwarded = NextIncomeFor(Team.A);
                 Player.Credits += summary.IncomeAwarded;
                 Enemy.Credits += NextIncomeFor(Team.B);
+                Player.IncomePenalty = 0;
+                Enemy.IncomePenalty = 0;
                 Phase = MatchPhase.Result;
             }
             LastSummary = summary;
@@ -557,6 +724,7 @@ namespace Halobellum.Economy
             {
                 player.SquadsBoughtThisRound = 0;
                 player.UnlocksThisRound = 0;
+                player.BoughtExtraSlot = player.BoughtOilZone = player.UsedRapidResupply = player.EliteRecruitment = false;
                 player.Offer = CardDeck.HasOffer(Rules, round) ? CardDeck.Draw(player, Rules, round, _random) : null;
             }
             Phase = MatchPhase.Deployment;
