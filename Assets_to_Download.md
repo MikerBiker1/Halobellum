@@ -49,7 +49,7 @@ Sounds go by kind of weapon, not by unit, so one file covers every unit in its r
 | [ ] | `sfx_fire_gauss` | Gauss guns and the sniper rifle: Gauss Warthog, Spartan Sniper. |
 | [ ] | `sfx_fire_cannon` | Tank and other cannons: Scorpion, Elephant, Rhino, Grizzly. |
 | [ ] | `sfx_fire_rocket` | Rockets and missiles, the launch: Hornet, Wolverine, Archer Pod. |
-| [ ] | `sfx_fire_bomb` | Bombs, the release: Banshee, Hornet, Shortsword. |
+| [ ] | `sfx_fire_bomb` | Bombs, the release: Banshee, Hornet, Longsword. |
 | [ ] | `sfx_fire_flame` | Flamethrowers. |
 | [ ] | `sfx_fire_laser` | Spartan Laser, Hunter Captain's Siphon Laser. |
 | [ ] | `sfx_fire_plasma` | Plasma rifles, pistols and turrets: Grunts, Jackals, Elites. |
@@ -124,7 +124,7 @@ These units are placeholder shapes, or borrow another unit's body. Weapons on a 
 | [ ] | Rhino | Armored Division. |
 | [ ] | Sparrowhawk | Aerospace Command. |
 | [ ] | Vulture | Aerospace Command. |
-| [ ] | Shortsword | Aerospace Command. |
+| [ ] | Longsword | Aerospace Command. |
 | [ ] | Condor Gunship | Aerospace Command. It is a grey Pelican for now. |
 
 ### Covenant

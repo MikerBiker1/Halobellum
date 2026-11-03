@@ -26,7 +26,7 @@ namespace Halobellum.Tests
         {
             ("UNSC_Standard", "Noble", "Noble", new[] { "Spartan Sniper", "Spartan Heavy Weapons", "Spartan Grenadier", "Spartan CQB", "Spartan Fireteam" }),
             ("UNSC_Standard", "Armored Division", "ArmoredDivision", new[] { "Grizzly", "Cobra", "Rhino", "Gremlin" }),
-            ("UNSC_Standard", "Aerospace Command", "AerospaceCommand", new[] { "Sparrowhawk", "Vulture", "Shortsword", "Condor Gunship" }),
+            ("UNSC_Standard", "Aerospace Command", "AerospaceCommand", new[] { "Sparrowhawk", "Vulture", "Longsword", "Condor Gunship" }),
             ("Covenant_Standard", "Banished", "Banished", new[] { "Chopper", "Marauder", "Reaver", "Brute Grenadier" }),
             ("Covenant_Standard", "Lekgolo Colony", "LekgoloColony", new[] { "Goliath", "Skitterer", "Hunter Captain" }),
             ("Covenant_Standard", "Unggoy Rebellion", "UnggoyRebellion", new[] { "Cannon Fodder", "Heavy Grunts", "Grunt Goblin" }),
@@ -157,7 +157,7 @@ namespace Halobellum.Tests
             Assert.AreEqual(2, u["Grizzly"].Weapons.Length);
 
             foreach (string flyer in Table[2].units) Assert.IsTrue(u[flyer].IsAir, flyer);
-            Assert.IsFalse(u["Shortsword"].CanTarget(true), "A bomber cannot fight aircraft.");
+            Assert.IsFalse(u["Longsword"].CanTarget(true), "A bomber cannot fight aircraft.");
             Assert.AreEqual("Marine", u["Condor Gunship"].Reinforcement.Name);
             Assert.AreEqual(6, u["Condor Gunship"].Reinforcement.SquadSize);
 

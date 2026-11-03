@@ -280,7 +280,7 @@ Sub-factions **add** exclusive units on top of the base faction roster. They do 
 - **Flood, UNSC-based:** infected variants of the UNSC roster plus pure forms.
 - **Flood, Covenant-based:** infected variants of the Covenant roster plus pure forms.
 - **Armored Division (UNSC):** Grizzly, Cobra, Rhino, Gremlin.
-- **Aerospace Command (UNSC):** Sparrowhawk, Vulture, Shortsword, Condor Gunship.
+- **Aerospace Command (UNSC):** Sparrowhawk, Vulture, Longsword, Condor Gunship.
 
 ## 9. Tech upgrades
 

@@ -13,9 +13,9 @@ def units(U, W):
         U("Sparrowhawk", "Sparrowhawk", FACTION, "Aerial", 2, 50, 1, 300, 550, "L", 4, 2, 1, "B",
           [W("Heavy Autocannon", 18, 0.3, 14, "Ballistic", aa=True)], airu=True,
           note="Gunship that hunts vehicles. Its gun is poor against infantry."),
-        U("Shortsword", "Shortsword", FACTION, "Aerial", 2, 50, 1, 300, 500, "L", 6, 2.2, 1, "G",
-          [W("Carpet Bombs", 150, 2.5, 5, "Explosive", proj=18, splash=4.5, own="G")], airu=True,
-          note="Bomber. It has to fly over its target, and cannot fight other aircraft at all."),
+        U("Longsword", "Longsword", FACTION, "Aerial", 2, 50, 1, 350, 650, "L", 5, 2.8, 1, "G",
+          [W("Carpet Bombs", 170, 2.5, 5, "Explosive", proj=18, splash=5, own="G")], airu=True,
+          note="Heavy bomber. It has to fly over its target, and cannot fight other aircraft at all."),
         U("Vulture", "Vulture", FACTION, "Aerial", 3, 250, 1, 500, 900, "H", 2.5, 3, 1.5, "B",
           [W("Missile Barrage", 55, 3, 22, "Explosive", proj=40, splash=3),
            W("Chin Gun", 10, 0.2, 14, "Ballistic", block=True)], airu=True,
@@ -31,7 +31,7 @@ TECHS = {
         T("ArmorPlating", "Armor Plating", 150, "Extra plating on the airframe.", health=1.3),
         T("HeavyRounds", "Heavy Rounds", 200, "Heavier autocannon rounds.", damage=1.3),
     ],
-    "Shortsword": [
+    "Longsword": [
         T("ArmorPlating", "Armor Plating", 150, "Extra plating on the airframe.", health=1.3),
         T("WideBombBay", "Wide Bomb Bay", 200, "Each bomb covers more ground.", splash=1.5),
         T("Afterburners", "Afterburners", 100, "Spends less time under fire.", speed=1.25),

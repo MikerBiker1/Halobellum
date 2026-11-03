@@ -159,9 +159,9 @@ namespace Halobellum.Tests
             yield return null;
             Assert.AreEqual(BakedAnimation.Dead, views.PlayingAnimation(fallen));
             Assert.IsTrue(views.IsShown(fallen), "It stays on the field to play its death.");
-            limit = Time.realtimeSinceStartup + 10f;
+            limit = Time.realtimeSinceStartup + 20f;
             while (views.IsShown(fallen) && !_battle.Simulation.IsFinished && Time.realtimeSinceStartup < limit) yield return null;
-            limit = Time.realtimeSinceStartup + 5f;
+            limit = Time.realtimeSinceStartup + 16f;
             while (views.IsShown(fallen) && Time.realtimeSinceStartup < limit) yield return null;
             Assert.IsFalse(views.IsShown(fallen), "Then it goes.");
         }

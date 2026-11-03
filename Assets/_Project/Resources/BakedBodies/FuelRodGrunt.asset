@@ -23,7 +23,7 @@ MonoBehaviour:
   weaponLength: 1.4
   weaponInForwardHand: 0
   transitionSeconds: 0.2
-  corpseSeconds: 1.5
+  corpseSeconds: 14
   bakedFps: 30
   mesh: {fileID: 4300000, guid: f8e5d523895fac146b503b5054179dad, type: 2}
   material: {fileID: 2100000, guid: 15666de7ad588dd46ab6a6585ee2ef74, type: 2}

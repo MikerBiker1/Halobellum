@@ -265,6 +265,7 @@ namespace Halobellum.Presentation
             return true;
         }
 
+        private const float BodySinkSeconds = 1.6f, BodySinkDepth = 1.5f;
         private BattleSimulation _shown;
         private Transform _container;
         private static readonly int BattleTimeId = Shader.PropertyToID("_BattleTime");
@@ -622,12 +623,11 @@ namespace Halobellum.Presentation
                 view.Root.SetActive(false);
                 return;
             }
-            // It falls, stays down a moment, then goes.
+            // It falls, stays down, then sinks away. Nothing bumps into it: the simulation only ever looks at living units.
             view.Bar.gameObject.SetActive(false);
             view.Ring.SetActive(false);
             Play(view, BakedAnimation.Dead, true);
-            BakedClip dead = view.Baked.Clip(BakedAnimation.Dead);
-            view.HideAt = _animationTime + dead.frames / (float)view.Baked.bakedFps + view.Baked.corpseSeconds;
+            view.HideAt = _animationTime + view.Baked.corpseSeconds;
             _falling.Add(view);
         }
 
@@ -648,7 +648,12 @@ namespace Halobellum.Presentation
             Shader.SetGlobalFloat(BattleTimeId, _animationTime);
             for (int i = _falling.Count - 1; i >= 0; i--)
             {
-                if (_animationTime < _falling[i].HideAt) continue;
+                float left = _falling[i].HideAt - _animationTime;
+                if (left > 0f)
+                {
+                    if (left < BodySinkSeconds) _falling[i].Root.transform.position = _falling[i].CurrentPosition + Vector3.down * (BodySinkDepth * (1f - left / BodySinkSeconds));
+                    continue;
+                }
                 _falling[i].Root.SetActive(false);
                 _falling.RemoveAt(i);
             }

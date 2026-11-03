@@ -48,7 +48,7 @@ MonoBehaviour:
     description: 'Aircraft: gunships, bombers and a heavy transport.'
     exclusiveUnits:
     - {fileID: 11400000, guid: 0fff2195f162ab2f6f837d6799dab27e, type: 2}
-    - {fileID: 11400000, guid: 1b34bd49865458e4a24a2531dd923446, type: 2}
+    - {fileID: 11400000, guid: 2efb3a51cd149d96ce2fabbb7f0050be, type: 2}
     - {fileID: 11400000, guid: b782de6e73a396fab21cee4b875a9536, type: 2}
     - {fileID: 11400000, guid: a2fad471944b6d3b66269468f087159a, type: 2}
   spells:

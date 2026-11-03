@@ -48,11 +48,11 @@ namespace Halobellum.Presentation
             public SimUnit Unit;
         }
 
-        private const int MostCorpses = 48;
+        private const int MostCorpses = 240;
         private const int MostFires = 28;
         private const float WreckSeconds = 14f;
         private const float TitanWreckSeconds = 24f;
-        private const float InfantryCorpseSeconds = 2.4f;
+        private const float InfantryCorpseSeconds = 14f;
         private const float SinkSeconds = 1.6f;
         private const float FallGravity = 15f;
         private const float DivePuffsPerSecond = 60f;

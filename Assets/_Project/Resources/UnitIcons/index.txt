@@ -1,5 +1,5 @@
 Condor Gunship	model
-Shortsword	fallback
+Longsword	fallback
 Sparrowhawk	fallback
 Vulture	fallback
 Cobra	fallback

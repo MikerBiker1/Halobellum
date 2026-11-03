@@ -71,7 +71,7 @@ namespace Halobellum.Tests
             ("Rhino", "Hornet"),
             ("Grizzly", "Gauss Warthog"),
             ("Sparrowhawk", "Wolverine"),
-            ("Shortsword", "Wolverine"),
+            ("Longsword", "Wolverine"),
             ("Vulture", "Wolverine"),
             ("Condor Gunship", "Wolverine"),
             ("Chopper", "Flamethrower Trooper"),

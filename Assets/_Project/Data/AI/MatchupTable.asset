@@ -147,7 +147,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Marine
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Marine
     defender: Vulture
@@ -351,7 +351,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Flamethrower Trooper
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Flamethrower Trooper
     defender: Vulture
@@ -555,7 +555,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Warthog
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Warthog
     defender: Vulture
@@ -759,7 +759,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Gauss Warthog
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Gauss Warthog
     defender: Vulture
@@ -963,7 +963,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Scorpion
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Scorpion
     defender: Vulture
@@ -1167,7 +1167,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Wolverine
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Wolverine
     defender: Vulture
@@ -1371,7 +1371,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Hornet
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Hornet
     defender: Vulture
@@ -1575,7 +1575,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Archer Missile Pod
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Archer Missile Pod
     defender: Vulture
@@ -1779,7 +1779,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Pelican
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Pelican
     defender: Vulture
@@ -1983,7 +1983,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Spartan
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Spartan
     defender: Vulture
@@ -2187,7 +2187,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Mantis
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Mantis
     defender: Vulture
@@ -2391,7 +2391,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Elephant
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Elephant
     defender: Vulture
@@ -2595,7 +2595,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Grunt
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Grunt
     defender: Vulture
@@ -2799,7 +2799,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Fuel Rod Grunt
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Fuel Rod Grunt
     defender: Vulture
@@ -3003,7 +3003,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: 'Jackal (Plasma Rifle)'
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Vulture
@@ -3207,7 +3207,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: 'Jackal (Shield)'
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: 'Jackal (Shield)'
     defender: Vulture
@@ -3411,8 +3411,8 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Ghost
-    defender: Shortsword
-    winRate: 0.7
+    defender: Longsword
+    winRate: 1
   - attacker: Ghost
     defender: Vulture
     winRate: 1
@@ -3615,7 +3615,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Elite
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Elite
     defender: Vulture
@@ -3819,7 +3819,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Wraith
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Wraith
     defender: Vulture
@@ -4023,7 +4023,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Vampire
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Vampire
     defender: Vulture
@@ -4227,7 +4227,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Banshee
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Banshee
     defender: Vulture
@@ -4431,7 +4431,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Hunter Pair
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Hunter Pair
     defender: Vulture
@@ -4635,7 +4635,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Zealot
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Zealot
     defender: Vulture
@@ -4839,7 +4839,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Scarab
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Scarab
     defender: Vulture
@@ -5043,7 +5043,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Infection Forms
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Infection Forms
     defender: Vulture
@@ -5247,7 +5247,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Carrier Form
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Carrier Form
     defender: Vulture
@@ -5451,7 +5451,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Combat Form
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Combat Form
     defender: Vulture
@@ -5655,7 +5655,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Stalker Form
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Stalker Form
     defender: Vulture
@@ -5859,7 +5859,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Pure Form Ranged
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Pure Form Ranged
     defender: Vulture
@@ -6063,7 +6063,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Swarm Form
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Swarm Form
     defender: Vulture
@@ -6267,7 +6267,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Pure Form Tank
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Pure Form Tank
     defender: Vulture
@@ -6471,7 +6471,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Seeder
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Seeder
     defender: Vulture
@@ -6675,7 +6675,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Infected Pelican
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Infected Pelican
     defender: Vulture
@@ -6879,7 +6879,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Infected Phantom
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Infected Phantom
     defender: Vulture
@@ -7083,7 +7083,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Flood Abomination
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Flood Abomination
     defender: Vulture
@@ -7287,7 +7287,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Spartan Sniper
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Spartan Sniper
     defender: Vulture
@@ -7491,8 +7491,8 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Spartan Heavy Weapons
-    defender: Shortsword
-    winRate: 0.2
+    defender: Longsword
+    winRate: 0.67
   - attacker: Spartan Heavy Weapons
     defender: Vulture
     winRate: 1
@@ -7695,7 +7695,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Spartan Grenadier
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Spartan Grenadier
     defender: Vulture
@@ -7899,8 +7899,8 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Spartan CQB
-    defender: Shortsword
-    winRate: 1
+    defender: Longsword
+    winRate: 0.67
   - attacker: Spartan CQB
     defender: Vulture
     winRate: 0.1
@@ -8103,7 +8103,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Spartan Fireteam
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Spartan Fireteam
     defender: Vulture
@@ -8307,7 +8307,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Gremlin
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Gremlin
     defender: Vulture
@@ -8511,7 +8511,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Cobra
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Cobra
     defender: Vulture
@@ -8715,7 +8715,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Rhino
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Rhino
     defender: Vulture
@@ -8919,7 +8919,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Grizzly
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Grizzly
     defender: Vulture
@@ -9123,7 +9123,7 @@ MonoBehaviour:
     defender: Grizzly
     winRate: 1
   - attacker: Sparrowhawk
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Sparrowhawk
     defender: Vulture
@@ -9194,208 +9194,208 @@ MonoBehaviour:
   - attacker: Sparrowhawk
     defender: Spawner
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Marine
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Flamethrower Trooper
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Warthog
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Gauss Warthog
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Scorpion
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Wolverine
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Hornet
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Archer Missile Pod
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Pelican
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Spartan
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Mantis
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Elephant
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Grunt
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Fuel Rod Grunt
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: 'Jackal (Plasma Rifle)'
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: 'Jackal (Shield)'
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Ghost
-    winRate: 0.3
-  - attacker: Shortsword
+    winRate: 0
+  - attacker: Longsword
     defender: Elite
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Wraith
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Vampire
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Banshee
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Hunter Pair
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Zealot
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Scarab
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Infection Forms
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Carrier Form
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Combat Form
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Stalker Form
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Pure Form Ranged
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Swarm Form
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Pure Form Tank
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Seeder
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Infected Pelican
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Infected Phantom
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Flood Abomination
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Spartan Sniper
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Spartan Heavy Weapons
-    winRate: 0.8
-  - attacker: Shortsword
+    winRate: 0.33
+  - attacker: Longsword
     defender: Spartan Grenadier
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Spartan CQB
-    winRate: 0
-  - attacker: Shortsword
+    winRate: 0.33
+  - attacker: Longsword
     defender: Spartan Fireteam
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Gremlin
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Cobra
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Rhino
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Grizzly
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Sparrowhawk
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Vulture
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Condor Gunship
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Chopper
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Brute Grenadier
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Marauder
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Reaver
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Skitterer
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Goliath
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Hunter Captain
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Cannon Fodder
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Heavy Grunts
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Grunt Goblin
-    winRate: 0.3
-  - attacker: Shortsword
+    winRate: 1
+  - attacker: Longsword
     defender: Infested Marine
-    winRate: 0.7
-  - attacker: Shortsword
+    winRate: 0.33
+  - attacker: Longsword
     defender: Infested Warthog
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Infested Scorpion
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Infested Hornet
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Juggernaut
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Infested Grunt
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Infested Ghost
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Infested Elite
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Infested Wraith
     winRate: 1
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Infested Banshee
     winRate: 0
-  - attacker: Shortsword
+  - attacker: Longsword
     defender: Spawner
     winRate: 1
   - attacker: Vulture
@@ -9534,7 +9534,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Vulture
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Vulture
     defender: Condor Gunship
@@ -9738,7 +9738,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Condor Gunship
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Condor Gunship
     defender: Vulture
@@ -9942,7 +9942,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Chopper
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Chopper
     defender: Vulture
@@ -10146,7 +10146,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Brute Grenadier
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Brute Grenadier
     defender: Vulture
@@ -10350,7 +10350,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Marauder
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Marauder
     defender: Vulture
@@ -10554,7 +10554,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Reaver
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Reaver
     defender: Vulture
@@ -10758,7 +10758,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Skitterer
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Skitterer
     defender: Vulture
@@ -10962,7 +10962,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Goliath
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Goliath
     defender: Vulture
@@ -11166,7 +11166,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Hunter Captain
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Hunter Captain
     defender: Vulture
@@ -11370,7 +11370,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Cannon Fodder
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Cannon Fodder
     defender: Vulture
@@ -11574,7 +11574,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Heavy Grunts
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Heavy Grunts
     defender: Vulture
@@ -11778,8 +11778,8 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Grunt Goblin
-    defender: Shortsword
-    winRate: 0.7
+    defender: Longsword
+    winRate: 0
   - attacker: Grunt Goblin
     defender: Vulture
     winRate: 1
@@ -11982,8 +11982,8 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Infested Marine
-    defender: Shortsword
-    winRate: 0.3
+    defender: Longsword
+    winRate: 0.67
   - attacker: Infested Marine
     defender: Vulture
     winRate: 0
@@ -12186,7 +12186,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Infested Warthog
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Infested Warthog
     defender: Vulture
@@ -12390,7 +12390,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Infested Scorpion
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Infested Scorpion
     defender: Vulture
@@ -12594,7 +12594,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Infested Hornet
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Infested Hornet
     defender: Vulture
@@ -12798,7 +12798,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Juggernaut
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Juggernaut
     defender: Vulture
@@ -13002,7 +13002,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Infested Grunt
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Infested Grunt
     defender: Vulture
@@ -13206,7 +13206,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Infested Ghost
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Infested Ghost
     defender: Vulture
@@ -13410,7 +13410,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 1
   - attacker: Infested Elite
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Infested Elite
     defender: Vulture
@@ -13614,7 +13614,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Infested Wraith
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Infested Wraith
     defender: Vulture
@@ -13818,7 +13818,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Infested Banshee
-    defender: Shortsword
+    defender: Longsword
     winRate: 1
   - attacker: Infested Banshee
     defender: Vulture
@@ -14022,7 +14022,7 @@ MonoBehaviour:
     defender: Sparrowhawk
     winRate: 0
   - attacker: Spawner
-    defender: Shortsword
+    defender: Longsword
     winRate: 0
   - attacker: Spawner
     defender: Vulture

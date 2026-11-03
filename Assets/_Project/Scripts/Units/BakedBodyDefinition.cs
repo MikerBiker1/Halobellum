@@ -58,8 +58,8 @@ namespace Halobellum.Units
         [Header("Playing")]
         [Tooltip("Battle seconds a cross-fade from one animation to the next takes.")]
         public float transitionSeconds = 0.2f;
-        [Tooltip("Battle seconds a body stays on the ground after its death animation ends.")]
-        public float corpseSeconds = 1.5f;
+        [Tooltip("Battle seconds a body stays on the field from the moment it dies, with its fall.")]
+        public float corpseSeconds = 14f;
 
         [Header("Baked (filled in by the Animation Baker)")]
         public int bakedFps = 30;
