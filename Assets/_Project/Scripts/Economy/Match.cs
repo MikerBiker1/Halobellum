@@ -188,7 +188,7 @@ namespace Halobellum.Economy
         {
             player.Faction = card.Faction;
             player.SubFaction = card.SubFaction;
-            player.BaseHealth = Rules.BaseHealth;
+            player.BaseHealth = player.StartingBaseHealth = Rules.StartingBaseHealth(card.Value);
             foreach (UnitStats type in card.Squads)
             {
                 player.Unlocked.Add(type);
@@ -366,7 +366,7 @@ namespace Halobellum.Economy
         /// <summary>
         /// Gives each placed squad the XP its bodies earned in the finished battle: for every enemy body
         /// killed, the victim's worth (its squad price per body, plus half per level above 1). A tower is worth
-        /// one squad of the killer's own price per level of the tower (D58).
+        /// what the rules say for its level (D59).
         /// Simulation squad i is placed squad i (Team A's squads first, then Team B's); units dropped
         /// mid-battle belong to no placed squad and earn nothing.
         /// </summary>
@@ -387,7 +387,7 @@ namespace Halobellum.Economy
                 UnitStats v = victim.Stats;
                 if (v.IsTower)
                 {
-                    earned[index] += placed[index].squad.Type.Cost * Get(victim.Team).FindTower(v.Shockwave.Kind).Level;
+                    earned[index] += Rules.TowerXpByLevel[Get(victim.Team).FindTower(v.Shockwave.Kind).Level - 1];
                     continue;
                 }
                 earned[index] += v.Cost / (float)Math.Max(1, v.SquadSize) * (1f + 0.5f * (v.Level - 1));

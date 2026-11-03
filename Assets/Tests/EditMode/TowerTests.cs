@@ -129,9 +129,12 @@ namespace Halobellum.Tests
             Assert.AreEqual(1.4f, shockwave.DamageTakenMultiplier, 1e-3f);
         }
 
-        [TestCase(1)]
-        [TestCase(3)]
-        public void ATower_GivesItsKillerASquadsWorthOfXp_PerLevelOfTheTower(int level)
+        [TestCase(1, 150f)]
+        [TestCase(2, 275f)]
+        [TestCase(3, 450f)]
+        [TestCase(4, 800f)]
+        [TestCase(5, 1200f)]
+        public void ATower_GivesItsKillerTheXpOfASquadOfTheTierOfItsLevel(int level, float xp)
         {
             Match match = Started(out _);
             match.Enemy.FindTower(TowerKind.CommandCenter).Level = level;
@@ -146,7 +149,7 @@ namespace Halobellum.Tests
             }
             while (!battle.IsFinished) battle.Step();
             RoundSummary summary = match.FinishBattle();
-            Assert.AreEqual(killer.Type.Cost * level, summary.XpGained[killer.Id], 1e-3f);
+            Assert.AreEqual(xp, summary.XpGained[killer.Id], 1e-3f);
             Assert.AreEqual(1, summary.XpGained.Count);
         }
 

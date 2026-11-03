@@ -43,6 +43,8 @@ namespace Halobellum.Units
         public int draftCardValue = 300;
         [Tooltip("How far from that a card may be. 0 = exactly that, if the roster has such a pair.")]
         public int draftCardValueTolerance = 50;
+        [Tooltip("Base health a side gives up per credit its starting card is worth above that value, or gains per credit below it.")]
+        public float draftBaseHealthPerCredit = 2f;
 
         [Header("Squad leveling")]
         [Tooltip("XP bar size as a share of the squad's base price (2 = kill twice your own price's worth of enemies, D26). Same at every level.")]
@@ -79,6 +81,8 @@ namespace Halobellum.Units
         [Range(0f, 1f)] public float shockwaveFireRateMultiplier = 0.6f;
         [Tooltip("What the army takes while it suffers a shockwave: 1.4 = 40% more damage.")]
         public float shockwaveDamageTakenMultiplier = 1.4f;
+        [Tooltip("XP for destroying a tower, by its level: a level 1 squad of that tier, and for level 5 a level 2 Titan.")]
+        public float[] towerXpByLevel = { 150f, 275f, 450f, 800f, 1200f };
 
         [Header("Command Center")]
         public int extraSlotCost = 100;
@@ -117,6 +121,7 @@ namespace Halobellum.Units
                 DraftSquadsPerCard = draftSquadsPerCard,
                 DraftCardValue = draftCardValue,
                 DraftCardValueTolerance = draftCardValueTolerance,
+                DraftBaseHealthPerCredit = draftBaseHealthPerCredit,
                 XpBarPerSquadCost = xpBarPerSquadCost,
                 LevelUpCostShare = levelUpCostShare,
                 FirstCardRound = firstCardRound,
@@ -137,6 +142,7 @@ namespace Halobellum.Units
                 ShockwaveDamageMultiplier = shockwaveDamageMultiplier,
                 ShockwaveFireRateMultiplier = shockwaveFireRateMultiplier,
                 ShockwaveDamageTakenMultiplier = shockwaveDamageTakenMultiplier,
+                TowerXpByLevel = towerXpByLevel,
                 ExtraSlotCost = extraSlotCost,
                 RapidResupplyCredits = rapidResupplyCredits,
                 RapidResupplyPenalty = rapidResupplyPenalty,

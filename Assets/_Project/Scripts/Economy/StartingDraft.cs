@@ -19,6 +19,17 @@ namespace Halobellum.Economy
         public SubFactionInfo SubFaction;
         public List<UnitStats> Squads = new List<UnitStats>();
 
+        /// <summary>What its squads are worth together.</summary>
+        public int Value
+        {
+            get
+            {
+                int value = 0;
+                foreach (UnitStats squad in Squads) value += squad.Cost;
+                return value;
+            }
+        }
+
         public override string ToString() => $"{Faction.Name} / {SubFaction.Name}: {string.Join(", ", Squads.ConvertAll(s => s.Name))}";
     }
 

@@ -62,6 +62,8 @@ namespace Halobellum.Economy
         public SubFactionInfo SubFaction;
         public int Credits;
         public int BaseHealth;
+        /// <summary>The base's health when the match began: more with a cheap starting card, less with a dear one (D59).</summary>
+        public int StartingBaseHealth;
         public readonly HashSet<UnitStats> Unlocked = new HashSet<UnitStats>();
         public readonly List<PlacedSquad> Squads = new List<PlacedSquad>();
         public int SquadsBoughtThisRound;

@@ -25,6 +25,7 @@ MonoBehaviour:
   draftSquadsPerCard: 2
   draftCardValue: 300
   draftCardValueTolerance: 50
+  draftBaseHealthPerCredit: 2
   xpBarPerSquadCost: 2
   levelUpCostShare: 0.5
   firstCardRound: 2
@@ -50,6 +51,12 @@ MonoBehaviour:
   shockwaveDamageMultiplier: 0.6
   shockwaveFireRateMultiplier: 0.6
   shockwaveDamageTakenMultiplier: 1.4
+  towerXpByLevel:
+  - 150
+  - 275
+  - 450
+  - 800
+  - 1200
   extraSlotCost: 100
   rapidResupplyCredits: 200
   rapidResupplyPenalty: 300

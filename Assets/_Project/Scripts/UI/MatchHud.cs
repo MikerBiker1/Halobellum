@@ -97,7 +97,7 @@ namespace Halobellum.UI
             const float difficultyWidth = 590f;
             float titleWidth = bar.width - difficultyWidth - 34f;
             CardScreens.Fit(new Rect(bar.x + 18f, bar.y + 8f, titleWidth, 36f), "Starting draft", CardScreens.TitleStyle, 28, 18, TextAnchor.MiddleLeft, HudTheme.TitleColor);
-            CardScreens.Fit(new Rect(bar.x + 18f, bar.y + 44f, titleWidth, 32f), "Pick a faction and sub-faction. Its squads are free and start unlocked.", CardScreens.LineStyle, 15, 11, TextAnchor.MiddleLeft, HudTheme.DimText);
+            CardScreens.Fit(new Rect(bar.x + 18f, bar.y + 44f, titleWidth, 32f), "Pick a faction and sub-faction. Its squads are free and start unlocked. Dearer squads mean a weaker base.", CardScreens.LineStyle, 15, 11, TextAnchor.MiddleLeft, HudTheme.DimText);
             float difficultyX = bar.xMax - difficultyWidth - 8f;
             GUI.Label(new Rect(difficultyX, bar.y + 26f, 140f, 30f), "AI difficulty:", _text);
             string[] names = { "Easy", "Normal", "Hard" };
@@ -122,7 +122,7 @@ namespace Halobellum.UI
             DraftRowText text = count > 0 ? CardScreens.MeasureDraftRow(m.PlayerDraft, row.CardAt(0)) : default;
             for (int i = 0; i < count; i++)
             {
-                if (CardScreens.DrawDraftCard(row.CardAt(i), m.PlayerDraft[i], text)) match.ChooseDraft(i);
+                if (CardScreens.DrawDraftCard(row.CardAt(i), m.PlayerDraft[i], text, m.Rules.StartingBaseHealth(m.PlayerDraft[i].Value))) match.ChooseDraft(i);
             }
         }
 
@@ -141,8 +141,8 @@ namespace Halobellum.UI
             GUI.Label(new Rect(bar.x + 16f, bar.y + 32f, 260f, 26f), $"Credits {player.Credits}  (+{m.NextIncomeFor(Team.A)} next round)", _text);
             GUI.Label(new Rect(bar.x + 290f, bar.y + 6f, 220f, 26f), $"Squads bought: {player.SquadsBoughtThisRound} of {m.SquadsPerRound(Team.A)}", _text);
             GUI.Label(new Rect(bar.x + 290f, bar.y + 32f, 220f, 26f), $"Unlocks: {player.UnlocksThisRound} of {m.Rules.UnlocksPerRound}", _text);
-            BaseBar(new Rect(bar.x + 520f, bar.y + 10f, 220f, 20f), _yourBaseLine, "Your base", player.BaseHealth, m.Rules.BaseHealth, playerColor);
-            BaseBar(new Rect(bar.x + 520f, bar.y + 36f, 220f, 20f), _enemyBaseLine, "Enemy base", m.Enemy.BaseHealth, m.Rules.BaseHealth, enemyColor);
+            BaseBar(new Rect(bar.x + 520f, bar.y + 10f, 220f, 20f), _yourBaseLine, "Your base", player.BaseHealth, player.StartingBaseHealth, playerColor);
+            BaseBar(new Rect(bar.x + 520f, bar.y + 36f, 220f, 20f), _enemyBaseLine, "Enemy base", m.Enemy.BaseHealth, m.Enemy.StartingBaseHealth, enemyColor);
             GUI.Label(new Rect(bar.x + 760f, bar.y + 6f, 200f, 26f), $"{player.Faction.Name} vs {m.Enemy.Faction?.Name ?? "?"}", _small);
             GUI.Label(new Rect(bar.x + 760f, bar.y + 32f, 200f, 26f), m.EnemyAi.Label, _small);
             if (GUI.Button(new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f), "Ready", _bigButton)) match.Ready();
@@ -538,13 +538,13 @@ namespace Halobellum.UI
             float width = HudScale.ScaledWidth(_scale);
             var left = new Rect(10f, 8f, 280f, 64f);
             Panel(left);
-            BaseBar(new Rect(left.x + 12f, left.y + 10f, 256f, 20f), _yourBaseLine, "Your base", m.Player.BaseHealth, m.Rules.BaseHealth, playerColor);
+            BaseBar(new Rect(left.x + 12f, left.y + 10f, 256f, 20f), _yourBaseLine, "Your base", m.Player.BaseHealth, m.Player.StartingBaseHealth, playerColor);
             GUI.Label(new Rect(left.x + 12f, left.y + 34f, 256f, 24f), ArmyValueText(_yourValueLine, Team.A), _small);
             DrawShockwave(left, _yourShockwaveLine, Team.A);
 
             var right = new Rect(width - 290f, 40f, 280f, 64f);
             Panel(right);
-            BaseBar(new Rect(right.x + 12f, right.y + 10f, 256f, 20f), _enemyBaseLine, "Enemy base", m.Enemy.BaseHealth, m.Rules.BaseHealth, enemyColor);
+            BaseBar(new Rect(right.x + 12f, right.y + 10f, 256f, 20f), _enemyBaseLine, "Enemy base", m.Enemy.BaseHealth, m.Enemy.StartingBaseHealth, enemyColor);
             GUI.Label(new Rect(right.x + 12f, right.y + 34f, 256f, 24f), ArmyValueText(_enemyValueLine, Team.B), _small);
             DrawShockwave(right, _enemyShockwaveLine, Team.B);
             DrawTowerWindow(HudScale.ScaledHeight(_scale));

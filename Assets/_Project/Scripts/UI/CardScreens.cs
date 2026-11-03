@@ -109,7 +109,8 @@ namespace Halobellum.UI
         /// A starting draft card: its faction's frame, the sub-faction on a big banner, what is special about it, and its
         /// squads. `text` is what the cards of its row share (MeasureDraftRow). Returns true when chosen.
         /// </summary>
-        public static bool DrawDraftCard(Rect card, DraftCard draft, DraftRowText text)
+        /// <param name="baseHealth">What the base starts with on this card, which depends on what its squads are worth.</param>
+        public static bool DrawDraftCard(Rect card, DraftCard draft, DraftRowText text, int baseHealth)
         {
             EnsureStyles();
             string faction = draft.Faction.Name;
@@ -145,7 +146,7 @@ namespace Halobellum.UI
                 y += text.Height + 2f;
             }
 
-            Fit(new Rect(area.x, y, area.width, 22f), "Free starting squads", _line, 15, 12, TextAnchor.MiddleCenter, HudTheme.DimText);
+            Fit(new Rect(area.x, y, area.width, 22f), $"Free squads worth {draft.Value}, base health {baseHealth}", _line, 15, 12, TextAnchor.MiddleCenter, HudTheme.DimText);
             y += 24f;
 
             DrawSquads(new Rect(area.x, y, area.width, bottom - y), draft, faction, accent);

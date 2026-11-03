@@ -37,6 +37,8 @@ namespace Halobellum.Economy
         public int DraftCardValue = 300;
         /// <summary>How far from that a card may be. In a roster with no such pair, the closest pair is taken.</summary>
         public int DraftCardValueTolerance = 50;
+        /// <summary>Base health a side gives up per credit its starting card is worth above DraftCardValue, or gains per credit below it (the owner: 100 per 50, D59).</summary>
+        public float DraftBaseHealthPerCredit = 2f;
         /// <summary>
         /// Size of the XP bar as a share of the squad's base price (decision D26: 2 = a squad must kill twice
         /// its price's worth of enemies to fill it). The same at every level (Bible Section 5).
@@ -77,6 +79,11 @@ namespace Halobellum.Economy
         public float ShockwaveDamageMultiplier = 0.6f;
         public float ShockwaveFireRateMultiplier = 0.6f;
         public float ShockwaveDamageTakenMultiplier = 1.4f;
+        /// <summary>
+        /// XP for destroying a tower, by its level: a level 1 squad of the tier of the same number, at the middle of that tier's price band; level 5 a
+        /// level 2 Titan, worth half as much again (the owner, D59).
+        /// </summary>
+        public float[] TowerXpByLevel = { 150f, 275f, 450f, 800f, 1200f };
         public int ExtraSlotCost = 100;
         /// <summary>The spell the Command Center sells; its price is its Cost. It is used once.</summary>
         public SpellStats OilZone;
@@ -92,6 +99,9 @@ namespace Halobellum.Economy
         public int TowerMaxLevel => TowerShockwaveSeconds.Length;
 
         public bool CardsEnabled => FirstCardRound > 0;
+
+        /// <summary>A side's base health at the start of a match, from what its starting card is worth (D59).</summary>
+        public int StartingBaseHealth(int cardValue) => BaseHealth - (int)Math.Round((cardValue - DraftCardValue) * DraftBaseHealthPerCredit);
 
         /// <summary>The reinforcement budget of a round.</summary>
         public int ReinforcementBudget(int round) => ReinforcementBudgetBase + ReinforcementBudgetPerRound * round;

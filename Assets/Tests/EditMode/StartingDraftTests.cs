@@ -148,6 +148,20 @@ namespace Halobellum.Tests
             Assert.Less(System.Math.Abs(second.Y - match.CombatRules.DeploymentDepthSquares * 0.5f), 10f);
         }
 
+        [TestCase(100, 150, 2100, Description = "The owner's example: a card worth 250.")]
+        [TestCase(100, 200, 2000)]
+        [TestCase(150, 200, 1900)]
+        public void TheBase_StartsStrongerWithACheaperCard(int first, int second, int baseHealth)
+        {
+            var match = new Match(TestMatch.Rules(), TestRules.Default(), TestMatch.StandardFactions(out _, out _, out _, out _), 1, new DoNothingAi());
+            DraftCard card = match.PlayerDraft[0];
+            card.Squads[0].Cost = first;
+            card.Squads[1].Cost = second;
+            Assert.IsTrue(match.ChooseDraft(0).Ok);
+            Assert.AreEqual(baseHealth, match.Player.BaseHealth);
+            Assert.AreEqual(baseHealth, match.Player.StartingBaseHealth);
+        }
+
         [Test]
         public void TheAI_GetsItsOwnDraw_AndPicksACard()
         {

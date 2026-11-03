@@ -333,6 +333,7 @@ namespace Halobellum.Presentation
             var panel = new TowerPanel { Title = Match.TowerName(kind), Side = own ? "Your tower" : "Enemy tower, as last seen" };
             panel.Lines.Add($"Level {level} of {rules.TowerMaxLevel}    Health {stats.MaxHealth:0}");
             panel.Lines.Add($"If it falls, {(own ? "your" : "their")} whole army loses {(1f - rules.ShockwaveSpeedMultiplier) * 100f:0}% speed, {(1f - rules.ShockwaveDamageMultiplier) * 100f:0}% damage and {(1f - rules.ShockwaveFireRateMultiplier) * 100f:0}% rate of fire, and takes {(rules.ShockwaveDamageTakenMultiplier - 1f) * 100f:0}% more damage, for {stats.Shockwave.Seconds:0} s. Two falling add up their time, not their severity.");
+            panel.Lines.Add($"Whoever destroys it earns {rules.TowerXpByLevel[level - 1]:0} XP.");
             if (!own) return panel;
 
             bool deploying = Match.Phase == MatchPhase.Deployment;
