@@ -149,7 +149,8 @@ namespace Halobellum.Presentation
         {
             if (unit.HasDived) return AudioCatalog.PelicanCrash;
             bool flood = IsFloodBody(unit.Stats);
-            if (flood && unit.Stats.DeathBurst != null) return AudioCatalog.FloodBurst;
+            // A death burst with no reach only leaves bodies behind (the Infected Phantom): nothing goes off.
+            if (flood && unit.Stats.DeathBurst != null && unit.Stats.DeathBurst.Radius > 0f) return AudioCatalog.FloodBurst;
             if (!flood && IsLekgolo(unit.Stats) && !AudioCatalog.DeathLekgolo.Clips.IsEmpty) return AudioCatalog.DeathLekgolo;
             bool living = IsLiving(unit.Stats);
             if (unit.IsAir && !living) return AudioCatalog.DeathAir;

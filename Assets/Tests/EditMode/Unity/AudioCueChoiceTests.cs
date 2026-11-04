@@ -182,7 +182,7 @@ namespace Halobellum.Tests
 
         [TestCase("Covenant/HunterPair", "sfx_death_infantry_covenant")]
         [TestCase("LekgoloColony/HunterCaptain", "sfx_death_infantry_covenant")]
-        [TestCase("LekgoloColony/Goliath", "sfx_explosion_large")]
+        [TestCase("LekgoloColony/Goliath", "sfx_explosion_medium")]
         public void AHuntersDeath_KeepsTodaysCue_UntilThereIsAFileInItsOwnSlot(string path, string today)
         {
             AudioLibrary.Forget();
