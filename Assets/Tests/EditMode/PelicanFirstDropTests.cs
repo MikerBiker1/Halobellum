@@ -59,6 +59,26 @@ namespace Halobellum.Tests
             Assert.AreEqual(7f, drops[0], OneOrTwoTicks);
         }
 
+        /// <summary>The older route to the same landing: a carrier whose bay really comes from its tech, on the 10 s delay rather than the 5 s first drop.</summary>
+        [Test]
+        public void AnEmp_HoldsTheSquadBack_OnTheLandingAfterTheDelay_WithTheBayFromARealTech()
+        {
+            UnitStats bare = Pelican(firstDrop: 0f);
+            bare.LockedReinforcement = bare.Reinforcement;
+            bare.Reinforcement = null;
+            UnitStats withBay = TechUpgrade.Apply(bare, 1, new[] { new TechUpgrade { Name = "Troop Bay", UnlocksReinforcement = true } }, null, null);
+            Assert.IsTrue(withBay.HasReinforcement);
+            Assert.IsFalse(withBay.WithoutTechs.HasReinforcement, "An EMP takes the bay away.");
+
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            SimUnit carrier = sim.AddUnit(withBay, Team.A, new Vec2(0f, 8.5f));
+            sim.AddUnit(Dummy(), Team.B, new Vec2(0f, 0f));
+            carrier.TechsDisabledUntil = 13f; // It touches down at 11.5 s, with the EMP still on.
+            List<float> drops = DropTimes(sim, 14f);
+            Assert.AreEqual(1, drops.Count, "It comes out once the EMP is over.");
+            Assert.AreEqual(13f, drops[0], OneOrTwoTicks);
+        }
+
         // ------------------------------------------------------------------ on time, anywhere
 
         [TestCase(0f, -40f, Team.A)]        // The middle of its own area.

@@ -1,6 +1,6 @@
 // RuleBasedAiSkirmishTests.cs
 // Tests how the AI plays Unlock Skirmish: it deploys at all with the one made-up faction, Hard doesn't field only flyers, Normal and Hard
-// don't unlock on a whim, reinforcement squads go where their role belongs, and a squad in a flank zone doesn't waste a spell.
+// don't unlock on a whim, Normal spends savings that pile up, reinforcement squads go where their role belongs, and a squad in a flank zone doesn't waste a spell.
 // Each has Faction mode alongside it, which keeps the behaviour it was measured with. The carrier corners trial is here too.
 // The roster here is a test fixture with one unit per role, not game balance.
 // Depends on: Halobellum.Economy, Halobellum.Combat, Halobellum.Core, NUnit, TestUnits, TestRules, TestMatch.
@@ -123,6 +123,53 @@ namespace Halobellum.Tests
         public void Easy_UnlocksAsItAlwaysDid()
         {
             Assert.AreEqual(1, UnlockedInRoundOne(MatchMode.UnlockSkirmish, AiDifficulty.Easy));
+        }
+
+        // ------------------------------------------------------------------ savings that pile up
+
+        /// <summary>In how many of 40 matches the AI unlocks a unit in round 1, holding these credits, with what is locked cheap to unlock.</summary>
+        private static int MatchesWithAnUnlock(AiDifficulty difficulty, int credits)
+        {
+            int unlocks = 0;
+            for (int seed = 1; seed <= 40; seed++)
+            {
+                Match match = NewMatch(MatchMode.UnlockSkirmish, new RuleBasedAi(difficulty, seed), seed, prepare: rules => rules.StartingCredits = credits);
+                match.ChooseDraft(0);
+                if (match.Enemy.UnlocksThisRound > 0) unlocks++;
+            }
+            return unlocks;
+        }
+
+        [Test]
+        public void Normal_UnlocksMoreReadily_WhenItsSavingsHavePiledUp()
+        {
+            Assert.Greater(MatchesWithAnUnlock(AiDifficulty.Normal, 20000), MatchesWithAnUnlock(AiDifficulty.Normal, 1400));
+        }
+
+        [Test]
+        public void Hard_KeepsItsUnlockHurdle_HoweverMuchItHolds()
+        {
+            Assert.AreEqual(MatchesWithAnUnlock(AiDifficulty.Hard, 1400), MatchesWithAnUnlock(AiDifficulty.Hard, 20000));
+        }
+
+        /// <summary>Whether a Normal AI buys an extra squad slot in round 1, in a match with towers, holding these credits.</summary>
+        private static bool NormalBuysAnExtraSlot(MatchMode mode, int credits)
+        {
+            Match match = NewMatch(mode, new RuleBasedAi(AiDifficulty.Normal, 3), prepare: rules =>
+            {
+                rules.StartingCredits = credits;
+                rules.TowerBaseHealth = 100f;
+            });
+            match.ChooseDraft(0);
+            return match.Enemy.BoughtExtraSlot;
+        }
+
+        [Test]
+        public void Normal_BuysAnExtraSlot_OnlyInUnlockSkirmish_AndOnlyWithSavingsPiledUp()
+        {
+            Assert.IsTrue(NormalBuysAnExtraSlot(MatchMode.UnlockSkirmish, 5000));
+            Assert.IsFalse(NormalBuysAnExtraSlot(MatchMode.UnlockSkirmish, 1000), "After its squads it has less than the savings it acts on.");
+            Assert.IsFalse(NormalBuysAnExtraSlot(MatchMode.Faction, 5000), "Faction mode keeps its old behaviour.");
         }
 
         // ------------------------------------------------------------------ reinforcement squads
