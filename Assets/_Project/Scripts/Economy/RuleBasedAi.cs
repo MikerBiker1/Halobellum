@@ -30,6 +30,7 @@
 // In Unlock Skirmish, where a side can unlock any of the game's units (decided by view.Rules.Mode, so Faction mode plays on as it did):
 //   - Hard wants a flyer far less for being able to flank (MatchRules.AiSkirmishFlankBonus), or it would field nothing else;
 //   - Normal and Hard only unlock a unit that is clearly better than what they own, by more the dearer it is to unlock;
+//   - Normal with savings piled up unlocks more readily and buys an extra squad slot, or it ends matches with thousands unspent;
 //   - squads a reinforcement card just brought go where their role belongs, like the starting squads;
 //   - a spell only aims at a spot it can be placed on, so a squad in a flank zone doesn't waste the cast.
 // Depends on: AiView, IMatchAi, DeploymentGrid, MatchupTable, Halobellum.Combat (CounterWeb role counters),
@@ -414,8 +415,9 @@ namespace Halobellum.Economy
                 bought.Add(choice.Name);
                 if (UsesMatchups) UpdateThreats(view, seen); // The new squad covers part of the threat.
             }
-            // Hard with credits to spare after its squads: one slot more.
-            if (Difficulty == AiDifficulty.Hard && self.Towers.Count > 0 && self.Credits >= HardExtraSlotCredits && view.BuyExtraSlot().Ok)
+            // Hard with credits to spare after its squads: one slot more. So too Normal in Unlock Skirmish, only once its savings have piled up.
+            bool wantsSlot = Difficulty == AiDifficulty.Hard ? self.Credits >= HardExtraSlotCredits : Difficulty == AiDifficulty.Normal && skirmish && self.Credits >= NormalSkirmishFlushCredits;
+            if (wantsSlot && self.Towers.Count > 0 && view.BuyExtraSlot().Ok)
             {
                 UnitStats choice = BestAffordable(view, seen, totalSeen, unlockedOnly: true);
                 if (choice != null && FindSpotFor(view, choice, -1, out int column, out int row) && view.Buy(choice, column, row, false).Ok) bought.Add(choice.Name);
@@ -500,6 +502,8 @@ namespace Halobellum.Economy
 
         private const int HardEliteCredits = 1000, HardExtraSlotCredits = 400, HardOilCredits = 450;
         private const int NormalTowerCredits = 300, HardTowerCredits = 200;
+        /// <summary>Savings Normal shouldn't pass in Unlock Skirmish, about a round's income at its cap: above this it unlocks more readily and buys an extra slot.</summary>
+        private const int NormalSkirmishFlushCredits = 1500;
 
         /// <summary>
         /// Credits left after the squads go to the towers. Easy doesn't care about them. Normal and Hard level the tower that falls the
@@ -711,7 +715,13 @@ namespace Halobellum.Economy
             if (bestLocked == null) return null;
             float ownedScore = bestOwned != null ? Score(bestOwned, seen, totalSeen) : float.MinValue;
             // With every unit in the game to choose from, some locked one nearly always scores a little higher: in Unlock Skirmish it has to be clearly better.
-            if (view.Rules.Mode == MatchMode.UnlockSkirmish) ownedScore += view.Rules.AiSkirmishUnlockMargin + bestLocked.UnlockCost / 200f;
+            if (view.Rules.Mode == MatchMode.UnlockSkirmish)
+            {
+                float hurdle = view.Rules.AiSkirmishUnlockMargin + bestLocked.UnlockCost / 200f;
+                // Normal has few other ways to spend, so its hurdle falls as its savings pass what they should ever reach. Hard spends the money elsewhere.
+                if (Difficulty == AiDifficulty.Normal && self.Credits > NormalSkirmishFlushCredits) hurdle *= NormalSkirmishFlushCredits / (float)self.Credits;
+                ownedScore += hurdle;
+            }
             if (lockedScore <= ownedScore && Difficulty != AiDifficulty.Easy) return null;
             return view.Unlock(bestLocked).Ok ? bestLocked.Name : null;
         }
