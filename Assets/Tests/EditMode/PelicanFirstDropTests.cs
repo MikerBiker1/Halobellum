@@ -1,6 +1,6 @@
 // PelicanFirstDropTests.cs
 // Tests a landing carrier's first drop on its own clock (ReinforcementFirstDropSeconds, the Pelican): the squad is out at 5 s wherever the carrier is,
-// a late flank arrival starts down as it arrives, the squad always stands on the field in formation, later drops still wait and fly, and at 0 nothing changes.
+// a late flank arrival starts down as it arrives, the squad always stands on the field in formation, later drops still wait and fly, at 0 nothing changes, and an EMP holds the squad back.
 // Depends on: Halobellum.Combat, Halobellum.Core, NUnit, TestUnits, TestRules.
 
 using System.Collections.Generic;
@@ -39,6 +39,24 @@ namespace Halobellum.Tests
             sim.Events.ReinforcementDropped += (carrier, squadId) => times.Add(sim.ElapsedSeconds);
             while (sim.ElapsedSeconds < until && !sim.IsFinished) sim.Step();
             return times;
+        }
+
+        // ------------------------------------------------------------------ an EMP switches off the tech that opens the bay
+
+        [Test]
+        public void AnEmp_HoldsTheSquadBack_UntilItIsOver()
+        {
+            UnitStats pelican = Pelican();
+            pelican.WithoutTechs = pelican.Clone();
+            pelican.WithoutTechs.Reinforcement = null;
+
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            SimUnit carrier = sim.AddUnit(pelican, Team.A, new Vec2(0f, -40f));
+            sim.AddUnit(Dummy(), Team.B, new Vec2(0f, 70f));
+            carrier.TechsDisabledUntil = 7f;
+            List<float> drops = DropTimes(sim, 8f);
+            Assert.AreEqual(1, drops.Count, "It comes out once the EMP is over.");
+            Assert.AreEqual(7f, drops[0], OneOrTwoTicks);
         }
 
         // ------------------------------------------------------------------ on time, anywhere
