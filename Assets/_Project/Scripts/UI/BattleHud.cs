@@ -1,7 +1,7 @@
 // BattleHud.cs
 // The battle screen's top bar (Bible Sections 5 and 13): battle time, living bodies on each side,
 // and speed control (Pause, 1x, 2x, 4x). Keyboard: Space = pause/resume, 1 = 1x, 2 = 2x, 3 = 4x.
-// Also shows the frame rate in the top-right corner (used to check the 60 FPS target in M2),
+// Also shows the frame rate in the top-right corner when the Frame rate counter setting is on (off by default),
 // and the result line when the battle ends.
 // Placeholder UI drawn with Unity's immediate-mode GUI; scales with the screen height.
 // Depends on: Halobellum.Presentation (BattleController, UiHitAreas), Unity Input System.
@@ -103,7 +103,7 @@ namespace Halobellum.UI
                 GUI.Label(result, ResultText(sim.Result), _centered);
             }
 
-            if (showFps && _smoothedFrameTime > 0f)
+            if (showFps && GameSettings.ShowFrameRate && _smoothedFrameTime > 0f)
             {
                 // A few times a second: faster can't be read, and it would be a new string every frame.
                 if (_fpsText == null || Time.unscaledTime >= _nextFpsText)

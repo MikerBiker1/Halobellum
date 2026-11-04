@@ -8,6 +8,8 @@
 //   Video.VSync                                         int, 1 on, 0 off.
 //   Ui.Scale                                            float, a factor on top of the HUD's scale to the window.
 //   Halobellum.AiDifficulty                             int, 0 Easy, 1 Normal, 2 Hard.
+//   Skirmish.BaseHealth                                 int, Unlock Skirmish's base health from the Play page, 100 to 10000 in steps of 100.
+//   Ui.ShowFrameRate                                    int, 1 shows the frame-rate counter in battle, 0 hides it.
 // A run of a test tool, or one with -screen-width and so on, keeps its window and frame rate: a saved window must not change what
 // another tool measures. Benchmarks turn VSync off for themselves after this has run.
 // A run of a test tool also holds the settings in memory (HoldInMemory): it starts from what the player saved, and what it changes, by a click or the K key
@@ -32,17 +34,21 @@ namespace Halobellum.Presentation
         public const string CameraShakeKey = "Fx.CameraShake";
         public const string FullscreenKey = "Video.Fullscreen", WidthKey = "Video.Width", HeightKey = "Video.Height";
         public const string QualityKey = "Video.Quality", VSyncKey = "Video.VSync", ScreenKey = "Video.Screen";
-        public const string UiScaleKey = "Ui.Scale";
+        public const string UiScaleKey = "Ui.Scale", ShowFrameRateKey = "Ui.ShowFrameRate";
+        public const string SkirmishBaseHealthKey = "Skirmish.BaseHealth";
 
         public const float DefaultMasterVolume = 1f, DefaultMusicVolume = 0.6f, DefaultSfxVolume = 1f, DefaultUiVolume = 1f;
         public const float SmallestUiScale = 0.75f, LargestUiScale = 1.25f, UiScaleStep = 0.05f;
+        public const int DefaultSkirmishBaseHealth = 2000;
 
         private static readonly string[] SavedFloatKeys = { MasterVolumeKey, MusicVolumeKey, SfxVolumeKey, UiVolumeKey, UiScaleKey };
-        private static readonly string[] SavedIntKeys = { CameraShakeKey, FullscreenKey, WidthKey, HeightKey, QualityKey, VSyncKey, MatchController.DifficultyKey };
+        private static readonly string[] SavedIntKeys = { CameraShakeKey, FullscreenKey, WidthKey, HeightKey, QualityKey, VSyncKey, MatchController.DifficultyKey, SkirmishBaseHealthKey, ShowFrameRateKey };
 
         private static readonly string[] SavedStringKeys = { ScreenKey };
 
         private static float _uiScale = -1f;
+        /// <summary>The frame-rate setting as last read: 0 off, 1 on, -1 not read yet.</summary>
+        private static int _showFrameRate = -1;
         /// <summary>What a hold has changed so far, by key, or null when nothing is held.</summary>
         private static Dictionary<string, object> _held;
         private static bool _heldStartedEmpty;
@@ -58,6 +64,7 @@ namespace Halobellum.Presentation
             _held = new Dictionary<string, object>();
             _heldStartedEmpty = startEmpty;
             _uiScale = -1f;
+            _showFrameRate = -1;
         }
 
         /// <summary>Forgets what the hold changed: the saved settings count again.</summary>
@@ -66,6 +73,7 @@ namespace Halobellum.Presentation
             _held = null;
             _heldStartedEmpty = false;
             _uiScale = -1f;
+            _showFrameRate = -1;
         }
 
         public static float MasterVolume { get => Volume(MasterVolumeKey, DefaultMasterVolume); set => SetVolume(MasterVolumeKey, value); }
@@ -102,6 +110,28 @@ namespace Halobellum.Presentation
                 _uiScale = ClampUiScale(value);
                 SetFloat(UiScaleKey, _uiScale);
             }
+        }
+
+        /// <summary>Shows the frame-rate counter in battle. Read every time the battle's HUD draws, so it is kept in memory.</summary>
+        public static bool ShowFrameRate
+        {
+            get
+            {
+                if (_showFrameRate < 0) _showFrameRate = GetInt(ShowFrameRateKey, 0) != 0 ? 1 : 0;
+                return _showFrameRate == 1;
+            }
+            set
+            {
+                _showFrameRate = value ? 1 : 0;
+                SetInt(ShowFrameRateKey, _showFrameRate);
+            }
+        }
+
+        /// <summary>Unlock Skirmish's base health, always inside the limits and on a whole step.</summary>
+        public static int SkirmishBaseHealth
+        {
+            get => MatchSetup.SnapBaseHealth(GetInt(SkirmishBaseHealthKey, DefaultSkirmishBaseHealth));
+            set => SetInt(SkirmishBaseHealthKey, MatchSetup.SnapBaseHealth(value));
         }
 
         /// <summary>The AI's difficulty, on the menu and the draft screen alike.</summary>
@@ -175,6 +205,8 @@ namespace Halobellum.Presentation
             UiVolume = DefaultUiVolume;
             CameraShake = true;
             UiScale = 1f;
+            ShowFrameRate = false;
+            SkirmishBaseHealth = DefaultSkirmishBaseHealth;
             Save();
         }
 
@@ -237,6 +269,7 @@ namespace Halobellum.Presentation
         private static void ApplyAtStart()
         {
             _uiScale = -1f;
+            _showFrameRate = -1;
             string[] args = Environment.GetCommandLineArgs();
             if (GameFlow.IsTestRun(args))
             {

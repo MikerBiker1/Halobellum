@@ -219,10 +219,10 @@ namespace Halobellum.UI
             return true;
         }
 
-        /// <summary>A big text button of a menu's column: on hover a warm light runs in from the left, and a bar and the text brighten.</summary>
-        public static bool MenuButton(Rect rect, string label)
+        /// <summary>A big text button of a menu's column: on hover a warm light runs in from the left, and a bar and the text brighten. Selected, it stays lit.</summary>
+        public static bool MenuButton(Rect rect, string label, bool selected = false)
         {
-            bool hover = rect.Contains(Event.current.mousePosition);
+            bool hover = selected || GUI.enabled && rect.Contains(Event.current.mousePosition);
             if (Event.current.type == EventType.Repaint)
             {
                 FadeRight(rect, new Color(Accent.r, Accent.g, Accent.b, hover ? 0.3f : 0.07f));
@@ -239,7 +239,7 @@ namespace Halobellum.UI
         /// <summary>A small framed button, lit when selected or hovered.</summary>
         public static bool SmallFramedButton(Rect rect, string label, bool selected, string key = null)
         {
-            bool hover = rect.Contains(Event.current.mousePosition);
+            bool hover = GUI.enabled && rect.Contains(Event.current.mousePosition);
             if (Event.current.type == EventType.Repaint)
             {
                 Fill(rect, new Color(0.03f, 0.03f, 0.045f, 0.62f));
@@ -266,6 +266,41 @@ namespace Halobellum.UI
             return selected;
         }
 
+        /// <summary>
+        /// A box showing the selected label, which when pressed lists all the labels under itself. Returns the one selected now. Keys: the row's name
+        /// and "open" for the box, the row's name and the label for each line of the list. Call it after everything else on the screen, so that the list
+        /// is painted on top, and draw the rest with GUI.enabled = false while open is true. A click anywhere else only closes the list.
+        /// </summary>
+        public static int Dropdown(Rect rect, string row, string[] labels, int selected, ref bool open)
+        {
+            if (SmallFramedButton(rect, labels[selected], open, row + "/open")) open = !open;
+            GUI.Label(new Rect(rect.xMax - 28f, rect.y, 20f, rect.height), "v", SmallButton);
+            if (!open) return selected;
+
+            const float gap = 2f;
+            var list = new Rect(rect.x, rect.yMax + gap, rect.width, labels.Length * (rect.height + gap) - gap);
+            Fill(list, new Color(PanelFill.r, PanelFill.g, PanelFill.b, 1f));
+            for (int i = 0; i < labels.Length; i++)
+            {
+                var line = new Rect(list.x, list.y + i * (rect.height + gap), list.width, rect.height);
+                if (!SmallFramedButton(line, labels[i], i == selected, row + "/" + labels[i])) continue;
+                selected = i;
+                open = false;
+            }
+
+            Event current = Event.current;
+            if (current.type == EventType.MouseDown && !list.Contains(current.mousePosition) && !rect.Contains(current.mousePosition))
+            {
+                open = false;
+                current.Use();
+            }
+            else if (TestPressed(row + "/outside"))
+            {
+                open = false; // The test tool's way to click elsewhere, with no real mouse.
+            }
+            return selected;
+        }
+
         /// <summary>How wide each arrow of a Stepper is.</summary>
         public const float StepperArrowWidth = 44f;
 
@@ -286,7 +321,7 @@ namespace Halobellum.UI
             float middle = rect.center.y;
             float thumbTravel = rect.width - _sliderThumb.fixedWidth;
             float at = rect.x + _sliderThumb.fixedWidth * 0.5f + thumbTravel * value;
-            bool hover = rect.Contains(Event.current.mousePosition);
+            bool hover = GUI.enabled && rect.Contains(Event.current.mousePosition);
             if (Event.current.type == EventType.Repaint)
             {
                 Fill(new Rect(rect.x, middle - 2f, rect.width, 4f), Track);

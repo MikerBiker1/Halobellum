@@ -1,7 +1,9 @@
 // MainMenuHud.cs
-// The main menu's screen (M10), in the MainMenu scene over MenuBackdrop's picture: the title, New Match with the AI's difficulty next to it,
-// Sandbox, Settings and Quit. It fades in from black and fades out before a scene change. Esc closes Settings. It scales to any window
-// (HudScale.ApplyFit). The difficulty is the one the draft screen also shows: both go through GameSettings.Difficulty.
+// The main menu's screen (M10), in the MainMenu scene over MenuBackdrop's picture: the title, and two pages of buttons. The first has Play, Settings and Quit.
+// Play's page has Faction mode, Unlock Skirmish mode, Sandbox and Back: a chosen mode shows a panel on the right with its settings and Start, and the Sandbox leaves at once.
+// It fades in from black and fades out before a scene change. Esc steps back: the card list, then Play's page, and it closes Settings. It scales to any window (HudScale.ApplyFit).
+// Difficulty and base health are remembered (GameSettings). The card filter starts at All cards each time this screen loads, and no mode is chosen.
+// The buttons call plain public methods, which a batch run's tests can call too, since a batch run draws no IMGUI.
 // Depends on: GameFlow, GameSettings, MenuStyle, SettingsScreen, Halobellum.Economy, Unity Input System.
 
 using System;
@@ -16,19 +18,100 @@ namespace Halobellum.UI
     {
         public const string Title = "HALOBELLUM";
 
+        public enum Page { Main, Play }
+
         private const float FadeInSeconds = 1.6f, FadeOutSeconds = 0.35f;
         private const float ButtonWidth = 400f, ButtonHeight = 64f, ButtonGap = 6f;
+        private const float PanelGap = 24f, PanelWidth = 560f, PanelMargin = 24f, RowHeight = 52f, RowLabelWidth = 140f, ControlHeight = 36f;
+        private const float StepperWidth = 170f, StartHeight = 48f;
         private static readonly string[] Difficulties = { "Easy", "Normal", "Hard" };
+        private static readonly string[] CardLabels = { "All cards", "No reinforcement cards", "Only reinforcement cards" }; // In CardFilter's order.
 
         private readonly SettingsScreen _settings = new SettingsScreen();
         private bool _showSettings;
         private float _shownAt;
         private Action _leaving;
         private float _leavingAt;
-        private GUIStyle _difficultyLabel;
+        private Page _page = Page.Main;
+        private MatchMode? _selectedMode;
+        private CardFilter _cards = CardFilter.AllCards;
+        private bool _cardListOpen;
 
         /// <summary>True while the settings panel is showing (for the test tool).</summary>
         public bool ShowingSettings => _showSettings;
+
+        public Page CurrentPage => _page;
+
+        /// <summary>The mode whose panel is showing, or null.</summary>
+        public MatchMode? SelectedMode => _selectedMode;
+
+        /// <summary>Which cards an Unlock Skirmish match started from here offers.</summary>
+        public CardFilter Cards { get => _cards; set => _cards = value; }
+
+        /// <summary>True while the list of the card filter is open.</summary>
+        public bool CardListOpen { get => _cardListOpen; set => _cardListOpen = value; }
+
+        /// <summary>True once a button has started the fade out of this scene.</summary>
+        public bool IsLeaving => _leaving != null;
+
+        /// <summary>The base health at this place of the slider, from 0 to 1.</summary>
+        public static int BaseHealthFromSlider(float position) =>
+            MatchSetup.SnapBaseHealth(Mathf.RoundToInt(Mathf.Lerp(MatchSetup.LeastBaseHealth, MatchSetup.MostBaseHealth, position)));
+
+        /// <summary>Where the slider stands for this base health, from 0 to 1.</summary>
+        public static float SliderFromBaseHealth(int health) => Mathf.InverseLerp(MatchSetup.LeastBaseHealth, MatchSetup.MostBaseHealth, health);
+
+        public void OpenPlayPage() => _page = Page.Play;
+
+        /// <summary>Shows this mode's panel.</summary>
+        public void SelectMode(MatchMode mode)
+        {
+            _selectedMode = mode;
+            _cardListOpen = false;
+        }
+
+        /// <summary>Leaves for a match of the selected mode. With none selected, nothing happens.</summary>
+        public void StartSelected()
+        {
+            if (_selectedMode == null) return;
+            GameSettings.Save();
+            if (_selectedMode == MatchMode.Faction)
+            {
+                Leave(GameFlow.NewMatch);
+                return;
+            }
+            var setup = new MatchSetup { Mode = MatchMode.UnlockSkirmish, BaseHealth = GameSettings.SkirmishBaseHealth, Cards = _cards };
+            Leave(() => GameFlow.NewSkirmish(setup));
+        }
+
+        public void OpenSandbox() => Leave(GameFlow.OpenSandbox);
+
+        /// <summary>From Play's page back to the first one.</summary>
+        public void Back()
+        {
+            _page = Page.Main;
+            _selectedMode = null;
+            _cardListOpen = false;
+        }
+
+        /// <summary>What Esc does: one step back. Returns false if there was nothing to step back from.</summary>
+        public bool HandleEscape()
+        {
+            if (_leaving != null) return false;
+            if (_showSettings)
+            {
+                CloseSettings();
+                return true;
+            }
+            if (_cardListOpen)
+            {
+                _cardListOpen = false;
+                return true;
+            }
+            if (_page != Page.Play) return false;
+            Back();
+            return true;
+        }
 
         private void Start() => _shownAt = Time.unscaledTime;
 
@@ -42,7 +125,7 @@ namespace Halobellum.UI
                 return;
             }
             Keyboard keyboard = Keyboard.current;
-            if (_showSettings && keyboard != null && keyboard.escapeKey.wasPressedThisFrame) CloseSettings();
+            if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) HandleEscape();
         }
 
         private void CloseSettings()
@@ -71,12 +154,12 @@ namespace Halobellum.UI
             }
             else
             {
-                DrawMain(width, height);
+                DrawMenu(width, height);
             }
             DrawFade(width, height);
         }
 
-        private void DrawMain(float width, float height)
+        private void DrawMenu(float width, float height)
         {
             // A soft darkness on the left, for the title and buttons to stand on; the picture stays clear on the right.
             MenuStyle.FadeRight(new Rect(0f, 0f, width * 0.68f, height), new Color(0.015f, 0.015f, 0.03f, 0.86f));
@@ -88,38 +171,122 @@ namespace Halobellum.UI
             MenuStyle.FadeRight(new Rect(left, underTitle, titleWidth, 2f), MenuStyle.Accent);
 
             float y = Mathf.Max(underTitle + 40f, height * 0.42f);
-            bool enabled = _leaving == null;
-            GUI.enabled = enabled;
+            if (_page == Page.Play) DrawPlayPage(left, y);
+            else DrawMainPage(left, y);
+            GUI.enabled = true;
+        }
 
-            var newMatch = new Rect(left, y, ButtonWidth, ButtonHeight);
-            if (MenuStyle.MenuButton(newMatch, "New Match")) Leave(GameFlow.NewMatch);
-            DrawDifficulty(new Rect(newMatch.xMax + 18f, y + 12f, 330f, ButtonHeight - 24f));
-            y += ButtonHeight + ButtonGap;
-
-            if (MenuStyle.MenuButton(new Rect(left, y, ButtonWidth, ButtonHeight), "Sandbox")) Leave(GameFlow.OpenSandbox);
-            y += ButtonHeight + ButtonGap;
-
-            if (MenuStyle.MenuButton(new Rect(left, y, ButtonWidth, ButtonHeight), "Settings"))
+        private void DrawMainPage(float left, float y)
+        {
+            GUI.enabled = _leaving == null;
+            if (ColumnButton(left, ref y, "Play")) OpenPlayPage();
+            if (ColumnButton(left, ref y, "Settings"))
             {
                 _settings.Open();
                 _showSettings = true;
             }
-            y += ButtonHeight + ButtonGap;
-
-            if (MenuStyle.MenuButton(new Rect(left, y, ButtonWidth, ButtonHeight), "Quit")) Leave(GameFlow.QuitGame);
-            GUI.enabled = true;
+            if (ColumnButton(left, ref y, "Quit")) Leave(GameFlow.QuitGame);
         }
 
-        /// <summary>The AI's difficulty, next to New Match.</summary>
-        private void DrawDifficulty(Rect rect)
+        private void DrawPlayPage(float left, float y)
         {
+            // The list is drawn last and is the only thing that takes a click while open. Read once, so that every part of this pass agrees.
+            bool enabled = _leaving == null;
+            GUI.enabled = enabled && !_cardListOpen;
+
+            float panelTop = y;
+            if (ColumnButton(left, ref y, "Faction mode", _selectedMode == MatchMode.Faction)) SelectMode(MatchMode.Faction);
+            if (ColumnButton(left, ref y, "Unlock Skirmish mode", _selectedMode == MatchMode.UnlockSkirmish)) SelectMode(MatchMode.UnlockSkirmish);
+            if (ColumnButton(left, ref y, "Sandbox")) OpenSandbox();
+            if (ColumnButton(left, ref y, "Back")) Back();
+
+            float panelLeft = left + ButtonWidth + PanelGap;
+            if (_selectedMode == MatchMode.Faction) DrawFactionPanel(panelLeft, panelTop);
+            else if (_selectedMode == MatchMode.UnlockSkirmish) DrawSkirmishPanel(panelLeft, panelTop, enabled);
+        }
+
+        private bool ColumnButton(float left, ref float y, string label, bool selected = false)
+        {
+            bool pressed = MenuStyle.MenuButton(new Rect(left, y, ButtonWidth, ButtonHeight), label, selected);
+            y += ButtonHeight + ButtonGap;
+            return pressed;
+        }
+
+        private void DrawFactionPanel(float x, float y)
+        {
+            Rect panel = PanelFor(x, y, 1);
+            float row = PanelHeading(panel, "FACTION MODE", "Fight with a faction's units, chosen by your starting card.");
+            DrawDifficulty(panel, row);
+            DrawStart(panel);
+        }
+
+        private void DrawSkirmishPanel(float x, float y, bool enabled)
+        {
+            Rect panel = PanelFor(x, y, 3);
+            float row = PanelHeading(panel, "UNLOCK SKIRMISH MODE", "No factions. Unlock any unit; every spell card can appear.");
+            DrawDifficulty(panel, row);
+            row += RowHeight;
+            DrawBaseHealth(panel, row);
+            row += RowHeight;
+            RowLabel(panel, row, "Cards");
+            DrawStart(panel);
+
+            GUI.enabled = enabled;
+            Rect box = ControlRect(panel, row);
+            _cards = (CardFilter)MenuStyle.Dropdown(box, "Cards", CardLabels, (int)_cards, ref _cardListOpen);
+        }
+
+        /// <summary>A panel with room for this many rows, and its Start at the bottom.</summary>
+        private static Rect PanelFor(float x, float y, int rows)
+        {
+            var panel = new Rect(x, y, PanelWidth, 84f + rows * RowHeight + 20f + StartHeight + PanelMargin);
+            MenuStyle.Panel(panel);
+            return panel;
+        }
+
+        /// <summary>Writes a panel's heading and its line of text, and gives the top of its first row.</summary>
+        private static float PanelHeading(Rect panel, string heading, string text)
+        {
+            GUI.Label(new Rect(panel.x + PanelMargin, panel.y + 14f, panel.width - 2f * PanelMargin, 30f), heading, MenuStyle.Section);
+            GUI.Label(new Rect(panel.x + PanelMargin, panel.y + 46f, panel.width - 2f * PanelMargin, 24f), text, MenuStyle.Small);
+            return panel.y + 84f;
+        }
+
+        private static void RowLabel(Rect panel, float y, string label) =>
+            GUI.Label(new Rect(panel.x + PanelMargin, y, RowLabelWidth, ControlHeight), label, MenuStyle.Body);
+
+        private static Rect ControlRect(Rect panel, float y) =>
+            new Rect(panel.x + PanelMargin + RowLabelWidth, y, panel.width - 2f * PanelMargin - RowLabelWidth, ControlHeight);
+
+        /// <summary>The AI's difficulty, which the draft screen's match will use.</summary>
+        private static void DrawDifficulty(Rect panel, float y)
+        {
+            RowLabel(panel, y, "Difficulty");
             int current = Mathf.Clamp((int)GameSettings.Difficulty, 0, Difficulties.Length - 1);
-            // This row stands past the left side's darkness, on the bright picture, so it has a little of its own.
-            if (_difficultyLabel == null) _difficultyLabel = new GUIStyle(MenuStyle.Small) { normal = { textColor = MenuStyle.Ink } };
-            MenuStyle.FadeRight(new Rect(rect.x - 10f, rect.y - 25f, 190f, 24f), new Color(0.015f, 0.015f, 0.03f, 0.8f));
-            GUI.Label(new Rect(rect.x, rect.y - 24f, rect.width, 22f), "AI difficulty", _difficultyLabel);
-            int wanted = MenuStyle.Choice(rect, "Difficulty", Difficulties, current);
+            int wanted = MenuStyle.Choice(ControlRect(panel, y), "Difficulty", Difficulties, current);
             if (wanted != current) GameSettings.Difficulty = (AiDifficulty)wanted;
+        }
+
+        /// <summary>A slider for the whole range, and arrows for one step at a time.</summary>
+        private static void DrawBaseHealth(Rect panel, float y)
+        {
+            RowLabel(panel, y, "Base health");
+            Rect control = ControlRect(panel, y);
+            int health = GameSettings.SkirmishBaseHealth;
+
+            float position = SliderFromBaseHealth(health);
+            float moved = MenuStyle.Slider(new Rect(control.x, control.y, control.width - StepperWidth - 12f, control.height), position);
+            int wanted = Mathf.Approximately(moved, position) ? health : BaseHealthFromSlider(moved);
+
+            int step = MenuStyle.Stepper(new Rect(control.xMax - StepperWidth, control.y, StepperWidth, control.height), "Base health", wanted.ToString());
+            wanted += step * MatchSetup.BaseHealthStep;
+            if (wanted != health) GameSettings.SkirmishBaseHealth = wanted;
+        }
+
+        private void DrawStart(Rect panel)
+        {
+            var start = new Rect(panel.xMax - PanelMargin - 200f, panel.yMax - PanelMargin - StartHeight, 200f, StartHeight);
+            if (MenuStyle.SmallFramedButton(start, "Start", true)) StartSelected();
         }
 
         private void DrawFade(float width, float height)
