@@ -5,8 +5,8 @@
 //                                  [--setup mode=skirmish,hp=10000,cards=only] [--most-rounds 60]
 // Use one results file per trial and setup: what it carries on from is only the pairing and the match number, so a file would mix them without a word.
 // --setup goes through the game's own MatchSetup; hp is the base health, and cards is all, no or only (reinforcement cards). With mode=skirmish the field is the
-// one made-up faction of all units, with its "sub-factions" being the AI difficulties Hard, Normal and Easy, which it needs an export made since that mode came in.
-// Without it every side is a Hard AI.
+// one made-up faction of all units, and its "sub-factions" are the AI difficulties Hard, Normal and Easy; that needs an export made since Unlock Skirmish came in.
+// In Faction mode every side is a Hard AI.
 // A trial file tries balance changes without touching the game, one per line:
 //   Flood Abomination|MaxHealth=6000            a field of the unit
 //   Flood Abomination|Tendril Slam|DamagePerShot=300     a field of one of its weapons
