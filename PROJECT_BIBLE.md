@@ -119,7 +119,7 @@ A match is a series of rounds against an AI opponent. Each round has these phase
 
 A unit can be unlocked and bought in the same round. Buying a squad is limited to 2 new squads per round, regardless of type.
 
-**Deployment price bands (per squad).** Tier 1 costs 100 to 200, Tier 2 costs 250 to 300, Tier 3 costs 400 to 500, and Titans cost 800. Balance is done through price, so every unit stays inside its tier’s band.
+**Deployment price bands (per squad).** Tier 1 costs 100 to 200, Tier 2 costs 250 to 300, Tier 3 costs 400 to 500, and Titans cost 800. Balance is done through price, so every unit stays inside its tier’s band. The Infected Pelican, at 350, is the one exception (D60).
 
 **Squads.** Buying a unit deploys a *squad*: a fixed number of bodies (for example 18 Marines, 1 Scorpion). Squad size and cost are data, and cost is per squad. Units that spawn other units (for example the Pelican) do not necessarily spawn full squads; the spawn count is part of the ability data.
 
@@ -213,8 +213,8 @@ Numbers below are first-pass values for the first playable slice. Costs are per 
 | Scorpion | Tank | 2 | 50 | 1 | 300 | 1200 | Heavy armor; cannon (explosive) plus coax |
 | Wolverine | Anti-air | 2 | 50 | 1 | 300 | 500 | Rocket volleys, bonus damage against air, can still hit ground |
 | Hornet | Aerial | 2 | 50 | 2 | 300 | 400 | Air, rockets, bombs ground |
-| Archer Missile Pod | Artillery | 2 | 50 | 2 | 300 | 350 | Long-range explosive barrage; lobbed |
-| Pelican | Aerial | 2 | 50 | 1 | 300 | 800 | Chin-mounted M370 autocannon (ballistic, hits air and ground); drops one small Marine squad (6) mid-battle after 10 seconds |
+| Archer Missile Pod | Artillery | 2 | 50 | 2 | 300 | 350 | Long-range explosive barrage; lobbed; cannot move |
+| Pelican | Aerial | 2 | 50 | 1 | 300 | 800 | Chin-mounted M370 autocannon (ballistic, hits air and ground); with its Troop Bay it lands behind enemy lines and drops 6 Marines behind it, up to 3 times, at least 10 seconds apart |
 | Spartan | Single-target DPS | 3 | 225 | 1 | 450 | 1500 | Energy shield, Spartan Laser |
 | Mantis | Tank | 3 | 250 | 1 | 500 | 2500 | Heavy armor; chaingun and rockets |
 | Elephant | Titan | 4 | 350 | 1 | 800 | 8000 | Mobile fortress; turrets for chaff, cannon for armor |
@@ -236,7 +236,7 @@ ODSTs are not a unit. They appear as a UNSC spell card (Section 10).
 | Banshee | Aerial | 2 | 50 | 2 | 300 | 400 | Fast bombing runs |
 | Hunter pair | Tank | 3 | 225 | 2 | 450 | 1500 | Heavy armor; 240 degree front defense arc, extremely resistant inside it, weak from behind |
 | Zealot | Single-target DPS | 3 | 200 | 1 | 400 | 1400 | Energy sword, fast, strong shield, Unarmored body |
-| Scarab | Titan | 4 | 350 | 1 | 800 | 9000 | Walking fortress; plasma turrets plus a charged main beam |
+| Scarab | Titan | 4 | 350 | 1 | 800 | 8500 | Walking fortress; plasma turrets plus a charged main beam |
 
 The Covenant has no dedicated anti-armor unit. Elites, Zealots, and Wraith splash fill that job for the slice, and a dedicated unit may be added in the balance pass if win rates demand it. The Engineer is not in the slice.
 
@@ -246,29 +246,30 @@ The Flood win by spreading. They have a roster of their own, plus temporary infe
 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Infection Forms | Chaff | 1 | 0 | 50 forms in 10 packs | 100 | 190 per pack | Fast; the only unit that infects |
-| Carrier Form | Chaff clear | 1 | 0 | 4 | 150 | 140 | Explodes on reaching an enemy or when killed, releases 10 Infection Forms |
-| Combat Form | Single-target DPS | 2 | 50 | 6 | 200 | 220 | Anti-armor claws, scavenged rifle |
+| Infection Forms | Chaff | 1 | 0 | 60 forms in 10 packs | 100 | 228 per pack | Fast; the only unit that infects |
+| Carrier Form | Chaff clear | 1 | 0 | 4 | 150 | 140 | Explodes on reaching an enemy or when killed, releases 12 Infection Forms |
+| Combat Form | Single-target DPS | 2 | 50 | 6 | 200 | 260 | Anti-armor claws, scavenged rifle |
 | Stalker Form | Flanker | 2 | 50 | 3 | 250 | 450 | Very fast pure form |
-| Pure Form Ranged | Artillery | 2 | 50 | 2 | 300 | 400 | Lobs bone shards |
-| Swarm Form | Anti-air | 2 | 50 | 20 forms in 4 packs | 300 | 200 per pack | Flying packs, bonus damage against air |
-| Pure Form Tank | Tank | 3 | 200 | 1 | 500 | 3200 | Heavy armor, splash slam |
-| Seeder | Single-target DPS | 3 | 200 | 2 | 450 | 800 | Seeds enemies from range |
-| Infected Pelican | Aerial | 3 | 200 | 1 | 400 | 900 | One-shot crash dive (900 damage within 3.5 m) |
-| Infected Phantom | Aerial | 3 | 200 | 1 | 450 | 1100 | Drops 5 Combat Forms after 8 seconds |
-| Flood Abomination | Titan | 4 | 350 | 1 | 800 | 7000 | Very tall and large; aura for nearby Flood, keeps releasing Infection Forms |
+| Pure Form Ranged | Artillery | 2 | 50 | 2 | 250 | 400 | Lobs bone shards |
+| Swarm Form | Anti-air | 2 | 50 | 20 forms in 4 packs | 250 | 200 per pack | Flying packs, bonus damage against air |
+| Pure Form Tank | Tank | 3 | 200 | 1 | 400 | 3200 | Heavy armor, splash slam |
+| Seeder | Single-target DPS | 3 | 200 | 2 | 400 | 800 | Seeds enemies from range |
+| Infected Pelican | Aerial | 3 | 175 | 1 | 350 | 900 | One-shot crash dive (900 damage within 3.5 m) |
+| Infected Phantom | Aerial | 3 | 200 | 1 | 400 | 1100 | Drops 5 Combat Forms after 8 seconds |
+| Flood Abomination | Titan | 4 | 350 | 1 | 800 | 8500 | Very tall and large; aura for nearby Flood, keeps releasing Infection Forms |
 
-**Packs.** One Infection Forms body is a pack of 5 tiny forms that move and act as one. A pack shows and deals less as its forms die. A single shot hurts one form; an area hit (splash, cone, beam, spell) hurts every form in the pack. A pack pounces on a target within 6 metres and jumps over anything that holds it up, flying over bodies; it cannot attack in the air (D39).
+**Packs.** One Infection Forms body is a pack of 6 tiny forms that move and act as one. A pack shows and deals less as its forms die. A single shot hurts one form; an area hit (splash, cone, beam, spell) hurts every form in the pack. A pack pounces on a target within 6 metres and jumps over anything that holds it up, flying over bodies; it cannot attack in the air (D39).
 
 **Infection mechanic**
 
+- **Every Flood vehicle** (Infested Warthog, Scorpion, Hornet, Ghost, Wraith and Banshee, Infected Phantom) releases a group of 6 Infection Forms when it dies.
 - **Only Infection Forms can infect.** Combat Forms, Carrier Forms, and Pure Forms do not. The Seeder and the Flood's infecting spells are the exceptions.
 - Only **Unarmored** units can be infected, and only when they die within melee range of an Infection Form.
 - Vehicles, Heavy and Light Armor, Spartans, and Hunters cannot be infected by Infection Forms. A unit with an Unarmored body and an energy shield, such as an Elite, can be infected only after its shield is depleted.
 - A killed unit rises as an infected unit after 2 seconds. Its stats come from its original definition scaled to 60% health. It becomes a dumb melee charger: moves to the nearest enemy, no special abilities. It keeps its base damage and cannot be infected again.
 - Infected units exist only for that round and are discarded at round end.
 - **Seeder:** a hit plants a seed for 8 seconds. The host loses health and is slowed, and if it dies seeded it rises as an infected unit, whatever its armor. A shield that is up stops the seed. Titans and Flood cannot be seeded.
-- **Infected Pelican:** a one-shot Tier 3 unit that crashes into the densest enemy cluster, dealing heavy splash damage and spawning 10 Infection Forms and 5 Combat Forms on impact. If it is shot down, it does the same where it falls.
+- **Infected Pelican:** a one-shot Tier 3 unit that crashes into the densest enemy cluster, dealing heavy splash damage and spawning 30 Infection Forms and 5 Combat Forms on impact. If it is shot down, it does the same where it falls.
 - Counters: Fire, splash, and armored units. Players are expected to invest in chaff clear. Fighting the Flood with chaff feeds them.
 
 ### 8.4 Sub-factions (built after the slice, do not implement until approved)
@@ -499,6 +500,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-03 | Dead ground units stay 14 seconds. The Shortsword is now the Longsword, a slower, tougher bomber at the same price | Per the project owner (D57) |
 | 2026-11-03 | Starting cards worth about 300; the enemy's starting squads seen in grey; shop in order of price; a fallen tower weakens by 40% and adds 40% damage taken, and gives its killer XP; Spartan Grenadier fires rockets; Abomination's attacks raised | Per the project owner (D58) |
 | 2026-11-03 | A dearer starting card means a weaker base; a tower's XP goes by its level | Per the project owner (D59) |
+| 2026-11-03 | Balance from the Hard AI tournament; reinforcement cards bring no Titans; 6 Infection Forms to a group, released by every Flood vehicle; Archer pods can't move; the Pelican is twice as fast and lands behind enemy lines to drop Marines, up to 3 times | Per the project owner (D60) |
 
 ## 18. Assumptions to confirm
 

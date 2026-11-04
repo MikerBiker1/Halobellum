@@ -121,9 +121,16 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 
 ## From the Hard AI tournament (D59)
 
-65. **The suggested balance changes:** `Docs/Balance/suggestions.md`. They take the sub-factions from 23-68% to 44-55%, and the factions from Covenant 74%, UNSC 51%, Flood 19% to 52%, 53%, 44%. Apply them all, or only some?
+65. *(Applied, D60.)* **The suggested balance changes:** `Docs/Balance/suggestions.md`. They take the sub-factions from 23-68% to 44-55%, and the factions from Covenant 74%, UNSC 51%, Flood 19% to 52%, 53%, 44%. Apply them all, or only some?
 66. **A tower's XP in numbers:** 150, 275, 450, 800 and 1,200 by level. A level 1 tower is 150 XP, which fills 3/4 of a Marine squad's bar and under 10% of a Titan's. Good?
 67. **The Hard AI hardly uses towers:** it spends nearly all its credits on squads, so it almost never levels a tower and never buys research. Should it spend on them sooner? That would make it harder to beat, and let the tournament measure them.
+
+## From the changes of D60
+
+68. **Aerospace Command is the outlier, at 32%.** It loses more than 80% of its matches to Armored Division, Noble and UNSC-based Flood. A tougher Longsword (750 health) only took it to 35%, in a trial before the last AI change. It needs a look of its own: what would you like its aircraft to be good at?
+69. **The Pelican is weak in the AI's hands:** 1.27 drops a battle of at most 3, usually shot down on the way in, and sides that field it win 28%. Do you want it tougher (it has 800 health), or is that for players to use better than the AI does?
+70. **UNSC is now the lowest faction, at 43%,** with Covenant 54% and Flood 53%. Archer pods that can't move and the loss of Titan reinforcement cards both cost it. Do you want UNSC raised next?
+71. **The Infected Pelican costs 350,** below Tier 3's band of 400 to 500, as it was already at the bottom when you asked for it to be cheaper. Fine as an exception?
 
 ## Things my test runs did to your PC
 

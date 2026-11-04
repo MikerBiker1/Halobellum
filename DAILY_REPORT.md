@@ -2,6 +2,13 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Balance applied, and more Infection Forms (D60)
+- **In the game:** the suggested balance changes, no Titans on reinforcement cards, 6 Infection Forms to a group, a group from every Flood vehicle that dies, 30 forms and a price of 350 for the Infected Pelican, Archer pods that can't move, and a Pelican that lands behind enemy lines up to 3 times.
+- **Tournament after all of it:** Covenant 54%, Flood 53%, UNSC 43%. Sub-factions run from 48% to 57%, except Aerospace Command at 32%: `Docs/Balance/hard_ai_tournament_after_changes.txt`.
+- **The old Scarab would be worse:** Covenant 63%, UNSC 38%: `Docs/Balance/hard_ai_tournament_old_scarab.txt`.
+- **A power cut** stopped the first run of the counter web and the tournaments. No file was damaged, and they were run again.
+- Questions are items 68 to 71 of `MORNING_DECISIONS.md`.
+
 ## The Hard AI tournament (D59)
 - **3,600 whole matches** between two Hard AIs on the game's real data, 100 for each pairing of sub-factions: `Docs/Balance/hard_ai_tournament_baseline.txt`.
 - **Result:** Covenant 74%, UNSC 51%, Flood 19%. The Scarab is the biggest single cause of Covenant's lead, and Flood is weak across its roster.
@@ -57,6 +64,7 @@ Earlier reports are in this file's Git history. **M10 is built and merged**, and
 **D46 to D52** in `DECISIONS.md`, and the list in `MORNING_DECISIONS.md`.
 
 ## Test results
+- **After the changes of D60, only what they touch:** 185 EditMode tests (AI, cards, towers, infection, rosters, match data, counter web, draft, weapons) and 52 PlayMode tests (Match scene, effects) pass, after updating the roster table to the new numbers. A picture run of a test build showed the Pelican landing behind enemy tanks with its Marines out, with no exceptions. It was shot down before a second drop in that run, so a second and third landing have only been seen in tests and in the tournament's count. The whole counter web and a full tournament were run on the final numbers. The full suites were **not** run. Nobody has played these changes yet, and how the bigger swarms affect the frame rate wasn't measured.
 - **After the base health and tower XP changes, only what they touch:** the EditMode tests for the draft, towers, round flow, match data, cards, menus, AI and leveling, and the PlayMode Match scene tests, pass. A picture run of a test build had no exceptions, and the draft cards show the new line. The full suites were **not** run. The tournament and its trials ran outside Unity on the game's own code and exported data. The suggested changes have not been run in the game itself.
 - **After your notes from playing, only what they touch:** the EditMode tests for the draft, towers, AI, cards, leveling, menus, match data and rosters, and the PlayMode Match scene tests, pass. 5 expectations were out of date and were corrected: nothing of the enemy seen before the first battle (4 tests) and where a bought squad is among the views. A picture run in a test build showed all 3 factions' tower windows, the shop, a shop unit, the grey squads and an item with an arrow, with no exceptions. The Abomination's and Grenadier's rows of the counter web were rerun at 10 battles, and 30 AI matches per pairing at the old and new Abomination. The full suites and the rest of the counter web were **not** run. Nobody has played the tower changes in a real match, so their balance is untested: the counter web has no towers.
 - **After the second batch of models, only what it touches:** the cards, rosters, counter web and baked-body tests, and the Sandbox, effects and match scene tests, pass. 3 expectations were out of date and were corrected: a Spartan with no body, and the Sandbox's two unit counts, which the removal of units had already left wrong. A gallery run took pictures of the units standing, moving and firing with no errors, stopping at my time limit in its later effects pictures. The Longsword's row of the counter web was rerun at 3 battles. The full suites and the rest of the counter web were **not** run. Nobody has judged the motion in play.

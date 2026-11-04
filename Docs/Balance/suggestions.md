@@ -1,6 +1,6 @@
 # Balance suggestions from the Hard AI tournament (D59)
 
-Nothing here is in the game yet. These changes were only tried in the tournament (`Tools/Balance/Tournament/trials/suggested.txt`), and wait for the owner's approval.
+**Applied on the owner's word (D60), with more changes on top: see `hard_ai_tournament_after_changes.txt` for where the game stands now.** This page is the reasoning at the time.
 
 - **The game as it is:** `hard_ai_tournament_baseline.txt`
 - **With these changes:** `hard_ai_tournament_suggested.txt`

@@ -138,7 +138,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] Notes from playing: starting cards about 300, enemy's starting squads in grey, shop by price with level 1 stats, tower debuff and XP, item and arrow together, Elite Recruitment's note, Grenadier rockets, Abomination buff (D58)
 - [x] Base health follows the starting card's value, a tower gives the XP of a squad of the tier of its level (D59)
 - [x] Hard AI tournament on the game's real data, with a report and suggested balance changes (D59)
-- [ ] Apply the balance changes the owner approves (Docs/Balance/suggestions.md)
+- [x] Applied the suggested balance changes, no Titan reinforcements, 6 Infection Forms to a group, forms from Flood vehicles, Archer pods that stay put, the Pelican's landings, tournament rerun (D60)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 
