@@ -275,7 +275,7 @@ namespace Halobellum.Tests
         // ------------------------------------------------------------------ how much dust
 
         [TestCase("Mobile", 1f)]
-        [TestCase("PC", 2.5f)]
+        [TestCase("PC", 4f)]
         [TestCase("Something New", 1f)]
         public void TheParticleScale_GoesByTheQualityLevelsRealName(string level, float scale) => Assert.AreEqual(scale, EffectKit.ParticleScaleFor(level));
 
