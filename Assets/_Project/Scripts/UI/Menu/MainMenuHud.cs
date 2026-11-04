@@ -86,8 +86,17 @@ namespace Halobellum.UI
 
         public void OpenSandbox() => Leave(GameFlow.OpenSandbox);
 
-        /// <summary>Draws this screen under whatever Event.current is now: how the test tool sends IMGUI's own mouse events to it, with nothing going outside the game.</summary>
-        public void DrawForTest() => OnGUI();
+        /// <summary>
+        /// Draws this screen under whatever Event.current is now, with the mouse at these pixels of IMGUI's screen: how the test tool sends IMGUI's own mouse events to it, with
+        /// nothing going outside the game. The place is set after the scale, because setting GUI.matrix puts an event's mouse back where the real one is.
+        /// </summary>
+        public void DrawForTest(Vector2 mousePixels)
+        {
+            MenuStyle.Ensure();
+            float scale = ApplyScale();
+            Event.current.mousePosition = mousePixels / scale;
+            DrawScaled(scale);
+        }
 
         /// <summary>From Play's page back to the first one.</summary>
         public void Back()
@@ -147,7 +156,13 @@ namespace Halobellum.UI
         private void OnGUI()
         {
             MenuStyle.Ensure();
-            float scale = HudScale.ApplyFit(Mathf.Max(1120f, SettingsScreen.PanelWidth + 20f), SettingsScreen.PanelHeight + 20f);
+            DrawScaled(ApplyScale());
+        }
+
+        private static float ApplyScale() => HudScale.ApplyFit(Mathf.Max(1120f, SettingsScreen.PanelWidth + 20f), SettingsScreen.PanelHeight + 20f);
+
+        private void DrawScaled(float scale)
+        {
             float width = HudScale.ScaledWidth(scale), height = HudScale.ScaledHeight(scale);
 
             if (_showSettings)

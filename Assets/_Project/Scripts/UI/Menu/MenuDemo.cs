@@ -112,6 +112,8 @@ namespace Halobellum.UI
                 Application.Quit();
                 yield break;
             }
+            // So that a posted Esc counts in a window without focus. From the start, because a window that loses focus before this is set has its keyboard switched off.
+            InputSystem.settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
             Check("the game starts in the main menu", SceneManager.GetActiveScene().name == GameFlow.MainMenuScene);
             yield return Wait(3.5f);
             yield return Shot("01_menu_a");
@@ -289,8 +291,6 @@ namespace Halobellum.UI
         /// <summary>The Play page's own controls, through its buttons and Esc: it ends back on the first page.</summary>
         private IEnumerator PlayPage()
         {
-            InputSettings.BackgroundBehavior kept = InputSystem.settings.backgroundBehavior;
-            InputSystem.settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus; // So that a posted Esc counts in a window without focus.
             var menu = FindAnyObjectByType<MainMenuHud>();
             var drawn = new Dictionary<string, Rect>();
             Action<string, Rect> note = (key, rect) => drawn[key] = rect;
@@ -373,15 +373,11 @@ namespace Halobellum.UI
             GameSettings.SkirmishBaseHealth = health;
             GameSettings.Difficulty = difficulty;
             MenuStyle.ButtonDrawnForTest -= note;
-            InputSystem.settings.backgroundBehavior = kept;
         }
 
         /// <summary>An Unlock Skirmish match with settings picked on the panel, as far as its unlock page, and Esc there.</summary>
         private IEnumerator SkirmishMatch()
         {
-            InputSettings.BackgroundBehavior kept = InputSystem.settings.backgroundBehavior;
-            InputSystem.settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
-
             yield return Press("Play");
             yield return Press("Unlock Skirmish mode");
             GameSettings.SkirmishBaseHealth = 1500;
@@ -419,8 +415,6 @@ namespace Halobellum.UI
             Check("the next Esc pauses", GamePause.IsPaused);
             yield return PostEscape();
             Check("and the next one resumes", !GamePause.IsPaused);
-
-            InputSystem.settings.backgroundBehavior = kept;
         }
 
         /// <summary>Goes through what makes a small sound, and counts what is heard.</summary>
@@ -660,8 +654,8 @@ namespace Halobellum.UI
             bool release = _clickStep == 1;
             Event real = Event.current;
             if (release) GUIUtility.hotControl = _clickControl; // The press was a frame ago, and the real mouse isn't down.
-            Event.current = new Event { type = release ? EventType.MouseUp : EventType.MouseDown, button = 0, mousePosition = _clickAt, clickCount = 1 };
-            _clickMenu.DrawForTest();
+            Event.current = new Event { type = release ? EventType.MouseUp : EventType.MouseDown, button = 0, clickCount = 1 };
+            _clickMenu.DrawForTest(_clickAt);
             _clickControl = GUIUtility.hotControl;
             GUIUtility.hotControl = 0;
             GUI.matrix = Matrix4x4.identity;
@@ -683,6 +677,7 @@ namespace Halobellum.UI
         {
             Keyboard keyboard = Keyboard.current;
             if (keyboard == null) yield break;
+            if (!keyboard.enabled) InputSystem.EnableDevice(keyboard);
             InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.Escape));
             yield return null;
             yield return null;
