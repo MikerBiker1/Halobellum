@@ -3,7 +3,8 @@
 // both sides (snapped to each side's grid, no overlap), moved, turned, removed, copied to the other
 // side; Run plays the battle with both armies and Reset brings back the same placement. The
 // placeholder test units are offered too (sandbox only). Every item can be put on squads (D34).
-// The towers switch: off is as if towers didn't exist; on stands 4 towers on the field, blocks their squares and moves the squads already there.
+// The towers switch: off is as if towers didn't exist; on stands 4 towers on the field, blocks their squares and moves the squads already there;
+// off again puts those squads back. A tower that falls in a battle weakens its side and plays its shockwave here as in a match.
 // Depends on: Halobellum.Presentation (SandboxController, BattleController), Halobellum.Economy,
 //             Halobellum.Core, NUnit, Unity Test Framework.
 
@@ -550,6 +551,151 @@ namespace Halobellum.Tests
             Assert.AreEqual(4, Towers().Length, "Still there after Reset.");
             Assert.IsTrue(Towers().All(t => t.IsAlive), "And whole again.");
             Assert.AreEqual(bodies + 4, CountViews());
+        }
+
+        [UnityTest]
+        public IEnumerator AFallenTower_WeakensItsSide_PlaysItsShockwave_AndResetEndsIt()
+        {
+            yield return LoadSandbox();
+            _sandbox.AddSquad(Team.A, Unit("Marine"));
+            _sandbox.AddSquad(Team.B, Unit("Grunt"));
+            _sandbox.SetTowers(true);
+            _battle.Speed = 1f;
+            _sandbox.Run();
+            yield return null;
+
+            BattleSimulation battle = _battle.Simulation;
+            SimUnit tower = Towers().Single(t => t.Team == Team.B && t.Stats.Shockwave.Kind == TowerKind.CommandCenter);
+            Assert.IsNull(battle.ActiveShockwave(Team.B), "No shockwave before a tower falls.");
+            tower.Health = 0f;
+            float deadline = Time.realtimeSinceStartup + 10f;
+            while (tower.IsAlive && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.IsFalse(tower.IsAlive, "The tower fell.");
+
+            Assert.AreSame(tower.Stats.Shockwave, battle.ActiveShockwave(Team.B));
+            Assert.Greater(battle.ShockwaveSecondsLeft(Team.B), 0f);
+            Assert.IsNull(battle.ActiveShockwave(Team.A), "Only its own side suffers it.");
+            Assert.AreEqual(3, Towers().Count(t => t.IsAlive), "The other towers still stand.");
+
+            // The widest ring of EffectRecipes.TowerShockwave, far wider than any death's.
+            ParticleSystem rings = GameObject.Find("Combat Effects").GetComponentsInChildren<ParticleSystem>(true).First(s => s.name == "Shock Ring");
+            var particles = new ParticleSystem.Particle[rings.particleCount];
+            rings.GetParticles(particles);
+            Assert.IsTrue(particles.Any(p => Mathf.Approximately(p.startSize, 160f)), "The shockwave's ring plays.");
+
+            int tick = battle.Tick;
+            deadline = Time.realtimeSinceStartup + 10f;
+            while (battle.Tick == tick && Time.realtimeSinceStartup < deadline) yield return null;
+            yield return null;
+            ShockwaveStats shockwave = tower.Stats.Shockwave;
+            Assert.Less(shockwave.SpeedMultiplier, 1f);
+            SimUnit grunt = battle.Units.First(u => u.Stats.Name == "Grunt" && u.IsAlive), marine = battle.Units.First(u => u.Stats.Name == "Marine" && u.IsAlive);
+            Assert.AreEqual(shockwave.SpeedMultiplier, grunt.SpeedMultiplier, 1e-3f, "Its side is slowed.");
+            Assert.AreEqual(shockwave.DamageMultiplier, grunt.ShockwaveDamage, 1e-3f, "And does less damage.");
+            Assert.AreEqual(1f, marine.SpeedMultiplier, 1e-3f, "The other side isn't.");
+            Assert.AreEqual(DeathStyle.Vehicle, DeathLooks.For(tower.Stats), "It blows up like a building, not like a soldier.");
+            Assert.IsTrue(_battle.GetComponent<UnitViewManager>().IsShown(tower), "Its wreck stays on the field.");
+
+            _sandbox.ResetBattle();
+            yield return null;
+            Assert.AreEqual(4, Towers().Count(t => t.IsAlive), "Whole again after Reset.");
+            Assert.IsNull(_battle.Simulation.ActiveShockwave(Team.B), "And the shockwave is over.");
+        }
+
+        /// <summary>Where the Command Center stands on a side's grid, without leaving the towers on.</summary>
+        private void CommandCenterSpot(out int column, out int row)
+        {
+            _sandbox.SetTowers(true);
+            PlacedTower commandCenter = _sandbox.ArmyA.FindTower(TowerKind.CommandCenter);
+            column = commandCenter.Column;
+            row = commandCenter.Row;
+            _sandbox.SetTowers(false);
+        }
+
+        [UnityTest]
+        public IEnumerator TowersOff_PutsTheSquadsTheyMovedBack_SoTheFightIsTheSameAsBefore()
+        {
+            yield return LoadSandbox();
+            UnitStats marine = Unit("Marine");
+            DeploymentGrid.Footprint(marine, false, _battle.Rules, out int width, out _);
+            CommandCenterSpot(out int towerColumn, out int towerRow);
+
+            // One squad on the tower's left edge and one on its right, so that both have to move.
+            int leftColumn = towerColumn - width + 1, rightColumn = towerColumn + 1;
+            _sandbox.EditingTeam = Team.A;
+            _sandbox.BeginPlacing(marine);
+            Assert.IsTrue(_sandbox.PlaceAt(leftColumn, towerRow).Ok, _sandbox.Message);
+            Assert.IsTrue(_sandbox.PlaceAt(rightColumn, towerRow).Ok, _sandbox.Message);
+            _sandbox.CancelPlacement();
+            _sandbox.AddSquad(Team.B, Unit("Grunt"));
+            PlacedSquad left = _sandbox.ArmyA.Squads[0], right = _sandbox.ArmyA.Squads[1];
+            yield return null;
+            Vec2[] before = _battle.Simulation.Units.Select(u => u.Position).ToArray();
+
+            _sandbox.SetTowers(true);
+            Assert.AreNotEqual(leftColumn, left.Column, "The towers moved it.");
+            Assert.AreNotEqual(rightColumn, right.Column, "The towers moved it.");
+            StringAssert.Contains("Towers off puts them back", _sandbox.Message, "The move is not silent.");
+
+            _sandbox.Run();
+            yield return null;
+            _sandbox.ResetBattle(); // A battle in between changes nothing.
+            yield return null;
+
+            _sandbox.SetTowers(false);
+            yield return null;
+            Assert.AreEqual(leftColumn, left.Column);
+            Assert.AreEqual(towerRow, left.Row);
+            Assert.AreEqual(rightColumn, right.Column);
+            Assert.AreEqual(towerRow, right.Row);
+            Assert.AreEqual("", _sandbox.Message);
+            CollectionAssert.AreEqual(before, _battle.Simulation.Units.Select(u => u.Position).ToArray(), "Every body starts where it did.");
+        }
+
+        [UnityTest]
+        public IEnumerator TowersOff_LeavesASquadMovedByHand_AndOneWhoseSpotIsTaken_AndACopyGoesBackLikeItsOriginal()
+        {
+            yield return LoadSandbox();
+            UnitStats marine = Unit("Marine");
+            DeploymentGrid.Footprint(marine, false, _battle.Rules, out int width, out _);
+            CommandCenterSpot(out int towerColumn, out int towerRow);
+
+            int leftColumn = towerColumn - width + 1, rightColumn = towerColumn + 1;
+            _sandbox.EditingTeam = Team.A;
+            _sandbox.BeginPlacing(marine);
+            Assert.IsTrue(_sandbox.PlaceAt(leftColumn, towerRow).Ok, _sandbox.Message);
+            Assert.IsTrue(_sandbox.PlaceAt(rightColumn, towerRow).Ok, _sandbox.Message);
+            _sandbox.CancelPlacement();
+            PlacedSquad byHand = _sandbox.ArmyA.Squads[0], taken = _sandbox.ArmyA.Squads[1];
+
+            _sandbox.SetTowers(true);
+            _sandbox.BeginMoving(byHand);
+            Assert.IsTrue(_sandbox.PlaceAt(0, 0).Ok, _sandbox.Message);
+            int movedColumn = taken.Column, movedRow = taken.Row;
+            _sandbox.ArmyA.Squads.Add(new PlacedSquad { Id = 1000, Type = marine, Column = rightColumn, Row = towerRow, PricePaid = marine.Cost });
+            yield return null;
+
+            _sandbox.SetTowers(false);
+            yield return null;
+            Assert.AreEqual(0, byHand.Column, "Moved by hand: it stays where the player put it.");
+            Assert.AreEqual(0, byHand.Row);
+            Assert.AreEqual(movedColumn, taken.Column, "Its spot is taken: nothing piles up.");
+            Assert.AreEqual(movedRow, taken.Row);
+            StringAssert.Contains("No room", _sandbox.Message);
+
+            // A copy made while the towers stand goes back with its original, so that the two sides still mirror each other.
+            _sandbox.Clear(Team.A);
+            _sandbox.Clear(Team.B);
+            _sandbox.EditingTeam = Team.A;
+            _sandbox.BeginPlacing(marine);
+            Assert.IsTrue(_sandbox.PlaceAt(rightColumn, towerRow).Ok, _sandbox.Message);
+            _sandbox.CancelPlacement();
+            _sandbox.SetTowers(true);
+            _sandbox.CopyToOtherSide(Team.A);
+            _sandbox.SetTowers(false);
+            Assert.AreEqual(rightColumn, _sandbox.ArmyA.Squads[0].Column);
+            Assert.AreEqual(rightColumn, _sandbox.ArmyB.Squads[0].Column, "The copy went back too.");
+            Assert.AreEqual(towerRow, _sandbox.ArmyB.Squads[0].Row);
         }
 
         [UnityTest]

@@ -8,6 +8,7 @@
 // Every item is free to use (decision D34): pick one from Items, then a squad on either side; one
 // item per squad, and the stats window can take it off again. Spells are not in the sandbox.
 // A switch (off at first, so that a fight measures its units alone) puts each side's two towers on the field, as in a match, at level 1.
+// Squads standing where a tower goes step aside, and switching off puts them back, so that the same layout and seed fight the same fight again.
 // The HUD (Scripts/UI/SandboxHud) and DeploymentInput call the public methods here; tests do too.
 // Depends on: BattleController, SquadSelection, IDeploymentPlacement, RightClick, Halobellum.Economy
 //             (PlayerState, DeploymentGrid, TowerBuilder), Halobellum.Units (FactionDefinition, UnitDefinition, MatchRulesDefinition), BattleFactions, UnityEngine.
@@ -26,6 +27,13 @@ namespace Halobellum.Presentation
     [RequireComponent(typeof(BattleController))]
     public sealed class SandboxController : MonoBehaviour, IDeploymentPlacement, ISquadProgression
     {
+        /// <summary>Where the towers moved a squad from and to, so that switching them off can put it back.</summary>
+        private struct MovedOffTower
+        {
+            public int FromColumn, FromRow, ToColumn, ToRow;
+            public bool Rotated90;
+        }
+
         /// <summary>One unit type the sandbox offers, with the faction it comes from.</summary>
         public readonly struct SandboxUnit
         {
@@ -61,6 +69,7 @@ namespace Halobellum.Presentation
         private readonly Dictionary<string, string> _factionOfUnit = new Dictionary<string, string>();
         private readonly Dictionary<string, int> _counting = new Dictionary<string, int>();
         private readonly Dictionary<TowerKind, UnitStats> _towerStats = new Dictionary<TowerKind, UnitStats>();
+        private readonly Dictionary<PlacedSquad, MovedOffTower> _movedOffTowers = new Dictionary<PlacedSquad, MovedOffTower>();
         private MatchRules _towerRules;
         private int _nextSquadId = 1;
 
@@ -288,7 +297,9 @@ namespace Halobellum.Presentation
             target.Techs.Clear();
             foreach (PlacedSquad squad in Army(from).Squads)
             {
-                target.Squads.Add(new PlacedSquad { Id = _nextSquadId++, Type = squad.Type, Column = squad.Column, Row = squad.Row, Rotated90 = squad.Rotated90, PricePaid = squad.PricePaid, Level = squad.Level, Item = squad.Item });
+                var copy = new PlacedSquad { Id = _nextSquadId++, Type = squad.Type, Column = squad.Column, Row = squad.Row, Rotated90 = squad.Rotated90, PricePaid = squad.PricePaid, Level = squad.Level, Item = squad.Item };
+                target.Squads.Add(copy);
+                if (_movedOffTowers.TryGetValue(squad, out MovedOffTower moved)) _movedOffTowers[copy] = moved; // It stands aside like its original, and goes back with it.
             }
             foreach (var pair in Army(from).Techs) target.Techs[pair.Key] = new List<TechUpgrade>(pair.Value);
             Refresh();
@@ -313,7 +324,7 @@ namespace Halobellum.Presentation
 
         // ------------------------------------------------------------------ towers
 
-        /// <summary>Puts both sides' towers on the field or takes them away. Squads standing where a tower goes move to the nearest free spot, and stay there when it goes again.</summary>
+        /// <summary>Puts both sides' towers on the field or takes them away. Squads standing where a tower goes move to the nearest free spot, and go back when it goes again.</summary>
         public void SetTowers(bool on)
         {
             if (IsBattle || on == TowersOn) return;
@@ -328,6 +339,13 @@ namespace Halobellum.Presentation
                 TowerBuilder.AddTo(ArmyB, _towerRules, _battle.Rules);
                 MoveSquadsOffTowers(ArmyA);
                 MoveSquadsOffTowers(ArmyB);
+                if (_movedOffTowers.Count > 0 && Message == "") Message = "Squads on the towers' squares moved aside: Towers off puts them back.";
+            }
+            else
+            {
+                PutBackSquadsMovedOffTowers(ArmyA);
+                PutBackSquadsMovedOffTowers(ArmyB);
+                _movedOffTowers.Clear();
             }
             Refresh();
         }
@@ -342,11 +360,30 @@ namespace Halobellum.Presentation
                 army.Squads.RemoveAt(i);
                 if (DeploymentGrid.FindFreeSpotNear(army, squad.Type, squad.Rotated90, _battle.Rules, squad.Column, squad.Row, out int column, out int row))
                 {
+                    _movedOffTowers[squad] = new MovedOffTower { FromColumn = squad.Column, FromRow = squad.Row, ToColumn = column, ToRow = row, Rotated90 = squad.Rotated90 };
                     squad.Column = column;
                     squad.Row = row;
                 }
                 else Report(ActionResult.Fail($"No room to move {squad.Type.Name} off the tower: it stays where it is."));
                 army.Squads.Insert(i, squad);
+            }
+        }
+
+        private void PutBackSquadsMovedOffTowers(PlayerState army)
+        {
+            // The last moved goes back first: that undoes the moves exactly, even if one squad took a square another had left.
+            for (int i = army.Squads.Count - 1; i >= 0; i--)
+            {
+                PlacedSquad squad = army.Squads[i];
+                if (!_movedOffTowers.TryGetValue(squad, out MovedOffTower moved)) continue;
+                // Moved or turned by hand since then: it stands where the player wants it.
+                if (squad.Column != moved.ToColumn || squad.Row != moved.ToRow || squad.Rotated90 != moved.Rotated90) continue;
+                if (DeploymentGrid.CanPlace(army, squad.Type, moved.FromColumn, moved.FromRow, squad.Rotated90, _battle.Rules, squad.Id))
+                {
+                    squad.Column = moved.FromColumn;
+                    squad.Row = moved.FromRow;
+                }
+                else Report(ActionResult.Fail($"No room to put {squad.Type.Name} back where it was: it stays where it is."));
             }
         }
 

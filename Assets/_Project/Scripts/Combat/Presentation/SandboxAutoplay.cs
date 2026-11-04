@@ -6,7 +6,8 @@
 // end, then quits. It also saves one screenshot of a lobbed shot at the top of its arc, one of a beam
 // charging, one of a beam firing, one of the first infected body and one of a unit leaping, the first time each is
 // seen, close-ups of a baked Marine: held still, in the middle of a cross-fade, running, shooting and falling, and one of the Scorpion.
-// If the towers are on (SandboxHud's "-sandboxTowers"), it also takes a close-up of each tower before the battle.
+// If the towers are on (SandboxHud's "-sandboxTowers"), it also takes a close-up of each tower before the battle, and brings down blue's Command Center
+// after 4 s of battle (the demo's armies don't get that far by themselves): a picture of the shockwave and a close-up of the wreck, and a line in the log.
 // With "-gallery" as well, it instead goes through every unit that has a real model (M9, D45): each one standing, moving
 // and firing, close up and from the game's camera, so that a person can judge them from pictures, and then every effect (EffectsGallery).
 // With "-effects" it only takes the pictures of the effects, and with "-effectsBench" it only measures the frame time of a big battle.
@@ -46,6 +47,10 @@ namespace Halobellum.Presentation
         private readonly List<ShotInFlight> _inFlight = new List<ShotInFlight>();
         private readonly List<BeamShot> _beams = new List<BeamShot>();
         private readonly HashSet<SimUnit> _towersShot = new HashSet<SimUnit>();
+        private const float TowerFallsAtSeconds = 4f, ShockwaveShotAfter = 0.1f, WreckShotAfter = 1f;
+        private SimUnit _fallenTower;
+        private float _towerFellAt;
+        private bool _shotShockwave, _shotWreck;
 
         private void Awake()
         {
@@ -273,6 +278,7 @@ namespace Halobellum.Presentation
             if (_step >= 4) ShootMarine();
             if (_closeUp) return;
             if (_step >= 5) ShootWeaponMechanics();
+            if (_step >= 5 && _sandbox.TowersOn) ShootFallingTower();
             _wait -= Time.unscaledDeltaTime;
             if (_wait > 0f) return;
             switch (_step)
@@ -347,6 +353,35 @@ namespace Halobellum.Presentation
                 if (unit.Stats.IsTower && _towersShot.Add(unit)) return unit;
             }
             return null;
+        }
+
+        private void ShootFallingTower()
+        {
+            BattleSimulation simulation = _battle.Simulation;
+            if (_fallenTower == null)
+            {
+                if (simulation.ElapsedSeconds < TowerFallsAtSeconds || simulation.IsFinished) return;
+                foreach (SimUnit unit in simulation.Units)
+                {
+                    if (!unit.Stats.IsTower || unit.Team != Team.A || unit.Stats.Shockwave.Kind != TowerKind.CommandCenter) continue;
+                    unit.Health = 0f;
+                    _fallenTower = unit;
+                    _towerFellAt = Time.unscaledTime;
+                    break;
+                }
+                return;
+            }
+            if (!_shotShockwave && Time.unscaledTime >= _towerFellAt + ShockwaveShotAfter)
+            {
+                _shotShockwave = true;
+                Shot("tower_shockwave");
+                Debug.Log($"Sandbox demo: {_fallenTower.Stats.Name} fell; blue suffers a shockwave for {simulation.ShockwaveSecondsLeft(Team.A):0.0} s more; red for {simulation.ShockwaveSecondsLeft(Team.B):0.0} s");
+            }
+            if (!_shotWreck && Time.unscaledTime >= _towerFellAt + WreckShotAfter)
+            {
+                _shotWreck = true;
+                StartCoroutine(CloseUp(_fallenTower, "tower_wreck"));
+            }
         }
 
         private void ShootWeaponMechanics()
