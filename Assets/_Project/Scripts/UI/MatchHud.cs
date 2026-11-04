@@ -24,7 +24,7 @@
 // The look follows the player's faction (HudTheme: UNSC or Covenant style); the draft screen is neutral.
 // Drawn with Unity's immediate-mode GUI; scales with the screen height.
 // Depends on: Halobellum.Presentation (MatchController, BattleController, UiHitAreas),
-//             Halobellum.Economy (Match, PlayerState, RoundSummary), HudScale, CardLayout, CardScreens, UnitIcons.
+//             Halobellum.Economy (Match, PlayerState, RoundSummary, ShopOrder), HudScale, CardLayout, CardScreens, UnitIcons, MenuStyle, SquadStatsWindow, PauseMenu.
 
 using System.Collections.Generic;
 using System.Linq;
@@ -89,6 +89,7 @@ namespace Halobellum.UI
         private void OnGUI()
         {
             if (match == null || match.Match == null) return;
+            GUI.depth = 0; // Said every time: a script switched back on by the pause menu takes on that menu's depth otherwise, and its dim then covers the Menu button and the hover window.
             HudTheme.Use(match.Match.Phase == MatchPhase.Draft ? neutralTheme : match.PlayerTheme ?? neutralTheme);
             HudTheme.Apply();
             EnsureStyles();
@@ -547,7 +548,7 @@ namespace Halobellum.UI
         private void DrawUnitCell(Rect cell, UnitStats unit, int price, string status, Color statusColor, bool available, bool hovered)
         {
             Color old = GUI.color;
-            if (!available) GUI.color = new Color(0.42f, 0.42f, 0.42f, 1f);
+            if (!available) GUI.color = new Color(0.5f, 0.5f, 0.5f, 1f);
             HudTheme.RowBox(cell);
             if (hovered && Event.current.type == EventType.Repaint)
             {
@@ -561,9 +562,9 @@ namespace Halobellum.UI
             var picture = new Rect(cell.center.x - size * 0.5f, cell.y + 3f, size, size);
             string faction = BattleFactions.OfUnit(unit, Team.A);
             CardScreens.DrawUnitPicture(picture, unit, faction, UnitIcons.FactionColor(faction));
+            GUI.color = old; // Its price stays easy to read: that is why it can't be had.
             CardScreens.Fit(new Rect(cell.x + 2f, picture.yMax, cell.width - 4f, 22f), $"{price} cr", _cellLine, 15, 12, TextAnchor.MiddleCenter, available ? HudTheme.Text : HudTheme.DimText);
             if (status != null) CardScreens.Fit(new Rect(cell.x + 2f, picture.yMax + 20f, cell.width - 4f, 20f), status, _cellLine, 14, 11, TextAnchor.MiddleCenter, statusColor);
-            GUI.color = old;
         }
 
         /// <summary>The bottom-right bar of Unlock Skirmish: the Unlock units button, and the units unlocked so far.</summary>
@@ -655,7 +656,7 @@ namespace Halobellum.UI
                 bool unlocked = player.Unlocked.Contains(unit);
                 bool canUnlock = player.Credits >= unit.UnlockCost && player.UnlocksThisRound < m.Rules.UnlocksPerRound;
                 string status = unlocked ? "Unlocked" : unit.UnlockCost > 0 ? $"Unlock {unit.UnlockCost}" : "Unlock (free)";
-                DrawUnitCell(cell, unit, m.SquadPrice(Team.A, unit), status, unlocked ? HudTheme.Accent : HudTheme.Text, unlocked || canUnlock, hovered);
+                DrawUnitCell(cell, unit, m.SquadPrice(Team.A, unit), status, unlocked ? HudTheme.Accent : canUnlock ? HudTheme.Text : HudTheme.DimText, unlocked || canUnlock, hovered);
                 if (MenuStyle.Button(cell, "", GUIStyle.none, PageCellKey(unit)) && Event.current.button == 0) UnlockFromPage(unit);
                 if (hovered && Event.current.type == EventType.Repaint && StatsWindow != null) StatsWindow.ShowHover(unit, SquadStatsWindow.ColumnRight, height - 10f, SquadStatsWindow.ColumnRight);
 
