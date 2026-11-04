@@ -79,13 +79,15 @@ namespace Halobellum.Tests
 
         // ------------------------------------------------------------------ flyers and unlocks
 
-        /// <summary>How many of 20 matches have a flyer among Hard's first-round squads, when money doesn't decide.</summary>
+        /// <summary>How many of 20 matches have a flyer among Hard's first-round squads, when neither money nor measured matchups decide: every unit beats every other half the time.</summary>
         private static int MatchesWithAFlyerInRoundOne(MatchMode mode)
         {
+            var even = new MatchupTable();
+            foreach (UnitStats unit in Roster()) foreach (UnitStats other in Roster()) even.Set(unit.Name, other.Name, 0.5f);
             int flyers = 0;
             for (int seed = 1; seed <= 20; seed++)
             {
-                Match match = NewMatch(mode, new RuleBasedAi(AiDifficulty.Hard, seed), seed, prepare: rules => rules.StartingCredits = 5000);
+                Match match = NewMatch(mode, new RuleBasedAi(AiDifficulty.Hard, seed, even), seed, prepare: rules => rules.StartingCredits = 5000);
                 match.ChooseDraft(0);
                 if (match.Enemy.Squads.Any(s => s.Type.CanFlank)) flyers++;
             }
@@ -208,18 +210,18 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void Easy_NeverAimsAtAFlankTarget()
+        public void Easy_LosesNoSpellToAFlankTarget()
         {
-            int placed = 0;
+            int faction = 0, skirmish = 0;
             for (int seed = 1; seed <= 20; seed++)
             {
+                if (SpellAfterSeeingAFlanker(MatchMode.Faction, AiDifficulty.Easy, Strike(), seed).IsPlaced) faction++;
                 OwnedSpell spell = SpellAfterSeeingAFlanker(MatchMode.UnlockSkirmish, AiDifficulty.Easy, Strike(), seed);
                 if (!spell.IsPlaced) continue;
-                placed++;
+                skirmish++;
                 Assert.IsTrue(DeploymentGrid.InArena(spell.Position, TestRules.Default()));
             }
-            // Easy forgets half of its spells, and it picks at random among the two squads it saw: without the filter a quarter would be lost as well.
-            Assert.Greater(placed, 5);
+            Assert.Greater(skirmish, faction, "Easy forgets some spells either way; in Faction mode it also picks the squad in the flank zone at random.");
         }
 
         // ------------------------------------------------------------------ the carrier corners trial
