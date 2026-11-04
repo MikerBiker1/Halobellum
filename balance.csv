@@ -41,7 +41,7 @@ Spartan CQB,UNSC,Noble,Flanker,3,200,1,400,1200,Unarmored,450,3.5,6,100,60,25,16
 Spartan Fireteam,UNSC,Noble,SingleTargetDps,3,250,3,500,420,Unarmored,140,1.75,16,143,145,127,1680,33.3333,"Marine (100%), Grunt (100%)"
 Gremlin,UNSC,Armored Division,Flanker,1,0,2,200,240,Light,0,4.5,13,38,91,114,480,20,"Flamethrower Trooper (100%), Brute Grenadier (100%)"
 Cobra,UNSC,Armored Division,SingleTargetDps,2,50,1,300,650,Heavy,0,1.75,26,43,104,130,650,60,"Marine (100%), Grunt (100%)"
-Rhino,UNSC,Armored Division,Artillery,3,200,1,400,1000,Heavy,0,1,50,30,30,30,1000,80,"Sparrowhawk (100%), Juggernaut (100%)"
+Rhino,UNSC,Armored Division,Artillery,3,250,1,500,1000,Heavy,0,1,50,30,30,30,1000,100,"Sparrowhawk (100%), Juggernaut (100%)"
 Grizzly,UNSC,Armored Division,Tank,3,250,1,500,2100,Heavy,0,1.35,17,80,64,50,2100,100,"Gauss Warthog (100%), Spartan (100%)"
 Sparrowhawk,UNSC,Aerospace Command,Aerial,2,50,1,250,550,Light,0,4,14,30,72,90,550,50,"Wolverine (100%), Swarm Form (100%)"
 Longsword,UNSC,Aerospace Command,Aerial,2,50,1,300,600,Light,0,5,5,60,60,60,600,60,"Wolverine (100%), Vampire (100%)"

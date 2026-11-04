@@ -955,7 +955,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Scorpion
     defender: Rhino
-    winRate: 0.3
+    winRate: 0.8
   - attacker: Scorpion
     defender: Grizzly
     winRate: 0.8
@@ -2179,7 +2179,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Mantis
     defender: Rhino
-    winRate: 0.1
+    winRate: 1
   - attacker: Mantis
     defender: Grizzly
     winRate: 0
@@ -3811,7 +3811,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Wraith
     defender: Rhino
-    winRate: 0
+    winRate: 0.5
   - attacker: Wraith
     defender: Grizzly
     winRate: 0
@@ -4423,7 +4423,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Hunter Pair
     defender: Rhino
-    winRate: 0.9
+    winRate: 1
   - attacker: Hunter Pair
     defender: Grizzly
     winRate: 1
@@ -5239,7 +5239,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Carrier Form
     defender: Rhino
-    winRate: 0.1
+    winRate: 1
   - attacker: Carrier Form
     defender: Grizzly
     winRate: 0.3
@@ -5443,7 +5443,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Combat Form
     defender: Rhino
-    winRate: 0
+    winRate: 0.2
   - attacker: Combat Form
     defender: Grizzly
     winRate: 0.8
@@ -6463,7 +6463,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Rhino
-    winRate: 0.9
+    winRate: 1
   - attacker: Seeder
     defender: Grizzly
     winRate: 1
@@ -6667,7 +6667,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infected Pelican
     defender: Rhino
-    winRate: 0.8
+    winRate: 1
   - attacker: Infected Pelican
     defender: Grizzly
     winRate: 0.5
@@ -7279,7 +7279,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan Sniper
     defender: Rhino
-    winRate: 0.1
+    winRate: 1
   - attacker: Spartan Sniper
     defender: Grizzly
     winRate: 1
@@ -7483,7 +7483,7 @@ MonoBehaviour:
     winRate: 0.6
   - attacker: Spartan Heavy Weapons
     defender: Rhino
-    winRate: 0
+    winRate: 0.5
   - attacker: Spartan Heavy Weapons
     defender: Grizzly
     winRate: 0.3
@@ -7687,7 +7687,7 @@ MonoBehaviour:
     winRate: 0.2
   - attacker: Spartan Grenadier
     defender: Rhino
-    winRate: 0
+    winRate: 0.4
   - attacker: Spartan Grenadier
     defender: Grizzly
     winRate: 0.4
@@ -7891,7 +7891,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan CQB
     defender: Rhino
-    winRate: 0
+    winRate: 1
   - attacker: Spartan CQB
     defender: Grizzly
     winRate: 0
@@ -8299,7 +8299,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Gremlin
     defender: Rhino
-    winRate: 0
+    winRate: 0.3
   - attacker: Gremlin
     defender: Grizzly
     winRate: 1
@@ -8596,7 +8596,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Rhino
     defender: Scorpion
-    winRate: 0.7
+    winRate: 0.2
   - attacker: Rhino
     defender: Wolverine
     winRate: 1
@@ -8614,7 +8614,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Rhino
     defender: Mantis
-    winRate: 0.9
+    winRate: 0
   - attacker: Rhino
     defender: Elephant
     winRate: 0
@@ -8638,7 +8638,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Rhino
     defender: Wraith
-    winRate: 1
+    winRate: 0.5
   - attacker: Rhino
     defender: Vampire
     winRate: 0
@@ -8647,7 +8647,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Rhino
     defender: Hunter Pair
-    winRate: 0.1
+    winRate: 0
   - attacker: Rhino
     defender: Zealot
     winRate: 0
@@ -8659,10 +8659,10 @@ MonoBehaviour:
     winRate: 0
   - attacker: Rhino
     defender: Carrier Form
-    winRate: 0.9
+    winRate: 0
   - attacker: Rhino
     defender: Combat Form
-    winRate: 1
+    winRate: 0.8
   - attacker: Rhino
     defender: Stalker Form
     winRate: 1
@@ -8677,10 +8677,10 @@ MonoBehaviour:
     winRate: 0
   - attacker: Rhino
     defender: Seeder
-    winRate: 0.1
+    winRate: 0
   - attacker: Rhino
     defender: Infected Pelican
-    winRate: 0.2
+    winRate: 0
   - attacker: Rhino
     defender: Infected Phantom
     winRate: 0
@@ -8689,28 +8689,28 @@ MonoBehaviour:
     winRate: 0
   - attacker: Rhino
     defender: Spartan Sniper
-    winRate: 0.9
+    winRate: 0
   - attacker: Rhino
     defender: Spartan Heavy Weapons
-    winRate: 1
+    winRate: 0.5
   - attacker: Rhino
     defender: Spartan Grenadier
-    winRate: 1
+    winRate: 0.6
   - attacker: Rhino
     defender: Spartan CQB
-    winRate: 1
+    winRate: 0
   - attacker: Rhino
     defender: Spartan Fireteam
     winRate: 1
   - attacker: Rhino
     defender: Gremlin
-    winRate: 1
+    winRate: 0.7
   - attacker: Rhino
     defender: Cobra
     winRate: 0
   - attacker: Rhino
     defender: Grizzly
-    winRate: 0.8
+    winRate: 0
   - attacker: Rhino
     defender: Sparrowhawk
     winRate: 0
@@ -8731,10 +8731,10 @@ MonoBehaviour:
     winRate: 1
   - attacker: Rhino
     defender: Marauder
-    winRate: 1
+    winRate: 0.3
   - attacker: Rhino
     defender: Reaver
-    winRate: 1
+    winRate: 0.4
   - attacker: Rhino
     defender: Skitterer
     winRate: 1
@@ -8755,13 +8755,13 @@ MonoBehaviour:
     winRate: 0
   - attacker: Rhino
     defender: Infested Marine
-    winRate: 1
+    winRate: 0.6
   - attacker: Rhino
     defender: Infested Warthog
-    winRate: 0.5
+    winRate: 0
   - attacker: Rhino
     defender: Infested Scorpion
-    winRate: 0.9
+    winRate: 0
   - attacker: Rhino
     defender: Infested Hornet
     winRate: 0
@@ -8770,16 +8770,16 @@ MonoBehaviour:
     winRate: 0
   - attacker: Rhino
     defender: Infested Grunt
-    winRate: 0.6
+    winRate: 0
   - attacker: Rhino
     defender: Infested Ghost
-    winRate: 0.5
+    winRate: 0
   - attacker: Rhino
     defender: Infested Elite
-    winRate: 0.6
+    winRate: 0
   - attacker: Rhino
     defender: Infested Wraith
-    winRate: 0.6
+    winRate: 0.1
   - attacker: Rhino
     defender: Infested Banshee
     winRate: 0
@@ -8914,7 +8914,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Grizzly
     defender: Rhino
-    winRate: 0.2
+    winRate: 1
   - attacker: Grizzly
     defender: Sparrowhawk
     winRate: 0
@@ -10342,7 +10342,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Marauder
     defender: Rhino
-    winRate: 0
+    winRate: 0.7
   - attacker: Marauder
     defender: Grizzly
     winRate: 0
@@ -10546,7 +10546,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Reaver
     defender: Rhino
-    winRate: 0
+    winRate: 0.6
   - attacker: Reaver
     defender: Grizzly
     winRate: 0
@@ -11974,7 +11974,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Marine
     defender: Rhino
-    winRate: 0
+    winRate: 0.4
   - attacker: Infested Marine
     defender: Grizzly
     winRate: 0.3
@@ -12178,7 +12178,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Warthog
     defender: Rhino
-    winRate: 0.5
+    winRate: 1
   - attacker: Infested Warthog
     defender: Grizzly
     winRate: 0
@@ -12382,7 +12382,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Scorpion
     defender: Rhino
-    winRate: 0.1
+    winRate: 1
   - attacker: Infested Scorpion
     defender: Grizzly
     winRate: 1
@@ -12994,7 +12994,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Grunt
     defender: Rhino
-    winRate: 0.4
+    winRate: 1
   - attacker: Infested Grunt
     defender: Grizzly
     winRate: 0
@@ -13198,7 +13198,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Ghost
     defender: Rhino
-    winRate: 0.5
+    winRate: 1
   - attacker: Infested Ghost
     defender: Grizzly
     winRate: 0
@@ -13402,7 +13402,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Elite
     defender: Rhino
-    winRate: 0.4
+    winRate: 1
   - attacker: Infested Elite
     defender: Grizzly
     winRate: 1
@@ -13606,7 +13606,7 @@ MonoBehaviour:
     winRate: 0.1
   - attacker: Infested Wraith
     defender: Rhino
-    winRate: 0.4
+    winRate: 0.9
   - attacker: Infested Wraith
     defender: Grizzly
     winRate: 1
