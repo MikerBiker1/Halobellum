@@ -100,10 +100,7 @@ namespace Halobellum.Presentation
 
         private static Vector3 Place(SimUnit unit) => new Vector3(unit.Position.X, 0f, unit.Position.Y);
 
-        /// <summary>The sound a weapon makes in the hands of a team's faction. Worked out once per weapon.</summary>
-        public SfxCue FireCue(WeaponStats weapon, Team team) => FireCue(weapon, null, team);
-
-        /// <summary>The same when the unit is known: in Unlock Skirmish it sounds like its own faction.</summary>
+        /// <summary>The sound a weapon makes in the hands of its side's faction, or in Unlock Skirmish of the unit's own. Worked out once per weapon.</summary>
         public SfxCue FireCue(WeaponStats weapon, UnitStats shooter, Team team)
         {
             Dictionary<WeaponStats, SfxCue> known = team == Team.A ? _fireA : _fireB;
