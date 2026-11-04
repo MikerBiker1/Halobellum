@@ -139,6 +139,8 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] Base health follows the starting card's value, a tower gives the XP of a squad of the tier of its level (D59)
 - [x] Hard AI tournament on the game's real data, with a report and suggested balance changes (D59)
 - [x] Applied the suggested balance changes, no Titan reinforcements, 6 Infection Forms to a group, forms from Flood vehicles, Archer pods that stay put, the Pelican's landings, tournament rerun (D60)
+- [x] Flank zones for the Pelican and Aerospace's aircraft, used and defended against by the Hard AI (D61)
+- [x] Every sub-faction wins 46% to 54% in the Hard AI tournament: the rule from now on (D61)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

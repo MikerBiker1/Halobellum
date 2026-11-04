@@ -127,10 +127,15 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 
 ## From the changes of D60
 
-68. **Aerospace Command is the outlier, at 32%.** It loses more than 80% of its matches to Armored Division, Noble and UNSC-based Flood. A tougher Longsword (750 health) only took it to 35%, in a trial before the last AI change. It needs a look of its own: what would you like its aircraft to be good at?
-69. **The Pelican is weak in the AI's hands:** 1.27 drops a battle of at most 3, usually shot down on the way in, and sides that field it win 28%. Do you want it tougher (it has 800 health), or is that for players to use better than the AI does?
-70. **UNSC is now the lowest faction, at 43%,** with Covenant 54% and Flood 53%. Archer pods that can't move and the loss of Titan reinforcement cards both cost it. Do you want UNSC raised next?
-71. **The Infected Pelican costs 350,** below Tier 3's band of 400 to 500, as it was already at the bottom when you asked for it to be cheaper. Fine as an exception?
+68. *(Answered: flank zones, D61. It is now 53%.)* **Aerospace Command is the outlier, at 32%.** It loses more than 80% of its matches to Armored Division, Noble and UNSC-based Flood. A tougher Longsword (750 health) only took it to 35%, in a trial before the last AI change. It needs a look of its own: what would you like its aircraft to be good at?
+69. *(Answered with the flank zones, D61.)* **The Pelican is weak in the AI's hands:** 1.27 drops a battle of at most 3, usually shot down on the way in, and sides that field it win 28%. Do you want it tougher (it has 800 health), or is that for players to use better than the AI does?
+70. *(Answered: flank zones, D61. It is now 52%.)* **UNSC is now the lowest faction, at 43%,** with Covenant 54% and Flood 53%. Archer pods that can't move and the loss of Titan reinforcement cards both cost it. Do you want UNSC raised next?
+71. *(Reverted to 400, D61.)* **The Infected Pelican costs 350,** below Tier 3's band of 400 to 500, as it was already at the bottom when you asked for it to be cheaper. Fine as an exception?
+
+## From the flank zones (D61)
+
+72. **The Infected Pelican's forms:** it costs 400 again, and keeps the 30 forms you asked for. The AI barely fields it, in 2% of its matches. Good as it is?
+73. **The Pelican still loses more than it wins for the AI:** sides that field it win 39%. It makes 1.56 drops per battle now. It may simply need a player to use it well. Worth a look once you have played with it?
 
 ## Things my test runs did to your PC
 

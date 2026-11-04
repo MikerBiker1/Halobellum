@@ -119,7 +119,7 @@ A match is a series of rounds against an AI opponent. Each round has these phase
 
 A unit can be unlocked and bought in the same round. Buying a squad is limited to 2 new squads per round, regardless of type.
 
-**Deployment price bands (per squad).** Tier 1 costs 100 to 200, Tier 2 costs 250 to 300, Tier 3 costs 400 to 500, and Titans cost 800. Balance is done through price, so every unit stays inside its tier’s band. The Infected Pelican, at 350, is the one exception (D60).
+**Deployment price bands (per squad).** Tier 1 costs 100 to 200, Tier 2 costs 250 to 300, Tier 3 costs 400 to 500, and Titans cost 800. Balance is done through price, so every unit stays inside its tier’s band.
 
 **Squads.** Buying a unit deploys a *squad*: a fixed number of bodies (for example 18 Marines, 1 Scorpion). Squad size and cost are data, and cost is per squad. Units that spawn other units (for example the Pelican) do not necessarily spawn full squads; the spawn count is part of the ability data.
 
@@ -140,6 +140,10 @@ A unit can be unlocked and bought in the same round. Buying a squad is limited t
 | 3 | 3x | +50% |
 | 4 | 4x | +33% |
 | 5 | 5x | +25% |
+
+**Flank zones (D61).** Beside the enemy's area, on each side, 2 empty columns away from it, is a strip 4 columns wide and as deep as that area. Only the Pelican and Aerospace Command's Sparrowhawk, Longsword, Vulture and Condor Gunship can deploy there. A squad arrives 10 seconds late the first time it deploys there, and at the start of the battle after that. Only the Hard AI uses the zones, and only it defends against them.
+
+**Balance target (D61).** Every sub-faction must win 46% to 54% in the Hard AI tournament (`Tools/Balance/Tournament`, 100 matches per pairing). When units are added, removed or changed, it is run again, and anything outside that gets adjusted.
 
 **Credit sinks.** Credits are spent on squads, unit unlocks, tech upgrades, squad level-ups, spell cards, reinforcement cards, and what the towers sell.
 
@@ -254,7 +258,7 @@ The Flood win by spreading. They have a roster of their own, plus temporary infe
 | Swarm Form | Anti-air | 2 | 50 | 20 forms in 4 packs | 250 | 200 per pack | Flying packs, bonus damage against air |
 | Pure Form Tank | Tank | 3 | 200 | 1 | 400 | 3200 | Heavy armor, splash slam |
 | Seeder | Single-target DPS | 3 | 200 | 2 | 400 | 800 | Seeds enemies from range |
-| Infected Pelican | Aerial | 3 | 175 | 1 | 350 | 900 | One-shot crash dive (900 damage within 3.5 m) |
+| Infected Pelican | Aerial | 3 | 200 | 1 | 400 | 900 | One-shot crash dive (900 damage within 3.5 m) |
 | Infected Phantom | Aerial | 3 | 200 | 1 | 400 | 1100 | Drops 5 Combat Forms after 8 seconds |
 | Flood Abomination | Titan | 4 | 350 | 1 | 800 | 8500 | Very tall and large; aura for nearby Flood, keeps releasing Infection Forms |
 
@@ -501,6 +505,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-03 | Starting cards worth about 300; the enemy's starting squads seen in grey; shop in order of price; a fallen tower weakens by 40% and adds 40% damage taken, and gives its killer XP; Spartan Grenadier fires rockets; Abomination's attacks raised | Per the project owner (D58) |
 | 2026-11-03 | A dearer starting card means a weaker base; a tower's XP goes by its level | Per the project owner (D59) |
 | 2026-11-03 | Balance from the Hard AI tournament; reinforcement cards bring no Titans; 6 Infection Forms to a group, released by every Flood vehicle; Archer pods can't move; the Pelican is twice as fast and lands behind enemy lines to drop Marines, up to 3 times | Per the project owner (D60) |
+| 2026-11-03 | Flank zones for the Pelican and Aerospace's aircraft; every sub-faction must win 46% to 54% in the Hard AI tournament; Infected Pelican back at 400 | Per the project owner (D61) |
 
 ## 18. Assumptions to confirm
 
