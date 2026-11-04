@@ -9,6 +9,7 @@
 //   - Reinforcement offers: per card a random unit type from the player's roster, Titans aside, at a random level
 //     (up to MatchRules.ReinforcementLevelCap), copied until its worth reaches the round's budget;
 //     the player pays whatever the worth exceeds the budget (ReinforcementCard.Price).
+//   - A match's card filter (MatchRules.Cards) can make every offer general, or every offer reinforcements, from the first offer on.
 // Depends on: MatchRules, PlayerState, Halobellum.Core (CardStats, SpellStats, UnitStats, SimRandom, Vec2).
 
 using System;
@@ -104,9 +105,13 @@ namespace Halobellum.Economy
         /// <summary>Whether a round has an offer at all.</summary>
         public static bool HasOffer(MatchRules rules, int round) => rules.CardsEnabled && round >= rules.FirstCardRound;
 
-        /// <summary>Reinforcements every other round from ReinforcementFirstRound, general cards otherwise.</summary>
-        public static CardKind KindForRound(MatchRules rules, int round) =>
-            round >= rules.ReinforcementFirstRound && (round - rules.ReinforcementFirstRound) % 2 == 0 ? CardKind.Reinforcement : CardKind.General;
+        /// <summary>Reinforcements every other round from ReinforcementFirstRound, general cards otherwise, unless the card filter says only one kind.</summary>
+        public static CardKind KindForRound(MatchRules rules, int round)
+        {
+            if (rules.Cards == CardFilter.NoReinforcements) return CardKind.General;
+            if (rules.Cards == CardFilter.OnlyReinforcements) return CardKind.Reinforcement;
+            return round >= rules.ReinforcementFirstRound && (round - rules.ReinforcementFirstRound) % 2 == 0 ? CardKind.Reinforcement : CardKind.General;
+        }
 
         /// <summary>A fresh offer for this player and round, drawn with the match's random numbers.</summary>
         public static CardOffer Draw(PlayerState player, MatchRules rules, int round, SimRandom random)

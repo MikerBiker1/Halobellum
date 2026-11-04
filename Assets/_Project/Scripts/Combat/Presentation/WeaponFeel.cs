@@ -1,8 +1,11 @@
 // WeaponFeel.cs
 // What kind of thing a weapon is to the eye and ear, so that effects and sounds agree (M10). It is read from the weapon's name,
 // falling back on what it does, so that a new weapon gets something sensible without any data. Looks and sound only.
+// BattleFactions below says which faction a side looks like. In Unlock Skirmish both sides stand on one land, and each unit
+// looks like its own real faction; because both sides then count as the same faction, Team B's shots keep their tint.
 // Depends on: Halobellum.Core.
 
+using System.Collections.Generic;
 using Halobellum.Core;
 
 namespace Halobellum.Presentation
@@ -73,14 +76,41 @@ namespace Halobellum.Presentation
         public static string TeamA { get; private set; } = Unsc;
         public static string TeamB { get; private set; } = Covenant;
 
+        /// <summary>Each unit's own faction by name, in Unlock Skirmish; otherwise null.</summary>
+        private static IReadOnlyDictionary<string, string> _factionOfUnit;
+
+        /// <summary>True in Unlock Skirmish: a unit looks and sounds like its own faction, not its side's.</summary>
+        public static bool PerUnitLooks => _factionOfUnit != null;
+
         public static string For(Team team) => team == Team.A ? TeamA : TeamB;
+
+        /// <summary>The faction a unit looks and sounds like: its own in Unlock Skirmish, if it has one, otherwise its side's.</summary>
+        public static string OfUnit(UnitStats stats, Team team)
+        {
+            return _factionOfUnit != null && stats != null && _factionOfUnit.TryGetValue(stats.Name, out string faction) ? faction : For(team);
+        }
 
         public static void Set(string teamA, string teamB)
         {
+            // This class is static, so a Skirmish's map would otherwise outlive its match.
+            bool hadMap = PerUnitLooks;
+            _factionOfUnit = null;
             string a = string.IsNullOrEmpty(teamA) ? Unsc : teamA, b = string.IsNullOrEmpty(teamB) ? Covenant : teamB;
-            if (a == TeamA && b == TeamB) return;
+            if (a == TeamA && b == TeamB && !hadMap) return;
             TeamA = a;
             TeamB = b;
+            Changed?.Invoke();
+        }
+
+        /// <summary>Unlock Skirmish: both sides stand on one land, and each unit has its own faction.</summary>
+        public static void SetSkirmish(string land, IReadOnlyDictionary<string, string> factionOfUnit)
+        {
+            bool hadMap = PerUnitLooks;
+            _factionOfUnit = factionOfUnit;
+            string both = string.IsNullOrEmpty(land) ? Unsc : land;
+            if (both == TeamA && both == TeamB && hadMap) return;
+            TeamA = both;
+            TeamB = both;
             Changed?.Invoke();
         }
     }
