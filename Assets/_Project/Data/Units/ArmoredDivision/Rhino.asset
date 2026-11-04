@@ -15,10 +15,10 @@ MonoBehaviour:
   unitName: Rhino
   role: 5
   tier: 3
-  unlockCost: 250
+  unlockCost: 200
   squadSize: 1
-  cost: 500
-  baseDamage: 100
+  cost: 400
+  baseDamage: 80
   maxHealth: 1000
   armorType: 2
   maxShield: 0

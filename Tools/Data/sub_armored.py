@@ -16,7 +16,7 @@ def units(U, W):
         U("Cobra", "Cobra", FACTION, "SingleTargetDps", 2, 50, 1, 300, 650, "H", 1.75, 1.5, 1.5, "G",
           [W("M66 Railgun", 190, 2.2, 26, "Ballistic", aa=True)],
           note="Anti-armor gun on tracks. Outranges tanks; a swarm or a flanker gets under its guns."),
-        U("Rhino", "Rhino", FACTION, "Artillery", 3, 250, 1, 500, 1000, "H", 1, 1.8, 2.5, "G",
+        U("Rhino", "Rhino", FACTION, "Artillery", 3, 200, 1, 400, 1000, "H", 1, 1.8, 2.5, "G",
           [W("Heavy Cannon", 150, 5, 50, "Explosive", proj=22, splash=4.5, minr=12, lob=True)],
           note="The longest gun in the game. Slow to turn and move, lobbed so it can miss, helpless up close."),
         U("Grizzly", "Grizzly", FACTION, "Tank", 3, 250, 1, 500, 2100, "H", 1.35, 2.2, 2.2, "G",
