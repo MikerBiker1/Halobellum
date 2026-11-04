@@ -58,7 +58,7 @@ MonoBehaviour:
   - 450
   - 800
   - 1200
-  extraSlotCost: 100
+  extraSlotCost: 50
   rapidResupplyCredits: 200
   rapidResupplyPenalty: 300
   eliteRecruitmentCost: 100

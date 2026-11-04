@@ -87,7 +87,7 @@ namespace Halobellum.Economy
         /// level 2 Titan, worth half as much again (the owner, D59).
         /// </summary>
         public float[] TowerXpByLevel = { 150f, 275f, 450f, 800f, 1200f };
-        public int ExtraSlotCost = 100;
+        public int ExtraSlotCost = 50;
         /// <summary>The spell the Command Center sells; its price is its Cost. It is used once.</summary>
         public SpellStats OilZone;
         public int RapidResupplyCredits = 200;

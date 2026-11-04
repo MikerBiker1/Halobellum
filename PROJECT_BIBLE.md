@@ -154,7 +154,7 @@ A unit can be unlocked and bought in the same round. Buying a squad is limited t
 - **Level:** 1 to 5, 100 credits each. A level 1 tower dies to one Scorpion shell (100 health), and each level doubles its health.
 - **XP:** the squad that destroys it earns the XP of a level 1 squad of the tier of the tower's level (150, 275, 450, 800), and for level 5, of a level 2 Titan (1,200).
 - **Shockwave:** its fall weakens its side's whole army, by 40% in speed, damage and rate of fire, and makes it take 40% more damage. It lasts 10, 8, 6, 4 or 2 seconds by the tower's level. A second fall adds its time, not its severity.
-- **Command Center sells,** each once a round: an extra squad slot for the round (100), a one-use Oil Zone of 4 x 15 m (150), Rapid Resupply (free: +200 now, 300 less next round), Elite Recruitment (100: squads bought this round are level 2, at half their price more).
+- **Command Center sells,** each once a round: an extra squad slot for the round (50), a one-use Oil Zone of 4 x 15 m (150), Rapid Resupply (free: +200 now, 300 less next round), Elite Recruitment (100: squads bought this round are level 2, at half their price more).
 - **Research Center sells** lasting bonuses for the whole army: +15% health (100), another +15% (300); +12% damage (100), another +12% (300).
 
 ## 6. Combat system

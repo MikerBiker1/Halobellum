@@ -87,7 +87,7 @@ namespace Halobellum.Units
         public float[] towerXpByLevel = { 150f, 275f, 450f, 800f, 1200f };
 
         [Header("Command Center")]
-        public int extraSlotCost = 100;
+        public int extraSlotCost = 50;
         public int rapidResupplyCredits = 200;
         public int rapidResupplyPenalty = 300;
         public int eliteRecruitmentCost = 100;
