@@ -41,8 +41,8 @@ def W(name, dmg, interval, rng, type, proj=0, splash=0, minr=0, aa=False, block=
                 seed=seed, seedshare=seedshare, seedslow=seedslow, slow=slow, slowshare=slowshare)
 
 
-# The air units that can deploy in the flank zones (D61): UNSC only.
-FLANKERS = {"Hornet", "Pelican", "Sparrowhawk", "Longsword", "Vulture", "CondorGunship"}
+# The air units that can deploy in the flank zones (D61): UNSC only. With the Hornet too, Noble and Armored Division reached 70%.
+FLANKERS = {"Pelican", "Sparrowhawk", "Longsword", "Vulture", "CondorGunship"}
 
 
 def U(id, name, faction, role, tier, unlock, squad, cost, hp, armor, speed, radius, turn, filter, weapons,

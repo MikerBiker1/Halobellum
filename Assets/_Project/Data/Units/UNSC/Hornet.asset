@@ -27,7 +27,7 @@ MonoBehaviour:
   collisionRadius: 1.5
   turnTime180: 1
   isAir: 1
-  canFlank: 1
+  canFlank: 0
   targetFilter: 2
   weapons:
   - weaponName: Rockets

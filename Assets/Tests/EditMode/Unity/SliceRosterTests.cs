@@ -223,6 +223,18 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void OnlyThePelicanAndAerospaceAircraft_CanFlank()
+        {
+            var flankers = new List<string>();
+            foreach (string guid in AssetDatabase.FindAssets("t:UnitDefinition"))
+            {
+                var unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>(AssetDatabase.GUIDToAssetPath(guid));
+                if (unit.canFlank) flankers.Add(unit.unitName);
+            }
+            CollectionAssert.AreEquivalent(new[] { "Pelican", "Sparrowhawk", "Longsword", "Vulture", "Condor Gunship" }, flankers);
+        }
+
+        [Test]
         public void ArcherMissilePods_CannotMove()
         {
             var pod = AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/UNSC/ArcherMissilePod.asset");

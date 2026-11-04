@@ -707,6 +707,8 @@ namespace Halobellum.Economy
         // ------------------------------------------------------------------ flank zones (D61): only Hard uses them, and only Hard defends against them
 
         private const float HardFlankBonus = 3f, HardFlankDefenceBonus = 2f;
+        /// <summary>A flanked tower is levelled this far: past it, the credits do more as guns that can reach aircraft.</summary>
+        private const int HardFlankedTowerLevel = 3;
         private readonly List<TowerKind> _flanked = new List<TowerKind>();
         private readonly Dictionary<TowerKind, int> _towerFallsNoted = new Dictionary<TowerKind, int>();
 
@@ -730,11 +732,12 @@ namespace Halobellum.Economy
             }
         }
 
-        /// <summary>A flanked tower gets a level before more squads are bought, while it can afford a squad as well.</summary>
+        /// <summary>A flanked tower gets a level before more squads are bought, up to a point, while it can afford a squad as well.</summary>
         private void ShoreUpFlankedTowers(AiView view, List<string> upgrades)
         {
             foreach (TowerKind kind in _flanked)
             {
+                if (view.Self.FindTower(kind).Level >= HardFlankedTowerLevel) continue;
                 if (view.Self.Credits < view.Rules.TowerLevelUpCost + HardTowerCredits) return;
                 if (view.LevelUpTower(kind).Ok) upgrades.Add($"{Match.TowerName(kind)} to level {view.Self.FindTower(kind).Level}, it was flanked");
             }

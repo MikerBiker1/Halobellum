@@ -1537,7 +1537,7 @@ MonoBehaviour:
     winRate: 0.4
   - attacker: Archer Missile Pod
     defender: Infected Pelican
-    winRate: 0.6
+    winRate: 0.9
   - attacker: Archer Missile Pod
     defender: Infected Phantom
     winRate: 0
@@ -2149,7 +2149,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Mantis
     defender: Infected Pelican
-    winRate: 0
+    winRate: 0.1
   - attacker: Mantis
     defender: Infected Phantom
     winRate: 0
@@ -2353,7 +2353,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Elephant
     defender: Infected Pelican
-    winRate: 0.3
+    winRate: 0.9
   - attacker: Elephant
     defender: Infected Phantom
     winRate: 1
@@ -3781,7 +3781,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Wraith
     defender: Infected Pelican
-    winRate: 0.9
+    winRate: 1
   - attacker: Wraith
     defender: Infected Phantom
     winRate: 0
@@ -4801,7 +4801,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Scarab
     defender: Infected Pelican
-    winRate: 0.8
+    winRate: 1
   - attacker: Scarab
     defender: Infected Phantom
     winRate: 1
@@ -6565,7 +6565,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infected Pelican
     defender: Archer Missile Pod
-    winRate: 0.4
+    winRate: 0.1
   - attacker: Infected Pelican
     defender: Pelican
     winRate: 0
@@ -6574,10 +6574,10 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infected Pelican
     defender: Mantis
-    winRate: 1
+    winRate: 0.9
   - attacker: Infected Pelican
     defender: Elephant
-    winRate: 0.7
+    winRate: 0.1
   - attacker: Infected Pelican
     defender: Grunt
     winRate: 0
@@ -6598,7 +6598,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infected Pelican
     defender: Wraith
-    winRate: 0.1
+    winRate: 0
   - attacker: Infected Pelican
     defender: Vampire
     winRate: 0
@@ -6613,7 +6613,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infected Pelican
     defender: Scarab
-    winRate: 0.2
+    winRate: 0
   - attacker: Infected Pelican
     defender: Infection Forms
     winRate: 0
@@ -6652,10 +6652,10 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infected Pelican
     defender: Spartan Grenadier
-    winRate: 0.7
+    winRate: 0.3
   - attacker: Infected Pelican
     defender: Spartan CQB
-    winRate: 0.7
+    winRate: 0
   - attacker: Infected Pelican
     defender: Spartan Fireteam
     winRate: 1
@@ -6667,10 +6667,10 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infected Pelican
     defender: Rhino
-    winRate: 0.9
+    winRate: 0.8
   - attacker: Infected Pelican
     defender: Grizzly
-    winRate: 0.6
+    winRate: 0.5
   - attacker: Infected Pelican
     defender: Sparrowhawk
     winRate: 0
@@ -6718,7 +6718,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infected Pelican
     defender: Infested Warthog
-    winRate: 0.2
+    winRate: 0
   - attacker: Infected Pelican
     defender: Infested Scorpion
     winRate: 0
@@ -6733,7 +6733,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infected Pelican
     defender: Infested Ghost
-    winRate: 0.7
+    winRate: 0.4
   - attacker: Infected Pelican
     defender: Infested Elite
     winRate: 1
@@ -6745,7 +6745,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infected Pelican
     defender: Spawner
-    winRate: 1
+    winRate: 0.4
   - attacker: Infected Phantom
     defender: Marine
     winRate: 0
@@ -7660,7 +7660,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan Grenadier
     defender: Infected Pelican
-    winRate: 0.3
+    winRate: 0.7
   - attacker: Spartan Grenadier
     defender: Infected Phantom
     winRate: 0
@@ -7864,7 +7864,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan CQB
     defender: Infected Pelican
-    winRate: 0.3
+    winRate: 1
   - attacker: Spartan CQB
     defender: Infected Phantom
     winRate: 0
@@ -8680,7 +8680,7 @@ MonoBehaviour:
     winRate: 0.1
   - attacker: Rhino
     defender: Infected Pelican
-    winRate: 0.1
+    winRate: 0.2
   - attacker: Rhino
     defender: Infected Phantom
     winRate: 0
@@ -8884,7 +8884,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Grizzly
     defender: Infected Pelican
-    winRate: 0.4
+    winRate: 0.5
   - attacker: Grizzly
     defender: Infected Phantom
     winRate: 0
@@ -9292,7 +9292,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Longsword
     defender: Infected Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Longsword
     defender: Infected Phantom
     winRate: 0
@@ -12148,7 +12148,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Warthog
     defender: Infected Pelican
-    winRate: 0.8
+    winRate: 1
   - attacker: Infested Warthog
     defender: Infected Phantom
     winRate: 0
@@ -13168,7 +13168,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Ghost
     defender: Infected Pelican
-    winRate: 0.3
+    winRate: 0.6
   - attacker: Infested Ghost
     defender: Infected Phantom
     winRate: 0
@@ -13984,7 +13984,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spawner
     defender: Infected Pelican
-    winRate: 0
+    winRate: 0.6
   - attacker: Spawner
     defender: Infected Phantom
     winRate: 1

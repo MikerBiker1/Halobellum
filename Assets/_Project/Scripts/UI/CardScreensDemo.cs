@@ -285,6 +285,7 @@ namespace Halobellum.UI
             Screen.SetResolution(1600, 900, FullScreenMode.Windowed);
             GameSettings.UseUiScaleForThisRun(1f);
             yield return new WaitForSecondsRealtime(0.8f);
+            yield return FlankPictures();
             yield return PelicanPictures();
             foreach (int seed in new[] { 1, 2, 3 })
             {
@@ -335,6 +336,48 @@ namespace Halobellum.UI
                 yield return Shot(faction + "_item_and_arrow_close");
                 control.enabled = true;
             }
+        }
+
+        /// <summary>The flank zones during deployment with a Pelican in one, and the same Pelican arriving 10 seconds into the battle.</summary>
+        private IEnumerator FlankPictures()
+        {
+            _match.NewMatch(1);
+            SetDraft(5);
+            Match m = _match.Match;
+            _match.ChooseDraft(m.PlayerDraft.FindIndex(c => c.Faction.Name == "UNSC"));
+            yield return new WaitForSecondsRealtime(0.5f);
+            m.Player.Credits = 5000;
+            UnitStats pelican = m.Player.Roster.First(u => u.Name == "Pelican");
+            _match.Unlock(pelican);
+            _match.Buy(pelican);
+            while (_match.IsDropping) yield return null;
+            PlacedSquad squad = m.Player.Squads[m.Player.Squads.Count - 1];
+            _match.BeginMoving(squad);
+            ActionResult placed = _match.PlaceAt(-5, -20);
+            Debug.Log($"Playtest flank: placed in a flank zone: {placed.Ok} {placed.Message}");
+            yield return new WaitForSecondsRealtime(0.5f);
+            yield return Shot("Flank_deployment");
+            Camera view = Camera.main;
+            var control = view.GetComponent<BattleCameraController>();
+            control.enabled = false;
+            view.transform.position = new Vector3(-88f, 70f, -10f);
+            view.transform.LookAt(new Vector3(-70f, 0f, 40f));
+            yield return new WaitForSecondsRealtime(0.3f);
+            yield return Shot("Flank_deployment_close");
+            _match.Ready();
+            yield return null;
+            BattleController battle = _match.GetComponent<BattleController>();
+            battle.Speed = 2f;
+            SimUnit body = battle.Simulation.Squads[m.Player.Squads.IndexOf(squad)].Members[0];
+            Debug.Log($"Playtest flank: waiting {body.NotArrived} at {body.Position.X:0},{body.Position.Y:0}");
+            yield return Shot("Flank_battle_waiting");
+            float deadline = Time.realtimeSinceStartup + 30f;
+            while (body.NotArrived && Time.realtimeSinceStartup < deadline) yield return null;
+            Debug.Log($"Playtest flank: arrived at {battle.Simulation.ElapsedSeconds:0.0} s, at {body.Position.X:0},{body.Position.Y:0}");
+            yield return new WaitForSecondsRealtime(1.2f);
+            yield return Shot("Flank_battle_arrived");
+            control.enabled = true;
+            battle.Speed = 1f;
         }
 
         /// <summary>A Pelican with its Troop Bay in a real battle, coming down and with its Marines out, and the Flood's swarm of forms.</summary>
