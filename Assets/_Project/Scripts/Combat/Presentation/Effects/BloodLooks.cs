@@ -78,6 +78,6 @@ namespace Halobellum.Presentation
         /// The chance that a hit taking this share of a body's health draws blood. A hit that takes a third or more always does, and small ones
         /// rarely, so that a flamethrower's many small licks don't fill the field with it. Never quite none, or a Hunter under rifle fire would never bleed.
         /// </summary>
-        public static float HitChance(float shareOfHealth) => Mathf.Clamp(shareOfHealth * 3f, 0.05f, 1f);
+        public static float HitChance(float shareOfHealth) => Mathf.Clamp(shareOfHealth * 3f, 0.1f, 1f);
     }
 }

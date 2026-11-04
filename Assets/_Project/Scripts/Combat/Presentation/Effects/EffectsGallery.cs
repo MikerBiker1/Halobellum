@@ -270,7 +270,7 @@ namespace Halobellum.Presentation
         /// <summary>One colour of blood: a few hits on a body, then a squad dying and what it leaves on the ground.</summary>
         private IEnumerator OneBlood(string name)
         {
-            yield return Setup(new[] { name, name }, new[] { "Marine", "Scorpion", "Marine" });
+            yield return Setup(new[] { name, name }, new[] { "Marine", "Marine", "Marine", "Marine", "Scorpion" });
             _battle.Speed = 6f;
             _sandbox.Run();
             int hits = 0;
@@ -301,7 +301,7 @@ namespace Halobellum.Presentation
             hits = 0;
             limit = 6f;
             // A few hits in the air at once, and just after the last of them, when its blood has appeared.
-            while (hits < 6 && limit > 0f && !_battle.Simulation.IsFinished) { limit -= Time.unscaledDeltaTime; yield return null; }
+            while (hits < 12 && limit > 0f && !_battle.Simulation.IsFinished) { limit -= Time.unscaledDeltaTime; yield return null; }
             float shown = Kit.BattleTime;
             while (Kit.BattleTime - shown < 0.16f) yield return null;
             yield return Capture($"b_{label}_hits", place, close);

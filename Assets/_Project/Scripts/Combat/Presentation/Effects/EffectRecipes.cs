@@ -286,12 +286,12 @@ namespace Halobellum.Presentation
             {
                 Vector3 out3 = Random.onUnitSphere;
                 out3.y = Mathf.Abs(out3.y) * 0.8f + 0.4f;
-                _kit.Blood(EffectPriority.Medium, middle + out3 * bodyRadius * 0.3f, out3 * reach * Random.Range(0.5f, 1.3f), Random.Range(0.3f, 0.7f) * read, color, Random.Range(0.4f, 0.85f));
+                _kit.Blood(EffectPriority.Medium, middle + out3 * bodyRadius * 0.3f, out3 * reach * Random.Range(0.5f, 1.3f), Random.Range(0.25f, 0.55f) * read, color, Random.Range(0.4f, 0.85f));
             }
             if (inAir) return;
-            // Small, so that a field of dead infantry can't take the room of what vehicles and blasts leave behind.
+            // An infantryman's is small, so that a field of dead infantry can't take the room of what vehicles and blasts leave behind.
             Color pool = new Color(color.r * 0.7f, color.g * 0.7f, color.b * 0.7f, 0.85f);
-            _kit.Scorch(EffectPriority.Small, new Vector3(position.x, 0.12f, position.z), Mathf.Max(1.8f, bodyRadius * 3f) * Mathf.Max(1f, read), pool, 20f);
+            _kit.Scorch(bodyRadius >= 1f ? EffectPriority.Medium : EffectPriority.Small, new Vector3(position.x, 0.12f, position.z), Mathf.Max(1.8f, bodyRadius * 3f) * Mathf.Max(1f, read), pool, 20f);
         }
 
         // ------------------------------------------------------------------ blasts
