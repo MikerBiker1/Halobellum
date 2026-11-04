@@ -84,6 +84,7 @@ namespace Halobellum.Economy
         public ActionResult BuyOilZone() => _match.BuyOilZone(Team);
         public ActionResult BuyEliteRecruitment() => _match.BuyEliteRecruitment(Team);
         public ActionResult BuyResearch(bool health) => _match.BuyResearch(Team, health);
+        public ActionResult RapidResupply() => _match.RapidResupply(Team);
 
         // Cards and spells (Milestone 7). Only this side's own offer and spells: the opponent's stay hidden.
         public CardOffer Offer => Self.Offer;

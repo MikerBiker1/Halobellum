@@ -2,7 +2,7 @@
 // Tests the rule-based AI (Milestone 5, Bible Section 11): it plays by the same limits as the
 // player, counters the opponent's most expensive role, places squads by role (chaff and tanks in
 // front, artillery behind, flankers on the sides), never sees the opponent's current deployment,
-// differs by difficulty (Easy wastes budget, Hard adapts), and a full match between two AIs ends.
+// differs by difficulty (Easy wastes budget, Hard adapts and takes Rapid Resupply when about to lose), and a full match between two AIs ends.
 // The roster here is a test fixture with one unit per role, not game balance.
 // Depends on: Halobellum.Economy, Halobellum.Combat, Halobellum.Core, NUnit, TestUnits, TestRules, TestMatch.
 
@@ -222,6 +222,95 @@ namespace Halobellum.Tests
                 unspentNormal += normal.match.Enemy.Credits;
             }
             Assert.Greater(unspentEasy, unspentNormal);
+        }
+
+        // ------------------------------------------------------------------ Rapid Resupply
+
+        /// <summary>Round 2 of a match with towers, with the bases set to these before the AI deploys. `prepare` can set up the first battle.</summary>
+        private static (Match match, RuleBasedAi ai) AtRoundTwo(AiDifficulty difficulty, int own, int opponent, System.Action<Match> prepare = null)
+        {
+            var ai = new RuleBasedAi(difficulty, 3);
+            MatchRules rules = TestMatch.Rules();
+            rules.TowerBaseHealth = 100f;
+            List<UnitStats> roster = Roster();
+            Match match = new Match(rules, TestRules.Default(), new List<FactionInfo> { TestMatch.Faction("Alpha", roster, "Standard") }, 3, ai);
+            match.ChooseDraft(0);
+            prepare?.Invoke(match);
+            PlayBattle(match);
+            match.Enemy.BaseHealth = own;
+            match.Player.BaseHealth = opponent;
+            match.ContinueAfterResult();
+            return (match, ai);
+        }
+
+        [Test]
+        public void Hard_TakesRapidResupply_WhenAboutToLose()
+        {
+            var (match, ai) = AtRoundTwo(AiDifficulty.Hard, 200, 2000);
+            Assert.AreEqual(1, ai.RapidResupplies, ai.LastDecision);
+            Assert.IsTrue(match.Enemy.UsedRapidResupply);
+            Assert.AreEqual(match.Rules.RapidResupplyPenalty, match.Enemy.IncomePenalty);
+            StringAssert.Contains("rapid resupply", ai.LastDecision);
+        }
+
+        [TestCase(2000, 1000, Description = "Ahead.")]
+        [TestCase(1500, 2000, Description = "Behind, but with plenty left.")]
+        [TestCase(200, 100, Description = "Low, but ahead.")]
+        public void Hard_LeavesRapidResupply_WhenNotAboutToLose(int own, int opponent)
+        {
+            var (match, ai) = AtRoundTwo(AiDifficulty.Hard, own, opponent);
+            Assert.AreEqual(0, ai.RapidResupplies, ai.LastDecision);
+            Assert.IsFalse(match.Enemy.UsedRapidResupply);
+        }
+
+        [Test]
+        public void Hard_TakesRapidResupply_WhenAnotherRoundLikeTheLastWouldEndIt()
+        {
+            // Four Titans against nothing: far more base damage than 15% of the base, which is about 300.
+            void TitansAgainstNothing(Match match)
+            {
+                match.Enemy.Squads.Clear();
+                match.Player.Squads.Clear();
+                UnitStats titan = match.Player.Roster.Single(u => u.Name == "Titan");
+                for (int i = 0; i < 4; i++)
+                {
+                    Assert.IsTrue(DeploymentGrid.FindFreeSpot(match.Player, titan, false, match.CombatRules, out int c, out int r));
+                    match.Player.Squads.Add(new PlacedSquad { Id = 1000 + i, Type = titan, Column = c, Row = r, RoundBought = 1 });
+                }
+            }
+            var (taken, _) = AtRoundTwo(AiDifficulty.Hard, 2000, 2000, TitansAgainstNothing);
+            int damage = taken.LastSummary.BaseDamageByA;
+            Assert.Greater(damage, 400, "The test needs a big hit.");
+
+            Assert.AreEqual(1, AtRoundTwo(AiDifficulty.Hard, damage, 2000, TitansAgainstNothing).ai.RapidResupplies);
+            Assert.AreEqual(0, AtRoundTwo(AiDifficulty.Hard, damage + 1, 2000, TitansAgainstNothing).ai.RapidResupplies);
+        }
+
+        [TestCase(AiDifficulty.Normal)]
+        [TestCase(AiDifficulty.Easy)]
+        public void OnlyHard_TakesRapidResupply(AiDifficulty difficulty)
+        {
+            var (match, ai) = AtRoundTwo(difficulty, 200, 2000);
+            Assert.AreEqual(0, ai.RapidResupplies);
+            Assert.IsFalse(match.Enemy.UsedRapidResupply);
+        }
+
+        [Test]
+        public void ALowBaseHealthSetting_DoesNotSetOffRapidResupply_InRoundOne()
+        {
+            var ai = new RuleBasedAi(AiDifficulty.Hard, 3);
+            MatchRules rules = TestMatch.Rules();
+            rules.TowerBaseHealth = 100f;
+            new MatchSetup { BaseHealth = 100 }.ApplyTo(rules);
+            Match match = new Match(rules, TestRules.Default(), new List<FactionInfo> { TestMatch.Faction("Alpha", Roster(), "Standard") }, 3, ai);
+            match.ChooseDraft(0);
+            Assert.AreEqual(0, ai.RapidResupplies, ai.LastDecision);
+
+            // Even behind and nearly at nothing, the first round has shown nothing yet.
+            match.Enemy.BaseHealth = 1;
+            match.Player.BaseHealth = 100;
+            ai.Deploy(new AiView(match, Team.B));
+            Assert.AreEqual(0, ai.RapidResupplies, ai.LastDecision);
         }
 
         // ------------------------------------------------------------------ placement

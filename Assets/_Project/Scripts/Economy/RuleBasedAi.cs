@@ -25,7 +25,13 @@
 //   Hard   - weighs the whole revealed army using measured matchups (MatchupTable: how often each
 //            unit beats each other unit at equal value, from the counter web), so it picks real
 //            counters and avoids units the opponent's army beats; changes strategy when the last
-//            round went badly. Without a table it falls back to the role table.
+//            round went badly. Without a table it falls back to the role table. When it is behind and
+//            about to lose, it takes the Research Center's Rapid Resupply.
+// In Unlock Skirmish, where a side can unlock any of the game's units (decided by view.Rules.Mode, so Faction mode plays on as it did):
+//   - Hard wants a flyer far less for being able to flank (MatchRules.AiSkirmishFlankBonus), or it would field nothing else;
+//   - Normal and Hard only unlock a unit that is clearly better than what they own, by more the dearer it is to unlock;
+//   - squads a reinforcement card just brought go where their role belongs, like the starting squads;
+//   - a spell only aims at a spot it can be placed on, so a squad in a flank zone doesn't waste the cast.
 // Depends on: AiView, IMatchAi, DeploymentGrid, MatchupTable, Halobellum.Combat (CounterWeb role counters),
 //             Halobellum.Core (UnitStats, UnitRole, SimRandom).
 
@@ -127,6 +133,8 @@ namespace Halobellum.Economy
         public UnitRole? CounteredRole { get; private set; }
         /// <summary>A one-line summary of the last round's decisions (for tests and debugging).</summary>
         public string LastDecision { get; private set; } = "";
+        /// <summary>How many times it has taken Rapid Resupply this match (for tests and the tournament).</summary>
+        public int RapidResupplies { get; private set; }
 
         // How much each strategy wants each role (index = UnitRole): Chaff, ChaffClear, SingleTargetDps,
         // Tank, Flanker, Artillery, AntiAir, Aerial, Titan.
@@ -251,19 +259,29 @@ namespace Halobellum.Economy
                 if (spell.Stats.Effect == SpellEffect.Buff)
                 {
                     var own = new List<(Vec2, float)>();
-                    foreach (PlacedSquad squad in view.Self.Squads) own.Add((view.WorldCentre(squad), squad.Type.Cost * squad.Level));
+                    foreach (PlacedSquad squad in view.Self.Squads)
+                    {
+                        if (CanAimAt(view, spell, view.WorldCentre(squad))) own.Add((view.WorldCentre(squad), squad.Type.Cost * squad.Level));
+                    }
                     target = DensestSpot(own, spell.Stats.Radius);
                 }
                 else
                 {
                     var seen = new List<(Vec2, float)>();
-                    foreach (SeenSquad squad in view.SeenOpponentArmy) seen.Add((view.WorldCentre(squad), squad.Value));
+                    foreach (SeenSquad squad in view.SeenOpponentArmy)
+                    {
+                        if (CanAimAt(view, spell, view.WorldCentre(squad))) seen.Add((view.WorldCentre(squad), squad.Value));
+                    }
                     if (spell.Stats.Effect == SpellEffect.DropSquad) target = MostValuable(seen);
                     else target = Difficulty == AiDifficulty.Easy && seen.Count > 0 ? seen[_random.RangeInt(0, seen.Count)].Item1 : DensestSpot(seen, spell.Stats.Radius);
                 }
                 if (target.HasValue && view.PlaceSpell(spell, target.Value).Ok) placed.Add(spell.Stats.Name);
             }
         }
+
+        /// <summary>In Unlock Skirmish a spell only aims where it can be placed. Faction mode still loses the cast on a squad in a flank zone, to keep the results it was measured with.</summary>
+        private static bool CanAimAt(AiView view, OwnedSpell spell, Vec2 position) =>
+            view.Rules.Mode != MatchMode.UnlockSkirmish || view.CanPlaceSpell(spell, position);
 
         /// <summary>
         /// Items go on its most valuable squads without one (Easy: any squad); a Deployment Module, which the
@@ -331,6 +349,8 @@ namespace Halobellum.Economy
             PlayerState self = view.Self;
             if (!self.HasFaction) return;
             _self = self;
+            bool skirmish = view.Rules.Mode == MatchMode.UnlockSkirmish;
+            _flankBonus = skirmish ? view.Rules.AiSkirmishFlankBonus : HardFlankBonus;
 
             // 1. What did the opponent field last battle?
             var seen = view.SeenOpponentArmy;
@@ -366,9 +386,20 @@ namespace Halobellum.Economy
                 }
             }
 
+            // In Unlock Skirmish, so do the squads a reinforcement card just brought: with only those cards they would otherwise be the whole army, all in the middle of the zone.
+            if (skirmish)
+            {
+                foreach (PlacedSquad squad in self.Squads.ToArray())
+                {
+                    if (!squad.FromCard || squad.RoundBought != view.Round || !view.CanMove(squad)) continue;
+                    if (FindSpotFor(view, squad.Type, squad.Id, out int column, out int row)) view.Move(squad, column, row, false);
+                }
+            }
+
             // 3-4. Unlock at most one unit type, then buy up to the squad limit.
             var bought = new List<string>();
             var upgrades = new List<string>();
+            if (Difficulty == AiDifficulty.Hard) TakeRapidResupply(view, upgrades);
             string unlocked = TryUnlock(view, seen, totalSeen);
             if (Difficulty == AiDifficulty.Hard) ShoreUpFlankedTowers(view, upgrades);
             if (Difficulty != AiDifficulty.Easy) BuyCarrierTechs(view, upgrades);
@@ -472,7 +503,7 @@ namespace Halobellum.Economy
 
         /// <summary>
         /// Credits left after the squads go to the towers. Easy doesn't care about them. Normal and Hard level the tower that falls the
-        /// most, then research health and damage; Hard needs less to spare, and buys oil against an army it has seen. Rapid Resupply is left to the player.
+        /// most, then research health and damage; Hard needs less to spare, and buys oil against an army it has seen. Rapid Resupply comes earlier in the round, from Hard only (TakeRapidResupply).
         /// </summary>
         private void SpendOnTowers(AiView view, IReadOnlyList<SeenSquad> seen, List<string> upgrades)
         {
@@ -494,6 +525,23 @@ namespace Halobellum.Economy
                 upgrades.Add(health ? "health research" : "damage research");
 
             if (Difficulty == AiDifficulty.Hard && seen.Count >= 3 && self.Credits >= HardOilCredits && view.BuyOilZone().Ok) upgrades.Add("oil");
+        }
+
+        /// <summary>
+        /// Hard, about to lose: behind on base health, with no more left than last round's damage, or than 15% of what it started with if that is more.
+        /// The next round's income matters little then. It comes before the squads, so the credits can be spent this round.
+        /// </summary>
+        private void TakeRapidResupply(AiView view, List<string> upgrades)
+        {
+            PlayerState self = view.Self;
+            int health = view.OwnBaseHealth;
+            if (view.Round < 2 || self.Towers.Count == 0 || health >= view.OpponentBaseHealth) return;
+            if (health > Math.Max(view.LastBaseDamageTaken, self.StartingBaseHealth * 0.15f)) return;
+            if (view.RapidResupply().Ok)
+            {
+                RapidResupplies++;
+                upgrades.Add("rapid resupply");
+            }
         }
 
         private AiStrategy ChooseStrategy(AiView view, IReadOnlyList<SeenSquad> seen, float[] valueByRole, float totalSeen)
@@ -598,7 +646,7 @@ namespace Halobellum.Economy
             }
             if (Difficulty == AiDifficulty.Hard)
             {
-                if (unit.CanFlank) score += HardFlankBonus;
+                if (unit.CanFlank) score += _flankBonus;
                 if (_flanked.Count > 0 && unit.TargetFilter != TargetFilter.Ground) score += unit.Role == UnitRole.AntiAir ? 2f * HardFlankDefenceBonus : HardFlankDefenceBonus;
             }
             return score;
@@ -662,6 +710,8 @@ namespace Halobellum.Economy
             }
             if (bestLocked == null) return null;
             float ownedScore = bestOwned != null ? Score(bestOwned, seen, totalSeen) : float.MinValue;
+            // With every unit in the game to choose from, some locked one nearly always scores a little higher: in Unlock Skirmish it has to be clearly better.
+            if (view.Rules.Mode == MatchMode.UnlockSkirmish) ownedScore += view.Rules.AiSkirmishUnlockMargin + bestLocked.UnlockCost / 200f;
             if (lockedScore <= ownedScore && Difficulty != AiDifficulty.Easy) return null;
             return view.Unlock(bestLocked).Ok ? bestLocked.Name : null;
         }
@@ -707,6 +757,8 @@ namespace Halobellum.Economy
         // ------------------------------------------------------------------ flank zones (D61): only Hard uses them, and only Hard defends against them
 
         private const float HardFlankBonus = 3f, HardFlankDefenceBonus = 2f;
+        /// <summary>What a flyer's score gains this match for being able to flank: HardFlankBonus, or the rules' smaller value in Unlock Skirmish.</summary>
+        private float _flankBonus = HardFlankBonus;
         /// <summary>A flanked tower is levelled this far: past it, the credits do more as guns that can reach aircraft.</summary>
         private const int HardFlankedTowerLevel = 3;
         private readonly List<TowerKind> _flanked = new List<TowerKind>();
@@ -767,6 +819,29 @@ namespace Halobellum.Economy
             return DeploymentGrid.FindFreeFlankSpot(view.Self, type, rules, ownLeft, targetRow, out column, out row);
         }
 
+        /// <summary>
+        /// A trial for the tournament, which the game never sets (MatchRules.AiCarrierPlacement): Hard puts each new squad with a locked reinforcement in a corner, left and right in turn:
+        /// the back corners of its own zone, or the far corners of the flank zones. Both sides get the same spot in their own frame. False if there is no trial or no spot, so the squad goes where it usually does.
+        /// </summary>
+        private bool ChooseCarrierCorner(AiView view, UnitStats type, out int column, out int row)
+        {
+            column = row = 0;
+            CarrierPlacement placement = view.Rules.AiCarrierPlacement;
+            if (placement == CarrierPlacement.Default || Difficulty != AiDifficulty.Hard || type.LockedReinforcement == null) return false;
+
+            CombatRules rules = view.CombatRules;
+            DeploymentGrid.Footprint(type, false, rules, out int width, out int depth);
+            int carriers = 0;
+            foreach (PlacedSquad squad in view.Self.Squads) if (squad.Type.LockedReinforcement != null) carriers++;
+            bool ownLeft = carriers % 2 == 0;
+            if (placement == CarrierPlacement.OwnBackCorners)
+                return DeploymentGrid.FindFreeSpotNear(view.Self, type, false, rules, ownLeft ? 0 : rules.ArenaWidthSquares - width, rules.DeploymentDepthSquares - depth, out column, out row);
+
+            int outer = rules.FlankGapColumns + rules.FlankZoneColumns;
+            int farRow = -rules.NoMansLandSquares - rules.DeploymentDepthSquares;
+            return DeploymentGrid.FindFreeFlankSpot(view.Self, type, rules, ownLeft, farRow, out column, out row, ownLeft ? -outer : rules.ArenaWidthSquares + outer - width);
+        }
+
         /// <summary>Where this AI would place a new squad of this type now (its role-based spot).</summary>
         public bool ChooseSpot(AiView view, UnitStats type, out int column, out int row) => FindSpotFor(view, type, -1, out column, out row);
 
@@ -778,6 +853,7 @@ namespace Halobellum.Economy
         private bool FindSpotFor(AiView view, UnitStats type, int ignoreSquadId, out int column, out int row)
         {
             CombatRules rules = view.CombatRules;
+            if (ignoreSquadId < 0 && ChooseCarrierCorner(view, type, out column, out row)) return true;
             if (Difficulty == AiDifficulty.Hard && ignoreSquadId < 0 && type.CanFlank && ChooseFlankSpot(view, type, out column, out row)) return true;
             DeploymentGrid.Footprint(type, false, rules, out int width, out _);
             int depth = rules.DeploymentDepthSquares, arenaWidth = rules.ArenaWidthSquares;
