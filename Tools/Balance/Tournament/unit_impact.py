@@ -5,7 +5,7 @@ Ratio = share of its side's damage / share of its side's credits. Mirrors are le
 """
 import collections, json, sys
 
-path = r"E:\AI\_hbci\tournament\band3.jsonl"
+path = sys.argv[1]
 matches = [json.loads(l) for l in open(path, encoding="utf-8") if l.strip()]
 
 
