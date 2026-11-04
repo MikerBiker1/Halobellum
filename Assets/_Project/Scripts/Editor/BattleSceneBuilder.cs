@@ -9,7 +9,7 @@
 // (BattleController and its views, wired to the Combat Rules asset) and a HUD. The MainMenu scene
 // (MainMenuSceneBuilder) is put first in the build settings, so a built game starts in the menu.
 //   Menu: Halobellum > Scenes > Rebuild Match Scene / Rebuild Battle Scene / Rebuild Sandbox Scene
-//   Command line: -executeMethod Halobellum.EditorTools.BattleSceneBuilder.BuildFromCommandLine (all three)
+//   Command line: -executeMethod Halobellum.EditorTools.BattleSceneBuilder.BuildFromCommandLine (all three), or BuildSandboxFromCommandLine (only the Sandbox)
 // Depends on: Halobellum.Presentation, Halobellum.UI, Halobellum.Units, UnityEditor.
 
 using System;
@@ -71,6 +71,18 @@ namespace Halobellum.EditorTools
                 BuildSandbox();
             }
             catch (Exception e) { Debug.LogError("Building the scenes failed: " + e); exitCode = 1; }
+            EditorApplication.Exit(exitCode);
+        }
+
+        /// <summary>Command line: rebuilds only the Sandbox scene.</summary>
+        public static void BuildSandboxFromCommandLine()
+        {
+            int exitCode = 0;
+            try
+            {
+                BuildSandbox();
+            }
+            catch (Exception e) { Debug.LogError("Building the Sandbox scene failed: " + e); exitCode = 1; }
             EditorApplication.Exit(exitCode);
         }
 
@@ -140,11 +152,14 @@ namespace Halobellum.EditorTools
         public static void BuildSandbox()
         {
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            var matchRules = AssetDatabase.LoadAssetAtPath<MatchRulesDefinition>(MatchRulesDefinition.DefaultAssetPath);
+            if (matchRules == null) throw new InvalidOperationException("Missing " + MatchRulesDefinition.DefaultAssetPath);
             List<FactionDefinition> factions = LoadFactions();
 
             BattleController battle = CreateCommon();
             GameObject battleObject = battle.gameObject;
             var sandbox = battleObject.AddComponent<SandboxController>();
+            SetReference(sandbox, "matchRules", matchRules);
             SetReferenceList(sandbox, "factions", factions.Cast<Object>().ToList());
             // The placeholder test units are offered in the sandbox only, never in matches.
             SetReferenceList(sandbox, "extraUnits", HeadlessRunnerTool.LoadUnitsInFolder(HeadlessRunnerTool.PlaceholderFolder).Cast<Object>().ToList());

@@ -7,9 +7,11 @@
 // overlap), so a sandbox battle plays exactly like a match battle with the same deployments.
 // Every item is free to use (decision D34): pick one from Items, then a squad on either side; one
 // item per squad, and the stats window can take it off again. Spells are not in the sandbox.
+// A switch (off at first, so that a fight measures its units alone) puts each side's two towers on the field, as in a match, at level 1.
+// Squads standing where a tower goes step aside, and switching off puts them back, so that the same layout and seed fight the same fight again.
 // The HUD (Scripts/UI/SandboxHud) and DeploymentInput call the public methods here; tests do too.
 // Depends on: BattleController, SquadSelection, IDeploymentPlacement, RightClick, Halobellum.Economy
-//             (PlayerState, DeploymentGrid), Halobellum.Units (FactionDefinition, UnitDefinition), BattleFactions, UnityEngine.
+//             (PlayerState, DeploymentGrid, TowerBuilder), Halobellum.Units (FactionDefinition, UnitDefinition, MatchRulesDefinition), BattleFactions, UnityEngine.
 
 using System;
 using System.Collections.Generic;
@@ -25,6 +27,13 @@ namespace Halobellum.Presentation
     [RequireComponent(typeof(BattleController))]
     public sealed class SandboxController : MonoBehaviour, IDeploymentPlacement, ISquadProgression
     {
+        /// <summary>Where the towers moved a squad from and to, so that switching them off can put it back.</summary>
+        private struct MovedOffTower
+        {
+            public int FromColumn, FromRow, ToColumn, ToRow;
+            public bool Rotated90;
+        }
+
         /// <summary>One unit type the sandbox offers, with the faction it comes from.</summary>
         public readonly struct SandboxUnit
         {
@@ -45,6 +54,8 @@ namespace Halobellum.Presentation
         [SerializeField] private List<FactionDefinition> factions = new List<FactionDefinition>();
         [Tooltip("Extra units offered only in the sandbox (the placeholder test units), listed as 'Placeholder'.")]
         [SerializeField] private List<UnitDefinition> extraUnits = new List<UnitDefinition>();
+        [Tooltip("Where the towers stand and how strong they are, as in a match.")]
+        [SerializeField] private MatchRulesDefinition matchRules;
         [Tooltip("Seed of the next battle (shield block rolls).")]
         [SerializeField] private int seed = 1000;
 
@@ -57,6 +68,9 @@ namespace Halobellum.Presentation
         private readonly List<PlacedSquad> _previewOrder = new List<PlacedSquad>();
         private readonly Dictionary<string, string> _factionOfUnit = new Dictionary<string, string>();
         private readonly Dictionary<string, int> _counting = new Dictionary<string, int>();
+        private readonly Dictionary<TowerKind, UnitStats> _towerStats = new Dictionary<TowerKind, UnitStats>();
+        private readonly Dictionary<PlacedSquad, MovedOffTower> _movedOffTowers = new Dictionary<PlacedSquad, MovedOffTower>();
+        private MatchRules _towerRules;
         private int _nextSquadId = 1;
 
         /// <summary>A squad on the field was set down in a new spot. For sound.</summary>
@@ -78,6 +92,8 @@ namespace Halobellum.Presentation
         public Team EditingTeam { get; set; } = Team.A;
         /// <summary>False while placing; true once Run was pressed (until Reset).</summary>
         public bool IsBattle { get; private set; }
+        /// <summary>True if both sides have their towers: see SetTowers.</summary>
+        public bool TowersOn { get; private set; }
         public string Message { get; private set; } = "";
 
         /// <summary>The unit type being placed, or null.</summary>
@@ -103,6 +119,7 @@ namespace Halobellum.Presentation
             _battle = GetComponent<BattleController>();
             _selection = GetComponent<SquadSelection>();
             _views = GetComponent<UnitViewManager>();
+            _towerRules = matchRules.ToRules();
 
             var cache = new Dictionary<UnitDefinition, UnitStats>();
             foreach (FactionDefinition faction in factions)
@@ -280,7 +297,9 @@ namespace Halobellum.Presentation
             target.Techs.Clear();
             foreach (PlacedSquad squad in Army(from).Squads)
             {
-                target.Squads.Add(new PlacedSquad { Id = _nextSquadId++, Type = squad.Type, Column = squad.Column, Row = squad.Row, Rotated90 = squad.Rotated90, PricePaid = squad.PricePaid, Level = squad.Level, Item = squad.Item });
+                var copy = new PlacedSquad { Id = _nextSquadId++, Type = squad.Type, Column = squad.Column, Row = squad.Row, Rotated90 = squad.Rotated90, PricePaid = squad.PricePaid, Level = squad.Level, Item = squad.Item };
+                target.Squads.Add(copy);
+                if (_movedOffTowers.TryGetValue(squad, out MovedOffTower moved)) _movedOffTowers[copy] = moved; // It stands aside like its original, and goes back with it.
             }
             foreach (var pair in Army(from).Techs) target.Techs[pair.Key] = new List<TechUpgrade>(pair.Value);
             Refresh();
@@ -301,6 +320,93 @@ namespace Halobellum.Presentation
             }
             foreach (var pair in army.Techs) foreach (TechUpgrade tech in pair.Value) total += tech.Cost;
             return total;
+        }
+
+        // ------------------------------------------------------------------ towers
+
+        /// <summary>Puts both sides' towers on the field or takes them away. Squads standing where a tower goes move to the nearest free spot, and go back when it goes again.</summary>
+        public void SetTowers(bool on)
+        {
+            if (IsBattle || on == TowersOn) return;
+            CancelPlacement();
+            TowersOn = on;
+            Message = "";
+            ArmyA.Towers.Clear();
+            ArmyB.Towers.Clear();
+            if (on)
+            {
+                TowerBuilder.AddTo(ArmyA, _towerRules, _battle.Rules);
+                TowerBuilder.AddTo(ArmyB, _towerRules, _battle.Rules);
+                MoveSquadsOffTowers(ArmyA);
+                MoveSquadsOffTowers(ArmyB);
+                if (_movedOffTowers.Count > 0 && Message == "") Message = "Squads on the towers' squares moved aside: Towers off puts them back.";
+            }
+            else
+            {
+                PutBackSquadsMovedOffTowers(ArmyA);
+                PutBackSquadsMovedOffTowers(ArmyB);
+                _movedOffTowers.Clear();
+            }
+            Refresh();
+        }
+
+        private void MoveSquadsOffTowers(PlayerState army)
+        {
+            for (int i = 0; i < army.Squads.Count; i++)
+            {
+                PlacedSquad squad = army.Squads[i];
+                if (DeploymentGrid.CanPlace(army, squad.Type, squad.Column, squad.Row, squad.Rotated90, _battle.Rules, squad.Id)) continue;
+                // Out of the list while looking, or it would block the spots around itself. It goes back to the same place in the list, which is its number in the battle.
+                army.Squads.RemoveAt(i);
+                if (DeploymentGrid.FindFreeSpotNear(army, squad.Type, squad.Rotated90, _battle.Rules, squad.Column, squad.Row, out int column, out int row))
+                {
+                    _movedOffTowers[squad] = new MovedOffTower { FromColumn = squad.Column, FromRow = squad.Row, ToColumn = column, ToRow = row, Rotated90 = squad.Rotated90 };
+                    squad.Column = column;
+                    squad.Row = row;
+                }
+                else Report(ActionResult.Fail($"No room to move {squad.Type.Name} off the tower: it stays where it is."));
+                army.Squads.Insert(i, squad);
+            }
+        }
+
+        private void PutBackSquadsMovedOffTowers(PlayerState army)
+        {
+            // The last moved goes back first: that undoes the moves exactly, even if one squad took a square another had left.
+            for (int i = army.Squads.Count - 1; i >= 0; i--)
+            {
+                PlacedSquad squad = army.Squads[i];
+                if (!_movedOffTowers.TryGetValue(squad, out MovedOffTower moved)) continue;
+                // Moved or turned by hand since then: it stands where the player wants it.
+                if (squad.Column != moved.ToColumn || squad.Row != moved.ToRow || squad.Rotated90 != moved.Rotated90) continue;
+                if (DeploymentGrid.CanPlace(army, squad.Type, moved.FromColumn, moved.FromRow, squad.Rotated90, _battle.Rules, squad.Id))
+                {
+                    squad.Column = moved.FromColumn;
+                    squad.Row = moved.FromRow;
+                }
+                else Report(ActionResult.Fail($"No room to put {squad.Type.Name} back where it was: it stays where it is."));
+            }
+        }
+
+        /// <summary>A battle (not started) from both armies as placed. The towers come after the squads, so that squad and unit numbering stay as they are without them.</summary>
+        private BattleSimulation BuildBattle()
+        {
+            BattleSimulation battle = DeploymentGrid.CreateBattle(_battle.Rules, ArmyA, ArmyB, seed);
+            foreach (PlayerState army in new[] { ArmyA, ArmyB })
+            {
+                foreach (PlacedTower tower in army.Towers)
+                {
+                    battle.AddUnit(TowerStatsFor(tower), army.Team, DeploymentGrid.TowerCentre(tower, army.Team, _battle.Rules));
+                }
+            }
+            return battle;
+        }
+
+        private UnitStats TowerStatsFor(PlacedTower tower)
+        {
+            if (_towerStats.TryGetValue(tower.Kind, out UnitStats stats)) return stats;
+            stats = TowerBuilder.MakeStats(_towerRules, tower.Kind, tower.Level);
+            _towerStats[tower.Kind] = stats;
+            return stats;
         }
 
         // ------------------------------------------------------------------ factions
@@ -343,7 +449,7 @@ namespace Halobellum.Presentation
             CancelPlacement();
             IsBattle = true;
             Message = "";
-            _battle.ShowBattle(DeploymentGrid.CreateBattle(_battle.Rules, ArmyA, ArmyB, seed), _sources, play: true);
+            _battle.ShowBattle(BuildBattle(), _sources, play: true);
         }
 
         /// <summary>Back to placing, with both armies where they were placed.</summary>
@@ -490,7 +596,7 @@ namespace Halobellum.Presentation
         {
             if (IsBattle || _battle == null) return;
             ShowFactions(); // Before the battle is shown: the effects read them when it changes.
-            BattleSimulation preview = DeploymentGrid.CreateBattle(_battle.Rules, ArmyA, ArmyB, seed);
+            BattleSimulation preview = BuildBattle();
             _previewOrder.Clear();
             _previewOrder.AddRange(ArmyA.Squads); // Team A's squads come first in the battle, then Team B's.
             _previewOrder.AddRange(ArmyB.Squads);

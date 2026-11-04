@@ -1,14 +1,16 @@
 // SandboxHud.cs
 // The sandbox screen (Milestone 4): a side switch (blue / red), the units of every faction to place
 // on that side, both armies' totals, actions for the selected squad (Move, Turn, Remove), and Run /
-// Reset, Clear side, Copy side, the battle seed and a Back button (to the match or the main menu, whichever opened it: GameFlow). An Items panel on the
+// Reset, Clear side, Copy side, a switch for the towers, the battle seed and a Back button (to the match or the main menu, whichever opened it: GameFlow). An Items panel on the
 // left offers every item for free (decision D34): drag one onto the hexagon over a squad of either
 // side. Speed controls and the battle result line come from BattleHud, which puts that line under this screen's bar; the squad stats window from
 // SquadStatsWindow. A tall stats window pushes the Items panel to its right.
+// With "-sandboxTowers" on the command line, for a test tool's pictures, it presses the towers switch once, down the same path as a mouse click (MenuStyle).
 // Placeholder UI drawn with Unity's immediate-mode GUI; scales with the screen height.
 // Depends on: Halobellum.Presentation (SandboxController, BattleController, UiHitAreas), BattleHud, SquadStatsWindow, HudScale,
-//             Halobellum.Core, UnityEngine (SceneManagement).
+//             MenuStyle, Halobellum.Core, UnityEngine (SceneManagement).
 
+using System;
 using System.Collections.Generic;
 using Halobellum.Core;
 using Halobellum.Economy;
@@ -22,6 +24,8 @@ namespace Halobellum.UI
     public sealed class SandboxHud : MonoBehaviour
     {
         public const string MatchSceneName = "Match";
+        /// <summary>What the test tool presses, and what it says on the command line to have it pressed.</summary>
+        private const string TowersKey = "Towers", PressTowersArgument = "-sandboxTowers";
 
         [SerializeField] private SandboxController sandbox;
         [SerializeField] private BattleController battle;
@@ -48,6 +52,7 @@ namespace Halobellum.UI
             _statsWindow = FindAnyObjectByType<SquadStatsWindow>();
             var battleHud = FindAnyObjectByType<BattleHud>();
             if (battleHud != null) battleHud.ResultLineTop = ResultLineTop;
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), PressTowersArgument) >= 0) MenuStyle.PressedByTest = TowersKey;
         }
 
         private void OnGUI()
@@ -56,6 +61,7 @@ namespace Halobellum.UI
             HudTheme.Use(neutralTheme);
             HudTheme.Apply();
             EnsureStyles();
+            MenuStyle.Ensure();
             _scale = HudScale.Apply();
             float width = HudScale.ScaledWidth(_scale), height = HudScale.ScaledHeight(_scale);
 
@@ -152,9 +158,10 @@ namespace Halobellum.UI
             }
             else
             {
-                if (GUI.Button(new Rect(bar.x + 500f, bar.y + 10f, 130f, 44f), $"Clear {SandboxController.SideName(sandbox.EditingTeam)}", _button)) sandbox.Clear(sandbox.EditingTeam);
+                if (GUI.Button(new Rect(bar.x + 500f, bar.y + 10f, 96f, 44f), $"Clear {SandboxController.SideName(sandbox.EditingTeam)}", _button)) sandbox.Clear(sandbox.EditingTeam);
                 string other = SandboxController.SideName(sandbox.EditingTeam.Opponent());
-                if (GUI.Button(new Rect(bar.x + 640f, bar.y + 10f, 170f, 44f), $"Copy to {other}", _button)) sandbox.CopyToOtherSide(sandbox.EditingTeam);
+                if (GUI.Button(new Rect(bar.x + 600f, bar.y + 10f, 106f, 44f), $"Copy to {other}", _button)) sandbox.CopyToOtherSide(sandbox.EditingTeam);
+                if (MenuStyle.SmallFramedButton(new Rect(bar.x + 710f, bar.y + 10f, 104f, 44f), sandbox.TowersOn ? "Towers on" : "Towers off", sandbox.TowersOn, TowersKey)) sandbox.SetTowers(!sandbox.TowersOn);
                 if (GUI.Button(new Rect(bar.xMax - 300f, bar.y + 10f, 140f, 44f), "Run battle", _bigButton)) sandbox.Run();
             }
             if (GUI.Button(new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f), GameFlow.SandboxBackLabel, _button)) GameFlow.LeaveSandbox();
