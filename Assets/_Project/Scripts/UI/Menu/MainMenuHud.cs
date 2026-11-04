@@ -20,6 +20,9 @@ namespace Halobellum.UI
 
         public enum Page { Main, Play }
 
+        /// <summary>How long after the card list closes a press on the Play page takes nothing: Windows's usual time for a double-click.</summary>
+        public const float ClosedListGuardSeconds = 0.5f;
+
         private const float FadeInSeconds = 1.6f, FadeOutSeconds = 0.35f;
         private const float ButtonWidth = 400f, ButtonHeight = 64f, ButtonGap = 6f;
         private const float PanelGap = 24f, PanelWidth = 560f, PanelMargin = 24f, RowHeight = 52f, RowLabelWidth = 140f, ControlHeight = 36f;
@@ -36,6 +39,7 @@ namespace Halobellum.UI
         private MatchMode? _selectedMode;
         private CardFilter _cards = CardFilter.AllCards;
         private bool _cardListOpen;
+        private float _ignorePressesUntil;
 
         /// <summary>True while the settings panel is showing (for the test tool).</summary>
         public bool ShowingSettings => _showSettings;
@@ -212,6 +216,9 @@ namespace Halobellum.UI
             bool enabled = _leaving == null;
             GUI.enabled = enabled && !_cardListOpen;
 
+            // The second click of a double-click that closed the list would land on whatever lay under the list, which may be Start, so it is thrown away here.
+            if (Event.current.type == EventType.MouseDown && Time.unscaledTime < _ignorePressesUntil) Event.current.Use();
+
             float panelTop = y;
             if (ColumnButton(left, ref y, "Faction mode", _selectedMode == MatchMode.Faction)) SelectMode(MatchMode.Faction);
             if (ColumnButton(left, ref y, "Unlock Skirmish mode", _selectedMode == MatchMode.UnlockSkirmish)) SelectMode(MatchMode.UnlockSkirmish);
@@ -251,7 +258,9 @@ namespace Halobellum.UI
 
             GUI.enabled = enabled;
             Rect box = ControlRect(panel, row);
+            bool wasOpen = _cardListOpen;
             _cards = (CardFilter)MenuStyle.Dropdown(box, "Cards", CardLabels, (int)_cards, ref _cardListOpen);
+            if (wasOpen && !_cardListOpen) _ignorePressesUntil = Time.unscaledTime + ClosedListGuardSeconds;
         }
 
         /// <summary>A panel with room for this many rows, and its Start at the bottom.</summary>

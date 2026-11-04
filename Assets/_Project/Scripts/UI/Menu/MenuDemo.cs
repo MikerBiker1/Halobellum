@@ -345,6 +345,7 @@ namespace Halobellum.UI
             yield return Click(menu, drawn["Back"].center);
             Check("a click on a button behind the list only closes the list", !menu.CardListOpen && menu.CurrentPage == MainMenuHud.Page.Play && menu.Cards == CardFilter.AllCards);
 
+            yield return Wait(MainMenuHud.ClosedListGuardSeconds + 0.1f);
             yield return Click(menu, drawn["Cards/open"].center);
             Check("a click on its box opens the list", menu.CardListOpen);
             yield return Click(menu, drawn["Cards/open"].center);
@@ -352,10 +353,19 @@ namespace Halobellum.UI
             yield return Press("Cards/open");
             yield return Press("Cards/All cards");
             Check("a line of the list picks it and closes the list", !menu.CardListOpen && menu.Cards == CardFilter.AllCards);
+            yield return Wait(MainMenuHud.ClosedListGuardSeconds + 0.1f);
             yield return Click(menu, drawn["Cards/open"].center);
             yield return Click(menu, drawn["Start"].center);
             Check($"where the list lies over Start, a click takes the list's line (now {menu.Cards})", !menu.CardListOpen && menu.Cards == CardFilter.NoReinforcements);
             Check("and doesn't start the match", !menu.IsLeaving);
+
+            // The second click of a double-click on that line, where Start is live again. SkirmishMatch clicks here once the guard is over, and that does start the match.
+            yield return Click(menu, drawn["Start"].center);
+            Check("the second click of a double-click on the list's line doesn't start the match", !menu.IsLeaving && menu.Cards == CardFilter.NoReinforcements);
+            yield return Wait(MainMenuHud.ClosedListGuardSeconds + 0.1f);
+            yield return Click(menu, drawn["Cards/open"].center);
+            Check("a click takes again once the time for a double-click is over", menu.CardListOpen);
+            yield return Click(menu, drawn["Cards/open"].center);
             yield return Wait(0.2f);
             yield return Shot("04g_card_list_picked");
 
@@ -378,6 +388,9 @@ namespace Halobellum.UI
         /// <summary>An Unlock Skirmish match with settings picked on the panel, as far as its unlock page, and Esc there.</summary>
         private IEnumerator SkirmishMatch()
         {
+            var start = new Rect();
+            Action<string, Rect> note = (key, rect) => { if (key == "Start") start = rect; };
+            MenuStyle.ButtonDrawnForTest += note;
             yield return Press("Play");
             yield return Press("Unlock Skirmish mode");
             GameSettings.SkirmishBaseHealth = 1500;
@@ -387,7 +400,10 @@ namespace Halobellum.UI
             yield return Press("Cards/Only reinforcement cards");
             yield return Wait(0.2f);
             yield return Shot("20_skirmish_panel");
-            yield return Press("Start");
+            yield return Wait(MainMenuHud.ClosedListGuardSeconds + 0.1f);
+            yield return Click(FindAnyObjectByType<MainMenuHud>(), start.center);
+            MenuStyle.ButtonDrawnForTest -= note;
+            Check("a click on Start, with the list long closed, starts the match", FindAnyObjectByType<MainMenuHud>().IsLeaving);
             yield return WaitForScene(GameFlow.MatchScene);
             yield return Wait(1f);
 
