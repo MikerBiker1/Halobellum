@@ -2,6 +2,7 @@
 // The match rules from Bible Section 5 (starting credits, income and its cap, base health, squads
 // and unlocks per round, sale refunds, starting draft size). The values come from the Match Rules
 // data asset (Data/MatchRules.asset) through MatchRulesDefinition.ToRules(); tests build their own.
+// A MatchSetup can then change a match's own copy (the mode, base health and card filter); the defaults here are Faction mode.
 // Depends on: Halobellum.Core (SpellStats).
 
 using System;
@@ -97,13 +98,25 @@ namespace Halobellum.Economy
         /// <summary>The price of each research step, for health and for damage alike; there are as many steps as these.</summary>
         public int[] ResearchCosts = { 100, 300 };
 
+        // The match's mode (MatchSetup). The defaults keep Faction mode as it has always played.
+        /// <summary>Faction mode, or Unlock Skirmish (no factions: any unit can be unlocked).</summary>
+        public MatchMode Mode;
+        /// <summary>Which cards the offers bring.</summary>
+        public CardFilter Cards;
+        /// <summary>Unlock Skirmish: what the Hard AI adds to a flyer's score for being able to flank (starting guess).</summary>
+        public float AiSkirmishFlankBonus = 0.75f;
+        /// <summary>Unlock Skirmish: how much better a locked unit must score than an owned one before the AI unlocks it (starting guess).</summary>
+        public float AiSkirmishUnlockMargin = 0.25f;
+        /// <summary>A tournament trial of where the Hard AI puts its carriers; the game never sets it.</summary>
+        public CarrierPlacement AiCarrierPlacement;
+
         public bool HasTowers => TowerBaseHealth > 0f;
         public int TowerMaxLevel => TowerShockwaveSeconds.Length;
 
         public bool CardsEnabled => FirstCardRound > 0;
 
         /// <summary>A side's base health at the start of a match, from what its starting card is worth (D59).</summary>
-        public int StartingBaseHealth(int cardValue) => BaseHealth - (int)Math.Round((cardValue - DraftCardValue) * DraftBaseHealthPerCredit);
+        public int StartingBaseHealth(int cardValue) => Math.Max(1, BaseHealth - (int)Math.Round((cardValue - DraftCardValue) * DraftBaseHealthPerCredit));
 
         /// <summary>The reinforcement budget of a round.</summary>
         public int ReinforcementBudget(int round) => ReinforcementBudgetBase + ReinforcementBudgetPerRound * round;

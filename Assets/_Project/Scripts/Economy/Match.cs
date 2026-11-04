@@ -45,7 +45,7 @@
 // The AI only sees the match through an AiView: its own state, public information, and each army as
 // it was revealed when the last battle started (SeenArmy), never the opponent's current deployment.
 // The player gets the same: BuildPreview shows the enemy's last-battle army as ghosts (D25).
-// Depends on: MatchRules, PlayerState, DeploymentGrid, StartingDraft, RoundSummary, IMatchAi, AiView,
+// Depends on: MatchRules, PlayerState, DeploymentGrid, StartingDraft, TowerBuilder, RoundSummary, IMatchAi, AiView,
 //             Halobellum.Combat (HeadlessBattleRunner, BattleSimulation), Halobellum.Core.
 
 using System;
@@ -105,8 +105,8 @@ namespace Halobellum.Economy
             _enemyAi = enemyAi ?? new DoNothingAi();
             Player = new PlayerState(Team.A);
             Enemy = new PlayerState(Team.B);
-            AddTowers(Player);
-            AddTowers(Enemy);
+            TowerBuilder.AddTo(Player, rules, combatRules);
+            TowerBuilder.AddTo(Enemy, rules, combatRules);
             PlayerDraft = StartingDraft.Draw(factions, rules, _random);
             EnemyDraft = StartingDraft.Draw(factions, rules, _random);
             Phase = MatchPhase.Draft;
@@ -170,8 +170,9 @@ namespace Halobellum.Economy
             if (Phase != MatchPhase.Draft) return ActionResult.Fail("The draft is over.");
             if (cardIndex < 0 || cardIndex >= PlayerDraft.Count) return ActionResult.Fail("No such card.");
 
-            ApplyDraftCard(Player, PlayerDraft[cardIndex]);
+            // The AI chooses before the player's card is applied, so that it can't know that card.
             int enemyChoice = EnemyDraft.Count > 0 ? Math.Clamp(_enemyAi.ChooseDraftCard(new AiView(this, Team.B), EnemyDraft), 0, EnemyDraft.Count - 1) : -1;
+            ApplyDraftCard(Player, PlayerDraft[cardIndex]);
             if (enemyChoice >= 0) ApplyDraftCard(Enemy, EnemyDraft[enemyChoice]);
 
             // Both sides see each other's starting squads, as they stand in the middle of the zone before anyone deploys (D58).
@@ -207,7 +208,7 @@ namespace Halobellum.Economy
         {
             PlayerState player = Get(team);
             if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Units can only be unlocked during deployment.");
-            if (!player.Roster.Contains(type)) return ActionResult.Fail($"{type.Name} is not in your faction's roster.");
+            if (!player.Roster.Contains(type)) return ActionResult.Fail(Rules.Mode == MatchMode.UnlockSkirmish ? $"{type.Name} cannot be unlocked here." : $"{type.Name} is not in your faction's roster.");
             if (player.Unlocked.Contains(type)) return ActionResult.Fail($"{type.Name} is already unlocked.");
             if (player.UnlocksThisRound >= Rules.UnlocksPerRound) return ActionResult.Fail("You already unlocked a unit this round.");
             if (player.Credits < type.UnlockCost) return ActionResult.Fail($"Not enough credits ({type.UnlockCost} needed).");
@@ -424,31 +425,11 @@ namespace Halobellum.Economy
 
         public static string TowerName(TowerKind kind) => kind == TowerKind.CommandCenter ? "Command Center" : "Research Center";
 
-        private void AddTowers(PlayerState player)
-        {
-            if (!Rules.HasTowers) return;
-            int squares = Rules.TowerSquares;
-            int left = CombatRules.ArenaWidthSquares / 4 - squares / 2;
-            int row = (CombatRules.DeploymentDepthSquares - squares) / 2;
-            player.Towers.Add(new PlacedTower { Kind = TowerKind.CommandCenter, Column = left, Row = row, Squares = squares });
-            player.Towers.Add(new PlacedTower { Kind = TowerKind.ResearchCenter, Column = CombatRules.ArenaWidthSquares - left - squares, Row = row, Squares = squares });
-        }
-
         /// <summary>A tower's stats at a level: its health doubles with each one, and its shockwave gets shorter.</summary>
         public UnitStats TowerStats(TowerKind kind, int level)
         {
             if (_towerStats.TryGetValue((kind, level), out UnitStats stats)) return stats;
-            stats = new UnitStats
-            {
-                Name = TowerName(kind), Role = UnitRole.Tank, SquadSize = 1, MaxHealth = Rules.TowerBaseHealth * MathF.Pow(2f, level - 1),
-                ArmorType = ArmorType.Light, CollisionRadius = Rules.TowerRadius, ImmuneToInfection = true, TargetFilter = TargetFilter.Ground,
-                Shockwave = new ShockwaveStats
-                {
-                    Kind = kind, Seconds = Rules.TowerShockwaveSeconds[level - 1], SpeedMultiplier = Rules.ShockwaveSpeedMultiplier,
-                    DamageMultiplier = Rules.ShockwaveDamageMultiplier, FireRateMultiplier = Rules.ShockwaveFireRateMultiplier,
-                    DamageTakenMultiplier = Rules.ShockwaveDamageTakenMultiplier,
-                },
-            };
+            stats = TowerBuilder.MakeStats(Rules, kind, level);
             _towerStats[(kind, level)] = stats;
             return stats;
         }

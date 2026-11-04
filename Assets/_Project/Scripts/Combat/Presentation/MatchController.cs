@@ -12,6 +12,9 @@
 // Items wait in the Inventory until the player selects one and picks a squad; Intensive Training fills
 // a selected squad's XP bar (decision D33). The HUD draws both and calls the functions here.
 // A click on a tower selects it (SquadSelection), and DescribeTower says what its window shows and sells (D55).
+// A match can start with a MatchSetup (mode, base health, card filter), which goes on that match's own copy of the rules and
+// is remembered, so that "New match" plays the same again. In Unlock Skirmish both sides draft from one made-up faction
+// (SkirmishFaction), the seed picks one land for the whole field, and each unit keeps the looks of its real faction.
 // The HUD (Scripts/UI/MatchHud) and DeploymentInput call the public methods here; tests do too.
 // Depends on: BattleController, SquadSelection, UnitViewManager,
 //             Halobellum.Economy (Match, RuleBasedAi, DeploymentGrid),
@@ -49,6 +52,11 @@ namespace Halobellum.Presentation
         private readonly List<PlacedSquad> _previewOrder = new List<PlacedSquad>();
         /// <summary>The enemy's ghost squads in the preview, after the player's (decision D25).</summary>
         private readonly List<SeenSquad> _ghostOrder = new List<SeenSquad>();
+        /// <summary>What the match was started with, or null for Faction mode at the asset's values.</summary>
+        private MatchSetup _setup;
+        /// <summary>The real factions of this match, whatever the mode offers.</summary>
+        private List<FactionInfo> _realFactions = new List<FactionInfo>();
+        private static readonly string[] SkirmishLands = { BattleFactions.Unsc, BattleFactions.Covenant, BattleFactions.Flood };
 
         public Match Match { get; private set; }
         /// <summary>Feedback from the last action, for the HUD (empty when nothing to say).</summary>
@@ -70,7 +78,7 @@ namespace Halobellum.Presentation
         public bool PlacingRotated { get; private set; }
         public bool IsPlacing => MovingSquadId >= 0;
         /// <summary>A side that has units that can flank sees where they could go, throughout deployment.</summary>
-        public bool ShowsFlankZones => IsDeploying && Match.Player.Faction != null && Match.Player.Roster.Exists(unit => unit.CanFlank);
+        public bool ShowsFlankZones => IsDeploying && Match.Player.Faction != null && HasUnitsThatCanFlank();
         public bool IsDeploying => Match != null && Match.Phase == MatchPhase.Deployment;
         /// <summary>The player always deploys in their own zone.</summary>
         public Team PlacingTeam => Team.A;
@@ -84,7 +92,7 @@ namespace Halobellum.Presentation
             _spellView = GetComponent<SpellView>();
             if (_spellView == null) _spellView = gameObject.AddComponent<SpellView>();
             _battle.BattleFinished += OnBattleFinished;
-            NewMatch();
+            NewMatch(setup: GameFlow.TakeMatchSetup());
         }
 
         private void OnDestroy()
@@ -92,9 +100,24 @@ namespace Halobellum.Presentation
             if (_battle != null) _battle.BattleFinished -= OnBattleFinished;
         }
 
-        /// <summary>Starts a fresh match at the draft. fixedSeed overrides the Inspector seed (tests).</summary>
-        public void NewMatch(int? fixedSeed = null)
+        /// <summary>In Unlock Skirmish every unit is in the roster, so only those unlocked say anything about this side.</summary>
+        private bool HasUnitsThatCanFlank()
         {
+            if (Match.Rules.Mode != MatchMode.UnlockSkirmish) return Match.Player.Roster.Exists(unit => unit.CanFlank);
+            foreach (UnitStats unit in Match.Player.Unlocked)
+            {
+                if (unit.CanFlank) return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Starts a fresh match at the draft. fixedSeed overrides the Inspector seed (tests). A setup is remembered for the
+        /// matches after this one; without one, the last one is played again.
+        /// </summary>
+        public void NewMatch(int? fixedSeed = null, MatchSetup setup = null)
+        {
+            if (setup != null) _setup = setup;
             var cache = new Dictionary<UnitDefinition, UnitStats>();
             var infos = new List<FactionInfo>();
             _cardSources.Clear();
@@ -108,7 +131,12 @@ namespace Halobellum.Presentation
             int matchSeed = fixedSeed ?? (seed != 0 ? seed : Environment.TickCount & 0x7FFFFFFF);
             Difficulty = GameSettings.Difficulty;
             _matchups = matchupTable != null ? matchupTable.ToTable() : null;
-            Match = new Match(matchRules.ToRules(), _battle.Rules, infos, matchSeed, new RuleBasedAi(Difficulty, matchSeed, _matchups));
+            MatchRules rules = matchRules.ToRules();
+            _setup?.ApplyTo(rules);
+            _realFactions = infos;
+            IReadOnlyList<FactionInfo> offered = infos;
+            if (rules.Mode == MatchMode.UnlockSkirmish) offered = new[] { SkirmishFaction.Build(infos) };
+            Match = new Match(rules, _battle.Rules, offered, matchSeed, new RuleBasedAi(Difficulty, matchSeed, _matchups));
             CancelPlacement();
             CancelSpellPlacement();
             CancelItemPlacement();
@@ -151,11 +179,40 @@ namespace Halobellum.Presentation
             Report(result);
             if (result.Ok)
             {
-                BattleFactions.Set(Match.Player.Faction?.Name, Match.Enemy.Faction?.Name);
+                if (Match.Rules.Mode == MatchMode.UnlockSkirmish) BattleFactions.SetSkirmish(SkirmishLand(Match.Seed), RealFactionOfEachUnit());
+                else BattleFactions.Set(Match.Player.Faction?.Name, Match.Enemy.Faction?.Name);
                 RefreshPreview();
                 PhaseChanged?.Invoke();
             }
             return result;
+        }
+
+        private static string SkirmishLand(int matchSeed)
+        {
+            int count = SkirmishLands.Length;
+            return SkirmishLands[(matchSeed % count + count) % count];
+        }
+
+        /// <summary>Each unit's real faction by name: everything in a roster, and what a faction's spells drop (ODST, which is in no roster).</summary>
+        private Dictionary<string, string> RealFactionOfEachUnit()
+        {
+            var map = new Dictionary<string, string>();
+            foreach (FactionInfo faction in _realFactions)
+            {
+                foreach (UnitStats unit in faction.BaseRoster) map.TryAdd(unit.Name, faction.Name);
+                foreach (SubFactionInfo subFaction in faction.SubFactions)
+                {
+                    foreach (UnitStats unit in subFaction.ExclusiveUnits) map.TryAdd(unit.Name, faction.Name);
+                }
+            }
+            foreach (FactionInfo faction in _realFactions)
+            {
+                foreach (CardStats card in faction.Cards)
+                {
+                    if (card?.Spell?.DropUnit != null) map.TryAdd(card.Spell.DropUnit.Name, faction.Name);
+                }
+            }
+            return map;
         }
 
         // ------------------------------------------------------------------ deployment

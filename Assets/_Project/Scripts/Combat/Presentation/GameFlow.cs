@@ -4,9 +4,12 @@
 // The test tools (-autoplay, -sandboxDemo, -gallery, -crowdBench, -benchmark) skip the menu: as soon as MainMenu has loaded, the
 // game moves on to the scene that tool has always run in. -menuDemo and -screenDemo stay in the menu, because the menu is what they test.
 // It also remembers where the Sandbox was opened from, for the Sandbox's Back button.
-// Depends on: GamePause, SandboxAutoplay, CrowdBenchmark and AudioCapture (their flags), UnityEngine.
+// A setup chosen for the next match waits here for the Match scene, which takes it once, so that any other load of the scene
+// (a test tool, a test) always gets Faction mode.
+// Depends on: GamePause, SandboxAutoplay, CrowdBenchmark and AudioCapture (their flags), Halobellum.Economy (MatchSetup), UnityEngine.
 
 using System;
+using Halobellum.Economy;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -28,6 +31,7 @@ namespace Halobellum.Presentation
         public const string TerrainGalleryFlag = "-terrainGallery";
 
         private static string _lastScene;
+        private static MatchSetup _pendingSetup;
 
         /// <summary>The scene the Sandbox's Back button returns to.</summary>
         public static string SandboxCameFrom { get; private set; } = MatchScene;
@@ -60,6 +64,21 @@ namespace Halobellum.Presentation
 
         public static void NewMatch() => Load(MatchScene);
 
+        /// <summary>Starts a match with this setup.</summary>
+        public static void NewSkirmish(MatchSetup setup)
+        {
+            _pendingSetup = setup;
+            Load(MatchScene);
+        }
+
+        /// <summary>The setup waiting for the Match scene, or null. It can only be taken once.</summary>
+        public static MatchSetup TakeMatchSetup()
+        {
+            MatchSetup setup = _pendingSetup;
+            _pendingSetup = null;
+            return setup;
+        }
+
         public static void OpenSandbox() => Load(SandboxScene);
 
         /// <summary>The Sandbox's Back button: to the match or the menu, whichever it was opened from.</summary>
@@ -87,6 +106,7 @@ namespace Halobellum.Presentation
         private static void Hook()
         {
             _lastScene = null;
+            _pendingSetup = null;
             SceneManager.sceneLoaded -= OnSceneLoaded;
             SceneManager.sceneLoaded += OnSceneLoaded;
         }

@@ -5,6 +5,8 @@
 // game's 8 sub-factions a faction may not appear at all.
 // Picking a card fixes the faction and sub-faction for the match; the 2 squads are free and their
 // unit types start unlocked. Draws use the match's seeded random generator.
+// In Unlock Skirmish there is one made-up faction (SkirmishFaction), so every card shows it, and what differs is the squads:
+// a fair pair from all its Tier 1 units, the same pair not twice in a draw if that can be helped.
 // Depends on: FactionInfo, MatchRules, Halobellum.Core (UnitStats, SimRandom).
 
 using System;
@@ -38,6 +40,8 @@ namespace Halobellum.Economy
         /// <summary>Draws one player's draft cards.</summary>
         public static List<DraftCard> Draw(IReadOnlyList<FactionInfo> factions, MatchRules rules, SimRandom random)
         {
+            if (rules.Mode == MatchMode.UnlockSkirmish) return DrawSkirmish(factions, rules, random);
+
             // Every (faction, sub-faction) pair that has at least one Tier 1 unit can appear once.
             var options = new List<DraftCard>();
             foreach (FactionInfo faction in factions)
@@ -59,6 +63,37 @@ namespace Halobellum.Economy
                 cards.Add(card);
             }
             return cards;
+        }
+
+        /// <summary>Unlock Skirmish's cards: all of the one faction, each with its own fair pair of squads.</summary>
+        private static List<DraftCard> DrawSkirmish(IReadOnlyList<FactionInfo> factions, MatchRules rules, SimRandom random)
+        {
+            var cards = new List<DraftCard>();
+            if (factions.Count == 0 || factions[0].SubFactions.Count == 0) return cards;
+            FactionInfo faction = factions[0];
+            SubFactionInfo subFaction = faction.SubFactions[0];
+            List<UnitStats> pool = TierOneUnits(faction, subFaction);
+            if (pool.Count == 0) return cards;
+
+            while (cards.Count < rules.DraftCardCount)
+            {
+                List<UnitStats> squads = PickFairPair(pool, rules, random);
+                for (int retry = 0; retry < MaxPairRetries && HasPair(cards, squads); retry++) squads = PickFairPair(pool, rules, random);
+                cards.Add(new DraftCard { Faction = faction, SubFaction = subFaction, Squads = squads });
+            }
+            return cards;
+        }
+
+        /// <summary>How often a draw tries again for a pair no other card has. A small pool may not have enough.</summary>
+        private const int MaxPairRetries = 20;
+
+        private static bool HasPair(List<DraftCard> cards, List<UnitStats> squads)
+        {
+            foreach (DraftCard card in cards)
+            {
+                if (card.Squads.Contains(squads[0]) && card.Squads.Contains(squads[1])) return true;
+            }
+            return false;
         }
 
         public static List<UnitStats> TierOneUnits(FactionInfo faction, SubFactionInfo subFaction)
