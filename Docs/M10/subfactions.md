@@ -70,7 +70,7 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Sparrowhawk | Aerial | 2 | 50 | 1 | 250 | 550 | Light | 0 | 4 | Heavy Autocannon (18 per 0.3 s, Ballistic, anti-armor, 14 m) | 39 of 68, 59% | Wolverine 100%, Swarm Form 100% |
 | Longsword | Aerial | 2 | 50 | 1 | 300 | 600 | Light | 0 | 5 | Carpet Bombs (150 per 2.5 s, Explosive, 5 m, splash 5 m) | 41 of 68, 60% | Wolverine 100%, Vampire 100% |
-| Vulture | Aerial | 3 | 200 | 1 | 400 | 900 | Heavy | 0 | 2.5 | Missile Barrage (55 per 3 s, Explosive, 22 m, splash 3 m); Chin Gun (10 per 0.2 s, Ballistic, 14 m) | 49 of 68, 72% | Wolverine 100%, Vampire 100% |
+| Vulture | Aerial | 3 | 200 | 1 | 400 | 900 | Heavy | 0 | 2.5 | Missile Barrage (50 per 3 s, Explosive, 22 m, splash 3 m); Chin Gun (10 per 0.2 s, Ballistic, 14 m) | 47 of 68, 70% | Wolverine 100%, Vampire 100% |
 | Condor Gunship | Aerial | 3 | 200 | 1 | 400 | 1500 | Light | 0 | 3.25 | Twin Autocannons (20 per 0.25 s, Ballistic, 16 m) | 44 of 68, 66% | Wolverine 100%, Reaver 100% |
 
 - **Sparrowhawk.** Gunship that hunts vehicles. Its gun is poor against infantry.
@@ -123,7 +123,7 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 | Infested Marine | Chaff | 1 | 0 | 12 | 100 | 140 | Unarmored | 0 | 3 | Scythe Limb (20 per 0.8 s, Melee, 1.5 m); Scavenged Rifle (4 per 0.5 s, Ballistic, 10 m) | 48 of 68, 72% | Flamethrower Trooper 100%, Carrier Form 100% |
 | Infested Warthog | Flanker | 1 | 0 | 2 | 200 | 320 | Light | 0 | 5 | Ramming Mass (50 per 1 s, Melee, 1.5 m, splash 1.5 m); Scavenged Machine Gun (7 per 0.2 s, Ballistic, 10 m) | 30 of 68, 43% | Flamethrower Trooper 100%, Scorpion 100% |
 | Infested Scorpion | Tank | 2 | 50 | 1 | 250 | 1350 | Heavy | 0 | 1.4 | Scavenged Cannon (80 per 3 s, Explosive, 14 m, splash 2.5 m); Tentacle Whip (30 per 1 s, Melee, 4 m) | 41 of 68, 60% | Spartan 100%, Zealot 100% |
-| Infested Hornet | Aerial | 2 | 50 | 2 | 250 | 360 | Light | 0 | 4 | Scavenged Rockets (20 per 1 s, Explosive, 12 m); Spore Bombs (40 per 2 s, Explosive, 8 m, splash 3 m) | 44 of 68, 65% | Wolverine 100%, Swarm Form 100% |
+| Infested Hornet | Aerial | 2 | 50 | 2 | 250 | 360 | Light | 0 | 4 | Scavenged Rockets (20 per 1 s, Explosive, 12 m); Spore Bombs (40 per 2 s, Explosive, 8 m, splash 3 m) | 45 of 68, 66% | Wolverine 100%, Swarm Form 100% |
 | Juggernaut | Flanker | 3 | 200 | 1 | 400 | 2300 | Heavy | 0 | 3.25 | Crushing Charge (130 per 1.2 s, Melee, 2.5 m, splash 2.5 m) | 36 of 68, 54% | Scorpion 100%, Hunter Pair 100% |
 
 - **Infested Marine.** Fewer bodies than a Marine squad, each much tougher: it leaps in with a scythe limb. Cannot infect, as only Infection Forms do.

@@ -45,7 +45,7 @@ Rhino,UNSC,Armored Division,Artillery,3,200,1,400,1000,Heavy,0,1,50,30,30,30,100
 Grizzly,UNSC,Armored Division,Tank,3,250,1,500,2100,Heavy,0,1.35,17,80,64,50,2100,100,"Gauss Warthog (100%), Spartan (100%)"
 Sparrowhawk,UNSC,Aerospace Command,Aerial,2,50,1,250,550,Light,0,4,14,30,72,90,550,50,"Wolverine (100%), Swarm Form (100%)"
 Longsword,UNSC,Aerospace Command,Aerial,2,50,1,300,600,Light,0,5,5,60,60,60,600,60,"Wolverine (100%), Vampire (100%)"
-Vulture,UNSC,Aerospace Command,Aerial,3,200,1,400,900,Heavy,0,2.5,22,68,48,31,900,80,"Wolverine (100%), Vampire (100%)"
+Vulture,UNSC,Aerospace Command,Aerial,3,200,1,400,900,Heavy,0,2.5,22,67,47,29,900,80,"Wolverine (100%), Vampire (100%)"
 Condor Gunship,UNSC,Aerospace Command,Aerial,3,200,1,400,1500,Light,0,3.25,16,80,48,20,1500,80,"Wolverine (100%), Reaver (100%)"
 Chopper,Covenant,Banished,Flanker,1,0,2,200,300,Light,0,5.5,1.5,200,132,56,600,20,"Flamethrower Trooper (100%), Scorpion (100%)"
 Brute Grenadier,Covenant,Banished,ChaffClear,1,0,4,150,150,Unarmored,0,1.5,13,68,68,68,600,7.5,"Scorpion (100%), Mantis (100%)"

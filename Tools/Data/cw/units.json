@@ -3461,7 +3461,7 @@
   "weapons": [
    {
     "name": "Missile Barrage",
-    "dmg": 55,
+    "dmg": 50,
     "interval": 3,
     "range": 22,
     "minr": 0,
