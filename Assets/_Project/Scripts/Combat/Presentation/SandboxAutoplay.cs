@@ -6,6 +6,7 @@
 // end, then quits. It also saves one screenshot of a lobbed shot at the top of its arc, one of a beam
 // charging, one of a beam firing, one of the first infected body and one of a unit leaping, the first time each is
 // seen, close-ups of a baked Marine: held still, in the middle of a cross-fade, running, shooting and falling, and one of the Scorpion.
+// If the towers are on (SandboxHud's "-sandboxTowers"), it also takes a close-up of each tower before the battle.
 // With "-gallery" as well, it instead goes through every unit that has a real model (M9, D45): each one standing, moving
 // and firing, close up and from the game's camera, so that a person can judge them from pictures, and then every effect (EffectsGallery).
 // With "-effects" it only takes the pictures of the effects, and with "-effectsBench" it only measures the frame time of a big battle.
@@ -44,6 +45,7 @@ namespace Halobellum.Presentation
         private bool _shotArc, _shotCharge, _shotBeam, _shotInfected, _shotLeap;
         private readonly List<ShotInFlight> _inFlight = new List<ShotInFlight>();
         private readonly List<BeamShot> _beams = new List<BeamShot>();
+        private readonly HashSet<SimUnit> _towersShot = new HashSet<SimUnit>();
 
         private void Awake()
         {
@@ -304,6 +306,12 @@ namespace Halobellum.Presentation
                     _wait = 0.3f;
                     break;
                 case 4:
+                    SimUnit tower = NextTowerToShoot();
+                    if (tower != null)
+                    {
+                        StartCoroutine(CloseUp(tower, $"tower_{tower.Team}_{tower.Stats.Shockwave.Kind}"));
+                        break;
+                    }
                     _battle.Speed = 4f;
                     _sandbox.Run();
                     _step++;
@@ -330,6 +338,15 @@ namespace Halobellum.Presentation
                     Application.Quit();
                     break;
             }
+        }
+
+        private SimUnit NextTowerToShoot()
+        {
+            foreach (SimUnit unit in _battle.Simulation.Units)
+            {
+                if (unit.Stats.IsTower && _towersShot.Add(unit)) return unit;
+            }
+            return null;
         }
 
         private void ShootWeaponMechanics()
