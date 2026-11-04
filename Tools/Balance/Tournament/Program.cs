@@ -200,6 +200,7 @@ static class Program
         var tallyB = new Dictionary<string, UnitTally>();
         int startA = match.Player.BaseHealth, startB = match.Enemy.BaseHealth;
         int rounds = 0, firstBattle = 0;
+        int[] carrierBattles = new int[2], carrierDrops = new int[2];
         while (match.Phase != MatchPhase.MatchOver && rounds < MostRounds)
         {
             if (match.Phase == MatchPhase.Cards)
@@ -218,6 +219,12 @@ static class Program
                 UnitTally tally = Tally(unit.Team == Team.A ? tallyA : tallyB, unit.Stats.Name);
                 tally.Damage += unit.DamageDealt;
                 tally.Kills += unit.Kills;
+                if (unit.Stats.HasReinforcement && unit.Stats.ReinforcementLandSeconds > 0f)
+                {
+                    int side = unit.Team == Team.A ? 0 : 1;
+                    carrierBattles[side]++;
+                    carrierDrops[side] += unit.DropsMade;
+                }
             }
             RoundSummary summary = match.FinishBattle();
             if (rounds == 0) firstBattle = summary.BaseDamageByA > summary.BaseDamageByB ? 1 : summary.BaseDamageByB > summary.BaseDamageByA ? 2 : 0;
@@ -239,9 +246,9 @@ static class Program
         w.Num("rounds", rounds);
         w.Num("firstBattle", firstBattle);
         text.Append("\"sideA\":");
-        Side(text, match, match.Player, aiA, tallyA, valueA, startA, openingA);
+        Side(text, match, match.Player, aiA, tallyA, valueA, startA, openingA, carrierBattles[0], carrierDrops[0]);
         text.Append(",\"sideB\":");
-        Side(text, match, match.Enemy, aiB, tallyB, valueB, startB, openingB);
+        Side(text, match, match.Enemy, aiB, tallyB, valueB, startB, openingB, carrierBattles[1], carrierDrops[1]);
         text.Append('}');
         return text.ToString();
     }
@@ -272,7 +279,7 @@ static class Program
         }
     }
 
-    static void Side(StringBuilder text, Match match, PlayerState side, RecordingAi ai, Dictionary<string, UnitTally> tallies, int value, int start, string opening)
+    static void Side(StringBuilder text, Match match, PlayerState side, RecordingAi ai, Dictionary<string, UnitTally> tallies, int value, int start, string opening, int carrierBattles, int carrierDrops)
     {
         var w = new Utf8JsonWriterHelper(text);
         text.Append('{');
@@ -281,6 +288,8 @@ static class Program
         w.Num("spells", side.Spells.Count);
         w.Num("research", side.ResearchHealthSteps + side.ResearchDamageSteps);
         w.Num("skipped", ai.Skipped);
+        w.Num("carrierBattles", carrierBattles);
+        w.Num("carrierDrops", carrierDrops);
         text.Append("\"towers\":[").Append(string.Join(",", side.Towers.Select(t => $"[{t.Level},{t.Falls}]"))).Append("],");
         text.Append("\"cards\":[").Append(string.Join(",", ai.Taken.Select(c => JsonSerializer.Serialize(c)))).Append("],");
         text.Append("\"units\":{");

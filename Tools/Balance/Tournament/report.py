@@ -171,6 +171,12 @@ line(f"The side whose towers fell less often wins {pct(fewer_w, fewer_g)} of the
 credits_left = [s[2]["credits"] for m in matches for s in sides(m)]
 line(f"Credits unspent when the match ends: {sum(credits_left) / len(credits_left):.0f} on average.")
 
+carrier_battles = sum(s[2].get("carrierBattles", 0) for m in matches for s in sides(m))
+carrier_drops = sum(s[2].get("carrierDrops", 0) for m in matches for s in sides(m))
+if carrier_battles:
+    heading("Pelicans with their Troop Bay")
+    line(f"{carrier_battles} Pelican battles: {carrier_drops / carrier_battles:.2f} drops per battle, of at most 3.")
+
 heading("Units")
 line("Fielded: the share of a side's matches, among sub-factions that can buy it, in which it ever fought.")
 line("Win when fielded: the side's win rate in those matches. Edge: that, minus the same sub-faction's win rate without it. High edge can also mean the side was ahead, as winners last longer and can afford more.")

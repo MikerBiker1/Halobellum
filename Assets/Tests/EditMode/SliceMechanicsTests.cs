@@ -140,7 +140,7 @@ namespace Halobellum.Tests
                 {
                     firstDrop = c.Position;
                     Assert.Greater(c.Position.Y, 20f, "Behind the enemy.");
-                    Assert.Less(squad.Members[0].Position.Y - c.Position.Y, 12f);
+                    Assert.Less(Vec2.Distance(squad.Members[0].Position, c.Position), 16f);
                 }
                 Assert.Greater(Vec2.Dot(squad.Members[0].Position - c.Position, -c.Facing), 0f, "They come out behind it.");
             };

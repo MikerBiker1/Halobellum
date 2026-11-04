@@ -366,7 +366,9 @@ namespace Halobellum.Economy
 
             // 3-4. Unlock at most one unit type, then buy up to the squad limit.
             var bought = new List<string>();
+            var upgrades = new List<string>();
             string unlocked = TryUnlock(view, seen, totalSeen);
+            if (Difficulty != AiDifficulty.Easy) BuyCarrierTechs(view, upgrades);
             if (Difficulty == AiDifficulty.Hard && self.Towers.Count > 0 && self.Credits >= HardEliteCredits) view.BuyEliteRecruitment();
             for (int i = 0; i < view.SquadsPerRound; i++)
             {
@@ -386,7 +388,6 @@ namespace Halobellum.Economy
             }
 
             // 5. Level-ups and techs with the credits left, then spells.
-            var upgrades = new List<string>();
             UseItemsAndTraining(view, upgrades);
             SpendOnUpgrades(view, upgrades);
             SpendOnTowers(view, seen, upgrades);
@@ -443,6 +444,22 @@ namespace Halobellum.Economy
                 {
                     upgrades.Add($"{cheapest.Name} ({type.Name})");
                     break; // One tech per round keeps money for squads.
+                }
+            }
+        }
+
+        /// <summary>A carrier's drop is the reason to field it, so the tech that opens it comes before more squads, with a single squad of it (D60).</summary>
+        private static void BuyCarrierTechs(AiView view, List<string> upgrades)
+        {
+            PlayerState self = view.Self;
+            foreach (PlacedSquad squad in self.Squads)
+            {
+                UnitStats type = squad.Type;
+                if (type.LockedReinforcement == null || type.TechUpgrades == null) continue;
+                foreach (TechUpgrade tech in type.TechUpgrades)
+                {
+                    if (tech == null || !tech.UnlocksReinforcement || self.HasTech(type, tech) || tech.Cost > self.Credits || !view.BuyTech(type, tech).Ok) continue;
+                    upgrades.Add($"{tech.Name} ({type.Name})");
                 }
             }
         }

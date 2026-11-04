@@ -351,6 +351,16 @@ namespace Halobellum.UI
             _match.Buy(pelican);
             _match.BuyTech(pelican, pelican.TechUpgrades.First(t => t.UnlocksReinforcement));
             while (_match.IsDropping) yield return null;
+            // Enough of an enemy for the battle to last for all 3 drops.
+            m.Enemy.Credits = 5000;
+            UnitStats tough = m.Enemy.Roster.Where(u => u.TargetFilter == TargetFilter.Ground && u.Tier < 4).OrderByDescending(u => u.MaxHealth * u.SquadSize).First();
+            m.Enemy.UnlocksThisRound = 0;
+            m.Unlock(Team.B, tough);
+            for (int i = 0; i < 2; i++)
+            {
+                m.Enemy.SquadsBoughtThisRound = 0;
+                m.Buy(Team.B, tough);
+            }
             _match.Ready();
             yield return null;
             BattleController battle = _match.GetComponent<BattleController>();
@@ -368,17 +378,18 @@ namespace Halobellum.UI
                 carrier = battle.Simulation.Units.FirstOrDefault(u => u.Stats.Name == "Pelican" && u.Team == Team.A);
                 if (carrier == null) continue;
                 Vector3 body = _match.GetComponent<UnitViewManager>().WorldPosition(carrier);
-                view.transform.position = new Vector3(body.x, 26f, body.z) + new Vector3(0f, 0f, -22f);
+                view.transform.position = new Vector3(body.x, 34f, body.z) + new Vector3(0f, 0f, -26f);
                 view.transform.LookAt(new Vector3(body.x, 2f, body.z));
                 bool down = carrier.DropPhase != DropRunPhase.Flying;
                 if (down && ((shots == 0 && carrier.DropPhase == DropRunPhase.Descending && carrier.Altitude < 0.5f) || (shots == 1 && carrier.DropPhase == DropRunPhase.Ascending && carrier.Altitude < 0.25f)
-                    || (shots == 2 && carrier.DropsMade == 2 && carrier.DropPhase == DropRunPhase.Descending && carrier.Altitude < 0.2f) || (shots == 3 && carrier.DropsMade == 3 && carrier.DropPhase == DropRunPhase.Ascending)))
+                    || (shots == 2 && carrier.DropsMade == 2 && carrier.DropPhase == DropRunPhase.Ascending) || (shots == 3 && carrier.DropsMade == 3 && carrier.DropPhase == DropRunPhase.Ascending)))
                 {
-                    Debug.Log($"Playtest Pelican: picture {shots} at {battle.Simulation.ElapsedSeconds:0.0} s, drops made {carrier.DropsMade}, at {carrier.Position.X:0},{carrier.Position.Y:0}, Marines on the field {battle.Simulation.Units.Count(u => u.Stats.Name == "Marine" && u.Team == Team.A && u.IsAlive)}");
+                    Debug.Log($"Playtest Pelican: picture {shots} at {battle.Simulation.ElapsedSeconds:0.0} s, drops made {carrier.DropsMade}, at {carrier.Position.X:0},{carrier.Position.Y:0}, facing {carrier.Facing.X:0.0},{carrier.Facing.Y:0.0}, altitude {carrier.Altitude:0.00}, Marines at {string.Join(" ", battle.Simulation.Units.Where(u => u.Stats.Name == "Marine" && u.Team == Team.A && u.IsAlive).Take(4).Select(u => $"{u.Position.X:0},{u.Position.Y:0}"))}, enemy's rearmost at {battle.Simulation.Units.Where(u => u.Team == Team.B && u.IsAlive && !u.IsAir && !u.Stats.IsTower).Select(u => u.Position.Y).DefaultIfEmpty(0f).Max():0}");
                     yield return Shot($"Pelican_{shots}");
                     shots++;
                 }
             }
+            Debug.Log($"Playtest Pelican: at the end, {carrier?.DropsMade} drops made, alive {carrier?.IsAlive}, at {battle.Simulation?.ElapsedSeconds:0.0} s");
             control.enabled = true;
             battle.Speed = 1f;
         }

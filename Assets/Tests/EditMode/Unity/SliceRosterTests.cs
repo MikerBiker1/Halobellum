@@ -51,22 +51,22 @@ namespace Halobellum.Tests
             ("Banshee", UnitRole.Aerial, 2, 50, 2, 300, 400),
             ("Hunter Pair", UnitRole.Tank, 3, 225, 2, 450, 1500),
             ("Zealot", UnitRole.SingleTargetDps, 3, 200, 1, 400, 1400),
-            ("Scarab", UnitRole.Titan, 4, 350, 1, 800, 9000),
+            ("Scarab", UnitRole.Titan, 4, 350, 1, 800, 8500),
         };
 
         private static readonly (string name, UnitRole role, int tier, int unlock, int squad, int cost, float health)[] Flood =
         {
-            ("Infection Forms", UnitRole.Chaff, 1, 0, 10, 100, 190),
+            ("Infection Forms", UnitRole.Chaff, 1, 0, 10, 100, 228),
             ("Carrier Form", UnitRole.ChaffClear, 1, 0, 4, 150, 140),
-            ("Combat Form", UnitRole.SingleTargetDps, 2, 50, 6, 200, 220),
+            ("Combat Form", UnitRole.SingleTargetDps, 2, 50, 6, 200, 260),
             ("Stalker Form", UnitRole.Flanker, 2, 50, 3, 250, 450),
-            ("Pure Form Ranged", UnitRole.Artillery, 2, 50, 2, 300, 400),
-            ("Swarm Form", UnitRole.AntiAir, 2, 50, 4, 300, 200),
-            ("Pure Form Tank", UnitRole.Tank, 3, 200, 1, 500, 3200),
-            ("Seeder", UnitRole.SingleTargetDps, 3, 200, 2, 450, 800),
-            ("Infected Pelican", UnitRole.Aerial, 3, 200, 1, 400, 900),
-            ("Infected Phantom", UnitRole.Aerial, 3, 200, 1, 450, 1100),
-            ("Flood Abomination", UnitRole.Titan, 4, 350, 1, 800, 7000),
+            ("Pure Form Ranged", UnitRole.Artillery, 2, 50, 2, 250, 400),
+            ("Swarm Form", UnitRole.AntiAir, 2, 50, 4, 250, 200),
+            ("Pure Form Tank", UnitRole.Tank, 3, 200, 1, 400, 3200),
+            ("Seeder", UnitRole.SingleTargetDps, 3, 200, 2, 400, 800),
+            ("Infected Pelican", UnitRole.Aerial, 3, 175, 1, 350, 900),
+            ("Infected Phantom", UnitRole.Aerial, 3, 200, 1, 400, 1100),
+            ("Flood Abomination", UnitRole.Titan, 4, 350, 1, 800, 8500),
         };
 
         private static Dictionary<string, UnitDefinition> Load(string folder) =>

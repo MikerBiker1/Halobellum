@@ -282,7 +282,9 @@ namespace Halobellum.Combat
         // ------------------------------------------------------------------ carriers that land (the Pelican, D60)
 
         private readonly List<SimUnit> _landers = new List<SimUnit>();
-        private const float DropArrivalMetres = 6f, DropBehindLinesMetres = 8f, DropSpotCheckSeconds = 1f, DropBehindCarrierMetres = 3f;
+        private const float DropArrivalMetres = 6f, DropBehindLinesMetres = 8f, DropSpotCheckSeconds = 1f;
+        /// <summary>Beyond its collision size, how far behind it a carrier's squad comes out: clear of the Pelican's long tail.</summary>
+        private const float DropBehindCarrierMetres = 8f;
 
         /// <summary>Flies each carrier to its next drop, brings it down, lets its squad out behind it, and takes it back up.</summary>
         private void UpdateDropRuns()

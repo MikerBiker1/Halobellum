@@ -1,0 +1,2 @@
+# Aerospace Command fell to 33%: a tougher Longsword, which its first trial had.
+Longsword|MaxHealth=750
