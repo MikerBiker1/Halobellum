@@ -562,11 +562,11 @@ MonoBehaviour:
     winRate: 0
   - attacker: Warthog
     defender: Condor Gunship
-    winRate: 0.9
-  - attacker: Warthog
-    defender: Chopper
     winRate: 0
   - attacker: Warthog
+    defender: Chopper
+    winRate: 0
+  - attacker: Warthog
     defender: Brute Grenadier
     winRate: 0
   - attacker: Warthog
@@ -970,47 +970,47 @@ MonoBehaviour:
     winRate: 0
   - attacker: Scorpion
     defender: Condor Gunship
-    winRate: 0.8
-  - attacker: Scorpion
-    defender: Chopper
-    winRate: 1
-  - attacker: Scorpion
-    defender: Brute Grenadier
-    winRate: 1
-  - attacker: Scorpion
-    defender: Marauder
-    winRate: 1
-  - attacker: Scorpion
-    defender: Reaver
-    winRate: 1
-  - attacker: Scorpion
-    defender: Skitterer
-    winRate: 1
-  - attacker: Scorpion
-    defender: Goliath
-    winRate: 1
-  - attacker: Scorpion
-    defender: Hunter Captain
-    winRate: 0
-  - attacker: Scorpion
-    defender: Cannon Fodder
-    winRate: 1
-  - attacker: Scorpion
-    defender: Heavy Grunts
-    winRate: 1
-  - attacker: Scorpion
-    defender: Grunt Goblin
-    winRate: 1
-  - attacker: Scorpion
-    defender: Infested Marine
-    winRate: 0.9
-  - attacker: Scorpion
-    defender: Infested Warthog
-    winRate: 1
-  - attacker: Scorpion
-    defender: Infested Scorpion
     winRate: 0.7
   - attacker: Scorpion
+    defender: Chopper
+    winRate: 1
+  - attacker: Scorpion
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Scorpion
+    defender: Marauder
+    winRate: 1
+  - attacker: Scorpion
+    defender: Reaver
+    winRate: 1
+  - attacker: Scorpion
+    defender: Skitterer
+    winRate: 1
+  - attacker: Scorpion
+    defender: Goliath
+    winRate: 1
+  - attacker: Scorpion
+    defender: Hunter Captain
+    winRate: 0
+  - attacker: Scorpion
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Scorpion
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Scorpion
+    defender: Grunt Goblin
+    winRate: 1
+  - attacker: Scorpion
+    defender: Infested Marine
+    winRate: 0.9
+  - attacker: Scorpion
+    defender: Infested Warthog
+    winRate: 1
+  - attacker: Scorpion
+    defender: Infested Scorpion
+    winRate: 0.7
+  - attacker: Scorpion
     defender: Infested Hornet
     winRate: 0
   - attacker: Scorpion
@@ -1990,14 +1990,14 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan
     defender: Condor Gunship
-    winRate: 0.1
-  - attacker: Spartan
-    defender: Chopper
-    winRate: 1
-  - attacker: Spartan
-    defender: Brute Grenadier
     winRate: 0
   - attacker: Spartan
+    defender: Chopper
+    winRate: 1
+  - attacker: Spartan
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Spartan
     defender: Marauder
     winRate: 1
   - attacker: Spartan
@@ -3010,7 +3010,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Condor Gunship
-    winRate: 1
+    winRate: 0.1
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Chopper
     winRate: 1
@@ -3418,11 +3418,11 @@ MonoBehaviour:
     winRate: 1
   - attacker: Ghost
     defender: Condor Gunship
-    winRate: 1
-  - attacker: Ghost
-    defender: Chopper
     winRate: 0
   - attacker: Ghost
+    defender: Chopper
+    winRate: 0
+  - attacker: Ghost
     defender: Brute Grenadier
     winRate: 0
   - attacker: Ghost
@@ -6274,7 +6274,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pure Form Tank
     defender: Condor Gunship
-    winRate: 1
+    winRate: 0
   - attacker: Pure Form Tank
     defender: Chopper
     winRate: 1
@@ -6886,7 +6886,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infected Phantom
     defender: Condor Gunship
-    winRate: 1
+    winRate: 0
   - attacker: Infected Phantom
     defender: Chopper
     winRate: 1
@@ -7906,7 +7906,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan CQB
     defender: Condor Gunship
-    winRate: 1
+    winRate: 0
   - attacker: Spartan CQB
     defender: Chopper
     winRate: 0
@@ -8314,7 +8314,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Gremlin
     defender: Condor Gunship
-    winRate: 1
+    winRate: 0.5
   - attacker: Gremlin
     defender: Chopper
     winRate: 0.9
@@ -9610,13 +9610,13 @@ MonoBehaviour:
     winRate: 1
   - attacker: Condor Gunship
     defender: Warthog
-    winRate: 0.1
+    winRate: 1
   - attacker: Condor Gunship
     defender: Gauss Warthog
     winRate: 1
   - attacker: Condor Gunship
     defender: Scorpion
-    winRate: 0.2
+    winRate: 0.3
   - attacker: Condor Gunship
     defender: Wolverine
     winRate: 0
@@ -9631,7 +9631,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Condor Gunship
     defender: Spartan
-    winRate: 0.9
+    winRate: 1
   - attacker: Condor Gunship
     defender: Mantis
     winRate: 0
@@ -9646,13 +9646,13 @@ MonoBehaviour:
     winRate: 1
   - attacker: Condor Gunship
     defender: 'Jackal (Plasma Rifle)'
-    winRate: 0
+    winRate: 0.9
   - attacker: Condor Gunship
     defender: 'Jackal (Shield)'
     winRate: 1
   - attacker: Condor Gunship
     defender: Ghost
-    winRate: 0
+    winRate: 1
   - attacker: Condor Gunship
     defender: Elite
     winRate: 0
@@ -9667,7 +9667,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Condor Gunship
     defender: Hunter Pair
-    winRate: 0
+    winRate: 1
   - attacker: Condor Gunship
     defender: Zealot
     winRate: 1
@@ -9703,7 +9703,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Condor Gunship
     defender: Infected Phantom
-    winRate: 0
+    winRate: 1
   - attacker: Condor Gunship
     defender: Flood Abomination
     winRate: 0
@@ -9718,13 +9718,13 @@ MonoBehaviour:
     winRate: 1
   - attacker: Condor Gunship
     defender: Spartan CQB
-    winRate: 0
+    winRate: 1
   - attacker: Condor Gunship
     defender: Spartan Fireteam
     winRate: 1
   - attacker: Condor Gunship
     defender: Gremlin
-    winRate: 0
+    winRate: 0.5
   - attacker: Condor Gunship
     defender: Cobra
     winRate: 1
@@ -9763,7 +9763,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Condor Gunship
     defender: Hunter Captain
-    winRate: 0
+    winRate: 1
   - attacker: Condor Gunship
     defender: Cannon Fodder
     winRate: 1
@@ -9778,7 +9778,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Condor Gunship
     defender: Infested Warthog
-    winRate: 0
+    winRate: 0.2
   - attacker: Condor Gunship
     defender: Infested Scorpion
     winRate: 1
@@ -9793,7 +9793,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Condor Gunship
     defender: Infested Ghost
-    winRate: 0
+    winRate: 0.1
   - attacker: Condor Gunship
     defender: Infested Elite
     winRate: 1
@@ -9802,7 +9802,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Condor Gunship
     defender: Infested Banshee
-    winRate: 0.1
+    winRate: 1
   - attacker: Condor Gunship
     defender: Spawner
     winRate: 0
@@ -12193,7 +12193,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Warthog
     defender: Condor Gunship
-    winRate: 1
+    winRate: 0.6
   - attacker: Infested Warthog
     defender: Chopper
     winRate: 0.7
@@ -12805,7 +12805,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Juggernaut
     defender: Condor Gunship
-    winRate: 1
+    winRate: 0
   - attacker: Juggernaut
     defender: Chopper
     winRate: 1
@@ -13213,7 +13213,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Ghost
     defender: Condor Gunship
-    winRate: 1
+    winRate: 0.9
   - attacker: Infested Ghost
     defender: Chopper
     winRate: 0.8
@@ -13825,7 +13825,7 @@ MonoBehaviour:
     winRate: 0.3
   - attacker: Infested Banshee
     defender: Condor Gunship
-    winRate: 0.9
+    winRate: 0
   - attacker: Infested Banshee
     defender: Chopper
     winRate: 1

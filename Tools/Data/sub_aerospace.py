@@ -20,7 +20,7 @@ def units(U, W):
           [W("Missile Barrage", 55, 3, 22, "Explosive", proj=40, splash=3),
            W("Chin Gun", 10, 0.2, 14, "Ballistic", block=True)], airu=True,
           note="The heaviest gunship: heavy armor, slow, long-range missiles."),
-        U("CondorGunship", "Condor Gunship", FACTION, "Aerial", 3, 225, 1, 450, 1500, "L", 3.25, 3, 1.5, "B",
+        U("CondorGunship", "Condor Gunship", FACTION, "Aerial", 3, 200, 1, 400, 1500, "L", 3.25, 3, 1.5, "B",
           [W("Twin Autocannons", 20, 0.25, 16, "Ballistic")], airu=True, drop=("Marine", 6, 7),
           note="A gunship that also drops 6 Marines after 7 seconds, without needing a tech."),
     ]
