@@ -98,7 +98,7 @@ namespace Halobellum.Tests
             yield return null;
 
             GameObject pack = GameObject.Find("Units").transform.GetChild(0).gameObject;
-            Assert.AreEqual(5, pack.GetComponentsInChildren<Transform>(false).Count(t => t.name.StartsWith("Form ")), "A pack shows its 5 forms.");
+            Assert.AreEqual(6, pack.GetComponentsInChildren<Transform>(false).Count(t => t.name.StartsWith("Form ")), "A pack shows its 6 forms.");
 
             _battle.Speed = 4f;
             _sandbox.Run();
