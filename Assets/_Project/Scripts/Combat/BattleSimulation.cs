@@ -366,6 +366,7 @@ namespace Halobellum.Combat
                 {
                     carrier.Altitude = Math.Max(0f, carrier.Altitude - step);
                     if (carrier.Altitude > 0f) continue;
+                    if (!carrier.Stats.HasReinforcement) continue; // An EMP has switched off the tech that opens its bay: it waits on the ground until that is over.
                     DropSquadFrom(carrier, carrier.Position - carrier.Facing * (carrier.Radius + DropBehindCarrierMetres));
                     carrier.DropsMade++;
                     carrier.NextDropAt = ElapsedSeconds + carrier.Stats.ReinforcementDelaySeconds;

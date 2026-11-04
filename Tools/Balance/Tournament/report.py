@@ -44,11 +44,15 @@ unfinished = sum(1 for m in matches if m["winner"] == "none")
 
 line(title)
 line("=" * len(title))
-line(f"{len(matches)} matches between two Hard AIs: {len(others)} between different sub-factions, {len(mirrors)} of a sub-faction against itself.")
+skirmish = any(m["fa"] == "Skirmish" for m in matches)
+if skirmish:
+    line(f"{len(matches)} Unlock Skirmish matches, where each \"sub-faction\" below is an AI difficulty: {len(others)} between different difficulties, {len(mirrors)} of a difficulty against itself.")
+else:
+    line(f"{len(matches)} matches between two Hard AIs: {len(others)} between different sub-factions, {len(mirrors)} of a sub-faction against itself.")
 line("Whole matches under the game's real rules, with towers, cards, techs and spells. Half of each pairing is played with the sides swapped.")
 line("Each side is dealt a random starting card for its sub-faction (250 to 350, with base health to match).")
-line(f"Matches with no winner after 60 rounds: {unfinished}.")
-line("This measures two Hard AIs, not good players: a unit the AI uses badly looks weak here. How close numbers must be to mean nothing is given in each table.")
+line(f"Matches with no winner after {max(m.get('mostRounds', 60) for m in matches)} rounds: {unfinished}.")
+line("This measures AIs, not good players: a unit the AI uses badly looks weak here. How close numbers must be to mean nothing is given in each table.")
 
 # ------------------------------------------------------------------ overall
 heading("Win rate by sub-faction (against the other sub-factions)")
@@ -144,7 +148,8 @@ first = [m for m in matches if m["firstBattle"] != 0 and m["winner"] != "none"]
 firsts = sum(1 for m in first if m["winnerTeam"] == ("A" if m["firstBattle"] == 1 else "B"))
 line(f"The side that does more base damage in round 1 goes on to win {pct(firsts, len(first))} of matches ({firsts} of {len(first)}).")
 margins = [max(s[2]["end"] for s in sides(m)) for m in matches if m["winner"] != "none"]
-line(f"The winner's base at the end: {sum(margins) / len(margins):.0f} on average.")
+if margins:
+    line(f"The winner's base at the end: {sum(margins) / len(margins):.0f} on average.")
 
 # ------------------------------------------------------------------ towers and what the AI buys
 heading("Towers")
@@ -176,6 +181,19 @@ carrier_drops = sum(s[2].get("carrierDrops", 0) for m in matches for s in sides(
 if carrier_battles:
     heading("Pelicans with their Troop Bay")
     line(f"{carrier_battles} Pelican battles: {carrier_drops / carrier_battles:.2f} drops per battle, of at most 3.")
+
+heading("Rapid Resupply, unlocks and flank squads (per side, per match)")
+tally = collections.defaultdict(lambda: [0, 0, 0, 0])
+for m in matches:
+    for sub, _, side, _ in sides(m):
+        row = tally[sub]
+        row[0] += 1
+        row[1] += side.get("resupplies", 0)
+        row[2] += side.get("unlocked", 0)
+        row[3] += side.get("flankSquads", 0)
+for sub in ranked:
+    n, resupplies, unlocked, flank = tally[sub]
+    line(f"  {sub:<20} {resupplies / n:>5.2f} resupplies   {unlocked / n:>5.1f} unit types unlocked   {flank / n:>5.1f} squads in flank zones at the end")
 
 heading("Units")
 line("Fielded: the share of a side's matches, among sub-factions that can buy it, in which it ever fought.")

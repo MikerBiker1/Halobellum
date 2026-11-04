@@ -2,10 +2,16 @@
 // swapped. It loads what TournamentDataExport wrote from the game's assets, and writes one line per match to a results file as soon as the match ends,
 // so that a run stopped by a power cut carries on where it was when started again. report.py turns that file into the text report.
 // Usage: dotnet run -c Release -- <game_data.json> <matrix.csv> <results.jsonl> [--matches 100] [--trial trial.txt] [--only "Sub A,Sub B"] [--threads N]
+//                                  [--setup mode=skirmish,hp=10000,cards=only] [--most-rounds 60]
+// Use one results file per trial and setup: what it carries on from is only the pairing and the match number, so a file would mix them without a word.
+// --setup goes through the game's own MatchSetup; hp is the base health, and cards is all, no or only (reinforcement cards). With mode=skirmish the field is the
+// one made-up faction of all units, and its "sub-factions" are the AI difficulties Hard, Normal and Easy; that needs an export made since Unlock Skirmish came in.
+// In Faction mode every side is a Hard AI.
 // A trial file tries balance changes without touching the game, one per line:
 //   Flood Abomination|MaxHealth=6000            a field of the unit
 //   Flood Abomination|Tendril Slam|DamagePerShot=300     a field of one of its weapons
 //   rules|TowerBaseHealth=150                   a field of the match rules
+//   rules|AiCarrierPlacement=FlankFarCorners    an enum goes by its name
 // (# starts a comment.)
 using System;
 using System.Collections;
@@ -27,13 +33,15 @@ using Match = Halobellum.Economy.Match;
 
 static class Program
 {
-    const int MostRounds = 60;
+    /// <summary>A match with no winner after this many rounds is called off.</summary>
+    static int MostRounds = 60;
 
     static int Main(string[] args)
     {
         string dataPath = args[0], matrixPath = args[1], resultsPath = args[2];
         int matches = int.Parse(Option(args, "--matches") ?? "100");
         int threads = int.Parse(Option(args, "--threads") ?? Math.Max(1, Environment.ProcessorCount - 2).ToString());
+        MostRounds = int.Parse(Option(args, "--most-rounds") ?? MostRounds.ToString());
 
         using JsonDocument doc = JsonDocument.Parse(File.ReadAllText(dataPath));
         var reader = new GraphReader();
@@ -42,6 +50,14 @@ static class Program
         var combat = (CombatRules)reader.Read(doc.RootElement.GetProperty("combat"), typeof(CombatRules));
         string trial = Option(args, "--trial");
         if (trial != null) ApplyTrial(trial, factions, rules);
+        string setup = Option(args, "--setup");
+        if (setup != null) ParseSetup(setup).ApplyTo(rules);
+        if (rules.Mode == MatchMode.UnlockSkirmish)
+        {
+            // The rules are read without their initial values, so an older export would quietly play with these at 0.
+            if (rules.AiSkirmishFlankBonus == 0f && rules.AiSkirmishUnlockMargin == 0f) throw new InvalidOperationException($"{dataPath} is older than Unlock Skirmish: export it again to a new file.");
+            factions = new List<FactionInfo> { SkirmishField(factions) };
+        }
         var wins = LoadMatrix(matrixPath);
 
         var subs = new List<(FactionInfo faction, SubFactionInfo sub)>();
@@ -89,6 +105,39 @@ static class Program
         int at = Array.IndexOf(args, name);
         return at >= 0 && at + 1 < args.Length ? args[at + 1] : null;
     }
+
+    static MatchSetup ParseSetup(string text)
+    {
+        var setup = new MatchSetup();
+        foreach (string part in text.Split(','))
+        {
+            string[] pair = part.Split('=');
+            switch (pair[0] + "=" + (pair[0] == "hp" ? "" : pair[1]))
+            {
+                case "mode=skirmish": setup.Mode = MatchMode.UnlockSkirmish; break;
+                case "mode=faction": setup.Mode = MatchMode.Faction; break;
+                case "hp=": setup.BaseHealth = int.Parse(pair[1]); break;
+                case "cards=all": setup.Cards = CardFilter.AllCards; break;
+                case "cards=no": setup.Cards = CardFilter.NoReinforcements; break;
+                case "cards=only": setup.Cards = CardFilter.OnlyReinforcements; break;
+                default: throw new InvalidOperationException($"No such setup: {part}");
+            }
+        }
+        return setup;
+    }
+
+    /// <summary>Unlock Skirmish's one faction, the same as the game builds, with the AI difficulties in place of its one sub-faction. They have no units of their own.</summary>
+    static FactionInfo SkirmishField(List<FactionInfo> factions)
+    {
+        FactionInfo field = SkirmishFaction.Build(factions);
+        field.SubFactions = new List<SubFactionInfo>();
+        foreach (AiDifficulty difficulty in Enum.GetValues(typeof(AiDifficulty))) field.SubFactions.Add(new SubFactionInfo { Name = difficulty.ToString() });
+        return field;
+    }
+
+    /// <summary>Who plays a side: in Unlock Skirmish its name says, and in Faction mode it is always Hard.</summary>
+    static AiDifficulty DifficultyOf(SubFactionInfo sub, MatchRules rules) =>
+        rules.Mode == MatchMode.UnlockSkirmish ? (AiDifficulty)Enum.Parse(typeof(AiDifficulty), sub.Name) : AiDifficulty.Hard;
 
     static HashSet<(string, string, int)> LoadDone(string path)
     {
@@ -144,7 +193,7 @@ static class Program
             }
             FieldInfo field = target.GetType().GetField(assignment[0], BindingFlags.Instance | BindingFlags.Public);
             if (field == null) throw new InvalidOperationException($"No such field: {line}");
-            field.SetValue(target, Convert.ChangeType(assignment[1], field.FieldType, CultureInfo.InvariantCulture));
+            field.SetValue(target, field.FieldType.IsEnum ? Enum.Parse(field.FieldType, assignment[1]) : Convert.ChangeType(assignment[1], field.FieldType, CultureInfo.InvariantCulture));
             Console.WriteLine("Trial: " + line);
         }
     }
@@ -155,6 +204,7 @@ static class Program
         readonly RuleBasedAi _ai;
         public readonly List<string> Taken = new List<string>();
         public int Skipped;
+        public int RapidResupplies => _ai.RapidResupplies;
 
         public RecordingAi(RuleBasedAi ai) { _ai = ai; }
         public int ChooseDraftCard(AiView view, IReadOnlyList<DraftCard> cards) => _ai.ChooseDraftCard(view, cards);
@@ -186,8 +236,8 @@ static class Program
 
         var table = new MatchupTable();
         foreach ((string row, string column, float rate) in wins) table.Set(row, column, rate);
-        var aiA = new RecordingAi(new RuleBasedAi(AiDifficulty.Hard, unchecked(seed + 1), table));
-        var aiB = new RecordingAi(new RuleBasedAi(AiDifficulty.Hard, unchecked(seed + 2), table));
+        var aiA = new RecordingAi(new RuleBasedAi(DifficultyOf(teamA.sub, rules), unchecked(seed + 1), table));
+        var aiB = new RecordingAi(new RuleBasedAi(DifficultyOf(teamB.sub, rules), unchecked(seed + 2), table));
         var match = new Match(rules, combat, new List<FactionInfo> { teamA.faction, teamB.faction }, seed, aiB);
         var random = new SimRandom(unchecked(seed + 3));
         SetCard(match.PlayerDraft, teamA, rules, random);
@@ -244,6 +294,7 @@ static class Program
         w.Str("winnerTeam", match.Winner == null ? "none" : match.Winner == Team.A ? "A" : "B");
         w.Num("aOnTeam", aFirst ? 1 : 2);
         w.Num("rounds", rounds);
+        w.Num("mostRounds", MostRounds);
         w.Num("firstBattle", firstBattle);
         text.Append("\"sideA\":");
         Side(text, match, match.Player, aiA, tallyA, valueA, startA, openingA, carrierBattles[0], carrierDrops[0]);
@@ -256,7 +307,7 @@ static class Program
     static void SetCard(List<DraftCard> draft, (FactionInfo faction, SubFactionInfo sub) side, MatchRules rules, SimRandom random)
     {
         var alone = new FactionInfo { Name = side.faction.Name, BaseRoster = side.faction.BaseRoster, SubFactions = new List<SubFactionInfo> { side.sub }, Cards = side.faction.Cards };
-        var one = new MatchRules { DraftCardCount = 1, DraftSquadsPerCard = rules.DraftSquadsPerCard, DraftCardValue = rules.DraftCardValue, DraftCardValueTolerance = rules.DraftCardValueTolerance };
+        var one = new MatchRules { Mode = rules.Mode, DraftCardCount = 1, DraftSquadsPerCard = rules.DraftSquadsPerCard, DraftCardValue = rules.DraftCardValue, DraftCardValueTolerance = rules.DraftCardValueTolerance };
         DraftCard card = StartingDraft.Draw(new List<FactionInfo> { alone }, one, random)[0];
         card.Faction = side.faction;
         draft.Clear();
@@ -290,6 +341,9 @@ static class Program
         w.Num("skipped", ai.Skipped);
         w.Num("carrierBattles", carrierBattles);
         w.Num("carrierDrops", carrierDrops);
+        w.Num("resupplies", ai.RapidResupplies);
+        w.Num("unlocked", side.Unlocked.Count);
+        w.Num("flankSquads", side.Squads.Count(squad => DeploymentGrid.IsInFlankZone(squad, match.CombatRules)));
         text.Append("\"towers\":[").Append(string.Join(",", side.Towers.Select(t => $"[{t.Level},{t.Falls}]"))).Append("],");
         text.Append("\"cards\":[").Append(string.Join(",", ai.Taken.Select(c => JsonSerializer.Serialize(c)))).Append("],");
         text.Append("\"units\":{");

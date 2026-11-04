@@ -55,8 +55,11 @@ namespace Halobellum.Economy
             return IsInFlankZone(squad.Column, squad.Row, width, depth, rules);
         }
 
-        /// <summary>The free spot in the flank zone on the owner's left or right that is nearest this row. False if there is none.</summary>
-        public static bool FindFreeFlankSpot(PlayerState player, UnitStats type, CombatRules rules, bool ownLeft, int targetRow, out int column, out int row)
+        /// <summary>
+        /// The free spot in the flank zone on the owner's left or right that is nearest this row, and nearest targetColumn too if one is given. False if there is none.
+        /// Without a column, ties go to the lowest column, which is the outer edge on the left and the inner edge on the right.
+        /// </summary>
+        public static bool FindFreeFlankSpot(PlayerState player, UnitStats type, CombatRules rules, bool ownLeft, int targetRow, out int column, out int row, int? targetColumn = null)
         {
             Footprint(type, false, rules, out int width, out int depth);
             int firstColumn = ownLeft ? -rules.FlankGapColumns - rules.FlankZoneColumns : rules.ArenaWidthSquares + rules.FlankGapColumns;
@@ -67,7 +70,7 @@ namespace Halobellum.Economy
             {
                 for (int c = firstColumn; c + width <= firstColumn + rules.FlankZoneColumns; c++)
                 {
-                    int distance = Math.Abs(r - targetRow);
+                    int distance = Math.Abs(r - targetRow) + (targetColumn.HasValue ? Math.Abs(c - targetColumn.Value) : 0);
                     if (distance >= bestDistance || !CanPlace(player, type, c, r, false, rules)) continue;
                     bestDistance = distance;
                     column = c;

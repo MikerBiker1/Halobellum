@@ -34,4 +34,7 @@ for faction in ("Covenant", "UNSC", "Flood"):
 print()
 for sub in sorted(subs, key=lambda s: -table[runs[0][0]][0][s] / max(1, table[runs[0][0]][1][s])):
     print(f"{sub:<22}" + "".join(f"{cell(table[n][0], table[n][1], sub):>14}" for n, _ in runs))
-print(f"{'matches a sub-faction':<22}" + "".join(f"{table[n][1][next(iter(subs))]:>14}" for n, _ in runs))
+if subs:
+    print(f"{'matches a sub-faction':<22}" + "".join(f"{table[n][1][next(iter(subs))]:>14}" for n, _ in runs))
+else:
+    print("Every match was a side against itself, so there are no win rates to compare.")
