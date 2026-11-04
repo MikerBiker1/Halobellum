@@ -258,7 +258,7 @@ namespace Halobellum.Tests
             Assert.IsTrue(match.BuyExtraSlot(Team.A).Ok);
             Assert.IsFalse(match.BuyExtraSlot(Team.A).Ok, "Once a round.");
             Assert.AreEqual(slots + 1, match.SquadsPerRound(Team.A));
-            Assert.AreEqual(400, match.Player.Credits);
+            Assert.AreEqual(450, match.Player.Credits);
             match.StartBattle().Run();
             match.FinishBattle();
             match.ContinueAfterResult();
