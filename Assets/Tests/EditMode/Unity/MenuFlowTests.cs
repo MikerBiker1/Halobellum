@@ -352,6 +352,32 @@ namespace Halobellum.Tests
             Assert.LessOrEqual(bar.yMax, 912f - 70f);
         }
 
+        [TestCase(1920f, 1080f, 1f)]
+        [TestCase(1920f, 1080f, 1.05f)]
+        [TestCase(1920f, 1080f, 1.25f)]
+        [TestCase(1280f, 1024f, 1.25f)]
+        [TestCase(1024f, 768f, 1.25f)]
+        [TestCase(1000f, 1080f, 1.25f)]
+        [TestCase(800f, 500f, 1f)]
+        public void TheUnlockPagesList_StopsAboveTheMenuButton(float screenWidth, float screenHeight, float uiScale)
+        {
+            float scale = HudScale.ScaleFor(screenWidth, screenHeight, uiScale);
+            Rect menu = PauseMenu.CornerButtonPixels(screenWidth, screenHeight, uiScale);
+            Rect page = MatchHud.UnlockPageRect(screenWidth / scale, screenHeight / scale);
+            Rect list = MatchHud.UnlockPageListRect(page, menu.y / scale);
+            Assert.LessOrEqual(list.yMax * scale, menu.y + 0.01f, "A scroll bar or a cell under that button would lose its clicks to it.");
+            Assert.LessOrEqual(list.yMax, page.yMax, "It stays on the page.");
+            Assert.Greater(list.height, 300f);
+        }
+
+        [Test]
+        public void TheMenuButton_IsWhereItWasDrawn_InTheMenusOwnScale()
+        {
+            Assert.AreEqual(new Rect(1814f, 1036f, 96f, 34f), PauseMenu.CornerButtonPixels(1920f, 1080f, 1f));
+            Rect narrow = PauseMenu.CornerButtonPixels(1000f, 1080f, 1.25f); // 1.25 here, where the HUD is at 1000 / 1140.
+            Assert.AreEqual(1080f - 44f * 1.25f, narrow.y, 0.01f);
+        }
+
         [Test]
         public void AHoveredUnitsWindow_GoesAboveTheBar_OrBesideItIfTooTall()
         {

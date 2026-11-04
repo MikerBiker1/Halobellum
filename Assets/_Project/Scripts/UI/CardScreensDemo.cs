@@ -45,7 +45,7 @@ namespace Halobellum.UI
 
         private static readonly (int w, int h, float ui)[] SkirmishSizes =
         {
-            (1920, 1080, 1f), (1920, 1080, 1.25f), (1280, 1024, 1.25f),
+            (1920, 1080, 1f), (1920, 1080, 1.05f), (1920, 1080, 1.25f), (1280, 1024, 1.25f),
         };
 
         private static readonly (int w, int h, bool full)[] Sizes =
@@ -66,6 +66,7 @@ namespace Halobellum.UI
         private readonly List<string> _problems = new List<string>();
         private MatchHud _hud;
         private int _rightClickProbe = -1, _probedControl, _skirmishProblems;
+        private int _readyProbeButton = -1;
 
         private void Awake() => useGUILayout = false;
 
@@ -537,6 +538,12 @@ namespace Halobellum.UI
             SquadStatsWindow stats = FindFirstObjectByType<SquadStatsWindow>();
             var setup = new MatchSetup { Mode = MatchMode.UnlockSkirmish };
             void Check(string what, bool ok) => SkirmishCheck(what, ok);
+            Rect menuButton = default;
+            void NoteMenuButton(string key, Rect pixels)
+            {
+                if (key == "Menu") menuButton = pixels;
+            }
+            MenuStyle.ButtonDrawnForTest += NoteMenuButton;
 
             string tallestName = null;
             foreach ((int w, int h, float ui) in SkirmishSizes)
@@ -603,6 +610,8 @@ namespace Halobellum.UI
 
                 _hud.OpenUnlockPage();
                 yield return Shot(prefix + "page");
+                float listBottom = _hud.UnlockPageListShown.yMax * HudScale.ScaleFor(Screen.width, Screen.height, ui);
+                Check($"{prefix} the page's list ends at {listBottom:0.#}, above the Menu button at {menuButton}", menuButton.height > 0f && listBottom <= menuButton.y + 0.5f);
                 _hud.DemoHover = tallest;
                 yield return Shot(prefix + "page_hover");
                 stats.TryGetWindow(out hoverWindow);
@@ -613,6 +622,7 @@ namespace Halobellum.UI
                 _hud.CloseUnlockPage();
                 yield return Shot(prefix + "bar_few_credits");
             }
+            MenuStyle.ButtonDrawnForTest -= NoteMenuButton;
             Debug.Log($"Skirmish HUD finished: {_skirmishProblems} problems.");
         }
 
@@ -635,6 +645,16 @@ namespace Halobellum.UI
             // What GUI.Button does with a right-click, and what the buttons' guard makes of it.
             _rightClickProbe = 0;
             while (_rightClickProbe >= 0) yield return null;
+
+            // Ready, with the page open as when a right-click closes it: the right button leaves the round alone, and the left one starts the battle.
+            _match.NewMatch(1, new MatchSetup { Mode = MatchMode.UnlockSkirmish });
+            _match.ChooseDraft(0);
+            yield return new WaitForSecondsRealtime(0.5f);
+            _hud.OpenUnlockPage();
+            yield return PressReady(1);
+            Check("a right-click on Ready doesn't start the battle", _match.Match.Phase == MatchPhase.Deployment);
+            yield return PressReady(0);
+            Check("a left-click on Ready does", _match.Match.Phase != MatchPhase.Deployment);
 
             _match.NewMatch(1, new MatchSetup { Mode = MatchMode.UnlockSkirmish });
             _match.ChooseDraft(0);
@@ -718,9 +738,29 @@ namespace Halobellum.UI
             yield return null;
         }
 
-        /// <summary>A press and release of the right button, then the left, on a GUI.Button of this script's own, as IMGUI's own events (nothing goes outside the game).</summary>
+        /// <summary>Presses Ready as if with this mouse button. The event is only this script's own; nothing goes outside the game.</summary>
+        private IEnumerator PressReady(int button)
+        {
+            _readyProbeButton = button;
+            while (_readyProbeButton >= 0) yield return null;
+            yield return null;
+        }
+
+        /// <summary>A press and release of the right button, then the left, on a GUI.Button of this script's own, as IMGUI's own events (nothing goes outside the game). Also PressReady.</summary>
         private void OnGUI()
         {
+            if (_readyProbeButton >= 0 && Event.current.type == EventType.Repaint)
+            {
+                Event shown = Event.current;
+                Event.current = new Event { type = EventType.Repaint, button = _readyProbeButton };
+                MenuStyle.PressedByTest = MatchHud.ReadyLabel;
+                _hud.DrawForTest();
+                if (MenuStyle.PressedByTest != null) SkirmishCheck("Ready was never drawn", false);
+                MenuStyle.PressedByTest = null;
+                Event.current = shown;
+                _readyProbeButton = -1;
+                return;
+            }
             if (_rightClickProbe < 0 || Event.current.type != EventType.Repaint) return;
             int button = _rightClickProbe < 2 ? 1 : 0;
             bool release = _rightClickProbe % 2 == 1;

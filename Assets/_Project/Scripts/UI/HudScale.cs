@@ -39,11 +39,16 @@ namespace Halobellum.UI
         /// </summary>
         public static float ApplyFit(float leastWidth, float leastHeight)
         {
-            float wanted = Screen.height / ReferenceHeight * GameSettings.UiScale;
-            float scale = Mathf.Min(wanted, Mathf.Min(Screen.width / leastWidth, Screen.height / leastHeight));
-            scale = Mathf.Max(0.2f, scale);
+            float scale = FitScaleFor(Screen.width, Screen.height, GameSettings.UiScale, leastWidth, leastHeight);
             GUI.matrix = Matrix4x4.Scale(new Vector3(scale, scale, 1f));
             return scale;
+        }
+
+        /// <summary>ApplyFit's scale for a window of this size.</summary>
+        public static float FitScaleFor(float screenWidth, float screenHeight, float uiScale, float leastWidth, float leastHeight)
+        {
+            float wanted = screenHeight / ReferenceHeight * uiScale;
+            return Mathf.Max(0.2f, Mathf.Min(wanted, Mathf.Min(screenWidth / leastWidth, screenHeight / leastHeight)));
         }
 
         /// <summary>Screen width in virtual (unscaled) GUI units.</summary>

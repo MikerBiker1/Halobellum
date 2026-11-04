@@ -26,6 +26,7 @@ namespace Halobellum.UI
         public const string HudObjectName = "HUD";
 
         private const float PanelWidth = 520f, ButtonHeight = 62f;
+        private const float LeastWidth = SettingsScreen.PanelWidth + 20f, LeastHeight = SettingsScreen.PanelHeight + 20f;
 
         private enum Page { Buttons, Settings, ConfirmMainMenu, ConfirmQuit }
 
@@ -157,7 +158,7 @@ namespace Halobellum.UI
         {
             MenuStyle.Ensure();
             GUI.depth = -100; // Over every HUD.
-            float scale = HudScale.ApplyFit(SettingsScreen.PanelWidth + 20f, SettingsScreen.PanelHeight + 20f);
+            float scale = HudScale.ApplyFit(LeastWidth, LeastHeight);
             float width = HudScale.ScaledWidth(scale), height = HudScale.ScaledHeight(scale);
 
             if (!GamePause.IsPaused)
@@ -179,9 +180,18 @@ namespace Halobellum.UI
             }
         }
 
+        /// <summary>Where the Menu button is, in pixels from the top left of a window of this size. This menu has its own scale, which in a narrow window isn't the HUD's.</summary>
+        public static Rect CornerButtonPixels(float screenWidth, float screenHeight, float uiScale)
+        {
+            float scale = HudScale.FitScaleFor(screenWidth, screenHeight, uiScale, LeastWidth, LeastHeight);
+            return HudScale.ToScreen(CornerButtonRect(screenWidth / scale, screenHeight / scale), scale);
+        }
+
+        private static Rect CornerButtonRect(float width, float height) => new Rect(width - 106f, height - 44f, 96f, 34f);
+
         private void DrawCornerButton(float width, float height, float scale)
         {
-            var rect = new Rect(width - 106f, height - 44f, 96f, 34f);
+            Rect rect = CornerButtonRect(width, height);
             UiHitAreas.Add(HudScale.ToScreen(rect, scale));
             MenuStyle.Fill(rect, new Color(0.03f, 0.035f, 0.05f, 0.7f));
             if (MenuStyle.SmallFramedButton(rect, "Menu", false)) Open();

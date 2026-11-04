@@ -152,8 +152,8 @@ namespace Halobellum.UI
             BaseBar(new Rect(bar.x + 520f, bar.y + 36f, 220f, 20f), _enemyBaseLine, "Enemy base", m.Enemy.BaseHealth, m.Enemy.StartingBaseHealth, enemyColor);
             GUI.Label(new Rect(bar.x + 760f, bar.y + 6f, 200f, 26f), skirmish ? "Unlock Skirmish" : $"{player.Faction.Name} vs {m.Enemy.Faction?.Name ?? "?"}", _small);
             GUI.Label(new Rect(bar.x + 760f, bar.y + 32f, 200f, 26f), m.EnemyAi.Label, _small);
-            if (GUI.Button(new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f), "Ready", _bigButton)) match.Ready();
-            UiAudio.Watch(new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f));
+            // The left button only: a right-click closes the unlock page, with this button still live behind it, and GUI.Button takes any mouse button.
+            if (MenuStyle.Button(new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f), ReadyLabel, _bigButton) && Event.current.button == 0) match.Ready();
 
             if (!string.IsNullOrEmpty(match.Message))
             {
@@ -444,7 +444,7 @@ namespace Halobellum.UI
         private const float BarCell = 64f, BarCellHeight = 86f, BarGap = 6f, BarPadding = 12f, BarCellsTop = 44f, BarRight = 112f, BarBottom = 10f;
         private const float PageLeft = 456f, PageTop = 110f, PageCell = 84f, PageCellHeight = 104f, PageGap = 6f, PageTierHeader = 26f, PageCellsTop = 50f, PagePadding = 8f;
         private const float ScrollBarRoom = 18f;
-        public const string UnlockUnitsLabel = "Unlock units", UnlockPageCloseKey = "Unlock page/x";
+        public const string UnlockUnitsLabel = "Unlock units", UnlockPageCloseKey = "Unlock page/x", ReadyLabel = "Ready";
 
         /// <summary>The test tool's key of a unit's cell in the bar, and on the page.</summary>
         public static string BarCellKey(UnitStats unit) => "Unit bar/" + unit.Name;
@@ -455,6 +455,10 @@ namespace Halobellum.UI
         /// <summary>For a test tool: where the bar and the page were last drawn, in HUD units.</summary>
         public Rect UnitBarShown { get; private set; }
         public Rect UnlockPageShown { get; private set; }
+        public Rect UnlockPageListShown { get; private set; }
+
+        /// <summary>For the test tool: draws this HUD once under the event it has set, to press a button with a mouse button of its choosing.</summary>
+        public void DrawForTest() => OnGUI();
 
         public bool IsUnlockPageOpen => _unlockPageOpen;
 
@@ -536,6 +540,16 @@ namespace Halobellum.UI
 
         /// <summary>Where the page goes, in HUD units: right of the column the stats window stands in, under the top bar and its message.</summary>
         public static Rect UnlockPageRect(float width, float height) => new Rect(PageLeft, PageTop, width - PageLeft - 10f, height - PageTop - 10f);
+
+        /// <summary>
+        /// The part of the page that holds its list, in HUD units. It stops at the top of the Menu button (menuTop), which is drawn over the page's lower right corner and would
+        /// take the clicks of a scroll bar or a cell under it. The whole roster still fits above that at 1080p and UI scale 1.
+        /// </summary>
+        public static Rect UnlockPageListRect(Rect page, float menuTop)
+        {
+            float top = page.y + PageCellsTop;
+            return new Rect(page.x + PagePadding, top, page.width - 2f * PagePadding, Mathf.Min(page.yMax - PagePadding, menuTop) - top);
+        }
 
         /// <summary>How many cells across the page's list, for the width it has.</summary>
         public static int UnlockPageColumns(float viewWidth) => Mathf.Max(1, Mathf.FloorToInt((viewWidth + PageGap) / (PageCell + PageGap)));
@@ -633,7 +647,8 @@ namespace Halobellum.UI
             if (MenuStyle.Button(new Rect(page.xMax - 46f, page.y + 10f, 32f, 28f), "x", _button, UnlockPageCloseKey)) CloseUnlockPage();
 
             FillShopRows(player.Roster, _shopRows);
-            var view = new Rect(page.x + PagePadding, page.y + PageCellsTop, page.width - 2f * PagePadding, page.height - PageCellsTop - PagePadding);
+            Rect view = UnlockPageListRect(page, PauseMenu.CornerButtonPixels(Screen.width, Screen.height, GameSettings.UiScale).y / _scale);
+            UnlockPageListShown = view;
             int columns = UnlockPageColumns(view.width);
             float contentHeight = UnlockPageContentHeight(_shopRows, columns);
             if (contentHeight > view.height)

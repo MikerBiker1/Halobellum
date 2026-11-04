@@ -197,10 +197,10 @@ namespace Halobellum.Tests
             yield return Skirmish();
             var rows = new List<UnitStats>();
             MatchHud.FillShopRows(_match.Match.Player.Roster, rows);
-            Rect page = MatchHud.UnlockPageRect(1920f, 1080f);
-            Assert.AreEqual(16, MatchHud.UnlockPageColumns(page.width - 16f));
+            Rect list = MatchHud.UnlockPageListRect(MatchHud.UnlockPageRect(1920f, 1080f), PauseMenu.CornerButtonPixels(1920f, 1080f, 1f).y);
+            Assert.AreEqual(16, MatchHud.UnlockPageColumns(list.width));
             Assert.AreEqual(874f, MatchHud.UnlockPageContentHeight(rows, 16), "Tiers of 20, 24, 22 and 3 units.");
-            Assert.LessOrEqual(MatchHud.UnlockPageContentHeight(rows, 16), page.height - 58f, "No scroll bar at 1080p.");
+            Assert.LessOrEqual(MatchHud.UnlockPageContentHeight(rows, 16), list.height, "No scroll bar at 1080p, with the list above the Menu button.");
         }
 
         [UnityTest]
