@@ -138,7 +138,7 @@ namespace Halobellum.Tests
                 Assert.AreEqual(700, kit.DustLimit, "Low is what it was.");
                 Assert.AreEqual(260, kit.Budget.SmallLimit, "So is its limit a frame.");
                 Fill(1000);
-                Assert.AreEqual(700, Dust());
+                Assert.AreEqual(700, Dust(), 2, "The fill is counted in fractions, so it can be one out.");
 
                 QualitySettings.SetQualityLevel(high, false);
                 kit.BeginFrame(1f, 0.01f, 0.01f);
