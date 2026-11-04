@@ -162,6 +162,7 @@ namespace Halobellum.Tests
             Assert.AreEqual(5f, u["Pelican"].ReinforcementFirstDropSeconds, 1e-3f);
             TechUpgrade bay = u["Pelican"].TechUpgrades.Single(t => t.UnlocksReinforcement);
             Assert.IsTrue(UnitUpgrades.Apply(u["Pelican"], 1, new[] { bay }).HasReinforcement);
+            StringAssert.StartsWith("It drops 6 Marines 5 seconds into the battle", bay.Description, "The tech's text tells of the first drop, which needs no landing spot.");
 
             // Directional defense: Shield Jackals (120 degrees, block 80% of ballistic projectiles) and Hunters (240 degrees).
             DefenseArcStats jackal = u["Jackal (Shield)"].DefenseArc;
