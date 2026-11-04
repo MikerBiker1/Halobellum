@@ -294,10 +294,6 @@ namespace Halobellum.UI
                 open = false;
                 current.Use();
             }
-            else if (TestPressed(row + "/outside"))
-            {
-                open = false; // The test tool's way to click elsewhere, with no real mouse.
-            }
             return selected;
         }
 

@@ -86,6 +86,9 @@ namespace Halobellum.UI
 
         public void OpenSandbox() => Leave(GameFlow.OpenSandbox);
 
+        /// <summary>Draws this screen under whatever Event.current is now: how the test tool sends IMGUI's own mouse events to it, with nothing going outside the game.</summary>
+        public void DrawForTest() => OnGUI();
+
         /// <summary>From Play's page back to the first one.</summary>
         public void Back()
         {
@@ -239,7 +242,7 @@ namespace Halobellum.UI
         /// <summary>A panel with room for this many rows, and its Start at the bottom.</summary>
         private static Rect PanelFor(float x, float y, int rows)
         {
-            var panel = new Rect(x, y, PanelWidth, 84f + rows * RowHeight + 20f + StartHeight + PanelMargin);
+            var panel = new Rect(x, y, PanelWidth, 84f + rows * RowHeight + 30f + StartHeight + PanelMargin);
             MenuStyle.Panel(panel);
             return panel;
         }

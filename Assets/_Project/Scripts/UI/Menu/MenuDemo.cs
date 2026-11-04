@@ -1,7 +1,8 @@
 // MenuDemo.cs
 // Test tool for built games (M10): walks through the whole game flow with nobody at the keyboard, and saves a picture of each screen.
 // It does nothing unless the game is started with "-menuDemo <screenshot folder>". It presses the same buttons a player would (through
-// MenuStyle.Button) and sends a real Esc through the Input System: an event posted inside the game, so nothing reaches the PC's real keyboard or mouse. Add "-menuDemoShort" to look only at the menu, settings and the Play page.
+// MenuStyle.Button) and sends a real Esc through the Input System: an event posted inside the game, so nothing reaches the PC's real keyboard or mouse. On the Play page it also clicks with IMGUI's own
+// mouse events, given to the menu's drawing from inside the game, for what depends on where a click lands. Add "-menuDemoShort" to look only at the menu, settings and the Play page.
 //   The menu, three moments apart; Settings and its frame-rate switch; back; the Play page, its panels, stepper and card list, and Esc through them; Faction mode and Start; the draft;
 //   a card; Esc in deployment; Settings from there; back; Resume; Ready; the frame-rate counter off and on; Esc in battle, checking that no tick runs while paused and that ticks run again
 //   after Resume; the result; a forced end of match and its Main Menu button; the menu again; Sandbox by way of the Play page; Esc; its Back button; an Unlock Skirmish match with
@@ -42,6 +43,11 @@ namespace Halobellum.UI
         private string _folder;
         private bool _short;
         private int _problems;
+        private MainMenuHud _clickMenu;
+        private Vector2 _clickAt;
+        private int _clickStep = -1, _clickControl;
+
+        private void Awake() => useGUILayout = false;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void StartIfAsked()
@@ -286,6 +292,9 @@ namespace Halobellum.UI
             InputSettings.BackgroundBehavior kept = InputSystem.settings.backgroundBehavior;
             InputSystem.settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus; // So that a posted Esc counts in a window without focus.
             var menu = FindAnyObjectByType<MainMenuHud>();
+            var drawn = new Dictionary<string, Rect>();
+            Action<string, Rect> note = (key, rect) => drawn[key] = rect;
+            MenuStyle.ButtonDrawnForTest += note;
 
             yield return PostEscape();
             Check("Esc on the first page does nothing", menu.CurrentPage == MainMenuHud.Page.Main && !menu.IsLeaving);
@@ -315,6 +324,11 @@ namespace Halobellum.UI
             yield return Press("Base health/>");
             Check("and at the most", GameSettings.SkirmishBaseHealth == MatchSetup.MostBaseHealth);
             GameSettings.SkirmishBaseHealth = 1500;
+            yield return null;
+            Rect stepper = drawn["Base health/<"];
+            yield return Click(menu, new Vector2(stepper.x - 30f, stepper.center.y));
+            Check($"a click near the slider's end moves it, on a whole step (now {GameSettings.SkirmishBaseHealth})", GameSettings.SkirmishBaseHealth > 5000 && GameSettings.SkirmishBaseHealth % MatchSetup.BaseHealthStep == 0);
+            GameSettings.SkirmishBaseHealth = 1500;
             yield return Press("Difficulty/Hard");
             Check("the panel sets the difficulty", GameSettings.Difficulty == AiDifficulty.Hard);
             yield return Wait(0.2f);
@@ -328,15 +342,20 @@ namespace Halobellum.UI
             yield return PressNothing("Start");
             yield return PressNothing("Back");
             yield return PressNothing("Difficulty/Easy");
-            yield return Press("Cards/outside");
-            Check("a click elsewhere closes the list and changes nothing", !menu.CardListOpen && menu.Cards == CardFilter.AllCards && GameSettings.Difficulty == AiDifficulty.Hard);
+            yield return Click(menu, drawn["Back"].center);
+            Check("a click on a button behind the list only closes the list", !menu.CardListOpen && menu.CurrentPage == MainMenuHud.Page.Play && menu.Cards == CardFilter.AllCards);
 
+            yield return Click(menu, drawn["Cards/open"].center);
+            Check("a click on its box opens the list", menu.CardListOpen);
+            yield return Click(menu, drawn["Cards/open"].center);
+            Check("and closes it again", !menu.CardListOpen);
             yield return Press("Cards/open");
-            yield return Press("Cards/open");
-            Check("its box closes the list again", !menu.CardListOpen);
-            yield return Press("Cards/open");
-            yield return Press("Cards/No reinforcement cards");
-            Check("a line of the list picks it and closes the list", !menu.CardListOpen && menu.Cards == CardFilter.NoReinforcements);
+            yield return Press("Cards/All cards");
+            Check("a line of the list picks it and closes the list", !menu.CardListOpen && menu.Cards == CardFilter.AllCards);
+            yield return Click(menu, drawn["Cards/open"].center);
+            yield return Click(menu, drawn["Start"].center);
+            Check($"where the list lies over Start, a click takes the list's line (now {menu.Cards})", !menu.CardListOpen && menu.Cards == CardFilter.NoReinforcements);
+            Check("and doesn't start the match", !menu.IsLeaving);
             yield return Wait(0.2f);
             yield return Shot("04g_card_list_picked");
 
@@ -353,6 +372,7 @@ namespace Halobellum.UI
             // Back to as it was, so that the tour goes on from the player's own settings.
             GameSettings.SkirmishBaseHealth = health;
             GameSettings.Difficulty = difficulty;
+            MenuStyle.ButtonDrawnForTest -= note;
             InputSystem.settings.backgroundBehavior = kept;
         }
 
@@ -621,6 +641,32 @@ namespace Halobellum.UI
                 yield break;
             }
             yield return null;
+        }
+
+        /// <summary>A press and release of the left button at this place on the menu, in pixels of IMGUI's screen, as IMGUI's own events.</summary>
+        private IEnumerator Click(MainMenuHud menu, Vector2 pixels)
+        {
+            _clickMenu = menu;
+            _clickAt = pixels;
+            _clickStep = 0;
+            while (_clickStep >= 0) yield return null;
+            yield return null;
+        }
+
+        /// <summary>Gives the menu's drawing one event of Click's, a frame apart, so that a button's press and release fall in two passes as they do with a mouse.</summary>
+        private void OnGUI()
+        {
+            if (_clickStep < 0 || Event.current.type != EventType.Repaint) return;
+            bool release = _clickStep == 1;
+            Event real = Event.current;
+            if (release) GUIUtility.hotControl = _clickControl; // The press was a frame ago, and the real mouse isn't down.
+            Event.current = new Event { type = release ? EventType.MouseUp : EventType.MouseDown, button = 0, mousePosition = _clickAt, clickCount = 1 };
+            _clickMenu.DrawForTest();
+            _clickControl = GUIUtility.hotControl;
+            GUIUtility.hotControl = 0;
+            GUI.matrix = Matrix4x4.identity;
+            Event.current = real;
+            _clickStep = release ? -1 : 1;
         }
 
         /// <summary>Tries a button that should not take a press now, because it is drawn greyed out behind the card list.</summary>
