@@ -122,6 +122,9 @@ namespace Halobellum.UI
                 if (behaviour != null) behaviour.enabled = true;
             }
             _switchedOff.Clear();
+            // A script switched back on draws last, whatever its GUI.depth. So this one goes after them, to stay over them: its Menu button stays over a dimmed field.
+            enabled = false;
+            enabled = true;
             GamePause.Resume();
         }
 

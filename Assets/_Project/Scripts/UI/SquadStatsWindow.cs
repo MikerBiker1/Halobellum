@@ -10,8 +10,8 @@
 // go on a row of their own if a theme's fonts leave no room for that.
 // The unit's picture (UnitIcons) is at the top. Placeholder UI drawn with Unity's immediate-mode GUI.
 // It also shows a unit clicked in the shop (ShopUnit): a level 1 squad of that type, with its techs locked. In Unlock Skirmish it shows a unit
-// hovered in the bar or on the unlock page the same way (ShowHover), wherever that says, and above MatchHud's dim; while it does, nothing of
-// a selected squad shows, and there is no x to press.
+// hovered in the bar or on the unlock page the same way (ShowHover, and MatchHud draws it with DrawHover, over its own dim), wherever that says;
+// while it does, nothing of a selected squad shows, and there is no x to press.
 // Depends on: Halobellum.Presentation (BattleController, SquadSelection, ISquadProgression, UiHitAreas), Halobellum.Core, UnitIcons.
 
 using System.Collections.Generic;
@@ -27,8 +27,6 @@ namespace Halobellum.UI
     public sealed class SquadStatsWindow : MonoBehaviour
     {
         private const float ScreenLeft = 10f, DefaultWidth = 440f;
-        /// <summary>Above MatchHud's dim, below the pause menu.</summary>
-        private const int HoverDepth = -10;
         /// <summary>A hovered unit's window goes no higher than this over the bar: above it is the top bar.</summary>
         private const float LeastHoverTop = 78f;
 
@@ -143,11 +141,24 @@ namespace Halobellum.UI
         private void OnGUI()
         {
             if (battle == null || battle.Simulation == null || _selection == null) return;
-            UnitStats hover = HoverUnit;
-            GUI.depth = hover != null ? HoverDepth : 0;
             if (_selection.SelectedSquadId >= 0 || _selection.SelectedTower != null) ShopUnit = null;
-            UnitStats notFielded = hover ?? ShopUnit; // The hovered unit first: it must not get the selected squad's XP, techs and level-up buttons.
-            if (_selection.SelectedSquadId < 0 && notFielded == null) return;
+            if (HoverUnit != null) return; // MatchHud draws that, and a hovered unit must not get the selected squad's XP, techs and level-up buttons.
+            if (_selection.SelectedSquadId < 0 && ShopUnit == null) return;
+            DrawWindow(ShopUnit, null);
+        }
+
+        /// <summary>The window of the unit ShowHover was told of, if any, from inside another script's OnGUI, on a Repaint. It has nothing there to click.</summary>
+        public void DrawHover()
+        {
+            UnitStats hover = HoverUnit;
+            if (hover == null || battle == null || battle.Simulation == null || _selection == null) return;
+            DrawWindow(hover, hover);
+        }
+
+        /// <param name="notFielded">A unit to show as a new squad, or null for the selected squad.</param>
+        /// <param name="hover">The same unit if it is a hovered one, or null.</param>
+        private void DrawWindow(UnitStats notFielded, UnitStats hover)
+        {
             HudTheme.Apply();
             EnsureStyles();
             float scale = HudScale.Apply();

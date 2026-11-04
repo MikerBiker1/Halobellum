@@ -89,7 +89,6 @@ namespace Halobellum.UI
         private void OnGUI()
         {
             if (match == null || match.Match == null) return;
-            GUI.depth = 0; // Said every time: a script switched back on by the pause menu takes on that menu's depth otherwise, and its dim then covers the Menu button and the hover window.
             HudTheme.Use(match.Match.Phase == MatchPhase.Draft ? neutralTheme : match.PlayerTheme ?? neutralTheme);
             HudTheme.Apply();
             EnsureStyles();
@@ -166,6 +165,7 @@ namespace Halobellum.UI
             if (_unlockPageOpen)
             {
                 DrawUnlockPage(width, height);
+                DrawHoveredUnit();
                 ItemHud.DrawDragged(match.IconFor);
                 return;
             }
@@ -178,7 +178,17 @@ namespace Halobellum.UI
             DrawSelectedSquadActions(width, height);
             DrawTowerButtons(height);
             DrawTowerWindow(height);
+            DrawHoveredUnit();
             ItemHud.DrawDragged(match.IconFor);
+        }
+
+        /// <summary>
+        /// A hovered unit's stats, drawn from here so that they are over everything else of this script: over the page's dim and the spell bar. An order between scripts
+        /// won't do it (GUI.depth): the pause menu switches this script off and on, and from then on it draws last.
+        /// </summary>
+        private void DrawHoveredUnit()
+        {
+            if (Event.current.type == EventType.Repaint && StatsWindow != null) StatsWindow.DrawHover();
         }
 
         // ------------------------------------------------------------------ cards (Milestone 7)
