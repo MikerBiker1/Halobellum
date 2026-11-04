@@ -91,7 +91,7 @@ TECHS = {
         T("ClusterWarheads", "Cluster Warheads", 200, "Each missile covers more ground.", splash=1.5),
     ],
     "Pelican": [
-        T("TroopBay", "Troop Bay", 200, "It lands behind enemy lines and drops 6 Marines, up to 3 times.", drop=True),
+        T("TroopBay", "Troop Bay", 200, "It drops 6 Marines 5 seconds into the battle, then lands behind enemy lines for more, up to 3 drops in all.", drop=True),
         T("ArmorPlating", "Armor Plating", 150, "Extra plating on the airframe.", health=1.3),
         T("HeavyAutocannon", "Heavy Autocannon", 150, "Heavier rounds for the chin gun.", damage=1.3),
     ],

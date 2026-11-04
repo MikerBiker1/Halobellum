@@ -366,8 +366,8 @@ namespace Halobellum.Combat
         /// <summary>Keeps the unit inside the arena. Returns true if it had to be moved back.</summary>
         private bool ClampToArena(SimUnit unit)
         {
-            // Aircraft that can flank fly in the flank zones too, beyond the field's edges (D61).
-            float beyond = unit.Stats.CanFlank && unit.IsAir ? (_rules.FlankGapColumns + _rules.FlankZoneColumns) * _rules.SquareSize : 0f;
+            // Aircraft that can flank fly in the flank zones too, beyond the field's edges (D61). One landing there stays put, so this asks what it is, not whether it's up.
+            float beyond = unit.Stats.CanFlank && unit.Stats.IsAir ? (_rules.FlankGapColumns + _rules.FlankZoneColumns) * _rules.SquareSize : 0f;
             float halfWidth = _rules.ArenaWidth * 0.5f + beyond - unit.Radius;
             float halfLength = _rules.ArenaLength * 0.5f - unit.Radius;
             float x = Math.Clamp(unit.Position.X, -halfWidth, halfWidth);

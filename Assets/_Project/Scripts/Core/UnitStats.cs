@@ -240,6 +240,11 @@ namespace Halobellum.Core
         /// behind it, and takes as long to go back up (the Pelican, D60). On the ground, weapons that can't hit air can hit it. Once its drops are made, it fights.
         /// </summary>
         public float ReinforcementLandSeconds;
+        /// <summary>
+        /// Above 0, a landing carrier's first squad is out this many seconds after it comes onto the field, wherever it has got to: it starts down in time, without
+        /// reaching the enemy's lines (the Pelican: 5). If it comes on later than that, it starts down as it arrives. 0 = the first drop is like the others.
+        /// </summary>
+        public float ReinforcementFirstDropSeconds;
 
         /// <summary>
         /// How many tiny forms one body stands for (Infection Forms: 5). They move and act as one body.
@@ -353,6 +358,7 @@ namespace Halobellum.Core
                 if (ReinforcementDelaySeconds < 0f) problems.Add($"{label}: reinforcement delay cannot be negative.");
                 if (ReinforcementDrops < 1) problems.Add($"{label}: it must drop its reinforcement at least once.");
                 if (ReinforcementLandSeconds < 0f) problems.Add($"{label}: landing time cannot be negative.");
+                if (ReinforcementFirstDropSeconds < 0f) problems.Add($"{label}: first drop time cannot be negative.");
                 foreach (string problem in drop.Validate()) problems.Add($"{label} reinforcement: {problem}");
             }
             if (TechUpgrades != null)

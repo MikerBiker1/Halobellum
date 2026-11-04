@@ -76,8 +76,8 @@ UNITS = [
     U("ArcherMissilePod", "Archer Missile Pod", "UNSC", "Artillery", 2, 50, 2, 300, 350, "L", 0, 1.4, 1.5, "G",
       [W("Archer Missile Barrage", 55, 4.0, 42, "Explosive", proj=28, splash=3.5, minr=8, lob=True)]),
     U("Pelican", "Pelican", "UNSC", "Aerial", 2, 50, 1, 300, 800, "L", 12, 2.5, 2, "B",
-      [W("M370 Autocannon", 14, 0.3, 14, "Ballistic")], airu=True, drop=("Marine", 6, 10, True, 3, 1.5),
-      note="With its Troop Bay tech it lands behind enemy lines and drops 6 Marines, up to 3 times (D60)."),
+      [W("M370 Autocannon", 14, 0.3, 14, "Ballistic")], airu=True, drop=("Marine", 6, 10, True, 3, 1.5, 5),
+      note="With its Troop Bay tech it lands and drops 6 Marines 5 seconds into the battle wherever it is, then lands behind enemy lines to drop more, up to 3 drops in all (D60)."),
     U("Spartan", "Spartan", "UNSC", "SingleTargetDps", 3, 225, 1, 450, 1500, "U", 3.5, 0.6, 0.5, "B",
       [W("Spartan Laser", 450, 4.0, 24, "Energy", aa=True)], shield=400, regen=80, immune=True, baked="Spartan"),
     U("Mantis", "Mantis", "UNSC", "Tank", 3, 250, 1, 500, 2500, "H", 3, 2, 2, "B",
@@ -257,7 +257,8 @@ def unit_yaml(u):
                   f"  reinforcementBodies: {drop[1]}", f"  reinforcementDelaySeconds: {fmt(drop[2])}",
                   f"  reinforcementNeedsUpgrade: {fmt(len(drop) > 3 and drop[3])}",
                   f"  reinforcementDrops: {drop[4] if len(drop) > 4 else 1}",
-                  f"  reinforcementLandSeconds: {fmt(drop[5] if len(drop) > 5 else 0)}"]
+                  f"  reinforcementLandSeconds: {fmt(drop[5] if len(drop) > 5 else 0)}",
+                  f"  reinforcementFirstDropSeconds: {fmt(drop[6] if len(drop) > 6 else 0)}"]
     else:
         lines += ["  reinforcementUnit: {fileID: 0}", "  reinforcementBodies: 0", "  reinforcementDelaySeconds: 0",
                   "  reinforcementNeedsUpgrade: 0"]

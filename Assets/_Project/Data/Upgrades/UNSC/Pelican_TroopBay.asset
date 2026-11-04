@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Pelican_TroopBay
   m_EditorClassIdentifier: 
   techName: Troop Bay
-  description: 'It lands behind enemy lines and drops 6 Marines, up to 3 times.'
+  description: 'It drops 6 Marines 5 seconds into the battle, then lands behind enemy lines for more, up to 3 drops in all.'
   cost: 200
   healthMultiplier: 1
   damageMultiplier: 1

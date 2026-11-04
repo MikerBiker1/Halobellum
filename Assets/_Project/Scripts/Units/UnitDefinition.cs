@@ -70,6 +70,8 @@ namespace Halobellum.Units
         public int reinforcementDrops = 1;
         [Tooltip("Above 0: it lands behind the enemy's lines to drop, taking this many seconds to come down and as long to go back up.")]
         public float reinforcementLandSeconds;
+        [Tooltip("Above 0, on a unit that lands: its first squad is out this many seconds into the battle, wherever it has got to. 0 = the first drop is like the others.")]
+        public float reinforcementFirstDropSeconds;
 
         [Header("Flood (D38)")]
         [Tooltip("Tiny forms one body stands for (Infection Forms: 5). They act as one body; an area hit hurts every form in it.")]
@@ -210,6 +212,7 @@ namespace Halobellum.Units
                 stats.ReinforcementDelaySeconds = reinforcementDelaySeconds;
                 stats.ReinforcementDrops = reinforcementDrops;
                 stats.ReinforcementLandSeconds = reinforcementLandSeconds;
+                stats.ReinforcementFirstDropSeconds = reinforcementFirstDropSeconds;
                 if (reinforcementNeedsUpgrade) stats.LockedReinforcement = drop;
                 else stats.Reinforcement = drop;
             }
