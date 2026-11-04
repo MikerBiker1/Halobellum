@@ -3106,7 +3106,7 @@
   "weapons": [
    {
     "name": "M66 Railgun",
-    "dmg": 190,
+    "dmg": 175,
     "interval": 2.2,
     "range": 26,
     "minr": 0,
@@ -3172,7 +3172,7 @@
   "weapons": [
    {
     "name": "Heavy Cannon",
-    "dmg": 150,
+    "dmg": 140,
     "interval": 5,
     "range": 50,
     "minr": 12,

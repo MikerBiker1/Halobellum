@@ -31,7 +31,7 @@ MonoBehaviour:
   targetFilter: 0
   weapons:
   - weaponName: Heavy Cannon
-    damagePerShot: 150
+    damagePerShot: 140
     fireInterval: 5
     range: 50
     minRange: 12

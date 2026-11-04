@@ -31,7 +31,7 @@ MonoBehaviour:
   targetFilter: 0
   weapons:
   - weaponName: M66 Railgun
-    damagePerShot: 190
+    damagePerShot: 175
     fireInterval: 2.2
     range: 26
     minRange: 0
