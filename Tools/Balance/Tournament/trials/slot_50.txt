@@ -1,0 +1,2 @@
+# The extra squad slot at Mechabellum's price.
+rules|ExtraSlotCost=50

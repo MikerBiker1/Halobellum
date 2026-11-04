@@ -422,7 +422,7 @@ namespace Halobellum.Economy
                 if (UsesMatchups) UpdateThreats(view, seen); // The new squad covers part of the threat.
             }
             // Hard with credits to spare after its squads: one slot more. So too Normal in Unlock Skirmish, only once its savings have piled up.
-            bool wantsSlot = Difficulty == AiDifficulty.Hard ? self.Credits >= HardExtraSlotCredits + SlotTrial() : Difficulty == AiDifficulty.Normal && skirmish && self.Credits >= NormalSkirmishFlushCredits;
+            bool wantsSlot = Difficulty == AiDifficulty.Hard ? self.Credits >= HardExtraSlotCredits : Difficulty == AiDifficulty.Normal && skirmish && self.Credits >= NormalSkirmishFlushCredits;
             if (wantsSlot && self.Towers.Count > 0 && view.BuyExtraSlot().Ok)
             {
                 UnitStats choice = BestAffordable(view, seen, totalSeen, unlockedOnly: true);
@@ -505,8 +505,6 @@ namespace Halobellum.Economy
                 }
             }
         }
-
-        private static int SlotTrial() => int.Parse(Environment.GetEnvironmentVariable("HB_SLOT") ?? "0"); // TEMPORARY
 
         private const int HardEliteCredits = 1000, HardExtraSlotCredits = 400, HardOilCredits = 450;
         private const int NormalTowerCredits = 300, HardTowerCredits = 200;

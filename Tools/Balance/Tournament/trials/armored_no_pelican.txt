@@ -1,0 +1,2 @@
+# The owner's question (item 79): Armored Division can't buy the Pelican.
+without|Armored Division|Pelican

@@ -139,14 +139,14 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 
 ## From Unlock Skirmish (D62)
 
-74. **Which units:** you said any unit. ODST isn't on the page, because it only lands from the drop pod spell and has no unlock price. Adding it is one line and makes 70.
-75. **Low health:** below 2000 a card's value moves the base less, so 100 gives 105, 100 or 95, because a flat 100 would leave 0 for a 350 card. Fine?
-76. **One unlock a round** and the unlock prices stay as in Faction mode. You didn't list them as a difference. Keep?
-77. **Ground and music:** the seed picks one land for both teams, and one in three is the dark Flood map. Keep?
-78. **Blood:** Jackals purple and Brutes dark red are my guess. Machines, Grunt Goblins, Skitterers, Marauders, Reavers and towers have none. Spells draw none.
-79. **The Spartan at 500 and the Vulture's missiles at 50** are what brought the band back after the Pelican's early drop. Armored Division is exactly at 54.0%, so the next change may push it out.
-80. **At 10000 health, Normal beats the Hard AI,** 32 of 50. In those long matches Normal's units deal about 1.9 times Hard's damage per credit. I didn't change it. Do you want this looked into?
-81. **Dust:** close up it now reads clearly behind a vehicle. From the game's camera it is still subtle, since vehicles are small there. The frame rate has room for more, so tell me if you want it stronger.
+74. *(ODST stays exclusively a card.)* **Which units:** you said any unit. ODST isn't on the page, because it only lands from the drop pod spell and has no unlock price. Adding it is one line and makes 70.
+75. *(5% at every setting, D63.)* **Low health:** below 2000 a card's value moves the base less, so 100 gives 105, 100 or 95, because a flat 100 would leave 0 for a 350 card. Fine?
+76. *(Keep.)* **One unlock a round** and the unlock prices stay as in Faction mode. You didn't list them as a difference. Keep?
+77. *(Fine: they change once all the 3D models are in.)* **Ground and music:** the seed picks one land for both teams, and one in three is the dark Flood map. Keep?
+78. *(OK.)* **Blood:** Jackals purple and Brutes dark red are my guess. Machines, Grunt Goblins, Skitterers, Marauders, Reavers and towers have none. Spells draw none.
+79. *(Tested: without the Pelican, Armored Division wins 54.9%, up from 54.1%, so no change. See D63.)* **The Spartan at 500 and the Vulture's missiles at 50** are what brought the band back after the Pelican's early drop. Armored Division is exactly at 54.0%, so the next change may push it out.
+80. *(Fixed: Hard now levels before new squads in Skirmish, and beats Normal 42 of 50 at 10000. See D63.)* **At 10000 health, Normal beats the Hard AI,** 32 of 50. In those long matches Normal's units deal about 1.9 times Hard's damage per credit. I didn't change it. Do you want this looked into?
+81. *(Fine for now.)* **Dust:** close up it now reads clearly behind a vehicle. From the game's camera it is still subtle, since vehicles are small there. The frame rate has room for more, so tell me if you want it stronger.
 82. **Sandbox towers:** I kept the switch off by default, so old Sandbox fights stay comparable. Flipping it is one line.
 
 ## Things my test runs did to your PC
@@ -163,7 +163,7 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 ## Small things I noticed and left
 
 - *(Fixed from Halopedia: the Cobra now reads as six-wheeled.)* The Cobra's description said it ran on tracks.
-- Under a shockwave, a leap's speed and a Seeder's seed damage aren't reduced. Infection Forms still cover about 81% of their normal distance rather than 70%.
+- Under a shockwave, a leap's speed isn't reduced. (A Seeder's seed damage now is, D63.) Infection Forms still cover about 81% of their normal distance rather than 70%.
 - An infected body keeps its size but gets a melee reach of 1.2 m, measured from its centre. A big one, such as a seeded Scorpion, may never reach a target that stands still, a tower included. This comes from before the towers, and nobody has seen it happen in play.
 - The menu's hover check is skipped in batch test runs, because they draw no buttons there. A sound tour in the built game covers it, using its own pointer. No real mouse has tried it.
 - Air units overlap into a blob in big fights.

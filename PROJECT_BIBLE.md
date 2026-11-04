@@ -509,6 +509,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-03 | Balance from the Hard AI tournament; reinforcement cards bring no Titans; 6 Infection Forms to a group, released by every Flood vehicle; Archer pods can't move; the Pelican is twice as fast and lands behind enemy lines to drop Marines, up to 3 times | Per the project owner (D60) |
 | 2026-11-03 | Flank zones for the Pelican and Aerospace's aircraft; every sub-faction must win 46% to 54% in the Hard AI tournament; Infected Pelican back at 400 | Per the project owner (D61) |
 | 2026-11-04 | Unlock Skirmish mode and the Play submenu; the draft is blind; the Pelican's first drop 5 seconds in; the Spartan at 500 and the Vulture's missiles at 50 for the balance band | Per the project owner (D62) |
+| 2026-11-04 | A starting card moves base health by 5% of the setting at any setting; a shockwave weakens a Seeder's seeds; Hard levels before new squads in Unlock Skirmish | Per the project owner (D63) |
 
 ## 18. Assumptions to confirm
 

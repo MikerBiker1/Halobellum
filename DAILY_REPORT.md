@@ -2,6 +2,12 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Your answers to D62 (D63)
+- **In the game:** base health moves 5% at any setting; a shockwave weakens a Seeder's seeds; the Cobra reads as six-wheeled; in Unlock Skirmish, Hard levels before it buys new squads.
+- **Hard against Normal, of 50:** 41 at 2000 health, 42 at 10000 (it was 18), 37 at 100.
+- **Tested, not changed:** Armored Division without the Pelican wins 54.9%; the extra squad slot at 50 makes no real difference to Hard.
+- **Tournament:** sub-factions from 48.1% to 54.1%. Armored Division is one win past 54%: `Docs/Balance/hard_ai_tournament_d63.txt`.
+
 ## Unlock Skirmish and the Play submenu (D62)
 - **In the game:** Unlock Skirmish mode with its unit bar and unlock page; Play leads to the modes, their settings and the Sandbox; a blind draft; blood; more dust on High; towers in the Sandbox; always a decimal point; the shop by tier then price; a frame-rate counter behind a setting; the Hard AI's Rapid Resupply; the Pelican's first drop 5 seconds in.
 - **Tournament:** all 8 sub-factions from 48.0% to 54.0%; Covenant 49%, UNSC 52%, Flood 48%: `Docs/Balance/hard_ai_tournament_d62.txt`. The Spartan costs 500 and the Vulture's missiles deal 50 to get there.
