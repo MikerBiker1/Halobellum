@@ -137,6 +137,18 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 72. *(Still open: you will playtest it.)* **The Infected Pelican's forms:** it costs 400 again, and keeps the 30 forms you asked for. The AI barely fields it, in 2% of its matches. Good as it is?
 73. *(The first drop is now 5 seconds in, wherever it is. The back-corner idea was tested: see D62.)* **The Pelican still loses more than it wins for the AI:** sides that field it win 38%. It makes 1.59 drops per battle now. It may simply need a player to use it well. Worth a look once you have played with it?
 
+## From Unlock Skirmish (D62)
+
+74. **Which units:** you said any unit. ODST isn't on the page, because it only lands from the drop pod spell and has no unlock price. Adding it is one line and makes 70.
+75. **Low health:** below 2000 a card's value moves the base less, so 100 gives 105, 100 or 95, because a flat 100 would leave 0 for a 350 card. Fine?
+76. **One unlock a round** and the unlock prices stay as in Faction mode. You didn't list them as a difference. Keep?
+77. **Ground and music:** the seed picks one land for both teams, and one in three is the dark Flood map. Keep?
+78. **Blood:** Jackals purple and Brutes dark red are my guess. Machines, Grunt Goblins, Skitterers, Marauders, Reavers and towers have none. Spells draw none.
+79. **The Spartan at 500 and the Vulture's missiles at 50** are what brought the band back after the Pelican's early drop. Armored Division is exactly at 54.0%, so the next change may push it out.
+80. **At 10000 health, Normal beats the Hard AI,** 32 of 50. In those long matches Normal's units deal about 1.9 times Hard's damage per credit. I didn't change it. Do you want this looked into?
+81. **Dust:** close up it now reads clearly behind a vehicle. From the game's camera it is still subtle, since vehicles are small there. The frame rate has room for more, so tell me if you want it stronger.
+82. **Sandbox towers:** I kept the switch off by default, so old Sandbox fights stay comparable. Flipping it is one line.
+
 ## Things my test runs did to your PC
 
 - **Windows moving, and possibly music:** while the Screen setting was being checked, a test window moved across all three of your screens and briefly went fullscreen on each. Some of those runs weren't silent, so menu music may have played for about 25 seconds at a time. Those checks have finished.

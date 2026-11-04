@@ -1,0 +1,178 @@
+Unlock Skirmish, 2000 health
+============================
+600 Unlock Skirmish matches, where each "sub-faction" below is an AI difficulty: 300 between different difficulties, 300 of a difficulty against itself.
+Whole matches under the game's real rules, with towers, cards, techs and spells. Half of each pairing is played with the sides swapped.
+Each side is dealt a random starting card for its sub-faction (250 to 350, with base health to match).
+Matches with no winner after 60 rounds: 0.
+This measures AIs, not good players: a unit the AI uses badly looks weak here. How close numbers must be to mean nothing is given in each table.
+
+Win rate by sub-faction (against the other sub-factions)
+========================================================
+Good to about 7 points either way.
+  Hard                 Skirmish   86%   172 of 200  7.8 rounds on average
+  Normal               Skirmish   64%   128 of 200  8.1 rounds on average
+  Easy                 Skirmish    0%     0 of 200  6.9 rounds on average
+
+Win rate by faction (against the other factions)
+================================================
+
+Each sub-faction against each other (the row's win rate)
+========================================================
+Good to about 10 points either way. A sub-faction against itself is shown as -.
+                             Hard     Normal       Easy
+  Hard                          -        72%       100%
+  Normal                      28%          -       100%
+  Easy                         0%         0%          -
+
+Does the side matter?
+=====================
+All matches: Team A wins 298, Team B wins 302: 50% for Team A (good to about 4 points; it should be 50%).
+Sub-faction against itself: Team A wins 148 of 300: 49% (good to about 6 points).
+
+Starting cards: does the base health make up for the value?
+===========================================================
+  Card worth 250: wins  54% of 334 (good to about 5 points)
+  Card worth 300: wins  48% of 472 (good to about 5 points)
+  Card worth 350: wins  49% of 394 (good to about 5 points)
+  By how much dearer a side's card is than the other's:
+     -100 credits: wins  51% of 98
+      -50 credits: wins  55% of 300
+       +0 credits: wins  50% of 404
+      +50 credits: wins  45% of 300
+     +100 credits: wins  49% of 98
+
+Opening squads (at least 40 matches)
+====================================
+  ...
+
+How matches go
+==============
+Rounds: shortest 5, median 8, longest 16.
+  5: 2  6: 54  7: 147  8: 123  9: 108  10: 94  11: 31  12: 17  13: 9  14: 9  15: 4  16: 2
+The side that does more base damage in round 1 goes on to win 61% of matches (367 of 600).
+The winner's base at the end: 1497 on average.
+
+Towers
+======
+A side loses 0.73 towers per round, of its 2.
+Tower levels at the end of a match: level 1: 1777, level 2: 152, level 3: 348, level 4: 59, level 5: 64
+Research steps bought per match, by a side: 0.48.
+The side whose towers fell less often wins 82% of the matches where they differ (454 of 551).
+Credits unspent when the match ends: 1517 on average.
+
+Pelicans with their Troop Bay
+=============================
+211 Pelican battles: 1.77 drops per battle, of at most 3.
+
+Rapid Resupply, unlocks and flank squads (per side, per match)
+==============================================================
+  Hard                  0.33 resupplies     8.7 unit types unlocked     3.2 squads in flank zones at the end
+  Normal                0.00 resupplies     8.1 unit types unlocked     0.0 squads in flank zones at the end
+  Easy                  0.00 resupplies    11.8 unit types unlocked     0.0 squads in flank zones at the end
+
+Units
+=====
+Fielded: the share of a side's matches, among sub-factions that can buy it, in which it ever fought.
+Win when fielded: the side's win rate in those matches. Edge: that, minus the same sub-faction's win rate without it. High edge can also mean the side was ahead, as winners last longer and can afford more.
+Damage per 100 credits: damage dealt per round fought per 100 credits of squad. Kills are bodies, per round fought per squad.
+
+  Unit                       Fielded   Win   Edge  Dmg/100  Kills  Rounds  Matches
+  Jackal (Shield)                42%   45%     -6      189    1.6    15.8      501
+  Infested Marine                41%   61%    +12      857    4.6    26.1      488
+  Scarab                         31%   56%    -21      830   13.5     4.4      247
+  Infested Scorpion              29%   60%     +1      567    7.0    14.6      350
+  Flamethrower Trooper           27%   52%     -5     1115    8.3    16.2      319
+  Infection Forms                25%   51%    +10      858    5.2    16.3      305
+  Scorpion                       24%   63%     +3      595    8.5    13.9      293
+  Brute Grenadier                24%   52%     -2     1328    9.1    16.5      291
+  Infested Grunt                 24%   51%     +8      831    3.7    19.4      283
+  Cannon Fodder                  22%   43%     +6      556    3.5    13.2      258
+  Fuel Rod Grunt                 20%   54%     +2     1589   11.3    17.3      246
+  Vulture                        20%   54%    -22      362    3.9    13.6      245
+  Marine                         20%   45%     +3      915    6.2    15.1      243
+  Jackal (Plasma Rifle)          20%   48%     -4      742    5.8    13.1      241
+  Grunt                          19%   49%    +10      763    5.4    14.8      231
+  Carrier Form                   19%   46%     -5      294    2.2    11.6      223
+  Heavy Grunts                   16%   53%     +1      575    6.2    12.0      198
+  Hunter Pair                    16%   60%     +1      638   10.9     8.5      187
+  Skitterer                      15%   52%     +2      411    3.0    12.2      178
+  Grunt Goblin                   12%   45%    -10      547    8.3     8.9      146
+  Warthog                        12%   44%     -5      299    3.1    10.1      146
+  Gremlin                        12%   49%     +1      412    2.6    10.3      145
+  Marauder                       12%   51%     +3      708    9.1    11.9      143
+  Infested Ghost                 12%   57%     +8      435    4.0    10.6      138
+  Chopper                        11%   46%     +0      669    6.7    10.9      137
+  Longsword                      11%   49%    -18      507    5.1    12.2      136
+  Condor Gunship                 11%   53%     -6      443    4.7     9.2      133
+  Ghost                          10%   46%     -6      289    2.7     9.5      126
+  Infested Warthog               10%   45%     -4      468    5.2     9.6      124
+  Spartan Grenadier               9%   55%     +8     1004   13.1     7.6      107
+  Infected Phantom                8%   48%     -9      296    2.8     7.4      102
+  Pure Form Tank                  8%   53%     +6      426    7.6     8.7      101
+  Gauss Warthog                   8%   51%     -6      701    3.6    27.7       97
+  Sparrowhawk                     8%   70%    +14      722    2.7    12.2       96
+  Spartan Sniper                  8%   49%     -3      467    4.1    10.9       94
+  Spartan                         8%   53%     -3      765    4.5    10.0       91
+  Cobra                           7%   57%     +6      800    4.6    20.3       87
+  Infested Banshee                7%   44%    -13      751    5.2    10.3       85
+  Hunter Captain                  7%   53%     -1      451    4.5    11.6       79
+  Wolverine                       6%   37%    -21      654    4.7    12.1       78
+  Flood Abomination               6%   58%     +2      507   15.9     4.1       52
+  Juggernaut                      6%   45%     -2      573    9.3     5.9       78
+  Infested Elite                  6%   47%     -6      382    2.6    14.7       76
+  Mantis                          6%   53%     +5      348    6.6     5.5       76
+  Spartan Heavy Weapons           6%   51%     +6      459   10.1     5.1       74
+  Vampire                         6%   58%     +1      528    3.3    10.5       74
+  Spartan CQB                     6%   40%     -1      232    4.2     8.2       72
+  Grizzly                         6%   49%     -2      774   14.5     6.1       71
+  Spartan Fireteam                6%   37%    -15      541    7.4    11.4       71
+  Infested Hornet                 6%   50%     -3      700    5.1     9.9       70
+  Goliath                         6%   49%     +1      366    8.8     4.7       70
+  Pure Form Ranged                6%   49%     -9     1062    6.5     8.7       67
+  Infested Wraith                 5%   62%     +4      654    6.2     8.5       65
+  Banshee                         5%   48%     -6     1032    8.1     8.7       61
+  Infected Pelican                5%   36%     -7      370   11.0     4.8       61
+  Spawner                         5%   47%     +6      103    1.9     6.3       60
+  Rhino                           4%   61%     +5      954   15.7     4.7       54
+  Hornet                          4%   44%     -8      778    6.8     8.1       54
+  Elite                           4%   55%     -0      514    6.1    10.4       53
+  Zealot                          4%   52%     +6      202    1.7     5.8       52
+  Reaver                          4%   56%     +5      717    3.1    14.0       52
+  Seeder                          4%   53%    +10      115    3.9     7.7       51
+  Combat Form                     4%   43%     -5      463    2.7    15.4       51
+  Elephant                        4%   12%    -14      650   26.6     4.9       17
+  Wraith                          4%   68%     +7      734    7.3     7.9       44
+  Pelican                         3%   32%    -19      133    1.5     7.2       37
+  Stalker Form                    3%   42%     -2      172    2.5     9.3       36
+  Archer Missile Pod              3%   51%     +1      785   10.2    10.0       35
+  Swarm Form                      3%   55%     +2      204    0.6     8.2       31
+
+Cards the AI takes
+==================
+Edge: the side's win rate with the card, minus without it, for the same faction's matches. Late cards mostly go to sides that survive, so compare them with care.
+
+  Skirmish
+    MAC Strike                         taken in  22% of matches   win  59%   edge +12
+    Blight Rain                        taken in  22% of matches   win  62%   edge +15
+    Amplifying Core                    taken in  21% of matches   win  58%   edge +10
+    Plasma Storm                       taken in  20% of matches   win  58%   edge +10
+    Banshee Ambush                     taken in  19% of matches   win  59%   edge +11
+    Archer Missile Barrage             taken in  18% of matches   win  53%   edge +3
+    Improved Firepower System          taken in  15% of matches   win  56%   edge +7
+    Heavy Armor                        taken in  14% of matches   win  50%   edge +0
+    Absorption Module                  taken in  14% of matches   win  53%   edge +3
+    Plasma Bombardment                 taken in  14% of matches   win  55%   edge +6
+    Spore Burst                        taken in  14% of matches   win  55%   edge +6
+    Battlefield Rally                  taken in  12% of matches   win  51%   edge +1
+    Hive Frenzy                        taken in  10% of matches   win  57%   edge +8
+    Electromagnetic Pulse              taken in  10% of matches   win  53%   edge +4
+    Nerve Spores                       taken in   9% of matches   win  54%   edge +4
+    Advanced Offensive Tactics         taken in   9% of matches   win  62%   edge +13
+    Haste Stims                        taken in   9% of matches   win  51%   edge +1
+    Advanced Defense Tactics           taken in   9% of matches   win  59%   edge +10
+    Prophet's Blessing                 taken in   9% of matches   win  49%   edge -2
+    HAVOK Nuke                         taken in   8% of matches   win  60%   edge +11
+    Intensive Training                 taken in   8% of matches   win  48%   edge -2
+    Healing Stims / Repair Kit         taken in   8% of matches   win  47%   edge -4
+    Glassing Beam                      taken in   7% of matches   win  54%   edge +4
+    Gravemind's Wrath                  taken in   7% of matches   win  52%   edge +2
