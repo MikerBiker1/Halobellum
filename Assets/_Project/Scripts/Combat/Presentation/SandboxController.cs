@@ -118,6 +118,7 @@ namespace Halobellum.Presentation
         {
             _battle = GetComponent<BattleController>();
             _selection = GetComponent<SquadSelection>();
+            _selection.TowersSelectable = false;
             _views = GetComponent<UnitViewManager>();
             _towerRules = matchRules.ToRules();
 

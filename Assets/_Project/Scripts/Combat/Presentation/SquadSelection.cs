@@ -33,6 +33,9 @@ namespace Halobellum.Presentation
         /// <summary>When false, mouse and keyboard don't change the selection (for example while placing a squad).</summary>
         public bool InputEnabled { get; set; } = true;
 
+        /// <summary>When false, a click on a tower selects nothing, for a scene with no tower window to show it (the Sandbox). A hidden selection would swallow the first Esc.</summary>
+        public bool TowersSelectable { get; set; } = true;
+
         private void Start()
         {
             _battle = GetComponent<BattleController>();
@@ -57,6 +60,7 @@ namespace Halobellum.Presentation
             if (UiHitAreas.Contains(pointer)) return;
 
             SimUnit picked = BodyAt(pointer);
+            if (picked != null && picked.Stats.IsTower && !TowersSelectable) picked = null;
             if (picked != null && picked.Stats.IsTower)
             {
                 SelectTower(picked.Team, picked.Stats.Shockwave.Kind);
