@@ -127,13 +127,20 @@ namespace Halobellum.Tests
 
         // ------------------------------------------------------------------ savings that pile up
 
-        /// <summary>In how many of 40 matches the AI unlocks a unit in round 1, holding these credits, with what is locked cheap to unlock.</summary>
+        /// <summary>In how many of 40 matches the AI unlocks a unit in round 1, holding these credits, when every unit is alike but for the score's small random part, and cheap to unlock.</summary>
         private static int MatchesWithAnUnlock(AiDifficulty difficulty, int credits)
         {
             int unlocks = 0;
             for (int seed = 1; seed <= 40; seed++)
             {
-                Match match = NewMatch(MatchMode.UnlockSkirmish, new RuleBasedAi(difficulty, seed), seed, prepare: rules => rules.StartingCredits = credits);
+                List<UnitStats> roster = Roster();
+                foreach (UnitStats unit in roster)
+                {
+                    unit.Role = UnitRole.Chaff;
+                    unit.Tier = 1;
+                    unit.UnlockCost = 50;
+                }
+                Match match = NewMatch(MatchMode.UnlockSkirmish, new RuleBasedAi(difficulty, seed), seed, roster, prepare: rules => rules.StartingCredits = credits);
                 match.ChooseDraft(0);
                 if (match.Enemy.UnlocksThisRound > 0) unlocks++;
             }

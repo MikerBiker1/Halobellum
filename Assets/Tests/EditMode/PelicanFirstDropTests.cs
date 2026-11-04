@@ -66,7 +66,7 @@ namespace Halobellum.Tests
             UnitStats bare = Pelican(firstDrop: 0f);
             bare.LockedReinforcement = bare.Reinforcement;
             bare.Reinforcement = null;
-            UnitStats withBay = TechUpgrade.Apply(bare, 1, new[] { new TechUpgrade { Name = "Troop Bay", UnlocksReinforcement = true } }, null, null);
+            UnitStats withBay = UnitUpgrades.Apply(bare, 1, new[] { new TechUpgrade { Name = "Troop Bay", UnlocksReinforcement = true } }, null, null);
             Assert.IsTrue(withBay.HasReinforcement);
             Assert.IsFalse(withBay.WithoutTechs.HasReinforcement, "An EMP takes the bay away.");
 

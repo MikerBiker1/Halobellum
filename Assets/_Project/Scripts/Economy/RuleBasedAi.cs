@@ -718,8 +718,8 @@ namespace Halobellum.Economy
             if (view.Rules.Mode == MatchMode.UnlockSkirmish)
             {
                 float hurdle = view.Rules.AiSkirmishUnlockMargin + bestLocked.UnlockCost / 200f;
-                // Normal has few other ways to spend, so its hurdle falls as its savings pass what they should ever reach. Hard spends the money elsewhere.
-                if (Difficulty == AiDifficulty.Normal && self.Credits > NormalSkirmishFlushCredits) hurdle *= NormalSkirmishFlushCredits / (float)self.Credits;
+                // Normal has few other ways to spend, so its hurdle falls as its savings pass what they should ever reach, unless the price would take a real share of them. Hard spends the money elsewhere.
+                if (Difficulty == AiDifficulty.Normal && self.Credits > NormalSkirmishFlushCredits && bestLocked.UnlockCost * 4 <= self.Credits) hurdle *= NormalSkirmishFlushCredits / (float)self.Credits;
                 ownedScore += hurdle;
             }
             if (lockedScore <= ownedScore && Difficulty != AiDifficulty.Easy) return null;
