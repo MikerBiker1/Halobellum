@@ -103,8 +103,9 @@ namespace Halobellum.Presentation
         /// <summary>A squad turned, or its ghost while it is being moved. From the R key: the Turn button is drawn in OnGUI, and it already clicked as it went down (AudioDirector).</summary>
         public static void SquadTurned()
         {
-            // GUIUtility.guiDepth, not Event.current: once a built game has drawn its GUI, Event.current stays set outside OnGUI too.
-            if (GUIUtility.guiDepth == 0) GameAudio.Ui(UiSound.Click, TurnedVolume);
+            // Once a built game has drawn its GUI, Event.current stays set outside OnGUI too, on the last Layout or Repaint. The Turn button's press inside OnGUI is a used mouse event.
+            Event current = Event.current;
+            if (current == null || current.type == EventType.Repaint || current.type == EventType.Layout) GameAudio.Ui(UiSound.Click, TurnedVolume);
         }
 
         /// <summary>A squad set down in a new spot.</summary>
