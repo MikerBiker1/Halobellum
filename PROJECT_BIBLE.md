@@ -510,6 +510,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-03 | Flank zones for the Pelican and Aerospace's aircraft; every sub-faction must win 46% to 54% in the Hard AI tournament; Infected Pelican back at 400 | Per the project owner (D61) |
 | 2026-11-04 | Unlock Skirmish mode and the Play submenu; the draft is blind; the Pelican's first drop 5 seconds in; the Spartan at 500 and the Vulture's missiles at 50 for the balance band | Per the project owner (D62) |
 | 2026-11-04 | A starting card moves base health by 5% of the setting at any setting; a shockwave weakens a Seeder's seeds; Hard levels before new squads in Unlock Skirmish | Per the project owner (D63) |
+| 2026-11-04 | The extra squad slot costs 50; the Cobra's railgun deals 175 and the Rhino's cannon 140 | Per the project owner (D64) |
 
 ## 18. Assumptions to confirm
 

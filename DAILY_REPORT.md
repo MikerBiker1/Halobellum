@@ -2,6 +2,10 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The slot and Armored Division (D64)
+- **In the game:** the extra squad slot costs 50; the Cobra's railgun deals 175 (was 190), and the Rhino's cannon 140 (was 150).
+- **Tournament:** sub-factions from 46.6% to 53.3%, with Armored Division at 53.3%: `Docs/Balance/hard_ai_tournament_d64.txt`. The Hard AI now fields the Rhino in 36% of matches, down from 68%.
+
 ## Your answers to D62 (D63)
 - **In the game:** base health moves 5% at any setting; a shockwave weakens a Seeder's seeds; the Cobra reads as six-wheeled; in Unlock Skirmish, Hard levels before it buys new squads.
 - **Hard against Normal, of 50:** 41 at 2000 health, 42 at 10000 (it was 18), 37 at 100.

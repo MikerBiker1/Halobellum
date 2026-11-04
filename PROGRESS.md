@@ -147,6 +147,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] Blood by what was hit, more dust on High, a slot for the Hunter death sound, towers in the Sandbox behind a switch, always a decimal point, shop by tier and price (D62)
 - [x] The Hard AI takes Rapid Resupply when about to lose; the Pelican drops 5 seconds in (D62)
 - [x] Base health moves 5% at any setting, a shockwave weakens seeds, Hard levels before new squads in Unlock Skirmish (D63)
+- [x] The extra squad slot costs 50; a weaker Cobra and Rhino for Armored Division (D64)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 
