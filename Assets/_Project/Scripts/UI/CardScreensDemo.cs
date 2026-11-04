@@ -66,6 +66,7 @@ namespace Halobellum.UI
         private int _totalDidNotFit, _totalAtTheFloor;
         private readonly List<string> _problems = new List<string>();
         private MatchHud _hud;
+        private int _pressedControl, _skirmishProblems;
         private readonly Queue<Event> _clicksForTheHud = new Queue<Event>();
         private readonly Dictionary<string, Rect> _buttonsDrawn = new Dictionary<string, Rect>();
 
@@ -486,6 +487,7 @@ namespace Halobellum.UI
                 yield return Shot($"{w}x{h}_ui{ui * 100f:0}_deployment");
             }
 
+            yield return SkirmishHudButtons();
             yield return SkirmishHudPictures();
 
             GameSettings.UseUiScaleForThisRun(1f);
@@ -526,20 +528,20 @@ namespace Halobellum.UI
             Debug.Log("Card demo's layout pictures finished.");
         }
 
-        /// <summary>Unlock Skirmish's bar, unlock page and hover stats, then its buttons and keys at work.</summary>
+        private void SkirmishCheck(string what, bool ok)
+        {
+            Debug.Log($"Skirmish HUD: {(ok ? "ok" : "PROBLEM")}: {what}");
+            if (!ok) _skirmishProblems++;
+        }
+
+        /// <summary>Unlock Skirmish's bar, unlock page and hover stats.</summary>
         private IEnumerator SkirmishHudPictures()
         {
-            _hud = FindFirstObjectByType<MatchHud>();
             SquadStatsWindow stats = FindFirstObjectByType<SquadStatsWindow>();
             var setup = new MatchSetup { Mode = MatchMode.UnlockSkirmish };
-            int problems = 0;
-            void Check(string what, bool ok)
-            {
-                Debug.Log($"Skirmish HUD: {(ok ? "ok" : "PROBLEM")}: {what}");
-                if (!ok) problems++;
-            }
+            void Check(string what, bool ok) => SkirmishCheck(what, ok);
 
-            UnitStats tallest = null;
+            string tallestName = null;
             foreach ((int w, int h, float ui) in SkirmishSizes)
             {
                 Screen.SetResolution(w, h, FullScreenMode.Windowed);
@@ -559,7 +561,7 @@ namespace Halobellum.UI
 
                 var sorted = new List<UnitStats>();
                 MatchHud.FillShopRows(player.Roster, sorted);
-                if (tallest == null)
+                if (tallestName == null)
                 {
                     // The tallest window of them all, measured rather than guessed.
                     var heights = new List<(float height, UnitStats unit)>();
@@ -574,11 +576,12 @@ namespace Halobellum.UI
                     }
                     _hud.DemoHover = null;
                     heights.Sort((a, b) => b.height.CompareTo(a.height));
-                    tallest = heights[0].unit;
+                    tallestName = heights[0].unit.Name;
                     Debug.Log("Skirmish HUD: the tallest hover windows: " + string.Join(", ", heights.Take(5).Select(p => $"{p.unit.Name} {p.height:0}")) + $"; the shortest {heights[heights.Count - 1].unit.Name} {heights[heights.Count - 1].height:0}");
                     yield return Shot(prefix + "bar_every_unit");
                 }
 
+                UnitStats tallest = sorted.First(u => u.Name == tallestName); // Each match has its own.
                 int columns = MatchHud.UnitBarColumns(hudWidth);
                 player.Unlocked.Clear();
                 player.Unlocked.Add(tallest);
@@ -608,11 +611,27 @@ namespace Halobellum.UI
                 stats.TryGetWindow(out hoverWindow);
                 Check($"{prefix} hovering {tallest.Name} on the page: window at {hoverWindow}, beside the page", hoverWindow.xMax <= _hud.UnlockPageShown.x && hoverWindow.y >= 0f);
                 _hud.DemoHover = null;
+                player.Credits = 120;
+                yield return Shot(prefix + "page_few_credits");
                 _hud.CloseUnlockPage();
-                yield return null;
+                yield return Shot(prefix + "bar_few_credits");
+            }
+            Debug.Log($"Skirmish HUD finished: {_skirmishProblems} problems.");
+        }
+
+        /// <summary>The buttons and keys of Unlock Skirmish's bar and page, at 1080p, where 1 unit is 1 pixel.</summary>
+        private IEnumerator SkirmishHudButtons()
+        {
+            _hud = FindFirstObjectByType<MatchHud>();
+            SquadStatsWindow stats = FindFirstObjectByType<SquadStatsWindow>();
+            var setup = new MatchSetup { Mode = MatchMode.UnlockSkirmish };
+            void Check(string what, bool ok) => SkirmishCheck(what, ok);
+            Rect Drawn(string key)
+            {
+                if (!_buttonsDrawn.TryGetValue(key, out Rect rect)) Check($"{key} was never drawn", false);
+                return rect;
             }
 
-            // Now the buttons and keys, at 1080p, where 1 unit is 1 pixel.
             Screen.SetResolution(1920, 1080, FullScreenMode.Windowed);
             GameSettings.UseUiScaleForThisRun(1f);
             yield return new WaitForSecondsRealtime(0.8f);
@@ -626,7 +645,7 @@ namespace Halobellum.UI
             yield return null;
             yield return null;
 
-            Vector2 stripAt = _buttonsDrawn[MatchHud.UnlockUnitsLabel].center;
+            Vector2 stripAt = Drawn(MatchHud.UnlockUnitsLabel).center;
             yield return ClickHud(1, stripAt);
             Check("a right-click on Unlock units does not open the page", !_hud.IsUnlockPageOpen);
             yield return ClickHud(0, stripAt);
@@ -637,7 +656,7 @@ namespace Halobellum.UI
             // In a scroll view, which the note of a drawn button doesn't know about.
             Vector2 listAt = _hud.UnlockPageShown.position + new Vector2(8f, 50f);
             UnitStats locked = me.Roster.First(u => !me.Unlocked.Contains(u) && u.UnlockCost > 0);
-            Vector2 lockedAt = listAt + _buttonsDrawn[MatchHud.PageCellKey(locked)].center;
+            Vector2 lockedAt = listAt + Drawn(MatchHud.PageCellKey(locked)).center;
             yield return ClickHud(1, lockedAt);
             yield return null;
             Check($"a right-click on {locked.Name} on the page does not unlock it", !me.Unlocked.Contains(locked));
@@ -648,20 +667,20 @@ namespace Halobellum.UI
             yield return null;
             yield return Shot("skirmish_bar_after_unlock");
 
-            yield return ClickHud(0, stripAt = _buttonsDrawn[MatchHud.UnlockUnitsLabel].center);
+            yield return ClickHud(0, Drawn(MatchHud.UnlockUnitsLabel).center);
             yield return null;
             yield return null;
             UnitStats second = me.Roster.First(u => !me.Unlocked.Contains(u) && u.UnlockCost > 0);
-            yield return ClickHud(0, listAt + _buttonsDrawn[MatchHud.PageCellKey(second)].center);
+            yield return ClickHud(0, listAt + Drawn(MatchHud.PageCellKey(second)).center);
             Check($"a second unlock in the round is refused, and the page stays: {_match.Message}", !me.Unlocked.Contains(second) && _hud.IsUnlockPageOpen);
             yield return Shot("skirmish_page_second_unlock_refused");
-            yield return ClickHud(0, _buttonsDrawn[MatchHud.UnlockPageCloseKey].center);
+            yield return ClickHud(0, Drawn(MatchHud.UnlockPageCloseKey).center);
             Check("its x closes the page", !_hud.IsUnlockPageOpen);
             yield return null;
             yield return null;
 
             UnitStats toBuy = SortedUnlocked(me).First();
-            Vector2 cellAt = _buttonsDrawn[MatchHud.BarCellKey(toBuy)].center;
+            Vector2 cellAt = Drawn(MatchHud.BarCellKey(toBuy)).center;
             int squads = me.Squads.Count;
             yield return ClickHud(1, cellAt);
             Check($"a right-click on {toBuy.Name} in the bar does not buy it", me.Squads.Count == squads);
@@ -669,7 +688,7 @@ namespace Halobellum.UI
             Check($"a left-click on {toBuy.Name} in the bar buys a squad: {_match.Message}", me.Squads.Count == squads + 1);
 
             // It lands with the page open: it selects itself, and the page clears that.
-            yield return ClickHud(0, _buttonsDrawn[MatchHud.UnlockUnitsLabel].center);
+            yield return ClickHud(0, Drawn(MatchHud.UnlockUnitsLabel).center);
             Check("the page opens while a squad is dropping", _hud.IsUnlockPageOpen && _match.IsDropping);
             SquadSelection selection = _match.GetComponent<SquadSelection>();
             while (_match.IsDropping) yield return null;
@@ -695,7 +714,7 @@ namespace Halobellum.UI
             Check("and the next Esc closes the page", !GamePause.IsPaused && !_hud.IsUnlockPageOpen);
 
             // A squad selected in the field, with a unit hovered in the bar: the window is the hovered unit's, with nothing of that squad.
-            yield return ClickHud(0, _buttonsDrawn[MatchHud.BarCellKey(toBuy)].center);
+            yield return ClickHud(0, Drawn(MatchHud.BarCellKey(toBuy)).center);
             while (_match.IsDropping) yield return null;
             yield return new WaitForSecondsRealtime(0.3f);
             Check("a squad that lands with the page shut is selected", selection.SelectedSquadId >= 0);
@@ -706,7 +725,6 @@ namespace Halobellum.UI
             Check($"hovering {other.Name} with a squad selected shows no level-up button of that squad", stats.HoverUnit == other && stats.LevelUpShown.width <= 0f && stats.LevelAllShown.width <= 0f);
             _hud.DemoHover = null;
             MenuStyle.ButtonDrawnForTest -= NoteButton;
-            Debug.Log($"Skirmish HUD finished: {problems} problems.");
         }
 
         private static IEnumerable<UnitStats> SortedUnlocked(PlayerState player)
@@ -732,8 +750,15 @@ namespace Halobellum.UI
             if (_clicksForTheHud.Count == 0 || Event.current.type != EventType.Repaint) return;
             Event real = Event.current;
             Matrix4x4 matrix = GUI.matrix;
-            Event.current = _clicksForTheHud.Dequeue();
+            Event click = _clicksForTheHud.Dequeue();
+            bool release = click.type == EventType.MouseUp;
+            string asked = $"{click.type} button {click.button} at {click.mousePosition}";
+            if (release) GUIUtility.hotControl = _pressedControl; // The press was a frame ago: this game's real mouse isn't down, and IMGUI may have let go of it.
+            Event.current = click;
             typeof(MatchHud).GetMethod("OnGUI", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(_hud, null);
+            if (!release) _pressedControl = GUIUtility.hotControl;
+            Debug.Log($"Skirmish HUD: {asked}: the control held is now {GUIUtility.hotControl}");
+            GUIUtility.hotControl = 0;
             GUI.matrix = matrix;
             Event.current = real;
         }
