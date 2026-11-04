@@ -1,7 +1,7 @@
 // MenuFlowTests.cs
 // The main menu's rules that need no running game (M10): where each test tool goes, what the settings default to and how they are kept
 // in range, how the HUD fits a window, and that the build starts in the MainMenu scene with every scene it can reach. Also how the HUD's parts
-// keep clear of each other, the order of the shop, the selection ring, and that the game's fonts keep a non-breaking space together.
+// keep clear of each other, the shop's order of tier then price, Unlock Skirmish's bar and hover window, the selection ring, and that the game's fonts keep a non-breaking space together.
 // Settings tests hold the settings in memory, since PlayerPrefs outlive a test. The two that are about PlayerPrefs itself put back whatever was stored.
 // Depends on: Halobellum.Presentation, Halobellum.UI, Halobellum.Core, Halobellum.Economy, Halobellum.Editor (scene paths), Halobellum.Units, NUnit.
 
@@ -312,27 +312,54 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void TheShop_ListsTheSubFactionsOwnUnitsFirst_WithoutTouchingTheRoster()
+        public void TheShop_IsInOrderOfTierThenPrice_WithoutTouchingTheRoster()
         {
-            UnitStats One(string name) => new UnitStats { Name = name };
-            UnitStats a = One("a"), b = One("b"), c = One("c"), own1 = One("own1"), own2 = One("own2");
-            var roster = new List<UnitStats> { a, b, c, own1, own2 };
-            var rows = new List<UnitStats> { a };
-            MatchHud.FillShopRows(roster, new List<UnitStats> { own1, own2 }, rows);
-            CollectionAssert.AreEqual(new[] { own1, own2, a, b, c }, rows);
-            CollectionAssert.AreEqual(new[] { a, b, c, own1, own2 }, roster, "The roster keeps its order for the cards and the AI.");
-            MatchHud.FillShopRows(roster, new List<UnitStats>(), rows);
-            CollectionAssert.AreEqual(roster, rows, "With no units of its own, nothing moves.");
+            UnitStats One(string name, int tier, int cost) => new UnitStats { Name = name, Tier = tier, Cost = cost };
+            UnitStats titan = One("titan", 3, 800), tank = One("tank", 2, 300), cheapTier2 = One("cheapTier2", 2, 150), marine = One("marine", 1, 100), dearTier1 = One("dearTier1", 1, 200), sameAsMarine = One("sameAsMarine", 1, 100);
+            var roster = new List<UnitStats> { titan, tank, dearTier1, cheapTier2, marine, sameAsMarine };
+            var rows = new List<UnitStats> { titan };
+            MatchHud.FillShopRows(roster, rows);
+            CollectionAssert.AreEqual(new[] { marine, sameAsMarine, dearTier1, cheapTier2, tank, titan }, rows, "A dear unit of a low tier comes before a cheap one of the next; equals keep their order.");
+            CollectionAssert.AreEqual(new[] { titan, tank, dearTier1, cheapTier2, marine, sameAsMarine }, roster, "The roster keeps its order for the cards and the AI.");
+        }
+
+        [TestCase(1920f, 8)]
+        [TestCase(1536f, 5)]
+        public void TheUnitBar_FitsAsManyIconsAsTheScaleLeavesRoomFor(float width, int columns)
+        {
+            Assert.AreEqual(columns, MatchHud.UnitBarColumns(width));
+            Rect bar = MatchHud.UnitBarRect(width, width / 16f * 9f, 3 * columns);
+            Assert.AreEqual(width - 112f, bar.xMax, "It stops short of the Menu button.");
+            Assert.GreaterOrEqual(bar.x, SquadStatsWindow.ActionsPanelLeft(width, 520f) + 520f, "It keeps clear of Move / Turn / Sell.");
+            Assert.AreEqual(width / 16f * 9f - 10f, bar.yMax);
         }
 
         [Test]
-        public void TheShop_IsInOrderOfPrice_WithTheSubFactionsOwnFirstAtTheSamePrice()
+        public void TheUnitBar_GrowsUpward_AndScrollsBeforeItReachesTheTopBar()
         {
-            UnitStats One(string name, int cost) => new UnitStats { Name = name, Cost = cost };
-            UnitStats titan = One("titan", 800), tank = One("tank", 300), marine = One("marine", 100), own = One("own", 300), ownCheap = One("ownCheap", 150);
-            var rows = new List<UnitStats>();
-            MatchHud.FillShopRows(new List<UnitStats> { titan, tank, marine, own, ownCheap }, new List<UnitStats> { own, ownCheap }, rows);
-            CollectionAssert.AreEqual(new[] { marine, ownCheap, own, tank, titan }, rows);
+            Rect one = MatchHud.UnitBarRect(1920f, 1080f, 2), three = MatchHud.UnitBarRect(1920f, 1080f, 24);
+            Assert.AreEqual(578f, one.width);
+            Assert.AreEqual(one.yMax, three.yMax);
+            Assert.Less(three.y, one.y);
+            Assert.GreaterOrEqual(MatchHud.UnitBarRect(1536f, 864f, 69).y, 110f, "Every unit unlocked, at the largest UI scale.");
+        }
+
+        [Test]
+        public void TheUnitBar_StandsAboveTheSquadActions_InANarrowWindow()
+        {
+            Rect bar = MatchHud.UnitBarRect(1140f, 912f, 8);
+            Assert.AreEqual(4, MatchHud.UnitBarColumns(1140f));
+            Assert.LessOrEqual(bar.yMax, 912f - 70f);
+        }
+
+        [Test]
+        public void AHoveredUnitsWindow_GoesAboveTheBar_OrBesideItIfTooTall()
+        {
+            Rect above = SquadStatsWindow.HoverRect(440f, 300f, 1808f, 700f, 1224f, 1080f);
+            Assert.AreEqual(new Rect(1368f, 400f, 440f, 300f), above);
+            Rect beside = SquadStatsWindow.HoverRect(440f, 580f, 1424f, 532f, 1050f, 864f);
+            Assert.AreEqual(new Rect(610f, 274f, 440f, 580f), beside, "At the screen's bottom, left of the bar.");
+            Assert.AreEqual(0f, SquadStatsWindow.HoverRect(440f, 2000f, 1424f, 532f, 1050f, 864f).y, "Its top stays on the screen.");
         }
 
         [Test]
@@ -347,6 +374,8 @@ namespace Halobellum.Tests
             Assert.IsTrue(view.Techs[0].Locked);
             Assert.IsFalse(view.Techs[0].Owned);
             Assert.IsNull(view.Techs[0].ButtonLabel, "It can't be bought from here.");
+            StringAssert.Contains("In the shop", view.SideLabel);
+            StringAssert.DoesNotContain("shop", SquadStatsWindow.ShopProgress(new UnitStats { Name = "tank" }, hovered: true).SideLabel, "Unlock Skirmish has no shop.");
         }
 
         [Test]

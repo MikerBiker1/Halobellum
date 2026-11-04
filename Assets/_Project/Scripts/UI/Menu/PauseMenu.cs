@@ -3,10 +3,11 @@
 // itself to the scene when the scene loads, so no scene file holds it. Pausing is GamePause: time stops, so the battle stops in whatever
 // phase it is. While paused, the HUD and everything that takes clicks or keys on the field are switched off, so that nothing behind the
 // menu can react; they come back as they were. Leaving asks first, because the match is lost.
-// Esc still does its old jobs first: while something is being placed it cancels that, and with a squad selected it clears the selection
-// (those scripts see the same key press, so this one must look before they change anything; hence its early execution order).
+// Esc still does its old jobs first: while something is being placed it cancels that, with a squad selected it clears the selection, and
+// it closes Unlock Skirmish's unlock page (those scripts see the same key press, so this one must look before they change anything; hence
+// its early execution order).
 // A small Menu button in the screen's corner does the same for those who don't know about Esc.
-// Depends on: GameFlow, GamePause, BattleController, SquadSelection, DeploymentInput, SpellView, BattleCameraController, UiHitAreas,
+// Depends on: GameFlow, GamePause, BattleController, SquadSelection, MatchHud, DeploymentInput, SpellView, BattleCameraController, UiHitAreas,
 //             MenuStyle, SettingsScreen, Unity Input System.
 
 using System;
@@ -32,10 +33,15 @@ namespace Halobellum.UI
         private readonly List<Behaviour> _switchedOff = new List<Behaviour>();
         private BattleController _battle;
         private SquadSelection _selection;
+        private MatchHud _hud;
         private Page _page;
+        private int _closedFrame = -1;
 
         /// <summary>The pause menu of the loaded scene, or null if it has none.</summary>
         public static PauseMenu Current { get; private set; }
+
+        /// <summary>This menu closed this frame: an Esc that did so was for it, and not for what comes back to life behind it.</summary>
+        public bool ClosedThisFrame => _closedFrame == Time.frameCount;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Hook()
@@ -60,7 +66,11 @@ namespace Halobellum.UI
             useGUILayout = false; // Nothing here uses GUILayout. With the layout pass on, Unity makes new layout groups for this script every frame, which is garbage at every frame rate.
         }
 
-        private void Start() => _selection = _battle != null ? _battle.GetComponent<SquadSelection>() : null;
+        private void Start()
+        {
+            _selection = _battle != null ? _battle.GetComponent<SquadSelection>() : null;
+            _hud = FindAnyObjectByType<MatchHud>();
+        }
 
         private void OnDestroy()
         {
@@ -85,9 +95,10 @@ namespace Halobellum.UI
             }
         }
 
-        /// <summary>True if Esc is about to cancel a placement or clear the selection instead.</summary>
-        private bool EscapeHasOtherWork()
+        /// <summary>True if Esc is about to close the unlock page, cancel a placement or clear the selection instead.</summary>
+        public bool EscapeHasOtherWork()
         {
+            if (_hud != null && _hud.UnlockPageTakesEscape) return true;
             if (_selection == null) return false;
             return !_selection.InputEnabled || _selection.SelectedSquadId >= 0 || _selection.SelectedTower != null;
         }
@@ -105,6 +116,7 @@ namespace Halobellum.UI
         public void Close()
         {
             if (!GamePause.IsPaused) return;
+            _closedFrame = Time.frameCount;
             foreach (Behaviour behaviour in _switchedOff)
             {
                 if (behaviour != null) behaviour.enabled = true;

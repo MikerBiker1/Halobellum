@@ -1,7 +1,7 @@
 // MatchHud.cs
 // The match screens (Bible Section 13), one per phase:
-//   Draft: the starting draft cards (faction, sub-faction, 2 free squads) to choose from, and a
-//     button to the Sandbox. Up to 5 cards fit (CardLayout); each is drawn by CardScreens.
+//   Draft: the starting draft cards (faction, sub-faction, 2 free squads) to choose from. Up to 5 cards fit (CardLayout); each is
+//     drawn by CardScreens. The AI's difficulty and the Sandbox are chosen in the Play menu, before this.
 //   Deployment: credits and next income, squads bought (x of 2), unlocks (x of 1), both bases, the
 //     unit shop (Buy / Unlock), actions for the selected squad (Move, Turn, Sell) and Ready. No timer.
 //   Cards (from round 2, Milestone 7): 3 cards with their prices (spells, items, economy, buffs,
@@ -14,6 +14,9 @@
 //     an icon at the top left: select a squad, click it, confirm (decision D33).
 //     Each tower (D55) has a small button above it, and clicking it or the tower opens its window at the bottom
 //     left: its level, what its fall does, and what it sells.
+//     In Unlock Skirmish a bar at the bottom right takes the shop's place: an icon and price for each unlocked unit (click to buy, hover
+//     for its stats), and an "Unlock units" button that opens a page of every unit by tier and price, over a dimmed field. Esc, a
+//     right-click, its x or a successful unlock closes the page. Its state is in plain methods, so that batch tests can use them.
 //   Battle: both base health bars and a live army-value comparison (speed controls are in BattleHud), and how long
 //     a fallen tower's shockwave still weakens each army.
 //   Result: base damage dealt by each side, income, survivors, top damage dealers, what killed what.
@@ -31,7 +34,7 @@ using Halobellum.Economy;
 using Halobellum.Presentation;
 using Halobellum.Units;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 namespace Halobellum.UI
 {
@@ -46,10 +49,13 @@ namespace Halobellum.UI
         [SerializeField] private Color playerColor = new Color(0.35f, 0.55f, 1f);
         [SerializeField] private Color enemyColor = new Color(1f, 0.4f, 0.32f);
 
-        private GUIStyle _title, _big, _text, _small, _smallCentered, _button, _bigButton, _centered, _header, _barLabel, _wrap, _wrapDim, _shopLine;
+        private GUIStyle _title, _big, _text, _small, _smallCentered, _button, _bigButton, _centered, _header, _barLabel, _wrap, _wrapDim, _shopLine, _cellLine;
         private float _scale;
         private Vector2 _shopScroll;
         private readonly List<UnitStats> _shopRows = new List<UnitStats>();
+        private Vector2 _barScroll, _pageScroll;
+        private bool _unlockPageOpen;
+        private int _unlockPageClosedFrame = -1;
         private readonly HudLine _yourBaseLine = new HudLine(), _enemyBaseLine = new HudLine(), _yourValueLine = new HudLine(), _enemyValueLine = new HudLine();
         private readonly HudLine _yourShockwaveLine = new HudLine(), _enemyShockwaveLine = new HudLine();
         private SquadSelection _selection;
@@ -60,6 +66,25 @@ namespace Halobellum.UI
         private Rect _towerWindow;
 
         private void Awake() => useGUILayout = false; // Nothing here uses GUILayout. With the layout pass on, Unity makes new layout groups for this script every frame, which is garbage at every frame rate.
+
+        /// <summary>The page has its own rules while it is open. A squad landing during the drop selects itself, and M, R and Del would then act on it behind the page.</summary>
+        private void Update()
+        {
+            if (!_unlockPageOpen) return;
+            if (match == null || match.Match == null || match.Match.Phase != MatchPhase.Deployment)
+            {
+                _unlockPageOpen = false;
+                return;
+            }
+            Selection.Select(-1);
+            Selection.ClearTower();
+
+            Keyboard keyboard = Keyboard.current;
+            PauseMenu pause = PauseMenu.Current;
+            bool closedThePauseMenu = pause != null && pause.ClosedThisFrame; // That press was for the menu in front.
+            if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame && !closedThePauseMenu) HandleEscape();
+            else if (RightClick.WasClicked) CloseUnlockPage();
+        }
 
         private void OnGUI()
         {
@@ -89,36 +114,16 @@ namespace Halobellum.UI
             float width = HudScale.ScaledWidth(_scale), height = HudScale.ScaledHeight(_scale);
             DimTheField(width, height);
 
-            // Top bar: what this screen is, and the AI's difficulty (Milestone 5: it only changes how well the
-            // AI decides, never what it knows or earns).
+            // Top bar: what this screen is.
             float barWidth = Mathf.Min(1180f, width - 28f);
             var bar = new Rect((width - barWidth) * 0.5f, 10f, barWidth, 84f);
             Panel(bar);
-            const float difficultyWidth = 590f;
-            float titleWidth = bar.width - difficultyWidth - 34f;
+            float titleWidth = bar.width - 36f;
             CardScreens.Fit(new Rect(bar.x + 18f, bar.y + 8f, titleWidth, 36f), "Starting draft", CardScreens.TitleStyle, 28, 18, TextAnchor.MiddleLeft, HudTheme.TitleColor);
             CardScreens.Fit(new Rect(bar.x + 18f, bar.y + 44f, titleWidth, 32f), "Its squads are free and start unlocked. Dearer squads mean a weaker base.", CardScreens.LineStyle, 15, 11, TextAnchor.MiddleLeft, HudTheme.DimText);
-            float difficultyX = bar.xMax - difficultyWidth - 8f;
-            GUI.Label(new Rect(difficultyX, bar.y + 26f, 140f, 30f), "AI difficulty:", _text);
-            string[] names = { "Easy", "Normal", "Hard" };
-            for (int d = 0; d < names.Length; d++)
-            {
-                bool selected = (int)match.Difficulty == d;
-                Color old = GUI.backgroundColor;
-                if (selected) GUI.backgroundColor = new Color(0.45f, 0.75f, 1f);
-                if (GUI.Button(new Rect(difficultyX + 145f + d * 148f, bar.y + 22f, 138f, 40f), selected ? $"[ {names[d]} ]" : names[d], _button))
-                    match.SetDifficulty((AiDifficulty)d);
-                GUI.backgroundColor = old;
-            }
-
-            // The sandbox (Milestone 4): place any two armies and watch them fight.
-            var sandbox = new Rect(width * 0.5f - 200f, height - 62f, 400f, 52f);
-            Panel(sandbox);
-            if (GUI.Button(new Rect(sandbox.x + 8f, sandbox.y + 6f, sandbox.width - 16f, 40f), "Sandbox: test any two armies", _button))
-                SceneManager.LoadScene(SandboxSceneName);
 
             int count = m.PlayerDraft.Count;
-            CardRow row = CardLayout.Arrange(count, width, bar.yMax + 14f, sandbox.y - 14f);
+            CardRow row = CardLayout.Arrange(count, width, bar.yMax + 14f, height - 14f);
             DraftRowText text = count > 0 ? CardScreens.MeasureDraftRow(m.PlayerDraft, row.CardAt(0)) : default;
             for (int i = 0; i < count; i++)
             {
@@ -133,6 +138,8 @@ namespace Halobellum.UI
             Match m = match.Match;
             PlayerState player = m.Player;
             float width = HudScale.ScaledWidth(_scale), height = HudScale.ScaledHeight(_scale);
+            bool skirmish = m.Rules.Mode == MatchMode.UnlockSkirmish;
+            if (_unlockPageOpen) DimTheField(width, height); // First, so that the top bar stays lit.
 
             // Top bar.
             var bar = new Rect(width * 0.5f - 560f, 8f, 1120f, 64f);
@@ -143,7 +150,7 @@ namespace Halobellum.UI
             GUI.Label(new Rect(bar.x + 290f, bar.y + 32f, 220f, 26f), $"Unlocks: {player.UnlocksThisRound} of {m.Rules.UnlocksPerRound}", _text);
             BaseBar(new Rect(bar.x + 520f, bar.y + 10f, 220f, 20f), _yourBaseLine, "Your base", player.BaseHealth, player.StartingBaseHealth, playerColor);
             BaseBar(new Rect(bar.x + 520f, bar.y + 36f, 220f, 20f), _enemyBaseLine, "Enemy base", m.Enemy.BaseHealth, m.Enemy.StartingBaseHealth, enemyColor);
-            GUI.Label(new Rect(bar.x + 760f, bar.y + 6f, 200f, 26f), $"{player.Faction.Name} vs {m.Enemy.Faction?.Name ?? "?"}", _small);
+            GUI.Label(new Rect(bar.x + 760f, bar.y + 6f, 200f, 26f), skirmish ? "Unlock Skirmish" : $"{player.Faction.Name} vs {m.Enemy.Faction?.Name ?? "?"}", _small);
             GUI.Label(new Rect(bar.x + 760f, bar.y + 32f, 200f, 26f), m.EnemyAi.Label, _small);
             if (GUI.Button(new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f), "Ready", _bigButton)) match.Ready();
             UiAudio.Watch(new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f));
@@ -155,8 +162,16 @@ namespace Halobellum.UI
                 GUI.Label(message, match.Message, _smallCentered);
             }
 
+            if (_unlockPageOpen)
+            {
+                DrawUnlockPage(width, height);
+                ItemHud.DrawDragged(match.IconFor);
+                return;
+            }
+
             DrawSquadItemSlots();
-            DrawShop(width, height);
+            if (skirmish) DrawUnitBar(width, height);
+            else DrawShop(width, height);
             DrawInventory(DrawSpellBar());
             DrawTrainingIcons();
             DrawSelectedSquadActions(width, height);
@@ -341,22 +356,14 @@ namespace Halobellum.UI
         public static string ShopLine(UnitStats unit, bool exclusive) => $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.FormsInSquad)}{(exclusive ? ", exclusive" : "")}";
 
         /// <summary>
-        /// The shop's rows from the top, cheapest first (the owner). At the same price, the sub-faction's own units come first, since they are the
-        /// reason to pick that card, and then the rest as the roster has them. For the display only: unlocking, prices, card offers and the AI go by
-        /// the roster itself. It runs for every OnGUI event, so it sorts in place, and keeps the order of equals.
+        /// The shop's rows from the top, by tier and then by price (the owner; ShopOrder). For the display only: unlocking, prices, card offers and
+        /// the AI go by the roster itself. It runs for every OnGUI event, so it sorts in a list that is kept.
         /// </summary>
-        public static void FillShopRows(List<UnitStats> roster, List<UnitStats> exclusive, List<UnitStats> rows)
+        public static void FillShopRows(List<UnitStats> roster, List<UnitStats> rows)
         {
             rows.Clear();
-            foreach (UnitStats unit in roster) if (exclusive.Contains(unit)) rows.Add(unit);
-            foreach (UnitStats unit in roster) if (!exclusive.Contains(unit)) rows.Add(unit);
-            for (int i = 1; i < rows.Count; i++)
-            {
-                UnitStats unit = rows[i];
-                int at = i;
-                for (; at > 0 && rows[at - 1].Cost > unit.Cost; at--) rows[at] = rows[at - 1];
-                rows[at] = unit;
-            }
+            rows.AddRange(roster);
+            ShopOrder.Sort(rows);
         }
 
         private void DrawShop(float width, float height)
@@ -364,7 +371,7 @@ namespace Halobellum.UI
             Match m = match.Match;
             PlayerState player = m.Player;
             List<UnitStats> roster = _shopRows;
-            FillShopRows(player.Roster, player.SubFaction.ExclusiveUnits, roster);
+            FillShopRows(player.Roster, roster);
             const float panelWidth = ShopPanelWidth, rowHeight = 58f, picture = ShopPicture;
             float panelHeight = Mathf.Min(height - 200f, 50f + roster.Count * rowHeight);
             var panel = new Rect(width - panelWidth - 10f, 110f, panelWidth, panelHeight);
@@ -420,12 +427,254 @@ namespace Halobellum.UI
             StatsWindow.ShopUnit = StatsWindow.ShopUnit == unit ? null : unit;
         }
 
+        // ------------------------------------------------------------------ the unit bar and unlock page (Unlock Skirmish)
+
+        private const float ActionsWidth = 520f, ActionsTop = 70f;
+        private const float BarCell = 64f, BarCellHeight = 86f, BarGap = 6f, BarPadding = 12f, BarCellsTop = 44f, BarRight = 112f, BarBottom = 10f;
+        private const float PageLeft = 456f, PageTop = 110f, PageCell = 84f, PageCellHeight = 104f, PageGap = 6f, PageTierHeader = 26f, PageCellsTop = 50f, PagePadding = 8f;
+        private const float ScrollBarRoom = 18f;
+        public const string UnlockUnitsLabel = "Unlock units", UnlockPageCloseKey = "Unlock page/x";
+
+        /// <summary>The test tool's key of a unit's cell in the bar, and on the page.</summary>
+        public static string BarCellKey(UnitStats unit) => "Unit bar/" + unit.Name;
+        public static string PageCellKey(UnitStats unit) => "Unlock page/" + unit.Name;
+
+        /// <summary>For the test tool, in place of the mouse: the unit whose cell counts as hovered.</summary>
+        public UnitStats DemoHover { get; set; }
+        /// <summary>For a test tool: where the bar and the page were last drawn, in HUD units.</summary>
+        public Rect UnitBarShown { get; private set; }
+        public Rect UnlockPageShown { get; private set; }
+
+        public bool IsUnlockPageOpen => _unlockPageOpen;
+
+        /// <summary>True while Esc is the page's, or just was: PauseMenu mustn't open on the press that closes it, whichever of them runs first.</summary>
+        public bool UnlockPageTakesEscape => _unlockPageOpen || _unlockPageClosedFrame == Time.frameCount;
+
+        /// <summary>Opens the page, over nothing that could go on acting behind it: no selection, and nothing being placed.</summary>
+        public void OpenUnlockPage()
+        {
+            if (match == null || match.Match == null || match.Match.Phase != MatchPhase.Deployment || match.Match.Rules.Mode != MatchMode.UnlockSkirmish) return;
+            match.CancelPlacement();
+            match.CancelSpellPlacement();
+            match.CancelItemPlacement();
+            Selection.Select(-1);
+            Selection.ClearTower();
+            _pageScroll = Vector2.zero;
+            _unlockPageOpen = true;
+        }
+
+        public void CloseUnlockPage()
+        {
+            if (!_unlockPageOpen) return;
+            _unlockPageOpen = false;
+            _unlockPageClosedFrame = Time.frameCount;
+        }
+
+        /// <summary>Unlocks a unit, and closes the page if that went through. If not, the page stays and the message says why.</summary>
+        public ActionResult UnlockFromPage(UnitStats unit)
+        {
+            ActionResult result = match.Unlock(unit);
+            if (result.Ok) CloseUnlockPage();
+            return result;
+        }
+
+        /// <summary>Esc while the page is open closes it. Returns whether it did.</summary>
+        public bool HandleEscape()
+        {
+            if (!_unlockPageOpen) return false;
+            CloseUnlockPage();
+            return true;
+        }
+
+        /// <summary>The bar's rows: the units unlocked, in the shop's order. The set of them has no order to show.</summary>
+        public static void FillUnitBarRows(List<UnitStats> roster, HashSet<UnitStats> unlocked, List<UnitStats> rows)
+        {
+            FillShopRows(roster, rows);
+            for (int i = rows.Count - 1; i >= 0; i--)
+            {
+                if (!unlocked.Contains(rows[i])) rows.RemoveAt(i);
+            }
+        }
+
+        /// <summary>How many icons across: as many as fit between the Move / Turn / Sell panel and the Menu button, whatever the UI scale.</summary>
+        public static int UnitBarColumns(float width)
+        {
+            float actionsRight = SquadStatsWindow.ActionsPanelLeft(width, ActionsWidth) + ActionsWidth;
+            return Mathf.Clamp(Mathf.FloorToInt((width - BarRight - (actionsRight + BarGap) - 2f * BarPadding + BarGap) / (BarCell + BarGap)), 4, 8);
+        }
+
+        /// <summary>
+        /// Where the bar goes, in HUD units: at the bottom right, growing upward by the row. In a window too narrow to keep clear of the Move / Turn / Sell
+        /// panel it stands above that panel, and if it would reach the top bar it stops there and scrolls.
+        /// </summary>
+        public static Rect UnitBarRect(float width, float height, int unitCount)
+        {
+            int columns = UnitBarColumns(width);
+            int rows = Mathf.Max(1, Mathf.CeilToInt(unitCount / (float)columns));
+            float panelWidth = 2f * BarPadding + columns * (BarCell + BarGap) - BarGap;
+            float panelHeight = BarCellsTop + rows * (BarCellHeight + BarGap) - BarGap + BarPadding;
+            float actionsRight = SquadStatsWindow.ActionsPanelLeft(width, ActionsWidth) + ActionsWidth;
+            float bottom = width - BarRight - panelWidth < actionsRight + BarGap ? height - ActionsTop - BarGap : height - BarBottom;
+            if (panelHeight > bottom - PageTop)
+            {
+                panelHeight = bottom - PageTop;
+                panelWidth += ScrollBarRoom;
+            }
+            return new Rect(width - BarRight - panelWidth, bottom - panelHeight, panelWidth, panelHeight);
+        }
+
+        /// <summary>Where the page goes, in HUD units: right of the column the stats window stands in, under the top bar and its message.</summary>
+        public static Rect UnlockPageRect(float width, float height) => new Rect(PageLeft, PageTop, width - PageLeft - 10f, height - PageTop - 10f);
+
+        /// <summary>How many cells across the page's list, for the width it has.</summary>
+        public static int UnlockPageColumns(float viewWidth) => Mathf.Max(1, Mathf.FloorToInt((viewWidth + PageGap) / (PageCell + PageGap)));
+
+        /// <summary>How tall the page's list is: a header per tier, and rows of cells. The rows must be in tier order.</summary>
+        public static float UnlockPageContentHeight(List<UnitStats> rows, int columns)
+        {
+            float height = 0f;
+            int at = 0;
+            while (at < rows.Count)
+            {
+                int tier = rows[at].Tier, inTier = 0;
+                for (; at < rows.Count && rows[at].Tier == tier; at++) inTier++;
+                height += PageTierHeader + (inTier + columns - 1) / columns * (PageCellHeight + PageGap);
+            }
+            return height;
+        }
+
+        /// <summary>A unit's picture (in its own faction's look) and squad price, and under that a line of status if there is one. Greyed if it can't be had now.</summary>
+        private void DrawUnitCell(Rect cell, UnitStats unit, int price, string status, Color statusColor, bool available, bool hovered)
+        {
+            Color old = GUI.color;
+            if (!available) GUI.color = new Color(0.42f, 0.42f, 0.42f, 1f);
+            HudTheme.RowBox(cell);
+            if (hovered && Event.current.type == EventType.Repaint)
+            {
+                Color kept = GUI.color;
+                Color accent = HudTheme.Accent;
+                GUI.color = new Color(accent.r, accent.g, accent.b, 0.22f);
+                GUI.DrawTexture(cell, Texture2D.whiteTexture);
+                GUI.color = kept;
+            }
+            float size = Mathf.Min(cell.width - 8f, 60f);
+            var picture = new Rect(cell.center.x - size * 0.5f, cell.y + 3f, size, size);
+            string faction = BattleFactions.OfUnit(unit, Team.A);
+            CardScreens.DrawUnitPicture(picture, unit, faction, UnitIcons.FactionColor(faction));
+            CardScreens.Fit(new Rect(cell.x + 2f, picture.yMax, cell.width - 4f, 22f), $"{price} cr", _cellLine, 15, 12, TextAnchor.MiddleCenter, available ? HudTheme.Text : HudTheme.DimText);
+            if (status != null) CardScreens.Fit(new Rect(cell.x + 2f, picture.yMax + 20f, cell.width - 4f, 20f), status, _cellLine, 14, 11, TextAnchor.MiddleCenter, statusColor);
+            GUI.color = old;
+        }
+
+        /// <summary>The bottom-right bar of Unlock Skirmish: the Unlock units button, and the units unlocked so far.</summary>
+        private void DrawUnitBar(float width, float height)
+        {
+            Match m = match.Match;
+            PlayerState player = m.Player;
+            FillUnitBarRows(player.Roster, player.Unlocked, _shopRows);
+            Rect panel = UnitBarRect(width, height, _shopRows.Count);
+            UnitBarShown = panel;
+            Panel(panel);
+
+            var strip = new Rect(panel.x + BarPadding, panel.y + 8f, panel.width - 2f * BarPadding, 30f);
+            if (MenuStyle.Button(strip, UnlockUnitsLabel, _button) && Event.current.button == 0) OpenUnlockPage();
+
+            var view = new Rect(panel.x + BarPadding, panel.y + BarCellsTop, panel.width - 2f * BarPadding, panel.height - BarCellsTop - BarPadding);
+            int columns = UnitBarColumns(width);
+            int rowCount = Mathf.CeilToInt(_shopRows.Count / (float)columns);
+            float contentHeight = rowCount * (BarCellHeight + BarGap) - BarGap;
+            bool scrolls = contentHeight > view.height + 0.5f;
+            Vector2 pointer = Event.current.mousePosition;
+            bool inView = view.Contains(pointer); // Before the scroll view, which moves the pointer to its own coordinates.
+            Vector2 scroll = Vector2.zero, origin = view.position;
+            if (scrolls)
+            {
+                _barScroll = GUI.BeginScrollView(view, _barScroll, new Rect(0f, 0f, columns * (BarCell + BarGap) - BarGap, contentHeight));
+                scroll = _barScroll;
+                origin = Vector2.zero;
+            }
+
+            for (int i = 0; i < _shopRows.Count; i++)
+            {
+                UnitStats unit = _shopRows[i];
+                float cellX = i % columns * (BarCell + BarGap), cellY = i / columns * (BarCellHeight + BarGap);
+                var cell = new Rect(origin.x + cellX, origin.y + cellY, BarCell, BarCellHeight);
+                var onScreen = new Rect(view.x + cellX - scroll.x, view.y + cellY - scroll.y, BarCell, BarCellHeight);
+                bool hovered = unit == DemoHover || (inView && onScreen.Contains(pointer));
+                int price = m.SquadPrice(Team.A, unit);
+                bool canBuy = player.Credits >= price && player.SquadsBoughtThisRound < m.SquadsPerRound(Team.A);
+                DrawUnitCell(cell, unit, price, null, default, canBuy, hovered);
+                if (MenuStyle.Button(cell, "", GUIStyle.none, BarCellKey(unit)) && Event.current.button == 0) match.Buy(unit);
+                if (hovered && Event.current.type == EventType.Repaint && StatsWindow != null) StatsWindow.ShowHover(unit, panel.xMax, panel.y - BarGap, panel.x - BarGap);
+            }
+            if (scrolls) GUI.EndScrollView();
+        }
+
+        /// <summary>Every unit by tier and price: click one to unlock it. Hovering shows its stats in the column on the left.</summary>
+        private void DrawUnlockPage(float width, float height)
+        {
+            Match m = match.Match;
+            PlayerState player = m.Player;
+            Rect page = UnlockPageRect(width, height);
+            UnlockPageShown = page;
+            Panel(page);
+            GUI.Label(new Rect(page.x + 16f, page.y + 10f, page.width - 80f, 30f), HudTheme.Title(UnlockUnitsLabel), _header);
+            if (MenuStyle.Button(new Rect(page.xMax - 46f, page.y + 10f, 32f, 28f), "x", _button, UnlockPageCloseKey)) CloseUnlockPage();
+
+            FillShopRows(player.Roster, _shopRows);
+            var view = new Rect(page.x + PagePadding, page.y + PageCellsTop, page.width - 2f * PagePadding, page.height - PageCellsTop - PagePadding);
+            int columns = UnlockPageColumns(view.width);
+            float contentHeight = UnlockPageContentHeight(_shopRows, columns);
+            if (contentHeight > view.height)
+            {
+                columns = UnlockPageColumns(view.width - ScrollBarRoom);
+                contentHeight = UnlockPageContentHeight(_shopRows, columns);
+            }
+
+            Vector2 pointer = Event.current.mousePosition;
+            bool inView = view.Contains(pointer); // Before the scroll view, which moves the pointer to its own coordinates.
+            _pageScroll = GUI.BeginScrollView(view, _pageScroll, new Rect(0f, 0f, columns * (PageCell + PageGap) - PageGap, contentHeight));
+            float y = 0f;
+            int column = 0, tier = int.MinValue;
+            for (int i = 0; i < _shopRows.Count; i++)
+            {
+                UnitStats unit = _shopRows[i];
+                if (unit.Tier != tier)
+                {
+                    if (column > 0) y += PageCellHeight + PageGap;
+                    column = 0;
+                    tier = unit.Tier;
+                    GUI.Label(new Rect(4f, y, 300f, PageTierHeader), $"Tier {tier}", _text);
+                    y += PageTierHeader;
+                }
+
+                float cellX = column * (PageCell + PageGap);
+                var cell = new Rect(cellX, y, PageCell, PageCellHeight);
+                var onScreen = new Rect(view.x + cellX - _pageScroll.x, view.y + y - _pageScroll.y, PageCell, PageCellHeight);
+                bool hovered = unit == DemoHover || (inView && onScreen.Contains(pointer));
+                bool unlocked = player.Unlocked.Contains(unit);
+                bool canUnlock = player.Credits >= unit.UnlockCost && player.UnlocksThisRound < m.Rules.UnlocksPerRound;
+                string status = unlocked ? "Unlocked" : unit.UnlockCost > 0 ? $"Unlock {unit.UnlockCost}" : "Unlock (free)";
+                DrawUnitCell(cell, unit, m.SquadPrice(Team.A, unit), status, unlocked ? HudTheme.Accent : HudTheme.Text, unlocked || canUnlock, hovered);
+                if (MenuStyle.Button(cell, "", GUIStyle.none, PageCellKey(unit)) && Event.current.button == 0) UnlockFromPage(unit);
+                if (hovered && Event.current.type == EventType.Repaint && StatsWindow != null) StatsWindow.ShowHover(unit, SquadStatsWindow.ColumnRight, height - 10f, SquadStatsWindow.ColumnRight);
+
+                column++;
+                if (column == columns)
+                {
+                    column = 0;
+                    y += PageCellHeight + PageGap;
+                }
+            }
+            GUI.EndScrollView();
+        }
+
         private void DrawSelectedSquadActions(float width, float height)
         {
             PlacedSquad squad = match.SelectedPlacedSquad;
             if (squad == null || match.IsPlacing) return;
             bool movable = match.Match.CanMove(squad);
-            var panel = new Rect(SquadStatsWindow.ActionsPanelLeft(width, 520f), height - 70f, 520f, 58f);
+            var panel = new Rect(SquadStatsWindow.ActionsPanelLeft(width, ActionsWidth), height - ActionsTop, ActionsWidth, 58f);
             Panel(panel);
             GUI.enabled = movable;
             if (GUI.Button(new Rect(panel.x + 10f, panel.y + 10f, 150f, 38f), "Move (M)", _button)) match.BeginMoving(squad);
@@ -688,6 +937,7 @@ namespace Halobellum.UI
             _bigButton = new GUIStyle(GUI.skin.button) { fontSize = HudTheme.Size(19), fontStyle = FontStyle.Bold };
             _smallCentered = new GUIStyle(_small) { alignment = TextAnchor.MiddleCenter };
             _shopLine = new GUIStyle(_small) { wordWrap = false };
+            _cellLine = new GUIStyle(_small) { wordWrap = false };
             _wrap = new GUIStyle(_text) { fontSize = HudTheme.Size(15), wordWrap = true };
             _wrapDim = new GUIStyle(_small) { wordWrap = true, alignment = TextAnchor.UpperLeft };
             HudTheme.Fit(_wrap, _wrapDim);
