@@ -78,7 +78,7 @@ UNITS = [
     U("Pelican", "Pelican", "UNSC", "Aerial", 2, 50, 1, 300, 800, "L", 12, 2.5, 2, "B",
       [W("M370 Autocannon", 14, 0.3, 14, "Ballistic")], airu=True, drop=("Marine", 6, 10, True, 3, 1.5, 5),
       note="With its Troop Bay tech it lands and drops 6 Marines 5 seconds into the battle wherever it is, then lands behind enemy lines to drop more, up to 3 drops in all (D60)."),
-    U("Spartan", "Spartan", "UNSC", "SingleTargetDps", 3, 225, 1, 450, 1500, "U", 3.5, 0.6, 0.5, "B",
+    U("Spartan", "Spartan", "UNSC", "SingleTargetDps", 3, 250, 1, 500, 1500, "U", 3.5, 0.6, 0.5, "B",
       [W("Spartan Laser", 450, 4.0, 24, "Energy", aa=True)], shield=400, regen=80, immune=True, baked="Spartan"),
     U("Mantis", "Mantis", "UNSC", "Tank", 3, 250, 1, 500, 2500, "H", 3, 2, 2, "B",
       [W("Chaingun", 8, 0.2, 14, "Ballistic", block=True),

@@ -1933,7 +1933,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan
     defender: Pure Form Ranged
-    winRate: 1
+    winRate: 0.8
   - attacker: Spartan
     defender: Swarm Form
     winRate: 1
@@ -2032,7 +2032,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan
     defender: Infested Hornet
-    winRate: 1
+    winRate: 0.2
   - attacker: Spartan
     defender: Juggernaut
     winRate: 1
@@ -5755,7 +5755,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pure Form Ranged
     defender: Spartan
-    winRate: 0
+    winRate: 0.2
   - attacker: Pure Form Ranged
     defender: Mantis
     winRate: 1
@@ -12487,7 +12487,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Hornet
     defender: Spartan
-    winRate: 0
+    winRate: 0.8
   - attacker: Infested Hornet
     defender: Mantis
     winRate: 1
