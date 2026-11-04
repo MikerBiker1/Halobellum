@@ -206,12 +206,47 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void EveryFloodVehicle_ReleasesAGroupOf6InfectionForms_OnDeath()
+        {
+            var all = new Dictionary<string, UnitStats>();
+            foreach (string guid in AssetDatabase.FindAssets("t:UnitDefinition"))
+            {
+                var unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>(AssetDatabase.GUIDToAssetPath(guid));
+                all[unit.unitName] = unit.ToStats();
+            }
+            foreach (string name in new[] { "Infested Warthog", "Infested Scorpion", "Infested Hornet", "Infested Ghost", "Infested Wraith", "Infested Banshee", "Infected Phantom" })
+            {
+                SpawnEntry spawn = all[name].DeathBurst.Spawns.Single();
+                Assert.AreEqual("Infection Forms", spawn.Unit.Name, name);
+                Assert.AreEqual(6, spawn.Bodies * spawn.Unit.FormsPerBody, name);
+            }
+        }
+
+        [Test]
+        public void ArcherMissilePods_CannotMove()
+        {
+            var pod = AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/UNSC/ArcherMissilePod.asset");
+            Assert.AreEqual(0f, pod.ToStats().MoveSpeed);
+        }
+
+        [Test]
+        public void ThePelican_LandsToDrop_ThreeTimes()
+        {
+            UnitStats pelican = AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/UNSC/Pelican.asset").ToStats();
+            Assert.AreEqual(6f, pelican.MoveSpeed, 1e-3f, "Twice its old 3 m/s.");
+            Assert.AreEqual(3, pelican.ReinforcementDrops);
+            Assert.Greater(pelican.ReinforcementLandSeconds, 0f);
+            Assert.IsNull(pelican.Reinforcement, "Only with its tech.");
+            Assert.AreEqual("Marine", pelican.LockedReinforcement.Name);
+        }
+
+        [Test]
         public void FloodAbilities_AreSetUp()
         {
             Dictionary<string, UnitStats> u = AllStats();
             UnitStats forms = u["Infection Forms"];
-            Assert.AreEqual(5, forms.FormsPerBody);
-            Assert.AreEqual(50, forms.FormsInSquad, "50 forms in a squad, in packs of 5.");
+            Assert.AreEqual(6, forms.FormsPerBody);
+            Assert.AreEqual(60, forms.FormsInSquad, "60 forms in a squad, in packs of 6.");
             Assert.IsTrue(forms.Infects);
             Assert.AreEqual(6f, forms.LeapRange, 1e-3f, "They pounce from 6 m.");
             Assert.Greater(forms.LeapSpeed, forms.MoveSpeed);
@@ -228,7 +263,7 @@ namespace Halobellum.Tests
 
             UnitStats pelican = u["Infected Pelican"];
             Assert.IsTrue(pelican.IsAir && pelican.SelfDestructs && pelican.SeeksDensestCluster);
-            Assert.AreEqual(10, pelican.DeathBurst.Spawns.Where(s => s.Unit.Name == "Infection Forms").Sum(s => s.Bodies * s.Unit.FormsPerBody), "Bible: 10 Infection Forms.");
+            Assert.AreEqual(30, pelican.DeathBurst.Spawns.Where(s => s.Unit.Name == "Infection Forms").Sum(s => s.Bodies * s.Unit.FormsPerBody), "D60: 30 Infection Forms.");
             Assert.AreEqual(5, pelican.DeathBurst.Spawns.Where(s => s.Unit.Name == "Combat Form").Sum(s => s.Bodies), "Bible: 5 Combat Forms.");
 
             Assert.IsNotNull(u["Infected Phantom"].Reinforcement, "It carries Combat Forms.");

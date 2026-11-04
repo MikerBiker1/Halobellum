@@ -19,11 +19,11 @@ MonoBehaviour:
   squadSize: 12
   cost: 100
   baseDamage: 1.6667
-  maxHealth: 110
+  maxHealth: 130
   armorType: 0
   maxShield: 0
   shieldRegenPerSecond: 0
-  moveSpeed: 2.25
+  moveSpeed: 3
   collisionRadius: 0.5
   turnTime180: 0.25
   isAir: 0
@@ -120,4 +120,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Single-target DPS
   weakAgainst: Chaff clear
-  notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Fuel Rod Grunt (100%). Fewer bodies than a Marine squad, each much tougher: it leaps in with a scythe limb. Cannot infect, as only Infection Forms do. First-pass M10 values, UNSC-based (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Carrier Form (100%). Fewer bodies than a Marine squad, each much tougher: it leaps in with a scythe limb. Cannot infect, as only Infection Forms do. First-pass M10 values, UNSC-based (Docs/M10/subfactions.md).'

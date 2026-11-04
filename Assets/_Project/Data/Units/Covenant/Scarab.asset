@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 1
   cost: 800
   baseDamage: 160
-  maxHealth: 9000
+  maxHealth: 8500
   armorType: 2
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -30,7 +30,7 @@ MonoBehaviour:
   targetFilter: 2
   weapons:
   - weaponName: Focus Beam
-    damagePerShot: 40
+    damagePerShot: 30
     fireInterval: 0.1
     range: 24
     minRange: 0

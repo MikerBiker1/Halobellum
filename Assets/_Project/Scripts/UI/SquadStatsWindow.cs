@@ -299,8 +299,8 @@ namespace Halobellum.UI
             if (s.DeathBurst != null)
             {
                 string released = "";
-                foreach (SpawnEntry spawn in s.DeathBurst.Spawns) released += $", releases {spawn.Unit.Name}";
-                b.AppendLine($"On death: {s.DeathBurst.Damage:0} damage in {s.DeathBurst.Radius:0.#} m{released}");
+                foreach (SpawnEntry spawn in s.DeathBurst.Spawns) released += $", releases {spawn.Bodies * spawn.Unit.FormsPerBody} {spawn.Unit.Name}";
+                b.AppendLine(s.DeathBurst.Damage > 0f ? $"On death: {s.DeathBurst.Damage:0} damage in {s.DeathBurst.Radius:0.#} m{released}" : $"On death{released}");
             }
             if (s.SpawnedUnit != null) b.AppendLine($"Releases {s.SpawnedUnit.Name} every {s.SpawnIntervalSeconds:0.#} s");
             if (s.AuraRadius > 0f)
@@ -320,10 +320,13 @@ namespace Halobellum.UI
             b.AppendLine(fielded ? $"Squad size: {s.FormsInSquad}{packs}  ({alive} alive, {totalHealth:0} health left)" : $"Squad size: {s.FormsInSquad}{packs}");
             b.AppendLine($"Health: {s.MaxHealth:0} per {(s.FormsPerBody > 1 ? "pack" : "body")}    Armor: {s.ArmorType}");
             b.AppendLine(s.HasShield ? $"Shield: {s.MaxShield:0} (regen {s.ShieldRegenPerSecond:0.#}/s)" : "Shield: none");
-            b.AppendLine($"Move speed: {s.MoveSpeed:0.#} m/s    Collision size: {s.CollisionRadius * 2f:0.#} m");
+            b.AppendLine(s.MoveSpeed > 0f ? $"Move speed: {s.MoveSpeed:0.#} m/s    Collision size: {s.CollisionRadius * 2f:0.#} m" : $"Cannot move    Collision size: {s.CollisionRadius * 2f:0.#} m");
             b.AppendLine(s.TurnTime180 > 0f ? $"Turn time: {s.TurnTime180:0.##} s for 180 degrees" : "Turn time: instant");
             b.AppendLine($"Targets: {s.TargetFilter}{(s.IsAir ? "    (air unit)" : "")}");
             AppendFloodLines(b, s);
+            UnitStats drop = s.Reinforcement ?? s.LockedReinforcement;
+            if (drop != null && s.ReinforcementLandSeconds > 0f)
+                b.AppendLine($"{(s.Reinforcement == null ? "With its tech: lands" : "Lands")} behind enemy lines to drop {drop.SquadSize} {drop.Name}s, up to {s.ReinforcementDrops} times");
             for (int i = 0; i < s.Weapons.Length; i++)
             {
                 WeaponStats w = s.Weapons[i];

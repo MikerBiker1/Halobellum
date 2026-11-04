@@ -15,10 +15,10 @@ MonoBehaviour:
   unitName: Juggernaut
   role: 4
   tier: 3
-  unlockCost: 225
+  unlockCost: 200
   squadSize: 1
-  cost: 450
-  baseDamage: 90
+  cost: 400
+  baseDamage: 80
   maxHealth: 2300
   armorType: 2
   maxShield: 0
@@ -96,4 +96,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: 'Artillery, DPS'
   weakAgainst: 'Chaff clear, tanks'
-  notes: 'Best counters (headless runner, equal cost): Scorpion (100%), Mantis (100%). A pure form the size of a tank that moves like a flanker and leaps onto what it hunts. First-pass M10 values, UNSC-based (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Scorpion (100%), Goliath (100%). A pure form the size of a tank that moves like a flanker and leaps onto what it hunts. First-pass M10 values, UNSC-based (Docs/M10/subfactions.md).'

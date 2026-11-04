@@ -19,11 +19,11 @@ MonoBehaviour:
   squadSize: 16
   cost: 100
   baseDamage: 1.25
-  maxHealth: 62
+  maxHealth: 75
   armorType: 0
   maxShield: 0
   shieldRegenPerSecond: 0
-  moveSpeed: 2.25
+  moveSpeed: 3
   collisionRadius: 0.45
   turnTime180: 0.25
   isAir: 0

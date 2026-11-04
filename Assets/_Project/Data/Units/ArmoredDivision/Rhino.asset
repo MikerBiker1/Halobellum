@@ -96,4 +96,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: 'Slow, grouped units'
   weakAgainst: 'Flankers, air'
-  notes: 'Best counters (headless runner, equal cost): Sparrowhawk (100%), Infested Hornet (100%). The longest gun in the game. Slow to turn and move, lobbed so it can miss, helpless up close. First-pass M10 values, Armored Division (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Sparrowhawk (100%), Juggernaut (100%). The longest gun in the game. Slow to turn and move, lobbed so it can miss, helpless up close. First-pass M10 values, Armored Division (Docs/M10/subfactions.md).'

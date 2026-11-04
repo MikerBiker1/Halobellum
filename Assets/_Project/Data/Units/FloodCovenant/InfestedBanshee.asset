@@ -17,8 +17,8 @@ MonoBehaviour:
   tier: 2
   unlockCost: 50
   squadSize: 2
-  cost: 300
-  baseDamage: 30
+  cost: 250
+  baseDamage: 25
   maxHealth: 360
   armorType: 1
   maxShield: 0
@@ -96,9 +96,11 @@ MonoBehaviour:
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
-  deathBurstDamageType: 0
+  deathBurstDamageType: 1
   deathBurstAntiArmor: 0
-  deathSpawns: []
+  deathSpawns:
+  - unit: {fileID: 11400000, guid: 6b41beaaf1cf621860b58e52a70f04fb, type: 2}
+    bodies: 1
   spawnedUnit: {fileID: 0}
   spawnedBodies: 0
   spawnIntervalSeconds: 0
@@ -120,4 +122,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air
-  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Vampire (100%). Barely flying, still bombing. First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Swarm Form (100%). Barely flying, still bombing. First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'

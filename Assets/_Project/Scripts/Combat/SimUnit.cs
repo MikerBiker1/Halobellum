@@ -49,6 +49,14 @@ namespace Halobellum.Combat
         }
     }
 
+    /// <summary>What a carrier that lands to drop its squad is doing (D60).</summary>
+    public enum DropRunPhase
+    {
+        Flying,
+        Descending,
+        Ascending,
+    }
+
     public sealed class SimUnit
     {
         /// <summary>Unique number within one battle. Also used to break ties so results are repeatable.</summary>
@@ -172,6 +180,14 @@ namespace Halobellum.Combat
         public bool UnlimitedAcquisition;
         /// <summary>True once this unit's mid-battle reinforcement (if it has one) has been dropped.</summary>
         public bool ReinforcementDropped;
+        /// <summary>A carrier that lands to drop (D60): how many drops it has made, what it is doing, and where it is going.</summary>
+        public int DropsMade;
+        public DropRunPhase DropPhase;
+        public float NextDropAt;
+        public Vec2 DropSpot;
+        public float DropSpotCheckAt;
+        /// <summary>How high it flies: 1 at its full height, 0 on the ground. Only a carrier that lands ever comes down.</summary>
+        public float Altitude = 1f;
 
         // Battle statistics for results and later features (XP from kills, result screen).
         public float DamageDealt;
@@ -200,7 +216,9 @@ namespace Halobellum.Combat
         }
 
         public bool IsAlive => State != UnitState.Dead;
-        public bool IsAir => Stats.IsAir;
+        /// <summary>A flier that has come down to land counts as being on the ground.</summary>
+        public bool IsAir => Stats.IsAir && Altitude > LandedAltitude;
+        private const float LandedAltitude = 0.2f;
         public float Radius => Stats.CollisionRadius;
 
         public override string ToString() => $"{Stats.Name}#{Id} ({Team}) {State} hp={Health:0.#} at {Position}";

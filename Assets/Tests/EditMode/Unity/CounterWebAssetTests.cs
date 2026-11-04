@@ -86,7 +86,7 @@ namespace Halobellum.Tests
             ("Grunt Goblin", "Gauss Warthog"),
             ("Infested Marine", "Flamethrower Trooper"),
             ("Infested Warthog", "Flamethrower Trooper"),
-            ("Infested Scorpion", "Gauss Warthog"),
+            ("Infested Scorpion", "Spartan"),
             ("Infested Hornet", "Wolverine"),
             ("Juggernaut", "Scorpion"),
             ("Infested Grunt", "Flamethrower Trooper"),

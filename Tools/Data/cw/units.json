@@ -522,7 +522,7 @@
   "cost": 300,
   "hp": 350,
   "armor": "L",
-  "speed": 1.25,
+  "speed": 0.0,
   "radius": 1.4,
   "turn": 1.5,
   "filter": "G",
@@ -588,7 +588,7 @@
   "cost": 300,
   "hp": 800,
   "armor": "L",
-  "speed": 3.0,
+  "speed": 6.0,
   "radius": 2.5,
   "turn": 2,
   "filter": "B",
@@ -627,9 +627,11 @@
    "Marine",
    6,
    10,
-   true
+   true,
+   3,
+   1.5
   ],
-  "note": "Drops 6 Marines at 10 s only after its Troop Bay tech (D22).",
+  "note": "With its Troop Bay tech it lands behind enemy lines and drops 6 Marines, up to 3 times (D60).",
   "forms": 1,
   "flood": false,
   "infects": false,
@@ -1695,7 +1697,7 @@
   "unlock": 350,
   "squad": 1,
   "cost": 800,
-  "hp": 9000,
+  "hp": 8500,
   "armor": "H",
   "speed": 0.75,
   "radius": 5,
@@ -1704,7 +1706,7 @@
   "weapons": [
    {
     "name": "Focus Beam",
-    "dmg": 40,
+    "dmg": 30,
     "interval": 0.1,
     "range": 24,
     "minr": 0,
@@ -1811,7 +1813,7 @@
   "unlock": 0,
   "squad": 10,
   "cost": 100,
-  "hp": 190,
+  "hp": 228,
   "armor": "U",
   "speed": 5,
   "radius": 0.8,
@@ -1820,7 +1822,7 @@
   "weapons": [
    {
     "name": "Infectious Bite",
-    "dmg": 30,
+    "dmg": 36,
     "interval": 0.5,
     "range": 1,
     "minr": 0,
@@ -1850,7 +1852,7 @@
   "arc": null,
   "drop": null,
   "note": "",
-  "forms": 5,
+  "forms": 6,
   "flood": true,
   "infects": true,
   "immune": false,
@@ -1958,7 +1960,7 @@
   "unlock": 50,
   "squad": 6,
   "cost": 200,
-  "hp": 220,
+  "hp": 260,
   "armor": "U",
   "speed": 2.4,
   "radius": 0.6,
@@ -2114,7 +2116,7 @@
   "tier": 2,
   "unlock": 50,
   "squad": 2,
-  "cost": 300,
+  "cost": 250,
   "hp": 400,
   "armor": "L",
   "speed": 1,
@@ -2180,7 +2182,7 @@
   "tier": 2,
   "unlock": 50,
   "squad": 4,
-  "cost": 300,
+  "cost": 250,
   "hp": 200,
   "armor": "U",
   "speed": 3.5,
@@ -2246,7 +2248,7 @@
   "tier": 3,
   "unlock": 200,
   "squad": 1,
-  "cost": 500,
+  "cost": 400,
   "hp": 3200,
   "armor": "H",
   "speed": 1.6,
@@ -2312,7 +2314,7 @@
   "tier": 3,
   "unlock": 200,
   "squad": 2,
-  "cost": 450,
+  "cost": 400,
   "hp": 800,
   "armor": "L",
   "speed": 1.5,
@@ -2376,9 +2378,9 @@
   "faction": "Flood",
   "role": "Aerial",
   "tier": 3,
-  "unlock": 200,
+  "unlock": 175,
   "squad": 1,
-  "cost": 400,
+  "cost": 350,
   "hp": 900,
   "armor": "L",
   "speed": 6,
@@ -2432,7 +2434,7 @@
    "spawns": [
     [
      "InfectionForms",
-     2
+     5
     ],
     [
      "CombatForm",
@@ -2463,7 +2465,7 @@
   "tier": 3,
   "unlock": 200,
   "squad": 1,
-  "cost": 450,
+  "cost": 400,
   "hp": 1100,
   "armor": "L",
   "speed": 2.5,
@@ -2513,7 +2515,18 @@
   "immune": false,
   "selfd": false,
   "seek": false,
-  "burst": null,
+  "burst": {
+   "dmg": 0,
+   "radius": 0,
+   "type": "Explosive",
+   "aa": false,
+   "spawns": [
+    [
+     "InfectionForms",
+     1
+    ]
+   ]
+  },
   "spawn": null,
   "aura": null,
   "leap": null,
@@ -2534,9 +2547,9 @@
   "unlock": 350,
   "squad": 1,
   "cost": 800,
-  "hp": 7000,
+  "hp": 8500,
   "armor": "H",
-  "speed": 1,
+  "speed": 1.25,
   "radius": 5,
   "turn": 3,
   "filter": "B",
@@ -3305,7 +3318,7 @@
   "tier": 2,
   "unlock": 50,
   "squad": 1,
-  "cost": 300,
+  "cost": 250,
   "hp": 550,
   "armor": "L",
   "speed": 4,
@@ -3435,9 +3448,9 @@
   "faction": "UNSC",
   "role": "Aerial",
   "tier": 3,
-  "unlock": 250,
+  "unlock": 200,
   "squad": 1,
-  "cost": 500,
+  "cost": 400,
   "hp": 900,
   "armor": "H",
   "speed": 2.5,
@@ -3526,9 +3539,9 @@
   "faction": "UNSC",
   "role": "Aerial",
   "tier": 3,
-  "unlock": 225,
+  "unlock": 200,
   "squad": 1,
-  "cost": 450,
+  "cost": 400,
   "hp": 1500,
   "armor": "L",
   "speed": 3.25,
@@ -4389,9 +4402,9 @@
   "unlock": 0,
   "squad": 12,
   "cost": 100,
-  "hp": 110,
+  "hp": 130,
   "armor": "U",
-  "speed": 2.25,
+  "speed": 3,
   "radius": 0.5,
   "turn": 0.25,
   "filter": "G",
@@ -4559,7 +4572,18 @@
   "immune": false,
   "selfd": false,
   "seek": false,
-  "burst": null,
+  "burst": {
+   "dmg": 0,
+   "radius": 0,
+   "type": "Explosive",
+   "aa": false,
+   "spawns": [
+    [
+     "InfectionForms",
+     1
+    ]
+   ]
+  },
   "spawn": null,
   "aura": null,
   "leap": null,
@@ -4579,7 +4603,7 @@
   "tier": 2,
   "unlock": 50,
   "squad": 1,
-  "cost": 300,
+  "cost": 250,
   "hp": 1350,
   "armor": "H",
   "speed": 1.4,
@@ -4650,7 +4674,18 @@
   "immune": false,
   "selfd": false,
   "seek": false,
-  "burst": null,
+  "burst": {
+   "dmg": 0,
+   "radius": 0,
+   "type": "Explosive",
+   "aa": false,
+   "spawns": [
+    [
+     "InfectionForms",
+     1
+    ]
+   ]
+  },
   "spawn": null,
   "aura": null,
   "leap": null,
@@ -4670,7 +4705,7 @@
   "tier": 2,
   "unlock": 50,
   "squad": 2,
-  "cost": 300,
+  "cost": 250,
   "hp": 360,
   "armor": "L",
   "speed": 4,
@@ -4741,7 +4776,18 @@
   "immune": false,
   "selfd": false,
   "seek": false,
-  "burst": null,
+  "burst": {
+   "dmg": 0,
+   "radius": 0,
+   "type": "Explosive",
+   "aa": false,
+   "spawns": [
+    [
+     "InfectionForms",
+     1
+    ]
+   ]
+  },
   "spawn": null,
   "aura": null,
   "leap": null,
@@ -4759,9 +4805,9 @@
   "faction": "Flood",
   "role": "Flanker",
   "tier": 3,
-  "unlock": 225,
+  "unlock": 200,
   "squad": 1,
-  "cost": 450,
+  "cost": 400,
   "hp": 2300,
   "armor": "H",
   "speed": 3.25,
@@ -4832,9 +4878,9 @@
   "unlock": 0,
   "squad": 16,
   "cost": 100,
-  "hp": 62,
+  "hp": 75,
   "armor": "U",
-  "speed": 2.25,
+  "speed": 3,
   "radius": 0.45,
   "turn": 0.25,
   "filter": "G",
@@ -5002,7 +5048,18 @@
   "immune": false,
   "selfd": false,
   "seek": false,
-  "burst": null,
+  "burst": {
+   "dmg": 0,
+   "radius": 0,
+   "type": "Explosive",
+   "aa": false,
+   "spawns": [
+    [
+     "InfectionForms",
+     1
+    ]
+   ]
+  },
   "spawn": null,
   "aura": null,
   "leap": null,
@@ -5022,7 +5079,7 @@
   "tier": 2,
   "unlock": 50,
   "squad": 3,
-  "cost": 300,
+  "cost": 250,
   "hp": 420,
   "armor": "U",
   "speed": 2,
@@ -5122,7 +5179,7 @@
   "tier": 2,
   "unlock": 50,
   "squad": 1,
-  "cost": 300,
+  "cost": 250,
   "hp": 1000,
   "armor": "H",
   "speed": 1,
@@ -5168,7 +5225,18 @@
   "immune": false,
   "selfd": false,
   "seek": false,
-  "burst": null,
+  "burst": {
+   "dmg": 0,
+   "radius": 0,
+   "type": "Explosive",
+   "aa": false,
+   "spawns": [
+    [
+     "InfectionForms",
+     1
+    ]
+   ]
+  },
   "spawn": null,
   "aura": null,
   "leap": null,
@@ -5188,7 +5256,7 @@
   "tier": 2,
   "unlock": 50,
   "squad": 2,
-  "cost": 300,
+  "cost": 250,
   "hp": 360,
   "armor": "L",
   "speed": 4.5,
@@ -5259,7 +5327,18 @@
   "immune": false,
   "selfd": false,
   "seek": false,
-  "burst": null,
+  "burst": {
+   "dmg": 0,
+   "radius": 0,
+   "type": "Explosive",
+   "aa": false,
+   "spawns": [
+    [
+     "InfectionForms",
+     1
+    ]
+   ]
+  },
   "spawn": null,
   "aura": null,
   "leap": null,
@@ -5277,9 +5356,9 @@
   "faction": "Flood",
   "role": "Tank",
   "tier": 3,
-  "unlock": 225,
+  "unlock": 200,
   "squad": 1,
-  "cost": 450,
+  "cost": 400,
   "hp": 2800,
   "armor": "L",
   "speed": 0.9,
@@ -5318,7 +5397,7 @@
   "air": false,
   "arc": null,
   "drop": null,
-  "note": "A mobile birthing form: it fights badly, and releases 10 Infection Forms every 6 seconds. Kill it first.",
+  "note": "A mobile birthing form: it fights badly, and releases 12 Infection Forms every 6 seconds. Kill it first.",
   "forms": 1,
   "flood": true,
   "infects": false,

@@ -15,10 +15,10 @@ MonoBehaviour:
   unitName: Condor Gunship
   role: 7
   tier: 3
-  unlockCost: 225
+  unlockCost: 200
   squadSize: 1
-  cost: 450
-  baseDamage: 90
+  cost: 400
+  baseDamage: 80
   maxHealth: 1500
   armorType: 1
   maxShield: 0
@@ -64,6 +64,8 @@ MonoBehaviour:
   reinforcementBodies: 6
   reinforcementDelaySeconds: 7
   reinforcementNeedsUpgrade: 0
+  reinforcementDrops: 1
+  reinforcementLandSeconds: 0
   formsPerBody: 1
   isFlood: 0
   infects: 0

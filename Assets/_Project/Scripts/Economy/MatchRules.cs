@@ -63,6 +63,8 @@ namespace Halobellum.Economy
         public int ReinforcementBudgetPerRound = 50;
         /// <summary>Highest level a reinforcement card can have (decision D32).</summary>
         public int ReinforcementMaxLevel = 3;
+        /// <summary>The highest tier a reinforcement card can bring: no Titans (the owner, D60).</summary>
+        public int ReinforcementMaxTier = 3;
         /// <summary>The possible reinforcement level goes up by 1 every this many rounds: level 1 in rounds 1-4, up to 2 in 5-8 ... (D32).</summary>
         public int ReinforcementLevelEveryRounds = 4;
 

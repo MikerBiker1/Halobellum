@@ -232,7 +232,7 @@ namespace Halobellum.Combat
         /// </summary>
         private bool MakesWayFor(SimUnit slower, SimUnit faster)
         {
-            return _rules.YieldSpeedRatio > 0f && slower != faster && slower.Team == faster.Team && !slower.IsAir && !faster.IsAir && !slower.IsLeaping
+            return _rules.YieldSpeedRatio > 0f && slower != faster && slower.Stats.MoveSpeed > 0f && slower.Team == faster.Team && !slower.IsAir && !faster.IsAir && !slower.IsLeaping
                 && faster.Radius >= slower.Radius && faster.MoveSpeedNow >= slower.MoveSpeedNow * _rules.YieldSpeedRatio;
         }
 
@@ -334,10 +334,10 @@ namespace Halobellum.Combat
         /// </summary>
         private static void PushShares(SimUnit a, SimUnit b, out float aShare, out float bShare)
         {
-            if (a.Stats.IsTower || b.Stats.IsTower) // Nothing moves a tower.
+            if (a.Stats.MoveSpeed <= 0f || b.Stats.MoveSpeed <= 0f) // Nothing moves a tower or an Archer pod.
             {
-                aShare = a.Stats.IsTower ? 0f : 1f;
-                bShare = 1f - aShare;
+                aShare = a.Stats.MoveSpeed <= 0f ? 0f : 1f;
+                bShare = b.Stats.MoveSpeed <= 0f ? 0f : 1f;
                 return;
             }
             bool aAnchored = a.State != UnitState.Move;

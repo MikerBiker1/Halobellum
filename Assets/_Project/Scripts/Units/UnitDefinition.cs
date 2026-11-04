@@ -66,6 +66,10 @@ namespace Halobellum.Units
         public float reinforcementDelaySeconds;
         [Tooltip("If ticked, the drop only works once a tech upgrade with 'Unlocks Reinforcement' is bought (e.g. the Pelican's troop bay).")]
         public bool reinforcementNeedsUpgrade;
+        [Tooltip("How many times it drops its squad in a battle, the delay apart at least.")]
+        public int reinforcementDrops = 1;
+        [Tooltip("Above 0: it lands behind the enemy's lines to drop, taking this many seconds to come down and as long to go back up.")]
+        public float reinforcementLandSeconds;
 
         [Header("Flood (D38)")]
         [Tooltip("Tiny forms one body stands for (Infection Forms: 5). They act as one body; an area hit hurts every form in it.")]
@@ -201,6 +205,8 @@ namespace Halobellum.Units
                 UnitStats drop = reinforcementUnit.ToStats(depth + 1);
                 drop.SquadSize = reinforcementBodies;
                 stats.ReinforcementDelaySeconds = reinforcementDelaySeconds;
+                stats.ReinforcementDrops = reinforcementDrops;
+                stats.ReinforcementLandSeconds = reinforcementLandSeconds;
                 if (reinforcementNeedsUpgrade) stats.LockedReinforcement = drop;
                 else stats.Reinforcement = drop;
             }

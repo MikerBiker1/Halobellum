@@ -96,4 +96,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: 'Artillery, DPS'
   weakAgainst: 'Chaff clear, tanks'
-  notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Scorpion (100%). First-pass M8 values (DECISIONS D38).'
+  notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Grunt Goblin (100%). First-pass M8 values (DECISIONS D38).'

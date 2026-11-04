@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 10
   cost: 100
   baseDamage: 2
-  maxHealth: 190
+  maxHealth: 228
   armorType: 0
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -30,7 +30,7 @@ MonoBehaviour:
   targetFilter: 0
   weapons:
   - weaponName: Infectious Bite
-    damagePerShot: 30
+    damagePerShot: 36
     fireInterval: 0.5
     range: 1
     minRange: 0
@@ -64,7 +64,7 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
-  formsPerBody: 5
+  formsPerBody: 6
   isFlood: 1
   infects: 1
   immuneToInfection: 0

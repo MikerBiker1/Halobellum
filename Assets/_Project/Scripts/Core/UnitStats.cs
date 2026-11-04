@@ -231,6 +231,13 @@ namespace Halobellum.Core
         public float ReinforcementDelaySeconds;
         /// <summary>A drop that only works once a tech upgrade unlocks it (the Pelican's troop bay); null = none.</summary>
         public UnitStats LockedReinforcement;
+        /// <summary>How many times it drops its squad in a battle, ReinforcementDelaySeconds apart at least.</summary>
+        public int ReinforcementDrops = 1;
+        /// <summary>
+        /// Above 0, it doesn't drop from the air where it is: it flies behind the enemy's lines, takes this many seconds to come down, lets its squad out
+        /// behind it, and takes as long to go back up (the Pelican, D60). On the ground, weapons that can't hit air can hit it. Once its drops are made, it fights.
+        /// </summary>
+        public float ReinforcementLandSeconds;
 
         /// <summary>
         /// How many tiny forms one body stands for (Infection Forms: 5). They move and act as one body.
@@ -342,6 +349,8 @@ namespace Halobellum.Core
             if (drop != null)
             {
                 if (ReinforcementDelaySeconds < 0f) problems.Add($"{label}: reinforcement delay cannot be negative.");
+                if (ReinforcementDrops < 1) problems.Add($"{label}: it must drop its reinforcement at least once.");
+                if (ReinforcementLandSeconds < 0f) problems.Add($"{label}: landing time cannot be negative.");
                 foreach (string problem in drop.Validate()) problems.Add($"{label} reinforcement: {problem}");
             }
             if (TechUpgrades != null)

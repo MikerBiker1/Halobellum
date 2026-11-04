@@ -160,6 +160,7 @@ namespace Halobellum.Combat
                 _spawners.Add(unit);
             }
             if (stats.AuraRadius > 0f) _auras.Add(unit);
+            if (stats.HasReinforcement && stats.ReinforcementLandSeconds > 0f) _landers.Add(unit);
             if (squadId >= 0)
             {
                 if (!_squadById.TryGetValue(squadId, out SimSquad squad))
@@ -231,6 +232,7 @@ namespace Halobellum.Combat
             UpdateTargetsAndStates();
             UpdateSquadFormations();
             UpdateAdvances();
+            UpdateDropRuns();
             UpdateLeaps();
             _movement.Step(_units, _dt);
             FaceTargets();
@@ -251,25 +253,100 @@ namespace Halobellum.Combat
             _dropping.Clear();
             foreach (SimUnit unit in _units)
             {
-                if (!unit.IsAlive || unit.ReinforcementDropped || !unit.Stats.HasReinforcement) continue;
+                if (!unit.IsAlive || unit.ReinforcementDropped || !unit.Stats.HasReinforcement || unit.Stats.ReinforcementLandSeconds > 0f) continue;
                 if (ElapsedSeconds + 1e-4f >= unit.Stats.ReinforcementDelaySeconds) _dropping.Add(unit);
             }
             foreach (SimUnit carrier in _dropping)
             {
                 carrier.ReinforcementDropped = true;
-                UnitStats stats = carrier.Stats.Reinforcement;
-                int squadId = NewSquadId();
-                Vec2 forward = carrier.Team == Team.A ? Vec2.Up : Vec2.Down;
-                foreach (Vec2 offset in SquadFormation.Offsets(stats.SquadSize, stats.CollisionRadius, _rules.FormationGap, false))
-                {
-                    Vec2 placed = carrier.Team == Team.A ? offset : -offset;
-                    SimUnit dropped = CreateUnit(stats, carrier.Team, carrier.Position + placed, squadId);
-                    dropped.Facing = forward;
-                    dropped.UnlimitedAcquisition = carrier.UnlimitedAcquisition || IsInEnemyZone(dropped);
-                }
-                _squadById[squadId].FormUp();
-                Events.RaiseReinforcementDropped(carrier, squadId);
+                DropSquadFrom(carrier, carrier.Position);
             }
+        }
+
+        private void DropSquadFrom(SimUnit carrier, Vec2 centre)
+        {
+            UnitStats stats = carrier.Stats.Reinforcement;
+            int squadId = NewSquadId();
+            Vec2 forward = carrier.Team == Team.A ? Vec2.Up : Vec2.Down;
+            foreach (Vec2 offset in SquadFormation.Offsets(stats.SquadSize, stats.CollisionRadius, _rules.FormationGap, false))
+            {
+                Vec2 placed = carrier.Team == Team.A ? offset : -offset;
+                SimUnit dropped = CreateUnit(stats, carrier.Team, centre + placed, squadId);
+                dropped.Facing = forward;
+                dropped.UnlimitedAcquisition = carrier.UnlimitedAcquisition || IsInEnemyZone(dropped);
+            }
+            _squadById[squadId].FormUp();
+            Events.RaiseReinforcementDropped(carrier, squadId);
+        }
+
+        // ------------------------------------------------------------------ carriers that land (the Pelican, D60)
+
+        private readonly List<SimUnit> _landers = new List<SimUnit>();
+        private const float DropArrivalMetres = 6f, DropBehindLinesMetres = 8f, DropSpotCheckSeconds = 1f, DropBehindCarrierMetres = 3f;
+
+        /// <summary>Flies each carrier to its next drop, brings it down, lets its squad out behind it, and takes it back up.</summary>
+        private void UpdateDropRuns()
+        {
+            int count = _landers.Count;
+            for (int i = 0; i < count; i++)
+            {
+                SimUnit carrier = _landers[i];
+                if (!carrier.IsAlive) continue;
+                if (carrier.DropPhase == DropRunPhase.Flying)
+                {
+                    if (carrier.DropsMade >= carrier.Stats.ReinforcementDrops) continue; // All out: it fights like anything else.
+                    float now = ElapsedSeconds;
+                    if (carrier.DropsMade == 0 && carrier.NextDropAt <= 0f) carrier.NextDropAt = carrier.Stats.ReinforcementDelaySeconds;
+                    if (now + 1e-4f >= carrier.DropSpotCheckAt)
+                    {
+                        carrier.DropSpot = BehindEnemyLines(carrier);
+                        carrier.DropSpotCheckAt = now + DropSpotCheckSeconds;
+                    }
+                    carrier.State = UnitState.Move;
+                    carrier.MoveGoal = carrier.DropSpot;
+                    if (now + 1e-4f >= carrier.NextDropAt && Vec2.Distance(carrier.Position, carrier.DropSpot) <= DropArrivalMetres)
+                    {
+                        carrier.DropPhase = DropRunPhase.Descending;
+                        carrier.MoveGoal = carrier.Position;
+                    }
+                    continue;
+                }
+
+                // Coming down or going up, it stays where it is, and its gun keeps firing.
+                if (carrier.State == UnitState.Move) carrier.MoveGoal = carrier.Position;
+                float step = _dt / carrier.Stats.ReinforcementLandSeconds;
+                if (carrier.DropPhase == DropRunPhase.Descending)
+                {
+                    carrier.Altitude = Math.Max(0f, carrier.Altitude - step);
+                    if (carrier.Altitude > 0f) continue;
+                    DropSquadFrom(carrier, carrier.Position - carrier.Facing * (carrier.Radius + DropBehindCarrierMetres));
+                    carrier.DropsMade++;
+                    carrier.NextDropAt = ElapsedSeconds + carrier.Stats.ReinforcementDelaySeconds;
+                    carrier.DropPhase = DropRunPhase.Ascending;
+                    continue;
+                }
+                carrier.Altitude = Math.Min(1f, carrier.Altitude + step);
+                if (carrier.Altitude >= 1f) carrier.DropPhase = DropRunPhase.Flying;
+            }
+        }
+
+        /// <summary>
+        /// Where a carrier wants to land: behind the enemy's rearmost ground unit, towers aside, or as far back as the arena goes if there is no room behind it.
+        /// With no enemy on the ground, in the middle of the enemy's zone.
+        /// </summary>
+        private Vec2 BehindEnemyLines(SimUnit carrier)
+        {
+            float back = carrier.Team == Team.A ? 1f : -1f;
+            SimUnit rearmost = null;
+            foreach (SimUnit unit in _units)
+            {
+                if (!unit.IsAlive || unit.Team == carrier.Team || unit.IsAir || unit.Stats.IsTower) continue;
+                if (rearmost == null || unit.Position.Y * back > rearmost.Position.Y * back) rearmost = unit;
+            }
+            float furthest = _rules.ArenaLength * 0.5f - carrier.Radius - 1f;
+            if (rearmost == null) return new Vec2(carrier.Position.X, back * Math.Min(furthest, (_rules.DeploymentZoneFront + _rules.ArenaLength * 0.5f) * 0.5f));
+            float depth = rearmost.Position.Y * back + rearmost.Radius + DropBehindLinesMetres;
+            return new Vec2(rearmost.Position.X, back * Math.Min(furthest, depth));
         }
 
         /// <summary>A new squad of this unit type on the spot, for this battle only.</summary>

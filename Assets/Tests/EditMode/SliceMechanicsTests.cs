@@ -111,6 +111,95 @@ namespace Halobellum.Tests
             return pelican;
         }
 
+        private static UnitStats LandingCarrier()
+        {
+            UnitStats pelican = TestUnits.Unit(name: "Lander", health: 100000f, speed: 12f, air: true, radius: 2.5f, weapon: Harmless());
+            pelican.Reinforcement = TestUnits.Unit(name: "Dropped Marine", health: 100000f, speed: 0f, weapon: Harmless(), squadSize: 6);
+            pelican.ReinforcementDelaySeconds = 5f;
+            pelican.ReinforcementDrops = 3;
+            pelican.ReinforcementLandSeconds = 1f;
+            return pelican;
+        }
+
+        [Test]
+        public void ALandingCarrier_LandsBehindTheEnemy_LetsItsSquadOutBehindIt_ThreeTimes_AndGoesBackUp()
+        {
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            SimUnit carrier = sim.AddUnit(LandingCarrier(), Team.A, new Vec2(0f, -40f));
+            sim.AddUnit(Dummy(), Team.B, new Vec2(10f, 20f));
+            float lowest = 1f;
+            int drops = 0;
+            Vec2 firstDrop = Vec2.Zero;
+            sim.Events.ReinforcementDropped += (c, squadId) =>
+            {
+                drops++;
+                SimSquad squad = sim.SquadById(squadId);
+                Assert.IsFalse(c.IsAir, "It is on the ground when they get out.");
+                Assert.AreEqual(6, squad.Members.Count);
+                if (drops == 1)
+                {
+                    firstDrop = c.Position;
+                    Assert.Greater(c.Position.Y, 20f, "Behind the enemy.");
+                    Assert.Less(squad.Members[0].Position.Y - c.Position.Y, 12f);
+                }
+                Assert.Greater(Vec2.Dot(squad.Members[0].Position - c.Position, -c.Facing), 0f, "They come out behind it.");
+            };
+            while (sim.ElapsedSeconds < 45f && !sim.IsFinished)
+            {
+                sim.Step();
+                lowest = System.Math.Min(lowest, carrier.Altitude);
+            }
+            Assert.AreEqual(3, drops);
+            Assert.AreEqual(0f, lowest, 1e-3f);
+            Assert.AreEqual(1f, carrier.Altitude, 1e-3f, "Back up.");
+            Assert.IsTrue(carrier.IsAir);
+        }
+
+        [Test]
+        public void ALandingCarrier_ThatDoesntHaveItsReinforcement_JustFlies()
+        {
+            UnitStats stats = LandingCarrier();
+            stats.LockedReinforcement = stats.Reinforcement;
+            stats.Reinforcement = null;
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            SimUnit carrier = sim.AddUnit(stats, Team.A, new Vec2(0f, -40f));
+            sim.AddUnit(Dummy(), Team.B, new Vec2(10f, 20f));
+            while (sim.ElapsedSeconds < 20f) sim.Step();
+            Assert.AreEqual(2, sim.Units.Count);
+            Assert.AreEqual(1f, carrier.Altitude);
+        }
+
+        [Test]
+        public void ALandedCarrier_CanBeHitByGroundOnlyWeapons_AndAFlyingOneCannot()
+        {
+            WeaponStats groundOnly = TestUnits.Weapon(damage: 100f, range: 100f, interval: 0.2f);
+            groundOnly.HasOwnTargetFilter = true;
+            groundOnly.TargetFilter = TargetFilter.Ground;
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            SimUnit carrier = sim.AddUnit(LandingCarrier(), Team.A, new Vec2(0f, -10f));
+            sim.AddUnit(TestUnits.Unit(health: 100000f, speed: 0f, filter: TargetFilter.Ground, weapon: groundOnly), Team.B, new Vec2(0f, 40f));
+            while (carrier.DropPhase == DropRunPhase.Flying && sim.ElapsedSeconds < 30f && !sim.IsFinished) sim.Step();
+            Assert.AreEqual(100000f, carrier.Health, "Not while it flies.");
+            while (carrier.DropsMade == 0 && !sim.IsFinished) sim.Step();
+            while (carrier.DropPhase == DropRunPhase.Ascending && !carrier.IsAir && !sim.IsFinished) sim.Step();
+            float steps = 0f;
+            while (steps++ < 2f / sim.TickSeconds && !sim.IsFinished) sim.Step();
+            Assert.Less(carrier.Health, 100000f, "It was shot on the ground.");
+        }
+
+        [Test]
+        public void AUnitThatCantMove_StaysPut_NoMatterWhatWalksIntoIt_AndStillFires()
+        {
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            SimUnit pod = sim.AddUnit(TestUnits.Unit(name: "Pod", health: 100000f, speed: 0f, radius: 1.4f, weapon: TestUnits.Weapon(damage: 1f, range: 30f, interval: 0.5f)), Team.A, new Vec2(0f, -10f));
+            Vec2 stood = pod.Position;
+            sim.AddUnit(TestUnits.Unit(health: 100000f, speed: 5f, radius: 1.4f, weapon: TestUnits.Weapon(damage: 1f, range: 1f)), Team.A, new Vec2(0f, -20f));
+            SimUnit enemy = sim.AddUnit(TestUnits.Unit(health: 100000f, speed: 5f, radius: 1.4f, weapon: TestUnits.Weapon(damage: 1f, range: 1f)), Team.B, new Vec2(0f, 20f));
+            while (sim.ElapsedSeconds < 30f && !sim.IsFinished) sim.Step();
+            Assert.AreEqual(stood, pod.Position);
+            Assert.Less(enemy.Health, 100000f, "It fired.");
+        }
+
         [Test]
         public void Reinforcement_DropsOneSquadUnderTheCarrier_AfterItsDelay()
         {

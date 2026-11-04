@@ -64,6 +64,8 @@ namespace Halobellum.Units
         public int reinforcementBudgetBase = 200;
         public int reinforcementBudgetPerRound = 50;
         public int reinforcementMaxLevel = 3;
+        [Tooltip("The highest tier a reinforcement card can bring. 3 = no Titans.")]
+        public int reinforcementMaxTier = 3;
         [Tooltip("The possible reinforcement level goes up by 1 every this many rounds.")]
         public int reinforcementLevelEveryRounds = 4;
 
@@ -132,6 +134,7 @@ namespace Halobellum.Units
                 ReinforcementBudgetBase = reinforcementBudgetBase,
                 ReinforcementBudgetPerRound = reinforcementBudgetPerRound,
                 ReinforcementMaxLevel = reinforcementMaxLevel,
+                ReinforcementMaxTier = reinforcementMaxTier,
                 ReinforcementLevelEveryRounds = reinforcementLevelEveryRounds,
                 TowerBaseHealth = towerBaseHealth,
                 TowerRadius = towerRadius,

@@ -285,6 +285,7 @@ namespace Halobellum.UI
             Screen.SetResolution(1600, 900, FullScreenMode.Windowed);
             GameSettings.UseUiScaleForThisRun(1f);
             yield return new WaitForSecondsRealtime(0.8f);
+            yield return PelicanPictures();
             foreach (int seed in new[] { 1, 2, 3 })
             {
                 _match.NewMatch(seed);
@@ -334,6 +335,52 @@ namespace Halobellum.UI
                 yield return Shot(faction + "_item_and_arrow_close");
                 control.enabled = true;
             }
+        }
+
+        /// <summary>A Pelican with its Troop Bay in a real battle, coming down and with its Marines out, and the Flood's swarm of forms.</summary>
+        private IEnumerator PelicanPictures()
+        {
+            _match.NewMatch(1);
+            SetDraft(5);
+            Match m = _match.Match;
+            _match.ChooseDraft(m.PlayerDraft.FindIndex(c => c.Faction.Name == "UNSC"));
+            yield return new WaitForSecondsRealtime(0.5f);
+            m.Player.Credits = 5000;
+            UnitStats pelican = m.Player.Roster.First(u => u.Name == "Pelican");
+            _match.Unlock(pelican);
+            _match.Buy(pelican);
+            _match.BuyTech(pelican, pelican.TechUpgrades.First(t => t.UnlocksReinforcement));
+            while (_match.IsDropping) yield return null;
+            _match.Ready();
+            yield return null;
+            BattleController battle = _match.GetComponent<BattleController>();
+            battle.Speed = 2f;
+            float deadline = Time.realtimeSinceStartup + 40f;
+            SimUnit carrier = null;
+            Camera view = Camera.main;
+            var control = view.GetComponent<BattleCameraController>();
+            control.enabled = false;
+            int shots = 0;
+            while (Time.realtimeSinceStartup < deadline && shots < 4)
+            {
+                yield return null;
+                if (battle.Simulation == null) continue;
+                carrier = battle.Simulation.Units.FirstOrDefault(u => u.Stats.Name == "Pelican" && u.Team == Team.A);
+                if (carrier == null) continue;
+                Vector3 body = _match.GetComponent<UnitViewManager>().WorldPosition(carrier);
+                view.transform.position = new Vector3(body.x, 26f, body.z) + new Vector3(0f, 0f, -22f);
+                view.transform.LookAt(new Vector3(body.x, 2f, body.z));
+                bool down = carrier.DropPhase != DropRunPhase.Flying;
+                if (down && ((shots == 0 && carrier.DropPhase == DropRunPhase.Descending && carrier.Altitude < 0.5f) || (shots == 1 && carrier.DropPhase == DropRunPhase.Ascending && carrier.Altitude < 0.25f)
+                    || (shots == 2 && carrier.DropsMade == 2 && carrier.DropPhase == DropRunPhase.Descending && carrier.Altitude < 0.2f) || (shots == 3 && carrier.DropsMade == 3 && carrier.DropPhase == DropRunPhase.Ascending)))
+                {
+                    Debug.Log($"Playtest Pelican: picture {shots} at {battle.Simulation.ElapsedSeconds:0.0} s, drops made {carrier.DropsMade}, at {carrier.Position.X:0},{carrier.Position.Y:0}, Marines on the field {battle.Simulation.Units.Count(u => u.Stats.Name == "Marine" && u.Team == Team.A && u.IsAlive)}");
+                    yield return Shot($"Pelican_{shots}");
+                    shots++;
+                }
+            }
+            control.enabled = true;
+            battle.Speed = 1f;
         }
 
         /// <summary>The pictures of "-cardsDemoLayout".</summary>

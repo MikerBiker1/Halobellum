@@ -19,11 +19,11 @@ MonoBehaviour:
   squadSize: 1
   cost: 800
   baseDamage: 160
-  maxHealth: 7000
+  maxHealth: 8500
   armorType: 2
   maxShield: 0
   shieldRegenPerSecond: 0
-  moveSpeed: 1
+  moveSpeed: 1.25
   collisionRadius: 5
   turnTime180: 3
   isAir: 0
@@ -120,4 +120,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Most things in a straight fight
   weakAgainst: 'Single-target DPS, large chaff swarms'
-  notes: 'Best counters (headless runner, equal cost): Hunter Captain (100%), Zealot (100%). First-pass M8 values (DECISIONS D38).'
+  notes: 'Best counters (headless runner, equal cost): Hunter Captain (100%), Marine (0%). First-pass M8 values (DECISIONS D38).'

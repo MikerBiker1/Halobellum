@@ -1,0 +1,3 @@
+# The Scarab as it was before the suggested changes.
+Scarab|Focus Beam|DamagePerShot=40
+Scarab|MaxHealth=9000

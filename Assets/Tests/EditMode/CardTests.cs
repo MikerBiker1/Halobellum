@@ -247,6 +247,24 @@ namespace Halobellum.Tests
         // ------------------------------------------------------------------ reinforcements
 
         [Test]
+        public void ReinforcementOffers_NeverBringATitan()
+        {
+            var titan = new UnitStats { Name = "Titan", Tier = 4, Cost = 800, SquadSize = 1 };
+            var rules = TestMatch.Rules();
+            var player = new PlayerState(Team.A);
+            var faction = TestMatch.Faction("UNSC", new System.Collections.Generic.List<UnitStats> { titan, TestMatch.Infantry(), TestMatch.Buggy(), TestMatch.Tank(), TestMatch.Walker() }, "Standard");
+            player.Faction = faction;
+            player.SubFaction = faction.SubFactions[0];
+            for (int seed = 0; seed < 40; seed++)
+            {
+                CardOffer offer = CardDeck.Draw(player, rules, rules.ReinforcementFirstRound, new SimRandom(seed));
+                Assert.AreEqual(CardKind.Reinforcement, offer.Kind);
+                Assert.AreEqual(rules.CardsPerOffer, offer.Count);
+                foreach (ReinforcementCard card in offer.Reinforcements) Assert.Less(card.Type.Tier, 4);
+            }
+        }
+
+        [Test]
         public void ReinforcementPricing_FollowsTheBiblesExamples()
         {
             UnitStats warthog = TestUnits.Unit(name: "Warthog", cost: 200);

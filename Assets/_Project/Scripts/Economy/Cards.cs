@@ -6,7 +6,7 @@
 //     A player takes 1 of up to 3 cards or skips for a bonus (50 for general, 100 for reinforcements).
 //   - General offers draw from the faction's cards that are allowed by now (CardStats.MinRound) and
 //     that the player doesn't own the maximum of yet; fewer than 3 eligible = fewer cards.
-//   - Reinforcement offers: per card a random unit type from the player's roster at a random level
+//   - Reinforcement offers: per card a random unit type from the player's roster, Titans aside, at a random level
 //     (up to MatchRules.ReinforcementLevelCap), copied until its worth reaches the round's budget;
 //     the player pays whatever the worth exceeds the budget (ReinforcementCard.Price).
 // Depends on: MatchRules, PlayerState, Halobellum.Core (CardStats, SpellStats, UnitStats, SimRandom, Vec2).
@@ -127,7 +127,7 @@ namespace Halobellum.Economy
                 offer.SkipBonus = rules.ReinforcementSkipBonus;
                 int budget = rules.ReinforcementBudget(round);
                 int levelCap = rules.ReinforcementLevelCap(round);
-                foreach (UnitStats type in PickDistinct(player.Roster, rules.CardsPerOffer, random))
+                foreach (UnitStats type in PickDistinct(player.Roster.FindAll(unit => unit.Tier <= rules.ReinforcementMaxTier), rules.CardsPerOffer, random))
                 {
                     offer.Reinforcements.Add(ReinforcementCard.Make(type, random.RangeInt(1, levelCap + 1), budget));
                 }

@@ -96,4 +96,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Aerial
   weakAgainst: Ground units
-  notes: 'Best counters (headless runner, equal cost): Marine (100%), Spartan Sniper (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Infested Elite (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

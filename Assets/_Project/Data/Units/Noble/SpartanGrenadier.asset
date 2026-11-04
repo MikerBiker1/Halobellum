@@ -96,4 +96,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Chaff
   weakAgainst: 'Tanks, flankers'
-  notes: 'Best counters (headless runner, equal cost): Scorpion (100%), Juggernaut (100%). Rockets in a straight line: strong against crowds, weak against tanks and flankers. First-pass M10 values, Noble (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Spawner (100%), Scorpion (100%). Rockets in a straight line: strong against crowds, weak against tanks and flankers. First-pass M10 values, Noble (Docs/M10/subfactions.md).'

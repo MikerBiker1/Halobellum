@@ -36,6 +36,7 @@ MonoBehaviour:
   reinforcementBudgetBase: 200
   reinforcementBudgetPerRound: 50
   reinforcementMaxLevel: 3
+  reinforcementMaxTier: 3
   reinforcementLevelEveryRounds: 4
   towerBaseHealth: 100
   towerRadius: 3

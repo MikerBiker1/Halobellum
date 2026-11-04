@@ -17,8 +17,8 @@ MonoBehaviour:
   tier: 3
   unlockCost: 200
   squadSize: 1
-  cost: 450
-  baseDamage: 90
+  cost: 400
+  baseDamage: 80
   maxHealth: 1100
   armorType: 1
   maxShield: 0
@@ -64,6 +64,8 @@ MonoBehaviour:
   reinforcementBodies: 5
   reinforcementDelaySeconds: 8
   reinforcementNeedsUpgrade: 0
+  reinforcementDrops: 1
+  reinforcementLandSeconds: 0
   formsPerBody: 1
   isFlood: 1
   infects: 0
@@ -72,9 +74,11 @@ MonoBehaviour:
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
-  deathBurstDamageType: 0
+  deathBurstDamageType: 1
   deathBurstAntiArmor: 0
-  deathSpawns: []
+  deathSpawns:
+  - unit: {fileID: 11400000, guid: 6b41beaaf1cf621860b58e52a70f04fb, type: 2}
+    bodies: 1
   spawnedUnit: {fileID: 0}
   spawnedBodies: 0
   spawnIntervalSeconds: 0
@@ -96,4 +100,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air
-  notes: 'Best counters (headless runner, equal cost): Swarm Form (100%), Reaver (100%). First-pass M8 values (DECISIONS D38).'
+  notes: 'Best counters (headless runner, equal cost): Swarm Form (100%), Wolverine (0%). First-pass M8 values (DECISIONS D38).'

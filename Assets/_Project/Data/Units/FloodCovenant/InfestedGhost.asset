@@ -96,9 +96,11 @@ MonoBehaviour:
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
-  deathBurstDamageType: 0
+  deathBurstDamageType: 1
   deathBurstAntiArmor: 0
-  deathSpawns: []
+  deathSpawns:
+  - unit: {fileID: 11400000, guid: 6b41beaaf1cf621860b58e52a70f04fb, type: 2}
+    bodies: 1
   spawnedUnit: {fileID: 0}
   spawnedBodies: 0
   spawnIntervalSeconds: 0
@@ -120,4 +122,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: 'Artillery, DPS'
   weakAgainst: 'Chaff clear, tanks'
-  notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Grunt Goblin (100%). Faster and lighter than the Infested Warthog. First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Scorpion (100%). Faster and lighter than the Infested Warthog. First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'

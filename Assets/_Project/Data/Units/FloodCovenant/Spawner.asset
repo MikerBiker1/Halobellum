@@ -15,10 +15,10 @@ MonoBehaviour:
   unitName: Spawner
   role: 3
   tier: 3
-  unlockCost: 225
+  unlockCost: 200
   squadSize: 1
-  cost: 450
-  baseDamage: 90
+  cost: 400
+  baseDamage: 80
   maxHealth: 2800
   armorType: 1
   maxShield: 0
@@ -96,4 +96,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
-  notes: 'Best counters (headless runner, equal cost): Jackal (Plasma Rifle) (100%), Elite (100%). A mobile birthing form: it fights badly, and releases 10 Infection Forms every 6 seconds. Kill it first. First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Jackal (Plasma Rifle) (100%), Combat Form (100%). A mobile birthing form: it fights badly, and releases 12 Infection Forms every 6 seconds. Kill it first. First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'

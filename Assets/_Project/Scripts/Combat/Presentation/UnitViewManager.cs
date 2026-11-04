@@ -46,6 +46,8 @@ namespace Halobellum.Presentation
         [Header("Layout (metres)")]
         [Tooltip("Height at which air units fly.")]
         [SerializeField] private float airHeight = 13f;
+        [Tooltip("Height of a carrier's middle when it has landed to drop its squad.")]
+        [SerializeField] private float landedHeight = 2.2f;
         [SerializeField] private float healthBarHeight = 0.25f;
         [SerializeField] private float healthBarMinWidth = 1.2f;
         [SerializeField] private float healthBarGap = 0.6f;
@@ -668,6 +670,7 @@ namespace Halobellum.Presentation
                 root.SetPositionAndRotation(
                     Vector3.LerpUnclamped(view.PreviousPosition, view.CurrentPosition, alpha) + Vector3.up * DropOffset(view),
                     Quaternion.SlerpUnclamped(view.PreviousRotation, view.CurrentRotation, alpha));
+                if (unit.Stats.ReinforcementLandSeconds > 0f && view.Ring.activeSelf) view.Ring.transform.localPosition = new Vector3(0f, 0.05f - root.position.y, 0f); // It stays on the ground.
 
                 if (view.Baked != null)
                 {
@@ -800,7 +803,7 @@ namespace Halobellum.Presentation
 
         private Vector3 ToWorld(SimUnit unit)
         {
-            float height = unit.IsAir ? airHeight : 0f;
+            float height = unit.Stats.IsAir ? Mathf.Lerp(landedHeight, airHeight, unit.Altitude) : 0f;
             if (unit.IsLeaping)
             {
                 float t = unit.LeapProgress;
