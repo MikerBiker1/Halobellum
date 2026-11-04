@@ -112,10 +112,10 @@ namespace Halobellum.Tests
         [Test]
         public void SmallHitsRarelyBleed_AndBigOnesAlwaysDo()
         {
-            Assert.Less(BloodLooks.HitChance(0.01f), 0.05f, "A lick of a flamethrower.");
+            Assert.LessOrEqual(BloodLooks.HitChance(0.01f), 0.05f, "A lick of a flamethrower.");
+            Assert.Greater(BloodLooks.HitChance(0.001f), 0f, "Rifle fire on something huge still shows now and then.");
             Assert.AreEqual(1f, BloodLooks.HitChance(0.34f), 1e-5f);
             Assert.AreEqual(1f, BloodLooks.HitChance(5f), 1e-5f);
-            Assert.AreEqual(0f, BloodLooks.HitChance(0f), 1e-5f);
         }
 
         // ------------------------------------------------------------------ looks by the unit's own faction

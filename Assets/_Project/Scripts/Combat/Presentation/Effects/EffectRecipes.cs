@@ -268,7 +268,7 @@ namespace Halobellum.Presentation
         public void BloodHit(Vector3 position, Vector3 direction, Color color, float strength)
         {
             float read = _kit.ReadScale;
-            _kit.Blood(EffectPriority.Small, position, direction * 1.5f + Vector3.up * 0.5f, Mathf.Lerp(0.8f, 1.5f, strength) * read, new Color(color.r, color.g, color.b, 0.55f), 0.18f);
+            _kit.Blood(EffectPriority.Small, position, direction * 1.5f + Vector3.up * 0.5f, Mathf.Lerp(0.7f, 1.2f, strength) * read, new Color(color.r, color.g, color.b, 0.4f), 0.18f);
             int drops = 3 + Mathf.RoundToInt(strength * 5f);
             for (int i = 0; i < drops; i++)
                 _kit.Blood(EffectPriority.Small, position, direction * Random.Range(1f, 4f) + Random.insideUnitSphere * 2.5f + Vector3.up * Random.Range(1.5f, 4f), Random.Range(0.3f, 0.55f) * read, color, Random.Range(0.3f, 0.6f));
@@ -280,7 +280,7 @@ namespace Halobellum.Presentation
             float read = _kit.ReadScale;
             Vector3 middle = inAir ? position : position + Vector3.up * Mathf.Max(0.6f, bodyRadius * 0.6f);
             float reach = 3f + bodyRadius * 1.5f;
-            _kit.Blood(EffectPriority.Medium, middle, Vector3.up, Mathf.Max(1.6f, bodyRadius * 2.2f) * read, new Color(color.r, color.g, color.b, 0.6f), 0.25f);
+            _kit.Blood(EffectPriority.Medium, middle, Vector3.up, Mathf.Max(1.3f, bodyRadius * 1.8f) * read, new Color(color.r, color.g, color.b, 0.45f), 0.25f);
             int drops = Mathf.Clamp(Mathf.RoundToInt(bodyRadius * 10f) + 8, 10, 30);
             for (int i = 0; i < drops; i++)
             {
