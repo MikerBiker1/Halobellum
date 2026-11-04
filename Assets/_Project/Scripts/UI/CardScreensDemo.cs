@@ -9,8 +9,7 @@
 // directly: this never happens in a real match. Looks only: nothing here runs without the flag.
 // With "-cardsDemoLayout" as well it takes only the pictures for the narrowest windows and largest UI scales (without saving any of them): the deployment bar and shop, the Sandbox with its
 // squad window at its tallest next to the Items panel, and its result line; and for each faction a close look at the selection ring on that faction's ground. Also Unlock Skirmish's bar, unlock
-// page and hover stats at 1080p and at UI scale 1.25, and "Skirmish HUD: ..." checks of its buttons: it hands MatchHud left and right mouse clicks as events of IMGUI's own (nothing goes outside the game)
-// and sends a real Esc through the Input System.
+// page and hover stats at 1080p and at UI scale 1.25, and "Skirmish HUD: ..." checks of its buttons and of a real Esc sent through the Input System. Nothing goes outside the game.
 // With "-cardsDemoLevelAll" as well it takes only the pictures of the Level all button: for each faction 3 squads of a type with full XP bars, with enough credits, too few, with the selected squad
 // not ready, and after pressing it (through the view's action, as a click does), and logs "Level all: ..." checks of the prices, the levels and that the buttons fit, at every UI scale.
 // Depends on: CardScreens, Halobellum.Presentation (MatchController, BattleController, SquadSelection), Halobellum.Economy, UnityEngine.
@@ -66,9 +65,7 @@ namespace Halobellum.UI
         private int _totalDidNotFit, _totalAtTheFloor;
         private readonly List<string> _problems = new List<string>();
         private MatchHud _hud;
-        private int _pressedControl, _skirmishProblems;
-        private readonly Queue<Event> _clicksForTheHud = new Queue<Event>();
-        private readonly Dictionary<string, Rect> _buttonsDrawn = new Dictionary<string, Rect>();
+        private int _rightClickProbe = -1, _probedControl, _skirmishProblems;
 
         private void Awake() => useGUILayout = false;
 
@@ -619,76 +616,58 @@ namespace Halobellum.UI
             Debug.Log($"Skirmish HUD finished: {_skirmishProblems} problems.");
         }
 
-        /// <summary>The buttons and keys of Unlock Skirmish's bar and page, at 1080p, where 1 unit is 1 pixel.</summary>
+        /// <summary>The buttons and keys of Unlock Skirmish's bar and page, pressed by the test tool's way (MenuStyle) and a real Esc through the Input System.</summary>
         private IEnumerator SkirmishHudButtons()
         {
             _hud = FindFirstObjectByType<MatchHud>();
             SquadStatsWindow stats = FindFirstObjectByType<SquadStatsWindow>();
-            var setup = new MatchSetup { Mode = MatchMode.UnlockSkirmish };
             void Check(string what, bool ok) => SkirmishCheck(what, ok);
-            Rect Drawn(string key)
-            {
-                if (!_buttonsDrawn.TryGetValue(key, out Rect rect)) Check($"{key} was never drawn", false);
-                return rect;
-            }
+
+            // A window started from a script may not have the focus, and without it no key arrives. This is the game's own setting, only in memory.
+            InputSettings.BackgroundBehavior keptBehavior = InputSystem.settings.backgroundBehavior;
+            InputSystem.settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
+            Debug.Log($"Skirmish HUD: the window has the focus: {Application.isFocused}");
 
             Screen.SetResolution(1920, 1080, FullScreenMode.Windowed);
             GameSettings.UseUiScaleForThisRun(1f);
             yield return new WaitForSecondsRealtime(0.8f);
-            MenuStyle.ButtonDrawnForTest += NoteButton;
-            _match.NewMatch(1, setup);
+
+            // What GUI.Button does with a right-click, and what the buttons' guard makes of it.
+            _rightClickProbe = 0;
+            while (_rightClickProbe >= 0) yield return null;
+
+            _match.NewMatch(1, new MatchSetup { Mode = MatchMode.UnlockSkirmish });
             _match.ChooseDraft(0);
             yield return new WaitForSecondsRealtime(0.5f);
-            Match m = _match.Match;
-            PlayerState me = m.Player;
+            PlayerState me = _match.Match.Player;
             me.Credits = 5000;
-            yield return null;
-            yield return null;
 
-            Vector2 stripAt = Drawn(MatchHud.UnlockUnitsLabel).center;
-            yield return ClickHud(1, stripAt);
-            Check("a right-click on Unlock units does not open the page", !_hud.IsUnlockPageOpen);
-            yield return ClickHud(0, stripAt);
-            Check("a left-click on Unlock units opens the page", _hud.IsUnlockPageOpen);
-            yield return null;
-            yield return null;
+            yield return PressOnHud(MatchHud.UnlockUnitsLabel);
+            Check("the Unlock units button opens the page", _hud.IsUnlockPageOpen);
 
-            // In a scroll view, which the note of a drawn button doesn't know about.
-            Vector2 listAt = _hud.UnlockPageShown.position + new Vector2(8f, 50f);
             UnitStats locked = me.Roster.First(u => !me.Unlocked.Contains(u) && u.UnlockCost > 0);
-            Vector2 lockedAt = listAt + Drawn(MatchHud.PageCellKey(locked)).center;
-            yield return ClickHud(1, lockedAt);
-            yield return null;
-            Check($"a right-click on {locked.Name} on the page does not unlock it", !me.Unlocked.Contains(locked));
             int credits = me.Credits;
-            yield return ClickHud(0, lockedAt);
-            Check($"a left-click on {locked.Name} unlocks it for {locked.UnlockCost}, and closes the page", me.Unlocked.Contains(locked) && me.Credits == credits - locked.UnlockCost && !_hud.IsUnlockPageOpen);
-            yield return null;
-            yield return null;
+            yield return PressOnHud(MatchHud.PageCellKey(locked));
+            Check($"a cell on the page unlocks {locked.Name} for {locked.UnlockCost}, and closes the page", me.Unlocked.Contains(locked) && me.Credits == credits - locked.UnlockCost && !_hud.IsUnlockPageOpen);
             yield return Shot("skirmish_bar_after_unlock");
 
-            yield return ClickHud(0, Drawn(MatchHud.UnlockUnitsLabel).center);
-            yield return null;
-            yield return null;
+            yield return PressOnHud(MatchHud.UnlockUnitsLabel);
             UnitStats second = me.Roster.First(u => !me.Unlocked.Contains(u) && u.UnlockCost > 0);
-            yield return ClickHud(0, listAt + Drawn(MatchHud.PageCellKey(second)).center);
+            yield return PressOnHud(MatchHud.PageCellKey(second));
             Check($"a second unlock in the round is refused, and the page stays: {_match.Message}", !me.Unlocked.Contains(second) && _hud.IsUnlockPageOpen);
             yield return Shot("skirmish_page_second_unlock_refused");
-            yield return ClickHud(0, Drawn(MatchHud.UnlockPageCloseKey).center);
+            yield return PressOnHud(MatchHud.UnlockPageCloseKey);
             Check("its x closes the page", !_hud.IsUnlockPageOpen);
-            yield return null;
-            yield return null;
 
-            UnitStats toBuy = SortedUnlocked(me).First();
-            Vector2 cellAt = Drawn(MatchHud.BarCellKey(toBuy)).center;
+            var rows = new List<UnitStats>();
+            MatchHud.FillUnitBarRows(me.Roster, me.Unlocked, rows);
+            UnitStats toBuy = rows[0], other = rows[rows.Count - 1];
             int squads = me.Squads.Count;
-            yield return ClickHud(1, cellAt);
-            Check($"a right-click on {toBuy.Name} in the bar does not buy it", me.Squads.Count == squads);
-            yield return ClickHud(0, cellAt);
-            Check($"a left-click on {toBuy.Name} in the bar buys a squad: {_match.Message}", me.Squads.Count == squads + 1);
+            yield return PressOnHud(MatchHud.BarCellKey(toBuy));
+            Check($"a cell in the bar buys a squad of {toBuy.Name}", me.Squads.Count == squads + 1);
 
             // It lands with the page open: it selects itself, and the page clears that.
-            yield return ClickHud(0, Drawn(MatchHud.UnlockUnitsLabel).center);
+            yield return PressOnHud(MatchHud.UnlockUnitsLabel);
             Check("the page opens while a squad is dropping", _hud.IsUnlockPageOpen && _match.IsDropping);
             SquadSelection selection = _match.GetComponent<SquadSelection>();
             while (_match.IsDropping) yield return null;
@@ -712,55 +691,54 @@ namespace Halobellum.UI
             Check("with the page behind the pause menu, Esc only closes the menu", !GamePause.IsPaused && _hud.IsUnlockPageOpen);
             yield return PressEscape();
             Check("and the next Esc closes the page", !GamePause.IsPaused && !_hud.IsUnlockPageOpen);
+            if (GamePause.IsPaused) PauseMenu.Current.Close();
+            _hud.CloseUnlockPage();
+            InputSystem.settings.backgroundBehavior = keptBehavior;
 
             // A squad selected in the field, with a unit hovered in the bar: the window is the hovered unit's, with nothing of that squad.
-            yield return ClickHud(0, Drawn(MatchHud.BarCellKey(toBuy)).center);
+            yield return PressOnHud(MatchHud.BarCellKey(toBuy));
             while (_match.IsDropping) yield return null;
             yield return new WaitForSecondsRealtime(0.3f);
             Check("a squad that lands with the page shut is selected", selection.SelectedSquadId >= 0);
             yield return Shot("skirmish_bar_squad_selected");
-            UnitStats other = SortedUnlocked(me).Last();
             _hud.DemoHover = other;
             yield return Shot("skirmish_bar_hover_squad_selected");
             Check($"hovering {other.Name} with a squad selected shows no level-up button of that squad", stats.HoverUnit == other && stats.LevelUpShown.width <= 0f && stats.LevelAllShown.width <= 0f);
             _hud.DemoHover = null;
-            MenuStyle.ButtonDrawnForTest -= NoteButton;
         }
 
-        private static IEnumerable<UnitStats> SortedUnlocked(PlayerState player)
+        /// <summary>Presses a button of the HUD by its key, down the same path as a mouse click (MenuStyle).</summary>
+        private IEnumerator PressOnHud(string key)
         {
-            var rows = new List<UnitStats>();
-            MatchHud.FillUnitBarRows(player.Roster, player.Unlocked, rows);
-            return rows;
-        }
-
-        private void NoteButton(string key, Rect rect) => _buttonsDrawn[key] = rect;
-
-        /// <summary>A mouse press and release at this place, in the HUD's OnGUI, as IMGUI's own events: 0 is the left button, 1 the right.</summary>
-        private IEnumerator ClickHud(int button, Vector2 where)
-        {
-            _clicksForTheHud.Enqueue(new Event { type = EventType.MouseDown, button = button, mousePosition = where, clickCount = 1 });
-            _clicksForTheHud.Enqueue(new Event { type = EventType.MouseUp, button = button, mousePosition = where, clickCount = 1 });
-            while (_clicksForTheHud.Count > 0) yield return null;
+            MenuStyle.PressedByTest = key;
+            for (int frame = 0; frame < 30 && MenuStyle.PressedByTest != null; frame++) yield return null;
+            if (MenuStyle.PressedByTest != null) SkirmishCheck($"{key} was never drawn", false);
+            MenuStyle.PressedByTest = null;
+            yield return null;
             yield return null;
         }
 
+        /// <summary>A press and release of the right button, then the left, on a GUI.Button of this script's own, as IMGUI's own events (nothing goes outside the game).</summary>
         private void OnGUI()
         {
-            if (_clicksForTheHud.Count == 0 || Event.current.type != EventType.Repaint) return;
+            if (_rightClickProbe < 0 || Event.current.type != EventType.Repaint) return;
+            int button = _rightClickProbe < 2 ? 1 : 0;
+            bool release = _rightClickProbe % 2 == 1;
+            var rect = new Rect(0f, 0f, 40f, 40f);
             Event real = Event.current;
-            Matrix4x4 matrix = GUI.matrix;
-            Event click = _clicksForTheHud.Dequeue();
-            bool release = click.type == EventType.MouseUp;
-            string asked = $"{click.type} button {click.button} at {click.mousePosition}";
-            if (release) GUIUtility.hotControl = _pressedControl; // The press was a frame ago: this game's real mouse isn't down, and IMGUI may have let go of it.
-            Event.current = click;
-            typeof(MatchHud).GetMethod("OnGUI", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(_hud, null);
-            if (!release) _pressedControl = GUIUtility.hotControl;
-            Debug.Log($"Skirmish HUD: {asked}: the control held is now {GUIUtility.hotControl}");
+            if (release) GUIUtility.hotControl = _probedControl; // The press was a frame ago, and the real mouse isn't down.
+            Event.current = new Event { type = release ? EventType.MouseUp : EventType.MouseDown, button = button, mousePosition = rect.center, clickCount = 1 };
+            bool fired = GUI.Button(rect, GUIContent.none, GUIStyle.none);
+            bool guarded = fired && Event.current.button == 0;
+            if (release)
+            {
+                Debug.Log($"Skirmish HUD: GUI.Button on mouse button {button}: it fired {fired}, and with the guard {guarded}");
+                SkirmishCheck($"the guard takes mouse button {button} as a click: {guarded}", guarded == (button == 0) && fired);
+            }
+            else _probedControl = GUIUtility.hotControl;
             GUIUtility.hotControl = 0;
-            GUI.matrix = matrix;
             Event.current = real;
+            _rightClickProbe = _rightClickProbe == 3 ? -1 : _rightClickProbe + 1;
         }
 
         private static IEnumerator PressEscape()
