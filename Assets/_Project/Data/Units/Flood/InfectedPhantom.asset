@@ -67,6 +67,7 @@ MonoBehaviour:
   reinforcementNeedsUpgrade: 0
   reinforcementDrops: 1
   reinforcementLandSeconds: 0
+  reinforcementFirstDropSeconds: 0
   formsPerBody: 1
   isFlood: 1
   infects: 0

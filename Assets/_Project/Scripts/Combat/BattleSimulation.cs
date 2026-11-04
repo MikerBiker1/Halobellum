@@ -289,7 +289,9 @@ namespace Halobellum.Combat
             UnitStats stats = carrier.Stats.Reinforcement;
             int squadId = NewSquadId();
             Vec2 forward = carrier.Team == Team.A ? Vec2.Up : Vec2.Down;
-            foreach (Vec2 offset in SquadFormation.Offsets(stats.SquadSize, stats.CollisionRadius, _rules.FormationGap, false))
+            List<Vec2> offsets = SquadFormation.Offsets(stats.SquadSize, stats.CollisionRadius, _rules.FormationGap, false);
+            centre = KeepFormationOnTheField(centre, offsets, stats.CollisionRadius);
+            foreach (Vec2 offset in offsets)
             {
                 Vec2 placed = carrier.Team == Team.A ? offset : -offset;
                 SimUnit dropped = CreateUnit(stats, carrier.Team, centre + placed, squadId);
@@ -298,6 +300,23 @@ namespace Halobellum.Combat
             }
             _squadById[squadId].FormUp();
             Events.RaiseReinforcementDropped(carrier, squadId);
+        }
+
+        /// <summary>
+        /// Moves a squad's centre in just far enough that all of its formation stands on the field. A carrier can drop from over a flank zone or from its own back edge,
+        /// and bodies placed off the field would each be snapped to the edge, out of formation.
+        /// </summary>
+        private Vec2 KeepFormationOnTheField(Vec2 centre, List<Vec2> offsets, float bodyRadius)
+        {
+            float acrossX = 0f, acrossY = 0f;
+            foreach (Vec2 offset in offsets)
+            {
+                acrossX = Math.Max(acrossX, Math.Abs(offset.X));
+                acrossY = Math.Max(acrossY, Math.Abs(offset.Y));
+            }
+            float halfWidth = Math.Max(0f, _rules.ArenaWidth * 0.5f - bodyRadius - acrossX);
+            float halfLength = Math.Max(0f, _rules.ArenaLength * 0.5f - bodyRadius - acrossY);
+            return new Vec2(Math.Clamp(centre.X, -halfWidth, halfWidth), Math.Clamp(centre.Y, -halfLength, halfLength));
         }
 
         // ------------------------------------------------------------------ carriers that land (the Pelican, D60)
@@ -319,7 +338,12 @@ namespace Halobellum.Combat
                 {
                     if (carrier.DropsMade >= carrier.Stats.ReinforcementDrops) continue; // All out: it fights like anything else.
                     float now = ElapsedSeconds;
-                    if (carrier.DropsMade == 0 && carrier.NextDropAt <= 0f) carrier.NextDropAt = carrier.Stats.ReinforcementDelaySeconds;
+                    // A first drop with its own time needs no landing spot: it starts down early enough for the squad to be out on time.
+                    bool freeFirst = carrier.DropsMade == 0 && carrier.Stats.ReinforcementFirstDropSeconds > 0f;
+                    if (carrier.DropsMade == 0 && carrier.NextDropAt <= 0f)
+                        carrier.NextDropAt = freeFirst
+                            ? Math.Max(0f, carrier.Stats.ReinforcementFirstDropSeconds - carrier.Stats.ReinforcementLandSeconds)
+                            : carrier.Stats.ReinforcementDelaySeconds;
                     if (now + 1e-4f >= carrier.DropSpotCheckAt)
                     {
                         carrier.DropSpot = BehindEnemyLines(carrier);
@@ -327,7 +351,7 @@ namespace Halobellum.Combat
                     }
                     carrier.State = UnitState.Move;
                     carrier.MoveGoal = carrier.DropSpot;
-                    if (now + 1e-4f >= carrier.NextDropAt && Vec2.Distance(carrier.Position, carrier.DropSpot) <= DropArrivalMetres)
+                    if (now + 1e-4f >= carrier.NextDropAt && (freeFirst || Vec2.Distance(carrier.Position, carrier.DropSpot) <= DropArrivalMetres))
                     {
                         carrier.DropPhase = DropRunPhase.Descending;
                         carrier.MoveGoal = carrier.Position;

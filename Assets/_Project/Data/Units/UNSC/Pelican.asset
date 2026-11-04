@@ -67,6 +67,7 @@ MonoBehaviour:
   reinforcementNeedsUpgrade: 1
   reinforcementDrops: 3
   reinforcementLandSeconds: 1.5
+  reinforcementFirstDropSeconds: 5
   formsPerBody: 1
   isFlood: 0
   infects: 0
@@ -99,4 +100,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air
-  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Vampire (100%). With its Troop Bay tech it lands behind enemy lines and drops 6 Marines, up to 3 times (D60). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Vampire (100%). With its Troop Bay tech it lands and drops 6 Marines 5 seconds into the battle wherever it is, then lands behind enemy lines to drop more, up to 3 drops in all (D60). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

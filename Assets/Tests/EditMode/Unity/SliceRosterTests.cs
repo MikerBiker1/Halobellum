@@ -153,12 +153,13 @@ namespace Halobellum.Tests
             Assert.IsTrue(u["Pelican"].Weapons[0].CanTarget(u["Pelican"], true) && u["Pelican"].Weapons[0].CanTarget(u["Pelican"], false),
                 "Pelican autocannon hits air and ground.");
 
-            // Pelican: a plain air unit until its Troop Bay tech (decision D22), which drops 6 Marines at 10 s.
+            // Pelican: a plain air unit until its Troop Bay tech (decision D22), which drops 6 Marines at 5 s, then at least 10 s apart.
             Assert.IsFalse(u["Pelican"].HasReinforcement, "The Pelican only carries Marines after its Troop Bay tech.");
             Assert.IsNotNull(u["Pelican"].LockedReinforcement);
             Assert.AreEqual("Marine", u["Pelican"].LockedReinforcement.Name);
             Assert.AreEqual(6, u["Pelican"].LockedReinforcement.SquadSize);
             Assert.AreEqual(10f, u["Pelican"].ReinforcementDelaySeconds, 1e-3f);
+            Assert.AreEqual(5f, u["Pelican"].ReinforcementFirstDropSeconds, 1e-3f);
             TechUpgrade bay = u["Pelican"].TechUpgrades.Single(t => t.UnlocksReinforcement);
             Assert.IsTrue(UnitUpgrades.Apply(u["Pelican"], 1, new[] { bay }).HasReinforcement);
 
