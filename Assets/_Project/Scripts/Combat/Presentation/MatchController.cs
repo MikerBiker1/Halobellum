@@ -69,6 +69,8 @@ namespace Halobellum.Presentation
         /// <summary>Whether the squad being moved is turned 90 degrees.</summary>
         public bool PlacingRotated { get; private set; }
         public bool IsPlacing => MovingSquadId >= 0;
+        /// <summary>A side that has units that can flank sees where they could go, throughout deployment.</summary>
+        public bool ShowsFlankZones => IsDeploying && Match.Player.Faction != null && Match.Player.Roster.Exists(unit => unit.CanFlank);
         public bool IsDeploying => Match != null && Match.Phase == MatchPhase.Deployment;
         /// <summary>The player always deploys in their own zone.</summary>
         public Team PlacingTeam => Team.A;

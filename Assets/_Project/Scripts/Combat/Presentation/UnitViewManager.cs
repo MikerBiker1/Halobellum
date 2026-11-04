@@ -373,10 +373,12 @@ namespace Halobellum.Presentation
             _arrows.Clear();
             _container = new GameObject("Units").transform;
             foreach (SimUnit unit in simulation.Units) _views.Add(CreateView(unit, _container));
+            foreach (View view in _views) if (view.Unit.NotArrived) view.Root.SetActive(false);
             simulation.Events.Ticked += OnTicked;
             simulation.Events.UnitDied += OnUnitDied;
             simulation.Events.UnitSpawned += OnUnitSpawned;
             simulation.Events.ReinforcementDropped += OnReinforcementDropped;
+            simulation.Events.SquadArrived += OnSquadArrived;
             simulation.Events.SpellTriggered += OnSpellTriggered;
             simulation.Events.UnitInfected += OnUnitInfected;
             simulation.Events.UnitRose += OnUnitRose;
@@ -390,6 +392,7 @@ namespace Halobellum.Presentation
             _shown.Events.UnitDied -= OnUnitDied;
             _shown.Events.UnitSpawned -= OnUnitSpawned;
             _shown.Events.ReinforcementDropped -= OnReinforcementDropped;
+            _shown.Events.SquadArrived -= OnSquadArrived;
             _shown.Events.SpellTriggered -= OnSpellTriggered;
             _shown.Events.UnitInfected -= OnUnitInfected;
             _shown.Events.UnitRose -= OnUnitRose;
@@ -574,6 +577,13 @@ namespace Halobellum.Presentation
             {
                 _views.Add(CreateView(_shown.Units[_views.Count], _container));
             }
+        }
+
+        /// <summary>A squad that arrives late drops into its place from above the camera (D61).</summary>
+        private void OnSquadArrived(int squadId)
+        {
+            foreach (View view in _views) if (view.Unit.SquadId == squadId) view.Root.SetActive(true);
+            DropSquad(squadId, Time.unscaledTime, dropHeight);
         }
 
         private void OnReinforcementDropped(SimUnit carrier, int squadId)

@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 1.1
   turnTime180: 0.9
   isAir: 0
+  canFlank: 0
   targetFilter: 2
   weapons:
   - weaponName: EMP Railgun

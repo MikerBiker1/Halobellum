@@ -3,6 +3,8 @@
 // covers a rectangle of squares (its footprint) worked out from its formation size, snapped to whole
 // squares. Squads must stay inside the zone and cannot overlap; air squads only collide with air
 // squads. Turning a squad 90 degrees swaps its width and depth.
+// Flank zones (D61): two strips beside the enemy's area, for units that can flank. They use the same grid, carried on past its edges: columns below 0 or past
+// the field's width, and negative rows, which count on across no man's land and into the enemy's area.
 // Coordinates are in the owner's frame: column 0 is the owner's left edge, row 0 is the front edge
 // of the owner's zone. Team B's grid is the mirror image of Team A's.
 // CreateBattle turns two deployments into a battle (used by the Match and the Sandbox).
@@ -36,6 +38,45 @@ namespace Halobellum.Economy
             return column >= 0 && row >= 0 && column + width <= rules.ArenaWidthSquares && row + depth <= rules.DeploymentDepthSquares;
         }
 
+        /// <summary>True if the footprint lies completely inside one of the two flank zones beside the enemy's area.</summary>
+        public static bool IsInFlankZone(int column, int row, int width, int depth, CombatRules rules)
+        {
+            int enemyFront = -rules.NoMansLandSquares, enemyBack = enemyFront - rules.DeploymentDepthSquares;
+            if (row < enemyBack || row + depth > enemyFront) return false;
+            int near = rules.FlankGapColumns, far = rules.FlankGapColumns + rules.FlankZoneColumns;
+            bool left = column >= -far && column + width <= -near;
+            bool right = column >= rules.ArenaWidthSquares + near && column + width <= rules.ArenaWidthSquares + far;
+            return left || right;
+        }
+
+        public static bool IsInFlankZone(PlacedSquad squad, CombatRules rules)
+        {
+            Footprint(squad.Type, squad.Rotated90, rules, out int width, out int depth);
+            return IsInFlankZone(squad.Column, squad.Row, width, depth, rules);
+        }
+
+        /// <summary>The free spot in the flank zone on the owner's left or right that is nearest this row. False if there is none.</summary>
+        public static bool FindFreeFlankSpot(PlayerState player, UnitStats type, CombatRules rules, bool ownLeft, int targetRow, out int column, out int row)
+        {
+            Footprint(type, false, rules, out int width, out int depth);
+            int firstColumn = ownLeft ? -rules.FlankGapColumns - rules.FlankZoneColumns : rules.ArenaWidthSquares + rules.FlankGapColumns;
+            int enemyFront = -rules.NoMansLandSquares, enemyBack = enemyFront - rules.DeploymentDepthSquares;
+            int bestDistance = int.MaxValue;
+            column = row = 0;
+            for (int r = enemyBack; r + depth <= enemyFront; r++)
+            {
+                for (int c = firstColumn; c + width <= firstColumn + rules.FlankZoneColumns; c++)
+                {
+                    int distance = Math.Abs(r - targetRow);
+                    if (distance >= bestDistance || !CanPlace(player, type, c, r, false, rules)) continue;
+                    bestDistance = distance;
+                    column = c;
+                    row = r;
+                }
+            }
+            return bestDistance != int.MaxValue;
+        }
+
         /// <summary>
         /// True if a squad of this type could stand at this spot: inside the zone and not overlapping
         /// another squad on the same layer (ground or air). ignoreSquadId skips one squad (the one being moved).
@@ -43,7 +84,7 @@ namespace Halobellum.Economy
         public static bool CanPlace(PlayerState player, UnitStats type, int column, int row, bool rotated90, CombatRules rules, int ignoreSquadId = -1)
         {
             Footprint(type, rotated90, rules, out int width, out int depth);
-            if (!IsInsideZone(column, row, width, depth, rules)) return false;
+            if (!IsInsideZone(column, row, width, depth, rules) && !(type.CanFlank && IsInFlankZone(column, row, width, depth, rules))) return false;
 
             foreach (PlacedSquad other in player.Squads)
             {

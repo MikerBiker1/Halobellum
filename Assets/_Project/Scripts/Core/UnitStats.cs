@@ -231,6 +231,8 @@ namespace Halobellum.Core
         public float ReinforcementDelaySeconds;
         /// <summary>A drop that only works once a tech upgrade unlocks it (the Pelican's troop bay); null = none.</summary>
         public UnitStats LockedReinforcement;
+        /// <summary>It can deploy in the flank zones beside the enemy's area (D61).</summary>
+        public bool CanFlank;
         /// <summary>How many times it drops its squad in a battle, ReinforcementDelaySeconds apart at least.</summary>
         public int ReinforcementDrops = 1;
         /// <summary>

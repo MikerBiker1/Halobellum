@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 0.6
   turnTime180: 0.35
   isAir: 0
+  canFlank: 0
   targetFilter: 2
   weapons:
   - weaponName: M45 Shotgun

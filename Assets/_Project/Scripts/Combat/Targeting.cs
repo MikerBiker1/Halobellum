@@ -29,7 +29,7 @@ namespace Halobellum.Combat
         /// <summary>True if the target is alive, not already at 0 health, and on the other team.</summary>
         public static bool IsTargetableEnemy(SimUnit shooter, SimUnit target)
         {
-            return target != null && target.IsAlive && target.Health > 0f && target.Team != shooter.Team;
+            return target != null && target.IsAlive && target.Health > 0f && target.Team != shooter.Team && !target.NotArrived;
         }
 
         /// <summary>True if a Seeder's seed can take in this unit (D38): not a Titan, not Flood, and no shield up.</summary>

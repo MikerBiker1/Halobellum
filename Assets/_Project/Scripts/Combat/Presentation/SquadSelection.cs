@@ -117,7 +117,7 @@ namespace Halobellum.Presentation
             float bestDistance = float.MaxValue;
             foreach (SimUnit unit in _battle.Simulation.Units)
             {
-                if (!unit.IsAlive) continue;
+                if (!unit.IsAlive || unit.NotArrived) continue;
                 Vector3 centre = _units.WorldPosition(unit);
                 centre.y += unit.IsAir ? 0f : unit.Radius;
                 float distance = Vector3.Cross(ray.direction, centre - ray.origin).magnitude; // Distance from the ray.

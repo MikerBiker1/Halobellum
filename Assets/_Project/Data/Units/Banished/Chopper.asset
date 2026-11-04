@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 1.3
   turnTime180: 0.8
   isAir: 0
+  canFlank: 0
   targetFilter: 0
   weapons:
   - weaponName: Ramming Blades

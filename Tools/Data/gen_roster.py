@@ -41,6 +41,10 @@ def W(name, dmg, interval, rng, type, proj=0, splash=0, minr=0, aa=False, block=
                 seed=seed, seedshare=seedshare, seedslow=seedslow, slow=slow, slowshare=slowshare)
 
 
+# The air units that can deploy in the flank zones (D61): UNSC only.
+FLANKERS = {"Hornet", "Pelican", "Sparrowhawk", "Longsword", "Vulture", "CondorGunship"}
+
+
 def U(id, name, faction, role, tier, unlock, squad, cost, hp, armor, speed, radius, turn, filter, weapons,
       shield=0, regen=0, airu=False, arc=None, drop=None, note="", forms=1, flood=False, infects=False, immune=False,
       selfd=False, seek=False, burst=None, spawn=None, aura=None, leap=None, lifesteal=0, basedmg=None, tint=None, scale=1, sub=None, folder=None, baked=None):
@@ -134,7 +138,7 @@ UNITS = [
       [W("Slam", 200, 2, 3, "Melee", splash=4)], flood=True),
     U("Seeder", "Seeder", "Flood", "SingleTargetDps", 3, 200, 2, 400, 800, "L", 1.5, 1.2, 1, "G",
       [W("Seed Spore", 60, 2.5, 24, "Energy", proj=30, seed=8, seedshare=0.08, seedslow=0.4)], flood=True),
-    U("InfectedPelican", "Infected Pelican", "Flood", "Aerial", 3, 175, 1, 350, 900, "L", 6, 2.5, 1, "G",
+    U("InfectedPelican", "Infected Pelican", "Flood", "Aerial", 3, 200, 1, 400, 900, "L", 6, 2.5, 1, "G",
       [W("Crash Dive", 0, 1, 1, "Explosive", own="G")], airu=True, flood=True, selfd=True, seek=True, leap=(22, 16, 0),
       burst=dict(dmg=900, radius=3.5, type="Explosive", aa=False, spawns=[("InfectionForms", 5), ("CombatForm", 5)])),
     U("InfectedPhantom", "Infected Phantom", "Flood", "Aerial", 3, 200, 1, 400, 1100, "L", 2.5, 3, 1.5, "B",
@@ -227,7 +231,7 @@ def unit_yaml(u):
              f"  baseDamage: {fmt(base_damage(u))}", f"  maxHealth: {fmt(u['hp'])}", f"  armorType: {ARMOR[u['armor']]}",
              f"  maxShield: {fmt(u['shield'])}", f"  shieldRegenPerSecond: {fmt(u['regen'])}",
              f"  moveSpeed: {fmt(u['speed'])}", f"  collisionRadius: {fmt(u['radius'])}", f"  turnTime180: {fmt(u['turn'])}",
-             f"  isAir: {fmt(u['air'])}", f"  targetFilter: {FILTER[u['filter']]}", "  weapons:"]
+             f"  isAir: {fmt(u['air'])}", f"  canFlank: {fmt(u['id'] in FLANKERS)}", f"  targetFilter: {FILTER[u['filter']]}", "  weapons:"]
     for w in u["weapons"]:
         lines += [f"  - weaponName: {yaml_str(w['name'])}", f"    damagePerShot: {fmt(w['dmg'])}",
                   f"    fireInterval: {fmt(w['interval'])}", f"    range: {fmt(w['range'])}", f"    minRange: {fmt(w['minr'])}",

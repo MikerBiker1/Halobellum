@@ -182,6 +182,8 @@ namespace Halobellum.Combat
         public bool ReinforcementDropped;
         /// <summary>A carrier that lands to drop (D60): how many drops it has made, what it is doing, and where it is going.</summary>
         public int DropsMade;
+        /// <summary>True until a squad that arrives late is on the field (D61): it can't act, be seen or be hit, but it does keep the battle going.</summary>
+        public bool NotArrived;
         public DropRunPhase DropPhase;
         public float NextDropAt;
         public Vec2 DropSpot;

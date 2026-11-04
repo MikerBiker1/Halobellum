@@ -17,6 +17,8 @@ namespace Halobellum.Presentation
         /// <summary>The unit type being placed or moved, or null.</summary>
         UnitStats PlacementType { get; }
         bool PlacingRotated { get; }
+        /// <summary>True if the placing side's flank zones should show (D61).</summary>
+        bool ShowsFlankZones { get; }
         /// <summary>Whose zone the squad goes in (Team B's grid is the mirror image of Team A's).</summary>
         Team PlacingTeam { get; }
         /// <summary>The placed squad currently selected, or null.</summary>

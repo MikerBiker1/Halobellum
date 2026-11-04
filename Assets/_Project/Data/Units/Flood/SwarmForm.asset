@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 1
   turnTime180: 0.3
   isAir: 1
+  canFlank: 0
   targetFilter: 1
   weapons:
   - weaponName: Spat Bone

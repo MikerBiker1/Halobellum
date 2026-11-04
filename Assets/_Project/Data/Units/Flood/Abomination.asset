@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 5
   turnTime180: 3
   isAir: 0
+  canFlank: 0
   targetFilter: 2
   weapons:
   - weaponName: Tendril Slam

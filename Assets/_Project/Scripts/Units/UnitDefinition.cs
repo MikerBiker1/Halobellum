@@ -82,6 +82,8 @@ namespace Halobellum.Units
         public bool immuneToInfection;
         [Tooltip("The unit kills itself when its main weapon fires, to set off its death burst.")]
         public bool selfDestructs;
+        [Tooltip("It can deploy in the flank zones beside the enemy's area (D61).")]
+        public bool canFlank;
         [Tooltip("The unit heads for the thickest group of enemies instead of the closest one.")]
         public bool seeksDensestCluster;
         [Tooltip("Damage of the explosion when it dies. Together with Death Spawns, this makes a death burst.")]
@@ -160,6 +162,7 @@ namespace Halobellum.Units
                 Infects = infects,
                 ImmuneToInfection = immuneToInfection,
                 SelfDestructs = selfDestructs,
+                CanFlank = canFlank,
                 SeeksDensestCluster = seeksDensestCluster,
                 SpawnIntervalSeconds = spawnIntervalSeconds,
                 AuraRadius = auraRadius,

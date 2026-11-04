@@ -223,6 +223,7 @@ namespace Halobellum.Combat
 
             if (Tick == 0) foreach (SimSquad squad in _squads) squad.FormUp();
 
+            UpdateArrivals();
             SpawnReinforcements();
             UpdateRises();
             UpdateSpawners();
@@ -245,6 +246,26 @@ namespace Halobellum.Combat
             CheckForEnd();
         }
 
+        private readonly List<(SimSquad squad, float at)> _arriving = new List<(SimSquad, float)>();
+
+        /// <summary>This squad only comes onto the field after this many seconds (a first deployment in a flank zone, D61).</summary>
+        public void DelayArrival(SimSquad squad, float seconds)
+        {
+            foreach (SimUnit member in squad.Members) member.NotArrived = true;
+            _arriving.Add((squad, ElapsedSeconds + seconds));
+        }
+
+        private void UpdateArrivals()
+        {
+            for (int i = _arriving.Count - 1; i >= 0; i--)
+            {
+                if (ElapsedSeconds + 1e-4f < _arriving[i].at) continue;
+                foreach (SimUnit member in _arriving[i].squad.Members) member.NotArrived = false;
+                Events.RaiseSquadArrived(_arriving[i].squad.Id);
+                _arriving.RemoveAt(i);
+            }
+        }
+
         private readonly List<SimUnit> _dropping = new List<SimUnit>();
 
         /// <summary>Drops the reinforcement squad of every living unit whose drop delay has passed (once per unit).</summary>
@@ -253,7 +274,7 @@ namespace Halobellum.Combat
             _dropping.Clear();
             foreach (SimUnit unit in _units)
             {
-                if (!unit.IsAlive || unit.ReinforcementDropped || !unit.Stats.HasReinforcement || unit.Stats.ReinforcementLandSeconds > 0f) continue;
+                if (!unit.IsAlive || unit.NotArrived || unit.ReinforcementDropped || !unit.Stats.HasReinforcement || unit.Stats.ReinforcementLandSeconds > 0f) continue;
                 if (ElapsedSeconds + 1e-4f >= unit.Stats.ReinforcementDelaySeconds) _dropping.Add(unit);
             }
             foreach (SimUnit carrier in _dropping)
@@ -293,7 +314,7 @@ namespace Halobellum.Combat
             for (int i = 0; i < count; i++)
             {
                 SimUnit carrier = _landers[i];
-                if (!carrier.IsAlive) continue;
+                if (!carrier.IsAlive || carrier.NotArrived) continue;
                 if (carrier.DropPhase == DropRunPhase.Flying)
                 {
                     if (carrier.DropsMade >= carrier.Stats.ReinforcementDrops) continue; // All out: it fights like anything else.
@@ -618,7 +639,7 @@ namespace Halobellum.Combat
             foreach (SimUnit victim in _nearby)
             {
                 // Offensive spells hit everyone in the area, the caster's own units too (D33).
-                if (!victim.IsAlive || (victim.Team == spell.Team && (!spell.Stats.Offensive || victim.Stats.IsTower)) || !spell.Stats.Targets.Allows(victim.IsAir)) continue;
+                if (!victim.IsAlive || victim.NotArrived || (victim.Team == spell.Team && (!spell.Stats.Offensive || victim.Stats.IsTower)) || !spell.Stats.Targets.Allows(victim.IsAir)) continue;
                 if (!spell.Covers(victim)) continue;
                 float multiplier = (victim.IsAir ? weapon.AirDamageMultiplier : 1f) * victim.FormsAlive * victim.ShockwaveDamageTaken;
                 if (weapon.DamageType == DamageType.Fire) multiplier *= victim.FireDamageTaken;
@@ -694,6 +715,12 @@ namespace Halobellum.Combat
             foreach (SimUnit unit in _units)
             {
                 if (!unit.IsAlive) continue;
+
+                if (unit.NotArrived)
+                {
+                    unit.State = UnitState.Idle;
+                    continue;
+                }
 
                 // Once inside the enemy's deployment zone, a unit notices enemies at any distance. It looks
                 // straight away, instead of standing idle until its next check.
@@ -1053,7 +1080,7 @@ namespace Halobellum.Combat
         {
             foreach (SimUnit unit in _units)
             {
-                if (!unit.IsAlive || unit.IsLeaping) continue;
+                if (!unit.IsAlive || unit.IsLeaping || unit.NotArrived) continue;
                 for (int w = 0; w < unit.Weapons.Length; w++)
                 {
                     SimWeapon weapon = unit.Weapons[w];

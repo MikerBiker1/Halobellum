@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 1.1
   turnTime180: 1
   isAir: 0
+  canFlank: 0
   targetFilter: 0
   weapons:
   - weaponName: Bone Shards

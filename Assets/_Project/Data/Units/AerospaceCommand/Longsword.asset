@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 2.8
   turnTime180: 1
   isAir: 1
+  canFlank: 1
   targetFilter: 0
   weapons:
   - weaponName: Carpet Bombs

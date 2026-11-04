@@ -324,6 +324,7 @@ namespace Halobellum.UI
             b.AppendLine(s.TurnTime180 > 0f ? $"Turn time: {s.TurnTime180:0.##} s for 180 degrees" : "Turn time: instant");
             b.AppendLine($"Targets: {s.TargetFilter}{(s.IsAir ? "    (air unit)" : "")}");
             AppendFloodLines(b, s);
+            if (s.CanFlank) b.AppendLine("Can deploy in the flank zones beside the enemy's area: late the first time");
             UnitStats drop = s.Reinforcement ?? s.LockedReinforcement;
             if (drop != null && s.ReinforcementLandSeconds > 0f)
                 b.AppendLine($"{(s.Reinforcement == null ? "With its tech: lands" : "Lands")} behind enemy lines to drop {drop.SquadSize} {drop.Name}s, up to {s.ReinforcementDrops} times");

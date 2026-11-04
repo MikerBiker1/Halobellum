@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 1.5
   turnTime180: 1.5
   isAir: 0
+  canFlank: 0
   targetFilter: 0
   weapons:
   - weaponName: M66 Railgun

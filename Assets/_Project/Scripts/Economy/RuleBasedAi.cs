@@ -349,6 +349,8 @@ namespace Halobellum.Economy
                 CounteredRole = (UnitRole)top;
             }
 
+            if (Difficulty == AiDifficulty.Hard) NoteFlanking(view, seen);
+
             // 2. Strategy.
             if (UsesMatchups) UpdateThreats(view, seen);
             Strategy = ChooseStrategy(view, seen, valueByRole, totalSeen);
@@ -368,6 +370,7 @@ namespace Halobellum.Economy
             var bought = new List<string>();
             var upgrades = new List<string>();
             string unlocked = TryUnlock(view, seen, totalSeen);
+            if (Difficulty == AiDifficulty.Hard) ShoreUpFlankedTowers(view, upgrades);
             if (Difficulty != AiDifficulty.Easy) BuyCarrierTechs(view, upgrades);
             if (Difficulty == AiDifficulty.Hard && self.Towers.Count > 0 && self.Credits >= HardEliteCredits) view.BuyEliteRecruitment();
             for (int i = 0; i < view.SquadsPerRound; i++)
@@ -593,6 +596,11 @@ namespace Halobellum.Economy
             {
                 score += _random.Range(-0.3f, 0.3f);
             }
+            if (Difficulty == AiDifficulty.Hard)
+            {
+                if (unit.CanFlank) score += HardFlankBonus;
+                if (_flanked.Count > 0 && unit.TargetFilter != TargetFilter.Ground) score += unit.Role == UnitRole.AntiAir ? 2f * HardFlankDefenceBonus : HardFlankDefenceBonus;
+            }
             return score;
         }
 
@@ -696,6 +704,66 @@ namespace Halobellum.Economy
             return true;
         }
 
+        // ------------------------------------------------------------------ flank zones (D61): only Hard uses them, and only Hard defends against them
+
+        private const float HardFlankBonus = 3f, HardFlankDefenceBonus = 2f;
+        private readonly List<TowerKind> _flanked = new List<TowerKind>();
+        private readonly Dictionary<TowerKind, int> _towerFallsNoted = new Dictionary<TowerKind, int>();
+
+        /// <summary>A tower of ours fell in the last battle, on the side where we saw the enemy in a flank zone: from now on that tower is guarded.</summary>
+        private void NoteFlanking(AiView view, IReadOnlyList<SeenSquad> seen)
+        {
+            foreach (PlacedTower tower in view.Self.Towers)
+            {
+                _towerFallsNoted.TryGetValue(tower.Kind, out int noted);
+                _towerFallsNoted[tower.Kind] = tower.Falls;
+                if (tower.Falls <= noted || _flanked.Contains(tower.Kind)) continue;
+                float towerX = DeploymentGrid.TowerCentre(tower, view.Team, view.CombatRules).X;
+                foreach (SeenSquad squad in seen)
+                {
+                    DeploymentGrid.Footprint(squad.Type, squad.Rotated90, view.CombatRules, out int width, out int depth);
+                    if (!DeploymentGrid.IsInFlankZone(squad.Column, squad.Row, width, depth, view.CombatRules)) continue;
+                    if (view.WorldCentre(squad).X * towerX <= 0f) continue;
+                    _flanked.Add(tower.Kind);
+                    break;
+                }
+            }
+        }
+
+        /// <summary>A flanked tower gets a level before more squads are bought, while it can afford a squad as well.</summary>
+        private void ShoreUpFlankedTowers(AiView view, List<string> upgrades)
+        {
+            foreach (TowerKind kind in _flanked)
+            {
+                if (view.Self.Credits < view.Rules.TowerLevelUpCost + HardTowerCredits) return;
+                if (view.LevelUpTower(kind).Ok) upgrades.Add($"{Match.TowerName(kind)} to level {view.Self.FindTower(kind).Level}, it was flanked");
+            }
+        }
+
+        /// <summary>
+        /// A spot in the flank zone on the side where what it last saw can shoot at aircraft the least, level with the enemy's towers in its middle.
+        /// From round 2 the side stays the same unless the other looks weaker; before that, squads alternate.
+        /// </summary>
+        private bool ChooseFlankSpot(AiView view, UnitStats type, out int column, out int row)
+        {
+            CombatRules rules = view.CombatRules;
+            float atWorldLeft = 0f, atWorldRight = 0f;
+            foreach (SeenSquad squad in view.SeenOpponentArmy)
+            {
+                if (squad.Type.TargetFilter == TargetFilter.Ground) continue;
+                if (view.WorldCentre(squad).X < 0f) atWorldLeft += squad.Value;
+                else atWorldRight += squad.Value;
+            }
+            int ownFlanks = 0;
+            foreach (PlacedSquad squad in view.Self.Squads) if (DeploymentGrid.IsInFlankZone(squad, rules)) ownFlanks++;
+            bool worldLeft = atWorldLeft == atWorldRight ? ownFlanks % 2 == 0 : atWorldLeft < atWorldRight;
+            // Battlefield left is this side's own left only for Team A: Team B's grid is the mirror image.
+            bool ownLeft = worldLeft == (view.Team == Team.A);
+            DeploymentGrid.Footprint(type, false, rules, out _, out int depth);
+            int targetRow = -rules.NoMansLandSquares - rules.DeploymentDepthSquares / 2 - depth / 2;
+            return DeploymentGrid.FindFreeFlankSpot(view.Self, type, rules, ownLeft, targetRow, out column, out row);
+        }
+
         /// <summary>Where this AI would place a new squad of this type now (its role-based spot).</summary>
         public bool ChooseSpot(AiView view, UnitStats type, out int column, out int row) => FindSpotFor(view, type, -1, out column, out row);
 
@@ -707,6 +775,7 @@ namespace Halobellum.Economy
         private bool FindSpotFor(AiView view, UnitStats type, int ignoreSquadId, out int column, out int row)
         {
             CombatRules rules = view.CombatRules;
+            if (Difficulty == AiDifficulty.Hard && ignoreSquadId < 0 && type.CanFlank && ChooseFlankSpot(view, type, out column, out row)) return true;
             DeploymentGrid.Footprint(type, false, rules, out int width, out _);
             int depth = rules.DeploymentDepthSquares, arenaWidth = rules.ArenaWidthSquares;
             int targetRow;
@@ -742,6 +811,14 @@ namespace Halobellum.Economy
             {
                 int spread = (sameKind + 1) / 2 * (sameKind % 2 == 1 ? 1 : -1);
                 targetColumn = lane - width / 2 + spread * (width + 2);
+            }
+
+            // Hard guards a tower that was taken from the flank with what can shoot at aircraft (D61).
+            if (Difficulty == AiDifficulty.Hard && _flanked.Count > 0 && type.TargetFilter != TargetFilter.Ground)
+            {
+                PlacedTower guarded = view.Self.FindTower(_flanked[sameKind % _flanked.Count]);
+                targetColumn = guarded.Column + guarded.Squares / 2 - width / 2;
+                targetRow = guarded.Row;
             }
 
             if (Difficulty == AiDifficulty.Easy)

@@ -38,6 +38,10 @@ namespace Halobellum.Core
         public int DeploymentDepthSquares;
         /// <summary>Squares of no man's land between the two deployment zones.</summary>
         public int NoMansLandSquares;
+        /// <summary>How wide each flank zone is, how many empty columns part it from the enemy's area, and how late a squad arrives the first time it deploys there (D61).</summary>
+        public int FlankZoneColumns = 4;
+        public int FlankGapColumns = 2;
+        public float FlankArrivalDelaySeconds = 10f;
 
         /// <summary>Total length in squares, from Team A's edge to Team B's edge.</summary>
         public int ArenaLengthSquares => DeploymentDepthSquares * 2 + NoMansLandSquares;

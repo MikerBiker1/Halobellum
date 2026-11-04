@@ -109,7 +109,7 @@ namespace Halobellum.Combat
         }
 
         /// <summary>True if two bodies can touch: both on the ground or both in the air, and neither on a leap.</summary>
-        private static bool CanTouch(SimUnit a, SimUnit b) => a.IsAir == b.IsAir && !a.IsLeaping && !b.IsLeaping;
+        private static bool CanTouch(SimUnit a, SimUnit b) => a.IsAir == b.IsAir && !a.IsLeaping && !b.IsLeaping && !a.NotArrived && !b.NotArrived;
 
         private Vec2 SteeringVelocity(SimUnit unit, float dt, out Vec2 facing)
         {
@@ -366,7 +366,9 @@ namespace Halobellum.Combat
         /// <summary>Keeps the unit inside the arena. Returns true if it had to be moved back.</summary>
         private bool ClampToArena(SimUnit unit)
         {
-            float halfWidth = _rules.ArenaWidth * 0.5f - unit.Radius;
+            // Aircraft that can flank fly in the flank zones too, beyond the field's edges (D61).
+            float beyond = unit.Stats.CanFlank && unit.IsAir ? (_rules.FlankGapColumns + _rules.FlankZoneColumns) * _rules.SquareSize : 0f;
+            float halfWidth = _rules.ArenaWidth * 0.5f + beyond - unit.Radius;
             float halfLength = _rules.ArenaLength * 0.5f - unit.Radius;
             float x = Math.Clamp(unit.Position.X, -halfWidth, halfWidth);
             float y = Math.Clamp(unit.Position.Y, -halfLength, halfLength);

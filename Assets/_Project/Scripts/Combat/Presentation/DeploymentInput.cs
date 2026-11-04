@@ -22,6 +22,7 @@ namespace Halobellum.Presentation
 
         private IDeploymentPlacement _match;
         private BattleController _battle;
+        private BattlefieldView _field;
         private Transform _ghost;
         private MeshRenderer _ghostRenderer;
         private Material _validMaterial, _invalidMaterial;
@@ -30,6 +31,7 @@ namespace Halobellum.Presentation
         {
             _match = GetComponent<IDeploymentPlacement>();
             _battle = GetComponent<BattleController>();
+            _field = GetComponent<BattlefieldView>();
             _validMaterial = PlaceholderArt.MaterialFor(validColor);
             _invalidMaterial = PlaceholderArt.MaterialFor(invalidColor);
             _ghost = PlaceholderArt.CreatePart("Placement Ghost", null, PlaceholderArt.Cube, _validMaterial);
@@ -40,6 +42,7 @@ namespace Halobellum.Presentation
         private void Update()
         {
             if (_match == null) return;
+            if (_field != null) _field.ShowFlankZones(_match.ShowsFlankZones ? _match.PlacingTeam : (Team?)null);
             if (!_match.IsDeploying)
             {
                 if (_match.IsPlacing) _match.CancelPlacement();

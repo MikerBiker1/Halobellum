@@ -39,6 +39,12 @@ namespace Halobellum.Units
         public int deploymentDepthSquares;
         [Tooltip("Squares of no man's land between the two deployment zones.")]
         public int noMansLandSquares;
+        [Tooltip("How wide each flank zone is, in columns (D61).")]
+        public int flankZoneColumns = 4;
+        [Tooltip("Empty columns between a flank zone and the enemy's area.")]
+        public int flankGapColumns = 2;
+        [Tooltip("How late a squad arrives the first time it deploys in a flank zone.")]
+        public float flankArrivalDelaySeconds = 10f;
 
         [Header("Movement tuning")]
         [Tooltip("Neighbor-search grid cell size in metres.")]
@@ -108,6 +114,9 @@ namespace Halobellum.Units
                 ArenaWidthSquares = arenaWidthSquares,
                 DeploymentDepthSquares = deploymentDepthSquares,
                 NoMansLandSquares = noMansLandSquares,
+                FlankZoneColumns = flankZoneColumns,
+                FlankGapColumns = flankGapColumns,
+                FlankArrivalDelaySeconds = flankArrivalDelaySeconds,
                 SpatialCellSize = spatialCellSize,
                 SeparationPadding = separationPadding,
                 SeparationWeight = separationWeight,

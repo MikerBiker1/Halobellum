@@ -565,6 +565,7 @@ namespace Halobellum.Economy
         {
             if (Phase != MatchPhase.Deployment) throw new InvalidOperationException("A battle can only start after deployment.");
             CurrentBattle = BuildBattle(includeEnemy: true);
+            DelayFirstFlanks(CurrentBattle);
             CastPlacedSpells(Player, CurrentBattle);
             CastPlacedSpells(Enemy, CurrentBattle);
             Reveal(Player, _seenA);
@@ -579,6 +580,22 @@ namespace Halobellum.Economy
             _battleCount++;
             Phase = MatchPhase.Battle;
             return CurrentBattle;
+        }
+
+        /// <summary>A squad in a flank zone arrives late the first time, and on time after that (D61). Simulation squad i is placed squad i, Team A's first.</summary>
+        private void DelayFirstFlanks(BattleSimulation battle)
+        {
+            int index = 0;
+            foreach (PlayerState side in new[] { Player, Enemy })
+            {
+                foreach (PlacedSquad squad in side.Squads)
+                {
+                    SimSquad simSquad = battle.Squads[index++];
+                    if (!DeploymentGrid.IsInFlankZone(squad, CombatRules)) continue;
+                    if (!squad.HasFlanked) battle.DelayArrival(simSquad, CombatRules.FlankArrivalDelaySeconds);
+                    squad.HasFlanked = true;
+                }
+            }
         }
 
         /// <summary>Every placed spell goes into the battle and starts recharging (usable again CooldownRounds + 1 rounds later).</summary>

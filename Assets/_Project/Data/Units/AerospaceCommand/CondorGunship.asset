@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 3
   turnTime180: 1.5
   isAir: 1
+  canFlank: 1
   targetFilter: 2
   weapons:
   - weaponName: Twin Autocannons

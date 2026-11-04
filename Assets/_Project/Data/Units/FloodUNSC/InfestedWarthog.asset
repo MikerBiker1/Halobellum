@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 1.2
   turnTime180: 1
   isAir: 0
+  canFlank: 0
   targetFilter: 0
   weapons:
   - weaponName: Ramming Mass

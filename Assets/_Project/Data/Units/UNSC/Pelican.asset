@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 2.5
   turnTime180: 2
   isAir: 1
+  canFlank: 1
   targetFilter: 2
   weapons:
   - weaponName: M370 Autocannon

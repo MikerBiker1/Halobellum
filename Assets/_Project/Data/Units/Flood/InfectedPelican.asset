@@ -15,10 +15,10 @@ MonoBehaviour:
   unitName: Infected Pelican
   role: 7
   tier: 3
-  unlockCost: 175
+  unlockCost: 200
   squadSize: 1
-  cost: 350
-  baseDamage: 70
+  cost: 400
+  baseDamage: 80
   maxHealth: 900
   armorType: 1
   maxShield: 0
@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 2.5
   turnTime180: 1
   isAir: 1
+  canFlank: 0
   targetFilter: 0
   weapons:
   - weaponName: Crash Dive

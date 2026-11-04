@@ -218,6 +218,43 @@ namespace Halobellum.Presentation
             Debug.Log($"Terrain: {factionA} {_map.LayoutA.Name} against {factionB} {_map.LayoutB.Name}, seed {seed}: {_map.TriangleCount} triangles, built in {_map.BuildMilliseconds:0} ms.");
         }
 
+        private Transform _flankLeft, _flankRight;
+        private Team? _flankTeam;
+
+        /// <summary>Shows the flank zones of this team, beside the enemy's area, or none (D61).</summary>
+        public void ShowFlankZones(Team? team)
+        {
+            if (_root == null || team == _flankTeam && _flankLeft != null == team.HasValue) return;
+            if (_flankLeft != null) Destroy(_flankLeft.gameObject);
+            if (_flankRight != null) Destroy(_flankRight.gameObject);
+            _flankLeft = _flankRight = null;
+            _flankTeam = team;
+            if (!team.HasValue) return;
+
+            CombatRules rules = _battle.Rules;
+            Color color = team == Team.A ? teamASquaresColor : teamBSquaresColor;
+            float near = rules.ArenaWidth * 0.5f + rules.FlankGapColumns * rules.SquareSize, far = near + rules.FlankZoneColumns * rules.SquareSize;
+            _flankLeft = FlankZone(rules, team.Value, -far, -near, color);
+            _flankRight = FlankZone(rules, team.Value, near, far, color);
+        }
+
+        private Transform FlankZone(CombatRules rules, Team team, float x0, float x1, Color color)
+        {
+            float depth = rules.DeploymentDepthSquares * rules.SquareSize, gap = rules.NoMansLandSquares * rules.SquareSize;
+            float z0 = team == Team.A ? gap * 0.5f : -gap * 0.5f - depth; // Over the enemy's area.
+            float z1 = z0 + depth;
+            Material material = Make("Terrain/TerrainDeployment");
+            material.SetColor("_Team", color);
+            material.SetVector("_Zone", new Vector4(x0, z0, x1, z1));
+            material.SetFloat("_Square", rules.SquareSize);
+            material.SetFloat(FadeId, _squares);
+            _overlays.Add(material);
+            Transform quad = PlaceholderArt.CreatePart("Flank Zone", _root, PlaceholderArt.Quad, material);
+            quad.SetPositionAndRotation(new Vector3((x0 + x1) * 0.5f, TerrainCanvas.DecalHeight + 0.01f, (z0 + z1) * 0.5f), Quaternion.Euler(90f, 0f, 0f));
+            quad.localScale = new Vector3(x1 - x0, depth, 1f);
+            return quad;
+        }
+
         private void SquaresOver(string name, CombatRules rules, Team team, Color color)
         {
             float width = rules.ArenaWidth, depth = rules.DeploymentDepthSquares * rules.SquareSize, gap = rules.NoMansLandSquares * rules.SquareSize;
@@ -301,6 +338,8 @@ namespace Halobellum.Presentation
         {
             if (_root != null) Destroy(_root.gameObject);
             _root = null;
+            _flankLeft = _flankRight = null;
+            _flankTeam = null;
             foreach (Material material in _materials) Destroy(material);
             _materials.Clear();
             _overlays.Clear();

@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 2
   turnTime180: 2
   isAir: 0
+  canFlank: 0
   targetFilter: 0
   weapons:
   - weaponName: Scavenged Cannon
