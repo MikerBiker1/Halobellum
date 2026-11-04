@@ -218,7 +218,7 @@ Numbers below are first-pass values for the first playable slice. Costs are per 
 | Wolverine | Anti-air | 2 | 50 | 1 | 300 | 500 | Rocket volleys, bonus damage against air, can still hit ground |
 | Hornet | Aerial | 2 | 50 | 2 | 300 | 400 | Air, rockets, bombs ground |
 | Archer Missile Pod | Artillery | 2 | 50 | 2 | 300 | 350 | Long-range explosive barrage; lobbed; cannot move |
-| Pelican | Aerial | 2 | 50 | 1 | 300 | 800 | Chin-mounted M370 autocannon (ballistic, hits air and ground); with its Troop Bay it lands behind enemy lines and drops 6 Marines behind it, up to 3 times, at least 10 seconds apart |
+| Pelican | Aerial | 2 | 50 | 1 | 300 | 800 | Chin-mounted M370 autocannon (ballistic, hits air and ground); with its Troop Bay it lands wherever it is and drops 6 Marines 5 seconds into the battle (about 11.5 seconds if it comes late to a flank zone), then lands behind enemy lines for more, up to 3 drops in all, at least 10 seconds apart |
 | Spartan | Single-target DPS | 3 | 225 | 1 | 450 | 1500 | Energy shield, Spartan Laser |
 | Mantis | Tank | 3 | 250 | 1 | 500 | 2500 | Heavy armor; chaingun and rockets |
 | Elephant | Titan | 4 | 350 | 1 | 800 | 8000 | Mobile fortress; turrets for chaff, cannon for armor |

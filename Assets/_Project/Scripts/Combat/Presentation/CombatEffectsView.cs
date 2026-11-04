@@ -619,7 +619,11 @@ namespace Halobellum.Presentation
                 if (unit.Stats.ArmorType != ArmorType.Unarmored || radius >= 1f)
                 {
                     Vector2 off = Random.insideUnitCircle * radius * 0.7f;
-                    _kit.Dust(EffectPriority.Small, base3 + new Vector3(off.x, 0f, off.y), Vector3.up * 0.5f, radius * Random.Range(1.2f, 1.9f), new Color(0.6f, 0.55f, 0.46f, 0.22f), Random.Range(0.8f, 1.3f));
+                    bool high = _kit.ParticleScale > 1f;
+                    float size = radius * Random.Range(1.2f, 1.9f) * (high ? EffectKit.HighDustSize : 1f);
+                    float alpha = 0.22f * (high ? EffectKit.HighDustThickness : 1f);
+                    float life = Random.Range(0.8f, 1.3f) * (high ? EffectKit.HighDustLife : 1f);
+                    _kit.Dust(EffectPriority.Small, base3 + new Vector3(off.x, 0f, off.y), Vector3.up * 0.5f, size, new Color(0.6f, 0.55f, 0.46f, alpha), life);
                 }
                 else if (Random.value < 0.08f)
                 {

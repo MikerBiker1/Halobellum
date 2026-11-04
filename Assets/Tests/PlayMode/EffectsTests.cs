@@ -143,16 +143,16 @@ namespace Halobellum.Tests
                 QualitySettings.SetQualityLevel(high, false);
                 kit.BeginFrame(1f, 0.01f, 0.01f);
                 Assert.AreEqual(EffectKit.HighQualityScale, kit.ParticleScale);
-                Assert.AreEqual(1750, kit.DustLimit);
-                Assert.AreEqual(650, kit.Budget.SmallLimit);
-                Fill(2000);
-                Assert.AreEqual(1750, Dust(), "The same layer now holds more.");
+                Assert.AreEqual(2800, kit.DustLimit);
+                Assert.AreEqual(1040, kit.Budget.SmallLimit);
+                Fill(3200);
+                Assert.AreEqual(2800, Dust(), "The same layer now holds more.");
 
                 QualitySettings.SetQualityLevel(low, false);
                 kit.BeginFrame(1f, 0.01f, 0.01f);
                 Assert.AreEqual(700, kit.DustLimit);
                 Fill(10);
-                Assert.AreEqual(1750, Dust(), "Back on Low, nothing new starts until it is under Low's limit, and what is in the air stays.");
+                Assert.AreEqual(2800, Dust(), "Back on Low, nothing new starts until it is under Low's limit, and what is in the air stays.");
             }
             finally
             {

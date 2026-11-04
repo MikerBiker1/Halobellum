@@ -48,7 +48,9 @@ namespace Halobellum.Presentation
         /// <summary>The dust layer's size at a ParticleScale of 1.</summary>
         public const int DustPerScale = 700;
         /// <summary>How many times more dust High quality has than Low.</summary>
-        public const float HighQualityScale = 2.5f;
+        public const float HighQualityScale = 4f;
+        /// <summary>A rate alone doesn't show from the game's camera (D62), so on High a moving vehicle's puff is also this much bigger, longer-lived and thicker.</summary>
+        public const float HighDustSize = 1.7f, HighDustLife = 1.8f, HighDustThickness = 1.5f;
         /// <summary>Compares settings of the scale on one build, for this run only: "-particleScale 4" instead of what the quality level says. See EffectsGallery's benchmark.</summary>
         public const string ParticleScaleFlag = "-particleScale";
         private const int BloodCapacity = 500;

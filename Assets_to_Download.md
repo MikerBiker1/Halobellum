@@ -62,10 +62,11 @@ Sounds go by kind of weapon, not by unit, so one file covers every unit in its r
 | [ ] | `sfx_fire_melee_covenant` | Covenant melee: energy sword, talons. |
 | [ ] | `sfx_fire_melee_flood` | Flood melee: claws, tendrils, bites. |
 
-### Hits, deaths and engines (16)
+### Hits, deaths and engines (17)
 
 | Done | Slot | When it plays |
 | --- | --- | --- |
+| [ ] | `sfx_death_lekgolo` | A Hunter or Goliath dying: the gore death. Until you add it, they keep the Covenant soldier's death sound. |
 | [ ] | `sfx_impact_armor` | A hit on armor. |
 | [ ] | `sfx_impact_flesh` | A hit on something unarmored. |
 | [ ] | `sfx_impact_shield` | A hit on an energy shield. |
@@ -143,6 +144,8 @@ The Spartans have your model now, each with a placeholder weapon from the game's
 | [ ] | Seeder | |
 | [ ] | Juggernaut | You may remove it if you can't find one. |
 | [ ] | Spawner | You may remove it if you can't find one. |
+| [ ] | Growths for Infested vehicles | The Flood's tentacles, to fit on an Infested Scorpion, Elephant, Hornet and so on (decision 37). One or a few pieces that can be placed on any vehicle. |
+| [ ] | Hunter and Goliath gore death | Worms spilling apart instead of today's burning wreck (decision 31). A worm pile or a short animation. |
 
 ### Towers
 

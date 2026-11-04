@@ -4,7 +4,7 @@
 
 The game now opens in a new scene, **MainMenu**. It fades in from black on a dusk battlefield seen from ground level: Marines in silhouette, Scorpions on the line, a burnt-out Warthog smoking, Wraiths further on, and a huge Scarab standing in the haze on all four legs, with a low sun beside it. Pelicans cross the sky in three different groups. Every 26 seconds the Scarab fires its beam at the ground. Embers drift past. The camera wanders very slowly.
 
-On the left, under a soft darkness so the text stands out: the title **HALOBELLUM** and the buttons **New Match** (with Easy / Normal / Hard next to it), **Sandbox**, **Settings** and **Quit**. There are no Halo logos or marks. The look (near-black panels, a fine edge, warm amber) belongs to these screens only, because they belong to no faction.
+On the left, under a soft darkness so the text stands out: the title **HALOBELLUM** and the buttons **Play**, **Settings** and **Quit**. **Play** leads to a second page with **Faction mode**, **Unlock Skirmish mode**, **Sandbox** and **Back**. Choosing a mode opens a panel on the right with its settings and **Start**: difficulty for Faction mode; difficulty, base health (100 to 10000) and a card list for Unlock Skirmish. Esc steps back a page (D62). There are no Halo logos or marks. The look (near-black panels, a fine edge, warm amber) belongs to these screens only, because they belong to no faction.
 
 **Settings** has the same panel from the menu and from a match:
 
@@ -30,7 +30,7 @@ Each is applied at once and again when the game starts. "Reset to defaults" puts
 
 **End of a match:** the screen now has **New match** and **Main Menu**.
 
-**Sandbox's Back button** goes back where the Sandbox was opened from. It says "Main menu" if it was opened from the menu, and "Back to match" if from the draft screen.
+**Sandbox's Back button** goes back where the Sandbox was opened from. It says "Main menu", because the menu's Play page is the only way in (D62).
 
 ## How it fits together
 
@@ -76,7 +76,7 @@ To change the picture, edit `MainMenuSceneBuilder.cs` and run it (Halobellum > S
 
 - **AI difficulty label.** It stands past the left side's darkness, on the bright picture, so it now uses the bright text colour on a little darkness of its own that fades to the right.
 - **Spell text.** "1 x ODST squad lands" and "2 x ODST squads land". A number and its unit are joined by a non-breaking space (U+00A0) in the text of spells, items and techs, so that a line never ends between "8" and "m". A test measures this with all five fonts the game uses: the space is the same width as a plain one, and a wrapped line does not break at it.
-- **Shop order.** A sub-faction's own units come first in the shop list (`MatchHud.FillShopRows`). This is the display only: `PlayerState.Roster` keeps its order, and with it unlocking, prices, card offers and the AI stay the same.
+- **Shop order.** Tier, then price, in every mode, since D62 (`ShopOrder.Sort`). Until then a sub-faction's own units came first (`MatchHud.FillShopRows`). This is the display only: `PlayerState.Roster` keeps its order, and with it unlocking, prices, card offers and the AI stay the same.
 - **Result line in the Sandbox.** BattleHud drew it at y 90, and the Sandbox's bar is at y 92. `SandboxHud` now tells BattleHud to draw it under the bar (y 164). The speed controls did not move. A message during a battle moves one line further down. The Battle scene keeps the line where it was, and the Match scene has its own result screen.
 - **Selection marker.** A flat ring instead of a solid disc (`PlaceholderArt.Ring`), open in the middle and a little wider than the disc was, 2.6 times the collision radius. It is only a mesh in the view.
 - **Narrow windows.** `HudScale.ScaleFor` lets the UI scale grow only as far as 1140 units still fit across the window, so that the 1120-unit bars of the Match and the Sandbox stay on the screen. The only sizes in the Settings list that this changes are 120% and 125% at 5:4, which both show as about 118%. Every HUD of a scene uses the same scale, so they stay in line.

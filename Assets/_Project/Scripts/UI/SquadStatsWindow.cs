@@ -380,7 +380,9 @@ namespace Halobellum.UI
             if (s.CanFlank) b.AppendLine("Can deploy in the flank zones beside the enemy's area: late the first time");
             UnitStats drop = s.Reinforcement ?? s.LockedReinforcement;
             if (drop != null && s.ReinforcementLandSeconds > 0f)
-                b.AppendLine($"{(s.Reinforcement == null ? "With its tech: lands" : "Lands")} behind enemy lines to drop {drop.SquadSize} {drop.Name}s, up to {s.ReinforcementDrops} times");
+                b.AppendLine(s.ReinforcementFirstDropSeconds > 0f
+                    ? $"{(s.Reinforcement == null ? "With its tech: drops" : "Drops")} {drop.SquadSize} {drop.Name}s {s.ReinforcementFirstDropSeconds:0.#} s in, then behind enemy lines, up to {s.ReinforcementDrops} times"
+                    : $"{(s.Reinforcement == null ? "With its tech: lands" : "Lands")} behind enemy lines to drop {drop.SquadSize} {drop.Name}s, up to {s.ReinforcementDrops} times");
             for (int i = 0; i < s.Weapons.Length; i++)
             {
                 WeaponStats w = s.Weapons[i];

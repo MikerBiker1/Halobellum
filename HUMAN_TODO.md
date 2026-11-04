@@ -54,7 +54,7 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 
 ## 2026-10-31 (night): check M5 (AI), M6 (leveling and techs) and the faction UI
 
-- [x] **Pick a difficulty and play.** Open `Assets/_Project/Scenes/Match.unity`, press **Play**. On the draft screen choose **Easy**, **Normal** or **Hard** (remembered for next time), then a card. The top bar shows "UNSC vs Covenant / Normal AI".
+- [x] **Pick a difficulty and play.** Open `Assets/_Project/Scenes/Match.unity`, press **Play**. (Since D62 the difficulty is chosen in the main menu, under Play, and the draft screen only offers cards.) Choose a card. The top bar shows "UNSC vs Covenant / Normal AI".
 - [x] **Watch the AI.** It now buys and places an army each round (chaff and tanks in front, ranged behind, flankers on the sides) and answers what you fielded last battle. It never sees what you buy this round.
 - [x] **Level a squad up.** After a battle, the result screen lists your squads that are ready. Next round, click one: the stats window (bottom left) shows its level, XP bar and **Level up (price)**. A level-2 squad has double health and damage.
 - [x] **Research a tech.** In the same window, **Buy** a tech: it applies to every squad of that type for the rest of the match. Try the Pelican's **Troop Bay** (it then drops 6 Marines 10 seconds into each battle) or the Flamethrower's **Wide Nozzle**.
@@ -146,3 +146,12 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 - [ ] **Watch the Infected Pelican dive** at 1x, against other air units.
 - [ ] **Try each sub-faction** in the draft. The Sandbox lists exclusive units under their own headings.
 - [ ] **Models wanted:** see item 14 in `MORNING_DECISIONS.md`.
+
+## 2026-11-04: play Unlock Skirmish (D62)
+
+- [ ] **Play > Unlock Skirmish mode.** At 1080p, try the unit bar at the bottom right, hovering an icon, the **Unlock units** page and the settings: difficulty, base health and the card list.
+- [ ] **Low health.** Start one at 100 base health and tell me how it feels.
+- [ ] **Blood.** Red for humans, light blue for Grunts, deep blue for Elites, orange for Hunters, sickly brown for Flood, purple for Jackals and dark red for Brutes (those last two are my guess).
+- [ ] **Dust on High.** Watch a Warthog or Scorpion move. The frame rate shows if you turn on Frame rate counter in Settings.
+- [ ] **Pelican timing.** With Troop Bay it should drop its first Marines 5 seconds in. Try it in a back corner (items 58 and 72 of `MORNING_DECISIONS.md` are also yours to playtest).
+- [ ] **Real mouse.** Agents may not send real input, so slider dragging, real wheel scrolling and real double-clicks have never been tried. Tell me if any of them misbehave.

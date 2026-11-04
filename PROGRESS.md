@@ -44,7 +44,7 @@ Milestones and items from PROJECT_BIBLE.md Section 14. An item is ticked when it
 
 ## M5: AI opponent (confirmed by the human 2026-11-01)
 - [x] Rule-based AI: 4 strategies (swarm, armor push, air raid, balanced), counters the player's most expensive role, role-based placement, same rules and limits as the player, no cheating (with tests)
-- [x] 3 difficulty levels (Easy, Normal, Hard) chosen on the draft screen; Hard uses measured matchups
+- [x] 3 difficulty levels (Easy, Normal, Hard), chosen on the draft screen until D62 moved them to the menu's Play page; Hard uses measured matchups
 - [x] Full playable match against the AI (headless and PlayMode tests)
 
 ## M6: Leveling and tech upgrades (confirmed by the human 2026-11-01)
@@ -141,6 +141,11 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] Applied the suggested balance changes, no Titan reinforcements, 6 Infection Forms to a group, forms from Flood vehicles, Archer pods that stay put, the Pelican's landings, tournament rerun (D60)
 - [x] Flank zones for the Pelican and Aerospace's aircraft, used and defended against by the Hard AI (D61)
 - [x] Every sub-faction wins 46% to 54% in the Hard AI tournament: the rule from now on (D61)
+- [x] Unlock Skirmish mode: no factions, 69 units to unlock, all spell cards, 2 random starting squads, the unit bar and unlock page (D62)
+- [x] The Play submenu with mode settings; Sandbox and difficulty moved there; frame-rate counter behind a setting (D62)
+- [x] The draft is blind: the AI commits before your card applies (D62)
+- [x] Blood by what was hit, more dust on High, a slot for the Hunter death sound, towers in the Sandbox behind a switch, always a decimal point, shop by tier and price (D62)
+- [x] The Hard AI takes Rapid Resupply when about to lose; the Pelican drops 5 seconds in (D62)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

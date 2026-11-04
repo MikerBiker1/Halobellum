@@ -236,7 +236,7 @@ namespace Halobellum.Core
         /// <summary>How many times it drops its squad in a battle, ReinforcementDelaySeconds apart at least.</summary>
         public int ReinforcementDrops = 1;
         /// <summary>
-        /// Above 0, it doesn't drop from the air where it is: it flies behind the enemy's lines, takes this many seconds to come down, lets its squad out
+        /// Above 0, it doesn't drop from the air where it is: it flies behind the enemy's lines (unless ReinforcementFirstDropSeconds has it start down sooner), takes this many seconds to come down, lets its squad out
         /// behind it, and takes as long to go back up (the Pelican, D60). On the ground, weapons that can't hit air can hit it. Once its drops are made, it fights.
         /// </summary>
         public float ReinforcementLandSeconds;
