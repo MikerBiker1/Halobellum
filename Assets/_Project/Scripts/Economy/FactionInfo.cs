@@ -33,7 +33,7 @@ namespace Halobellum.Economy
             var roster = new List<UnitStats>(BaseRoster);
             if (subFaction != null)
             {
-                foreach (UnitStats unit in subFaction.ExcludedUnits) roster.Remove(unit);
+                if (subFaction.ExcludedUnits != null) foreach (UnitStats unit in subFaction.ExcludedUnits) roster.Remove(unit);
                 foreach (UnitStats unit in subFaction.ExclusiveUnits)
                 {
                     if (!roster.Contains(unit)) roster.Add(unit);

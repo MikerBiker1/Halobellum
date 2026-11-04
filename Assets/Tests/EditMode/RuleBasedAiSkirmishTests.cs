@@ -179,6 +179,48 @@ namespace Halobellum.Tests
             Assert.IsFalse(NormalBuysAnExtraSlot(MatchMode.Faction, 5000), "Faction mode keeps its old behaviour.");
         }
 
+        // ------------------------------------------------------------------ levels before new squads
+
+        /// <summary>Skips its cards, and just before deploying in round 2 leaves every squad ready to level, holding these credits.</summary>
+        private sealed class ReadyToLevelAi : IMatchAi
+        {
+            private readonly RuleBasedAi _ai;
+            private readonly int _credits;
+            public ReadyToLevelAi(RuleBasedAi ai, int credits) { _ai = ai; _credits = credits; }
+            public string Label => _ai.Label;
+            public int ChooseDraftCard(AiView view, IReadOnlyList<DraftCard> cards) => _ai.ChooseDraftCard(view, cards);
+            public int ChooseCard(AiView view, CardOffer offer) => -1;
+
+            public void Deploy(AiView view)
+            {
+                if (view.Round == 2)
+                {
+                    view.Self.Credits = _credits;
+                    foreach (PlacedSquad squad in view.Self.Squads) squad.Xp = 100000f;
+                }
+                _ai.Deploy(view);
+            }
+        }
+
+        /// <summary>The squads a Hard AI has levelled once round 2's deployment is done, holding credits for a level or a new squad but not both.</summary>
+        private static int HardsLevelsInRoundTwo(MatchMode mode)
+        {
+            Match match = NewMatch(mode, new ReadyToLevelAi(new RuleBasedAi(AiDifficulty.Hard, 3), 200));
+            match.ChooseDraft(0);
+            PlayBattle(match);
+            if (match.Phase == MatchPhase.Result) match.ContinueAfterResult();
+            if (match.Phase == MatchPhase.Cards) match.SkipCards(Team.A);
+            int levelled = 0;
+            foreach (PlacedSquad squad in match.Enemy.Squads) if (squad.Level > 1) levelled++;
+            return levelled;
+        }
+
+        [Test]
+        public void Hard_LevelsBeforeNewSquads_OnlyInUnlockSkirmish()
+        {
+            Assert.Greater(HardsLevelsInRoundTwo(MatchMode.UnlockSkirmish), HardsLevelsInRoundTwo(MatchMode.Faction));
+        }
+
         // ------------------------------------------------------------------ reinforcement squads
 
         /// <summary>Always takes the first card of an offer, around the real AI, so that the test is about where the squads go.</summary>

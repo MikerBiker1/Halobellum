@@ -187,7 +187,7 @@ static class Program
             if (parts[0] == "without")
             {
                 SubFactionInfo sub = factions.SelectMany(f => f.SubFactions).First(s => s.Name == parts[1]);
-                sub.ExcludedUnits.Add(units[parts[2]]);
+                (sub.ExcludedUnits ??= new List<UnitStats>()).Add(units[parts[2]]);
                 Console.WriteLine("Trial: " + line);
                 continue;
             }
