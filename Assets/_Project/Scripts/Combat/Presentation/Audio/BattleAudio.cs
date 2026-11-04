@@ -101,18 +101,21 @@ namespace Halobellum.Presentation
         private static Vector3 Place(SimUnit unit) => new Vector3(unit.Position.X, 0f, unit.Position.Y);
 
         /// <summary>The sound a weapon makes in the hands of a team's faction. Worked out once per weapon.</summary>
-        public SfxCue FireCue(WeaponStats weapon, Team team)
+        public SfxCue FireCue(WeaponStats weapon, Team team) => FireCue(weapon, null, team);
+
+        /// <summary>The same when the unit is known: in Unlock Skirmish it sounds like its own faction.</summary>
+        public SfxCue FireCue(WeaponStats weapon, UnitStats shooter, Team team)
         {
             Dictionary<WeaponStats, SfxCue> known = team == Team.A ? _fireA : _fireB;
             if (known.TryGetValue(weapon, out SfxCue cue)) return cue;
-            cue = AudioCatalog.Fire(WeaponFeel.For(weapon), BattleFactions.For(team));
+            cue = AudioCatalog.Fire(WeaponFeel.For(weapon), BattleFactions.OfUnit(shooter, team));
             known[weapon] = cue;
             return cue;
         }
 
         private void OnWeaponFired(SimUnit attacker, int weaponIndex, SimUnit target)
         {
-            SfxCue cue = FireCue(attacker.Weapons[weaponIndex].Stats, attacker.Team);
+            SfxCue cue = FireCue(attacker.Weapons[weaponIndex].Stats, attacker.Stats, attacker.Team);
             if (cue != null) GameAudio.Sfx(cue, Place(attacker));
         }
 
@@ -147,18 +150,22 @@ namespace Halobellum.Presentation
             if (unit.HasDived) return AudioCatalog.PelicanCrash;
             bool flood = IsFloodBody(unit.Stats);
             if (flood && unit.Stats.DeathBurst != null) return AudioCatalog.FloodBurst;
+            if (!flood && IsLekgolo(unit.Stats) && !AudioCatalog.DeathLekgolo.Clips.IsEmpty) return AudioCatalog.DeathLekgolo;
             bool living = IsLiving(unit.Stats);
             if (unit.IsAir && !living) return AudioCatalog.DeathAir;
             float radius = unit.Radius;
             if (living || radius < 1f)
             {
                 if (flood) return radius >= 3f ? AudioCatalog.PelicanCrash : AudioCatalog.DeathFlood;
-                return BattleFactions.For(unit.Team) == BattleFactions.Covenant ? AudioCatalog.DeathInfantryCovenant : AudioCatalog.DeathInfantry;
+                return BattleFactions.OfUnit(unit.Stats, unit.Team) == BattleFactions.Covenant ? AudioCatalog.DeathInfantryCovenant : AudioCatalog.DeathInfantry;
             }
             if (flood) return radius >= 3f ? AudioCatalog.PelicanCrash : AudioCatalog.FloodBurst;
             if (radius >= 3f) return AudioCatalog.ExplosionLarge;
             return radius >= 1.6f ? AudioCatalog.ExplosionMedium : AudioCatalog.DeathVehicle;
         }
+
+        /// <summary>Worm colonies: the Hunters and what the Goliath is.</summary>
+        private static bool IsLekgolo(UnitStats stats) => stats.Name == "Goliath" || stats.Name.IndexOf("Hunter", System.StringComparison.Ordinal) >= 0;
 
         /// <summary>A Flood form or something it has taken over, whichever side it is on: in the Sandbox, an army can be a mix.</summary>
         private static bool IsFloodBody(UnitStats stats) => stats.IsFlood || stats.InfectedFrom != null;
@@ -175,8 +182,14 @@ namespace Halobellum.Presentation
 
         private void OnSpellTriggered(SimSpell spell)
         {
-            SfxCue cue = AudioCatalog.Spell(spell.Stats, spell.TicksDone, BattleFactions.For(spell.Team));
+            SfxCue cue = AudioCatalog.Spell(spell.Stats, spell.TicksDone, CasterFaction(spell.Stats, spell.Team));
             if (cue != null) GameAudio.Sfx(cue, new Vector3(spell.Position.X, 0f, spell.Position.Y));
+        }
+
+        /// <summary>Whose sound a spell has: its side's, but in Unlock Skirmish a drop sounds of what it drops, so ODST pods on the Flood's land don't land like Flood.</summary>
+        public static string CasterFaction(SpellStats spell, Team team)
+        {
+            return BattleFactions.PerUnitLooks && spell.DropUnit != null ? BattleFactions.OfUnit(spell.DropUnit, team) : BattleFactions.For(team);
         }
 
         private void OnReinforcementDropped(SimUnit carrier, int squadId) => GameAudio.Sfx(AudioCatalog.DropIn, Place(carrier));
@@ -221,7 +234,7 @@ namespace Halobellum.Presentation
                 if (unit.IsAir) hovers++;
                 else if (unit.Radius >= 1f)
                 {
-                    string faction = BattleFactions.For(unit.Team);
+                    string faction = BattleFactions.OfUnit(unit.Stats, unit.Team);
                     if (faction == BattleFactions.Unsc) engines++;
                     else if (faction == BattleFactions.Covenant) hovers++;
                 }

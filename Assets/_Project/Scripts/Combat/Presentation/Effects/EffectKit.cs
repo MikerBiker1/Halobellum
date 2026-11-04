@@ -6,9 +6,14 @@
 // (the burning spot of a beam), "cloud puffs" (a nuke's cloud, which holds a shape no flying particle could), and lines (beams, lasers,
 // lightning), which are a pool of LineRenderers.
 // EffectBudget decides what may still start; its limits are per layer. Nothing in here knows what a weapon or a unit is.
+// High quality has more dust than Low. The quality can change in the middle of a battle (the pause menu) while a layer's size is fixed when
+// it is built, so the dust layer is built big enough for High, and how much of it may be used follows the quality level as it is now.
 // Depends on: EffectAssets, EffectBudget, UnityEngine (ParticleSystem module).
 
+using System;
 using UnityEngine;
+using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 namespace Halobellum.Presentation
 {
@@ -18,6 +23,7 @@ namespace Halobellum.Presentation
         {
             public ParticleSystem System;
             public Material Material;
+            /// <summary>How many it may hold now. Never more than the system's own size, which is fixed.</summary>
             public int Max;
             public float Fill;
             public float Step;
@@ -39,6 +45,14 @@ namespace Halobellum.Presentation
         private const int LinePool = 64;
         private const int FlashedLineCapacity = 40;
 
+        /// <summary>The dust layer's size at a ParticleScale of 1.</summary>
+        public const int DustPerScale = 700;
+        /// <summary>How many times more dust High quality has than Low.</summary>
+        public const float HighQualityScale = 2.5f;
+        /// <summary>Compares settings of the scale on one build, for this run only: "-particleScale 4" instead of what the quality level says. See EffectsGallery's benchmark.</summary>
+        public const string ParticleScaleFlag = "-particleScale";
+        private const int BloodCapacity = 500;
+
         // Length of a stretched particle in metres: its width + its speed x this.
         private const float StreakStretch = 0.032f;
         private const float BoltStretch = 0.04f;
@@ -46,7 +60,7 @@ namespace Halobellum.Presentation
         private const float HeadStretch = 1f;
 
         private readonly Transform _root;
-        private readonly Layer _glow, _orb, _streak, _bolt, _sparks, _fire, _flame, _smoke, _dust, _ring, _groundGlow, _scorch, _chunks, _heat, _slash, _spores;
+        private readonly Layer _glow, _orb, _streak, _bolt, _sparks, _fire, _flame, _smoke, _dust, _blood, _ring, _groundGlow, _scorch, _chunks, _heat, _slash, _spores;
         private readonly Layer[] _layers;
         private readonly Layer _headGlow, _headStreak, _groundHead, _cloudSmoke, _cloudFire;
         private readonly ParticleSystem.Particle[] _headGlowData = new ParticleSystem.Particle[HeadCapacity];
@@ -65,6 +79,9 @@ namespace Halobellum.Presentation
 
         private Camera _camera;
         private float _speedShown = -1f;
+        private readonly float[] _scaleOfLevel;
+        private readonly float _forcedScale;
+        private int _levelShown = -1;
 
         public readonly EffectBudget Budget = new EffectBudget();
 
@@ -83,6 +100,23 @@ namespace Halobellum.Presentation
         /// <summary>The most particles alive at once since the battle was shown (for the benchmark).</summary>
         public int PeakLive { get; private set; }
 
+        /// <summary>How many times more dust than on Low there is now: by the quality level as it is at the moment, unless the command line says otherwise.</summary>
+        public float ParticleScale { get; private set; } = 1f;
+
+        /// <summary>The most dust the layer may hold now (for tests).</summary>
+        public int DustLimit => _dust.Max;
+
+        /// <summary>The scale a quality level gives, by its name: "PC" is the one the settings show as High and "Mobile" the one they show as Low.</summary>
+        public static float ParticleScaleFor(string qualityName) => qualityName == "PC" ? HighQualityScale : 1f;
+
+        /// <summary>The scale this command line asks for, or 0 if it doesn't. It can't go below Low's.</summary>
+        public static float ParticleScaleFromCommandLine(string[] args)
+        {
+            int index = Array.IndexOf(args, ParticleScaleFlag);
+            if (index < 0 || index + 1 >= args.Length) return 0f;
+            return float.TryParse(args[index + 1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float scale) ? Mathf.Max(1f, scale) : 0f;
+        }
+
         public int LiveParticles
         {
             get
@@ -98,6 +132,11 @@ namespace Halobellum.Presentation
             _root = new GameObject("Effect Layers").transform;
             _root.SetParent(parent, false);
 
+            _forcedScale = ParticleScaleFromCommandLine(Environment.GetCommandLineArgs());
+            string[] levels = QualitySettings.names; // This call makes a new array, so it is read once.
+            _scaleOfLevel = new float[levels.Length];
+            for (int i = 0; i < levels.Length; i++) _scaleOfLevel[i] = ParticleScaleFor(levels[i]);
+
             // What is drawn over what: marks on the ground, shimmer, smoke, fire, then everything that glows.
             _scorch = Flat("Scorch", EffectAssets.ParticleMaterial("Effect Scorch", EffectAssets.Scorch, 1f, 1f, 0f, 2960), 96);
             _heat = Billboard("Heat", EffectAssets.HeatMaterial(2970), 160);
@@ -105,7 +144,8 @@ namespace Halobellum.Presentation
             _ring = Flat("Shock Ring", EffectAssets.ParticleMaterial("Effect Ring", EffectAssets.Ring, 2.2f, 0f, 0f, 2985), 96);
             _groundHead = Flat("Ground Heads", EffectAssets.ParticleMaterial("Effect Ground Head", EffectAssets.Soft, 2.4f, 0f, 0f, 2981), GroundHeadCapacity);
             _smoke = Billboard("Smoke", EffectAssets.ParticleMaterial("Effect Smoke", EffectAssets.Smoke, 1f, 1f, 2f, 3000), 900);
-            _dust = Billboard("Dust", EffectAssets.ParticleMaterial("Effect Dust", EffectAssets.Smoke, 1f, 1f, 0.8f, 3001), 700);
+            _dust = Billboard("Dust", EffectAssets.ParticleMaterial("Effect Dust", EffectAssets.Smoke, 1f, 1f, 0.8f, 3001), Mathf.RoundToInt(DustPerScale * Mathf.Max(HighQualityScale, _forcedScale)));
+            _blood = Billboard("Blood", EffectAssets.ParticleMaterial("Effect Blood", EffectAssets.Soft, 1f, 1f, 0f, 3005), BloodCapacity);
             _spores = Billboard("Spores", EffectAssets.ParticleMaterial("Effect Spores", EffectAssets.Soft, 1.5f, 0.1f, 0f, 3010), 600);
             _fire = Billboard("Fire", EffectAssets.ParticleMaterial("Effect Fire", EffectAssets.Flame, 2.2f, 0.55f, 0.6f, 3020), 1300);
             _flame = Billboard("Flame", EffectAssets.ParticleMaterial("Effect Flame", EffectAssets.Flame, 1.9f, 0.4f, 0.3f, 3021), 1500);
@@ -122,7 +162,7 @@ namespace Halobellum.Presentation
             _chunkMaterial = EffectAssets.ChunkMaterial();
             _chunks = MakeChunks("Chunks", _chunkMaterial, 320);
 
-            _layers = new[] { _scorch, _heat, _groundGlow, _ring, _smoke, _dust, _spores, _fire, _flame, _glow, _orb, _bolt, _streak, _sparks, _slash, _chunks };
+            _layers = new[] { _scorch, _heat, _groundGlow, _ring, _smoke, _dust, _blood, _spores, _fire, _flame, _glow, _orb, _bolt, _streak, _sparks, _slash, _chunks };
 
             Fades(_glow, Fade(1f, 0.25f, 0.8f, 0f), Grow(0.55f, 0.2f, 1f));
             Fades(_orb, Fade(1f, 0.85f, 1f, 0f), null);
@@ -169,6 +209,9 @@ namespace Halobellum.Presentation
             Sheet(_dust);
             Spin(_dust, 0.4f);
 
+            ColorOverLife(_blood, Fade(1f, 0.75f, 1f, 0f));
+            Gravity(_blood, 1.8f);
+
             ColorOverLife(_spores, Rise(0.15f, 0.7f));
             Drag(_spores, 1.4f);
             Gravity(_spores, -0.015f);
@@ -188,6 +231,7 @@ namespace Halobellum.Presentation
             lines.SetParent(_root, false);
             for (int i = 0; i < LinePool; i++) _lines[i] = MakeLine(lines);
 
+            FollowQualityLevel();
             foreach (Layer layer in _layers) layer.System.Play();
             _headGlow.System.Play();
             _headStreak.System.Play();
@@ -224,6 +268,7 @@ namespace Halobellum.Presentation
                 }
             }
             Budget.BeginFrame(unscaledDelta);
+            FollowQualityLevel();
 
             int live = 0;
             foreach (Layer layer in _layers)
@@ -239,6 +284,18 @@ namespace Halobellum.Presentation
 
             _headGlowCount = _headStreakCount = _groundHeadCount = _cloudSmokeCount = _cloudFireCount = 0;
             _linesUsed = 0;
+        }
+
+        /// <summary>The quality can change at any moment: what the dust may use goes with it, whatever is already in the air.</summary>
+        private void FollowQualityLevel()
+        {
+            int level = QualitySettings.GetQualityLevel();
+            if (level == _levelShown) return;
+            _levelShown = level;
+            ParticleScale = _forcedScale > 0f ? _forcedScale : level >= 0 && level < _scaleOfLevel.Length ? _scaleOfLevel[level] : 1f;
+            _dust.Max = Mathf.RoundToInt(DustPerScale * ParticleScale);
+            _dust.Step = 1f / _dust.Max;
+            Budget.SmallLimit = Mathf.RoundToInt(EffectBudget.SmallPerFrame * ParticleScale);
         }
 
         /// <summary>
@@ -359,6 +416,13 @@ namespace Halobellum.Presentation
         {
             var emit = new ParticleSystem.EmitParams { position = position, velocity = velocity, startSize = size, startColor = color, startLifetime = life, rotation = Random.value * 360f };
             Emit(_dust, priority, ref emit);
+        }
+
+        /// <summary>A drop of blood: it is thrown out and falls.</summary>
+        public void Blood(EffectPriority priority, Vector3 position, Vector3 velocity, float size, Color color, float life)
+        {
+            var emit = new ParticleSystem.EmitParams { position = position, velocity = velocity, startSize = size, startColor = color, startLifetime = life };
+            Emit(_blood, priority, ref emit);
         }
 
         public void Spore(EffectPriority priority, Vector3 position, Vector3 velocity, float size, Color color, float life)

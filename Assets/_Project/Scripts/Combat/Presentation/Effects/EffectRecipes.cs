@@ -17,6 +17,7 @@ namespace Halobellum.Presentation
             Impact,
             Blast,
             Fireball,
+            Blood,
         }
 
         private struct Delayed
@@ -83,19 +84,20 @@ namespace Halobellum.Presentation
                     case DelayedKind.Impact: Impact(item.Position, item.Direction, item.Impact, item.Armor, item.Shielded, item.Color); break;
                     case DelayedKind.Blast: Blast(item.Position, item.Size, item.Blast, item.Color, item.Priority); break;
                     case DelayedKind.Fireball: Fireball(item.Position, item.Size, item.Priority); break;
+                    case DelayedKind.Blood: BloodHit(item.Position, item.Direction, item.Color, item.Size); break;
                 }
             }
         }
 
         private void Add(in Delayed item)
         {
-            // When the list is full, a new impact is the thing to drop; a blast takes a place from it.
+            // When the list is full, a new impact or a drop of blood is the thing to drop; a blast takes a place from one.
             if (_delayedCount >= DelayedCapacity)
             {
-                if (item.Kind == DelayedKind.Impact) return;
+                if (item.Kind == DelayedKind.Impact || item.Kind == DelayedKind.Blood) return;
                 for (int i = 0; i < _delayedCount; i++)
                 {
-                    if (_delayed[i].Kind != DelayedKind.Impact) continue;
+                    if (_delayed[i].Kind != DelayedKind.Impact && _delayed[i].Kind != DelayedKind.Blood) continue;
                     _delayed[i] = item;
                     return;
                 }
@@ -117,6 +119,11 @@ namespace Halobellum.Presentation
         public void FireballAfter(float seconds, Vector3 position, float radius, EffectPriority priority)
         {
             Add(new Delayed { At = _kit.BattleTime + seconds, Kind = DelayedKind.Fireball, Position = position, Size = radius, Priority = priority });
+        }
+
+        public void BloodHitAfter(float seconds, Vector3 position, Vector3 direction, Color color, float strength)
+        {
+            Add(new Delayed { At = _kit.BattleTime + seconds, Kind = DelayedKind.Blood, Position = position, Direction = direction, Color = color, Size = strength });
         }
 
         // ------------------------------------------------------------------ shooting
@@ -253,6 +260,38 @@ namespace Halobellum.Presentation
             float read = _kit.ReadScale;
             _kit.Glow(EffectPriority.Small, position, 1.6f * read, ShieldBlue, 0.12f);
             for (int i = 0; i < 2; i++) _kit.Spark(EffectPriority.Small, position, Random.onUnitSphere * 4f, 0.05f * read, ShieldBlue, 0.18f);
+        }
+
+        // ------------------------------------------------------------------ blood
+
+        /// <summary>A hit draws blood: a small cloud of it and a few drops thrown on the way the shot was going. Strength is how bad the hit was, from 0 to 1.</summary>
+        public void BloodHit(Vector3 position, Vector3 direction, Color color, float strength)
+        {
+            float read = _kit.ReadScale;
+            _kit.Blood(EffectPriority.Small, position, direction * 1.5f + Vector3.up * 0.5f, Mathf.Lerp(0.8f, 1.5f, strength) * read, new Color(color.r, color.g, color.b, 0.55f), 0.18f);
+            int drops = 3 + Mathf.RoundToInt(strength * 5f);
+            for (int i = 0; i < drops; i++)
+                _kit.Blood(EffectPriority.Small, position, direction * Random.Range(1f, 4f) + Random.insideUnitSphere * 2.5f + Vector3.up * Random.Range(1.5f, 4f), Random.Range(0.3f, 0.55f) * read, color, Random.Range(0.3f, 0.6f));
+        }
+
+        /// <summary>A body dies in a burst of blood, and leaves a pool unless it died in the air.</summary>
+        public void BloodBurst(Vector3 position, float bodyRadius, Color color, bool inAir)
+        {
+            float read = _kit.ReadScale;
+            Vector3 middle = inAir ? position : position + Vector3.up * Mathf.Max(0.6f, bodyRadius * 0.6f);
+            float reach = 3f + bodyRadius * 1.5f;
+            _kit.Blood(EffectPriority.Medium, middle, Vector3.up, Mathf.Max(1.6f, bodyRadius * 2.2f) * read, new Color(color.r, color.g, color.b, 0.6f), 0.25f);
+            int drops = Mathf.Clamp(Mathf.RoundToInt(bodyRadius * 10f) + 8, 10, 30);
+            for (int i = 0; i < drops; i++)
+            {
+                Vector3 out3 = Random.onUnitSphere;
+                out3.y = Mathf.Abs(out3.y) * 0.8f + 0.4f;
+                _kit.Blood(EffectPriority.Medium, middle + out3 * bodyRadius * 0.3f, out3 * reach * Random.Range(0.5f, 1.3f), Random.Range(0.3f, 0.7f) * read, color, Random.Range(0.4f, 0.85f));
+            }
+            if (inAir) return;
+            // Small, so that a field of dead infantry can't take the room of what vehicles and blasts leave behind.
+            Color pool = new Color(color.r * 0.7f, color.g * 0.7f, color.b * 0.7f, 0.85f);
+            _kit.Scorch(EffectPriority.Small, new Vector3(position.x, 0.12f, position.z), Mathf.Max(1.8f, bodyRadius * 3f) * Mathf.Max(1f, read), pool, 20f);
         }
 
         // ------------------------------------------------------------------ blasts

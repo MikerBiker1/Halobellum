@@ -77,6 +77,17 @@ namespace Halobellum.Presentation
             return cue;
         }
 
+        /// <summary>
+        /// A slot waiting for the owner's own file: it has no generated sound, so it stands outside the list of Cues, which all have one.
+        /// Until a file is dropped in, nothing asks for it (see BattleAudio.DeathCue).
+        /// </summary>
+        private static SfxCue WaitingCue(string slot, SfxGroup group, float volume, float pitch, int priority)
+        {
+            var cue = new SfxCue(slot, group, volume, pitch, priority);
+            BySlot[slot] = cue;
+            return cue;
+        }
+
         // Weapons. Each kind is a cue; a few kinds have a faction's own version (see Fire).
         private static readonly SfxCue FireBullet = Cue("sfx_fire_bullet", SfxGroup.SmallArms, 0.6f, 0.08f, 1);
         private static readonly SfxCue FireBulletFlood = Cue("sfx_fire_bullet_flood", SfxGroup.SmallArms, 0.6f, 0.1f, 1);
@@ -113,6 +124,8 @@ namespace Halobellum.Presentation
         public static readonly SfxCue DeathVehicle = Cue("sfx_death_vehicle", SfxGroup.BigDeaths, 0.95f, 0.05f, 8);
         public static readonly SfxCue DeathAir = Cue("sfx_death_air", SfxGroup.BigDeaths, 0.95f, 0.05f, 8);
         public static readonly SfxCue FloodBurst = Cue("sfx_flood_burst", SfxGroup.Bursts, 0.85f, 0.1f, 6);
+        /// <summary>A Hunter's or a Goliath's death, once the owner has a sound for it.</summary>
+        public static readonly SfxCue DeathLekgolo = WaitingCue("sfx_death_lekgolo", SfxGroup.BigDeaths, 0.95f, 0.05f, 8);
         public static readonly SfxCue InfectionStart = Cue("sfx_infection_start", SfxGroup.Infection, 0.55f, 0.1f, 3);
         public static readonly SfxCue InfectionRise = Cue("sfx_infection_rise", SfxGroup.Infection, 0.75f, 0.1f, 4);
         public static readonly SfxCue PelicanDive = Cue("sfx_pelican_dive", SfxGroup.BigDeaths, 1f, 0.03f, 9);
@@ -226,6 +239,7 @@ namespace Halobellum.Presentation
         public static void ForgetClips()
         {
             foreach (SfxCue cue in All) cue.Forget();
+            DeathLekgolo.Forget();
         }
     }
 }

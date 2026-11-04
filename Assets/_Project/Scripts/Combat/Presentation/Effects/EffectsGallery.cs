@@ -1,9 +1,10 @@
 // EffectsGallery.cs
 // Test tool for built games (M10): takes pictures of every effect so that a person can judge them, and measures the frame time of a big
 // battle. SandboxAutoplay starts it:
-//   -sandboxDemo <folder> -effects        every weapon kind firing, every kind of death, the Pelican's crash and every spell
+//   -sandboxDemo <folder> -effects        every weapon kind firing, every kind of death, every colour of blood, dust, the Pelican's crash and every spell
 //   -sandboxDemo <folder> -gallery        the same, after the pictures of the real models
 //   -sandboxDemo <folder> -effectsBench   about 200 bodies at 1x and at 4x; frame times go to bench.txt in the folder and to the log
+//   Any of these with -particleScale <number>: that much dust, whatever the quality level says, for this run only.
 // Each picture freezes the battle (particles run on battle time, so they freeze too), and is taken from the game's own camera and from
 // close by. It reaches into the simulation in one way only, to kill a body on demand; battles here are throw-aways for pictures.
 // Depends on: SandboxController, BattleController, UnitViewManager, CombatEffectsView, EffectKit, Halobellum.Combat, Halobellum.Core, UnityEngine.
@@ -54,6 +55,8 @@ namespace Halobellum.Presentation
             if (_control != null) _control.enabled = false;
             yield return Weapons();
             yield return Deaths();
+            yield return Bloods();
+            if (Wanted("dust")) yield return Dust();
             if (Wanted("crash")) yield return PelicanCrash();
             yield return Spells();
             if (_control != null) _control.enabled = true;
@@ -253,6 +256,89 @@ namespace Halobellum.Presentation
             yield return null;
         }
 
+        // ------------------------------------------------------------------ blood and dust
+
+        private IEnumerator Bloods()
+        {
+            string[] list = { "Marine", "Grunt", "Elite", "Hunter Pair", "Combat Form", "Jackal (Plasma Rifle)", "Brute Grenadier" };
+            foreach (string name in list)
+            {
+                if (Wanted("b_" + name.Replace(" ", ""))) yield return OneBlood(name);
+            }
+        }
+
+        /// <summary>One colour of blood: a few hits on a body, then a squad dying and what it leaves on the ground.</summary>
+        private IEnumerator OneBlood(string name)
+        {
+            yield return Setup(new[] { name, name }, new[] { "Marine", "Scorpion", "Marine" });
+            _battle.Speed = 6f;
+            _sandbox.Run();
+            int hits = 0;
+            SimUnit hurt = null;
+            void OnHurt(SimUnit target, SimUnit attacker, float amount)
+            {
+                if (attacker == null || target.Stats.Name != name || target.Shield > 0f || amount <= 0f) return;
+                hits++;
+                hurt = target;
+            }
+            _battle.Simulation.Events.UnitDamaged += OnHurt;
+            GameCamera(Vector3.zero);
+            float limit = 45f;
+            while (hits == 0 && limit > 0f && !_battle.Simulation.IsFinished) { limit -= Time.unscaledDeltaTime; yield return null; }
+            _battle.Speed = 1f;
+            if (hurt == null)
+            {
+                _battle.Simulation.Events.UnitDamaged -= OnHurt;
+                Debug.LogWarning($"Effects gallery: {name} was never hurt.");
+                _sandbox.ResetBattle();
+                yield break;
+            }
+            string label = name.Replace(" ", "");
+            Vector3 place = _views.WorldPosition(hurt);
+            place.y = 0f;
+            GameCamera(place);
+            float close = Mathf.Max(13f, hurt.Radius * 7f);
+            hits = 0;
+            limit = 6f;
+            // A few hits in the air at once, and just after the last of them, when its blood has appeared.
+            while (hits < 6 && limit > 0f && !_battle.Simulation.IsFinished) { limit -= Time.unscaledDeltaTime; yield return null; }
+            float shown = Kit.BattleTime;
+            while (Kit.BattleTime - shown < 0.16f) yield return null;
+            yield return Capture($"b_{label}_hits", place, close);
+            _battle.Simulation.Events.UnitDamaged -= OnHurt;
+
+            int killed = 0;
+            foreach (SimUnit unit in _battle.Simulation.Units)
+            {
+                if (unit.Team != Team.A || unit.Stats.Name != name || !unit.IsAlive || killed >= 6) continue;
+                unit.Health = 0f;
+                killed++;
+            }
+            float[] times = { 0.12f, 0.45f, 3f };
+            float start = Kit.BattleTime;
+            foreach (float at in times)
+            {
+                while (Kit.BattleTime - start < at) yield return null;
+                yield return Capture($"b_{label}_death_{at:0.00}", place, close);
+            }
+            _sandbox.ResetBattle();
+            yield return null;
+        }
+
+        /// <summary>Vehicles and infantry on the move, to judge the dust at this run's scale.</summary>
+        private IEnumerator Dust()
+        {
+            yield return Setup(new[] { "Warthog", "Warthog", "Scorpion", "Scorpion", "Marine", "Marine" }, new[] { "Marine" });
+            _battle.Speed = 1f;
+            _sandbox.Run();
+            float elapsed = 0f;
+            while (elapsed < 4f) { elapsed += Time.unscaledDeltaTime; yield return null; }
+            SimUnit vehicle = FirstAlive("Warthog", Team.A);
+            if (vehicle != null) yield return Capture(FormattableString($"dust_{Kit.ParticleScale:0.0}x"), _views.WorldPosition(vehicle), 30f);
+            _sandbox.ResetBattle();
+            yield return null;
+        }
+
         private IEnumerator PelicanCrash()
         {
             yield return Setup(new[] { "Infected Pelican" }, new[] { "Marine", "Marine" });
@@ -370,7 +456,7 @@ namespace Halobellum.Presentation
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = -1;
             var report = new StringBuilder();
-            report.AppendLine($"Effects benchmark, {Screen.width}x{Screen.height}, {SystemInfo.graphicsDeviceName}, {SystemInfo.processorType}, quality {QualitySettings.names[QualitySettings.GetQualityLevel()]}, MSAA {SandboxAutoplay.ShownMsaa}x");
+            report.AppendLine($"Effects benchmark, {Screen.width}x{Screen.height}, {SystemInfo.graphicsDeviceName}, {SystemInfo.processorType}, quality {QualitySettings.names[QualitySettings.GetQualityLevel()]}, MSAA {SandboxAutoplay.ShownMsaa}x, dust x{Kit.ParticleScale:0.0#}");
             yield return OnAgainstOff(report);
             yield return BenchmarkOne(1f, report, "bench_1x", false);
             yield return BenchmarkOne(4f, report, "bench_4x", false);

@@ -170,6 +170,7 @@ namespace Halobellum.Presentation
         private static void Preload()
         {
             foreach (SfxCue cue in AudioCatalog.Cues) _ = cue.Clips;
+            _ = AudioCatalog.DeathLekgolo.Clips;
             foreach (string slot in AudioSlots.MusicAndUiSlots())
             {
                 if (slot.StartsWith("ui_", StringComparison.Ordinal)) AudioLibrary.Get(slot);
@@ -226,7 +227,8 @@ namespace Halobellum.Presentation
 
         private void OnFactionsChanged()
         {
-            if (UiFaction != null) UiFaction = BattleFactions.TeamA;
+            // In Unlock Skirmish both sides stand on one land, but nobody is of it: the UI sounds stay neutral.
+            if (UiFaction != null) UiFaction = BattleFactions.PerUnitLooks ? null : BattleFactions.TeamA;
         }
 
         /// <summary>If the scene has no listener, sounds still need one: this object's own.</summary>

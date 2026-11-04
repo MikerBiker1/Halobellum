@@ -28,10 +28,13 @@ namespace Halobellum.Presentation
         private const float SmallFill = 0.6f, SmallFillStrained = 0.12f;
         private const float MediumFill = 0.85f, MediumFillStrained = 0.4f;
         private const float BigFill = 0.97f;
-        /// <summary>The most small particles started in one frame.</summary>
+        /// <summary>The most small particles started in one frame, unless the kit has room for more.</summary>
         public const int SmallPerFrame = 260;
 
         private int _smallThisFrame;
+
+        /// <summary>The most small particles started in one frame with this budget: High quality's extra dust needs more than Low's.</summary>
+        public int SmallLimit { get; set; } = SmallPerFrame;
 
         /// <summary>From 0 (frames are fast) to 1 (frames are slow).</summary>
         public float Pressure { get; private set; }
@@ -70,7 +73,7 @@ namespace Halobellum.Presentation
         /// <summary>True if a particle of this importance may start in a layer that is this full (0 to 1).</summary>
         public bool Allow(EffectPriority priority, float fill)
         {
-            if (fill >= FillLimit(priority) || (priority == EffectPriority.Small && _smallThisFrame >= SmallPerFrame))
+            if (fill >= FillLimit(priority) || (priority == EffectPriority.Small && _smallThisFrame >= SmallLimit))
             {
                 Dropped[(int)priority]++;
                 return false;

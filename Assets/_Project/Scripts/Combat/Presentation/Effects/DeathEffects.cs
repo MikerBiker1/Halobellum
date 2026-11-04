@@ -4,11 +4,12 @@
 //   vehicles blow up and stay as blackened wrecks that burn and smoke for a while, then sink away;
 //   air units blow up in the air and fall burning to the ground, where they crash;
 //   Flood bodies burst in gore and spores;
-//   the Infected Pelican trails fire and smoke in its dive, and its crash is a blast about as big as a titan's.
+//   the Infected Pelican trails fire and smoke in its dive, and its crash is a blast about as big as a titan's;
+//   and whatever has blood (BloodLooks) goes in a burst of it, which leaves a pool on the ground.
 // Death events are noted and handled in LateUpdate, after UnitViewManager has dealt with them in its own way, and after the
 // simulation has said whether the body rises again: such a corpse is left to UnitViewManager. Wrecks and falling bodies run on battle
 // time and are capped; past the cap the oldest wreck goes first. The simulation is only read.
-// Depends on: EffectRecipes, EffectKit, UnitViewManager, WeaponLooks (DeathLooks), Halobellum.Combat, UnityEngine.
+// Depends on: EffectRecipes, EffectKit, UnitViewManager, WeaponLooks (DeathLooks), BloodLooks, Halobellum.Combat, UnityEngine.
 
 using System.Collections.Generic;
 using Halobellum.Combat;
@@ -186,6 +187,9 @@ namespace Halobellum.Presentation
                     AddFire(new Vector3(position.x, 0f, position.z), radius * 1.3f, TitanWreckSeconds);
                     break;
             }
+
+            BloodKind blood = BloodLooks.For(stats);
+            if (blood != BloodKind.None) _recipes.BloodBurst(position, radius, BloodLooks.ColorOf(blood), stats.IsAir);
 
             // A burst weapon that goes off on death (the Carrier Form): a blast as wide as its reach.
             if (style != DeathStyle.CrashBurst && stats.DeathBurst != null && stats.DeathBurst.Radius > 0f)
