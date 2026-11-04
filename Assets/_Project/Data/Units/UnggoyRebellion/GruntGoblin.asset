@@ -15,10 +15,10 @@ MonoBehaviour:
   unitName: Grunt Goblin
   role: 3
   tier: 3
-  unlockCost: 225
+  unlockCost: 200
   squadSize: 1
-  cost: 450
-  baseDamage: 90
+  cost: 400
+  baseDamage: 80
   maxHealth: 1250
   armorType: 2
   maxShield: 0
