@@ -106,6 +106,9 @@ namespace Halobellum.Presentation
         /// <summary>The most dust the layer may hold now (for tests).</summary>
         public int DustLimit => _dust.Max;
 
+        /// <summary>How many puffs of dust are in the air now (for the benchmark).</summary>
+        public int LiveDust => _dust.System.particleCount;
+
         /// <summary>The scale a quality level gives, by its name: "PC" is the one the settings show as High and "Mobile" the one they show as Low.</summary>
         public static float ParticleScaleFor(string qualityName) => qualityName == "PC" ? HighQualityScale : 1f;
 

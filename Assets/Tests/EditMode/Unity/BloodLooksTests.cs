@@ -135,6 +135,37 @@ namespace Halobellum.Tests
             Assert.AreEqual(BattleFactions.Flood, BattleFactions.OfUnit(null, Team.B));
         }
 
+        [TestCase(BattleFactions.Unsc)]
+        [TestCase(BattleFactions.Covenant)]
+        [TestCase(BattleFactions.Flood)]
+        public void InASkirmish_ARisenBody_IsTheFloods_OnAnyLand(string land)
+        {
+            var map = new Dictionary<string, string> { { "Marine", BattleFactions.Unsc }, { "Warthog", BattleFactions.Unsc } };
+            BattleFactions.SetSkirmish(land, map);
+            var melee = new WeaponStats { Name = "Infected Melee", Range = 1f, FireInterval = 1f };
+            foreach (string before in map.Keys)
+            {
+                // Named as BattleSimulation.InfectedFormOf names it: in no roster, so the map can't help.
+                var risen = new UnitStats { Name = "Infected " + before, IsFlood = true, InfectedFrom = new UnitStats { Name = before }, Weapons = new[] { melee } };
+                Assert.AreEqual(BattleFactions.Flood, BattleFactions.OfUnit(risen, Team.A), risen.Name);
+                Assert.AreEqual(BattleFactions.Flood, BattleFactions.OfUnit(risen, Team.B), risen.Name);
+            }
+            var odd = new UnitStats { Name = "Risen", InfectedFrom = new UnitStats { Name = "Marine" } };
+            Assert.AreEqual(BattleFactions.Flood, BattleFactions.OfUnit(odd, Team.A), "By what it came from, whatever its name.");
+
+            // What the player hears from it: the Flood's melee, not the land's.
+            Assert.AreEqual("sfx_fire_melee_flood", AudioCatalog.Fire(WeaponFeel.For(melee), BattleFactions.OfUnit(odd, Team.A)).Slot);
+        }
+
+        [Test]
+        public void WithoutAMap_AFloodBody_StillGoesByItsSide()
+        {
+            BattleFactions.Set(BattleFactions.Unsc, BattleFactions.Covenant);
+            var risen = new UnitStats { Name = "Infected Marine", IsFlood = true, InfectedFrom = new UnitStats { Name = "Marine" } };
+            Assert.AreEqual(BattleFactions.Unsc, BattleFactions.OfUnit(risen, Team.A), "A Faction match or the Sandbox is as it was.");
+            Assert.AreEqual(BattleFactions.Covenant, BattleFactions.OfUnit(risen, Team.B));
+        }
+
         [Test]
         public void InASkirmish_AMarineOnTheFloodsLand_KeepsItsOwnTracers_AndTeamBIsTinted()
         {

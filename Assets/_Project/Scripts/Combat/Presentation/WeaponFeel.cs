@@ -87,7 +87,10 @@ namespace Halobellum.Presentation
         /// <summary>The faction a unit looks and sounds like: its own in Unlock Skirmish, if it has one, otherwise its side's.</summary>
         public static string OfUnit(UnitStats stats, Team team)
         {
-            return _factionOfUnit != null && stats != null && _factionOfUnit.TryGetValue(stats.Name, out string faction) ? faction : For(team);
+            if (_factionOfUnit == null || stats == null) return For(team);
+            // A risen body's name ("Infected Marine") is in no roster, and whatever it was before, it is the Flood's now.
+            if (stats.IsFlood || stats.InfectedFrom != null) return Flood;
+            return _factionOfUnit.TryGetValue(stats.Name, out string faction) ? faction : For(team);
         }
 
         public static void Set(string teamA, string teamB)
