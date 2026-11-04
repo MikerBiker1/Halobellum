@@ -2,7 +2,9 @@
 // The battle effects (M10): each weapon gets a look and shows who fired it, each unit a kind of death, each spell a look of its own; the
 // budget drops small things first; the shake adds up sensibly; the Infected Pelican's crash is half what it was but still fills what it
 // damages; and in the real Sandbox and Match scenes effects run in every kind of
-// fight and between battles without an error, stay under their caps, freeze with the battle, and allocate nothing per shot.
+// fight and between battles without an error, stay under their caps, freeze with the battle, and allocate nothing per shot. Blood shows what
+// was hit, or that it was hit by a spell or a machine by showing nothing; the dust follows the quality level as it changes; and in Unlock
+// Skirmish Team B keeps its tint on every shot, the UI stays neutral and the music is the land's.
 // Depends on: Halobellum.Presentation, Halobellum.Combat, Halobellum.Core, NUnit, Unity Test Framework.
 
 using System.Collections;
@@ -10,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Halobellum.Combat;
 using Halobellum.Core;
+using Halobellum.Economy;
 using Halobellum.Presentation;
 using NUnit.Framework;
 using UnityEngine;
@@ -98,6 +101,65 @@ namespace Halobellum.Tests
             for (int frame = 0; frame < battleSeconds / delta; frame++) looks += CombatEffectsView.DustLooksThisFrame(delta, bodies, ref due);
             float perBodyPerSecond = looks / (float)bodies / battleSeconds;
             Assert.AreEqual(1f / CombatEffectsView.DustLookSeconds, perBodyPerSecond, 0.1f);
+        }
+
+        [TestCase(1f)]
+        [TestCase(2.5f)]
+        [TestCase(4f)]
+        public void Dust_LooksMoreOften_AsTheScaleGoesUp(float scale)
+        {
+            const int bodies = 192;
+            const float battleSeconds = 20f, delta = 1f / 165f;
+            float due = 0f;
+            int looks = 0;
+            for (int frame = 0; frame < battleSeconds / delta; frame++) looks += CombatEffectsView.DustLooksThisFrame(delta, bodies, ref due, scale);
+            Assert.AreEqual(scale / CombatEffectsView.DustLookSeconds, looks / (float)bodies / battleSeconds, 0.1f);
+        }
+
+        [Test]
+        public void TheDust_FollowsTheQualityLevel_WithNoRebuild()
+        {
+            string[] names = QualitySettings.names;
+            int low = System.Array.IndexOf(names, "Mobile"), high = System.Array.IndexOf(names, "PC"), level = QualitySettings.GetQualityLevel();
+            Assert.GreaterOrEqual(low, 0, "The level the settings show as Low.");
+            Assert.GreaterOrEqual(high, 0, "The level the settings show as High.");
+            var host = new GameObject("Dust");
+            var kit = new EffectKit(host.transform);
+            int Dust() => ParticlesOf(host, "Dust").Length;
+            void Fill(int count)
+            {
+                for (int i = 0; i < count; i++) kit.Dust(EffectPriority.Huge, Vector3.zero, Vector3.zero, 1f, Color.white, 1000f);
+            }
+            try
+            {
+                QualitySettings.SetQualityLevel(low, false);
+                kit.BeginFrame(1f, 0.01f, 0.01f);
+                Assert.AreEqual(1f, kit.ParticleScale);
+                Assert.AreEqual(700, kit.DustLimit, "Low is what it was.");
+                Assert.AreEqual(260, kit.Budget.SmallLimit, "So is its limit a frame.");
+                Fill(1000);
+                Assert.AreEqual(700, Dust(), 2, "The fill is counted in fractions, so it can be one out.");
+
+                QualitySettings.SetQualityLevel(high, false);
+                kit.BeginFrame(1f, 0.01f, 0.01f);
+                Assert.AreEqual(EffectKit.HighQualityScale, kit.ParticleScale);
+                Assert.AreEqual(1750, kit.DustLimit);
+                Assert.AreEqual(650, kit.Budget.SmallLimit);
+                Fill(2000);
+                Assert.AreEqual(1750, Dust(), "The same layer now holds more.");
+
+                QualitySettings.SetQualityLevel(low, false);
+                kit.BeginFrame(1f, 0.01f, 0.01f);
+                Assert.AreEqual(700, kit.DustLimit);
+                Fill(10);
+                Assert.AreEqual(1750, Dust(), "Back on Low, nothing new starts until it is under Low's limit, and what is in the air stays.");
+            }
+            finally
+            {
+                QualitySettings.SetQualityLevel(level, false);
+                kit.Destroy();
+                Object.DestroyImmediate(host);
+            }
         }
 
         [Test]
@@ -336,6 +398,17 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void ABudgetsLimitAFrame_IsItsOwn()
+        {
+            var budget = new EffectBudget { SmallLimit = 10 };
+            budget.BeginFrame(1f / 120f);
+            int allowed = 0;
+            for (int i = 0; i < 50; i++) if (budget.Allow(EffectPriority.Small, 0f)) allowed++;
+            Assert.AreEqual(10, allowed);
+            Assert.AreEqual(EffectBudget.SmallPerFrame, new EffectBudget().SmallLimit);
+        }
+
+        [Test]
         public void TheCameraShakeAddsUpButStaysSmall()
         {
             float one = CameraShake.AddTrauma(0f, 0.3f);
@@ -560,6 +633,8 @@ namespace Halobellum.Tests
             recipes.InstantShot(from, to, look);
             recipes.Impact(to, Vector3.forward, ImpactStyle.Bullet, ArmorType.Heavy, false, look.Shot);
             recipes.Blast(to, 3f, BlastStyle.Fire, look.Shot, EffectPriority.Big);
+            UnitStats bleeds = Unit("Marine");
+            recipes.BloodBurst(to, 0.5f, BloodLooks.ColorOf(BloodLooks.For(bleeds)), false);
             Assert.That(() =>
             {
                 recipes.Muzzle(from, Vector3.forward, look);
@@ -573,12 +648,174 @@ namespace Halobellum.Tests
                 recipes.Fireball(to, 4f, EffectPriority.Big);
                 recipes.VehicleDeath(to, 2f, false);
                 recipes.FloodBurst(to, 1f, false);
+                BloodKind blood = BloodLooks.For(bleeds);
+                recipes.BloodHitAfter(0f, to, Vector3.forward, BloodLooks.ColorOf(blood), 0.5f);
+                recipes.BloodHit(to, Vector3.forward, BloodLooks.ColorOf(blood), 0.5f);
+                recipes.BloodBurst(to, 0.5f, BloodLooks.ColorOf(blood), false);
                 recipes.RunDue();
                 MushroomCloud.Puff smoke = MushroomCloud.Smoke(50, 3f, 14f, 7);
                 _view.Kit.CloudSmoke(smoke.Offset, smoke.Size, smoke.Color, smoke.Degrees, smoke.Seed);
                 MushroomCloud.Puff fire = MushroomCloud.Fire(20, 3f, 14f, 7);
                 _view.Kit.CloudFire(fire.Offset, fire.Size, fire.Color, fire.Degrees, fire.Seed);
             }, Is.Not.AllocatingGCMemory());
+        }
+
+        // ------------------------------------------------------------------ blood
+
+        private static ParticleSystem.Particle[] BloodNow() => ParticlesOf(GameObject.Find("Combat Effects"), "Blood");
+
+        private static bool Close(Color32 particle, Color wanted)
+        {
+            Color color = particle;
+            return Mathf.Abs(color.r - wanted.r) < 0.02f && Mathf.Abs(color.g - wanted.g) < 0.02f && Mathf.Abs(color.b - wanted.b) < 0.02f;
+        }
+
+        [UnityTest]
+        public IEnumerator AHit_DrawsTheBloodOfWhatWasHit()
+        {
+            yield return LoadSandbox();
+            _sandbox.AddSquad(Team.A, Unit("Marine"));
+            _sandbox.AddSquad(Team.B, Unit("Grunt"));
+            yield return null;
+            _battle.Speed = 4f;
+            _sandbox.Run();
+            Color red = BloodLooks.ColorOf(BloodKind.Red), blue = BloodLooks.ColorOf(BloodKind.LightBlue);
+            float deadline = Time.realtimeSinceStartup + 60f;
+            int seen = 0;
+            while (seen == 0 && !_battle.Simulation.IsFinished && Time.realtimeSinceStartup < deadline)
+            {
+                foreach (ParticleSystem.Particle drop in BloodNow())
+                {
+                    seen++;
+                    Assert.IsTrue(Close(drop.startColor, red) || Close(drop.startColor, blue), $"Only a Marine's or a Grunt's: {drop.startColor}");
+                }
+                yield return null;
+            }
+            Assert.Greater(seen, 0, "They hit each other, and bled.");
+        }
+
+        [UnityTest]
+        public IEnumerator Machines_FightWithoutBlood()
+        {
+            yield return LoadSandbox();
+            _sandbox.AddSquad(Team.A, Unit("Warthog"));
+            _sandbox.AddSquad(Team.B, Unit("Warthog"));
+            yield return null;
+            _battle.Speed = 4f;
+            _sandbox.Run();
+            int hits = 0;
+            void OnHit(SimUnit target, SimUnit attacker, float amount) => hits++;
+            _battle.Simulation.Events.UnitDamaged += OnHit;
+            float deadline = Time.realtimeSinceStartup + 40f;
+            while (hits < 10 && !_battle.Simulation.IsFinished && Time.realtimeSinceStartup < deadline)
+            {
+                Assert.AreEqual(0, BloodNow().Length);
+                yield return null;
+            }
+            Assert.Greater(hits, 0, "They did fight.");
+            for (int i = 0; i < 30; i++)
+            {
+                Assert.AreEqual(0, BloodNow().Length);
+                yield return null;
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator ASpell_DrawsNoBlood()
+        {
+            yield return LoadSandbox();
+            _sandbox.AddSquad(Team.A, Unit("Marine"));
+            _sandbox.AddSquad(Team.B, Unit("Marine"));
+            yield return null;
+            _battle.Speed = 1f;
+            _sandbox.Run();
+            int hits = 0;
+            void OnHit(SimUnit target, SimUnit attacker, float amount)
+            {
+                Assert.IsNull(attacker, "The armies have not met: this is only for the spell.");
+                hits++;
+            }
+            _battle.Simulation.Events.UnitDamaged += OnHit;
+            SimUnit marine = _battle.Simulation.Units.First(unit => unit.Team == Team.B);
+            _battle.Simulation.AddSpell(new SpellStats { Name = "Test", Offensive = true, Radius = 12f, DamagePerTick = 0.5f, DelaySeconds = 0f, DamageType = DamageType.Explosive }, Team.A, marine.Position);
+            float deadline = Time.realtimeSinceStartup + 5f;
+            while (hits == 0 && Time.realtimeSinceStartup < deadline) yield return null;
+            _battle.Simulation.Events.UnitDamaged -= OnHit;
+            Assert.Greater(hits, 0, "The spell hit them.");
+            for (int i = 0; i < 20; i++)
+            {
+                Assert.AreEqual(0, BloodNow().Length);
+                yield return null;
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator ADeath_BurstsInBlood_AndLeavesAPool()
+        {
+            yield return LoadSandbox();
+            _sandbox.AddSquad(Team.A, Unit("Marine"));
+            _sandbox.AddSquad(Team.B, Unit("Marine"));
+            yield return null;
+            _battle.Speed = 1f;
+            _sandbox.Run();
+            yield return null;
+            SimUnit marine = _battle.Simulation.Units.First(unit => unit.Team == Team.A);
+            int poolsBefore = ParticlesOf(GameObject.Find("Combat Effects"), "Scorch").Length;
+            marine.Health = 0f;
+            float deadline = Time.realtimeSinceStartup + 5f;
+            while (marine.IsAlive && Time.realtimeSinceStartup < deadline) yield return null;
+            yield return null;
+            yield return null;
+            Assert.IsFalse(marine.IsAlive);
+            Assert.Greater(BloodNow().Length, 5, "A burst of drops.");
+            Assert.AreEqual(poolsBefore + 1, ParticlesOf(GameObject.Find("Combat Effects"), "Scorch").Length, "A pool.");
+        }
+
+        // ------------------------------------------------------------------ Unlock Skirmish
+
+        [TearDown]
+        public void LeaveNoSkirmishBehind()
+        {
+            GameFlow.TakeMatchSetup();
+            BattleFactions.Set(BattleFactions.Unsc, BattleFactions.Covenant); // These are static.
+        }
+
+        [UnityTest]
+        public IEnumerator InASkirmish_TeamBKeepsItsTint_TheUiIsNeutral_AndTheMusicIsTheLands()
+        {
+            yield return SceneManager.LoadSceneAsync(GameFlow.MainMenuScene, LoadSceneMode.Single);
+            yield return null;
+            GameFlow.NewSkirmish(new MatchSetup { Mode = MatchMode.UnlockSkirmish });
+            float limit = Time.realtimeSinceStartup + 60f;
+            while (SceneManager.GetActiveScene().name != GameFlow.MatchScene && Time.realtimeSinceStartup < limit) yield return null;
+            yield return null;
+            yield return null;
+            var match = Object.FindAnyObjectByType<MatchController>();
+            AudioDirector director = AudioDirector.Instance;
+            CombatEffectsView view = match.GetComponent<CombatEffectsView>();
+            match.NewMatch(5); // This seed's land is the Flood's.
+            Assert.IsTrue(match.ChooseDraft(0).Ok, match.Message);
+            yield return null;
+
+            Assert.AreEqual(BattleFactions.Flood, BattleFactions.TeamA);
+            Assert.IsTrue(view.IsMirror, "Whatever the two armies are: both stand on one land.");
+            var marine = new UnitStats { Name = "Marine" };
+            var rifle = new WeaponStats { Name = "MA5 Assault Rifle", Range = 10f, FireInterval = 1f };
+            WeaponLook a = WeaponLooks.For(rifle, marine, BattleFactions.OfUnit(marine, Team.A), Team.A, view.IsMirror);
+            WeaponLook b = WeaponLooks.For(rifle, marine, BattleFactions.OfUnit(marine, Team.B), Team.B, view.IsMirror);
+            Assert.AreEqual(WeaponLooks.UnscTracer, a.Shot, "A Marine's own look, on the Flood's land.");
+            Assert.AreNotEqual(a.Shot, b.Shot, "Team B's shots stay tinted.");
+
+            Assert.IsNull(director.UiFaction, "Neutral, not the land's and not a faction called Skirmish.");
+            Assert.AreEqual("music_flood_deployment", director.Music.CurrentSlot);
+
+            director.UiFaction = BattleFactions.Unsc;
+            BattleFactions.SetSkirmish(BattleFactions.Covenant, new Dictionary<string, string>());
+            Assert.IsNull(director.UiFaction, "A change of land doesn't give the UI a faction.");
+
+            director.UiFaction = BattleFactions.Unsc;
+            BattleFactions.Set(BattleFactions.Flood, BattleFactions.Covenant);
+            Assert.AreEqual(BattleFactions.Flood, director.UiFaction, "Outside a Skirmish it follows as ever.");
         }
 
         [UnityTest]

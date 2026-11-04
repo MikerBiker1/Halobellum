@@ -1,6 +1,7 @@
 // MatchAudio.cs
 // The sound of a match: which music plays on which screen, which UI sound goes with what the player does (buy, sell, unlock, a card, a
 // spell, a level, a move, a mistake) and with how a round or a match ends. Added at run time to the object with the MatchController (see AudioDirector).
+// In Unlock Skirmish no side has a faction: the music is the land's, and the UI sounds are the neutral ones, or UNSC's where there is no neutral one.
 // Depends on: AudioDirector, AudioSlots, MatchController, Halobellum.Economy (Match, RoundSummary), UnityEngine.
 
 using Halobellum.Core;
@@ -35,10 +36,10 @@ namespace Halobellum.Presentation
             if (director == null || _match.Match == null) return;
             Match match = _match.Match;
             MatchPhase phase = match.Phase;
-            string faction = match.Player.Faction?.Name;
+            string faction = MusicFaction(match.Rules.Mode, match.Player.Faction?.Name);
             if (phase == MatchPhase.Draft && _lastPhase != MatchPhase.Draft) director.Music.ForgetPositions();
             if (phase != MatchPhase.MatchOver && _lastPhase == MatchPhase.MatchOver) director.Music.StopStinger(); // A new match, in the same scene.
-            director.UiFaction = phase == MatchPhase.Draft ? null : faction ?? BattleFactions.TeamA;
+            director.UiFaction = UiFactionFor(match.Rules.Mode, phase, match.Player.Faction?.Name);
             director.Music.Play(AudioSlots.MusicForPhase(phase, faction), phase == MatchPhase.Battle ? 1.5f : 2.5f);
 
             if (phase != _lastPhase)
@@ -48,6 +49,19 @@ namespace Halobellum.Presentation
                 else if (phase == MatchPhase.MatchOver) MatchEnded(director, match, faction);
             }
             _lastPhase = phase;
+        }
+
+        /// <summary>
+        /// Whose music and stingers play. This asks the match, not BattleFactions.PerUnitLooks, which is still true from a Skirmish before this match
+        /// until a card has been chosen.
+        /// </summary>
+        public static string MusicFaction(MatchMode mode, string playerFaction) => mode == MatchMode.UnlockSkirmish ? BattleFactions.TeamA : playerFaction;
+
+        /// <summary>Whose UI sounds play: none yet at the draft, and never anyone's in Unlock Skirmish, where the player's "faction" is only the name of the card list.</summary>
+        public static string UiFactionFor(MatchMode mode, MatchPhase phase, string playerFaction)
+        {
+            if (phase == MatchPhase.Draft || mode == MatchMode.UnlockSkirmish) return null;
+            return playerFaction ?? BattleFactions.TeamA;
         }
 
         private static void RoundEnded(Match match)

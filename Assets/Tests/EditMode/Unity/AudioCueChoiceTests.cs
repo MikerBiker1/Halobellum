@@ -10,6 +10,7 @@ using Halobellum.Presentation;
 using Halobellum.Units;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEngine;
 
 namespace Halobellum.Tests
 {
@@ -177,6 +178,63 @@ namespace Halobellum.Tests
             Assert.AreEqual("sfx_death_flood", Death("Flood/CombatForm", Team.A), "A Flood form in a mostly UNSC army.");
             BattleFactions.Set(BattleFactions.Flood, BattleFactions.Covenant);
             Assert.AreEqual("sfx_death_infantry", Death("UNSC/Marine", Team.A), "A Marine in a mostly Flood army.");
+        }
+
+        [TestCase("Covenant/HunterPair", "sfx_death_infantry_covenant")]
+        [TestCase("LekgoloColony/HunterCaptain", "sfx_death_infantry_covenant")]
+        [TestCase("LekgoloColony/Goliath", "sfx_explosion_medium")]
+        public void AHuntersDeath_KeepsTodaysCue_UntilThereIsAFileInItsOwnSlot(string path, string today)
+        {
+            AudioLibrary.Forget();
+            Assert.IsTrue(AudioCatalog.DeathLekgolo.Clips.IsEmpty, "The slot is waiting for the owner's file: a generated one would change every Hunter's death.");
+            Assert.AreEqual(today, Death(path, Team.B));
+        }
+
+        [TestCase("Covenant/HunterPair")]
+        [TestCase("LekgoloColony/HunterCaptain")]
+        [TestCase("LekgoloColony/Goliath")]
+        public void AHuntersDeath_UsesTheOwnersFile_OnceThereIsOne(string path)
+        {
+            System.Func<string, AudioClip> real = AudioLibrary.Loader;
+            AudioClip clip = AudioClip.Create("Test", 100, 1, 44100, false);
+            try
+            {
+                AudioLibrary.Loader = wanted => wanted == AudioLibrary.OverrideFolder + "sfx_death_lekgolo" ? clip : real(wanted);
+                AudioLibrary.Forget();
+                Assert.AreEqual("sfx_death_lekgolo", Death(path, Team.B));
+                Assert.AreEqual("sfx_death_infantry", Death("UNSC/Marine", Team.A), "Nobody else's.");
+                Assert.AreEqual("sfx_death_flood", Death("Flood/CombatForm", Team.B));
+            }
+            finally
+            {
+                AudioLibrary.Loader = real;
+                AudioLibrary.Forget();
+                Object.DestroyImmediate(clip);
+            }
+        }
+
+        [Test]
+        public void InASkirmish_ADeathGoesByTheBodysOwnFaction_NotTheLand()
+        {
+            var factions = new Dictionary<string, string> { { "Grunt", BattleFactions.Covenant }, { "Marine", BattleFactions.Unsc } };
+            BattleFactions.SetSkirmish(BattleFactions.Unsc, factions);
+            Assert.AreEqual("sfx_death_infantry_covenant", Death("Covenant/Grunt", Team.A), "A Grunt on the UNSC's land.");
+            BattleFactions.SetSkirmish(BattleFactions.Covenant, factions);
+            Assert.AreEqual("sfx_death_infantry", Death("UNSC/Marine", Team.B), "A Marine on the Covenant's land.");
+        }
+
+        [Test]
+        public void InASkirmish_ADropSoundsOfWhatItDrops_AndOtherSpellsOfTheLand()
+        {
+            var pods = new SpellStats { Name = "ODST Drop Pods", Effect = SpellEffect.DropSquad, DropUnit = new UnitStats { Name = "ODST" } };
+            var rally = new SpellStats { Name = "Battlefield Rally", Effect = SpellEffect.Buff };
+            BattleFactions.SetSkirmish(BattleFactions.Flood, new Dictionary<string, string> { { "ODST", BattleFactions.Unsc } });
+            Assert.AreEqual("sfx_spell_drop_pods", AudioSlots.Spell(pods, 1, BattleAudio.CasterFaction(pods, Team.B)), "Not the Flood's drop.");
+            Assert.AreEqual("sfx_spell_buff_flood", AudioSlots.Spell(rally, 1, BattleAudio.CasterFaction(rally, Team.A)));
+
+            BattleFactions.Set(BattleFactions.Flood, BattleFactions.Covenant);
+            Assert.AreEqual("sfx_spell_drop_flood", AudioSlots.Spell(pods, 1, BattleAudio.CasterFaction(pods, Team.A)), "In a Faction match, as ever: its side's.");
+            Assert.AreEqual("sfx_spell_drop_pods", AudioSlots.Spell(pods, 1, BattleAudio.CasterFaction(pods, Team.B)));
         }
 
         [Test]

@@ -1,9 +1,10 @@
 // EffectsGallery.cs
 // Test tool for built games (M10): takes pictures of every effect so that a person can judge them, and measures the frame time of a big
 // battle. SandboxAutoplay starts it:
-//   -sandboxDemo <folder> -effects        every weapon kind firing, every kind of death, the Pelican's crash and every spell
+//   -sandboxDemo <folder> -effects        every weapon kind firing, every kind of death, every colour of blood, dust, the Pelican's crash and every spell
 //   -sandboxDemo <folder> -gallery        the same, after the pictures of the real models
-//   -sandboxDemo <folder> -effectsBench   about 200 bodies at 1x and at 4x; frame times go to bench.txt in the folder and to the log
+//   -sandboxDemo <folder> -effectsBench   about 200 bodies at 1x and at 4x, then an army of ground vehicles, which is what kicks up dust; frame times go to bench.txt in the folder and to the log
+//   Any of these with -particleScale <number>: that much dust, whatever the quality level says, for this run only.
 // Each picture freezes the battle (particles run on battle time, so they freeze too), and is taken from the game's own camera and from
 // close by. It reaches into the simulation in one way only, to kill a body on demand; battles here are throw-aways for pictures.
 // Depends on: SandboxController, BattleController, UnitViewManager, CombatEffectsView, EffectKit, Halobellum.Combat, Halobellum.Core, UnityEngine.
@@ -54,6 +55,8 @@ namespace Halobellum.Presentation
             if (_control != null) _control.enabled = false;
             yield return Weapons();
             yield return Deaths();
+            yield return Bloods();
+            if (Wanted("dust")) yield return Dust();
             if (Wanted("crash")) yield return PelicanCrash();
             yield return Spells();
             if (_control != null) _control.enabled = true;
@@ -253,6 +256,105 @@ namespace Halobellum.Presentation
             yield return null;
         }
 
+        // ------------------------------------------------------------------ blood and dust
+
+        private IEnumerator Bloods()
+        {
+            string[] list = { "Marine", "Grunt", "Elite", "Hunter Pair", "Combat Form", "Jackal (Plasma Rifle)", "Brute Grenadier" };
+            foreach (string name in list)
+            {
+                if (Wanted("b_" + name.Replace(" ", ""))) yield return OneBlood(name);
+            }
+        }
+
+        /// <summary>One colour of blood: a few hits on a body, then a squad dying and what it leaves on the ground.</summary>
+        private IEnumerator OneBlood(string name)
+        {
+            yield return Setup(new[] { name, name }, new[] { "Marine", "Marine", "Marine", "Marine", "Scorpion" });
+            _battle.Speed = 6f;
+            _sandbox.Run();
+            int hits = 0;
+            SimUnit hurt = null;
+            void OnHurt(SimUnit target, SimUnit attacker, float amount)
+            {
+                if (attacker == null || target.Stats.Name != name || target.Shield > 0f || amount <= 0f) return;
+                hits++;
+                hurt = target;
+            }
+            _battle.Simulation.Events.UnitDamaged += OnHurt;
+            GameCamera(Vector3.zero);
+            float limit = 45f;
+            while (hits == 0 && limit > 0f && !_battle.Simulation.IsFinished) { limit -= Time.unscaledDeltaTime; yield return null; }
+            _battle.Speed = 1f;
+            if (hurt == null)
+            {
+                _battle.Simulation.Events.UnitDamaged -= OnHurt;
+                Debug.LogWarning($"Effects gallery: {name} was never hurt.");
+                _sandbox.ResetBattle();
+                yield break;
+            }
+            string label = name.Replace(" ", "");
+            Vector3 place = _views.WorldPosition(hurt);
+            place.y = 0f;
+            GameCamera(place);
+            float close = Mathf.Max(13f, hurt.Radius * 7f);
+            hits = 0;
+            limit = 6f;
+            // A few hits in the air at once, and just after the last of them, when its blood has appeared.
+            while (hits < 12 && limit > 0f && !_battle.Simulation.IsFinished) { limit -= Time.unscaledDeltaTime; yield return null; }
+            float shown = Kit.BattleTime;
+            while (Kit.BattleTime - shown < 0.16f) yield return null;
+            yield return Capture($"b_{label}_hits", place, close);
+            _battle.Simulation.Events.UnitDamaged -= OnHurt;
+
+            int killed = 0;
+            foreach (SimUnit unit in _battle.Simulation.Units)
+            {
+                if (unit.Team != Team.A || unit.Stats.Name != name || !unit.IsAlive || killed >= 6) continue;
+                unit.Health = 0f;
+                killed++;
+            }
+            float[] times = { 0.12f, 0.45f, 3f };
+            float start = Kit.BattleTime;
+            foreach (float at in times)
+            {
+                while (Kit.BattleTime - start < at) yield return null;
+                yield return Capture($"b_{label}_death_{at:0.00}", place, close);
+            }
+            _sandbox.ResetBattle();
+            yield return null;
+        }
+
+        /// <summary>Vehicles and infantry on the move, to judge the dust at this run's scale. The picture waits until a Warthog has been driving for as long as its dust lasts, so that its whole trail is there.</summary>
+        private IEnumerator Dust()
+        {
+            yield return Setup(new[] { "Warthog", "Warthog", "Scorpion", "Scorpion", "Marine", "Marine" }, new[] { "Marine" });
+            _battle.Speed = 1f;
+            _sandbox.Run();
+            const float TrailSeconds = 1.5f;
+            float limit = 30f, drivenSince = Kit.BattleTime;
+            SimUnit vehicle = null;
+            while (limit > 0f && !_battle.Simulation.IsFinished)
+            {
+                limit -= Time.unscaledDeltaTime;
+                vehicle = FirstAlive("Warthog", Team.A);
+                if (vehicle == null || vehicle.State != UnitState.Move || vehicle.Velocity.LengthSquared < 1f) drivenSince = Kit.BattleTime;
+                if (Kit.BattleTime - drivenSince >= TrailSeconds) break;
+                yield return null;
+            }
+            if (vehicle == null || Kit.BattleTime - drivenSince < TrailSeconds)
+            {
+                Debug.LogWarning("Effects gallery: no Warthog drove for long enough to show its dust.");
+            }
+            else
+            {
+                Debug.Log(FormattableString($"Effects gallery: dust x{Kit.ParticleScale:0.0#}, a Warthog driving at {Mathf.Sqrt(vehicle.Velocity.LengthSquared):0.0} m/s at {Kit.BattleTime:0.0} s, {Kit.LiveDust} puffs in the air."));
+                yield return Capture(FormattableString($"dust_{Kit.ParticleScale:0.0}x"), _views.WorldPosition(vehicle), 30f);
+            }
+            _sandbox.ResetBattle();
+            yield return null;
+        }
+
         private IEnumerator PelicanCrash()
         {
             yield return Setup(new[] { "Infected Pelican" }, new[] { "Marine", "Marine" });
@@ -370,10 +472,14 @@ namespace Halobellum.Presentation
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = -1;
             var report = new StringBuilder();
-            report.AppendLine($"Effects benchmark, {Screen.width}x{Screen.height}, {SystemInfo.graphicsDeviceName}, {SystemInfo.processorType}, quality {QualitySettings.names[QualitySettings.GetQualityLevel()]}, MSAA {SandboxAutoplay.ShownMsaa}x");
+            report.AppendLine($"Effects benchmark, {Screen.width}x{Screen.height}, {SystemInfo.graphicsDeviceName}, {SystemInfo.processorType}, quality {QualitySettings.names[QualitySettings.GetQualityLevel()]}, MSAA {SandboxAutoplay.ShownMsaa}x, dust x{Kit.ParticleScale:0.0#}");
             yield return OnAgainstOff(report);
             yield return BenchmarkOne(1f, report, "bench_1x", false);
             yield return BenchmarkOne(4f, report, "bench_4x", false);
+            // The big battle is mostly infantry, which hardly kick up dust: this one is what more dust costs.
+            report.AppendLine("Ground vehicles only:");
+            yield return BenchmarkOne(1f, report, "bench_vehicles_1x", false, VehiclesBlue, VehiclesRed);
+            yield return BenchmarkOne(4f, report, "bench_vehicles_4x", false, VehiclesBlue, VehiclesRed);
             string text = report.ToString();
             Debug.Log(text);
             File.WriteAllText(Path.Combine(_shots, "bench.txt"), text);
@@ -430,10 +536,12 @@ namespace Halobellum.Presentation
 
         private static readonly string[] BenchBlue = { "Marine", "Marine", "Marine", "Marine", "Flamethrower Trooper", "Flamethrower Trooper", "Scorpion", "Scorpion", "Warthog", "Gauss Warthog", "Wolverine", "Hornet", "Pelican", "Spartan", "Archer Missile Pod" };
         private static readonly string[] BenchRed = { "Grunt", "Grunt", "Grunt", "Fuel Rod Grunt", "Jackal (Plasma Rifle)", "Jackal (Plasma Rifle)", "Elite", "Elite", "Ghost", "Wraith", "Banshee", "Vampire", "Hunter Pair", "Scarab", "Zealot" };
+        private static readonly string[] VehiclesBlue = { "Warthog", "Warthog", "Warthog", "Warthog", "Warthog", "Gauss Warthog", "Gauss Warthog", "Gauss Warthog", "Scorpion", "Scorpion", "Scorpion", "Scorpion", "Wolverine", "Cobra", "Cobra" };
+        private static readonly string[] VehiclesRed = { "Ghost", "Ghost", "Ghost", "Ghost", "Ghost", "Ghost", "Wraith", "Wraith", "Wraith", "Wraith", "Chopper", "Chopper", "Chopper", "Marauder", "Marauder" };
 
-        private IEnumerator BenchmarkOne(float speed, StringBuilder report, string picture, bool muted)
+        private IEnumerator BenchmarkOne(float speed, StringBuilder report, string picture, bool muted, string[] blue = null, string[] red = null)
         {
-            yield return Setup(BenchBlue, BenchRed);
+            yield return Setup(blue ?? BenchBlue, red ?? BenchRed);
             _battle.Speed = speed;
             _sandbox.Run();
             int bodies = _battle.Simulation.Units.Count;
@@ -442,7 +550,7 @@ namespace Halobellum.Presentation
             view.Kit.Muted = muted;
             float elapsed = 0f, nextPicture = 12f / speed;
             int pictures = 0;
-            int mostLive = 0;
+            int mostLive = 0, mostDust = 0;
             float mostCost = 0f;
             double totalCost = 0;
             int collectionsAtStart = System.GC.CollectionCount(0);
@@ -460,6 +568,7 @@ namespace Halobellum.Presentation
                 }
                 int live = view.Kit.LiveParticles;
                 if (live > mostLive) mostLive = live;
+                mostDust = Mathf.Max(mostDust, view.Kit.LiveDust);
                 if (elapsed >= nextPicture)
                 {
                     nextPicture += 7f / speed;
@@ -479,7 +588,7 @@ namespace Halobellum.Presentation
             view.Kit.Muted = false;
             report.AppendLine(FormattableString($"{(muted ? "No effects, " : "")}Speed {speed}x: {bodies} bodies at the start, {times.Count} frames in {elapsed:0.0} s; average {average * 1000f:0.00} ms ({(average > 0f ? 1f / average : 0f):0} FPS), 1% slowest {p99 * 1000f:0.00} ms ({(p99 > 0f ? 1f / p99 : 0f):0} FPS), worst {worst * 1000f:0.00} ms; frames over 16.7 ms: {slow}"));
             report.AppendLine(FormattableString($"  effects' own main-thread time: average {(times.Count > 0 ? totalCost / times.Count : 0):0.00} ms, worst {mostCost:0.00} ms; garbage collections during the battle: {System.GC.CollectionCount(0) - collectionsAtStart}"));
-            report.AppendLine($"  most particles alive {mostLive}; dropped small {budget.Dropped[0]}, medium {budget.Dropped[1]}, big {budget.Dropped[2]}, huge {budget.Dropped[3]}; result: {(_battle.Simulation.IsFinished ? _battle.Simulation.Result.ToSummaryLine() : "still fighting")}");
+            report.AppendLine($"  most particles alive {mostLive}, of them dust {mostDust} (limit {view.Kit.DustLimit}); dropped small {budget.Dropped[0]}, medium {budget.Dropped[1]}, big {budget.Dropped[2]}, huge {budget.Dropped[3]}; result: {(_battle.Simulation.IsFinished ? _battle.Simulation.Result.ToSummaryLine() : "still fighting")}");
             _sandbox.ResetBattle();
             yield return null;
         }

@@ -7,11 +7,13 @@
 //   - projectiles at their real place in flight, in an arc if they are lobbed, blended between ticks as bodies are, with trails laid by
 //     distance where the look asks for one, and a blast as wide as their splash where they land;
 //   - beams: a thin line and a growing spot while charging, then a thick glowing beam with a burning spot, sparks and scorched ground;
-//   - dust behind moving ground units. Deaths are DeathEffects and spells are SpellEffects.
+//   - dust behind moving ground units, more of it on High quality;
+//   - blood from what bleeds (BloodLooks) when a weapon hits it, a moment later, when the shot has arrived. The bigger the hit, the likelier.
+//     Spells draw none; a shield in the way doesn't either. Deaths are DeathEffects and spells are SpellEffects.
 // All of it is pooled: nothing is created during battle. Everything runs on battle time: it pauses with the battle and runs faster at
 // 2x and 4x. If the frame rate suffers or too much is going on, EffectBudget drops the small things first. Looks only: nothing here
 // changes the simulation, and its random numbers aren't the simulation's.
-// Depends on: BattleController, UnitViewManager, EffectKit, EffectRecipes, DeathEffects, SpellEffects, WeaponLooks, CameraShake,
+// Depends on: BattleController, UnitViewManager, EffectKit, EffectRecipes, DeathEffects, SpellEffects, WeaponLooks, BloodLooks, CameraShake,
 //             EffectsPostProcess, Halobellum.Combat, UnityEngine.
 
 using System.Collections.Generic;
@@ -39,6 +41,8 @@ namespace Halobellum.Presentation
         public const int MostTrailPuffsAtOnce = 6;
         /// <summary>Each body is looked at for dust this often, in seconds of battle time.</summary>
         public const float DustLookSeconds = 7f / 60f;
+        /// <summary>How long after a hit its blood shows, in seconds of battle time: about what a shot takes to be seen arriving.</summary>
+        private const float BloodDelay = 0.1f;
 
         /// <summary>Paler than other smoke: from the game's camera a rocket's trail has to show against dark ground as well as light.</summary>
         private static readonly Color RocketSmoke = new Color(0.72f, 0.7f, 0.66f, 0.62f);
@@ -111,6 +115,7 @@ namespace Halobellum.Presentation
                 _shown.Events.WeaponFired -= OnWeaponFired;
                 _shown.Events.AttackBlocked -= OnAttackBlocked;
                 _shown.Events.Ticked -= OnTicked;
+                _shown.Events.UnitDamaged -= OnUnitDamaged;
             }
             _deaths?.Show(null);
             _spells?.Show(null);
@@ -127,6 +132,7 @@ namespace Halobellum.Presentation
                 _shown.Events.WeaponFired -= OnWeaponFired;
                 _shown.Events.AttackBlocked -= OnAttackBlocked;
                 _shown.Events.Ticked -= OnTicked;
+                _shown.Events.UnitDamaged -= OnUnitDamaged;
             }
             _shown = simulation;
             _kit.Clear();
@@ -147,6 +153,7 @@ namespace Halobellum.Presentation
             _shown.Events.WeaponFired += OnWeaponFired;
             _shown.Events.AttackBlocked += OnAttackBlocked;
             _shown.Events.Ticked += OnTicked;
+            _shown.Events.UnitDamaged += OnUnitDamaged;
         }
 
         /// <summary>The same faction on both sides, or (in the sandbox) the same unit type on both sides.</summary>
@@ -166,7 +173,7 @@ namespace Halobellum.Presentation
             WeaponStats weapon = unit.Weapons[weaponIndex].Stats;
             Dictionary<WeaponStats, WeaponLook> looks = unit.Team == Team.A ? _looksA : _looksB;
             if (looks.TryGetValue(weapon, out WeaponLook look)) return look;
-            look = WeaponLooks.For(weapon, unit.Stats, BattleFactions.For(unit.Team), unit.Team, _mirror);
+            look = WeaponLooks.For(weapon, unit.Stats, BattleFactions.OfUnit(unit.Stats, unit.Team), unit.Team, _mirror);
             looks[weapon] = look;
             return look;
         }
@@ -238,6 +245,22 @@ namespace Halobellum.Presentation
         private void OnAttackBlocked(SimUnit target, SimUnit attacker)
         {
             _recipes.ShieldHit(_units.AimPoint(target, shotHeight));
+        }
+
+        /// <summary>A hit that reached the body. With no attacker it is a spell or a slow burn, which draw no blood.</summary>
+        private void OnUnitDamaged(SimUnit target, SimUnit attacker, float amount)
+        {
+            if (attacker == null || amount <= 0f || target.Shield > 0f) return;
+            BloodKind blood = BloodLooks.For(target.Stats);
+            if (blood == BloodKind.None) return;
+            float share = amount / Mathf.Max(1f, target.Stats.MaxHealth);
+            if (Random.value >= BloodLooks.HitChance(share)) return;
+            _cost.Start();
+            Vector3 at = _units.AimPoint(target, shotHeight);
+            Vector3 way = at - _units.AimPoint(attacker, shotHeight);
+            way.y = 0f;
+            _recipes.BloodHitAfter(BloodDelay, at, way.sqrMagnitude > 1e-4f ? way.normalized : Vector3.up, BloodLooks.ColorOf(blood), Mathf.Clamp01(share * 2f));
+            _cost.Stop();
         }
 
         // ------------------------------------------------------------------ every frame
@@ -567,7 +590,13 @@ namespace Halobellum.Presentation
         /// </summary>
         public static int DustLooksThisFrame(float battleDelta, int bodies, ref float due)
         {
-            due += battleDelta / DustLookSeconds * bodies;
+            return DustLooksThisFrame(battleDelta, bodies, ref due, 1f);
+        }
+
+        /// <summary>The same with more or less dust: each body is looked at once per DustLookSeconds / scale.</summary>
+        public static int DustLooksThisFrame(float battleDelta, int bodies, ref float due, float scale)
+        {
+            due += battleDelta / (DustLookSeconds / scale) * bodies;
             int looks = (int)due;
             due -= looks;
             return Mathf.Min(looks, bodies);
@@ -578,7 +607,7 @@ namespace Halobellum.Presentation
         {
             if (_shown == null) return;
             IReadOnlyList<SimUnit> units = _shown.Units;
-            int looks = DustLooksThisFrame(battleDelta, units.Count, ref _dustDue);
+            int looks = DustLooksThisFrame(battleDelta, units.Count, ref _dustDue, _kit.ParticleScale);
             for (int look = 0; look < looks; look++)
             {
                 _dustNext = (_dustNext + 1) % units.Count;

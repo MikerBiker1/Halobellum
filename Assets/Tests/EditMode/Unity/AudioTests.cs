@@ -208,6 +208,86 @@ namespace Halobellum.Tests
                 StringAssert.Contains(slot, text, "README.txt doesn't list " + slot);
         }
 
+        // ------------------------------------------------------------------ a slot waiting for the owner's file
+
+        [Test]
+        public void TheLekgoloSlot_IsKnown_ButStandsOutsideTheCuesThatMustHaveAFile()
+        {
+            Assert.AreSame(AudioCatalog.DeathLekgolo, AudioCatalog.ForSlot("sfx_death_lekgolo"));
+            CollectionAssert.DoesNotContain(AudioCatalog.Cues, AudioCatalog.DeathLekgolo);
+        }
+
+        // ------------------------------------------------------------------ Unlock Skirmish
+
+        [Test]
+        public void InASkirmish_TheUi_IsNeutral_OrUnscWhereThereIsNoNeutralSound()
+        {
+            foreach (MatchPhase phase in Enum.GetValues(typeof(MatchPhase)))
+            {
+                string faction = MatchAudio.UiFactionFor(MatchMode.UnlockSkirmish, phase, SkirmishFaction.Name);
+                Assert.IsNull(faction, phase.ToString());
+                Assert.AreEqual("ui_neutral_click", AudioSlots.Ui(faction, UiSound.Click));
+                Assert.AreEqual("ui_neutral_hover", AudioSlots.Ui(faction, UiSound.Hover));
+                Assert.AreEqual("ui_neutral_error", AudioSlots.Ui(faction, UiSound.Error));
+                Assert.AreEqual("ui_neutral_cardpick", AudioSlots.Ui(faction, UiSound.CardPick));
+                Assert.AreEqual("ui_unsc_buy", AudioSlots.Ui(faction, UiSound.Buy));
+                Assert.AreEqual("ui_unsc_sell", AudioSlots.Ui(faction, UiSound.Sell));
+                Assert.AreEqual("ui_unsc_unlock", AudioSlots.Ui(faction, UiSound.Unlock));
+                Assert.AreEqual("ui_unsc_battlestart", AudioSlots.Ui(faction, UiSound.BattleStart));
+            }
+        }
+
+        [Test]
+        public void InASkirmish_TheMusic_IsTheLands()
+        {
+            try
+            {
+                BattleFactions.SetSkirmish(BattleFactions.Flood, new Dictionary<string, string>());
+                string faction = MatchAudio.MusicFaction(MatchMode.UnlockSkirmish, SkirmishFaction.Name);
+                Assert.AreEqual("music_flood_deployment", AudioSlots.MusicForPhase(MatchPhase.Deployment, faction));
+                Assert.AreEqual("music_flood_battle", AudioSlots.MusicForPhase(MatchPhase.Battle, faction));
+                Assert.AreEqual("stinger_flood_victory", AudioSlots.Stinger(faction, true));
+            }
+            finally
+            {
+                BattleFactions.Set(BattleFactions.Unsc, BattleFactions.Covenant);
+            }
+        }
+
+        [Test]
+        public void AFactionMatchAfterASkirmish_GoesByItsOwnFaction_ThoughTheSkirmishsMapIsStillThere()
+        {
+            try
+            {
+                BattleFactions.SetSkirmish(BattleFactions.Flood, new Dictionary<string, string>());
+                Assert.IsTrue(BattleFactions.PerUnitLooks, "No card has been chosen yet in the new match.");
+                Assert.IsNull(MatchAudio.MusicFaction(MatchMode.Faction, null), "At its draft.");
+                Assert.IsNull(MatchAudio.UiFactionFor(MatchMode.Faction, MatchPhase.Draft, null));
+                Assert.AreEqual("Covenant", MatchAudio.MusicFaction(MatchMode.Faction, "Covenant"));
+                Assert.AreEqual("Covenant", MatchAudio.UiFactionFor(MatchMode.Faction, MatchPhase.Deployment, "Covenant"));
+            }
+            finally
+            {
+                BattleFactions.Set(BattleFactions.Unsc, BattleFactions.Covenant);
+            }
+        }
+
+        // ------------------------------------------------------------------ how much dust
+
+        [TestCase("Mobile", 1f)]
+        [TestCase("PC", 2.5f)]
+        [TestCase("Something New", 1f)]
+        public void TheParticleScale_GoesByTheQualityLevelsRealName(string level, float scale) => Assert.AreEqual(scale, EffectKit.ParticleScaleFor(level));
+
+        [TestCase(new string[0], 0f)]
+        [TestCase(new[] { "-sandboxDemo", "x" }, 0f)]
+        [TestCase(new[] { "-particleScale" }, 0f)]
+        [TestCase(new[] { "-particleScale", "many" }, 0f)]
+        [TestCase(new[] { "-particleScale", "4" }, 4f)]
+        [TestCase(new[] { "-particleScale", "2.5", "-effectsBench" }, 2.5f)]
+        [TestCase(new[] { "-particleScale", "0.5" }, 1f)]
+        public void TheParticleScaleFlag(string[] arguments, float scale) => Assert.AreEqual(scale, EffectKit.ParticleScaleFromCommandLine(arguments));
+
         // ------------------------------------------------------------------ which slot goes with what
 
         [TestCase("UNSC", "unsc")]
@@ -446,7 +526,7 @@ namespace Halobellum.Tests
         public void EveryTestToolOnTheCommandLine_IsSilent()
         {
             // These only change what a tool that has already been started does, or record it.
-            string[] notTools = { "-effects", "-effectsBench", "-menuDemoShort", "-menuDemoWatch", "-menuDemoSounds", "-menuDemoUiScale", "-cardsDemoLayout", "-cardsDemoLevelAll", "-screenDemoFake", "-screenDemoEndOn", AudioCapture.Flag };
+            string[] notTools = { "-effects", "-effectsBench", "-menuDemoShort", "-menuDemoWatch", "-menuDemoSounds", "-menuDemoUiScale", "-cardsDemoLayout", "-cardsDemoLevelAll", "-cardsDemoPlaytest", "-screenDemoFake", "-screenDemoEndOn", EffectKit.ParticleScaleFlag, AudioCapture.Flag };
             var flags = new HashSet<string>();
             var declared = new Regex(@"const string \w*Flag\w* = ""(-\w+)""");
             var checkedByName = new Regex(@"Array\.IndexOf\(args, ""(-\w+)""\) < 0\)");
