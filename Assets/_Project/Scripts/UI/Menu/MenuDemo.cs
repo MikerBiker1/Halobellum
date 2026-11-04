@@ -1,10 +1,12 @@
 // MenuDemo.cs
 // Test tool for built games (M10): walks through the whole game flow with nobody at the keyboard, and saves a picture of each screen.
 // It does nothing unless the game is started with "-menuDemo <screenshot folder>". It presses the same buttons a player would (through
-// MenuStyle.Button) and sends a real Esc through the Input System. Add "-menuDemoShort" to look only at the menu and settings.
-//   The menu, three moments apart; Settings; back; New Match; the draft; a card; Esc in deployment; Settings from there; back; Resume;
-//   Ready; Esc in battle, checking that no tick runs while paused and that ticks run again after Resume; the result; a forced end of
-//   match and its Main Menu button; the menu again; Sandbox; Esc; its Back button; Quit.
+// MenuStyle.Button) and sends a real Esc through the Input System: an event posted inside the game, so nothing reaches the PC's real keyboard or mouse. On the Play page it also clicks with IMGUI's own
+// mouse events, given to the menu's drawing from inside the game, for what depends on where a click lands. Add "-menuDemoShort" to look only at the menu, settings and the Play page.
+//   The menu, three moments apart; Settings and its frame-rate switch; back; the Play page, its panels, stepper and card list, and Esc through them; Faction mode and Start; the draft;
+//   a card; Esc in deployment; Settings from there; back; Resume; Ready; the frame-rate counter off and on; Esc in battle, checking that no tick runs while paused and that ticks run again
+//   after Resume; the result; a forced end of match and its Main Menu button; the menu again; Sandbox by way of the Play page; Esc; its Back button; an Unlock Skirmish match with
+//   settings picked on the panel, its unlock page and Esc there; the menu again; Quit. A button it can't find ends the run at once, as a problem.
 // It writes "MenuDemo: ..." lines in the player's log, one for each thing checked, and ends with how many went wrong. It never changes
 // a setting, because PlayerPrefs are shared by every build on this PC: in a test run GameSettings holds them in memory, and logs at the end whether the saved ones are as they were.
 // With "-menuDemoSounds" it checks the small sounds instead, with no real mouse or keyboard: a pointer of its own goes over the buttons of the menu, Settings and
@@ -41,6 +43,11 @@ namespace Halobellum.UI
         private string _folder;
         private bool _short;
         private int _problems;
+        private MainMenuHud _clickMenu;
+        private Vector2 _clickAt;
+        private int _clickStep = -1, _clickControl;
+
+        private void Awake() => useGUILayout = false;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void StartIfAsked()
@@ -72,7 +79,7 @@ namespace Halobellum.UI
             while (Time.realtimeSinceStartup < until)
             {
                 var menu = FindAnyObjectByType<MainMenuHud>();
-                string now = $"scene {SceneManager.GetActiveScene().name}, paused {GamePause.IsPaused}, settings {menu != null && menu.ShowingSettings}, " +
+                string now = $"scene {SceneManager.GetActiveScene().name}, paused {GamePause.IsPaused}, settings {menu != null && menu.ShowingSettings}, page {(menu != null ? menu.CurrentPage.ToString() : "none")}, mode {(menu != null ? menu.SelectedMode?.ToString() : null)}, " +
                              $"window {Screen.width}x{Screen.height} {Screen.fullScreenMode}, quality {QualitySettings.GetQualityLevel()}, vsync {QualitySettings.vSyncCount}, " +
                              $"music {GameSettings.MusicVolume:0.00}, ui {GameSettings.UiScale:0.00}, shake {GameSettings.CameraShake}";
                 if (now != last)
@@ -105,6 +112,8 @@ namespace Halobellum.UI
                 Application.Quit();
                 yield break;
             }
+            // So that a posted Esc counts in a window without focus. From the start, because a window that loses focus before this is set has its keyboard switched off.
+            InputSystem.settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
             Check("the game starts in the main menu", SceneManager.GetActiveScene().name == GameFlow.MainMenuScene);
             yield return Wait(3.5f);
             yield return Shot("01_menu_a");
@@ -117,6 +126,14 @@ namespace Halobellum.UI
             yield return Wait(0.4f);
             Check("Settings opens from the menu", FindAnyObjectByType<MainMenuHud>().ShowingSettings);
             yield return Shot("04_settings");
+
+            // The frame-rate counter's switch, held in memory like every setting in a test run.
+            yield return Press("Frame rate counter/On");
+            Check("the frame-rate switch turns on", GameSettings.ShowFrameRate);
+            yield return Wait(0.2f);
+            yield return Shot("04a_settings_frame_rate_on");
+            yield return Press("Frame rate counter/Off");
+            Check("and off", !GameSettings.ShowFrameRate);
 
             // The Low quality level, without saving it: it must still draw the whole picture.
             int quality = QualitySettings.GetQualityLevel();
@@ -132,18 +149,22 @@ namespace Halobellum.UI
             yield return Press("Back");
             yield return Wait(0.3f);
             Check("Back closes Settings", !FindAnyObjectByType<MainMenuHud>().ShowingSettings);
+            yield return PlayPage();
             if (_short)
             {
                 Finish();
                 yield break;
             }
 
-            yield return Press("New Match");
+            yield return Press("Play");
+            yield return Press("Faction mode");
+            yield return Press("Start");
             yield return WaitForScene(GameFlow.MatchScene);
             yield return Wait(1f);
             var match = FindAnyObjectByType<MatchController>();
             var battle = FindAnyObjectByType<BattleController>();
-            Check("New Match reaches a working draft", match != null && match.Match != null && match.Match.Phase == MatchPhase.Draft && match.Match.PlayerDraft.Count > 0);
+            Check("Faction mode starts a Faction match", match != null && match.Match != null && match.Match.Rules.Mode == MatchMode.Faction);
+            Check("Start reaches a working draft", match != null && match.Match != null && match.Match.Phase == MatchPhase.Draft && match.Match.PlayerDraft.Count > 0);
             yield return Shot("05_draft");
             yield return PauseAndLook("draft", "06");
             match.ChooseDraft(0);
@@ -167,7 +188,13 @@ namespace Halobellum.UI
             yield return null;
             Check("Ready starts the battle", match.Match.Phase == MatchPhase.Battle);
             battle.Speed = 2f;
+            GameSettings.ShowFrameRate = false;
             yield return Wait(2f);
+            yield return Shot("09b_battle_frame_rate_off");
+            GameSettings.ShowFrameRate = true;
+            yield return Wait(0.5f);
+            yield return Shot("09c_battle_frame_rate_on");
+            GameSettings.ShowFrameRate = false;
             yield return PressEscape();
             int tick = battle.Simulation.Tick;
             yield return Wait(2f);
@@ -218,6 +245,7 @@ namespace Halobellum.UI
             yield return Wait(2.5f);
             yield return Shot("13_menu_again");
 
+            yield return Press("Play");
             yield return Press("Sandbox");
             yield return WaitForScene(GameFlow.SandboxScene);
             yield return Wait(1f);
@@ -232,7 +260,7 @@ namespace Halobellum.UI
             yield return WaitForScene(GameFlow.MainMenuScene);
             Check("the Sandbox's Back button returns to the menu", SceneManager.GetActiveScene().name == GameFlow.MainMenuScene);
 
-            // Back in by the old road: from the draft to the Sandbox and back to the match.
+            // Back in by the old road: from a match to the Sandbox and back to the match.
             GameFlow.NewMatch();
             yield return WaitForScene(GameFlow.MatchScene);
             yield return Wait(0.5f);
@@ -247,8 +275,162 @@ namespace Halobellum.UI
             GameFlow.OpenMainMenu();
             yield return WaitForScene(GameFlow.MainMenuScene);
             yield return Wait(1f);
+            yield return SkirmishMatch();
+
+            GameFlow.OpenMainMenu();
+            yield return WaitForScene(GameFlow.MainMenuScene);
+            yield return Wait(1f);
+            var again = FindAnyObjectByType<MainMenuHud>();
+            Check("the card filter is back at All cards when the menu loads", again.Cards == CardFilter.AllCards);
+            Check("no mode is selected when the menu loads", again.CurrentPage == MainMenuHud.Page.Main && again.SelectedMode == null);
+            Check("the base health and difficulty are remembered", GameSettings.SkirmishBaseHealth == 1600 && GameSettings.Difficulty == AiDifficulty.Hard);
             Finish();
             yield return Press("Quit");
+        }
+
+        /// <summary>The Play page's own controls, through its buttons and Esc: it ends back on the first page.</summary>
+        private IEnumerator PlayPage()
+        {
+            var menu = FindAnyObjectByType<MainMenuHud>();
+            var drawn = new Dictionary<string, Rect>();
+            Action<string, Rect> note = (key, rect) => drawn[key] = rect;
+            MenuStyle.ButtonDrawnForTest += note;
+
+            yield return PostEscape();
+            Check("Esc on the first page does nothing", menu.CurrentPage == MainMenuHud.Page.Main && !menu.IsLeaving);
+            yield return Press("Play");
+            Check("Play opens its page", menu.CurrentPage == MainMenuHud.Page.Play && menu.SelectedMode == null);
+            yield return Wait(0.2f);
+            yield return Shot("04c_play_page");
+            yield return Press("Faction mode");
+            Check("Faction mode shows its panel", menu.SelectedMode == MatchMode.Faction);
+            yield return Wait(0.2f);
+            yield return Shot("04d_faction_mode");
+
+            yield return Press("Unlock Skirmish mode");
+            Check("Unlock Skirmish mode shows its panel", menu.SelectedMode == MatchMode.UnlockSkirmish);
+            AiDifficulty difficulty = GameSettings.Difficulty;
+            int health = GameSettings.SkirmishBaseHealth;
+            GameSettings.SkirmishBaseHealth = 1500;
+            yield return Press("Base health/>");
+            Check("the stepper goes up by 100", GameSettings.SkirmishBaseHealth == 1600);
+            yield return Press("Base health/<");
+            yield return Press("Base health/<");
+            Check("and down by 100", GameSettings.SkirmishBaseHealth == 1400);
+            GameSettings.SkirmishBaseHealth = MatchSetup.LeastBaseHealth;
+            yield return Press("Base health/<");
+            Check("it stops at the least", GameSettings.SkirmishBaseHealth == MatchSetup.LeastBaseHealth);
+            GameSettings.SkirmishBaseHealth = MatchSetup.MostBaseHealth;
+            yield return Press("Base health/>");
+            Check("and at the most", GameSettings.SkirmishBaseHealth == MatchSetup.MostBaseHealth);
+            GameSettings.SkirmishBaseHealth = 1500;
+            yield return null;
+            Rect stepper = drawn["Base health/<"];
+            yield return Click(menu, new Vector2(stepper.x - 30f, stepper.center.y));
+            Check($"a click near the slider's end moves it, on a whole step (now {GameSettings.SkirmishBaseHealth})", GameSettings.SkirmishBaseHealth > 5000 && GameSettings.SkirmishBaseHealth % MatchSetup.BaseHealthStep == 0);
+            GameSettings.SkirmishBaseHealth = 1500;
+            yield return Press("Difficulty/Hard");
+            Check("the panel sets the difficulty", GameSettings.Difficulty == AiDifficulty.Hard);
+            yield return Wait(0.2f);
+            yield return Shot("04e_skirmish_mode");
+
+            Check("the card filter starts at All cards", menu.Cards == CardFilter.AllCards);
+            yield return Press("Cards/open");
+            Check("its box opens the list", menu.CardListOpen);
+            yield return Wait(0.2f);
+            yield return Shot("04f_card_list");
+            yield return PressNothing("Start");
+            yield return PressNothing("Back");
+            yield return PressNothing("Difficulty/Easy");
+            yield return Click(menu, drawn["Back"].center);
+            Check("a click on a button behind the list only closes the list", !menu.CardListOpen && menu.CurrentPage == MainMenuHud.Page.Play && menu.Cards == CardFilter.AllCards);
+
+            yield return Wait(MainMenuHud.ClosedListGuardSeconds + 0.1f);
+            yield return Click(menu, drawn["Cards/open"].center);
+            Check("a click on its box opens the list", menu.CardListOpen);
+            yield return Click(menu, drawn["Cards/open"].center);
+            Check("and closes it again", !menu.CardListOpen);
+            yield return Press("Cards/open");
+            yield return Press("Cards/All cards");
+            Check("a line of the list picks it and closes the list", !menu.CardListOpen && menu.Cards == CardFilter.AllCards);
+            yield return Wait(MainMenuHud.ClosedListGuardSeconds + 0.1f);
+            yield return Click(menu, drawn["Cards/open"].center);
+            yield return Click(menu, drawn["Start"].center);
+            Check($"where the list lies over Start, a click takes the list's line (now {menu.Cards})", !menu.CardListOpen && menu.Cards == CardFilter.NoReinforcements);
+            Check("and doesn't start the match", !menu.IsLeaving);
+
+            // The second click of a double-click on that line, where Start is live again. SkirmishMatch clicks here once the guard is over, and that does start the match.
+            yield return Click(menu, drawn["Start"].center);
+            Check("the second click of a double-click on the list's line doesn't start the match", !menu.IsLeaving && menu.Cards == CardFilter.NoReinforcements);
+            yield return Wait(MainMenuHud.ClosedListGuardSeconds + 0.1f);
+            yield return Click(menu, drawn["Cards/open"].center);
+            Check("a click takes again once the time for a double-click is over", menu.CardListOpen);
+            yield return Click(menu, drawn["Cards/open"].center);
+            yield return Wait(0.2f);
+            yield return Shot("04g_card_list_picked");
+
+            yield return Press("Cards/open");
+            yield return PostEscape();
+            Check("Esc closes the list first, and stays on the page", !menu.CardListOpen && menu.CurrentPage == MainMenuHud.Page.Play && menu.SelectedMode == MatchMode.UnlockSkirmish);
+            yield return PostEscape();
+            Check("the next Esc goes back to the first page", menu.CurrentPage == MainMenuHud.Page.Main && menu.SelectedMode == null);
+            Check("what was picked is kept until the menu loads again", menu.Cards == CardFilter.NoReinforcements);
+            yield return Press("Play");
+            yield return Press("Back");
+            Check("Back goes to the first page", menu.CurrentPage == MainMenuHud.Page.Main);
+
+            // Back to as it was, so that the tour goes on from the player's own settings.
+            GameSettings.SkirmishBaseHealth = health;
+            GameSettings.Difficulty = difficulty;
+            MenuStyle.ButtonDrawnForTest -= note;
+        }
+
+        /// <summary>An Unlock Skirmish match with settings picked on the panel, as far as its unlock page, and Esc there.</summary>
+        private IEnumerator SkirmishMatch()
+        {
+            var start = new Rect();
+            Action<string, Rect> note = (key, rect) => { if (key == "Start") start = rect; };
+            MenuStyle.ButtonDrawnForTest += note;
+            yield return Press("Play");
+            yield return Press("Unlock Skirmish mode");
+            GameSettings.SkirmishBaseHealth = 1500;
+            yield return Press("Base health/>");
+            yield return Press("Difficulty/Hard");
+            yield return Press("Cards/open");
+            yield return Press("Cards/Only reinforcement cards");
+            yield return Wait(0.2f);
+            yield return Shot("20_skirmish_panel");
+            yield return Wait(MainMenuHud.ClosedListGuardSeconds + 0.1f);
+            yield return Click(FindAnyObjectByType<MainMenuHud>(), start.center);
+            MenuStyle.ButtonDrawnForTest -= note;
+            Check("a click on Start, with the list long closed, starts the match", FindAnyObjectByType<MainMenuHud>().IsLeaving);
+            yield return WaitForScene(GameFlow.MatchScene);
+            yield return Wait(1f);
+
+            var match = FindAnyObjectByType<MatchController>();
+            MatchRules rules = match.Match.Rules;
+            Check("Start reaches an Unlock Skirmish draft", rules.Mode == MatchMode.UnlockSkirmish && match.Match.Phase == MatchPhase.Draft);
+            Check($"with the health picked (it has {rules.BaseHealth})", rules.BaseHealth == 1600);
+            Check($"with the card filter picked (it has {rules.Cards})", rules.Cards == CardFilter.OnlyReinforcements);
+            Check($"with the difficulty picked (it has {match.Difficulty})", match.Difficulty == AiDifficulty.Hard);
+            yield return Shot("21_skirmish_draft");
+            Check("the first card can be chosen", match.ChooseDraft(0).Ok);
+            yield return Wait(1f);
+            yield return Shot("22_skirmish_deployment");
+
+            var hud = FindAnyObjectByType<MatchHud>();
+            yield return Press(MatchHud.UnlockUnitsLabel);
+            yield return Wait(0.2f);
+            Check("the Unlock units button opens the page", hud.IsUnlockPageOpen);
+            yield return Shot("23_skirmish_unlock_page");
+            yield return PostEscape();
+            Check("Esc closes the unlock page", !hud.IsUnlockPageOpen);
+            Check("and doesn't pause", !GamePause.IsPaused);
+            yield return Shot("24_skirmish_page_closed");
+            yield return PostEscape();
+            Check("the next Esc pauses", GamePause.IsPaused);
+            yield return PostEscape();
+            Check("and the next one resumes", !GamePause.IsPaused);
         }
 
         /// <summary>Goes through what makes a small sound, and counts what is heard.</summary>
@@ -264,7 +446,7 @@ namespace Halobellum.UI
             UiAudio.PointerByTest = Vector2.one;
             yield return Wait(3f);
             Check("no hover sound with the pointer standing still", Hovers() == 0);
-            yield return Sweep("the main menu", buttons, new[] { "New Match", "Sandbox", "Settings", "Quit", "Difficulty/Normal" }, Hovers);
+            yield return Sweep("the main menu", buttons, new[] { "Play", "Settings", "Quit" }, Hovers);
             yield return Shot("s1_menu");
 
             // Resting on a button: not heard again, not even when the scene it is in opens again under it.
@@ -292,7 +474,16 @@ namespace Halobellum.UI
             yield return Press("Back");
             yield return Wait(0.3f);
 
-            yield return Press("New Match");
+            yield return Press("Play");
+            yield return Press("Unlock Skirmish mode");
+            buttons.Clear();
+            yield return Wait(0.2f);
+            yield return Sweep("the Play page", buttons, new[] { "Faction mode", "Unlock Skirmish mode", "Sandbox", "Back", "Difficulty/Normal", "Base health/>", "Cards/open", "Start" }, Hovers);
+            yield return Shot("s2b_play_page");
+            UiAudio.PointerByTest = Vector2.one;
+            yield return Wait(0.1f);
+            yield return Press("Faction mode");
+            yield return Press("Start");
             yield return WaitForScene(GameFlow.MatchScene);
             yield return Wait(1f);
             var match = FindAnyObjectByType<MatchController>();
@@ -444,16 +635,70 @@ namespace Halobellum.UI
             if (SceneManager.GetActiveScene().name != scene) Check("reached " + scene, false);
         }
 
-        private static IEnumerator Press(string label)
+        private IEnumerator Press(string label)
         {
             MenuStyle.PressedByTest = label;
             float limit = Time.realtimeSinceStartup + 3f;
             while (MenuStyle.PressedByTest == label && Time.realtimeSinceStartup < limit) yield return null;
             if (MenuStyle.PressedByTest == label)
             {
+                // The tour can't go on from a screen it didn't reach, so it ends here rather than in a timeout further on.
                 MenuStyle.PressedByTest = null;
-                Debug.Log("MenuDemo: PROBLEM: found no button called " + label);
+                Check("found a button called " + label, false);
+                Finish();
+                Application.Quit();
+                StopAllCoroutines();
+                yield break;
             }
+            yield return null;
+        }
+
+        /// <summary>A press and release of the left button at this place on the menu, in pixels of IMGUI's screen, as IMGUI's own events.</summary>
+        private IEnumerator Click(MainMenuHud menu, Vector2 pixels)
+        {
+            _clickMenu = menu;
+            _clickAt = pixels;
+            _clickStep = 0;
+            while (_clickStep >= 0) yield return null;
+            yield return null;
+        }
+
+        /// <summary>Gives the menu's drawing one event of Click's, a frame apart, so that a button's press and release fall in two passes as they do with a mouse.</summary>
+        private void OnGUI()
+        {
+            if (_clickStep < 0 || Event.current.type != EventType.Repaint) return;
+            bool release = _clickStep == 1;
+            Event real = Event.current;
+            if (release) GUIUtility.hotControl = _clickControl; // The press was a frame ago, and the real mouse isn't down.
+            Event.current = new Event { type = release ? EventType.MouseUp : EventType.MouseDown, button = 0, clickCount = 1 };
+            _clickMenu.DrawForTest(_clickAt);
+            _clickControl = GUIUtility.hotControl;
+            GUIUtility.hotControl = 0;
+            GUI.matrix = Matrix4x4.identity;
+            Event.current = real;
+            _clickStep = release ? -1 : 1;
+        }
+
+        /// <summary>Tries a button that should not take a press now, because it is drawn greyed out behind the card list.</summary>
+        private IEnumerator PressNothing(string label)
+        {
+            MenuStyle.PressedByTest = label;
+            yield return Wait(0.3f);
+            Check($"{label} takes no press while the list is open", MenuStyle.PressedByTest == label);
+            MenuStyle.PressedByTest = null;
+        }
+
+        /// <summary>A press and release of Esc, as an event posted to the Input System inside the game.</summary>
+        private static IEnumerator PostEscape()
+        {
+            Keyboard keyboard = Keyboard.current;
+            if (keyboard == null) yield break;
+            if (!keyboard.enabled) InputSystem.EnableDevice(keyboard);
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.Escape));
+            yield return null;
+            yield return null;
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState());
+            yield return null;
             yield return null;
         }
 
@@ -461,16 +706,7 @@ namespace Halobellum.UI
         private IEnumerator PressEscape()
         {
             bool before = GamePause.IsPaused;
-            Keyboard keyboard = Keyboard.current;
-            if (keyboard != null)
-            {
-                InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.Escape));
-                yield return null;
-                yield return null;
-                InputSystem.QueueStateEvent(keyboard, new KeyboardState());
-                yield return null;
-                yield return null;
-            }
+            yield return PostEscape();
             if (GamePause.IsPaused == before)
             {
                 Debug.Log("MenuDemo: Esc did not arrive (no keyboard focus?), so the pause menu was called directly.");

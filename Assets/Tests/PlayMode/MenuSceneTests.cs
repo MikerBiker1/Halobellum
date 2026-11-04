@@ -2,6 +2,8 @@
 // Plays the real menu and pause flow (M10): the MainMenu scene opens with its camera moving and its Pelicans flying, and its Scarab standing still; New Match reaches a
 // working draft; pausing truly stops a battle in every phase and resumes where it was, at the same speed; the HUD and field input are
 // off while paused and back after; leaving for the menu puts time right; the Sandbox's Back button goes where it came from.
+// The Play page, through the plain methods its buttons call: its pages, Esc stepping back, and that a start reaches the match with what was chosen. Its buttons, card list and a real Esc
+// are only pressed by -menuDemo, since a batch run draws no IMGUI.
 // Depends on: Halobellum.Presentation, Halobellum.UI, Halobellum.Economy, NUnit, Unity Test Framework.
 
 using System.Collections;
@@ -31,6 +33,9 @@ namespace Halobellum.Tests
         {
             GamePause.Resume();
             Assert.AreEqual(1f, Time.timeScale);
+            GameFlow.TakeMatchSetup(); // These last are static, and held in memory.
+            GameSettings.SkirmishBaseHealth = GameSettings.DefaultSkirmishBaseHealth;
+            GameSettings.Difficulty = AiDifficulty.Normal;
             yield return null;
         }
 
@@ -52,6 +57,16 @@ namespace Halobellum.Tests
             _battle = Object.FindAnyObjectByType<BattleController>();
             _match.NewMatch(3);
             yield return null;
+        }
+
+        private static IEnumerator LoadMenu(System.Action<MainMenuHud> found)
+        {
+            yield return SceneManager.LoadSceneAsync(GameFlow.MainMenuScene, LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+            var hud = Object.FindAnyObjectByType<MainMenuHud>();
+            Assert.IsNotNull(hud);
+            found(hud);
         }
 
         private static IEnumerator WaitRealSeconds(float seconds)
@@ -175,6 +190,131 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
+        public IEnumerator ThePlayPage_ShowsAPanelForTheSelectedMode_AndBackGoesToTheFirstPage()
+        {
+            MainMenuHud hud = null;
+            yield return LoadMenu(found => hud = found);
+            Assert.AreEqual(MainMenuHud.Page.Main, hud.CurrentPage);
+            Assert.IsNull(hud.SelectedMode);
+
+            hud.OpenPlayPage();
+            Assert.AreEqual(MainMenuHud.Page.Play, hud.CurrentPage);
+            Assert.IsNull(hud.SelectedMode, "No mode is chosen for the player.");
+
+            hud.SelectMode(MatchMode.Faction);
+            Assert.AreEqual(MatchMode.Faction, hud.SelectedMode);
+            hud.SelectMode(MatchMode.UnlockSkirmish);
+            Assert.AreEqual(MatchMode.UnlockSkirmish, hud.SelectedMode);
+
+            hud.Back();
+            Assert.AreEqual(MainMenuHud.Page.Main, hud.CurrentPage);
+            Assert.IsNull(hud.SelectedMode);
+        }
+
+        [UnityTest]
+        public IEnumerator Esc_StepsBack_FromTheCardList_ThenThePlayPage_AndStopsAtTheFirstPage()
+        {
+            MainMenuHud hud = null;
+            yield return LoadMenu(found => hud = found);
+            hud.OpenPlayPage();
+            hud.SelectMode(MatchMode.UnlockSkirmish);
+            hud.CardListOpen = true;
+
+            Assert.IsTrue(hud.HandleEscape());
+            Assert.IsFalse(hud.CardListOpen);
+            Assert.AreEqual(MainMenuHud.Page.Play, hud.CurrentPage, "Only the list closes.");
+            Assert.AreEqual(MatchMode.UnlockSkirmish, hud.SelectedMode);
+
+            Assert.IsTrue(hud.HandleEscape());
+            Assert.AreEqual(MainMenuHud.Page.Main, hud.CurrentPage);
+            Assert.IsNull(hud.SelectedMode);
+
+            Assert.IsFalse(hud.HandleEscape(), "There is nothing further to go back to.");
+            Assert.AreEqual(MainMenuHud.Page.Main, hud.CurrentPage);
+            Assert.IsFalse(hud.IsLeaving);
+        }
+
+        [UnityTest]
+        public IEnumerator Start_WithNoModeSelected_GoesNowhere()
+        {
+            MainMenuHud hud = null;
+            yield return LoadMenu(found => hud = found);
+            hud.OpenPlayPage();
+            hud.StartSelected();
+            Assert.IsFalse(hud.IsLeaving);
+        }
+
+        [UnityTest]
+        public IEnumerator AFactionStart_ReachesAFactionMatch_WithTheChosenDifficulty()
+        {
+            MainMenuHud hud = null;
+            yield return LoadMenu(found => hud = found);
+            GameSettings.Difficulty = AiDifficulty.Easy;
+            GameSettings.SkirmishBaseHealth = 500;
+            hud.OpenPlayPage();
+            hud.SelectMode(MatchMode.Faction);
+            hud.Cards = CardFilter.OnlyReinforcements;
+            hud.StartSelected();
+            Assert.IsTrue(hud.IsLeaving);
+            yield return WaitForScene(GameFlow.MatchScene);
+
+            var match = Object.FindAnyObjectByType<MatchController>();
+            Assert.AreEqual(MatchMode.Faction, match.Match.Rules.Mode);
+            Assert.AreEqual(CardFilter.AllCards, match.Match.Rules.Cards, "Faction mode takes only the difficulty.");
+            Assert.AreEqual(2000, match.Match.Rules.BaseHealth);
+            Assert.AreEqual(AiDifficulty.Easy, match.Difficulty);
+        }
+
+        [UnityTest]
+        public IEnumerator ASkirmishStart_ReachesTheMatch_WithTheChosenHealthAndFilter()
+        {
+            MainMenuHud hud = null;
+            yield return LoadMenu(found => hud = found);
+            GameSettings.Difficulty = AiDifficulty.Hard;
+            GameSettings.SkirmishBaseHealth = 500;
+            hud.OpenPlayPage();
+            hud.SelectMode(MatchMode.UnlockSkirmish);
+            hud.Cards = CardFilter.NoReinforcements;
+            hud.StartSelected();
+            yield return WaitForScene(GameFlow.MatchScene);
+
+            var match = Object.FindAnyObjectByType<MatchController>();
+            Assert.AreEqual(MatchMode.UnlockSkirmish, match.Match.Rules.Mode);
+            Assert.AreEqual(500, match.Match.Rules.BaseHealth);
+            Assert.AreEqual(CardFilter.NoReinforcements, match.Match.Rules.Cards);
+            Assert.AreEqual(AiDifficulty.Hard, match.Difficulty);
+            Assert.AreEqual(MatchPhase.Draft, match.Match.Phase);
+            Assert.AreEqual(5, match.Match.PlayerDraft.Count);
+        }
+
+        [UnityTest]
+        public IEnumerator TheCardFilter_GoesBackToAllCards_WhenTheMenuLoads_AndTheHealthStays()
+        {
+            MainMenuHud hud = null;
+            yield return LoadMenu(found => hud = found);
+            Assert.AreEqual(CardFilter.AllCards, hud.Cards);
+            hud.Cards = CardFilter.OnlyReinforcements;
+            GameSettings.SkirmishBaseHealth = 700;
+            hud.OpenPlayPage();
+
+            yield return LoadMenu(found => hud = found);
+            Assert.AreEqual(CardFilter.AllCards, hud.Cards);
+            Assert.AreEqual(MainMenuHud.Page.Main, hud.CurrentPage);
+            Assert.AreEqual(700, GameSettings.SkirmishBaseHealth);
+        }
+
+        [UnityTest]
+        public IEnumerator TheSandbox_LeavesFromThePlayPage_AndComesBackToTheMenu()
+        {
+            MainMenuHud hud = null;
+            yield return LoadMenu(found => hud = found);
+            hud.OpenPlayPage();
+            hud.OpenSandbox();
+            yield return WaitForScene(GameFlow.SandboxScene);
+            Assert.AreEqual(GameFlow.MainMenuScene, GameFlow.SandboxCameFrom);
+        }
+
+        [UnityTest]
         public IEnumerator Pausing_StopsTheBattle_AndResumesItAtTheSameSpeed()
         {
             yield return LoadMatch();
@@ -293,7 +433,7 @@ namespace Halobellum.Tests
 
             GameFlow.NewMatch();
             yield return WaitForScene(GameFlow.MatchScene);
-            SceneManager.LoadScene(MatchHud.SandboxSceneName); // The draft screen's own button.
+            SceneManager.LoadScene(MatchHud.SandboxSceneName); // From a match.
             yield return WaitForScene(GameFlow.SandboxScene);
             Assert.AreEqual(GameFlow.MatchScene, GameFlow.SandboxCameFrom);
             GameFlow.LeaveSandbox();

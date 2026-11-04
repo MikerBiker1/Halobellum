@@ -350,9 +350,9 @@ namespace Halobellum.Tests
             Assert.AreEqual(0, Hovers, "A pointer standing still.");
             // A batch run draws no IMGUI at all, so this says something only in the Editor's Test Runner. In a built game, -menuDemo -menuDemoSounds checks the same on real screens.
             if (Application.isBatchMode && _buttons.Count == 0) Assert.Ignore("Batch mode draws no IMGUI.");
-            Assert.IsTrue(_buttons.ContainsKey("Sandbox") && _buttons.ContainsKey("Settings"), "The menu should have drawn its buttons.");
+            Assert.IsTrue(_buttons.ContainsKey("Play") && _buttons.ContainsKey("Settings"), "The menu should have drawn its buttons.");
 
-            UiAudio.PointerByTest = _buttons["Sandbox"].center;
+            UiAudio.PointerByTest = _buttons["Play"].center;
             yield return Frames(3);
             Assert.AreEqual(1, Hovers, "It moved onto a button.");
             yield return Frames(120);

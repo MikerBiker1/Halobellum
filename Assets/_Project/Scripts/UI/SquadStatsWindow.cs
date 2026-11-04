@@ -9,7 +9,9 @@
 // ready squad of the type, when there are 2 or more. The two share the row with the level line, and
 // go on a row of their own if a theme's fonts leave no room for that.
 // The unit's picture (UnitIcons) is at the top. Placeholder UI drawn with Unity's immediate-mode GUI.
-// It also shows a unit clicked in the shop (ShopUnit): a level 1 squad of that type, with its techs locked.
+// It also shows a unit clicked in the shop (ShopUnit): a level 1 squad of that type, with its techs locked. In Unlock Skirmish it shows a unit
+// hovered in the bar or on the unlock page the same way (ShowHover, and MatchHud draws it with DrawHover, over its own dim), wherever that says;
+// while it does, nothing of a selected squad shows, and there is no x to press.
 // Depends on: Halobellum.Presentation (BattleController, SquadSelection, ISquadProgression, UiHitAreas), Halobellum.Core, UnitIcons.
 
 using System.Collections.Generic;
@@ -25,6 +27,8 @@ namespace Halobellum.UI
     public sealed class SquadStatsWindow : MonoBehaviour
     {
         private const float ScreenLeft = 10f, DefaultWidth = 440f;
+        /// <summary>A hovered unit's window goes no higher than this over the bar: above it is the top bar.</summary>
+        private const float LeastHoverTop = 78f;
 
         [SerializeField] private BattleController battle;
         [SerializeField] private float windowWidth = DefaultWidth;
@@ -48,11 +52,40 @@ namespace Halobellum.UI
         private readonly List<string> _techNames = new List<string>(), _techEffects = new List<string>();
         private Rect _window;
         private int _windowFrame = -1;
-        private bool _levelButtonsOwnRow;
+        private bool _levelButtonsOwnRow, _shownHover;
+        private UnitStats _hoverUnit;
+        private int _hoverFrame = -10;
+        private float _hoverRight, _hoverBottom, _hoverBesideRight;
         private float _levelUpWidth, _levelAllWidth, _levelLineWidth;
 
         /// <summary>The unit in the shop this window is showing, or null. Selecting a squad or a tower, or a click outside, closes it.</summary>
         public UnitStats ShopUnit { get; set; }
+
+        /// <summary>The right edge of the column this window stands in at the left of the screen.</summary>
+        public const float ColumnRight = ScreenLeft + DefaultWidth;
+
+        /// <summary>The unit hovered in the bar or on the unlock page, or null. It lasts while something keeps showing it.</summary>
+        public UnitStats HoverUnit => _hoverFrame >= Time.frameCount - 1 ? _hoverUnit : null;
+
+        /// <summary>
+        /// Shows this unit's stats for this frame (call it on Repaint), with the window's right edge and bottom here. A window too tall for that
+        /// goes down to the bottom of the screen instead, with its right edge at besideRight.
+        /// </summary>
+        public void ShowHover(UnitStats unit, float rightEdge, float bottom, float besideRight)
+        {
+            _hoverUnit = unit;
+            _hoverFrame = Time.frameCount;
+            _hoverRight = rightEdge;
+            _hoverBottom = bottom;
+            _hoverBesideRight = besideRight;
+        }
+
+        /// <summary>Where a hovered unit's window goes (ShowHover), in HUD units.</summary>
+        public static Rect HoverRect(float width, float height, float rightEdge, float bottom, float besideRight, float screenHeight)
+        {
+            if (bottom - height >= LeastHoverTop) return new Rect(rightEdge - width, bottom - height, width, height);
+            return new Rect(besideRight - width, Mathf.Max(0f, screenHeight - height - 10f), width, height);
+        }
 
         /// <summary>For a test tool: where the level line and the two buttons were last drawn, in HUD units. Width 0 when not drawn.</summary>
         public Rect LevelLineShown { get; private set; }
@@ -94,10 +127,10 @@ namespace Halobellum.UI
             if (clickedOutside || RightClick.WasClicked || (keyboard != null && keyboard.escapeKey.wasPressedThisFrame)) ShopUnit = null;
         }
 
-        /// <summary>What the window says under the stats of a unit in the shop.</summary>
-        public static SquadProgressView ShopProgress(UnitStats unit)
+        /// <summary>What the window says under the stats of a unit in the shop, or of one hovered in Unlock Skirmish, which has no shop.</summary>
+        public static SquadProgressView ShopProgress(UnitStats unit, bool hovered = false)
         {
-            var view = new SquadProgressView { SideLabel = "In the shop: level 1, no techs", Level = 1 };
+            var view = new SquadProgressView { SideLabel = hovered ? "A new squad: level 1, no techs" : "In the shop: level 1, no techs", Level = 1 };
             foreach (TechUpgrade tech in unit.TechUpgrades ?? new TechUpgrade[0])
             {
                 if (tech != null) view.Techs.Add(new TechLine { Tech = tech, Locked = true });
@@ -109,24 +142,43 @@ namespace Halobellum.UI
         {
             if (battle == null || battle.Simulation == null || _selection == null) return;
             if (_selection.SelectedSquadId >= 0 || _selection.SelectedTower != null) ShopUnit = null;
+            if (HoverUnit != null) return; // MatchHud draws that, and a hovered unit must not get the selected squad's XP, techs and level-up buttons.
             if (_selection.SelectedSquadId < 0 && ShopUnit == null) return;
+            DrawWindow(ShopUnit, null);
+        }
+
+        /// <summary>The window of the unit ShowHover was told of, if any, from inside another script's OnGUI, on a Repaint. It has nothing there to click.</summary>
+        public void DrawHover()
+        {
+            UnitStats hover = HoverUnit;
+            if (hover == null || battle == null || battle.Simulation == null || _selection == null) return;
+            DrawWindow(hover, hover);
+        }
+
+        /// <param name="notFielded">A unit to show as a new squad, or null for the selected squad.</param>
+        /// <param name="hover">The same unit if it is a hovered one, or null.</param>
+        private void DrawWindow(UnitStats notFielded, UnitStats hover)
+        {
             HudTheme.Apply();
             EnsureStyles();
             float scale = HudScale.Apply();
 
             int alive = 0;
             float totalHealth = 0f;
-            SimUnit sample = ShopUnit != null ? null : FindAnyOfSquad(_selection.SelectedSquadId, out alive, out totalHealth);
-            if (sample == null && ShopUnit == null) return;
-            UnitStats s = ShopUnit ?? sample.Stats;
+            SimUnit sample = notFielded != null ? null : FindAnyOfSquad(_selection.SelectedSquadId, out alive, out totalHealth);
+            if (sample == null && notFielded == null) return;
+            UnitStats s = notFielded ?? sample.Stats;
 
-            if (Time.unscaledTime >= _nextRefresh || _selection.SelectedSquadId != _shownSquad || s != _shownStats || _shownBattle != battle.Simulation || _shownStyles != _styleVersion)
-                Refresh(s, sample, alive, totalHealth);
+            if (Time.unscaledTime >= _nextRefresh || _selection.SelectedSquadId != _shownSquad || s != _shownStats || (hover != null) != _shownHover || _shownBattle != battle.Simulation || _shownStyles != _styleVersion)
+                Refresh(s, sample, alive, totalHealth, hover != null);
             string body = _body;
             float textHeight = _textHeight;
             SquadProgressView progress = _progress;
             float height = HeaderHeight + textHeight + ProgressHeight(progress) + (progress != null && _levelButtonsOwnRow ? LevelRowHeight : 0f);
-            var window = new Rect(ScreenLeft, HudScale.ScaledHeight(scale) - height - 10f, windowWidth, height);
+            float screenHeight = HudScale.ScaledHeight(scale);
+            Rect window = hover != null
+                ? HoverRect(windowWidth, height, _hoverRight, _hoverBottom, _hoverBesideRight, screenHeight)
+                : new Rect(ScreenLeft, screenHeight - height - 10f, windowWidth, height);
             UiHitAreas.Add(HudScale.ToScreen(window, scale));
             _window = window;
             _windowFrame = Time.frameCount;
@@ -135,7 +187,7 @@ namespace Halobellum.UI
             CardScreens.DrawUnitPicture(new Rect(window.x + 10f, window.y + 6f, PictureSize, PictureSize), s, null, HudTheme.Accent);
             GUI.Label(new Rect(window.x + PictureSize + 18f, window.y + 6f, windowWidth - PictureSize - 56f, 30f), s.Name, _title);
             GUI.Label(new Rect(window.x + PictureSize + 18f, window.y + 34f, windowWidth - PictureSize - 56f, 24f), _side, _small);
-            if (GUI.Button(new Rect(window.xMax - 34f, window.y + 8f, 24f, 22f), "x"))
+            if (hover == null && GUI.Button(new Rect(window.xMax - 34f, window.y + 8f, 24f, 22f), "x"))
             {
                 ShopUnit = null;
                 _selection.Select(-1);
@@ -146,8 +198,9 @@ namespace Halobellum.UI
         }
 
         /// <param name="sample">A body of the selected squad, or null for a unit in the shop.</param>
-        private void Refresh(UnitStats stats, SimUnit sample, int alive, float totalHealth)
+        private void Refresh(UnitStats stats, SimUnit sample, int alive, float totalHealth, bool hovered)
         {
+            _shownHover = hovered;
             _nextRefresh = Time.unscaledTime + RefreshSeconds;
             _shownSquad = _selection.SelectedSquadId;
             _shownStats = stats;
@@ -156,7 +209,7 @@ namespace Halobellum.UI
             _body = BuildText(stats, sample != null, alive, totalHealth);
             _measure.text = _body;
             _textHeight = _text.CalcHeight(_measure, windowWidth - 2f * TextInset);
-            _progress = sample != null ? _progression?.DescribeProgress(_shownSquad) : ShopProgress(stats);
+            _progress = sample != null ? _progression?.DescribeProgress(_shownSquad) : ShopProgress(stats, hovered);
             _side = _progress?.SideLabel ?? $"Team {sample.Team}";
             _techNames.Clear();
             _techEffects.Clear();

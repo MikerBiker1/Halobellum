@@ -8,7 +8,8 @@
 // (CardScreens.TextThatDidNotFit), which screens have text that only fits at the smallest size (CardScreens.TextAtTheFloor), and a summary line at the end. To reach those screens it builds offers and sets the match's phase
 // directly: this never happens in a real match. Looks only: nothing here runs without the flag.
 // With "-cardsDemoLayout" as well it takes only the pictures for the narrowest windows and largest UI scales (without saving any of them): the deployment bar and shop, the Sandbox with its
-// squad window at its tallest next to the Items panel, and its result line; and for each faction a close look at the selection ring on that faction's ground.
+// squad window at its tallest next to the Items panel, and its result line; and for each faction a close look at the selection ring on that faction's ground. Also Unlock Skirmish's bar, unlock
+// page and hover stats at 1080p and at UI scale 1.25, and "Skirmish HUD: ..." checks of its buttons and of a real Esc sent through the Input System. Nothing goes outside the game.
 // With "-cardsDemoLevelAll" as well it takes only the pictures of the Level all button: for each faction 3 squads of a type with full XP bars, with enough credits, too few, with the selected squad
 // not ready, and after pressing it (through the view's action, as a click does), and logs "Level all: ..." checks of the prices, the levels and that the buttons fit, at every UI scale.
 // Depends on: CardScreens, Halobellum.Presentation (MatchController, BattleController, SquadSelection), Halobellum.Economy, UnityEngine.
@@ -24,6 +25,8 @@ using Halobellum.Core;
 using Halobellum.Economy;
 using Halobellum.Presentation;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.SceneManagement;
 
 namespace Halobellum.UI
@@ -38,6 +41,11 @@ namespace Halobellum.UI
         private static readonly (int w, int h, float ui)[] LayoutSizes =
         {
             (1280, 1024, 1.25f), (1280, 1024, 1.1f), (1024, 768, 1.25f), (1024, 768, 1.1f), (1600, 900, 1.25f), (1920, 1080, 1f),
+        };
+
+        private static readonly (int w, int h, float ui)[] SkirmishSizes =
+        {
+            (1920, 1080, 1f), (1920, 1080, 1.05f), (1920, 1080, 1.25f), (1280, 1024, 1.25f),
         };
 
         private static readonly (int w, int h, bool full)[] Sizes =
@@ -56,6 +64,11 @@ namespace Halobellum.UI
         private MatchController _match;
         private int _totalDidNotFit, _totalAtTheFloor;
         private readonly List<string> _problems = new List<string>();
+        private MatchHud _hud;
+        private int _rightClickProbe = -1, _probedControl, _skirmishProblems;
+        private int _readyProbeButton = -1;
+
+        private void Awake() => useGUILayout = false;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Install()
@@ -472,6 +485,10 @@ namespace Halobellum.UI
                 yield return Shot($"{w}x{h}_ui{ui * 100f:0}_deployment");
             }
 
+            yield return SkirmishHudButtons();
+            yield return SkirmishHudPictures();
+
+            GameSettings.UseUiScaleForThisRun(1f);
             SceneManager.LoadScene("Sandbox");
             yield return new WaitForSecondsRealtime(1.5f);
             var sandbox = FindFirstObjectByType<SandboxController>();
@@ -507,6 +524,273 @@ namespace Halobellum.UI
                 yield return Shot($"{w}x{h}_ui{ui * 100f:0}_sandbox_result");
             }
             Debug.Log("Card demo's layout pictures finished.");
+        }
+
+        private void SkirmishCheck(string what, bool ok)
+        {
+            Debug.Log($"Skirmish HUD: {(ok ? "ok" : "PROBLEM")}: {what}");
+            if (!ok) _skirmishProblems++;
+        }
+
+        /// <summary>Unlock Skirmish's bar, unlock page and hover stats.</summary>
+        private IEnumerator SkirmishHudPictures()
+        {
+            SquadStatsWindow stats = FindFirstObjectByType<SquadStatsWindow>();
+            var setup = new MatchSetup { Mode = MatchMode.UnlockSkirmish };
+            void Check(string what, bool ok) => SkirmishCheck(what, ok);
+            Rect menuButton = default;
+            void NoteMenuButton(string key, Rect pixels)
+            {
+                if (key == "Menu") menuButton = pixels;
+            }
+            MenuStyle.ButtonDrawnForTest += NoteMenuButton;
+
+            string tallestName = null;
+            foreach ((int w, int h, float ui) in SkirmishSizes)
+            {
+                Screen.SetResolution(w, h, FullScreenMode.Windowed);
+                GameSettings.UseUiScaleForThisRun(ui);
+                yield return new WaitForSecondsRealtime(0.8f);
+                string prefix = $"{w}x{h}_ui{ui * 100f:0}_skirmish_";
+                float hudWidth = HudScale.ScaledWidth(HudScale.ScaleFor(Screen.width, Screen.height, ui));
+                float hudHeight = HudScale.ScaledHeight(HudScale.ScaleFor(Screen.width, Screen.height, ui));
+                _match.NewMatch(1, setup);
+                yield return Shot(prefix + "draft");
+                _match.ChooseDraft(0);
+                yield return new WaitForSecondsRealtime(0.5f);
+                PlayerState player = _match.Match.Player;
+                player.Credits = 5000;
+                yield return Shot(prefix + "bar_start");
+                Check($"{prefix} the bar is on the screen, at {_hud.UnitBarShown}", _hud.UnitBarShown.xMax <= hudWidth && _hud.UnitBarShown.yMax <= hudHeight);
+
+                var sorted = new List<UnitStats>();
+                MatchHud.FillShopRows(player.Roster, sorted);
+                if (tallestName == null)
+                {
+                    // The tallest window of them all, measured rather than guessed.
+                    var heights = new List<(float height, UnitStats unit)>();
+                    foreach (UnitStats unit in sorted)
+                    {
+                        player.Unlocked.Add(unit);
+                        _hud.DemoHover = unit;
+                        for (int frame = 0; frame < 3 && (stats.HoverUnit != unit || !stats.TryGetWindow(out Rect _)); frame++) yield return null;
+                        yield return null;
+                        stats.TryGetWindow(out Rect window);
+                        heights.Add((window.height, unit));
+                    }
+                    _hud.DemoHover = null;
+                    heights.Sort((a, b) => b.height.CompareTo(a.height));
+                    tallestName = heights[0].unit.Name;
+                    Debug.Log("Skirmish HUD: the tallest hover windows: " + string.Join(", ", heights.Take(5).Select(p => $"{p.unit.Name} {p.height:0}")) + $"; the shortest {heights[heights.Count - 1].unit.Name} {heights[heights.Count - 1].height:0}");
+                    yield return Shot(prefix + "bar_every_unit");
+                }
+
+                UnitStats tallest = sorted.First(u => u.Name == tallestName); // Each match has its own.
+                int columns = MatchHud.UnitBarColumns(hudWidth);
+                player.Unlocked.Clear();
+                player.Unlocked.Add(tallest);
+                foreach (UnitStats unit in sorted.Take(3 * columns - 1)) player.Unlocked.Add(unit);
+                yield return Shot(prefix + "bar_3_rows");
+
+                UnitStats shortOne = sorted[0];
+                _hud.DemoHover = shortOne;
+                yield return Shot(prefix + "bar_hover");
+                stats.TryGetWindow(out Rect hoverWindow);
+                Check($"{prefix} hovering {shortOne.Name}: window at {hoverWindow}", hoverWindow.height > 0f && !hoverWindow.Overlaps(_hud.UnitBarShown) && hoverWindow.y >= 0f);
+                _hud.DemoHover = tallest;
+                yield return Shot(prefix + "bar_hover_tallest");
+                stats.TryGetWindow(out hoverWindow);
+                Check($"{prefix} hovering {tallest.Name}: window at {hoverWindow}, not over the bar, top on the screen", !hoverWindow.Overlaps(_hud.UnitBarShown) && hoverWindow.y >= 0f && hoverWindow.yMax <= hudHeight);
+
+                // Spells on the left, for the hover window to keep clear of or sit above.
+                foreach (CardStats card in player.Faction.Cards.Where(c => c.Type == CardType.Spell).Take(4))
+                    player.Spells.Add(new OwnedSpell { Id = 1000 + player.Spells.Count, Stats = card.Spell, ReadyRound = 1 });
+                yield return Shot(prefix + "bar_hover_tallest_with_spells");
+                _hud.DemoHover = null;
+
+                _hud.OpenUnlockPage();
+                yield return Shot(prefix + "page");
+                float listBottom = _hud.UnlockPageListShown.yMax * HudScale.ScaleFor(Screen.width, Screen.height, ui);
+                Check($"{prefix} the page's list ends at {listBottom:0.#}, above the Menu button at {menuButton}", menuButton.height > 0f && listBottom <= menuButton.y + 0.5f);
+                _hud.DemoHover = tallest;
+                yield return Shot(prefix + "page_hover");
+                stats.TryGetWindow(out hoverWindow);
+                Check($"{prefix} hovering {tallest.Name} on the page: window at {hoverWindow}, beside the page", hoverWindow.xMax <= _hud.UnlockPageShown.x && hoverWindow.y >= 0f);
+                _hud.DemoHover = null;
+                player.Credits = 120;
+                yield return Shot(prefix + "page_few_credits");
+                _hud.CloseUnlockPage();
+                yield return Shot(prefix + "bar_few_credits");
+            }
+            MenuStyle.ButtonDrawnForTest -= NoteMenuButton;
+            Debug.Log($"Skirmish HUD finished: {_skirmishProblems} problems.");
+        }
+
+        /// <summary>The buttons and keys of Unlock Skirmish's bar and page, pressed by the test tool's way (MenuStyle) and a real Esc through the Input System.</summary>
+        private IEnumerator SkirmishHudButtons()
+        {
+            _hud = FindFirstObjectByType<MatchHud>();
+            SquadStatsWindow stats = FindFirstObjectByType<SquadStatsWindow>();
+            void Check(string what, bool ok) => SkirmishCheck(what, ok);
+
+            // A window started from a script may not have the focus, and without it no key arrives. This is the game's own setting, only in memory.
+            InputSettings.BackgroundBehavior keptBehavior = InputSystem.settings.backgroundBehavior;
+            InputSystem.settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
+            Debug.Log($"Skirmish HUD: the window has the focus: {Application.isFocused}");
+
+            Screen.SetResolution(1920, 1080, FullScreenMode.Windowed);
+            GameSettings.UseUiScaleForThisRun(1f);
+            yield return new WaitForSecondsRealtime(0.8f);
+
+            // What GUI.Button does with a right-click, and what the buttons' guard makes of it.
+            _rightClickProbe = 0;
+            while (_rightClickProbe >= 0) yield return null;
+
+            // Ready, with the page open as when a right-click closes it: the right button leaves the round alone, and the left one starts the battle.
+            _match.NewMatch(1, new MatchSetup { Mode = MatchMode.UnlockSkirmish });
+            _match.ChooseDraft(0);
+            yield return new WaitForSecondsRealtime(0.5f);
+            _hud.OpenUnlockPage();
+            yield return PressReady(1);
+            Check("a right-click on Ready doesn't start the battle", _match.Match.Phase == MatchPhase.Deployment);
+            yield return PressReady(0);
+            Check("a left-click on Ready does", _match.Match.Phase != MatchPhase.Deployment);
+
+            _match.NewMatch(1, new MatchSetup { Mode = MatchMode.UnlockSkirmish });
+            _match.ChooseDraft(0);
+            yield return new WaitForSecondsRealtime(0.5f);
+            PlayerState me = _match.Match.Player;
+            me.Credits = 5000;
+
+            yield return PressOnHud(MatchHud.UnlockUnitsLabel);
+            Check("the Unlock units button opens the page", _hud.IsUnlockPageOpen);
+
+            UnitStats locked = me.Roster.First(u => !me.Unlocked.Contains(u) && u.UnlockCost > 0);
+            int credits = me.Credits;
+            yield return PressOnHud(MatchHud.PageCellKey(locked));
+            Check($"a cell on the page unlocks {locked.Name} for {locked.UnlockCost}, and closes the page", me.Unlocked.Contains(locked) && me.Credits == credits - locked.UnlockCost && !_hud.IsUnlockPageOpen);
+            yield return Shot("skirmish_bar_after_unlock");
+
+            yield return PressOnHud(MatchHud.UnlockUnitsLabel);
+            UnitStats second = me.Roster.First(u => !me.Unlocked.Contains(u) && u.UnlockCost > 0);
+            yield return PressOnHud(MatchHud.PageCellKey(second));
+            Check($"a second unlock in the round is refused, and the page stays: {_match.Message}", !me.Unlocked.Contains(second) && _hud.IsUnlockPageOpen);
+            yield return Shot("skirmish_page_second_unlock_refused");
+            yield return PressOnHud(MatchHud.UnlockPageCloseKey);
+            Check("its x closes the page", !_hud.IsUnlockPageOpen);
+
+            var rows = new List<UnitStats>();
+            MatchHud.FillUnitBarRows(me.Roster, me.Unlocked, rows);
+            UnitStats toBuy = rows[0], other = rows[rows.Count - 1];
+            int squads = me.Squads.Count;
+            yield return PressOnHud(MatchHud.BarCellKey(toBuy));
+            Check($"a cell in the bar buys a squad of {toBuy.Name}", me.Squads.Count == squads + 1);
+
+            // It lands with the page open: it selects itself, and the page clears that.
+            yield return PressOnHud(MatchHud.UnlockUnitsLabel);
+            Check("the page opens while a squad is dropping", _hud.IsUnlockPageOpen && _match.IsDropping);
+            SquadSelection selection = _match.GetComponent<SquadSelection>();
+            while (_match.IsDropping) yield return null;
+            yield return null;
+            yield return null;
+            Check("a squad that lands behind the page is not left selected", selection.SelectedSquadId < 0);
+
+            yield return PressEscape();
+            Check("Esc closes the page, and doesn't pause", !_hud.IsUnlockPageOpen && !GamePause.IsPaused);
+            yield return PressEscape();
+            Check("the next Esc pauses", GamePause.IsPaused);
+            yield return PressEscape();
+            Check("and the next one resumes", !GamePause.IsPaused);
+
+            _hud.OpenUnlockPage();
+            yield return null;
+            PauseMenu.Current.Open();
+            yield return null;
+            yield return Shot("skirmish_page_behind_pause_menu");
+            yield return PressEscape();
+            Check("with the page behind the pause menu, Esc only closes the menu", !GamePause.IsPaused && _hud.IsUnlockPageOpen);
+            yield return PressEscape();
+            Check("and the next Esc closes the page", !GamePause.IsPaused && !_hud.IsUnlockPageOpen);
+            if (GamePause.IsPaused) PauseMenu.Current.Close();
+            _hud.CloseUnlockPage();
+            InputSystem.settings.backgroundBehavior = keptBehavior;
+
+            // A squad selected in the field, with a unit hovered in the bar: the window is the hovered unit's, with nothing of that squad.
+            yield return PressOnHud(MatchHud.BarCellKey(toBuy));
+            while (_match.IsDropping) yield return null;
+            yield return new WaitForSecondsRealtime(0.3f);
+            Check("a squad that lands with the page shut is selected", selection.SelectedSquadId >= 0);
+            yield return Shot("skirmish_bar_squad_selected");
+            _hud.DemoHover = other;
+            yield return Shot("skirmish_bar_hover_squad_selected");
+            Check($"hovering {other.Name} with a squad selected shows no level-up button of that squad", stats.HoverUnit == other && stats.LevelUpShown.width <= 0f && stats.LevelAllShown.width <= 0f);
+            _hud.DemoHover = null;
+        }
+
+        /// <summary>Presses a button of the HUD by its key, down the same path as a mouse click (MenuStyle).</summary>
+        private IEnumerator PressOnHud(string key)
+        {
+            MenuStyle.PressedByTest = key;
+            for (int frame = 0; frame < 30 && MenuStyle.PressedByTest != null; frame++) yield return null;
+            if (MenuStyle.PressedByTest != null) SkirmishCheck($"{key} was never drawn", false);
+            MenuStyle.PressedByTest = null;
+            yield return null;
+            yield return null;
+        }
+
+        /// <summary>Presses Ready as if with this mouse button. The event is only this script's own; nothing goes outside the game.</summary>
+        private IEnumerator PressReady(int button)
+        {
+            _readyProbeButton = button;
+            while (_readyProbeButton >= 0) yield return null;
+            yield return null;
+        }
+
+        /// <summary>A press and release of the right button, then the left, on a GUI.Button of this script's own, as IMGUI's own events (nothing goes outside the game). Also PressReady.</summary>
+        private void OnGUI()
+        {
+            if (_readyProbeButton >= 0 && Event.current.type == EventType.Repaint)
+            {
+                Event shown = Event.current;
+                Event.current = new Event { type = EventType.Repaint, button = _readyProbeButton };
+                MenuStyle.PressedByTest = MatchHud.ReadyLabel;
+                _hud.DrawForTest();
+                if (MenuStyle.PressedByTest != null) SkirmishCheck("Ready was never drawn", false);
+                MenuStyle.PressedByTest = null;
+                Event.current = shown;
+                _readyProbeButton = -1;
+                return;
+            }
+            if (_rightClickProbe < 0 || Event.current.type != EventType.Repaint) return;
+            int button = _rightClickProbe < 2 ? 1 : 0;
+            bool release = _rightClickProbe % 2 == 1;
+            var rect = new Rect(0f, 0f, 40f, 40f);
+            Event real = Event.current;
+            if (release) GUIUtility.hotControl = _probedControl; // The press was a frame ago, and the real mouse isn't down.
+            Event.current = new Event { type = release ? EventType.MouseUp : EventType.MouseDown, button = button, mousePosition = rect.center, clickCount = 1 };
+            bool fired = GUI.Button(rect, GUIContent.none, GUIStyle.none);
+            bool guarded = fired && Event.current.button == 0;
+            if (release)
+            {
+                Debug.Log($"Skirmish HUD: GUI.Button on mouse button {button}: it fired {fired}, and with the guard {guarded}");
+                SkirmishCheck($"the guard takes mouse button {button} as a click: {guarded}", guarded == (button == 0) && fired);
+            }
+            else _probedControl = GUIUtility.hotControl;
+            GUIUtility.hotControl = 0;
+            Event.current = real;
+            _rightClickProbe = _rightClickProbe == 3 ? -1 : _rightClickProbe + 1;
+        }
+
+        private static IEnumerator PressEscape()
+        {
+            Keyboard keyboard = Keyboard.current;
+            if (keyboard == null) yield break;
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.Escape));
+            yield return null;
+            yield return null;
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState());
+            yield return null;
+            yield return null;
         }
 
         private IEnumerator Shot(string name)
