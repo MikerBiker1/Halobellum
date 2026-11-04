@@ -12,6 +12,7 @@
 //   Flood Abomination|Tendril Slam|DamagePerShot=300     a field of one of its weapons
 //   rules|TowerBaseHealth=150                   a field of the match rules
 //   rules|AiCarrierPlacement=FlankFarCorners    an enum goes by its name
+//   without|Armored Division|Pelican            a sub-faction can't have this base unit
 // (# starts a comment.)
 using System;
 using System.Collections;
@@ -183,6 +184,13 @@ static class Program
             string line = raw.Split('#')[0].Trim();
             if (line.Length == 0) continue;
             string[] parts = line.Split('|');
+            if (parts[0] == "without")
+            {
+                SubFactionInfo sub = factions.SelectMany(f => f.SubFactions).First(s => s.Name == parts[1]);
+                sub.ExcludedUnits.Add(units[parts[2]]);
+                Console.WriteLine("Trial: " + line);
+                continue;
+            }
             string[] assignment = parts[parts.Length - 1].Split('=');
             object target;
             if (parts[0] == "rules") target = rules;

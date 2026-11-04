@@ -404,6 +404,12 @@ namespace Halobellum.Economy
             string unlocked = TryUnlock(view, seen, totalSeen);
             if (Difficulty == AiDifficulty.Hard) ShoreUpFlankedTowers(view, upgrades);
             if (Difficulty != AiDifficulty.Easy) BuyCarrierTechs(view, upgrades);
+            // In Unlock Skirmish, Hard levels what it has and buys a tech before new squads. New squads first left it nothing for these, which add up: at 10000 base health it lost to Normal (D63).
+            if (skirmish && Difficulty == AiDifficulty.Hard)
+            {
+                UseItemsAndTraining(view, upgrades);
+                SpendOnUpgrades(view, upgrades);
+            }
             if (Difficulty == AiDifficulty.Hard && self.Towers.Count > 0 && self.Credits >= HardEliteCredits) view.BuyEliteRecruitment();
             for (int i = 0; i < view.SquadsPerRound; i++)
             {
@@ -416,7 +422,7 @@ namespace Halobellum.Economy
                 if (UsesMatchups) UpdateThreats(view, seen); // The new squad covers part of the threat.
             }
             // Hard with credits to spare after its squads: one slot more. So too Normal in Unlock Skirmish, only once its savings have piled up.
-            bool wantsSlot = Difficulty == AiDifficulty.Hard ? self.Credits >= HardExtraSlotCredits : Difficulty == AiDifficulty.Normal && skirmish && self.Credits >= NormalSkirmishFlushCredits;
+            bool wantsSlot = Difficulty == AiDifficulty.Hard ? self.Credits >= HardExtraSlotCredits + SlotTrial() : Difficulty == AiDifficulty.Normal && skirmish && self.Credits >= NormalSkirmishFlushCredits;
             if (wantsSlot && self.Towers.Count > 0 && view.BuyExtraSlot().Ok)
             {
                 UnitStats choice = BestAffordable(view, seen, totalSeen, unlockedOnly: true);
@@ -499,6 +505,8 @@ namespace Halobellum.Economy
                 }
             }
         }
+
+        private static int SlotTrial() => int.Parse(Environment.GetEnvironmentVariable("HB_SLOT") ?? "0"); // TEMPORARY
 
         private const int HardEliteCredits = 1000, HardExtraSlotCredits = 400, HardOilCredits = 450;
         private const int NormalTowerCredits = 300, HardTowerCredits = 200;

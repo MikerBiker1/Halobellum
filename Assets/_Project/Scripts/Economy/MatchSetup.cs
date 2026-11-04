@@ -2,8 +2,8 @@
 // What is chosen before a match starts: the mode (today's Faction mode or Unlock Skirmish), the base health and which cards are
 // offered. It is applied to the match's own fresh MatchRules, so the Match Rules asset never changes, and with no setup every
 // value stays what it is in Faction mode.
-// Below the asset's base health, what a starting card is worth moves the base by less, in proportion, so that a low setting
-// can't start a side at nothing. From the asset's value up, the owner's flat 100 health per 50 credits stays (D59).
+// What a starting card is worth moves the base in proportion to the setting: 5% of it for 50 credits, as the asset's 100 of 2000 is (D59).
+// So 100 gives 105, 100 or 95, and 10000 gives 10500, 10000 or 9500.
 // Depends on: MatchRules.
 
 using System;
@@ -55,7 +55,7 @@ namespace Halobellum.Economy
             if (BaseHealth == 0) return;
 
             int health = SnapBaseHealth(BaseHealth);
-            if (health < rules.BaseHealth) rules.DraftBaseHealthPerCredit *= health / (float)rules.BaseHealth;
+            rules.DraftBaseHealthPerCredit *= health / (float)rules.BaseHealth;
             rules.BaseHealth = health;
         }
     }

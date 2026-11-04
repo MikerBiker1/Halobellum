@@ -162,9 +162,9 @@ namespace Halobellum.Tests
         [TestCase(2000, 250, 2100, Description = "Today's game.")]
         [TestCase(2000, 300, 2000)]
         [TestCase(2000, 350, 1900)]
-        [TestCase(10000, 250, 10100, Description = "From 2000 up, the owner's flat 100 per 50 credits stays.")]
+        [TestCase(10000, 250, 10500, Description = "5% of the setting for 50 credits, at any setting.")]
         [TestCase(10000, 300, 10000)]
-        [TestCase(10000, 350, 9900)]
+        [TestCase(10000, 350, 9500)]
         public void BaseHealth_FollowsTheSettingAndTheCard(int setting, int cardValue, int expected)
         {
             MatchRules rules = TestMatch.Rules();

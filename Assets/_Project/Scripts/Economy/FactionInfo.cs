@@ -15,6 +15,8 @@ namespace Halobellum.Economy
         /// <summary>One line for the draft card: what this sub-faction is about.</summary>
         public string Description = "";
         public List<UnitStats> ExclusiveUnits = new List<UnitStats>();
+        /// <summary>Units of the base roster this sub-faction can't have. Only the tournament's trials set it today.</summary>
+        public List<UnitStats> ExcludedUnits = new List<UnitStats>();
     }
 
     public sealed class FactionInfo
@@ -31,6 +33,7 @@ namespace Halobellum.Economy
             var roster = new List<UnitStats>(BaseRoster);
             if (subFaction != null)
             {
+                foreach (UnitStats unit in subFaction.ExcludedUnits) roster.Remove(unit);
                 foreach (UnitStats unit in subFaction.ExclusiveUnits)
                 {
                     if (!roster.Contains(unit)) roster.Add(unit);

@@ -162,7 +162,7 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 
 ## Small things I noticed and left
 
-- The Cobra's description says it runs on tracks, and your model has six wheels. I left the text.
+- *(Fixed from Halopedia: the Cobra now reads as six-wheeled.)* The Cobra's description said it ran on tracks.
 - Under a shockwave, a leap's speed and a Seeder's seed damage aren't reduced. Infection Forms still cover about 81% of their normal distance rather than 70%.
 - An infected body keeps its size but gets a melee reach of 1.2 m, measured from its centre. A big one, such as a seeded Scorpion, may never reach a target that stands still, a tower included. This comes from before the towers, and nobody has seen it happen in play.
 - The menu's hover check is skipped in batch test runs, because they draw no buttons there. A sound tour in the built game covers it, using its own pointer. No real mouse has tried it.

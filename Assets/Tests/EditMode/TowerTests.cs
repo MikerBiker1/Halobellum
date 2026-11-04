@@ -68,6 +68,30 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void AShockwave_WeakensTheSeedsItsSidePlanted()
+        {
+            float EatenInASecond(bool towerFalls)
+            {
+                var sim = new BattleSimulation(TestRules.Default(), 1);
+                WeaponStats dart = TestUnits.Weapon(damage: 1f, range: 30f, interval: 100f);
+                dart.SeedSeconds = 8f;
+                dart.SeedDamageSharePerSecond = 0.1f;
+                sim.AddUnit(TestUnits.Unit(health: 100000f, speed: 0f, weapon: dart), Team.A, new Vec2(0f, 0f));
+                SimUnit tower = sim.AddUnit(Tower(), Team.A, new Vec2(50f, -50f));
+                SimUnit host = sim.AddUnit(TestUnits.Unit(health: 1000f, armor: ArmorType.Heavy, speed: 0f, weapon: TestUnits.Weapon(damage: 0f, range: 1f)), Team.B, new Vec2(0f, 20f));
+                sim.AddUnit(TestUnits.Unit(health: 100000f, speed: 0f), Team.B, new Vec2(0f, 90f));
+                if (towerFalls) tower.Health = 0f;
+                sim.Step();
+                Assert.IsTrue(host.IsSeeded);
+                float before = host.Health;
+                RunSeconds(sim, 1f);
+                return before - host.Health;
+            }
+            Assert.AreEqual(100f, EatenInASecond(false), 5f);
+            Assert.AreEqual(70f, EatenInASecond(true), 5f, "0.7 of the damage, as with any weapon.");
+        }
+
+        [Test]
         public void AFallenTower_WeakensItsWholeSide_AndOnlyItsSide()
         {
             var sim = new BattleSimulation(TestRules.Default(), 1);

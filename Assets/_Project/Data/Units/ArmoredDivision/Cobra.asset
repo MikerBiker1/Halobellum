@@ -97,4 +97,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: 'Tanks, heavy units'
   weakAgainst: 'Chaff swarms, flankers'
-  notes: 'Best counters (headless runner, equal cost): Marine (100%), Grunt (100%). Anti-armor gun on tracks. Outranges tanks; a swarm or a flanker gets under its guns. First-pass M10 values, Armored Division (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Grunt (100%). Six-wheeled tank hunter: its twin light railguns punch through heavy armor from far off. Outranges tanks; a swarm or a flanker gets under its guns. First-pass M10 values, Armored Division (Docs/M10/subfactions.md).'

@@ -564,7 +564,7 @@ namespace Halobellum.Combat
                 unit.ShockwaveFireRate = shockwave?.FireRateMultiplier ?? 1f;
                 unit.ShockwaveDamageTaken = shockwave != null && !unit.Stats.IsTower ? shockwave.DamageTakenMultiplier : 1f;
                 if (shockwave != null) unit.SpeedMultiplier *= shockwave.SpeedMultiplier;
-                if (unit.IsSeeded) UpdateSeed(unit, now);
+                if (unit.IsSeeded) UpdateSeed(unit, now, (unit.Team == Team.A ? shockwaveB : shockwaveA)?.DamageMultiplier ?? 1f);
             }
             foreach (SimUnit source in _auras)
             {
@@ -598,8 +598,8 @@ namespace Halobellum.Combat
             }
         }
 
-        /// <summary>A seed eats its host and slows it until it runs out (it can kill: the host then rises).</summary>
-        private void UpdateSeed(SimUnit unit, float now)
+        /// <summary>A seed eats its host and slows it until it runs out (it can kill: the host then rises). A shockwave on the side that planted it weakens it, as it does any weapon.</summary>
+        private void UpdateSeed(SimUnit unit, float now, float planterShockwaveDamage)
         {
             if (now >= unit.SeededUntil)
             {
@@ -608,7 +608,7 @@ namespace Halobellum.Combat
             }
             unit.SpeedMultiplier *= 1f - unit.SeedSlowShare;
             if (unit.Health <= 0f) return;
-            unit.Health -= unit.SeedDamagePerSecond * _dt;
+            unit.Health -= unit.SeedDamagePerSecond * planterShockwaveDamage * _dt;
             unit.SecondsSinceDamaged = 0f;
             if (unit.Health <= 0f && unit.KilledById < 0 && unit.KilledBySpell == null && unit.SeededById >= 0)
             {

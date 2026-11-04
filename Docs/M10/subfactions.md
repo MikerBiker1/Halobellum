@@ -60,7 +60,7 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 | Grizzly | Tank | 3 | 250 | 1 | 500 | 2100 | Heavy | 0 | 1.35 | Twin Cannons (100 per 2.5 s, Explosive, 17 m, splash 2.5 m); Coaxial Machine Gun (8 per 0.2 s, Ballistic, 13 m) | 36 of 68, 54% | Gauss Warthog 100%, Spartan 100% |
 
 - **Gremlin.** Fast scout whose EMP slows what it hits (Titans shrug it off). Good against vehicles, poor against infantry.
-- **Cobra.** Anti-armor gun on tracks. Outranges tanks; a swarm or a flanker gets under its guns.
+- **Cobra.** Six-wheeled tank hunter: its twin light railguns punch through heavy armor from far off. Outranges tanks; a swarm or a flanker gets under its guns.
 - **Rhino.** The longest gun in the game. Slow to turn and move, lobbed so it can miss, helpless up close.
 - **Grizzly.** The upgraded Scorpion: twin barrels and more armor, at a Tier 3 price.
 
