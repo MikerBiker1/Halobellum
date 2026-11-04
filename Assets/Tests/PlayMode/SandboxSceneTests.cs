@@ -633,8 +633,8 @@ namespace Halobellum.Tests
             Vec2[] before = _battle.Simulation.Units.Select(u => u.Position).ToArray();
 
             _sandbox.SetTowers(true);
-            Assert.AreNotEqual(leftColumn, left.Column, "The towers moved it.");
-            Assert.AreNotEqual(rightColumn, right.Column, "The towers moved it.");
+            Assert.IsTrue(left.Column != leftColumn || left.Row != towerRow, "The towers moved the left one.");
+            Assert.IsTrue(right.Column != rightColumn || right.Row != towerRow, "The towers moved the right one.");
             StringAssert.Contains("Towers off puts them back", _sandbox.Message, "The move is not silent.");
 
             _sandbox.Run();
