@@ -12,6 +12,27 @@ namespace Halobellum.Tests
 {
     public class CultureEditTests
     {
+        private CultureInfo _current, _ui, _newThreads, _newThreadsUi;
+
+        [SetUp]
+        public void RememberTheCultures()
+        {
+            _current = CultureInfo.CurrentCulture;
+            _ui = CultureInfo.CurrentUICulture;
+            _newThreads = CultureInfo.DefaultThreadCurrentCulture;
+            _newThreadsUi = CultureInfo.DefaultThreadCurrentUICulture;
+        }
+
+        // Puts back what was there rather than calling Apply, which would hide a missing hook from any test that runs after this one.
+        [TearDown]
+        public void PutTheCulturesBack()
+        {
+            CultureInfo.CurrentCulture = _current;
+            CultureInfo.CurrentUICulture = _ui;
+            CultureInfo.DefaultThreadCurrentCulture = _newThreads;
+            CultureInfo.DefaultThreadCurrentUICulture = _newThreadsUi;
+        }
+
         [Test]
         public void ADecimalIsWrittenWithAPoint()
         {
@@ -32,25 +53,18 @@ namespace Halobellum.Tests
         {
             var comma = (CultureInfo)CultureInfo.InvariantCulture.Clone();
             comma.NumberFormat.NumberDecimalSeparator = ",";
-            try
-            {
-                CultureInfo.CurrentCulture = comma;
-                CultureInfo.DefaultThreadCurrentCulture = comma;
-                Assert.AreEqual("1,5", $"{1.5f:0.0}", "the comma culture took hold, so the next check proves something");
+            CultureInfo.CurrentCulture = comma;
+            CultureInfo.DefaultThreadCurrentCulture = comma;
+            Assert.AreEqual("1,5", $"{1.5f:0.0}", "the comma culture took hold, so the next check proves something");
 
-                GameCulture.Apply();
+            GameCulture.Apply();
 
-                Assert.AreEqual("1.5", $"{1.5f:0.0}");
-                string onNewThread = null;
-                var thread = new Thread(() => onNewThread = $"{1.5f:0.0}");
-                thread.Start();
-                thread.Join();
-                Assert.AreEqual("1.5", onNewThread);
-            }
-            finally
-            {
-                GameCulture.Apply();
-            }
+            Assert.AreEqual("1.5", $"{1.5f:0.0}");
+            string onNewThread = null;
+            var thread = new Thread(() => onNewThread = $"{1.5f:0.0}");
+            thread.Start();
+            thread.Join();
+            Assert.AreEqual("1.5", onNewThread);
         }
     }
 }
