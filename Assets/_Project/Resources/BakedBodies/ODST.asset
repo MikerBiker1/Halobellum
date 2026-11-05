@@ -20,8 +20,8 @@ MonoBehaviour:
   shootingClip: Walk_Forward_While_Shooting
   deathClip: Dead
   stillClip: walking_2
-  weaponName: Weapon_AssaultRifle
-  weaponLength: 0.85
+  weaponName: Weapon_SMG
+  weaponLength: 0.65
   weaponInForwardHand: 0
   weaponAlongForearm: 0
   muzzleInRightHand: 0
@@ -51,6 +51,6 @@ MonoBehaviour:
     firstRow: 207
     frames: 1
     loops: 0
-  muzzle: {x: 0.03492148, y: 1.7782748, z: 0.7451403}
+  muzzle: {x: 0.14174266, y: 1.7224934, z: 0.49504593}
   hasMuzzle: 1
   bodyHeight: 2

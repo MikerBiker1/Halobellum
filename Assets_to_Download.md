@@ -113,7 +113,6 @@ The Spartans have your model now, each with a placeholder weapon from the game's
 | [ ] | Shotgun | Spartan CQB. | SMG |
 | [ ] | BR85 battle rifle and M41 rocket launcher | Spartan Fireteam. | Assault rifle |
 | [ ] | Plasma rifle | Elite, and the Jackal (Plasma Rifle). | Plasma pistol, drawn big |
-| [ ] | M7 SMG | ODST. | Assault rifle |
 | [ ] | Spike grenade launcher | Brute Grenadier. | Rocket launcher |
 
 ### UNSC
