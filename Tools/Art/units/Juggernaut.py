@@ -8,9 +8,19 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 import bpy
 import model_tools as mt
 
-CUT = 0.17  # Past the head, on both sides.
-SWING_LEFT = "Swing_0_0_14_1.1"  # 14 degrees, 1.1 times a second: about the wobble's beat when it runs.
-SWING_RIGHT = "Swing_1_50_14_1.1"
+SWING_LEFT = "Swing_0_0_12_1.1"  # 12 degrees, 1.1 times a second: about the wobble's beat when it runs. Much more, and a blade reaches the ground.
+SWING_RIGHT = "Swing_1_50_12_1.1"
+
+
+def overlap(name, low, high):
+    """A copy of the body's faces just inside a cut goes with the arm too, so that no gap can be seen through when the arm turns."""
+    body = bpy.data.objects["Body"]
+    spare = body.copy()
+    spare.data = body.data.copy()
+    spare.name = "Spare"
+    bpy.context.scene.collection.objects.link(spare)
+    mt.take(name, low, high, "^Spare$", pivot=(0, 0, 0), whole_pieces=False)
+    bpy.data.objects.remove(spare)
 
 
 def tip(name):
@@ -30,13 +40,16 @@ mt.smooth(60)
 mt.centre_on_ground()
 mt.report("reduced")
 
-# The arm at -X leaves the shoulder in two strands, and its blade curls back in past the cut, so that takes a second box. The arm at +X leaves in
-# one tube. Both hang above the feet, so a height limit keeps those out. A swing turns around the X axis, so a cut across X turns on itself and
-# doesn't open: each pivot is the middle of its cut.
-mt.take("ArmA", (-2, -2, 0.065), (-CUT, 2, 2), whole_pieces=False, pivot=(0, 0, 0))
-mt.take("ArmB", (-CUT, -2, 0.065), (-0.08, -0.2, 2), whole_pieces=False, pivot=(0, 0, 0))
-mt.part(SWING_LEFT, "^Arm[AB]$", pivot=(-CUT, 0.107, 0.296))
-mt.take(SWING_RIGHT, (CUT, -2, 0.31), (2, 2, 2), whole_pieces=False, pivot=(CUT, 0.129, 0.395))
+# Each arm is cut where it is one tube, past the head and the two strands that the arm at -X leaves its shoulder in. That arm's blade curls back in
+# past the cut, so it takes a second box. Both arms hang above the feet, so a height limit keeps those out. A swing turns around the X axis, so a cut
+# across X mostly turns on itself: each pivot is the middle of its cut.
+mt.take("ArmA", (-2, -2, 0.065), (-0.26, 2, 2), whole_pieces=False, pivot=(0, 0, 0))
+mt.take("ArmB", (-0.26, -2, 0.065), (-0.08, -0.2, 2), whole_pieces=False, pivot=(0, 0, 0))
+overlap("ArmC", (-0.26, -0.1, 0.065), (-0.235, 2, 2))
+mt.part(SWING_LEFT, "^Arm[ABC]$", pivot=(-0.26, 0.145, 0.272))
+mt.take("ArmD", (0.2, -2, 0.31), (2, 2, 2), whole_pieces=False, pivot=(0, 0, 0))
+overlap("ArmE", (0.175, -2, 0.31), (0.2, 2, 2))
+mt.part(SWING_RIGHT, "^Arm[DE]$", pivot=(0.2, 0.173, 0.387))
 
 # Crushing Charge, weapon 0: the two blades take turns.
 mt.muzzle("Muzzle_0a", tip(SWING_LEFT), parent=SWING_LEFT)
