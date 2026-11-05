@@ -1,0 +1,15 @@
+{
+ "materials": [
+  {
+   "name": "Marauder_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Marauder_0.png"
+  }
+ ]
+}

@@ -1,0 +1,15 @@
+{
+ "materials": [
+  {
+   "name": "Seeder_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Seeder_0.png"
+  }
+ ]
+}

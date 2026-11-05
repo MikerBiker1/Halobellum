@@ -13,8 +13,15 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 SOURCE = os.path.join(ROOT, "Art_Source")
 PREPARED = os.path.join(SOURCE, "Prepared")
 PROJECT = os.path.join(ROOT, "Assets", "_Project")
-BATCH = r"E:\AI\_hbci\Halobellum\Assets\_Project"
+BATCH = os.environ.get("HB_BATCH") or r"E:\AI\_hbci\Halobellum\Assets\_Project"  # A worktree has its own batch copy, such as E:\AI\_hbci\ws_merged\Assets\_Project.
 SOURCE_NOTE = "Source: found by the project owner on Sketchfab, file {source} in Art_Source.\nPrepared by Tools/Art/units/{name}.py (decision D45).\nThe repository is private and must stay private.\n"
+# The third batch came in Art_Source/Meshy: Meshy_AI_* are the owner's own Meshy models, and the owner has not said where the others came from.
+MESHY_NOTE = "Source: made by the project owner with Meshy AI, file {source} in Art_Source.\nPrepared by Tools/Art/units/{name}.py.\nThe repository is private and must stay private.\n"
+GIVEN_NOTE = "Source: given by the project owner, file {source} in Art_Source. Where it came from before that is not recorded.\nPrepared by Tools/Art/units/{name}.py.\nThe repository is private and must stay private.\n"
+
+
+# A rigged folder has no report.json to say what it was made from.
+THIRD_BATCH_RIGS = {"ODST_Rig": "Meshy/halo_2_odst.glb", "Jackal_Rig": "Meshy/jackal_halo_2.glb", "BruteGrenadier_Rig": "Meshy/enemieshalo_3covenantbrutes.glb"}
 
 
 def copy(names):
@@ -29,8 +36,11 @@ def copy(names):
                 shutil.copy(os.path.join(source, f), os.path.join(target, f))
         report_path = os.path.join(source, "report.json")
         found = re.search(r'"source": "([^"]+)"', open(report_path, encoding="utf-8").read()) if os.path.exists(report_path) else None
-        origin = found.group(1) if found else name[:-4] + "/" + name[:-4].lower() + ".glb, rigged through Meshy by Tools/Meshy/meshy_rig.py"
-        note = SOURCE_NOTE.format(source=origin, name=name)
+        origin = found.group(1) if found else THIRD_BATCH_RIGS.get(name) or name[:-4] + "/" + name[:-4].lower() + ".glb, rigged through Meshy by Tools/Meshy/meshy_rig.py"
+        if origin.startswith("Prepared/_Paint/"):
+            origin = "Meshy/Meshy_AI_" + name + ".glb, painted by Meshy (Tools/Meshy/meshy_paint.py)"
+        kind = MESHY_NOTE if origin.startswith("Meshy/Meshy_AI_") else GIVEN_NOTE if origin.startswith("Meshy/") else SOURCE_NOTE
+        note = kind.format(source=origin, name=name)
         if name.endswith("_Rig"):
             note = note.replace(f"Tools/Art/units/{name}.py", "Tools/Meshy/rig_inputs.py and meshy_rig.py")
         link = os.path.join(SOURCE, origin.split("/")[0], "Source.txt")

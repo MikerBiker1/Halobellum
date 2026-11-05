@@ -1,0 +1,3 @@
+Source: given by the project owner, file Meshy/halo_ce_flood_Combat_form.glb in Art_Source. Where it came from before that is not recorded.
+Prepared by Tools/Art/units/CombatForm.py.
+The repository is private and must stay private.

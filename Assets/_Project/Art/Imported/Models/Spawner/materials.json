@@ -1,0 +1,15 @@
+{
+ "materials": [
+  {
+   "name": "Spawner_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Spawner_0.png"
+  }
+ ]
+}

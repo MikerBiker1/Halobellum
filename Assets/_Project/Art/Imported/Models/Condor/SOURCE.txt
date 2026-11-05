@@ -1,0 +1,3 @@
+Source: given by the project owner, file Meshy/unsc_condor.glb in Art_Source. Where it came from before that is not recorded.
+Prepared by Tools/Art/units/Condor.py.
+The repository is private and must stay private.

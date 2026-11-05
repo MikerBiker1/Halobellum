@@ -1,0 +1,3 @@
+Source: given by the project owner, file Meshy/halo_2_anniversary_human_flood_form.glb in Art_Source. Where it came from before that is not recorded.
+Prepared by Tools/Art/units/InfestedMarine.py.
+The repository is private and must stay private.

@@ -1,0 +1,3 @@
+Source: made by the project owner with Meshy AI, file Meshy/Meshy_AI_Wolverine.glb, painted by Meshy (Tools/Meshy/meshy_paint.py) in Art_Source.
+Prepared by Tools/Art/units/Wolverine.py.
+The repository is private and must stay private.

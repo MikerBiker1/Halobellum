@@ -1,0 +1,15 @@
+{
+ "materials": [
+  {
+   "name": "Vampire_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Vampire_0.png"
+  }
+ ]
+}

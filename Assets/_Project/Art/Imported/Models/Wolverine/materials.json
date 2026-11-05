@@ -1,0 +1,15 @@
+{
+ "materials": [
+  {
+   "name": "Wolverine_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Wolverine_0.png"
+  }
+ ]
+}
