@@ -31,7 +31,7 @@ MonoBehaviour:
   transitionSeconds: 0.2
   corpseSeconds: 14
   bakedFps: 30
-  mesh: {fileID: 0}
+  mesh: {fileID: 4300000, guid: 59c2f20a86a86db4dbd0bb848833c44f, type: 2}
   material: {fileID: 2100000, guid: 67e96a492bb20ed439f47687145be690, type: 2}
   glassMaterial: {fileID: 2100000, guid: 8e547c3613bf0164d97e3f301ccef8c0, type: 2}
   clips:
@@ -51,6 +51,6 @@ MonoBehaviour:
     firstRow: 207
     frames: 1
     loops: 0
-  muzzle: {x: 0.12489625, y: 1.4758216, z: 0.3294261}
+  muzzle: {x: 0.14833495, y: 1.4578532, z: 0.26481766}
   hasMuzzle: 1
   bodyHeight: 2
