@@ -239,7 +239,15 @@
     "credits": 5
    }
   ],
-  "credits": 5,
-  "rig": "01a1a9ee-ee20-7195-a8e6-ea7650e7e30c"
+  "credits": 17,
+  "rig": "01a1a9ee-ee20-7195-a8e6-ea7650e7e30c",
+  "animation": "01a1a9ef-6be5-7594-b32d-6f2a0f90c5ba",
+  "actions": [
+   98,
+   234,
+   8,
+   566
+  ],
+  "animation_credits": 12
  }
 }
