@@ -21,17 +21,17 @@ MonoBehaviour:
   deathClip: Dead
   stillClip: walking_2
   weaponName: Weapon_PlasmaPistol
-  weaponLength: 0.6
+  weaponLength: 0.45
   weaponInForwardHand: 0
   weaponAlongForearm: 0
   muzzleInRightHand: 0
   shieldName: Weapon_JackalShield
-  shieldDiameter: 1.2
-  shieldOffset: {x: 0, y: 0, z: 0.1}
+  shieldDiameter: 1.05
+  shieldOffset: {x: 0, y: 0, z: 0.22}
   transitionSeconds: 0.2
   corpseSeconds: 14
   bakedFps: 30
-  mesh: {fileID: 4300000, guid: 59c2f20a86a86db4dbd0bb848833c44f, type: 2}
+  mesh: {fileID: 0}
   material: {fileID: 2100000, guid: 67e96a492bb20ed439f47687145be690, type: 2}
   glassMaterial: {fileID: 2100000, guid: 8e547c3613bf0164d97e3f301ccef8c0, type: 2}
   clips:

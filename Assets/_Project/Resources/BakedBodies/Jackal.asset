@@ -21,7 +21,7 @@ MonoBehaviour:
   deathClip: Dead
   stillClip: walking_2
   weaponName: Weapon_PlasmaPistol
-  weaponLength: 0.6
+  weaponLength: 0.45
   weaponInForwardHand: 1
   weaponAlongForearm: 0
   muzzleInRightHand: 0
@@ -31,7 +31,7 @@ MonoBehaviour:
   transitionSeconds: 0.2
   corpseSeconds: 14
   bakedFps: 30
-  mesh: {fileID: 4300000, guid: 077a6abf4d1b4e24e83b79f3fb52c2ff, type: 2}
+  mesh: {fileID: 0}
   material: {fileID: 2100000, guid: 6dd59322a21020c409122f0206b2f071, type: 2}
   glassMaterial: {fileID: 0}
   clips:

@@ -196,9 +196,10 @@ namespace Halobellum.Presentation
             var control = view.GetComponent<BattleCameraController>();
             if (control != null) control.enabled = false;
             view.transform.GetPositionAndRotation(out Vector3 position, out Quaternion rotation);
-            var body = GetComponent<UnitViewManager>().WorldPosition(unit) + Vector3.up * 0.8f;
+            float top = GetComponent<UnitViewManager>().BodyTopOf(unit);
+            var body = GetComponent<UnitViewManager>().WorldPosition(unit) + Vector3.up * Mathf.Max(0.8f, top * 0.5f);
             var facing = new Vector3(unit.Facing.X, 0f, unit.Facing.Y);
-            float reach = Mathf.Max(1f, unit.Radius); // Further back for something big.
+            float reach = Mathf.Max(1f, Mathf.Max(unit.Radius, top * 0.45f)); // Further back for something big.
             view.transform.position = body + (facing * 3.4f + Vector3.Cross(facing, Vector3.up) * 1.8f + Vector3.up * 0.9f) * reach;
             view.transform.LookAt(body);
             yield return null;

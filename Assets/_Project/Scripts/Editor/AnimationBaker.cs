@@ -322,7 +322,8 @@ namespace Halobellum.EditorTools
             mesh.SetTriangles(triangles, 0);
             if (glass.Count > 0) mesh.SetTriangles(glass, 1);
             // Generous: the shader moves the vertices, and a falling body leaves its rest pose far behind.
-            float highest = positions.Max(p => p.y), lowest = positions.Min(p => p.y);
+            Matrix4x4 meshToModel = model.transform.worldToLocalMatrix * skin.transform.localToWorldMatrix;
+            float highest = positions.Max(p => meshToModel.MultiplyPoint3x4(p).y), lowest = positions.Min(p => meshToModel.MultiplyPoint3x4(p).y);
             body.bodyHeight = highest - lowest;
             float reach = Mathf.Max(5f, body.bodyHeight * 2.5f);
             mesh.bounds = new Bounds(Vector3.up * Mathf.Max(1f, body.bodyHeight * 0.5f), new Vector3(reach, reach, reach));
