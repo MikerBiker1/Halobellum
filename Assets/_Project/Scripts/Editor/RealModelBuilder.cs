@@ -76,7 +76,7 @@ namespace Halobellum.EditorTools
             new Entry { Unit = "FloodCovenant/InfestedGhost", Folder = "Ghost", Length = 4.4f, Tint = Infested },
             new Entry { Unit = "LekgoloColony/Skitterer", Folder = "Skitterer", Length = 2.6f },
             new Entry { Unit = "Flood/SwarmForm", Folder = "SwarmForm", Length = 3f },
-            // The owner's third batch (M11). Radii, for comparison: Mantis 2, Wolverine 1.4, Marauder 1.8, Reaver 1.4, Vampire 1.8, Seeder 1.2, Spawner 2, Juggernaut 1.8, Combat Form 0.6, Goliath 2.4.
+            // The owner's third batch (M11). Radii, for comparison: Mantis 2, Wolverine 1.4, Marauder 1.8, Reaver 1.4, Vampire 1.8, Seeder 1.6, Spawner 2, Juggernaut 1.8, Combat Form 0.6, Goliath 2.4.
             new Entry { Unit = "UNSC/Mantis", Folder = "Mantis", Height = 6f, Tint = new Color(1.3f, 1.3f, 1.3f) }, // A dark texture, between the Chopper's and the Cobra's.
             new Entry { Unit = "UNSC/Wolverine", Folder = "Wolverine", Length = 5.5f },
             new Entry { Unit = "Banished/Marauder", Folder = "Marauder", Length = 5.8f },

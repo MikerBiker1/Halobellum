@@ -310,7 +310,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Flamethrower Trooper
     defender: Seeder
-    winRate: 0.5
+    winRate: 0
   - attacker: Flamethrower Trooper
     defender: Infected Pelican
     winRate: 1
@@ -1534,7 +1534,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Archer Missile Pod
     defender: Seeder
-    winRate: 0.4
+    winRate: 0
   - attacker: Archer Missile Pod
     defender: Infected Pelican
     winRate: 0.9
@@ -4594,7 +4594,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Zealot
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Zealot
     defender: Infected Pelican
     winRate: 1
@@ -5002,7 +5002,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infection Forms
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Infection Forms
     defender: Infected Pelican
     winRate: 1
@@ -5206,7 +5206,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Carrier Form
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Carrier Form
     defender: Infected Pelican
     winRate: 1
@@ -5410,7 +5410,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Combat Form
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Combat Form
     defender: Infected Pelican
     winRate: 0
@@ -5614,7 +5614,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Stalker Form
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Stalker Form
     defender: Infected Pelican
     winRate: 0
@@ -5818,7 +5818,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pure Form Ranged
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Pure Form Ranged
     defender: Infected Pelican
     winRate: 1
@@ -6022,7 +6022,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Swarm Form
     defender: Seeder
-    winRate: 0
+    winRate: 1
   - attacker: Swarm Form
     defender: Infected Pelican
     winRate: 1
@@ -6226,7 +6226,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pure Form Tank
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Pure Form Tank
     defender: Infected Pelican
     winRate: 1
@@ -6343,7 +6343,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Flamethrower Trooper
-    winRate: 0.5
+    winRate: 1
   - attacker: Seeder
     defender: Warthog
     winRate: 1
@@ -6361,7 +6361,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Archer Missile Pod
-    winRate: 0.6
+    winRate: 1
   - attacker: Seeder
     defender: Pelican
     winRate: 0
@@ -6415,13 +6415,13 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Carrier Form
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Combat Form
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Stalker Form
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Pure Form Ranged
     winRate: 0
@@ -6460,10 +6460,10 @@ MonoBehaviour:
     winRate: 1
   - attacker: Seeder
     defender: Cobra
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Rhino
-    winRate: 0.9
+    winRate: 1
   - attacker: Seeder
     defender: Grizzly
     winRate: 1
@@ -6490,7 +6490,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Seeder
     defender: Reaver
-    winRate: 1
+    winRate: 0.5
   - attacker: Seeder
     defender: Skitterer
     winRate: 0
@@ -6637,7 +6637,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infected Pelican
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Infected Pelican
     defender: Infected Phantom
     winRate: 0
@@ -7657,7 +7657,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Grenadier
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Spartan Grenadier
     defender: Infected Pelican
     winRate: 0.7
@@ -8473,7 +8473,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Cobra
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Cobra
     defender: Infected Pelican
     winRate: 0
@@ -8677,7 +8677,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Rhino
     defender: Seeder
-    winRate: 0.1
+    winRate: 0
   - attacker: Rhino
     defender: Infected Pelican
     winRate: 0.2
@@ -10513,7 +10513,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Reaver
     defender: Seeder
-    winRate: 0
+    winRate: 0.5
   - attacker: Reaver
     defender: Infected Pelican
     winRate: 0
@@ -12349,7 +12349,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Scorpion
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Infested Scorpion
     defender: Infected Pelican
     winRate: 1
@@ -12757,7 +12757,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Juggernaut
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Juggernaut
     defender: Infected Pelican
     winRate: 1
@@ -13573,7 +13573,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Wraith
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Infested Wraith
     defender: Infected Pelican
     winRate: 1

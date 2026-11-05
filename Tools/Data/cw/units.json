@@ -2323,7 +2323,7 @@
   "hp": 800,
   "armor": "L",
   "speed": 1.5,
-  "radius": 1.2,
+  "radius": 1.6,
   "turn": 1,
   "filter": "G",
   "weapons": [
@@ -2355,7 +2355,7 @@
   ],
   "shield": 0,
   "regen": 0,
-  "air": false,
+  "air": true,
   "arc": null,
   "drop": null,
   "note": "",
