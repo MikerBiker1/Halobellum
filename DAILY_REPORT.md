@@ -2,6 +2,12 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The third batch of models, and a flying Seeder (D66)
+- **In the game:** all 16 of your files are in, with the Anniversary Human Flood Form on the Infested Marine and the red Brute on the Brute Grenadier. The Seeder flies.
+- **Tournament at 2000 health:** sub-factions from 48.7% to 53.0%, so the Seeder needed no other change: `Docs/Balance/hard_ai_tournament_d66.txt`.
+- **Fell back:** Meshy refused the Infested Marine and the Combat Form, and tore the Goliath. The Marine uses its file's rig with clips made by script; the other two are static models that wobble and swing.
+- **Not checked:** nobody has played this batch, and I can't watch motion, only still frames. The Brute Grenadier, Infested Marine, Combat Form, Goliath and Spawner have no firing frames in the gallery. No bench was run for the new bodies.
+
 ## The Spartan, the Zealot and what the AI reads (D65)
 - **In the game:** the Spartan has 1250 health; the Zealot leaps at its enemy, and its sword cleaves; Noble's Sniper costs 400 and Heavy Weapons 450; Hard picks techs by the army it has seen.
 - **Tournament at 2000 health:** sub-factions from 48.1% to 51.9%: `Docs/Balance/hard_ai_tournament_d65.txt`.

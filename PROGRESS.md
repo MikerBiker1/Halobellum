@@ -149,6 +149,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] Base health moves 5% at any setting, a shockwave weakens seeds, Hard levels before new squads in Unlock Skirmish (D63)
 - [x] The extra squad slot costs 50; a weaker Cobra and Rhino for Armored Division (D64)
 - [x] A weaker Spartan, a Zealot that leaps and cleaves, cheaper Noble Spartans, Hard's techs by the board (D65)
+- [x] The third batch of models, the Anniversary Flood Form on the Infested Marine, a flying Seeder (D66)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

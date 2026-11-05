@@ -149,6 +149,16 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 81. *(Fine for now.)* **Dust:** close up it now reads clearly behind a vehicle. From the game's camera it is still subtle, since vehicles are small there. The frame rate has room for more, so tell me if you want it stronger.
 82. **Sandbox towers:** I kept the switch off by default, so old Sandbox fights stay comparable. Flipping it is one line.
 
+## From the third batch of models (D66)
+
+83. **A Seeder against Flood does nothing:** it can't seed Flood, and Flood's ground-only units can't reach it, so both stand off until the 90 s limit and base damage decides. The AI has stopped buying it there, but you can still buy it. I left the battle rules alone. Should it be able to hurt Flood, or is that fine?
+84. **The Seeder for Normal and Easy:** they pick by role, and its role is still Single-target DPS with Chaff and Flankers as its counters, even the melee ones that can't reach it. It also deploys on the DPS row rather than the aircraft row. Hard goes by the measured matchups, so only Normal and Easy read this wrongly. Should it get an Aerial role?
+85. **The Seeder from the game's camera:** it reads as thin red fronds, 8 m long and 3.1 m wide. You called it big-ish. A bigger model is one number in `RealModelBuilder`, and it changes nothing in the fights.
+86. **The Brute Grenadier:** to stop it reading as black, its whole texture is lifted, so its armour is now light grey, and from the game's camera the red is only small specks. A lift of just the reds would be the next thing to try. Do you want it darker and redder?
+87. **The Infested Marine's rifle:** a grey slab along its right forearm, standing in for its Scavenged Rifle. It reads a little blocky. Its clips are made by script, as Meshy refused it, so please watch how it walks and swings.
+88. **The Goliath and Combat Form** don't bend like figures: Meshy tore the first and refused the second, so one swings four legs and the other wobbles. Good enough, or should I try another route?
+89. **Wide bodies:** the Juggernaut is 8 m arm to arm on a radius of 1.8, and the Spawner 9 m with its tendrils on a radius of 2, so both overlap their neighbours. I kept their radii, because a change there is a stat change.
+
 ## Things my test runs did to your PC
 
 - **Windows moving, and possibly music:** while the Screen setting was being checked, a test window moved across all three of your screens and briefly went fullscreen on each. Some of those runs weren't silent, so menu music may have played for about 25 seconds at a time. Those checks have finished.

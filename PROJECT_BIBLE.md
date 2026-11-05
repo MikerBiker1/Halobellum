@@ -512,6 +512,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-04 | A starting card moves base health by 5% of the setting at any setting; a shockwave weakens a Seeder's seeds; Hard levels before new squads in Unlock Skirmish | Per the project owner (D63) |
 | 2026-11-04 | The extra squad slot costs 50; the Cobra's railgun deals 175 and the Rhino's cannon 140 | Per the project owner (D64) |
 | 2026-11-04 | The Spartan has 1250 health; the Zealot leaps and cleaves; Noble's Sniper and Heavy Weapons cost 50 less; Hard picks techs by the army it has seen | Per the project owner (D65) |
+| 2026-11-05 | The Seeder flies, with a collision radius of 1.6; the owner's third batch of models is in, with the Anniversary Human Flood Form on the Infested Marine | Per the project owner (D66) |
 
 ## 18. Assumptions to confirm
 
