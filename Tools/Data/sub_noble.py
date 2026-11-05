@@ -12,11 +12,11 @@ ORDER = 1
 
 def units(U, W):
     return [
-        U("SpartanSniper", "Spartan Sniper", FACTION, "SingleTargetDps", 3, 225, 1, 450, 650, "U", 1.75, 0.6, 0.5, "B",
+        U("SpartanSniper", "Spartan Sniper", FACTION, "SingleTargetDps", 3, 200, 1, 400, 650, "U", 1.75, 0.6, 0.5, "B",
           [W("SRS99 Sniper Rifle", 220, 3.0, 42, "Ballistic", aa=True)], shield=200, regen=60, immune=True,
           note="Kills one armored target at a time from very far away; has no answer to a crowd or to anything that reaches it.",
           baked="SpartanSniper"),
-        U("SpartanHeavyWeapons", "Spartan Heavy Weapons", FACTION, "Tank", 3, 250, 1, 500, 1700, "U", 1.3, 0.8, 0.7, "B",
+        U("SpartanHeavyWeapons", "Spartan Heavy Weapons", FACTION, "Tank", 3, 225, 1, 450, 1700, "U", 1.3, 0.8, 0.7, "B",
           [W("M247H Chaingun", 11, 0.12, 15, "Ballistic", block=True),
            W("Hydra Rocket Pod", 80, 3.5, 20, "Explosive", proj=40, splash=1.5, own="G")], shield=250, regen=60, immune=True,
           note="A walking wall with a chaingun: mows down infantry, does little to armor. Its Unarmored body makes it weak to anti-infantry weapons once the shield is down.",

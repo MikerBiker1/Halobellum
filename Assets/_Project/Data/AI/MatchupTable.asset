@@ -121,7 +121,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Marine
     defender: Spartan Heavy Weapons
-    winRate: 0.9
+    winRate: 0.1
   - attacker: Marine
     defender: Spartan Grenadier
     winRate: 0
@@ -1549,7 +1549,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Archer Missile Pod
     defender: Spartan Heavy Weapons
-    winRate: 0.9
+    winRate: 0.8
   - attacker: Archer Missile Pod
     defender: Spartan Grenadier
     winRate: 1
@@ -3589,7 +3589,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Elite
     defender: Spartan Heavy Weapons
-    winRate: 1
+    winRate: 0.4
   - attacker: Elite
     defender: Spartan Grenadier
     winRate: 0
@@ -3793,7 +3793,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Wraith
     defender: Spartan Heavy Weapons
-    winRate: 0.2
+    winRate: 0.8
   - attacker: Wraith
     defender: Spartan Grenadier
     winRate: 1
@@ -5629,7 +5629,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Stalker Form
     defender: Spartan Heavy Weapons
-    winRate: 1
+    winRate: 0.9
   - attacker: Stalker Form
     defender: Spartan Grenadier
     winRate: 0
@@ -6238,7 +6238,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pure Form Tank
     defender: Spartan Sniper
-    winRate: 0.4
+    winRate: 0
   - attacker: Pure Form Tank
     defender: Spartan Heavy Weapons
     winRate: 1
@@ -7246,7 +7246,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan Sniper
     defender: Pure Form Tank
-    winRate: 0.6
+    winRate: 1
   - attacker: Spartan Sniper
     defender: Seeder
     winRate: 1
@@ -7264,7 +7264,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Sniper
     defender: Spartan Grenadier
-    winRate: 0
+    winRate: 0.7
   - attacker: Spartan Sniper
     defender: Spartan CQB
     winRate: 0
@@ -7279,7 +7279,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan Sniper
     defender: Rhino
-    winRate: 0.8
+    winRate: 1
   - attacker: Spartan Sniper
     defender: Grizzly
     winRate: 1
@@ -7294,7 +7294,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan Sniper
     defender: Condor Gunship
-    winRate: 0
+    winRate: 0.2
   - attacker: Spartan Sniper
     defender: Chopper
     winRate: 0
@@ -7315,7 +7315,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan Sniper
     defender: Hunter Captain
-    winRate: 0.6
+    winRate: 1
   - attacker: Spartan Sniper
     defender: Cannon Fodder
     winRate: 0
@@ -7339,7 +7339,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Sniper
     defender: Juggernaut
-    winRate: 0
+    winRate: 0.9
   - attacker: Spartan Sniper
     defender: Infested Grunt
     winRate: 0
@@ -7351,7 +7351,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Sniper
     defender: Infested Wraith
-    winRate: 0.9
+    winRate: 1
   - attacker: Spartan Sniper
     defender: Infested Banshee
     winRate: 0
@@ -7360,7 +7360,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Heavy Weapons
     defender: Marine
-    winRate: 0.1
+    winRate: 0.9
   - attacker: Spartan Heavy Weapons
     defender: Flamethrower Trooper
     winRate: 1
@@ -7381,7 +7381,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan Heavy Weapons
     defender: Archer Missile Pod
-    winRate: 0.1
+    winRate: 0.2
   - attacker: Spartan Heavy Weapons
     defender: Pelican
     winRate: 1
@@ -7411,10 +7411,10 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan Heavy Weapons
     defender: Elite
-    winRate: 0
+    winRate: 0.6
   - attacker: Spartan Heavy Weapons
     defender: Wraith
-    winRate: 0.8
+    winRate: 0.2
   - attacker: Spartan Heavy Weapons
     defender: Vampire
     winRate: 1
@@ -7441,7 +7441,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Heavy Weapons
     defender: Stalker Form
-    winRate: 0
+    winRate: 0.1
   - attacker: Spartan Heavy Weapons
     defender: Pure Form Ranged
     winRate: 0
@@ -7480,7 +7480,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan Heavy Weapons
     defender: Cobra
-    winRate: 0.6
+    winRate: 1
   - attacker: Spartan Heavy Weapons
     defender: Rhino
     winRate: 0
@@ -7492,7 +7492,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan Heavy Weapons
     defender: Longsword
-    winRate: 0
+    winRate: 0.4
   - attacker: Spartan Heavy Weapons
     defender: Vulture
     winRate: 1
@@ -7501,19 +7501,19 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Heavy Weapons
     defender: Chopper
-    winRate: 0
+    winRate: 0.3
   - attacker: Spartan Heavy Weapons
     defender: Brute Grenadier
     winRate: 1
   - attacker: Spartan Heavy Weapons
     defender: Marauder
-    winRate: 0
+    winRate: 0.1
   - attacker: Spartan Heavy Weapons
     defender: Reaver
     winRate: 1
   - attacker: Spartan Heavy Weapons
     defender: Skitterer
-    winRate: 0
+    winRate: 1
   - attacker: Spartan Heavy Weapons
     defender: Goliath
     winRate: 0
@@ -7558,7 +7558,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Heavy Weapons
     defender: Infested Banshee
-    winRate: 0.8
+    winRate: 1
   - attacker: Spartan Heavy Weapons
     defender: Spawner
     winRate: 0
@@ -7669,7 +7669,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Grenadier
     defender: Spartan Sniper
-    winRate: 1
+    winRate: 0.3
   - attacker: Spartan Grenadier
     defender: Spartan Heavy Weapons
     winRate: 0
@@ -8488,7 +8488,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Cobra
     defender: Spartan Heavy Weapons
-    winRate: 0.4
+    winRate: 0
   - attacker: Cobra
     defender: Spartan Grenadier
     winRate: 0.6
@@ -8689,7 +8689,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Rhino
     defender: Spartan Sniper
-    winRate: 0.2
+    winRate: 0
   - attacker: Rhino
     defender: Spartan Heavy Weapons
     winRate: 1
@@ -9304,7 +9304,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Longsword
     defender: Spartan Heavy Weapons
-    winRate: 1
+    winRate: 0.6
   - attacker: Longsword
     defender: Spartan Grenadier
     winRate: 1
@@ -9709,7 +9709,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Condor Gunship
     defender: Spartan Sniper
-    winRate: 1
+    winRate: 0.8
   - attacker: Condor Gunship
     defender: Spartan Heavy Weapons
     winRate: 1
@@ -9916,7 +9916,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Chopper
     defender: Spartan Heavy Weapons
-    winRate: 1
+    winRate: 0.7
   - attacker: Chopper
     defender: Spartan Grenadier
     winRate: 0
@@ -10324,7 +10324,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Marauder
     defender: Spartan Heavy Weapons
-    winRate: 1
+    winRate: 0.9
   - attacker: Marauder
     defender: Spartan Grenadier
     winRate: 0.4
@@ -10732,7 +10732,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Skitterer
     defender: Spartan Heavy Weapons
-    winRate: 1
+    winRate: 0
   - attacker: Skitterer
     defender: Spartan Grenadier
     winRate: 0
@@ -11137,7 +11137,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Hunter Captain
     defender: Spartan Sniper
-    winRate: 0.4
+    winRate: 0
   - attacker: Hunter Captain
     defender: Spartan Heavy Weapons
     winRate: 1
@@ -12769,7 +12769,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Juggernaut
     defender: Spartan Sniper
-    winRate: 1
+    winRate: 0.1
   - attacker: Juggernaut
     defender: Spartan Heavy Weapons
     winRate: 1
@@ -13585,7 +13585,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Wraith
     defender: Spartan Sniper
-    winRate: 0.1
+    winRate: 0
   - attacker: Infested Wraith
     defender: Spartan Heavy Weapons
     winRate: 1
@@ -13792,7 +13792,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Banshee
     defender: Spartan Heavy Weapons
-    winRate: 0.2
+    winRate: 0
   - attacker: Infested Banshee
     defender: Spartan Grenadier
     winRate: 1

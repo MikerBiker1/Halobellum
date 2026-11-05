@@ -15,10 +15,10 @@ MonoBehaviour:
   unitName: Spartan Heavy Weapons
   role: 3
   tier: 3
-  unlockCost: 250
+  unlockCost: 225
   squadSize: 1
-  cost: 500
-  baseDamage: 100
+  cost: 450
+  baseDamage: 90
   maxHealth: 1700
   armorType: 0
   maxShield: 250
