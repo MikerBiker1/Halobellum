@@ -2,6 +2,11 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The owner's music, and the end of a round (D67)
+- **In the game:** your music by your rules; the last shots land before a battle ends; survivors hit the base as nodes of light, smallest first, then each Titan alone; a ribbon says MATCH WON, MATCH LOST or MATCH DRAWN, and VICTORY or DEFEAT for the whole game.
+- **Tournament at 2000 health:** sub-factions from 48.3% to 53.4%: `Docs/Balance/hard_ai_tournament_d67.txt`. The counter web was kept, as the new rule moved 4 of 4761 matchups a little.
+- **Not checked:** nobody has heard the music or how loud it sits against the battle, and I can only see still frames of the nodes.
+
 ## The third batch of models, and a flying Seeder (D66)
 - **In the game:** all 16 of your files are in, with the Anniversary Human Flood Form on the Infested Marine and the red Brute on the Brute Grenadier. The Seeder flies.
 - **Tournament at 2000 health:** sub-factions from 48.7% to 53.0%, so the Seeder needed no other change: `Docs/Balance/hard_ai_tournament_d66.txt`.

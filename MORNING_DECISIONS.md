@@ -159,6 +159,14 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 88. **The Goliath and Combat Form** don't bend like figures: Meshy tore the first and refused the second, so one swings four legs and the other wobbles. Good enough, or should I try another route?
 89. **Wide bodies:** the Juggernaut is 8 m arm to arm on a radius of 1.8, and the Spawner 9 m with its tendrils on a radius of 2, so both overlap their neighbours. I kept their radii, because a change there is a stat change.
 
+## From the music and the end of a round (D67)
+
+90. **A song picked again resumes where it was,** as tracks did before, so that you hear all of it over a game. It could start from the top instead. One line.
+91. **The Flood song's chance:** you asked for more often, and I made it 40% when Flood is present, about 15% for each of the 4 others. One number.
+92. **Between the round's window and the next cards there is no music,** only the round's sound. Should a song carry on quietly under it?
+93. **Unlock Skirmish has no faction,** so a lost game plays the song of the land you fought on, unless the enemy fielded Flood.
+94. **The 90 second limit** also waits for the last shots, then both sides' survivors send their nodes.
+
 ## Things my test runs did to your PC
 
 - **Windows moving, and possibly music:** while the Screen setting was being checked, a test window moved across all three of your screens and briefly went fullscreen on each. Some of those runs weren't silent, so menu music may have played for about 25 seconds at a time. Those checks have finished.

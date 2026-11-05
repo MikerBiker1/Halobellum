@@ -1,6 +1,7 @@
 // RoundEnding.cs
 // The end of a round, once the fight is over and the last shot has landed: a node of light leaves every surviving unit and flies to the enemy's base health, slowly at first and
-// then fast. Each one that arrives takes its unit's damage off that health, with a hit and a fading number that grow with the unit. A second after the last hit, the round's window opens.
+// then fast. Each one that arrives takes its unit's damage off that health, with a hit and a fading number that grow with the unit. They arrive smallest first: the small units as
+// a run of hits, a short pause, the bigger units, then each Titan on its own after a longer pause. A second after the last hit, the round's window opens.
 // This only shows what the battle already decided. MatchController runs it and MatchHud draws it. Plain C#, so that it can be tested without a scene.
 // Depends on: Halobellum.Combat (BattleSimulation, SimUnit), Halobellum.Core (Team), UnityEngine (Vector3, Mathf).
 
@@ -17,8 +18,14 @@ namespace Halobellum.Presentation
     {
         /// <summary>How long a node takes to reach the base, with the biggest taking longer than the smallest.</summary>
         public const float NodeSeconds = 0.9f, BigNodeExtraSeconds = 0.3f;
-        /// <summary>Nodes leave within this time of each other, so that a crowd arrives as a run of hits.</summary>
+        /// <summary>A crowd's hits are spread over this time, or less if it is small, so that they arrive as a run.</summary>
         public const float MostStagger = 0.7f;
+        /// <summary>From the last small unit's hit to the first bigger unit's.</summary>
+        public const float BigUnitPause = 0.35f;
+        /// <summary>Before each Titan's hit.</summary>
+        public const float TitanPause = 0.75f;
+        /// <summary>A unit whose damage to a base is under this comes with the small ones. A Marine deals about 1, a Hunter 45.</summary>
+        public const float SmallUnitDamage = 15f;
         /// <summary>From the last hit to the window.</summary>
         public const float PauseSeconds = 1f;
         public const float NumberSeconds = 1.1f;
@@ -34,6 +41,7 @@ namespace Halobellum.Presentation
             public float Damage;
             /// <summary>0 for the smallest unit, 1 for the biggest.</summary>
             public float Size;
+            public bool IsTitan;
             public float Starts;
             public float Seconds;
             public bool Landed;
@@ -85,11 +93,54 @@ namespace Halobellum.Presentation
                     Source = unit.Team,
                     Damage = unit.Stats.BaseDamage,
                     Size = size,
-                    Starts = (float)_random.NextDouble() * MostStagger,
+                    IsTitan = unit.Stats.Role == UnitRole.Titan,
                     Seconds = NodeSeconds + BigNodeExtraSeconds * size,
                 });
             }
             _left = _nodes.Count;
+            Schedule();
+        }
+
+        /// <summary>Decides when each node arrives, and so when it must leave: a node's slow start is under way while those before it land.</summary>
+        private void Schedule()
+        {
+            _nodes.Sort((a, b) => a.Damage.CompareTo(b.Damage)); // Smallest first. List.Sort isn't stable, but equal damage looks the same.
+            float lastHit = ScheduleRun(node => !node.IsTitan && node.Damage < SmallUnitDamage, -1f, 0f);
+            lastHit = ScheduleRun(node => !node.IsTitan && node.Damage >= SmallUnitDamage, lastHit, BigUnitPause);
+            foreach (Node titan in _nodes)
+            {
+                if (!titan.IsTitan) continue;
+                float hit = lastHit < 0f ? titan.Seconds : lastHit + TitanPause;
+                titan.Starts = hit - titan.Seconds;
+                lastHit = hit;
+            }
+        }
+
+        /// <summary>One run of hits, spread by a share of a second each up to a limit. Returns when the last of them lands, or lastHit if there were none.</summary>
+        private float ScheduleRun(Predicate<Node> inRun, float lastHit, float pause)
+        {
+            int count = 0;
+            float longest = 0f;
+            foreach (Node node in _nodes)
+            {
+                if (!inRun(node)) continue;
+                count++;
+                longest = Mathf.Max(longest, node.Seconds);
+            }
+            if (count == 0) return lastHit;
+            float spread = Mathf.Min(MostStagger, (count - 1) * 0.08f);
+            float first = lastHit < 0f ? longest : lastHit + pause; // With nothing before it, the first to land is the first to leave.
+            int index = 0;
+            foreach (Node node in _nodes)
+            {
+                if (!inRun(node)) continue;
+                float jitter = count > 1 ? (float)_random.NextDouble() * spread / count : 0f;
+                float hit = first + spread * index / Mathf.Max(1, count - 1) + jitter;
+                node.Starts = hit - node.Seconds;
+                lastHit = Mathf.Max(lastHit, hit);
+                index++;
+            }
+            return lastHit;
         }
 
         /// <summary>From a unit's damage to a base to 0 to 1. By its logarithm, as they run from about 1 for a Marine to 250: a tenth of the biggest is still a good hit.</summary>

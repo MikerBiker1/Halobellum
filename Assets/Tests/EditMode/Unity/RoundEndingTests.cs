@@ -12,6 +12,13 @@ namespace Halobellum.Tests
 {
     public class RoundEndingTests
     {
+        /// <summary>When each node hits, by its damage to the base.</summary>
+        private static float HitTime(RoundEnding ending, float damage)
+        {
+            RoundEnding.Node node = ending.Nodes.First(n => n.Damage == damage);
+            return node.Starts + node.Seconds;
+        }
+
         private static BattleSimulation Battle(params (Team team, float damage, bool alive)[] units)
         {
             var sim = new BattleSimulation(TestRules.Default(), 1);
@@ -56,6 +63,40 @@ namespace Halobellum.Tests
             Assert.AreEqual(3, hits);
             Assert.AreEqual(36, ending.HitsTaken(Team.B), "Rounded as the round's result rounds it.");
             Assert.AreEqual(0, ending.HitsTaken(Team.A));
+        }
+
+        [Test]
+        public void TheBiggerUnitsHit_AfterTheSmallOnes_WithAPause_AndEachTitanAfterALongerOne()
+        {
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            float x = 0f;
+            foreach ((float damage, UnitRole role) in new[] { (160f, UnitRole.Titan), (45f, UnitRole.Tank), (1f, UnitRole.Chaff), (250f, UnitRole.Titan), (2f, UnitRole.Chaff), (100f, UnitRole.Tank) })
+            {
+                UnitStats stats = TestUnits.Unit(health: 10f, speed: 0f);
+                stats.BaseDamage = damage;
+                stats.Role = role;
+                sim.AddUnit(stats, Team.A, new Vec2(x += 5f, -10f));
+            }
+            RoundEnding ending = Ending(sim);
+            foreach (RoundEnding.Node node in ending.Nodes) Assert.GreaterOrEqual(node.Starts, 0f, "No node leaves before the ending begins.");
+
+            float small = Mathf.Max(HitTime(ending, 1f), HitTime(ending, 2f));
+            Assert.GreaterOrEqual(Mathf.Min(HitTime(ending, 45f), HitTime(ending, 100f)), small + RoundEnding.BigUnitPause - 1e-4f);
+            Assert.LessOrEqual(HitTime(ending, 45f), HitTime(ending, 100f) + 1e-4f, "Smallest first within a run, give or take.");
+            float big = Mathf.Max(HitTime(ending, 45f), HitTime(ending, 100f));
+            Assert.AreEqual(big + RoundEnding.TitanPause, HitTime(ending, 160f), 1e-3f);
+            Assert.AreEqual(big + 2f * RoundEnding.TitanPause, HitTime(ending, 250f), 1e-3f, "Each Titan on its own.");
+            Assert.Greater(RoundEnding.TitanPause, RoundEnding.BigUnitPause);
+        }
+
+        [Test]
+        public void ALoneUnit_LeavesAtOnce()
+        {
+            foreach (float damage in new[] { 1f, 45f })
+            {
+                RoundEnding ending = Ending(Battle((Team.A, damage, true)));
+                Assert.AreEqual(0f, ending.Nodes[0].Starts, 1e-3f);
+            }
         }
 
         [Test]

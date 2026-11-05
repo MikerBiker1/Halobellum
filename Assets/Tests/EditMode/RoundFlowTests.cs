@@ -77,6 +77,38 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void WhenBothArmiesFall_TheRoundIsADraw_NoBaseIsHit_AndTheMatchGoesOn()
+        {
+            var match = TestMatch.Started(out _, out _, out _, out _);
+            match.Player.Squads.Clear();
+            match.Enemy.Squads.Clear(); // What a last rocket can do: nobody is left on either side.
+            int credits = match.Player.Credits;
+
+            RoundSummary summary = PlayBattle(match);
+            Assert.AreEqual(BattleOutcome.Draw, summary.Battle.Outcome);
+            Assert.IsNull(summary.RoundWinner);
+            Assert.IsFalse(summary.Tie, "Not the exact tie of two fallen bases, which restores them.");
+            Assert.AreEqual(2000, match.Player.BaseHealth);
+            Assert.AreEqual(2000, match.Enemy.BaseHealth);
+            Assert.IsNull(match.Winner);
+            Assert.AreEqual(MatchPhase.Result, match.Phase);
+            Assert.AreEqual(credits + summary.IncomeAwarded, match.Player.Credits, "Both still get their income.");
+            match.ContinueAfterResult();
+            Assert.AreEqual(2, match.Round);
+        }
+
+        [TestCase(10, 5, false, Team.A)]
+        [TestCase(5, 10, false, Team.B)]
+        public void TheRoundsWinner_HitTheOtherBaseHarder(int byA, int byB, bool tie, Team winner) =>
+            Assert.AreEqual(winner, new RoundSummary { BaseDamageByA = byA, BaseDamageByB = byB, Tie = tie }.RoundWinner);
+
+        [TestCase(0, 0, false)]
+        [TestCase(7, 7, false)]
+        [TestCase(10, 5, true)]
+        public void EqualHits_OrAnExactTie_AreADraw(int byA, int byB, bool tie) =>
+            Assert.IsNull(new RoundSummary { BaseDamageByA = byA, BaseDamageByB = byB, Tie = tie }.RoundWinner);
+
+        [Test]
         public void RoundReset_EverySquadIsBackInPlaceNextRound()
         {
             var match = TestMatch.Started(out _, out _, out _, out _);

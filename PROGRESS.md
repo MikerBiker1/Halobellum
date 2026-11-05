@@ -132,7 +132,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] 3 techs on every unit, no infested Titans, damage techs reach death bursts (D54)
 - [x] Towers: targets, shockwave, levels, Command Center and Research Center, the AI by difficulty, placeholder models (D55)
 - [x] The owner's morning answers: Pelican blast of 3.5 m, Blisterback and Methane Wagon removed, `Assets_to_Download.md` (D56)
-- [ ] The owner's own Halo music and sound, in the slots (see MORNING_DECISIONS.md)
+- [x] The owner's own music, in the slots, with their rules (D67). Their own sound effects are still to come (see Assets_to_Download.md)
 - [x] The owner's second batch of models: 23 units fitted, animated, icons redone (D57)
 - [x] Dead ground units stay 14 seconds, Shortsword to Longsword (D57)
 - [x] Notes from playing: starting cards about 300, enemy's starting squads in grey, shop by price with level 1 stats, tower debuff and XP, item and arrow together, Elite Recruitment's note, Grenadier rockets, Abomination buff (D58)
@@ -150,6 +150,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] The extra squad slot costs 50; a weaker Cobra and Rhino for Armored Division (D64)
 - [x] A weaker Spartan, a Zealot that leaps and cleaves, cheaper Noble Spartans, Hard's techs by the board (D65)
 - [x] The third batch of models, the Anniversary Flood Form on the Infested Marine, a flying Seeder (D66)
+- [x] The last shots land, nodes of light hit the base, and result windows with a ribbon (D67)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

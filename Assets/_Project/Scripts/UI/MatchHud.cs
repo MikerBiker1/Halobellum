@@ -892,7 +892,9 @@ namespace Halobellum.UI
                 float age = (ending.Clock - number.Born) / RoundEnding.NumberSeconds;
                 Rect bar = number.Target == Team.A ? yourBar : enemyBar;
                 GUIStyle style = number.Size < 0.45f ? _hitSmall : number.Size < 0.8f ? _hitMedium : _hitBig;
-                var rect = new Rect(bar.center.x + number.Along * bar.width * 0.4f - 80f, bar.yMax + 4f + age * 44f, 160f, 60f);
+                // A crowd's numbers spread out under the bar, so that they can be read: each has its own place along it and its own distance below.
+                float below = Mathf.Abs(number.Along * 7919f) % 1f * 70f;
+                var rect = new Rect(Mathf.Clamp(bar.center.x + number.Along * bar.width * 0.62f, 40f, HudScale.ScaledWidth(_scale) - 40f) - 80f, bar.yMax + 6f + below + age * 50f, 160f, 60f);
                 float alpha = 1f - age * age;
                 GUI.color = new Color(0f, 0f, 0f, alpha);
                 GUI.Label(new Rect(rect.x + 2f, rect.y + 2f, rect.width, rect.height), number.Text, style);
@@ -955,8 +957,10 @@ namespace Halobellum.UI
             RoundSummary s = match.Match.LastSummary;
             if (s == null) return;
             Team? winner = s.RoundWinner;
-            string word = winner == null ? "DRAW" : winner == Team.A ? "VICTORY" : "DEFEAT";
-            DrawOutcome(word, winner == null ? DrawColor : winner == Team.A ? VictoryColor : DefeatColor, $"Round {s.Round}: you hit the enemy base for {s.BaseDamageByA}, it hit yours for {s.BaseDamageByB}", 550f);
+            string word = winner == null ? "MATCH DRAWN" : winner == Team.A ? "MATCH WON" : "MATCH LOST";
+            bool bothFell = s.Battle.TeamA.Survivors == 0 && s.Battle.TeamB.Survivors == 0;
+            string line = bothFell ? $"Round {s.Round}: both armies fell, and neither base was hit" : $"Round {s.Round}: you hit the enemy base for {s.BaseDamageByA}, it hit yours for {s.BaseDamageByB}";
+            DrawOutcome(word, winner == null ? DrawColor : winner == Team.A ? VictoryColor : DefeatColor, line, 550f);
             Rect panel = CenteredPanel(640f, 550f, BannerRoom);
             float y = panel.y + 12f;
             GUI.Label(new Rect(panel.x, y, panel.width, 34f), HudTheme.Title($"Round {s.Round} result"), _centered);
@@ -989,16 +993,13 @@ namespace Halobellum.UI
             if (MenuStyle.Button(new Rect(panel.x + panel.width * 0.5f + 10f, panel.yMax - 58f, 220f, 44f), "Main Menu", _bigButton)) GameFlow.OpenMainMenu();
         }
 
-        private const float BannerHeight = 132f, BannerRoom = 68f;
+        private const float BannerHeight = 140f, BannerRoom = 72f;
         private static readonly Color VictoryColor = new Color(0.09f, 0.55f, 0.2f), GameVictoryColor = new Color(0.78f, 0.56f, 0.06f), DefeatColor = new Color(0.68f, 0.07f, 0.07f), DrawColor = new Color(0.32f, 0.35f, 0.4f);
 
-        /// <summary>Whether it was won or lost, too big and too colourful to miss: the whole screen takes on its colour, and a band right across it above the window says the word.</summary>
+        /// <summary>Whether it was won or lost, too big and too colourful to miss: a band right across the screen above the window says the word.</summary>
         private void DrawOutcome(string word, Color color, string line, float panelHeight)
         {
             float width = HudScale.ScaledWidth(_scale), height = HudScale.ScaledHeight(_scale);
-            GUI.color = new Color(color.r, color.g, color.b, 0.3f);
-            GUI.DrawTexture(new Rect(0f, 0f, width, height), Texture2D.whiteTexture);
-
             var band = new Rect(0f, (height - panelHeight) * 0.5f + BannerRoom - BannerHeight - 4f, width, BannerHeight);
             UiHitAreas.Add(HudScale.ToScreen(band, _scale));
             GUI.color = color;
@@ -1007,12 +1008,12 @@ namespace Halobellum.UI
             GUI.DrawTexture(new Rect(band.x, band.y, band.width, 4f), Texture2D.whiteTexture);
             GUI.DrawTexture(new Rect(band.x, band.yMax - 4f, band.width, 4f), Texture2D.whiteTexture);
 
-            var wordRect = new Rect(0f, band.y + 2f, width, 92f);
+            var wordRect = new Rect(0f, band.y + 10f, width, 86f);
             GUI.color = new Color(0f, 0f, 0f, 0.55f);
             GUI.Label(new Rect(wordRect.x + 3f, wordRect.y + 3f, wordRect.width, wordRect.height), word, _bannerWord);
             GUI.color = Color.white;
             GUI.Label(wordRect, word, _bannerWord);
-            GUI.Label(new Rect(0f, band.y + 92f, width, 34f), line, _bannerLine);
+            GUI.Label(new Rect(0f, band.y + 98f, width, 34f), line, _bannerLine);
         }
 
         /// <summary>Base damage, bases, survivors, top damage dealers and what killed what. Returns the next y.</summary>
@@ -1107,7 +1108,7 @@ namespace Halobellum.UI
             _smallCentered = new GUIStyle(_small) { alignment = TextAnchor.MiddleCenter };
             _shopLine = new GUIStyle(_small) { wordWrap = false };
             _cellLine = new GUIStyle(_small) { wordWrap = false };
-            _bannerWord = new GUIStyle(_title) { fontSize = HudTheme.TitleSize(82), alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.white } };
+            _bannerWord = new GUIStyle(_title) { fontSize = HudTheme.TitleSize(76), alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.white } };
             _bannerLine = new GUIStyle(_text) { fontSize = HudTheme.Size(21), fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.white } };
             _hitSmall = new GUIStyle(_text) { fontSize = HudTheme.Size(21), fontStyle = FontStyle.Bold, alignment = TextAnchor.UpperCenter, normal = { textColor = Color.white } };
             _hitMedium = new GUIStyle(_hitSmall) { fontSize = HudTheme.Size(30) };

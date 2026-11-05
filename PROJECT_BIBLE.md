@@ -99,7 +99,7 @@ A match is a series of rounds against an AI opponent. Each round has these phase
 | Unit unlocks per round | 1 |
 | Unit sale refund | 100% before the battle of the round it was bought, 50% afterward. Free draft squads always sell for 50% of their cost. |
 
-**How a round ends and how base damage works.** A battle ends when one side has no units left, or when 90 seconds pass. Either way, the result is resolved the same way: every unit still alive on each side deals its `BaseDamage` to the opposing base, and both sides take damage at the same time. There is no separate “round winner” penalty. A side that was wiped out simply has no survivors, so it deals nothing. Example: at 90 seconds the player has 1 Scorpion alive (300 ÷ 1 ÷ 5 = 60 damage) and the AI has 2 Ghosts alive (200 ÷ 2 ÷ 5 = 20 each, 40 total). The AI base takes 60 and the player base takes 40. Only units alive at the moment the battle ends count, and temporary units from the round (infected units, reinforcements) are included if still alive.
+**How a round ends and how base damage works.** A battle ends when one side has no units left, or when 90 seconds pass, and once the shots in the air have landed (D67): nobody acts meanwhile, those shots still count, and if they leave nobody on either side the round is a draw. Either way, the result is resolved the same way: every unit still alive on each side deals its `BaseDamage` to the opposing base, and both sides take damage at the same time. There is no separate “round winner” penalty. A side that was wiped out simply has no survivors, so it deals nothing. Example: at 90 seconds the player has 1 Scorpion alive (300 ÷ 1 ÷ 5 = 60 damage) and the AI has 2 Ghosts alive (200 ÷ 2 ÷ 5 = 20 each, 40 total). The AI base takes 60 and the player base takes 40. Only units alive at the moment the battle ends count, and temporary units from the round (infected units, reinforcements) are included if still alive.
 
 **Starting draft.** Before round 1, the player picks one of 5 draft cards. This is the most important decision of the game.
 
@@ -513,6 +513,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-04 | The extra squad slot costs 50; the Cobra's railgun deals 175 and the Rhino's cannon 140 | Per the project owner (D64) |
 | 2026-11-04 | The Spartan has 1250 health; the Zealot leaps and cleaves; Noble's Sniper and Heavy Weapons cost 50 less; Hard picks techs by the army it has seen | Per the project owner (D65) |
 | 2026-11-05 | The Seeder flies, with a collision radius of 1.6; the owner's third batch of models is in, with the Anniversary Human Flood Form on the Infested Marine | Per the project owner (D66) |
+| 2026-11-05 | The owner's music and its rules; shots in the air land before a battle ends, so both armies can fall and draw; survivors hit the base as nodes of light, smallest first; result windows with a ribbon | Per the project owner (D67) |
 
 ## 18. Assumptions to confirm
 
