@@ -1,4 +1,4 @@
-# The Vampire, from the owner's Meshy model: 15,951 triangles to about 8,800 and one texture of 512. Its surface is split along its
+# The Vampire, from the owner's Meshy model: 15,951 triangles to about 8,700 and one texture of 512. Its surface is split along its
 # texture's seams into 802 pieces, which welding joins into 3, so it is reduced whole and repainted. Its nose is along -X in the file:
 # the canopy and the open mouth between its two claws are there, and its crests and fin sweep back toward +X. Its crescent wings are
 # one solid body with the hull, so nothing beats, and it hovers. The Needle Cannons fire in turn from the front of the glowing strips
@@ -7,13 +7,47 @@ import os
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 import model_tools as mt
+import bmesh
 import numpy as np
+from mathutils import Vector
+from mathutils.bvhtree import BVHTree
+
+
+def show_every_seen_side(body, share=0.04):
+    """
+    The game hides back faces, and the file has open sheets around its claws' teeth and inside its mouth that were made to be seen from
+    both sides. So each face asks which of its sides can see out: one that shows only its back is turned, and one that shows both is doubled.
+    """
+    mesh = bmesh.new()
+    mesh.from_mesh(body.data)
+    mesh.normal_update()
+    tree = BVHTree.FromBMesh(mesh)
+    rays = [Vector((np.sqrt(1 - z * z) * np.cos(i * 2.39996), np.sqrt(1 - z * z) * np.sin(i * 2.39996), z)) for i, z in enumerate(np.linspace(-0.99, 0.99, 96))]
+
+    def sees_out(point, normal):
+        facing = [r for r in rays if r.dot(normal) > 0.1]
+        return sum(1 for r in facing if tree.ray_cast(point + normal * 0.0002, r)[0] is None) / max(1, len(facing))
+
+    turned, doubled = [], []
+    for face in mesh.faces:
+        middle, normal = face.calc_center_median(), face.normal.copy()
+        if sees_out(middle, -normal) < share:
+            continue
+        (turned if sees_out(middle, normal) < share else doubled).append(face)
+    bmesh.ops.reverse_faces(mesh, faces=turned)
+    copies = bmesh.ops.duplicate(mesh, geom=doubled)["geom"]
+    bmesh.ops.reverse_faces(mesh, faces=[g for g in copies if isinstance(g, bmesh.types.BMFace)])
+    mesh.to_mesh(body.data)
+    mesh.free()
+    body.data.update()
+    print(f"REPORT turned {len(turned)} faces and doubled {len(doubled)}")
+
 
 mt.start("Vampire", "Meshy/Meshy_AI_Vampire.glb")
 mt.source_size()
 mt.turn(yaw=90)
 mt.centre_on_ground()
-image = mt.reduce_and_repaint(8800, 1024, reach=0.008)
+image = mt.reduce_and_repaint(8700, 1024, reach=0.008)
 # Its unwrap is in many small pieces with black between them, and from afar black seeps into them. So the unused parts of the texture
 # take the model's average colour instead.
 pixels = np.empty(image.size[0] * image.size[1] * 4, dtype=np.float32)
@@ -25,6 +59,7 @@ image.pixels.foreach_set(pixels.ravel())
 image.update()
 image.pack()
 print(f"REPORT filled {int(empty.sum())} of {len(pixels)} texture pixels")
+show_every_seen_side(mt.meshes("^Body$")[0])
 mt.smooth(40)
 mt.muzzle("Muzzle_0a", (0.125, -0.42, 0.228))
 mt.muzzle("Muzzle_0b", (-0.125, -0.42, 0.228))
