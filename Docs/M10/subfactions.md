@@ -163,8 +163,8 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 - **Hunter Captain has no taunt**, though it does in Halo Wars 2. Targeting is always "the closest enemy" (Bible Section 6), and a taunt would break that rule. It has its siphon and a healing aura instead.
 - **Cobra has no lockdown mode**, Gremlin's EMP slows rather than stuns, and the Rhino is Tier 3, more than the Wraith and Archer's Tier 2, because of its reach.
 - **Aerospace Command has no Tier 1 exclusive unit, and neither does Noble.** Their draft cards always give base Tier 1 squads. The Bible's band would allow a cheap one, but air or Spartans at Tier 1 seemed wrong.
-- **Spartan bodies.** Noble's Spartans use the Marine's rig, bigger and darker green, with a rifle, a rocket launcher or an SMG. It reads as "a big soldier", not a Spartan, and the base Spartan is still a capsule: I left that alone, but it now looks worse than its Noble cousins.
-- **Condor Gunship** uses the Pelican model with a grey tint. They are close relatives, and it is much better than a primitive at the same size, but a real Condor should replace it.
+- **Spartan bodies.** Noble's Spartans are the owner's Spartan model in five colours (D57), each with a placeholder weapon until real ones come (`Assets_to_Download.md`).
+- **Condor Gunship** has its own model since the third batch. It first borrowed the Pelican's, with a grey tint.
 - **The faction files are still called `*_Standard.asset`**, to keep every reference. Only the name is left over.
 
 ## Balance, first pass
@@ -191,25 +191,13 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 
 ## Models wanted
 
-Real models in the game now:
+Real models in the game now, after the owner's three batches (D45, D57 and the third):
 
-- **New:** Grizzly, Chopper.
-- **Reused real prefabs with a tint:** Infested Warthog, Scorpion, Hornet, Elephant, Wraith, Banshee, Scarab.
-- **Reused with a tint, as a stopgap:** Condor Gunship (Pelican).
-- **Reused baked bodies:** Spartan Sniper, Heavy Weapons, Grenadier, CQB, Fireteam (Marine rig), Cannon Fodder, Heavy Grunts, Infested Grunt (Grunt), Infested Marine (Marine).
+- **Their own model:** Grizzly, Chopper, Cobra, Rhino, Sparrowhawk, Longsword, Vulture, Condor Gunship, Brute Grenadier, Marauder, Reaver, Skitterer, Goliath, Hunter Captain, Grunt Goblin, Infested Marine, Juggernaut, Spawner.
+- **The Spartan's model, recoloured:** Spartan Sniper, Heavy Weapons, Grenadier, CQB, Fireteam.
+- **Reused with a tint:** Infested Warthog, Scorpion, Hornet, Wraith, Banshee, Ghost and Elite, Infested Grunt, Cannon Fodder, Heavy Grunts.
 
-Still placeholder primitives, each needing a model:
-
-| Sub-faction | Units |
-| --- | --- |
-| Armored Division | Cobra, Rhino, Gremlin |
-| Aerospace Command | Sparrowhawk, Vulture, Longsword (Condor Gunship would also like its own) |
-| Banished | Marauder, Reaver, Brute Grenadier |
-| Lekgolo Colony | Goliath, Skitterer, Hunter Captain |
-| Unggoy Rebellion | Grunt Goblin |
-| Flood, UNSC-based | Juggernaut |
-| Flood, Covenant-based | Infested Ghost (no Ghost model exists yet), Infested Elite, Spawner |
-| Noble | Spartans of their own, if wanted |
+Still a placeholder primitive among the sub-factions' units: the Gremlin (Armored Division). `Assets_to_Download.md` keeps the list of what is left to find.
 
 Left out on purpose, as asked: `vehicleshumangroundmammoth.glb` (197,535 triangles, no unit in the Bible) and `halo_3_energy_sword_by_abisv.glb` (would suit melee units later).
 
