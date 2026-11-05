@@ -13,13 +13,15 @@ SWING_RIGHT = "Swing_1_50_12_1.1"
 
 
 def overlap(name, low, high):
-    """A copy of the body's faces just inside a cut goes with the arm too, so that no gap can be seen through when the arm turns."""
+    """A copy of the body's faces just inside a cut goes with the arm too, so that no gap can be seen through when the arm turns. It sits a little under the surface, so as not to fight with the body's own."""
     body = bpy.data.objects["Body"]
     spare = body.copy()
     spare.data = body.data.copy()
     spare.name = "Spare"
     bpy.context.scene.collection.objects.link(spare)
-    mt.take(name, low, high, "^Spare$", pivot=(0, 0, 0), whole_pieces=False)
+    band = mt.take(name, low, high, "^Spare$", pivot=(0, 0, 0), whole_pieces=False)
+    for v in band.data.vertices:
+        v.co -= v.normal * 0.002
     bpy.data.objects.remove(spare)
 
 
