@@ -42,8 +42,8 @@ _state = {"name": None, "folder": None, "source": None, "tris_before": 0, "flags
 
 # ---- Loading and looking ----
 
-def start(name, source):
-    """Empties Blender and loads Art_Source/<source>. All parents and rigs are flattened into plain parts in place."""
+def start(name, source, rest_pose=False):
+    """Empties Blender and loads Art_Source/<source>. All parents and rigs are flattened into plain parts in place. With rest_pose, a rig's clip is dropped first, so it flattens in the rig's own rest pose."""
     bpy.ops.wm.read_factory_settings(use_empty=True)
     path = os.path.join(SOURCE, source)
     if path.lower().endswith(".fbx"):
@@ -57,6 +57,12 @@ def start(name, source):
     os.makedirs(os.path.join(folder, "shots"))
     _state.update(name=name, folder=folder, source=source, flags={}, high=None)
 
+    if rest_pose:
+        for o in bpy.context.scene.objects:
+            if o.type == "ARMATURE":
+                o.animation_data_clear()
+                for bone in o.pose.bones:
+                    bone.matrix_basis.identity()
     bpy.context.view_layer.update()
     for o in meshes():
         o.data = o.data.copy()  # Parts that share a mesh must not share what happens to it next.

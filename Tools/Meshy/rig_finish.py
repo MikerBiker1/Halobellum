@@ -30,6 +30,12 @@ ROLES = {
     "Hunter": {"moving": "Monster_Walk", "shooting": "Walk_Forward_While_Shooting", "dead": "Dead", "still": "walking_2"},
     "HunterCaptain": {"moving": "Monster_Walk", "shooting": "Walk_Forward_While_Shooting", "dead": "Dead", "still": "walking_2"},
     "GruntGoblin": {"moving": "Monster_Walk", "shooting": "Walk_Forward_While_Shooting", "dead": "Dead", "still": "walking_2"},
+    "InfestedMarine": {"moving": "Monster_Walk", "shooting": "Punch_Combo", "dead": "Dead", "still": "walking_2"},
+    "ODST": {"moving": "Run_and_Shoot", "shooting": "Walk_Forward_While_Shooting", "dead": "Dead", "still": "walking_2"},
+    "Jackal": {"moving": "Run_and_Shoot", "shooting": "Walk_Forward_While_Shooting", "dead": "Dead", "still": "walking_2"},
+    "BruteGrenadier": {"moving": "Run_and_Shoot", "shooting": "Walk_Forward_While_Shooting", "dead": "Dead", "still": "walking_2"},
+    "CombatForm": {"moving": "Monster_Walk", "shooting": "Punch_Combo", "dead": "Dead", "still": "walking_2"},
+    "Goliath": {"moving": "Monster_Walk", "shooting": "Walk_Forward_While_Shooting", "dead": "Dead", "still": "walking_2"},
 }
 REQUIRED = ("RightHand", "LeftHand", "LeftFoot", "RightFoot")
 

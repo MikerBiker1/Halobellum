@@ -11,6 +11,7 @@ import sys
 
 import bpy
 import numpy as np
+from mathutils import Matrix, Vector
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "Art"))
@@ -27,6 +28,16 @@ MODELS = {
     "Hunter": {"source": "sketchfab.com/enemiesmulticovenanthunters.glb", "height": 3.6, "keep": r"^Object_(10|11|12|13|14|15)$", "bake": True},
     "HunterCaptain": {"source": "sketchfab.com/enemiesmulticovenanthunters.glb", "height": 3.8, "keep": r"^Object_(27|28|29|30|31)$", "tris": 8000, "bake": True},
     "GruntGoblin": {"source": "sketchfab.com/enemiesbanishedgoblin.glb", "height": 4.4, "tris": 8000, "bake": True},
+    # The third batch. "yaw", "pitch" and "roll" turn a figure that faces elsewhere to face -Y and stand up, "rest" flattens a rigged file in its rest pose and not its clip's pose,
+    # "drop" leaves out parts by name (see-through cards bake to black squares),
+    # "box" keeps the separate pieces whose middle lies between these X values of the file (for figures that share objects, as these Brutes do),
+    # and "feet" stands it with its feet on the origin, where a big arm or a tail would pull the middle of its box aside.
+    "InfestedMarine": {"source": "Meshy/halo_2_anniversary_human_flood_form.glb", "height": 2.0, "drop": "^Object_7$", "tris": 5000, "bake": True, "feet": True},
+    "ODST": {"source": "Meshy/halo_2_odst.glb", "height": 2.0, "bake": True, "rest": True, "yaw": 4.7, "pitch": -45.5, "roll": -90, "feet": True},  # Its rest pose lies at a slant: these come from its bones.
+    "Jackal": {"source": "Meshy/jackal_halo_2.glb", "height": 2.0, "bake": True, "yaw": -90, "feet": True},
+    "BruteGrenadier": {"source": "Meshy/enemieshalo_3covenantbrutes.glb", "height": 2.8, "box": (-3.48, -1.13), "tris": 7000, "bake": True, "feet": True},  # The fifth from the left: the red crest and loincloth.
+    "CombatForm": {"source": "Meshy/halo_ce_flood_Combat_form.glb", "height": 2.6, "drop": "fronds", "yaw": 90, "bake": True, "feet": True},
+    "Goliath": {"source": "Meshy/Meshy_AI_Goliath.glb", "height": 6.0, "tris": 8000, "feet": True},
 }
 SIZE = 1024
 
@@ -113,17 +124,54 @@ def one_material(image):
     return o
 
 
-def stand(height):
+def no_metal():
+    """
+    A metal surface and an unlit one have no diffuse colour, so they would bake to black. The colours are what is wanted here,
+    so metal is switched off, and an unlit material gets an ordinary shader on its texture.
+    """
+    for material in {m for o in mt.meshes() for m in o.data.materials if m}:
+        shader = mt._shader(material)
+        if shader is None:
+            image = next((n for n in material.node_tree.nodes if n.type == "TEX_IMAGE"), None)
+            output = next(n for n in material.node_tree.nodes if n.type == "OUTPUT_MATERIAL")
+            shader = material.node_tree.nodes.new("ShaderNodeBsdfPrincipled")
+            material.node_tree.links.new(shader.outputs["BSDF"], output.inputs["Surface"])
+            if image:
+                material.node_tree.links.new(image.outputs["Color"], shader.inputs["Base Color"])
+            print(f"REPORT   {material.name}: was unlit, image {image.image.name if image else None}")
+        metallic = shader.inputs["Metallic"]
+        for link in list(metallic.links):
+            material.node_tree.links.remove(link)
+        metallic.default_value = 0.0
+
+
+def stand(height, feet=False):
     mt.centre_on_ground()
     low, high = mt._bounds()
     mt.scale(height / (high.z - low.z))
     mt.centre_on_ground()
+    if feet:
+        points = [o.matrix_world @ v.co for o in mt.meshes() for v in o.data.vertices]
+        low_points = [p for p in points if p.z < height * 0.1]
+        shift = Vector((-(min(p.x for p in low_points) + max(p.x for p in low_points)) / 2, -(min(p.y for p in low_points) + max(p.y for p in low_points)) / 2, 0))
+        for o in mt.meshes():
+            o.data.transform(Matrix.Translation(shift))
+            o.data.update()
+        print(f"REPORT   feet moved to the origin, by {shift.x:.3f}, {shift.y:.3f}")
 
 
 def prepare(unit, spec):
     name = unit + "_Rig"
-    mt.start(name, spec["source"])
+    mt.start(name, spec["source"], rest_pose=spec.get("rest", False))
     folder = mt._state["folder"]
+    mt.remove("Icosphere")
+    if "drop" in spec:
+        mt.remove(spec["drop"])
+    if "yaw" in spec or "pitch" in spec or "roll" in spec:
+        mt.turn(yaw=spec.get("yaw", 0), pitch=spec.get("pitch", 0), roll=spec.get("roll", 0))
+    if "box" in spec:
+        factor = mt._state["to_ten"]
+        mt.keep_box((spec["box"][0] * factor, -1e6, -1e6), (spec["box"][1] * factor, 1e6, 1e6))
     if "keep" in spec:
         for o in mt.meshes():
             if not re.match(spec["keep"], o.name):
@@ -132,9 +180,9 @@ def prepare(unit, spec):
         mt.weld(0.002)
         mt.reduce(spec["tris"], flat_angle=0)
     if unit == "Grunt":
-        mt.remove("Icosphere")
         image = atlas_grunt(folder)
     elif spec.get("bake"):
+        no_metal()
         baked = mt.bake_one(SIZE)
         image = write_png(read(baked, SIZE, SIZE), os.path.join(folder, unit + ".png"))
     else:
@@ -148,7 +196,7 @@ def prepare(unit, spec):
     if unit == "Grunt":
         mt.reduce(4000)
     mt.smooth(60)
-    stand(spec["height"])
+    stand(spec["height"], spec.get("feet", False))
     mt.report("ready")
     image.pack()
     path = os.path.join(folder, "input.glb")
