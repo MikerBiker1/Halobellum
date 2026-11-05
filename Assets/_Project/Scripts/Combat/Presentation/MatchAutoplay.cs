@@ -148,14 +148,14 @@ namespace Halobellum.Presentation
                 case MatchPhase.Battle:
                     if (_match.Ending != null)
                     {
-                        if (!_endingShotTaken && _match.Ending.Clock >= 0.75f)
+                        if (_endingShots < EndingShotSeconds.Length && _match.Ending.Clock >= EndingShotSeconds[_endingShots])
                         {
-                            Shot($"r{m.Round:00}_2_ending");
-                            _endingShotTaken = true;
+                            Shot($"r{m.Round:00}_2_ending_{_endingShots}");
+                            _endingShots++;
                         }
                         break;
                     }
-                    _endingShotTaken = false;
+                    _endingShots = 0;
                     if (!_battleShotTaken && _battle.Simulation != null && _battle.Simulation.ElapsedSeconds >= 1.2f)
                     {
                         Shot($"r{m.Round:00}_2_battle");
@@ -182,7 +182,9 @@ namespace Halobellum.Presentation
 
         private static readonly float[] LaterShotSeconds = { 8f, 16f, 26f };
         private int _nextLaterShot;
-        private bool _endingShotTaken;
+        private int _endingShots;
+        /// <summary>The nodes on their way, the first hits, and the crowd's hits with their numbers.</summary>
+        private static readonly float[] EndingShotSeconds = { 0.7f, 1.05f, 1.35f };
         private bool _phaseShotTaken;
         private int _inventoryShotRound = -1;
 
