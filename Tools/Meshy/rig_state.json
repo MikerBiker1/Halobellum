@@ -186,5 +186,26 @@
    }
   ],
   "credits": 0
+ },
+ "ODST": {
+  "attempts": [
+   {
+    "started": "23:17:37",
+    "id": "01a1a9ed-3d78-70ec-b09b-4d3dd6a60ef3",
+    "finished": true,
+    "status": "SUCCEEDED",
+    "credits": 5
+   }
+  ],
+  "credits": 17,
+  "rig": "01a1a9ed-3d78-70ec-b09b-4d3dd6a60ef3",
+  "animation": "01a1a9ed-e1cd-701a-b943-33e8e902304d",
+  "actions": [
+   98,
+   234,
+   8,
+   566
+  ],
+  "animation_credits": 12
  }
 }
