@@ -70,6 +70,7 @@ namespace Halobellum.UI
         /// <summary>The page has its own rules while it is open. A squad landing during the drop selects itself, and M, R and Del would then act on it behind the page.</summary>
         private void Update()
         {
+            if (match != null && match.Match != null && match.Match.Phase != MatchPhase.Cards) CardsHidden = CardsStartHidden; // Each card screen starts with its cards showing.
             if (!_unlockPageOpen) return;
             if (match == null || match.Match == null || match.Match.Phase != MatchPhase.Deployment)
             {
@@ -94,7 +95,6 @@ namespace Halobellum.UI
             EnsureStyles();
             _scale = HudScale.Apply();
             _panelsDrawn.Clear();
-            if (match.Match.Phase != MatchPhase.Cards) CardsHidden = CardsStartHidden;
 
             switch (match.Match.Phase)
             {
@@ -120,7 +120,7 @@ namespace Halobellum.UI
             var bar = new Rect((width - barWidth) * 0.5f, 10f, barWidth, 84f);
             Panel(bar);
             float titleWidth = bar.width - 36f;
-            CardScreens.Fit(new Rect(bar.x + 18f, bar.y + 8f, titleWidth, 36f), "Starting draft", CardScreens.TitleStyle, 28, 18, TextAnchor.MiddleLeft, HudTheme.TitleColor);
+            CardScreens.Fit(new Rect(bar.x + 18f, bar.y + 8f, titleWidth, 36f), HudTheme.Title("Starting draft"), CardScreens.TitleStyle, 28, 18, TextAnchor.MiddleLeft, HudTheme.TitleColor);
             CardScreens.Fit(new Rect(bar.x + 18f, bar.y + 44f, titleWidth, 32f), "Its squads are free and start unlocked. Dearer squads mean a weaker base.", CardScreens.LineStyle, 15, 11, TextAnchor.MiddleLeft, HudTheme.DimText);
 
             int count = m.PlayerDraft.Count;

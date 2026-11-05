@@ -682,7 +682,7 @@ namespace Halobellum.Presentation
 
             if (view.Tinted == null) FindTinted(view);
             // Over a real model's texture a tint can only multiply, so it goes above 1 to show on dark armour too.
-            Color bright = new Color(shockwaveColor.r * 2.4f, shockwaveColor.g * 2.4f, shockwaveColor.b * 2.4f, 1f);
+            Color bright = new Color(shockwaveColor.r * 1.8f, shockwaveColor.g * 1.8f, shockwaveColor.b * 1.8f, 1f);
             for (int i = 0; i < view.Tinted.Length; i++)
             {
                 Renderer renderer = view.Tinted[i];

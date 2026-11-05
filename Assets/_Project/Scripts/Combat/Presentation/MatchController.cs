@@ -120,7 +120,8 @@ namespace Halobellum.Presentation
             string folder = BattleLogFile.FolderForThisRun();
             if (folder == null) return;
             DateTime now = DateTime.Now;
-            _logFile = new BattleLogFile(folder, BattleLogFile.FileName(now, Match.Rules.Mode.ToString(), Match.Player.SubFaction?.Name ?? "player", Match.Enemy.SubFaction?.Name ?? "enemy"));
+            bool skirmish = Match.Rules.Mode == MatchMode.UnlockSkirmish; // Both sides are the same made-up faction there, so its names say nothing.
+            _logFile = new BattleLogFile(folder, BattleLogFile.FileName(now, Match.Rules.Mode.ToString(), skirmish ? null : Match.Player.SubFaction?.Name, skirmish ? null : Match.Enemy.SubFaction?.Name));
             _log = new MatchLog(_logFile.Write);
             _log.Started(Match, Difficulty.ToString(), now, cardChosen);
         }

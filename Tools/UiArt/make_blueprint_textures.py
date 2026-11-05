@@ -1,6 +1,7 @@
 # make_blueprint_textures.py
 # Draws the art of the neutral theme (D68) into Assets/_Project/Art/UI/Blueprint/ and writes their .meta files (fixed GUIDs, so that
 # Data/UI/Neutral_Theme.asset keeps pointing at them): deep blue drafting paper with a grid, thin drawn lines, corner marks and dimension lines.
+# It also draws the neutral card's frame and ribbon, over what Tools/UI/make_card_art.py made for them in Resources/CardArt/Frames.
 # Unlike make_ui_textures.py it needs nothing but Python itself.
 # Panels, rows and ornaments are drawn at double resolution (the HUD draws them at half size); buttons and bar fills at HUD size.
 # Textures whose name ends in _Tile repeat.
@@ -14,6 +15,7 @@ import zlib
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 FOLDER = os.path.join(ROOT, "Assets", "_Project", "Art", "UI", "Blueprint")
+CARD_FOLDER = os.path.join(ROOT, "Assets", "_Project", "Resources", "CardArt", "Frames")
 
 PAPER = (0.055, 0.2, 0.44)
 PAPER_LIGHT = (0.1, 0.3, 0.58)
@@ -43,9 +45,9 @@ class Canvas:
                     p[i] = (color[i] * alpha + p[i] * p[3] * (1.0 - alpha)) / out
                 p[3] = out
 
-    def save(self, name):
-        os.makedirs(FOLDER, exist_ok=True)
-        path = os.path.join(FOLDER, name + ".png")
+    def save(self, name, folder=FOLDER):
+        os.makedirs(folder, exist_ok=True)
+        path = os.path.join(folder, name + ".png")
         rows = bytearray()
         for y in range(self.h):
             rows.append(0)
@@ -152,9 +154,9 @@ def panel_frame():
     c.paint(INK_CYAN, lambda x, y: 0.6 * edge_line(d, -8.5, 1.3)(x, y))
     for ax, ay in ((inset, inset), (S - inset, inset), (inset, S - inset), (S - inset, S - inset)):
         c.paint(INK, lambda x, y, ax=ax, ay=ay: 0.95 if (abs(y - ay) < 1.1 and abs(x - ax) < inset) or (abs(x - ax) < 1.1 and abs(y - ay) < inset) else 0.0)
-        mx, my = ax + (20 if ax < S / 2 else -20), ay + (20 if ay < S / 2 else -20)
-        c.paint(INK_CYAN, lambda x, y, mx=mx, my=my: 0.85 * min(1.0, max(0.0, 1.2 - abs(math.hypot(x - mx, y - my) - 5.5))))
-        c.paint(INK_CYAN, lambda x, y, mx=mx, my=my: 0.7 if (abs(x - mx) < 0.8 and abs(y - my) < 9) or (abs(y - my) < 0.8 and abs(x - mx) < 9) else 0.0)
+        mx, my = ax + (13 if ax < S / 2 else -13), ay + (13 if ay < S / 2 else -13)
+        c.paint(INK_CYAN, lambda x, y, mx=mx, my=my: 0.85 * min(1.0, max(0.0, 1.2 - abs(math.hypot(x - mx, y - my) - 3.5))))
+        c.paint(INK_CYAN, lambda x, y, mx=mx, my=my: 0.7 if (abs(x - mx) < 0.8 and abs(y - my) < 6) or (abs(y - my) < 0.8 and abs(x - mx) < 6) else 0.0)
     c.save("Blueprint_PanelFrame")
 
 
@@ -233,6 +235,49 @@ def hexagons():
     empty.save("Blueprint_HexEmpty")
 
 
+def card_frame():
+    # 512 x 512, drawn at half size: corners of 160 px and a 192 px middle that repeats, so its marks come every 32 px. Texture pixels 28 to 60 from the outside
+    # are its band, and CardArt fills inside that. A ruler all round, with the same corner marks as a panel.
+    S, outer, window = 512, 28, 60
+    c = Canvas(S, S)
+    d = box_distance(S, S, outer)
+    c.paint(SHADOW, lambda x, y: 0.5 * math.exp(-(d(x, y) / 5.0) ** 2) if d(x, y) > 0 else 0.0)
+    c.paint(PAPER, inside(d, 0.5, outer - window))
+    c.paint(INK_CYAN, lambda x, y: 0.2 if d(x, y) < 0 and (int(x) % 32 < 2 or int(y) % 32 < 2) and d(x, y) > outer - window else 0.0)
+    c.paint(INK, edge_line(d, -1.0, 3.0))
+    c.paint(INK_CYAN, lambda x, y: 0.8 * edge_line(d, outer - window + 1.0, 2.0)(x, y))
+
+    def ruler(x, y):
+        distance = -d(x, y)
+        if distance < 0 or distance > window - outer:
+            return 0.0
+        along = x if abs(y - S / 2) > abs(x - S / 2) else y
+        return 0.9 if int(along) % 32 < 2 and distance < 10 else 0.0
+
+    c.paint(INK, ruler)
+    for ax, ay in ((outer, outer), (S - outer, outer), (outer, S - outer), (S - outer, S - outer)):
+        c.paint(INK, lambda x, y, ax=ax, ay=ay: 1.0 if (abs(y - ay) < 1.5 and abs(x - ax) < outer) or (abs(x - ax) < 1.5 and abs(y - ay) < outer) else 0.0)
+        mx, my = ax + (16 if ax < S / 2 else -16), ay + (16 if ay < S / 2 else -16)
+        c.paint(PAPER, lambda x, y, mx=mx, my=my: 1.0 if math.hypot(x - mx, y - my) < 13 else 0.0)
+        c.paint(INK_CYAN, lambda x, y, mx=mx, my=my: min(1.0, max(0.0, 1.5 - abs(math.hypot(x - mx, y - my) - 8.0))))
+        c.paint(INK_CYAN, lambda x, y, mx=mx, my=my: 0.85 if (abs(x - mx) < 1.0 and abs(y - my) < 13) or (abs(y - my) < 1.0 and abs(x - mx) < 13) else 0.0)
+    c.save("Frame_Neutral", CARD_FOLDER)
+
+
+def card_ribbon():
+    # A banner across the card: 256 x 72, its ends (48 px each) fixed and its middle stretched. A title block, as in the corner of a drawing.
+    W, H = 256, 72
+    c = Canvas(W, H)
+    d = box_distance(W, H, 5)
+    c.paint(SHADOW, lambda x, y: 0.5 * math.exp(-(d(x, y) / 2.5) ** 2) if d(x, y) > 0 else 0.0)
+    c.paint(PAPER_LIGHT, inside(d, 0.5, -40.0))
+    c.paint(INK, edge_line(d, -1.0, 2.5))
+    c.paint(INK_CYAN, lambda x, y: 0.7 * edge_line(d, -6.0, 1.5)(x, y))
+    for ax in (5, W - 5):
+        c.paint(INK, lambda x, y, ax=ax: 1.0 if abs(x - ax) < 1.25 and (y < 12 or y > H - 12) else 0.0)
+    c.save("Ribbon_Neutral", CARD_FOLDER)
+
+
 if __name__ == "__main__":
     hexagons()
     panel_frame()
@@ -243,3 +288,5 @@ if __name__ == "__main__":
     row()
     bar_fill()
     ornament()
+    card_frame()
+    card_ribbon()

@@ -107,6 +107,7 @@ namespace Halobellum.UI
                 case CardFrameKind.UNSC: return UnitIcons.FactionColor("UNSC");
                 case CardFrameKind.Covenant: return new Color(0.6f, 0.72f, 1f);
                 case CardFrameKind.Flood: return UnitIcons.FactionColor("Flood");
+                case CardFrameKind.Neutral: return new Color(0.55f, 0.88f, 1f);
                 default: return UnitIcons.FactionColor(null);
             }
         }
@@ -125,7 +126,7 @@ namespace Halobellum.UI
                 case CardFrameKind.UNSC: return new Color(0.055f, 0.065f, 0.07f);
                 case CardFrameKind.Covenant: return new Color(0.055f, 0.035f, 0.1f);
                 case CardFrameKind.Flood: return new Color(0.055f, 0.06f, 0.03f);
-                default: return new Color(0.055f, 0.06f, 0.07f);
+                default: return new Color(0.04f, 0.15f, 0.34f);
             }
         }
 
@@ -205,6 +206,14 @@ namespace Halobellum.UI
             var inner = new Rect(card.x + inset, card.y + inset, card.width - 2f * inset, card.height - 2f * inset);
             GUI.color = Inside(kind);
             GUI.DrawTexture(inner, Texture2D.whiteTexture);
+            // A neutral card is the same drafting paper as the neutral theme's panels (D68).
+            Texture2D paper = kind == CardFrameKind.Neutral && HudTheme.Current != null ? HudTheme.Current.panelDetail : null;
+            if (paper != null)
+            {
+                GUI.color = Color.white;
+                float tile = paper.width * HudTheme.Current.textureScale;
+                GUI.DrawTextureWithTexCoords(inner, paper, new Rect(0f, 0f, inner.width / tile, inner.height / tile));
+            }
             Texture2D wash = Load("Wash");
             if (wash != null)
             {

@@ -33,7 +33,8 @@ namespace Halobellum.Presentation
         /// <summary>A file's name from the time and who played. Whatever a name can't hold in a file name becomes a dash.</summary>
         public static string FileName(DateTime localTime, string mode, string player, string enemy)
         {
-            string name = $"{localTime:yyyy-MM-dd_HH-mm-ss}_{mode}_{player}_vs_{enemy}";
+            string name = $"{localTime:yyyy-MM-dd_HH-mm-ss}_{mode}";
+            if (player != null && enemy != null) name += $"_{player}_vs_{enemy}";
             foreach (char bad in Path.GetInvalidFileNameChars()) name = name.Replace(bad, '-');
             return name.Replace(' ', '-') + ".jsonl";
         }
