@@ -6,31 +6,31 @@ Cobra	model
 Gremlin	fallback
 Grizzly	model
 Rhino	model
-Brute Grenadier	fallback
+Brute Grenadier	baked
 Chopper	model
-Marauder	fallback
-Reaver	fallback
+Marauder	model
+Reaver	model
 Banshee	model
 Elite	baked
 Fuel Rod Grunt	baked
 Ghost	model
 Grunt	baked
 Hunter Pair	baked
-Jackal (Plasma Rifle)	fallback
-Jackal (Shield)	fallback
+Jackal (Plasma Rifle)	baked
+Jackal (Shield)	baked
 Scarab	model
-Vampire	fallback
+Vampire	model
 Wraith	model
 Zealot	baked
 Flood Abomination	baked
 Carrier Form	model
-Combat Form	fallback
+Combat Form	model
 Infected Pelican	model
 Infected Phantom	model
 Infection Forms	model
 Pure Form Ranged	model
 Pure Form Tank	model
-Seeder	fallback
+Seeder	model
 Stalker Form	model
 Swarm Form	model
 Infested Banshee	model
@@ -38,13 +38,13 @@ Infested Elite	baked
 Infested Ghost	model
 Infested Grunt	baked
 Infested Wraith	model
-Spawner	fallback
+Spawner	model
 Infested Hornet	model
 Infested Marine	baked
 Infested Scorpion	model
 Infested Warthog	model
-Juggernaut	fallback
-Goliath	fallback
+Juggernaut	model
+Goliath	model
 Hunter Captain	baked
 Skitterer	model
 Spartan CQB	baked
@@ -55,7 +55,7 @@ Spartan Sniper	baked
 Placeholder Heavy Tank	fallback
 Placeholder Infantry	fallback
 Placeholder Light Vehicle	fallback
-ODST	fallback
+ODST	baked
 Cannon Fodder	baked
 Grunt Goblin	baked
 Heavy Grunts	baked
@@ -64,10 +64,10 @@ Elephant	model
 Flamethrower Trooper	fallback
 Gauss Warthog	model
 Hornet	model
-Mantis	fallback
+Mantis	model
 Marine	baked
 Pelican	model
 Scorpion	model
 Spartan	baked
 Warthog	model
-Wolverine	fallback
+Wolverine	model
