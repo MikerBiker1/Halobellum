@@ -207,5 +207,18 @@
    566
   ],
   "animation_credits": 12
+ },
+ "Jackal": {
+  "attempts": [
+   {
+    "started": "23:18:38",
+    "id": "01a1a9ee-2987-74f9-bb8f-f329b004aa91",
+    "finished": true,
+    "status": "SUCCEEDED",
+    "credits": 5
+   }
+  ],
+  "credits": 5,
+  "rig": "01a1a9ee-2987-74f9-bb8f-f329b004aa91"
  }
 }
