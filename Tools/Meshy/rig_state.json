@@ -249,5 +249,15 @@
    566
   ],
   "animation_credits": 12
+ },
+ "CombatForm": {
+  "attempts": [
+   {
+    "started": "23:20:20",
+    "finished": true,
+    "refused": "HTTP 422: {\"message\":\"Pose estimation failed, please provide a valid model URL\"}"
+   }
+  ],
+  "credits": 0
  }
 }
