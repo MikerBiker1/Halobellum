@@ -111,3 +111,118 @@ def make_input():
 if "input" in sys.argv:
     make_input()
     sys.exit(0)
+
+
+def pieces(o):
+    """The separate pieces of a model whose surface is split along its seams: faces that touch at a corner, however many copies of that corner there are."""
+    points = np.array([v.co[:] for v in o.data.vertices])
+    keys = {}
+    corner = [keys.setdefault(tuple(k), len(keys)) for k in np.round(points / 0.002).astype(np.int64).tolist()]
+    parent = list(range(len(keys)))
+
+    def root(a):
+        while parent[a] != a:
+            parent[a] = parent[parent[a]]
+            a = parent[a]
+        return a
+
+    for polygon in o.data.polygons:
+        first = root(corner[polygon.vertices[0]])
+        for v in polygon.vertices[1:]:
+            parent[root(corner[v])] = first
+    faces = {}
+    for polygon in o.data.polygons:
+        faces.setdefault(root(corner[polygon.vertices[0]]), []).append(polygon.index)
+    return [[list(o.data.polygons[i].vertices) for i in group] + [group] for group in faces.values()], points
+
+
+def owner_of(group, points):
+    """Which part a separate piece belongs to, from where it is. Each came back with the gap it was sent with."""
+    at = points[sorted({v for face in group[:-1] for v in face})]
+    middle = at.mean(axis=0)
+    if at[:, 2].min() > CUT_Z + GAP / 2:
+        return "Turret_0"
+    reach = np.hypot(middle[1] - WHEEL_Y, middle[2] - WHEEL_Z)
+    if reach < 0.78 and abs(at[:, 0]).min() > WHEEL_X + GAP / 2:
+        return "Wheel_0" if middle[0] > 0 else "Wheel_1"
+    return "Body"
+
+
+def take_apart(o):
+    groups, points = pieces(o)
+    owners = {}
+    for group in groups:
+        for index in group[-1]:
+            owners[index] = owner_of(group, points)
+    print(f"REPORT {len(groups)} separate pieces came back")
+    for name in sorted(set(owners.values()) - {"Body"}):
+        copy = o.copy()
+        copy.data = o.data.copy()
+        copy.name = name
+        bpy.context.scene.collection.objects.link(copy)
+        mesh = bmesh.new()
+        mesh.from_mesh(copy.data)
+        mesh.faces.ensure_lookup_table()
+        bmesh.ops.delete(mesh, geom=[f for f in mesh.faces if owners[f.index] != name], context="FACES_ONLY")
+        bmesh.ops.delete(mesh, geom=[v for v in mesh.verts if not v.link_faces], context="VERTS")
+        mesh.to_mesh(copy.data)
+        mesh.free()
+    mesh = bmesh.new()
+    mesh.from_mesh(o.data)
+    mesh.faces.ensure_lookup_table()
+    bmesh.ops.delete(mesh, geom=[f for f in mesh.faces if owners[f.index] != "Body"], context="FACES_ONLY")
+    bmesh.ops.delete(mesh, geom=[v for v in mesh.verts if not v.link_faces], context="VERTS")
+    mesh.to_mesh(o.data)
+    mesh.free()
+    o.name = "Body"
+
+
+def fender_off_wheel(name):
+    """The first cut was rough: what is past the tyre belongs to the fender, and must not spin. It joins the body."""
+    o = bpy.data.objects[name]
+    outside = lambda p: (Vector((p.y, p.z)) - Vector(AXLE)).length > TYRE
+    split_off(o, "Fender_" + name, outside)
+    print(f"REPORT {name}: {mt.tris([bpy.data.objects['Fender_' + name]])} triangles of fender moved to the body")
+
+
+# Where the missiles' tips are, on the pod on the side of +X, the other pod being its mirror image: five above, three below.
+TOP = [0.85, 1.01, 1.19, 1.35, 1.51]
+BELOW = [1.01, 1.23, 1.41]
+TOP_Z, BELOW_Z, TIP_Y = 2.71, 2.54, 1.08
+AXLE, TYRE = (-1.99, 0.62), 0.665  # The tyre's middle and reach, measured on it.
+
+mt.start("Wolverine", "Prepared/_Paint/Wolverine/painted.glb")
+mt.source_size()
+mt.fit(LENGTH)
+mt.report("loaded")
+for image in bpy.data.images:
+    if image.size[0] > 512:
+        image.scale(512, 512)  # So that the pictures show what the game gets.
+take_apart(mt.meshes()[0])
+mt.report("apart")
+for o in mt.meshes():
+    print(f"REPORT {o.name}: {mt._round(mt._bounds([o])[0])} to {mt._round(mt._bounds([o])[1])}")
+bpy.data.objects["Turret_0"].data.transform(Matrix.Translation((0, 0, -GAP)))
+bpy.data.objects["Wheel_0"].data.transform(Matrix.Translation((-GAP, 0, 0)))
+bpy.data.objects["Wheel_1"].data.transform(Matrix.Translation((GAP, 0, 0)))
+for o in mt.meshes():
+    o.data.update()
+fender_off_wheel("Wheel_0")
+fender_off_wheel("Wheel_1")
+mt.smooth(35)
+mt._set_origin(bpy.data.objects["Turret_0"], (RING[0], RING[1], CUT_Z))
+for name in ("Wheel_0", "Wheel_1"):
+    o = bpy.data.objects[name]
+    low, high = mt._bounds([o])
+    mt._set_origin(o, ((low.x + high.x) / 2, AXLE[0], AXLE[1]))
+
+# Two pods take turns, each from the top row and the bottom row in turn.
+tips = [(x, TOP_Z) for x in TOP] + [(x, BELOW_Z) for x in BELOW]
+tips = [tips[i] for i in (2, 6, 0, 5, 4, 7, 1, 3)]
+for i, (x, z) in enumerate(tips):
+    mt.muzzle("Muzzle_0" + "abcdefghijklmnop"[i * 2], (x, TIP_Y, z), parent="Turret_0")
+    mt.muzzle("Muzzle_0" + "abcdefghijklmnop"[i * 2 + 1], (-x, TIP_Y, z), parent="Turret_0")
+
+mt.merge_rest()
+mt.report("done")
+mt.finish(texture_size=512)
