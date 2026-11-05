@@ -82,8 +82,8 @@ namespace Halobellum.Tests
             {
                 List<SpellStats> spells = Spells(asset);
                 SpellStats smoke = spells.Single(s => s.Effect == SpellEffect.Smoke);
-                Assert.AreEqual(15f, smoke.AreaWidth, 1e-3f);
-                Assert.AreEqual(4f, smoke.AreaDepth, 1e-3f);
+                Assert.AreEqual(45f, smoke.AreaWidth, 1e-3f);
+                Assert.AreEqual(8f, smoke.AreaDepth, 1e-3f);
                 Assert.AreEqual(0f, smoke.DurationSeconds, "It lasts the whole round.");
                 Assert.AreEqual(100, smoke.Cost);
                 Assert.AreEqual(3, smoke.CooldownRounds);

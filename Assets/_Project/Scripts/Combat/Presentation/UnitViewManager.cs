@@ -12,7 +12,8 @@
 // from their carrier's flying height; squads landed by drop-pod spells fall from high above.
 // Units of the GhostTeam are drawn grey: during deployment, the enemy's army as it was at the last
 // battle start (decision D25). Squads for which LevelUpReady says yes get a small yellow arrow above
-// them that pulses bright, dim, bright (decision D26).
+// them that pulses bright, dim, bright (decision D26). A side suffering a fallen tower's shockwave
+// pulses with a tint over all its bodies for as long as it lasts (D68).
 // The simulation's 2D position (x, y) becomes the world position (x, height, y).
 // Depends on: BattleController, SquadSelection, PlaceholderArt, Halobellum.Combat, UnityEngine.
 
@@ -38,6 +39,8 @@ namespace Halobellum.Presentation
         [SerializeField] private Color shieldColor = new Color(0.25f, 0.6f, 1f);
         [Tooltip("Mixed into the side's color for infected units, and the color of a corpse about to rise (D38).")]
         [SerializeField] private Color infectedColor = new Color(0.55f, 0.68f, 0.18f);
+        [Tooltip("What a side's bodies pulse with while they suffer a fallen tower's shockwave (D68).")]
+        [SerializeField] private Color shockwaveColor = new Color(0.45f, 0.92f, 1f);
         [Tooltip("Size of each tiny form in a pack, as a share of the pack's size (Infection Forms).")]
         [SerializeField] private float formScale = 0.42f;
         [Tooltip("How high a leap goes at its peak, as a share of its length.")]
@@ -109,6 +112,12 @@ namespace Halobellum.Presentation
             /// <summary>Time.unscaledTime at which the drop-in started, or NaN when not dropping.</summary>
             public float DropStart = float.NaN;
             public float DropHeight;
+            /// <summary>True while it shows a fallen tower's shockwave (D68).</summary>
+            public bool ShockwaveShown;
+            /// <summary>What of a body that isn't baked gets that tint, found the first time it is needed, and the colour each part had.</summary>
+            public Renderer[] Tinted;
+            public Color[] TintedFrom;
+            public bool[] TintedHadBlock;
         }
 
         private BattleController _battle;
@@ -644,6 +653,70 @@ namespace Halobellum.Presentation
             _falling.Add(view);
         }
 
+        // ------------------------------------------------------------------ a fallen tower's shockwave
+
+        private const float ShockwavePulseSeconds = 0.8f, ShockwaveLeast = 0.3f, ShockwaveMost = 0.85f;
+
+        /// <summary>How strongly this side's bodies are tinted right now: they pulse for as long as they suffer a shockwave. 0 if they don't.</summary>
+        private float ShockwaveStrength(Team team)
+        {
+            if (_shown.ActiveShockwave(team) == null) return 0f;
+            return Mathf.Lerp(ShockwaveLeast, ShockwaveMost, 0.5f + 0.5f * Mathf.Sin(_animationTime * Mathf.PI * 2f / ShockwavePulseSeconds));
+        }
+
+        /// <summary>True while this body shows the shockwave it suffers (for tests).</summary>
+        public bool ShowsShockwave(SimUnit unit) => _views[unit.Id].ShockwaveShown;
+
+        /// <summary>A tint over the whole body, whichever way it is drawn, so that no model needs anything of its own. A tower isn't part of the army, and doesn't suffer it.</summary>
+        private void ShowShockwave(View view, float strength)
+        {
+            if (view.Unit.Stats.IsTower || (strength <= 0f && !view.ShockwaveShown)) return;
+            view.ShockwaveShown = strength > 0f;
+            if (view.Baked != null)
+            {
+                view.BakedRenderer.GetPropertyBlock(_block);
+                _block.SetColor(TintId, strength > 0f ? new Color(shockwaveColor.r, shockwaveColor.g, shockwaveColor.b, Mathf.Max(strength, view.BakedTint.a)) : view.BakedTint);
+                view.BakedRenderer.SetPropertyBlock(_block);
+                return;
+            }
+
+            if (view.Tinted == null) FindTinted(view);
+            // Over a real model's texture a tint can only multiply, so it goes above 1 to show on dark armour too.
+            Color bright = new Color(shockwaveColor.r * 2.4f, shockwaveColor.g * 2.4f, shockwaveColor.b * 2.4f, 1f);
+            for (int i = 0; i < view.Tinted.Length; i++)
+            {
+                Renderer renderer = view.Tinted[i];
+                _block.Clear();
+                if (strength > 0f) _block.SetColor(TintId, Color.LerpUnclamped(view.TintedFrom[i], bright, strength));
+                else if (view.TintedHadBlock[i]) _block.SetColor(TintId, view.TintedFrom[i]);
+                renderer.SetPropertyBlock(_block);
+            }
+        }
+
+        /// <summary>Everything of a body that is drawn, without its bars and ring, and the colour each has now.</summary>
+        private void FindTinted(View view)
+        {
+            var found = new List<Renderer>();
+            foreach (Renderer renderer in view.Root.GetComponentsInChildren<Renderer>(true))
+            {
+                if (renderer.transform.IsChildOf(view.Bar) || renderer.gameObject == view.Ring) continue;
+                found.Add(renderer);
+            }
+            view.Tinted = found.ToArray();
+            view.TintedFrom = new Color[found.Count];
+            view.TintedHadBlock = new bool[found.Count];
+            for (int i = 0; i < found.Count; i++)
+            {
+                Renderer renderer = found[i];
+                Material material = renderer.sharedMaterial;
+                view.TintedFrom[i] = material != null && material.HasProperty(TintId) ? material.GetColor(TintId) : Color.white;
+                if (!renderer.HasPropertyBlock()) continue;
+                renderer.GetPropertyBlock(_block);
+                view.TintedFrom[i] = _block.GetColor(TintId);
+                view.TintedHadBlock[i] = true;
+            }
+        }
+
         private void OnSelectionChanged(int squadId)
         {
             foreach (View view in _views) view.Ring.SetActive(squadId >= 0 && view.Unit.SquadId == squadId && view.Unit.IsAlive);
@@ -671,6 +744,7 @@ namespace Halobellum.Presentation
                 _falling.RemoveAt(i);
             }
 
+            float shockwaveA = ShockwaveStrength(Team.A), shockwaveB = ShockwaveStrength(Team.B);
             foreach (View view in _views)
             {
                 SimUnit unit = view.Unit;
@@ -687,6 +761,7 @@ namespace Halobellum.Presentation
                     BakedAnimation wanted = WantedAnimation(unit);
                     if (wanted != view.Playing) Play(view, wanted, true);
                 }
+                ShowShockwave(view, unit.Team == Team.A ? shockwaveA : shockwaveB);
 
                 float motionDelta = _battle.IsPlaying ? Time.deltaTime * _battle.Speed : 0f;
                 view.Parts?.Animate(unit, motionDelta, _animationTime);

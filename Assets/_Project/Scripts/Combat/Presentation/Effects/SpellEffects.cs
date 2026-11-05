@@ -235,7 +235,7 @@ namespace Halobellum.Presentation
                 if (stats.Effect == SpellEffect.Oil) color = new Color(0.07f, 0.06f, 0.05f, 0.5f);
                 float width = stats.IsRectangle ? stats.AreaWidth : stats.Radius * 2f;
                 float depth = stats.IsRectangle ? stats.AreaDepth : stats.Radius * 2f;
-                int puffs = Mathf.Clamp(Mathf.RoundToInt(width * depth / 22f), 2, 8);
+                int puffs = Mathf.Clamp(Mathf.RoundToInt(width * depth / 22f), 2, 16);
                 for (int p = 0; p < puffs; p++)
                 {
                     Vec2 local = new Vec2(Random.Range(-0.5f, 0.5f) * width, Random.Range(-0.5f, 0.5f) * depth).Rotated(spell.AngleDegrees);

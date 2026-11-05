@@ -110,7 +110,7 @@ ODST = """  unitName: ODST
 # Damage types: 0 Ballistic, 1 Explosive, 2 Energy, 3 Fire, 4 Melee. Effects: 0 Damage, 1 Buff, 2 Drop.
 # Targets: 0 Ground, 1 Air, 2 Both.
 SMOKE = dict(file="SmokeBomb", name="Smoke Bomb", desc="Click one end, aim the other. Smoke fills the line and blinds both sides.",
-             off=1, eff=4, cost=100, cd=3, max=1, radius=0, delay=0.5, width=15, depth=4, duration=0, rangemul=0.5)
+             off=1, eff=4, cost=100, cd=3, max=1, radius=0, delay=0.5, width=45, depth=8, duration=0, rangemul=0.5)
 EMP = dict(file="ElectromagneticPulse", name="Electromagnetic Pulse", desc="Fries shields and electronics: everything in the area, friend or foe.",
            off=1, eff=3, cost=150, cd=2, max=1, radius=10, delay=1, shielddmg=10000, techoff=10, slow=0.4, slowfor=10)
 

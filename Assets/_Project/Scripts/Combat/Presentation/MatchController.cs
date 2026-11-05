@@ -97,13 +97,47 @@ namespace Halobellum.Presentation
             _spellView = GetComponent<SpellView>();
             if (_spellView == null) _spellView = gameObject.AddComponent<SpellView>();
             _battle.BattleFinished += OnBattleFinished;
-            NewMatch(setup: GameFlow.TakeMatchSetup());
+            MatchSetup setup = GameFlow.TakeMatchSetup();
+            if (setup == null && Array.IndexOf(Environment.GetCommandLineArgs(), "-autoplaySkirmish") >= 0) setup = new MatchSetup { Mode = MatchMode.UnlockSkirmish }; // For pictures of it, from the test game.
+            NewMatch(setup: setup);
         }
 
         private void OnDestroy()
         {
             if (_battle != null) _battle.BattleFinished -= OnBattleFinished;
+            CloseBattleLog();
         }
+
+        // ------------------------------------------------------------------ the battle log (D68)
+
+        private MatchLog _log;
+        private BattleLogFile _logFile;
+
+        /// <summary>A game's log starts when its starting card is chosen, so that a look at the draft leaves no file behind.</summary>
+        private void OpenBattleLog(int cardChosen)
+        {
+            CloseBattleLog();
+            string folder = BattleLogFile.FolderForThisRun();
+            if (folder == null) return;
+            DateTime now = DateTime.Now;
+            _logFile = new BattleLogFile(folder, BattleLogFile.FileName(now, Match.Rules.Mode.ToString(), Match.Player.SubFaction?.Name ?? "player", Match.Enemy.SubFaction?.Name ?? "enemy"));
+            _log = new MatchLog(_logFile.Write);
+            _log.Started(Match, Difficulty.ToString(), now, cardChosen);
+        }
+
+        private void CloseBattleLog()
+        {
+            _logFile?.Dispose();
+            _logFile = null;
+            _log = null;
+        }
+
+        private void LogAnyOffer()
+        {
+            if (Match.Phase == MatchPhase.Cards) _log?.CardsOffered(Match);
+        }
+
+        private static string Label(PlacedSquad squad) => squad == null ? null : $"{squad.Type.Name} #{squad.Id}";
 
         /// <summary>In Unlock Skirmish every unit is in the roster, so only those unlocked say anything about this side.</summary>
         private bool HasUnitsThatCanFlank()
@@ -123,6 +157,7 @@ namespace Halobellum.Presentation
         public void NewMatch(int? fixedSeed = null, MatchSetup setup = null)
         {
             Ending = null;
+            CloseBattleLog();
             if (setup != null) _setup = setup;
             var cache = new Dictionary<UnitDefinition, UnitStats>();
             var infos = new List<FactionInfo>();
@@ -185,6 +220,7 @@ namespace Halobellum.Presentation
             Report(result);
             if (result.Ok)
             {
+                OpenBattleLog(cardIndex);
                 if (Match.Rules.Mode == MatchMode.UnlockSkirmish) BattleFactions.SetSkirmish(SkirmishLand(Match.Seed), RealFactionOfEachUnit());
                 else BattleFactions.Set(Match.Player.Faction?.Name, Match.Enemy.Faction?.Name);
                 RefreshPreview();
@@ -223,7 +259,7 @@ namespace Halobellum.Presentation
 
         // ------------------------------------------------------------------ deployment
 
-        public ActionResult Unlock(UnitStats type) => Report(Match.Unlock(Team.A, type));
+        public ActionResult Unlock(UnitStats type) => Report(Match.Unlock(Team.A, type), type?.Name);
 
         /// <summary>
         /// Buys a squad of this type: it is placed at the free spot nearest the middle of the zone,
@@ -233,7 +269,7 @@ namespace Halobellum.Presentation
         {
             if (Match.Phase != MatchPhase.Deployment) return ActionResult.Fail("Squads can only be bought during deployment.");
             CancelPlacement();
-            ActionResult result = Report(Match.Buy(Team.A, type));
+            ActionResult result = Report(Match.Buy(Team.A, type), type?.Name);
             if (result.Ok)
             {
                 _drops[Match.Player.Squads[Match.Player.Squads.Count - 1].Id] = Time.unscaledTime;
@@ -297,7 +333,7 @@ namespace Halobellum.Presentation
             }
             PlacedSquad squad = SelectedPlacedSquad;
             if (squad == null) return;
-            if (Report(Match.Move(Team.A, squad.Id, squad.Column, squad.Row, !squad.Rotated90)).Ok) RefreshPreview(squad.Id);
+            if (Report(Match.Move(Team.A, squad.Id, squad.Column, squad.Row, !squad.Rotated90), $"{Label(squad)} turned to {!squad.Rotated90}").Ok) RefreshPreview(squad.Id);
         }
 
         /// <summary>The type of the squad being moved (for the ghost), or null.</summary>
@@ -308,7 +344,7 @@ namespace Halobellum.Presentation
         {
             if (MovingSquadId < 0) return ActionResult.Fail("Nothing to place.");
             int placedId = MovingSquadId;
-            ActionResult result = Report(Match.Move(Team.A, placedId, column, row, PlacingRotated));
+            ActionResult result = Report(Match.Move(Team.A, placedId, column, row, PlacingRotated), $"{Label(Match.Player.FindSquad(placedId))} to column {column}, row {row}, turned {PlacingRotated}");
             if (result.Ok)
             {
                 CancelPlacement();
@@ -331,7 +367,7 @@ namespace Halobellum.Presentation
         public ActionResult Sell(PlacedSquad squad)
         {
             if (squad == null) return ActionResult.Fail("Select a squad first.");
-            ActionResult result = Report(Match.Sell(Team.A, squad.Id));
+            ActionResult result = Report(Match.Sell(Team.A, squad.Id), Label(squad));
             if (result.Ok)
             {
                 _drops.Remove(squad.Id);
@@ -345,7 +381,7 @@ namespace Halobellum.Presentation
         public ActionResult LevelUp(PlacedSquad squad)
         {
             if (squad == null) return ActionResult.Fail("Select a squad first.");
-            ActionResult result = Report(Match.LevelUp(Team.A, squad.Id));
+            ActionResult result = Report(Match.LevelUp(Team.A, squad.Id), Label(squad));
             if (result.Ok) RefreshPreview(squad.Id);
             return result;
         }
@@ -353,14 +389,14 @@ namespace Halobellum.Presentation
         /// <summary>Levels up every ready squad of this type at once (Match.LevelUpAll).</summary>
         public ActionResult LevelUpAll(UnitStats type, int reselectSquadId = -1)
         {
-            ActionResult result = Report(Match.LevelUpAll(Team.A, type));
+            ActionResult result = Report(Match.LevelUpAll(Team.A, type), type?.Name);
             if (result.Ok) RefreshPreview(reselectSquadId);
             return result;
         }
 
         public ActionResult BuyTech(UnitStats type, TechUpgrade tech, int reselectSquadId = -1)
         {
-            ActionResult result = Report(Match.BuyTech(Team.A, type, tech));
+            ActionResult result = Report(Match.BuyTech(Team.A, type, tech), $"{type?.Name}: {tech?.Name}");
             if (result.Ok) RefreshPreview(reselectSquadId);
             return result;
         }
@@ -369,7 +405,7 @@ namespace Halobellum.Presentation
 
         public ActionResult LevelUpTower(TowerKind kind)
         {
-            ActionResult result = Report(Match.LevelUpTower(Team.A, kind));
+            ActionResult result = Report(Match.LevelUpTower(Team.A, kind), kind.ToString());
             if (result.Ok) RefreshPreview();
             return result;
         }
@@ -381,7 +417,7 @@ namespace Halobellum.Presentation
 
         public ActionResult BuyResearch(bool health)
         {
-            ActionResult result = Report(Match.BuyResearch(Team.A, health));
+            ActionResult result = Report(Match.BuyResearch(Team.A, health), health ? "health" : "damage");
             if (result.Ok) RefreshPreview();
             return result;
         }
@@ -593,9 +629,12 @@ namespace Halobellum.Presentation
 
         public ActionResult ChooseCard(int index)
         {
-            ActionResult result = Report(Match.ChooseCard(Team.A, index));
+            CardOffer offer = Match.Player.Offer;
+            string card = offer != null && index >= 0 && index < offer.Count ? offer.NameOf(index) : null;
+            ActionResult result = Report(Match.ChooseCard(Team.A, index), card);
             if (result.Ok)
             {
+                LogAnyOffer();
                 RefreshPreview();
                 PhaseChanged?.Invoke();
             }
@@ -607,6 +646,7 @@ namespace Halobellum.Presentation
             ActionResult result = Report(Match.SkipCards(Team.A));
             if (result.Ok)
             {
+                LogAnyOffer();
                 RefreshPreview();
                 PhaseChanged?.Invoke();
             }
@@ -682,13 +722,13 @@ namespace Halobellum.Presentation
         public ActionResult PlaceSpellAt(Vec2 position, float angleDegrees = 0f)
         {
             if (PlacingSpellId < 0) return ActionResult.Fail("No spell to place.");
-            ActionResult result = Report(Match.PlaceSpell(Team.A, PlacingSpellId, position, angleDegrees));
+            ActionResult result = Report(Match.PlaceSpell(Team.A, PlacingSpellId, position, angleDegrees), PlacingSpell == null ? null : FormattableString.Invariant($"{PlacingSpell.Stats.Name} at {position.X:0.##}, {position.Y:0.##}, angle {angleDegrees:0.#}"));
             if (result.Ok) CancelSpellPlacement();
             return result;
         }
 
         /// <summary>Takes a placed spell back; it stays ready.</summary>
-        public ActionResult UnplaceSpell(OwnedSpell spell) => spell == null ? ActionResult.Fail("No spell.") : Report(Match.UnplaceSpell(Team.A, spell.Id));
+        public ActionResult UnplaceSpell(OwnedSpell spell) => spell == null ? ActionResult.Fail("No spell.") : Report(Match.UnplaceSpell(Team.A, spell.Id), spell.Stats.Name);
 
         // ------------------------------------------------------------------ items and training (D33)
 
@@ -715,7 +755,7 @@ namespace Halobellum.Presentation
         public ActionResult PlaceItemOn(PlacedSquad squad)
         {
             if (PlacingItem == null || squad == null) return ActionResult.Fail("Pick an item first.");
-            ActionResult result = Report(Match.PlaceItem(Team.A, PlacingItem, squad.Id));
+            ActionResult result = Report(Match.PlaceItem(Team.A, PlacingItem, squad.Id), $"{PlacingItem.Name} on {Label(squad)}");
             if (result.Ok)
             {
                 int squadId = squad.Id;
@@ -729,7 +769,7 @@ namespace Halobellum.Presentation
         public ActionResult UseTraining(PlacedSquad squad)
         {
             if (squad == null) return Report(ActionResult.Fail("Select a squad first."));
-            ActionResult result = Report(Match.UseTraining(Team.A, squad.Id));
+            ActionResult result = Report(Match.UseTraining(Team.A, squad.Id), Label(squad));
             if (result.Ok) RefreshPreview(squad.Id);
             return result;
         }
@@ -772,7 +812,9 @@ namespace Halobellum.Presentation
             Message = "";
             _views.GhostTeam = null;
             _selection.ClearTower();
-            _battle.ShowBattle(Match.StartBattle(), _sources, play: true);
+            BattleSimulation battle = Match.StartBattle();
+            _log?.BattleStarted(Match);
+            _battle.ShowBattle(battle, _sources, play: true);
             PhaseChanged?.Invoke();
         }
 
@@ -797,7 +839,13 @@ namespace Halobellum.Presentation
             Ending.Tick(Time.deltaTime * (_battle.Speed > FastestPlayerSpeed ? _battle.Speed : 1f));
             if (!Ending.IsDone) return;
             Ending = null;
-            Match.FinishBattle();
+            RoundSummary summary = Match.FinishBattle();
+            _log?.BattleFinished(summary);
+            if (Match.Phase == MatchPhase.MatchOver)
+            {
+                _log?.Finished(Match);
+                CloseBattleLog();
+            }
             _selection.ClearTower();
             PhaseChanged?.Invoke();
         }
@@ -814,6 +862,7 @@ namespace Halobellum.Presentation
         {
             if (Match.Phase != MatchPhase.Result) return;
             Match.ContinueAfterResult();
+            LogAnyOffer();
             _selection.ClearTower();
             RefreshPreview();
             PhaseChanged?.Invoke();
@@ -851,9 +900,10 @@ namespace Halobellum.Presentation
                 _selection.Select(_battle.Simulation.Squads[index].Id);
         }
 
-        private ActionResult Report(ActionResult result, [CallerMemberName] string action = "")
+        private ActionResult Report(ActionResult result, string detail = null, [CallerMemberName] string action = "")
         {
             Message = result.Message ?? "";
+            _log?.PlayerAction(Match, action, detail, result);
             ActionTaken?.Invoke(action, result);
             return result;
         }

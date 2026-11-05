@@ -70,8 +70,8 @@ namespace Halobellum.Units
         public int reinforcementLevelEveryRounds = 4;
 
         [Header("Towers (D55)")]
-        [Tooltip("A level 1 tower's health (a Scorpion's shot kills it). It doubles with each level. 0 = no towers.")]
-        public float towerBaseHealth = 100f;
+        [Tooltip("A level 1 tower's health. It doubles with each level. 0 = no towers.")]
+        public float towerBaseHealth = 150f;
         public float towerRadius = 3f;
         [Tooltip("How many squares wide and deep a tower stands, where ground squads can't be placed.")]
         public int towerSquares = 3;
@@ -93,9 +93,9 @@ namespace Halobellum.Units
         public int eliteRecruitmentCost = 100;
         public int oilZoneCost = 150;
         [Tooltip("Metres along the line.")]
-        public float oilZoneLength = 15f;
+        public float oilZoneLength = 45f;
         [Tooltip("Metres across the line.")]
-        public float oilZoneWidth = 4f;
+        public float oilZoneWidth = 8f;
         public float oilZoneSeconds = 15f;
         [Range(0f, 1f)] public float oilZoneSlowShare = 0.4f;
         public float oilZoneFireDamageMultiplier = 1.5f;

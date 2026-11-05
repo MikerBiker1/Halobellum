@@ -594,7 +594,17 @@ namespace Halobellum.Tests
             Assert.AreEqual(shockwave.DamageMultiplier, grunt.ShockwaveDamage, 1e-3f, "And does less damage.");
             Assert.AreEqual(1f, marine.SpeedMultiplier, 1e-3f, "The other side isn't.");
             Assert.AreEqual(DeathStyle.Vehicle, DeathLooks.For(tower.Stats), "It blows up like a building, not like a soldier.");
-            Assert.IsTrue(_battle.GetComponent<UnitViewManager>().IsShown(tower), "Its wreck stays on the field.");
+            UnitViewManager views = _battle.GetComponent<UnitViewManager>();
+            Assert.IsTrue(views.IsShown(tower), "Its wreck stays on the field.");
+            Assert.IsTrue(views.ShowsShockwave(grunt), "Its side's bodies show that they suffer it.");
+            Assert.IsFalse(views.ShowsShockwave(marine), "The other side's don't.");
+
+            // It lasts as long as the shockwave does, and no longer.
+            _battle.Speed = 16f;
+            deadline = Time.realtimeSinceStartup + 20f;
+            while (battle.ActiveShockwave(Team.B) != null && !battle.IsFinished && Time.realtimeSinceStartup < deadline) yield return null;
+            yield return null;
+            if (battle.ActiveShockwave(Team.B) == null && grunt.IsAlive) Assert.IsFalse(views.ShowsShockwave(grunt), "It ends when the shockwave ends.");
 
             _sandbox.ResetBattle();
             yield return null;

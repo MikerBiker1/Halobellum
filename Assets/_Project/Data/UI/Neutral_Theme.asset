@@ -13,46 +13,46 @@ MonoBehaviour:
   m_Name: Neutral_Theme
   m_EditorClassIdentifier: 
   themeName: Neutral
-  fontAsset: {fileID: 0}
-  titleFontAsset: {fileID: 0}
+  fontAsset: {fileID: 12800000, guid: 67493f62478c22fbdf15cf833f07c10a, type: 3}
+  titleFontAsset: {fileID: 12800000, guid: 60ddab7073989aca5beac49a9c33209f, type: 3}
   osFontNames:
   - Arial
-  uppercaseTitles: 0
+  uppercaseTitles: 1
   fontScale: 1
   titleFontScale: 1
-  textShift: 0
-  titleTextShift: 0
+  textShift: 0.1
+  titleTextShift: 0.05
   textureScale: 0.5
-  panelFrame: {fileID: 0}
+  panelFrame: {fileID: 2800000, guid: f9290f02b1aabc43c06ad4e8e17045bc, type: 3}
   panelFrameBorder: 48
-  panelFillInset: 15
-  panelDetail: {fileID: 0}
+  panelFillInset: 9
+  panelDetail: {fileID: 2800000, guid: daf1156fa862e30f16533607c00ec2fa, type: 3}
   panelDetailTint: {r: 1, g: 1, b: 1, a: 1}
-  panelOrnament: {fileID: 0}
-  ornamentOffset: -3
-  rowFrame: {fileID: 0}
+  panelOrnament: {fileID: 2800000, guid: 670c6a4bfce8c09104b2b493d8443a77, type: 3}
+  ornamentOffset: -2
+  rowFrame: {fileID: 2800000, guid: b3cfa2e343119ce8c06147a77d06728c, type: 3}
   rowFrameBorder: 20
-  barFill: {fileID: 0}
-  barSegmentWidth: 0
-  buttonNormal: {fileID: 0}
-  buttonHover: {fileID: 0}
-  buttonPressed: {fileID: 0}
+  barFill: {fileID: 2800000, guid: 284b2d5d372e17751127b6b4320a0f55, type: 3}
+  barSegmentWidth: 14
+  buttonNormal: {fileID: 2800000, guid: d3ee87a01f066fefdd35d23cc6919efa, type: 3}
+  buttonHover: {fileID: 2800000, guid: c1845593f64a0ba03d3525c1e34c06da, type: 3}
+  buttonPressed: {fileID: 2800000, guid: 1635638009983682702fc5611f1b930a, type: 3}
   buttonBorder: 12
-  hexEmpty: {fileID: 2800000, guid: c10aba4ddb85d999b64beba8c46c9a1a, type: 3}
-  hexFilled: {fileID: 2800000, guid: 91c22c3bd2245f9ee1973833b6308f51, type: 3}
+  hexEmpty: {fileID: 2800000, guid: 709daff6754978b273552f2b31bd6fd8, type: 3}
+  hexFilled: {fileID: 2800000, guid: 1268fa8f44ed7a778e8a3c9319d4b16c, type: 3}
   panelShape: 0
   cornerSize: 3
   borderThickness: 1
   glowSize: 0
-  panelColor: {r: 0.08, g: 0.08, b: 0.09, a: 0.88}
-  borderColor: {r: 0.35, g: 0.36, b: 0.4, a: 1}
+  panelColor: {r: 0.055, g: 0.2, b: 0.44, a: 0.95}
+  borderColor: {r: 0.75, g: 0.9, b: 1, a: 1}
   glowColor: {r: 0, g: 0, b: 0, a: 0}
-  textColor: {r: 0.95, g: 0.95, b: 0.95, a: 1}
-  dimTextColor: {r: 0.78, g: 0.78, b: 0.8, a: 1}
+  textColor: {r: 0.93, g: 0.97, b: 1, a: 1}
+  dimTextColor: {r: 0.68, g: 0.82, b: 0.96, a: 1}
   titleColor: {r: 1, g: 1, b: 1, a: 1}
-  accentColor: {r: 0.45, g: 0.75, b: 1, a: 1}
-  buttonColor: {r: 0.2, g: 0.21, b: 0.24, a: 0.95}
-  buttonHoverColor: {r: 0.28, g: 0.3, b: 0.34, a: 0.98}
-  buttonPressedColor: {r: 0.14, g: 0.15, b: 0.17, a: 1}
-  buttonTextColor: {r: 1, g: 1, b: 1, a: 1}
-  disabledTextColor: {r: 0.55, g: 0.55, b: 0.55, a: 1}
+  accentColor: {r: 0.55, g: 0.88, b: 1, a: 1}
+  buttonColor: {r: 0.03, g: 0.12, b: 0.3, a: 0.97}
+  buttonHoverColor: {r: 0.1, g: 0.3, b: 0.58, a: 0.98}
+  buttonPressedColor: {r: 0.055, g: 0.2, b: 0.44, a: 1}
+  buttonTextColor: {r: 0.93, g: 0.97, b: 1, a: 1}
+  disabledTextColor: {r: 0.5, g: 0.62, b: 0.76, a: 1}

@@ -38,7 +38,7 @@ MonoBehaviour:
   reinforcementMaxLevel: 3
   reinforcementMaxTier: 3
   reinforcementLevelEveryRounds: 4
-  towerBaseHealth: 100
+  towerBaseHealth: 150
   towerRadius: 3
   towerSquares: 3
   towerLevelUpCost: 100
@@ -63,8 +63,8 @@ MonoBehaviour:
   rapidResupplyPenalty: 300
   eliteRecruitmentCost: 100
   oilZoneCost: 150
-  oilZoneLength: 15
-  oilZoneWidth: 4
+  oilZoneLength: 45
+  oilZoneWidth: 8
   oilZoneSeconds: 15
   oilZoneSlowShare: 0.4
   oilZoneFireDamageMultiplier: 1.5

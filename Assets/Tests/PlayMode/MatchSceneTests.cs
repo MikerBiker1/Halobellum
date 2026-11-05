@@ -14,6 +14,7 @@ using Halobellum.Combat;
 using Halobellum.Core;
 using Halobellum.Economy;
 using Halobellum.Presentation;
+using Halobellum.UI;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -55,6 +56,39 @@ namespace Halobellum.Tests
             while (_match.Match.Phase == MatchPhase.Battle && Time.realtimeSinceStartup < deadline) yield return null;
             Assert.AreNotEqual(MatchPhase.Battle, _match.Match.Phase, "The battle did not finish in time.");
         }
+
+        [UnityTest]
+        public IEnumerator TheCards_CanBePutAsideToSeeTheBoard_AndComeBack()
+        {
+            yield return LoadMatch();
+            Match m = _match.Match;
+            _match.ChooseDraft(0);
+            yield return PlayRound();
+            yield return null;
+            _match.Continue();
+            yield return null;
+            Assert.AreEqual(MatchPhase.Cards, m.Phase);
+
+            MatchHud hud = Object.FindAnyObjectByType<MatchHud>();
+            Assert.IsFalse(hud.CardsHidden, "A card screen starts with its cards showing.");
+            hud.ToggleCards();
+            Assert.IsTrue(hud.CardsHidden);
+            yield return null;
+            yield return null;
+            Assert.AreEqual(MatchPhase.Cards, m.Phase, "Nothing was chosen.");
+            Assert.IsNotNull(m.Player.Offer, "The offer still waits.");
+
+            hud.ToggleCards();
+            Assert.IsFalse(hud.CardsHidden, "The same button brings them back.");
+            hud.ToggleCards();
+            Assert.IsTrue(_match.SkipCards().Ok);
+            yield return null;
+            yield return null;
+            Assert.IsFalse(hud.CardsHidden, "The next card screen won't start with its cards put away.");
+        }
+
+        [Test]
+        public void ABasesBar_GoesOnBelowZero() => Assert.AreEqual("Enemy base: -340 / 2000", MatchHud.BaseLine("Enemy base", -340, 2000));
 
         [UnityTest]
         public IEnumerator AtTheEndOfARound_NodesOfLightHitTheBases_ThenTheResultComes()

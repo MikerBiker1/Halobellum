@@ -94,6 +94,7 @@ namespace Halobellum.UI
             EnsureStyles();
             _scale = HudScale.Apply();
             _panelsDrawn.Clear();
+            if (match.Match.Phase != MatchPhase.Cards) CardsHidden = CardsStartHidden;
 
             switch (match.Match.Phase)
             {
@@ -199,6 +200,13 @@ namespace Halobellum.UI
             CardOffer offer = m.Player.Offer;
             if (offer == null) return;
             float width = HudScale.ScaledWidth(_scale), height = HudScale.ScaledHeight(_scale);
+            var skip = new Rect(width * 0.5f - 150f, height - 62f, 300f, 52f);
+            var toggle = new Rect(skip.xMax + 12f, skip.y, 180f, skip.height);
+            if (CardsHidden)
+            {
+                DrawHiddenCards(m, toggle, width);
+                return;
+            }
             DimTheField(width, height);
             bool general = offer.Kind == CardKind.General;
 
@@ -208,8 +216,8 @@ namespace Halobellum.UI
             GUI.Label(new Rect(bar.x, bar.y + 8f, bar.width, 40f), HudTheme.Title(general ? $"Round {m.Round}: choose a card" : $"Round {m.Round}: choose reinforcements"), _centered);
             GUI.Label(new Rect(bar.x, bar.y + 48f, bar.width, 26f), $"Credits {m.Player.Credits}", _smallCentered);
 
-            var skip = new Rect(width * 0.5f - 150f, height - 62f, 300f, 52f);
             if (GUI.Button(skip, $"Skip (+{offer.SkipBonus} credits)", _bigButton)) match.SkipCards();
+            if (GUI.Button(toggle, "Hide cards", _bigButton)) ToggleCards();
             float bottom = skip.y - 12f;
             if (!string.IsNullOrEmpty(match.Message))
             {
@@ -233,6 +241,34 @@ namespace Halobellum.UI
                     : CardScreens.DrawReinforcementCard(card, offer.Reinforcements[i], faction, m.Player.Unlocked.Contains(offer.Reinforcements[i].Type), price, canAfford);
                 if (taken) match.ChooseCard(i);
             }
+        }
+
+        /// <summary>True while the player has put the cards aside to look at the board. A new card screen always starts with its cards showing.</summary>
+        public bool CardsHidden { get; private set; }
+
+        /// <summary>For pictures of the board at a card screen, which the test game has no mouse to reach.</summary>
+        private static readonly bool CardsStartHidden = System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-autoplayHideCards") >= 0;
+
+        /// <summary>Puts the cards aside, or brings them back. Anything clicked on the board meanwhile is let go of, so that its window doesn't sit over the cards.</summary>
+        public void ToggleCards()
+        {
+            CardsHidden = !CardsHidden;
+            if (CardsHidden || Selection == null) return;
+            Selection.Select(-1);
+            Selection.ClearTower();
+        }
+
+        /// <summary>The board, with only what brings the cards back. Squads and towers can be clicked to see their windows; nothing here can change them, as this is not deployment.</summary>
+        private void DrawHiddenCards(Match m, Rect toggle, float width)
+        {
+            float barWidth = Mathf.Min(420f, width - 28f);
+            var bar = new Rect((width - barWidth) * 0.5f, 10f, barWidth, 40f);
+            Panel(bar);
+            GUI.Label(bar, $"Round {m.Round}: looking at the board. Credits {m.Player.Credits}", _smallCentered);
+
+            UiHitAreas.Add(HudScale.ToScreen(toggle, _scale));
+            if (GUI.Button(toggle, "Show cards", _bigButton)) ToggleCards();
+            DrawTowerWindow(HudScale.ScaledHeight(_scale));
         }
 
         /// <summary>Darkens the battlefield behind a card screen, and keeps clicks from reaching it.</summary>
@@ -983,12 +1019,13 @@ namespace Halobellum.UI
             Match m = match.Match;
             RoundSummary s = m.LastSummary;
             bool won = m.Winner == Team.A;
-            DrawOutcome(won ? "VICTORY" : "DEFEAT", won ? GameVictoryColor : DefeatColor, won ? $"You won the game: the enemy base fell in round {m.Round}" : $"You lost the game: your base fell in round {m.Round}", 560f);
+            DrawOutcome(won ? "VICTORY" : "DEFEAT", won ? GameVictoryColor : DefeatColor, won ? $"You won the game in round {m.Round}: the enemy base ended at {m.Enemy.BaseHealth}" : $"You lost the game in round {m.Round}: your base ended at {m.Player.BaseHealth}", 560f);
             Rect panel = CenteredPanel(640f, 560f, BannerRoom);
             float y = panel.y + 12f;
             GUI.Label(new Rect(panel.x, y, panel.width, 40f), HudTheme.Title("Match over"), _title);
             y += 52f;
             if (s != null) SummaryLines(s, panel, y);
+            if (GUI.Button(new Rect(panel.x + panel.width * 0.5f - 110f, panel.yMax - 100f, 220f, 34f), "Open battle logs", _button)) Application.OpenURL("file:///" + BattleLogFile.Folder.Replace('\\', '/'));
             if (GUI.Button(new Rect(panel.x + panel.width * 0.5f - 230f, panel.yMax - 58f, 220f, 44f), "New match", _bigButton)) match.NewMatch();
             if (MenuStyle.Button(new Rect(panel.x + panel.width * 0.5f + 10f, panel.yMax - 58f, 220f, 44f), "Main Menu", _bigButton)) GameFlow.OpenMainMenu();
         }
@@ -1021,7 +1058,7 @@ namespace Halobellum.UI
         {
             float x = panel.x + 20f, w = panel.width - 40f;
             GUI.Label(new Rect(x, y, w, 26f), $"Base damage: you dealt {s.BaseDamageByA}, the enemy dealt {s.BaseDamageByB}", _text); y += 28f;
-            GUI.Label(new Rect(x, y, w, 26f), $"Bases: yours {Mathf.Max(0, s.BaseHealthA)}, enemy {Mathf.Max(0, s.BaseHealthB)}", _text); y += 28f;
+            GUI.Label(new Rect(x, y, w, 26f), $"Bases: yours {s.BaseHealthA}, enemy {s.BaseHealthB}", _text); y += 28f;
             GUI.Label(new Rect(x, y, w, 26f),
                 $"Survivors: yours {s.Battle.TeamA.Survivors} of {s.Battle.TeamA.Deployed}, enemy {s.Battle.TeamB.Survivors} of {s.Battle.TeamB.Deployed}" +
                 (s.Battle.TimedOut ? "  (time limit)" : ""), _text);
@@ -1073,9 +1110,18 @@ namespace Halobellum.UI
         private void BaseBar(Rect rect, HudLine line, string label, int health, int maxHealth, Color color)
         {
             HudTheme.Bar(rect, maxHealth > 0 ? health / (float)maxHealth : 0f, color);
-            if (line.Changed(health, maxHealth)) line.Text = $"{label}: {Mathf.Max(0, health)} / {maxHealth}";
+            if (line.Changed(health, maxHealth)) line.Text = BaseLine(label, health, maxHealth);
+            // Below zero the number goes on, so that it shows how far a base was overkilled.
+            Color oldColor = GUI.contentColor;
+            if (health < 0) GUI.contentColor = OverkillColor;
             GUI.Label(rect, line.Text, _barLabel);
+            GUI.contentColor = oldColor;
         }
+
+        private static readonly Color OverkillColor = new Color(1f, 0.55f, 0.48f);
+
+        /// <summary>What a base's bar says. Its health can be below zero.</summary>
+        public static string BaseLine(string label, int health, int maxHealth) => $"{label}: {health} / {maxHealth}";
 
         private static string Bodies(int count) => count == 1 ? "1 body" : $"{count} bodies";
 

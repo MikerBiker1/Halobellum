@@ -22,8 +22,8 @@ MonoBehaviour:
   radius: 0
   delaySeconds: 0.5
   minRound: 0
-  areaWidth: 15
-  areaDepth: 4
+  areaWidth: 45
+  areaDepth: 8
   damagePerTick: 0
   damageType: 0
   isAntiArmor: 0
