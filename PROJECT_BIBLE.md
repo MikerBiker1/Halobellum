@@ -259,7 +259,7 @@ The Flood win by spreading. They have a roster of their own, plus temporary infe
 | Pure Form Ranged | Artillery | 2 | 50 | 2 | 250 | 400 | Lobs bone shards |
 | Swarm Form | Anti-air | 2 | 50 | 20 forms in 4 packs | 250 | 200 per pack | Flying packs, bonus damage against air |
 | Pure Form Tank | Tank | 3 | 200 | 1 | 400 | 3200 | Heavy armor, splash slam |
-| Seeder | Single-target DPS | 3 | 200 | 2 | 400 | 800 | Seeds enemies from range |
+| Seeder | Single-target DPS | 3 | 200 | 2 | 400 | 800 | Flies; seeds ground enemies from range |
 | Infected Pelican | Aerial | 3 | 200 | 1 | 400 | 900 | One-shot crash dive (900 damage within 3.5 m) |
 | Infected Phantom | Aerial | 3 | 200 | 1 | 400 | 1100 | Drops 5 Combat Forms after 8 seconds |
 | Flood Abomination | Titan | 4 | 350 | 1 | 800 | 8500 | Very tall and large; aura for nearby Flood, keeps releasing Infection Forms |
@@ -274,7 +274,7 @@ The Flood win by spreading. They have a roster of their own, plus temporary infe
 - Vehicles, Heavy and Light Armor, Spartans, and Hunters cannot be infected by Infection Forms. A unit with an Unarmored body and an energy shield, such as an Elite, can be infected only after its shield is depleted.
 - A killed unit rises as an infected unit after 2 seconds. Its stats come from its original definition scaled to 60% health. It becomes a dumb melee charger: moves to the nearest enemy, no special abilities. It keeps its base damage and cannot be infected again.
 - Infected units exist only for that round and are discarded at round end.
-- **Seeder:** a hit plants a seed for 8 seconds. The host loses health and is slowed, and if it dies seeded it rises as an infected unit, whatever its armor. A shield that is up stops the seed. Titans and Flood cannot be seeded.
+- **Seeder:** it flies, so only what can reach air can hit it, and its Seed Spore hits ground units only (D66). A hit plants a seed for 8 seconds. The host loses health and is slowed, and if it dies seeded it rises as an infected unit, whatever its armor. A shield that is up stops the seed. Titans and Flood cannot be seeded.
 - **Infected Pelican:** a one-shot Tier 3 unit that crashes into the densest enemy cluster, dealing heavy splash damage and spawning 30 Infection Forms and 5 Combat Forms on impact. If it is shot down, it does the same where it falls.
 - Counters: Fire, splash, and armored units. Players are expected to invest in chaff clear. Fighting the Flood with chaff feeds them.
 
