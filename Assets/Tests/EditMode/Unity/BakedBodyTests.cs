@@ -80,6 +80,48 @@ namespace Halobellum.Tests
             Assert.IsNotNull(body.Clip(BakedAnimation.Dead));
         }
 
+        [TestCase("SpellUnits/ODST", "ODST", "Weapon_AssaultRifle", 2f)]
+        [TestCase("Covenant/JackalPlasmaRifle", "Jackal", "Weapon_PlasmaPistol", 2f)]
+        [TestCase("Covenant/JackalShield", "JackalShield", "Weapon_PlasmaPistol", 2f)]
+        [TestCase("Banished/BruteGrenadier", "BruteGrenadier", "Weapon_RocketLauncher", 2.8f)]
+        [TestCase("FloodUNSC/InfestedMarine", "InfestedMarine", "Weapon_AssaultRifle", 2f)]
+        public void TheThirdBatch_IsBaked_AndItsUnitsUseIt(string unit, string name, string weapon, float height)
+        {
+            BakedBodyDefinition body = Resources.Load<BakedBodyDefinition>("BakedBodies/" + name);
+            Assert.IsTrue(body.IsReady, "Run Halobellum > Art > Bake Animated Bodies.");
+            Assert.AreSame(body, UnityEditor.AssetDatabase.LoadAssetAtPath<UnitDefinition>($"Assets/_Project/Data/Units/{unit}.asset").bakedBody);
+            Assert.AreEqual(weapon, body.weaponName);
+            Assert.AreEqual(height, body.bodyHeight, 0.05f, "How tall it is decides where its health bar goes.");
+            Assert.IsTrue(body.hasMuzzle);
+            Assert.Less(Mathf.Abs(body.muzzle.x), 1f);
+            Assert.Greater(body.muzzle.z, 0f, "Its shots start ahead of its middle.");
+            Assert.Less(body.mesh.triangles.Length / 3, 7500);
+            Assert.IsNotNull(body.Clip(BakedAnimation.Dead));
+        }
+
+        [Test]
+        public void TheJackalsShareAModel_AndOnlyTheShieldedOneHasAShield()
+        {
+            BakedBodyDefinition rifle = Resources.Load<BakedBodyDefinition>("BakedBodies/Jackal");
+            BakedBodyDefinition shield = Resources.Load<BakedBodyDefinition>("BakedBodies/JackalShield");
+            Assert.AreEqual("Jackal", rifle.modelFolder);
+            Assert.AreEqual("Jackal", shield.modelFolder);
+            Assert.AreEqual(1, rifle.mesh.subMeshCount);
+            Assert.IsNull(rifle.glassMaterial);
+            Assert.AreEqual(1, rifle.Materials.Length);
+
+            Assert.AreEqual(2, shield.mesh.subMeshCount);
+            Assert.AreEqual(375, shield.mesh.GetTriangles(1).Length / 3, "The file's whole shield.");
+            Assert.AreEqual(2, shield.Materials.Length);
+            Material glass = shield.glassMaterial;
+            Assert.AreEqual(3000, glass.renderQueue, "Drawn over what is behind it.");
+            Assert.AreEqual(1f, glass.GetFloat("_Glass"));
+            Assert.AreEqual(0f, glass.GetFloat("_ZWrite"));
+            Assert.IsTrue(glass.enableInstancing, "Big armies need GPU instancing.");
+            Assert.AreEqual(0f, shield.material.GetFloat("_Glass"), "The body itself stays solid.");
+            Assert.AreEqual(1f, shield.material.GetFloat("_ZWrite"));
+        }
+
         [Test]
         public void Marine_Mesh_NamesBonesInTheTexture_AndHoldsARifle()
         {
@@ -100,8 +142,8 @@ namespace Halobellum.Tests
             UnitDefinition[] units = Resources.FindObjectsOfTypeAll<UnitDefinition>();
             var marineUnit = UnityEditor.AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/UNSC/Marine.asset");
             Assert.AreSame(Marine(), marineUnit.bakedBody);
-            var mantis = UnityEditor.AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/UNSC/Mantis.asset");
-            Assert.IsNull(mantis.bakedBody);
+            var trooper = UnityEditor.AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/UNSC/FlamethrowerTrooper.asset");
+            Assert.IsNull(trooper.bakedBody);
         }
     }
 }

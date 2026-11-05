@@ -112,38 +112,21 @@ The Spartans have your model now, each with a placeholder weapon from the game's
 | [ ] | M41 rocket launcher | Spartan Grenadier. | Rocket launcher, drawn short |
 | [ ] | Shotgun | Spartan CQB. | SMG |
 | [ ] | BR85 battle rifle and M41 rocket launcher | Spartan Fireteam. | Assault rifle |
-| [ ] | Plasma rifle | Elite. | Plasma pistol, drawn big |
+| [ ] | Plasma rifle | Elite, and the Jackal (Plasma Rifle). | Plasma pistol, drawn big |
+| [ ] | M7 SMG | ODST. | Assault rifle |
+| [ ] | Spike grenade launcher | Brute Grenadier. | Rocket launcher |
 
 ### UNSC
 
 | Done | Unit | Notes |
 | --- | --- | --- |
 | [ ] | Flamethrower Trooper | A soldier with a flamethrower. |
-| [ ] | Wolverine | Anti-air vehicle. |
-| [ ] | Mantis | Walker. |
-| [ ] | ODST | Only lands from the drop pod spell. |
 | [ ] | Gremlin | Armored Division. |
-| [ ] | Condor Gunship | Aerospace Command. It is a grey Pelican for now. |
-
-### Covenant
-
-| Done | Unit | Notes |
-| --- | --- | --- |
-| [ ] | Jackal | Two units, with a rifle and with a shield. |
-| [ ] | Vampire | Aircraft. |
-| [ ] | Marauder | Banished. |
-| [ ] | Reaver | Banished. |
-| [ ] | Brute | Brute Grenadier, Banished. |
-| [ ] | Goliath | Lekgolo Colony. |
 
 ### Flood
 
 | Done | Unit | Notes |
 | --- | --- | --- |
-| [ ] | Combat Form | |
-| [ ] | Seeder | |
-| [ ] | Juggernaut | You may remove it if you can't find one. |
-| [ ] | Spawner | You may remove it if you can't find one. |
 | [ ] | Growths for Infested vehicles | The Flood's tentacles, to fit on an Infested Scorpion, Elephant, Hornet and so on (decision 37). One or a few pieces that can be placed on any vehicle. |
 | [ ] | Hunter and Goliath gore death | Worms spilling apart instead of today's burning wreck (decision 31). A worm pile or a short animation. |
 
@@ -180,6 +163,6 @@ The colours of the sky, sun and haze for each faction are in `Presentation/Terra
 
 Fitted to their units, so there is nothing left to do here.
 
-- **UNSC:** Spartan (and the 5 Noble Spartans, recoloured), Archer Missile Pod, Cobra, Rhino, Sparrowhawk, Vulture, Longsword (in place of the Shortsword).
-- **Covenant:** Elite, Zealot (the Elite in gold), Ghost, Hunter Pair, Hunter Captain, Grunt Goblin, Skitterer.
-- **Flood:** Flood Abomination, Swarm Form, Infested Elite and Infested Ghost (the Elite and Ghost, tinted).
+- **UNSC:** Spartan (and the 5 Noble Spartans, recoloured), Archer Missile Pod, Cobra, Rhino, Sparrowhawk, Vulture, Longsword (in place of the Shortsword), Wolverine, Mantis, ODST, Condor Gunship.
+- **Covenant:** Elite, Zealot (the Elite in gold), Ghost, Hunter Pair, Hunter Captain, Grunt Goblin, Skitterer, both Jackals (the shield is your Halo 5 one), Vampire, Marauder, Reaver, Brute Grenadier (the red Brute of the six), Goliath.
+- **Flood:** Flood Abomination, Swarm Form, Infested Elite and Infested Ghost (the Elite and Ghost, tinted), Infested Marine, Combat Form, Seeder, Juggernaut, Spawner.

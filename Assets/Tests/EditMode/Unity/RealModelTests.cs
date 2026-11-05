@@ -24,6 +24,8 @@ namespace Halobellum.Tests
             "ArmoredDivision/Grizzly", "Banished/Chopper", "AerospaceCommand/CondorGunship",
             "FloodUNSC/InfestedWarthog", "FloodUNSC/InfestedScorpion", "FloodUNSC/InfestedHornet",
             "FloodCovenant/InfestedWraith", "FloodCovenant/InfestedBanshee",
+            "UNSC/Mantis", "UNSC/Wolverine", "Banished/Marauder", "Banished/Reaver", "Covenant/Vampire", "Flood/CombatForm",
+            "FloodCovenant/Spawner", "FloodUNSC/Juggernaut", "LekgoloColony/Goliath",
         };
 
         [TestCaseSource(nameof(RealModels))]
@@ -56,6 +58,35 @@ namespace Halobellum.Tests
             {
                 Object.DestroyImmediate(model);
             }
+        }
+
+        [Test]
+        public void Seeder_StandsOnItsMiddle_AsItFlies_WhateverItsDataSays()
+        {
+            var unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/Flood/Seeder.asset");
+            GameObject model = Object.Instantiate(unit.prefab);
+            try
+            {
+                MeshRenderer[] renderers = model.GetComponentsInChildren<MeshRenderer>();
+                Bounds bounds = renderers[0].bounds;
+                foreach (MeshRenderer renderer in renderers) bounds.Encapsulate(renderer.bounds);
+                Assert.AreEqual(0f, bounds.center.y, 0.02f);
+                Assert.AreEqual(8f, Mathf.Max(bounds.size.x, bounds.size.z), 0.05f);
+            }
+            finally
+            {
+                Object.DestroyImmediate(model);
+            }
+        }
+
+        [Test]
+        public void Condor_HasItsOwnModel_NotAGreyPelican()
+        {
+            var unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/AerospaceCommand/CondorGunship.asset");
+            Material material = unit.prefab.GetComponentInChildren<MeshRenderer>().sharedMaterial;
+            Assert.AreEqual("Condor_0", material.name);
+            Assert.AreEqual(1f, material.color.r, 0.01f, "It shows its texture as it is.");
+            Assert.IsNotNull(unit.prefab.GetComponentsInChildren<Transform>().Single(t => t.name == "Turret_0").Find("Muzzle_0a"));
         }
 
         [Test]
