@@ -27,7 +27,6 @@ MonoBehaviour:
   collisionRadius: 1.2
   turnTime180: 1
   isAir: 0
-  canFlank: 0
   targetFilter: 0
   weapons:
   - weaponName: Seed Spore
@@ -44,6 +43,7 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
+    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -65,11 +65,15 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
+  reinforcementDrops: 1
+  reinforcementLandSeconds: 0
+  reinforcementFirstDropSeconds: 0
   formsPerBody: 1
   isFlood: 1
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
+  canFlank: 0
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -90,11 +94,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 757a40fb6da515b64785ab074e78b47a, type: 2}
   - {fileID: 11400000, guid: 0ef4c9fa6f590f3b2cd4d035f1d3c6f6, type: 2}
   - {fileID: 11400000, guid: 88c83a28e91c1474e69daf2c3ad9a6bf, type: 2}
-  prefab: {fileID: 4022379312652394556, guid: 1ac9ebd70789d6b41aae956c11df703e, type: 3}
-  keepsOwnMaterials: 0
+  prefab: {fileID: 9127785656554542436, guid: 563f10caf69f61c43b08f1d0bb408fd0, type: 3}
+  keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
   bakedTint: {r: 1, g: 1, b: 1, a: 0}
   bakedScale: 1
-  strongAgainst: 'Tanks, heavy units'
-  weakAgainst: 'Chaff swarms, flankers'
-  notes: 'Best counters (headless runner, equal cost): Marine (100%), Grunt (100%). First-pass M8 values (DECISIONS D38).'
+  strongAgainst: Tanks, heavy units
+  weakAgainst: Chaff swarms, flankers
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Grunt (100%).
+    First-pass M8 values (DECISIONS D38).'

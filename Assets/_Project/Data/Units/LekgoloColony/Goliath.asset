@@ -27,7 +27,6 @@ MonoBehaviour:
   collisionRadius: 2.4
   turnTime180: 2.5
   isAir: 0
-  canFlank: 0
   targetFilter: 0
   weapons:
   - weaponName: Fist Slam
@@ -44,6 +43,7 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
+    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -68,6 +68,7 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
+    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -89,11 +90,15 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
+  reinforcementDrops: 1
+  reinforcementLandSeconds: 0
+  reinforcementFirstDropSeconds: 0
   formsPerBody: 1
   isFlood: 0
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
+  canFlank: 0
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -114,11 +119,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a0dd02b91aba05353b35fbcf888a43cd, type: 2}
   - {fileID: 11400000, guid: 8963651bd85ce490f434cac123cd2f89, type: 2}
   - {fileID: 11400000, guid: b9004367af7a7d6b1801fbfdd9c0992f, type: 2}
-  prefab: {fileID: 2038136081938272653, guid: 1944c17a6efe94940af5a1a6cb5b2295, type: 3}
-  keepsOwnMaterials: 0
+  prefab: {fileID: 7373601955929379643, guid: 8ca284741a7d6424ea2fb53765da74f8, type: 3}
+  keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
   bakedTint: {r: 1, g: 1, b: 1, a: 0}
   bakedScale: 1
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
-  notes: 'Best counters (headless runner, equal cost): Gauss Warthog (100%), Spartan (100%). Two colonies in one suit. Its old job as a building-killer shows as 2.5 times the base damage if it survives a battle. First-pass M10 values, Lekgolo Colony (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Gauss Warthog (100%), Spartan
+    (100%). Two colonies in one suit. Its old job as a building-killer shows as 2.5
+    times the base damage if it survives a battle. First-pass M10 values, Lekgolo
+    Colony (Docs/M10/subfactions.md).'

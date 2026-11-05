@@ -27,7 +27,6 @@ MonoBehaviour:
   collisionRadius: 2
   turnTime180: 2
   isAir: 0
-  canFlank: 0
   targetFilter: 2
   weapons:
   - weaponName: Chaingun
@@ -44,6 +43,7 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
+    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -68,6 +68,7 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
+    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -89,11 +90,15 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
+  reinforcementDrops: 1
+  reinforcementLandSeconds: 0
+  reinforcementFirstDropSeconds: 0
   formsPerBody: 1
   isFlood: 0
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
+  canFlank: 0
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -114,11 +119,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2881c33efa2797c8e77b16174dcd7800, type: 2}
   - {fileID: 11400000, guid: d28c85c00e84f636f16f30ee31615b49, type: 2}
   - {fileID: 11400000, guid: 1cfd6da19dff12e47ddd4f7cbd1e3076, type: 2}
-  prefab: {fileID: 682829876330678696, guid: 1b84cfffc7c493746893cfe0519b3988, type: 3}
-  keepsOwnMaterials: 0
+  prefab: {fileID: 6749508788317831636, guid: 1a6e0797b3264404bb81461658b50bf8, type: 3}
+  keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
   bakedTint: {r: 1, g: 1, b: 1, a: 0}
   bakedScale: 1
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
-  notes: 'Best counters (headless runner, equal cost): Gauss Warthog (100%), Spartan (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Gauss Warthog (100%), Spartan
+    (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the
+    Bible.'

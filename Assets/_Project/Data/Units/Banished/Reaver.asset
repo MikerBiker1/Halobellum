@@ -27,7 +27,6 @@ MonoBehaviour:
   collisionRadius: 1.4
   turnTime180: 1.2
   isAir: 0
-  canFlank: 0
   targetFilter: 2
   weapons:
   - weaponName: Spike Rockets
@@ -44,6 +43,7 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 3
     coneDegrees: 0
+    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -65,11 +65,15 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
+  reinforcementDrops: 1
+  reinforcementLandSeconds: 0
+  reinforcementFirstDropSeconds: 0
   formsPerBody: 1
   isFlood: 0
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
+  canFlank: 0
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -90,11 +94,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9e9b1db142d00389b9bf7ac17ec14630, type: 2}
   - {fileID: 11400000, guid: 590cff5a24e12ba7a4f3b08840016250, type: 2}
   - {fileID: 11400000, guid: 1082ed965f98e9578fbe748c7085d7a8, type: 2}
-  prefab: {fileID: 7325467474445018493, guid: 8b299b7b9aa9147468514f5ad84003a6, type: 3}
-  keepsOwnMaterials: 0
+  prefab: {fileID: 3655511445147062309, guid: 7b79734f2306d49438c83143164b9fa4, type: 3}
+  keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
   bakedTint: {r: 1, g: 1, b: 1, a: 0}
   bakedScale: 1
   strongAgainst: Aerial
   weakAgainst: Ground units
-  notes: 'Best counters (headless runner, equal cost): Marine (100%), Spartan Grenadier (100%). Ground anti-air walker, weak against vehicles. First-pass M10 values, Banished (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Spartan Grenadier
+    (100%). Ground anti-air walker, weak against vehicles. First-pass M10 values,
+    Banished (Docs/M10/subfactions.md).'

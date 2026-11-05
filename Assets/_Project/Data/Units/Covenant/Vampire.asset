@@ -27,7 +27,6 @@ MonoBehaviour:
   collisionRadius: 1.8
   turnTime180: 1
   isAir: 1
-  canFlank: 0
   targetFilter: 2
   weapons:
   - weaponName: Needle Cannons
@@ -44,6 +43,7 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 3
     coneDegrees: 0
+    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -65,11 +65,15 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
+  reinforcementDrops: 1
+  reinforcementLandSeconds: 0
+  reinforcementFirstDropSeconds: 0
   formsPerBody: 1
   isFlood: 0
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
+  canFlank: 0
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -90,11 +94,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ab1e12f76741380d31f2744b91810f4e, type: 2}
   - {fileID: 11400000, guid: 22ff79a1dd5e7b1624217d637b5911fb, type: 2}
   - {fileID: 11400000, guid: a803c1fa8f78d0f862d220296f62aed9, type: 2}
-  prefab: {fileID: 5104527227943967435, guid: 303492183918dee44a8538a6de5d584f, type: 3}
-  keepsOwnMaterials: 0
+  prefab: {fileID: 5653860917223297568, guid: ffd2fb8c0820eb04da5d2160158970b1, type: 3}
+  keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
   bakedTint: {r: 1, g: 1, b: 1, a: 0}
   bakedScale: 1
   strongAgainst: Aerial
   weakAgainst: Ground units
-  notes: 'Best counters (headless runner, equal cost): Marine (100%), Infested Elite (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Infested Elite
+    (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the
+    Bible.'

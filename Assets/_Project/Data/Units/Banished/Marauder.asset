@@ -27,7 +27,6 @@ MonoBehaviour:
   collisionRadius: 1.8
   turnTime180: 1.8
   isAir: 0
-  canFlank: 0
   targetFilter: 0
   weapons:
   - weaponName: Plasma Cannon
@@ -44,6 +43,7 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
+    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -68,6 +68,7 @@ MonoBehaviour:
     targetFilter: 2
     airDamageMultiplier: 1
     coneDegrees: 0
+    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -89,11 +90,15 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
+  reinforcementDrops: 1
+  reinforcementLandSeconds: 0
+  reinforcementFirstDropSeconds: 0
   formsPerBody: 1
   isFlood: 0
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
+  canFlank: 0
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -114,11 +119,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 039b476bac057f3b49ae4f805168fd1a, type: 2}
   - {fileID: 11400000, guid: 8e0bba6de862d470c11d87d438f2ed41, type: 2}
   - {fileID: 11400000, guid: 89665b33527b64906261be6ab37e2657, type: 2}
-  prefab: {fileID: 3937708965938966501, guid: 5ef5f40a9ff92124db4b03516f5f2202, type: 3}
-  keepsOwnMaterials: 0
+  prefab: {fileID: 5294820219748522418, guid: 0204f28cb65f20740a0a6664fa18176a, type: 3}
+  keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
   bakedTint: {r: 1, g: 1, b: 1, a: 0}
   bakedScale: 1
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
-  notes: 'Best counters (headless runner, equal cost): Gauss Warthog (100%), Spartan (100%). The Banished battle tank. A plasma main gun, so a little better than a Scorpion against shields. First-pass M10 values, Banished (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Gauss Warthog (100%), Spartan
+    (100%). The Banished battle tank. A plasma main gun, so a little better than
+    a Scorpion against shields. First-pass M10 values, Banished (Docs/M10/subfactions.md).'

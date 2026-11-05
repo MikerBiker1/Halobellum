@@ -27,7 +27,6 @@ MonoBehaviour:
   collisionRadius: 1.8
   turnTime180: 1
   isAir: 0
-  canFlank: 0
   targetFilter: 0
   weapons:
   - weaponName: Crushing Charge
@@ -44,6 +43,7 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
+    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -65,11 +65,15 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
+  reinforcementDrops: 1
+  reinforcementLandSeconds: 0
+  reinforcementFirstDropSeconds: 0
   formsPerBody: 1
   isFlood: 1
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
+  canFlank: 0
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -90,11 +94,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c0c8b66a106906b38ab80e685bfe35cf, type: 2}
   - {fileID: 11400000, guid: 6a30c760c5c89937a42234f1586f0b9e, type: 2}
   - {fileID: 11400000, guid: a877b4fd9c5c4a05cf348f8bad157da3, type: 2}
-  prefab: {fileID: 1263869980934676208, guid: 59a58553801f92542bb8cba426182048, type: 3}
-  keepsOwnMaterials: 0
+  prefab: {fileID: 8081316487958047871, guid: b28e5f7376a990542adb408f486e14f9, type: 3}
+  keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
   bakedTint: {r: 1, g: 1, b: 1, a: 0}
   bakedScale: 1
-  strongAgainst: 'Artillery, DPS'
-  weakAgainst: 'Chaff clear, tanks'
-  notes: 'Best counters (headless runner, equal cost): Scorpion (100%), Goliath (100%). A pure form the size of a tank that moves like a flanker and leaps onto what it hunts. First-pass M10 values, UNSC-based (Docs/M10/subfactions.md).'
+  strongAgainst: Artillery, DPS
+  weakAgainst: Chaff clear, tanks
+  notes: 'Best counters (headless runner, equal cost): Scorpion (100%), Goliath (100%).
+    A pure form the size of a tank that moves like a flanker and leaps onto what
+    it hunts. First-pass M10 values, UNSC-based (Docs/M10/subfactions.md).'
