@@ -151,10 +151,10 @@ A unit can be unlocked and bought in the same round. Buying a squad is limited t
 
 **Towers (D55).** Each side has two towers in the middle of its zone, the Command Center on its own left and the Research Center on its own right. They make two lanes to defend. Both are rebuilt for every battle, and levels last for the match. A tower is a ground target like any other, but isn't part of the army: it doesn't keep a battle going, deals no base damage and gives no XP.
 
-- **Level:** 1 to 5, 100 credits each. A level 1 tower dies to one Scorpion shell (100 health), and each level doubles its health.
+- **Level:** 1 to 5, 100 credits each. A level 1 tower has 150 health, and each level doubles it.
 - **XP:** the squad that destroys it earns the XP of a level 1 squad of the tier of the tower's level (150, 275, 450, 800), and for level 5, of a level 2 Titan (1,200).
 - **Shockwave:** its fall weakens its side's whole army, by 40% in speed, damage and rate of fire, and makes it take 40% more damage. It lasts 10, 8, 6, 4 or 2 seconds by the tower's level. A second fall adds its time, not its severity.
-- **Command Center sells,** each once a round: an extra squad slot for the round (50), a one-use Oil Zone of 4 x 15 m (150), Rapid Resupply (free: +200 now, 300 less next round), Elite Recruitment (100: squads bought this round are level 2, at half their price more).
+- **Command Center sells,** each once a round: an extra squad slot for the round (50), a one-use Oil Zone of 8 x 45 m (150), Rapid Resupply (free: +200 now, 300 less next round), Elite Recruitment (100: squads bought this round are level 2, at half their price more).
 - **Research Center sells** lasting bonuses for the whole army: +15% health (100), another +15% (300); +12% damage (100), another +12% (300).
 
 ## 6. Combat system
@@ -514,6 +514,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-04 | The Spartan has 1250 health; the Zealot leaps and cleaves; Noble's Sniper and Heavy Weapons cost 50 less; Hard picks techs by the army it has seen | Per the project owner (D65) |
 | 2026-11-05 | The Seeder flies, with a collision radius of 1.6; the owner's third batch of models is in, with the Anniversary Human Flood Form on the Infested Marine | Per the project owner (D66) |
 | 2026-11-05 | The owner's music and its rules; shots in the air land before a battle ends, so both armies can fall and draw; survivors hit the base as nodes of light, smallest first; result windows with a ribbon | Per the project owner (D67) |
+| 2026-11-05 | Smoke Bomb and Oil Zone are 8 x 45 m; a level 1 tower has 150 health; bases show their health below zero; a side under a shockwave pulses; cards can be hidden; a blueprint look for neutral screens; a battle log | Per the project owner (D68) |
 
 ## 18. Assumptions to confirm
 

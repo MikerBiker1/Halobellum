@@ -5,10 +5,10 @@
 // Fonts: the font files assigned here (Art/Imported/Fonts, free OFL fonts) win; otherwise fonts on
 // the computer are looked up by name, first match wins. Avoid variable fonts such as Bahnschrift:
 // Unity draws the wrong text with them.
-// Textures (decision D28, drawn by Tools/UiArt/make_ui_textures.py into Art/UI): when set, panels
+// Textures (decision D28, drawn by Tools/UiArt/make_ui_textures.py and make_blueprint_textures.py into Art/UI): when set, panels
 // are drawn as fill colour + repeating hull texture + frame on top (9-slice) + an ornament on the
 // top edge; list rows, bars and buttons use their own textures. Without textures, the HUD draws
-// plain shapes from the colours and Panel Shape below (the neutral theme does this).
+// plain shapes from the colours and Panel Shape below.
 // Depends on: UnityEngine.
 
 using UnityEngine;

@@ -161,11 +161,17 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 
 ## From the music and the end of a round (D67)
 
-90. **A song picked again resumes where it was,** as tracks did before, so that you hear all of it over a game. It could start from the top instead. One line.
-91. **The Flood song's chance:** you asked for more often, and I made it 40% when Flood is present, about 15% for each of the 4 others. One number.
-92. **Between the round's window and the next cards there is no music,** only the round's sound. Should a song carry on quietly under it?
-93. **Unlock Skirmish has no faction,** so a lost game plays the song of the land you fought on, unless the enemy fielded Flood.
-94. **The 90 second limit** also waits for the last shots, then both sides' survivors send their nodes.
+90. *(That's fine.)* **A song picked again resumes where it was,** as tracks did before, so that you hear all of it over a game. It could start from the top instead. One line.
+91. *(Good.)* **The Flood song's chance:** you asked for more often, and I made it 40% when Flood is present, about 15% for each of the 4 others. One number.
+92. *(That's fine: the round's window should not stay open long anyway.)* **Between the round's window and the next cards there is no music,** only the round's sound. Should a song carry on quietly under it?
+93. *(OK.)* **Unlock Skirmish has no faction,** so a lost game plays the song of the land you fought on, unless the enemy fielded Flood.
+94. *(Good.)* **The 90 second limit** also waits for the last shots, then both sides' survivors send their nodes.
+
+## From your two games (D68)
+
+95. **Blueprint goes wherever the neutral theme does:** Unlock Skirmish, and also the Sandbox and the starting draft in Faction mode. The draft's cards keep their factions' frames there. It can be kept to Unlock Skirmish only.
+96. **The shockwave's colour:** pale blue, to show on UNSC green, Covenant violet and Flood flesh alike. It is close to a shield's blue, which matters if you ever read one for the other. One colour to change.
+97. **The battle log has no switch.** Every game you play writes a small file, a few KB a round. Should the settings have one?
 
 ## Things my test runs did to your PC
 

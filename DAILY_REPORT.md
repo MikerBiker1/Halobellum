@@ -2,6 +2,11 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## After your two games (D68)
+- **In the game:** smoke and oil at 8 x 45 m; towers at 150 health; bases show below zero; a side under a shockwave pulses pale blue; a Hide cards button; the blueprint look; a battle log for each game you play.
+- **Tournament at 2000 health:** sub-factions from 47% to 53%: `Docs/Balance/hard_ai_tournament_d68.txt`. Skirmish: Hard beats Normal 43 of 50.
+- **Not checked:** the oil on the field, the blueprint's button hover, and the shockwave's pulse moving. Nobody has clicked Hide cards or Open battle logs with a mouse.
+
 ## The owner's music, and the end of a round (D67)
 - **In the game:** your music by your rules; the last shots land before a battle ends; survivors hit the base as nodes of light, smallest first, then each Titan alone; a ribbon says MATCH WON, MATCH LOST or MATCH DRAWN, and VICTORY or DEFEAT for the whole game.
 - **Tournament at 2000 health:** sub-factions from 48.3% to 53.4%: `Docs/Balance/hard_ai_tournament_d67.txt`. The counter web was kept, as the new rule moved 4 of 4761 matchups a little.

@@ -1,3 +1,4 @@
 Generated textures: drawn by Tools/UiArt/make_ui_textures.py (written for this project, no third-party art).
 Run it again (Python with numpy and Pillow) after changing it; it redraws every PNG here and keeps their GUIDs.
 Decision D28: UNSC hull-plating look, Covenant violet hull with glowing blue lines.
+Blueprint (the neutral theme, D68), and the neutral card's frame and ribbon in Resources/CardArt/Frames: drawn by Tools/UiArt/make_blueprint_textures.py (plain Python, no third-party art).

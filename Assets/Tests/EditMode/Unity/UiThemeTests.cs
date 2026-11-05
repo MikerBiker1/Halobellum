@@ -3,7 +3,7 @@
 // exist and look different (UNSC: cut corners and capital titles; Covenant: rounded, glowing),
 // each faction asset points to its theme, and HudTheme switches themes and titles correctly.
 // Decision D28: the UNSC and Covenant themes are textured (Art/UI) and use font files with their
-// licences; the neutral theme stays plain.
+// licences; the neutral theme is the blueprint (D68).
 // Needs the Unity editor (AssetDatabase), so it runs only in Unity's Test Runner.
 // Depends on: Halobellum.Units, Halobellum.UI (HudTheme), NUnit, UnityEditor.
 
@@ -63,14 +63,16 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void FactionThemes_LookDifferent_AndNeutralStaysPlain()
+        public void FactionThemes_LookDifferent_AndNeutralIsTheBlueprint()
         {
             UiThemeDefinition unsc = Theme("UNSC"), covenant = Theme("Covenant"), neutral = Theme("Neutral");
             Assert.AreNotSame(unsc.panelFrame, covenant.panelFrame);
             Assert.AreNotSame(unsc.fontAsset, covenant.fontAsset);
             Assert.AreNotSame(unsc.titleFontAsset, covenant.titleFontAsset);
-            Assert.IsNull(neutral.panelFrame, "The draft screen and the sandbox keep the plain look.");
-            Assert.IsNull(neutral.buttonNormal);
+            Assert.AreEqual("Blueprint_PanelFrame", neutral.panelFrame.name, "Unlock Skirmish, the draft screen and the sandbox are drawn as a blueprint (D68).");
+            Assert.AreEqual("Blueprint_Grid_Tile", neutral.panelDetail.name);
+            Assert.AreEqual("Blueprint_Button", neutral.buttonNormal.name);
+            Assert.AreNotSame(unsc.panelFrame, neutral.panelFrame);
         }
 
         [Test]
