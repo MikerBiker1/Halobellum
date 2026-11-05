@@ -11,6 +11,7 @@ import model_tools as mt
 import bmesh
 import bpy
 import numpy as np
+from mathutils import Vector
 from mathutils.geometry import barycentric_transform
 
 # A leg seen from the side, as (y, z). Further out than OUTER_FROM the shape takes in the back of the hip cowl too; further in, that is the tail.
@@ -73,8 +74,12 @@ def tube_tips(o):
     return tips
 
 
-def mend_texture(o, high, reach=0.02, difference=0.12):
-    """A reduced face whose middle shows other colours than the detailed surface under it spans two texture islands: it goes back on the island under it."""
+def mend_texture(o, high, reach=0.01, difference=0.1):
+    """
+    A reduced face whose middle shows other colours than the detailed surface under it spans two texture islands: it goes back on the island under it.
+    It looks from outside along the face's normal, as the plates are thin and the nearest surface can be the far side of one. Only the middle: testing
+    the corners too moved 127 faces rather than 15, and left new dark nicks.
+    """
     tree, points, faces, info = high
     pixels = mt._pixels(info[0][1])
     rows, columns = pixels.shape[:2]
@@ -88,11 +93,13 @@ def mend_texture(o, high, reach=0.02, difference=0.12):
     mended = 0
     for face in mesh.faces:
         middle = face.calc_center_median()
-        _, _, index, _ = tree.find_nearest(middle)
+        _, _, index, _ = tree.ray_cast(middle + face.normal * 0.06, -face.normal, 0.2)
+        if index is None:
+            _, _, index, _ = tree.find_nearest(middle)
         a, b, c = (points[i] for i in faces[index])
         uv_a, uv_b, uv_c = (uv.to_3d() for uv in info[index][0])
         right = barycentric_transform(middle, a, b, c, uv_a, uv_b, uv_c).to_2d()
-        shown = sum((loop[layer].uv for loop in face.loops), right * 0) / len(face.loops)
+        shown = sum((loop[layer].uv for loop in face.loops), Vector((0, 0))) / len(face.loops)
         if (shown - right).length < reach or np.abs(colour(shown) - colour(right)).max() < difference:
             continue
         for loop in face.loops:
