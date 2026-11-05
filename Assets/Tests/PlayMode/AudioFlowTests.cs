@@ -75,7 +75,8 @@ namespace Halobellum.Tests
         {
             foreach (AudioSource source in Director.GetComponents<AudioSource>())
             {
-                if (source.isPlaying && source.clip != null && source.clip.name == slot) return source.volume / (Director.VolumeMaster * Director.VolumeUi);
+                // The owner's file may be one for every faction (ui_click for ui_unsc_click).
+                if (source.isPlaying && source.clip != null && (source.clip.name == slot || source.clip.name == AudioLibrary.SharedUiSlot(slot))) return source.volume / (Director.VolumeMaster * Director.VolumeUi);
             }
             Assert.Fail(slot + " is not playing.");
             return 0f;
@@ -317,7 +318,7 @@ namespace Halobellum.Tests
             while (!heard && Time.realtimeSinceStartup < deadline)
             {
                 int laser = _played.IndexOf("sfx_fire_laser");
-                heard = laser >= 0 && _played.LastIndexOf("sfx_fire_beam") > laser;
+                heard = laser >= 0 && System.Math.Max(_played.LastIndexOf("sfx_fire_beam"), _played.LastIndexOf("sfx_beam_charge")) > laser; // With the owner's beam sounds in, it starts with its charge.
                 yield return null;
             }
             Assert.Greater(Count("sfx_fire_laser"), 3, "The lasers should be firing.");

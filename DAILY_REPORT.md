@@ -2,6 +2,11 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Your sound effects (D70)
+- **In the game:** 55 of your 59 files, by weapon and unit, with your exceptions: Zealots' sword ready, the Scarab's charge then in, loop and out, Seeder and Swarm Form calls, Flood howls on rising. The SMG, M60, Ghost and flamethrower loop while firing.
+- **Loudness:** your files are measured and turned to the game's levels; a recorded battle set the effects 3 dB lower again.
+- **Not checked:** how it sounds. I measured a recording; nobody has listened.
+
 ## Battle stats (D69)
 - **In the game:** a Battle stats button at the end of a game: a tab per battle, the field from above as it started with an icon for each squad, tower and spell, and both armies' damage dealt, taken and stopped. Settings has a Battle log switch.
 - **Checked:** the window in pictures from a test game; tests of the counting, the window and the switch. The battle reads none of the new counters.

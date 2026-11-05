@@ -516,6 +516,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-05 | The owner's music and its rules; shots in the air land before a battle ends, so both armies can fall and draw; survivors hit the base as nodes of light, smallest first; result windows with a ribbon | Per the project owner (D67) |
 | 2026-11-05 | Smoke Bomb and Oil Zone are 8 x 45 m; a level 1 tower has 150 health; bases show their health below zero; a side under a shockwave pulses; cards can be hidden; a blueprint look for neutral screens; a battle log | Per the project owner (D68) |
 | 2026-11-05 | A Battle stats window at the end of a game: a tab per battle, the field from above as it started, and both armies' damage dealt, taken and stopped; a switch for the battle log | Per the project owner (D69) |
+| 2026-11-05 | The owner's sound effects: by weapon and unit, fast guns looping while they fire, the Scarab's beam in order, calls for Seeders and Swarm Forms, Flood howls; files evened out under the music | Per the project owner (D70) |
 
 ## 18. Assumptions to confirm
 

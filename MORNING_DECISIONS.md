@@ -179,6 +179,14 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 99. *(Answered: yes, it is counted.)* **What "stopped" counts:** armor, the shield type and defense arcs, against a body that had none, never past what the body had left. A hit it is weak to stops nothing rather than counting below zero. Damage a shield soaks after it grows back counts as taken, like any other; there's just no separate number for how much shield came back. A test checks it.
 100. *(Yes. Flank zones: the map now takes them in, D69.)* **One window for both sides:** the map fit beside both lists (about 790 pixels at 1920 x 1080), so there are no separate tabs per side. Say if it feels small.
 
+## Your sound effects (D70)
+
+101. **`fire[grifle03]`:** I guessed it is a gauss rifle, so it plays for the Gauss Warthog, the Cobra and the Gremlin. Say if it is something else.
+102. **Machine guns:** only the Warthog's (and the Infested Warthog's) use the M60, as you said. The Scorpion's and Grizzly's coaxial guns, chainguns and autocannons keep the generated heavy gun sound. The M60 could go on all of them.
+103. **Hit sounds:** the generated ones still play, turned down. They can be taken out entirely.
+104. **The Scarab's beam:** its "in" is 2.4 s and the beam fires for 3 s, so the loop is heard for about half a second before "out".
+105. **Not used:** the beam rifle and the magnum (no unit carries one) and the plasma grenade.
+
 ## Things my test runs did to your PC
 
 - **Windows moving, and possibly music:** while the Screen setting was being checked, a test window moved across all three of your screens and briefly went fullscreen on each. Some of those runs weren't silent, so menu music may have played for about 25 seconds at a time. Those checks have finished.

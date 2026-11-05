@@ -162,7 +162,7 @@ namespace Halobellum.Tests
         [TestCase("Flood/InfectedPhantom", "sfx_death_air")]
         [TestCase("Covenant/Ghost", "sfx_death_vehicle")]
         [TestCase("Covenant/Wraith", "sfx_explosion_medium")]
-        [TestCase("Covenant/Scarab", "sfx_explosion_large")]
+        [TestCase("Covenant/Scarab", "sfx_death_scarab")]
         [TestCase("Flood/CarrierForm", "sfx_flood_burst")]
         [TestCase("Flood/CombatForm", "sfx_death_flood")]
         [TestCase("Flood/Abomination", "sfx_pelican_crash")]

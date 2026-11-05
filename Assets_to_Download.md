@@ -35,6 +35,8 @@ All in, from your `Art_Source/Music` (D67). To change one, replace the file ther
 
 ## Unit sound effects
 
+Your 59 files are in (D70): see `Assets/_Project/Art/Imported/Audio/SOURCE_SFX.txt` for which slot each fills. The list below is the older plan by kind; a row whose slot you filled can be ticked.
+
 Sounds go by kind of weapon, not by unit, so one file covers every unit in its row.
 
 ### Weapons firing (17)

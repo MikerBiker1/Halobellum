@@ -558,7 +558,7 @@ namespace Halobellum.Tests
         public void EveryTestToolOnTheCommandLine_IsSilent()
         {
             // These only change what a tool that has already been started does, or record it.
-            string[] notTools = { "-effects", "-effectsBench", "-menuDemoShort", "-menuDemoWatch", "-menuDemoSounds", "-menuDemoUiScale", "-cardsDemoLayout", "-cardsDemoLevelAll", "-cardsDemoPlaytest", "-screenDemoFake", "-screenDemoEndOn", EffectKit.ParticleScaleFlag, AudioCapture.Flag };
+            string[] notTools = { "-effects", "-effectsBench", "-menuDemoShort", "-menuDemoWatch", "-menuDemoSounds", "-menuDemoUiScale", "-cardsDemoLayout", "-cardsDemoLevelAll", "-cardsDemoPlaytest", "-screenDemoFake", "-screenDemoEndOn", EffectKit.ParticleScaleFlag, AudioCapture.Flag, BattleLogFile.FolderFlag };
             var flags = new HashSet<string>();
             var declared = new Regex(@"const string \w*Flag\w* = ""(-\w+)""");
             var checkedByName = new Regex(@"Array\.IndexOf\(args, ""(-\w+)""\) < 0\)");

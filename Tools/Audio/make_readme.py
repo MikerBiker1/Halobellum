@@ -87,6 +87,48 @@ UI = {
 }
 
 
+# Slots with no generated sound: one weapon's or unit's own, used only once the owner's file is in (until then its kind's sound plays).
+OWNER_ONLY = [
+    "ONE WEAPON'S OR UNIT'S OWN (no generated sound: until a file is in, the weapon's kind is heard; see AudioCatalog.OwnFire)",
+    "  sfx_fire_assaultrifle            Marines' MA5 and the Scavenged Rifle (Infested Marine, Combat Form).",
+    "  sfx_fire_smg                     ODSTs' M7 SMG. Loops while they fire, so the file should loop.",
+    "  sfx_fire_m60                     The Warthog's machine gun, and the Infested Warthog's. Loops while it fires.",
+    "  sfx_fire_ghost                   The Ghost's plasma bolts, and the Infested Ghost's. Loops while it fires.",
+    "  sfx_fire_banshee                 The Banshee's plasma cannons, and the Infested Banshee's.",
+    "  sfx_fire_banshee_bomb            The Banshee's fuel rod bomb, fired.",
+    "  sfx_explosion_banshee            The Banshee's fuel rod bomb, landing.",
+    "  sfx_fire_fuelrod                 Fuel rod guns: Fuel Rod Grunt, Grunt Goblin, Goliath.",
+    "  sfx_fire_hunter                  The Hunters' assault cannon.",
+    "  sfx_explosion_fuelrod            A fuel rod or a Hunter's shot landing.",
+    "  sfx_fire_mortar                  The Wraith's mortar, and the Infested Wraith's.",
+    "  sfx_flight_mortar                A Wraith's shell in the air, looped until it lands.",
+    "  sfx_fire_bruteshot               The Brute Grenadier's spike grenade launcher.",
+    "  sfx_fire_shotgun                 The Spartan CQB's shotgun.",
+    "  sfx_fire_sniper                  The Spartan Sniper's rifle.",
+    "  sfx_fire_sword                   The Zealot's energy sword.",
+    "  sfx_sword_ready                  Every Zealot, as a battle starts.",
+    "  sfx_beam_charge                  The Scarab's beam charging (2 s), heard to its end. With it in, the beam plays in this order, not sfx_fire_beam:",
+    "  sfx_beam_in                      the beam starting to fire,",
+    "  sfx_beam_loop                    the beam firing, looped after the start,",
+    "  sfx_beam_out                     the beam stopping.",
+    "  sfx_walk_scarab                  A Scarab walking, looped.",
+    "  sfx_death_scarab                 A Scarab dying.",
+    "  sfx_death_air_unsc               A UNSC aircraft crashing, and the Infected Pelican's crash dive.",
+    "  sfx_death_infectionform          An Infection Form popping.",
+    "  sfx_call_seeder                  A Seeder, 3 to 6 s after its last call. Several: sfx_call_seeder_1 and so on.",
+    "  sfx_call_swarm                   A Swarm Form, 3 to 6 s after its last call. Several: sfx_call_swarm_1 and so on.",
+    "  sfx_shield_regen                 An energy shield starting to recharge (one at a time).",
+    "  sfx_death_lekgolo                A Hunter's or a Goliath's death.",
+    "",
+    "UI SOUNDS FOR EVERY FACTION",
+    "  A UI file named without its faction, such as ui_click or ui_error, serves every faction's set (and the neutral one) that has no",
+    "  file of its own here.",
+    "",
+    "LOUDNESS",
+    "  Files can come as loud as they were made: the game measures each one and plays it at its slot's own level, a little under the music.",
+]
+
+
 def slots():
     names = sorted(os.path.splitext(os.path.basename(p))[0] for p in glob.glob(os.path.join(FOLDER, "*.wav")))
     return sorted({re.sub(r"_\d+$", "", n) for n in names} | {n for n in WHAT if n.startswith(("music_", "stinger_"))})  # The owner's music has no generated file.
@@ -111,7 +153,7 @@ def main():
         "- Music loops, so a track should end where it starts. It resumes where it was at the next round.",
         "- Each thing you drop in should have a SOURCE.txt note saying where it came from (Bible Section 12). A plain text file",
         "  here in Art/Imported/Audio is fine; don't put it in AudioOverride.",
-        "- The music and the end-of-round and end-of-game pieces are the owner's own (see SOURCE.txt).",
+        "- The music and the end-of-round and end-of-game pieces are the owner's own (see SOURCE.txt), and so are the sound effects in SOURCE_SFX.txt.",
         "- All the generated sounds are original placeholders made by Tools/Audio. They are meant to be replaced as you like.",
         "",
         "Volumes in the game: PlayerPrefs Volume.Master, Volume.Music, Volume.Sfx, Volume.Ui.",
@@ -136,6 +178,7 @@ def main():
         lines.append("    " + "  ".join(names))
     lines += ["", "UI SOUNDS BEFORE A SIDE IS CHOSEN (main menu, draft)"]
     section("ui_neutral_")
+    lines += ["", *OWNER_ONLY]
     missing = [n for n in all_slots if n.startswith("sfx_") and n not in WHAT]
     if missing:
         raise SystemExit("No description for: " + ", ".join(missing))

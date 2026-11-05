@@ -1,6 +1,11 @@
 // AudioCatalog.cs
 // Every sound effect of a battle, with how it is played: its slot, which group it counts against (see VoiceLimiter), how loud,
 // how much its pitch may wander, how much it matters when too much is playing at once. This is the place to tune the mix.
+// Each cue also says how loud its loudest moment should be (Loudness, in dB below full scale, about where its generated sound sits):
+// an owner's file is turned to that level, as they come far louder than the game's mix (AudioClipSet.Gain).
+// Some sounds belong to one weapon or unit and are the owner's only (OwnerOnly): they have no generated sound, and until their file is
+// in the folder the weapon's kind is heard as before (FireFor, LandingFor, BattleAudio.DeathCue). A few loop while their guns fire
+// rather than playing once a shot (LoopsWhileFiring; BattleAudio plays them).
 // A cue finds its clips the first time it is played. Nothing here allocates once a cue has been asked for, because the shots
 // of a battle come through here. Sound only.
 // Depends on: AudioSlots, AudioLibrary, WeaponFeel, Halobellum.Core (SpellStats).
@@ -35,6 +40,9 @@ namespace Halobellum.Presentation
         Spells,
         Drops,
         Loops,
+        Calls,
+        Ready,
+        ShieldRegen,
         Count,
     }
 
@@ -48,16 +56,28 @@ namespace Halobellum.Presentation
         public readonly float PitchSpread;
         /// <summary>Higher matters more: it may take the voice of something lower when all are busy.</summary>
         public readonly int Priority;
+        /// <summary>Where an owner's file is turned to: its loudest 50 ms, in dB below full scale.</summary>
+        public readonly float Loudness;
+        /// <summary>The owner's file loops for as long as its guns keep firing, rather than playing once a shot.</summary>
+        public readonly bool LoopsWhileFiring;
         private AudioClipSet _set;
 
-        public SfxCue(string slot, SfxGroup group, float volume, float pitchSpread, int priority)
+        public SfxCue(string slot, SfxGroup group, float volume, float pitchSpread, int priority, float loudness = -15f, bool loopsWhileFiring = false)
         {
             Slot = slot;
             Group = group;
             Volume = volume;
             PitchSpread = pitchSpread;
             Priority = priority;
+            Loudness = loudness;
+            LoopsWhileFiring = loopsWhileFiring;
         }
+
+        /// <summary>True if the owner's file is in, and loops while its guns fire.</summary>
+        public bool Loops => LoopsWhileFiring && Clips.IsOverride && !Clips.IsEmpty;
+
+        /// <summary>True if this cue has something to play.</summary>
+        public bool HasSound => !Clips.IsEmpty;
 
         public AudioClipSet Clips => _set ?? (_set = AudioLibrary.Get(Slot));
 
@@ -69,10 +89,21 @@ namespace Halobellum.Presentation
         private static readonly List<SfxCue> All = new List<SfxCue>();
         private static readonly Dictionary<string, SfxCue> BySlot = new Dictionary<string, SfxCue>();
 
-        private static SfxCue Cue(string slot, SfxGroup group, float volume, float pitch, int priority)
+        private static readonly List<SfxCue> Owners = new List<SfxCue>();
+
+        private static SfxCue Cue(string slot, SfxGroup group, float volume, float pitch, int priority, float loudness = -15f, bool loops = false)
         {
-            var cue = new SfxCue(slot, group, volume, pitch, priority);
+            var cue = new SfxCue(slot, group, volume, pitch, priority, loudness, loops);
             All.Add(cue);
+            BySlot[slot] = cue;
+            return cue;
+        }
+
+        /// <summary>A sound of one weapon or unit that only the owner's file gives: until it is in, the weapon's kind is heard instead.</summary>
+        private static SfxCue OwnerCue(string slot, SfxGroup group, float volume, float pitch, int priority, float loudness, bool loops = false)
+        {
+            var cue = new SfxCue(slot, group, volume, pitch, priority, loudness, loops);
+            Owners.Add(cue);
             BySlot[slot] = cue;
             return cue;
         }
@@ -81,60 +112,93 @@ namespace Halobellum.Presentation
         /// A slot waiting for the owner's own file: it has no generated sound, so it stands outside the list of Cues, which all have one.
         /// Until a file is dropped in, nothing asks for it (see BattleAudio.DeathCue).
         /// </summary>
-        private static SfxCue WaitingCue(string slot, SfxGroup group, float volume, float pitch, int priority)
+        private static SfxCue WaitingCue(string slot, SfxGroup group, float volume, float pitch, int priority, float loudness = -15f)
         {
-            var cue = new SfxCue(slot, group, volume, pitch, priority);
+            var cue = new SfxCue(slot, group, volume, pitch, priority, loudness);
             BySlot[slot] = cue;
             return cue;
         }
 
         // Weapons. Each kind is a cue; a few kinds have a faction's own version (see Fire).
-        private static readonly SfxCue FireBullet = Cue("sfx_fire_bullet", SfxGroup.SmallArms, 0.6f, 0.08f, 1);
-        private static readonly SfxCue FireBulletFlood = Cue("sfx_fire_bullet_flood", SfxGroup.SmallArms, 0.6f, 0.1f, 1);
-        private static readonly SfxCue FireHeavyBullet = Cue("sfx_fire_heavybullet", SfxGroup.HeavyArms, 0.7f, 0.06f, 2);
-        private static readonly SfxCue FireCannon = Cue("sfx_fire_cannon", SfxGroup.BigGuns, 0.95f, 0.05f, 5);
-        private static readonly SfxCue FireGauss = Cue("sfx_fire_gauss", SfxGroup.BigGuns, 0.9f, 0.04f, 5);
-        private static readonly SfxCue FireRocket = Cue("sfx_fire_rocket", SfxGroup.Rockets, 0.8f, 0.07f, 4);
-        private static readonly SfxCue FireBomb = Cue("sfx_fire_bomb", SfxGroup.Rockets, 0.85f, 0.06f, 4);
-        private static readonly SfxCue FireFlame = Cue("sfx_fire_flame", SfxGroup.Flame, 0.65f, 0.08f, 2);
-        private static readonly SfxCue FirePlasma = Cue("sfx_fire_plasma", SfxGroup.Plasma, 0.6f, 0.09f, 1);
-        private static readonly SfxCue FirePlasmaHeavy = Cue("sfx_fire_plasmaheavy", SfxGroup.HeavyPlasma, 0.9f, 0.05f, 5);
-        private static readonly SfxCue FireNeedle = Cue("sfx_fire_needle", SfxGroup.Needles, 0.55f, 0.1f, 1);
-        private static readonly SfxCue FireLaser = Cue("sfx_fire_laser", SfxGroup.Lasers, 1f, 0.02f, 7);
-        private static readonly SfxCue FireBeam = Cue("sfx_fire_beam", SfxGroup.Beams, 1f, 0f, 8);
-        private static readonly SfxCue FireMelee = Cue("sfx_fire_melee", SfxGroup.Melee, 0.6f, 0.09f, 1);
-        private static readonly SfxCue FireMeleeCovenant = Cue("sfx_fire_melee_covenant", SfxGroup.Melee, 0.6f, 0.08f, 1);
-        private static readonly SfxCue FireMeleeFlood = Cue("sfx_fire_melee_flood", SfxGroup.Melee, 0.6f, 0.1f, 1);
-        private static readonly SfxCue FireBio = Cue("sfx_fire_bio", SfxGroup.Bio, 0.65f, 0.1f, 1);
+        private static readonly SfxCue FireBullet = Cue("sfx_fire_bullet", SfxGroup.SmallArms, 0.6f, 0.08f, 1, -16.5f);
+        private static readonly SfxCue FireBulletFlood = Cue("sfx_fire_bullet_flood", SfxGroup.SmallArms, 0.6f, 0.1f, 1, -16f);
+        private static readonly SfxCue FireHeavyBullet = Cue("sfx_fire_heavybullet", SfxGroup.HeavyArms, 0.7f, 0.06f, 2, -14.6f);
+        private static readonly SfxCue FireCannon = Cue("sfx_fire_cannon", SfxGroup.BigGuns, 0.95f, 0.05f, 5, -12.4f);
+        private static readonly SfxCue FireGauss = Cue("sfx_fire_gauss", SfxGroup.BigGuns, 0.9f, 0.04f, 5, -12.7f);
+        private static readonly SfxCue FireRocket = Cue("sfx_fire_rocket", SfxGroup.Rockets, 0.8f, 0.07f, 4, -15.2f);
+        private static readonly SfxCue FireBomb = Cue("sfx_fire_bomb", SfxGroup.Rockets, 0.85f, 0.06f, 4, -12.2f);
+        private static readonly SfxCue FireFlame = Cue("sfx_fire_flame", SfxGroup.Flame, 0.65f, 0.08f, 2, -18.8f, loops: true);
+        private static readonly SfxCue FirePlasma = Cue("sfx_fire_plasma", SfxGroup.Plasma, 0.6f, 0.09f, 1, -18.8f);
+        private static readonly SfxCue FirePlasmaHeavy = Cue("sfx_fire_plasmaheavy", SfxGroup.HeavyPlasma, 0.9f, 0.05f, 5, -14f);
+        private static readonly SfxCue FireNeedle = Cue("sfx_fire_needle", SfxGroup.Needles, 0.55f, 0.1f, 1, -19.6f);
+        private static readonly SfxCue FireLaser = Cue("sfx_fire_laser", SfxGroup.Lasers, 1f, 0.02f, 7, -14f);
+        private static readonly SfxCue FireBeam = Cue("sfx_fire_beam", SfxGroup.Beams, 1f, 0f, 8, -12.5f);
+        private static readonly SfxCue FireMelee = Cue("sfx_fire_melee", SfxGroup.Melee, 0.6f, 0.09f, 1, -18.3f);
+        private static readonly SfxCue FireMeleeCovenant = Cue("sfx_fire_melee_covenant", SfxGroup.Melee, 0.6f, 0.08f, 1, -19.2f);
+        private static readonly SfxCue FireMeleeFlood = Cue("sfx_fire_melee_flood", SfxGroup.Melee, 0.6f, 0.1f, 1, -17.5f);
+        private static readonly SfxCue FireBio = Cue("sfx_fire_bio", SfxGroup.Bio, 0.65f, 0.1f, 1, -18.2f);
 
         // What a hit sounds like.
-        public static readonly SfxCue ImpactFlesh = Cue("sfx_impact_flesh", SfxGroup.Impacts, 0.4f, 0.1f, 0);
-        public static readonly SfxCue ImpactArmor = Cue("sfx_impact_armor", SfxGroup.Impacts, 0.4f, 0.1f, 0);
-        public static readonly SfxCue ImpactShield = Cue("sfx_impact_shield", SfxGroup.Shields, 0.5f, 0.1f, 0);
-        public static readonly SfxCue ImpactBlock = Cue("sfx_impact_block", SfxGroup.Shields, 0.6f, 0.1f, 1);
-        public static readonly SfxCue ImpactWet = Cue("sfx_impact_wet", SfxGroup.Impacts, 0.4f, 0.12f, 0);
+        public static readonly SfxCue ImpactFlesh = Cue("sfx_impact_flesh", SfxGroup.Impacts, 0.3f, 0.1f, 0, -21.6f);
+        public static readonly SfxCue ImpactArmor = Cue("sfx_impact_armor", SfxGroup.Impacts, 0.3f, 0.1f, 0, -21.6f);
+        public static readonly SfxCue ImpactShield = Cue("sfx_impact_shield", SfxGroup.Shields, 0.38f, 0.1f, 0, -24f);
+        public static readonly SfxCue ImpactBlock = Cue("sfx_impact_block", SfxGroup.Shields, 0.6f, 0.1f, 1, -22.7f);
+        public static readonly SfxCue ImpactWet = Cue("sfx_impact_wet", SfxGroup.Impacts, 0.3f, 0.12f, 0, -21.4f);
 
         // Explosions by size, and deaths.
-        public static readonly SfxCue ExplosionSmall = Cue("sfx_explosion_small", SfxGroup.Explosions, 0.75f, 0.08f, 3);
-        public static readonly SfxCue ExplosionMedium = Cue("sfx_explosion_medium", SfxGroup.Explosions, 0.9f, 0.06f, 6);
-        public static readonly SfxCue ExplosionLarge = Cue("sfx_explosion_large", SfxGroup.BigDeaths, 1f, 0.04f, 9);
-        public static readonly SfxCue DeathInfantry = Cue("sfx_death_infantry", SfxGroup.InfantryDeaths, 0.55f, 0.1f, 2);
-        public static readonly SfxCue DeathInfantryCovenant = Cue("sfx_death_infantry_covenant", SfxGroup.InfantryDeaths, 0.55f, 0.12f, 2);
-        public static readonly SfxCue DeathFlood = Cue("sfx_death_flood", SfxGroup.InfantryDeaths, 0.6f, 0.12f, 2);
-        public static readonly SfxCue DeathVehicle = Cue("sfx_death_vehicle", SfxGroup.BigDeaths, 0.95f, 0.05f, 8);
-        public static readonly SfxCue DeathAir = Cue("sfx_death_air", SfxGroup.BigDeaths, 0.95f, 0.05f, 8);
-        public static readonly SfxCue FloodBurst = Cue("sfx_flood_burst", SfxGroup.Bursts, 0.85f, 0.1f, 6);
+        public static readonly SfxCue ExplosionSmall = Cue("sfx_explosion_small", SfxGroup.Explosions, 0.75f, 0.08f, 3, -14.3f);
+        public static readonly SfxCue ExplosionMedium = Cue("sfx_explosion_medium", SfxGroup.Explosions, 0.9f, 0.06f, 6, -11.7f);
+        public static readonly SfxCue ExplosionLarge = Cue("sfx_explosion_large", SfxGroup.BigDeaths, 1f, 0.04f, 9, -7.5f);
+        public static readonly SfxCue DeathInfantry = Cue("sfx_death_infantry", SfxGroup.InfantryDeaths, 0.55f, 0.1f, 2, -21.2f);
+        public static readonly SfxCue DeathInfantryCovenant = Cue("sfx_death_infantry_covenant", SfxGroup.InfantryDeaths, 0.55f, 0.12f, 2, -20f);
+        public static readonly SfxCue DeathFlood = Cue("sfx_death_flood", SfxGroup.InfantryDeaths, 0.6f, 0.12f, 2, -17.6f);
+        public static readonly SfxCue DeathVehicle = Cue("sfx_death_vehicle", SfxGroup.BigDeaths, 0.95f, 0.05f, 8, -11.8f);
+        public static readonly SfxCue DeathAir = Cue("sfx_death_air", SfxGroup.BigDeaths, 0.95f, 0.05f, 8, -11.3f);
+        public static readonly SfxCue FloodBurst = Cue("sfx_flood_burst", SfxGroup.Bursts, 0.85f, 0.1f, 6, -13f);
         /// <summary>A Hunter's or a Goliath's death, once the owner has a sound for it.</summary>
-        public static readonly SfxCue DeathLekgolo = WaitingCue("sfx_death_lekgolo", SfxGroup.BigDeaths, 0.95f, 0.05f, 8);
-        public static readonly SfxCue InfectionStart = Cue("sfx_infection_start", SfxGroup.Infection, 0.55f, 0.1f, 3);
-        public static readonly SfxCue InfectionRise = Cue("sfx_infection_rise", SfxGroup.Infection, 0.75f, 0.1f, 4);
-        public static readonly SfxCue PelicanDive = Cue("sfx_pelican_dive", SfxGroup.BigDeaths, 1f, 0.03f, 9);
-        public static readonly SfxCue PelicanCrash = Cue("sfx_pelican_crash", SfxGroup.BigDeaths, 1f, 0.03f, 10);
-        public static readonly SfxCue DropIn = Cue("sfx_drop_in", SfxGroup.Drops, 0.8f, 0.05f, 6);
+        public static readonly SfxCue DeathLekgolo = WaitingCue("sfx_death_lekgolo", SfxGroup.BigDeaths, 0.95f, 0.05f, 8, -11f);
+        public static readonly SfxCue InfectionStart = Cue("sfx_infection_start", SfxGroup.Infection, 0.55f, 0.1f, 3, -22f);
+        public static readonly SfxCue InfectionRise = Cue("sfx_infection_rise", SfxGroup.Infection, 0.75f, 0.1f, 4, -19f);
+        public static readonly SfxCue PelicanDive = Cue("sfx_pelican_dive", SfxGroup.BigDeaths, 1f, 0.03f, 9, -16f);
+        public static readonly SfxCue PelicanCrash = Cue("sfx_pelican_crash", SfxGroup.BigDeaths, 1f, 0.03f, 10, -9.9f);
+        public static readonly SfxCue DropIn = Cue("sfx_drop_in", SfxGroup.Drops, 0.8f, 0.05f, 6, -15f);
+
+        // One weapon's or unit's own sound, from the owner (see OwnerCue). The guns that fire fast loop while they fire.
+        public static readonly SfxCue FireAssaultRifle = OwnerCue("sfx_fire_assaultrifle", SfxGroup.SmallArms, 0.6f, 0.06f, 1, -17f);
+        public static readonly SfxCue FireSmg = OwnerCue("sfx_fire_smg", SfxGroup.SmallArms, 0.6f, 0f, 1, -19f, true);
+        public static readonly SfxCue FireM60 = OwnerCue("sfx_fire_m60", SfxGroup.HeavyArms, 0.7f, 0f, 2, -16.5f, true);
+        public static readonly SfxCue FireGhost = OwnerCue("sfx_fire_ghost", SfxGroup.Plasma, 0.65f, 0f, 2, -18f, true);
+        public static readonly SfxCue FireBanshee = OwnerCue("sfx_fire_banshee", SfxGroup.Plasma, 0.6f, 0.06f, 2, -18.5f);
+        public static readonly SfxCue FireBansheeBomb = OwnerCue("sfx_fire_banshee_bomb", SfxGroup.Rockets, 0.85f, 0.05f, 4, -13f);
+        public static readonly SfxCue ExplosionBanshee = OwnerCue("sfx_explosion_banshee", SfxGroup.Explosions, 0.8f, 0.06f, 3, -13.5f);
+        public static readonly SfxCue FireFuelRod = OwnerCue("sfx_fire_fuelrod", SfxGroup.HeavyPlasma, 0.9f, 0.05f, 5, -14f);
+        public static readonly SfxCue FireHunter = OwnerCue("sfx_fire_hunter", SfxGroup.HeavyPlasma, 0.9f, 0.04f, 5, -13.5f);
+        public static readonly SfxCue ExplosionFuelRod = OwnerCue("sfx_explosion_fuelrod", SfxGroup.Explosions, 0.8f, 0.06f, 3, -14f);
+        public static readonly SfxCue FireMortar = OwnerCue("sfx_fire_mortar", SfxGroup.HeavyPlasma, 0.9f, 0.04f, 5, -13.5f);
+        public static readonly SfxCue FlightMortar = OwnerCue("sfx_flight_mortar", SfxGroup.Loops, 0.5f, 0f, 0, -20f, true);
+        public static readonly SfxCue FireBruteShot = OwnerCue("sfx_fire_bruteshot", SfxGroup.Rockets, 0.8f, 0.05f, 4, -14f);
+        public static readonly SfxCue FireShotgun = OwnerCue("sfx_fire_shotgun", SfxGroup.HeavyArms, 0.75f, 0.05f, 3, -14f);
+        public static readonly SfxCue FireSniper = OwnerCue("sfx_fire_sniper", SfxGroup.BigGuns, 0.85f, 0.03f, 5, -13f);
+        public static readonly SfxCue FireSword = OwnerCue("sfx_fire_sword", SfxGroup.Melee, 0.65f, 0.08f, 2, -17.5f);
+        public static readonly SfxCue SwordReady = OwnerCue("sfx_sword_ready", SfxGroup.Ready, 0.6f, 0.06f, 3, -17f);
+        public static readonly SfxCue BeamCharge = OwnerCue("sfx_beam_charge", SfxGroup.Beams, 1f, 0f, 8, -13f);
+        public static readonly SfxCue BeamIn = OwnerCue("sfx_beam_in", SfxGroup.Beams, 1f, 0f, 8, -12f);
+        public static readonly SfxCue BeamLoop = OwnerCue("sfx_beam_loop", SfxGroup.Loops, 1f, 0f, 8, -13f, true);
+        public static readonly SfxCue BeamOut = OwnerCue("sfx_beam_out", SfxGroup.Beams, 1f, 0f, 8, -13f);
+        public static readonly SfxCue WalkScarab = OwnerCue("sfx_walk_scarab", SfxGroup.Loops, 0.6f, 0f, 0, -17f, true);
+        public static readonly SfxCue DeathScarab = OwnerCue("sfx_death_scarab", SfxGroup.BigDeaths, 1f, 0.02f, 10, -8f);
+        public static readonly SfxCue DeathAirUnsc = OwnerCue("sfx_death_air_unsc", SfxGroup.BigDeaths, 0.95f, 0.05f, 8, -11.3f);
+        public static readonly SfxCue DeathInfectionForm = OwnerCue("sfx_death_infectionform", SfxGroup.InfantryDeaths, 0.5f, 0.12f, 1, -21f);
+        public static readonly SfxCue CallSeeder = OwnerCue("sfx_call_seeder", SfxGroup.Calls, 0.55f, 0.06f, 2, -20f);
+        public static readonly SfxCue CallSwarm = OwnerCue("sfx_call_swarm", SfxGroup.Calls, 0.5f, 0.08f, 1, -21f);
+        public static readonly SfxCue ShieldRegen = OwnerCue("sfx_shield_regen", SfxGroup.ShieldRegen, 0.45f, 0.05f, 0, -24f);
+
+        /// <summary>The owner's sounds of one weapon or unit (they have no generated sound).</summary>
+        public static IReadOnlyList<SfxCue> OwnerOnly => Owners;
 
         // Long loops, one for all the engines and one for all the hovering, at the level of how many are alive.
-        public static readonly SfxCue HumEngine = Cue("sfx_hum_engine", SfxGroup.Loops, 0.5f, 0f, 0);
-        public static readonly SfxCue HumHover = Cue("sfx_hum_hover", SfxGroup.Loops, 0.5f, 0f, 0);
+        public static readonly SfxCue HumEngine = Cue("sfx_hum_engine", SfxGroup.Loops, 0.5f, 0f, 0, -18f);
+        public static readonly SfxCue HumHover = Cue("sfx_hum_hover", SfxGroup.Loops, 0.5f, 0f, 0, -18f);
 
         /// <summary>Every spell's slot (see AudioSlots.Spell).</summary>
         public static readonly string[] SpellSlots =
@@ -146,7 +210,7 @@ namespace Halobellum.Presentation
 
         static AudioCatalog()
         {
-            foreach (string slot in SpellSlots) Cue(slot, SfxGroup.Spells, 1f, 0.02f, 10);
+            foreach (string slot in SpellSlots) Cue(slot, SfxGroup.Spells, 1f, 0.02f, 10, -12.5f);
         }
 
         public static IReadOnlyList<SfxCue> Cues => All;
@@ -162,7 +226,7 @@ namespace Halobellum.Presentation
             Limit(limiter, SfxGroup.HeavyPlasma, 3, 0.15f);
             Limit(limiter, SfxGroup.Needles, 3, 0.06f);
             Limit(limiter, SfxGroup.Lasers, 3, 0.2f);
-            Limit(limiter, SfxGroup.Beams, 2, 0.2f); // Apart from the lasers: a limit doesn't look at priority, and a Scarab's one long beam must not lose its only start to Siphon Lasers overlapping themselves.
+            Limit(limiter, SfxGroup.Beams, 4, 0.2f); // The owner's beam has a long charge and a long stop, which mustn't keep the next charge out. Apart from the lasers: a limit doesn't look at priority, and a Scarab's one long beam must not lose its only start to Siphon Lasers overlapping themselves.
             Limit(limiter, SfxGroup.Melee, 3, 0.08f);
             Limit(limiter, SfxGroup.Bio, 3, 0.07f);
             Limit(limiter, SfxGroup.Impacts, 3, 0.1f);
@@ -175,6 +239,9 @@ namespace Halobellum.Presentation
             Limit(limiter, SfxGroup.Spells, 4, 0.08f);
             Limit(limiter, SfxGroup.Drops, 2, 0.12f);
             Limit(limiter, SfxGroup.Loops, 2, 0f);
+            Limit(limiter, SfxGroup.Calls, 2, 0.4f);
+            Limit(limiter, SfxGroup.Ready, 6, 0.04f);
+            Limit(limiter, SfxGroup.ShieldRegen, 1, 1.2f);
         }
 
         private static void Limit(VoiceLimiter limiter, SfxGroup group, int voices, float gap) => limiter.SetLimit((int)group, voices, gap);
@@ -204,6 +271,47 @@ namespace Halobellum.Presentation
                 case WeaponFeelKind.Bio: return FireBio;
                 default: return null;
             }
+        }
+
+        /// <summary>
+        /// The sound of this weapon on this unit: its own (the owner's file) if it has one and it is in, otherwise its kind's (Fire). Null: no sound
+        /// when it fires (a burst; or the Scarab's beam once its own sounds are in, which BattleAudio plays by the beam's phases).
+        /// </summary>
+        public static SfxCue FireFor(WeaponStats weapon, UnitStats shooter, string faction)
+        {
+            WeaponFeelKind kind = WeaponFeel.For(weapon);
+            if (kind == WeaponFeelKind.Beam && BeamCharge.HasSound) return null;
+            SfxCue own = OwnFire(weapon, shooter);
+            return own != null && own.HasSound ? own : Fire(kind, faction);
+        }
+
+        /// <summary>The weapon's or unit's own firing sound by its names, or null if it has none.</summary>
+        public static SfxCue OwnFire(WeaponStats weapon, UnitStats shooter)
+        {
+            string n = (weapon.Name ?? "").ToLowerInvariant();
+            string unit = (shooter?.Name ?? "").ToLowerInvariant();
+            if (n.Contains("assault rifle") || n == "scavenged rifle") return FireAssaultRifle;
+            if (n.Contains("smg")) return FireSmg;
+            if (n == "m41 machine gun" || n == "scavenged machine gun") return FireM60;
+            if (n.Contains("plasma bolts")) return FireGhost;
+            if (unit.Contains("banshee") && n.Contains("plasma cannons")) return FireBanshee;
+            if (n == "fuel rod bomb") return FireBansheeBomb;
+            if (n.Contains("fuel rod")) return FireFuelRod;
+            if (n == "assault cannon") return FireHunter;
+            if (n.Contains("mortar") && unit.Contains("wraith")) return FireMortar;
+            if (n.Contains("spike grenade")) return FireBruteShot;
+            if (n.Contains("shotgun")) return FireShotgun;
+            if (n.Contains("sniper")) return FireSniper;
+            if (n.Contains("energy sword")) return FireSword;
+            return null;
+        }
+
+        /// <summary>Where a shot lands: the weapon's own explosion (the owner's file) if it has one and it is in, otherwise as LandingOf.</summary>
+        public static SfxCue LandingFor(WeaponStats weapon)
+        {
+            string n = (weapon.Name ?? "").ToLowerInvariant();
+            SfxCue own = n == "fuel rod bomb" ? ExplosionBanshee : n.Contains("fuel rod") || n == "assault cannon" ? ExplosionFuelRod : null;
+            return own != null && own.HasSound ? own : LandingOf(weapon);
         }
 
         /// <summary>The explosion a shot from this weapon makes where it lands, or null. A plasma shot with a blast is drawn going off, so it is heard going off too; so is a lobbed Flood shot (Bone Shards) or a Spore Bomb, wetly.</summary>
@@ -239,6 +347,7 @@ namespace Halobellum.Presentation
         public static void ForgetClips()
         {
             foreach (SfxCue cue in All) cue.Forget();
+            foreach (SfxCue cue in Owners) cue.Forget();
             DeathLekgolo.Forget();
         }
     }

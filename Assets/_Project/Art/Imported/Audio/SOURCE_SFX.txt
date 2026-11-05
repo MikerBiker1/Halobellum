@@ -1,0 +1,64 @@
+The owner's sound effects, from their Art_Source/SFX, brought in by Tools/Audio/bring_in_sfx.py.
+File, the slot it fills, and what for. The game evens out how loud each one is (AudioLibrary).
+
+assault_rifle_fire_brown2_1.wav -> sfx_fire_assaultrifle.wav: Marines' MA5 and the Scavenged Rifle (Infested Marine, Combat Form)
+fire[smg_new01].wav -> sfx_fire_smg.wav: ODSTs' M7 SMG, looped while they fire
+fire[m60_ster1].wav -> sfx_fire_m60.wav: the Warthog's machine gun (and the Infested Warthog's), looped while it fires
+ghost_fire[plasma_ghost].wav -> sfx_fire_ghost.wav: the Ghost's plasma bolts (and the Infested Ghost's), looped while it fires
+flamethrower_fire_FT_active.wav -> sfx_fire_flame.wav: flamethrowers, looped while they fire
+plas_rifle_fire[plas_rif_fire].wav -> sfx_fire_plasma.wav: plasma rifles, pistols and turrets
+banshee_fire[plasmarifle1].wav -> sfx_fire_banshee.wav: the Banshee's plasma cannons (and the Infested Banshee's)
+banshee_cannon_fire[banshee_cannon__fire].wav -> sfx_fire_banshee_bomb.wav: the Banshee's fuel rod bomb, fired
+banshee_cannon_expl[banshee_cannon_explo2].wav -> sfx_explosion_banshee.wav: the Banshee's fuel rod bomb, landing
+fire[needlefire11].wav -> sfx_fire_needle.wav: needle weapons
+fire[rocket16].wav -> sfx_fire_rocket.wav: rocket launchers and missiles
+scorpion_cannon_fire[cannon_fire].wav -> sfx_fire_cannon.wav: tank cannons
+fire[grifle03].wav -> sfx_fire_gauss.wav: gauss guns and railguns (Gauss Warthog, Cobra, Gremlin)
+Sniper fire[ruger24].wav -> sfx_fire_sniper.wav: the Spartan Sniper's rifle
+fire[shotgun2].wav -> sfx_fire_shotgun.wav: the Spartan CQB's shotgun
+brute_shot_fire[brute_fire1].wav -> sfx_fire_bruteshot.wav: the Brute Grenadier's spike grenade launcher
+Fuelrod_fire_grunt.wav -> sfx_fire_fuelrod.wav: fuel rod guns (Fuel Rod Grunt, Grunt Goblin, Goliath)
+Hunter_fuel_rod_gun_fire_fuelrod_fire.wav -> sfx_fire_hunter.wav: the Hunters' assault cannon
+fuel_rod_gun_explosion_fuelrod_explo1.wav -> sfx_explosion_fuelrod_1.wav: a fuel rod landing
+fuel_rod_gun_explosion_fuelrod_explo2.wav -> sfx_explosion_fuelrod_2.wav: a fuel rod landing
+wraith_fire_mortar[wraith_fire].wav -> sfx_fire_mortar.wav: the Wraith's mortar (and the Infested Wraith's), fired
+Wraith airborn projectile loop.wav -> sfx_flight_mortar.wav: a Wraith's mortar shell in the air, looped while it flies
+sword_impact_character[sword_hit_char2].wav -> sfx_fire_sword.wav: the Zealot's energy sword
+sword_ready[energy_ready].wav -> sfx_sword_ready.wav: every Zealot as a battle starts
+Beam Charge scarab.wav -> sfx_beam_charge.wav: the Scarab's beam charging
+in[scarab_fire_in].wav -> sfx_beam_in.wav: the Scarab's beam starting to fire
+loop[scarab_fire_loop].wav -> sfx_beam_loop.wav: the Scarab's beam firing, looped
+out[scarab_fire_out].wav -> sfx_beam_out.wav: the Scarab's beam stopping
+Scarab walking.mp3 -> sfx_walk_scarab.mp3: a Scarab walking, looped
+Scarab dying.mp3 -> sfx_death_scarab.mp3: a Scarab dying
+frag_grenade_expl_frag2.wav -> sfx_explosion_small.wav: rockets, shells and grenades landing
+med_explosion_15.wav -> sfx_explosion_medium.wav: medium vehicles and walkers going up
+large_explosion_1.wav -> sfx_explosion_large_1.wav: the biggest units going up
+large_explosion_12.wav -> sfx_explosion_large_2.wav: the biggest units going up
+UNSC air unit hitting the ground.wav -> sfx_death_air_unsc.wav: a UNSC aircraft crashing, and the Infected Pelican's crash dive
+Infested pelican dive.wav -> sfx_pelican_dive.wav: the Infected Pelican starting its dive
+combatform_body_destroyed[combat_body_destroyed3].wav -> sfx_death_flood.wav: a Flood form dying
+infectionform_die2.wav -> sfx_death_infectionform.wav: an Infection Form popping
+flood carrier explosion.mp3 -> sfx_flood_burst.mp3: a Carrier Form going off, and other Flood bursts
+flood_howls[floodhowl_1].wav -> sfx_infection_rise_1.wav: a unit rising as Flood
+flood_howls[floodhowl_2].wav -> sfx_infection_rise_2.wav: a unit rising as Flood
+flood_howls[floodhowl_3].wav -> sfx_infection_rise_3.wav: a unit rising as Flood
+flood_howls[floodhowl_4].wav -> sfx_infection_rise_4.wav: a unit rising as Flood
+Seeder1.wav -> sfx_call_seeder_1.wav: a Seeder, every 3 to 6 s
+Seeder2.wav -> sfx_call_seeder_2.wav: a Seeder, every 3 to 6 s
+Seeder3.wav -> sfx_call_seeder_3.wav: a Seeder, every 3 to 6 s
+Swarm form1.wav -> sfx_call_swarm_1.wav: a Swarm Form, every 3 to 6 s
+Swarm form2.wav -> sfx_call_swarm_2.wav: a Swarm Form, every 3 to 6 s
+Swarm form3.wav.wav -> sfx_call_swarm_3.wav: a Swarm Form, every 3 to 6 s
+shield_regen.wav -> sfx_shield_regen.wav: an energy shield starting to recharge
+UI buttons.wav -> ui_click.wav: any button, every faction
+Failure to place unit.wav -> ui_error.wav: something that can't be done, every faction
+Card chosen.wav -> ui_cardpick.wav: a card taken, every faction
+Unit bought (fall to grid).wav -> ui_buy.wav: a squad bought, every faction
+Unit unlocked.wav -> ui_unlock.wav: a unit unlocked or a tech bought, every faction
+
+Not used:
+plasma_grenade_plasmagrenexpl_plasmagx1.wav: no use for it yet, as the owner said
+beam_rifle_fire[cov_snip_shot9].wav: no unit has a beam rifle
+magnum_fire[handgun2].wav: no unit has a magnum
+fire[plasmarifle1].wav: the same file as banshee_fire[plasmarifle1].wav, which the Banshee uses

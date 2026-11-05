@@ -9,6 +9,9 @@
 // It goes silent by itself when the game runs for tests (batch mode, -autoplay and the like) unless -audioOn is given, so that test
 // runs make no noise in the room.
 // It also works out what to play for each scene; BattleAudio, MatchAudio and SandboxAudio listen to their scenes and call in here.
+// Loops that follow the battle (guns that fire fast, a mortar shell in the air, a Scarab walking or firing its beam) each have one voice of
+// their own, held at a level BattleAudio sets (SetLoop) and faded in and out quickly. The owner's files are played at their cue's loudness
+// (AudioClipSet.Gain): they come much louder than the game's mix.
 // Depends on: AudioCatalog, AudioLibrary, AudioSlots, MusicDeck, VoiceLimiter, BattleAudio, MatchAudio, SandboxAudio, UnityEngine.
 
 using System;
@@ -29,10 +32,12 @@ namespace Halobellum.Presentation
 
     public sealed class AudioDirector : MonoBehaviour
     {
-        private const int SfxVoices = 20, UiVoices = 5;
+        private const int SfxVoices = 20, UiVoices = 5, LoopVoices = 8;
         private const float PollSeconds = 0.5f;
-        /// <summary>All effects together, so that they sit over the music with room to spare.</summary>
-        private const float SfxTrim = 0.7f;
+        /// <summary>All effects together, so that they sit under the music's level with room to spare (the owner's files are fuller than the generated ones).</summary>
+        private const float SfxTrim = 0.4f; // A recorded battle with the owner's files sat 3 dB over the music at 0.55 (D70).
+        /// <summary>How loud the owner's UI sounds are turned to: the loudest 50 ms, in dB below full scale. Clicks and hovers sit lower.</summary>
+        private const float UiLoudness = -17f, UiQuietLoudness = -21f;
         private const int CrowdStarts = 5;
         public const string KeyMaster = "Volume.Master", KeyMusic = "Volume.Music", KeySfx = "Volume.Sfx", KeyUi = "Volume.Ui";
         public const float DefaultMaster = 1f, DefaultMusic = 0.6f, DefaultSfx = 1f, DefaultUi = 1f;
@@ -70,6 +75,14 @@ namespace Halobellum.Presentation
             public float Volume;
         }
 
+        private sealed class LoopVoice
+        {
+            public AudioSource Source;
+            public SfxCue Cue;
+            public float Level, Target, Gain;
+        }
+
+        private readonly LoopVoice[] _loops = new LoopVoice[LoopVoices];
         private readonly VoiceLimiter _limiter = new VoiceLimiter((int)SfxGroup.Count);
         private readonly Voice[] _sfx = new Voice[SfxVoices];
         private readonly AudioSource[] _ui = new AudioSource[UiVoices];
@@ -135,6 +148,11 @@ namespace Halobellum.Presentation
                 _sfx[i] = new Voice { Source = NewSource(128) };
             }
             for (int i = 0; i < UiVoices; i++) _ui[i] = NewSource(16);
+            for (int i = 0; i < LoopVoices; i++)
+            {
+                _loops[i] = new LoopVoice { Source = NewSource(100) };
+                _loops[i].Source.loop = true;
+            }
             _engineHum = NewSource(200);
             _hoverHum = NewSource(200);
             _engineHum.loop = _hoverHum.loop = true;
@@ -170,6 +188,7 @@ namespace Halobellum.Presentation
         private static void Preload()
         {
             foreach (SfxCue cue in AudioCatalog.Cues) _ = cue.Clips;
+            foreach (SfxCue cue in AudioCatalog.OwnerOnly) _ = cue.Clips;
             _ = AudioCatalog.DeathLekgolo.Clips;
             foreach (string slot in AudioSlots.MusicAndUiSlots())
             {
@@ -255,8 +274,11 @@ namespace Halobellum.Presentation
         public void PlayUi(UiSound sound, float volume = 1f)
         {
             string slot = AudioSlots.Ui(UiFaction, sound);
-            AudioClip clip = AudioLibrary.Get(slot).Pick(NextRandom());
-            if (clip == null) return;
+            AudioClipSet set = AudioLibrary.Get(slot);
+            int index = set.PickIndex(NextRandom());
+            if (index < 0) return;
+            AudioClip clip = set.Clips[index];
+            volume *= set.Gain(index, sound == UiSound.Click || sound == UiSound.Hover ? UiQuietLoudness : UiLoudness);
             AudioSource source = _ui[_nextUi];
             _nextUi = (_nextUi + 1) % _ui.Length;
             source.Stop();
@@ -281,7 +303,8 @@ namespace Halobellum.Presentation
                 DroppedVoices++; // Most shots of a big battle end here, before any more work.
                 return;
             }
-            AudioClip clip = cue.Clips.Pick(NextRandom());
+            int index = cue.Clips.PickIndex(NextRandom());
+            AudioClip clip = index >= 0 ? cue.Clips.Clips[index] : null;
             Voice voice = clip != null ? FindVoice(cue.Priority) : null;
             if (voice == null)
             {
@@ -304,7 +327,7 @@ namespace Halobellum.Presentation
             voice.EndsAt = _battleClock + clip.length / Mathf.Max(0.1f, pitch);
             // In the thick of it each new sound is a little quieter, so that the sum stays under the ceiling: a recorded big battle reached 0 dB before this.
             float crowd = ActiveSfxVoices <= CrowdStarts ? 1f : Mathf.Sqrt((float)CrowdStarts / ActiveSfxVoices);
-            voice.Volume = cue.Volume * gain * crowd * SfxTrim;
+            voice.Volume = cue.Volume * gain * crowd * SfxTrim * cue.Clips.Gain(index, cue.Loudness);
             AudioSource source = voice.Source;
             source.Stop();
             source.clip = clip;
@@ -342,6 +365,77 @@ namespace Halobellum.Presentation
             if (outside > 0f) gain = Mathf.Lerp(1f, 0.3f, outside / 0.8f);
         }
 
+        /// <summary>
+        /// Holds a loop at this level, from 0 (fades out and stops) to 1, panned by where it comes from. BattleAudio calls it every frame for the guns that are
+        /// firing, and for anything else that goes on (a shell in the air, a Scarab walking). A loop with no voice left to take is not heard.
+        /// </summary>
+        public void SetLoop(SfxCue cue, float level, Vector3 world)
+        {
+            if (cue == null) return;
+            LoopVoice free = null;
+            for (int i = 0; i < _loops.Length; i++)
+            {
+                LoopVoice voice = _loops[i];
+                if (voice.Cue == cue)
+                {
+                    voice.Target = Mathf.Clamp01(level);
+                    if (voice.Level > 0f || voice.Target > 0f) Place(voice, world);
+                    return;
+                }
+                if (free == null && voice.Cue == null) free = voice;
+            }
+            if (free == null || level <= 0f || BattlePaused) return;
+            int index = cue.Clips.PickIndex(NextRandom());
+            if (index < 0) return;
+            free.Cue = cue;
+            free.Level = 0f;
+            free.Target = Mathf.Clamp01(level);
+            free.Gain = cue.Clips.Gain(index, cue.Loudness);
+            AudioSource source = free.Source;
+            source.clip = cue.Clips.Clips[index];
+            source.pitch = 1f;
+            source.volume = 0f;
+            source.time = source.clip.length * NextRandom() * 0.9f; // Two of the same loop starting together mustn't sound like one.
+            Place(free, world);
+            source.Play();
+            SlotPlayed?.Invoke(cue.Slot);
+        }
+
+        /// <summary>The loop's level now, 0 if it isn't playing. For tests.</summary>
+        public float LoopLevel(SfxCue cue)
+        {
+            foreach (LoopVoice voice in _loops)
+            {
+                if (voice.Cue == cue) return voice.Level;
+            }
+            return 0f;
+        }
+
+        private void Place(LoopVoice voice, Vector3 world)
+        {
+            ScreenPlace(world, out float pan, out _);
+            voice.Source.panStereo = pan;
+        }
+
+        private void UpdateLoops(float dt)
+        {
+            if (BattlePaused) return;
+            for (int i = 0; i < _loops.Length; i++)
+            {
+                LoopVoice voice = _loops[i];
+                if (voice.Cue == null) continue;
+                // In fast, so the first shot is heard; out a little slower, so short pauses between bursts don't chop it.
+                voice.Level = Mathf.MoveTowards(voice.Level, voice.Target, dt * (voice.Target > voice.Level ? 14f : 5f));
+                if (voice.Level <= 0f && voice.Target <= 0f)
+                {
+                    voice.Source.Stop();
+                    voice.Cue = null;
+                    continue;
+                }
+                voice.Source.volume = voice.Level * voice.Cue.Volume * voice.Gain * SfxTrim * VolumeMaster * VolumeSfx;
+            }
+        }
+
         /// <summary>How much of the engine and hover hums to play, from 0 to 1. BattleAudio sets these from what is alive.</summary>
         public void SetHums(float engine, float hover)
         {
@@ -359,6 +453,12 @@ namespace Halobellum.Presentation
                 if (_sfx[i].Group < 0) continue;
                 if (paused) _sfx[i].Source.Pause();
                 else _sfx[i].Source.UnPause();
+            }
+            foreach (LoopVoice voice in _loops)
+            {
+                if (voice.Cue == null) continue;
+                if (paused) voice.Source.Pause();
+                else voice.Source.UnPause();
             }
             if (paused)
             {
@@ -384,6 +484,12 @@ namespace Halobellum.Presentation
             }
             _limiter.Clear();
             ActiveSfxVoices = 0;
+            foreach (LoopVoice voice in _loops)
+            {
+                voice.Source.Stop();
+                voice.Cue = null;
+                voice.Level = voice.Target = 0f;
+            }
             SetHums(0f, 0f);
         }
 
@@ -406,6 +512,7 @@ namespace Halobellum.Presentation
             WatchClicks();
             UpdateHum(_engineHum, AudioCatalog.HumEngine, ref _engineLevel, _engineTarget, dt);
             UpdateHum(_hoverHum, AudioCatalog.HumHover, ref _hoverLevel, _hoverTarget, dt);
+            UpdateLoops(dt);
             Music.Tick(dt, VolumeMaster * VolumeMusic);
             if (_notingCues && (_notedMusic != Music.CurrentSlot || _notedStinger != Music.LastStinger))
             {
@@ -478,6 +585,9 @@ namespace Halobellum.Presentation
                 if (_sfx[i].Group >= 0) _sfx[i].Source.volume = _sfx[i].Volume * master * sfx;
             }
         }
+
+        /// <summary>Seconds of battle sound so far: it stops while the battle is paused. BattleAudio times what it plays in order (the Scarab's beam) by it.</summary>
+        public float BattleClock => _battleClock;
 
         /// <summary>A random number from 0 up to 1, from a generator of its own: the game's others must not be disturbed.</summary>
         public float NextRandom()
