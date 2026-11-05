@@ -2,39 +2,36 @@
 
 Everything in the game that is still a stand-in, for you to replace. Tick things off as you get them. Nothing here is required for the game to run.
 
-- **Sound and music:** put the file in `Assets/_Project/Art/Imported/Audio/Resources/AudioOverride/`, named after its slot, such as `music_unsc_battle.ogg`. No code changes are needed, and the game uses it from its next start. Use `.ogg` or `.wav` for music, since `.mp3` usually doesn't loop cleanly.
+- **Sound and music:** put the file in `Assets/_Project/Art/Imported/Audio/Resources/AudioOverride/`, named after its slot, such as `music_combat_5.ogg`. No code changes are needed, and the game uses it from its next start. Use `.ogg` or `.wav` for music, since `.mp3` usually doesn't loop cleanly.
 - **Several files for one slot:** name them `slot_1`, `slot_2` and so on, up to 12. One is picked each time.
 - **Models:** tell me where you put them and I'll fit them to their units.
 - **Ground textures:** see their section at the end.
 - Please leave a `SOURCE.txt` note saying where each came from, in `Art/Imported/Audio` for sound (not in `AudioOverride`).
 
-## Music (10 tracks)
+## Music and end-of-round pieces
 
-Music loops, so a track should end where it starts.
-
-| Done | Slot | When it plays |
-| --- | --- | --- |
-| [ ] | `music_mainmenu` | Main menu and the draft screen. The first thing heard. |
-| [ ] | `music_unsc_deployment` | UNSC: placing the army. |
-| [ ] | `music_unsc_battle` | UNSC: the battle. |
-| [ ] | `music_unsc_menu` | UNSC: cards, round result, match over. |
-| [ ] | `music_covenant_deployment` | Covenant: placing the army. |
-| [ ] | `music_covenant_battle` | Covenant: the battle. |
-| [ ] | `music_covenant_menu` | Covenant: cards, round result, match over. |
-| [ ] | `music_flood_deployment` | Flood: placing the army. |
-| [ ] | `music_flood_battle` | Flood: the battle. |
-| [ ] | `music_flood_menu` | Flood: cards, round result, match over. |
-
-## Short end-of-match pieces (6)
+All in, from your `Art_Source/Music` (D67). To change one, replace the file there and tell me, or put a new one in `AudioOverride` under its slot's name. To add a song to a pool, name it the next number up, such as `music_combat_5`.
 
 | Done | Slot | When it plays |
 | --- | --- | --- |
-| [ ] | `stinger_unsc_victory` | UNSC: match won. |
-| [ ] | `stinger_unsc_defeat` | UNSC: match lost. |
-| [ ] | `stinger_covenant_victory` | Covenant: match won. |
-| [ ] | `stinger_covenant_defeat` | Covenant: match lost. |
-| [ ] | `stinger_flood_victory` | Flood: match won. |
-| [ ] | `stinger_flood_defeat` | Flood: match lost. |
+| [x] | `music_mainmenu` | Main menu and the draft screen. |
+| [x] | `music_deployment_1` to `_8` | Each round's cards and deployment: one song, picked at random. |
+| [x] | `music_combat_1` to `_4` | Each battle: one song, picked at random. |
+| [x] | `music_combat_flood_present` | Joins the battle songs when Flood is on either side, and plays more often than any of them. |
+| [x] | `stinger_match_victory` | A round won, when its window opens. |
+| [x] | `stinger_match_defeat_1` to `_5` | A round lost: one at random. |
+| [x] | `stinger_match_defeat_flood_present` | Joins those when the enemy is Flood. |
+| [x] | `stinger_game_victory` | The whole game won. |
+| [x] | `stinger_game_defeat_unsc`, `_covenant`, `_flood` | The whole game lost, by the faction you played. |
+| [x] | `stinger_game_defeat_flood_present` | The whole game lost against Flood, whoever you played. |
+
+### Still wanted
+
+| Done | What | For | Stand-in for now |
+| --- | --- | --- | --- |
+| [ ] | A round drawn | When neither side wins a round. | Silence |
+| [ ] | Node of light hitting a base, small and big | The end of a round. Send me the files and I'll fit them. | The battle's own hit and explosion sounds, by size |
+| [ ] | Node of light taking off | The end of a round, optional. | Silence |
 
 ## Unit sound effects
 

@@ -65,6 +65,11 @@ namespace Halobellum.Presentation
         public event Action PhaseChanged;
         /// <summary>Raised after each action the player takes, with the name of its method and how it went (for sound).</summary>
         public event Action<string, ActionResult> ActionTaken;
+        /// <summary>The end of a round, between the last shot landing and its window; null the rest of the time.</summary>
+        public RoundEnding Ending { get; private set; }
+        /// <summary>Raised as a node of light hits a base (for sound).</summary>
+        public event Action<RoundEnding.Node> EndingHit;
+        private const float FastestPlayerSpeed = 4f;
 
         public const string DifficultyKey = "Halobellum.AiDifficulty";
         private MatchupTable _matchups;
@@ -117,6 +122,7 @@ namespace Halobellum.Presentation
         /// </summary>
         public void NewMatch(int? fixedSeed = null, MatchSetup setup = null)
         {
+            Ending = null;
             if (setup != null) _setup = setup;
             var cache = new Dictionary<UnitDefinition, UnitStats>();
             var infos = new List<FactionInfo>();
@@ -241,6 +247,7 @@ namespace Halobellum.Presentation
 
         private void Update()
         {
+            if (Ending != null) TickEnding();
             if (_drops.Count == 0) return;
             // Select each squad as it lands (the last one to land stays selected).
             float duration = _views.DropDuration;
@@ -772,9 +779,34 @@ namespace Halobellum.Presentation
         private void OnBattleFinished(BattleResult result)
         {
             if (Match == null || Match.Phase != MatchPhase.Battle || _battle.Simulation != Match.CurrentBattle) return;
+            Ending = new RoundEnding(Match.CurrentBattle, _views.WorldPosition, Match.BattleSeed);
+            Ending.Hit += OnEndingHit;
+        }
+
+        private void OnEndingHit(RoundEnding.Node node)
+        {
+            CameraShake.KickEverywhere(0.12f + 0.75f * node.Size * node.Size);
+            EndingHit?.Invoke(node);
+        }
+
+        /// <summary>The nodes of light have all landed: only now does the round's result come, with its window and its sound.</summary>
+        private void TickEnding()
+        {
+            if (_battle.Clock != null && _battle.Clock.IsPaused) return;
+            // At the speeds a player can pick it takes its time, however fast the battle ran. Test runs go faster than those.
+            Ending.Tick(Time.deltaTime * (_battle.Speed > FastestPlayerSpeed ? _battle.Speed : 1f));
+            if (!Ending.IsDone) return;
+            Ending = null;
             Match.FinishBattle();
             _selection.ClearTower();
             PhaseChanged?.Invoke();
+        }
+
+        /// <summary>A team's base health as the player sees it: while the nodes land, what is left after the hits so far.</summary>
+        public int ShownBaseHealth(Team team)
+        {
+            PlayerState player = team == Team.A ? Match.Player : Match.Enemy;
+            return Ending != null ? player.BaseHealth - Ending.HitsTaken(team) : player.BaseHealth;
         }
 
         /// <summary>Leaves the result screen for the next round's deployment.</summary>

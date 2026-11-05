@@ -94,7 +94,7 @@ namespace Halobellum.Tests
 
             Assert.IsTrue(controller.ChooseDraft(card).Ok);
             Assert.Contains("ui_neutral_cardpick", _played, "The side is chosen after the pick is heard.");
-            Assert.AreEqual($"music_{key}_deployment", Director.Music.CurrentSlot);
+            Assert.AreEqual(AudioSlots.DeploymentMusic, Director.Music.CurrentSlot);
             Assert.AreEqual(faction, Director.UiFaction);
 
             // A purchase: its faction's sound, and the squad dropping in survives the preview being rebuilt.
@@ -115,7 +115,8 @@ namespace Halobellum.Tests
             battle.Speed = 4f;
             controller.Ready();
             Assert.Contains($"ui_{key}_battlestart", _played);
-            Assert.AreEqual($"music_{key}_battle", Director.Music.CurrentSlot);
+            StringAssert.StartsWith(AudioSlots.CombatMusic, Director.Music.CurrentSlot);
+            string song = Director.Music.CurrentClip.name;
             float deadline = Time.realtimeSinceStartup + 60f;
             while (controller.Match.Phase == MatchPhase.Battle && !_played.Exists(s => s.StartsWith("sfx_fire_")) && Time.realtimeSinceStartup < deadline) yield return null;
             Assert.IsTrue(_played.Exists(s => s.StartsWith("sfx_fire_")), "A battle should ask for its weapons' sounds.");
@@ -138,11 +139,15 @@ namespace Halobellum.Tests
             yield return null;
             Assert.IsFalse(Director.BattlePaused);
 
-            // To the end of the battle: the quiet track between rounds.
+            Assert.AreEqual(song, Director.Music.CurrentClip.name, "One song for the whole battle.");
+
+            // To the end of the battle: the music stops, and the round's own sound plays.
             deadline = Time.realtimeSinceStartup + 120f;
             while (controller.Match.Phase == MatchPhase.Battle && Time.realtimeSinceStartup < deadline) yield return null;
             Assert.AreNotEqual(MatchPhase.Battle, controller.Match.Phase, "The battle should have finished.");
-            Assert.AreEqual($"music_{key}_menu", Director.Music.CurrentSlot);
+            Assert.IsNull(Director.Music.CurrentSlot);
+            RoundSummary summary = controller.Match.LastSummary;
+            if (summary.RoundWinner != null) StringAssert.StartsWith(controller.Match.Phase == MatchPhase.MatchOver ? "stinger_game_" : "stinger_match_", Director.Music.LastStinger);
             battle.Speed = 1f;
         }
 
@@ -153,14 +158,14 @@ namespace Halobellum.Tests
             yield return Load("Sandbox");
             var sandbox = UnityEngine.Object.FindAnyObjectByType<SandboxController>();
             Assert.IsNotNull(sandbox.GetComponent<SandboxAudio>());
-            Assert.AreEqual("music_unsc_deployment", Director.Music.CurrentSlot, "An empty Sandbox has the defaults, whatever was played before.");
+            Assert.AreEqual(AudioSlots.DeploymentMusic, Director.Music.CurrentSlot);
             Assert.AreEqual(BattleFactions.Unsc, Director.UiFaction);
             Assert.AreEqual(BattleFactions.Covenant, BattleFactions.TeamB);
 
             sandbox.AddSquad(Team.A, sandbox.Units.Find(u => u.Faction == BattleFactions.Flood).Stats);
             Assert.AreEqual(BattleFactions.Flood, BattleFactions.TeamA);
             Assert.AreEqual(BattleFactions.Covenant, BattleFactions.TeamB, "Each side has its own faction.");
-            Assert.AreEqual("music_flood_deployment", Director.Music.CurrentSlot, "A change of faction changes the music.");
+            Assert.AreEqual(AudioSlots.DeploymentMusic, Director.Music.CurrentSlot);
             Assert.AreEqual(BattleFactions.Flood, Director.UiFaction);
 
             sandbox.AddSquad(Team.B, sandbox.Units.Find(u => u.Faction == BattleFactions.Unsc).Stats);
@@ -173,7 +178,7 @@ namespace Halobellum.Tests
             sandbox.Run();
             yield return null;
             yield return null;
-            Assert.AreEqual("music_flood_battle", Director.Music.CurrentSlot);
+            StringAssert.StartsWith(AudioSlots.CombatMusic, Director.Music.CurrentSlot);
             Assert.Contains("ui_flood_battlestart", _played);
             BattleFactions.Set(BattleFactions.Unsc, BattleFactions.Covenant);
         }
@@ -187,7 +192,7 @@ namespace Halobellum.Tests
             Assert.IsNotNull(exclusive.Stats, "A Covenant sub-faction has its own units.");
             sandbox.AddSquad(Team.A, exclusive.Stats);
             Assert.AreEqual(BattleFactions.Covenant, BattleFactions.TeamA, "The faction, not the list's heading.");
-            Assert.AreEqual("music_covenant_deployment", Director.Music.CurrentSlot);
+            Assert.AreEqual(AudioSlots.DeploymentMusic, Director.Music.CurrentSlot);
 
             sandbox.Clear(Team.A);
             sandbox.AddSquad(Team.A, sandbox.Units.Find(u => u.BaseFaction == null).Stats);

@@ -80,7 +80,7 @@ namespace Halobellum.Presentation
         private float _nextPoll;
         private int _lastHotControl;
         private Camera _camera;
-        private uint _random = 2463534242u;
+        private uint _random = (uint)Environment.TickCount | 1u; // Different every run, so that the songs are too. Never 0, which would stay 0.
         private AudioListener _ownListener;
         private bool _checkListener;
         private bool _notingCues;
@@ -221,7 +221,7 @@ namespace Halobellum.Presentation
             {
                 // The plain Battle scene just plays a battle.
                 UiFaction = BattleFactions.TeamA;
-                Music.Play(AudioSlots.Music(BattleFactions.TeamA, MusicMood.Battle));
+                Music.Play(AudioSlots.CombatSong(AudioSlots.FloodIn(battle.Simulation), NextRandom()));
             }
         }
 
@@ -480,7 +480,7 @@ namespace Halobellum.Presentation
         }
 
         /// <summary>A random number from 0 up to 1, from a generator of its own: the game's others must not be disturbed.</summary>
-        private float NextRandom()
+        public float NextRandom()
         {
             uint x = _random;
             x ^= x << 13;

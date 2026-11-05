@@ -41,6 +41,9 @@ namespace Halobellum.Economy
 
         public int BaseDamageBy(Team team) => team == Team.A ? BaseDamageByA : BaseDamageByB;
 
+        /// <summary>Who won this round: the side that hit the other's base harder. Null for a draw.</summary>
+        public Team? RoundWinner => Tie || BaseDamageByA == BaseDamageByB ? (Team?)null : BaseDamageByA > BaseDamageByB ? Team.A : Team.B;
+
         /// <summary>Counts kills by (killer team, killer type or spell, victim type) from a finished battle.</summary>
         public static List<KillCount> CountKills(BattleSimulation simulation)
         {

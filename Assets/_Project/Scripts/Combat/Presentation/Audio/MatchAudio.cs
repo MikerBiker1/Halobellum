@@ -1,7 +1,7 @@
 // MatchAudio.cs
-// The sound of a match: which music plays on which screen, which UI sound goes with what the player does (buy, sell, unlock, a card, a
-// spell, a level, a move, a mistake) and with how a round or a match ends. Added at run time to the object with the MatchController (see AudioDirector).
-// In Unlock Skirmish no side has a faction: the music is the land's, and the UI sounds are the neutral ones, or UNSC's where there is no neutral one.
+// The sound of a match: which music plays on which screen (a random song for each round's cards and deployment, another for its battle), which UI sound goes with what the
+// player does (buy, sell, unlock, a card, a spell, a level, a move, a mistake), and what sounds when a round or the whole game ends, with their own sounds against Flood.
+// Added at run time to the object with the MatchController (see AudioDirector). In Unlock Skirmish no side has a faction: the UI sounds are the neutral ones, or UNSC's where there is no neutral one.
 // Depends on: AudioDirector, AudioSlots, MatchController, Halobellum.Economy (Match, RoundSummary), UnityEngine.
 
 using Halobellum.Core;
@@ -20,6 +20,7 @@ namespace Halobellum.Presentation
             _match = GetComponent<MatchController>();
             _match.PhaseChanged += OnPhaseChanged;
             _match.ActionTaken += OnAction;
+            _match.EndingHit += OnEndingHit;
             if (_match.Match != null) OnPhaseChanged();
         }
 
@@ -28,6 +29,7 @@ namespace Halobellum.Presentation
             if (_match == null) return;
             _match.PhaseChanged -= OnPhaseChanged;
             _match.ActionTaken -= OnAction;
+            _match.EndingHit -= OnEndingHit;
         }
 
         private void OnPhaseChanged()
@@ -36,25 +38,37 @@ namespace Halobellum.Presentation
             if (director == null || _match.Match == null) return;
             Match match = _match.Match;
             MatchPhase phase = match.Phase;
-            string faction = MusicFaction(match.Rules.Mode, match.Player.Faction?.Name);
             if (phase == MatchPhase.Draft && _lastPhase != MatchPhase.Draft) director.Music.ForgetPositions();
-            if (phase != MatchPhase.MatchOver && _lastPhase == MatchPhase.MatchOver) director.Music.StopStinger(); // A new match, in the same scene.
+            if (phase != _lastPhase && (_lastPhase == MatchPhase.MatchOver || _lastPhase == MatchPhase.Result)) director.Music.StopStinger(); // Its screen was left.
             director.UiFaction = UiFactionFor(match.Rules.Mode, phase, match.Player.Faction?.Name);
-            director.Music.Play(AudioSlots.MusicForPhase(phase, faction), phase == MatchPhase.Battle ? 1.5f : 2.5f);
+
+            switch (phase)
+            {
+                case MatchPhase.Draft:
+                    director.Music.Play(AudioSlots.MainMenuMusic);
+                    break;
+                case MatchPhase.Cards:
+                case MatchPhase.Deployment:
+                    director.Music.Play(AudioSlots.DeploymentMusic); // Chosen when the cards appear, and it goes on through the deployment.
+                    break;
+                case MatchPhase.Battle:
+                    if (_lastPhase != MatchPhase.Battle) director.Music.Play(AudioSlots.CombatSong(FloodOn(match, Team.A) || FloodOn(match, Team.B), director.NextRandom()), 1.5f);
+                    break;
+                default:
+                    director.Music.Stop(); // The end of a round or a game has its own sound.
+                    break;
+            }
 
             if (phase != _lastPhase)
             {
                 if (phase == MatchPhase.Battle) GameAudio.Ui(UiSound.BattleStart);
-                else if (phase == MatchPhase.Result) RoundEnded(match);
-                else if (phase == MatchPhase.MatchOver) MatchEnded(director, match, faction);
+                else if (phase == MatchPhase.Result) RoundEnded(director, match);
+                else if (phase == MatchPhase.MatchOver) GameEnded(director, match);
             }
             _lastPhase = phase;
         }
 
-        /// <summary>
-        /// Whose music and stingers play. This asks the match, not BattleFactions.PerUnitLooks, which is still true from a Skirmish before this match
-        /// until a card has been chosen.
-        /// </summary>
+        /// <summary>Whose song the end of a lost game is, by faction. In Unlock Skirmish nobody has one: the land's goes for it.</summary>
         public static string MusicFaction(MatchMode mode, string playerFaction) => mode == MatchMode.UnlockSkirmish ? BattleFactions.TeamA : playerFaction;
 
         /// <summary>Whose UI sounds play: none yet at the draft, and never anyone's in Unlock Skirmish, where the player's "faction" is only the name of the card list.</summary>
@@ -64,18 +78,32 @@ namespace Halobellum.Presentation
             return playerFaction ?? BattleFactions.TeamA;
         }
 
-        private static void RoundEnded(Match match)
+        /// <summary>Flood is on this side: by its faction, or by the units in the battle where a side has no faction.</summary>
+        private static bool FloodOn(Match match, Team team)
         {
-            RoundSummary summary = match.LastSummary;
-            if (summary == null || summary.Tie || summary.BaseDamageByA == summary.BaseDamageByB) return;
-            GameAudio.Ui(summary.BaseDamageByA > summary.BaseDamageByB ? UiSound.RoundWon : UiSound.RoundLost);
+            PlayerState player = team == Team.A ? match.Player : match.Enemy;
+            if (match.Rules.Mode != MatchMode.UnlockSkirmish && AudioSlots.FactionKey(player.Faction?.Name) == "flood") return true;
+            return AudioSlots.FloodIn(match.CurrentBattle, team);
         }
 
-        private static void MatchEnded(AudioDirector director, Match match, string faction)
+        private static void RoundEnded(AudioDirector director, Match match)
         {
-            bool won = match.Winner == Team.A;
-            GameAudio.Ui(won ? UiSound.MatchWon : UiSound.MatchLost);
-            director.Music.PlayStinger(AudioSlots.Stinger(faction, won), 0.55f);
+            Team? winner = match.LastSummary?.RoundWinner;
+            if (winner == null) return;
+            if (winner == Team.A) director.Music.PlayStinger(AudioSlots.RoundVictory);
+            else director.Music.PlayStinger(AudioSlots.RoundDefeatSound(FloodOn(match, Team.B), director.NextRandom(), AudioLibrary.Get(AudioSlots.RoundDefeat).Clips.Length));
+        }
+
+        private static void GameEnded(AudioDirector director, Match match)
+        {
+            string faction = MusicFaction(match.Rules.Mode, match.Player.Faction?.Name);
+            director.Music.PlayStinger(AudioSlots.GameOverSong(match.Winner == Team.A, FloodOn(match, Team.B), faction));
+        }
+
+        /// <summary>A node of light hit a base. Big hits sound big. These are stand-ins from the battle's own sounds until the game has a sound for it.</summary>
+        private static void OnEndingHit(RoundEnding.Node node)
+        {
+            GameAudio.Sfx(node.Size < 0.45f ? AudioCatalog.ImpactArmor : node.Size < 0.75f ? AudioCatalog.ExplosionSmall : node.Size < 0.92f ? AudioCatalog.ExplosionMedium : AudioCatalog.ExplosionLarge);
         }
 
         /// <summary>What the player just did, by the name of the MatchController's method.</summary>

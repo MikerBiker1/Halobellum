@@ -1,4 +1,5 @@
 # make_music.py
+# The owner's own music replaced all of this (D67), and its files are gone from the game. Running this writes them again, unused. Kept for its history.
 # Composes and renders the placeholder music of Halobellum (M10): a main menu track, and a menu, a deployment and a
 # battle track for each faction, plus victory and defeat stingers. Every note here was written for this game; no melody
 # is taken from any existing work. Everything is rendered on a circular buffer: a note or a reverb tail that runs off

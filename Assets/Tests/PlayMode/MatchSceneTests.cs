@@ -57,6 +57,42 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
+        public IEnumerator AtTheEndOfARound_NodesOfLightHitTheBases_ThenTheResultComes()
+        {
+            yield return LoadMatch();
+            _match.ChooseDraft(0);
+            yield return null;
+            Match m = _match.Match;
+            int yoursBefore = m.Player.BaseHealth, enemyBefore = m.Enemy.BaseHealth;
+            _battle.Speed = 16f;
+            _match.Ready();
+            float deadline = Time.realtimeSinceStartup + 120f;
+            while (_match.Ending == null && m.Phase == MatchPhase.Battle && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.IsNotNull(_match.Ending, "The battle ended, and its ending began.");
+            Assert.AreEqual(MatchPhase.Battle, m.Phase, "The result waits for the nodes.");
+            Assert.IsTrue(_battle.Simulation.IsFinished);
+            Assert.AreEqual(yoursBefore, m.Player.BaseHealth, "Nothing is taken off yet.");
+            Assert.AreEqual(enemyBefore, m.Enemy.BaseHealth);
+
+            int yoursShown = yoursBefore, enemyShown = enemyBefore;
+            while (_match.Ending != null && Time.realtimeSinceStartup < deadline)
+            {
+                Assert.LessOrEqual(_match.ShownBaseHealth(Team.A), yoursShown, "Base health only goes down.");
+                Assert.LessOrEqual(_match.ShownBaseHealth(Team.B), enemyShown);
+                yoursShown = _match.ShownBaseHealth(Team.A);
+                enemyShown = _match.ShownBaseHealth(Team.B);
+                yield return null;
+            }
+            Assert.AreNotEqual(MatchPhase.Battle, m.Phase);
+            RoundSummary s = m.LastSummary;
+            if (!s.Tie)
+            {
+                Assert.AreEqual(s.BaseHealthA, yoursShown, "The hits add up to the round's result.");
+                Assert.AreEqual(s.BaseHealthB, enemyShown);
+            }
+        }
+
+        [UnityTest]
         public IEnumerator Draft_ThenDeployment_ShowsThePlayersSquads_AndOnlyTheEnemysStartingSquads()
         {
             yield return LoadMatch();

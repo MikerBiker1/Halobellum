@@ -1,14 +1,14 @@
 // AudioSlots.cs
 // The names of every sound and music slot in the game (M10), and which slot goes with what: a weapon kind, a faction, a
-// spell, a screen. A slot is a name such as "music_unsc_battle". AudioLibrary finds the file behind a name: the owner's
+// spell, a screen. A slot is a name such as "music_combat". AudioLibrary finds the file behind a name: the owner's
 // file in Art/Imported/Audio/Resources/AudioOverride if there is one, otherwise the generated one. The sound effects
 // have more settings than a name, so they are listed in AudioCatalog. Sound only; nothing here touches the simulation.
-// Depends on: Halobellum.Core (SpellStats), Halobellum.Economy (MatchPhase).
+// Depends on: Halobellum.Core (SpellStats), Halobellum.Combat (BattleSimulation).
 
 using System;
 using System.Collections.Generic;
+using Halobellum.Combat;
 using Halobellum.Core;
-using Halobellum.Economy;
 
 namespace Halobellum.Presentation
 {
@@ -32,25 +32,27 @@ namespace Halobellum.Presentation
         MatchLost,
     }
 
-    public enum MusicMood
-    {
-        Menu,
-        Deployment,
-        Battle,
-    }
-
     public static class AudioSlots
     {
         public const string MainMenuMusic = "music_mainmenu";
         /// <summary>The scene that plays the main menu's music.</summary>
         public const string MainMenuScene = "MainMenu";
 
+        /// <summary>Several songs each: one is picked at random. The cards and deployment of a round share one song.</summary>
+        public const string DeploymentMusic = "music_deployment", CombatMusic = "music_combat";
+        /// <summary>Joins the combat songs when Flood is on either side.</summary>
+        public const string CombatFloodMusic = "music_combat_flood_present";
+        /// <summary>How often the Flood's song plays when Flood is present. It is one song against several, and this is more than any of them gets.</summary>
+        public const float CombatFloodShare = 0.4f;
+
+        public const string RoundVictory = "stinger_match_victory", RoundDefeat = "stinger_match_defeat", RoundDefeatFlood = "stinger_match_defeat_flood_present";
+        public const string GameVictory = "stinger_game_victory", GameDefeatFlood = "stinger_game_defeat_flood_present";
+
         public static readonly string[] FactionKeys = { "unsc", "covenant", "flood" };
         /// <summary>The UI set used before a side is chosen. It has only the sounds a menu needs; the rest fall back to UNSC.</summary>
         public const string NeutralKey = "neutral";
 
         private static readonly string[] UiEventNames = { "click", "hover", "buy", "sell", "unlock", "error", "cardpick", "skip", "spellplaced", "levelup", "battlestart", "roundwon", "roundlost", "matchwon", "matchlost" };
-        private static readonly string[] MoodNames = { "menu", "deployment", "battle" };
 
         /// <summary>The short lower-case key of a faction's name. Anything unknown counts as UNSC, so a new faction still sounds of something.</summary>
         public static string FactionKey(string faction)
@@ -61,9 +63,32 @@ namespace Halobellum.Presentation
             return FactionKeys[0];
         }
 
-        public static string Music(string faction, MusicMood mood) => $"music_{FactionKey(faction)}_{MoodNames[(int)mood]}";
+        /// <summary>The song of a battle. roll is any number from 0 up to 1.</summary>
+        public static string CombatSong(bool floodPresent, float roll) => floodPresent && roll < CombatFloodShare ? CombatFloodMusic : CombatMusic;
 
-        public static string Stinger(string faction, bool victory) => $"stinger_{FactionKey(faction)}_{(victory ? "victory" : "defeat")}";
+        /// <summary>The sound of a lost round. Against Flood its own sound joins the others, with the same chance as each of them. roll is any number from 0 up to 1.</summary>
+        public static string RoundDefeatSound(bool floodEnemy, float roll, int plainSounds) => floodEnemy && roll * (plainSounds + 1) < 1f ? RoundDefeatFlood : RoundDefeat;
+
+        /// <summary>What plays when the whole game is over. Losing to Flood has its own song, whoever you played.</summary>
+        public static string GameOverSong(bool won, bool floodEnemy, string playerFaction)
+        {
+            if (won) return GameVictory;
+            return floodEnemy ? GameDefeatFlood : GameDefeat(playerFaction);
+        }
+
+        public static string GameDefeat(string faction) => $"stinger_game_defeat_{FactionKey(faction)}";
+
+        /// <summary>True if Flood is in this battle: on one team, or on either if none is given.</summary>
+        public static bool FloodIn(BattleSimulation battle, Team? team = null)
+        {
+            if (battle == null) return false;
+            IReadOnlyList<SimUnit> units = battle.Units;
+            for (int i = 0; i < units.Count; i++)
+            {
+                if (units[i].Stats.IsFlood && (team == null || units[i].Team == team)) return true;
+            }
+            return false;
+        }
 
         /// <summary>The slot of a UI sound for a faction; a null faction means no side has been chosen yet.</summary>
         public static string Ui(string faction, UiSound sound)
@@ -73,21 +98,6 @@ namespace Halobellum.Presentation
         }
 
         public static bool HasNeutral(UiSound sound) => sound == UiSound.Click || sound == UiSound.Hover || sound == UiSound.Error || sound == UiSound.CardPick;
-
-        /// <summary>
-        /// The music of a match screen. There is no faction yet at the draft, so it keeps the main menu's music. The screens
-        /// between battles have the faction's quiet menu track.
-        /// </summary>
-        public static string MusicForPhase(MatchPhase phase, string playerFaction)
-        {
-            switch (phase)
-            {
-                case MatchPhase.Draft: return MainMenuMusic;
-                case MatchPhase.Deployment: return Music(playerFaction, MusicMood.Deployment);
-                case MatchPhase.Battle: return Music(playerFaction, MusicMood.Battle);
-                default: return Music(playerFaction, MusicMood.Menu);
-            }
-        }
 
         /// <summary>The slot of a spell's sound, from its name, or else from what it does; null if this effect adds no new sound. tick counts its effects from 1.</summary>
         public static string Spell(SpellStats spell, int tick, string casterFaction)
@@ -117,11 +127,17 @@ namespace Halobellum.Presentation
         public static IEnumerable<string> MusicAndUiSlots()
         {
             yield return MainMenuMusic;
+            yield return DeploymentMusic;
+            yield return CombatMusic;
+            yield return CombatFloodMusic;
+            yield return RoundVictory;
+            yield return RoundDefeat;
+            yield return RoundDefeatFlood;
+            yield return GameVictory;
+            yield return GameDefeatFlood;
             foreach (string faction in FactionKeys)
             {
-                foreach (MusicMood mood in Enum.GetValues(typeof(MusicMood))) yield return Music(faction, mood);
-                yield return Stinger(faction, true);
-                yield return Stinger(faction, false);
+                yield return GameDefeat(faction);
                 foreach (UiSound sound in Enum.GetValues(typeof(UiSound))) yield return Ui(faction, sound);
             }
             foreach (UiSound sound in Enum.GetValues(typeof(UiSound)))

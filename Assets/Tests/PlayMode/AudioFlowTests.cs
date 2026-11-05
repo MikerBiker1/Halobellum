@@ -423,7 +423,7 @@ namespace Halobellum.Tests
         {
             yield return Load("Match");
             MusicDeck music = Director.Music;
-            music.PlayStinger(AudioSlots.Stinger(BattleFactions.Covenant, true));
+            music.PlayStinger(AudioSlots.RoundVictory);
             float deadline = Time.realtimeSinceStartup + 2f;
             while (music.Duck > 0.25f && Time.realtimeSinceStartup < deadline) yield return null;
             Assert.LessOrEqual(music.Duck, 0.25f, "The track ducks under the stinger.");
@@ -443,7 +443,7 @@ namespace Halobellum.Tests
             var audio = controller.GetComponent<MatchAudio>();
             // Getting to the end of a real match takes minutes; MatchSceneTests does that. This is the moment it ends.
             typeof(MatchAudio).GetField("_lastPhase", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(audio, MatchPhase.MatchOver);
-            Director.Music.PlayStinger(AudioSlots.Stinger(BattleFactions.Unsc, false));
+            Director.Music.PlayStinger(AudioSlots.GameDefeat(BattleFactions.Unsc));
             Assert.IsTrue(Director.Music.StingerOn);
 
             controller.NewMatch();
@@ -458,11 +458,11 @@ namespace Halobellum.Tests
             var sandbox = Object.FindAnyObjectByType<SandboxController>();
             Assert.AreEqual(BattleFactions.Unsc, BattleFactions.TeamA, "An empty side has the default.");
             Assert.AreEqual(BattleFactions.Covenant, BattleFactions.TeamB);
-            Assert.AreEqual("music_unsc_deployment", Director.Music.CurrentSlot);
+            Assert.AreEqual(AudioSlots.DeploymentMusic, Director.Music.CurrentSlot);
 
             Assert.IsTrue(sandbox.AddSquad(Team.A, UnitNamed(sandbox, "Combat Form")).Ok);
             Assert.AreEqual(BattleFactions.Flood, BattleFactions.TeamA);
-            Assert.AreEqual("music_flood_deployment", Director.Music.CurrentSlot);
+            Assert.AreEqual(AudioSlots.DeploymentMusic, Director.Music.CurrentSlot, "One song goes on, whatever is placed.");
             Assert.AreEqual(BattleFactions.Flood, Director.UiFaction);
 
             // A sub-faction's unit counts for its faction, and placeholder units for none.
@@ -492,7 +492,7 @@ namespace Halobellum.Tests
             sandbox.Run();
             yield return null;
             yield return null;
-            Assert.AreEqual("music_unsc_battle", Director.Music.CurrentSlot);
+            StringAssert.StartsWith(AudioSlots.CombatMusic, Director.Music.CurrentSlot);
             Assert.Contains("ui_unsc_battlestart", _played);
         }
 

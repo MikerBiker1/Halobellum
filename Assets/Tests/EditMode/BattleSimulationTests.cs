@@ -39,6 +39,47 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void AShotInTheAir_LandsBeforeTheBattleEnds_AndWhatItKillsNoLongerCounts()
+        {
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            // A kills B's only unit at once, but B's slow shot is already on its way to A's only unit.
+            var a = sim.AddUnit(TestUnits.Unit(health: 50f, speed: 0f, weapon: TestUnits.Weapon(damage: 1000f, range: 30f, interval: 5f)), Team.A, new Vec2(0f, -10f));
+            var b = sim.AddUnit(TestUnits.Unit(health: 50f, speed: 0f, weapon: TestUnits.Weapon(damage: 1000f, range: 30f, interval: 5f, projectileSpeed: 5f)), Team.B, new Vec2(0f, 10f));
+            sim.Step();
+            sim.Step();
+            Assert.IsFalse(b.IsAlive, "A's shot is instant.");
+            Assert.IsTrue(a.IsAlive, "B's takes 4 seconds to arrive.");
+            Assert.IsFalse(sim.IsFinished);
+            Assert.IsTrue(sim.IsSettling);
+
+            BattleResult result = sim.Run();
+            Assert.IsFalse(sim.IsSettling);
+            Assert.IsFalse(a.IsAlive, "It landed, and it killed.");
+            Assert.AreEqual(0, result.TeamA.Survivors);
+            Assert.AreEqual(BattleOutcome.Draw, result.Outcome);
+            Assert.Greater(result.DurationSeconds, 3.5f);
+        }
+
+        [Test]
+        public void NobodyActs_WhileTheLastShotsLand()
+        {
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            var a = sim.AddUnit(TestUnits.Unit(health: 5000f, speed: 3f, weapon: TestUnits.Weapon(damage: 1000f, range: 30f, interval: 0.2f)), Team.A, new Vec2(0f, -10f));
+            sim.AddUnit(TestUnits.Unit(health: 50f, speed: 0f, weapon: TestUnits.Weapon(damage: 10f, range: 30f, interval: 5f, projectileSpeed: 5f)), Team.B, new Vec2(0f, 10f));
+            sim.Step();
+            sim.Step();
+            Assert.IsTrue(sim.IsSettling);
+            Vec2 place = a.Position;
+            float dealt = a.DamageDealt;
+            BattleResult result = sim.Run();
+            Assert.AreEqual(place.X, a.Position.X, 1e-4f);
+            Assert.AreEqual(place.Y, a.Position.Y, 1e-4f);
+            Assert.AreEqual(dealt, a.DamageDealt, 1e-4f, "It has nothing left to do, and doesn't try.");
+            Assert.AreEqual(1, result.TeamA.Survivors, "A shot that doesn't kill leaves the survivor to hit the base.");
+            Assert.AreEqual(4990f, a.Health, 1e-3f);
+        }
+
+        [Test]
         public void Battle_EndsAtTheTimeLimit_WhenNobodyCanFight()
         {
             // Two ground units that can only shoot air: neither can ever attack.

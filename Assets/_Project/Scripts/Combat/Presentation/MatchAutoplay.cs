@@ -146,6 +146,16 @@ namespace Halobellum.Presentation
                     _match.Ready();
                     break;
                 case MatchPhase.Battle:
+                    if (_match.Ending != null)
+                    {
+                        if (!_endingShotTaken && _match.Ending.Clock >= 0.75f)
+                        {
+                            Shot($"r{m.Round:00}_2_ending");
+                            _endingShotTaken = true;
+                        }
+                        break;
+                    }
+                    _endingShotTaken = false;
                     if (!_battleShotTaken && _battle.Simulation != null && _battle.Simulation.ElapsedSeconds >= 1.2f)
                     {
                         Shot($"r{m.Round:00}_2_battle");
@@ -172,6 +182,7 @@ namespace Halobellum.Presentation
 
         private static readonly float[] LaterShotSeconds = { 8f, 16f, 26f };
         private int _nextLaterShot;
+        private bool _endingShotTaken;
         private bool _phaseShotTaken;
         private int _inventoryShotRound = -1;
 

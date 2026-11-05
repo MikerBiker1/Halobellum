@@ -34,8 +34,13 @@ namespace Halobellum.Presentation
         {
             if (Clips.Length == 0) return null;
             if (Clips.Length == 1) return Clips[0];
+            if (_last < 0)
+            {
+                _last = Mathf.Clamp((int)(roll * Clips.Length), 0, Clips.Length - 1); // Nothing to avoid yet: any of them.
+                return Clips[_last];
+            }
             int index = Mathf.Clamp((int)(roll * (Clips.Length - 1)), 0, Clips.Length - 2);
-            if (_last >= 0 && index >= _last) index++;
+            if (index >= _last) index++;
             _last = index;
             return Clips[index];
         }

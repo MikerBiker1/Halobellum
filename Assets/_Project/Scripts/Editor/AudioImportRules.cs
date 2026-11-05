@@ -15,7 +15,7 @@ namespace Halobellum.EditorTools
         private const string Generated = "Assets/_Project/Audio/Generated/";
         private const string Imported = "Assets/_Project/Art/Imported/Audio/";
 
-        public override uint GetVersion() => 1;
+        public override uint GetVersion() => 2;
 
         private void OnPreprocessAudio()
         {
@@ -26,7 +26,8 @@ namespace Halobellum.EditorTools
             string name = Path.GetFileNameWithoutExtension(path);
             AudioImporterSampleSettings settings = importer.defaultSampleSettings;
             settings.sampleRateSetting = AudioSampleRateSetting.PreserveSampleRate;
-            if (name.StartsWith("music_"))
+            bool streamed = name.StartsWith("music_") || name.StartsWith("stinger_game_"); // The end of a game has a whole song.
+            if (streamed)
             {
                 settings.loadType = AudioClipLoadType.Streaming;
                 settings.compressionFormat = AudioCompressionFormat.Vorbis;
@@ -47,7 +48,7 @@ namespace Halobellum.EditorTools
                 settings.preloadAudioData = true;
             }
             importer.defaultSampleSettings = settings;
-            importer.loadInBackground = name.StartsWith("music_");
+            importer.loadInBackground = streamed;
         }
     }
 }

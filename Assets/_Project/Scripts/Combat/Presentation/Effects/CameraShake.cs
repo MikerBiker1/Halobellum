@@ -44,6 +44,13 @@ namespace Halobellum.Presentation
             _instance._trauma = AddTrauma(_instance._trauma, strength * _instance.NearMiddle(where));
         }
 
+        /// <summary>A kick that isn't anywhere in the world, such as a hit on a base. strength as for Kick.</summary>
+        public static void KickEverywhere(float strength)
+        {
+            if (_instance == null || !ShakeEnabled) return;
+            _instance._trauma = AddTrauma(_instance._trauma, strength);
+        }
+
         /// <summary>Adds a kick: several small ones add up, but never past the biggest shake.</summary>
         public static float AddTrauma(float trauma, float strength) => Mathf.Clamp01(Mathf.Max(trauma, strength) + Mathf.Min(trauma, strength) * 0.25f);
 

@@ -49,7 +49,7 @@ namespace Halobellum.UI
         [SerializeField] private Color playerColor = new Color(0.35f, 0.55f, 1f);
         [SerializeField] private Color enemyColor = new Color(1f, 0.4f, 0.32f);
 
-        private GUIStyle _title, _big, _text, _small, _smallCentered, _button, _bigButton, _centered, _header, _barLabel, _wrap, _wrapDim, _shopLine, _cellLine;
+        private GUIStyle _title, _big, _text, _small, _smallCentered, _button, _bigButton, _centered, _header, _barLabel, _wrap, _wrapDim, _shopLine, _cellLine, _bannerWord, _bannerLine, _hitSmall, _hitMedium, _hitBig;
         private float _scale;
         private Vector2 _shopScroll;
         private readonly List<UnitStats> _shopRows = new List<UnitStats>();
@@ -813,16 +813,132 @@ namespace Halobellum.UI
             float width = HudScale.ScaledWidth(_scale);
             var left = new Rect(10f, 8f, 280f, 64f);
             Panel(left);
-            BaseBar(new Rect(left.x + 12f, left.y + 10f, 256f, 20f), _yourBaseLine, "Your base", m.Player.BaseHealth, m.Player.StartingBaseHealth, playerColor);
+            Rect yourBar = new Rect(left.x + 12f, left.y + 10f, 256f, 20f);
+            BaseBar(Kicked(yourBar, Team.A), _yourBaseLine, "Your base", match.ShownBaseHealth(Team.A), m.Player.StartingBaseHealth, playerColor);
+            FlashBar(yourBar, Team.A);
             GUI.Label(new Rect(left.x + 12f, left.y + 34f, 256f, 24f), ArmyValueText(_yourValueLine, Team.A), _small);
             DrawShockwave(left, _yourShockwaveLine, Team.A);
 
             var right = new Rect(width - 290f, 40f, 280f, 64f);
             Panel(right);
-            BaseBar(new Rect(right.x + 12f, right.y + 10f, 256f, 20f), _enemyBaseLine, "Enemy base", m.Enemy.BaseHealth, m.Enemy.StartingBaseHealth, enemyColor);
+            Rect enemyBar = new Rect(right.x + 12f, right.y + 10f, 256f, 20f);
+            BaseBar(Kicked(enemyBar, Team.B), _enemyBaseLine, "Enemy base", match.ShownBaseHealth(Team.B), m.Enemy.StartingBaseHealth, enemyColor);
+            FlashBar(enemyBar, Team.B);
             GUI.Label(new Rect(right.x + 12f, right.y + 34f, 256f, 24f), ArmyValueText(_enemyValueLine, Team.B), _small);
             DrawShockwave(right, _enemyShockwaveLine, Team.B);
             DrawTowerWindow(HudScale.ScaledHeight(_scale));
+            DrawEnding(yourBar, enemyBar);
+        }
+
+        // ------------------------------------------------------------------ the nodes of light at the end of a round
+
+        /// <summary>A base's bar, moved by the shake of the last hit on it.</summary>
+        private Rect Kicked(Rect bar, Team team)
+        {
+            RoundEnding ending = match.Ending;
+            if (ending == null) return bar;
+            float kick = ending.Kick(team);
+            if (kick <= 0f) return bar;
+            bar.x += Mathf.Sin(ending.Clock * 70f) * 12f * kick;
+            bar.y += Mathf.Cos(ending.Clock * 90f) * 6f * kick;
+            return bar;
+        }
+
+        private void FlashBar(Rect bar, Team team)
+        {
+            RoundEnding ending = match.Ending;
+            if (ending == null) return;
+            float kick = ending.Kick(team);
+            if (kick <= 0f) return;
+            GUI.color = new Color(1f, 1f, 1f, 0.8f * kick);
+            GUI.DrawTexture(Kicked(bar, team), Texture2D.whiteTexture);
+            GUI.color = Color.white;
+        }
+
+        private void DrawEnding(Rect yourBar, Rect enemyBar)
+        {
+            RoundEnding ending = match.Ending;
+            Camera camera = Camera.main;
+            if (ending == null || camera == null) return;
+
+            for (int i = 0; i < ending.Nodes.Count; i++)
+            {
+                RoundEnding.Node node = ending.Nodes[i];
+                float time = (ending.Clock - node.Starts) / node.Seconds;
+                if (node.Landed || time < 0f) continue;
+                Vector3 screen = camera.WorldToScreenPoint(node.From);
+                var from = new Vector2(screen.x / _scale, (Screen.height - screen.y) / _scale);
+                Vector2 to = (node.Target == Team.A ? yourBar : enemyBar).center;
+                Color color = Color.Lerp(node.Source == Team.A ? playerColor : enemyColor, Color.white, 0.25f);
+                float radius = 13f + 32f * node.Size;
+                float bend = i % 2 == 0 ? 60f : -60f; // Crowds spread out on their way instead of flying in one line.
+
+                // A tail that shows how fast it has become: the points are close while it is slow and far apart when it is fast.
+                for (int tail = TailPoints; tail >= 1; tail--)
+                {
+                    float share = 1f - tail / (TailPoints + 1f);
+                    float tailTime = time - tail * 0.035f;
+                    if (tailTime <= 0f) continue;
+                    DrawGlow(NodePlace(from, to, tailTime, bend), radius * (0.4f + 0.5f * share), new Color(color.r, color.g, color.b, 0.45f * share));
+                }
+                Vector2 place = NodePlace(from, to, time, bend);
+                DrawGlow(place, radius, color);
+                DrawGlow(place, radius * 0.5f, Color.white);
+            }
+
+            for (int i = 0; i < ending.Numbers.Count; i++)
+            {
+                RoundEnding.Number number = ending.Numbers[i];
+                float age = (ending.Clock - number.Born) / RoundEnding.NumberSeconds;
+                Rect bar = number.Target == Team.A ? yourBar : enemyBar;
+                GUIStyle style = number.Size < 0.45f ? _hitSmall : number.Size < 0.8f ? _hitMedium : _hitBig;
+                var rect = new Rect(bar.center.x + number.Along * bar.width * 0.4f - 80f, bar.yMax + 4f + age * 44f, 160f, 60f);
+                float alpha = 1f - age * age;
+                GUI.color = new Color(0f, 0f, 0f, alpha);
+                GUI.Label(new Rect(rect.x + 2f, rect.y + 2f, rect.width, rect.height), number.Text, style);
+                GUI.color = number.Target == Team.A ? new Color(1f, 0.32f, 0.26f, alpha) : new Color(1f, 0.88f, 0.35f, alpha);
+                GUI.Label(rect, number.Text, style);
+            }
+            GUI.color = Color.white;
+        }
+
+        private static Vector2 NodePlace(Vector2 from, Vector2 to, float time, float bend)
+        {
+            float along = RoundEnding.Ease(time);
+            Vector2 way = to - from;
+            Vector2 aside = new Vector2(-way.y, way.x).normalized;
+            return from + way * along + aside * (Mathf.Sin(along * Mathf.PI) * bend);
+        }
+
+        private static void DrawGlow(Vector2 center, float radius, Color color)
+        {
+            GUI.color = color;
+            GUI.DrawTexture(new Rect(center.x - radius, center.y - radius, radius * 2f, radius * 2f), Glow);
+        }
+
+        private const int TailPoints = 6;
+        private static Texture2D _glow;
+
+        /// <summary>A soft round light, white so that it can take any colour.</summary>
+        private static Texture2D Glow
+        {
+            get
+            {
+                if (_glow != null) return _glow;
+                const int size = 64;
+                _glow = new Texture2D(size, size, TextureFormat.RGBA32, false) { hideFlags = HideFlags.HideAndDontSave, wrapMode = TextureWrapMode.Clamp };
+                for (int y = 0; y < size; y++)
+                {
+                    for (int x = 0; x < size; x++)
+                    {
+                        float off = new Vector2(x - size * 0.5f + 0.5f, y - size * 0.5f + 0.5f).magnitude / (size * 0.5f);
+                        float light = Mathf.Clamp01(1f - off);
+                        _glow.SetPixel(x, y, new Color(1f, 1f, 1f, light * light * (3f - 2f * light)));
+                    }
+                }
+                _glow.Apply();
+                return _glow;
+            }
         }
 
         private string ArmyValueText(HudLine line, Team team)
@@ -838,7 +954,10 @@ namespace Halobellum.UI
         {
             RoundSummary s = match.Match.LastSummary;
             if (s == null) return;
-            Rect panel = CenteredPanel(640f, 550f);
+            Team? winner = s.RoundWinner;
+            string word = winner == null ? "DRAW" : winner == Team.A ? "VICTORY" : "DEFEAT";
+            DrawOutcome(word, winner == null ? DrawColor : winner == Team.A ? VictoryColor : DefeatColor, $"Round {s.Round}: you hit the enemy base for {s.BaseDamageByA}, it hit yours for {s.BaseDamageByB}", 550f);
+            Rect panel = CenteredPanel(640f, 550f, BannerRoom);
             float y = panel.y + 12f;
             GUI.Label(new Rect(panel.x, y, panel.width, 34f), HudTheme.Title($"Round {s.Round} result"), _centered);
             y += 44f;
@@ -859,17 +978,41 @@ namespace Halobellum.UI
         {
             Match m = match.Match;
             RoundSummary s = m.LastSummary;
-            Rect panel = CenteredPanel(640f, 560f);
-            float y = panel.y + 12f;
             bool won = m.Winner == Team.A;
-            GUI.Label(new Rect(panel.x, y, panel.width, 40f), HudTheme.Title(won ? "Victory!" : "Defeat"), _title);
+            DrawOutcome(won ? "VICTORY" : "DEFEAT", won ? GameVictoryColor : DefeatColor, won ? $"You won the game: the enemy base fell in round {m.Round}" : $"You lost the game: your base fell in round {m.Round}", 560f);
+            Rect panel = CenteredPanel(640f, 560f, BannerRoom);
+            float y = panel.y + 12f;
+            GUI.Label(new Rect(panel.x, y, panel.width, 40f), HudTheme.Title("Match over"), _title);
             y += 52f;
-            GUI.Label(new Rect(panel.x + 20f, y, panel.width - 40f, 26f),
-                won ? $"The enemy base fell in round {m.Round}." : $"Your base fell in round {m.Round}.", _text);
-            y += 34f;
             if (s != null) SummaryLines(s, panel, y);
             if (GUI.Button(new Rect(panel.x + panel.width * 0.5f - 230f, panel.yMax - 58f, 220f, 44f), "New match", _bigButton)) match.NewMatch();
             if (MenuStyle.Button(new Rect(panel.x + panel.width * 0.5f + 10f, panel.yMax - 58f, 220f, 44f), "Main Menu", _bigButton)) GameFlow.OpenMainMenu();
+        }
+
+        private const float BannerHeight = 132f, BannerRoom = 68f;
+        private static readonly Color VictoryColor = new Color(0.09f, 0.55f, 0.2f), GameVictoryColor = new Color(0.78f, 0.56f, 0.06f), DefeatColor = new Color(0.68f, 0.07f, 0.07f), DrawColor = new Color(0.32f, 0.35f, 0.4f);
+
+        /// <summary>Whether it was won or lost, too big and too colourful to miss: the whole screen takes on its colour, and a band right across it above the window says the word.</summary>
+        private void DrawOutcome(string word, Color color, string line, float panelHeight)
+        {
+            float width = HudScale.ScaledWidth(_scale), height = HudScale.ScaledHeight(_scale);
+            GUI.color = new Color(color.r, color.g, color.b, 0.3f);
+            GUI.DrawTexture(new Rect(0f, 0f, width, height), Texture2D.whiteTexture);
+
+            var band = new Rect(0f, (height - panelHeight) * 0.5f + BannerRoom - BannerHeight - 4f, width, BannerHeight);
+            UiHitAreas.Add(HudScale.ToScreen(band, _scale));
+            GUI.color = color;
+            GUI.DrawTexture(band, Texture2D.whiteTexture);
+            GUI.color = new Color(1f, 1f, 1f, 0.85f);
+            GUI.DrawTexture(new Rect(band.x, band.y, band.width, 4f), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(band.x, band.yMax - 4f, band.width, 4f), Texture2D.whiteTexture);
+
+            var wordRect = new Rect(0f, band.y + 2f, width, 92f);
+            GUI.color = new Color(0f, 0f, 0f, 0.55f);
+            GUI.Label(new Rect(wordRect.x + 3f, wordRect.y + 3f, wordRect.width, wordRect.height), word, _bannerWord);
+            GUI.color = Color.white;
+            GUI.Label(wordRect, word, _bannerWord);
+            GUI.Label(new Rect(0f, band.y + 92f, width, 34f), line, _bannerLine);
         }
 
         /// <summary>Base damage, bases, survivors, top damage dealers and what killed what. Returns the next y.</summary>
@@ -910,10 +1053,10 @@ namespace Halobellum.UI
 
         // ------------------------------------------------------------------ helpers
 
-        private Rect CenteredPanel(float w, float h)
+        private Rect CenteredPanel(float w, float h, float lower = 0f)
         {
             float width = HudScale.ScaledWidth(_scale), height = HudScale.ScaledHeight(_scale);
-            var rect = new Rect((width - w) * 0.5f, (height - h) * 0.5f, w, h);
+            var rect = new Rect((width - w) * 0.5f, (height - h) * 0.5f + lower, w, h);
             Panel(rect);
             return rect;
         }
@@ -964,10 +1107,15 @@ namespace Halobellum.UI
             _smallCentered = new GUIStyle(_small) { alignment = TextAnchor.MiddleCenter };
             _shopLine = new GUIStyle(_small) { wordWrap = false };
             _cellLine = new GUIStyle(_small) { wordWrap = false };
+            _bannerWord = new GUIStyle(_title) { fontSize = HudTheme.TitleSize(82), alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.white } };
+            _bannerLine = new GUIStyle(_text) { fontSize = HudTheme.Size(21), fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.white } };
+            _hitSmall = new GUIStyle(_text) { fontSize = HudTheme.Size(21), fontStyle = FontStyle.Bold, alignment = TextAnchor.UpperCenter, normal = { textColor = Color.white } };
+            _hitMedium = new GUIStyle(_hitSmall) { fontSize = HudTheme.Size(30) };
+            _hitBig = new GUIStyle(_hitSmall) { fontSize = HudTheme.Size(44) };
             _wrap = new GUIStyle(_text) { fontSize = HudTheme.Size(15), wordWrap = true };
             _wrapDim = new GUIStyle(_small) { wordWrap = true, alignment = TextAnchor.UpperLeft };
             HudTheme.Fit(_wrap, _wrapDim);
-            HudTheme.Fit(_text, _small, _big, _centered, _title, _header, _barLabel, _button, _bigButton, _smallCentered);
+            HudTheme.Fit(_text, _small, _big, _centered, _title, _header, _barLabel, _button, _bigButton, _smallCentered, _bannerWord, _bannerLine, _hitSmall, _hitMedium, _hitBig);
         }
     }
 }

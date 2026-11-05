@@ -1,7 +1,7 @@
 // MusicDeck.cs
 // Plays the music: one track at a time, crossfading between two sources when the track changes, plus a stinger that ducks the
-// track for a moment. Each track remembers where it was, because rounds are short: a player who only ever heard the first
-// minute of a battle track would never hear the rest of it. Plain C# around three AudioSources from the AudioDirector.
+// track for a moment. A slot can have several songs, and one is picked at random. Each song remembers where it was, because rounds are short: a player who only ever
+// heard the first minute of a song would never hear the rest of it. Plain C# around three AudioSources from the AudioDirector.
 // Depends on: AudioLibrary, UnityEngine.
 
 using System.Collections.Generic;
@@ -45,7 +45,7 @@ namespace Halobellum.Presentation
         /// <summary>True from a stinger's start until it ends or is stopped.</summary>
         public bool StingerOn => _clock < _stingerEnds;
 
-        /// <summary>Crossfades to a track, resuming where it last was. The same track again does nothing.</summary>
+        /// <summary>Crossfades to one of a slot's songs, resuming where that song last was. The slot already playing goes on with its song.</summary>
         public void Play(string slot, float fadeSeconds = 2.5f)
         {
             if (slot == CurrentSlot) return;
@@ -66,7 +66,16 @@ namespace Halobellum.Presentation
             _gains[next] = 0f;
             source.volume = 0f;
             source.Play();
-            if (_positions.TryGetValue(slot, out float position) && clip.length > 0f) source.time = position % clip.length;
+            if (_positions.TryGetValue(clip.name, out float position) && clip.length > 0f) source.time = position % clip.length;
+        }
+
+        /// <summary>Fades the track out and leaves silence, until the next Play. That Play picks a new song, even from the same slot.</summary>
+        public void Stop(float fadeSeconds = 1.5f)
+        {
+            RememberPosition();
+            CurrentSlot = null;
+            _fadeSeconds = Mathf.Max(0.05f, fadeSeconds);
+            _silent = true;
         }
 
         /// <summary>Plays a one-off stinger, with the track ducked until it has finished.</summary>
@@ -131,7 +140,7 @@ namespace Halobellum.Presentation
         {
             if (string.IsNullOrEmpty(CurrentSlot)) return;
             AudioSource source = _sources[_current];
-            if (source.clip != null && source.isPlaying) _positions[CurrentSlot] = source.time;
+            if (source.clip != null && source.isPlaying) _positions[source.clip.name] = source.time;
         }
 
         private static float Random01() => (Time.frameCount * 0.6180339f) % 1f;

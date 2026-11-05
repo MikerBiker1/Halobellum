@@ -130,6 +130,12 @@ namespace Halobellum.Combat
         public float ElapsedSeconds => Tick * _dt;
         public float TickSeconds => _dt;
         public bool IsFinished { get; private set; }
+
+        /// <summary>The fight is over but shots are still in the air: only they move, and the battle finishes when the last one has landed.</summary>
+        public bool IsSettling { get; private set; }
+        /// <summary>A shot that never lands must not hold a battle up. None takes this long.</summary>
+        private const float MostSettlingSeconds = 10f;
+        private int _settlingTicks;
         /// <summary>Set once the battle is finished.</summary>
         public BattleResult Result { get; private set; }
 
@@ -223,21 +229,24 @@ namespace Halobellum.Combat
 
             if (Tick == 0) foreach (SimSquad squad in _squads) squad.FormUp();
 
-            UpdateArrivals();
-            SpawnReinforcements();
-            UpdateRises();
-            UpdateSpawners();
-            UpdateSpells();
-            UpdateStatusEffects();
-            UpdateShields();
-            UpdateTargetsAndStates();
-            UpdateSquadFormations();
-            UpdateAdvances();
-            UpdateDropRuns();
-            UpdateLeaps();
-            _movement.Step(_units, _dt);
-            FaceTargets();
-            FireWeapons();
+            if (!IsSettling)
+            {
+                UpdateArrivals();
+                SpawnReinforcements();
+                UpdateRises();
+                UpdateSpawners();
+                UpdateSpells();
+                UpdateStatusEffects();
+                UpdateShields();
+                UpdateTargetsAndStates();
+                UpdateSquadFormations();
+                UpdateAdvances();
+                UpdateDropRuns();
+                UpdateLeaps();
+                _movement.Step(_units, _dt);
+                FaceTargets();
+                FireWeapons();
+            }
             UpdateProjectiles();
             ApplyDeaths();
 
@@ -1429,8 +1438,21 @@ namespace Halobellum.Combat
 
             bool sideWipedOut = aliveA == 0 || aliveB == 0;
             bool outOfTime = Tick >= _tickLimit;
-            if (!sideWipedOut && !outOfTime) return;
+            if (!sideWipedOut && !outOfTime)
+            {
+                IsSettling = false; // A shot that was still in flight made a body rise, so the fight goes on.
+                return;
+            }
 
+            // The shots in the air still land, and what they kill no longer hits the base. Nobody acts meanwhile.
+            if (_projectiles.Count > 0 && _settlingTicks < MostSettlingSeconds / _dt)
+            {
+                IsSettling = true;
+                _settlingTicks++;
+                return;
+            }
+
+            IsSettling = false;
             IsFinished = true;
             Result = BuildResult(timedOut: !sideWipedOut);
             Events.RaiseBattleEnded(Result);

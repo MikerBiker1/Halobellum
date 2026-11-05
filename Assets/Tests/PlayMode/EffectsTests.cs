@@ -781,7 +781,7 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
-        public IEnumerator InASkirmish_TeamBKeepsItsTint_TheUiIsNeutral_AndTheMusicIsTheLands()
+        public IEnumerator InASkirmish_TeamBKeepsItsTint_AndTheUiIsNeutral()
         {
             yield return SceneManager.LoadSceneAsync(GameFlow.MainMenuScene, LoadSceneMode.Single);
             yield return null;
@@ -807,7 +807,7 @@ namespace Halobellum.Tests
             Assert.AreNotEqual(a.Shot, b.Shot, "Team B's shots stay tinted.");
 
             Assert.IsNull(director.UiFaction, "Neutral, not the land's and not a faction called Skirmish.");
-            Assert.AreEqual("music_flood_deployment", director.Music.CurrentSlot);
+            Assert.AreEqual(AudioSlots.DeploymentMusic, director.Music.CurrentSlot);
 
             director.UiFaction = BattleFactions.Unsc;
             BattleFactions.SetSkirmish(BattleFactions.Covenant, new Dictionary<string, string>());

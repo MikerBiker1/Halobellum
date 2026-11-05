@@ -172,10 +172,21 @@ namespace Halobellum.Tests
         // ------------------------------------------------------------------ the slots have files
 
         [Test]
-        public void EveryMusicAndUiSlot_HasAGeneratedFile()
+        public void EveryMusicAndUiSlot_HasAFile()
         {
+            AudioLibrary.Forget();
             foreach (string slot in AudioSlots.MusicAndUiSlots())
-                Assert.IsTrue(File.Exists(GeneratedFolder + slot + ".wav"), "No file for " + slot);
+                Assert.IsFalse(AudioLibrary.Get(slot).IsEmpty, "No file for " + slot);
+        }
+
+        [Test]
+        public void TheOwnersSongs_AreAllThere()
+        {
+            AudioLibrary.Forget();
+            Assert.AreEqual(8, AudioLibrary.Get(AudioSlots.DeploymentMusic).Clips.Length);
+            Assert.AreEqual(4, AudioLibrary.Get(AudioSlots.CombatMusic).Clips.Length);
+            Assert.AreEqual(5, AudioLibrary.Get(AudioSlots.RoundDefeat).Clips.Length);
+            Assert.IsTrue(AudioLibrary.Get(AudioSlots.MainMenuMusic).IsOverride);
         }
 
         [Test]
@@ -238,15 +249,13 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void InASkirmish_TheMusic_IsTheLands()
+        public void InASkirmish_ALostGame_HasTheLandsSong()
         {
             try
             {
-                BattleFactions.SetSkirmish(BattleFactions.Flood, new Dictionary<string, string>());
+                BattleFactions.SetSkirmish(BattleFactions.Covenant, new Dictionary<string, string>());
                 string faction = MatchAudio.MusicFaction(MatchMode.UnlockSkirmish, SkirmishFaction.Name);
-                Assert.AreEqual("music_flood_deployment", AudioSlots.MusicForPhase(MatchPhase.Deployment, faction));
-                Assert.AreEqual("music_flood_battle", AudioSlots.MusicForPhase(MatchPhase.Battle, faction));
-                Assert.AreEqual("stinger_flood_victory", AudioSlots.Stinger(faction, true));
+                Assert.AreEqual("stinger_game_defeat_covenant", AudioSlots.GameOverSong(false, false, faction));
             }
             finally
             {
@@ -297,13 +306,32 @@ namespace Halobellum.Tests
         [TestCase("Someone new", "unsc")]
         public void FactionKey(string faction, string key) => Assert.AreEqual(key, AudioSlots.FactionKey(faction));
 
-        [TestCase(MatchPhase.Draft, "UNSC", "music_mainmenu")]
-        [TestCase(MatchPhase.Cards, "Flood", "music_flood_menu")]
-        [TestCase(MatchPhase.Deployment, "Covenant", "music_covenant_deployment")]
-        [TestCase(MatchPhase.Battle, "UNSC", "music_unsc_battle")]
-        [TestCase(MatchPhase.Result, "Covenant", "music_covenant_menu")]
-        [TestCase(MatchPhase.MatchOver, "Flood", "music_flood_menu")]
-        public void MusicFollowsTheScreenAndTheFaction(MatchPhase phase, string faction, string slot) => Assert.AreEqual(slot, AudioSlots.MusicForPhase(phase, faction));
+        [TestCase(false, 0f, "music_combat")]
+        [TestCase(false, 0.99f, "music_combat")]
+        [TestCase(true, 0.39f, "music_combat_flood_present")]
+        [TestCase(true, 0.41f, "music_combat")]
+        public void TheFloodsCombatSong_PlaysMoreOften_OnlyWithFloodPresent(bool flood, float roll, string slot) => Assert.AreEqual(slot, AudioSlots.CombatSong(flood, roll));
+
+        [Test]
+        public void TheFloodsCombatSong_PlaysMoreThanAnyOtherSong()
+        {
+            int songs = AudioLibrary.Get(AudioSlots.CombatMusic).Clips.Length;
+            Assert.Greater(AudioSlots.CombatFloodShare, (1f - AudioSlots.CombatFloodShare) / songs);
+        }
+
+        [TestCase(false, 0f, "stinger_match_defeat")]
+        [TestCase(true, 0.1f, "stinger_match_defeat_flood_present")]
+        [TestCase(true, 0.2f, "stinger_match_defeat")]
+        public void ALostRound_AgainstFlood_MayHaveItsOwnSound(bool flood, float roll, string slot) => Assert.AreEqual(slot, AudioSlots.RoundDefeatSound(flood, roll, 5));
+
+        [TestCase(true, false, "UNSC", "stinger_game_victory")]
+        [TestCase(true, true, "Flood", "stinger_game_victory")]
+        [TestCase(false, false, "UNSC", "stinger_game_defeat_unsc")]
+        [TestCase(false, false, "Covenant", "stinger_game_defeat_covenant")]
+        [TestCase(false, false, "Flood", "stinger_game_defeat_flood")]
+        [TestCase(false, true, "UNSC", "stinger_game_defeat_flood_present")]
+        [TestCase(false, true, "Flood", "stinger_game_defeat_flood_present")]
+        public void TheEndOfAGame_HasTheRightSong(bool won, bool floodEnemy, string faction, string slot) => Assert.AreEqual(slot, AudioSlots.GameOverSong(won, floodEnemy, faction));
 
         [Test]
         public void UiSounds_DifferByFaction()
@@ -490,9 +518,13 @@ namespace Halobellum.Tests
         [Test]
         public void Music_IsStreamedAndCompressed_EffectsAreReadyInMemory()
         {
-            var music = (AudioImporter)AssetImporter.GetAtPath(GeneratedFolder + "music_mainmenu.wav");
+            var music = (AudioImporter)AssetImporter.GetAtPath(OverrideFolder + "music_mainmenu.mp3");
             Assert.AreEqual(AudioClipLoadType.Streaming, music.defaultSampleSettings.loadType);
             Assert.AreEqual(AudioCompressionFormat.Vorbis, music.defaultSampleSettings.compressionFormat);
+            var gameEnd = (AudioImporter)AssetImporter.GetAtPath(OverrideFolder + "stinger_game_victory.mp3");
+            Assert.AreEqual(AudioClipLoadType.Streaming, gameEnd.defaultSampleSettings.loadType, "A whole song, not a short piece.");
+            var roundEnd = (AudioImporter)AssetImporter.GetAtPath(OverrideFolder + "stinger_match_victory.mp3");
+            Assert.AreEqual(AudioClipLoadType.CompressedInMemory, roundEnd.defaultSampleSettings.loadType);
             var sfx = (AudioImporter)AssetImporter.GetAtPath(GeneratedFolder + "sfx_fire_bullet_1.wav");
             Assert.AreEqual(AudioClipLoadType.DecompressOnLoad, sfx.defaultSampleSettings.loadType);
             var ui = (AudioImporter)AssetImporter.GetAtPath(GeneratedFolder + "ui_flood_click.wav");

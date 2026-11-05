@@ -1,5 +1,5 @@
 // SandboxAudio.cs
-// The sound of the Sandbox: its music follows BattleFactions, which the SandboxController keeps up with the armies placed (deployment while placing, battle while fighting), a squad placed drops in, a squad
+// The sound of the Sandbox: a random deployment song while placing and a random combat song while fighting, a squad placed drops in, a squad
 // moved or turned sounds as in a match, a squad removed sounds sold, what can't be done sounds so, and pressing Run starts the battle with its sound. Squads coming and going and the battle starting are watched here each frame; the rest are the SandboxController's events.
 // Added at run time to the object with the SandboxController (see AudioDirector).
 // Depends on: AudioDirector, AudioSlots, SandboxController, WeaponFeel (BattleFactions), UnityEngine.
@@ -12,6 +12,7 @@ namespace Halobellum.Presentation
     {
         private SandboxController _sandbox;
         private bool _wasBattle;
+        private bool _battleSongPicked;
         private int _lastSquads = -1;
 
         private void Awake()
@@ -40,7 +41,16 @@ namespace Halobellum.Presentation
             AudioDirector director = AudioDirector.Instance;
             if (director == null) return;
             director.UiFaction = BattleFactions.TeamA;
-            director.Music.Play(AudioSlots.Music(BattleFactions.TeamA, _sandbox.IsBattle ? MusicMood.Battle : MusicMood.Deployment));
+            if (!_sandbox.IsBattle)
+            {
+                _battleSongPicked = false;
+                director.Music.Play(AudioSlots.DeploymentMusic);
+            }
+            else if (!_battleSongPicked)
+            {
+                _battleSongPicked = true; // Once per battle: the sides' looks changing must not change the song.
+                director.Music.Play(AudioSlots.CombatSong(AudioSlots.FloodIn(GetComponent<BattleController>().Simulation), director.NextRandom()), 1.5f);
+            }
         }
 
         private void Update()

@@ -24,18 +24,16 @@ Put the file in `Assets/_Project/Art/Imported/Audio/Resources/AudioOverride/`, n
 
 | Screen | Music |
 |---|---|
-| Scene `MainMenu` | `music_mainmenu` |
-| Draft (no side chosen yet) | `music_mainmenu` carries on |
-| Cards, round result, match over | the player's faction's menu track |
-| Deployment | the player's faction's deployment track |
-| Battle | the player's faction's battle track |
-| Match won or lost | the faction's victory or defeat stinger, with the track ducked under it. It stops when the match-over screen is left (new match, main menu, any scene load) |
-| Sandbox | deployment and battle tracks of the blue side's faction, or UNSC while blue is empty |
-| Battle scene | battle track of `BattleFactions.TeamA` |
+| Scene `MainMenu`, and the draft | `music_mainmenu` |
+| A round's cards and deployment | one of `music_deployment_1` to `_8`, picked when the cards appear (round 1, when deployment starts) |
+| Battle | one of `music_combat_1` to `_4`. With Flood on either side, `music_combat_flood_present` has a 40% chance, and the others share the rest |
+| From the round's window on | no music. A won round plays `stinger_match_victory`. A lost one plays one of `stinger_match_defeat_1` to `_5`, or against Flood also `stinger_match_defeat_flood_present`. A drawn round plays nothing. It stops when the window is left |
+| Game over | `stinger_game_victory`, or if lost `stinger_game_defeat_flood_present` against Flood and otherwise the faction's `stinger_game_defeat_*`. Unlock Skirmish has no faction, so the land's stands in |
+| Sandbox | deployment songs while placing, combat songs while fighting |
+| Battle scene | combat songs |
 | Any other scene (a settings screen) | whatever is playing carries on; the main menu's if nothing is |
 
-Tracks crossfade (2.5 s, 1.5 s into a battle). Each track remembers where it was and resumes there, because rounds are short: otherwise only the
-first minute of a battle track would ever be heard. A new match starts them over.
+Songs crossfade (2.5 s, 1.5 s into a battle). A song remembers where it was and resumes there when it is picked again, because rounds are short: otherwise only its first minute would ever be heard. A new match starts them over. The owner's music came in with D67, and the generated music and stingers described further down have left the game.
 
 UI sounds use the player's faction from the moment the draft is chosen. Before that (main menu, draft) a small neutral set plays.
 
