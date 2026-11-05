@@ -2,7 +2,7 @@
 # Brightens a baked body's texture, for one that reads as a black shape from the game's camera: a baked body has no tint that lifts its colours
 # as a real model's material does. Colours keep their proportions. Run it once on the file in Art/Imported/Models, as bring_in.py copies over it:
 #   blender --background --factory-startup --python Tools/Art/lift_texture.py -- <png> <factor>
-# The ODST's came with a median brightness of 0.15, and is lifted by 1.7.
+# The ODST's came with a median brightness of 0.15, and is lifted by 1.7. The Brute Grenadier's came with 0.09, and is lifted by 2.7.
 import sys
 
 import bpy
