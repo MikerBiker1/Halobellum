@@ -31,12 +31,12 @@ MonoBehaviour:
   targetFilter: 0
   weapons:
   - weaponName: Energy Sword
-    damagePerShot: 240
-    fireInterval: 0.6
+    damagePerShot: 180
+    fireInterval: 0.75
     range: 1.5
     minRange: 0
     projectileSpeed: 0
-    splashRadius: 2.5
+    splashRadius: 2
     damageType: 4
     isAntiArmor: 1
     canBeBlocked: 0

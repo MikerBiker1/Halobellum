@@ -1933,7 +1933,7 @@ MonoBehaviour:
     winRate: 0.1
   - attacker: Spartan
     defender: Pure Form Ranged
-    winRate: 0.2
+    winRate: 0.3
   - attacker: Spartan
     defender: Swarm Form
     winRate: 1
@@ -1993,7 +1993,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan
     defender: Chopper
-    winRate: 0.3
+    winRate: 0.9
   - attacker: Spartan
     defender: Brute Grenadier
     winRate: 0
@@ -2035,7 +2035,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan
     defender: Juggernaut
-    winRate: 0.8
+    winRate: 1
   - attacker: Spartan
     defender: Infested Grunt
     winRate: 0
@@ -2047,7 +2047,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan
     defender: Infested Wraith
-    winRate: 0.7
+    winRate: 1
   - attacker: Spartan
     defender: Infested Banshee
     winRate: 0
@@ -2935,7 +2935,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Zealot
-    winRate: 0
+    winRate: 0.3
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Scarab
     winRate: 0
@@ -4546,7 +4546,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Zealot
     defender: 'Jackal (Plasma Rifle)'
-    winRate: 1
+    winRate: 0.7
   - attacker: Zealot
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -4603,7 +4603,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Zealot
     defender: Flood Abomination
-    winRate: 1
+    winRate: 0
   - attacker: Zealot
     defender: Spartan Sniper
     winRate: 1
@@ -4666,16 +4666,16 @@ MonoBehaviour:
     winRate: 1
   - attacker: Zealot
     defender: Cannon Fodder
-    winRate: 0.1
+    winRate: 0
   - attacker: Zealot
     defender: Heavy Grunts
-    winRate: 1
+    winRate: 0.1
   - attacker: Zealot
     defender: Grunt Goblin
     winRate: 1
   - attacker: Zealot
     defender: Infested Marine
-    winRate: 1
+    winRate: 0.3
   - attacker: Zealot
     defender: Infested Warthog
     winRate: 1
@@ -5755,7 +5755,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pure Form Ranged
     defender: Spartan
-    winRate: 0.8
+    winRate: 0.7
   - attacker: Pure Form Ranged
     defender: Mantis
     winRate: 1
@@ -7018,7 +7018,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Flood Abomination
     defender: Zealot
-    winRate: 0
+    winRate: 1
   - attacker: Flood Abomination
     defender: Scarab
     winRate: 0
@@ -9835,7 +9835,7 @@ MonoBehaviour:
     winRate: 0.1
   - attacker: Chopper
     defender: Spartan
-    winRate: 0.7
+    winRate: 0.1
   - attacker: Chopper
     defender: Mantis
     winRate: 0
@@ -11302,7 +11302,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Cannon Fodder
     defender: Zealot
-    winRate: 0.9
+    winRate: 1
   - attacker: Cannon Fodder
     defender: Scarab
     winRate: 0
@@ -11506,7 +11506,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Heavy Grunts
     defender: Zealot
-    winRate: 0
+    winRate: 0.9
   - attacker: Heavy Grunts
     defender: Scarab
     winRate: 0
@@ -11914,7 +11914,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Marine
     defender: Zealot
-    winRate: 0
+    winRate: 0.7
   - attacker: Infested Marine
     defender: Scarab
     winRate: 0
@@ -12691,7 +12691,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Juggernaut
     defender: Spartan
-    winRate: 0.2
+    winRate: 0
   - attacker: Juggernaut
     defender: Mantis
     winRate: 0.7
@@ -13507,7 +13507,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Wraith
     defender: Spartan
-    winRate: 0.3
+    winRate: 0
   - attacker: Infested Wraith
     defender: Mantis
     winRate: 0.9

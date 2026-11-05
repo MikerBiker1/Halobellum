@@ -82,7 +82,7 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Armor | Shield | Speed | Weapons | Wins, average | Best counters |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Chopper | Flanker | 1 | 0 | 2 | 200 | 300 | Light | 0 | 5.5 | Ramming Blades (60 per 1 s, Melee, 1.5 m, splash 1.5 m); Chopper Autocannons (10 per 0.25 s, Ballistic, 9 m) | 15 of 68, 22% | Flamethrower Trooper 100%, Scorpion 100% |
+| Chopper | Flanker | 1 | 0 | 2 | 200 | 300 | Light | 0 | 5.5 | Ramming Blades (60 per 1 s, Melee, 1.5 m, splash 1.5 m); Chopper Autocannons (10 per 0.25 s, Ballistic, 9 m) | 14 of 68, 22% | Flamethrower Trooper 100%, Scorpion 100% |
 | Brute Grenadier | Chaff clear | 1 | 0 | 4 | 150 | 150 | Unarmored | 0 | 1.5 | Spike Grenade Launcher (34 per 2 s, Explosive, 13 m, splash 2.8 m, lobbed) | 30 of 68, 44% | Scorpion 100%, Mantis 100% |
 | Marauder | Tank | 2 | 50 | 1 | 300 | 1250 | Heavy | 0 | 1.5 | Plasma Cannon (80 per 2.2 s, Energy, 15 m, splash 2 m); Spike Turret (8 per 0.3 s, Ballistic, 12 m) | 34 of 68, 49% | Gauss Warthog 100%, Spartan 100% |
 | Reaver | Anti-air | 2 | 50 | 1 | 300 | 700 | Light | 0 | 3 | Spike Rockets (24 per 0.5 s, Explosive, 20 m, x3 vs air) | 12 of 68, 18% | Marine 100%, Flamethrower Trooper 100% |
@@ -108,8 +108,8 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Armor | Shield | Speed | Weapons | Wins, average | Best counters |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Cannon Fodder | Chaff | 1 | 0 | 30 | 100 | 20 | Unarmored | 0 | 1.75 | Plasma Pistol (3 per 0.5 s, Energy, 9 m) | 34 of 68, 49% | Flamethrower Trooper 100%, Fuel Rod Grunt 100% |
-| Heavy Grunts | Single-target DPS | 1 | 0 | 8 | 200 | 100 | Unarmored | 30 | 1.5 | Needle Rifle (6.5 per 0.25 s, Energy, 12 m) | 39 of 68, 57% | Marine 100%, Infection Forms 100% |
+| Cannon Fodder | Chaff | 1 | 0 | 30 | 100 | 20 | Unarmored | 0 | 1.75 | Plasma Pistol (3 per 0.5 s, Energy, 9 m) | 34 of 68, 50% | Flamethrower Trooper 100%, Fuel Rod Grunt 100% |
+| Heavy Grunts | Single-target DPS | 1 | 0 | 8 | 200 | 100 | Unarmored | 30 | 1.5 | Needle Rifle (6.5 per 0.25 s, Energy, 12 m) | 40 of 68, 58% | Marine 100%, Infection Forms 100% |
 | Grunt Goblin | Tank | 3 | 200 | 1 | 400 | 1250 | Heavy | 0 | 2 | Goblin Plasma Cannons (9 per 0.2 s, Energy, 14 m); Goblin Fuel Rod (60 per 3 s, Explosive, 16 m, splash 2.5 m) | 41 of 68, 59% | Gauss Warthog 100%, Spartan 100% |
 
 - **Cannon Fodder.** The largest squad in the game: 30 Grunts who barely fight. They are there to be shot instead of something else.
@@ -120,7 +120,7 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Armor | Shield | Speed | Weapons | Wins, average | Best counters |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Infested Marine | Chaff | 1 | 0 | 12 | 100 | 140 | Unarmored | 0 | 3 | Scythe Limb (20 per 0.8 s, Melee, 1.5 m); Scavenged Rifle (4 per 0.5 s, Ballistic, 10 m) | 47 of 68, 70% | Flamethrower Trooper 100%, Carrier Form 100% |
+| Infested Marine | Chaff | 1 | 0 | 12 | 100 | 140 | Unarmored | 0 | 3 | Scythe Limb (20 per 0.8 s, Melee, 1.5 m); Scavenged Rifle (4 per 0.5 s, Ballistic, 10 m) | 48 of 68, 71% | Flamethrower Trooper 100%, Carrier Form 100% |
 | Infested Warthog | Flanker | 1 | 0 | 2 | 200 | 320 | Light | 0 | 5 | Ramming Mass (50 per 1 s, Melee, 1.5 m, splash 1.5 m); Scavenged Machine Gun (7 per 0.2 s, Ballistic, 10 m) | 29 of 68, 42% | Flamethrower Trooper 100%, Scorpion 100% |
 | Infested Scorpion | Tank | 2 | 50 | 1 | 250 | 1350 | Heavy | 0 | 1.4 | Scavenged Cannon (80 per 3 s, Explosive, 14 m, splash 2.5 m); Tentacle Whip (30 per 1 s, Melee, 4 m) | 42 of 68, 60% | Spartan 100%, Zealot 100% |
 | Infested Hornet | Aerial | 2 | 50 | 2 | 250 | 360 | Light | 0 | 4 | Scavenged Rockets (20 per 1 s, Explosive, 12 m); Spore Bombs (40 per 2 s, Explosive, 8 m, splash 3 m) | 45 of 68, 66% | Wolverine 100%, Swarm Form 100% |

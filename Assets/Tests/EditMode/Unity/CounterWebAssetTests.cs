@@ -60,7 +60,7 @@ namespace Halobellum.Tests
             ("Seeder", "Marine"),
             ("Infected Pelican", "Vampire"),
             ("Infected Phantom", "Swarm Form"),
-            ("Flood Abomination", "Zealot"),
+            ("Flood Abomination", "Hunter Captain"),
             ("Spartan Sniper", "Marine"),
             ("Spartan Heavy Weapons", "Elite"),
             ("Spartan Grenadier", "Scorpion"),
