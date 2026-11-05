@@ -221,6 +221,32 @@ namespace Halobellum.Tests
             Assert.Greater(HardsLevelsInRoundTwo(MatchMode.UnlockSkirmish), HardsLevelsInRoundTwo(MatchMode.Faction));
         }
 
+        // ------------------------------------------------------------------ techs by the board
+
+        [Test]
+        public void HardsTechs_GoByTheBoard()
+        {
+            var airTech = new TechUpgrade { Name = "Anti-Air", Cost = 100, AirDamageMultiplier = 2f };
+            var damage = new TechUpgrade { Name = "Damage", Cost = 100, DamageMultiplier = 1.3f };
+            var armor = new TechUpgrade { Name = "Armor", Cost = 100, HealthMultiplier = 1.3f };
+            WeaponStats gun = TestUnits.Weapon(damage: 10f, range: 12f, interval: 0.5f);
+            gun.HasOwnTargetFilter = true;
+            gun.TargetFilter = TargetFilter.Ground;
+            WeaponStats coax = TestUnits.Weapon(damage: 10f, range: 12f, interval: 0.5f);
+            coax.HasOwnTargetFilter = true;
+            coax.TargetFilter = TargetFilter.Both;
+            UnitStats tank = Unit("Tank", UnitRole.Tank, 1, 0, 1, 100, 1200);
+            tank.Weapons = new[] { gun, coax };
+            var ground = new[] { new SeenSquad { Type = Unit("Tank", UnitRole.Tank, 1, 0, 1, 100, 1200) } };
+            var air = new[] { new SeenSquad { Type = Unit("Flyer", UnitRole.Aerial, 1, 0, 1, 100, 400, air: true) } };
+            var ai = new RuleBasedAi(AiDifficulty.Hard, 3);
+
+            Assert.AreEqual(0f, ai.TechValueAgainst(tank, airTech, ground), "No use until air is seen.");
+            Assert.Greater(ai.TechValueAgainst(tank, airTech, air), 0f);
+            Assert.Greater(ai.TechValueAgainst(tank, damage, ground), ai.TechValueAgainst(tank, damage, air), "Half its firepower can't reach what flies.");
+            Assert.AreEqual(ai.TechValueAgainst(tank, armor, ground), ai.TechValueAgainst(tank, armor, air), "Armor is worth the same against anything.");
+        }
+
         // ------------------------------------------------------------------ reinforcement squads
 
         /// <summary>Always takes the first card of an offer, around the real AI, so that the test is about where the squads go.</summary>

@@ -65,6 +65,77 @@ namespace Halobellum.Economy
         private bool _movedDraftSquads;
 
         /// <param name="matchups">Measured unit-vs-unit win rates (used by Hard). Null = role table only.</param>
+        // ------------------------------------------------------------------ reading the enemy's board (D65)
+
+        // Shares of the value of what Hard has seen: how much of it flies or comes in crowds. They choose its techs. Its units already go by the measured matchups, and
+        // weights for air, crowds and armor on top of those won no more matches against the old Hard (D65).
+        private float _boardAir, _boardCrowd;
+
+        private void ReadBoard(IReadOnlyList<SeenSquad> seen)
+        {
+            float total = 0f, air = 0f, crowd = 0f;
+            foreach (SeenSquad squad in seen)
+            {
+                total += squad.Value;
+                if (squad.Type.IsAir) air += squad.Value;
+                if (squad.Type.SquadSize >= 6) crowd += squad.Value;
+            }
+            _boardAir = total > 0f ? air / total : 0f;
+            _boardCrowd = total > 0f ? crowd / total : 0f;
+        }
+
+        /// <summary>How much of this unit's firepower reaches air, from 0 to 1.</summary>
+        private static float ShareThatHitsAir(UnitStats unit)
+        {
+            float all = 0f, air = 0f;
+            foreach (WeaponStats weapon in unit.Weapons)
+            {
+                float rate = weapon.DamagePerShot * weapon.ShotsPerSecond;
+                all += rate;
+                if (weapon.CanTarget(unit, true)) air += rate;
+            }
+            return all > 0f ? air / all : 0f;
+        }
+
+        /// <summary>How much of what Hard has seen this unit's guns can reach, from 0 to 1.</summary>
+        private float ShareOfTheBoardItReaches(UnitStats unit)
+        {
+            float air = ShareThatHitsAir(unit);
+            float ground = 0f, all = 0f;
+            foreach (WeaponStats weapon in unit.Weapons)
+            {
+                float rate = weapon.DamagePerShot * weapon.ShotsPerSecond;
+                all += rate;
+                if (weapon.CanTarget(unit, false)) ground += rate;
+            }
+            return _boardAir * air + (1f - _boardAir) * (all > 0f ? ground / all : 0f);
+        }
+
+        /// <summary>What a tech is worth to this unit against an army seen, for a test.</summary>
+        public float TechValueAgainst(UnitStats type, TechUpgrade tech, IReadOnlyList<SeenSquad> seen)
+        {
+            ReadBoard(seen);
+            return TechValue(type, tech);
+        }
+
+        /// <summary>What a tech is worth to this unit against this board, per 100 credits. A tech for shooting air is worth nothing until air is seen, and damage is worth less on guns that can't reach most of the board.</summary>
+        private float TechValue(UnitStats type, TechUpgrade tech)
+        {
+            float reach = ShareOfTheBoardItReaches(type);
+            float range = 1f;
+            foreach (WeaponStats weapon in type.Weapons) range = System.Math.Max(range, weapon.Range);
+            float value = tech.HealthMultiplier - 1f;
+            if (type.MaxHealth > 0f) value += (tech.ShieldBonus + 4f * tech.ShieldRegenBonus) / type.MaxHealth;
+            value += reach * (tech.DamageMultiplier - 1f + tech.FireRateMultiplier - 1f);
+            value += 0.5f * reach * tech.RangeBonus / range;
+            value += 0.25f * (tech.MoveSpeedMultiplier - 1f);
+            value += reach * (0.05f + 0.15f * _boardCrowd) * tech.SplashRadiusBonus;
+            value += reach * tech.ConeDegreesBonus / 90f;
+            value += _boardAir * ShareThatHitsAir(type) * (tech.AirDamageMultiplier - 1f);
+            if (tech.AddsAirTargeting) value += _boardAir * (1f - ShareThatHitsAir(type));
+            return 100f * value / System.Math.Max(1, tech.Cost);
+        }
+
         public RuleBasedAi(AiDifficulty difficulty, int seed, MatchupTable matchups = null)
         {
             Difficulty = difficulty;
@@ -374,6 +445,7 @@ namespace Halobellum.Economy
 
             // 2. Strategy.
             if (UsesMatchups) UpdateThreats(view, seen);
+            if (Difficulty == AiDifficulty.Hard) ReadBoard(seen);
             Strategy = ChooseStrategy(view, seen, valueByRole, totalSeen);
 
             // In round 1, put the free draft squads where their role belongs.
@@ -477,10 +549,17 @@ namespace Halobellum.Economy
             {
                 if (type.TechUpgrades == null || invested[type] < type.Cost * 2) continue; // Only worth it with 2+ squads' worth.
                 TechUpgrade cheapest = null;
+                bool byValue = Difficulty == AiDifficulty.Hard;
+                float bestValue = 0f;
                 foreach (TechUpgrade tech in type.TechUpgrades)
                 {
                     if (tech == null || self.HasTech(type, tech) || tech.Cost + reserve > self.Credits) continue;
-                    if (cheapest == null || tech.Cost < cheapest.Cost) cheapest = tech;
+                    if (byValue)
+                    {
+                        float value = TechValue(type, tech);
+                        if (value > bestValue) { bestValue = value; cheapest = tech; }
+                    }
+                    else if (cheapest == null || tech.Cost < cheapest.Cost) cheapest = tech;
                 }
                 if (cheapest != null && view.BuyTech(type, cheapest).Ok)
                 {
