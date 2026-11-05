@@ -1,6 +1,6 @@
 # Assets to download
 
-Everything in the game that is still a stand-in, for you to replace. Tick things off as you get them. Nothing here is required for the game to run.
+Everything in the game that is still a stand-in, for you to replace. I tick things off as you add them. Nothing here is required for the game to run.
 
 - **Sound and music:** put the file in `Assets/_Project/Art/Imported/Audio/Resources/AudioOverride/`, named after its slot, such as `music_combat_5.ogg`. No code changes are needed, and the game uses it from its next start. Use `.ogg` or `.wav` for music, since `.mp3` usually doesn't loop cleanly.
 - **Several files for one slot:** name them `slot_1`, `slot_2` and so on, up to 12. One is picked each time.
@@ -33,67 +33,89 @@ All in, from your `Art_Source/Music` (D67). To change one, replace the file ther
 | [ ] | Node of light hitting a base, small and big | The end of a round. Send me the files and I'll fit them. | The battle's own hit and explosion sounds, by size |
 | [ ] | Node of light taking off | The end of a round, optional. | Silence |
 
-## Unit sound effects
+## Sound effects
 
-Your 59 files are in (D70): see `Assets/_Project/Art/Imported/Audio/SOURCE_SFX.txt` for which slot each fills. The list below is the older plan by kind; a row whose slot you filled can be ticked.
+55 of your 59 files from `Art_Source/SFX` are in (D70). `Assets/_Project/Art/Imported/Audio/SOURCE_SFX.txt` says which file fills which slot. To add or change one, put it in `Art_Source/SFX` and tell me, or run `Tools/Audio/bring_in_sfx.py` after adding its line there.
 
-Sounds go by kind of weapon, not by unit, so one file covers every unit in its row.
+Not used: the plasma grenade (no use yet), the beam rifle and the magnum (no unit carries them), and `fire[plasmarifle1]` (the same file as the Banshee's).
 
-### Weapons firing (17)
+### Weapons firing
 
-| Done | Slot | Used by |
-| --- | --- | --- |
-| [ ] | `sfx_fire_bullet` | Rifles, SMGs, pistols: Marines and others. It plays very often, so keep it short and not too bright. |
-| [ ] | `sfx_fire_heavybullet` | Machine guns, chainguns, autocannons, turrets, shotguns: Warthog, Mantis, Spartan CQB. |
-| [ ] | `sfx_fire_bullet_flood` | A rifle in Flood hands: Infested Marine. |
-| [ ] | `sfx_fire_gauss` | Gauss guns and the sniper rifle: Gauss Warthog, Spartan Sniper. |
-| [ ] | `sfx_fire_cannon` | Tank and other cannons: Scorpion, Elephant, Rhino, Grizzly. |
-| [ ] | `sfx_fire_rocket` | Rockets and missiles, the launch: Hornet, Wolverine, Archer Pod. |
-| [ ] | `sfx_fire_bomb` | Bombs, the release: the Banshee's fuel rod bomb (every 2.5 s, at ground targets), Hornet, Longsword. |
-| [ ] | `sfx_fire_flame` | Flamethrowers. |
-| [ ] | `sfx_fire_laser` | Spartan Laser, Hunter Captain's Siphon Laser. |
-| [ ] | `sfx_fire_plasma` | Plasma rifles, pistols and turrets: Grunts, Jackals, Elites, and the Banshee's plasma cannons (fast, at air and ground). |
-| [ ] | `sfx_fire_plasmaheavy` | Fuel rod guns, plasma mortars, and plasma shots that fly and burst: Fuel Rod Grunt, Wraith, Hunter, Marauder. |
-| [ ] | `sfx_fire_needle` | Needle weapons: Vampire, Heavy Grunts. |
-| [ ] | `sfx_fire_beam` | The Scarab's beam: 2 s of charging, then 3 s of firing, 5.5 s in all. |
-| [ ] | `sfx_fire_bio` | Flood spat bone, bone shards and spores. |
-| [ ] | `sfx_fire_melee` | Melee with no faction of its own. |
-| [ ] | `sfx_fire_melee_covenant` | Covenant melee: energy sword, talons. |
-| [ ] | `sfx_fire_melee_flood` | Flood melee: claws, tendrils, bites. |
+A weapon with a sound of its own uses it; the others use their kind's sound.
 
-### Hits, deaths and engines (17)
+| Done | Slot | Used by | Your file |
+| --- | --- | --- | --- |
+| [x] | `sfx_fire_assaultrifle` | Marines, Infested Marines, Combat Forms. | `assault_rifle_fire_brown2_1` |
+| [x] | `sfx_fire_smg` | ODSTs. Loops while firing. | `fire[smg_new01]` |
+| [x] | `sfx_fire_m60` | Warthog and Infested Warthog machine guns. Loops while firing. | `fire[m60_ster1]` |
+| [x] | `sfx_fire_ghost` | Ghost and Infested Ghost. Loops while firing. | `ghost_fire[plasma_ghost]` |
+| [x] | `sfx_fire_flame` | Flamethrowers. Loops while firing. | `flamethrower_fire_FT_active` |
+| [x] | `sfx_fire_plasma` | Plasma rifles, pistols and turrets. | `plas_rifle_fire[plas_rif_fire]` |
+| [x] | `sfx_fire_banshee` | Banshee and Infested Banshee plasma cannons. | `banshee_fire[plasmarifle1]` |
+| [x] | `sfx_fire_banshee_bomb`, `sfx_explosion_banshee` | The Banshee's fuel rod bomb, fired and landing. | `banshee_cannon_fire`, `banshee_cannon_expl` |
+| [x] | `sfx_fire_fuelrod`, `sfx_explosion_fuelrod` | Fuel Rod Grunt, Grunt Goblin, Goliath; their shots landing. | `Fuelrod_fire_grunt`, `fuel_rod_gun_explosion` 1 and 2 |
+| [x] | `sfx_fire_hunter` | Hunters' assault cannon. | `Hunter_fuel_rod_gun_fire` |
+| [x] | `sfx_fire_mortar`, `sfx_flight_mortar` | Wraith and Infested Wraith mortar, and the shell in the air. | `wraith_fire_mortar`, `Wraith airborn projectile loop` |
+| [x] | `sfx_fire_bruteshot` | Brute Grenadier. | `brute_shot_fire` |
+| [x] | `sfx_fire_shotgun` | Spartan CQB. | `fire[shotgun2]` |
+| [x] | `sfx_fire_sniper` | Spartan Sniper. | `Sniper fire[ruger24]` |
+| [x] | `sfx_fire_sword`, `sfx_sword_ready` | Zealots: the sword, and readying it as a battle starts. | `sword_impact_character`, `sword_ready` |
+| [x] | `sfx_fire_needle` | Needle weapons. | `fire[needlefire11]` |
+| [x] | `sfx_fire_rocket` | Rockets and missiles. | `fire[rocket16]` |
+| [x] | `sfx_fire_cannon` | Tank cannons. | `scorpion_cannon_fire` |
+| [x] | `sfx_fire_gauss` | Gauss Warthog, Cobra, Gremlin (my guess for this file). | `fire[grifle03]` |
+| [x] | `sfx_beam_charge`, `_in`, `_loop`, `_out` | The Scarab's beam, in that order. | `Beam Charge scarab`, `in`, `loop`, `out` |
+| [ ] | `sfx_fire_bullet` | Other rifles, SMGs and pistols, such as the BR85. | Generated stand-in |
+| [ ] | `sfx_fire_heavybullet` | Other machine guns, chainguns, autocannons, turrets: Scorpion and Grizzly coaxial guns, Mantis, Pelican, Sparrowhawk, Condor, Chopper, Vulture. | Generated stand-in |
+| [ ] | `sfx_fire_bomb` | Hornet and Longsword bombs. | Generated stand-in |
+| [ ] | `sfx_fire_laser` | Spartan Laser, Hunter Captain's Siphon Laser. | Generated stand-in |
+| [ ] | `sfx_fire_plasmaheavy` | The Marauder's plasma cannon and other plasma shots that burst. | Generated stand-in |
+| [ ] | `sfx_fire_bio` | Flood spat bone, bone shards and spores. | Generated stand-in |
+| [ ] | `sfx_fire_melee`, `_covenant`, `_flood` | Melee: claws, talons, tendrils, rams. | Generated stand-ins |
 
-| Done | Slot | When it plays |
-| --- | --- | --- |
-| [ ] | `sfx_death_lekgolo` | A Hunter or Goliath dying: the gore death. Until you add it, they keep the Covenant soldier's death sound. |
-| [ ] | `sfx_impact_armor` | A hit on armor. |
-| [ ] | `sfx_impact_flesh` | A hit on something unarmored. |
-| [ ] | `sfx_impact_shield` | A hit on an energy shield. |
-| [ ] | `sfx_impact_block` | A shot stopped by a held shield. |
-| [ ] | `sfx_impact_wet` | A hit on the Flood. |
-| [ ] | `sfx_explosion_small` | Rockets, shells and fuel rods landing. |
-| [ ] | `sfx_explosion_medium` | Medium vehicles and walkers going up. |
-| [ ] | `sfx_explosion_large` | The biggest units going up, and towers. |
-| [ ] | `sfx_death_infantry` | A UNSC soldier falling. |
-| [ ] | `sfx_death_infantry_covenant` | A Covenant soldier falling. |
-| [ ] | `sfx_death_flood` | A Flood form dying. |
-| [ ] | `sfx_death_vehicle` | A light vehicle going up. |
-| [ ] | `sfx_death_air` | An aircraft hit, falling and crashing. |
-| [ ] | `sfx_hum_engine` | A loop: the engines of all UNSC ground vehicles. It must close without a click. |
-| [ ] | `sfx_hum_hover` | A loop: what flies or floats (aircraft, Covenant vehicles). It must close without a click. |
-| [ ] | `sfx_drop_in` | A squad falling into place: it lands 0.6 s in. |
+### Explosions, deaths and the Flood
 
-### Flood specials (5)
+| Done | Slot | When it plays | Your file |
+| --- | --- | --- | --- |
+| [x] | `sfx_explosion_small` | Rockets, shells and grenades landing. | `frag_grenade_expl_frag2` |
+| [x] | `sfx_explosion_medium` | Medium vehicles and walkers going up. | `med_explosion_15` |
+| [x] | `sfx_explosion_large` | The biggest units going up. | `large_explosion_1`, `_12` |
+| [x] | `sfx_death_scarab`, `sfx_walk_scarab` | A Scarab dying, and walking. | `Scarab dying`, `Scarab walking` |
+| [x] | `sfx_death_air_unsc` | A UNSC aircraft crashing, and the Infected Pelican's crash dive. | `UNSC air unit hitting the ground` |
+| [x] | `sfx_pelican_dive` | The Infected Pelican starting its dive. | `Infested pelican dive` |
+| [x] | `sfx_death_flood` | A Flood form dying. | `combatform_body_destroyed` |
+| [x] | `sfx_death_infectionform` | An Infection Form popping. | `infectionform_die2` |
+| [x] | `sfx_flood_burst` | A Carrier Form going off, and other Flood bursts. | `flood carrier explosion` |
+| [x] | `sfx_infection_rise` | A unit rising as Flood: one of four howls. | `flood_howls` 1 to 4 |
+| [x] | `sfx_call_seeder`, `sfx_call_swarm` | Seeders and Swarm Forms, every 3 to 6 s. | `Seeder` 1 to 3, `Swarm form` 1 to 3 |
+| [x] | `sfx_shield_regen` | An energy shield starting to recharge. | `shield_regen` |
+| [ ] | `sfx_death_infantry` | A UNSC soldier falling. | Generated stand-in |
+| [ ] | `sfx_death_infantry_covenant` | A Covenant soldier falling. | Generated stand-in |
+| [ ] | `sfx_death_vehicle` | A light vehicle going up. | Generated stand-in |
+| [ ] | `sfx_death_air` | A Covenant or Flood aircraft going down. | Generated stand-in |
+| [ ] | `sfx_death_lekgolo` | A Hunter or Goliath dying. | The Covenant soldier's death |
+| [ ] | `sfx_pelican_crash` | The biggest Flood units dying. | Generated stand-in |
+| [ ] | `sfx_infection_start` | A dying unit being infected. | Generated stand-in |
+| [ ] | `sfx_hum_engine`, `sfx_hum_hover` | Loops: UNSC ground engines; what flies or floats. They must close without a click. | Generated stand-ins |
+| [ ] | `sfx_drop_in` | A squad falling into place: it lands 0.6 s in. | Generated stand-in |
+| — | `sfx_impact_armor`, `_flesh`, `_shield`, `_block`, `_wet` | Hits. You said you won't add these: the stand-ins play quietly. | Generated stand-ins |
 
-| Done | Slot | When it plays |
-| --- | --- | --- |
-| [ ] | `sfx_flood_burst` | A Carrier Form going off, a Flood unit bursting, Bone Shards landing. |
-| [ ] | `sfx_infection_start` | A dying unit being infected. |
-| [ ] | `sfx_infection_rise` | An infected corpse rising. |
-| [ ] | `sfx_pelican_dive` | The Infected Pelican starting its dive. |
-| [ ] | `sfx_pelican_crash` | The Infected Pelican hitting the ground, and the biggest Flood units dying. |
+### Interface
 
-Spells and interface sounds have slots too, listed in `Assets/_Project/Art/Imported/Audio/README.txt`. I left them out here because you asked for music and unit sounds.
+A UI file named without a faction, such as `ui_click`, serves every faction.
+
+| Done | Slot | When it plays | Your file |
+| --- | --- | --- | --- |
+| [x] | `ui_click` | Any button. | `UI buttons` |
+| [x] | `ui_error` | Something that can't be done. | `Failure to place unit` |
+| [x] | `ui_cardpick` | A card taken. | `Card chosen` |
+| [x] | `ui_buy` | A squad bought. | `Unit bought (fall to grid)` |
+| [x] | `ui_unlock` | A unit unlocked or a tech bought. | `Unit unlocked` |
+| [ ] | `ui_hover`, `ui_sell`, `ui_skip`, `ui_spellplaced`, `ui_levelup`, `ui_battlestart`, `ui_roundwon`, `ui_roundlost`, `ui_matchwon`, `ui_matchlost` | The rest of the interface. Each can also have one per faction, such as `ui_unsc_hover`. | Generated stand-ins |
+
+### Spells
+
+All 17 spell slots still have generated stand-ins, listed in `Assets/_Project/Art/Imported/Audio/README.txt`.
 
 ## Models left to find
 
