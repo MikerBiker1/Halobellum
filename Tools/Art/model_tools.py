@@ -747,6 +747,27 @@ def _input_image(material, socket_name):
     return image if image and image.size[0] > 0 else None
 
 
+def plain_materials():
+    """
+    A metal surface and an unlit one have no diffuse colour, so they would bake to black, and an unlit one shows no texture to finish().
+    The colours are what is wanted, so metal is switched off and an unlit material gets an ordinary shader on its texture.
+    """
+    for material in {m for o in meshes() for m in o.data.materials if m}:
+        shader = _shader(material)
+        if shader is None:
+            image = next((n for n in material.node_tree.nodes if n.type == "TEX_IMAGE"), None)
+            output = next(n for n in material.node_tree.nodes if n.type == "OUTPUT_MATERIAL")
+            shader = material.node_tree.nodes.new("ShaderNodeBsdfPrincipled")
+            material.node_tree.links.new(shader.outputs["BSDF"], output.inputs["Surface"])
+            if image:
+                material.node_tree.links.new(image.outputs["Color"], shader.inputs["Base Color"])
+            print(f"REPORT   {material.name}: was unlit, image {image.image.name if image else None}")
+        metallic = shader.inputs["Metallic"]
+        for link in list(metallic.links):
+            material.node_tree.links.remove(link)
+        metallic.default_value = 0.0
+
+
 def _save_scaled(image, path, size):
     copy = image.copy()
     if copy.size[0] > size or copy.size[1] > size:

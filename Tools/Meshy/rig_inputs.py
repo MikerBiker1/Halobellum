@@ -124,27 +124,6 @@ def one_material(image):
     return o
 
 
-def no_metal():
-    """
-    A metal surface and an unlit one have no diffuse colour, so they would bake to black. The colours are what is wanted here,
-    so metal is switched off, and an unlit material gets an ordinary shader on its texture.
-    """
-    for material in {m for o in mt.meshes() for m in o.data.materials if m}:
-        shader = mt._shader(material)
-        if shader is None:
-            image = next((n for n in material.node_tree.nodes if n.type == "TEX_IMAGE"), None)
-            output = next(n for n in material.node_tree.nodes if n.type == "OUTPUT_MATERIAL")
-            shader = material.node_tree.nodes.new("ShaderNodeBsdfPrincipled")
-            material.node_tree.links.new(shader.outputs["BSDF"], output.inputs["Surface"])
-            if image:
-                material.node_tree.links.new(image.outputs["Color"], shader.inputs["Base Color"])
-            print(f"REPORT   {material.name}: was unlit, image {image.image.name if image else None}")
-        metallic = shader.inputs["Metallic"]
-        for link in list(metallic.links):
-            material.node_tree.links.remove(link)
-        metallic.default_value = 0.0
-
-
 def stand(height, feet=False):
     mt.centre_on_ground()
     low, high = mt._bounds()
@@ -182,7 +161,7 @@ def prepare(unit, spec):
     if unit == "Grunt":
         image = atlas_grunt(folder)
     elif spec.get("bake"):
-        no_metal()
+        mt.plain_materials()
         baked = mt.bake_one(SIZE)
         image = write_png(read(baked, SIZE, SIZE), os.path.join(folder, unit + ".png"))
     else:
