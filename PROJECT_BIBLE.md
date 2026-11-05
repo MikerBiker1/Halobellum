@@ -241,7 +241,7 @@ ODSTs are not a unit. They appear as a UNSC spell card (Section 10).
 | Vampire | Anti-air | 2 | 50 | 1 | 300 | 500 | Plasma, bonus damage against air, can still hit ground |
 | Banshee | Aerial | 2 | 50 | 2 | 300 | 400 | Fast bombing runs |
 | Hunter pair | Tank | 3 | 225 | 2 | 450 | 1500 | Heavy armor; 240 degree front defense arc, extremely resistant inside it, weak from behind |
-| Zealot | Single-target DPS | 3 | 200 | 1 | 400 | 1400 | Energy sword, fast, strong shield, Unarmored body |
+| Zealot | Single-target DPS | 3 | 200 | 1 | 400 | 1400 | Energy sword that cleaves, leaps at its enemy, fast, strong shield, Unarmored body |
 | Scarab | Titan | 4 | 350 | 1 | 800 | 8500 | Walking fortress; plasma turrets plus a charged main beam |
 
 The Covenant has no dedicated anti-armor unit. Elites, Zealots, and Wraith splash fill that job for the slice, and a dedicated unit may be added in the balance pass if win rates demand it. The Engineer is not in the slice.
