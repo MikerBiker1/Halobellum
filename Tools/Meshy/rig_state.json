@@ -228,5 +228,18 @@
    566
   ],
   "animation_credits": 12
+ },
+ "BruteGrenadier": {
+  "attempts": [
+   {
+    "started": "23:19:28",
+    "id": "01a1a9ee-ee20-7195-a8e6-ea7650e7e30c",
+    "finished": true,
+    "status": "SUCCEEDED",
+    "credits": 5
+   }
+  ],
+  "credits": 5,
+  "rig": "01a1a9ee-ee20-7195-a8e6-ea7650e7e30c"
  }
 }
