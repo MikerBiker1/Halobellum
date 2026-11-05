@@ -97,6 +97,19 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void RunPair_ABattleWhereNeitherCanHurtTheOther_IsNoWinForEither_ThoughTheTimeLimitWouldCallItByBaseDamage()
+        {
+            UnitStats flyer = TestUnits.Unit(name: "Flyer", air: true, filter: TargetFilter.Air, weapon: TestUnits.Weapon(damage: 20f, range: 10f));
+            flyer.BaseDamage = 5f;
+            UnitStats walker = TestUnits.Unit(name: "Walker", filter: TargetFilter.Ground, weapon: TestUnits.Weapon(damage: 20f, range: 10f));
+            CounterMatchup matchup = CounterWeb.RunPair(TestRules.Default(), flyer, walker, Quick(2));
+
+            Assert.AreEqual(2, matchup.Draws);
+            Assert.AreEqual(0f, matchup.WinRateA);
+            Assert.AreEqual(0f, matchup.WinRateB);
+        }
+
+        [Test]
         public void Report_PassesOnlyWhenTheBestCounterWinsAtLeastTheThreshold()
         {
             UnitStats chaff = Role(UnitRole.Chaff), clear = Role(UnitRole.ChaffClear), tank = Role(UnitRole.Tank);

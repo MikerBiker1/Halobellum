@@ -156,7 +156,9 @@ namespace Halobellum.Combat
                     settings.Runner, settings.Runner.BaseSeed + i);
                 matchup.Battles++;
                 bool firstWon = result.Outcome == BattleOutcome.TeamAWins, secondWon = result.Outcome == BattleOutcome.TeamBWins;
-                if (!firstWon && !secondWon) matchup.Draws++;
+                // Neither side could hurt the other (a Seeder and a Flood form that can't reach it): the time limit decides that by base damage alone, and nobody beat anybody.
+                bool stalemate = result.TimedOut && result.TeamA.DamageDealt <= 0f && result.TeamB.DamageDealt <= 0f;
+                if (stalemate || (!firstWon && !secondWon)) matchup.Draws++;
                 else if (firstWon != swapped) matchup.WinsA++;
                 else matchup.WinsB++;
             }
