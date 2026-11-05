@@ -8,6 +8,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 import bmesh
 import numpy as np
 from mathutils import Matrix, Vector
+from mathutils.bvhtree import BVHTree
 import model_tools as mt
 
 BIG = 5
@@ -41,20 +42,29 @@ def sheets(mesh):
     return result
 
 
+def crossings(tree, start, direction):
+    """How many times a line going this way from just off a face crosses the mesh."""
+    count, at = 0, start + direction * 1e-5
+    while count < 50:
+        hit = tree.ray_cast(at, direction)[0]
+        if hit is None:
+            return count
+        count, at = count + 1, hit + direction * 1e-5
+    return count
+
+
 def outward_and_laid_out():
     """Turns any sheet that is inside out (a whole frond came out that way), since the game hides back faces, then lays out the tail."""
     body = mt.meshes("^Body$")[0]
     mesh = bmesh.new()
     mesh.from_mesh(body.data)
     mesh.faces.ensure_lookup_table()
+    tree = BVHTree.FromBMesh(mesh)
     for faces in sheets(mesh):
-        centre = sum((v.co for f in faces for v in f.verts), Vector()) / sum(len(f.verts) for f in faces)
-        volume = 0.0
-        for f in faces:
-            first = f.verts[0].co - centre
-            for a, b in zip(f.verts[1:], f.verts[2:]):
-                volume += first.dot((a.co - centre).cross(b.co - centre))
-        if volume < 0:
+        # A line going out from a face that points outward crosses the model's skin an even number of times. Most of a sheet's faces vote.
+        step = max(1, len(faces) // 40)
+        inward = sum(crossings(tree, f.calc_center_median(), f.normal) % 2 for f in faces[::step])
+        if inward * 2 > len(faces[::step]):
             print(f"REPORT turned a sheet of {len(faces)} faces the right way out")
             bmesh.ops.reverse_faces(mesh, faces=faces)
     turn = Matrix.Translation(HUB) @ Matrix.Rotation(math.radians(TAIL_ROLL), 4, "Y") @ Matrix.Rotation(math.radians(TAIL_LEVEL), 4, "X") @ Matrix.Translation(-HUB)
