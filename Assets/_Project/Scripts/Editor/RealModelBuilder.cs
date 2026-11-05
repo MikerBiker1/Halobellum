@@ -30,8 +30,6 @@ namespace Halobellum.EditorTools
             public string Unit, Folder;
             public float Length, Height;
             public Color Tint = Color.white;
-            /// <summary>Stands on its middle whatever the unit's data says, for a model that flies.</summary>
-            public bool Flies;
         }
 
         private static readonly Color Infested = new Color(0.72f, 0.82f, 0.45f);
@@ -82,7 +80,7 @@ namespace Halobellum.EditorTools
             new Entry { Unit = "Banished/Marauder", Folder = "Marauder", Length = 5.8f },
             new Entry { Unit = "Banished/Reaver", Folder = "Reaver", Height = 5f },
             new Entry { Unit = "Covenant/Vampire", Folder = "Vampire", Length = 7.5f },
-            new Entry { Unit = "Flood/Seeder", Folder = "Seeder", Length = 8f, Flies = true },
+            new Entry { Unit = "Flood/Seeder", Folder = "Seeder", Length = 8f },
             new Entry { Unit = "Flood/CombatForm", Folder = "CombatForm", Height = 2.6f },
             new Entry { Unit = "FloodCovenant/Spawner", Folder = "Spawner", Length = 9f },
             new Entry { Unit = "FloodUNSC/Juggernaut", Folder = "Juggernaut", Length = 8f },
@@ -173,7 +171,7 @@ namespace Halobellum.EditorTools
                 float scale = entry.Height > 0f ? entry.Height / bounds.size.y : entry.Length / Mathf.Max(bounds.size.x, bounds.size.z);
                 model.transform.localScale *= scale;
                 bounds = BoundsOf(root);
-                float baseHeight = unit.isAir || entry.Flies ? bounds.center.y : bounds.min.y;
+                float baseHeight = unit.isAir ? bounds.center.y : bounds.min.y;
                 model.transform.localPosition -= new Vector3(bounds.center.x, baseHeight, bounds.center.z);
 
                 string materials = $"{folder}/GameMaterials";

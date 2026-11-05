@@ -61,9 +61,10 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void Seeder_StandsOnItsMiddle_AsItFlies_WhateverItsDataSays()
+        public void Seeder_Flies_AndStandsOnItsMiddle()
         {
             var unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/Flood/Seeder.asset");
+            Assert.IsTrue(unit.isAir);
             GameObject model = Object.Instantiate(unit.prefab);
             try
             {
