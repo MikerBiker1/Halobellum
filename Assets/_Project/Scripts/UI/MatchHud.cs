@@ -20,7 +20,9 @@
 //   Battle: both base health bars and a live army-value comparison (speed controls are in BattleHud), and how long
 //     a fallen tower's shockwave still weakens each army.
 //   Result: base damage dealt by each side, income, survivors, top damage dealers, what killed what.
-//   Match over: the winner, a New match button and a Main Menu button.
+//   Match over: the winner, a New match button and a Main Menu button, Open battle logs, and Battle stats, which opens a window
+//     with a tab for each battle: the field from above as it started, and both armies' damage dealt, taken and stopped (BattleStatsWindow, D69).
+//     Esc, a right-click or its Close button closes it.
 // The look follows the player's faction (HudTheme: UNSC or Covenant style); the draft screen is neutral.
 // Drawn with Unity's immediate-mode GUI; scales with the screen height.
 // Depends on: Halobellum.Presentation (MatchController, BattleController, UiHitAreas),
@@ -64,6 +66,27 @@ namespace Halobellum.UI
         private readonly List<Rect> _panelsDrawn = new List<Rect>();
         private SquadStatsWindow _squadWindow;
         private Rect _towerWindow;
+        private readonly BattleStatsWindow _battleStats = new BattleStatsWindow();
+        private int _battleStatsClosedFrame = -1;
+
+        /// <summary>The Battle stats window (D69), for tests.</summary>
+        public BattleStatsWindow BattleStatsWindow => _battleStats;
+
+        public void OpenBattleStats()
+        {
+            if (match == null || match.Match == null || match.Match.Phase != MatchPhase.MatchOver) return;
+            _battleStats.Open(match.Match);
+        }
+
+        public void CloseBattleStats()
+        {
+            if (!_battleStats.IsOpen) return;
+            _battleStats.Close();
+            _battleStatsClosedFrame = Time.frameCount;
+        }
+
+        /// <summary>True while Esc is for a page of this HUD (the unlock page, Battle stats), or just was: PauseMenu mustn't open on the press that closes one.</summary>
+        public bool TakesEscape => UnlockPageTakesEscape || _battleStats.IsOpen || _battleStatsClosedFrame == Time.frameCount;
 
         private void Awake() => useGUILayout = false; // Nothing here uses GUILayout. With the layout pass on, Unity makes new layout groups for this script every frame, which is garbage at every frame rate.
 
@@ -71,6 +94,15 @@ namespace Halobellum.UI
         private void Update()
         {
             if (match != null && match.Match != null && match.Match.Phase != MatchPhase.Cards) CardsHidden = CardsStartHidden; // Each card screen starts with its cards showing.
+            if (OpensBattleStatsAtTheEnd && !_battleStatsOpenedForTest && match != null && match.Match != null && match.Match.Phase == MatchPhase.MatchOver)
+            {
+                // The test game's picture of the window, with its best squad picked out.
+                _battleStatsOpenedForTest = true;
+                OpenBattleStats();
+                BattleStats last = match.Match.BattleHistory.Count > 0 ? match.Match.BattleHistory[match.Match.BattleHistory.Count - 1] : null;
+                if (last != null && last.Side(Team.A, false).Count > 0) _battleStats.Pick(last, last.Side(Team.A, false)[0]);
+            }
+            if (_battleStats.IsOpen) UpdateBattleStats();
             if (!_unlockPageOpen) return;
             if (match == null || match.Match == null || match.Match.Phase != MatchPhase.Deployment)
             {
@@ -248,6 +280,8 @@ namespace Halobellum.UI
 
         /// <summary>For pictures of the board at a card screen, which the test game has no mouse to reach.</summary>
         private static readonly bool CardsStartHidden = System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-autoplayHideCards") >= 0;
+        private static readonly bool OpensBattleStatsAtTheEnd = System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-autoplayBattleStats") >= 0;
+        private bool _battleStatsOpenedForTest;
 
         /// <summary>Puts the cards aside, or brings them back. Anything clicked on the board meanwhile is let go of, so that its window doesn't sit over the cards.</summary>
         public void ToggleCards()
@@ -492,6 +526,19 @@ namespace Halobellum.UI
         public Rect UnitBarShown { get; private set; }
         public Rect UnlockPageShown { get; private set; }
         public Rect UnlockPageListShown { get; private set; }
+
+        private void UpdateBattleStats()
+        {
+            if (match == null || match.Match == null || match.Match.Phase != MatchPhase.MatchOver)
+            {
+                _battleStats.Close();
+                return;
+            }
+            Keyboard keyboard = Keyboard.current;
+            PauseMenu pause = PauseMenu.Current;
+            bool closedThePauseMenu = pause != null && pause.ClosedThisFrame;
+            if ((keyboard != null && keyboard.escapeKey.wasPressedThisFrame && !closedThePauseMenu) || RightClick.WasClicked) CloseBattleStats();
+        }
 
         /// <summary>For the test tool: draws this HUD once under the event it has set, to press a button with a mouse button of its choosing.</summary>
         public void DrawForTest() => OnGUI();
@@ -1017,6 +1064,14 @@ namespace Halobellum.UI
         private void DrawMatchOver()
         {
             Match m = match.Match;
+            if (_battleStats.IsOpen)
+            {
+                float screenWidth = HudScale.ScaledWidth(_scale), screenHeight = HudScale.ScaledHeight(_scale);
+                DimTheField(screenWidth, screenHeight);
+                _battleStats.Draw(screenWidth, screenHeight, m, match.BattlePictureOf, match.IconFor, playerColor, enemyColor, Panel);
+                if (!_battleStats.IsOpen) _battleStatsClosedFrame = Time.frameCount;
+                return;
+            }
             RoundSummary s = m.LastSummary;
             bool won = m.Winner == Team.A;
             DrawOutcome(won ? "VICTORY" : "DEFEAT", won ? GameVictoryColor : DefeatColor, won ? $"You won the game in round {m.Round}: the enemy base ended at {m.Enemy.BaseHealth}" : $"You lost the game in round {m.Round}: your base ended at {m.Player.BaseHealth}", 560f);
@@ -1025,7 +1080,8 @@ namespace Halobellum.UI
             GUI.Label(new Rect(panel.x, y, panel.width, 40f), HudTheme.Title("Match over"), _title);
             y += 52f;
             if (s != null) SummaryLines(s, panel, y);
-            if (GUI.Button(new Rect(panel.x + panel.width * 0.5f - 110f, panel.yMax - 100f, 220f, 34f), "Open battle logs", _button)) Application.OpenURL("file:///" + BattleLogFile.Folder.Replace('\\', '/'));
+            if (GUI.Button(new Rect(panel.x + panel.width * 0.5f - 230f, panel.yMax - 100f, 220f, 34f), "Battle stats", _button)) OpenBattleStats();
+            if (GUI.Button(new Rect(panel.x + panel.width * 0.5f + 10f, panel.yMax - 100f, 220f, 34f), "Open battle logs", _button)) Application.OpenURL("file:///" + BattleLogFile.Folder.Replace('\\', '/'));
             if (GUI.Button(new Rect(panel.x + panel.width * 0.5f - 230f, panel.yMax - 58f, 220f, 44f), "New match", _bigButton)) match.NewMatch();
             if (MenuStyle.Button(new Rect(panel.x + panel.width * 0.5f + 10f, panel.yMax - 58f, 220f, 44f), "Main Menu", _bigButton)) GameFlow.OpenMainMenu();
         }

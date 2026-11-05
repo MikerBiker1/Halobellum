@@ -197,11 +197,24 @@ namespace Halobellum.Combat
         /// <summary>Id of the unit that dealt the killing blow, or -1.</summary>
         public int KilledById = -1;
 
+        // For the battle's statistics (D69). Nothing in the battle reads these.
+        /// <summary>Shield and health this body lost, to anything.</summary>
+        public float DamageTaken;
+        /// <summary>What its armor, shield type and defense arc stopped: what each hit would have done to a body with none, minus what it did, never more than it had left. A shot an arc blocked counts whole.</summary>
+        public float DamagePrevented;
+        /// <summary>What the seeds it planted ate (DamageDealt doesn't count it).</summary>
+        public float SeedDamageDealt;
+        /// <summary>The squad its deeds count for: its own, or for a body dropped, released or risen in the battle, the squad it came from (-1 if none).</summary>
+        public int CreditSquadId;
+        /// <summary>The spell its deeds count for (squads that drop with a spell), or null.</summary>
+        public SimSpell CreditSpell;
+
         public SimUnit(int id, Team team, int squadId, UnitStats stats, Vec2 position, Vec2 facing)
         {
             Id = id;
             Team = team;
             SquadId = squadId;
+            CreditSquadId = squadId;
             Stats = stats;
             _fullStats = stats;
             Position = position;

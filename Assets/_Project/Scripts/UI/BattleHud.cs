@@ -67,10 +67,14 @@ namespace Halobellum.UI
             _resumeSpeed = speed;
         }
 
+        private MatchHud _matchHud;
+
         private void OnGUI()
         {
             if (battle == null || battle.Simulation == null) return;
             if (!battle.IsPlaying && battle.Simulation.Tick == 0) return; // Deployment preview: no battle bar.
+            if (_matchHud == null) _matchHud = FindAnyObjectByType<MatchHud>();
+            if (_matchHud != null && _matchHud.BattleStatsWindow.IsOpen) return; // The Battle stats window covers the screen (D69).
             HudTheme.Apply();
             EnsureStyles();
             float scale = HudScale.Apply();

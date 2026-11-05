@@ -126,6 +126,10 @@ namespace Halobellum.Economy
         /// <summary>The battle of the current round (set during Battle and Result).</summary>
         public BattleSimulation CurrentBattle { get; private set; }
         public RoundSummary LastSummary { get; private set; }
+
+        /// <summary>Every battle of this match so far, in order, for the Battle stats window (D69). The one being fought is last, and not Finished yet.</summary>
+        public IReadOnlyList<BattleStats> BattleHistory => _battleHistory;
+        private readonly List<BattleStats> _battleHistory = new List<BattleStats>();
         public Team? Winner { get; private set; }
 
         public PlayerState Get(Team team) => team == Team.A ? Player : Enemy;
@@ -559,6 +563,7 @@ namespace Halobellum.Economy
             foreach (PlacedSquad squad in Player.Squads) squad.HasFought = true;
             foreach (PlacedSquad squad in Enemy.Squads) squad.HasFought = true;
             _battleCount++;
+            _battleHistory.Add(BattleStats.AtStart(CurrentBattle, Round, Player, Enemy, CombatRules));
             Phase = MatchPhase.Battle;
             return CurrentBattle;
         }
@@ -674,6 +679,7 @@ namespace Halobellum.Economy
                 Kills = RoundSummary.CountKills(CurrentBattle),
             };
             AwardXp(CurrentBattle, summary);
+            if (_battleHistory.Count > 0) _battleHistory[_battleHistory.Count - 1].Finish(CurrentBattle);
             foreach (SimUnit unit in CurrentBattle.Units)
             {
                 if (unit.Stats.IsTower && !unit.IsAlive) Get(unit.Team).FindTower(unit.Stats.Shockwave.Kind).Falls++;

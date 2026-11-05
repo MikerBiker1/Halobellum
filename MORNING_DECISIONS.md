@@ -171,7 +171,13 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 
 95. **Blueprint goes wherever the neutral theme does:** Unlock Skirmish, and also the Sandbox and the starting draft in Faction mode. The draft's cards keep their factions' frames there. It can be kept to Unlock Skirmish only.
 96. **The shockwave's colour:** pale blue, to show on UNSC green, Covenant violet and Flood flesh alike. It is close to a shield's blue, which matters if you ever read one for the other. One colour to change.
-97. **The battle log has no switch.** Every game you play writes a small file, a few KB a round. Should the settings have one?
+97. *(Yes: Settings has a Battle log switch now, D69.)* **The battle log has no switch.** Every game you play writes a small file, a few KB a round. Should the settings have one?
+
+## Battle stats (D69)
+
+98. **Only at the end of the game,** as you asked. The same window could open from each round's result screen too.
+99. **What "stopped" counts:** armor, the shield type and defense arcs, against a body that had none, never past what the body had left. A hit it is weak to stops nothing rather than counting below zero. Shield regeneration isn't counted anywhere.
+100. **One window for both sides:** the map fit beside both lists (about 790 pixels at 1920 x 1080), so there are no separate tabs per side. Say if it feels small.
 
 ## Things my test runs did to your PC
 

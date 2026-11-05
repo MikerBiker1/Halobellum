@@ -515,6 +515,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-05 | The Seeder flies, with a collision radius of 1.6; the owner's third batch of models is in, with the Anniversary Human Flood Form on the Infested Marine | Per the project owner (D66) |
 | 2026-11-05 | The owner's music and its rules; shots in the air land before a battle ends, so both armies can fall and draw; survivors hit the base as nodes of light, smallest first; result windows with a ribbon | Per the project owner (D67) |
 | 2026-11-05 | Smoke Bomb and Oil Zone are 8 x 45 m; a level 1 tower has 150 health; bases show their health below zero; a side under a shockwave pulses; cards can be hidden; a blueprint look for neutral screens; a battle log | Per the project owner (D68) |
+| 2026-11-05 | A Battle stats window at the end of a game: a tab per battle, the field from above as it started, and both armies' damage dealt, taken and stopped; a switch for the battle log | Per the project owner (D69) |
 
 ## 18. Assumptions to confirm
 

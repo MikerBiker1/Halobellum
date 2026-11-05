@@ -273,6 +273,20 @@ namespace Halobellum.Presentation
             quad.localScale = new Vector3(width, depth, 1f);
         }
 
+        /// <summary>Runs draw with the deployment squares out of sight, for a picture of the field (D69); they come back as they were.</summary>
+        public void WithoutSquares(System.Action draw)
+        {
+            foreach (Material overlay in _overlays) overlay.SetFloat(FadeId, 0f);
+            try
+            {
+                draw();
+            }
+            finally
+            {
+                foreach (Material overlay in _overlays) overlay.SetFloat(FadeId, _squares);
+            }
+        }
+
         /// <summary>The squares show while placing, and fade out while a battle runs or its result is up.</summary>
         private void UpdateSquares()
         {

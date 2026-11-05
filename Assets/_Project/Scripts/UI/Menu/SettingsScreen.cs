@@ -1,6 +1,6 @@
 // SettingsScreen.cs
 // The settings panel (M10), one and the same from the main menu and from the pause menu: four volumes, the screen, window or fullscreen, resolution,
-// quality, VSync, UI scale, camera shake and the frame-rate counter. The Screen row lists the PC's screens by name and size and marks the main one (GameDisplays moves the window); with one screen it just says so. Each change is applied and written to PlayerPrefs at once (GameSettings); the file on disk
+// quality, VSync, UI scale, camera shake, the frame-rate counter and the battle log (D69). The Screen row lists the PC's screens by name and size and marks the main one (GameDisplays moves the window); with one screen it just says so. Each change is applied and written to PlayerPrefs at once (GameSettings); the file on disk
 // is saved when the panel closes. The owner of the panel calls Open when it opens, and Draw in OnGUI until Draw says it is done.
 // Depends on: GameDisplays, GameSettings, MenuStyle, Halobellum.Core (DisplayChoice), UnityEngine.
 
@@ -14,7 +14,7 @@ namespace Halobellum.UI
     public sealed class SettingsScreen
     {
         /// <summary>The virtual size of the panel. Menus fit their scale to this.</summary>
-        public const float PanelWidth = 760f, PanelHeight = 774f;
+        public const float PanelWidth = 760f, PanelHeight = 818f;
 
         private const float Margin = 34f, RowHeight = 44f, LabelWidth = 230f;
 
@@ -86,6 +86,9 @@ namespace Halobellum.UI
             y += RowHeight;
             bool frameRate = MenuStyle.Choice(ControlRect(panel, y, "Frame rate counter"), "Frame rate counter", OffOn, GameSettings.ShowFrameRate ? 1 : 0) == 1;
             if (frameRate != GameSettings.ShowFrameRate) GameSettings.ShowFrameRate = frameRate;
+            y += RowHeight;
+            bool battleLog = MenuStyle.Choice(ControlRect(panel, y, "Battle log"), "Battle log", OffOn, GameSettings.BattleLog ? 1 : 0) == 1;
+            if (battleLog != GameSettings.BattleLog) GameSettings.BattleLog = battleLog;
 
             if (MenuStyle.SmallFramedButton(new Rect(panel.x + Margin, panel.yMax - 58f, 190f, 40f), "Reset to defaults", false)) GameSettings.ResetToDefaults();
             if (MenuStyle.SmallFramedButton(new Rect(panel.xMax - Margin - 190f, panel.yMax - 58f, 190f, 40f), "Back", false))

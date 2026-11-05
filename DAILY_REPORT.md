@@ -2,6 +2,11 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Battle stats (D69)
+- **In the game:** a Battle stats button at the end of a game: a tab per battle, the field from above as it started with an icon for each squad, tower and spell, and both armies' damage dealt, taken and stopped. Settings has a Battle log switch.
+- **Checked:** the window in pictures from a test game; tests of the counting, the window and the switch. The battle reads none of the new counters.
+- **Not checked:** nobody has clicked it with a mouse, or opened it at a small window size.
+
 ## After your two games (D68)
 - **In the game:** smoke and oil at 8 x 45 m; towers at 150 health; bases show below zero; a side under a shockwave pulses pale blue; a Hide cards button; the blueprint look; a battle log for each game you play.
 - **Tournament at 2000 health:** sub-factions from 47% to 53%: `Docs/Balance/hard_ai_tournament_d68.txt`. Skirmish: Hard beats Normal 43 of 50.

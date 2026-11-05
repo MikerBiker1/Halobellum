@@ -99,7 +99,7 @@ namespace Halobellum.UI
         /// <summary>True if Esc is about to close the unlock page, cancel a placement or clear the selection instead.</summary>
         public bool EscapeHasOtherWork()
         {
-            if (_hud != null && _hud.UnlockPageTakesEscape) return true;
+            if (_hud != null && _hud.TakesEscape) return true;
             if (_selection == null) return false;
             return !_selection.InputEnabled || _selection.SelectedSquadId >= 0 || _selection.SelectedTower != null;
         }

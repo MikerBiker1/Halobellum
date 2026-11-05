@@ -98,7 +98,14 @@ namespace Halobellum.Presentation
             if (_spellView == null) _spellView = gameObject.AddComponent<SpellView>();
             _battle.BattleFinished += OnBattleFinished;
             MatchSetup setup = GameFlow.TakeMatchSetup();
-            if (setup == null && Array.IndexOf(Environment.GetCommandLineArgs(), "-autoplaySkirmish") >= 0) setup = new MatchSetup { Mode = MatchMode.UnlockSkirmish }; // For pictures of it, from the test game.
+            string[] args = Environment.GetCommandLineArgs();
+            if (setup == null && Array.IndexOf(args, "-autoplaySkirmish") >= 0) setup = new MatchSetup { Mode = MatchMode.UnlockSkirmish }; // For pictures of it, from the test game.
+            int health = Array.IndexOf(args, "-autoplayBaseHealth");
+            if (health >= 0 && health + 1 < args.Length && int.TryParse(args[health + 1], out int baseHealth)) // A short game, for pictures of its end.
+            {
+                if (setup == null) setup = new MatchSetup();
+                setup.BaseHealth = baseHealth;
+            }
             NewMatch(setup: setup);
         }
 
@@ -106,6 +113,47 @@ namespace Halobellum.Presentation
         {
             if (_battle != null) _battle.BattleFinished -= OnBattleFinished;
             CloseBattleLog();
+            ForgetBattlePictures();
+        }
+
+        // ------------------------------------------------------------------ battle stats (D69)
+
+        private readonly List<Texture2D> _battlePictures = new List<Texture2D>();
+        private int _pictureInFrames = -1;
+
+        /// <summary>The picture taken as battle number index of this match started (Match.BattleHistory's order), or null if there is none.</summary>
+        public Texture2D BattlePictureOf(int index) => index >= 0 && index < _battlePictures.Count ? _battlePictures[index] : null;
+
+        /// <summary>The pictures go with the match: a new game or leaving the scene drops them.</summary>
+        private void ForgetBattlePictures()
+        {
+            foreach (Texture2D picture in _battlePictures)
+            {
+                if (picture != null) Destroy(picture);
+            }
+            _battlePictures.Clear();
+            _pictureInFrames = -1;
+        }
+
+        /// <summary>The battle's bodies are shown and in place a frame or two after it starts, and have hardly moved yet.</summary>
+        private void LateUpdate()
+        {
+            if (_pictureInFrames < 0 || --_pictureInFrames > 0) return;
+            _pictureInFrames = -1;
+            if (Match == null || Match.BattleHistory.Count == 0) return;
+            while (_battlePictures.Count < Match.BattleHistory.Count - 1) _battlePictures.Add(null);
+            if (_battlePictures.Count >= Match.BattleHistory.Count) return;
+            _battlePictures.Add(BattlePicture.Take(_battle.Rules.ArenaWidth, _battle.Rules.ArenaLength));
+        }
+
+        /// <summary>The picture of a card's spell, or null.</summary>
+        public Texture2D IconFor(SpellStats spell)
+        {
+            foreach (var pair in _cardSources)
+            {
+                if (spell != null && pair.Key.Spell != null && (pair.Key.Spell == spell || pair.Key.Spell.Name == spell.Name)) return pair.Value.icon; // A spell in play may be a copy of its card's.
+            }
+            return null;
         }
 
         // ------------------------------------------------------------------ the battle log (D68)
@@ -159,6 +207,7 @@ namespace Halobellum.Presentation
         {
             Ending = null;
             CloseBattleLog();
+            ForgetBattlePictures();
             if (setup != null) _setup = setup;
             var cache = new Dictionary<UnitDefinition, UnitStats>();
             var infos = new List<FactionInfo>();
@@ -816,6 +865,7 @@ namespace Halobellum.Presentation
             BattleSimulation battle = Match.StartBattle();
             _log?.BattleStarted(Match);
             _battle.ShowBattle(battle, _sources, play: true);
+            _pictureInFrames = 2;
             PhaseChanged?.Invoke();
         }
 

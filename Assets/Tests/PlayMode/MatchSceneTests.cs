@@ -384,6 +384,54 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
+        public IEnumerator AtTheEnd_BattleStatsShowEachBattle_AndANewGameForgetsThem()
+        {
+            yield return LoadMatch();
+            _match.ChooseDraft(0);
+            yield return null;
+            Match m = _match.Match;
+            m.Enemy.BaseHealth = 1;        // Whoever lives at the end of a round finishes this base...
+            m.Player.BaseHealth = 100000;  // ...and this one holds until then.
+            int rounds = 0;
+            while (m.Phase != MatchPhase.MatchOver && rounds < 4)
+            {
+                if (rounds == 1) m.Enemy.Squads.Clear(); // A fight first; then the do-nothing AI's army leaves, so that the player's survivors end it.
+                yield return PlayRound();
+                rounds++;
+                if (m.Phase != MatchPhase.Result) continue;
+                ContinueAndSkipCards();
+                yield return null;
+            }
+            Assert.AreEqual(MatchPhase.MatchOver, m.Phase);
+            Assert.AreEqual(rounds, m.BattleHistory.Count, "A tab for each battle.");
+
+            BattleStats stats = m.BattleHistory[rounds - 1];
+            Assert.IsTrue(m.BattleHistory.All(b => b.Finished));
+            Assert.AreEqual(m.Player.Squads.Count, stats.Lines.Count(l => l.Team == Team.A && l.Kind == BattleStatsKind.Squad));
+            Assert.Greater(m.BattleHistory.Sum(b => b.Lines.Where(l => l.Team == Team.A).Sum(l => l.DamageDealt)), 0f, "The player's squads fought.");
+            if (SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null)
+                Assert.IsNotNull(_match.BattlePictureOf(rounds - 1), "The field was pictured as the battle started.");
+
+            MatchHud hud = Object.FindAnyObjectByType<MatchHud>();
+            hud.OpenBattleStats();
+            Assert.IsTrue(hud.BattleStatsWindow.IsOpen);
+            Assert.AreEqual(rounds - 1, hud.BattleStatsWindow.Tab, "It opens on the last battle.");
+            BattleStatsLine best = stats.Side(Team.A, false)[0];
+            hud.BattleStatsWindow.Pick(stats, best);
+            Assert.AreSame(best, hud.BattleStatsWindow.Picked);
+            var map = new Rect(100f, 100f, 400f, 410f);
+            Assert.AreSame(best, BattleStatsWindow.LineAt(map, stats, BattleStatsWindow.OnMap(map, stats, best.Start)), "Its icon on the map is where it stood.");
+            yield return null;
+            hud.CloseBattleStats();
+            Assert.IsFalse(hud.BattleStatsWindow.IsOpen);
+
+            _match.NewMatch();
+            yield return null;
+            Assert.AreEqual(0, _match.Match.BattleHistory.Count, "A new game starts with no stats.");
+            Assert.IsNull(_match.BattlePictureOf(0), "The pictures went with the old game.");
+        }
+
+        [UnityTest]
         public IEnumerator Round2_ShowsTheEnemysLastArmyAsGreyGhosts_AndReadySquadsGetAnArrow()
         {
             yield return LoadMatch();

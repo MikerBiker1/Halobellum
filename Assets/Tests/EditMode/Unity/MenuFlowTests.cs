@@ -229,6 +229,16 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void TheBattleLog_IsOnByDefault_AndCanBeTurnedOff()
+        {
+            Assert.IsTrue(GameSettings.BattleLog, "A game writes its log unless the player says not to (D69).");
+            GameSettings.BattleLog = false;
+            Assert.IsFalse(GameSettings.BattleLog);
+            GameSettings.ResetToDefaults();
+            Assert.IsTrue(GameSettings.BattleLog);
+        }
+
+        [Test]
         public void UiScale_StaysInRange_AndOnItsSteps()
         {
             Assert.AreEqual(GameSettings.SmallestUiScale, GameSettings.ClampUiScale(0.1f));

@@ -1,6 +1,7 @@
 // BattleLogFile.cs
 // Writes a person's game to a file, a line at a time, so that a game that is quit or crashes keeps all it had (D68). Each game has its own file in the
-// BattleLogs folder of the game's saved data. Tests and test runs write none unless told where: start the game with "-battleLogs <folder>".
+// BattleLogs folder of the game's saved data, unless the Battle log setting is off (D69). Tests and test runs write none unless told where: start the
+// game with "-battleLogs <folder>".
 // A problem with the disk stops the log, and never the game.
 // Depends on: Halobellum.Economy (MatchLog writes the lines), UnityEngine.
 
@@ -27,7 +28,7 @@ namespace Halobellum.Presentation
             int asked = Array.IndexOf(args, FolderFlag);
             if (asked >= 0 && asked + 1 < args.Length) return args[asked + 1];
             if (Application.isEditor || Application.isBatchMode || Array.IndexOf(args, GameFlow.AutoplayFlag) >= 0) return null;
-            return Folder;
+            return GameSettings.BattleLog ? Folder : null;
         }
 
         /// <summary>A file's name from the time and who played. Whatever a name can't hold in a file name becomes a dash.</summary>

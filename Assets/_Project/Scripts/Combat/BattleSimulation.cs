@@ -306,6 +306,8 @@ namespace Halobellum.Combat
                 SimUnit dropped = CreateUnit(stats, carrier.Team, centre + placed, squadId);
                 dropped.Facing = forward;
                 dropped.UnlimitedAcquisition = carrier.UnlimitedAcquisition || IsInEnemyZone(dropped);
+                dropped.CreditSquadId = carrier.CreditSquadId;
+                dropped.CreditSpell = carrier.CreditSpell;
             }
             _squadById[squadId].FormUp();
             Events.RaiseReinforcementDropped(carrier, squadId);
@@ -407,8 +409,9 @@ namespace Halobellum.Combat
         }
 
         /// <summary>A new squad of this unit type on the spot, for this battle only.</summary>
-        private void SpawnSquad(UnitStats stats, Team team, Vec2 centre, int bodies)
+        private void SpawnSquad(UnitStats stats, SimUnit parent, Vec2 centre, int bodies)
         {
+            Team team = parent.Team;
             int squadId = NewSquadId();
             Vec2 forward = team == Team.A ? Vec2.Up : Vec2.Down;
             foreach (Vec2 offset in SquadFormation.Offsets(bodies, stats.CollisionRadius, _rules.FormationGap, false))
@@ -416,6 +419,8 @@ namespace Halobellum.Combat
                 SimUnit spawned = CreateUnit(stats, team, centre + (team == Team.A ? offset : -offset), squadId);
                 spawned.Facing = forward;
                 spawned.UnlimitedAcquisition = IsInEnemyZone(spawned);
+                spawned.CreditSquadId = parent.CreditSquadId;
+                spawned.CreditSpell = parent.CreditSpell;
             }
             _squadById[squadId].FormUp();
         }
@@ -430,6 +435,9 @@ namespace Halobellum.Combat
                 SimUnit risen = CreateUnit(InfectedFormOf(rise.Corpse.Stats), rise.Team, rise.Corpse.Position, -1);
                 risen.Facing = rise.Team == Team.A ? Vec2.Up : Vec2.Down;
                 risen.UnlimitedAcquisition = true;
+                SimUnit killer = rise.Corpse.KilledById >= 0 ? _units[rise.Corpse.KilledById] : null;
+                risen.CreditSquadId = killer?.CreditSquadId ?? -1;
+                risen.CreditSpell = killer != null ? killer.CreditSpell : rise.Corpse.KilledBySpell;
                 Events.RaiseUnitRose(rise.Corpse, risen);
                 _rises.RemoveAt(i--);
             }
@@ -444,7 +452,7 @@ namespace Halobellum.Combat
                 SimUnit unit = _spawners[i];
                 if (!unit.IsAlive || ElapsedSeconds + 1e-4f < unit.NextSpawnAt) continue;
                 unit.NextSpawnAt += unit.Stats.SpawnIntervalSeconds;
-                SpawnSquad(unit.Stats.SpawnedUnit, unit.Team, unit.Position + Forward(unit) * (unit.Radius + 1f), unit.Stats.SpawnedUnit.SquadSize);
+                SpawnSquad(unit.Stats.SpawnedUnit, unit, unit.Position + Forward(unit) * (unit.Radius + 1f), unit.Stats.SpawnedUnit.SquadSize);
             }
         }
 
@@ -520,7 +528,7 @@ namespace Halobellum.Combat
                     DealDamage(victim, unit, weapon, defense.DamageMultiplier, true);
                 }
             }
-            foreach (SpawnEntry spawn in burst.Spawns) SpawnSquad(spawn.Unit, unit.Team, unit.Position, spawn.Bodies);
+            foreach (SpawnEntry spawn in burst.Spawns) SpawnSquad(spawn.Unit, unit, unit.Position, spawn.Bodies);
         }
 
         /// <summary>Applies every spell effect that is due this tick (in the order the spells were cast).</summary>
@@ -617,6 +625,9 @@ namespace Halobellum.Combat
             }
             unit.SpeedMultiplier *= 1f - unit.SeedSlowShare;
             if (unit.Health <= 0f) return;
+            float bite = Math.Min(unit.Health, unit.SeedDamagePerSecond * planterShockwaveDamage * _dt);
+            unit.DamageTaken += bite;
+            if (unit.SeededById >= 0) _units[unit.SeededById].SeedDamageDealt += bite;
             unit.Health -= unit.SeedDamagePerSecond * planterShockwaveDamage * _dt;
             unit.SecondsSinceDamaged = 0f;
             if (unit.Health <= 0f && unit.KilledById < 0 && unit.KilledBySpell == null && unit.SeededById >= 0)
@@ -656,6 +667,7 @@ namespace Halobellum.Combat
                 if (!unit.IsAlive || !spell.Covers(unit)) continue;
                 float removed = Math.Min(unit.Shield, stats.ShieldDamage);
                 unit.Shield -= removed;
+                unit.DamageTaken += removed;
                 spell.DamageDealt += removed;
                 if (stats.TechDisableSeconds > 0f) unit.TechsDisabledUntil = Math.Max(unit.TechsDisabledUntil, now + stats.TechDisableSeconds);
                 if (stats.SlowShare > 0f && unit.Stats.ArmorType != ArmorType.Unarmored)
@@ -677,7 +689,9 @@ namespace Halobellum.Combat
                 if (!spell.Covers(victim)) continue;
                 float multiplier = (victim.IsAir ? weapon.AirDamageMultiplier : 1f) * victim.FormsAlive * victim.ShockwaveDamageTaken;
                 if (weapon.DamageType == DamageType.Fire) multiplier *= victim.FireDamageTaken;
+                float pool = PoolOf(victim);
                 float dealt = DamageCalculator.ApplyHit(_rules.DamageTable, weapon, victim.Stats.ArmorType, multiplier, ref victim.Shield, ref victim.Health);
+                CountTaken(victim, weapon.DamagePerShot * multiplier, pool, dealt);
                 victim.SecondsSinceDamaged = 0f;
                 spell.DamageDealt += dealt;
                 MarkEngaged(victim);
@@ -724,6 +738,8 @@ namespace Halobellum.Combat
                     SimUnit dropped = CreateUnit(stats, spell.Team, centre + placed, squadId);
                     dropped.Facing = forward;
                     dropped.UnlimitedAcquisition = IsInEnemyZone(dropped);
+                    dropped.CreditSquadId = -1;
+                    dropped.CreditSpell = spell;
                 }
                 _squadById[squadId].FormUp();
             }
@@ -1302,6 +1318,7 @@ namespace Halobellum.Combat
                     directTarget.Facing, sourcePosition, weapon, true, _random);
                 if (defense.Blocked)
                 {
+                    directTarget.DamagePrevented += Math.Min(weapon.DamagePerShot * NominalMultiplier(directTarget, attacker, weapon, weapon.IsCone || weapon.SplashRadius > 0f), PoolOf(directTarget));
                     Events.RaiseAttackBlocked(directTarget, attacker);
                     return; // A blocked projectile is stopped completely, including any splash.
                 }
@@ -1354,14 +1371,35 @@ namespace Halobellum.Combat
             }
         }
 
+        /// <summary>A hit's multiplier without the target's defense arc: what it would do to a body with no defenses, before armor (D69's statistics).</summary>
+        private static float NominalMultiplier(SimUnit target, SimUnit attacker, WeaponStats weapon, bool areaHit)
+        {
+            float multiplier = (target.IsAir ? weapon.AirDamageMultiplier : 1f) * attacker.DamageMultiplier * attacker.ShockwaveDamage * attacker.FormsShare * target.ShockwaveDamageTaken;
+            if (areaHit) multiplier *= target.FormsAlive;
+            if (weapon.DamageType == DamageType.Fire) multiplier *= target.FireDamageTaken;
+            return multiplier;
+        }
+
+        /// <summary>What a body has left to lose.</summary>
+        private static float PoolOf(SimUnit unit) => unit.Shield + Math.Max(0f, unit.Health);
+
+        /// <summary>Counts a hit for the statistics: what it took, and what the body's defenses stopped of what it would have done (never past what the body had).</summary>
+        private static void CountTaken(SimUnit target, float nominal, float pool, float dealt)
+        {
+            target.DamageTaken += dealt;
+            target.DamagePrevented += Math.Max(0f, Math.Min(nominal, pool) - dealt);
+        }
+
         /// <param name="areaHit">An area hit (splash, cone, beam) hurts every tiny form in a pack (D38).</param>
         private void DealDamage(SimUnit target, SimUnit attacker, WeaponStats weapon, float directionalMultiplier, bool areaHit)
         {
             float multiplier = (target.IsAir ? directionalMultiplier * weapon.AirDamageMultiplier : directionalMultiplier) * attacker.DamageMultiplier * attacker.ShockwaveDamage * attacker.FormsShare * target.ShockwaveDamageTaken;
             if (areaHit) multiplier *= target.FormsAlive;
             if (weapon.DamageType == DamageType.Fire) multiplier *= target.FireDamageTaken;
+            float pool = PoolOf(target);
             float dealt = DamageCalculator.ApplyHit(_rules.DamageTable, weapon, target.Stats.ArmorType, multiplier,
                 ref target.Shield, ref target.Health);
+            CountTaken(target, weapon.DamagePerShot * NominalMultiplier(target, attacker, weapon, areaHit), pool, dealt);
             target.SecondsSinceDamaged = 0f;
             attacker.DamageDealt += dealt;
             MarkEngaged(target);

@@ -152,6 +152,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] The third batch of models, the Anniversary Flood Form on the Infested Marine, a flying Seeder (D66)
 - [x] The last shots land, nodes of light hit the base, and result windows with a ribbon (D67)
 - [x] After the owner's two games: smoke and oil, towers, overkill shown, the shockwave on the bodies, Hide cards, the blueprint look, a battle log (D68)
+- [x] Battle stats at the end of a game, and a switch for the battle log (D69)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

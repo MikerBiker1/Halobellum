@@ -1,6 +1,6 @@
 # The battle log (D68)
 
-Every game you play yourself, in Faction mode or Unlock Skirmish, writes one file. Nothing reads these files yet. They are kept in case an AI learns from them one day.
+Every game you play yourself, in Faction mode or Unlock Skirmish, writes one file, unless the Battle log setting is off (Settings, D69). Nothing reads these files yet. They are kept in case an AI learns from them one day.
 
 **Where they are:** `C:\Users\Mike\AppData\LocalLow\DefaultCompany\Halobellum\BattleLogs`, or press **Open battle logs** on the screen at the end of a game. The Sandbox and the test game write none.
 
