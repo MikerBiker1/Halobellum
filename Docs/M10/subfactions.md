@@ -204,7 +204,7 @@ Left out on purpose, as asked: `vehicleshumangroundmammoth.glb` (197,535 triangl
 ## Tools
 
 - `Tools/Data/gen_roster.py` makes the unit and tech assets, the faction assets' lists, `balance.csv` and `cw/units.json`. The sub-factions are `sub_*.py`, one file each.
-- `Tools/Data/cw` is the console: `dotnet run -c Release -- 10` runs the full web, `-- 10 id,id` only those units, `-- ai 20` AI matches, `-- dur` battle lengths. `report.py` prints the sub-faction report.
+- `Tools/Data/cw` is the console: `dotnet run -c Release -- 10` runs the full web, `-- 10 id,id` only those units, `-- ai 20` AI matches, `-- dur` battle lengths. `report.py` prints the sub-faction report. A battle that runs out of time with no damage dealt by either side, such as a Seeder against a Combat Form, counts as a win for neither.
 - After a full console run, run `gen_roster.py` (the notes list each unit's two best counters), `gen_counter_list.py` (the test's list), `gen_matchup_asset.py cw/matrix.csv` (the Hard AI's table), and `gen_subfaction_doc.py` (this document).
 - `Tools/Art/units/Grizzly.py`, `Chopper.py` prepare the models. `HB_PREPARED` says where to prepare them, since `Art_Source` is shared between worktrees.
 - `RealModelBuilder.BuildNewFromCommandLine` and `AnimationBaker.BakeNewFromCommandLine` build only what is missing, leaving the old models untouched.

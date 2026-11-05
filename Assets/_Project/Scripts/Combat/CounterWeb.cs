@@ -6,7 +6,7 @@
 // Armies: as many squads of each type as fit a budget (default 1800 credits), picking the two squad
 // counts whose total costs are closest to each other (both within 80% to 125% of the budget).
 // Half of each matchup's battles swap the sides, so neither unit always plays Team A.
-// Win = D9: the side whose survivors would deal more base damage.
+// Win = D9: the side whose survivors would deal more base damage. A battle out of time with no damage dealt by either side is no win for either.
 // Plain C#: the Unity editor tool (HeadlessRunnerTool) and the tests both call it.
 // Depends on: HeadlessBattleRunner, BattleResult, Halobellum.Core.
 
