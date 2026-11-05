@@ -42,8 +42,11 @@ _state = {"name": None, "folder": None, "source": None, "tris_before": 0, "flags
 
 # ---- Loading and looking ----
 
-def start(name, source, rest_pose=False):
-    """Empties Blender and loads Art_Source/<source>. All parents and rigs are flattened into plain parts in place. With rest_pose, a rig's clip is dropped first, so it flattens in the rig's own rest pose."""
+def start(name, source, rest_pose=False, pose=None):
+    """
+    Empties Blender and loads Art_Source/<source>. All parents and rigs are flattened into plain parts in place. With rest_pose, a rig's clip
+    is dropped first, so it flattens in the rig's own rest pose. With pose, its bones are turned first: {bone: (x, y, z)}, in degrees around the world's axes.
+    """
     bpy.ops.wm.read_factory_settings(use_empty=True)
     path = os.path.join(SOURCE, source)
     if path.lower().endswith(".fbx"):
@@ -64,6 +67,15 @@ def start(name, source, rest_pose=False):
                 for bone in o.pose.bones:
                     bone.matrix_basis.identity()
     bpy.context.view_layer.update()
+    for o in [o for o in bpy.context.scene.objects if o.type == "ARMATURE"] if pose else []:
+        for bone_name, (x, y, z) in pose.items():
+            bone = o.pose.bones[bone_name]
+            world = (Matrix.Rotation(math.radians(z), 4, "Z") @ Matrix.Rotation(math.radians(y), 4, "Y") @ Matrix.Rotation(math.radians(x), 4, "X"))
+            around = o.matrix_world.inverted() @ world @ o.matrix_world
+            around = around.to_3x3().to_4x4()
+            head = bone.matrix.translation.copy()
+            bone.matrix = Matrix.Translation(head) @ around @ Matrix.Translation(-head) @ bone.matrix
+            bpy.context.view_layer.update()
     for o in meshes():
         o.data = o.data.copy()  # Parts that share a mesh must not share what happens to it next.
     _select(meshes())

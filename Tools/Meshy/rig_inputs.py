@@ -28,11 +28,11 @@ MODELS = {
     "Hunter": {"source": "sketchfab.com/enemiesmulticovenanthunters.glb", "height": 3.6, "keep": r"^Object_(10|11|12|13|14|15)$", "bake": True},
     "HunterCaptain": {"source": "sketchfab.com/enemiesmulticovenanthunters.glb", "height": 3.8, "keep": r"^Object_(27|28|29|30|31)$", "tris": 8000, "bake": True},
     "GruntGoblin": {"source": "sketchfab.com/enemiesbanishedgoblin.glb", "height": 4.4, "tris": 8000, "bake": True},
-    # The third batch. "yaw", "pitch" and "roll" turn a figure that faces elsewhere to face -Y and stand up, "rest" flattens a rigged file in its rest pose and not its clip's pose,
+    # The third batch. "yaw", "pitch" and "roll" turn a figure that faces elsewhere to face -Y and stand up, "rest" flattens a rigged file in its rest pose and not its clip's pose, "pose" turns its bones first,
     # "drop" leaves out parts by name (see-through cards bake to black squares),
     # "box" keeps the separate pieces whose middle lies between these X values of the file (for figures that share objects, as these Brutes do),
     # and "feet" stands it with its feet on the origin, where a big arm or a tail would pull the middle of its box aside.
-    "InfestedMarine": {"source": "Meshy/halo_2_anniversary_human_flood_form.glb", "height": 2.0, "drop": "^Object_7$", "tris": 5000, "bake": True, "feet": True},
+    "InfestedMarine": {"source": "Meshy/halo_2_anniversary_human_flood_form.glb", "height": 2.0, "pose": {"neck_30": (35, 30, 0)}, "drop": "^Object_7$", "tris": 5000, "bake": True, "feet": True},
     "ODST": {"source": "Meshy/halo_2_odst.glb", "height": 2.0, "bake": True, "rest": True, "yaw": 4.7, "pitch": -45.5, "roll": -90, "feet": True},  # Its rest pose lies at a slant: these come from its bones.
     "Jackal": {"source": "Meshy/jackal_halo_2.glb", "height": 2.0, "bake": True, "yaw": -90, "feet": True},
     "BruteGrenadier": {"source": "Meshy/enemieshalo_3covenantbrutes.glb", "height": 2.8, "box": (-3.48, -1.13), "tris": 7000, "bake": True, "feet": True},  # The fifth from the left: the red crest and loincloth.
@@ -162,7 +162,7 @@ def stand(height, feet=False):
 
 def prepare(unit, spec):
     name = unit + "_Rig"
-    mt.start(name, spec["source"], rest_pose=spec.get("rest", False))
+    mt.start(name, spec["source"], rest_pose=spec.get("rest", False), pose=spec.get("pose"))
     folder = mt._state["folder"]
     mt.remove("Icosphere")
     if "drop" in spec:

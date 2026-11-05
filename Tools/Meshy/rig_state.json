@@ -171,5 +171,20 @@
    566
   ],
   "animation_credits": 12
+ },
+ "InfestedMarine": {
+  "attempts": [
+   {
+    "started": "23:16:02",
+    "finished": true,
+    "refused": "HTTP 422: {\"message\":\"Pose estimation failed, please provide a valid model URL\"}"
+   },
+   {
+    "started": "23:17:21",
+    "finished": true,
+    "refused": "HTTP 422: {\"message\":\"Pose estimation failed, please provide a valid model URL\"}"
+   }
+  ],
+  "credits": 0
  }
 }
