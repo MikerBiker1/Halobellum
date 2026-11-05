@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 1.4
   turnTime180: 1.2
   isAir: 0
+  canFlank: 0
   targetFilter: 2
   weapons:
   - weaponName: Spike Rockets
@@ -43,7 +44,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 3
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -65,15 +65,11 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
-  reinforcementDrops: 1
-  reinforcementLandSeconds: 0
-  reinforcementFirstDropSeconds: 0
   formsPerBody: 1
   isFlood: 0
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
-  canFlank: 0
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -101,6 +97,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Aerial
   weakAgainst: Ground units
-  notes: 'Best counters (headless runner, equal cost): Marine (100%), Spartan Grenadier
-    (100%). Ground anti-air walker, weak against vehicles. First-pass M10 values,
-    Banished (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Spartan Grenadier (100%). Ground anti-air walker, weak against vehicles. First-pass M10 values, Banished (Docs/M10/subfactions.md).'
