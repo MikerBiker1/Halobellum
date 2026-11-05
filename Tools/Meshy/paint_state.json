@@ -10,5 +10,9 @@
  "RhinoTurret": {
   "id": "01a19fa0-1f76-70a7-b60f-4b91346715ab",
   "prompt": "Heavy military tank turret and long cannon, matte olive green painted armor plates with panel lines and worn edges, dark grey metal barrel, science fiction, clean hard surface"
+ },
+ "Wolverine": {
+  "id": "01a1a9e0-a4ea-7682-8ac0-b2c70f744aeb",
+  "prompt": "Military half-track anti-air vehicle with two missile pods on a turret, matte olive green painted armor plates with panel lines and worn edges, dark grey metal tracks, black rubber tyres, dark grey missile tubes with pale missile tips, small yellow warning stripes, science fiction, clean hard surface"
  }
 }
