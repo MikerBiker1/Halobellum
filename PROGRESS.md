@@ -148,6 +148,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] The Hard AI takes Rapid Resupply when about to lose; the Pelican drops 5 seconds in (D62)
 - [x] Base health moves 5% at any setting, a shockwave weakens seeds, Hard levels before new squads in Unlock Skirmish (D63)
 - [x] The extra squad slot costs 50; a weaker Cobra and Rhino for Armored Division (D64)
+- [x] A weaker Spartan, a Zealot that leaps and cleaves, cheaper Noble Spartans, Hard's techs by the board (D65)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

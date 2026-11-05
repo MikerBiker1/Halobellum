@@ -2,6 +2,11 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The Spartan, the Zealot and what the AI reads (D65)
+- **In the game:** the Spartan has 1250 health; the Zealot leaps at its enemy, and its sword cleaves; Noble's Sniper costs 400 and Heavy Weapons 450; Hard picks techs by the army it has seen.
+- **Tournament at 2000 health:** sub-factions from 48.1% to 51.9%: `Docs/Balance/hard_ai_tournament_d65.txt`.
+- **Not reached:** the Zealot's impact is 0.82, not 1.5. Going further put Covenant at 58%.
+
 ## The slot and Armored Division (D64)
 - **In the game:** the extra squad slot costs 50; the Cobra's railgun deals 175 (was 190), and the Rhino's cannon 140 (was 150).
 - **Tournament:** sub-factions from 46.6% to 53.3%, with Armored Division at 53.3%: `Docs/Balance/hard_ai_tournament_d64.txt`. The Hard AI now fields the Rhino in 36% of matches, down from 68%.

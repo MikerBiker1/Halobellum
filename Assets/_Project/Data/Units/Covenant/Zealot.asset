@@ -97,4 +97,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: 'Tanks, heavy units'
   weakAgainst: 'Chaff swarms, flankers'
-  notes: 'Best counters (headless runner, equal cost): Marine (100%), Grunt (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Grunt (100%). Leaps onto its enemy, and its energy sword cuts everything around its target. First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
