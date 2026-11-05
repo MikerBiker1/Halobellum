@@ -97,4 +97,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Aerial
   weakAgainst: Ground units
-  notes: 'Best counters (headless runner, equal cost): Flood Abomination (100%), Spartan Sniper (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Spartan Sniper (100%), Spartan Heavy Weapons (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

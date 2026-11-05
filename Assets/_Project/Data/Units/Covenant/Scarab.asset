@@ -145,4 +145,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Most things in a straight fight
   weakAgainst: 'Single-target DPS, large chaff swarms'
-  notes: 'Best counters (headless runner, equal cost): Spartan (100%), Spartan Sniper (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Spartan (100%), Zealot (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

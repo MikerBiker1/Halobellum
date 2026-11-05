@@ -97,4 +97,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
-  notes: 'Best counters (headless runner, equal cost): Jackal (Plasma Rifle) (100%), Combat Form (100%). A mobile birthing form: it fights badly, and releases 12 Infection Forms every 6 seconds. Kill it first. First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Jackal (Plasma Rifle) (100%), Zealot (100%). A mobile birthing form: it fights badly, and releases 12 Infection Forms every 6 seconds. Kill it first. First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'

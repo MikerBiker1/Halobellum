@@ -6010,7 +6010,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Swarm Form
     defender: Combat Form
-    winRate: 1
+    winRate: 0
   - attacker: Swarm Form
     defender: Stalker Form
     winRate: 0
@@ -6415,13 +6415,13 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Carrier Form
-    winRate: 1
+    winRate: 0
   - attacker: Seeder
     defender: Combat Form
-    winRate: 1
+    winRate: 0
   - attacker: Seeder
     defender: Stalker Form
-    winRate: 1
+    winRate: 0
   - attacker: Seeder
     defender: Pure Form Ranged
     winRate: 0
@@ -9289,10 +9289,10 @@ MonoBehaviour:
     winRate: 1
   - attacker: Longsword
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Longsword
     defender: Infected Pelican
-    winRate: 1
+    winRate: 0
   - attacker: Longsword
     defender: Infected Phantom
     winRate: 0
@@ -10915,7 +10915,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Goliath
     defender: Swarm Form
-    winRate: 1
+    winRate: 0
   - attacker: Goliath
     defender: Pure Form Tank
     winRate: 1
@@ -13975,13 +13975,13 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spawner
     defender: Swarm Form
-    winRate: 1
+    winRate: 0
   - attacker: Spawner
     defender: Pure Form Tank
     winRate: 0
   - attacker: Spawner
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Spawner
     defender: Infected Pelican
     winRate: 0.6

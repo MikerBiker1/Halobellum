@@ -69,7 +69,7 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Armor | Shield | Speed | Weapons | Wins, average | Best counters |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Sparrowhawk | Aerial | 2 | 50 | 1 | 250 | 550 | Light | 0 | 4 | Heavy Autocannon (18 per 0.3 s, Ballistic, anti-armor, 14 m) | 39 of 68, 59% | Wolverine 100%, Swarm Form 100% |
-| Longsword | Aerial | 2 | 50 | 1 | 300 | 600 | Light | 0 | 5 | Carpet Bombs (150 per 2.5 s, Explosive, 5 m, splash 5 m) | 41 of 68, 60% | Wolverine 100%, Vampire 100% |
+| Longsword | Aerial | 2 | 50 | 1 | 300 | 600 | Light | 0 | 5 | Carpet Bombs (150 per 2.5 s, Explosive, 5 m, splash 5 m) | 39 of 68, 57% | Wolverine 100%, Vampire 100% |
 | Vulture | Aerial | 3 | 200 | 1 | 400 | 900 | Heavy | 0 | 2.5 | Missile Barrage (50 per 3 s, Explosive, 22 m, splash 3 m); Chin Gun (10 per 0.2 s, Ballistic, 14 m) | 47 of 68, 70% | Wolverine 100%, Vampire 100% |
 | Condor Gunship | Aerial | 3 | 200 | 1 | 400 | 1500 | Light | 0 | 3.25 | Twin Autocannons (20 per 0.25 s, Ballistic, 16 m) | 44 of 68, 66% | Wolverine 100%, Reaver 100% |
 
@@ -97,7 +97,7 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Armor | Shield | Speed | Weapons | Wins, average | Best counters |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Skitterer | Flanker | 1 | 0 | 6 | 150 | 100 | Light | 0 | 4.5 | Spitter Plasma (5 per 0.25 s, Energy, 7 m) | 23 of 68, 33% | Flamethrower Trooper 100%, Scorpion 100% |
-| Goliath | Tank | 3 | 250 | 1 | 500 | 2200 | Heavy | 0 | 1.1 | Fist Slam (120 per 2 s, Melee, 3 m, splash 3.5 m); Fuel Rod Cannon (55 per 2.5 s, Explosive, 14 m, splash 2 m) | 35 of 68, 53% | Gauss Warthog 100%, Spartan 100% |
+| Goliath | Tank | 3 | 250 | 1 | 500 | 2200 | Heavy | 0 | 1.1 | Fist Slam (120 per 2 s, Melee, 3 m, splash 3.5 m); Fuel Rod Cannon (55 per 2.5 s, Explosive, 14 m, splash 2 m) | 34 of 68, 52% | Gauss Warthog 100%, Spartan 100% |
 | Hunter Captain | Single-target DPS | 3 | 225 | 1 | 450 | 2000 | Heavy | 0 | 1.25 | Siphon Laser (72 per 0.75 s, Energy, anti-armor, 15 m) | 36 of 68, 53% | Marine 100%, Grunt 100% |
 
 - **Skitterer.** Spider-like machines worked by a few worms: a fast, light swarm of a flanker.
@@ -141,7 +141,7 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 | Infested Elite | Single-target DPS | 2 | 50 | 3 | 250 | 420 | Unarmored | 0 | 2 | Scythe Claw (42 per 0.7 s, Melee, anti-armor, 1.5 m); Scavenged Plasma Rifle (10 per 0.5 s, Energy, 11 m) | 32 of 68, 48% | Marine 100%, Grunt 100% |
 | Infested Wraith | Artillery | 2 | 50 | 1 | 250 | 1000 | Heavy | 0 | 1 | Scavenged Mortar (70 per 3.5 s, Explosive, 34 m, splash 4 m, lobbed) | 41 of 68, 60% | Hornet 100%, Pelican 100% |
 | Infested Banshee | Aerial | 2 | 50 | 2 | 250 | 360 | Light | 0 | 4.5 | Scavenged Plasma Cannons (8 per 0.3 s, Energy, 10 m); Spore Bomb (45 per 2.5 s, Explosive, 8 m, splash 3 m) | 50 of 68, 75% | Wolverine 100%, Swarm Form 100% |
-| Spawner | Tank | 3 | 200 | 1 | 400 | 2800 | Light | 0 | 0.9 | Spore Lash (40 per 1.2 s, Melee, 3 m, splash 2 m) | 29 of 68, 43% | Jackal (Plasma Rifle) 100%, Zealot 100% |
+| Spawner | Tank | 3 | 200 | 1 | 400 | 2800 | Light | 0 | 0.9 | Spore Lash (40 per 1.2 s, Melee, 3 m, splash 2 m) | 27 of 68, 40% | Jackal (Plasma Rifle) 100%, Zealot 100% |
 
 - **Infested Grunt.** A rushing crowd with claws. Cannot infect, as only Infection Forms do.
 - **Infested Ghost.** Faster and lighter than the Infested Warthog.

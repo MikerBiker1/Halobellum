@@ -4,7 +4,7 @@
   "Warthog": "Flamethrower Trooper (100%), Grunt Goblin (100%)",
   "GaussWarthog": "Marine (100%), Grunt (100%)",
   "Scorpion": "Gauss Warthog (100%), Spartan (100%)",
-  "Wolverine": "Flood Abomination (100%), Spartan Sniper (100%)",
+  "Wolverine": "Spartan Sniper (100%), Spartan Heavy Weapons (100%)",
   "Hornet": "Wolverine (100%), Vampire (100%)",
   "ArcherMissilePod": "Sparrowhawk (100%), Juggernaut (100%)",
   "Pelican": "Wolverine (100%), Vampire (100%)",
@@ -22,7 +22,7 @@
   "Banshee": "Wolverine (100%), Vampire (100%)",
   "HunterPair": "Spartan (100%), Zealot (100%)",
   "Zealot": "Marine (100%), Grunt (100%)",
-  "Scarab": "Spartan (100%), Spartan Sniper (100%)",
+  "Scarab": "Spartan (100%), Zealot (100%)",
   "InfectionForms": "Flamethrower Trooper (100%), Fuel Rod Grunt (100%)",
   "CarrierForm": "Spawner (100%), Scorpion (100%)",
   "CombatForm": "Marine (100%), Grunt (100%)",
@@ -35,7 +35,7 @@
   "InfectedPhantom": "Swarm Form (100%), Wolverine (0%)",
   "Abomination": "Hunter Captain (100%), Marine (0%)",
   "SpartanSniper": "Marine (100%), Warthog (100%)",
-  "SpartanHeavyWeapons": "Elite (100%), Combat Form (100%)",
+  "SpartanHeavyWeapons": "Zealot (100%), Combat Form (100%)",
   "SpartanGrenadier": "Spawner (100%), Scorpion (100%)",
   "SpartanCQB": "Flamethrower Trooper (100%), Grunt Goblin (100%)",
   "SpartanFireteam": "Marine (100%), Grunt (100%)",
@@ -51,7 +51,7 @@
   "BruteGrenadier": "Scorpion (100%), Mantis (100%)",
   "Marauder": "Gauss Warthog (100%), Spartan (100%)",
   "Reaver": "Marine (100%), Spartan Grenadier (100%)",
-  "Skitterer": "Flamethrower Trooper (100%), Scorpion (100%)",
+  "Skitterer": "Flamethrower Trooper (100%), Grunt Goblin (100%)",
   "Goliath": "Gauss Warthog (100%), Spartan (100%)",
   "HunterCaptain": "Marine (100%), Grunt (100%)",
   "CannonFodder": "Flamethrower Trooper (100%), Fuel Rod Grunt (100%)",
@@ -67,5 +67,5 @@
   "InfestedElite": "Marine (100%), Grunt (100%)",
   "InfestedWraith": "Sparrowhawk (100%), Infested Hornet (100%)",
   "InfestedBanshee": "Wolverine (100%), Swarm Form (100%)",
-  "Spawner": "Jackal (Plasma Rifle) (100%), Combat Form (100%)"
+  "Spawner": "Jackal (Plasma Rifle) (100%), Zealot (100%)"
 }

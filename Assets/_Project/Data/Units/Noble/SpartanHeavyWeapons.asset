@@ -121,4 +121,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
-  notes: 'Best counters (headless runner, equal cost): Elite (100%), Combat Form (100%). A walking wall with a chaingun: mows down infantry, does little to armor. Its Unarmored body makes it weak to anti-infantry weapons once the shield is down. First-pass M10 values, Noble (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Zealot (100%), Combat Form (100%). A walking wall with a chaingun: mows down infantry, does little to armor. Its Unarmored body makes it weak to anti-infantry weapons once the shield is down. First-pass M10 values, Noble (Docs/M10/subfactions.md).'
