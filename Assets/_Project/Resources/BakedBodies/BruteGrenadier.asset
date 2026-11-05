@@ -11,11 +11,11 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9d50c9e005dbc80ecacdbb7a00a0ff15, type: 3}
   m_Name: BruteGrenadier
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
   modelFolder: BruteGrenadier
-  sourceModel: {fileID: 0}
-  albedo: {fileID: 0}
-  albedoFile:
+  sourceModel: {fileID: 919132149155446097, guid: ef3133a9c67ca324e9d5616cdfded239, type: 3}
+  albedo: {fileID: 2800000, guid: e8ba574dd22bff9478a7ea0d94acbcf5, type: 3}
+  albedoFile: 
   movingClip: Run_and_Shoot
   shootingClip: Walk_Forward_While_Shooting
   deathClip: Dead
@@ -31,3 +31,26 @@ MonoBehaviour:
   transitionSeconds: 0.2
   corpseSeconds: 14
   bakedFps: 30
+  mesh: {fileID: 4300000, guid: f5ae6c33cb2b4ce4dbce740645890858, type: 2}
+  material: {fileID: 2100000, guid: e5445644fb3f5df46b8fd420e21fb399, type: 2}
+  glassMaterial: {fileID: 0}
+  clips:
+  - role: 1
+    firstRow: 0
+    frames: 20
+    loops: 1
+  - role: 2
+    firstRow: 20
+    frames: 98
+    loops: 1
+  - role: 3
+    firstRow: 118
+    frames: 89
+    loops: 0
+  - role: 0
+    firstRow: 207
+    frames: 1
+    loops: 0
+  muzzle: {x: 0.17576766, y: 2.2589858, z: 0.65294856}
+  hasMuzzle: 1
+  bodyHeight: 2.8

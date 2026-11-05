@@ -11,11 +11,11 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9d50c9e005dbc80ecacdbb7a00a0ff15, type: 3}
   m_Name: ODST
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
   modelFolder: ODST
-  sourceModel: {fileID: 0}
-  albedo: {fileID: 0}
-  albedoFile:
+  sourceModel: {fileID: 919132149155446097, guid: 0d825d663674b7449988e674d50c9ae0, type: 3}
+  albedo: {fileID: 2800000, guid: 30152dda49813c0439f1404c68a6212b, type: 3}
+  albedoFile: 
   movingClip: Run_and_Shoot
   shootingClip: Walk_Forward_While_Shooting
   deathClip: Dead
@@ -31,3 +31,26 @@ MonoBehaviour:
   transitionSeconds: 0.2
   corpseSeconds: 14
   bakedFps: 30
+  mesh: {fileID: 4300000, guid: 95eba6a5492b7c34091559f034966e36, type: 2}
+  material: {fileID: 2100000, guid: 71a8cb0bcb2b2b34fa8c170f455d7369, type: 2}
+  glassMaterial: {fileID: 0}
+  clips:
+  - role: 1
+    firstRow: 0
+    frames: 20
+    loops: 1
+  - role: 2
+    firstRow: 20
+    frames: 98
+    loops: 1
+  - role: 3
+    firstRow: 118
+    frames: 89
+    loops: 0
+  - role: 0
+    firstRow: 207
+    frames: 1
+    loops: 0
+  muzzle: {x: 0.03492148, y: 1.7782748, z: 0.7451403}
+  hasMuzzle: 1
+  bodyHeight: 2
