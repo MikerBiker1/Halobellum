@@ -31,12 +31,12 @@ MonoBehaviour:
   targetFilter: 0
   weapons:
   - weaponName: Energy Sword
-    damagePerShot: 160
-    fireInterval: 0.9
+    damagePerShot: 240
+    fireInterval: 0.6
     range: 1.5
     minRange: 0
     projectileSpeed: 0
-    splashRadius: 0
+    splashRadius: 2.5
     damageType: 4
     isAntiArmor: 1
     canBeBlocked: 0
@@ -83,9 +83,9 @@ MonoBehaviour:
   auraSpeedMultiplier: 1
   auraHealPerSecondShare: 0
   lifestealShare: 0
-  leapRange: 0
-  leapSpeed: 0
-  leapCooldownSeconds: 0
+  leapRange: 6
+  leapSpeed: 14
+  leapCooldownSeconds: 2.5
   techUpgrades:
   - {fileID: 11400000, guid: 69fdd1d164a5690259a2017ad7ad3335, type: 2}
   - {fileID: 11400000, guid: 0a2c741f0735efd041d56eec7de3a3a5, type: 2}

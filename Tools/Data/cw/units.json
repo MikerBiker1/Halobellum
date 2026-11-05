@@ -660,7 +660,7 @@
   "unlock": 250,
   "squad": 1,
   "cost": 500,
-  "hp": 1500,
+  "hp": 1000,
   "armor": "U",
   "speed": 1.75,
   "radius": 0.6,
@@ -1641,12 +1641,12 @@
   "weapons": [
    {
     "name": "Energy Sword",
-    "dmg": 160,
-    "interval": 0.9,
+    "dmg": 240,
+    "interval": 0.6,
     "range": 1.5,
     "minr": 0,
     "proj": 0,
-    "splash": 0,
+    "splash": 2.5,
     "type": "Melee",
     "aa": true,
     "block": false,
@@ -1680,7 +1680,11 @@
   "burst": null,
   "spawn": null,
   "aura": null,
-  "leap": null,
+  "leap": [
+   6,
+   14,
+   2.5
+  ],
   "lifesteal": 0,
   "basedmg": null,
   "tint": null,

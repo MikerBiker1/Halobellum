@@ -283,7 +283,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Flamethrower Trooper
     defender: Zealot
-    winRate: 1
+    winRate: 0
   - attacker: Flamethrower Trooper
     defender: Scarab
     winRate: 0
@@ -1930,10 +1930,10 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan
     defender: Stalker Form
-    winRate: 1
+    winRate: 0.1
   - attacker: Spartan
     defender: Pure Form Ranged
-    winRate: 0.8
+    winRate: 0.2
   - attacker: Spartan
     defender: Swarm Form
     winRate: 1
@@ -1960,7 +1960,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan
     defender: Spartan Grenadier
-    winRate: 0.9
+    winRate: 0.6
   - attacker: Spartan
     defender: Spartan CQB
     winRate: 0
@@ -1993,7 +1993,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan
     defender: Chopper
-    winRate: 1
+    winRate: 0.3
   - attacker: Spartan
     defender: Brute Grenadier
     winRate: 0
@@ -2032,10 +2032,10 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan
     defender: Infested Hornet
-    winRate: 0.2
+    winRate: 0
   - attacker: Spartan
     defender: Juggernaut
-    winRate: 1
+    winRate: 0.8
   - attacker: Spartan
     defender: Infested Grunt
     winRate: 0
@@ -2047,7 +2047,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan
     defender: Infested Wraith
-    winRate: 1
+    winRate: 0.7
   - attacker: Spartan
     defender: Infested Banshee
     winRate: 0
@@ -2731,7 +2731,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Fuel Rod Grunt
     defender: Zealot
-    winRate: 1
+    winRate: 0
   - attacker: Fuel Rod Grunt
     defender: Scarab
     winRate: 0
@@ -2935,7 +2935,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Zealot
-    winRate: 1
+    winRate: 0
   - attacker: 'Jackal (Plasma Rifle)'
     defender: Scarab
     winRate: 0
@@ -3139,7 +3139,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: 'Jackal (Shield)'
     defender: Zealot
-    winRate: 1
+    winRate: 0
   - attacker: 'Jackal (Shield)'
     defender: Scarab
     winRate: 0
@@ -3547,7 +3547,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Elite
     defender: Zealot
-    winRate: 1
+    winRate: 0
   - attacker: Elite
     defender: Scarab
     winRate: 0
@@ -4507,7 +4507,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Zealot
     defender: Flamethrower Trooper
-    winRate: 0
+    winRate: 1
   - attacker: Zealot
     defender: Warthog
     winRate: 1
@@ -4543,19 +4543,19 @@ MonoBehaviour:
     winRate: 0
   - attacker: Zealot
     defender: Fuel Rod Grunt
-    winRate: 0
+    winRate: 1
   - attacker: Zealot
     defender: 'Jackal (Plasma Rifle)'
-    winRate: 0
+    winRate: 1
   - attacker: Zealot
     defender: 'Jackal (Shield)'
-    winRate: 0
+    winRate: 1
   - attacker: Zealot
     defender: Ghost
     winRate: 1
   - attacker: Zealot
     defender: Elite
-    winRate: 0
+    winRate: 1
   - attacker: Zealot
     defender: Wraith
     winRate: 1
@@ -4570,16 +4570,16 @@ MonoBehaviour:
     winRate: 1
   - attacker: Zealot
     defender: Scarab
-    winRate: 0
+    winRate: 1
   - attacker: Zealot
     defender: Infection Forms
-    winRate: 0
+    winRate: 1
   - attacker: Zealot
     defender: Carrier Form
     winRate: 0
   - attacker: Zealot
     defender: Combat Form
-    winRate: 0
+    winRate: 1
   - attacker: Zealot
     defender: Stalker Form
     winRate: 1
@@ -4597,28 +4597,28 @@ MonoBehaviour:
     winRate: 1
   - attacker: Zealot
     defender: Infected Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Zealot
     defender: Infected Phantom
     winRate: 0
   - attacker: Zealot
     defender: Flood Abomination
-    winRate: 0
+    winRate: 1
   - attacker: Zealot
     defender: Spartan Sniper
     winRate: 1
   - attacker: Zealot
     defender: Spartan Heavy Weapons
-    winRate: 0.5
+    winRate: 1
   - attacker: Zealot
     defender: Spartan Grenadier
     winRate: 1
   - attacker: Zealot
     defender: Spartan CQB
-    winRate: 0.7
+    winRate: 1
   - attacker: Zealot
     defender: Spartan Fireteam
-    winRate: 0
+    winRate: 1
   - attacker: Zealot
     defender: Gremlin
     winRate: 1
@@ -4648,7 +4648,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Zealot
     defender: Brute Grenadier
-    winRate: 0
+    winRate: 1
   - attacker: Zealot
     defender: Marauder
     winRate: 1
@@ -4657,7 +4657,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Zealot
     defender: Skitterer
-    winRate: 0
+    winRate: 1
   - attacker: Zealot
     defender: Goliath
     winRate: 1
@@ -4666,19 +4666,19 @@ MonoBehaviour:
     winRate: 1
   - attacker: Zealot
     defender: Cannon Fodder
-    winRate: 0
+    winRate: 0.1
   - attacker: Zealot
     defender: Heavy Grunts
-    winRate: 0
+    winRate: 1
   - attacker: Zealot
     defender: Grunt Goblin
     winRate: 1
   - attacker: Zealot
     defender: Infested Marine
-    winRate: 0
+    winRate: 1
   - attacker: Zealot
     defender: Infested Warthog
-    winRate: 0
+    winRate: 1
   - attacker: Zealot
     defender: Infested Scorpion
     winRate: 1
@@ -4690,13 +4690,13 @@ MonoBehaviour:
     winRate: 1
   - attacker: Zealot
     defender: Infested Grunt
-    winRate: 0
+    winRate: 1
   - attacker: Zealot
     defender: Infested Ghost
-    winRate: 0
+    winRate: 1
   - attacker: Zealot
     defender: Infested Elite
-    winRate: 0
+    winRate: 1
   - attacker: Zealot
     defender: Infested Wraith
     winRate: 1
@@ -4705,7 +4705,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Zealot
     defender: Spawner
-    winRate: 0
+    winRate: 1
   - attacker: Scarab
     defender: Marine
     winRate: 1
@@ -4774,7 +4774,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Scarab
     defender: Zealot
-    winRate: 1
+    winRate: 0
   - attacker: Scarab
     defender: Infection Forms
     winRate: 1
@@ -4978,7 +4978,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infection Forms
     defender: Zealot
-    winRate: 1
+    winRate: 0
   - attacker: Infection Forms
     defender: Scarab
     winRate: 0
@@ -5386,7 +5386,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Combat Form
     defender: Zealot
-    winRate: 1
+    winRate: 0
   - attacker: Combat Form
     defender: Scarab
     winRate: 0.3
@@ -5551,7 +5551,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Stalker Form
     defender: Spartan
-    winRate: 0
+    winRate: 0.9
   - attacker: Stalker Form
     defender: Mantis
     winRate: 0
@@ -5755,7 +5755,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pure Form Ranged
     defender: Spartan
-    winRate: 0.2
+    winRate: 0.8
   - attacker: Pure Form Ranged
     defender: Mantis
     winRate: 1
@@ -6610,7 +6610,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infected Pelican
     defender: Zealot
-    winRate: 1
+    winRate: 0
   - attacker: Infected Pelican
     defender: Scarab
     winRate: 0
@@ -7018,7 +7018,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Flood Abomination
     defender: Zealot
-    winRate: 1
+    winRate: 0
   - attacker: Flood Abomination
     defender: Scarab
     winRate: 0
@@ -7426,7 +7426,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Heavy Weapons
     defender: Zealot
-    winRate: 0.5
+    winRate: 0
   - attacker: Spartan Heavy Weapons
     defender: Scarab
     winRate: 0
@@ -7591,7 +7591,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Grenadier
     defender: Spartan
-    winRate: 0.1
+    winRate: 0.4
   - attacker: Spartan Grenadier
     defender: Mantis
     winRate: 0.1
@@ -7834,7 +7834,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan CQB
     defender: Zealot
-    winRate: 0.3
+    winRate: 0
   - attacker: Spartan CQB
     defender: Scarab
     winRate: 0
@@ -8038,7 +8038,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Fireteam
     defender: Zealot
-    winRate: 1
+    winRate: 0
   - attacker: Spartan Fireteam
     defender: Scarab
     winRate: 0
@@ -9835,7 +9835,7 @@ MonoBehaviour:
     winRate: 0.1
   - attacker: Chopper
     defender: Spartan
-    winRate: 0
+    winRate: 0.7
   - attacker: Chopper
     defender: Mantis
     winRate: 0
@@ -10078,7 +10078,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Brute Grenadier
     defender: Zealot
-    winRate: 1
+    winRate: 0
   - attacker: Brute Grenadier
     defender: Scarab
     winRate: 0
@@ -10690,7 +10690,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Skitterer
     defender: Zealot
-    winRate: 1
+    winRate: 0
   - attacker: Skitterer
     defender: Scarab
     winRate: 0
@@ -11302,7 +11302,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Cannon Fodder
     defender: Zealot
-    winRate: 1
+    winRate: 0.9
   - attacker: Cannon Fodder
     defender: Scarab
     winRate: 0
@@ -11506,7 +11506,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Heavy Grunts
     defender: Zealot
-    winRate: 1
+    winRate: 0
   - attacker: Heavy Grunts
     defender: Scarab
     winRate: 0
@@ -11914,7 +11914,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Marine
     defender: Zealot
-    winRate: 1
+    winRate: 0
   - attacker: Infested Marine
     defender: Scarab
     winRate: 0
@@ -12118,7 +12118,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Warthog
     defender: Zealot
-    winRate: 1
+    winRate: 0
   - attacker: Infested Warthog
     defender: Scarab
     winRate: 0
@@ -12487,7 +12487,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Hornet
     defender: Spartan
-    winRate: 0.8
+    winRate: 1
   - attacker: Infested Hornet
     defender: Mantis
     winRate: 1
@@ -12691,7 +12691,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Juggernaut
     defender: Spartan
-    winRate: 0
+    winRate: 0.2
   - attacker: Juggernaut
     defender: Mantis
     winRate: 0.7
@@ -12934,7 +12934,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Grunt
     defender: Zealot
-    winRate: 1
+    winRate: 0
   - attacker: Infested Grunt
     defender: Scarab
     winRate: 0
@@ -13138,7 +13138,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Ghost
     defender: Zealot
-    winRate: 1
+    winRate: 0
   - attacker: Infested Ghost
     defender: Scarab
     winRate: 0
@@ -13342,7 +13342,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Elite
     defender: Zealot
-    winRate: 1
+    winRate: 0
   - attacker: Infested Elite
     defender: Scarab
     winRate: 0
@@ -13507,7 +13507,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Wraith
     defender: Spartan
-    winRate: 0
+    winRate: 0.3
   - attacker: Infested Wraith
     defender: Mantis
     winRate: 0.9
@@ -13954,7 +13954,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spawner
     defender: Zealot
-    winRate: 1
+    winRate: 0
   - attacker: Spawner
     defender: Scarab
     winRate: 0
