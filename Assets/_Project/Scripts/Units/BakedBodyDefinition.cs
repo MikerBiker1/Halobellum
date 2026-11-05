@@ -60,6 +60,12 @@ namespace Halobellum.Units
         public bool weaponAlongForearm;
         [Tooltip("With no weapon of its own: shots start from the right hand, where the model has its gun.")]
         public bool muzzleInRightHand;
+        [Tooltip("Folder in Art/Imported/Models of a prepared shield (Tools/Art), fixed to the left hand, facing forward in the shooting pose, and drawn see-through. Empty for none.")]
+        public string shieldName;
+        [Tooltip("How wide the shield is in the game, in metres.")]
+        public float shieldDiameter = 1.1f;
+        [Tooltip("Where the middle of the shield sits from the left hand, in the body's own axes, in the shooting pose.")]
+        public Vector3 shieldOffset;
 
         [Header("Playing")]
         [Tooltip("Battle seconds a cross-fade from one animation to the next takes.")]
@@ -71,6 +77,8 @@ namespace Halobellum.Units
         public int bakedFps = 30;
         public Mesh mesh;
         public Material material;
+        [Tooltip("What the see-through part of the mesh is drawn with: its second sub-mesh. Null if it has none.")]
+        public Material glassMaterial;
         public List<BakedClip> clips = new List<BakedClip>();
         [Tooltip("Where shots start: the tip of the weapon in the shooting pose, in the body's own space.")]
         public Vector3 muzzle;
@@ -79,6 +87,9 @@ namespace Halobellum.Units
         public float bodyHeight;
 
         public bool IsReady => mesh != null && material != null && clips.Count > 0;
+
+        /// <summary>The materials a renderer of this body's mesh needs.</summary>
+        public Material[] Materials => glassMaterial != null ? new[] { material, glassMaterial } : new[] { material };
 
         public BakedClip Clip(BakedAnimation role)
         {

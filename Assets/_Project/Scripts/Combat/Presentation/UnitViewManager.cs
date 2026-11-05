@@ -422,7 +422,7 @@ namespace Halobellum.Presentation
                 body.transform.SetParent(view.Root.transform, false);
                 body.AddComponent<MeshFilter>().sharedMesh = baked.mesh;
                 view.BakedRenderer = body.AddComponent<MeshRenderer>();
-                view.BakedRenderer.sharedMaterial = baked.material;
+                view.BakedRenderer.sharedMaterials = baked.Materials;
                 view.BakedRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 view.BakedRenderer.receiveShadows = false;
                 view.Baked = baked;

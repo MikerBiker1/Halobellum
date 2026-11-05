@@ -83,6 +83,8 @@ namespace Halobellum.Presentation
         public PlayerState ArmyA { get; } = new PlayerState(Team.A);
         public PlayerState ArmyB { get; } = new PlayerState(Team.B);
         public List<SandboxUnit> Units { get; } = new List<SandboxUnit>();
+        /// <summary>The units that only land from a spell, such as the ODST: not on the list to place, but the gallery shows them.</summary>
+        public List<SandboxUnit> DropUnits { get; } = new List<SandboxUnit>();
         /// <summary>Every item, once each: pick one, then a squad.</summary>
         public List<ItemStats> Items { get; } = new List<ItemStats>();
         /// <summary>The item picked from the list, waiting for a squad (hexagons show), or null.</summary>
@@ -134,6 +136,8 @@ namespace Halobellum.Presentation
                 }
                 foreach (CardStats card in info.Cards)
                 {
+                    UnitStats drop = card.Spell?.DropUnit;
+                    if (drop != null && !DropUnits.Exists(u => u.Stats == drop)) DropUnits.Add(new SandboxUnit(info.Name, info.Name, drop));
                     // Factions share their items: list each one once.
                     if (card.Item == null || Items.Exists(i => i.Name == card.Item.Name)) continue;
                     Items.Add(card.Item);

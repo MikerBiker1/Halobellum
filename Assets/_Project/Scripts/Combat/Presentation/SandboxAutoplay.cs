@@ -17,6 +17,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Halobellum.Combat;
 using Halobellum.Core;
 using Halobellum.Units;
@@ -65,7 +66,7 @@ namespace Halobellum.Presentation
             Directory.CreateDirectory(_shots);
             _gallery = Array.IndexOf(args, GalleryFlag) >= 0;
             _all = Array.IndexOf(args, "-galleryAll") >= 0; // Placeholder bodies too.
-            int only = Array.IndexOf(args, "-galleryOnly"); // Only the units listed under this name, such as a sub-faction ("Noble").
+            int only = Array.IndexOf(args, "-galleryOnly"); // Only these, split by commas: a name a unit is listed under, such as a sub-faction ("Noble"), or a unit's own name.
             if (only >= 0 && only + 1 < args.Length) _only = args[only + 1];
             _effectsOnly = Array.IndexOf(args, EffectsFlag) >= 0;
             _benchOnly = Array.IndexOf(args, BenchFlag) >= 0;
@@ -101,7 +102,7 @@ namespace Halobellum.Presentation
             yield return new WaitForSecondsRealtime(1f);
             var views = GetComponent<UnitViewManager>();
             var shown = new List<UnitStats>();
-            foreach (SandboxController.SandboxUnit entry in _sandbox.Units)
+            foreach (SandboxController.SandboxUnit entry in _sandbox.Units.Concat(_sandbox.DropUnits))
             {
                 UnitStats type = entry.Stats;
                 _sandbox.Clear(Team.A);
@@ -111,7 +112,7 @@ namespace Halobellum.Presentation
                 _sandbox.AddSquad(Team.B, Find("Hornet"));
                 yield return null;
                 if (!_all && !_battle.KeepsOwnMaterials(type) && _battle.BakedBodyFor(type) == null) continue;
-                if (_only != null && !entry.Faction.Contains(_only)) continue;
+                if (_only != null && !_only.Split(',').Any(name => entry.Faction.Contains(name) || type.Name == name)) continue;
                 shown.Add(type);
                 string name = type.Name.Replace(" ", "");
 

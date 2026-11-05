@@ -15,7 +15,7 @@ def units(U, W):
     return [
         U("InfestedMarine", "Infested Marine", FACTION, "Chaff", 1, 0, 12, 100, 140, "U", 3, 0.5, 0.25, "G",
           [W("Scythe Limb", 20, 0.8, 1.5, "Melee"),
-           W("Scavenged Rifle", 4, 0.5, 10, "Ballistic", block=True, own="B")], flood=True, leap=(4, 10, 4), tint=INFESTED, baked="Marine",
+           W("Scavenged Rifle", 4, 0.5, 10, "Ballistic", block=True, own="B")], flood=True, leap=(4, 10, 4), baked="InfestedMarine",
           note="Fewer bodies than a Marine squad, each much tougher: it leaps in with a scythe limb. Cannot infect, as only Infection Forms do."),
         U("InfestedWarthog", "Infested Warthog", FACTION, "Flanker", 1, 0, 2, 200, 320, "L", 5, 1.2, 1, "G",
           [W("Ramming Mass", 50, 1.0, 1.5, "Melee", splash=1.5),

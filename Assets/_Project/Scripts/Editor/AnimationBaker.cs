@@ -2,7 +2,7 @@
 // Turns a rigged model and its clips into what BakedCrowd.shader draws (M9, decisions D41 and D42), for every
 // Baked Body asset in Resources/BakedBodies:
 //   - a mesh that names two bones per vertex, with finger bones merged into the hands (too small to see at
-//     game distance) and, if it has one, a prepared weapon merged into the right hand;
+//     game distance) and, if it has one, a prepared weapon merged into the right hand, and a shield on the left in a second, see-through sub-mesh;
 //   - a texture holding every kept bone's matrix for every frame of every clip;
 //   - the clip table, and a material.
 // Moving and shooting clips play on the spot: the battle moves the unit, so any forward drift in the clip is
@@ -172,6 +172,20 @@ namespace Halobellum.EditorTools
                 material.SetFloat("_AnimFps", body.bakedFps);
                 AssetDatabase.CreateAsset(material, $"{folder}/{body.name}_Material.mat");
 
+                body.glassMaterial = null;
+                if (mesh.subMeshCount > 1)
+                {
+                    // Over the battlefield and everything opaque, seen from both sides, and writing no depth.
+                    var glass = new Material(material) { name = body.name + " glass", enableInstancing = true, renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent };
+                    glass.SetFloat("_Glass", 1f);
+                    glass.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                    glass.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                    glass.SetFloat("_ZWrite", 0f);
+                    glass.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
+                    AssetDatabase.CreateAsset(glass, $"{folder}/{body.name}_Glass.mat");
+                    body.glassMaterial = glass;
+                }
+
                 body.mesh = mesh;
                 body.material = material;
                 body.clips = clips;
@@ -284,7 +298,18 @@ namespace Halobellum.EditorTools
                     holding = hand;
                 }
                 Matrix4x4 weaponToWorld = Matrix4x4.TRS(bones[holding].position, Quaternion.LookRotation(direction, Vector3.up), Vector3.one);
-                muzzle = AddWeapon(body, weaponToWorld, bindPoses[holding].inverse * bones[holding].worldToLocalMatrix, keptIndex[holding], positions, normals, uvs, colors, boneIds, weights, triangles);
+                muzzle = AddProp(body, body.weaponName, body.weaponLength, false, weaponToWorld, bindPoses[holding].inverse * bones[holding].worldToLocalMatrix, keptIndex[holding], positions, normals, uvs, colors, boneIds, weights, triangles);
+            }
+
+            var glass = new List<int>();
+            if (!string.IsNullOrEmpty(body.shieldName))
+            {
+                int arm = Array.FindIndex(bones, b => b.name == "LeftHand");
+                if (arm < 0) throw new InvalidOperationException($"{body.name}: a shield needs a LeftHand bone.");
+                AnimationClip aim = source(body.shootingClip);
+                aim.SampleAnimation(model, aim.length * 0.5f);
+                Matrix4x4 shieldToWorld = Matrix4x4.TRS(bones[arm].position + model.transform.TransformVector(body.shieldOffset), Quaternion.LookRotation(model.transform.forward, Vector3.up), Vector3.one);
+                AddProp(body, body.shieldName, body.shieldDiameter, true, shieldToWorld, bindPoses[arm].inverse * bones[arm].worldToLocalMatrix, keptIndex[arm], positions, normals, uvs, colors, boneIds, weights, glass);
             }
 
             mesh.SetVertices(positions);
@@ -293,7 +318,9 @@ namespace Halobellum.EditorTools
             mesh.SetUVs(1, boneIds);
             mesh.SetUVs(2, weights);
             mesh.SetColors(colors);
+            mesh.subMeshCount = glass.Count > 0 ? 2 : 1;
             mesh.SetTriangles(triangles, 0);
+            if (glass.Count > 0) mesh.SetTriangles(glass, 1);
             // Generous: the shader moves the vertices, and a falling body leaves its rest pose far behind.
             float highest = positions.Max(p => p.y), lowest = positions.Min(p => p.y);
             body.bodyHeight = highest - lowest;
@@ -303,13 +330,14 @@ namespace Halobellum.EditorTools
         }
 
         /// <summary>
-        /// Merges a prepared weapon into the mesh, fixed to one bone. Its origin is its grip, it points along +Z, and a node
-        /// "Muzzle" marks the tip of its barrel. Returns where that tip is in the world.
+        /// Merges a prepared weapon or shield into the mesh, fixed to one bone. Its origin is its grip, it points along +Z, and a node
+        /// "Muzzle" marks the tip of its barrel. Returns where that tip is in the world. A weapon's size is its length; a shield's, its width,
+        /// and a shield's vertices say in their colour's alpha how much they show: more at the rim, as a field of energy does.
         /// </summary>
-        private static Vector3 AddWeapon(BakedBodyDefinition body, Matrix4x4 weaponToWorld, Matrix4x4 worldToMesh, int bone, List<Vector3> positions, List<Vector3> normals,
+        private static Vector3 AddProp(BakedBodyDefinition body, string prop, float size, bool shield, Matrix4x4 weaponToWorld, Matrix4x4 worldToMesh, int bone, List<Vector3> positions, List<Vector3> normals,
             List<Vector2> uvs, List<Color> colors, List<Vector2> boneIds, List<Vector2> weights, List<int> triangles)
         {
-            string path = $"{ModelsFolder}/{body.weaponName}/{body.weaponName}.fbx";
+            string path = $"{ModelsFolder}/{prop}/{prop}.fbx";
             var importer = (ModelImporter)AssetImporter.GetAtPath(path);
             if (importer == null) throw new InvalidOperationException($"{body.name}: no weapon at {path}.");
             if (!importer.isReadable)
@@ -328,8 +356,9 @@ namespace Halobellum.EditorTools
                 Mesh from = filter.sharedMesh;
                 Matrix4x4 meshToWeapon = filter.transform.localToWorldMatrix;
                 Vector3[] vertices = from.vertices;
-                float length = vertices.Select(v => meshToWeapon.MultiplyPoint3x4(v).z).Max() - vertices.Select(v => meshToWeapon.MultiplyPoint3x4(v).z).Min();
-                Matrix4x4 sized = Matrix4x4.Scale(Vector3.one * (body.weaponLength / length));
+                float Extent(Func<Vector3, float> along) => vertices.Select(v => along(meshToWeapon.MultiplyPoint3x4(v))).Max() - vertices.Select(v => along(meshToWeapon.MultiplyPoint3x4(v))).Min();
+                float length = shield ? Mathf.Max(Extent(v => v.x), Extent(v => v.y)) : Extent(v => v.z);
+                Matrix4x4 sized = Matrix4x4.Scale(Vector3.one * (size / length));
                 Matrix4x4 toMesh = worldToMesh * weaponToWorld * sized * meshToWeapon;
 
                 int first = positions.Count;
@@ -341,7 +370,8 @@ namespace Halobellum.EditorTools
                     normals.Add(toMesh.MultiplyVector(fromNormals[i]).normalized);
                     uvs.Add(Vector2.zero);
                     Color colour = fromColors.Length > i ? fromColors[i] : new Color(0.02f, 0.02f, 0.02f);
-                    colors.Add(new Color(colour.r, colour.g, colour.b, 1f)); // Alpha above 0 tells the shader to use this colour.
+                    float rim = shield ? new Vector2(meshToWeapon.MultiplyPoint3x4(vertices[i]).x, meshToWeapon.MultiplyPoint3x4(vertices[i]).y).magnitude / (length * 0.5f) : 0f;
+                    colors.Add(new Color(colour.r, colour.g, colour.b, shield ? Mathf.Lerp(0.3f, 0.85f, rim * rim * rim) : 1f)); // Alpha above 0 tells the shader to use this colour.
                     boneIds.Add(new Vector2(bone, bone));
                     weights.Add(new Vector2(1f, 0f));
                 }

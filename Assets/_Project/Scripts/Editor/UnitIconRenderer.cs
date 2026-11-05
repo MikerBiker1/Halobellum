@@ -163,7 +163,7 @@ namespace Halobellum.EditorTools
             var body = new GameObject("Icon subject");
             body.AddComponent<MeshFilter>().sharedMesh = baked.mesh;
             var renderer = body.AddComponent<MeshRenderer>();
-            renderer.sharedMaterial = baked.material;
+            renderer.sharedMaterials = baked.Materials;
             BakedClip still = baked.Clip(BakedAnimation.Still);
             var frame = new Vector4(still != null ? still.firstRow : 0, 1f, 0f, 0f);
             var block = new MaterialPropertyBlock();

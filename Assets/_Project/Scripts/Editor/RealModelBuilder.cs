@@ -30,6 +30,8 @@ namespace Halobellum.EditorTools
             public string Unit, Folder;
             public float Length, Height;
             public Color Tint = Color.white;
+            /// <summary>Stands on its middle whatever the unit's data says, for a model that flies.</summary>
+            public bool Flies;
         }
 
         private static readonly Color Infested = new Color(0.72f, 0.82f, 0.45f);
@@ -57,7 +59,7 @@ namespace Halobellum.EditorTools
             // Sub-factions (M10): their own models, and real models over again where that is honest.
             new Entry { Unit = "ArmoredDivision/Grizzly", Folder = "Grizzly", Length = 7.2f },
             new Entry { Unit = "Banished/Chopper", Folder = "Chopper", Length = 4.8f, Tint = new Color(1.4f, 1.35f, 1.25f) }, // A very dark texture: it read as a black shape.
-            new Entry { Unit = "AerospaceCommand/CondorGunship", Folder = "Pelican", Length = 11f, Tint = new Color(0.72f, 0.76f, 0.84f) },
+            new Entry { Unit = "AerospaceCommand/CondorGunship", Folder = "Condor", Length = 11f },
             new Entry { Unit = "FloodUNSC/InfestedWarthog", Folder = "Warthog", Length = 4.6f, Tint = Infested },
             new Entry { Unit = "FloodUNSC/InfestedScorpion", Folder = "Scorpion", Length = 6.2f, Tint = Infested },
             new Entry { Unit = "FloodUNSC/InfestedHornet", Folder = "Hornet", Length = 6f, Tint = Infested },
@@ -74,6 +76,17 @@ namespace Halobellum.EditorTools
             new Entry { Unit = "FloodCovenant/InfestedGhost", Folder = "Ghost", Length = 4.4f, Tint = Infested },
             new Entry { Unit = "LekgoloColony/Skitterer", Folder = "Skitterer", Length = 2.6f },
             new Entry { Unit = "Flood/SwarmForm", Folder = "SwarmForm", Length = 3f },
+            // The owner's third batch (M11). Radii, for comparison: Mantis 2, Wolverine 1.4, Marauder 1.8, Reaver 1.4, Vampire 1.8, Seeder 1.2, Spawner 2, Juggernaut 1.8, Combat Form 0.6, Goliath 2.4.
+            new Entry { Unit = "UNSC/Mantis", Folder = "Mantis", Height = 6f, Tint = new Color(1.3f, 1.3f, 1.3f) }, // A dark texture, between the Chopper's and the Cobra's.
+            new Entry { Unit = "UNSC/Wolverine", Folder = "Wolverine", Length = 5.5f },
+            new Entry { Unit = "Banished/Marauder", Folder = "Marauder", Length = 5.8f },
+            new Entry { Unit = "Banished/Reaver", Folder = "Reaver", Height = 5f },
+            new Entry { Unit = "Covenant/Vampire", Folder = "Vampire", Length = 7.5f },
+            new Entry { Unit = "Flood/Seeder", Folder = "Seeder", Length = 8f, Flies = true },
+            new Entry { Unit = "Flood/CombatForm", Folder = "CombatForm", Height = 2.6f },
+            new Entry { Unit = "FloodCovenant/Spawner", Folder = "Spawner", Length = 9f },
+            new Entry { Unit = "FloodUNSC/Juggernaut", Folder = "Juggernaut", Length = 8f },
+            new Entry { Unit = "LekgoloColony/Goliath", Folder = "Goliath", Height = 6f },
         };
 
         [Serializable]
@@ -160,7 +173,7 @@ namespace Halobellum.EditorTools
                 float scale = entry.Height > 0f ? entry.Height / bounds.size.y : entry.Length / Mathf.Max(bounds.size.x, bounds.size.z);
                 model.transform.localScale *= scale;
                 bounds = BoundsOf(root);
-                float baseHeight = unit.isAir ? bounds.center.y : bounds.min.y;
+                float baseHeight = unit.isAir || entry.Flies ? bounds.center.y : bounds.min.y;
                 model.transform.localPosition -= new Vector3(bounds.center.x, baseHeight, bounds.center.z);
 
                 string materials = $"{folder}/GameMaterials";

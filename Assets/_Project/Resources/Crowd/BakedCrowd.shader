@@ -9,6 +9,8 @@
 // the global _BattleTime clock, so bodies pause, and speed up, with the battle.
 // A vertex with colour alpha above 0 is a flat colour (a rifle made of boxes) instead of the texture.
 // _BaseColor tints the body: rgb is the colour, alpha how strongly (the side's colour, a ghost, infection).
+// A second material can draw a see-through part of the mesh, such as a Jackal's shield: _Glass on, in the transparent queue, with blending.
+// That part glows in its vertices' own colour, unlit, and their colour's alpha says how much it shows. The depth pass never sees that queue.
 Shader "Halobellum/BakedCrowd"
 {
     Properties
@@ -17,6 +19,11 @@ Shader "Halobellum/BakedCrowd"
         _BaseColor("Tint", Color) = (1, 1, 1, 0)
         [NoScaleOffset] _AnimTex("Baked animation", 2D) = "black" {}
         _AnimFps("Frames per second", Float) = 30
+        [HideInInspector] _Glass("See-through", Float) = 0
+        [HideInInspector] _SrcBlend("Source blend", Float) = 1
+        [HideInInspector] _DstBlend("Destination blend", Float) = 0
+        [HideInInspector] _ZWrite("Writes depth", Float) = 1
+        [HideInInspector] _Cull("Cull", Float) = 2
     }
 
     SubShader
@@ -32,6 +39,7 @@ Shader "Halobellum/BakedCrowd"
         SAMPLER(sampler_MainTex);
         float _AnimFps;
         float _BattleTime;
+        float _Glass;
 
         UNITY_INSTANCING_BUFFER_START(BakedCrowdProps)
             UNITY_DEFINE_INSTANCED_PROP(float4, _BaseColor)
@@ -112,6 +120,9 @@ Shader "Halobellum/BakedCrowd"
         {
             Name "ForwardLit"
             Tags { "LightMode" = "UniversalForward" }
+            Blend [_SrcBlend] [_DstBlend]
+            ZWrite [_ZWrite]
+            Cull [_Cull]
 
             HLSLPROGRAM
             #pragma target 4.5
@@ -126,6 +137,7 @@ Shader "Halobellum/BakedCrowd"
                 half4 tint = UNITY_ACCESS_INSTANCED_PROP(BakedCrowdProps, _BaseColor);
                 // Keeps the texture's light and dark, lifted so that dark armour still shows the colour.
                 albedo = lerp(albedo, (0.35 + 0.9 * dot(albedo, half3(0.3, 0.59, 0.11))) * tint.rgb * 1.3, tint.a);
+                if (_Glass > 0.5) return half4(albedo * 1.6, input.color.a);
                 Light light = GetMainLight();
                 half lit = saturate(dot(normalize(input.normalWS), light.direction));
                 return half4(albedo * (0.45 + 0.75 * lit * light.color), 1.0);

@@ -1120,7 +1120,7 @@
   "scale": 1,
   "sub": null,
   "folder": "Covenant",
-  "baked": null
+  "baked": "Jackal"
  },
  {
   "id": "JackalShield",
@@ -1194,7 +1194,7 @@
   "scale": 1,
   "sub": null,
   "folder": "Covenant",
-  "baked": null
+  "baked": "JackalShield"
  },
  {
   "id": "Ghost",
@@ -3763,7 +3763,7 @@
   "scale": 1,
   "sub": "Banished",
   "folder": "Banished",
-  "baked": null
+  "baked": "BruteGrenadier"
  },
  {
   "id": "Marauder",
@@ -4487,16 +4487,11 @@
   ],
   "lifesteal": 0,
   "basedmg": null,
-  "tint": [
-   0.55,
-   0.68,
-   0.18,
-   0.55
-  ],
+  "tint": null,
   "scale": 1,
   "sub": "UNSC-based",
   "folder": "FloodUNSC",
-  "baked": "Marine"
+  "baked": "InfestedMarine"
  },
  {
   "id": "InfestedWarthog",

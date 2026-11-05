@@ -116,8 +116,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2faae295618f8da6ec76613fdff8da50, type: 2}
   prefab: {fileID: 4340932343587113536, guid: 84696f4d4238fb34fb031899847709e2, type: 3}
   keepsOwnMaterials: 0
-  bakedBody: {fileID: 11400000, guid: b0c8cf6e56807b5c59eb2c7f1e0dc9b2, type: 2}
-  bakedTint: {r: 0.55, g: 0.68, b: 0.18, a: 0.55}
+  bakedBody: {fileID: 11400000, guid: 016527badfde4bc0a945555e7cd13cc8, type: 2}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
   bakedScale: 1
   strongAgainst: Single-target DPS
   weakAgainst: Chaff clear

@@ -72,6 +72,7 @@ MonoBehaviour:
   reinforcementNeedsUpgrade: 0
   techUpgrades: []
   prefab: {fileID: 0}
+  bakedBody: {fileID: 11400000, guid: 8b7cdfc6c9704a15b819ee55a78c9d2c, type: 2}
   strongAgainst: Chaff
   weakAgainst: Chaff clear
   notes: 'Only lands from the ODST Drop Pods spell (UNSC, decisions D31 and D33); not in any roster. Uses the SMG on chaff and unarmored enemies, the rocket launcher on tougher ones. First-pass values.'
