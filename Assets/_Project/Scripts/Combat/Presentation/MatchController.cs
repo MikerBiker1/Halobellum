@@ -143,7 +143,8 @@ namespace Halobellum.Presentation
             if (Match == null || Match.BattleHistory.Count == 0) return;
             while (_battlePictures.Count < Match.BattleHistory.Count - 1) _battlePictures.Add(null);
             if (_battlePictures.Count >= Match.BattleHistory.Count) return;
-            _battlePictures.Add(BattlePicture.Take(_battle.Rules.ArenaWidth, _battle.Rules.ArenaLength));
+            BattleStats last = Match.BattleHistory[Match.BattleHistory.Count - 1];
+            _battlePictures.Add(BattlePicture.Take(last.FieldWidth, last.FieldLength)); // The flank zones beside the field too.
         }
 
         /// <summary>The picture of a card's spell, or null.</summary>

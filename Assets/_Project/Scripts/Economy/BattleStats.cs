@@ -54,8 +54,11 @@ namespace Halobellum.Economy
         /// <summary>Team A's lines first (squads, towers, spells, in that order), then Team B's.</summary>
         public readonly List<BattleStatsLine> Lines = new List<BattleStatsLine>();
         public bool Finished { get; private set; }
-        /// <summary>The field's size in metres: X from -Width/2 to Width/2, Y from -Length/2 (Team A's edge) to Length/2.</summary>
+        /// <summary>The area the map shows, in metres: X from -Width/2 to Width/2, Y from -Length/2 (Team A's edge) to Length/2. Its width takes in
+        /// the flank zones beside the field (D61), so that a squad deployed there is on the map.</summary>
         public float FieldWidth, FieldLength;
+        /// <summary>The field itself (without the flank zones), and how far out from the middle each side's flank zone starts and ends.</summary>
+        public float ArenaWidth, FlankZoneFrom, FlankZoneTo;
 
         /// <summary>One side's lines, sorted by damage dealt (or by everything thrown at them), the biggest first.</summary>
         public List<BattleStatsLine> Side(Team team, bool byReceived)
@@ -78,7 +81,14 @@ namespace Halobellum.Economy
         /// </summary>
         public static BattleStats AtStart(BattleSimulation battle, int round, PlayerState a, PlayerState b, CombatRules rules)
         {
-            var stats = new BattleStats { Round = round, FieldWidth = rules.ArenaWidth, FieldLength = rules.ArenaLength };
+            float half = rules.ArenaWidth * 0.5f;
+            var stats = new BattleStats
+            {
+                Round = round, FieldLength = rules.ArenaLength, ArenaWidth = rules.ArenaWidth,
+                FlankZoneFrom = half + rules.FlankGapColumns * rules.SquareSize,
+                FlankZoneTo = half + (rules.FlankGapColumns + rules.FlankZoneColumns) * rules.SquareSize,
+            };
+            stats.FieldWidth = stats.FlankZoneTo * 2f;
             foreach (PlayerState side in new[] { a, b }) AddSide(stats, battle, side, side == a ? 0 : a.Squads.Count);
             return stats;
         }

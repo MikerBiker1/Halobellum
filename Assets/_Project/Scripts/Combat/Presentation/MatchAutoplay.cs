@@ -36,6 +36,7 @@ namespace Halobellum.Presentation
         private MatchPhase _lastPhase = (MatchPhase)(-1);
         private bool _battleShotTaken;
         private bool _dropShotPending;
+        private bool _flank;
 
         private void Awake()
         {
@@ -57,6 +58,7 @@ namespace Halobellum.Presentation
             if (float.TryParse(Argument(args, "-autoplaySpeed"), NumberStyles.Float, CultureInfo.InvariantCulture, out float speed)) _speed = speed;
             if (int.TryParse(Argument(args, "-autoplayCard"), out int card)) _card = card; // Which draft card to pick (default 0).
             _faction = Argument(args, "-autoplayFaction"); // Or the first card of this faction, e.g. UNSC.
+            _flank = Array.IndexOf(args, "-autoplayFlank") >= 0;
             _subFaction = Argument(args, "-autoplaySubFaction"); // Or of this sub-faction, e.g. Noble. If the draw has none, a new match is drawn.
             if (_shots != null) Directory.CreateDirectory(_shots);
         }
@@ -109,6 +111,7 @@ namespace Halobellum.Presentation
                     if (_lastShotRound != m.Round)
                     {
                         BuySquads(m);
+                        if (_flank) FlankWhatCan(m);
                         PlaceSpells(m);
                         _lastShotRound = m.Round;
                         _dropShotPending = true;
@@ -264,6 +267,18 @@ namespace Halobellum.Presentation
                     if (!m.Player.Unlocked.Contains(type) || m.Player.Credits < type.Cost) continue;
                     if (_match.Buy(type).Ok) break;
                 }
+            }
+        }
+
+        /// <summary>With -autoplayFlank: each new squad that can flank goes to a flank zone, for pictures of one (D61, D69).</summary>
+        private void FlankWhatCan(Match m)
+        {
+            foreach (PlacedSquad squad in new System.Collections.Generic.List<PlacedSquad>(m.Player.Squads))
+            {
+                if (!squad.Type.CanFlank || squad.HasFought || DeploymentGrid.IsInFlankZone(squad, m.CombatRules)) continue;
+                if (!DeploymentGrid.FindFreeFlankSpot(m.Player, squad.Type, m.CombatRules, true, -20, out int column, out int row)) continue;
+                _match.BeginMoving(squad);
+                if (!_match.PlaceAt(column, row).Ok) _match.CancelPlacement();
             }
         }
 

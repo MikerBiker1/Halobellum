@@ -47,10 +47,10 @@ Sounds go by kind of weapon, not by unit, so one file covers every unit in its r
 | [ ] | `sfx_fire_gauss` | Gauss guns and the sniper rifle: Gauss Warthog, Spartan Sniper. |
 | [ ] | `sfx_fire_cannon` | Tank and other cannons: Scorpion, Elephant, Rhino, Grizzly. |
 | [ ] | `sfx_fire_rocket` | Rockets and missiles, the launch: Hornet, Wolverine, Archer Pod. |
-| [ ] | `sfx_fire_bomb` | Bombs, the release: Banshee, Hornet, Longsword. |
+| [ ] | `sfx_fire_bomb` | Bombs, the release: the Banshee's fuel rod bomb (every 2.5 s, at ground targets), Hornet, Longsword. |
 | [ ] | `sfx_fire_flame` | Flamethrowers. |
 | [ ] | `sfx_fire_laser` | Spartan Laser, Hunter Captain's Siphon Laser. |
-| [ ] | `sfx_fire_plasma` | Plasma rifles, pistols and turrets: Grunts, Jackals, Elites. |
+| [ ] | `sfx_fire_plasma` | Plasma rifles, pistols and turrets: Grunts, Jackals, Elites, and the Banshee's plasma cannons (fast, at air and ground). |
 | [ ] | `sfx_fire_plasmaheavy` | Fuel rod guns, plasma mortars, and plasma shots that fly and burst: Fuel Rod Grunt, Wraith, Hunter, Marauder. |
 | [ ] | `sfx_fire_needle` | Needle weapons: Vampire, Heavy Grunts. |
 | [ ] | `sfx_fire_beam` | The Scarab's beam: 2 s of charging, then 3 s of firing, 5.5 s in all. |

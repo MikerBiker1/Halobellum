@@ -1,5 +1,5 @@
 // BattlePicture.cs
-// A picture of the whole field from straight above, for the Battle stats window (D69): MatchController takes one as each battle
+// A picture of the whole field and the flank zones beside it from straight above, for the Battle stats window (D69): MatchController takes one as each battle
 // starts, with both armies in place, and without the deployment squares. North is the enemy's edge, as on the stats window's map: the picture's left to right is the
 // battle's X from -width/2 to width/2, and bottom to top its Y from -length/2 (the player's edge) to length/2.
 // The pictures are kept in memory only, and dropped with the match (a new game, or leaving the scene).

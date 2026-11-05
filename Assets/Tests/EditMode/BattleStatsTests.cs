@@ -48,6 +48,23 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void WhatARegeneratedShieldSoaks_CountsAsTaken()
+        {
+            CombatRules rules = TestRules.Default();
+            rules.ShieldRegenDelaySeconds = 1f;
+            var sim = new BattleSimulation(rules, 1);
+            // Every 5 s a hit of 40: 30 to the shield and 10 to health. The shield is back to 30 well before the next one.
+            UnitStats shooter = TestUnits.Unit("Shooter", health: 10000f, speed: 0f, weapon: TestUnits.Weapon(damage: 40f, range: 30f, interval: 5f, type: DamageType.Explosive));
+            UnitStats target = TestUnits.Unit("Target", health: 50f, shield: 30f, shieldRegen: 1000f, speed: 0f, weapon: TestUnits.Weapon(damage: 0.001f, range: 1f));
+            sim.AddSquad(shooter, Team.A, new Vec2(0f, -10f));
+            sim.AddSquad(target, Team.B, new Vec2(0f, 10f));
+            sim.Run();
+            SimUnit dead = sim.Units[1];
+            Assert.IsFalse(dead.IsAlive);
+            Assert.AreEqual(200f, dead.DamageTaken, 0.01f, "Five hits of 40: its 80 at the start, and 120 more its shield came back with.");
+        }
+
+        [Test]
         public void AShotAnArcBlocks_CountsWholeAsStopped()
         {
             var arc = new DefenseArcStats { ArcDegrees = 180f, FrontDamageMultiplier = 1f, RearDamageMultiplier = 1f, BlockChance = 1f, BlockedDamageTypes = new[] { DamageType.Ballistic } };
@@ -57,6 +74,32 @@ namespace Halobellum.Tests
             Assert.AreEqual(0f, target.DamageTaken, 0.01f, "Every shot came into the arc and was blocked.");
             Assert.Greater(target.DamagePrevented, 30f);
             Assert.AreEqual(0f, target.DamagePrevented % 10f, 0.01f, "Each blocked shot counts its whole 10.");
+        }
+
+        [Test]
+        public void TheMap_TakesInTheFlankZones_SoASquadThereIsOnIt()
+        {
+            CombatRules rules = TestRules.Default();
+            rules.ArenaWidthSquares = 80;
+            rules.DeploymentDepthSquares = 40;
+            rules.NoMansLandSquares = 2;
+            rules.SquareSize = 2f;
+            var flier = new UnitStats
+            {
+                Name = "Flier", Tier = 2, Cost = 300, SquadSize = 1, MaxHealth = 1000f, MoveSpeed = 5f, CollisionRadius = 1f, IsAir = true, CanFlank = true, TargetFilter = TargetFilter.Both,
+                Weapons = new[] { TestUnits.Weapon(damage: 1f, range: 12f) },
+            };
+            var player = new PlayerState(Team.A);
+            player.Squads.Add(new PlacedSquad { Id = 1, Type = flier, Column = -6, Row = -20 }); // The far edge of the left flank zone.
+            var enemy = new PlayerState(Team.B);
+            BattleSimulation battle = DeploymentGrid.CreateBattle(rules, player, enemy, 1);
+            BattleStats stats = BattleStats.AtStart(battle, 1, player, enemy, rules);
+
+            Assert.AreEqual(rules.ArenaWidth + 2f * (rules.FlankGapColumns + rules.FlankZoneColumns) * rules.SquareSize, stats.FieldWidth, 1e-3f);
+            BattleStatsLine line = stats.Lines.Single();
+            Assert.Less(line.Start.X, -rules.ArenaWidth * 0.5f, "It stands beyond the field's edge.");
+            Assert.GreaterOrEqual(line.Start.X, -stats.FieldWidth * 0.5f, "But on the map.");
+            Assert.Greater(line.Start.Y, 0f, "Beside the enemy's area.");
         }
 
         [Test]

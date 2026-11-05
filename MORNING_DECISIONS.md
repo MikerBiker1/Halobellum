@@ -175,9 +175,9 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 
 ## Battle stats (D69)
 
-98. **Only at the end of the game,** as you asked. The same window could open from each round's result screen too.
-99. **What "stopped" counts:** armor, the shield type and defense arcs, against a body that had none, never past what the body had left. A hit it is weak to stops nothing rather than counting below zero. Shield regeneration isn't counted anywhere.
-100. **One window for both sides:** the map fit beside both lists (about 790 pixels at 1920 x 1080), so there are no separate tabs per side. Say if it feels small.
+98. *(Only at the end: as it is.)* **Only at the end of the game,** as you asked. The same window could open from each round's result screen too.
+99. *(Answered: yes, it is counted.)* **What "stopped" counts:** armor, the shield type and defense arcs, against a body that had none, never past what the body had left. A hit it is weak to stops nothing rather than counting below zero. Damage a shield soaks after it grows back counts as taken, like any other; there's just no separate number for how much shield came back. A test checks it.
+100. *(Yes. Flank zones: the map now takes them in, D69.)* **One window for both sides:** the map fit beside both lists (about 790 pixels at 1920 x 1080), so there are no separate tabs per side. Say if it feels small.
 
 ## Things my test runs did to your PC
 

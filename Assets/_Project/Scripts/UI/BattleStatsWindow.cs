@@ -244,6 +244,13 @@ namespace Halobellum.UI
             }
             GUI.color = HudTheme.Accent;
             Outline(map, 2f);
+            // The flank zones (D61): a strip each side, beyond the field's edge; each side's squads flank beside the other's area.
+            GUI.color = new Color(1f, 1f, 1f, 0.35f);
+            foreach (float sign in new[] { -1f, 1f })
+            {
+                Vector2 near = OnMap(map, stats, new Vec2(sign * stats.FlankZoneFrom, 0f)), far = OnMap(map, stats, new Vec2(sign * stats.FlankZoneTo, 0f));
+                Outline(new Rect(Mathf.Min(near.x, far.x), map.y + 2f, Mathf.Abs(far.x - near.x), map.height - 4f), 1f);
+            }
             GUI.color = old;
 
             Event current = Event.current;
@@ -268,7 +275,7 @@ namespace Halobellum.UI
             if (hovered != null)
             {
                 Vector2 spot = OnMap(map, stats, hovered.Start);
-                string text = Title(hovered);
+                string text = Title(hovered) + (hovered.ArrivesLate ? ": flanked, and came late" : "");
                 float width = _tip.CalcSize(new GUIContent(text)).x + 16f;
                 var tip = new Rect(Mathf.Clamp(spot.x - width * 0.5f, map.x, map.xMax - width), spot.y - MapIcon - 26f, width, 24f);
                 if (tip.y < map.y) tip.y = spot.y + MapIcon * 0.7f;
@@ -286,7 +293,7 @@ namespace Halobellum.UI
             DrawIcon(rect, line, color, faction, spellIcon, picked);
         }
 
-        /// <summary>An icon in its side's colour; a spell's is round-cornered by a thinner edge, and a squad that arrives late is dimmed.</summary>
+        /// <summary>An icon in its side's colour; a spell's has a thinner edge, and a squad that arrives late (from a flank zone) is dimmed.</summary>
         private static void DrawIcon(Rect rect, BattleStatsLine line, Color color, string faction, Func<SpellStats, Texture2D> spellIcon, bool picked)
         {
             Color old = GUI.color;
