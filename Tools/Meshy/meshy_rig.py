@@ -17,7 +17,7 @@ import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
-PREPARED = os.path.join(ROOT, "Art_Source", "Prepared")
+PREPARED = os.environ.get("HB_PREPARED") or os.path.join(ROOT, "Art_Source", "Prepared")  # As in model_tools.py: a worktree can prepare outside the shared Art_Source.
 API = "https://api.meshy.ai/openapi"
 KEY = open(os.path.join(ROOT, "Art_Source", "meshy_key.txt"), encoding="utf-8").read().strip()
 STATE_PATH = os.path.join(HERE, "rig_state.json")

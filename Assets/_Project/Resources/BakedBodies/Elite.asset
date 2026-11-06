@@ -20,8 +20,8 @@ MonoBehaviour:
   shootingClip: Walk_Forward_While_Shooting
   deathClip: Dead
   stillClip: walking_2
-  weaponName: Weapon_PlasmaPistol
-  weaponLength: 0.7
+  weaponName: Weapon_PlasmaRifle
+  weaponLength: 0.85
   weaponInForwardHand: 1
   weaponAlongForearm: 0
   muzzleInRightHand: 0
