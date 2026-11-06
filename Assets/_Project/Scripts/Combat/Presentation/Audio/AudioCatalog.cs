@@ -209,8 +209,9 @@ namespace Halobellum.Presentation
         /// <summary>The Phantoms' and the Scarab's plasma turrets: the owner's heavy plasma file, in a group of its own so that their fast fire can't take every heavy plasma voice from the fuel rods and mortars.</summary>
         public static readonly SfxCue FirePlasmaTurret = OwnerCue("sfx_fire_plasmaturret", SfxGroup.PlasmaTurrets, 0.75f, 0.06f, 2, -16.5f);
         public static readonly SfxCue FireBeamRifle = OwnerCue("sfx_fire_beamrifle", SfxGroup.BigGuns, 0.85f, 0.03f, 5, -13.5f, hold: 0.6f); // 3 s, mostly echo: four Jackals would hold every big gun voice.
-        public static readonly SfxCue NodeSmall = OwnerCue("sfx_node_small", SfxGroup.Nodes, 0.8f, 0.08f, 6, -15f);
-        public static readonly SfxCue NodeBig = OwnerCue("sfx_node_big", SfxGroup.Nodes, 1f, 0.03f, 9, -10.5f);
+        // Louder than the rest, about 6 dB, with the music dipping under them: a base being hit must be heard (the owner, 2026-11-06).
+        public static readonly SfxCue NodeSmall = OwnerCue("sfx_node_small", SfxGroup.Nodes, 1.6f, 0.08f, 6, -15f);
+        public static readonly SfxCue NodeBig = OwnerCue("sfx_node_big", SfxGroup.Nodes, 2f, 0.03f, 9, -10.5f);
 
         /// <summary>The owner's sounds of one weapon or unit (they have no generated sound).</summary>
         public static IReadOnlyList<SfxCue> OwnerOnly => Owners;

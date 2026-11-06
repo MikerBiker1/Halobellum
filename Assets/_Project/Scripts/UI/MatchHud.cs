@@ -187,6 +187,7 @@ namespace Halobellum.UI
             GUI.Label(new Rect(bar.x + 760f, bar.y + 32f, 200f, 26f), m.EnemyAi.Label, _small);
             // The left button only: a right-click closes the unlock page, with this button still live behind it, and GUI.Button takes any mouse button.
             if (MenuStyle.Button(new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f), ReadyLabel, _bigButton) && Event.current.button == 0) match.Ready();
+            DrawUndo(new Rect(bar.xMax - 150f, bar.yMax + 6f, 136f, 30f));
 
             if (!string.IsNullOrEmpty(match.Message))
             {
@@ -514,7 +515,27 @@ namespace Halobellum.UI
         private const float BarCell = 64f, BarCellHeight = 86f, BarGap = 6f, BarPadding = 12f, BarCellsTop = 44f, BarRight = 112f, BarBottom = 10f;
         private const float PageLeft = 456f, PageTop = 110f, PageCell = 84f, PageCellHeight = 104f, PageGap = 6f, PageTierHeader = 26f, PageCellsTop = 50f, PagePadding = 8f;
         private const float ScrollBarRoom = 18f;
-        public const string UnlockUnitsLabel = "Unlock units", UnlockPageCloseKey = "Unlock page/x", ReadyLabel = "Ready";
+        public const string UnlockUnitsLabel = "Unlock units", UnlockPageCloseKey = "Unlock page/x", ReadyLabel = "Ready", UndoLabel = "Undo";
+
+        /// <summary>
+        /// Takes back the last deployment action this round, also with Ctrl+Z (the owner, 2026-11-06). The card choice is the line it stops at,
+        /// so it is greyed out until something has been done after it.
+        /// </summary>
+        private void DrawUndo(Rect rect)
+        {
+            bool canUndo = match.CanUndo;
+            bool wasEnabled = GUI.enabled;
+            GUI.enabled = wasEnabled && canUndo;
+            if (MenuStyle.Button(rect, UndoLabel, _button) && Event.current.button == 0 && canUndo) match.Undo();
+            UiAudio.Watch(rect, canUndo);
+            GUI.enabled = wasEnabled;
+            Event e = Event.current;
+            if (canUndo && e.type == EventType.KeyDown && e.keyCode == KeyCode.Z && (e.control || e.command))
+            {
+                match.Undo();
+                e.Use();
+            }
+        }
 
         /// <summary>The test tool's key of a unit's cell in the bar, and on the page.</summary>
         public static string BarCellKey(UnitStats unit) => "Unit bar/" + unit.Name;

@@ -179,5 +179,96 @@ namespace Halobellum.Economy
         public PlacedSquad FindSquad(int squadId) => Squads.Find(s => s.Id == squadId);
 
         public string Label => HasFaction ? $"{Faction.Name} ({SubFaction?.Name})" : $"Team {Team}";
+
+        // ------------------------------------------------------------------ undo in deployment (the owner, 2026-11-06)
+
+        /// <summary>
+        /// Everything a deployment action can change, to put it back with Restore. Squads, spells and towers keep their own objects
+        /// (the field values are copied back into them), so a selection or preview holding one stays valid.
+        /// </summary>
+        public sealed class Snapshot
+        {
+            internal int Credits, SquadsBoughtThisRound, UnlocksThisRound, BonusIncome, ExtraSquadsPerRound, IncomePenalty, ResearchHealthSteps, ResearchDamageSteps;
+            internal bool BoughtExtraSlot, BoughtOilZone, UsedRapidResupply, EliteRecruitment;
+            internal ArmyBuffs Buffs;
+            internal CardOffer Offer;
+            internal List<UnitStats> Unlocked;
+            internal List<(PlacedSquad squad, PlacedSquad values)> Squads;
+            internal List<(OwnedSpell spell, OwnedSpell values)> Spells;
+            internal List<(OwnedTraining training, int readyRound)> Trainings;
+            internal List<(PlacedTower tower, int level, int falls)> Towers;
+            internal List<CardStats> CardsTaken;
+            internal List<ItemStats> Inventory;
+            internal List<(UnitStats type, List<TechUpgrade> techs)> Techs;
+        }
+
+        public Snapshot TakeSnapshot()
+        {
+            var s = new Snapshot
+            {
+                Credits = Credits, SquadsBoughtThisRound = SquadsBoughtThisRound, UnlocksThisRound = UnlocksThisRound, BonusIncome = BonusIncome,
+                ExtraSquadsPerRound = ExtraSquadsPerRound, IncomePenalty = IncomePenalty, ResearchHealthSteps = ResearchHealthSteps, ResearchDamageSteps = ResearchDamageSteps,
+                BoughtExtraSlot = BoughtExtraSlot, BoughtOilZone = BoughtOilZone, UsedRapidResupply = UsedRapidResupply, EliteRecruitment = EliteRecruitment,
+                Buffs = Buffs, Offer = Offer, Unlocked = new List<UnitStats>(Unlocked),
+                Squads = new List<(PlacedSquad, PlacedSquad)>(), Spells = new List<(OwnedSpell, OwnedSpell)>(),
+                Trainings = new List<(OwnedTraining, int)>(), Towers = new List<(PlacedTower, int, int)>(),
+                CardsTaken = new List<CardStats>(CardsTaken), Inventory = new List<ItemStats>(Inventory), Techs = new List<(UnitStats, List<TechUpgrade>)>(),
+            };
+            foreach (PlacedSquad squad in Squads) s.Squads.Add((squad, CopySquad(squad, new PlacedSquad())));
+            foreach (OwnedSpell spell in Spells) s.Spells.Add((spell, CopySpell(spell, new OwnedSpell())));
+            foreach (OwnedTraining training in Trainings) s.Trainings.Add((training, training.ReadyRound));
+            foreach (PlacedTower tower in Towers) s.Towers.Add((tower, tower.Level, tower.Falls));
+            foreach (KeyValuePair<UnitStats, List<TechUpgrade>> pair in Techs) s.Techs.Add((pair.Key, new List<TechUpgrade>(pair.Value)));
+            return s;
+        }
+
+        public void Restore(Snapshot s)
+        {
+            Credits = s.Credits; SquadsBoughtThisRound = s.SquadsBoughtThisRound; UnlocksThisRound = s.UnlocksThisRound; BonusIncome = s.BonusIncome;
+            ExtraSquadsPerRound = s.ExtraSquadsPerRound; IncomePenalty = s.IncomePenalty; ResearchHealthSteps = s.ResearchHealthSteps; ResearchDamageSteps = s.ResearchDamageSteps;
+            BoughtExtraSlot = s.BoughtExtraSlot; BoughtOilZone = s.BoughtOilZone; UsedRapidResupply = s.UsedRapidResupply; EliteRecruitment = s.EliteRecruitment;
+            Offer = s.Offer;
+            SetBuffs(s.Buffs);
+            Unlocked.Clear();
+            Unlocked.UnionWith(s.Unlocked);
+            Squads.Clear();
+            foreach ((PlacedSquad squad, PlacedSquad values) in s.Squads) Squads.Add(CopySquad(values, squad));
+            Spells.Clear();
+            foreach ((OwnedSpell spell, OwnedSpell values) in s.Spells) Spells.Add(CopySpell(values, spell));
+            Trainings.Clear();
+            foreach ((OwnedTraining training, int readyRound) in s.Trainings)
+            {
+                training.ReadyRound = readyRound;
+                Trainings.Add(training);
+            }
+            foreach ((PlacedTower tower, int level, int falls) in s.Towers)
+            {
+                tower.Level = level;
+                tower.Falls = falls;
+            }
+            CardsTaken.Clear();
+            CardsTaken.AddRange(s.CardsTaken);
+            Inventory.Clear();
+            Inventory.AddRange(s.Inventory);
+            Techs.Clear();
+            foreach ((UnitStats type, List<TechUpgrade> techs) in s.Techs) Techs[type] = new List<TechUpgrade>(techs);
+            _effective.Clear();
+        }
+
+        private static PlacedSquad CopySquad(PlacedSquad from, PlacedSquad to)
+        {
+            to.Id = from.Id; to.Type = from.Type; to.Column = from.Column; to.Row = from.Row; to.Rotated90 = from.Rotated90;
+            to.RoundBought = from.RoundBought; to.PricePaid = from.PricePaid; to.FromDraft = from.FromDraft; to.HasFought = from.HasFought;
+            to.HasFlanked = from.HasFlanked; to.Level = from.Level; to.Xp = from.Xp; to.LevelUpSpent = from.LevelUpSpent; to.FromCard = from.FromCard;
+            to.GrantedLevelWorth = from.GrantedLevelWorth; to.Item = from.Item;
+            return to;
+        }
+
+        private static OwnedSpell CopySpell(OwnedSpell from, OwnedSpell to)
+        {
+            to.Id = from.Id; to.Stats = from.Stats; to.ReadyRound = from.ReadyRound; to.IsPlaced = from.IsPlaced;
+            to.Position = from.Position; to.AngleDegrees = from.AngleDegrees; to.SingleUse = from.SingleUse;
+            return to;
+        }
     }
 }

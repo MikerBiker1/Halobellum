@@ -350,7 +350,8 @@ namespace Halobellum.UI
             return $"{line.Survivors}/{line.Bodies} lived";
         }
 
-        private static string Number(float value) => Mathf.Round(value).ToString("N0", CultureInfo.InvariantCulture);
+        // No thousands separator: "Dealt 1,234, 3 kills" read as a list (the owner, 2026-11-06).
+        private static string Number(float value) => Mathf.Round(value).ToString("0", CultureInfo.InvariantCulture);
 
         private static void Fill(Rect rect, Color color)
         {

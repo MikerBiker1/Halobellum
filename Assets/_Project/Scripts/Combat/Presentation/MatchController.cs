@@ -412,6 +412,28 @@ namespace Halobellum.Presentation
             return type != null && DeploymentGrid.CanPlace(Match.Player, type, column, row, PlacingRotated, Match.CombatRules, MovingSquadId);
         }
 
+        /// <summary>True if a deployment action this round can be taken back (not the card choice).</summary>
+        public bool CanUndo => Match != null && Match.CanUndo;
+
+        /// <summary>Takes back the last deployment action this round (the owner, 2026-11-06): buys, sells, moves, levels, techs, towers, spells, items.</summary>
+        public ActionResult Undo()
+        {
+            if (Match == null) return ActionResult.Fail("There is no match.");
+            CancelPlacement();
+            CancelSpellPlacement();
+            CancelItemPlacement();
+            ActionResult result = Match.Undo();
+            Message = result.Message ?? "";
+            _log?.PlayerAction(Match, nameof(Undo), null, result);
+            ActionTaken?.Invoke(nameof(Undo), result);
+            if (result.Ok)
+            {
+                foreach (int id in new List<int>(_drops.Keys)) if (Match.Player.FindSquad(id) == null) _drops.Remove(id);
+                RefreshPreview();
+            }
+            return result;
+        }
+
         /// <summary>In a match, taking a squad off the field means selling it.</summary>
         public ActionResult Remove(PlacedSquad squad) => Sell(squad);
 
@@ -955,6 +977,8 @@ namespace Halobellum.Presentation
         private ActionResult Report(ActionResult result, string detail = null, [CallerMemberName] string action = "")
         {
             Message = result.Message ?? "";
+            // Each deployment action that worked becomes a step Undo can take back; the card choice and the draft are the line it stops at.
+            if (result.Ok && action != nameof(ChooseCard) && action != nameof(SkipCards) && action != nameof(ChooseDraft)) Match.RecordPlayerAction();
             _log?.PlayerAction(Match, action, detail, result);
             ActionTaken?.Invoke(action, result);
             return result;

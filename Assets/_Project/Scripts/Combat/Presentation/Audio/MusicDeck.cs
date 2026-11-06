@@ -19,6 +19,8 @@ namespace Halobellum.Presentation
         private int _current;
         private float _fadeSeconds = 2.5f;
         private float _duck = 1f;
+        // A short dip under something that must be heard (nodes of light hitting a base): in quickly, out gently.
+        private float _dip = 1f, _dipLevel = 1f, _dipEnds;
         private float _stingerEnds;
         private float _stingerGain = 1f;
         private bool _stingerStopping;
@@ -42,6 +44,17 @@ namespace Halobellum.Presentation
         public float CurrentGain => _gains[_current];
         /// <summary>How far the track is ducked: 1 is not at all.</summary>
         public float Duck => _duck;
+        /// <summary>How far the track is dipped under a moment that must be heard: 1 is not at all.</summary>
+        public float DipLevel => _dip;
+
+        /// <summary>Dips the track to this level for this long; called again while it lasts, the dip lasts longer (and goes as deep as the deepest call).</summary>
+        public void Dip(float seconds, float level)
+        {
+            level = Mathf.Clamp01(level);
+            _dipLevel = _clock < _dipEnds ? Mathf.Min(_dipLevel, level) : level;
+            _dipEnds = Mathf.Max(_dipEnds, _clock + Mathf.Max(0f, seconds));
+        }
+
         /// <summary>True from a stinger's start until it ends or is stopped.</summary>
         public bool StingerOn => _clock < _stingerEnds;
 
@@ -114,6 +127,8 @@ namespace Halobellum.Presentation
             _volume = volume;
             float duckTarget = _clock < _stingerEnds ? 0.2f : 1f;
             _duck = Mathf.MoveTowards(_duck, duckTarget, dt / 0.6f);
+            float dipTarget = _clock < _dipEnds ? _dipLevel : 1f;
+            _dip = Mathf.MoveTowards(_dip, dipTarget, dt / (dipTarget < _dip ? 0.12f : 0.8f));
             if (_stingerStopping)
             {
                 _stingerGain = Mathf.MoveTowards(_stingerGain, 0f, dt / StingerFadeSeconds);
@@ -131,7 +146,7 @@ namespace Halobellum.Presentation
                 _gains[i] = Mathf.MoveTowards(_gains[i], wanted ? 1f : 0f, dt / _fadeSeconds);
                 AudioSource source = _sources[i];
                 // Equal power, so that the crossfade doesn't dip.
-                source.volume = Mathf.Sin(_gains[i] * Mathf.PI * 0.5f) * volume * _duck;
+                source.volume = Mathf.Sin(_gains[i] * Mathf.PI * 0.5f) * volume * _duck * _dip;
                 if (_gains[i] <= 0f && !wanted && source.isPlaying) source.Stop();
             }
         }

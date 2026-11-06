@@ -90,6 +90,10 @@ namespace Halobellum.Economy
         private string _seenFactionA, _seenFactionB;
         private int _nextSquadId = 1;
         private int _nextSpellId = 1;
+        // Undo in deployment (the owner, 2026-11-06): the player's state before each action this round, and as it is now.
+        private readonly Stack<PlayerState.Snapshot> _undo = new Stack<PlayerState.Snapshot>();
+        private PlayerState.Snapshot _undoNow;
+        private int _undoRound = -1;
         private int _battleCount;
         private int _baseHealthBeforeA, _baseHealthBeforeB;
         private ArmyBuffs _seenBuffsA = new ArmyBuffs(), _seenBuffsB = new ArmyBuffs();
@@ -762,9 +766,47 @@ namespace Halobellum.Economy
             }
             _enemyAi.Deploy(enemyView);
             if (Player.Offer != null) Phase = MatchPhase.Cards;
+            else StartUndo();
         }
 
         // ------------------------------------------------------------------ cards and spells (Milestone 7)
+
+        // ------------------------------------------------------------------ undo in deployment (the owner, 2026-11-06)
+
+        /// <summary>Starts this round's undo history from the player's state as it is now (deployment has begun, the card is chosen).</summary>
+        private void StartUndo()
+        {
+            _undo.Clear();
+            _undoNow = Player.TakeSnapshot();
+            _undoRound = Round;
+        }
+
+        /// <summary>
+        /// Call after each of the player's deployment actions that worked: the state before it becomes a step Undo can go back to.
+        /// Actions outside deployment, or before this round's history has started, are not recorded.
+        /// </summary>
+        public void RecordPlayerAction()
+        {
+            if (Phase != MatchPhase.Deployment || _undoRound != Round || _undoNow == null) return;
+            _undo.Push(_undoNow);
+            _undoNow = Player.TakeSnapshot();
+        }
+
+        /// <summary>True if the player has a deployment action this round to take back.</summary>
+        public bool CanUndo => Phase == MatchPhase.Deployment && _undoRound == Round && _undo.Count > 0;
+
+        /// <summary>How many of this round's actions can still be taken back.</summary>
+        public int UndoSteps => CanUndo ? _undo.Count : 0;
+
+        /// <summary>Takes back the player's last deployment action this round: credits, squads, places, levels, techs, towers, spells and items as they were.</summary>
+        public ActionResult Undo()
+        {
+            if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Undo works during deployment.");
+            if (!CanUndo) return ActionResult.Fail("Nothing to undo this round.");
+            _undoNow = _undo.Pop();
+            Player.Restore(_undoNow);
+            return ActionResult.Success("Undone.");
+        }
 
         /// <summary>Takes card `index` of this team's offer: pays its price, then adds the spell or places the reinforcement squads.</summary>
         public ActionResult ChooseCard(Team team, int index)
@@ -860,7 +902,11 @@ namespace Halobellum.Economy
         private void ResolveOffer(Team team)
         {
             Get(team).Offer = null;
-            if (team == Team.A && Phase == MatchPhase.Cards) Phase = MatchPhase.Deployment;
+            if (team == Team.A && Phase == MatchPhase.Cards)
+            {
+                Phase = MatchPhase.Deployment;
+                StartUndo(); // The card choice is the line: what came before it can't be undone.
+            }
         }
 
         /// <summary>Unlocks the card's unit and places its squads like squads bought this round (0 XP, outside the squad limit).</summary>

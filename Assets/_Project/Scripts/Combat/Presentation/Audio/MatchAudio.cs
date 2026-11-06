@@ -103,7 +103,13 @@ namespace Halobellum.Presentation
         }
 
         /// <summary>A node of light hit a base: the owner's small or big sound, by its size (AudioCatalog.NodeHit).</summary>
-        private static void OnEndingHit(RoundEnding.Node node) => GameAudio.Sfx(AudioCatalog.NodeHit(node.Size, node.IsTitan));
+        /// <summary>A node of light hitting a base: the music dips under it for a moment, deeper for a big one (the owner, 2026-11-06).</summary>
+        private static void OnEndingHit(RoundEnding.Node node)
+        {
+            SfxCue cue = AudioCatalog.NodeHit(node.Size, node.IsTitan);
+            GameAudio.Sfx(cue);
+            GameAudio.DipMusic(cue == AudioCatalog.NodeBig ? 1.4f : 0.9f, cue == AudioCatalog.NodeBig ? 0.3f : 0.45f);
+        }
 
         /// <summary>What the player just did, by the name of the MatchController's method.</summary>
         private void OnAction(string action, ActionResult result)

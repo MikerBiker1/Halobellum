@@ -29,6 +29,9 @@ namespace Halobellum.Presentation
 
         public static void Sfx(SfxCue cue) => AudioDirector.Instance?.PlaySfx(cue);
 
+        /// <summary>Dips the music to this level for a moment, longer if it is called again (a node of light hitting a base, the owner, 2026-11-06).</summary>
+        public static void DipMusic(float seconds, float level) => AudioDirector.Instance?.Music?.Dip(seconds, level);
+
         public static void Sfx(SfxCue cue, Vector3 world) => AudioDirector.Instance?.PlaySfx(cue, world);
 
         /// <summary>See AudioDirector.PlaySfxShaped.</summary>
@@ -87,6 +90,8 @@ namespace Halobellum.Presentation
             public AudioSource Source;
             public SfxCue Cue;
             public float Level, Target, Gain;
+            /// <summary>Where it is from the camera: on screen or not, near or far (Placement).</summary>
+            public float Place = 1f;
         }
 
         private readonly LoopVoice[] _loops = new LoopVoice[LoopVoices];
@@ -408,11 +413,25 @@ namespace Halobellum.Presentation
             pan = 0f;
             gain = 1f;
             if (_camera == null) return;
-            Vector3 view = _camera.WorldToViewportPoint(world);
-            pan = Mathf.Clamp((view.x - 0.5f) * 1.5f, -0.8f, 0.8f);
-            float outside = Mathf.Max(Mathf.Abs(view.x - 0.5f), Mathf.Abs(view.y - 0.5f)) - 0.5f;
-            if (view.z < 0f) outside = 1f;
-            if (outside > 0f) gain = Mathf.Lerp(1f, 0.3f, outside / 0.8f);
+            Placement(_camera.WorldToViewportPoint(world), Vector3.Distance(_camera.transform.position, world), out pan, out gain);
+        }
+
+        /// <summary>A sound this far from the camera plays at its own level: the game's starting view (D75, the owner, 2026-11-06).</summary>
+        public const float ReferenceMetres = 150f;
+
+        /// <summary>
+        /// Pan and gain for a sound at this viewport point (z: in front of the camera if positive), this many metres from the camera.
+        /// Off screen it fades to 12% within half a screen beyond the edge. Nearer than the starting view it is louder, up to 1.7 times when zoomed right in,
+        /// and further away quieter, down to 0.4: zoom in on a fight to hear it over the rest (the owner, 2026-11-06).
+        /// </summary>
+        public static void Placement(Vector3 viewport, float metres, out float pan, out float gain)
+        {
+            pan = Mathf.Clamp((viewport.x - 0.5f) * 1.5f, -0.8f, 0.8f);
+            float outside = Mathf.Max(Mathf.Abs(viewport.x - 0.5f), Mathf.Abs(viewport.y - 0.5f)) - 0.5f;
+            if (viewport.z < 0f) outside = 1f;
+            float screen = outside > 0f ? Mathf.Lerp(1f, 0.12f, outside / 0.5f) : 1f;
+            float near = Mathf.Clamp(Mathf.Pow(ReferenceMetres / Mathf.Max(1f, metres), 0.7f), 0.4f, 1.7f);
+            gain = screen * near;
         }
 
         /// <summary>
@@ -463,8 +482,9 @@ namespace Halobellum.Presentation
 
         private void Place(LoopVoice voice, Vector3 world)
         {
-            ScreenPlace(world, out float pan, out _);
+            ScreenPlace(world, out float pan, out float gain);
             voice.Source.panStereo = pan;
+            voice.Place = gain;
         }
 
         private void UpdateLoops(float dt)
@@ -482,7 +502,7 @@ namespace Halobellum.Presentation
                     voice.Cue = null;
                     continue;
                 }
-                voice.Source.volume = voice.Level * voice.Cue.Volume * voice.Gain * SfxTrim * VolumeMaster * VolumeSfx;
+                voice.Source.volume = voice.Level * voice.Cue.Volume * voice.Gain * voice.Place * SfxTrim * VolumeMaster * VolumeSfx;
             }
         }
 
