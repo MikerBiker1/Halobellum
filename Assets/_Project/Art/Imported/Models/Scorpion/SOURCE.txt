@@ -1,4 +1,3 @@
-Link: https://sketchfab.com/3d-models/scorpion-42a37126ded5424980bb870b4be7a3eb#download
-Source: found by the project owner on Sketchfab, file Scorpion/scorpion_painted.glb in Art_Source.
-Prepared by Tools/Art/units/Scorpion.py (decision D45).
+Source: given by the project owner, file Meshy/Scorpion update.glb in Art_Source. Where it came from before that is not recorded.
+Prepared by Tools/Art/units/Scorpion.py.
 The repository is private and must stay private.
