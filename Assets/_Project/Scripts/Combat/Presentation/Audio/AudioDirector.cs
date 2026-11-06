@@ -369,14 +369,37 @@ namespace Halobellum.Presentation
         /// <summary>A free voice, or else the least important and oldest if it matters less than this.</summary>
         private Voice FindVoice(int priority)
         {
-            Voice weakest = null;
+            // A free voice that is silent first; then one whose tail still rings after its hold (SfxCue.HoldSeconds), so a tail is cut only when it must.
+            Voice ringing = null, weakest = null;
             for (int i = 0; i < _sfx.Length; i++)
             {
                 Voice voice = _sfx[i];
-                if (voice.Group < 0) return voice;
+                if (voice.Group < 0)
+                {
+                    if (!voice.Source.isPlaying) return voice;
+                    ringing ??= voice;
+                    continue;
+                }
                 if (weakest == null || voice.Priority < weakest.Priority || (voice.Priority == weakest.Priority && voice.Started < weakest.Started)) weakest = voice;
             }
-            return weakest.Priority > priority ? null : weakest;
+            if (ringing != null) return ringing;
+            return weakest == null || weakest.Priority > priority ? null : weakest;
+        }
+
+        /// <summary>
+        /// Fades out, over seconds, every shaped sound (PlaySfxShaped) not yet fading: a battle that ends before the Glassing Beam strikes takes its
+        /// build-up away with it.
+        /// </summary>
+        public void FadeShaped(float seconds)
+        {
+            for (int i = 0; i < _sfx.Length; i++)
+            {
+                Voice voice = _sfx[i];
+                if (voice.Group < 0 || voice.FadeSeconds <= 0f || voice.FadeAt <= _battleClock) continue;
+                voice.FadeAt = _battleClock;
+                voice.FadeSeconds = Mathf.Max(0.05f, seconds);
+                voice.EndsAt = Mathf.Min(voice.EndsAt, _battleClock + voice.FadeSeconds);
+            }
         }
 
         private void ScreenPlace(Vector3 world, out float pan, out float gain)

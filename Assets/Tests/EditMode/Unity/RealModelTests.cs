@@ -198,7 +198,8 @@ namespace Halobellum.Tests
             // The owner's updated model (M12) comes painted: its textures show as they are, and the Infested Scorpion tints them.
             var sick = AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/FloodUNSC/InfestedScorpion.asset");
             Material[] clean = Scorpion().prefab.GetComponentsInChildren<MeshRenderer>().SelectMany(r => r.sharedMaterials).Distinct().ToArray();
-            Material[] tinted = sick.prefab.GetComponentsInChildren<MeshRenderer>().SelectMany(r => r.sharedMaterials).Distinct().ToArray();
+            // The Flood's growths (D37) sit on the Infested one and are left out here.
+            Material[] tinted = sick.prefab.GetComponentsInChildren<MeshRenderer>().Where(r => r.name != "Growth").SelectMany(r => r.sharedMaterials).Distinct().ToArray();
             Assert.AreEqual(3, clean.Length, "Hull, turret and pods.");
             foreach (Material material in clean)
             {
@@ -212,7 +213,7 @@ namespace Halobellum.Tests
                 Assert.Less(material.color.b, 0.6f, material.name + " has the Flood's colour over it.");
             }
             Assert.AreEqual(Scorpion().prefab.GetComponentsInChildren<MeshFilter>().Sum(f => f.sharedMesh.triangles.Length),
-                sick.prefab.GetComponentsInChildren<MeshFilter>().Sum(f => f.sharedMesh.triangles.Length), "The same model.");
+                sick.prefab.GetComponentsInChildren<MeshFilter>().Where(f => f.name != "Growth").Sum(f => f.sharedMesh.triangles.Length), "The same model.");
         }
 
         [Test]

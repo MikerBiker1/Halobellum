@@ -190,6 +190,13 @@ namespace Halobellum.Presentation
             AudioDirector director = AudioDirector.Instance;
             if (director == null) return;
             director.SetHums(0f, 0f);
+            // A spell whose build-up started ahead but which never struck (the battle ended first): its strike would be heard with no beam.
+            foreach (SimSpell spell in _spellsAhead)
+            {
+                if (spell.TicksDone > 0) continue;
+                director.FadeShaped(0.4f);
+                break;
+            }
             // The battle's time stops here, so nothing that waits on it would ever end: the guns and beams fall silent now.
             foreach (var pair in _loops)
             {

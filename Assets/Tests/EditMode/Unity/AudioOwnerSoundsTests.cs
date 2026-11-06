@@ -67,7 +67,6 @@ namespace Halobellum.Tests
         [TestCase("Noble/SpartanCQB", "M45 Shotgun", "sfx_fire_shotgun")]
         [TestCase("Noble/SpartanSniper", "SRS99 Sniper Rifle", "sfx_fire_sniper")]
         [TestCase("Noble/SpartanFireteam", "BR85 Battle Rifle", "sfx_fire_br85")]
-        [TestCase("Noble/SpartanCQB", "M45 Shotgun", "sfx_fire_shotgun")]
         [TestCase("Covenant/Zealot", "Energy Sword", "sfx_fire_sword")]
         [TestCase("Covenant/Grunt", "Plasma Pistol", "sfx_fire_plasma")]
         [TestCase("UNSC/Scorpion", "M512 Cannon", "sfx_fire_cannon")]

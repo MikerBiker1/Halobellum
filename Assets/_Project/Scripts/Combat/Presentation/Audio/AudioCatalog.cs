@@ -206,7 +206,7 @@ namespace Halobellum.Presentation
         public static readonly SfxCue FireBr85 = OwnerCue("sfx_fire_br85", SfxGroup.SmallArms, 0.65f, 0.04f, 2, -17f, hold: 0.5f);
         /// <summary>The Phantoms' and the Scarab's plasma turrets: the owner's heavy plasma file, in a group of its own so that their fast fire can't take every heavy plasma voice from the fuel rods and mortars.</summary>
         public static readonly SfxCue FirePlasmaTurret = OwnerCue("sfx_fire_plasmaturret", SfxGroup.PlasmaTurrets, 0.75f, 0.06f, 2, -16.5f);
-        public static readonly SfxCue FireBeamRifle = OwnerCue("sfx_fire_beamrifle", SfxGroup.BigGuns, 0.85f, 0.03f, 5, -13.5f);
+        public static readonly SfxCue FireBeamRifle = OwnerCue("sfx_fire_beamrifle", SfxGroup.BigGuns, 0.85f, 0.03f, 5, -13.5f, hold: 0.6f); // 3 s, mostly echo: four Jackals would hold every big gun voice.
         public static readonly SfxCue NodeSmall = OwnerCue("sfx_node_small", SfxGroup.Nodes, 0.8f, 0.08f, 6, -15f);
         public static readonly SfxCue NodeBig = OwnerCue("sfx_node_big", SfxGroup.Nodes, 1f, 0.03f, 9, -10.5f);
 
