@@ -62,7 +62,7 @@ namespace Halobellum.EditorTools
             float length = Mathf.Max(bounds.size.x, bounds.size.z);
             float pod = Mathf.Clamp(length * PodShare, LeastPod, MostPod);
             float factor = pod / largest;
-            int clumps = length < 5f ? 2 : length < 8f ? 3 : 4;
+            int clumps = length < 5f ? 3 : length < 8f ? 4 : 5;
             var random = new Random(Seed(unitName));
 
             // Where a clump can go: a grid of rays from above, kept where they meet a flattish top.

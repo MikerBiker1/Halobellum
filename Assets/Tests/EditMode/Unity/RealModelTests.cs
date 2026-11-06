@@ -78,7 +78,7 @@ namespace Halobellum.Tests
                 MeshRenderer[] growths = renderers.Where(r => r.name == "Growth").ToArray();
                 MeshRenderer[] body = renderers.Where(r => r.name != "Growth").ToArray();
                 Assert.GreaterOrEqual(growths.Length, 4, "A few clumps of growths.");
-                Assert.LessOrEqual(growths.Sum(r => r.GetComponent<MeshFilter>().sharedMesh.triangles.Length / 3), 2000, "Modest.");
+                Assert.LessOrEqual(growths.Sum(r => r.GetComponent<MeshFilter>().sharedMesh.triangles.Length / 3), 2500, "Modest.");
                 Bounds hull = body[0].bounds;
                 foreach (MeshRenderer renderer in body) hull.Encapsulate(renderer.bounds);
                 foreach (MeshRenderer growth in growths)
