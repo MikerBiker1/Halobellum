@@ -272,5 +272,26 @@
   ],
   "credits": 5,
   "rig": "01a1a9f0-09c9-726d-a63d-75b435e10799"
+ },
+ "FlamethrowerTrooper": {
+  "attempts": [
+   {
+    "started": "21:07:12",
+    "id": "01a1ae9c-2d78-74aa-be52-e82df00a2141",
+    "finished": true,
+    "status": "SUCCEEDED",
+    "credits": 5
+   }
+  ],
+  "credits": 17,
+  "rig": "01a1ae9c-2d78-74aa-be52-e82df00a2141",
+  "animation": "01a1ae9d-57d7-7139-9b4e-eab99b2e9517",
+  "actions": [
+   98,
+   234,
+   8,
+   566
+  ],
+  "animation_credits": 12
  }
 }

@@ -26,6 +26,7 @@ namespace Halobellum.Tests
             "FloodCovenant/InfestedWraith", "FloodCovenant/InfestedBanshee",
             "UNSC/Mantis", "UNSC/Wolverine", "Banished/Marauder", "Banished/Reaver", "Covenant/Vampire", "Flood/CombatForm",
             "FloodCovenant/Spawner", "FloodUNSC/Juggernaut", "LekgoloColony/Goliath",
+            "ArmoredDivision/Gremlin",
         };
 
         [TestCaseSource(nameof(RealModels))]
@@ -146,13 +147,51 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void Scorpion_IsPainted_NotWhite()
+        public void Scorpion_ShowsItsOwnPaintedTextures_AndTheInfestedOneHasTheSameModelInASickColour()
         {
-            foreach (Material material in Scorpion().prefab.GetComponentsInChildren<MeshRenderer>().SelectMany(r => r.sharedMaterials))
+            // The owner's updated model (M12) comes painted: its textures show as they are, and the Infested Scorpion tints them.
+            var sick = AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/FloodUNSC/InfestedScorpion.asset");
+            Material[] clean = Scorpion().prefab.GetComponentsInChildren<MeshRenderer>().SelectMany(r => r.sharedMaterials).Distinct().ToArray();
+            Material[] tinted = sick.prefab.GetComponentsInChildren<MeshRenderer>().SelectMany(r => r.sharedMaterials).Distinct().ToArray();
+            Assert.AreEqual(3, clean.Length, "Hull, turret and pods.");
+            foreach (Material material in clean)
             {
-                Assert.IsNotNull(material);
-                Assert.Less(material.color.grayscale, 0.5f, material.name + " should have its paint.");
+                Assert.IsNotNull(material.GetTexture("_BaseMap"), material.name + " should have its paint.");
+                Assert.AreEqual(1f, material.color.r, 0.01f, material.name + " shows its texture as it is.");
             }
+            Assert.AreEqual(clean.Length, tinted.Length);
+            foreach (Material material in tinted)
+            {
+                Assert.IsNotNull(material.GetTexture("_BaseMap"));
+                Assert.Less(material.color.b, 0.6f, material.name + " has the Flood's colour over it.");
+            }
+            Assert.AreEqual(Scorpion().prefab.GetComponentsInChildren<MeshFilter>().Sum(f => f.sharedMesh.triangles.Length),
+                sick.prefab.GetComponentsInChildren<MeshFilter>().Sum(f => f.sharedMesh.triangles.Length), "The same model.");
+        }
+
+        [Test]
+        public void Scorpion_FiresBothGunsFromItsTurret()
+        {
+            Transform turret = Scorpion().prefab.GetComponentsInChildren<Transform>().Single(t => t.name == "Turret_0");
+            Transform cannon = turret.Find("Muzzle_0"), coaxial = turret.Find("Muzzle_1");
+            Assert.IsNotNull(cannon);
+            Assert.IsNotNull(coaxial, "The coaxial gun's muzzle turns with the turret.");
+            Assert.Greater(cannon.position.z, coaxial.position.z, "The cannon reaches further forward.");
+            Assert.Greater(cannon.position.z, 2f, "Forward in the game is +Z.");
+        }
+
+        [Test]
+        public void Gremlin_HasItsOwnModel_WithATurningRailgunAndSixWheels()
+        {
+            var unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/ArmoredDivision/Gremlin.asset");
+            StringAssert.EndsWith("_Model", unit.prefab.name);
+            Transform[] nodes = unit.prefab.GetComponentsInChildren<Transform>();
+            Transform turret = nodes.Single(t => t.name == "Turret_0");
+            Transform muzzle = turret.Find("Muzzle_0");
+            Assert.IsNotNull(muzzle, "The railgun's muzzle turns with it.");
+            Assert.Greater(muzzle.position.z, turret.position.z, "It points forward, +Z in the game.");
+            Assert.AreEqual(6, nodes.Count(t => t.name.StartsWith("Wheel_")));
+            Assert.IsNotNull(nodes.First(t => t.name.StartsWith("Body")).GetComponent<MeshRenderer>().sharedMaterial.GetTexture("_BaseMap"));
         }
 
         [Test]

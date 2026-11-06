@@ -88,6 +88,8 @@ namespace Halobellum.EditorTools
             new Entry { Unit = "FloodCovenant/Spawner", Folder = "Spawner", Length = 9f },
             new Entry { Unit = "FloodUNSC/Juggernaut", Folder = "Juggernaut", Length = 8f },
             new Entry { Unit = "LekgoloColony/Goliath", Folder = "Goliath", Height = 6f },
+            // The owner's fourth batch (M12). The Gremlin's 2.2 m width matches its radius of 1.1.
+            new Entry { Unit = "ArmoredDivision/Gremlin", Folder = "Gremlin", Length = 4.6f },
         };
 
         [Serializable]

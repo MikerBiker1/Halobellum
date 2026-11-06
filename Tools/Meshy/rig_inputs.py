@@ -38,6 +38,9 @@ MODELS = {
     "BruteGrenadier": {"source": "Meshy/enemieshalo_3covenantbrutes.glb", "height": 2.8, "box": (-3.48, -1.13), "tris": 7000, "bake": True, "feet": True},  # The fifth from the left: the red crest and loincloth.
     "CombatForm": {"source": "Meshy/halo_ce_flood_Combat_form.glb", "height": 2.6, "drop": "fronds", "yaw": 90, "bake": True, "feet": True},
     "Goliath": {"source": "Meshy/Meshy_AI_Goliath.glb", "height": 6.0, "tris": 8000, "feet": True},
+    # The fourth batch (M12): the owner's own Meshy figure, caught mid-stride with the flamethrower in both hands, turned 40 degrees to its right.
+    # Meshy rigged it, but its clips bent it double and tore the gun, as it stands crouched: Tools/Art/units/FlamethrowerTrooper.py makes its clips instead.
+    "FlamethrowerTrooper": {"source": "Meshy/Meshy_AI_Flamethrower_trooper.glb", "height": 2.0, "tris": 6000, "yaw": 40, "feet": True},
 }
 SIZE = 1024
 

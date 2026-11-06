@@ -11,7 +11,7 @@ import sys
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 SOURCE = os.path.join(ROOT, "Art_Source")
-PREPARED = os.path.join(SOURCE, "Prepared")
+PREPARED = os.environ.get("HB_PREPARED") or os.path.join(SOURCE, "Prepared")  # As in model_tools.py: a worktree can prepare outside the shared Art_Source.
 PROJECT = os.path.join(ROOT, "Assets", "_Project")
 BATCH = os.environ.get("HB_BATCH") or r"E:\AI\_hbci\Halobellum\Assets\_Project"  # A worktree has its own batch copy, such as E:\AI\_hbci\ws_merged\Assets\_Project.
 SOURCE_NOTE = "Source: found by the project owner on Sketchfab, file {source} in Art_Source.\nPrepared by Tools/Art/units/{name}.py (decision D45).\nThe repository is private and must stay private.\n"
@@ -21,7 +21,8 @@ GIVEN_NOTE = "Source: given by the project owner, file {source} in Art_Source. W
 
 
 # A rigged folder has no report.json to say what it was made from.
-THIRD_BATCH_RIGS = {"ODST_Rig": "Meshy/halo_2_odst.glb", "Jackal_Rig": "Meshy/jackal_halo_2.glb", "BruteGrenadier_Rig": "Meshy/enemieshalo_3covenantbrutes.glb"}
+THIRD_BATCH_RIGS = {"ODST_Rig": "Meshy/halo_2_odst.glb", "Jackal_Rig": "Meshy/jackal_halo_2.glb", "BruteGrenadier_Rig": "Meshy/enemieshalo_3covenantbrutes.glb",
+                    "FlamethrowerTrooper_Rig": "Meshy/Meshy_AI_Flamethrower_trooper.glb"}
 
 
 def copy(names):

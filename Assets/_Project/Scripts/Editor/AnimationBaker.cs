@@ -3,6 +3,7 @@
 // Baked Body asset in Resources/BakedBodies:
 //   - a mesh that names two bones per vertex, with finger bones merged into the hands (too small to see at
 //     game distance) and, if it has one, a prepared weapon merged into the right hand, and a shield on the left in a second, see-through sub-mesh;
+//     a body whose gun is part of its own model (the Flamethrower Trooper) shoots from its furthest-forward point instead (muzzleAtFront);
 //   - a texture holding every kept bone's matrix for every frame of every clip;
 //   - the clip table, and a material.
 // Moving and shooting clips play on the spot: the battle moves the unit, so any forward drift in the clip is
@@ -109,7 +110,9 @@ namespace Halobellum.EditorTools
                 Vector3? muzzle = BuildMesh(body, mesh, skin, keptIndex, bones, bindPoses, Source, model);
 
                 int hips = Array.IndexOf(bones, skin.rootBone);
-                Vector3 restHips = bindPoses[hips].inverse.MultiplyPoint3x4(Vector3.zero);
+                // Where the hips stand at rest, in the model's space: a bind pose is in the skinned mesh's own space, which is the model's for
+                // Meshy's files but not for one whose mesh hangs under a turned and scaled rig, as Blender writes them (the Flamethrower Trooper's).
+                Vector3 restHips = model.transform.InverseTransformPoint(skin.transform.TransformPoint(bindPoses[hips].inverse.MultiplyPoint3x4(Vector3.zero)));
                 body.hasMuzzle = muzzle.HasValue;
                 if (muzzle.HasValue)
                 {
@@ -272,7 +275,29 @@ namespace Halobellum.EditorTools
             var triangles = new List<int>(from.triangles);
 
             Vector3? muzzle = null;
-            if (string.IsNullOrEmpty(body.weaponName) && body.muzzleInRightHand)
+            if (string.IsNullOrEmpty(body.weaponName) && body.muzzleAtFront)
+            {
+                // The body's own gun: its tip is the vertex furthest forward halfway through the shooting clip, skinned as the shader will.
+                AnimationClip aim = source(body.shootingClip);
+                aim.SampleAnimation(model, aim.length * 0.5f);
+                Matrix4x4[] skinning = bones.Select((b, i) => b.localToWorldMatrix * bindPoses[i]).ToArray();
+                BoneWeight[] boneWeights = from.boneWeights;
+                float front = float.MinValue;
+                for (int i = 0; i < positions.Count; i++)
+                {
+                    BoneWeight w = boneWeights[i];
+                    Vector3 v = positions[i];
+                    Vector3 world = skinning[w.boneIndex0].MultiplyPoint3x4(v) * w.weight0 + skinning[w.boneIndex1].MultiplyPoint3x4(v) * w.weight1
+                        + skinning[w.boneIndex2].MultiplyPoint3x4(v) * w.weight2 + skinning[w.boneIndex3].MultiplyPoint3x4(v) * w.weight3;
+                    float ahead = model.transform.InverseTransformPoint(world).z;
+                    if (ahead > front)
+                    {
+                        front = ahead;
+                        muzzle = world;
+                    }
+                }
+            }
+            else if (string.IsNullOrEmpty(body.weaponName) && body.muzzleInRightHand)
             {
                 int hand = Array.FindIndex(bones, b => b.name == "RightHand");
                 if (hand < 0) throw new InvalidOperationException($"{body.name}: shots from the right hand need a RightHand bone.");

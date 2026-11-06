@@ -17,11 +17,11 @@ import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
-PREPARED = os.path.join(ROOT, "Art_Source", "Prepared")
+PREPARED = os.environ.get("HB_PREPARED") or os.path.join(ROOT, "Art_Source", "Prepared")  # As in model_tools.py: a worktree can prepare outside the shared Art_Source.
 API = "https://api.meshy.ai/openapi"
 KEY = open(os.path.join(ROOT, "Art_Source", "meshy_key.txt"), encoding="utf-8").read().strip()
 STATE_PATH = os.path.join(HERE, "rig_state.json")
-HEIGHTS = {"Grunt": 1.3, "StalkerForm": 2.4, "PureFormRanged": 2.9, "PureFormTank": 3.8, "Spartan": 2.3, "Elite": 2.6, "Hunter": 3.6, "HunterCaptain": 3.8, "GruntGoblin": 4.4, "InfestedMarine": 2.0, "ODST": 2.0, "Jackal": 2.0, "BruteGrenadier": 2.8, "CombatForm": 2.6, "Goliath": 6.0}
+HEIGHTS = {"Grunt": 1.3, "StalkerForm": 2.4, "PureFormRanged": 2.9, "PureFormTank": 3.8, "Spartan": 2.3, "Elite": 2.6, "Hunter": 3.6, "HunterCaptain": 3.8, "GruntGoblin": 4.4, "InfestedMarine": 2.0, "ODST": 2.0, "Jackal": 2.0, "BruteGrenadier": 2.8, "CombatForm": 2.6, "Goliath": 6.0, "FlamethrowerTrooper": 2.0}
 MAX_ATTEMPTS = 2
 BUDGET = 300
 

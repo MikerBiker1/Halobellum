@@ -20,16 +20,21 @@ MonoBehaviour:
   shootingClip: Walk_Forward_While_Shooting
   deathClip: Dead
   stillClip: walking_2
-  weaponName: Weapon_PlasmaPistol
-  weaponLength: 0.7
+  weaponName: Weapon_PlasmaRifle
+  weaponLength: 0.85
   weaponInForwardHand: 1
   weaponAlongForearm: 0
   muzzleInRightHand: 0
+  muzzleAtFront: 0
+  shieldName: 
+  shieldDiameter: 1.1
+  shieldOffset: {x: 0, y: 0, z: 0}
   transitionSeconds: 0.2
   corpseSeconds: 14
   bakedFps: 30
   mesh: {fileID: 4300000, guid: 96bca8d0b4095524da70f49dbc898cf4, type: 2}
   material: {fileID: 2100000, guid: 79e9bbd524a7af64c87cfc05de8e59b1, type: 2}
+  glassMaterial: {fileID: 0}
   clips:
   - role: 1
     firstRow: 0
@@ -47,6 +52,6 @@ MonoBehaviour:
     firstRow: 207
     frames: 1
     loops: 0
-  muzzle: {x: 0.09010948, y: 2.3808115, z: 1.1672685}
+  muzzle: {x: 0.09010948, y: 2.343037, z: 1.2934786}
   hasMuzzle: 1
   bodyHeight: 2.5999997

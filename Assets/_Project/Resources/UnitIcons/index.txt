@@ -3,7 +3,7 @@ Longsword	model
 Sparrowhawk	model
 Vulture	model
 Cobra	model
-Gremlin	fallback
+Gremlin	model
 Grizzly	model
 Rhino	model
 Brute Grenadier	baked
@@ -62,7 +62,7 @@ Grunt Goblin	baked
 Heavy Grunts	baked
 Archer Missile Pod	model
 Elephant	model
-Flamethrower Trooper	fallback
+Flamethrower Trooper	baked
 Gauss Warthog	model
 Hornet	model
 Mantis	model

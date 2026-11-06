@@ -1,6 +1,7 @@
 // BakedBodyTests.cs
 // The baked Marine (M9, decisions D41 and D42): it uses the clips the owner chose, the baked data fits together,
-// and the rifle is part of its mesh.
+// and the rifle is part of its mesh. And the other baked bodies: each holds its own weapon (M12: the Elite's plasma rifle,
+// the rifle Jackal's beam rifle) and the Flamethrower Trooper shoots from the front of the gun that is part of its model.
 // Depends on: Halobellum.Units, NUnit, UnityEngine.
 
 using System.Linq;
@@ -81,10 +82,12 @@ namespace Halobellum.Tests
         }
 
         [TestCase("SpellUnits/ODST", "ODST", "Weapon_SMG", 2f)]
-        [TestCase("Covenant/JackalBeamRifle", "Jackal", "Weapon_PlasmaPistol", 2f)]
+        [TestCase("Covenant/JackalBeamRifle", "Jackal", "Weapon_BeamRifle", 2f)]
         [TestCase("Covenant/JackalShield", "JackalShield", "Weapon_PlasmaPistol", 2f)]
         [TestCase("Banished/BruteGrenadier", "BruteGrenadier", "Weapon_RocketLauncher", 2.8f)]
         [TestCase("FloodUNSC/InfestedMarine", "InfestedMarine", "Weapon_AssaultRifle", 2f)]
+        [TestCase("Covenant/Elite", "Elite", "Weapon_PlasmaRifle", 2.6f)]
+        [TestCase("UNSC/FlamethrowerTrooper", "FlamethrowerTrooper", "", 2f)]
         public void TheThirdBatch_IsBaked_AndItsUnitsUseIt(string unit, string name, string weapon, float height)
         {
             BakedBodyDefinition body = Resources.Load<BakedBodyDefinition>("BakedBodies/" + name);
@@ -97,6 +100,31 @@ namespace Halobellum.Tests
             Assert.Greater(body.muzzle.z, 0f, "Its shots start ahead of its middle.");
             Assert.Less(body.mesh.triangles.Length / 3, 7500);
             Assert.IsNotNull(body.Clip(BakedAnimation.Dead));
+        }
+
+        [Test]
+        public void TheShieldJackalHoldsAPlasmaPistol_AndTheOtherALongBeamRifle()
+        {
+            BakedBodyDefinition rifle = Resources.Load<BakedBodyDefinition>("BakedBodies/Jackal");
+            BakedBodyDefinition shield = Resources.Load<BakedBodyDefinition>("BakedBodies/JackalShield");
+            Assert.AreEqual("Weapon_PlasmaPistol", shield.weaponName);
+            Assert.AreEqual("Weapon_BeamRifle", rifle.weaponName);
+            Assert.GreaterOrEqual(rifle.weaponLength, 1.2f, "A sniper rifle, longer than the pistol.");
+            Assert.IsFalse(rifle.weaponInForwardHand, "Held in both hands.");
+            Assert.Greater(rifle.muzzle.z, shield.muzzle.z, "Its muzzle reaches further forward.");
+        }
+
+        [Test]
+        public void FlamethrowerTrooper_ShootsFromTheFrontOfTheGunInItsModel()
+        {
+            BakedBodyDefinition body = Resources.Load<BakedBodyDefinition>("BakedBodies/FlamethrowerTrooper");
+            Assert.IsTrue(body.IsReady, "Run Halobellum > Art > Bake Animated Bodies.");
+            Assert.IsTrue(body.muzzleAtFront);
+            Assert.IsTrue(string.IsNullOrEmpty(body.weaponName), "The gun is part of the model.");
+            Assert.IsTrue(body.hasMuzzle);
+            Assert.Greater(body.muzzle.z, 0.6f, "The gun reaches out in front of him.");
+            Assert.Less(body.muzzle.y, 1.2f, "Held low, at the hip.");
+            Assert.AreEqual(1, body.mesh.subMeshCount);
         }
 
         [Test]
@@ -137,13 +165,12 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void TheMarineUnit_UsesIt_AndAUnitStillWithoutAModelDoesNot()
+        public void TheMarineUnit_UsesIt_AndTheFlamethrowerTrooperHasItsOwn()
         {
-            UnitDefinition[] units = Resources.FindObjectsOfTypeAll<UnitDefinition>();
             var marineUnit = UnityEditor.AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/UNSC/Marine.asset");
             Assert.AreSame(Marine(), marineUnit.bakedBody);
             var trooper = UnityEditor.AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/UNSC/FlamethrowerTrooper.asset");
-            Assert.IsNull(trooper.bakedBody);
+            Assert.AreSame(Resources.Load<BakedBodyDefinition>("BakedBodies/FlamethrowerTrooper"), trooper.bakedBody);
         }
     }
 }
