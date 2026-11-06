@@ -11,6 +11,7 @@ Chopper	model
 Marauder	model
 Reaver	model
 Banshee	model
+Covenant Phantom	model
 Elite	baked
 Fuel Rod Grunt	baked
 Ghost	model
