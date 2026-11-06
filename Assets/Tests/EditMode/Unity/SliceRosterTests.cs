@@ -42,7 +42,7 @@ namespace Halobellum.Tests
         {
             ("Grunt", UnitRole.Chaff, 1, 0, 20, 100, 40),
             ("Fuel Rod Grunt", UnitRole.ChaffClear, 1, 0, 4, 150, 80),
-            ("Jackal (Beam Rifle)", UnitRole.SingleTargetDps, 1, 0, 4, 150, 70), // Snipers since 2026-11-05: was Jackal (Plasma Rifle), 8 to a squad.
+            ("Jackal (Beam Rifle)", UnitRole.SingleTargetDps, 1, 0, 4, 175, 70), // Snipers since 2026-11-05: was Jackal (Plasma Rifle), 8 to a squad at 150; 175 after the tournament (D72).
             ("Jackal (Shield)", UnitRole.Tank, 1, 0, 6, 150, 70),
             ("Ghost", UnitRole.Flanker, 1, 0, 2, 200, 250),
             ("Elite", UnitRole.SingleTargetDps, 2, 50, 3, 300, 200),
