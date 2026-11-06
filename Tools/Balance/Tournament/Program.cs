@@ -191,6 +191,8 @@ static class Program
             {
                 SubFactionInfo sub = factions.SelectMany(f => f.SubFactions).First(s => s.Name == parts[1]);
                 (sub.ExcludedUnits ??= new List<UnitStats>()).Add(units[parts[2]]);
+                // A sub-faction's own unit is not in the base roster, so taking it away means out of its exclusives.
+                if (sub.ExclusiveUnits.Contains(units[parts[2]])) sub.ExclusiveUnits = sub.ExclusiveUnits.Where(u => u != units[parts[2]]).ToList();
                 Console.WriteLine("Trial: " + line);
                 continue;
             }
@@ -238,6 +240,8 @@ static class Program
         // What enemies did to it, what its armour, shields and defence arc stopped, and how many of its bodies fought and fell.
         public float Taken, Prevented;
         public int Bodies, Lost;
+        // Damage by its own bodies and by every body it dropped, released, or infected (credited back to the squad bought), with a Seeder's seed damage.
+        public float Credited;
     }
 
     static string PlayMatch((FactionInfo faction, SubFactionInfo sub) a, (FactionInfo faction, SubFactionInfo sub) b, int i, MatchRules rules, CombatRules combat, List<(string, string, float)> wins)
@@ -277,6 +281,9 @@ static class Program
             CountArmy(match.Enemy, tallyB);
             BattleSimulation battle = match.StartBattle();
             battle.Run();
+            var madeBy = new Dictionary<(Team, int), string>();
+            foreach (SimUnit unit in battle.Units)
+                if (unit.SquadId >= 0 && unit.SquadId == unit.CreditSquadId && !unit.Stats.IsTower) madeBy[(unit.Team, unit.SquadId)] = unit.Stats.Name;
             foreach (SimUnit unit in battle.Units)
             {
                 if (unit.Stats.IsTower) continue;
@@ -287,6 +294,8 @@ static class Program
                 tally.Prevented += unit.DamagePrevented;
                 tally.Bodies++;
                 if (!unit.IsAlive) tally.Lost++;
+                string maker = unit.CreditSquadId >= 0 && madeBy.TryGetValue((unit.Team, unit.CreditSquadId), out string m) ? m : unit.Stats.Name;
+                Tally(unit.Team == Team.A ? tallyA : tallyB, maker).Credited += unit.DamageDealt + unit.SeedDamageDealt;
                 if (unit.Stats.HasReinforcement && unit.Stats.ReinforcementLandSeconds > 0f)
                 {
                     int side = unit.Team == Team.A ? 0 : 1;
@@ -365,7 +374,7 @@ static class Program
         text.Append("\"towers\":[").Append(string.Join(",", side.Towers.Select(t => $"[{t.Level},{t.Falls}]"))).Append("],");
         text.Append("\"cards\":[").Append(string.Join(",", ai.Taken.Select(c => JsonSerializer.Serialize(c)))).Append("],");
         text.Append("\"units\":{");
-        text.Append(string.Join(",", tallies.Select(kv => $"{JsonSerializer.Serialize(kv.Key)}:[{kv.Value.SquadRounds},{kv.Value.CreditRounds},{kv.Value.Damage.ToString("0", CultureInfo.InvariantCulture)},{kv.Value.Kills},{kv.Value.EndSquads},{kv.Value.EndLevels},{kv.Value.Taken.ToString("0", CultureInfo.InvariantCulture)},{kv.Value.Prevented.ToString("0", CultureInfo.InvariantCulture)},{kv.Value.Bodies},{kv.Value.Lost}]")));
+        text.Append(string.Join(",", tallies.Select(kv => $"{JsonSerializer.Serialize(kv.Key)}:[{kv.Value.SquadRounds},{kv.Value.CreditRounds},{kv.Value.Damage.ToString("0", CultureInfo.InvariantCulture)},{kv.Value.Kills},{kv.Value.EndSquads},{kv.Value.EndLevels},{kv.Value.Taken.ToString("0", CultureInfo.InvariantCulture)},{kv.Value.Prevented.ToString("0", CultureInfo.InvariantCulture)},{kv.Value.Bodies},{kv.Value.Lost},{kv.Value.Credited.ToString("0", CultureInfo.InvariantCulture)}]")));
         text.Append("}}");
     }
 

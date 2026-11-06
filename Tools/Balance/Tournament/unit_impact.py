@@ -3,7 +3,8 @@
 Ratio = share of its side's damage / share of its side's credits. From results with damage taken (D73 on):
 tkn% = share of its side's damage taken, soak = tkn% / cr% (above 1: it draws and absorbs more fire than its price), stop% = share of
 the damage aimed at it that armour, shields and defence arcs stopped, died% = share of its bodies dead at a battle's end,
-lvl = average level of its squads still owned at the match's end. Back-line units take little fire, so a low soak is not toughness. Mirrors are left out. Units that fight through bodies they make
+lvl = average level of its squads still owned at the match's end. From results with credited damage (D74 on), dmg% and ratio count
+what a unit's drops, spawns and the bodies it infected did as its own, and the units that only come that way are left out. Back-line units take little fire, so a low soak is not toughness. Mirrors are left out. Units that fight through bodies they make
 (Seeder, Carrier Form, Infected Phantom) or that block (Jackal with a shield) score low without being weak; dropped Marines count under Marine.
 """
 import collections, json, sys
@@ -29,6 +30,10 @@ for m in matches:
         s["wins"] += won
         for name, v in side["units"].items():
             sr, cr, dmg, kills, endsq, endlv = v[:6]
+            if len(v) >= 11:
+                dmg = v[10]
+                if cr == 0 and sr == 0 and dmg == 0:
+                    continue
             u = s["u"][name]
             u["endsq"] += endsq
             u["endlv"] += endlv
