@@ -26,8 +26,11 @@ namespace Halobellum.EditorTools
         private const string UnitsFolder = "Assets/_Project/Data/Units";
         public const string TowerFolder = "Assets/_Project/Resources/Towers";
 
-        /// <summary>The towers: the model's folder, named as its TowerKind, and its longest side across the ground. A tower has 3 squares of 2 m.</summary>
-        private static readonly (string Folder, float Length)[] Towers = { ("CommandCenter", 5.8f), ("ResearchCenter", 5.8f) };
+        /// <summary>
+        /// The towers: the model's folder, named as its TowerKind, its longest side across the ground (a tower has 3 squares of 2 m), and how much its
+        /// texture is lifted. The Command Center's gunmetal reads as a black shape from the game's camera without one.
+        /// </summary>
+        private static readonly (string Folder, float Length, float Lift)[] Towers = { ("CommandCenter", 5.8f, 1.6f), ("ResearchCenter", 5.8f, 1.25f) };
 
         /// <summary>One prefab: its unit, the model's folder, its size in metres (longest side across the ground, or else its height), and a colour over its own.</summary>
         private sealed class Entry
@@ -116,9 +119,9 @@ namespace Halobellum.EditorTools
                 // A unit whose model hasn't come in yet stays as it is; a unit baked for crowds doesn't use a prefab.
                 if (AssetDatabase.IsValidFolder($"{AnimationBaker.ModelsFolder}/{entry.Folder}")) Build(entry);
             }
-            foreach ((string folder, float length) in Towers)
+            foreach ((string folder, float length, float lift) in Towers)
             {
-                if (AssetDatabase.IsValidFolder($"{AnimationBaker.ModelsFolder}/{folder}")) BuildTower(folder, length);
+                if (AssetDatabase.IsValidFolder($"{AnimationBaker.ModelsFolder}/{folder}")) BuildTower(folder, length, lift);
             }
             AssetDatabase.SaveAssets();
         }
@@ -147,7 +150,7 @@ namespace Halobellum.EditorTools
             int exit = 0;
             try
             {
-                foreach ((string folder, float length) in Towers) BuildTower(folder, length);
+                foreach ((string folder, float length, float lift) in Towers) BuildTower(folder, length, lift);
                 AssetDatabase.SaveAssets();
             }
             catch (Exception e) { Debug.LogError("Building the towers failed: " + e); exit = 1; }
@@ -186,9 +189,9 @@ namespace Halobellum.EditorTools
         }
 
         /// <summary>A tower's prefab, in Resources so that the game can find it by its kind's name. Its door faces +Z, as a unit's front does.</summary>
-        private static void BuildTower(string folder, float length)
+        private static void BuildTower(string folder, float length, float lift)
         {
-            GameObject root = MakeModel(folder, folder, length, 0f, false, Color.white, "", glows: true);
+            GameObject root = MakeModel(folder, folder, length, 0f, false, new Color(lift, lift, lift), "", glows: true);
             if (root == null) return;
             try
             {
