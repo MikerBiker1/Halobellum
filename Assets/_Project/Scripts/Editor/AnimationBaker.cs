@@ -3,6 +3,7 @@
 // Baked Body asset in Resources/BakedBodies:
 //   - a mesh that names two bones per vertex, with finger bones merged into the hands (too small to see at
 //     game distance) and, if it has one, a prepared weapon merged into the right hand, and a shield on the left in a second, see-through sub-mesh;
+//     a body whose gun is part of its own model (the Flamethrower Trooper) shoots from its furthest-forward point instead (muzzleAtFront);
 //   - a texture holding every kept bone's matrix for every frame of every clip;
 //   - the clip table, and a material.
 // Moving and shooting clips play on the spot: the battle moves the unit, so any forward drift in the clip is
