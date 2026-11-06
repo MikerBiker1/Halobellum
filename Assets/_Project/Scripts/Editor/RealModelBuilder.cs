@@ -282,10 +282,12 @@ namespace Halobellum.EditorTools
             bool hasGlowColour = info?.glow != null && info.glow.Length == 3;
             if (!string.IsNullOrEmpty(info?.glowTexture) || hasGlowColour)
             {
-                material.EnableKeyword("_EMISSION");
-                // URP keeps _EMISSION only on a material flagged as emissive, and drops it otherwise when it checks the material. So far only the
-                // towers' glow (their faction-coloured mask) is flagged: the other models' glow has never shown, and switching it on would change
-                // how they look, which is the owner's call.
+                // URP keeps _EMISSION only on a material flagged as emissive, and drops it otherwise when it first checks a new material, while a
+                // material built again kept it: so the other models' glow has never shown, but would have come on with a rebuild. Now it is the same
+                // every time: only the towers' glow (their faction-coloured mask) is switched on. Switching the others on would change how they
+                // look, which is the owner's call.
+                if (glows) material.EnableKeyword("_EMISSION");
+                else material.DisableKeyword("_EMISSION");
                 material.globalIlluminationFlags = glows ? MaterialGlobalIlluminationFlags.RealtimeEmissive : MaterialGlobalIlluminationFlags.None;
                 material.SetColor("_EmissionColor", hasGlowColour ? new Color(info.glow[0], info.glow[1], info.glow[2]) : Color.white);
                 if (!string.IsNullOrEmpty(info.glowTexture)) material.SetTexture("_EmissionMap", AssetDatabase.LoadAssetAtPath<Texture2D>($"{folder}/{info.glowTexture}"));
