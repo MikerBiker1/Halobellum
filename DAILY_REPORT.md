@@ -2,6 +2,15 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The tutorial (D77)
+- **In the game:** Play page, Tutorial: a scripted match in 29 steps, with a panel and an outline on what each step means; Skip tutorial at any time.
+- **Checked:** played through by a test and by the test game (pictures of every step); a player who follows along wins in round 5.
+- **Not checked:** nobody has played it by hand; the texts are drafts.
+
+## Your Flood change (D76)
+- **In the game:** Swarm Forms bite ground units; Seeders shoot air, and only raise what the Flood has its own version of. The Seeder at 475 with weaker seeds, as the change carried the Flood to 66%.
+- **Tournaments:** every sub-faction 47.7% to 53.9% over three runs. The AI's table from whole matches made the AI lopsided (UNSC 32%), so the game keeps its one-on-one table.
+
 ## Your playtest: undo, base hits, sound by zoom, battle stats (D75)
 - **In the game:** Undo (button under Ready, or Ctrl+Z) steps back this round's deployment, never past the card choice; base hits are louder and the music dips under them; zooming in on a fight makes it louder, far and off-screen sounds quieter; battle stats numbers have no commas.
 - **Checked:** tests of each (undo of buys, sells, moves, level-ups, unlocks; the card line; the round end; the sound curve; the music dip); the match, HUD and audio scene tests.

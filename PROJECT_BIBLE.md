@@ -258,9 +258,9 @@ The Flood win by spreading. They have a roster of their own, plus temporary infe
 | Combat Form | Single-target DPS | 2 | 50 | 6 | 200 | 260 | Anti-armor claws, scavenged rifle |
 | Stalker Form | Flanker | 2 | 50 | 3 | 250 | 450 | Very fast pure form |
 | Pure Form Ranged | Artillery | 2 | 50 | 2 | 250 | 400 | Lobs bone shards |
-| Swarm Form | Anti-air | 2 | 50 | 20 forms in 4 packs | 250 | 200 per pack | Flying packs, bonus damage against air |
+| Swarm Form | Anti-air | 2 | 50 | 20 forms in 4 packs | 250 | 200 per pack | Flying packs, bonus damage against air from range; they bite ground units in melee, going for air first |
 | Pure Form Tank | Tank | 3 | 200 | 1 | 400 | 3200 | Heavy armor, splash slam |
-| Seeder | Single-target DPS | 3 | 200 | 2 | 400 | 800 | Flies; seeds ground enemies from range |
+| Seeder | Single-target DPS | 3 | 200 | 2 | 475 | 800 | Flies; seeds enemies on the ground and in the air from range; a unit that dies seeded rises as the Flood's own version of it if a Flood roster has one (an Infested Banshee from a Banshee), otherwise it stays dead |
 | Infected Pelican | Aerial | 3 | 200 | 1 | 400 | 900 | One-shot crash dive (900 damage within 3.5 m) |
 | Infected Phantom | Aerial | 3 | 200 | 1 | 400 | 1100 | Drops 5 Combat Forms after 8 seconds |
 | Flood Abomination | Titan | 4 | 350 | 1 | 800 | 8500 | Very tall and large; aura for nearby Flood, keeps releasing Infection Forms |
@@ -523,6 +523,8 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-06 | The Pelican at 1200 health (was 800), so it lands its Marines more often | Per the project owner (D73) |
 | 2026-11-06 | Fine-tuning: the Grunt Goblin at 1500 health with a 0.6% aura, the Carrier Form's burst at 110, the Spartan Sniper at 200 damage, the Skitterer at 7 | Per the project owner (D74) |
 | 2026-11-06 | Undo in deployment (back to the card choice); base hits louder with the music dipping; battle sounds by zoom and camera | Per the project owner (D75) |
+| 2026-11-06 | Swarm Forms bite ground units in melee; Seeders shoot air and raise only what a Flood roster has its own version of; the Seeder at 475 with weaker seeds | Per the project owner (D76) |
+| 2026-11-06 | A tutorial: a scripted match from the Play page | Per the project owner (D77) |
 
 ## 18. Assumptions to confirm
 

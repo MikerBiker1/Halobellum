@@ -222,6 +222,13 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 125. **Sound by zoom:** nearer than the starting view up to 1.7 times louder, further down to 0.4, off screen down to 12%. Base hits about 6 dB louder, the music down to 45% (small) or 30% (big) under them. All first guesses for your ears: louder, quieter, or a different curve?
 
 
+## The Flood change and the tutorial (D76, D77)
+
+126. **The Seeder** is at 475 with seeds of 4% a second and 45-damage spores, after carrying the Flood to 66%. It is still the Flood's best buy (edge +20 in UNSC-based). Its converts rise with 60% of their own unit's health, as any infected unit does. Keep these, or would you rather it converted less (fewer kinds) and kept its old numbers?
+127. **The whole-match AI table** is set aside (D76): it made the AI chase what won before, Covenant 63% and UNSC 32%. Item 122 stays open: a blend of both tables, or a table learned over several rounds, could still be tried.
+128. **The tutorial:** UNSC Noble against Banished, the Flamethrower Trooper as the unit to unlock, 29 steps. Another faction pair? Wording? Should it offer itself the first time the game starts?
+
+
 ## Things my test runs did to your PC
 
 - **Windows moving, and possibly music:** while the Screen setting was being checked, a test window moved across all three of your screens and briefly went fullscreen on each. Some of those runs weren't silent, so menu music may have played for about 25 seconds at a time. Those checks have finished.
