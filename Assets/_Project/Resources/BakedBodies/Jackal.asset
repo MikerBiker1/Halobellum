@@ -25,6 +25,7 @@ MonoBehaviour:
   weaponInForwardHand: 0
   weaponAlongForearm: 0
   muzzleInRightHand: 0
+  muzzleAtFront: 0
   shieldName: 
   shieldDiameter: 1.1
   shieldOffset: {x: 0, y: 0, z: 0}
@@ -51,6 +52,6 @@ MonoBehaviour:
     firstRow: 207
     frames: 1
     loops: 0
-  muzzle: {x: 0.07248097, y: 1.4885001, z: 0.68554854}
+  muzzle: {x: -0.14029609, y: 1.5116695, z: 1.0604248}
   hasMuzzle: 1
   bodyHeight: 2
