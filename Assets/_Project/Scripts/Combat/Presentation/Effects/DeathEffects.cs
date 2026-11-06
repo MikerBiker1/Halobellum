@@ -2,6 +2,7 @@
 // What happens when a body dies (M10). The kind of death comes from DeathLooks:
 //   infantry fall with a puff (baked bodies play their own death; others tip over and sink);
 //   vehicles blow up and stay as blackened wrecks that burn and smoke for a while, then sink away;
+//   Covenant machines, and the Flood's infested ones, do all of that in light blue plasma instead of orange fire (ExplodesBlue);
 //   air units blow up in the air and fall burning to the ground, where they crash;
 //   Flood bodies burst in gore and spores;
 //   the Infected Pelican trails fire and smoke in its dive, and its crash is a blast about as big as a titan's;
@@ -42,6 +43,7 @@ namespace Halobellum.Presentation
             public float BodyRadius;
             public float NextPuff;
             public bool Flood;
+            public bool Blue;
         }
 
         private struct Pending
@@ -70,6 +72,8 @@ namespace Halobellum.Presentation
             public float NextPuff;
             /// <summary>How high the fire starts: on top of a wreck's hull; on the ground if nothing is left standing.</summary>
             public float Top;
+            /// <summary>A Covenant wreck burns light blue.</summary>
+            public bool Blue;
         }
 
         private readonly EffectRecipes _recipes;
@@ -88,6 +92,24 @@ namespace Halobellum.Presentation
 
         /// <summary>Wrecks and falling bodies on the field right now (for tests).</summary>
         public int CorpsesOnField => _corpses.Count;
+
+        // The Covenant's machines, which go up in light blue plasma (the owner, 2026-11-05). An infested one, still a Covenant machine,
+        // does too; the Banished's and the Unggoy's crude machines and the Lekgolo's worms keep their own deaths.
+        private static readonly HashSet<string> CovenantMachines = new HashSet<string>
+        {
+            "Ghost", "Banshee", "Wraith", "Scarab", "Vampire", "Phantom",
+            "Infested Ghost", "Infested Banshee", "Infested Wraith", "Infected Phantom",
+        };
+
+        /// <summary>True for a Covenant machine, which explodes and burns light blue instead of orange.</summary>
+        public static bool ExplodesBlue(UnitStats stats)
+        {
+            for (UnitStats s = stats; s != null; s = s.InfectedFrom == s ? null : s.InfectedFrom)
+            {
+                if (CovenantMachines.Contains(s.Name ?? "")) return true;
+            }
+            return false;
+        }
 
         public DeathEffects(EffectRecipes recipes, UnitViewManager units)
         {
@@ -147,6 +169,7 @@ namespace Halobellum.Presentation
             float radius = stats.CollisionRadius;
             bool rises = _rising.Contains(unit);
             DeathStyle style = DeathLooks.For(stats);
+            bool blue = ExplodesBlue(stats);
             switch (style)
             {
                 case DeathStyle.Infantry:
@@ -156,22 +179,22 @@ namespace Halobellum.Presentation
 
                 case DeathStyle.Vehicle:
                     bool titan = DeathLooks.IsTitan(stats);
-                    _recipes.VehicleDeath(position, radius, titan);
+                    _recipes.VehicleDeath(position, radius, titan, blue);
                     if (!rises)
                     {
-                        Keep(unit, CorpseKind.Wreck, titan ? TitanWreckSeconds : WreckSeconds, position, false);
-                        AddFire(position, radius, titan ? TitanWreckSeconds : WreckSeconds, _units.BodyTopOf(unit) * HullTopShare);
+                        Keep(unit, CorpseKind.Wreck, titan ? TitanWreckSeconds : WreckSeconds, position, false, blue);
+                        AddFire(position, radius, titan ? TitanWreckSeconds : WreckSeconds, _units.BodyTopOf(unit) * HullTopShare, blue);
                     }
                     break;
 
                 case DeathStyle.Air:
-                    _recipes.AirDeath(position, radius, false);
-                    Keep(unit, CorpseKind.Falling, 6f, position, false);
+                    _recipes.AirDeath(position, radius, false, blue);
+                    Keep(unit, CorpseKind.Falling, 6f, position, false, blue);
                     break;
 
                 case DeathStyle.FloodAir:
-                    _recipes.AirDeath(position, radius, true);
-                    Keep(unit, CorpseKind.Falling, 6f, position, true);
+                    _recipes.AirDeath(position, radius, true, blue);
+                    Keep(unit, CorpseKind.Falling, 6f, position, true, blue);
                     break;
 
                 case DeathStyle.FloodBurst:
@@ -222,7 +245,7 @@ namespace Halobellum.Presentation
 
         // ------------------------------------------------------------------ bodies left on the field
 
-        private void Keep(SimUnit unit, CorpseKind kind, float life, Vector3 position, bool flood)
+        private void Keep(SimUnit unit, CorpseKind kind, float life, Vector3 position, bool flood, bool blue = false)
         {
             Transform root = _units.KeepCorpse(unit);
             if (root == null) return;
@@ -239,6 +262,7 @@ namespace Halobellum.Presentation
             corpse.BodyRadius = unit.Stats.CollisionRadius;
             corpse.NextPuff = 0f;
             corpse.Flood = flood;
+            corpse.Blue = blue;
             _corpses.Add(corpse);
             if (kind != CorpseKind.Infantry) Blacken(root);
         }
@@ -322,8 +346,8 @@ namespace Halobellum.Presentation
             float height = corpse.Start.y - 0.5f * FallGravity * age * age;
             if (height <= 0.2f)
             {
-                _recipes.GroundCrash(new Vector3(corpse.Start.x, 0f, corpse.Start.z), corpse.BodyRadius);
-                AddFire(new Vector3(corpse.Start.x, 0f, corpse.Start.z), corpse.BodyRadius, WreckSeconds);
+                _recipes.GroundCrash(new Vector3(corpse.Start.x, 0f, corpse.Start.z), corpse.BodyRadius, corpse.Blue);
+                AddFire(new Vector3(corpse.Start.x, 0f, corpse.Start.z), corpse.BodyRadius, WreckSeconds, 0f, corpse.Blue);
                 return true;
             }
             var position = new Vector3(corpse.Start.x, height, corpse.Start.z);
@@ -331,7 +355,7 @@ namespace Halobellum.Presentation
             if (age >= corpse.NextPuff)
             {
                 corpse.NextPuff = age + 0.035f;
-                _recipes.BurningTrail(position, corpse.BodyRadius * 0.75f, EffectPriority.Big);
+                _recipes.BurningTrail(position, corpse.BodyRadius * 0.75f, EffectPriority.Big, corpse.Blue);
                 if (corpse.Flood) _kit.Spore(EffectPriority.Small, position, Random.insideUnitSphere * 2f, 0.5f * _kit.ReadScale, EffectRecipes.SporeGreen, 1.6f);
             }
             return false;
@@ -339,9 +363,9 @@ namespace Halobellum.Presentation
 
         // ------------------------------------------------------------------ what goes on burning
 
-        private void AddFire(Vector3 position, float bodyRadius, float seconds, float top = 0f)
+        private void AddFire(Vector3 position, float bodyRadius, float seconds, float top = 0f, bool blue = false)
         {
-            _fires[_nextFire] = new BurningSpot { Position = position, Until = _kit.BattleTime + seconds, BodyRadius = bodyRadius, NextPuff = _kit.BattleTime + 0.6f, Top = top };
+            _fires[_nextFire] = new BurningSpot { Position = position, Until = _kit.BattleTime + seconds, BodyRadius = bodyRadius, NextPuff = _kit.BattleTime + 0.6f, Top = top, Blue = blue };
             _nextFire = (_nextFire + 1) % MostFires;
         }
 
@@ -363,12 +387,19 @@ namespace Halobellum.Presentation
                 _kit.Smoke(EffectPriority.Small, spot + Vector3.up * 1.2f, Vector3.up * Random.Range(4f, 6.5f) + Random.insideUnitSphere * 0.4f, size * Random.Range(0.9f, 1.3f), new Color(0.17f, 0.165f, 0.16f, 0.42f * strength), Random.Range(1.8f, 2.8f));
                 if (strength >= 1f)
                 {
-                    _kit.Fire(EffectPriority.Small, spot, Vector3.up * Random.Range(2f, 4f), flames * Random.Range(0.7f, 1.15f), Random.Range(0.55f, 0.95f));
+                    Flames(fire.Blue, spot, flames * Random.Range(0.7f, 1.15f), Random.Range(0.55f, 0.95f));
                     Vector3 other = fire.Position + new Vector3(Random.Range(-0.6f, 0.6f) * fire.BodyRadius, fire.Top + 0.3f, Random.Range(-0.6f, 0.6f) * fire.BodyRadius);
-                    _kit.Fire(EffectPriority.Small, other, Vector3.up * Random.Range(2f, 4f), flames * Random.Range(0.45f, 0.8f), Random.Range(0.45f, 0.8f));
+                    Flames(fire.Blue, other, flames * Random.Range(0.45f, 0.8f), Random.Range(0.45f, 0.8f));
                 }
-                if (Random.value < 0.15f) _kit.Spark(EffectPriority.Small, spot, Vector3.up * Random.Range(3f, 7f) + Random.insideUnitSphere * 1.5f, 0.05f * _kit.ReadScale, EffectRecipes.SparkHot, Random.Range(0.4f, 0.9f));
+                if (Random.value < 0.15f) _kit.Spark(EffectPriority.Small, spot, Vector3.up * Random.Range(3f, 7f) + Random.insideUnitSphere * 1.5f, 0.05f * _kit.ReadScale, fire.Blue ? EffectRecipes.SparkPlasma : EffectRecipes.SparkHot, Random.Range(0.4f, 0.9f));
             }
+        }
+
+        private void Flames(bool blue, Vector3 spot, float size, float life)
+        {
+            Vector3 velocity = Vector3.up * Random.Range(2f, 4f);
+            if (blue) _kit.PlasmaFire(EffectPriority.Small, spot, velocity, size, life);
+            else _kit.Fire(EffectPriority.Small, spot, velocity, size, life);
         }
     }
 }

@@ -2,7 +2,7 @@
 // The battle effects (M10): each weapon gets a look and shows who fired it, each unit a kind of death, each spell a look of its own; the
 // budget drops small things first; the shake adds up sensibly; the Infected Pelican's crash is half what it was but still fills what it
 // damages; and in the real Sandbox and Match scenes effects run in every kind of
-// fight and between battles without an error, stay under their caps, freeze with the battle, and allocate nothing per shot. Blood shows what
+// fight and between battles without an error, a Covenant machine explodes light blue, stay under their caps, freeze with the battle, and allocate nothing per shot. Blood shows what
 // was hit, or that it was hit by a spell or a machine by showing nothing; the dust follows the quality level as it changes; and in Unlock
 // Skirmish Team B keeps its tint on every shot, the UI stays neutral and the music is the land's.
 // Depends on: Halobellum.Presentation, Halobellum.Combat, Halobellum.Core, NUnit, Unity Test Framework.
@@ -616,6 +616,31 @@ namespace Halobellum.Tests
             while ((views.IsShown(car) || views.IsShown(flier)) && Time.realtimeSinceStartup < deadline) yield return null;
             Assert.IsFalse(views.IsShown(flier), "It has crashed.");
             Assert.IsFalse(views.IsShown(car), "The wreck has gone.");
+        }
+
+        [UnityTest]
+        public IEnumerator ACovenantMachine_ExplodesLightBlue_AndAUnscOneOrange()
+        {
+            yield return LoadSandbox();
+            _sandbox.AddSquad(Team.A, Unit("Warthog"));
+            _sandbox.AddSquad(Team.B, Unit("Ghost"));
+            yield return null;
+            _battle.Speed = 1f;
+            _sandbox.Run();
+            yield return null;
+            EffectKit kit = _view.Kit;
+            SimUnit ghost = _battle.Simulation.Units.First(u => u.Stats.Name == "Ghost");
+            ghost.Health = 0f;
+            float deadline = Time.realtimeSinceStartup + 5f;
+            while (kit.LivePlasmaFire == 0 && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.Greater(kit.LivePlasmaFire, 0, "The Ghost goes up in light blue.");
+            Assert.AreEqual(0, kit.LiveFire, "And in no orange fire.");
+
+            SimUnit car = _battle.Simulation.Units.First(u => u.Stats.Name == "Warthog");
+            car.Health = 0f;
+            deadline = Time.realtimeSinceStartup + 5f;
+            while (kit.LiveFire == 0 && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.Greater(kit.LiveFire, 0, "The Warthog goes up in orange.");
         }
 
         [UnityTest]

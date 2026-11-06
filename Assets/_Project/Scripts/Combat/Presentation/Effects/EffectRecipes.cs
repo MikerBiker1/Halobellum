@@ -33,6 +33,8 @@ namespace Halobellum.Presentation
             public ArmorType Armor;
             public bool Shielded;
             public EffectPriority Priority;
+            /// <summary>A fireball in a Covenant machine's light blue.</summary>
+            public bool Blue;
         }
 
         private const int DelayedCapacity = 700;
@@ -45,6 +47,11 @@ namespace Halobellum.Presentation
         public static readonly Color FireGlow = new Color(1f, 0.72f, 0.38f);
         public static readonly Color GroundFire = new Color(1f, 0.5f, 0.18f, 0.8f);
         public static readonly Color SparkHot = new Color(1f, 0.82f, 0.45f);
+        // A Covenant machine explodes light blue instead of orange (the owner, 2026-11-05).
+        public static readonly Color PlasmaGlow = new Color(0.5f, 0.82f, 1f);
+        public static readonly Color GroundPlasma = new Color(0.3f, 0.62f, 1f, 0.8f);
+        public static readonly Color SparkPlasma = new Color(0.72f, 0.93f, 1f);
+        public static readonly Color MetalPlasma = new Color(0.16f, 0.32f, 0.6f);
         public static readonly Color ShieldBlue = new Color(0.4f, 0.72f, 1f);
         public static readonly Color ScorchBlack = new Color(0.03f, 0.028f, 0.025f, 0.72f);
         public static readonly Color MetalDark = new Color(0.14f, 0.14f, 0.13f);
@@ -83,7 +90,7 @@ namespace Halobellum.Presentation
                 {
                     case DelayedKind.Impact: Impact(item.Position, item.Direction, item.Impact, item.Armor, item.Shielded, item.Color); break;
                     case DelayedKind.Blast: Blast(item.Position, item.Size, item.Blast, item.Color, item.Priority); break;
-                    case DelayedKind.Fireball: Fireball(item.Position, item.Size, item.Priority); break;
+                    case DelayedKind.Fireball: Fireball(item.Position, item.Size, item.Priority, item.Blue); break;
                     case DelayedKind.Blood: BloodHit(item.Position, item.Direction, item.Color, item.Size); break;
                 }
             }
@@ -116,9 +123,9 @@ namespace Halobellum.Presentation
             Add(new Delayed { At = _kit.BattleTime + seconds, Kind = DelayedKind.Blast, Position = position, Size = radius, Blast = style, Color = color, Priority = priority });
         }
 
-        public void FireballAfter(float seconds, Vector3 position, float radius, EffectPriority priority)
+        public void FireballAfter(float seconds, Vector3 position, float radius, EffectPriority priority, bool blue = false)
         {
-            Add(new Delayed { At = _kit.BattleTime + seconds, Kind = DelayedKind.Fireball, Position = position, Size = radius, Priority = priority });
+            Add(new Delayed { At = _kit.BattleTime + seconds, Kind = DelayedKind.Fireball, Position = position, Size = radius, Priority = priority, Blue = blue });
         }
 
         public void BloodHitAfter(float seconds, Vector3 position, Vector3 direction, Color color, float strength)
@@ -354,23 +361,26 @@ namespace Halobellum.Presentation
             }
         }
 
-        /// <summary>A rolling fireball: the heart of every vehicle's death. Radius is how far the fire reaches.</summary>
-        public void Fireball(Vector3 position, float radius, EffectPriority priority)
+        /// <summary>A rolling fireball: the heart of every vehicle's death. Radius is how far the fire reaches. Blue: a Covenant machine's plasma.</summary>
+        public void Fireball(Vector3 position, float radius, EffectPriority priority, bool blue = false)
         {
             EffectPriority lesser = priority == EffectPriority.Huge ? EffectPriority.Big : priority == EffectPriority.Big ? EffectPriority.Medium : EffectPriority.Small;
-            _kit.Glow(priority, position, radius * 3.6f, FireGlow, 0.24f);
+            _kit.Glow(priority, position, radius * 3.6f, blue ? PlasmaGlow : FireGlow, 0.24f);
             _kit.Glow(priority, position, radius * 1.8f, Color.white, 0.1f);
             int fire = Mathf.Clamp(Mathf.RoundToInt(radius * 5f) + 8, 12, 46);
             for (int i = 0; i < fire; i++)
             {
                 Vector3 out3 = Random.onUnitSphere;
                 out3.y = Mathf.Abs(out3.y) * 0.9f + 0.1f;
-                _kit.Fire(priority, position + out3 * radius * Random.Range(0.1f, 0.5f), out3 * radius * Random.Range(1.5f, 3.6f), radius * Random.Range(0.75f, 1.3f), Random.Range(0.5f, 1.05f));
+                Vector3 at = position + out3 * radius * Random.Range(0.1f, 0.5f), velocity = out3 * radius * Random.Range(1.5f, 3.6f);
+                float size = radius * Random.Range(0.75f, 1.3f), life = Random.Range(0.5f, 1.05f);
+                if (blue) _kit.PlasmaFire(priority, at, velocity, size, life);
+                else _kit.Fire(priority, at, velocity, size, life);
             }
             int smoke = Mathf.Clamp(Mathf.RoundToInt(radius * 2f) + 4, 6, 22);
             for (int i = 0; i < smoke; i++) _kit.Smoke(lesser, position + Random.insideUnitSphere * radius * 0.5f, Random.onUnitSphere * radius * 0.8f + Vector3.up * radius * Random.Range(0.8f, 1.6f), radius * Random.Range(1.1f, 1.9f), SmokeDark, Random.Range(1.4f, 2.6f));
             int sparks = Mathf.Clamp(Mathf.RoundToInt(radius * 7f), 12, 60);
-            for (int i = 0; i < sparks; i++) _kit.Spark(lesser, position, Random.onUnitSphere * radius * Random.Range(3f, 8f) + Vector3.up * radius * 2f, 0.085f * _kit.ReadScale, SparkHot, Random.Range(0.4f, 1.1f));
+            for (int i = 0; i < sparks; i++) _kit.Spark(lesser, position, Random.onUnitSphere * radius * Random.Range(3f, 8f) + Vector3.up * radius * 2f, 0.085f * _kit.ReadScale, blue ? SparkPlasma : SparkHot, Random.Range(0.4f, 1.1f));
             _kit.Heat(lesser, position + Vector3.up * radius, Vector3.up * 3f, radius * 4f, 0.9f);
         }
 
@@ -385,22 +395,22 @@ namespace Halobellum.Presentation
         }
 
         /// <summary>A vehicle blows up: fireball, smoke, sparks, flying debris, a shock ring and a scorch mark. The wreck goes on burning (DeathEffects).</summary>
-        public void VehicleDeath(Vector3 position, float bodyRadius, bool titan)
+        public void VehicleDeath(Vector3 position, float bodyRadius, bool titan, bool blue = false)
         {
             Vector3 middle = position + Vector3.up * Mathf.Max(0.8f, bodyRadius * 0.45f);
             float radius = (titan ? bodyRadius * 1.2f : bodyRadius * 1.7f) + 1f;
             EffectPriority priority = titan ? EffectPriority.Huge : EffectPriority.Big;
-            Fireball(middle, radius, priority);
+            Fireball(middle, radius, priority, blue);
             Vector3 ground = new Vector3(position.x, 0.12f, position.z);
-            _kit.Ring(priority, ground, radius * 3.4f, new Color(1f, 0.8f, 0.55f, 0.85f), 0.65f);
-            _kit.GroundGlow(priority, ground, radius * 5f, GroundFire, 0.7f);
+            _kit.Ring(priority, ground, radius * 3.4f, blue ? new Color(0.7f, 0.9f, 1f, 0.85f) : new Color(1f, 0.8f, 0.55f, 0.85f), 0.65f);
+            _kit.GroundGlow(priority, ground, radius * 5f, blue ? GroundPlasma : GroundFire, 0.7f);
             _kit.Scorch(priority, ground, radius * 2.1f, ScorchBlack, 60f);
             int chunks = Mathf.Clamp(Mathf.RoundToInt(bodyRadius * 7f) + 6, 8, 40);
             for (int i = 0; i < chunks; i++)
             {
                 Vector3 out3 = Random.onUnitSphere;
                 out3.y = Mathf.Abs(out3.y) + 0.5f;
-                Color color = i % 3 == 0 ? MetalHot : MetalDark;
+                Color color = i % 3 == 0 ? (blue ? MetalPlasma : MetalHot) : MetalDark;
                 _kit.Chunk(priority, middle + out3 * bodyRadius * 0.3f, out3 * Random.Range(7f, 18f), Random.Range(0.18f, 0.32f + bodyRadius * 0.12f), color, Random.Range(1.8f, 3.6f));
             }
             CameraShake.Kick(position, titan ? 0.8f : 0.3f);
@@ -409,21 +419,21 @@ namespace Halobellum.Presentation
             for (int i = 0; i < 6; i++)
             {
                 Vector3 spot = position + new Vector3(Random.Range(-bodyRadius, bodyRadius), Random.Range(1f, bodyRadius), Random.Range(-bodyRadius, bodyRadius));
-                FireballAfter(0.2f + i * 0.28f, spot, bodyRadius * Random.Range(0.45f, 0.75f), EffectPriority.Big);
+                FireballAfter(0.2f + i * 0.28f, spot, bodyRadius * Random.Range(0.45f, 0.75f), EffectPriority.Big, blue);
             }
-            FireballAfter(2f, position + Vector3.up * bodyRadius * 0.6f, bodyRadius * 1.2f, EffectPriority.Huge);
+            FireballAfter(2f, position + Vector3.up * bodyRadius * 0.6f, bodyRadius * 1.2f, EffectPriority.Huge, blue);
         }
 
         /// <summary>An air unit blows up where it flies; burning pieces rain down. The body itself falls too (DeathEffects).</summary>
-        public void AirDeath(Vector3 position, float bodyRadius, bool flood)
+        public void AirDeath(Vector3 position, float bodyRadius, bool flood, bool blue = false)
         {
             float radius = bodyRadius * 1.5f + 0.8f;
-            Fireball(position, radius, EffectPriority.Big);
-            _kit.Ring(EffectPriority.Big, position, radius * 3f, new Color(1f, 0.8f, 0.55f, 0.6f), 0.45f);
+            Fireball(position, radius, EffectPriority.Big, blue);
+            _kit.Ring(EffectPriority.Big, position, radius * 3f, blue ? new Color(0.7f, 0.9f, 1f, 0.6f) : new Color(1f, 0.8f, 0.55f, 0.6f), 0.45f);
             int chunks = Mathf.Clamp(Mathf.RoundToInt(bodyRadius * 8f) + 4, 6, 30);
             for (int i = 0; i < chunks; i++)
             {
-                Color color = flood ? (i % 2 == 0 ? FleshPink : FleshSick) : i % 3 == 0 ? MetalHot : MetalDark;
+                Color color = flood ? (i % 2 == 0 ? FleshPink : FleshSick) : i % 3 == 0 ? (blue ? MetalPlasma : MetalHot) : MetalDark;
                 _kit.Chunk(EffectPriority.Medium, position, Random.onUnitSphere * Random.Range(5f, 14f), Random.Range(0.2f, 0.55f), color, Random.Range(1.6f, 3f));
             }
             if (flood) for (int i = 0; i < 16; i++) _kit.Spore(EffectPriority.Medium, position, Random.insideUnitSphere * 5f, Random.Range(0.35f, 0.7f) * _kit.ReadScale, SporeGreen, Random.Range(1.5f, 3f));
@@ -431,21 +441,24 @@ namespace Halobellum.Presentation
         }
 
         /// <summary>The trail of something falling on fire: call it again and again along the way.</summary>
-        public void BurningTrail(Vector3 position, float bodyRadius, EffectPriority priority)
+        public void BurningTrail(Vector3 position, float bodyRadius, EffectPriority priority, bool blue = false)
         {
-            _kit.Fire(priority, position + Random.insideUnitSphere * bodyRadius * 0.4f, Random.insideUnitSphere * 1.5f + Vector3.up * 1.5f, bodyRadius * Random.Range(0.8f, 1.4f), Random.Range(0.4f, 0.7f));
+            Vector3 at = position + Random.insideUnitSphere * bodyRadius * 0.4f, velocity = Random.insideUnitSphere * 1.5f + Vector3.up * 1.5f;
+            float size = bodyRadius * Random.Range(0.8f, 1.4f), life = Random.Range(0.4f, 0.7f);
+            if (blue) _kit.PlasmaFire(priority, at, velocity, size, life);
+            else _kit.Fire(priority, at, velocity, size, life);
             _kit.Smoke(priority, position, Vector3.up * 1.5f + Random.insideUnitSphere, bodyRadius * Random.Range(1f, 1.7f), SmokeDark, Random.Range(1.4f, 2.6f));
-            if (Random.value < 0.5f) _kit.Spark(EffectPriority.Small, position, Random.onUnitSphere * 5f, 0.07f * _kit.ReadScale, SparkHot, 0.5f);
+            if (Random.value < 0.5f) _kit.Spark(EffectPriority.Small, position, Random.onUnitSphere * 5f, 0.07f * _kit.ReadScale, blue ? SparkPlasma : SparkHot, 0.5f);
         }
 
         /// <summary>What falls from the sky hits the ground.</summary>
-        public void GroundCrash(Vector3 position, float bodyRadius)
+        public void GroundCrash(Vector3 position, float bodyRadius, bool blue = false)
         {
             Vector3 ground = new Vector3(position.x, 0.5f, position.z);
             float radius = bodyRadius * 1.3f + 0.8f;
-            Fireball(ground, radius, EffectPriority.Big);
-            _kit.Ring(EffectPriority.Big, new Vector3(position.x, 0.12f, position.z), radius * 3f, new Color(1f, 0.8f, 0.55f, 0.8f), 0.55f);
-            _kit.GroundGlow(EffectPriority.Big, new Vector3(position.x, 0.12f, position.z), radius * 4f, GroundFire, 0.55f);
+            Fireball(ground, radius, EffectPriority.Big, blue);
+            _kit.Ring(EffectPriority.Big, new Vector3(position.x, 0.12f, position.z), radius * 3f, blue ? new Color(0.7f, 0.9f, 1f, 0.8f) : new Color(1f, 0.8f, 0.55f, 0.8f), 0.55f);
+            _kit.GroundGlow(EffectPriority.Big, new Vector3(position.x, 0.12f, position.z), radius * 4f, blue ? GroundPlasma : GroundFire, 0.55f);
             _kit.Scorch(EffectPriority.Big, ground, radius * 2.1f, ScorchBlack, 50f);
             CameraShake.Kick(position, 0.3f);
         }

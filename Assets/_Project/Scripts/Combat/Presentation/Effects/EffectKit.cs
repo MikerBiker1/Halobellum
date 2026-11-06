@@ -62,7 +62,7 @@ namespace Halobellum.Presentation
         private const float HeadStretch = 1f;
 
         private readonly Transform _root;
-        private readonly Layer _glow, _orb, _streak, _bolt, _sparks, _fire, _flame, _smoke, _dust, _blood, _ring, _groundGlow, _scorch, _chunks, _heat, _slash, _spores;
+        private readonly Layer _glow, _orb, _streak, _bolt, _sparks, _fire, _plasmaFire, _flame, _smoke, _dust, _blood, _ring, _groundGlow, _scorch, _chunks, _heat, _slash, _spores;
         private readonly Layer[] _layers;
         private readonly Layer _headGlow, _headStreak, _groundHead, _cloudSmoke, _cloudFire;
         private readonly ParticleSystem.Particle[] _headGlowData = new ParticleSystem.Particle[HeadCapacity];
@@ -110,6 +110,9 @@ namespace Halobellum.Presentation
 
         /// <summary>How many puffs of dust are in the air now (for the benchmark).</summary>
         public int LiveDust => _dust.System.particleCount;
+        /// <summary>Licks of orange fire and of light blue plasma fire alive right now (for tests).</summary>
+        public int LiveFire => _fire.System.particleCount;
+        public int LivePlasmaFire => _plasmaFire.System.particleCount;
 
         /// <summary>The scale a quality level gives, by its name: "PC" is the one the settings show as High and "Mobile" the one they show as Low.</summary>
         public static float ParticleScaleFor(string qualityName) => qualityName == "PC" ? HighQualityScale : 1f;
@@ -153,6 +156,7 @@ namespace Halobellum.Presentation
             _blood = Billboard("Blood", EffectAssets.ParticleMaterial("Effect Blood", EffectAssets.Soft, 1f, 1f, 0f, 3005), BloodCapacity);
             _spores = Billboard("Spores", EffectAssets.ParticleMaterial("Effect Spores", EffectAssets.Soft, 1.5f, 0.1f, 0f, 3010), 600);
             _fire = Billboard("Fire", EffectAssets.ParticleMaterial("Effect Fire", EffectAssets.Flame, 2.2f, 0.55f, 0.6f, 3020), 1300);
+            _plasmaFire = Billboard("Plasma Fire", EffectAssets.ParticleMaterial("Effect Plasma Fire", EffectAssets.Flame, 2.2f, 0.55f, 0.6f, 3020), 600);
             _flame = Billboard("Flame", EffectAssets.ParticleMaterial("Effect Flame", EffectAssets.Flame, 1.9f, 0.4f, 0.3f, 3021), 1500);
             _glow = Billboard("Glow", EffectAssets.ParticleMaterial("Effect Glow", EffectAssets.Soft, 3f, 0f, 0f, 3030, true), 1500);
             _orb = Billboard("Orb", EffectAssets.ParticleMaterial("Effect Orb", EffectAssets.Soft, 3f, 0f, 0f, 3031), 500);
@@ -167,7 +171,7 @@ namespace Halobellum.Presentation
             _chunkMaterial = EffectAssets.ChunkMaterial();
             _chunks = MakeChunks("Chunks", _chunkMaterial, 320);
 
-            _layers = new[] { _scorch, _heat, _groundGlow, _ring, _smoke, _dust, _blood, _spores, _fire, _flame, _glow, _orb, _bolt, _streak, _sparks, _slash, _chunks };
+            _layers = new[] { _scorch, _heat, _groundGlow, _ring, _smoke, _dust, _blood, _spores, _fire, _plasmaFire, _flame, _glow, _orb, _bolt, _streak, _sparks, _slash, _chunks };
 
             Fades(_glow, Fade(1f, 0.25f, 0.8f, 0f), Grow(0.55f, 0.2f, 1f));
             Fades(_orb, Fade(1f, 0.85f, 1f, 0f), null);
@@ -187,6 +191,18 @@ namespace Halobellum.Presentation
             Gravity(_fire, -0.25f);
             Sheet(_fire);
             Spin(_fire, 1.2f);
+
+            // A Covenant machine goes up in plasma: white-hot through light blue to deep blue, then dark.
+            var plasmaFire = new Gradient();
+            plasmaFire.SetKeys(
+                new[] { new GradientColorKey(new Color(0.9f, 0.97f, 1f), 0f), new GradientColorKey(new Color(0.45f, 0.8f, 1f), 0.25f), new GradientColorKey(new Color(0.1f, 0.28f, 0.75f), 0.55f), new GradientColorKey(new Color(0.03f, 0.04f, 0.08f), 0.85f) },
+                new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(1f, 0.05f), new GradientAlphaKey(0.7f, 0.6f), new GradientAlphaKey(0f, 1f) });
+            ColorOverLife(_plasmaFire, plasmaFire);
+            SizeOverLife(_plasmaFire, Grow(0.45f, 0.45f, 1f));
+            Drag(_plasmaFire, 2.4f);
+            Gravity(_plasmaFire, -0.25f);
+            Sheet(_plasmaFire);
+            Spin(_plasmaFire, 1.2f);
 
             // Flamethrower fire: small at the muzzle, growing all the way to the end of its range.
             var flame = new Gradient();
@@ -396,6 +412,13 @@ namespace Halobellum.Presentation
         }
 
         public void Fire(EffectPriority priority, Vector3 position, Vector3 velocity, float size, float life) => Fire(priority, position, velocity, size, life, Color.white);
+
+        /// <summary>A lick of fire, but light blue: a Covenant machine burning.</summary>
+        public void PlasmaFire(EffectPriority priority, Vector3 position, Vector3 velocity, float size, float life)
+        {
+            var emit = new ParticleSystem.EmitParams { position = position, velocity = velocity, startSize = size, startColor = Color.white, startLifetime = life, rotation = Random.value * 360f };
+            Emit(_plasmaFire, priority, ref emit);
+        }
 
         /// <summary>A puff of a flamethrower's flame: it grows as it flies.</summary>
         public void Flame(EffectPriority priority, Vector3 position, Vector3 velocity, float size, float life)
