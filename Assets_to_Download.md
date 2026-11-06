@@ -29,15 +29,15 @@ All in, from your `Art_Source/Music` (D67). To change one, replace the file ther
 
 | Done | What | For | Stand-in for now |
 | --- | --- | --- | --- |
-| [ ] | A round drawn | When neither side wins a round. | Silence |
-| [ ] | Node of light hitting a base, small and big | The end of a round. Send me the files and I'll fit them. | The battle's own hit and explosion sounds, by size |
+| [x] | A round drawn | When neither side wins a round: `stinger_match_draw`. | Your `draw.mp3` (D71) |
+| [x] | Node of light hitting a base, small and big | The end of a round: `sfx_node_small` below about 63 damage to a base, `sfx_node_big` from there and for every Titan. | Your `Small&medium light nodes` and `big light node` (D71) |
 | [ ] | Node of light taking off | The end of a round, optional. | Silence |
 
 ## Sound effects
 
-55 of your 59 files from `Art_Source/SFX` are in (D70). `Assets/_Project/Art/Imported/Audio/SOURCE_SFX.txt` says which file fills which slot. To add or change one, put it in `Art_Source/SFX` and tell me, or run `Tools/Audio/bring_in_sfx.py` after adding its line there.
+All your files from `Art_Source/SFX` are in: 55 of the first 59 (D70), and the 7 of the second batch (D71). `Assets/_Project/Art/Imported/Audio/SOURCE_SFX.txt` says which file fills which slot. To add or change one, put it in `Art_Source/SFX` and tell me, or run `Tools/Audio/bring_in_sfx.py` after adding its line there.
 
-Not used: the plasma grenade (no use yet), the beam rifle and the magnum (no unit carries them), and `fire[plasmarifle1]` (the same file as the Banshee's).
+Not used: the plasma grenade (no use yet), the magnum (no unit carries one), and `fire[plasmarifle1]` (the same file as the Banshee's). The beam rifle now has a carrier, the Jackal (Beam Rifle).
 
 ### Weapons firing
 
@@ -47,7 +47,12 @@ A weapon with a sound of its own uses it; the others use their kind's sound.
 | --- | --- | --- | --- |
 | [x] | `sfx_fire_assaultrifle` | Marines, Infested Marines, Combat Forms. | `assault_rifle_fire_brown2_1` |
 | [x] | `sfx_fire_smg` | ODSTs. Loops while firing. | `fire[smg_new01]` |
-| [x] | `sfx_fire_m60` | Warthog and Infested Warthog machine guns. Loops while firing. | `fire[m60_ster1]` |
+| [x] | `sfx_fire_m60` | Every machine gun and chaingun (D71): Warthog and Infested Warthog, Scorpion and Grizzly coaxial guns, Mantis, Spartan Heavy Weapons' M247H, Vulture, Elephant turrets, Marauder's Spike Turret. Loops while firing. | `fire[m60_ster1]` |
+| [x] | `sfx_fire_autocannon` | Autocannons: Pelican, Sparrowhawk, Condor, Chopper. Loops while firing. | `Autocannon` (D71) |
+| [x] | `sfx_fire_br85` | The BR85 (Spartan Fireteam). | `fire_BR85` (D71) |
+| [x] | `sfx_fire_beamrifle` | The Jackal (Beam Rifle)'s Beam Rifle. | `beam_rifle_fire[cov_snip_shot9]` (D71) |
+| [x] | `sfx_fire_spartanlaser` | The Spartan Laser: played as its 2.5 s wind-up starts, so the shot in the file lands with the shot. | `Spartan_laser_shoots_at_2` (D71) |
+| [x] | `sfx_fire_plasmaheavy`, `sfx_fire_plasmaturret` | Heavy plasma: the Marauder's cannon; and the plasma turrets of both Phantoms and the Scarab. | `phantom_turret_fire[phantom_fire]` (D71) |
 | [x] | `sfx_fire_ghost` | Ghost and Infested Ghost. Loops while firing. | `ghost_fire[plasma_ghost]` |
 | [x] | `sfx_fire_flame` | Flamethrowers. Loops while firing. | `flamethrower_fire_FT_active` |
 | [x] | `sfx_fire_plasma` | Plasma rifles, pistols and turrets. | `plas_rifle_fire[plas_rif_fire]` |
@@ -65,11 +70,10 @@ A weapon with a sound of its own uses it; the others use their kind's sound.
 | [x] | `sfx_fire_cannon` | Tank cannons. | `scorpion_cannon_fire` |
 | [x] | `sfx_fire_gauss` | Gauss Warthog, Cobra, Gremlin (my guess for this file). | `fire[grifle03]` |
 | [x] | `sfx_beam_charge`, `_in`, `_loop`, `_out` | The Scarab's beam, in that order. | `Beam Charge scarab`, `in`, `loop`, `out` |
-| [ ] | `sfx_fire_bullet` | Other rifles, SMGs and pistols, such as the BR85. | Generated stand-in |
-| [ ] | `sfx_fire_heavybullet` | Other machine guns, chainguns, autocannons, turrets: Scorpion and Grizzly coaxial guns, Mantis, Pelican, Sparrowhawk, Condor, Chopper, Vulture. | Generated stand-in |
+| [ ] | `sfx_fire_bullet` | Other rifles, SMGs and pistols, such as the Marines' and the placeholder rifles. | Generated stand-in |
+| [ ] | `sfx_fire_heavybullet` | Only a heavy gun that is none of the above, if one comes. | Generated stand-in |
 | [ ] | `sfx_fire_bomb` | Hornet and Longsword bombs. | Generated stand-in |
-| [ ] | `sfx_fire_laser` | Spartan Laser, Hunter Captain's Siphon Laser. | Generated stand-in |
-| [ ] | `sfx_fire_plasmaheavy` | The Marauder's plasma cannon and other plasma shots that burst. | Generated stand-in |
+| [ ] | `sfx_fire_laser` | The Hunter Captain's Siphon Laser. | Generated stand-in |
 | [ ] | `sfx_fire_bio` | Flood spat bone, bone shards and spores. | Generated stand-in |
 | [ ] | `sfx_fire_melee`, `_covenant`, `_flood` | Melee: claws, talons, tendrils, rams. | Generated stand-ins |
 
@@ -94,7 +98,7 @@ A weapon with a sound of its own uses it; the others use their kind's sound.
 | [ ] | `sfx_death_vehicle` | A light vehicle going up. | Generated stand-in |
 | [ ] | `sfx_death_air` | A Covenant or Flood aircraft going down. | Generated stand-in |
 | [ ] | `sfx_death_lekgolo` | A Hunter or Goliath dying. | The Covenant soldier's death |
-| [ ] | `sfx_pelican_crash` | The biggest Flood units dying. | Generated stand-in |
+| [x] | `sfx_pelican_crash` | The biggest Flood units dying: the same as the UNSC air crash, as you said. | `UNSC air unit hitting the ground` (D71) |
 | [ ] | `sfx_infection_start` | A dying unit being infected. | Generated stand-in |
 | [ ] | `sfx_hum_engine`, `sfx_hum_hover` | Loops: UNSC ground engines; what flies or floats. They must close without a click. | Generated stand-ins |
 | [ ] | `sfx_drop_in` | A squad falling into place: it lands 0.6 s in. | Generated stand-in |
@@ -115,7 +119,11 @@ A UI file named without a faction, such as `ui_click`, serves every faction.
 
 ### Spells
 
-All 17 spell slots still have generated stand-ins, listed in `Assets/_Project/Art/Imported/Audio/README.txt`.
+| Done | Slot | When it plays | Your file |
+| --- | --- | --- | --- |
+| [x] | `sfx_spell_glassing` | The Glassing Beam: starts 1.85 s before the beam strikes, so its build-up leads into the strike, and fades as the beam goes. | `Glassing beam` (D71) |
+
+The other 16 spell slots still have generated stand-ins, listed in `Assets/_Project/Art/Imported/Audio/README.txt`.
 
 ## Models left to find
 
@@ -133,29 +141,30 @@ The Spartans have your model now, each with a placeholder weapon from the game's
 | [ ] | M41 rocket launcher | Spartan Grenadier. | Rocket launcher, drawn short |
 | [ ] | Shotgun | Spartan CQB. | SMG |
 | [ ] | BR85 battle rifle and M41 rocket launcher | Spartan Fireteam. | Assault rifle |
-| [ ] | Plasma rifle | Elite, and the Jackal (Plasma Rifle). | Plasma pistol, drawn big |
+| [x] | Plasma rifle | Elite. | Your `halo_-_plasma_rifle.glb` (D71) |
+| [x] | Beam rifle | Jackal (Beam Rifle). | Your `halo_-_beam_rifle.glb` (D71) |
 | [ ] | Spike grenade launcher | Brute Grenadier. | Rocket launcher |
 
 ### UNSC
 
 | Done | Unit | Notes |
 | --- | --- | --- |
-| [ ] | Flamethrower Trooper | A soldier with a flamethrower. |
-| [ ] | Gremlin | Armored Division. |
+| [x] | Flamethrower Trooper | Your `Meshy_AI_Flamethrower_trooper.glb`, rigged by Meshy, with clips made around its crouched pose (D71). |
+| [x] | Gremlin | Your `Meshy_AI_Gremlin.glb` (D71). |
 
 ### Flood
 
 | Done | Unit | Notes |
 | --- | --- | --- |
-| [ ] | Growths for Infested vehicles | The Flood's tentacles, to fit on an Infested Scorpion, Elephant, Hornet and so on (decision 37). One or a few pieces that can be placed on any vehicle. |
+| [x] | Growths for Infested vehicles | Your `Meshy_AI_growths.glb`: pods and bubbles in 3 to 5 clumps on each of the 8 infested vehicles (D71). A trial, to revert if you don't like it. |
 | [ ] | Hunter and Goliath gore death | Worms spilling apart instead of today's burning wreck (decision 31). A worm pile or a short animation. |
 
 ### Towers
 
 | Done | What | Notes |
 | --- | --- | --- |
-| [ ] | Command Center | Stands on each side's left. For now it is a block with a mast and a dish, built from plain shapes. |
-| [ ] | Research Center | Stands on each side's right. For now it is a lab with a glowing dome. |
+| [x] | Command Center | Your `Meshy_AI_command_center.glb`; its red trim glows in the owner's faction colour (D71). |
+| [x] | Research Center | Your `Meshy_AI_Research center.glb`; its lights glow in the owner's faction colour (D71). |
 
 Only about 6 m of ground is free for each tower, though it can be as tall as you like.
 
@@ -183,6 +192,6 @@ The colours of the sky, sun and haze for each faction are in `Presentation/Terra
 
 Fitted to their units, so there is nothing left to do here.
 
-- **UNSC:** Spartan (and the 5 Noble Spartans, recoloured), Archer Missile Pod, Cobra, Rhino, Sparrowhawk, Vulture, Longsword (in place of the Shortsword), Wolverine, Mantis, ODST, Condor Gunship.
-- **Covenant:** Elite, Zealot (the Elite in gold), Ghost, Hunter Pair, Hunter Captain, Grunt Goblin, Skitterer, both Jackals (the shield is your Halo 5 one), Vampire, Marauder, Reaver, Brute Grenadier (the red Brute of the six), Goliath.
+- **UNSC:** Scorpion (your updated one, D71), Spartan (and the 5 Noble Spartans, recoloured), Archer Missile Pod, Cobra, Rhino, Sparrowhawk, Vulture, Longsword (in place of the Shortsword), Wolverine, Mantis, ODST, Condor Gunship.
+- **Covenant:** Covenant Phantom (your Phantom, in Covenant purple), Elite, Zealot (the Elite in gold), Ghost, Hunter Pair, Hunter Captain, Grunt Goblin, Skitterer, both Jackals (the shield is your Halo 5 one), Vampire, Marauder, Reaver, Brute Grenadier (the red Brute of the six), Goliath.
 - **Flood:** Flood Abomination, Swarm Form, Infested Elite and Infested Ghost (the Elite and Ghost, tinted), Infested Marine, Combat Form, Seeder, Juggernaut, Spawner.

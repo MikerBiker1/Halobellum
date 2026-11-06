@@ -283,5 +283,13 @@ namespace Halobellum.Tests
             Debug.Log($"Spartan Laser file: {clip.length:0.00} s long, its loudest 10 ms at {loudest * 0.01f:0.00} s, the shot's attack at {shotAt:0.00} s. dB every 0.1 s:{line}");
             Assert.AreEqual(2.5f, loudest * 0.01f, 0.2f, "The shot (the loudest moment, 2.42 s in the owner's file) should come with the wind-up's end.");
         }
+
+        [Test]
+        public void TheLasersBang_MeetsItsShot_AtEveryBattleSpeed()
+        {
+            Assert.AreEqual(0f, BattleAudio.WindUpSkip(2.5f, 1f), 1e-4f, "At 1x the file starts with the wind-up.");
+            Assert.AreEqual(2.42f - 1.25f, BattleAudio.WindUpSkip(2.5f, 2f), 1e-4f, "At 2x the shot comes 1.25 s later: start that much before the bang.");
+            Assert.AreEqual(2.42f - 0.625f, BattleAudio.WindUpSkip(2.5f, 4f), 1e-4f);
+        }
     }
 }

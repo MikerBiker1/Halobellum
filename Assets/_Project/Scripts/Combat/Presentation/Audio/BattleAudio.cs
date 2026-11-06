@@ -250,8 +250,16 @@ namespace Halobellum.Presentation
                 cue = AudioCatalog.WindUpFor(weapon);
                 _windUps[weapon] = cue;
             }
-            if (cue != null) GameAudio.Sfx(cue, Place(attacker));
+            if (cue == null) return;
+            // The file plays in real time and the wind-up in battle time: faster than 1x, start it part way in, so its bang still meets the shot.
+            float skip = WindUpSkip(seconds, _battle.Speed);
+            if (skip > 0.02f) GameAudio.SfxShaped(cue, Place(attacker), skip, 99f, 0.05f);
+            else GameAudio.Sfx(cue, Place(attacker));
         }
+
+        /// <summary>How far into the Spartan Laser's file to start, so that its shot lands with a wind-up of these battle seconds at this battle speed.</summary>
+        public static float WindUpSkip(float windUpSeconds, float speed) =>
+            Mathf.Max(0f, AudioCatalog.SpartanLaserShotSeconds - windUpSeconds / Mathf.Max(0.05f, speed));
 
         /// <summary>Keeps a loop going for this source until then (in the battle's time).</summary>
         private void Keep(SfxCue cue, int source, float until, Vector3 place)

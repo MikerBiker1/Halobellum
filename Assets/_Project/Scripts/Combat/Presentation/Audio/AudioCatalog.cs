@@ -186,6 +186,8 @@ namespace Halobellum.Presentation
         public static readonly SfxCue FireShotgun = OwnerCue("sfx_fire_shotgun", SfxGroup.HeavyArms, 0.75f, 0.05f, 3, -14f);
         public static readonly SfxCue FireSniper = OwnerCue("sfx_fire_sniper", SfxGroup.BigGuns, 0.85f, 0.03f, 5, -13f);
         /// <summary>The Spartan Laser's charge with its shot about 2.5 s in: played as its wind-up starts (WindUpFor). No pitch spread, which would move the shot.</summary>
+        /// <summary>Where the shot is in the owner's Spartan Laser file: its loudest moment, measured (the wind-up is 2.5 s).</summary>
+        public const float SpartanLaserShotSeconds = 2.42f;
         public static readonly SfxCue FireSpartanLaser = OwnerCue("sfx_fire_spartanlaser", SfxGroup.Lasers, 1f, 0f, 7, -14f);
         public static readonly SfxCue FireSword = OwnerCue("sfx_fire_sword", SfxGroup.Melee, 0.65f, 0.08f, 2, -17.5f);
         public static readonly SfxCue SwordReady = OwnerCue("sfx_sword_ready", SfxGroup.Ready, 0.6f, 0.06f, 3, -17f);
