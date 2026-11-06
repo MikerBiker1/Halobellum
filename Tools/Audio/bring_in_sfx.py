@@ -30,6 +30,8 @@ SLOTS = [
     ("scorpion_cannon_fire[cannon_fire].wav", "sfx_fire_cannon", "tank cannons"),
     ("fire[grifle03].wav", "sfx_fire_gauss", "gauss guns and railguns (Gauss Warthog, Cobra, Gremlin)"),
     ("Sniper fire[ruger24].wav", "sfx_fire_sniper", "the Spartan Sniper's rifle"),
+    # The Spartan Laser: played as it starts its 2.5 s wind-up, so the shot in the file (about 2.5 s in) comes with the shot in the battle.
+    ("Spartan_laser_shoots_at_2.mp3", "sfx_fire_spartanlaser", "the Spartan Laser's wind-up and shot, played as it starts winding up"),
     ("fire[shotgun2].wav", "sfx_fire_shotgun", "the Spartan CQB's shotgun"),
     ("brute_shot_fire[brute_fire1].wav", "sfx_fire_bruteshot", "the Brute Grenadier's spike grenade launcher"),
     ("Fuelrod_fire_grunt.wav", "sfx_fire_fuelrod", "fuel rod guns (Fuel Rod Grunt, Grunt Goblin, Goliath)"),

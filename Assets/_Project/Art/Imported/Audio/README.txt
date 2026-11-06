@@ -146,6 +146,7 @@ ONE WEAPON'S OR UNIT'S OWN (no generated sound: until a file is in, the weapon's
   sfx_fire_bruteshot               The Brute Grenadier's spike grenade launcher.
   sfx_fire_shotgun                 The Spartan CQB's shotgun.
   sfx_fire_sniper                  The Spartan Sniper's rifle.
+  sfx_fire_spartanlaser            The Spartan Laser: its charge and shot, played as its 2.5 s wind-up starts. The shot should be 2.5 s in.
   sfx_fire_sword                   The Zealot's energy sword.
   sfx_sword_ready                  Every Zealot, as a battle starts.
   sfx_beam_charge                  The Scarab's beam charging (2 s), heard to its end. With it in, the beam plays in this order, not sfx_fire_beam:

@@ -8,7 +8,7 @@ Wolverine,UNSC,,AntiAir,2,50,1,300,500,Light,0,2,24,30,30,30,500,60,"Spartan Sni
 Hornet,UNSC,,Aerial,2,50,2,300,400,Light,0,4.5,12,89,89,89,800,30,"Wolverine (100%), Vampire (100%)"
 Archer Missile Pod,UNSC,,Artillery,2,50,2,300,350,Light,0,0,42,28,28,28,700,30,"Sparrowhawk (100%), Juggernaut (100%)"
 Pelican,UNSC,,Aerial,2,50,1,300,800,Light,0,6,14,47,28,12,800,60,"Wolverine (100%), Vampire (100%)"
-Spartan,UNSC,,SingleTargetDps,3,250,1,500,1250,Unarmored,400,1.75,24,56,135,169,1650,100,"Marine (100%), Grunt (100%)"
+Spartan,UNSC,,SingleTargetDps,3,250,1,500,1250,Unarmored,400,1.75,24,64,154,193,1650,100,"Marine (100%), Grunt (100%)"
 Mantis,UNSC,,Tank,3,250,1,500,2500,Heavy,0,1.5,14,64,48,34,2500,100,"Gauss Warthog (100%), Spartan (100%)"
 Elephant,UNSC,,Titan,4,350,1,800,8000,Heavy,0,0.75,20,117,136,130,8000,160,"Spartan (100%), Hunter Captain (100%)"
 Grunt,Covenant,,Chaff,1,0,20,100,40,Unarmored,0,1.5,10,200,200,150,800,1,"Flamethrower Trooper (100%), Fuel Rod Grunt (100%)"

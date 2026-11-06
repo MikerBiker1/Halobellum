@@ -35,10 +35,14 @@ ROLE_TEXT = {
 
 
 def W(name, dmg, interval, rng, type, proj=0, splash=0, minr=0, aa=False, block=False, own=None, air=1, cone=0,
-      lob=False, beam=0, charge=0, rest=0, sweep=0, seed=0, seedshare=0, seedslow=0, slow=0, slowshare=0):
+      lob=False, beam=0, charge=0, rest=0, sweep=0, seed=0, seedshare=0, seedslow=0, slow=0, slowshare=0, windup=0):
     return dict(name=name, dmg=dmg, interval=interval, range=rng, minr=minr, proj=proj, splash=splash, type=type,
                 aa=aa, block=block, own=own, air=air, cone=cone, lob=lob, beam=beam, charge=charge, rest=rest, sweep=sweep,
-                seed=seed, seedshare=seedshare, seedslow=seedslow, slow=slow, slowshare=slowshare)
+                seed=seed, seedshare=seedshare, seedslow=seedslow, slow=slow, slowshare=slowshare, windup=windup)
+
+
+# Seconds every Spartan Laser charges before its shot goes (the owner, 2026-11-05: the laser fires 2.5 s into its sound).
+SPARTAN_LASER_WINDUP = 2.5
 
 
 # The air units that can deploy in the flank zones (D61): UNSC only. With the Hornet too, Noble and Armored Division reached 70%.
@@ -79,7 +83,8 @@ UNITS = [
       [W("M370 Autocannon", 14, 0.3, 14, "Ballistic")], airu=True, drop=("Marine", 6, 10, True, 3, 1.5, 5),
       note="With its Troop Bay tech it lands and drops 6 Marines 5 seconds into the battle wherever it is, then lands behind enemy lines to drop more, up to 3 drops in all (D60)."),
     U("Spartan", "Spartan", "UNSC", "SingleTargetDps", 3, 250, 1, 500, 1250, "U", 3.5, 0.6, 0.5, "B",
-      [W("Spartan Laser", 450, 4.0, 24, "Energy", aa=True)], shield=400, regen=80, immune=True, baked="Spartan"),
+      [W("Spartan Laser", 450, 3.5, 24, "Energy", aa=True)], shield=400, regen=80, immune=True, baked="Spartan",
+      note="Its laser winds up for 2.5 s before each shot; it fires every 3.5 s (was 4) to make up for the first shot coming later."),
     U("Mantis", "Mantis", "UNSC", "Tank", 3, 250, 1, 500, 2500, "H", 3, 2, 2, "B",
       [W("Chaingun", 8, 0.2, 14, "Ballistic", block=True),
        W("Rockets", 60, 2.5, 18, "Explosive", proj=35, splash=2, own="G")]),
@@ -244,6 +249,8 @@ def unit_yaml(u):
                   f"    beamRestSeconds: {fmt(w['rest'])}", f"    beamSweepSpeed: {fmt(w['sweep'])}",
                   f"    seedSeconds: {fmt(w['seed'])}", f"    seedDamageSharePerSecond: {fmt(w['seedshare'])}", f"    seedSlowShare: {fmt(w['seedslow'])}",
                   f"    hitSlowSeconds: {fmt(w['slow'])}", f"    hitSlowShare: {fmt(w['slowshare'])}"]
+        if w["windup"]:
+            lines += [f"    windUpSeconds: {fmt(w['windup'])}"]  # Only where there is one, so the other assets stay as they were.
     arc = u["arc"]
     hexes = "".join(struct.pack("<i", DTYPE[t]).hex() for t in (arc["types"] if arc else []))
     lines += [f"  hasDefenseArc: {fmt(arc is not None)}", "  defenseArc:",
@@ -388,8 +395,17 @@ def apply_speed_decision():
         u["speed"] = u["speed"] * 0.5 + FAST_VEHICLES.get(u["name"], 0)
 
 
+def apply_windups():
+    """Every weapon named Spartan Laser, on whichever unit carries one, gets its wind-up."""
+    for u in UNITS:
+        for w in u["weapons"]:
+            if w["name"] == "Spartan Laser":
+                w["windup"] = SPARTAN_LASER_WINDUP
+
+
 def main():
     apply_speed_decision()
+    apply_windups()
     unit_folders = ["UNSC", "Covenant", "Flood"] + [m.FOLDER for m in SUBFACTIONS]
     for faction in unit_folders:
         folder = os.path.join(ROOT, "Assets", "_Project", "Data", "Units", faction)

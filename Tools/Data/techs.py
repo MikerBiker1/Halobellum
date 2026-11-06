@@ -97,7 +97,7 @@ TECHS = {
     ],
     "Spartan": [
         T("Overshield", "Overshield", 250, "A stronger energy shield.", shield=300),
-        T("LaserCapacitor", "Laser Capacitor", 250, "The Spartan Laser charges faster.", fire=1.25),
+        T("LaserCapacitor", "Laser Capacitor", 250, "The Spartan Laser recharges faster between shots.", fire=1.25),
     ],
     "Mantis": [
         T("ArmorPlating", "Armor Plating", 250, "Extra plating on the walker.", health=1.25),

@@ -42,6 +42,22 @@ namespace Halobellum.Combat
         public Vec2 BeamPoint;
         /// <summary>Ticks already spent in the current beam phase.</summary>
         public int BeamTicks;
+        /// <summary>True while a weapon with a wind-up (the Spartan Laser) charges its shot.</summary>
+        public bool WindingUp;
+        /// <summary>The enemy a winding-up weapon locked on to when it started.</summary>
+        public SimUnit WindUpTarget;
+        /// <summary>Seconds of wind-up left, counted down at the unit's rate of fire (a shockwave stretches it).</summary>
+        public float WindUpLeft;
+        /// <summary>How far the wind-up has come, 0 to 1.</summary>
+        public float WindUpShare => !WindingUp || Stats.WindUpSeconds <= 0f ? 0f : System.Math.Min(1f, System.Math.Max(0f, 1f - WindUpLeft / Stats.WindUpSeconds));
+
+        /// <summary>Stops a wind-up without firing (an EMP, or the unit died).</summary>
+        public void CancelWindUp()
+        {
+            WindingUp = false;
+            WindUpTarget = null;
+            WindUpLeft = 0f;
+        }
 
         public SimWeapon(WeaponStats stats)
         {

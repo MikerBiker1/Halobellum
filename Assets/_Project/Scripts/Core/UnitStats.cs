@@ -90,11 +90,19 @@ namespace Halobellum.Core
         public float HitSlowSeconds;
         /// <summary>A unit slowed by a hit moves this share slower (0.4 = 40% slower).</summary>
         public float HitSlowShare;
+        /// <summary>
+        /// Wind-up (the Spartan Laser): if above 0, the weapon charges for this many seconds once it is ready and aimed at a target in range,
+        /// and the shot goes at the end, at the target it locked on to (or at its current one if that one died or left its range; with
+        /// neither in range, the shot is spent). Firing on, it keeps to one shot per FireInterval: the next wind-up starts while it reloads.
+        /// Only the first shot at a new target comes later. A shockwave's slower fire stretches it; an EMP or death cancels it. 0 = none.
+        /// </summary>
+        public float WindUpSeconds;
 
         public float ShotsPerSecond => FireInterval > 0f ? 1f / FireInterval : 0f;
         public bool IsInstant => ProjectileSpeed <= 0f;
         public bool IsCone => ConeDegrees > 0f;
         public bool IsBeam => BeamSeconds > 0f;
+        public bool HasWindUp => WindUpSeconds > 0f;
 
         /// <summary>True if this weapon, on this unit, may attack a unit that is (or is not) in the air.</summary>
         /// <summary>True if this weapon's target class fits this enemy.</summary>
@@ -338,6 +346,8 @@ namespace Halobellum.Core
                     if (w.SeedSeconds < 0f || w.SeedDamageSharePerSecond < 0f || w.SeedSlowShare < 0f || w.SeedSlowShare > 1f) problems.Add($"{wl}: seed values are out of range.");
                     if (w.HitSlowSeconds < 0f || w.HitSlowShare < 0f || w.HitSlowShare > 1f) problems.Add($"{wl}: hit slow values are out of range.");
                     if (w.BeamSeconds < 0f || w.BeamChargeSeconds < 0f || w.BeamRestSeconds < 0f || w.BeamSweepSpeed < 0f) problems.Add($"{wl}: beam values cannot be negative.");
+                    if (w.WindUpSeconds < 0f) problems.Add($"{wl}: wind-up cannot be negative.");
+                    if (w.HasWindUp && w.IsBeam) problems.Add($"{wl}: a beam charges by its own values and cannot have a wind-up.");
                 }
             }
             if (FormsPerBody < 1) problems.Add($"{label}: forms per body must be 1 or more.");

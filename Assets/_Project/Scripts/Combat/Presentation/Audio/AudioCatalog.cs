@@ -179,6 +179,8 @@ namespace Halobellum.Presentation
         public static readonly SfxCue FireBruteShot = OwnerCue("sfx_fire_bruteshot", SfxGroup.Rockets, 0.8f, 0.05f, 4, -14f);
         public static readonly SfxCue FireShotgun = OwnerCue("sfx_fire_shotgun", SfxGroup.HeavyArms, 0.75f, 0.05f, 3, -14f);
         public static readonly SfxCue FireSniper = OwnerCue("sfx_fire_sniper", SfxGroup.BigGuns, 0.85f, 0.03f, 5, -13f);
+        /// <summary>The Spartan Laser's charge with its shot about 2.5 s in: played as its wind-up starts (WindUpFor). No pitch spread, which would move the shot.</summary>
+        public static readonly SfxCue FireSpartanLaser = OwnerCue("sfx_fire_spartanlaser", SfxGroup.Lasers, 1f, 0f, 7, -14f);
         public static readonly SfxCue FireSword = OwnerCue("sfx_fire_sword", SfxGroup.Melee, 0.65f, 0.08f, 2, -17.5f);
         public static readonly SfxCue SwordReady = OwnerCue("sfx_sword_ready", SfxGroup.Ready, 0.6f, 0.06f, 3, -17f);
         public static readonly SfxCue BeamCharge = OwnerCue("sfx_beam_charge", SfxGroup.Beams, 1f, 0f, 8, -13f);
@@ -279,10 +281,22 @@ namespace Halobellum.Presentation
         /// </summary>
         public static SfxCue FireFor(WeaponStats weapon, UnitStats shooter, string faction)
         {
+            if (WindUpFor(weapon) != null) return null; // Its shot is in the sound of its wind-up.
             WeaponFeelKind kind = WeaponFeel.For(weapon);
             if (kind == WeaponFeelKind.Beam && BeamCharge.HasSound) return null;
             SfxCue own = OwnFire(weapon, shooter);
             return own != null && own.HasSound ? own : Fire(kind, faction);
+        }
+
+        /// <summary>
+        /// The sound a weapon with a wind-up makes as it starts winding up, its shot inside it (the Spartan Laser), if its file is in.
+        /// Null otherwise: its shot is then heard as it fires (FireFor).
+        /// </summary>
+        public static SfxCue WindUpFor(WeaponStats weapon)
+        {
+            if (weapon == null || !weapon.HasWindUp) return null;
+            SfxCue own = (weapon.Name ?? "").IndexOf("spartan laser", System.StringComparison.OrdinalIgnoreCase) >= 0 ? FireSpartanLaser : null;
+            return own != null && own.HasSound ? own : null;
         }
 
         /// <summary>The weapon's or unit's own firing sound by its names, or null if it has none.</summary>
