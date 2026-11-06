@@ -154,7 +154,7 @@ static class Program
             var infRules = TestRules.Default();
             var infSettings = new RunnerSettings { Battles = 1, BaseSeed = 1000, PositionJitter = 0.3f, FrontLineDistance = 12f, SquadGap = 3f };
             UnitStats forms = units.First(u => u.Name == "Infection Forms");
-            foreach (string name in new[] { "Marine", "Grunt", "Jackal (Plasma Rifle)", "Elite", "Flamethrower Trooper", "Fuel Rod Grunt", "Spartan", "Scorpion" })
+            foreach (string name in new[] { "Marine", "Grunt", "Jackal (Beam Rifle)", "Elite", "Flamethrower Trooper", "Fuel Rod Grunt", "Spartan", "Scorpion" })
             {
                 UnitStats enemy = units.First(u => u.Name == name);
                 CounterWeb.EqualCostCounts(forms.Cost, enemy.Cost, new CounterWebSettings { Runner = infSettings }, out int nf, out int ne);
@@ -382,6 +382,7 @@ static class Program
                 SeedSlowShare = w.GetProperty("seedslow").GetSingle(),
                 HitSlowSeconds = w.GetProperty("slow").GetSingle(),
                 HitSlowShare = w.GetProperty("slowshare").GetSingle(),
+                WindUpSeconds = w.TryGetProperty("windup", out JsonElement windUp) ? windUp.GetSingle() : 0f,
             });
         }
         s.Weapons = weapons.ToArray();

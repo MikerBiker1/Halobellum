@@ -32,7 +32,7 @@ MonoBehaviour:
   weapons:
   - weaponName: Spartan Laser
     damagePerShot: 450
-    fireInterval: 4
+    fireInterval: 3.5
     range: 24
     minRange: 0
     projectileSpeed: 0
@@ -54,6 +54,7 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
+    windUpSeconds: 2.5
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -97,4 +98,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: 'Tanks, heavy units'
   weakAgainst: 'Chaff swarms, flankers'
-  notes: 'Best counters (headless runner, equal cost): Marine (100%), Grunt (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Grunt (100%). Its laser winds up for 2.5 s before each shot; it fires every 3.5 s (was 4) to make up for the first shot coming later. First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

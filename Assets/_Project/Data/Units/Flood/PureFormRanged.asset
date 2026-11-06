@@ -97,4 +97,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: 'Slow, grouped units'
   weakAgainst: 'Flankers, air'
-  notes: 'Best counters (headless runner, equal cost): Sparrowhawk (100%), Juggernaut (100%). First-pass M8 values (DECISIONS D38).'
+  notes: 'Best counters (headless runner, equal cost): Infested Banshee (100%), Hornet (100%). First-pass M8 values (DECISIONS D38).'

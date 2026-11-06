@@ -1,5 +1,5 @@
 // SkirmishRosterAssetTests.cs
-// The one faction of Unlock Skirmish on the real assets: 69 different units, with ODST (which only lands from its spell) and the
+// The one faction of Unlock Skirmish on the real assets: 70 different units, with ODST (which only lands from its spell) and the
 // old placeholders left out, and 37 different cards: 22 spells and 15 general cards. A real draw deals 5 different fair pairs.
 // Needs the Unity editor (AssetDatabase), so it runs only in Unity's Test Runner.
 // Depends on: Halobellum.Units, Halobellum.EditorTools (HeadlessRunnerTool), Halobellum.Economy, Halobellum.Core, NUnit, UnityEditor.
@@ -31,11 +31,11 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void TheRoster_Has69DifferentUnits_WithoutOdstOrPlaceholders()
+        public void TheRoster_Has70DifferentUnits_WithoutOdstOrPlaceholders()
         {
             List<string> names = Skirmish().BaseRoster.Select(u => u.Name).ToList();
-            Assert.AreEqual(69, names.Count);
-            Assert.AreEqual(69, names.Distinct().Count());
+            Assert.AreEqual(70, names.Count);
+            Assert.AreEqual(70, names.Distinct().Count());
             CollectionAssert.DoesNotContain(names, "ODST");
             List<UnitDefinition> placeholders = HeadlessRunnerTool.LoadUnitsInFolder("Assets/_Project/Data/Units/Placeholder");
             Assert.AreEqual(3, placeholders.Count);

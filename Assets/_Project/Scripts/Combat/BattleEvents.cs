@@ -18,6 +18,8 @@ namespace Halobellum.Combat
         public event Action<SimUnit, int> ReinforcementDropped;
         /// <summary>A weapon fired: attacker, weapon index on the attacker, target.</summary>
         public event Action<SimUnit, int, SimUnit> WeaponFired;
+        /// <summary>A weapon with a wind-up started charging its shot: attacker, weapon index, the target it locked on to, seconds until the shot (at its rate of fire now).</summary>
+        public event Action<SimUnit, int, SimUnit, float> WeaponWindingUp;
         /// <summary>A shot arrived and was not blocked: attacker, the weapon that fired it, where. Once per shot, however many it hits, and also if it hits nothing.</summary>
         public event Action<SimUnit, WeaponStats, Vec2> ShotLanded;
         /// <summary>A unit took damage: target, attacker, damage removed from shield and health.</summary>
@@ -45,6 +47,7 @@ namespace Halobellum.Combat
         internal void RaiseUnitSpawned(SimUnit unit) => UnitSpawned?.Invoke(unit);
         internal void RaiseReinforcementDropped(SimUnit carrier, int squadId) => ReinforcementDropped?.Invoke(carrier, squadId);
         internal void RaiseWeaponFired(SimUnit attacker, int weaponIndex, SimUnit target) => WeaponFired?.Invoke(attacker, weaponIndex, target);
+        internal void RaiseWeaponWindingUp(SimUnit attacker, int weaponIndex, SimUnit target, float seconds) => WeaponWindingUp?.Invoke(attacker, weaponIndex, target, seconds);
         internal void RaiseShotLanded(SimUnit attacker, WeaponStats weapon, Vec2 point) => ShotLanded?.Invoke(attacker, weapon, point);
         internal void RaiseUnitDamaged(SimUnit target, SimUnit attacker, float amount) => UnitDamaged?.Invoke(target, attacker, amount);
         internal void RaiseAttackBlocked(SimUnit target, SimUnit attacker) => AttackBlocked?.Invoke(target, attacker);

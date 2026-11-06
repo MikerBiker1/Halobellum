@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Spartan_LaserCapacitor
   m_EditorClassIdentifier: 
   techName: Laser Capacitor
-  description: The Spartan Laser charges faster.
+  description: The Spartan Laser recharges faster between shots.
   cost: 250
   healthMultiplier: 1
   damageMultiplier: 1

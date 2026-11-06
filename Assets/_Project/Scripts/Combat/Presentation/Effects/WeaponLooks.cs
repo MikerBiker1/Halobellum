@@ -1,6 +1,6 @@
 // WeaponLooks.cs
 // What each kind of weapon looks like when it fires (M10): colours, sizes and how fast a shot appears to fly. Colour says who fired:
-// UNSC shots are warm yellow, Covenant plasma blue with green fuel rods and pink needles, Flood shots a sick green. If both sides
+// UNSC shots are warm yellow, Covenant plasma blue with green fuel rods, pink needles and pink-purple beam rifles, Flood shots a sick green. If both sides
 // could fire the same colour (a mirror match, or the same unit type on both sides in the sandbox), the second side's are pushed to red.
 // Also here: what kind of death a unit gets, and what each spell looks like. All of it is plain data with no Unity objects but Color,
 // read from WeaponFeel and the unit's stats, so it can be tested. Looks only.
@@ -63,6 +63,7 @@ namespace Halobellum.Presentation
         public static readonly Color FuelRodGreen = new Color(0.3f, 1f, 0.38f);
         public static readonly Color MortarBlue = new Color(0.4f, 0.55f, 1f);
         public static readonly Color NeedlePink = new Color(1f, 0.3f, 0.78f);
+        public static readonly Color BeamRiflePink = new Color(0.95f, 0.42f, 1f);
         public static readonly Color LaserRed = new Color(1f, 0.1f, 0.12f);
         public static readonly Color GaussWhite = new Color(0.72f, 0.9f, 1f);
         public static readonly Color RocketOrange = new Color(1f, 0.62f, 0.22f);
@@ -109,6 +110,9 @@ namespace Halobellum.Presentation
                     // A sniper's round is a gun's, not a railgun's: the same straight line, but thin and the colour of its side's tracers.
                     if (name.Contains("sniper"))
                         return new WeaponLook { Shot = Color.Lerp(tracer, Color.white, 0.45f), Flash = tracer, FlashSize = 2.4f, ShotWidth = 0.2f, Impact = ImpactStyle.Bullet, HeavyMuzzle = true };
+                    // A Covenant beam rifle: the same thin straight line, bright pink-purple, and it burns where it lands.
+                    if (name.Contains("beam rifle"))
+                        return new WeaponLook { Shot = Color.Lerp(BeamRiflePink, Color.white, 0.3f), Flash = BeamRiflePink, FlashSize = 2f, ShotWidth = 0.17f, Impact = ImpactStyle.Plasma };
                     return new WeaponLook { Shot = GaussWhite, Flash = GaussWhite, FlashSize = 3.5f, ShotWidth = 0.34f, Impact = ImpactStyle.Bullet, HeavyMuzzle = true };
                 case WeaponFeelKind.Rocket:
                     return new WeaponLook { Shot = RocketOrange, Flash = RocketOrange, FlashSize = 2.2f, ShotWidth = 0.5f, Impact = ImpactStyle.Bullet, Blast = BlastStyle.Fire, SmokeTrail = true };

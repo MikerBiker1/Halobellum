@@ -399,6 +399,7 @@ namespace Halobellum.UI
                 {
                     b.AppendLine($"  Damage {w.DamagePerShot:0.#} {w.DamageType}{(w.IsAntiArmor ? ", anti-armor" : "")}    Rate {w.ShotsPerSecond:0.##}/s");
                 }
+                if (w.HasWindUp) b.AppendLine($"  Winds up {w.WindUpSeconds:0.#} s before each shot (the first at a new target comes that much later)");
                 if (w.Lobbed) b.AppendLine("  Lobbed: aims ahead of its target, can miss");
                 if (w.SeedSeconds > 0f) b.AppendLine($"  Seeds its target for {w.SeedSeconds:0.#} s: a host that dies rises as Flood");
                 if (w.HitSlowSeconds > 0f) b.AppendLine($"  A hit slows its target {w.HitSlowShare * 100f:0}% for {w.HitSlowSeconds:0.#} s (not Titans)");

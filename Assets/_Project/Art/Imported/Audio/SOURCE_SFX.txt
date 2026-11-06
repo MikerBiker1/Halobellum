@@ -15,6 +15,7 @@ fire[rocket16].wav -> sfx_fire_rocket.wav: rocket launchers and missiles
 scorpion_cannon_fire[cannon_fire].wav -> sfx_fire_cannon.wav: tank cannons
 fire[grifle03].wav -> sfx_fire_gauss.wav: gauss guns and railguns (Gauss Warthog, Cobra, Gremlin)
 Sniper fire[ruger24].wav -> sfx_fire_sniper.wav: the Spartan Sniper's rifle
+Spartan_laser_shoots_at_2.mp3 -> sfx_fire_spartanlaser.mp3: the Spartan Laser's wind-up and shot, played as it starts winding up
 fire[shotgun2].wav -> sfx_fire_shotgun.wav: the Spartan CQB's shotgun
 brute_shot_fire[brute_fire1].wav -> sfx_fire_bruteshot.wav: the Brute Grenadier's spike grenade launcher
 Fuelrod_fire_grunt.wav -> sfx_fire_fuelrod.wav: fuel rod guns (Fuel Rod Grunt, Grunt Goblin, Goliath)
@@ -62,3 +63,9 @@ plasma_grenade_plasmagrenexpl_plasmagx1.wav: no use for it yet, as the owner sai
 beam_rifle_fire[cov_snip_shot9].wav: no unit has a beam rifle
 magnum_fire[handgun2].wav: no unit has a magnum
 fire[plasmarifle1].wav: the same file as banshee_fire[plasmarifle1].wav, which the Banshee uses
+Autocannon.mp3: new, not placed yet
+Glassing beam.mp3: new, not placed yet
+Small&medium light nodes.wav: new, not placed yet
+big light node.wav: new, not placed yet
+fire_BR85.wav: new, not placed yet
+phantom_turret_fire[phantom_fire].wav: new, not placed yet

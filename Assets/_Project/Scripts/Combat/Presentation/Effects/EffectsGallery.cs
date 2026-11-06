@@ -99,7 +99,8 @@ namespace Halobellum.Presentation
                 new WeaponShot("SporeBombBlast", "Infested Hornet", tough, 1.05f, "Spore Bombs"),
                 new WeaponShot("SporeBombBanshee", "Infested Banshee", tough, 0.3f, "Spore Bomb"),
                 new WeaponShot("Flame", "Flamethrower Trooper", tough, 0.7f),
-                new WeaponShot("Plasma", "Jackal (Plasma Rifle)", tough, 0.08f),
+                new WeaponShot("Plasma", "Grunt", tough, 0.08f),
+                new WeaponShot("BeamRifle", "Jackal (Beam Rifle)", tough, 0.05f),
                 new WeaponShot("PlasmaElite", "Elite", tough, 0.08f),
                 new WeaponShot("FuelRod", "Fuel Rod Grunt", tough, 0.3f),
                 new WeaponShot("Mortar", "Wraith", tough, 0.9f),
@@ -113,6 +114,7 @@ namespace Halobellum.Presentation
                 new WeaponShot("SeedSpore", "Seeder", "Marine", 0.2f),
                 new WeaponShot("BoneShards", "Pure Form Ranged", tough, 0.8f),
                 new WeaponShot("FloodPlasma", "Infected Phantom", tough, 0.08f),
+                new WeaponShot("PhantomPlasma", "Covenant Phantom", tough, 0.08f),
                 new WeaponShot("PlasmaCannon", "Marauder", tough, 0.25f, "Plasma Cannon"),
                 new WeaponShot("Sniper", "Spartan Sniper", tough, 0.05f),
                 new WeaponShot("Shotgun", "Spartan CQB", tough, 0.04f),
@@ -123,6 +125,7 @@ namespace Halobellum.Presentation
                 if (Wanted("w_" + shot.Label)) yield return OneWeapon(shot);
             }
             if (Wanted("w_Beam")) yield return ScarabBeam();
+            if (Wanted("w_LaserWindUp")) yield return LaserWindUp();
         }
 
         private IEnumerator OneWeapon(WeaponShot shot)
@@ -154,6 +157,28 @@ namespace Halobellum.Presentation
                 yield return Capture("w_" + shot.Label, Middle(_firedBy, _firedAt), Mathf.Max(13f, Mathf.Max(_firedBy.Radius, _firedAt.Radius) * 5f, Vector3.Distance(_views.WorldPosition(_firedBy), _views.WorldPosition(_firedAt)) * 1.05f));
             }
             _battle.Simulation.Events.WeaponFired -= OnFired;
+            _sandbox.ResetBattle();
+            yield return null;
+        }
+
+        /// <summary>A Spartan Laser winding up (its charge at the muzzle), most of the way through, before its next shot.</summary>
+        private IEnumerator LaserWindUp()
+        {
+            yield return Setup(new[] { "Spartan" }, new[] { "Pure Form Tank" });
+            _battle.Speed = 1f;
+            _sandbox.Run();
+            SimUnit charging = null;
+            void OnWindUp(SimUnit attacker, int weapon, SimUnit target, float seconds) { if (charging == null) charging = attacker; }
+            _battle.Simulation.Events.WeaponWindingUp += OnWindUp;
+            float limit = 30f;
+            while (charging == null && limit > 0f && !_battle.Simulation.IsFinished) { limit -= Time.unscaledDeltaTime; yield return null; }
+            _battle.Simulation.Events.WeaponWindingUp -= OnWindUp;
+            if (charging == null) Debug.LogWarning("Effects gallery: the Spartan never wound up.");
+            else
+            {
+                yield return new WaitForSecondsRealtime(2f);
+                yield return Capture("w_LaserWindUp", _views.WorldPosition(charging), 9f); // Close on the Spartan: the charge is small.
+            }
             _sandbox.ResetBattle();
             yield return null;
         }
@@ -216,6 +241,7 @@ namespace Halobellum.Presentation
             {
                 "Marine", "Placeholder Infantry", "Warthog", "Scorpion", "Elephant", "Scarab", "Hornet", "Pelican", "Banshee",
                 "Infection Forms", "Combat Form", "Stalker Form", "Carrier Form", "Flood Abomination", "Swarm Form", "Infected Phantom",
+                "Covenant Phantom",
             };
             foreach (string name in list)
             {
@@ -260,7 +286,7 @@ namespace Halobellum.Presentation
 
         private IEnumerator Bloods()
         {
-            string[] list = { "Marine", "Grunt", "Elite", "Hunter Pair", "Combat Form", "Jackal (Plasma Rifle)", "Brute Grenadier" };
+            string[] list = { "Marine", "Grunt", "Elite", "Hunter Pair", "Combat Form", "Jackal (Beam Rifle)", "Brute Grenadier" };
             foreach (string name in list)
             {
                 if (Wanted("b_" + name.Replace(" ", ""))) yield return OneBlood(name);
@@ -535,7 +561,7 @@ namespace Halobellum.Presentation
         }
 
         private static readonly string[] BenchBlue = { "Marine", "Marine", "Marine", "Marine", "Flamethrower Trooper", "Flamethrower Trooper", "Scorpion", "Scorpion", "Warthog", "Gauss Warthog", "Wolverine", "Hornet", "Pelican", "Spartan", "Archer Missile Pod" };
-        private static readonly string[] BenchRed = { "Grunt", "Grunt", "Grunt", "Fuel Rod Grunt", "Jackal (Plasma Rifle)", "Jackal (Plasma Rifle)", "Elite", "Elite", "Ghost", "Wraith", "Banshee", "Vampire", "Hunter Pair", "Scarab", "Zealot" };
+        private static readonly string[] BenchRed = { "Grunt", "Grunt", "Grunt", "Fuel Rod Grunt", "Jackal (Beam Rifle)", "Jackal (Beam Rifle)", "Elite", "Elite", "Ghost", "Wraith", "Banshee", "Vampire", "Hunter Pair", "Scarab", "Zealot" };
         private static readonly string[] VehiclesBlue = { "Warthog", "Warthog", "Warthog", "Warthog", "Warthog", "Gauss Warthog", "Gauss Warthog", "Gauss Warthog", "Scorpion", "Scorpion", "Scorpion", "Scorpion", "Wolverine", "Cobra", "Cobra" };
         private static readonly string[] VehiclesRed = { "Ghost", "Ghost", "Ghost", "Ghost", "Ghost", "Ghost", "Wraith", "Wraith", "Wraith", "Wraith", "Chopper", "Chopper", "Chopper", "Marauder", "Marauder" };
 

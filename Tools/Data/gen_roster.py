@@ -35,10 +35,14 @@ ROLE_TEXT = {
 
 
 def W(name, dmg, interval, rng, type, proj=0, splash=0, minr=0, aa=False, block=False, own=None, air=1, cone=0,
-      lob=False, beam=0, charge=0, rest=0, sweep=0, seed=0, seedshare=0, seedslow=0, slow=0, slowshare=0):
+      lob=False, beam=0, charge=0, rest=0, sweep=0, seed=0, seedshare=0, seedslow=0, slow=0, slowshare=0, windup=0):
     return dict(name=name, dmg=dmg, interval=interval, range=rng, minr=minr, proj=proj, splash=splash, type=type,
                 aa=aa, block=block, own=own, air=air, cone=cone, lob=lob, beam=beam, charge=charge, rest=rest, sweep=sweep,
-                seed=seed, seedshare=seedshare, seedslow=seedslow, slow=slow, slowshare=slowshare)
+                seed=seed, seedshare=seedshare, seedslow=seedslow, slow=slow, slowshare=slowshare, windup=windup)
+
+
+# Seconds every Spartan Laser charges before its shot goes (the owner, 2026-11-05: the laser fires 2.5 s into its sound).
+SPARTAN_LASER_WINDUP = 2.5
 
 
 # The air units that can deploy in the flank zones (D61): UNSC only. With the Hornet too, Noble and Armored Division reached 70%.
@@ -79,7 +83,8 @@ UNITS = [
       [W("M370 Autocannon", 14, 0.3, 14, "Ballistic")], airu=True, drop=("Marine", 6, 10, True, 3, 1.5, 5),
       note="With its Troop Bay tech it lands and drops 6 Marines 5 seconds into the battle wherever it is, then lands behind enemy lines to drop more, up to 3 drops in all (D60)."),
     U("Spartan", "Spartan", "UNSC", "SingleTargetDps", 3, 250, 1, 500, 1250, "U", 3.5, 0.6, 0.5, "B",
-      [W("Spartan Laser", 450, 4.0, 24, "Energy", aa=True)], shield=400, regen=80, immune=True, baked="Spartan"),
+      [W("Spartan Laser", 450, 3.5, 24, "Energy", aa=True)], shield=400, regen=80, immune=True, baked="Spartan",
+      note="Its laser winds up for 2.5 s before each shot; it fires every 3.5 s (was 4) to make up for the first shot coming later."),
     U("Mantis", "Mantis", "UNSC", "Tank", 3, 250, 1, 500, 2500, "H", 3, 2, 2, "B",
       [W("Chaingun", 8, 0.2, 14, "Ballistic", block=True),
        W("Rockets", 60, 2.5, 18, "Explosive", proj=35, splash=2, own="G")]),
@@ -93,8 +98,10 @@ UNITS = [
       [W("Plasma Pistol", 5, 0.5, 10, "Energy")]),
     U("FuelRodGrunt", "Fuel Rod Grunt", "Covenant", "ChaffClear", 1, 0, 4, 150, 80, "U", 3, 0.5, 0.25, "G",
       [W("Fuel Rod Gun", 32, 2.0, 16, "Explosive", proj=25, splash=3)]),
-    U("JackalPlasmaRifle", "Jackal (Plasma Rifle)", "Covenant", "SingleTargetDps", 1, 0, 8, 150, 70, "U", 3.2, 0.5, 0.25, "B",
-      [W("Plasma Rifle", 8, 0.3, 12, "Energy")], baked="Jackal"),
+    # A sniper since 2026-11-05 (the owner): fewer to a squad, far more range, slow hard shots that land at once. Was Jackal (Plasma Rifle): 8 per squad, 8 damage every 0.3 s, 12 m.
+    U("JackalBeamRifle", "Jackal (Beam Rifle)", "Covenant", "SingleTargetDps", 1, 0, 4, 150, 70, "U", 3.2, 0.5, 0.25, "B",
+      [W("Beam Rifle", 45, 3.0, 24, "Energy")], baked="Jackal",
+      note="Snipers: few to a squad, they pick targets off from far away with slow, hard shots, and have little to stop a rush."),
     U("JackalShield", "Jackal (Shield)", "Covenant", "Tank", 1, 0, 6, 150, 70, "U", 3, 0.6, 0.25, "B",
       [W("Plasma Pistol", 6, 0.6, 10, "Energy")],
       arc=dict(deg=120, front=0.5, rear=1.0, block=0.8, types=["Ballistic"]), baked="JackalShield"),
@@ -109,6 +116,10 @@ UNITS = [
     U("Banshee", "Banshee", "Covenant", "Aerial", 2, 50, 2, 300, 400, "L", 10, 1.4, 0.8, "B",
       [W("Plasma Cannons", 9, 0.3, 10, "Energy"),
        W("Fuel Rod Bomb", 50, 2.5, 8, "Explosive", proj=30, splash=3, own="G")], airu=True),
+    # The Covenant's dropship (the owner, 2026-11-05): the Pelican's mirror, with Grunts in its bay. Its weapon's name is what its sound goes by.
+    U("CovenantPhantom", "Covenant Phantom", "Covenant", "Aerial", 2, 50, 1, 300, 800, "L", 10, 3, 2, "B",
+      [W("Plasma Turrets", 12, 0.4, 14, "Energy")], airu=True, drop=("Grunt", 7, 10, True, 3, 1.5, 5),
+      note="With its Gravity Lift tech it lands and drops 7 Grunts 5 seconds into the battle wherever it is, then lands behind enemy lines to drop more, up to 3 drops in all (as the Pelican, D60)."),
     U("HunterPair", "Hunter Pair", "Covenant", "Tank", 3, 225, 2, 450, 1500, "H", 2.2, 1.2, 1.5, "G",
       [W("Assault Cannon", 60, 2.0, 16, "Explosive", proj=30, splash=2.5)],
       arc=dict(deg=240, front=0.7, rear=1.5, block=0, types=[]), baked="Hunter"),
@@ -168,7 +179,15 @@ except FileNotFoundError:
     pass
 
 
+# Units renamed after their assets were made: their files were moved with their .meta, so they keep the GUID of their old id and
+# nothing that points at them breaks (the unit and its techs).
+RENAMED = {"JackalBeamRifle": "JackalPlasmaRifle"}
+
+
 def guid(key):
+    for new, old in RENAMED.items():
+        if key == "unit-" + new or key.startswith("tech-" + new + "-"):
+            key = key.replace(new, old, 1)
     return hashlib.md5(("halobellum-m4-" + key).encode()).hexdigest()
 
 
@@ -244,6 +263,8 @@ def unit_yaml(u):
                   f"    beamRestSeconds: {fmt(w['rest'])}", f"    beamSweepSpeed: {fmt(w['sweep'])}",
                   f"    seedSeconds: {fmt(w['seed'])}", f"    seedDamageSharePerSecond: {fmt(w['seedshare'])}", f"    seedSlowShare: {fmt(w['seedslow'])}",
                   f"    hitSlowSeconds: {fmt(w['slow'])}", f"    hitSlowShare: {fmt(w['slowshare'])}"]
+        if w["windup"]:
+            lines += [f"    windUpSeconds: {fmt(w['windup'])}"]  # Only where there is one, so the other assets stay as they were.
     arc = u["arc"]
     hexes = "".join(struct.pack("<i", DTYPE[t]).hex() for t in (arc["types"] if arc else []))
     lines += [f"  hasDefenseArc: {fmt(arc is not None)}", "  defenseArc:",
@@ -388,8 +409,17 @@ def apply_speed_decision():
         u["speed"] = u["speed"] * 0.5 + FAST_VEHICLES.get(u["name"], 0)
 
 
+def apply_windups():
+    """Every weapon named Spartan Laser, on whichever unit carries one, gets its wind-up."""
+    for u in UNITS:
+        for w in u["weapons"]:
+            if w["name"] == "Spartan Laser":
+                w["windup"] = SPARTAN_LASER_WINDUP
+
+
 def main():
     apply_speed_decision()
+    apply_windups()
     unit_folders = ["UNSC", "Covenant", "Flood"] + [m.FOLDER for m in SUBFACTIONS]
     for faction in unit_folders:
         folder = os.path.join(ROOT, "Assets", "_Project", "Data", "Units", faction)

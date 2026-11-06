@@ -54,7 +54,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Marine
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 1
   - attacker: Marine
     defender: 'Jackal (Shield)'
@@ -73,6 +73,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Marine
     defender: Banshee
+    winRate: 1
+  - attacker: Marine
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Marine
     defender: Hunter Pair
@@ -258,7 +261,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Flamethrower Trooper
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Flamethrower Trooper
     defender: 'Jackal (Shield)'
@@ -277,6 +280,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Flamethrower Trooper
     defender: Banshee
+    winRate: 0
+  - attacker: Flamethrower Trooper
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Flamethrower Trooper
     defender: Hunter Pair
@@ -448,7 +454,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Warthog
     defender: Spartan
-    winRate: 0
+    winRate: 0.2
   - attacker: Warthog
     defender: Mantis
     winRate: 0
@@ -462,7 +468,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Warthog
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Warthog
     defender: 'Jackal (Shield)'
@@ -481,6 +487,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Warthog
     defender: Banshee
+    winRate: 1
+  - attacker: Warthog
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Warthog
     defender: Hunter Pair
@@ -666,7 +675,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Gauss Warthog
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Gauss Warthog
     defender: 'Jackal (Shield)'
@@ -685,6 +694,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Gauss Warthog
     defender: Banshee
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Gauss Warthog
     defender: Hunter Pair
@@ -870,8 +882,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Scorpion
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 1
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 0
   - attacker: Scorpion
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -889,6 +901,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Scorpion
     defender: Banshee
+    winRate: 0
+  - attacker: Scorpion
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Scorpion
     defender: Hunter Pair
@@ -1074,8 +1089,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Wolverine
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 1
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 0
   - attacker: Wolverine
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -1093,6 +1108,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Wolverine
     defender: Banshee
+    winRate: 1
+  - attacker: Wolverine
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Wolverine
     defender: Hunter Pair
@@ -1278,7 +1296,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Hornet
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Hornet
     defender: 'Jackal (Shield)'
@@ -1298,6 +1316,9 @@ MonoBehaviour:
   - attacker: Hornet
     defender: Banshee
     winRate: 0
+  - attacker: Hornet
+    defender: Covenant Phantom
+    winRate: 1
   - attacker: Hornet
     defender: Hunter Pair
     winRate: 1
@@ -1482,7 +1503,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Archer Missile Pod
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 1
   - attacker: Archer Missile Pod
     defender: 'Jackal (Shield)'
@@ -1501,6 +1522,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Archer Missile Pod
     defender: Banshee
+    winRate: 0
+  - attacker: Archer Missile Pod
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Archer Missile Pod
     defender: Hunter Pair
@@ -1686,7 +1710,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Pelican
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Pelican
     defender: 'Jackal (Shield)'
@@ -1705,6 +1729,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pelican
     defender: Banshee
+    winRate: 0
+  - attacker: Pelican
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Pelican
     defender: Hunter Pair
@@ -1858,7 +1885,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan
     defender: Warthog
-    winRate: 1
+    winRate: 0.8
   - attacker: Spartan
     defender: Gauss Warthog
     winRate: 1
@@ -1890,7 +1917,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Spartan
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Spartan
     defender: 'Jackal (Shield)'
@@ -1909,6 +1936,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan
     defender: Banshee
+    winRate: 1
+  - attacker: Spartan
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Spartan
     defender: Hunter Pair
@@ -1930,10 +1960,10 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan
     defender: Stalker Form
-    winRate: 0.1
+    winRate: 0.3
   - attacker: Spartan
     defender: Pure Form Ranged
-    winRate: 0.3
+    winRate: 0.1
   - attacker: Spartan
     defender: Swarm Form
     winRate: 1
@@ -1960,7 +1990,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan
     defender: Spartan Grenadier
-    winRate: 0.6
+    winRate: 0.7
   - attacker: Spartan
     defender: Spartan CQB
     winRate: 0
@@ -1993,7 +2023,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan
     defender: Chopper
-    winRate: 0.9
+    winRate: 0
   - attacker: Spartan
     defender: Brute Grenadier
     winRate: 0
@@ -2094,8 +2124,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Mantis
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 1
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 0.2
   - attacker: Mantis
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -2114,6 +2144,9 @@ MonoBehaviour:
   - attacker: Mantis
     defender: Banshee
     winRate: 0
+  - attacker: Mantis
+    defender: Covenant Phantom
+    winRate: 1
   - attacker: Mantis
     defender: Hunter Pair
     winRate: 0
@@ -2298,7 +2331,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Elephant
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 1
   - attacker: Elephant
     defender: 'Jackal (Shield)'
@@ -2317,6 +2350,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Elephant
     defender: Banshee
+    winRate: 1
+  - attacker: Elephant
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Elephant
     defender: Hunter Pair
@@ -2502,7 +2538,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Grunt
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Grunt
     defender: 'Jackal (Shield)'
@@ -2521,6 +2557,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Grunt
     defender: Banshee
+    winRate: 1
+  - attacker: Grunt
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Grunt
     defender: Hunter Pair
@@ -2706,8 +2745,8 @@ MonoBehaviour:
     defender: Grunt
     winRate: 1
   - attacker: Fuel Rod Grunt
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 1
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 0
   - attacker: Fuel Rod Grunt
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -2725,6 +2764,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Fuel Rod Grunt
     defender: Banshee
+    winRate: 0
+  - attacker: Fuel Rod Grunt
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Fuel Rod Grunt
     defender: Hunter Pair
@@ -2870,210 +2912,213 @@ MonoBehaviour:
   - attacker: Fuel Rod Grunt
     defender: Spawner
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Marine
     winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Flamethrower Trooper
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Warthog
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Gauss Warthog
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Scorpion
-    winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Wolverine
-    winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Hornet
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Archer Missile Pod
     winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Pelican
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Spartan
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Mantis
-    winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+    winRate: 0.8
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Elephant
     winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Grunt
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Fuel Rod Grunt
-    winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: 'Jackal (Beam Rifle)'
     defender: 'Jackal (Shield)'
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Ghost
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Elite
-    winRate: 0.7
-  - attacker: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Wraith
     winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Vampire
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Banshee
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Covenant Phantom
+    winRate: 1
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Hunter Pair
     winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Zealot
-    winRate: 0.3
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Scarab
-    winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Infection Forms
-    winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Carrier Form
-    winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Combat Form
-    winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Stalker Form
-    winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Pure Form Ranged
-    winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Swarm Form
-    winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Pure Form Tank
-    winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Seeder
-    winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Infected Pelican
-    winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Infected Phantom
-    winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Flood Abomination
-    winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Spartan Sniper
-    winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Spartan Heavy Weapons
-    winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Spartan Grenadier
-    winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Spartan CQB
-    winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Spartan Fireteam
-    winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Gremlin
-    winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Cobra
-    winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Rhino
-    winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Grizzly
-    winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Sparrowhawk
-    winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Longsword
-    winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Vulture
-    winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
-    defender: Condor Gunship
     winRate: 0.1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Scarab
+    winRate: 0
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Infection Forms
+    winRate: 0
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Carrier Form
+    winRate: 0
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Combat Form
+    winRate: 0
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Stalker Form
+    winRate: 0
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Pure Form Ranged
+    winRate: 0
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Swarm Form
+    winRate: 1
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Seeder
+    winRate: 1
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Infected Pelican
+    winRate: 0
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Infected Phantom
+    winRate: 1
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Spartan CQB
+    winRate: 0.2
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Spartan Fireteam
+    winRate: 1
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Gremlin
+    winRate: 1
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Cobra
+    winRate: 1
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Rhino
+    winRate: 0
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Grizzly
+    winRate: 1
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Sparrowhawk
+    winRate: 1
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Longsword
+    winRate: 1
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Vulture
+    winRate: 1
+  - attacker: 'Jackal (Beam Rifle)'
+    defender: Condor Gunship
+    winRate: 0
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Chopper
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Brute Grenadier
-    winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Marauder
-    winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+    winRate: 1
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Reaver
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Skitterer
-    winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Goliath
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Hunter Captain
-    winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Cannon Fodder
-    winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Heavy Grunts
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Grunt Goblin
-    winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+    winRate: 0.4
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Infested Marine
     winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Infested Warthog
-    winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Infested Scorpion
     winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Infested Hornet
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Juggernaut
     winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Infested Grunt
     winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Infested Ghost
-    winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+    winRate: 0
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Infested Elite
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Infested Wraith
     winRate: 0
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Infested Banshee
     winRate: 1
-  - attacker: 'Jackal (Plasma Rifle)'
+  - attacker: 'Jackal (Beam Rifle)'
     defender: Spawner
-    winRate: 1
+    winRate: 0
   - attacker: 'Jackal (Shield)'
     defender: Marine
     winRate: 0
@@ -3117,7 +3162,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: 'Jackal (Shield)'
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: 'Jackal (Shield)'
     defender: Ghost
@@ -3133,6 +3178,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: 'Jackal (Shield)'
     defender: Banshee
+    winRate: 1
+  - attacker: 'Jackal (Shield)'
+    defender: Covenant Phantom
     winRate: 1
   - attacker: 'Jackal (Shield)'
     defender: Hunter Pair
@@ -3321,7 +3369,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Ghost
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Ghost
     defender: 'Jackal (Shield)'
@@ -3337,6 +3385,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Ghost
     defender: Banshee
+    winRate: 1
+  - attacker: Ghost
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Ghost
     defender: Hunter Pair
@@ -3525,8 +3576,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Elite
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 0.3
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 0
   - attacker: Elite
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -3541,6 +3592,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Elite
     defender: Banshee
+    winRate: 1
+  - attacker: Elite
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Elite
     defender: Hunter Pair
@@ -3729,7 +3783,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Wraith
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 1
   - attacker: Wraith
     defender: 'Jackal (Shield)'
@@ -3745,6 +3799,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Wraith
     defender: Banshee
+    winRate: 0
+  - attacker: Wraith
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Wraith
     defender: Hunter Pair
@@ -3811,7 +3868,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Wraith
     defender: Rhino
-    winRate: 0.6
+    winRate: 0.4
   - attacker: Wraith
     defender: Grizzly
     winRate: 0
@@ -3933,7 +3990,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Vampire
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Vampire
     defender: 'Jackal (Shield)'
@@ -3949,6 +4006,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Vampire
     defender: Banshee
+    winRate: 1
+  - attacker: Vampire
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Vampire
     defender: Hunter Pair
@@ -4137,7 +4197,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Banshee
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Banshee
     defender: 'Jackal (Shield)'
@@ -4154,6 +4214,9 @@ MonoBehaviour:
   - attacker: Banshee
     defender: Vampire
     winRate: 0
+  - attacker: Banshee
+    defender: Covenant Phantom
+    winRate: 1
   - attacker: Banshee
     defender: Hunter Pair
     winRate: 1
@@ -4298,6 +4361,213 @@ MonoBehaviour:
   - attacker: Banshee
     defender: Spawner
     winRate: 1
+  - attacker: Covenant Phantom
+    defender: Marine
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Flamethrower Trooper
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Warthog
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Gauss Warthog
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Scorpion
+    winRate: 0.9
+  - attacker: Covenant Phantom
+    defender: Wolverine
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Hornet
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Archer Missile Pod
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Pelican
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Spartan
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Mantis
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Elephant
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Grunt
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: 'Jackal (Shield)'
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Ghost
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Elite
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Wraith
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Vampire
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Banshee
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Hunter Pair
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Zealot
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Scarab
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Infection Forms
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Carrier Form
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Combat Form
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Stalker Form
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Pure Form Ranged
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Swarm Form
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Pure Form Tank
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Seeder
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Infected Pelican
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Infected Phantom
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Spartan Heavy Weapons
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Spartan CQB
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Spartan Fireteam
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Gremlin
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Cobra
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Rhino
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Grizzly
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Sparrowhawk
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Longsword
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Vulture
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Condor Gunship
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Chopper
+    winRate: 0.8
+  - attacker: Covenant Phantom
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Marauder
+    winRate: 0.1
+  - attacker: Covenant Phantom
+    defender: Reaver
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Skitterer
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Goliath
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Hunter Captain
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Cannon Fodder
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Heavy Grunts
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Grunt Goblin
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Infested Marine
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Infested Warthog
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Infested Scorpion
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Infested Hornet
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Juggernaut
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Infested Ghost
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Covenant Phantom
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Covenant Phantom
+    defender: Spawner
+    winRate: 0
   - attacker: Hunter Pair
     defender: Marine
     winRate: 1
@@ -4341,7 +4611,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Hunter Pair
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 1
   - attacker: Hunter Pair
     defender: 'Jackal (Shield)'
@@ -4360,6 +4630,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Hunter Pair
     defender: Banshee
+    winRate: 0
+  - attacker: Hunter Pair
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Hunter Pair
     defender: Zealot
@@ -4545,8 +4818,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Zealot
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 0.7
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 0.9
   - attacker: Zealot
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -4564,6 +4837,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Zealot
     defender: Banshee
+    winRate: 0
+  - attacker: Zealot
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Zealot
     defender: Hunter Pair
@@ -4749,7 +5025,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Scarab
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 1
   - attacker: Scarab
     defender: 'Jackal (Shield)'
@@ -4768,6 +5044,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Scarab
     defender: Banshee
+    winRate: 1
+  - attacker: Scarab
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Scarab
     defender: Hunter Pair
@@ -4953,7 +5232,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Infection Forms
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 1
   - attacker: Infection Forms
     defender: 'Jackal (Shield)'
@@ -4972,6 +5251,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infection Forms
     defender: Banshee
+    winRate: 0
+  - attacker: Infection Forms
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Infection Forms
     defender: Hunter Pair
@@ -5157,7 +5439,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0.4
   - attacker: Carrier Form
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 1
   - attacker: Carrier Form
     defender: 'Jackal (Shield)'
@@ -5176,6 +5458,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Carrier Form
     defender: Banshee
+    winRate: 0
+  - attacker: Carrier Form
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Carrier Form
     defender: Hunter Pair
@@ -5361,8 +5646,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Combat Form
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 0
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 1
   - attacker: Combat Form
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -5380,6 +5665,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Combat Form
     defender: Banshee
+    winRate: 0
+  - attacker: Combat Form
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Combat Form
     defender: Hunter Pair
@@ -5551,7 +5839,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Stalker Form
     defender: Spartan
-    winRate: 0.9
+    winRate: 0.7
   - attacker: Stalker Form
     defender: Mantis
     winRate: 0
@@ -5565,8 +5853,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Stalker Form
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 0
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 1
   - attacker: Stalker Form
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -5586,6 +5874,9 @@ MonoBehaviour:
     defender: Banshee
     winRate: 0
   - attacker: Stalker Form
+    defender: Covenant Phantom
+    winRate: 0
+  - attacker: Stalker Form
     defender: Hunter Pair
     winRate: 0
   - attacker: Stalker Form
@@ -5755,7 +6046,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pure Form Ranged
     defender: Spartan
-    winRate: 0.7
+    winRate: 0.9
   - attacker: Pure Form Ranged
     defender: Mantis
     winRate: 1
@@ -5769,7 +6060,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Pure Form Ranged
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 1
   - attacker: Pure Form Ranged
     defender: 'Jackal (Shield)'
@@ -5790,8 +6081,11 @@ MonoBehaviour:
     defender: Banshee
     winRate: 0
   - attacker: Pure Form Ranged
+    defender: Covenant Phantom
+    winRate: 0
+  - attacker: Pure Form Ranged
     defender: Hunter Pair
-    winRate: 0.9
+    winRate: 0.8
   - attacker: Pure Form Ranged
     defender: Zealot
     winRate: 0
@@ -5973,7 +6267,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Swarm Form
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Swarm Form
     defender: 'Jackal (Shield)'
@@ -5992,6 +6286,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Swarm Form
     defender: Banshee
+    winRate: 1
+  - attacker: Swarm Form
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Swarm Form
     defender: Hunter Pair
@@ -6177,8 +6474,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Pure Form Tank
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 0
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 1
   - attacker: Pure Form Tank
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -6196,6 +6493,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pure Form Tank
     defender: Banshee
+    winRate: 0
+  - attacker: Pure Form Tank
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Pure Form Tank
     defender: Hunter Pair
@@ -6381,7 +6681,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Seeder
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Seeder
     defender: 'Jackal (Shield)'
@@ -6400,6 +6700,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Banshee
+    winRate: 0
+  - attacker: Seeder
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Seeder
     defender: Hunter Pair
@@ -6585,7 +6888,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Infected Pelican
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 1
   - attacker: Infected Pelican
     defender: 'Jackal (Shield)'
@@ -6604,6 +6907,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infected Pelican
     defender: Banshee
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Infected Pelican
     defender: Hunter Pair
@@ -6789,7 +7095,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Infected Phantom
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Infected Phantom
     defender: 'Jackal (Shield)'
@@ -6809,6 +7115,9 @@ MonoBehaviour:
   - attacker: Infected Phantom
     defender: Banshee
     winRate: 0
+  - attacker: Infected Phantom
+    defender: Covenant Phantom
+    winRate: 1
   - attacker: Infected Phantom
     defender: Hunter Pair
     winRate: 1
@@ -6993,7 +7302,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Flood Abomination
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 1
   - attacker: Flood Abomination
     defender: 'Jackal (Shield)'
@@ -7012,6 +7321,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Flood Abomination
     defender: Banshee
+    winRate: 1
+  - attacker: Flood Abomination
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Flood Abomination
     defender: Hunter Pair
@@ -7197,8 +7509,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Spartan Sniper
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 0
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 1
   - attacker: Spartan Sniper
     defender: 'Jackal (Shield)'
     winRate: 0
@@ -7216,6 +7528,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan Sniper
     defender: Banshee
+    winRate: 1
+  - attacker: Spartan Sniper
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Spartan Sniper
     defender: Hunter Pair
@@ -7401,8 +7716,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Spartan Heavy Weapons
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 1
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 0
   - attacker: Spartan Heavy Weapons
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -7420,6 +7735,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan Heavy Weapons
     defender: Banshee
+    winRate: 1
+  - attacker: Spartan Heavy Weapons
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Spartan Heavy Weapons
     defender: Hunter Pair
@@ -7591,7 +7909,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Grenadier
     defender: Spartan
-    winRate: 0.4
+    winRate: 0.3
   - attacker: Spartan Grenadier
     defender: Mantis
     winRate: 0.1
@@ -7605,8 +7923,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Spartan Grenadier
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 1
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 0
   - attacker: Spartan Grenadier
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -7624,6 +7942,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Grenadier
     defender: Banshee
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Spartan Grenadier
     defender: Hunter Pair
@@ -7809,8 +8130,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Spartan CQB
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 0
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 0.8
   - attacker: Spartan CQB
     defender: 'Jackal (Shield)'
     winRate: 0
@@ -7829,6 +8150,9 @@ MonoBehaviour:
   - attacker: Spartan CQB
     defender: Banshee
     winRate: 0
+  - attacker: Spartan CQB
+    defender: Covenant Phantom
+    winRate: 1
   - attacker: Spartan CQB
     defender: Hunter Pair
     winRate: 0
@@ -8013,7 +8337,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0.9
   - attacker: Spartan Fireteam
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Spartan Fireteam
     defender: 'Jackal (Shield)'
@@ -8033,6 +8357,9 @@ MonoBehaviour:
   - attacker: Spartan Fireteam
     defender: Banshee
     winRate: 0
+  - attacker: Spartan Fireteam
+    defender: Covenant Phantom
+    winRate: 1
   - attacker: Spartan Fireteam
     defender: Hunter Pair
     winRate: 0
@@ -8217,7 +8544,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Gremlin
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Gremlin
     defender: 'Jackal (Shield)'
@@ -8236,6 +8563,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Gremlin
     defender: Banshee
+    winRate: 1
+  - attacker: Gremlin
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Gremlin
     defender: Hunter Pair
@@ -8421,7 +8751,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Cobra
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Cobra
     defender: 'Jackal (Shield)'
@@ -8440,6 +8770,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Cobra
     defender: Banshee
+    winRate: 0
+  - attacker: Cobra
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Cobra
     defender: Hunter Pair
@@ -8625,7 +8958,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Rhino
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 1
   - attacker: Rhino
     defender: 'Jackal (Shield)'
@@ -8646,6 +8979,9 @@ MonoBehaviour:
     defender: Banshee
     winRate: 0
   - attacker: Rhino
+    defender: Covenant Phantom
+    winRate: 0
+  - attacker: Rhino
     defender: Hunter Pair
     winRate: 0
   - attacker: Rhino
@@ -8829,8 +9165,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Grizzly
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 1
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 0
   - attacker: Grizzly
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -8849,6 +9185,9 @@ MonoBehaviour:
   - attacker: Grizzly
     defender: Banshee
     winRate: 0
+  - attacker: Grizzly
+    defender: Covenant Phantom
+    winRate: 1
   - attacker: Grizzly
     defender: Hunter Pair
     winRate: 0
@@ -9033,7 +9372,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Sparrowhawk
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Sparrowhawk
     defender: 'Jackal (Shield)'
@@ -9052,6 +9391,9 @@ MonoBehaviour:
     winRate: 0.5
   - attacker: Sparrowhawk
     defender: Banshee
+    winRate: 1
+  - attacker: Sparrowhawk
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Sparrowhawk
     defender: Hunter Pair
@@ -9237,7 +9579,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Longsword
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Longsword
     defender: 'Jackal (Shield)'
@@ -9256,6 +9598,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Longsword
     defender: Banshee
+    winRate: 0
+  - attacker: Longsword
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Longsword
     defender: Hunter Pair
@@ -9441,8 +9786,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Vulture
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 1
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 0
   - attacker: Vulture
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -9460,6 +9805,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Vulture
     defender: Banshee
+    winRate: 1
+  - attacker: Vulture
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Vulture
     defender: Hunter Pair
@@ -9645,8 +9993,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Condor Gunship
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 0.9
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 1
   - attacker: Condor Gunship
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -9664,6 +10012,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Condor Gunship
     defender: Banshee
+    winRate: 1
+  - attacker: Condor Gunship
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Condor Gunship
     defender: Hunter Pair
@@ -9835,7 +10186,7 @@ MonoBehaviour:
     winRate: 0.1
   - attacker: Chopper
     defender: Spartan
-    winRate: 0.1
+    winRate: 1
   - attacker: Chopper
     defender: Mantis
     winRate: 0
@@ -9849,7 +10200,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Chopper
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Chopper
     defender: 'Jackal (Shield)'
@@ -9869,6 +10220,9 @@ MonoBehaviour:
   - attacker: Chopper
     defender: Banshee
     winRate: 0
+  - attacker: Chopper
+    defender: Covenant Phantom
+    winRate: 0.1
   - attacker: Chopper
     defender: Hunter Pair
     winRate: 0
@@ -10053,8 +10407,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Brute Grenadier
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 1
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 0
   - attacker: Brute Grenadier
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -10072,6 +10426,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Brute Grenadier
     defender: Banshee
+    winRate: 0
+  - attacker: Brute Grenadier
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Brute Grenadier
     defender: Hunter Pair
@@ -10257,8 +10614,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Marauder
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 1
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 0
   - attacker: Marauder
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -10277,6 +10634,9 @@ MonoBehaviour:
   - attacker: Marauder
     defender: Banshee
     winRate: 0
+  - attacker: Marauder
+    defender: Covenant Phantom
+    winRate: 0.9
   - attacker: Marauder
     defender: Hunter Pair
     winRate: 0
@@ -10461,7 +10821,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0.5
   - attacker: Reaver
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Reaver
     defender: 'Jackal (Shield)'
@@ -10482,6 +10842,9 @@ MonoBehaviour:
     defender: Banshee
     winRate: 1
   - attacker: Reaver
+    defender: Covenant Phantom
+    winRate: 1
+  - attacker: Reaver
     defender: Hunter Pair
     winRate: 0
   - attacker: Reaver
@@ -10665,8 +11028,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Skitterer
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 0
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 1
   - attacker: Skitterer
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -10685,6 +11048,9 @@ MonoBehaviour:
   - attacker: Skitterer
     defender: Banshee
     winRate: 0
+  - attacker: Skitterer
+    defender: Covenant Phantom
+    winRate: 1
   - attacker: Skitterer
     defender: Hunter Pair
     winRate: 0
@@ -10869,7 +11235,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Goliath
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Goliath
     defender: 'Jackal (Shield)'
@@ -10888,6 +11254,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Goliath
     defender: Banshee
+    winRate: 0
+  - attacker: Goliath
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Goliath
     defender: Hunter Pair
@@ -11023,7 +11392,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Goliath
     defender: Infested Wraith
-    winRate: 0.5
+    winRate: 0.3
   - attacker: Goliath
     defender: Infested Banshee
     winRate: 0
@@ -11073,8 +11442,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0.5
   - attacker: Hunter Captain
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 0
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 1
   - attacker: Hunter Captain
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -11092,6 +11461,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Hunter Captain
     defender: Banshee
+    winRate: 0
+  - attacker: Hunter Captain
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Hunter Captain
     defender: Hunter Pair
@@ -11277,8 +11649,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Cannon Fodder
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 0
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 1
   - attacker: Cannon Fodder
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -11296,6 +11668,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Cannon Fodder
     defender: Banshee
+    winRate: 1
+  - attacker: Cannon Fodder
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Cannon Fodder
     defender: Hunter Pair
@@ -11481,7 +11856,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Heavy Grunts
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Heavy Grunts
     defender: 'Jackal (Shield)'
@@ -11500,6 +11875,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Heavy Grunts
     defender: Banshee
+    winRate: 1
+  - attacker: Heavy Grunts
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Heavy Grunts
     defender: Hunter Pair
@@ -11685,8 +12063,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Grunt Goblin
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 1
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 0.6
   - attacker: Grunt Goblin
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -11704,6 +12082,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Grunt Goblin
     defender: Banshee
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Grunt Goblin
     defender: Hunter Pair
@@ -11889,7 +12270,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Infested Marine
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 1
   - attacker: Infested Marine
     defender: 'Jackal (Shield)'
@@ -11908,6 +12289,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Marine
     defender: Banshee
+    winRate: 1
+  - attacker: Infested Marine
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Infested Marine
     defender: Hunter Pair
@@ -12093,8 +12477,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Infested Warthog
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 0
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 1
   - attacker: Infested Warthog
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -12113,6 +12497,9 @@ MonoBehaviour:
   - attacker: Infested Warthog
     defender: Banshee
     winRate: 0
+  - attacker: Infested Warthog
+    defender: Covenant Phantom
+    winRate: 1
   - attacker: Infested Warthog
     defender: Hunter Pair
     winRate: 0
@@ -12297,7 +12684,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Infested Scorpion
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 1
   - attacker: Infested Scorpion
     defender: 'Jackal (Shield)'
@@ -12316,6 +12703,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Scorpion
     defender: Banshee
+    winRate: 0
+  - attacker: Infested Scorpion
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Infested Scorpion
     defender: Hunter Pair
@@ -12501,7 +12891,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Infested Hornet
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Infested Hornet
     defender: 'Jackal (Shield)'
@@ -12521,6 +12911,9 @@ MonoBehaviour:
   - attacker: Infested Hornet
     defender: Banshee
     winRate: 0
+  - attacker: Infested Hornet
+    defender: Covenant Phantom
+    winRate: 1
   - attacker: Infested Hornet
     defender: Hunter Pair
     winRate: 1
@@ -12705,7 +13098,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Juggernaut
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 1
   - attacker: Juggernaut
     defender: 'Jackal (Shield)'
@@ -12724,6 +13117,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Juggernaut
     defender: Banshee
+    winRate: 0
+  - attacker: Juggernaut
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Juggernaut
     defender: Hunter Pair
@@ -12909,7 +13305,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Infested Grunt
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 1
   - attacker: Infested Grunt
     defender: 'Jackal (Shield)'
@@ -12929,6 +13325,9 @@ MonoBehaviour:
   - attacker: Infested Grunt
     defender: Banshee
     winRate: 0
+  - attacker: Infested Grunt
+    defender: Covenant Phantom
+    winRate: 1
   - attacker: Infested Grunt
     defender: Hunter Pair
     winRate: 0
@@ -13113,8 +13512,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Infested Ghost
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 0
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 1
   - attacker: Infested Ghost
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -13133,6 +13532,9 @@ MonoBehaviour:
   - attacker: Infested Ghost
     defender: Banshee
     winRate: 0
+  - attacker: Infested Ghost
+    defender: Covenant Phantom
+    winRate: 1
   - attacker: Infested Ghost
     defender: Hunter Pair
     winRate: 0
@@ -13317,7 +13719,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Infested Elite
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Infested Elite
     defender: 'Jackal (Shield)'
@@ -13337,6 +13739,9 @@ MonoBehaviour:
   - attacker: Infested Elite
     defender: Banshee
     winRate: 0
+  - attacker: Infested Elite
+    defender: Covenant Phantom
+    winRate: 1
   - attacker: Infested Elite
     defender: Hunter Pair
     winRate: 0
@@ -13521,7 +13926,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Infested Wraith
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 1
   - attacker: Infested Wraith
     defender: 'Jackal (Shield)'
@@ -13540,6 +13945,9 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Wraith
     defender: Banshee
+    winRate: 0
+  - attacker: Infested Wraith
+    defender: Covenant Phantom
     winRate: 0
   - attacker: Infested Wraith
     defender: Hunter Pair
@@ -13639,7 +14047,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Wraith
     defender: Goliath
-    winRate: 0.5
+    winRate: 0.7
   - attacker: Infested Wraith
     defender: Hunter Captain
     winRate: 0
@@ -13725,7 +14133,7 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 1
   - attacker: Infested Banshee
-    defender: 'Jackal (Plasma Rifle)'
+    defender: 'Jackal (Beam Rifle)'
     winRate: 0
   - attacker: Infested Banshee
     defender: 'Jackal (Shield)'
@@ -13744,6 +14152,9 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Banshee
     defender: Banshee
+    winRate: 1
+  - attacker: Infested Banshee
+    defender: Covenant Phantom
     winRate: 1
   - attacker: Infested Banshee
     defender: Hunter Pair
@@ -13929,8 +14340,8 @@ MonoBehaviour:
     defender: Fuel Rod Grunt
     winRate: 0
   - attacker: Spawner
-    defender: 'Jackal (Plasma Rifle)'
-    winRate: 0
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 1
   - attacker: Spawner
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -13949,6 +14360,9 @@ MonoBehaviour:
   - attacker: Spawner
     defender: Banshee
     winRate: 0
+  - attacker: Spawner
+    defender: Covenant Phantom
+    winRate: 1
   - attacker: Spawner
     defender: Hunter Pair
     winRate: 0

@@ -16,6 +16,7 @@
 //   5. Attacking units turn toward their target at their own turning speed. Weapons fire when ready
 //      at targets in range (the main weapon only once the unit faces its target): instant hits
 //      resolve now, other weapons launch projectiles.
+//      A weapon with a wind-up (the Spartan Laser) charges first and fires at the end of it (WindUpShot).
 //   6. Projectiles fly and hit (splash or cone damage, directional defense, block rolls, bonus
 //      damage against air).
 //   7. Units at 0 health die. Deaths are applied at the end of the tick, so units that shoot in
@@ -58,6 +59,15 @@ namespace Halobellum.Combat
         public float Radius;
         public bool Firing;
         /// <summary>How far the charge has come, 0 to 1 (1 while firing).</summary>
+        public float Charge;
+    }
+
+    /// <summary>A weapon charging its shot (a wind-up, such as the Spartan Laser's), for drawing.</summary>
+    public struct WindUpShot
+    {
+        public SimUnit Attacker;
+        public int WeaponIndex;
+        /// <summary>How far the wind-up has come, 0 to 1.</summary>
         public float Charge;
     }
 
@@ -665,6 +675,7 @@ namespace Halobellum.Combat
             foreach (SimUnit unit in _units)
             {
                 if (!unit.IsAlive || !spell.Covers(unit)) continue;
+                foreach (SimWeapon weapon in unit.Weapons) if (weapon.WindingUp) weapon.CancelWindUp(); // An EMP breaks a charge: it starts again from nothing.
                 float removed = Math.Min(unit.Shield, stats.ShieldDamage);
                 unit.Shield -= removed;
                 unit.DamageTaken += removed;
@@ -1142,15 +1153,34 @@ namespace Halobellum.Combat
                     }
 
                     SimUnit target = weapon.Target;
-                    bool canFire = Targeting.IsTargetableEnemy(unit, target) && Targeting.IsInRange(unit, weapon.Stats, target)
-                                   && IsAimed(unit, w, target);
-                    if (!canFire)
+                    if (weapon.WindingUp)
                     {
-                        // A weapon that is not shooting stays ready, but cannot store up extra shots.
-                        if (weapon.Cooldown < 0f) weapon.Cooldown = 0f;
-                        continue;
+                        target = WindUpShot(unit, weapon);
+                        if (target == null) continue; // Still charging, or the shot was spent.
                     }
-                    if (weapon.Cooldown > 0f) continue;
+                    else
+                    {
+                        bool canFire = Targeting.IsTargetableEnemy(unit, target) && Targeting.IsInRange(unit, weapon.Stats, target)
+                                       && IsAimed(unit, w, target);
+                        if (!canFire)
+                        {
+                            // A weapon that is not shooting stays ready, but cannot store up extra shots.
+                            if (weapon.Cooldown < 0f) weapon.Cooldown = 0f;
+                            continue;
+                        }
+                        if (weapon.Stats.HasWindUp)
+                        {
+                            // It starts charging once the rest of its reload is no longer than its wind-up, so firing on keeps its rate.
+                            if (weapon.Cooldown > weapon.Stats.WindUpSeconds + WindUpEpsilon) continue;
+                            weapon.WindingUp = true;
+                            weapon.WindUpTarget = target;
+                            weapon.WindUpLeft = weapon.Stats.WindUpSeconds;
+                            MarkEngaged(unit);
+                            Events.RaiseWeaponWindingUp(unit, w, target, weapon.Stats.WindUpSeconds / Math.Max(1e-3f, unit.ShockwaveFireRate));
+                            continue;
+                        }
+                        if (weapon.Cooldown > 0f) continue;
+                    }
 
                     Events.RaiseWeaponFired(unit, w, target);
                     MarkEngaged(unit);
@@ -1169,6 +1199,8 @@ namespace Halobellum.Combat
                         continue;
                     }
 
+                    // A wound-up shot may come long after the weapon was ready: its reload counts from the shot, as any weapon's does.
+                    if (weapon.Stats.HasWindUp) weapon.Cooldown = Math.Max(weapon.Cooldown, -_dt * unit.ShockwaveFireRate);
                     weapon.Cooldown += weapon.Stats.FireInterval;
                     if (weapon.Stats.IsInstant)
                     {
@@ -1178,6 +1210,42 @@ namespace Halobellum.Combat
                     {
                         _projectiles.Add(new Projectile(unit, weapon.Stats, target, unit.Position, w, _shotsFired++));
                     }
+                }
+            }
+        }
+
+        /// <summary>Wind-up times are counted in float steps: this keeps a step's rounding from costing a whole tick.</summary>
+        private const float WindUpEpsilon = 1e-4f;
+
+        /// <summary>
+        /// One tick of a winding-up weapon. Returns who the shot goes at once the wind-up is over: the target it locked on to if that one
+        /// can still be hit and is in range, otherwise its current target if that one is in range. Null while it still charges, and when
+        /// the shot is spent with nothing in range (it then reloads as if it had fired).
+        /// </summary>
+        private SimUnit WindUpShot(SimUnit unit, SimWeapon weapon)
+        {
+            MarkEngaged(unit);
+            weapon.WindUpLeft -= _dt * unit.ShockwaveFireRate;
+            if (weapon.WindUpLeft > WindUpEpsilon) return null;
+            SimUnit locked = weapon.WindUpTarget;
+            weapon.CancelWindUp();
+            if (Targeting.IsTargetableEnemy(unit, locked) && Targeting.IsInRange(unit, weapon.Stats, locked)) return locked;
+            if (Targeting.IsTargetableEnemy(unit, weapon.Target) && Targeting.IsInRange(unit, weapon.Stats, weapon.Target)) return weapon.Target;
+            weapon.Cooldown = Math.Max(weapon.Cooldown, -_dt * unit.ShockwaveFireRate) + weapon.Stats.FireInterval;
+            return null;
+        }
+
+        /// <summary>Every weapon winding up right now, for drawing.</summary>
+        public void GetWindUps(List<WindUpShot> windUps)
+        {
+            windUps.Clear();
+            foreach (SimUnit unit in _units)
+            {
+                if (!unit.IsAlive) continue;
+                for (int w = 0; w < unit.Weapons.Length; w++)
+                {
+                    SimWeapon weapon = unit.Weapons[w];
+                    if (weapon.WindingUp) windUps.Add(new WindUpShot { Attacker = unit, WeaponIndex = w, Charge = weapon.WindUpShare });
                 }
             }
         }
@@ -1424,7 +1492,11 @@ namespace Halobellum.Combat
                 unit.State = UnitState.Dead;
                 unit.Velocity = Vec2.Zero;
                 unit.MoveTarget = null;
-                foreach (SimWeapon weapon in unit.Weapons) weapon.Target = null;
+                foreach (SimWeapon weapon in unit.Weapons)
+                {
+                    weapon.Target = null;
+                    weapon.CancelWindUp(); // A charge dies with its shooter.
+                }
                 SimUnit killer = unit.KilledById >= 0 ? _units[unit.KilledById] : null;
                 Events.RaiseUnitDied(unit, killer);
                 if (unit.Stats.Shockwave != null) ReleaseShockwave(unit);

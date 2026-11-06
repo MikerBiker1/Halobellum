@@ -81,7 +81,7 @@ namespace Halobellum.Tests
         }
 
         [TestCase("SpellUnits/ODST", "ODST", "Weapon_SMG", 2f)]
-        [TestCase("Covenant/JackalPlasmaRifle", "Jackal", "Weapon_PlasmaPistol", 2f)]
+        [TestCase("Covenant/JackalBeamRifle", "Jackal", "Weapon_PlasmaPistol", 2f)]
         [TestCase("Covenant/JackalShield", "JackalShield", "Weapon_PlasmaPistol", 2f)]
         [TestCase("Banished/BruteGrenadier", "BruteGrenadier", "Weapon_RocketLauncher", 2.8f)]
         [TestCase("FloodUNSC/InfestedMarine", "InfestedMarine", "Weapon_AssaultRifle", 2f)]

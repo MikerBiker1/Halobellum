@@ -11,7 +11,8 @@
 //   - a Scarab walking is a loop;
 //   - every Zealot readies its sword as the battle starts;
 //   - Seeders and Swarm Forms call, each one 3 to 6 s after its last call ended;
-//   - an energy shield starting to recharge is heard (one at a time, as there may be many).
+//   - an energy shield starting to recharge is heard (one at a time, as there may be many);
+//   - a Spartan Laser's sound starts with its wind-up, so that the shot in the file comes with the shot in the battle.
 // Depends on: AudioDirector, AudioCatalog, WeaponFeel, GamePause, BattleController, Halobellum.Combat (BattleSimulation, SimUnit, SimSpell), Halobellum.Core, UnityEngine.
 
 using System.Collections.Generic;
@@ -28,6 +29,7 @@ namespace Halobellum.Presentation
         private readonly Dictionary<WeaponStats, SfxCue> _fireA = new Dictionary<WeaponStats, SfxCue>();
         private readonly Dictionary<WeaponStats, SfxCue> _fireB = new Dictionary<WeaponStats, SfxCue>();
         private readonly Dictionary<WeaponStats, SfxCue> _landings = new Dictionary<WeaponStats, SfxCue>();
+        private readonly Dictionary<WeaponStats, SfxCue> _windUps = new Dictionary<WeaponStats, SfxCue>();
         private readonly List<SimUnit> _divers = new List<SimUnit>();
         private float _nextHumCheck;
         private bool _wasPlaying;
@@ -149,6 +151,7 @@ namespace Halobellum.Presentation
             {
                 BattleEvents events = _shown.Events;
                 events.WeaponFired -= OnWeaponFired;
+                events.WeaponWindingUp -= OnWeaponWindingUp;
                 events.ShotLanded -= OnShotLanded;
                 events.UnitDamaged -= OnUnitDamaged;
                 events.AttackBlocked -= OnAttackBlocked;
@@ -164,6 +167,7 @@ namespace Halobellum.Presentation
             {
                 BattleEvents events = _shown.Events;
                 events.WeaponFired += OnWeaponFired;
+                events.WeaponWindingUp += OnWeaponWindingUp;
                 events.ShotLanded += OnShotLanded;
                 events.UnitDamaged += OnUnitDamaged;
                 events.AttackBlocked += OnAttackBlocked;
@@ -223,6 +227,18 @@ namespace Halobellum.Presentation
                 float flight = Vec2.Distance(attacker.Position, target.Position) / weapon.ProjectileSpeed;
                 Keep(AudioCatalog.FlightMortar, --_shells, _shown.ElapsedSeconds + flight, (Place(attacker) + Place(target)) * 0.5f);
             }
+        }
+
+        /// <summary>A weapon starts its wind-up: its own sound, if it has one, carries the shot at the end of it.</summary>
+        private void OnWeaponWindingUp(SimUnit attacker, int weaponIndex, SimUnit target, float seconds)
+        {
+            WeaponStats weapon = attacker.Weapons[weaponIndex].Stats;
+            if (!_windUps.TryGetValue(weapon, out SfxCue cue))
+            {
+                cue = AudioCatalog.WindUpFor(weapon);
+                _windUps[weapon] = cue;
+            }
+            if (cue != null) GameAudio.Sfx(cue, Place(attacker));
         }
 
         /// <summary>Keeps a loop going for this source until then (in the battle's time).</summary>

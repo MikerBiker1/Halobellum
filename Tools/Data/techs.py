@@ -97,7 +97,7 @@ TECHS = {
     ],
     "Spartan": [
         T("Overshield", "Overshield", 250, "A stronger energy shield.", shield=300),
-        T("LaserCapacitor", "Laser Capacitor", 250, "The Spartan Laser charges faster.", fire=1.25),
+        T("LaserCapacitor", "Laser Capacitor", 250, "The Spartan Laser recharges faster between shots.", fire=1.25),
     ],
     "Mantis": [
         T("ArmorPlating", "Armor Plating", 250, "Extra plating on the walker.", health=1.25),
@@ -116,9 +116,9 @@ TECHS = {
         T("ExtendedRange", "Extended Range", 150, "Longer-range fuel rods.", range=4),
         T("HeavyRods", "Heavy Rods", 150, "Bigger fuel rod blasts.", damage=1.3),
     ],
-    "JackalPlasmaRifle": [
+    "JackalBeamRifle": [
         T("Gauntlets", "Point-Defense Gauntlets", 100, "Small shields on the arms.", health=1.3),
-        T("Overcharge", "Rifle Overcharge", 150, "Plasma rifles fire faster.", fire=1.25),
+        T("Overcharge", "Beam Overcharge", 150, "A hotter beam: each shot hits harder.", damage=1.25),
     ],
     "JackalShield": [
         T("StrongerShields", "Stronger Shields", 100, "Tougher Jackals behind tougher shields.", health=1.3),
@@ -143,6 +143,11 @@ TECHS = {
     "Banshee": [
         T("ArmorPlating", "Armor Plating", 150, "Extra plating on the airframe.", health=1.3),
         T("FuelRodUpgrade", "Fuel Rod Upgrade", 200, "Heavier bombs and cannons.", damage=1.3),
+    ],
+    "CovenantPhantom": [
+        T("GravityLift", "Gravity Lift", 200, "It drops 7 Grunts 5 seconds into the battle, then lands behind enemy lines for more, up to 3 drops in all.", drop=True),
+        T("ArmorPlating", "Armor Plating", 150, "Extra plating on the hull.", health=1.3),
+        T("HeavyTurrets", "Heavy Plasma Turrets", 150, "Hotter plasma for the turrets.", damage=1.3),
     ],
     "HunterPair": [
         T("AssaultCannon", "Assault Cannon Upgrade", 250, "Bigger fuel rod cannons.", damage=1.3),
@@ -174,7 +179,7 @@ THIRD_TECHS = {
     # Covenant
     "Grunt": T("HotPlasma", "Hot Plasma", 100, "Hotter pistol bolts.", damage=1.25),
     "FuelRodGrunt": T("Harness", "Reinforced Harness", 100, "Armor around the gun and tanks.", health=1.3),
-    "JackalPlasmaRifle": T("MarksmanOptics", "Marksman Optics", 120, "Jackal eyes and a better sight reach further.", range=3),
+    "JackalBeamRifle": T("MarksmanOptics", "Marksman Optics", 120, "Jackal eyes and a better scope reach further.", range=4),
     "JackalShield": T("HotPlasma", "Hot Plasma", 120, "Hotter pistol bolts.", damage=1.25),
     "Ghost": T("PlasmaOvercharge", "Plasma Overcharge", 150, "Hotter plasma bolts.", damage=1.25),
     "Elite": T("CombatStride", "Combat Stride", 150, "Closes the distance faster.", speed=1.2),

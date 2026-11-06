@@ -73,7 +73,7 @@ namespace Halobellum.Tests
             var rows = new List<UnitStats>();
             MatchHud.FillUnitBarRows(player.Roster, player.Unlocked, rows);
             CollectionAssert.AreEqual(new[] { first, middle, last }, rows);
-            Assert.AreEqual(69, player.Roster.Count, "The roster itself is untouched.");
+            Assert.AreEqual(70, player.Roster.Count, "The roster itself is untouched.");
         }
 
         [UnityTest]

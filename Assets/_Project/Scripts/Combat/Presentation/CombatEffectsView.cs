@@ -7,6 +7,7 @@
 //   - projectiles at their real place in flight, in an arc if they are lobbed, blended between ticks as bodies are, with trails laid by
 //     distance where the look asks for one, and a blast as wide as their splash where they land;
 //   - beams: a thin line and a growing spot while charging, then a thick glowing beam with a burning spot, sparks and scorched ground;
+//   - a weapon winding up its shot (the Spartan Laser): light gathering at its muzzle, growing until the shot goes;
 //   - dust behind moving ground units, more of it on High quality;
 //   - blood from what bleeds (BloodLooks) when a weapon hits it, a moment later, when the shot has arrived. The bigger the hit, the likelier.
 //     Spells draw none; a shield in the way doesn't either. Deaths are DeathEffects and spells are SpellEffects.
@@ -68,6 +69,8 @@ namespace Halobellum.Presentation
         private readonly List<ShotInFlight> _tickShots = new List<ShotInFlight>();
         private readonly ShotTrack[] _tracks = new ShotTrack[TrackSize];
         private readonly List<BeamShot> _beams = new List<BeamShot>();
+        private readonly List<WindUpShot> _windUps = new List<WindUpShot>();
+        private float _windUpEmit;
         private readonly float[] _beamEmit = new float[16];
         private readonly Vector3[] _beamLastScorch = new Vector3[16];
         private readonly Dictionary<WeaponStats, WeaponLook> _looksA = new Dictionary<WeaponStats, WeaponLook>();
@@ -276,6 +279,7 @@ namespace Halobellum.Presentation
             float battleDelta = Time.deltaTime * speed;
             DrawShots();
             DrawBeams(battleDelta);
+            DrawWindUps(battleDelta);
             if (speed > 0f && _battle.IsPlaying) KickUpDust(battleDelta);
             _deaths.Tick(battleDelta);
             _spells.Tick();
@@ -579,6 +583,36 @@ namespace Halobellum.Presentation
             {
                 _beamLastScorch[index] = to;
                 _kit.Scorch(EffectPriority.Medium, to, beam.Radius * 2.2f, EffectRecipes.ScorchBlack, 35f);
+            }
+        }
+
+        // ------------------------------------------------------------------ wind-ups
+
+        /// <summary>A charging shot: a small glow at the muzzle that grows and brightens, with a few motes of light drawn into it. Kept small: the shot is the show.</summary>
+        private void DrawWindUps(float battleDelta)
+        {
+            if (_shown != null) _shown.GetWindUps(_windUps);
+            else _windUps.Clear();
+            if (_windUps.Count == 0) return;
+            float read = Mathf.Max(1f, _kit.ReadScale * 0.8f);
+            float flicker = 0.85f + 0.15f * Mathf.Sin(_kit.BattleTime * 40f);
+            _windUpEmit += battleDelta * 14f;
+            int motes = (int)_windUpEmit;
+            _windUpEmit -= motes;
+            for (int i = 0; i < _windUps.Count; i++)
+            {
+                WindUpShot windUp = _windUps[i];
+                WeaponLook look = LookOf(windUp.Attacker, windUp.WeaponIndex);
+                Vector3 from = _units.TryMuzzle(windUp.Attacker, windUp.WeaponIndex, 0, out Vector3 muzzle) ? muzzle : ShotPoint(windUp.Attacker);
+                float charge = Mathf.Clamp01(windUp.Charge);
+                Color color = look.Flash;
+                _kit.HeadGlow(from, Mathf.Lerp(0.25f, 1.7f, charge * charge) * read * flicker, new Color(color.r, color.g, color.b, 0.45f + 0.45f * charge));
+                _kit.HeadGlow(from, Mathf.Lerp(0.1f, 0.6f, charge) * read, Color.white);
+                for (int m = 0; m < motes; m++)
+                {
+                    Vector3 away = Random.onUnitSphere * Random.Range(0.8f, 1.6f) * read;
+                    _kit.Orb(EffectPriority.Small, from + away, -away * 2.5f, 0.12f * read, color, 0.35f);
+                }
             }
         }
 
