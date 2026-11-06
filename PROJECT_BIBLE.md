@@ -521,6 +521,8 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-05 | The owner's second batch: the M60 on every machine gun, autocannons, BR85, beam rifle, heavy plasma, the Glassing Beam, nodes of light, a drawn round; real models for the Scorpion, Gremlin, Flamethrower Trooper, plasma and beam rifles, both towers in their faction's colour, Flood growths on infested vehicles; Covenant machines explode light blue | Per the project owner (D71) |
 | 2026-11-05 | Weapons can wind up (the Spartan Laser, 2.5 s; it fires every 3.5 s); a Covenant Phantom on the Covenant roster; the Jackal (Plasma Rifle) becomes the Jackal (Beam Rifle), a sniper, at 175 after the tournament | Per the project owner (D72) |
 | 2026-11-06 | The Pelican at 1200 health (was 800), so it lands its Marines more often | Per the project owner (D73) |
+| 2026-11-06 | Fine-tuning: the Grunt Goblin at 1500 health with a 0.6% aura, the Carrier Form's burst at 110, the Spartan Sniper at 200 damage, the Skitterer at 7 | Per the project owner (D74) |
+| 2026-11-06 | Undo in deployment (back to the card choice); base hits louder with the music dipping; battle sounds by zoom and camera | Per the project owner (D75) |
 
 ## 18. Assumptions to confirm
 

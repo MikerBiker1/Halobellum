@@ -157,6 +157,8 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] The owner's second batch of sounds and models, the towers in faction colours, Flood growths, Covenant machines exploding light blue (D71)
 - [x] The Spartan Laser's wind-up, a Covenant Phantom, Jackal snipers, balanced in the Hard AI tournament (D72)
 - [x] A tougher Pelican; tournaments with seeds and damage taken; every sub-faction in the band over three runs (D73)
+- [x] Fine-tuning with credited damage and removal tests; the counter web's good-against and bad-against list (D74)
+- [x] Undo in deployment, base hits heard over the music, battle sounds by zoom and camera, battle stats numbers (D75)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

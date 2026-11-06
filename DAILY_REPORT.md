@@ -2,6 +2,16 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Your playtest: undo, base hits, sound by zoom, battle stats (D75)
+- **In the game:** Undo (button under Ready, or Ctrl+Z) steps back this round's deployment, never past the card choice; base hits are louder and the music dips under them; zooming in on a fight makes it louder, far and off-screen sounds quieter; battle stats numbers have no commas.
+- **Checked:** tests of each (undo of buys, sells, moves, level-ups, unlocks; the card line; the round end; the sound curve; the music dip); the match, HUD and audio scene tests.
+- **Not checked:** nobody has heard the new levels; the curve's numbers are first guesses.
+
+## Fine-tuning (D74)
+- **In the game:** Grunt Goblin 1500 health with a gentler aura (0.6%), Carrier Form burst 110, Spartan Sniper 200 damage, Skitterer 7 damage.
+- **Tournaments:** damage now counts drops, spawns and infected bodies; 26 outliers tested by removing them; seven rounds. Every sub-faction 47.0% to 53.2%; Flood 46.5% overall: `Docs/Balance/hard_ai_tournament_d74.txt`. The counter web list: `Docs/Balance/counter_web.md`.
+- **Not fixed:** the Pure Form Tank, Covenant Phantom, Vulture, Elite and Ghost stay weak (morning items 122 to 124).
+
 ## A tougher Pelican, the Grizzly, damage taken (D73)
 - **In the game:** the Pelican has 1200 health (was 800). The Grizzly stays at 500: at 450 the AI bought it into Noble's Spartans and Armored Division fell further.
 - **Tournaments:** can now play fresh matches (`--seed`) and record damage taken, what armour stopped, losses and levels. Over three runs every sub-faction is from 46.2% (Covenant-based) to 53.0% (Noble), Armored Division 48.3%: `Docs/Balance/hard_ai_tournament_d73.txt`.

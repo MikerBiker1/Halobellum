@@ -214,6 +214,14 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 121. **Marauders:** you find them nearly unkillable after a level or two, but the Hard AI's units end matches at level 1.3 to 1.8, so the tournament can't see that. Want a test with levelled squads, or a look at what levels give the Marauder?
 
 
+## Fine-tuning and your playtest (D74, D75)
+
+122. **The AI buys from the one-on-one table.** Any buff that makes a unit look better one on one makes the Hard AI buy it much more, and the slow melee units (Pure Form Tank, Grizzly) look far better one on one than in a real match, so buffing them made their sides lose (D73, D74). The fix is in the AI, not the units: build its table from whole matches (the tournament) instead of one-on-one fights, or weigh a unit's real results. Want that tried? It would change how the Hard AI plays everywhere.
+123. **Still weak:** UNSC-based Flood's Pure Form Tank (the side does better without it), the Covenant Phantom (the AI uses its drops badly), the Vulture (bought in 89% of Aerospace matches for little), the Elite and the Ghost. Each buff tried made things worse through the AI's buying (item 122). Leave them until the AI's table is settled, or redesign one (the Phantom dropping Elites, say)?
+124. **The Flood is at 46.5%** overall, both its sub-factions at 47.0%, inside the band but last, losing most to Banished and Unggoy (35% to 40%). Leave it, or a Flood-wide nudge?
+125. **Sound by zoom:** nearer than the starting view up to 1.7 times louder, further down to 0.4, off screen down to 12%. Base hits about 6 dB louder, the music down to 45% (small) or 30% (big) under them. All first guesses for your ears: louder, quieter, or a different curve?
+
+
 ## Things my test runs did to your PC
 
 - **Windows moving, and possibly music:** while the Screen setting was being checked, a test window moved across all three of your screens and briefly went fullscreen on each. Some of those runs weren't silent, so menu music may have played for about 25 seconds at a time. Those checks have finished.

@@ -1,0 +1,29 @@
+Removal tests (D74): each unit taken off its sub-faction's roster, that sub-faction's 700 matches replayed (seed 0, the D73 roster).
+Worth = the sub-faction's win rate with the unit minus without it. One run is good to about 5 points either way.
+
+Noble              without Marine                30.1% (base 53.9, n700)  worth +23.7
+Noble              without Hornet                55.9% (base 53.9, n700)  worth  -2.0
+Noble              without Spartan Sniper        40.9% (base 53.9, n700)  worth +13.0
+Aerospace Command  without Vulture               54.0% (base 52.3, n700)  worth  -1.7
+Armored Division   without Elephant              51.3% (base 48.6, n700)  worth  -2.7
+Armored Division   without Rhino                 43.1% (base 48.6, n700)  worth  +5.4
+Armored Division   without Spartan               37.1% (base 48.6, n700)  worth +11.4
+Banished           without Covenant Phantom      54.3% (base 53.1, n700)  worth  -1.1
+Banished           without Reaver                48.4% (base 53.1, n700)  worth  +4.7
+Unggoy Rebellion   without Covenant Phantom      49.6% (base 48.7, n700)  worth  -0.9
+Unggoy Rebellion   without Ghost                 50.9% (base 48.7, n700)  worth  -2.1
+Unggoy Rebellion   without Elite                 50.0% (base 48.7, n700)  worth  -1.3
+Unggoy Rebellion   without Heavy Grunts          47.9% (base 48.7, n700)  worth  +0.9
+Unggoy Rebellion   without Grunt Goblin          56.6% (base 48.7, n700)  worth  -7.9
+Lekgolo Colony     without Elite                 49.6% (base 48.4, n700)  worth  -1.1
+Lekgolo Colony     without Vampire               47.9% (base 48.4, n700)  worth  +0.6
+Lekgolo Colony     without Grunt                 33.6% (base 48.4, n700)  worth +14.9
+Lekgolo Colony     without Fuel Rod Grunt        46.9% (base 48.4, n700)  worth  +1.6
+UNSC-based         without Seeder                47.0% (base 47.4, n700)  worth  +0.4
+UNSC-based         without Pure Form Tank        55.7% (base 47.4, n700)  worth  -8.3
+UNSC-based         without Flood Abomination     46.6% (base 47.4, n700)  worth  +0.9
+UNSC-based         without Swarm Form            46.3% (base 47.4, n700)  worth  +1.1
+Covenant-based     without Seeder                44.7% (base 47.6, n700)  worth  +2.9
+Covenant-based     without Carrier Form          49.1% (base 47.6, n700)  worth  -1.6
+Covenant-based     without Infested Elite        48.3% (base 47.6, n700)  worth  -0.7
+Covenant-based     without Flood Abomination     34.9% (base 47.6, n700)  worth +12.7
