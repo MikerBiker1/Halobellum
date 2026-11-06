@@ -36,6 +36,8 @@ static class Program
 {
     /// <summary>A match with no winner after this many rounds is called off.</summary>
     static int MostRounds = 60;
+    // --seed N plays a different set of matches with the same data, to check a result is not luck; 0 keeps the old matches.
+    static int SeedOffset = 0;
 
     static int Main(string[] args)
     {
@@ -43,6 +45,7 @@ static class Program
         int matches = int.Parse(Option(args, "--matches") ?? "100");
         int threads = int.Parse(Option(args, "--threads") ?? Math.Max(1, Environment.ProcessorCount - 2).ToString());
         MostRounds = int.Parse(Option(args, "--most-rounds") ?? MostRounds.ToString());
+        SeedOffset = int.Parse(Option(args, "--seed") ?? "0");
 
         using JsonDocument doc = JsonDocument.Parse(File.ReadAllText(dataPath));
         var reader = new GraphReader();
@@ -236,7 +239,7 @@ static class Program
 
     static string PlayMatch((FactionInfo faction, SubFactionInfo sub) a, (FactionInfo faction, SubFactionInfo sub) b, int i, MatchRules rules, CombatRules combat, List<(string, string, float)> wins)
     {
-        int seed = unchecked(StableHash(a.sub.Name) * 31 + StableHash(b.sub.Name) * 17 + i * 7919);
+        int seed = unchecked(StableHash(a.sub.Name) * 31 + StableHash(b.sub.Name) * 17 + i * 7919 + SeedOffset * 1000003);
         // Half of the matches with the sides swapped. The sub-faction on Team A is "a" on even matches.
         bool aFirst = i % 2 == 0;
         var teamA = aFirst ? a : b;

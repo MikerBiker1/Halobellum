@@ -204,7 +204,7 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 115. **The Spartan:** I made up for the wind-up by a faster reload (every 3.5 s instead of 4) rather than damage, as 600 damage changed whom it beats. A charge broken by an EMP or its death still plays the whole laser sound, and under a shockwave the bang comes early. Laser Capacitor speeds the reload, not the wind-up. Change any of these?
 116. **The Covenant Phantom** drops 7 Grunts per drop, up to 3, behind its Gravity Lift tech, at tier 2 and 300 like the Pelican. The Hard AI rarely buys it (15%), as with the Pelican. Should it drop something else (Elites, Jackals), use the flank zones, or be tier 3? Its purple tint over your grey Phantom: the look you want?
 117. **The Jackal snipers** ended at 40 damage every 3 s, 24 m, 4 to a squad, 175 credits. At 45 damage and 150 they carried Banished to 65%. More range with less damage is possible; 30 m made them far too strong in the counter web.
-118. **Banished is at 54.1%**, a hair over the band, inside one run's noise of 4 points. I left it rather than chase it.
+118. **Banished was at 54.1%** in the first run. Two more runs on new seeds put it at 52.3% over all three, but **Armored Division at 45.6%**, a hair under the band and last or near last in every run (46.3, 43.3, 47.1). Its Grizzly is its weakest regular unit (0.71 of its credits' share in damage, 43% of the matches it is in won). Leave it, or make the Grizzly cheaper and test again (8 minutes a run)?
 
 
 ## Things my test runs did to your PC
