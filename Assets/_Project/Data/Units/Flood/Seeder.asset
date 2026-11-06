@@ -17,8 +17,8 @@ MonoBehaviour:
   tier: 3
   unlockCost: 200
   squadSize: 2
-  cost: 400
-  baseDamage: 40
+  cost: 475
+  baseDamage: 47.5
   maxHealth: 800
   armorType: 1
   maxShield: 0
@@ -30,7 +30,7 @@ MonoBehaviour:
   targetFilter: 2
   weapons:
   - weaponName: Seed Spore
-    damagePerShot: 60
+    damagePerShot: 45
     fireInterval: 2.5
     range: 24
     minRange: 0
@@ -50,7 +50,7 @@ MonoBehaviour:
     beamRestSeconds: 0
     beamSweepSpeed: 0
     seedSeconds: 8
-    seedDamageSharePerSecond: 0.08
+    seedDamageSharePerSecond: 0.04
     seedSlowShare: 0.4
     hitSlowSeconds: 0
     hitSlowShare: 0

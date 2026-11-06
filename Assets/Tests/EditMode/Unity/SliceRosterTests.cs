@@ -64,7 +64,7 @@ namespace Halobellum.Tests
             ("Pure Form Ranged", UnitRole.Artillery, 2, 50, 2, 250, 400),
             ("Swarm Form", UnitRole.AntiAir, 2, 50, 4, 250, 200),
             ("Pure Form Tank", UnitRole.Tank, 3, 200, 1, 400, 3200),
-            ("Seeder", UnitRole.SingleTargetDps, 3, 200, 2, 400, 800),
+            ("Seeder", UnitRole.SingleTargetDps, 3, 200, 2, 475, 800),
             ("Infected Pelican", UnitRole.Aerial, 3, 200, 1, 400, 900),
             ("Infected Phantom", UnitRole.Aerial, 3, 200, 1, 400, 1100),
             ("Flood Abomination", UnitRole.Titan, 4, 350, 1, 800, 8500),

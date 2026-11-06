@@ -2492,7 +2492,7 @@
   "tier": 3,
   "unlock": 200,
   "squad": 2,
-  "cost": 400,
+  "cost": 475,
   "hp": 800,
   "armor": "L",
   "speed": 1.5,
@@ -2502,7 +2502,7 @@
   "weapons": [
    {
     "name": "Seed Spore",
-    "dmg": 60,
+    "dmg": 45,
     "interval": 2.5,
     "range": 24,
     "minr": 0,
@@ -2520,7 +2520,7 @@
     "rest": 0,
     "sweep": 0,
     "seed": 8,
-    "seedshare": 0.08,
+    "seedshare": 0.04,
     "seedslow": 0.4,
     "slow": 0,
     "slowshare": 0,

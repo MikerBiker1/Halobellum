@@ -54,7 +54,7 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Armor | Shield | Speed | Weapons | Wins, average | Best counters |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Gremlin | Flanker | 1 | 0 | 2 | 200 | 240 | Light | 0 | 4.5 | EMP Railgun (38 per 1 s, Energy, anti-armor, 13 m, slows 40% for 2 s) | 23 of 69, 35% | Flamethrower Trooper 100%, Fuel Rod Grunt 100% |
+| Gremlin | Flanker | 1 | 0 | 2 | 200 | 240 | Light | 0 | 4.5 | EMP Railgun (38 per 1 s, Energy, anti-armor, 13 m, slows 40% for 2 s) | 24 of 69, 36% | Flamethrower Trooper 100%, Fuel Rod Grunt 100% |
 | Cobra | Single-target DPS | 2 | 50 | 1 | 300 | 650 | Heavy | 0 | 1.75 | M66 Railgun (175 per 2.2 s, Ballistic, anti-armor, 26 m) | 25 of 69, 36% | Marine 100%, Grunt 100% |
 | Rhino | Artillery | 3 | 200 | 1 | 400 | 1000 | Heavy | 0 | 1 | Heavy Cannon (140 per 5 s, Explosive, 50 m, splash 4.5 m, lobbed) | 33 of 69, 49% | Hornet 100%, Pelican 100% |
 | Grizzly | Tank | 3 | 250 | 1 | 500 | 2100 | Heavy | 0 | 1.35 | Twin Cannons (100 per 2.5 s, Explosive, 17 m, splash 2.5 m); Coaxial Machine Gun (8 per 0.2 s, Ballistic, 13 m) | 36 of 69, 53% | Gauss Warthog 100%, Spartan 100% |
@@ -70,8 +70,8 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Sparrowhawk | Aerial | 2 | 50 | 1 | 250 | 550 | Light | 0 | 4 | Heavy Autocannon (18 per 0.3 s, Ballistic, anti-armor, 14 m) | 40 of 69, 59% | Wolverine 100%, Swarm Form 100% |
 | Longsword | Aerial | 2 | 50 | 1 | 300 | 600 | Light | 0 | 5 | Carpet Bombs (150 per 2.5 s, Explosive, 5 m, splash 5 m) | 39 of 69, 56% | Wolverine 100%, Vampire 100% |
-| Vulture | Aerial | 3 | 200 | 1 | 400 | 900 | Heavy | 0 | 2.5 | Missile Barrage (50 per 3 s, Explosive, 22 m, splash 3 m); Chin Gun (10 per 0.2 s, Ballistic, 14 m) | 46 of 69, 67% | Wolverine 100%, Vampire 100% |
-| Condor Gunship | Aerial | 3 | 200 | 1 | 400 | 1500 | Light | 0 | 3.25 | Twin Autocannons (20 per 0.25 s, Ballistic, 16 m) | 45 of 69, 67% | Wolverine 100%, Reaver 100% |
+| Vulture | Aerial | 3 | 200 | 1 | 400 | 900 | Heavy | 0 | 2.5 | Missile Barrage (50 per 3 s, Explosive, 22 m, splash 3 m); Chin Gun (10 per 0.2 s, Ballistic, 14 m) | 45 of 69, 66% | Wolverine 100%, Vampire 100% |
+| Condor Gunship | Aerial | 3 | 200 | 1 | 400 | 1500 | Light | 0 | 3.25 | Twin Autocannons (20 per 0.25 s, Ballistic, 16 m) | 44 of 69, 65% | Wolverine 100%, Reaver 100% |
 
 - **Sparrowhawk.** Gunship that hunts vehicles. Its gun is poor against infantry.
 - **Longsword.** Heavy bomber. It has to fly over its target, and cannot fight other aircraft at all.
@@ -85,7 +85,7 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 | Chopper | Flanker | 1 | 0 | 2 | 200 | 300 | Light | 0 | 5.5 | Ramming Blades (60 per 1 s, Melee, 1.5 m, splash 1.5 m); Chopper Autocannons (10 per 0.25 s, Ballistic, 9 m) | 16 of 69, 24% | Flamethrower Trooper 100%, Scorpion 100% |
 | Brute Grenadier | Chaff clear | 1 | 0 | 4 | 150 | 150 | Unarmored | 0 | 1.5 | Spike Grenade Launcher (34 per 2 s, Explosive, 13 m, splash 2.8 m, lobbed) | 28 of 69, 41% | Scorpion 100%, Mantis 100% |
 | Marauder | Tank | 2 | 50 | 1 | 300 | 1250 | Heavy | 0 | 1.5 | Plasma Cannon (80 per 2.2 s, Energy, 15 m, splash 2 m); Spike Turret (8 per 0.3 s, Ballistic, 12 m) | 35 of 69, 50% | Gauss Warthog 100%, Spartan 100% |
-| Reaver | Anti-air | 2 | 50 | 1 | 300 | 700 | Light | 0 | 3 | Spike Rockets (24 per 0.5 s, Explosive, 20 m, x3 vs air) | 13 of 69, 20% | Marine 100%, Flamethrower Trooper 100% |
+| Reaver | Anti-air | 2 | 50 | 1 | 300 | 700 | Light | 0 | 3 | Spike Rockets (24 per 0.5 s, Explosive, 20 m, x3 vs air) | 14 of 69, 21% | Marine 100%, Flamethrower Trooper 100% |
 
 - **Chopper.** It rams: its main weapon is its front wheel, so it drives straight into the enemy, guns firing on the way.
 - **Brute Grenadier.** Tough infantry with lobbed grenades. Shorter range than a Fuel Rod Grunt, can miss what moves, but takes much more killing.

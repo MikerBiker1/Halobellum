@@ -1144,7 +1144,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Wolverine
     defender: Seeder
-    winRate: 0
+    winRate: 1
   - attacker: Wolverine
     defender: Infected Pelican
     winRate: 0
@@ -1351,7 +1351,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Hornet
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Hornet
     defender: Infected Pelican
     winRate: 1
@@ -1765,7 +1765,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Pelican
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Pelican
     defender: Infected Pelican
     winRate: 1
@@ -3007,7 +3007,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: 'Jackal (Beam Rifle)'
     defender: Seeder
-    winRate: 0
+    winRate: 1
   - attacker: 'Jackal (Beam Rifle)'
     defender: Infected Pelican
     winRate: 0
@@ -3214,7 +3214,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: 'Jackal (Shield)'
     defender: Seeder
-    winRate: 0
+    winRate: 1
   - attacker: 'Jackal (Shield)'
     defender: Infected Pelican
     winRate: 0
@@ -3421,7 +3421,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Ghost
     defender: Seeder
-    winRate: 0
+    winRate: 0.5
   - attacker: Ghost
     defender: Infected Pelican
     winRate: 0
@@ -4249,7 +4249,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Banshee
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Banshee
     defender: Infected Pelican
     winRate: 1
@@ -4456,7 +4456,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Covenant Phantom
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Covenant Phantom
     defender: Infected Pelican
     winRate: 1
@@ -6229,13 +6229,13 @@ MonoBehaviour:
     winRate: 0
   - attacker: Swarm Form
     defender: Flamethrower Trooper
-    winRate: 0
+    winRate: 1
   - attacker: Swarm Form
     defender: Warthog
     winRate: 0
   - attacker: Swarm Form
     defender: Gauss Warthog
-    winRate: 0
+    winRate: 1
   - attacker: Swarm Form
     defender: Scorpion
     winRate: 0
@@ -6247,7 +6247,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Swarm Form
     defender: Archer Missile Pod
-    winRate: 0
+    winRate: 1
   - attacker: Swarm Form
     defender: Pelican
     winRate: 1
@@ -6265,7 +6265,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Swarm Form
     defender: Fuel Rod Grunt
-    winRate: 0
+    winRate: 1
   - attacker: Swarm Form
     defender: 'Jackal (Beam Rifle)'
     winRate: 0
@@ -6280,7 +6280,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Swarm Form
     defender: Wraith
-    winRate: 0
+    winRate: 1
   - attacker: Swarm Form
     defender: Vampire
     winRate: 1
@@ -6292,31 +6292,31 @@ MonoBehaviour:
     winRate: 1
   - attacker: Swarm Form
     defender: Hunter Pair
-    winRate: 0
+    winRate: 1
   - attacker: Swarm Form
     defender: Zealot
-    winRate: 0
+    winRate: 1
   - attacker: Swarm Form
     defender: Scarab
     winRate: 0
   - attacker: Swarm Form
     defender: Infection Forms
-    winRate: 0
+    winRate: 1
   - attacker: Swarm Form
     defender: Carrier Form
-    winRate: 0
+    winRate: 1
   - attacker: Swarm Form
     defender: Combat Form
-    winRate: 0
+    winRate: 1
   - attacker: Swarm Form
     defender: Stalker Form
-    winRate: 0
+    winRate: 1
   - attacker: Swarm Form
     defender: Pure Form Ranged
-    winRate: 0
+    winRate: 1
   - attacker: Swarm Form
     defender: Pure Form Tank
-    winRate: 0
+    winRate: 0.6
   - attacker: Swarm Form
     defender: Seeder
     winRate: 1
@@ -6337,7 +6337,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Swarm Form
     defender: Spartan Grenadier
-    winRate: 0
+    winRate: 1
   - attacker: Swarm Form
     defender: Spartan CQB
     winRate: 0
@@ -6349,10 +6349,10 @@ MonoBehaviour:
     winRate: 0
   - attacker: Swarm Form
     defender: Cobra
-    winRate: 0
+    winRate: 1
   - attacker: Swarm Form
     defender: Rhino
-    winRate: 0
+    winRate: 1
   - attacker: Swarm Form
     defender: Grizzly
     winRate: 0
@@ -6373,7 +6373,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Swarm Form
     defender: Brute Grenadier
-    winRate: 0
+    winRate: 1
   - attacker: Swarm Form
     defender: Marauder
     winRate: 0
@@ -6385,10 +6385,10 @@ MonoBehaviour:
     winRate: 0
   - attacker: Swarm Form
     defender: Goliath
-    winRate: 0
+    winRate: 1
   - attacker: Swarm Form
     defender: Hunter Captain
-    winRate: 0
+    winRate: 0.3
   - attacker: Swarm Form
     defender: Cannon Fodder
     winRate: 0
@@ -6406,13 +6406,13 @@ MonoBehaviour:
     winRate: 0
   - attacker: Swarm Form
     defender: Infested Scorpion
-    winRate: 0
+    winRate: 1
   - attacker: Swarm Form
     defender: Infested Hornet
     winRate: 1
   - attacker: Swarm Form
     defender: Juggernaut
-    winRate: 0
+    winRate: 1
   - attacker: Swarm Form
     defender: Infested Grunt
     winRate: 0
@@ -6424,13 +6424,13 @@ MonoBehaviour:
     winRate: 0
   - attacker: Swarm Form
     defender: Infested Wraith
-    winRate: 0
+    winRate: 1
   - attacker: Swarm Form
     defender: Infested Banshee
     winRate: 1
   - attacker: Swarm Form
     defender: Spawner
-    winRate: 0
+    winRate: 1
   - attacker: Pure Form Tank
     defender: Marine
     winRate: 1
@@ -6655,16 +6655,16 @@ MonoBehaviour:
     winRate: 1
   - attacker: Seeder
     defender: Wolverine
-    winRate: 1
+    winRate: 0
   - attacker: Seeder
     defender: Hornet
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Archer Missile Pod
     winRate: 1
   - attacker: Seeder
     defender: Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Spartan
     winRate: 0
@@ -6682,13 +6682,13 @@ MonoBehaviour:
     winRate: 1
   - attacker: Seeder
     defender: 'Jackal (Beam Rifle)'
-    winRate: 1
+    winRate: 0
   - attacker: Seeder
     defender: 'Jackal (Shield)'
-    winRate: 1
+    winRate: 0
   - attacker: Seeder
     defender: Ghost
-    winRate: 1
+    winRate: 0.5
   - attacker: Seeder
     defender: Elite
     winRate: 0
@@ -6700,10 +6700,10 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Banshee
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Covenant Phantom
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Hunter Pair
     winRate: 1
@@ -6760,7 +6760,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Gremlin
-    winRate: 1
+    winRate: 0
   - attacker: Seeder
     defender: Cobra
     winRate: 1
@@ -6775,13 +6775,13 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Longsword
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Vulture
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Condor Gunship
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Chopper
     winRate: 1
@@ -6793,7 +6793,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Seeder
     defender: Reaver
-    winRate: 0.5
+    winRate: 0
   - attacker: Seeder
     defender: Skitterer
     winRate: 0
@@ -8599,7 +8599,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Gremlin
     defender: Seeder
-    winRate: 0
+    winRate: 1
   - attacker: Gremlin
     defender: Infected Pelican
     winRate: 0
@@ -9841,7 +9841,7 @@ MonoBehaviour:
     winRate: 0.2
   - attacker: Vulture
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Vulture
     defender: Infected Pelican
     winRate: 1
@@ -10048,7 +10048,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Condor Gunship
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Condor Gunship
     defender: Infected Pelican
     winRate: 1
@@ -10876,7 +10876,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Reaver
     defender: Seeder
-    winRate: 0.5
+    winRate: 1
   - attacker: Reaver
     defender: Infected Pelican
     winRate: 0
