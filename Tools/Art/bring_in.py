@@ -20,9 +20,9 @@ MESHY_NOTE = "Source: made by the project owner with Meshy AI, file {source} in 
 GIVEN_NOTE = "Source: given by the project owner, file {source} in Art_Source. Where it came from before that is not recorded.\nPrepared by Tools/Art/units/{name}.py.\nThe repository is private and must stay private.\n"
 
 
-# A rigged folder has no report.json to say what it was made from.
-THIRD_BATCH_RIGS = {"ODST_Rig": "Meshy/halo_2_odst.glb", "Jackal_Rig": "Meshy/jackal_halo_2.glb", "BruteGrenadier_Rig": "Meshy/enemieshalo_3covenantbrutes.glb",
-                    "FlamethrowerTrooper_Rig": "Meshy/Meshy_AI_Flamethrower_trooper.glb"}
+# A rigged folder has no report.json to say what it was made from. (FlamethrowerTrooper_Rig is only Meshy's raw rig, which FlamethrowerTrooper.py
+# reads: copy FlamethrowerTrooper, never the _Rig folder, or its unused clips would replace the scripted body.)
+THIRD_BATCH_RIGS = {"ODST_Rig": "Meshy/halo_2_odst.glb", "Jackal_Rig": "Meshy/jackal_halo_2.glb", "BruteGrenadier_Rig": "Meshy/enemieshalo_3covenantbrutes.glb"}
 
 
 def copy(names):
