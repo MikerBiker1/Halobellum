@@ -12,7 +12,7 @@ HUNTER_ARC = dict(deg=240, front=0.7, rear=1.5, block=0, types=[])
 def units(U, W):
     return [
         U("Skitterer", "Skitterer", FACTION, "Flanker", 1, 0, 6, 150, 100, "L", 4.5, 0.7, 0.3, "B",
-          [W("Spitter Plasma", 5, 0.25, 7, "Energy")],
+          [W("Spitter Plasma", 7, 0.25, 7, "Energy")],
           note="Spider-like machines worked by a few worms: a fast, light swarm of a flanker."),
         U("Goliath", "Goliath", FACTION, "Tank", 3, 250, 1, 500, 2200, "H", 1.1, 2.4, 2.5, "G",
           [W("Fist Slam", 120, 2, 3, "Melee", splash=3.5),

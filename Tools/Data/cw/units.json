@@ -2043,7 +2043,7 @@
   "selfd": true,
   "seek": false,
   "burst": {
-   "dmg": 80,
+   "dmg": 110,
    "radius": 4.5,
    "type": "Explosive",
    "aa": false,
@@ -2780,7 +2780,7 @@
   "weapons": [
    {
     "name": "SRS99 Sniper Rifle",
-    "dmg": 220,
+    "dmg": 200,
     "interval": 3.0,
     "range": 42,
     "minr": 0,
@@ -4083,7 +4083,7 @@
   "weapons": [
    {
     "name": "Spitter Plasma",
-    "dmg": 5,
+    "dmg": 7,
     "interval": 0.25,
     "range": 7,
     "minr": 0,
@@ -4461,7 +4461,7 @@
   "unlock": 200,
   "squad": 1,
   "cost": 400,
-  "hp": 1250,
+  "hp": 1500,
   "armor": "H",
   "speed": 2,
   "radius": 1.5,
@@ -4526,7 +4526,7 @@
   "air": false,
   "arc": null,
   "drop": null,
-  "note": "A Grunt in a hero's mech. A quick tank with a strong aura: friends within 14 m move 20% faster and heal 1% per second.",
+  "note": "A Grunt in a hero's mech. A quick tank with a strong aura: friends within 14 m move 20% faster and heal 0.6% per second.",
   "forms": 1,
   "flood": false,
   "infects": false,
@@ -4538,7 +4538,7 @@
   "aura": [
    14,
    1.2,
-   0.01
+   0.006
   ],
   "leap": null,
   "lifesteal": 0,

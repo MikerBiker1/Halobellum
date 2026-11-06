@@ -30,7 +30,7 @@ MonoBehaviour:
   targetFilter: 2
   weapons:
   - weaponName: Spitter Plasma
-    damagePerShot: 5
+    damagePerShot: 7
     fireInterval: 0.25
     range: 7
     minRange: 0

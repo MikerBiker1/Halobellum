@@ -1015,7 +1015,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Scorpion
     defender: Grunt Goblin
-    winRate: 1
+    winRate: 0.4
   - attacker: Scorpion
     defender: Infested Marine
     winRate: 0.9
@@ -1636,11 +1636,11 @@ MonoBehaviour:
     winRate: 1
   - attacker: Archer Missile Pod
     defender: Grunt Goblin
-    winRate: 0.4
-  - attacker: Archer Missile Pod
-    defender: Infested Marine
     winRate: 0
   - attacker: Archer Missile Pod
+    defender: Infested Marine
+    winRate: 0
+  - attacker: Archer Missile Pod
     defender: Infested Warthog
     winRate: 0
   - attacker: Archer Missile Pod
@@ -2161,7 +2161,7 @@ MonoBehaviour:
     winRate: 0.8
   - attacker: Mantis
     defender: Carrier Form
-    winRate: 0.9
+    winRate: 0
   - attacker: Mantis
     defender: Combat Form
     winRate: 0
@@ -2242,7 +2242,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Mantis
     defender: Skitterer
-    winRate: 0.2
+    winRate: 0
   - attacker: Mantis
     defender: Goliath
     winRate: 0
@@ -3433,7 +3433,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Ghost
     defender: Spartan Sniper
-    winRate: 0
+    winRate: 1
   - attacker: Ghost
     defender: Spartan Heavy Weapons
     winRate: 0
@@ -3691,7 +3691,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Elite
     defender: Skitterer
-    winRate: 1
+    winRate: 0.2
   - attacker: Elite
     defender: Goliath
     winRate: 0
@@ -5428,7 +5428,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Carrier Form
     defender: Mantis
-    winRate: 0.1
+    winRate: 1
   - attacker: Carrier Form
     defender: Elephant
     winRate: 0
@@ -5509,10 +5509,10 @@ MonoBehaviour:
     winRate: 1
   - attacker: Carrier Form
     defender: Spartan Grenadier
-    winRate: 0.3
+    winRate: 0.6
   - attacker: Carrier Form
     defender: Spartan CQB
-    winRate: 0.9
+    winRate: 1
   - attacker: Carrier Form
     defender: Spartan Fireteam
     winRate: 1
@@ -5527,7 +5527,7 @@ MonoBehaviour:
     winRate: 0.1
   - attacker: Carrier Form
     defender: Grizzly
-    winRate: 0.3
+    winRate: 1
   - attacker: Carrier Form
     defender: Sparrowhawk
     winRate: 0
@@ -5545,7 +5545,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Carrier Form
     defender: Brute Grenadier
-    winRate: 0.1
+    winRate: 0.5
   - attacker: Carrier Form
     defender: Marauder
     winRate: 0
@@ -5569,7 +5569,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Carrier Form
     defender: Grunt Goblin
-    winRate: 0.5
+    winRate: 0.9
   - attacker: Carrier Form
     defender: Infested Marine
     winRate: 1
@@ -5584,7 +5584,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Carrier Form
     defender: Juggernaut
-    winRate: 0
+    winRate: 0.1
   - attacker: Carrier Form
     defender: Infested Grunt
     winRate: 1
@@ -6190,7 +6190,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Pure Form Ranged
     defender: Grunt Goblin
-    winRate: 1
+    winRate: 0.9
   - attacker: Pure Form Ranged
     defender: Infested Marine
     winRate: 0
@@ -7018,7 +7018,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infected Pelican
     defender: Grunt Goblin
-    winRate: 0.8
+    winRate: 0.7
   - attacker: Infected Pelican
     defender: Infested Marine
     winRate: 0
@@ -7516,7 +7516,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Sniper
     defender: Ghost
-    winRate: 1
+    winRate: 0
   - attacker: Spartan Sniper
     defender: Elite
     winRate: 0
@@ -7579,7 +7579,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Sniper
     defender: Spartan Grenadier
-    winRate: 0.7
+    winRate: 0.3
   - attacker: Spartan Sniper
     defender: Spartan CQB
     winRate: 0
@@ -7609,7 +7609,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan Sniper
     defender: Condor Gunship
-    winRate: 0.2
+    winRate: 0
   - attacker: Spartan Sniper
     defender: Chopper
     winRate: 0
@@ -7654,7 +7654,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Sniper
     defender: Juggernaut
-    winRate: 0.9
+    winRate: 0.3
   - attacker: Spartan Sniper
     defender: Infested Grunt
     winRate: 0
@@ -7831,7 +7831,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan Heavy Weapons
     defender: Skitterer
-    winRate: 1
+    winRate: 0.3
   - attacker: Spartan Heavy Weapons
     defender: Goliath
     winRate: 0
@@ -7960,7 +7960,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan Grenadier
     defender: Carrier Form
-    winRate: 0.7
+    winRate: 0.4
   - attacker: Spartan Grenadier
     defender: Combat Form
     winRate: 0.9
@@ -7990,7 +7990,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Grenadier
     defender: Spartan Sniper
-    winRate: 0.3
+    winRate: 0.7
   - attacker: Spartan Grenadier
     defender: Spartan Heavy Weapons
     winRate: 0
@@ -8053,7 +8053,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan Grenadier
     defender: Grunt Goblin
-    winRate: 0.1
+    winRate: 0
   - attacker: Spartan Grenadier
     defender: Infested Marine
     winRate: 0
@@ -8167,7 +8167,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan CQB
     defender: Carrier Form
-    winRate: 0.1
+    winRate: 0
   - attacker: Spartan CQB
     defender: Combat Form
     winRate: 0
@@ -8467,7 +8467,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Fireteam
     defender: Grunt Goblin
-    winRate: 1
+    winRate: 0.6
   - attacker: Spartan Fireteam
     defender: Infested Marine
     winRate: 0
@@ -9202,7 +9202,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Grizzly
     defender: Carrier Form
-    winRate: 0.7
+    winRate: 0
   - attacker: Grizzly
     defender: Combat Form
     winRate: 0.2
@@ -9295,7 +9295,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Grizzly
     defender: Grunt Goblin
-    winRate: 0.2
+    winRate: 0
   - attacker: Grizzly
     defender: Infested Marine
     winRate: 0.7
@@ -9709,7 +9709,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Longsword
     defender: Grunt Goblin
-    winRate: 0.9
+    winRate: 0.8
   - attacker: Longsword
     defender: Infested Marine
     winRate: 1
@@ -9901,7 +9901,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Vulture
     defender: Skitterer
-    winRate: 1
+    winRate: 0.8
   - attacker: Vulture
     defender: Goliath
     winRate: 1
@@ -10060,7 +10060,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Condor Gunship
     defender: Spartan Sniper
-    winRate: 0.8
+    winRate: 1
   - attacker: Condor Gunship
     defender: Spartan Heavy Weapons
     winRate: 1
@@ -10444,7 +10444,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Brute Grenadier
     defender: Carrier Form
-    winRate: 0.9
+    winRate: 0.5
   - attacker: Brute Grenadier
     defender: Combat Form
     winRate: 1
@@ -11017,7 +11017,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Skitterer
     defender: Mantis
-    winRate: 0.8
+    winRate: 1
   - attacker: Skitterer
     defender: Elephant
     winRate: 0
@@ -11038,7 +11038,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Skitterer
     defender: Elite
-    winRate: 0
+    winRate: 0.8
   - attacker: Skitterer
     defender: Wraith
     winRate: 0
@@ -11098,7 +11098,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Skitterer
     defender: Spartan Heavy Weapons
-    winRate: 0
+    winRate: 0.7
   - attacker: Skitterer
     defender: Spartan Grenadier
     winRate: 0
@@ -11128,7 +11128,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Skitterer
     defender: Vulture
-    winRate: 0
+    winRate: 0.2
   - attacker: Skitterer
     defender: Condor Gunship
     winRate: 1
@@ -11149,7 +11149,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Skitterer
     defender: Hunter Captain
-    winRate: 0
+    winRate: 1
   - attacker: Skitterer
     defender: Cannon Fodder
     winRate: 0
@@ -11164,7 +11164,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Skitterer
     defender: Infested Warthog
-    winRate: 0
+    winRate: 1
   - attacker: Skitterer
     defender: Infested Scorpion
     winRate: 0
@@ -11179,10 +11179,10 @@ MonoBehaviour:
     winRate: 0
   - attacker: Skitterer
     defender: Infested Ghost
-    winRate: 0
+    winRate: 1
   - attacker: Skitterer
     defender: Infested Elite
-    winRate: 0
+    winRate: 0.9
   - attacker: Skitterer
     defender: Infested Wraith
     winRate: 0
@@ -11191,7 +11191,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Skitterer
     defender: Spawner
-    winRate: 0.8
+    winRate: 1
   - attacker: Goliath
     defender: Marine
     winRate: 1
@@ -11560,7 +11560,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Hunter Captain
     defender: Skitterer
-    winRate: 1
+    winRate: 0
   - attacker: Hunter Captain
     defender: Goliath
     winRate: 1
@@ -12034,7 +12034,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Grunt Goblin
     defender: Scorpion
-    winRate: 0
+    winRate: 0.6
   - attacker: Grunt Goblin
     defender: Wolverine
     winRate: 1
@@ -12043,7 +12043,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Grunt Goblin
     defender: Archer Missile Pod
-    winRate: 0.6
+    winRate: 1
   - attacker: Grunt Goblin
     defender: Pelican
     winRate: 1
@@ -12100,127 +12100,127 @@ MonoBehaviour:
     winRate: 1
   - attacker: Grunt Goblin
     defender: Carrier Form
+    winRate: 0.1
+  - attacker: Grunt Goblin
+    defender: Combat Form
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Stalker Form
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Pure Form Ranged
+    winRate: 0.1
+  - attacker: Grunt Goblin
+    defender: Swarm Form
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Pure Form Tank
+    winRate: 0.6
+  - attacker: Grunt Goblin
+    defender: Seeder
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Infected Pelican
+    winRate: 0.3
+  - attacker: Grunt Goblin
+    defender: Infected Phantom
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Spartan Heavy Weapons
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Spartan Grenadier
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Spartan Fireteam
+    winRate: 0.4
+  - attacker: Grunt Goblin
+    defender: Gremlin
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Cobra
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Rhino
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Grizzly
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Sparrowhawk
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Longsword
+    winRate: 0.2
+  - attacker: Grunt Goblin
+    defender: Vulture
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Condor Gunship
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Chopper
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Marauder
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Reaver
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Skitterer
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Goliath
+    winRate: 0.7
+  - attacker: Grunt Goblin
+    defender: Hunter Captain
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Cannon Fodder
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Heavy Grunts
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Infested Marine
+    winRate: 0
+  - attacker: Grunt Goblin
+    defender: Infested Warthog
+    winRate: 1
+  - attacker: Grunt Goblin
+    defender: Infested Scorpion
     winRate: 0.5
   - attacker: Grunt Goblin
-    defender: Combat Form
-    winRate: 0
-  - attacker: Grunt Goblin
-    defender: Stalker Form
-    winRate: 1
-  - attacker: Grunt Goblin
-    defender: Pure Form Ranged
-    winRate: 0
-  - attacker: Grunt Goblin
-    defender: Swarm Form
-    winRate: 1
-  - attacker: Grunt Goblin
-    defender: Pure Form Tank
-    winRate: 0.6
-  - attacker: Grunt Goblin
-    defender: Seeder
-    winRate: 0
-  - attacker: Grunt Goblin
-    defender: Infected Pelican
-    winRate: 0.2
-  - attacker: Grunt Goblin
-    defender: Infected Phantom
-    winRate: 0
-  - attacker: Grunt Goblin
-    defender: Flood Abomination
-    winRate: 0
-  - attacker: Grunt Goblin
-    defender: Spartan Sniper
-    winRate: 0
-  - attacker: Grunt Goblin
-    defender: Spartan Heavy Weapons
-    winRate: 1
-  - attacker: Grunt Goblin
-    defender: Spartan Grenadier
-    winRate: 0.9
-  - attacker: Grunt Goblin
-    defender: Spartan CQB
-    winRate: 1
-  - attacker: Grunt Goblin
-    defender: Spartan Fireteam
-    winRate: 0
-  - attacker: Grunt Goblin
-    defender: Gremlin
-    winRate: 0
-  - attacker: Grunt Goblin
-    defender: Cobra
-    winRate: 0
-  - attacker: Grunt Goblin
-    defender: Rhino
-    winRate: 1
-  - attacker: Grunt Goblin
-    defender: Grizzly
-    winRate: 0.8
-  - attacker: Grunt Goblin
-    defender: Sparrowhawk
-    winRate: 0
-  - attacker: Grunt Goblin
-    defender: Longsword
-    winRate: 0.1
-  - attacker: Grunt Goblin
-    defender: Vulture
-    winRate: 1
-  - attacker: Grunt Goblin
-    defender: Condor Gunship
-    winRate: 1
-  - attacker: Grunt Goblin
-    defender: Chopper
-    winRate: 1
-  - attacker: Grunt Goblin
-    defender: Brute Grenadier
-    winRate: 1
-  - attacker: Grunt Goblin
-    defender: Marauder
-    winRate: 1
-  - attacker: Grunt Goblin
-    defender: Reaver
-    winRate: 1
-  - attacker: Grunt Goblin
-    defender: Skitterer
-    winRate: 1
-  - attacker: Grunt Goblin
-    defender: Goliath
-    winRate: 0.7
-  - attacker: Grunt Goblin
-    defender: Hunter Captain
-    winRate: 0
-  - attacker: Grunt Goblin
-    defender: Cannon Fodder
-    winRate: 1
-  - attacker: Grunt Goblin
-    defender: Heavy Grunts
-    winRate: 1
-  - attacker: Grunt Goblin
-    defender: Infested Marine
-    winRate: 0
-  - attacker: Grunt Goblin
-    defender: Infested Warthog
-    winRate: 1
-  - attacker: Grunt Goblin
-    defender: Infested Scorpion
-    winRate: 0.2
-  - attacker: Grunt Goblin
     defender: Infested Hornet
     winRate: 1
   - attacker: Grunt Goblin
     defender: Juggernaut
-    winRate: 0.8
+    winRate: 1
   - attacker: Grunt Goblin
     defender: Infested Grunt
     winRate: 0
   - attacker: Grunt Goblin
     defender: Infested Ghost
-    winRate: 0.3
+    winRate: 0.9
   - attacker: Grunt Goblin
     defender: Infested Elite
     winRate: 0
   - attacker: Grunt Goblin
     defender: Infested Wraith
-    winRate: 0.6
+    winRate: 0.8
   - attacker: Grunt Goblin
     defender: Infested Banshee
     winRate: 1
@@ -12595,7 +12595,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Warthog
     defender: Skitterer
-    winRate: 1
+    winRate: 0
   - attacker: Infested Warthog
     defender: Goliath
     winRate: 0
@@ -12817,7 +12817,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Scorpion
     defender: Grunt Goblin
-    winRate: 0.8
+    winRate: 0.5
   - attacker: Infested Scorpion
     defender: Infested Marine
     winRate: 1
@@ -13135,7 +13135,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Juggernaut
     defender: Carrier Form
-    winRate: 1
+    winRate: 0.9
   - attacker: Juggernaut
     defender: Combat Form
     winRate: 1
@@ -13165,7 +13165,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Juggernaut
     defender: Spartan Sniper
-    winRate: 0.1
+    winRate: 0.7
   - attacker: Juggernaut
     defender: Spartan Heavy Weapons
     winRate: 1
@@ -13231,7 +13231,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Juggernaut
     defender: Grunt Goblin
-    winRate: 0.2
+    winRate: 0
   - attacker: Juggernaut
     defender: Infested Marine
     winRate: 1
@@ -13630,7 +13630,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Ghost
     defender: Skitterer
-    winRate: 1
+    winRate: 0
   - attacker: Infested Ghost
     defender: Goliath
     winRate: 0
@@ -13645,7 +13645,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Ghost
     defender: Grunt Goblin
-    winRate: 0.7
+    winRate: 0.1
   - attacker: Infested Ghost
     defender: Infested Marine
     winRate: 0
@@ -13837,7 +13837,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Elite
     defender: Skitterer
-    winRate: 1
+    winRate: 0.1
   - attacker: Infested Elite
     defender: Goliath
     winRate: 0
@@ -14059,7 +14059,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Wraith
     defender: Grunt Goblin
-    winRate: 0.4
+    winRate: 0.2
   - attacker: Infested Wraith
     defender: Infested Marine
     winRate: 0.9
@@ -14458,7 +14458,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spawner
     defender: Skitterer
-    winRate: 0.2
+    winRate: 0
   - attacker: Spawner
     defender: Goliath
     winRate: 0

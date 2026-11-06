@@ -74,6 +74,8 @@ def show(sub):
     extra = f"{'tkn%':>6}{'soak':>6}{'stop%':>6}{'died%':>6}{'lvl':>5}" if has_taken else ""
     print(f"{'unit':<24}{'field':>6}{'n':>5}{'win':>5}{'edge':>6}{'dmg%':>6}{'cr%':>6}{'ratio':>6}{'d/100':>7}{'kills':>6}" + extra)
     for x in sorted(r, key=lambda x: x["dshare"] / max(0.01, x["cshare"])):
+        if x["cshare"] == 0 and has_taken:
+            continue  # bodies it never bought (infected enemies, free drops): their damage is their maker's
         e = "  -" if x["edge"] is None else f"{x['edge']:+.0f}"
         print(f"{x['name']:<24}{x['fielded']:>5.0f}%{x['n']:>5}{x['win']:>5.0f}{e:>6}{x['dshare']:>6.1f}{x['cshare']:>6.1f}{x['dshare']/max(.01,x['cshare']):>6.2f}{x['per100']:>7.0f}{x['kills']:>6.1f}"
               + (f"{x['tshare']:>6.1f}{x['tshare']/max(.01,x['cshare']):>6.2f}{x['stop']:>6.0f}{x['died']:>6.0f}" + ("    -" if x['lvl'] is None else f"{x['lvl']:>5.1f}") if has_taken else ""))

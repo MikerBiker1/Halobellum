@@ -136,7 +136,7 @@ UNITS = [
       [W("Infectious Bite", 36, 0.5, 1, "Melee")], forms=6, flood=True, infects=True, leap=(6, 14, 2.5)),
     U("CarrierForm", "Carrier Form", "Flood", "ChaffClear", 1, 0, 4, 150, 140, "U", 2, 0.8, 0.4, "G",
       [W("Burst", 0, 1, 1.5, "Explosive")], flood=True, selfd=True,
-      burst=dict(dmg=80, radius=4.5, type="Explosive", aa=False, spawns=[("InfectionForms", 2)])),
+      burst=dict(dmg=110, radius=4.5, type="Explosive", aa=False, spawns=[("InfectionForms", 2)])),
     U("CombatForm", "Combat Form", "Flood", "SingleTargetDps", 2, 50, 6, 200, 260, "U", 2.4, 0.6, 0.3, "G",
       [W("Claw Swipe", 50, 0.8, 1.5, "Melee", aa=True),
        W("Scavenged Rifle", 6, 0.4, 10, "Ballistic", block=True)], flood=True),

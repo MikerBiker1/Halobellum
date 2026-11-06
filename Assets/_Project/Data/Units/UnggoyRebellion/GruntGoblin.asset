@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 1
   cost: 400
   baseDamage: 80
-  maxHealth: 1250
+  maxHealth: 1500
   armorType: 2
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -105,7 +105,7 @@ MonoBehaviour:
   spawnIntervalSeconds: 0
   auraRadius: 14
   auraSpeedMultiplier: 1.2
-  auraHealPerSecondShare: 0.01
+  auraHealPerSecondShare: 0.006
   lifestealShare: 0
   leapRange: 0
   leapSpeed: 0
@@ -121,4 +121,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
-  notes: 'Best counters (headless runner, equal cost): Gauss Warthog (100%), Spartan (100%). A Grunt in a hero''s mech. A quick tank with a strong aura: friends within 14 m move 20% faster and heal 1% per second. First-pass M10 values, Unggoy Rebellion (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Gauss Warthog (100%), Spartan (100%). A Grunt in a hero''s mech. A quick tank with a strong aura: friends within 14 m move 20% faster and heal 0.6% per second. First-pass M10 values, Unggoy Rebellion (Docs/M10/subfactions.md).'

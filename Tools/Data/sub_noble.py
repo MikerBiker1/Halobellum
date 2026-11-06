@@ -13,7 +13,7 @@ ORDER = 1
 def units(U, W):
     return [
         U("SpartanSniper", "Spartan Sniper", FACTION, "SingleTargetDps", 3, 200, 1, 400, 650, "U", 1.75, 0.6, 0.5, "B",
-          [W("SRS99 Sniper Rifle", 220, 3.0, 42, "Ballistic", aa=True)], shield=200, regen=60, immune=True,
+          [W("SRS99 Sniper Rifle", 200, 3.0, 42, "Ballistic", aa=True)], shield=200, regen=60, immune=True,
           note="Kills one armored target at a time from very far away; has no answer to a crowd or to anything that reaches it.",
           baked="SpartanSniper"),
         U("SpartanHeavyWeapons", "Spartan Heavy Weapons", FACTION, "Tank", 3, 225, 1, 450, 1700, "U", 1.3, 0.8, 0.7, "B",

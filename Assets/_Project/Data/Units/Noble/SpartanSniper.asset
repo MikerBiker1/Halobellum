@@ -31,7 +31,7 @@ MonoBehaviour:
   targetFilter: 2
   weapons:
   - weaponName: SRS99 Sniper Rifle
-    damagePerShot: 220
+    damagePerShot: 200
     fireInterval: 3
     range: 42
     minRange: 0
