@@ -20,6 +20,7 @@ namespace Halobellum.Tests
         [TestCase("Covenant/Wraith")]
         [TestCase("Covenant/Scarab")]
         [TestCase("Covenant/Vampire")]
+        [TestCase("Covenant/CovenantPhantom")]
         [TestCase("Flood/InfectedPhantom")]
         [TestCase("FloodCovenant/InfestedBanshee")]
         public void ACovenantMachine_ExplodesLightBlue(string path)

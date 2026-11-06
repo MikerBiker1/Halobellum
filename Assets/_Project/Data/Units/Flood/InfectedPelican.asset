@@ -27,7 +27,6 @@ MonoBehaviour:
   collisionRadius: 2.5
   turnTime180: 1
   isAir: 1
-  canFlank: 0
   targetFilter: 0
   weapons:
   - weaponName: Crash Dive
@@ -44,6 +43,7 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
+    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -54,6 +54,7 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
+    windUpSeconds: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -65,11 +66,15 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
+  reinforcementDrops: 1
+  reinforcementLandSeconds: 0
+  reinforcementFirstDropSeconds: 0
   formsPerBody: 1
   isFlood: 1
   infects: 0
   immuneToInfection: 0
   selfDestructs: 1
+  canFlank: 0
   seeksDensestCluster: 1
   deathBurstDamage: 900
   deathBurstRadius: 3.5
@@ -101,4 +106,5 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air
-  notes: 'Best counters (headless runner, equal cost): Vampire (100%), Swarm Form (100%). First-pass M8 values (DECISIONS D38).'
+  notes: 'Best counters (headless runner, equal cost): Vampire (100%), Swarm Form
+    (100%). First-pass M8 values (DECISIONS D38).'

@@ -27,7 +27,6 @@ MonoBehaviour:
   collisionRadius: 1.4
   turnTime180: 1.5
   isAir: 0
-  canFlank: 0
   targetFilter: 2
   weapons:
   - weaponName: Rocket Volley
@@ -44,6 +43,7 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 3
     coneDegrees: 0
+    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -54,6 +54,7 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
+    windUpSeconds: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -65,11 +66,15 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
+  reinforcementDrops: 1
+  reinforcementLandSeconds: 0
+  reinforcementFirstDropSeconds: 0
   formsPerBody: 1
   isFlood: 0
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
+  canFlank: 0
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -97,4 +102,6 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Aerial
   weakAgainst: Ground units
-  notes: 'Best counters (headless runner, equal cost): Spartan Sniper (100%), Spartan Heavy Weapons (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Spartan Sniper (100%), Spartan
+    Heavy Weapons (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers
+    are from the Bible.'

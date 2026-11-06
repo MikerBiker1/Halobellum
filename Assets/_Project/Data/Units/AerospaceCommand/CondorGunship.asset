@@ -27,7 +27,6 @@ MonoBehaviour:
   collisionRadius: 3
   turnTime180: 1.5
   isAir: 1
-  canFlank: 1
   targetFilter: 2
   weapons:
   - weaponName: Twin Autocannons
@@ -44,6 +43,7 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
+    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -54,6 +54,7 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
+    windUpSeconds: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -73,6 +74,7 @@ MonoBehaviour:
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
+  canFlank: 1
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -100,4 +102,6 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air
-  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Reaver (100%). A gunship that also drops 6 Marines after 7 seconds, without needing a tech. First-pass M10 values, Aerospace Command (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Reaver (100%).
+    A gunship that also drops 6 Marines after 7 seconds, without needing a tech.
+    First-pass M10 values, Aerospace Command (Docs/M10/subfactions.md).'

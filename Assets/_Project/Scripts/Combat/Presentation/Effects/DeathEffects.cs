@@ -98,7 +98,7 @@ namespace Halobellum.Presentation
         // does too; the Banished's and the Unggoy's crude machines and the Lekgolo's worms keep their own deaths.
         private static readonly HashSet<string> CovenantMachines = new HashSet<string>
         {
-            "Ghost", "Banshee", "Wraith", "Scarab", "Vampire", "Phantom",
+            "Ghost", "Banshee", "Wraith", "Scarab", "Vampire", "Covenant Phantom",
             "Infested Ghost", "Infested Banshee", "Infested Wraith", "Infected Phantom",
         };
 
