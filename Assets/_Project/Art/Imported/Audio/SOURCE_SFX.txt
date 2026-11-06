@@ -3,7 +3,7 @@ File, the slot it fills, and what for. The game evens out how loud each one is (
 
 assault_rifle_fire_brown2_1.wav -> sfx_fire_assaultrifle.wav: Marines' MA5 and the Scavenged Rifle (Infested Marine, Combat Form)
 fire[smg_new01].wav -> sfx_fire_smg.wav: ODSTs' M7 SMG, looped while they fire
-fire[m60_ster1].wav -> sfx_fire_m60.wav: the Warthog's machine gun (and the Infested Warthog's), looped while it fires
+fire[m60_ster1].wav -> sfx_fire_m60.wav: every machine gun and chaingun: the Warthog's (and the Infested Warthog's), the coaxial guns, the Mantis, the Vulture, the Elephant's turrets, the Spartan's chaingun, looped while they fire
 ghost_fire[plasma_ghost].wav -> sfx_fire_ghost.wav: the Ghost's plasma bolts (and the Infested Ghost's), looped while it fires
 flamethrower_fire_FT_active.wav -> sfx_fire_flame.wav: flamethrowers, looped while they fire
 plas_rifle_fire[plas_rif_fire].wav -> sfx_fire_plasma.wav: plasma rifles, pistols and turrets
@@ -57,15 +57,17 @@ Failure to place unit.wav -> ui_error.wav: something that can't be done, every f
 Card chosen.wav -> ui_cardpick.wav: a card taken, every faction
 Unit bought (fall to grid).wav -> ui_buy.wav: a squad bought, every faction
 Unit unlocked.wav -> ui_unlock.wav: a unit unlocked or a tech bought, every faction
+Autocannon.mp3 -> sfx_fire_autocannon.mp3: autocannons (Pelican, Sparrowhawk, Condor, Chopper), looped while they fire
+fire_BR85.wav -> sfx_fire_br85.wav: the BR85 battle rifle (Spartan Fireteam)
+phantom_turret_fire[phantom_fire].wav -> sfx_fire_plasmaheavy.wav: heavy plasma: the Marauder's plasma cannon, and any heavy plasma shot with no file of its own
+phantom_turret_fire[phantom_fire].wav -> sfx_fire_plasmaturret.wav: the Phantoms' and the Scarab's plasma turrets (the same file, in a voice group of its own)
+beam_rifle_fire[cov_snip_shot9].wav -> sfx_fire_beamrifle.wav: the Beam Rifle (Jackal)
+Glassing beam.mp3 -> sfx_spell_glassing.mp3: Glassing Beam, once for the whole beam, started so that the beam strikes with it
+Small&medium light nodes.wav -> sfx_node_small.wav: a small or medium node of light hitting a base at the end of a round
+big light node.wav -> sfx_node_big.wav: a big node of light hitting a base at the end of a round
+UNSC air unit hitting the ground.wav -> sfx_pelican_crash.wav: the same crash, as asked: the biggest Flood units dying
 
 Not used:
 plasma_grenade_plasmagrenexpl_plasmagx1.wav: no use for it yet, as the owner said
-beam_rifle_fire[cov_snip_shot9].wav: no unit has a beam rifle
 magnum_fire[handgun2].wav: no unit has a magnum
 fire[plasmarifle1].wav: the same file as banshee_fire[plasmarifle1].wav, which the Banshee uses
-Autocannon.mp3: new, not placed yet
-Glassing beam.mp3: new, not placed yet
-Small&medium light nodes.wav: new, not placed yet
-big light node.wav: new, not placed yet
-fire_BR85.wav: new, not placed yet
-phantom_turret_fire[phantom_fire].wav: new, not placed yet

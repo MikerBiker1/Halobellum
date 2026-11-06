@@ -1,13 +1,15 @@
 // AudioFlowTests.cs
 // Sound at the edges of a battle (M10): the game's pause holds the battle's sounds, leaving from the pause leaves nothing behind, a
 // stinger doesn't follow the player off its screen, the Sandbox's sound goes by the armies really placed, what is done to a squad each round is heard
-// softly, and menu buttons sound when the pointer goes over them (with a test's pointer, never the real mouse).
+// softly, menu buttons sound when the pointer goes over them (with a test's pointer, never the real mouse), and the Glassing Beam's long sound starts
+// ahead of its strike and fades with its beam (D71).
 // These can only check what is asked for and what is playing, not how it sounds. The tests run in batch mode, where the room stays silent.
-// Depends on: Halobellum.Presentation, Halobellum.Economy, Halobellum.Core, NUnit, Unity Test Framework.
+// Depends on: Halobellum.Presentation, Halobellum.Combat, Halobellum.Economy, Halobellum.Core, NUnit, Unity Test Framework.
 
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using Halobellum.Combat;
 using Halobellum.Core;
 using Halobellum.Economy;
 using Halobellum.Presentation;
@@ -324,6 +326,39 @@ namespace Halobellum.Tests
             Assert.Greater(Count("sfx_fire_laser"), 3, "The lasers should be firing.");
             Assert.IsTrue(heard, "The beam should be heard over them.");
             Object.FindAnyObjectByType<BattleController>().Speed = 1f;
+        }
+
+        [UnityTest]
+        public IEnumerator TheGlassingBeam_IsHeardBeforeItStrikes_OnlyOnce_AndFadesWithItsBeam()
+        {
+            yield return Load("Sandbox");
+            var sandbox = Object.FindAnyObjectByType<SandboxController>();
+            Assert.IsTrue(sandbox.AddSquad(Team.A, UnitNamed(sandbox, "Scorpion")).Ok);
+            Assert.IsTrue(sandbox.AddSquad(Team.B, UnitNamed(sandbox, "Scorpion")).Ok);
+            yield return null;
+            var battle = Object.FindAnyObjectByType<BattleController>();
+            battle.Speed = 1f;
+            sandbox.Run();
+            var glassing = new SpellStats { Name = "Glassing Beam", Offensive = true, Effect = SpellEffect.Damage, Radius = 2f, DamagePerTick = 1f, Ticks = 5, TickInterval = 0.6f, DelaySeconds = 3f, Targets = TargetFilter.Both };
+            SimSpell spell = battle.Simulation.AddSpell(glassing, Team.A, new Vec2(0f, 0f));
+            _played.Clear();
+
+            float heardAt = -1f, deadline = Time.realtimeSinceStartup + 20f;
+            while (spell.TicksDone == 0 && Time.realtimeSinceStartup < deadline)
+            {
+                if (heardAt < 0f && _played.Contains("sfx_spell_glassing")) heardAt = battle.Simulation.ElapsedSeconds;
+                yield return null;
+            }
+            Assert.Greater(spell.TicksDone, 0, "The beam should have struck.");
+            Assert.GreaterOrEqual(heardAt, 0f, "Its sound should start before it strikes.");
+            Assert.AreEqual(glassing.DelaySeconds - AudioCatalog.GlassingStrikeSeconds, heardAt, 0.3f, "As long before as the file builds up.");
+
+            // The beam lasts 3 s, then the sound fades: long before the owner's 13 s file would have ended by itself.
+            deadline = Time.realtimeSinceStartup + 6f + AudioCatalog.GlassingFadeSeconds;
+            while (Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.AreEqual(1, Count("sfx_spell_glassing"), "Once for the whole beam: not again at its first hit.");
+            foreach (AudioSource source in Director.GetComponents<AudioSource>())
+                Assert.IsFalse(source.isPlaying && source.clip != null && source.clip.name == "sfx_spell_glassing", "It should have faded out with its beam.");
         }
 
         private readonly Dictionary<string, Rect> _buttons = new Dictionary<string, Rect>();

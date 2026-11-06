@@ -13,6 +13,7 @@
 //   - Seeders and Swarm Forms call, each one 3 to 6 s after its last call ended;
 //   - an energy shield starting to recharge is heard (one at a time, as there may be many);
 //   - a Spartan Laser's sound starts with its wind-up, so that the shot in the file comes with the shot in the battle.
+//   - the Glassing Beam's long sound starts ahead of the beam, so that the beam strikes with it, and fades out as the beam goes (D71).
 // Depends on: AudioDirector, AudioCatalog, WeaponFeel, GamePause, BattleController, Halobellum.Combat (BattleSimulation, SimUnit, SimSpell), Halobellum.Core, UnityEngine.
 
 using System.Collections.Generic;
@@ -60,6 +61,9 @@ namespace Halobellum.Presentation
         private readonly Dictionary<UnitStats, bool> _swords = new Dictionary<UnitStats, bool>();
         private readonly Dictionary<int, float> _nextCall = new Dictionary<int, float>(128);
         private readonly HashSet<int> _recharging = new HashSet<int>();
+        /// <summary>Spells whose sound started ahead of their first hit (the Glassing Beam), and how far ahead each kind's must start.</summary>
+        private readonly HashSet<SimSpell> _spellsAhead = new HashSet<SimSpell>();
+        private readonly Dictionary<SpellStats, float> _spellLeads = new Dictionary<SpellStats, float>();
 
         private struct Later
         {
@@ -117,6 +121,7 @@ namespace Halobellum.Presentation
             _beams.Clear();
             _nextCall.Clear();
             _recharging.Clear();
+            _spellsAhead.Clear();
             _later.Clear();
             _shells = 0;
         }
@@ -319,6 +324,7 @@ namespace Halobellum.Presentation
 
         private void OnSpellTriggered(SimSpell spell)
         {
+            if (_spellsAhead.Contains(spell)) return; // Its sound is already under way (StartSpellsAhead).
             SfxCue cue = AudioCatalog.Spell(spell.Stats, spell.TicksDone, CasterFaction(spell.Stats, spell.Team));
             if (cue != null) GameAudio.Sfx(cue, new Vector3(spell.Position.X, 0f, spell.Position.Y));
         }
@@ -363,6 +369,7 @@ namespace Halobellum.Presentation
             UpdateLoops(director);
             if (AudioCatalog.BeamCharge.HasSound) UpdateBeams(director);
             PlayWhatIsDue(director);
+            StartSpellsAhead();
             if (Time.unscaledTime >= _nextScan)
             {
                 _nextScan = Time.unscaledTime + 0.25f;
@@ -442,6 +449,44 @@ namespace Halobellum.Presentation
             }
             foreach (int key in _ended) _beams.Remove(key);
             director.SetLoop(AudioCatalog.BeamLoop, firing > 0 ? 1f : 0f, loopPlace);
+        }
+
+        /// <summary>
+        /// A spell whose sound builds up before it strikes (the owner's Glassing Beam) starts that long before its first hit, by the battle's speed, and fades
+        /// out as its beam goes (SpellEffects draws it for its hits and half a second more). If the battle starts too close to the hit, the build-up is skipped.
+        /// </summary>
+        private void StartSpellsAhead()
+        {
+            IReadOnlyList<SimSpell> spells = _shown.Spells;
+            if (spells.Count == 0) return;
+            float speed = _battle.Speed, now = _shown.ElapsedSeconds;
+            for (int i = 0; i < spells.Count; i++)
+            {
+                SimSpell spell = spells[i];
+                if (spell.TicksDone > 0 || _spellsAhead.Contains(spell)) continue;
+                if (!_spellLeads.TryGetValue(spell.Stats, out float lead))
+                {
+                    lead = AudioCatalog.SpellLeadSeconds(spell.Stats);
+                    _spellLeads[spell.Stats] = lead;
+                }
+                if (!SpellAhead(spell.Stats, lead, now, speed, out float skip, out float fadeAfter)) continue;
+                _spellsAhead.Add(spell);
+                SfxCue cue = AudioCatalog.Spell(spell.Stats, 1, CasterFaction(spell.Stats, spell.Team));
+                if (cue != null) GameAudio.SfxShaped(cue, new Vector3(spell.Position.X, 0f, spell.Position.Y), skip, fadeAfter, AudioCatalog.GlassingFadeSeconds);
+            }
+        }
+
+        /// <summary>
+        /// Whether a spell's sound, which must start lead seconds (real time) before its first hit, starts now, at this moment of the battle and at this speed.
+        /// If so: how far into the clip it starts (skip: the battle began too close to the hit) and after how long it fades (its hits, and a little more).
+        /// </summary>
+        public static bool SpellAhead(SpellStats spell, float lead, float now, float speed, out float skip, out float fadeAfter)
+        {
+            speed = Mathf.Max(0.05f, speed);
+            float left = Mathf.Max(0f, (spell.DelaySeconds - now) / speed); // Real seconds to its first hit.
+            skip = Mathf.Max(0f, lead - left);
+            fadeAfter = left + (Mathf.Max(1, spell.Ticks) * spell.TickInterval + 0.1f) / speed;
+            return lead > 0f && left <= lead;
         }
 
         private void PlayWhatIsDue(AudioDirector director)

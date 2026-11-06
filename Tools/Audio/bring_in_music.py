@@ -19,6 +19,7 @@ SLOTS.update(
     {
         "Combat_flood_present": "music_combat_flood_present",
         "Victory_match": "stinger_match_victory",
+        "draw": "stinger_match_draw",
         "Defeat_match": "stinger_match_defeat_1",
         "Defeat_match2": "stinger_match_defeat_2",
         "Defeat_match3": "stinger_match_defeat_3",

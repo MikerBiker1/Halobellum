@@ -1,6 +1,6 @@
 // MatchAudio.cs
 // The sound of a match: which music plays on which screen (a random song for each round's cards and deployment, another for its battle), which UI sound goes with what the
-// player does (buy, sell, unlock, a card, a spell, a level, a move, a mistake), and what sounds when a round or the whole game ends, with their own sounds against Flood.
+// player does (buy, sell, unlock, a card, a spell, a level, a move, a mistake), and what sounds when a round or the whole game ends (a round drawn has its own), with their own sounds against Flood.
 // Added at run time to the object with the MatchController (see AudioDirector). In Unlock Skirmish no side has a faction: the UI sounds are the neutral ones, or UNSC's where there is no neutral one.
 // Depends on: AudioDirector, AudioSlots, MatchController, Halobellum.Economy (Match, RoundSummary), UnityEngine.
 
@@ -88,9 +88,11 @@ namespace Halobellum.Presentation
 
         private static void RoundEnded(AudioDirector director, Match match)
         {
-            Team? winner = match.LastSummary?.RoundWinner;
-            if (winner == null) return;
-            if (winner == Team.A) director.Music.PlayStinger(AudioSlots.RoundVictory);
+            RoundSummary summary = match.LastSummary;
+            if (summary == null) return;
+            Team? winner = summary.RoundWinner;
+            if (winner == null) director.Music.PlayStinger(AudioSlots.RoundDraw); // Neither side won the round.
+            else if (winner == Team.A) director.Music.PlayStinger(AudioSlots.RoundVictory);
             else director.Music.PlayStinger(AudioSlots.RoundDefeatSound(FloodOn(match, Team.B), director.NextRandom(), AudioLibrary.Get(AudioSlots.RoundDefeat).Clips.Length));
         }
 
@@ -100,11 +102,8 @@ namespace Halobellum.Presentation
             director.Music.PlayStinger(AudioSlots.GameOverSong(match.Winner == Team.A, FloodOn(match, Team.B), faction));
         }
 
-        /// <summary>A node of light hit a base. Big hits sound big. These are stand-ins from the battle's own sounds until the game has a sound for it.</summary>
-        private static void OnEndingHit(RoundEnding.Node node)
-        {
-            GameAudio.Sfx(node.Size < 0.45f ? AudioCatalog.ImpactArmor : node.Size < 0.75f ? AudioCatalog.ExplosionSmall : node.Size < 0.92f ? AudioCatalog.ExplosionMedium : AudioCatalog.ExplosionLarge);
-        }
+        /// <summary>A node of light hit a base: the owner's small or big sound, by its size (AudioCatalog.NodeHit).</summary>
+        private static void OnEndingHit(RoundEnding.Node node) => GameAudio.Sfx(AudioCatalog.NodeHit(node.Size, node.IsTitan));
 
         /// <summary>What the player just did, by the name of the MatchController's method.</summary>
         private void OnAction(string action, ActionResult result)

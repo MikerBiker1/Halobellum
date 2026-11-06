@@ -33,6 +33,7 @@ STINGERS
   stinger_game_victory             The whole game won.
   stinger_match_defeat             A round lost, when its window opens. Several sounds: stinger_match_defeat_1 and so on. One is picked at random.
   stinger_match_defeat_flood_present A round lost against Flood: joins the other sounds.
+  stinger_match_draw               A round drawn (neither side won it), when its window opens. No generated sound: silent until a file is in.
   stinger_match_victory            A round won, when its window opens.
 
 BATTLE SOUNDS
@@ -53,14 +54,14 @@ BATTLE SOUNDS
   sfx_fire_cannon                  Tank and other cannons.
   sfx_fire_flame                   Flamethrowers.
   sfx_fire_gauss                   Gauss guns and the sniper rifle: one hard shot.
-  sfx_fire_heavybullet             Machine guns, chainguns, autocannons, turrets, shotguns.
+  sfx_fire_heavybullet             Machine guns, chainguns, autocannons, turrets, shotguns, where they have no file of their own (sfx_fire_m60, sfx_fire_autocannon, sfx_fire_shotgun).
   sfx_fire_laser                   The Spartan Laser and the Hunter Captain's Siphon Laser.
   sfx_fire_melee                   Melee with no faction of its own.
   sfx_fire_melee_covenant          Covenant melee (energy sword, talons).
   sfx_fire_melee_flood             Flood melee (claws, tendrils, bites).
   sfx_fire_needle                  Needle weapons.
   sfx_fire_plasma                  Plasma rifles, pistols, turrets.
-  sfx_fire_plasmaheavy             Fuel rod guns, plasma mortars, and plasma shots that fly and burst (Marauder).
+  sfx_fire_plasmaheavy             Heavy plasma: plasma shots that fly and burst (Marauder), and fuel rod guns and mortars where they have no file of their own.
   sfx_fire_rocket                  Rocket launchers and missiles, the launch.
   sfx_flood_burst                  A carrier form going off, a Flood unit bursting, or Bone Shards landing.
   sfx_hum_engine                   A loop: the engines of all UNSC ground vehicles, as loud as how many are alive.
@@ -72,7 +73,7 @@ BATTLE SOUNDS
   sfx_impact_wet                   A hit on the Flood.
   sfx_infection_rise               An infected corpse rising.
   sfx_infection_start              A dying unit being infected.
-  sfx_pelican_crash                The Infected Pelican hitting the ground; also the biggest Flood units dying.
+  sfx_pelican_crash                The Infected Pelican hitting the ground (sfx_death_air_unsc once it is in); also the biggest Flood units dying.
   sfx_pelican_dive                 The Infected Pelican starting its dive.
   sfx_spell_buff_covenant          Prophet's Blessing.
   sfx_spell_buff_flood             Hive Frenzy and Biomass Shell.
@@ -81,7 +82,7 @@ BATTLE SOUNDS
   sfx_spell_drop_flood             Dispersal Pods.
   sfx_spell_drop_pods              ODST Drop Pods.
   sfx_spell_emp                    Electromagnetic Pulse and Nerve Spores.
-  sfx_spell_glassing               Glassing Beam (one sound for its whole 3 s).
+  sfx_spell_glassing               Glassing Beam: one sound for its whole 3 s. The owner's file builds up for 1.85 s before the beam strikes, so it starts that long ahead, and fades as the beam goes.
   sfx_spell_mac                    MAC Strike.
   sfx_spell_missiles               Archer Missile Barrage (one sound at its start).
   sfx_spell_nuke                   HAVOK Nuke.
@@ -133,7 +134,12 @@ UI SOUNDS BEFORE A SIDE IS CHOSEN (main menu, draft)
 ONE WEAPON'S OR UNIT'S OWN (no generated sound: until a file is in, the weapon's kind is heard; see AudioCatalog.OwnFire)
   sfx_fire_assaultrifle            Marines' MA5 and the Scavenged Rifle (Infested Marine, Combat Form).
   sfx_fire_smg                     ODSTs' M7 SMG. Loops while they fire, so the file should loop.
-  sfx_fire_m60                     The Warthog's machine gun, and the Infested Warthog's. Loops while it fires.
+  sfx_fire_m60                     Every machine gun and chaingun: the Warthog's (and the Infested Warthog's), the Scorpion's and the Grizzly's
+                                   coaxial guns, the Mantis, the Vulture, the Elephant's turrets, the Spartan's chaingun. Loops while they fire.
+  sfx_fire_autocannon              Autocannons: Pelican, Sparrowhawk, Condor, Chopper. Loops while they fire.
+  sfx_fire_br85                    The BR85 battle rifle (Spartan Fireteam).
+  sfx_fire_beamrifle               The Beam Rifle (Jackal).
+  sfx_fire_plasmaturret            The Phantoms' and the Scarab's plasma turrets (the same file as sfx_fire_plasmaheavy, in a voice group of its own).
   sfx_fire_ghost                   The Ghost's plasma bolts, and the Infested Ghost's. Loops while it fires.
   sfx_fire_banshee                 The Banshee's plasma cannons, and the Infested Banshee's.
   sfx_fire_banshee_bomb            The Banshee's fuel rod bomb, fired.
@@ -161,6 +167,8 @@ ONE WEAPON'S OR UNIT'S OWN (no generated sound: until a file is in, the weapon's
   sfx_call_swarm                   A Swarm Form, 3 to 6 s after its last call. Several: sfx_call_swarm_1 and so on.
   sfx_shield_regen                 An energy shield starting to recharge (one at a time).
   sfx_death_lekgolo                A Hunter's or a Goliath's death.
+  sfx_node_small                   A small or medium node of light hitting a base at the end of a round (until it is in: the battle's hits).
+  sfx_node_big                     A big node of light (about 60 damage to a base and up, and every Titan's).
 
 UI SOUNDS FOR EVERY FACTION
   A UI file named without its faction, such as ui_click or ui_error, serves every faction's set (and the neutral one) that has no
