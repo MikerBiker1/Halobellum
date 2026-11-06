@@ -69,6 +69,8 @@ namespace Halobellum.Economy
         public bool CanMove(PlacedSquad squad) => Self.Squads.Contains(squad) && _match.CanMove(squad);
         public ActionResult Unlock(UnitStats type) => _match.Unlock(Team, type);
         public ActionResult Buy(UnitStats type, int column, int row, bool rotated90) => _match.Buy(Team, type, column, row, rotated90);
+        /// <summary>Buys a squad at the free spot nearest the middle of the zone (the tutorial's enemy, D77).</summary>
+        public ActionResult Buy(UnitStats type) => _match.Buy(Team, type);
         public ActionResult Move(PlacedSquad squad, int column, int row, bool rotated90) => _match.Move(Team, squad.Id, column, row, rotated90);
         public ActionResult Sell(PlacedSquad squad) => _match.Sell(Team, squad.Id);
         public int SellValue(PlacedSquad squad) => _match.SellValue(squad);

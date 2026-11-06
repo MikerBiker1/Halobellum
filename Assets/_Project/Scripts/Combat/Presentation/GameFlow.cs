@@ -29,9 +29,11 @@ namespace Halobellum.Presentation
         public const string ScreenDemoFlag = "-screenDemo";
         public const string CardsDemoFlag = "-cardsDemo";
         public const string TerrainGalleryFlag = "-terrainGallery";
+        public const string TutorialDemoFlag = "-tutorialDemo";
 
         private static string _lastScene;
         private static MatchSetup _pendingSetup;
+        private static bool _tutorialPending;
 
         /// <summary>The scene the Sandbox's Back button returns to.</summary>
         public static string SandboxCameFrom { get; private set; } = MatchScene;
@@ -52,7 +54,7 @@ namespace Halobellum.Presentation
         public static bool IsMeasuring(string[] args) => Has(args, CrowdBenchmark.Flag) || Has(args, BenchmarkFlag);
 
         /// <summary>True for a run of any test tool: the player's saved settings are not applied, and nothing it does reaches them (GameSettings).</summary>
-        public static bool IsTestRun(string[] args) => DirectSceneFor(args) != null || Has(args, MenuDemoFlag) || Has(args, ScreenDemoFlag) || Has(args, TerrainGalleryFlag) || Has(args, AudioCapture.Flag);
+        public static bool IsTestRun(string[] args) => DirectSceneFor(args) != null || Has(args, MenuDemoFlag) || Has(args, ScreenDemoFlag) || Has(args, TerrainGalleryFlag) || Has(args, TutorialDemoFlag) || Has(args, AudioCapture.Flag);
 
         /// <summary>True if the command line itself sets the window, which the saved settings must not undo.</summary>
         public static bool CommandLineSetsWindow(string[] args)
@@ -77,6 +79,22 @@ namespace Halobellum.Presentation
             MatchSetup setup = _pendingSetup;
             _pendingSetup = null;
             return setup;
+        }
+
+        /// <summary>Starts the tutorial's scripted match (D77).</summary>
+        public static void StartTutorial()
+        {
+            _pendingSetup = null;
+            _tutorialPending = true;
+            Load(MatchScene);
+        }
+
+        /// <summary>True once, for the Match scene, if the tutorial was asked for.</summary>
+        public static bool TakeTutorial()
+        {
+            bool pending = _tutorialPending;
+            _tutorialPending = false;
+            return pending;
         }
 
         public static void OpenSandbox() => Load(SandboxScene);
@@ -107,6 +125,7 @@ namespace Halobellum.Presentation
         {
             _lastScene = null;
             _pendingSetup = null;
+            _tutorialPending = false;
             SceneManager.sceneLoaded -= OnSceneLoaded;
             SceneManager.sceneLoaded += OnSceneLoaded;
         }

@@ -180,6 +180,7 @@ namespace Halobellum.UI
                 ? HoverRect(windowWidth, height, _hoverRight, _hoverBottom, _hoverBesideRight, screenHeight)
                 : new Rect(ScreenLeft, screenHeight - height - 10f, windowWidth, height);
             UiHitAreas.Add(HudScale.ToScreen(window, scale));
+            if (hover == null) TutorialHud.Mark("area:stats", window);
             _window = window;
             _windowFrame = Time.frameCount;
 

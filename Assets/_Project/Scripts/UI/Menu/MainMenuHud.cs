@@ -90,6 +90,9 @@ namespace Halobellum.UI
 
         public void OpenSandbox() => Leave(GameFlow.OpenSandbox);
 
+        /// <summary>The tutorial's scripted match (D77).</summary>
+        public void OpenTutorial() => Leave(GameFlow.StartTutorial);
+
         /// <summary>
         /// Draws this screen under whatever Event.current is now, with the mouse at these pixels of IMGUI's screen: how the test tool sends IMGUI's own mouse events to it, with
         /// nothing going outside the game. The place is set after the scale, because setting GUI.matrix puts an event's mouse back where the real one is.
@@ -222,6 +225,7 @@ namespace Halobellum.UI
             float panelTop = y;
             if (ColumnButton(left, ref y, "Faction mode", _selectedMode == MatchMode.Faction)) SelectMode(MatchMode.Faction);
             if (ColumnButton(left, ref y, "Unlock Skirmish mode", _selectedMode == MatchMode.UnlockSkirmish)) SelectMode(MatchMode.UnlockSkirmish);
+            if (ColumnButton(left, ref y, "Tutorial")) OpenTutorial();
             if (ColumnButton(left, ref y, "Sandbox")) OpenSandbox();
             if (ColumnButton(left, ref y, "Back")) Back();
 

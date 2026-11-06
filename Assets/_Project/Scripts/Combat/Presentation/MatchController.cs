@@ -106,7 +106,25 @@ namespace Halobellum.Presentation
                 if (setup == null) setup = new MatchSetup();
                 setup.BaseHealth = baseHealth;
             }
-            NewMatch(setup: setup);
+            if (GameFlow.TakeTutorial()) StartTutorial();
+            else NewMatch(setup: setup);
+        }
+
+        // ------------------------------------------------------------------ the tutorial (D77)
+
+        /// <summary>The tutorial running in this match, or null.</summary>
+        public TutorialDirector Tutorial { get; private set; }
+
+        /// <summary>The scene's selection (the squad or tower selected).</summary>
+        public SquadSelection Selection => _selection;
+
+        /// <summary>A fixed match with the tutorial's steps (TutorialSetup): the same seed, start and enemy for everyone.</summary>
+        public void StartTutorial()
+        {
+            NewMatch(TutorialSetup.Seed, TutorialSetup.Setup(), TutorialSetup.Enemy(), tutorial: true);
+            TutorialSetup.FixDrafts(Match, _realFactions);
+            Tutorial = gameObject.AddComponent<TutorialDirector>();
+            Tutorial.Begin(this);
         }
 
         private void OnDestroy()
@@ -204,12 +222,19 @@ namespace Halobellum.Presentation
         /// Starts a fresh match at the draft. fixedSeed overrides the Inspector seed (tests). A setup is remembered for the
         /// matches after this one; without one, the last one is played again.
         /// </summary>
-        public void NewMatch(int? fixedSeed = null, MatchSetup setup = null)
+        public void NewMatch(int? fixedSeed = null, MatchSetup setup = null, IMatchAi enemy = null, bool tutorial = false)
         {
+            if (!tutorial && Tutorial != null)
+            {
+                // A new match after the tutorial is an ordinary one, with the settings it had before.
+                Destroy(Tutorial);
+                Tutorial = null;
+            }
             Ending = null;
             CloseBattleLog();
             ForgetBattlePictures();
-            if (setup != null) _setup = setup;
+            if (setup != null && !tutorial) _setup = setup; // The tutorial's own setup is not kept for the next match.
+            MatchSetup applied = tutorial ? setup : _setup;
             var cache = new Dictionary<UnitDefinition, UnitStats>();
             var infos = new List<FactionInfo>();
             _cardSources.Clear();
@@ -224,11 +249,11 @@ namespace Halobellum.Presentation
             Difficulty = GameSettings.Difficulty;
             _matchups = matchupTable != null ? matchupTable.ToTable() : null;
             MatchRules rules = matchRules.ToRules();
-            _setup?.ApplyTo(rules);
+            applied?.ApplyTo(rules);
             _realFactions = infos;
             IReadOnlyList<FactionInfo> offered = infos;
             if (rules.Mode == MatchMode.UnlockSkirmish) offered = new[] { SkirmishFaction.Build(infos) };
-            Match = new Match(rules, _battle.Rules, offered, matchSeed, new RuleBasedAi(Difficulty, matchSeed, _matchups));
+            Match = new Match(rules, _battle.Rules, offered, matchSeed, enemy ?? new RuleBasedAi(Difficulty, matchSeed, _matchups));
             CancelPlacement();
             CancelSpellPlacement();
             CancelItemPlacement();
@@ -878,6 +903,11 @@ namespace Halobellum.Presentation
         public void Ready()
         {
             if (Match.Phase != MatchPhase.Deployment) return;
+            if (Tutorial != null && !Tutorial.ReadyAllowed)
+            {
+                Message = "First: " + (Tutorial.Current?.Doing ?? "the tutorial's step.");
+                return;
+            }
             CancelPlacement();
             CancelSpellPlacement();
             CancelItemPlacement();

@@ -76,6 +76,7 @@ namespace Halobellum.UI
         {
             if (match == null || match.Match == null || match.Match.Phase != MatchPhase.MatchOver) return;
             _battleStats.Open(match.Match);
+            match.Tutorial?.Signal("BattleStats");
         }
 
         public void CloseBattleStats()
@@ -127,6 +128,7 @@ namespace Halobellum.UI
             EnsureStyles();
             _scale = HudScale.Apply();
             _panelsDrawn.Clear();
+            TutorialHud.Active = match.Tutorial != null;
 
             switch (match.Match.Phase)
             {
@@ -137,6 +139,7 @@ namespace Halobellum.UI
                 case MatchPhase.Result: DrawBattle(); DrawResult(); break;
                 case MatchPhase.MatchOver: DrawMatchOver(); break;
             }
+            if (match.Tutorial != null) TutorialHud.Draw(match, _scale, _header, _text, _small, _button); // Over everything (D77).
         }
 
         // ------------------------------------------------------------------ draft
@@ -158,6 +161,7 @@ namespace Halobellum.UI
             int count = m.PlayerDraft.Count;
             CardRow row = CardLayout.Arrange(count, width, bar.yMax + 14f, height - 14f);
             DraftRowText text = count > 0 ? CardScreens.MeasureDraftRow(m.PlayerDraft, row.CardAt(0)) : default;
+            if (count > 0) TutorialHud.Mark("area:draft", row.CardAt(0));
             for (int i = 0; i < count; i++)
             {
                 if (CardScreens.DrawDraftCard(row.CardAt(i), m.PlayerDraft[i], text, m.Rules.StartingBaseHealth(m.PlayerDraft[i].Value))) match.ChooseDraft(i);
@@ -186,7 +190,14 @@ namespace Halobellum.UI
             GUI.Label(new Rect(bar.x + 760f, bar.y + 6f, 200f, 26f), skirmish ? "Unlock Skirmish" : $"{player.Faction.Name} vs {m.Enemy.Faction?.Name ?? "?"}", _small);
             GUI.Label(new Rect(bar.x + 760f, bar.y + 32f, 200f, 26f), m.EnemyAi.Label, _small);
             // The left button only: a right-click closes the unlock page, with this button still live behind it, and GUI.Button takes any mouse button.
-            if (MenuStyle.Button(new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f), ReadyLabel, _bigButton) && Event.current.button == 0) match.Ready();
+            TutorialHud.Mark("area:topbar", bar);
+            var ready = new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f);
+            TutorialHud.Mark("key:Ready", ready);
+            bool readyLocked = match.Tutorial != null && !match.Tutorial.ReadyAllowed; // The tutorial holds the battle back until its step allows it (D77).
+            bool wasEnabled = GUI.enabled;
+            GUI.enabled = wasEnabled && !readyLocked;
+            if (MenuStyle.Button(ready, ReadyLabel, _bigButton) && Event.current.button == 0) match.Ready();
+            GUI.enabled = wasEnabled;
             DrawUndo(new Rect(bar.xMax - 150f, bar.yMax + 6f, 136f, 30f));
 
             if (!string.IsNullOrEmpty(match.Message))
@@ -264,6 +275,8 @@ namespace Halobellum.UI
                 GUI.Label(new Rect(0f, height * 0.5f - 20f, width, 40f), "No cards left to offer.", _centered);
             string faction = m.Player.Faction?.Name;
             CardRow row = CardLayout.Arrange(offer.Count, width, bar.yMax + 14f, bottom);
+            if (offer.Count > 0) TutorialHud.Mark("area:cards", Rect.MinMaxRect(row.CardAt(0).xMin, row.CardAt(0).yMin, row.CardAt(offer.Count - 1).xMax, row.CardAt(0).yMax));
+            for (int i = 0; i < offer.Count; i++) TutorialHud.Mark("area:card" + i, row.CardAt(i));
             for (int i = 0; i < offer.Count; i++)
             {
                 Rect card = row.CardAt(i);
@@ -327,6 +340,7 @@ namespace Halobellum.UI
             if (items.Count == 0) return;
             var panel = new Rect(10f, top, 330f, 44f + ItemHud.GridHeight(items.Count) + 44f);
             Panel(panel);
+            TutorialHud.Mark("area:inventory", panel);
             GUI.Label(new Rect(panel.x + 12f, panel.y + 8f, panel.width - 24f, 28f), HudTheme.Title("Inventory"), _header);
             string hovered = ItemHud.DrawItemGrid(panel.x + 12f, panel.y + 40f, items, match.PlacingItem, match.IconFor, match.BeginPlacingItem);
             string caption = hovered ?? (match.PlacingItem != null ? ItemHud.Describe(match.PlacingItem) : "Drag an item onto a squad's hexagon.");
@@ -398,6 +412,7 @@ namespace Halobellum.UI
             const float rowHeight = 52f;
             var panel = new Rect(10f, 110f, 330f, 44f + spells.Count * rowHeight);
             Panel(panel);
+            TutorialHud.Mark("area:spells", panel);
             GUI.Label(new Rect(panel.x + 12f, panel.y + 8f, panel.width - 24f, 28f), HudTheme.Title("Spells"), _header);
             for (int i = 0; i < spells.Count; i++)
             {
@@ -448,6 +463,9 @@ namespace Halobellum.UI
             ShopOrder.Sort(rows);
         }
 
+        /// <summary>A rect of the shop's scrolled list, where it is in the HUD's own space (D77).</summary>
+        private Rect ShopOnScreen(Rect view, Rect inList) => new Rect(view.x + inList.x - _shopScroll.x, view.y + inList.y - _shopScroll.y, inList.width, inList.height);
+
         private void DrawShop(float width, float height)
         {
             Match m = match.Match;
@@ -458,6 +476,7 @@ namespace Halobellum.UI
             float panelHeight = Mathf.Min(height - 200f, 50f + roster.Count * rowHeight);
             var panel = new Rect(width - panelWidth - 10f, 110f, panelWidth, panelHeight);
             Panel(panel);
+            TutorialHud.Mark("area:shop", panel);
             GUI.Label(new Rect(panel.x + 12f, panel.y + 8f, panel.width - 24f, 28f), HudTheme.Title($"Shop: {player.Label}"), _header);
 
             var view = new Rect(panel.x + 6f, panel.y + 40f, panel.width - 12f, panel.height - 46f);
@@ -483,6 +502,7 @@ namespace Halobellum.UI
                 {
                     bool canBuy = player.Credits >= price && player.SquadsBoughtThisRound < m.SquadsPerRound(Team.A);
                     GUI.enabled = canBuy;
+                    TutorialHud.MarkScaled("key:Shop/Buy/" + unit.Name, ShopOnScreen(view, button), _scale);
                     if (GUI.Button(button, $"Buy {price}", _button)) match.Buy(unit);
                     UiAudio.Watch(button, canBuy);
                 }
@@ -490,6 +510,7 @@ namespace Halobellum.UI
                 {
                     bool canUnlock = player.Credits >= unit.UnlockCost && player.UnlocksThisRound < m.Rules.UnlocksPerRound;
                     GUI.enabled = canUnlock;
+                    TutorialHud.MarkScaled("key:Shop/Unlock/" + unit.Name, ShopOnScreen(view, button), _scale);
                     if (GUI.Button(button, unit.UnlockCost > 0 ? $"Unlock {unit.UnlockCost}" : "Unlock (free)", _button)) match.Unlock(unit);
                     UiAudio.Watch(button, canUnlock);
                 }
@@ -507,6 +528,7 @@ namespace Halobellum.UI
             Selection.Select(-1);
             Selection.ClearTower();
             StatsWindow.ShopUnit = StatsWindow.ShopUnit == unit ? null : unit;
+            match.Tutorial?.Signal("ShopUnit");
         }
 
         // ------------------------------------------------------------------ the unit bar and unlock page (Unlock Skirmish)
@@ -523,6 +545,7 @@ namespace Halobellum.UI
         /// </summary>
         private void DrawUndo(Rect rect)
         {
+            TutorialHud.Mark("key:Undo", rect);
             bool canUndo = match.CanUndo;
             bool wasEnabled = GUI.enabled;
             GUI.enabled = wasEnabled && canUndo;
@@ -832,6 +855,7 @@ namespace Halobellum.UI
                 var rect = new Rect(screen.x / _scale - 80f, height - screen.y / _scale - 16f, 160f, 28f);
                 if (IsUnderAWindow(rect)) continue;
                 UiHitAreas.Add(HudScale.ToScreen(rect, _scale));
+                if (unit.Team == Team.A) TutorialHud.Mark("key:Tower/" + unit.Stats.Name, rect);
                 if (GUI.Button(rect, unit.Stats.Name, _button)) Selection.SelectTower(unit.Team, unit.Stats.Shockwave.Kind);
             }
         }
@@ -866,6 +890,7 @@ namespace Halobellum.UI
             var window = new Rect(10f, height - windowHeight - 10f, windowWidth, windowHeight);
             _towerWindow = window;
             Panel(window);
+            TutorialHud.Mark("area:tower", window);
             GUI.Label(new Rect(window.x + inset, window.y + 8f, textWidth - 30f, 28f), HudTheme.Title(view.Title), _header);
             GUI.Label(new Rect(window.x + inset, window.y + 34f, textWidth - 30f, 22f), view.Side, _small);
             if (GUI.Button(new Rect(window.xMax - 36f, window.y + 8f, 24f, 22f), "x", _button)) Selection.ClearTower();
@@ -1079,7 +1104,9 @@ namespace Halobellum.UI
             string footer = (s.Tie ? "Exact tie: both bases are restored. " : "")
                             + $"Income: +{s.IncomeAwarded} credits for next round.";
             GUI.Label(new Rect(panel.x + 20f, panel.yMax - 96f, panel.width - 40f, 26f), footer, _text);
-            if (GUI.Button(new Rect(panel.x + panel.width * 0.5f - 110f, panel.yMax - 58f, 220f, 44f), "Continue", _bigButton)) match.Continue();
+            var next = new Rect(panel.x + panel.width * 0.5f - 110f, panel.yMax - 58f, 220f, 44f);
+            TutorialHud.Mark("key:Continue", next);
+            if (GUI.Button(next, "Continue", _bigButton)) match.Continue();
         }
 
         private void DrawMatchOver()
@@ -1101,7 +1128,9 @@ namespace Halobellum.UI
             GUI.Label(new Rect(panel.x, y, panel.width, 40f), HudTheme.Title("Match over"), _title);
             y += 52f;
             if (s != null) SummaryLines(s, panel, y);
-            if (GUI.Button(new Rect(panel.x + panel.width * 0.5f - 230f, panel.yMax - 100f, 220f, 34f), "Battle stats", _button)) OpenBattleStats();
+            var stats = new Rect(panel.x + panel.width * 0.5f - 230f, panel.yMax - 100f, 220f, 34f);
+            TutorialHud.Mark("key:Battle stats", stats);
+            if (GUI.Button(stats, "Battle stats", _button)) OpenBattleStats();
             if (GUI.Button(new Rect(panel.x + panel.width * 0.5f + 10f, panel.yMax - 100f, 220f, 34f), "Open battle logs", _button)) Application.OpenURL("file:///" + BattleLogFile.Folder.Replace('\\', '/'));
             if (GUI.Button(new Rect(panel.x + panel.width * 0.5f - 230f, panel.yMax - 58f, 220f, 44f), "New match", _bigButton)) match.NewMatch();
             if (MenuStyle.Button(new Rect(panel.x + panel.width * 0.5f + 10f, panel.yMax - 58f, 220f, 44f), "Main Menu", _bigButton)) GameFlow.OpenMainMenu();
