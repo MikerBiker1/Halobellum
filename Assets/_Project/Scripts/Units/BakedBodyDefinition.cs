@@ -60,6 +60,8 @@ namespace Halobellum.Units
         public bool weaponAlongForearm;
         [Tooltip("With no weapon of its own: shots start from the right hand, where the model has its gun.")]
         public bool muzzleInRightHand;
+        [Tooltip("With no weapon of its own: shots start from the point of the body furthest forward in the shooting pose, the end of a gun that is part of its model.")]
+        public bool muzzleAtFront;
         [Tooltip("Folder in Art/Imported/Models of a prepared shield (Tools/Art), fixed to the left hand, facing forward in the shooting pose, and drawn see-through. Empty for none.")]
         public string shieldName;
         [Tooltip("How wide the shield is in the game, in metres.")]

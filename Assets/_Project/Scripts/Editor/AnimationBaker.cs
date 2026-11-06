@@ -272,7 +272,29 @@ namespace Halobellum.EditorTools
             var triangles = new List<int>(from.triangles);
 
             Vector3? muzzle = null;
-            if (string.IsNullOrEmpty(body.weaponName) && body.muzzleInRightHand)
+            if (string.IsNullOrEmpty(body.weaponName) && body.muzzleAtFront)
+            {
+                // The body's own gun: its tip is the vertex furthest forward halfway through the shooting clip, skinned as the shader will.
+                AnimationClip aim = source(body.shootingClip);
+                aim.SampleAnimation(model, aim.length * 0.5f);
+                Matrix4x4[] skinning = bones.Select((b, i) => b.localToWorldMatrix * bindPoses[i]).ToArray();
+                BoneWeight[] boneWeights = from.boneWeights;
+                float front = float.MinValue;
+                for (int i = 0; i < positions.Count; i++)
+                {
+                    BoneWeight w = boneWeights[i];
+                    Vector3 v = positions[i];
+                    Vector3 world = skinning[w.boneIndex0].MultiplyPoint3x4(v) * w.weight0 + skinning[w.boneIndex1].MultiplyPoint3x4(v) * w.weight1
+                        + skinning[w.boneIndex2].MultiplyPoint3x4(v) * w.weight2 + skinning[w.boneIndex3].MultiplyPoint3x4(v) * w.weight3;
+                    float ahead = model.transform.InverseTransformPoint(world).z;
+                    if (ahead > front)
+                    {
+                        front = ahead;
+                        muzzle = world;
+                    }
+                }
+            }
+            else if (string.IsNullOrEmpty(body.weaponName) && body.muzzleInRightHand)
             {
                 int hand = Array.FindIndex(bones, b => b.name == "RightHand");
                 if (hand < 0) throw new InvalidOperationException($"{body.name}: shots from the right hand need a RightHand bone.");
