@@ -177,8 +177,7 @@ namespace Halobellum.Presentation
             else
             {
                 yield return new WaitForSecondsRealtime(2f);
-                SimUnit target = charging.Weapons[0].WindUpTarget ?? charging.Weapons[0].Target;
-                yield return Capture("w_LaserWindUp", target != null ? Middle(charging, target) : _views.WorldPosition(charging), 13f);
+                yield return Capture("w_LaserWindUp", _views.WorldPosition(charging), 9f); // Close on the Spartan: the charge is small.
             }
             _sandbox.ResetBattle();
             yield return null;

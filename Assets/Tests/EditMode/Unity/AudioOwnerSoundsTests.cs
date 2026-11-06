@@ -160,21 +160,24 @@ namespace Halobellum.Tests
             AudioClip clip = AudioCatalog.FireSpartanLaser.Clips.Clips[0];
             var samples = new float[clip.samples * clip.channels];
             Assert.IsTrue(clip.GetData(samples, 0));
-            // The loudness of each 10 ms, and the moment it jumps most from the 10 ms before: the shot's attack.
+            // The loudness of each 10 ms. The charge swells into the shot: the loudest is the shot, and the log also says where the swell reaches half of it.
             int window = Mathf.Max(1, clip.frequency / 100) * clip.channels;
-            float previous = 0f, biggestJump = 0f, shotAt = 0f, loudestAt = 0f, loudest = 0f;
+            var loudness = new System.Collections.Generic.List<float>();
             for (int start = 0; start + window <= samples.Length; start += window)
             {
                 float sum = 0f;
                 for (int i = start; i < start + window; i++) sum += samples[i] * samples[i];
-                float rms = Mathf.Sqrt(sum / window);
-                float at = start / (float)clip.channels / clip.frequency;
-                if (rms - previous > biggestJump) { biggestJump = rms - previous; shotAt = at; }
-                if (rms > loudest) { loudest = rms; loudestAt = at; }
-                previous = rms;
+                loudness.Add(Mathf.Sqrt(sum / window));
             }
-            Debug.Log($"Spartan Laser file: {clip.length:0.00} s long, its sharpest attack at {shotAt:0.00} s, its loudest 10 ms at {loudestAt:0.00} s.");
-            Assert.AreEqual(2.5f, shotAt, 0.25f, "The shot should land with the wind-up's end.");
+            int loudest = 0;
+            for (int i = 1; i < loudness.Count; i++) if (loudness[i] > loudness[loudest]) loudest = i;
+            int attack = loudest;
+            while (attack > 0 && loudest - attack < 30 && loudness[attack - 1] >= loudness[loudest] * 0.5f) attack--;
+            float shotAt = attack * 0.01f;
+            var line = new System.Text.StringBuilder();
+            for (int i = 0; i < loudness.Count; i += 10) line.Append($" {i * 0.01f:0.0}s:{20f * Mathf.Log10(Mathf.Max(1e-5f, loudness[i])):0}");
+            Debug.Log($"Spartan Laser file: {clip.length:0.00} s long, its loudest 10 ms at {loudest * 0.01f:0.00} s, the shot's attack at {shotAt:0.00} s. dB every 0.1 s:{line}");
+            Assert.AreEqual(2.5f, loudest * 0.01f, 0.2f, "The shot (the loudest moment, 2.42 s in the owner's file) should come with the wind-up's end.");
         }
     }
 }
