@@ -99,8 +99,8 @@ UNITS = [
     U("FuelRodGrunt", "Fuel Rod Grunt", "Covenant", "ChaffClear", 1, 0, 4, 150, 80, "U", 3, 0.5, 0.25, "G",
       [W("Fuel Rod Gun", 32, 2.0, 16, "Explosive", proj=25, splash=3)]),
     # A sniper since 2026-11-05 (the owner): fewer to a squad, far more range, slow hard shots that land at once. Was Jackal (Plasma Rifle): 8 per squad, 8 damage every 0.3 s, 12 m.
-    U("JackalBeamRifle", "Jackal (Beam Rifle)", "Covenant", "SingleTargetDps", 1, 0, 4, 150, 70, "U", 3.2, 0.5, 0.25, "B",
-      [W("Beam Rifle", 45, 3.0, 24, "Energy")], baked="Jackal",
+    U("JackalBeamRifle", "Jackal (Beam Rifle)", "Covenant", "SingleTargetDps", 1, 0, 4, 175, 70, "U", 3.2, 0.5, 0.25, "B",
+      [W("Beam Rifle", 40, 3.0, 24, "Energy")], baked="Jackal",
       note="Snipers: few to a squad, they pick targets off from far away with slow, hard shots, and have little to stop a rush."),
     U("JackalShield", "Jackal (Shield)", "Covenant", "Tank", 1, 0, 6, 150, 70, "U", 3, 0.6, 0.25, "B",
       [W("Plasma Pistol", 6, 0.6, 10, "Energy")],

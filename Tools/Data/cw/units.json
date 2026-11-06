@@ -1083,7 +1083,7 @@
   "tier": 1,
   "unlock": 0,
   "squad": 4,
-  "cost": 150,
+  "cost": 175,
   "hp": 70,
   "armor": "U",
   "speed": 1.6,
@@ -1093,7 +1093,7 @@
   "weapons": [
    {
     "name": "Beam Rifle",
-    "dmg": 45,
+    "dmg": 40,
     "interval": 3.0,
     "range": 24,
     "minr": 0,

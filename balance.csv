@@ -13,7 +13,7 @@ Mantis,UNSC,,Tank,3,250,1,500,2500,Heavy,0,1.5,14,64,48,34,2500,100,"Gauss Warth
 Elephant,UNSC,,Titan,4,350,1,800,8000,Heavy,0,0.75,20,117,136,130,8000,160,"Spartan (100%), Hunter Captain (100%)"
 Grunt,Covenant,,Chaff,1,0,20,100,40,Unarmored,0,1.5,10,200,200,150,800,1,"Flamethrower Trooper (100%), Fuel Rod Grunt (100%)"
 Fuel Rod Grunt,Covenant,,ChaffClear,1,0,4,150,80,Unarmored,0,1.5,16,64,64,64,320,7.5,"Scorpion (100%), Mantis (100%)"
-Jackal (Beam Rifle),Covenant,,SingleTargetDps,1,0,4,150,70,Unarmored,0,1.6,24,60,60,45,280,7.5,"Marine (100%), Infection Forms (100%)"
+Jackal (Beam Rifle),Covenant,,SingleTargetDps,1,0,4,175,70,Unarmored,0,1.6,24,53,53,40,280,8.75,"Marine (100%), Infection Forms (100%)"
 Jackal (Shield),Covenant,,Tank,1,0,6,150,70,Unarmored,0,1.5,10,60,60,45,420,5,"Jackal (Beam Rifle) (100%), Elite (100%)"
 Ghost,Covenant,,Flanker,1,0,2,200,250,Light,0,5.5,10,72,72,54,500,20,"Flamethrower Trooper (100%), Grunt Goblin (100%)"
 Elite,Covenant,,SingleTargetDps,2,50,3,300,200,Unarmored,200,1.75,12,144,144,108,1200,20,"Marine (100%), Infection Forms (100%)"

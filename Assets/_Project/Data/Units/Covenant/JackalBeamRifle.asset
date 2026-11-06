@@ -17,8 +17,8 @@ MonoBehaviour:
   tier: 1
   unlockCost: 0
   squadSize: 4
-  cost: 150
-  baseDamage: 7.5
+  cost: 175
+  baseDamage: 8.75
   maxHealth: 70
   armorType: 0
   maxShield: 0
@@ -31,7 +31,7 @@ MonoBehaviour:
   targetFilter: 2
   weapons:
   - weaponName: Beam Rifle
-    damagePerShot: 45
+    damagePerShot: 40
     fireInterval: 3
     range: 24
     minRange: 0
