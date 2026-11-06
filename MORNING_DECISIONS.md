@@ -182,10 +182,30 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 ## Your sound effects (D70)
 
 101. **`fire[grifle03]`:** I guessed it is a gauss rifle, so it plays for the Gauss Warthog, the Cobra and the Gremlin. Say if it is something else.
-102. **Machine guns:** only the Warthog's (and the Infested Warthog's) use the M60, as you said. The Scorpion's and Grizzly's coaxial guns, chainguns and autocannons keep the generated heavy gun sound. The M60 could go on all of them.
+102. *(Answered: the M60 is on every machine gun and chaingun, and the autocannons have your new file, D71.)* **Machine guns:** only the Warthog's (and the Infested Warthog's) use the M60, as you said. The Scorpion's and Grizzly's coaxial guns, chainguns and autocannons keep the generated heavy gun sound. The M60 could go on all of them.
 103. **Hit sounds:** the generated ones still play, turned down. They can be taken out entirely.
 104. **The Scarab's beam:** its "in" is 2.4 s and the beam fires for 3 s, so the loop is heard for about half a second before "out".
-105. **Not used:** the beam rifle and the magnum (no unit carries one) and the plasma grenade.
+105. *(The beam rifle now has a carrier, the Jackal (Beam Rifle), D71 and D72.)* **Not used:** the beam rifle and the magnum (no unit carries one) and the plasma grenade.
+
+## Your second batch (D71)
+
+106. **Growths, a trial as you said:** pods and bubbles in 3 to 5 clumps on each infested vehicle. They sit properly on the hulls, but read as stuck on rather than grown in, and are small dots from the game's camera. Keep them, change their colour (now orange-brown; a paler Flood tan is easy), more or fewer, or revert (commits `0976829` and `f86f1c4`)?
+107. **The towers:** they keep their models' proportions inside their 6 m of squares, so they are 5.3 m (Command Center) and 5.8 m (Research Center) tall, against 9 to 9.5 m for the old plain shapes. A thin slab in the side's colour lies under each, so two towers of the same faction show whose they are. In Unlock Skirmish, where no side has a faction, both are neutral grey-blue. Tall enough? Keep the slab?
+108. **Glow on other models:** a builder bug meant glow never showed on any model (the Scarab's cannon, Banshee, Wraith, Hornet, Elephant, Phantom and others). It is fixed, and on only for the towers. Switching it on for the rest is one line and a rebuild. Want it?
+109. **The Flamethrower Trooper:** Meshy's clips bent the crouched figure double and tore its gun (12 credits spent on them, unused), so it runs and sprays with clips made around its own crouched pose. If you'd rather, a Meshy figure standing upright (T- or A-pose) with the flamethrower separate could be rigged like the others.
+110. **The new Scorpion** has its own markings (UNSC, a number, white stripes) in its texture, kept as part of your model. Its textures were very dark, so they are lifted by 1.35. The Gremlin reads dark olive and has no lift. Change any of these?
+111. **The Infested Elite's** weapon is a Scavenged Plasma Rifle, but its body attacks with claws and holds nothing. Give it the plasma rifle?
+112. **Light blue explosions:** the Covenant's machines and their infested copies. The Banished's (Chopper, Marauder, Reaver) and the Unggoy's Grunt Goblin still explode orange, as cruder machines. Blue for them too?
+113. **Sounds:** the Marauder's Spike Turret now plays the M60, as a machine gun. The biggest Flood ground units (Abomination, Juggernaut) die with the aircraft crash, now that the Pelican crash slot has that file. Your Glassing Beam file burns for about 8 s while the beam is drawn for 3.5 s, so it fades 1.2 s after the beam. The draw stinger is under 1 s, much shorter than the others. Ordinary rifles and pistols still use the generated sound. Any of these to change?
+114. **Nodes of light:** the small file below about 63 damage to a base, the big one above and for every Titan. That puts the Scorpion, Wraith and Pelican on the small file and Spartans and Zealots on the big one. Is that where you want the line?
+
+## The Spartan, the Phantom, the snipers (D72)
+
+115. **The Spartan:** I made up for the wind-up by a faster reload (every 3.5 s instead of 4) rather than damage, as 600 damage changed whom it beats. A charge broken by an EMP or its death still plays the whole laser sound, and under a shockwave the bang comes early. Laser Capacitor speeds the reload, not the wind-up. Change any of these?
+116. **The Covenant Phantom** drops 7 Grunts per drop, up to 3, behind its Gravity Lift tech, at tier 2 and 300 like the Pelican. The Hard AI rarely buys it (15%), as with the Pelican. Should it drop something else (Elites, Jackals), use the flank zones, or be tier 3? Its purple tint over your grey Phantom: the look you want?
+117. **The Jackal snipers** ended at 40 damage every 3 s, 24 m, 4 to a squad, 175 credits. At 45 damage and 150 they carried Banished to 65%. More range with less damage is possible; 30 m made them far too strong in the counter web.
+118. **Banished is at 54.1%**, a hair over the band, inside one run's noise of 4 points. I left it rather than chase it.
+
 
 ## Things my test runs did to your PC
 

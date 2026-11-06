@@ -154,6 +154,8 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] After the owner's two games: smoke and oil, towers, overkill shown, the shockwave on the bodies, Hide cards, the blueprint look, a battle log (D68)
 - [x] Battle stats at the end of a game, and a switch for the battle log (D69)
 - [x] The owner's sound effects in, by weapon and unit, under the music (D70)
+- [x] The owner's second batch of sounds and models, the towers in faction colours, Flood growths, Covenant machines exploding light blue (D71)
+- [x] The Spartan Laser's wind-up, a Covenant Phantom, Jackal snipers, balanced in the Hard AI tournament (D72)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

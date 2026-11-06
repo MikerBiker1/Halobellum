@@ -221,7 +221,7 @@ Numbers below are first-pass values for the first playable slice. Costs are per 
 | Hornet | Aerial | 2 | 50 | 2 | 300 | 400 | Air, rockets, bombs ground |
 | Archer Missile Pod | Artillery | 2 | 50 | 2 | 300 | 350 | Long-range explosive barrage; lobbed; cannot move |
 | Pelican | Aerial | 2 | 50 | 1 | 300 | 800 | Chin-mounted M370 autocannon (ballistic, hits air and ground); with its Troop Bay it lands wherever it is and drops 6 Marines 5 seconds into the battle (about 11.5 seconds if it comes late to a flank zone), then lands behind enemy lines for more, up to 3 drops in all, at least 10 seconds apart |
-| Spartan | Single-target DPS | 3 | 250 | 1 | 500 | 1250 | Energy shield, Spartan Laser |
+| Spartan | Single-target DPS | 3 | 250 | 1 | 500 | 1250 | Energy shield, Spartan Laser that winds up for 2.5 s before each shot |
 | Mantis | Tank | 3 | 250 | 1 | 500 | 2500 | Heavy armor; chaingun and rockets |
 | Elephant | Titan | 4 | 350 | 1 | 800 | 8000 | Mobile fortress; turrets for chaff, cannon for armor |
 
@@ -233,13 +233,14 @@ ODSTs are not a unit. They appear as a UNSC spell card (Section 10).
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Grunt | Chaff | 1 | 0 | 20 | 100 | 40 | Weak plasma pistols |
 | Fuel Rod Grunt | Chaff clear | 1 | 0 | 4 | 150 | 80 | Explosive splash at range |
-| Jackal (Plasma Rifle) | Single-target DPS | 1 | 0 | 8 | 150 | 70 | Plasma rifle, no shield |
+| Jackal (Beam Rifle) | Single-target DPS | 1 | 0 | 4 | 175 | 70 | Snipers: a beam rifle, slow hard shots at 24 m, no shield |
 | Jackal (Shield) | Tank | 1 | 0 | 6 | 150 | 70 | Frontal energy shield: 120 degree arc, blocks 80% of incoming ballistic projectiles. Strong against light chaff |
 | Ghost | Flanker | 1 | 0 | 2 | 200 | 250 | Fast, light armor |
 | Elite | Single-target DPS | 2 | 50 | 3 | 300 | 200 | Regenerating shield, Unarmored body (can be infected once its shield is down) |
 | Wraith | Artillery | 2 | 50 | 1 | 300 | 900 | Lobbed mortar; heavy armor; slow |
 | Vampire | Anti-air | 2 | 50 | 1 | 300 | 500 | Plasma, bonus damage against air, can still hit ground |
 | Banshee | Aerial | 2 | 50 | 2 | 300 | 400 | Fast bombing runs |
+| Covenant Phantom | Aerial | 2 | 50 | 1 | 300 | 800 | Plasma turrets (hit air and ground); with its Gravity Lift it drops 7 Grunts 5 seconds into the battle, then lands behind enemy lines for more, up to 3 drops, as the Pelican does |
 | Hunter pair | Tank | 3 | 225 | 2 | 450 | 1500 | Heavy armor; 240 degree front defense arc, extremely resistant inside it, weak from behind |
 | Zealot | Single-target DPS | 3 | 200 | 1 | 400 | 1400 | Energy sword that cleaves, leaps at its enemy, fast, strong shield, Unarmored body |
 | Scarab | Titan | 4 | 350 | 1 | 800 | 8500 | Walking fortress; plasma turrets plus a charged main beam |
@@ -517,6 +518,8 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-05 | Smoke Bomb and Oil Zone are 8 x 45 m; a level 1 tower has 150 health; bases show their health below zero; a side under a shockwave pulses; cards can be hidden; a blueprint look for neutral screens; a battle log | Per the project owner (D68) |
 | 2026-11-05 | A Battle stats window at the end of a game: a tab per battle, the field from above as it started, and both armies' damage dealt, taken and stopped; a switch for the battle log | Per the project owner (D69) |
 | 2026-11-05 | The owner's sound effects: by weapon and unit, fast guns looping while they fire, the Scarab's beam in order, calls for Seeders and Swarm Forms, Flood howls; files evened out under the music | Per the project owner (D70) |
+| 2026-11-05 | The owner's second batch: the M60 on every machine gun, autocannons, BR85, beam rifle, heavy plasma, the Glassing Beam, nodes of light, a drawn round; real models for the Scorpion, Gremlin, Flamethrower Trooper, plasma and beam rifles, both towers in their faction's colour, Flood growths on infested vehicles; Covenant machines explode light blue | Per the project owner (D71) |
+| 2026-11-05 | Weapons can wind up (the Spartan Laser, 2.5 s; it fires every 3.5 s); a Covenant Phantom on the Covenant roster; the Jackal (Plasma Rifle) becomes the Jackal (Beam Rifle), a sniper, at 175 after the tournament | Per the project owner (D72) |
 
 ## 18. Assumptions to confirm
 

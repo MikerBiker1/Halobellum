@@ -2,6 +2,16 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The Spartan's wind-up, the Covenant Phantom, Jackal snipers (D72)
+- **In the game:** the Spartan Laser charges for 2.5 s before each shot and fires every 3.5 s; a Covenant Phantom for every Covenant sub-faction, dropping Grunts with its Gravity Lift; the Jackal (Beam Rifle), 4 snipers at 24 m.
+- **Tournament at 2000 health:** the snipers first carried Banished to 65% and sank Armored Division to 39%. At 40 damage and 175 credits every sub-faction is from 46% to 54%: `Docs/Balance/hard_ai_tournament_d72.txt`.
+- **Not checked:** no Skirmish tournament; nobody has played the new units.
+
+## Your second batch of sounds and models, the towers, growths, blue explosions (D71)
+- **In the game:** all your new sounds, with the M60 on every machine gun; the new Scorpion, Gremlin, Flamethrower Trooper, plasma and beam rifles; both towers, lit in the owner's faction colour; growths on the infested vehicles, as a trial; Covenant machines exploding light blue.
+- **Checked:** tests of each part; pictures of the models, towers, growths and blue explosions; a recorded battle sits about 1 dB over the music.
+- **Not checked:** nobody has listened, and the growths were judged in close-ups only. They can be reverted on their own.
+
 ## Your sound effects (D70)
 - **In the game:** 55 of your 59 files, by weapon and unit, with your exceptions: Zealots' sword ready, the Scarab's charge then in, loop and out, Seeder and Swarm Form calls, Flood howls on rising. The SMG, M60, Ghost and flamethrower loop while firing.
 - **Loudness:** your files are measured and turned to the game's levels; a recorded battle set the effects 3 dB lower again.
