@@ -55,6 +55,7 @@ shield_regen.wav -> sfx_shield_regen.wav: an energy shield starting to recharge
 UI buttons.wav -> ui_click.wav: any button, every faction
 Failure to place unit.wav -> ui_error.wav: something that can't be done, every faction
 Card chosen.wav -> ui_cardpick.wav: a card taken, every faction
+Round start.wav -> ui_battlestart.wav: a round's battle starting, every faction (D78)
 Unit bought (fall to grid).wav -> ui_buy.wav: a squad bought, every faction
 Unit unlocked.wav -> ui_unlock.wav: a unit unlocked or a tech bought, every faction
 Autocannon.mp3 -> sfx_fire_autocannon.mp3: autocannons (Pelican, Sparrowhawk, Condor, Chopper), looped while they fire

@@ -115,7 +115,8 @@ A UI file named without a faction, such as `ui_click`, serves every faction.
 | [x] | `ui_cardpick` | A card taken. | `Card chosen` |
 | [x] | `ui_buy` | A squad bought. | `Unit bought (fall to grid)` |
 | [x] | `ui_unlock` | A unit unlocked or a tech bought. | `Unit unlocked` |
-| [ ] | `ui_hover`, `ui_sell`, `ui_skip`, `ui_spellplaced`, `ui_levelup`, `ui_battlestart`, `ui_roundwon`, `ui_roundlost`, `ui_matchwon`, `ui_matchlost` | The rest of the interface. Each can also have one per faction, such as `ui_unsc_hover`. | Generated stand-ins |
+| [x] | `ui_battlestart` | A round's battle starting, every faction. | Your `Round start.wav` (D78) |
+| [ ] | `ui_hover`, `ui_sell`, `ui_skip`, `ui_spellplaced`, `ui_levelup`, `ui_roundwon`, `ui_roundlost`, `ui_matchwon`, `ui_matchlost` | The rest of the interface. Each can also have one per faction, such as `ui_unsc_hover`. | Generated stand-ins |
 
 ### Spells
 

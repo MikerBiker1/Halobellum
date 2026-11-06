@@ -2,6 +2,9 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Your round start sound (D78)
+- **In the game:** `Round start.wav` as each battle starts, every faction.
+
 ## The tutorial (D77)
 - **In the game:** Play page, Tutorial: a scripted match in 29 steps, with a panel and an outline on what each step means; Skip tutorial at any time.
 - **Checked:** played through by a test and by the test game (pictures of every step); a player who follows along wins in round 5.

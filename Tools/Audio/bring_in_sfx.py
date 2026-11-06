@@ -71,6 +71,7 @@ SLOTS = [
     ("UI buttons.wav", "ui_click", "any button, every faction"),
     ("Failure to place unit.wav", "ui_error", "something that can't be done, every faction"),
     ("Card chosen.wav", "ui_cardpick", "a card taken, every faction"),
+    ("Round start.wav", "ui_battlestart", "a round's battle starting, every faction (D78)"),
     ("Unit bought (fall to grid).wav", "ui_buy", "a squad bought, every faction"),
     ("Unit unlocked.wav", "ui_unlock", "a unit unlocked or a tech bought, every faction"),
     # The owner's second batch (D71).
