@@ -46,6 +46,8 @@ namespace Halobellum.Presentation
         public const float CombatFloodShare = 0.4f;
 
         public const string RoundVictory = "stinger_match_victory", RoundDefeat = "stinger_match_defeat", RoundDefeatFlood = "stinger_match_defeat_flood_present";
+        /// <summary>A round drawn: neither side won it. The owner's file only; without it, nothing plays.</summary>
+        public const string RoundDraw = "stinger_match_draw";
         public const string GameVictory = "stinger_game_victory", GameDefeatFlood = "stinger_game_defeat_flood_present";
 
         public static readonly string[] FactionKeys = { "unsc", "covenant", "flood" };
@@ -133,6 +135,7 @@ namespace Halobellum.Presentation
             yield return RoundVictory;
             yield return RoundDefeat;
             yield return RoundDefeatFlood;
+            yield return RoundDraw;
             yield return GameVictory;
             yield return GameDefeatFlood;
             foreach (string faction in FactionKeys)

@@ -52,6 +52,7 @@ namespace Halobellum.Presentation
             if (n.Contains("plasma")) return WeaponFeelKind.Plasma;
             if (n.Contains("flame") || n.Contains("fire") || n.Contains("m7057")) return WeaponFeelKind.Flame;
             if (n.Contains("laser")) return WeaponFeelKind.Laser;
+            if (n.Contains("beam rifle")) return WeaponFeelKind.Gauss; // A Covenant sniper rifle: one hard shot in a straight line, not the Scarab's held beam. Before "beam".
             if (n.Contains("beam")) return WeaponFeelKind.Beam;
             if (n.Contains("gauss") || n.Contains("rail") || n.Contains("sniper")) return WeaponFeelKind.Gauss; // One hard shot and a straight line. Before "rifle", which a sniper rifle also contains.
             if (n.Contains("rocket") || n.Contains("missile")) return WeaponFeelKind.Rocket;

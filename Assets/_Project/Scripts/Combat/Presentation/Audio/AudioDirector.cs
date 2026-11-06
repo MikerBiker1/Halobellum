@@ -11,7 +11,9 @@
 // It also works out what to play for each scene; BattleAudio, MatchAudio and SandboxAudio listen to their scenes and call in here.
 // Loops that follow the battle (guns that fire fast, a mortar shell in the air, a Scarab walking or firing its beam) each have one voice of
 // their own, held at a level BattleAudio sets (SetLoop) and faded in and out quickly. The owner's files are played at their cue's loudness
-// (AudioClipSet.Gain): they come much louder than the game's mix.
+// (AudioClipSet.Gain): they come much louder than the game's mix. A long sound can also start part way in and fade out at a given time
+// (PlaySfxShaped: the Glassing Beam, which must fit its beam), and a cue with a long quiet tail stops counting against its group's limit once
+// the loud part is over (SfxCue.HoldSeconds).
 // Depends on: AudioCatalog, AudioLibrary, AudioSlots, MusicDeck, VoiceLimiter, BattleAudio, MatchAudio, SandboxAudio, UnityEngine.
 
 using System;
@@ -28,6 +30,9 @@ namespace Halobellum.Presentation
         public static void Sfx(SfxCue cue) => AudioDirector.Instance?.PlaySfx(cue);
 
         public static void Sfx(SfxCue cue, Vector3 world) => AudioDirector.Instance?.PlaySfx(cue, world);
+
+        /// <summary>See AudioDirector.PlaySfxShaped.</summary>
+        public static void SfxShaped(SfxCue cue, Vector3 world, float skipSeconds, float fadeAfter, float fadeSeconds) => AudioDirector.Instance?.PlaySfxShaped(cue, world, skipSeconds, fadeAfter, fadeSeconds);
     }
 
     public sealed class AudioDirector : MonoBehaviour
@@ -73,6 +78,8 @@ namespace Halobellum.Presentation
             public float EndsAt;
             public float Started;
             public float Volume;
+            /// <summary>When it starts fading out, by the battle clock, and over how long; 0 seconds if it plays to its end.</summary>
+            public float FadeAt, FadeSeconds;
         }
 
         private sealed class LoopVoice
@@ -295,13 +302,30 @@ namespace Halobellum.Presentation
         /// <summary>An effect from a place in the world: panned by where it is on screen.</summary>
         public void PlaySfx(SfxCue cue, Vector3 world) => Begin(cue, true, world);
 
-        private void Begin(SfxCue cue, bool placed, Vector3 world)
+        /// <summary>
+        /// An effect from a place in the world, started skipSeconds into its clip, that fades out over fadeSeconds once it has played for fadeAfter seconds
+        /// (by the battle clock: paused with the battle). For a long sound that must fit something shorter (the Glassing Beam).
+        /// </summary>
+        public void PlaySfxShaped(SfxCue cue, Vector3 world, float skipSeconds, float fadeAfter, float fadeSeconds)
         {
-            if (cue == null || BattlePaused) return;
+            Voice voice = Begin(cue, true, world);
+            if (voice == null) return;
+            AudioClip clip = voice.Source.clip;
+            float skip = Mathf.Clamp(skipSeconds, 0f, Mathf.Max(0f, clip.length - 0.05f));
+            if (skip > 0f) voice.Source.time = skip;
+            float pitch = Mathf.Max(0.1f, voice.Source.pitch);
+            voice.FadeSeconds = Mathf.Max(0.05f, fadeSeconds);
+            voice.FadeAt = _battleClock + Mathf.Max(0f, fadeAfter);
+            voice.EndsAt = Mathf.Min(_battleClock + (clip.length - skip) / pitch, voice.FadeAt + voice.FadeSeconds);
+        }
+
+        private Voice Begin(SfxCue cue, bool placed, Vector3 world)
+        {
+            if (cue == null || BattlePaused) return null;
             if (!_limiter.TryStart((int)cue.Group, _battleClock))
             {
                 DroppedVoices++; // Most shots of a big battle end here, before any more work.
-                return;
+                return null;
             }
             int index = cue.Clips.PickIndex(NextRandom());
             AudioClip clip = index >= 0 ? cue.Clips.Clips[index] : null;
@@ -310,7 +334,7 @@ namespace Halobellum.Presentation
             {
                 _limiter.Release((int)cue.Group);
                 DroppedVoices++;
-                return;
+                return null;
             }
             if (voice.Group >= 0)
             {
@@ -325,6 +349,8 @@ namespace Halobellum.Presentation
             voice.Priority = cue.Priority;
             voice.Started = _battleClock;
             voice.EndsAt = _battleClock + clip.length / Mathf.Max(0.1f, pitch);
+            if (cue.HoldSeconds > 0f) voice.EndsAt = Mathf.Min(voice.EndsAt, _battleClock + cue.HoldSeconds); // Its tail rings on, but no longer keeps the next one out.
+            voice.FadeSeconds = 0f;
             // In the thick of it each new sound is a little quieter, so that the sum stays under the ceiling: a recorded big battle reached 0 dB before this.
             float crowd = ActiveSfxVoices <= CrowdStarts ? 1f : Mathf.Sqrt((float)CrowdStarts / ActiveSfxVoices);
             voice.Volume = cue.Volume * gain * crowd * SfxTrim * cue.Clips.Gain(index, cue.Loudness);
@@ -337,6 +363,7 @@ namespace Halobellum.Presentation
             source.Play();
             ActiveSfxVoices++;
             SlotPlayed?.Invoke(cue.Slot);
+            return voice;
         }
 
         /// <summary>A free voice, or else the least important and oldest if it matters less than this.</summary>
@@ -527,7 +554,14 @@ namespace Halobellum.Presentation
             for (int i = 0; i < _sfx.Length; i++)
             {
                 Voice voice = _sfx[i];
-                if (voice.Group < 0 || _battleClock < voice.EndsAt) continue;
+                if (voice.Group < 0) continue;
+                if (voice.FadeSeconds > 0f && _battleClock >= voice.FadeAt)
+                {
+                    float left = 1f - (_battleClock - voice.FadeAt) / voice.FadeSeconds;
+                    voice.Source.volume = voice.Volume * Mathf.Clamp01(left) * VolumeMaster * VolumeSfx;
+                    if (left <= 0f) voice.Source.Stop();
+                }
+                if (_battleClock < voice.EndsAt) continue;
                 _limiter.Release(voice.Group);
                 voice.Group = -1;
                 ActiveSfxVoices--;

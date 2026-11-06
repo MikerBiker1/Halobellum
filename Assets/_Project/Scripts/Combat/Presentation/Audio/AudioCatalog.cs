@@ -5,7 +5,8 @@
 // an owner's file is turned to that level, as they come far louder than the game's mix (AudioClipSet.Gain).
 // Some sounds belong to one weapon or unit and are the owner's only (OwnerOnly): they have no generated sound, and until their file is
 // in the folder the weapon's kind is heard as before (FireFor, LandingFor, BattleAudio.DeathCue). A few loop while their guns fire
-// rather than playing once a shot (LoopsWhileFiring; BattleAudio plays them).
+// rather than playing once a shot (LoopsWhileFiring; BattleAudio plays them). The end of a round's nodes of light have the owner's
+// sounds too, by size (NodeHit), and the Glassing Beam's long sound starts ahead of the beam so that it strikes with it (SpellLeadSeconds).
 // A cue finds its clips the first time it is played. Nothing here allocates once a cue has been asked for, because the shots
 // of a battle come through here. Sound only.
 // Depends on: AudioSlots, AudioLibrary, WeaponFeel, Halobellum.Core (SpellStats).
@@ -43,6 +44,8 @@ namespace Halobellum.Presentation
         Calls,
         Ready,
         ShieldRegen,
+        PlasmaTurrets,
+        Nodes,
         Count,
     }
 
@@ -60,10 +63,13 @@ namespace Halobellum.Presentation
         public readonly float Loudness;
         /// <summary>The owner's file loops for as long as its guns keep firing, rather than playing once a shot.</summary>
         public readonly bool LoopsWhileFiring;
+        /// <summary>For a file with a long quiet tail: after this many seconds a voice stops counting against its group's limit, though its tail rings on (0: the whole clip).</summary>
+        public readonly float HoldSeconds;
         private AudioClipSet _set;
 
-        public SfxCue(string slot, SfxGroup group, float volume, float pitchSpread, int priority, float loudness = -15f, bool loopsWhileFiring = false)
+        public SfxCue(string slot, SfxGroup group, float volume, float pitchSpread, int priority, float loudness = -15f, bool loopsWhileFiring = false, float holdSeconds = 0f)
         {
+            HoldSeconds = holdSeconds;
             Slot = slot;
             Group = group;
             Volume = volume;
@@ -100,9 +106,9 @@ namespace Halobellum.Presentation
         }
 
         /// <summary>A sound of one weapon or unit that only the owner's file gives: until it is in, the weapon's kind is heard instead.</summary>
-        private static SfxCue OwnerCue(string slot, SfxGroup group, float volume, float pitch, int priority, float loudness, bool loops = false)
+        private static SfxCue OwnerCue(string slot, SfxGroup group, float volume, float pitch, int priority, float loudness, bool loops = false, float hold = 0f)
         {
-            var cue = new SfxCue(slot, group, volume, pitch, priority, loudness, loops);
+            var cue = new SfxCue(slot, group, volume, pitch, priority, loudness, loops, hold);
             Owners.Add(cue);
             BySlot[slot] = cue;
             return cue;
@@ -192,6 +198,15 @@ namespace Halobellum.Presentation
         public static readonly SfxCue CallSeeder = OwnerCue("sfx_call_seeder", SfxGroup.Calls, 0.55f, 0.06f, 2, -20f);
         public static readonly SfxCue CallSwarm = OwnerCue("sfx_call_swarm", SfxGroup.Calls, 0.5f, 0.08f, 1, -21f);
         public static readonly SfxCue ShieldRegen = OwnerCue("sfx_shield_regen", SfxGroup.ShieldRegen, 0.45f, 0.05f, 0, -24f);
+        // The owner's second batch (D71).
+        public static readonly SfxCue FireAutocannon = OwnerCue("sfx_fire_autocannon", SfxGroup.HeavyArms, 0.75f, 0f, 2, -16f, true);
+        /// <summary>The BR85's file is a burst with almost 3 s of echo: a Spartan fires again long before it ends, so only its burst holds a voice.</summary>
+        public static readonly SfxCue FireBr85 = OwnerCue("sfx_fire_br85", SfxGroup.SmallArms, 0.65f, 0.04f, 2, -17f, hold: 0.5f);
+        /// <summary>The Phantoms' and the Scarab's plasma turrets: the owner's heavy plasma file, in a group of its own so that their fast fire can't take every heavy plasma voice from the fuel rods and mortars.</summary>
+        public static readonly SfxCue FirePlasmaTurret = OwnerCue("sfx_fire_plasmaturret", SfxGroup.PlasmaTurrets, 0.75f, 0.06f, 2, -16.5f);
+        public static readonly SfxCue FireBeamRifle = OwnerCue("sfx_fire_beamrifle", SfxGroup.BigGuns, 0.85f, 0.03f, 5, -13.5f);
+        public static readonly SfxCue NodeSmall = OwnerCue("sfx_node_small", SfxGroup.Nodes, 0.8f, 0.08f, 6, -15f);
+        public static readonly SfxCue NodeBig = OwnerCue("sfx_node_big", SfxGroup.Nodes, 1f, 0.03f, 9, -10.5f);
 
         /// <summary>The owner's sounds of one weapon or unit (they have no generated sound).</summary>
         public static IReadOnlyList<SfxCue> OwnerOnly => Owners;
@@ -242,6 +257,8 @@ namespace Halobellum.Presentation
             Limit(limiter, SfxGroup.Calls, 2, 0.4f);
             Limit(limiter, SfxGroup.Ready, 6, 0.04f);
             Limit(limiter, SfxGroup.ShieldRegen, 1, 1.2f);
+            Limit(limiter, SfxGroup.PlasmaTurrets, 3, 0.15f);
+            Limit(limiter, SfxGroup.Nodes, 5, 0.05f); // A crowd's nodes land 0.08 s apart at the closest.
         }
 
         private static void Limit(VoiceLimiter limiter, SfxGroup group, int voices, float gap) => limiter.SetLimit((int)group, voices, gap);
@@ -279,20 +296,27 @@ namespace Halobellum.Presentation
         /// </summary>
         public static SfxCue FireFor(WeaponStats weapon, UnitStats shooter, string faction)
         {
+            SfxCue own = OwnFire(weapon, shooter);
+            if (own != null && own.HasSound) return own;
             WeaponFeelKind kind = WeaponFeel.For(weapon);
             if (kind == WeaponFeelKind.Beam && BeamCharge.HasSound) return null;
-            SfxCue own = OwnFire(weapon, shooter);
-            return own != null && own.HasSound ? own : Fire(kind, faction);
+            return Fire(kind, faction);
         }
 
-        /// <summary>The weapon's or unit's own firing sound by its names, or null if it has none.</summary>
+        /// <summary>
+        /// The weapon's or unit's own firing sound by its names, or null if it has none. The owner's M60 is every machine gun and chaingun (D71):
+        /// whatever is a heavy bullet gun by its name, but the shotguns and autocannons, which have their own.
+        /// </summary>
         public static SfxCue OwnFire(WeaponStats weapon, UnitStats shooter)
         {
             string n = (weapon.Name ?? "").ToLowerInvariant();
             string unit = (shooter?.Name ?? "").ToLowerInvariant();
             if (n.Contains("assault rifle") || n == "scavenged rifle") return FireAssaultRifle;
             if (n.Contains("smg")) return FireSmg;
-            if (n == "m41 machine gun" || n == "scavenged machine gun") return FireM60;
+            if (n.Contains("br85")) return FireBr85;
+            if (n.Contains("beam rifle")) return FireBeamRifle;
+            if (n.Contains("plasma turret")) return FirePlasmaTurret; // "Plasma Turrets" (the Phantoms), "Plasma Turret (left)" (the Scarab).
+            if (n.Contains("autocannon")) return FireAutocannon;
             if (n.Contains("plasma bolts")) return FireGhost;
             if (unit.Contains("banshee") && n.Contains("plasma cannons")) return FireBanshee;
             if (n == "fuel rod bomb") return FireBansheeBomb;
@@ -303,6 +327,7 @@ namespace Halobellum.Presentation
             if (n.Contains("shotgun")) return FireShotgun;
             if (n.Contains("sniper")) return FireSniper;
             if (n.Contains("energy sword")) return FireSword;
+            if (WeaponFeel.FromName(weapon.Name) == WeaponFeelKind.HeavyBullet) return FireM60;
             return null;
         }
 
@@ -342,6 +367,36 @@ namespace Halobellum.Presentation
 
         /// <summary>The cue of a spell's effect, or null if this effect makes no new sound.</summary>
         public static SfxCue Spell(SpellStats spell, int tick, string faction) => ForSlot(AudioSlots.Spell(spell, tick, faction));
+
+        /// <summary>
+        /// Where in the owner's Glassing Beam the beam strikes, in seconds: the file builds up for this long first (measured from the file, D71).
+        /// The sound starts this long before the first hit, so that the two meet.
+        /// </summary>
+        public const float GlassingStrikeSeconds = 1.85f;
+
+        /// <summary>How long the Glassing Beam's sound takes to fade once its beam is gone: the owner's file goes on burning for 8 s, the beam for 3.</summary>
+        public const float GlassingFadeSeconds = 1.2f;
+
+        /// <summary>How long before a spell's first hit its sound must start, in seconds of real time: 0 for every sound that starts with the hit.</summary>
+        public static float SpellLeadSeconds(SpellStats spell)
+        {
+            if (spell == null || AudioSlots.Spell(spell, 1, null) != "sfx_spell_glassing") return 0f;
+            AudioClipSet clips = ForSlot("sfx_spell_glassing").Clips;
+            return clips.IsOverride && !clips.IsEmpty ? GlassingStrikeSeconds : 0f; // The generated sound starts with the beam.
+        }
+
+        /// <summary>Nodes of light at least this big (0 to 1, RoundEnding.Node.Size, about 60 damage to a base and up), and every Titan's, land with the big sound.</summary>
+        public const float BigNodeSize = 0.75f;
+
+        /// <summary>
+        /// The sound of a node of light hitting a base at the end of a round: the owner's small and big files, by the node's size. Until they are in, the
+        /// battle's own hit and explosions stand in, by size.
+        /// </summary>
+        public static SfxCue NodeHit(float size, bool titan)
+        {
+            if (NodeSmall.HasSound && NodeBig.HasSound) return titan || size >= BigNodeSize ? NodeBig : NodeSmall;
+            return size < 0.45f ? ImpactArmor : size < 0.75f ? ExplosionSmall : size < 0.92f ? ExplosionMedium : ExplosionLarge;
+        }
 
         /// <summary>Forgets the clips of every cue, so that they are looked up again.</summary>
         public static void ForgetClips()
