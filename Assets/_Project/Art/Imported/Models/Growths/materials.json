@@ -1,0 +1,15 @@
+{
+ "materials": [
+  {
+   "name": "Growths_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "Growths_0.png"
+  }
+ ]
+}

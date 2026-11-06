@@ -1,6 +1,7 @@
 // RealModelTests.cs
 // The real models that aren't baked for crowds (M9, decisions D44 and D45): each prefab is sized for the game, stands on the
-// ground (or is centred on its flying height), has its own materials, and isn't too heavy to draw.
+// ground (or is centred on its flying height), has its own materials, and isn't too heavy to draw. The Flood's growths on an infested
+// vehicle (FloodGrowths) are left out of where it stands; they are tested on their own: there, on the surface, and only on infested ones.
 // Depends on: Halobellum.Units, NUnit, UnityEditor, UnityEngine.
 
 using System.Linq;
@@ -38,10 +39,10 @@ namespace Halobellum.Tests
             try
             {
                 MeshRenderer[] renderers = model.GetComponentsInChildren<MeshRenderer>();
-                Bounds bounds = renderers[0].bounds;
+                Bounds bounds = renderers.First(r => r.name != "Growth").bounds;
                 foreach (MeshRenderer renderer in renderers)
                 {
-                    bounds.Encapsulate(renderer.bounds);
+                    if (renderer.name != "Growth") bounds.Encapsulate(renderer.bounds);
                     foreach (Material material in renderer.sharedMaterials)
                     {
                         Assert.IsNotNull(material, renderer.name + " has lost a material.");
@@ -57,6 +58,51 @@ namespace Halobellum.Tests
             finally
             {
                 Object.DestroyImmediate(model);
+            }
+        }
+
+        private static readonly string[] Infested =
+        {
+            "FloodUNSC/InfestedWarthog", "FloodUNSC/InfestedScorpion", "FloodUNSC/InfestedHornet", "FloodCovenant/InfestedWraith",
+            "FloodCovenant/InfestedBanshee", "FloodCovenant/InfestedGhost", "Flood/InfectedPelican", "Flood/InfectedPhantom",
+        };
+
+        [TestCaseSource(nameof(Infested))]
+        public void InfestedVehicle_HasGrowths_OnItsSurface(string name)
+        {
+            var unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>($"Assets/_Project/Data/Units/{name}.asset");
+            GameObject model = Object.Instantiate(unit.prefab);
+            try
+            {
+                MeshRenderer[] renderers = model.GetComponentsInChildren<MeshRenderer>();
+                MeshRenderer[] growths = renderers.Where(r => r.name == "Growth").ToArray();
+                MeshRenderer[] body = renderers.Where(r => r.name != "Growth").ToArray();
+                Assert.GreaterOrEqual(growths.Length, 4, "A few clumps of growths.");
+                Assert.LessOrEqual(growths.Sum(r => r.GetComponent<MeshFilter>().sharedMesh.triangles.Length / 3), 2000, "Modest.");
+                Bounds hull = body[0].bounds;
+                foreach (MeshRenderer renderer in body) hull.Encapsulate(renderer.bounds);
+                foreach (MeshRenderer growth in growths)
+                {
+                    Assert.IsTrue(hull.Contains(growth.transform.position), $"{growth.transform.position} stands on the vehicle, inside {hull}.");
+                    Assert.IsFalse(growth.GetComponentsInParent<Transform>().Any(t => t.name.StartsWith("Wheel_")), "Not on a wheel.");
+                    Assert.AreEqual("Universal Render Pipeline/Lit", growth.sharedMaterial.shader.name);
+                    StringAssert.StartsWith("Growths_", growth.sharedMaterial.name);
+                }
+                Assert.Less(Mathf.Max(growths.Max(g => g.bounds.size.x), growths.Max(g => g.bounds.size.z)), Mathf.Max(hull.size.x, hull.size.z) * 0.25f, "Small against the vehicle.");
+            }
+            finally
+            {
+                Object.DestroyImmediate(model);
+            }
+        }
+
+        [Test]
+        public void CleanVehicles_HaveNoGrowths()
+        {
+            foreach (string name in new[] { "UNSC/Warthog", "UNSC/Scorpion", "Covenant/Wraith", "UNSC/Pelican" })
+            {
+                var unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>($"Assets/_Project/Data/Units/{name}.asset");
+                Assert.IsFalse(unit.prefab.GetComponentsInChildren<Transform>().Any(t => t.name == "Growth"), name);
             }
         }
 

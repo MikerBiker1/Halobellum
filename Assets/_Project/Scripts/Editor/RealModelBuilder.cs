@@ -5,9 +5,11 @@
 // on the unit's position (air units on their middle), makes its matte materials, and points the unit's data asset at it.
 // The unit then keeps the model's own materials. Sizes in the table below are the place to tune how big a unit looks.
 // The two towers (D55) aren't units: each becomes a prefab in Resources/Towers, named after its kind, which TowerArt finds there.
+// An infested vehicle (one tinted Infested) also gets Flood growths on its surface (FloodGrowths, decision D37).
 //   Menu: Halobellum > Art > Build Real Model Prefabs
-//   Command line: -executeMethod Halobellum.EditorTools.RealModelBuilder.BuildAllFromCommandLine (or BuildTowersFromCommandLine for the towers alone)
-// Depends on: Halobellum.Units (UnitDefinition), UnityEditor.
+//   Command line: -executeMethod Halobellum.EditorTools.RealModelBuilder.BuildAllFromCommandLine (or BuildTowersFromCommandLine for the towers alone,
+//   BuildInfestedFromCommandLine for the infested vehicles alone)
+// Depends on: FloodGrowths, Halobellum.Units (UnitDefinition), UnityEditor.
 
 using System;
 using System.Collections.Generic;
@@ -41,6 +43,8 @@ namespace Halobellum.EditorTools
         }
 
         private static readonly Color Infested = new Color(0.72f, 0.82f, 0.45f);
+        /// <summary>The growths keep their own texture, a little greener, and lifted: as it is, the dark brown reads as black from the game's camera.</summary>
+        private static readonly Color GrowthTint = new Color(1.15f, 1.25f, 0.85f);
 
         private static readonly Entry[] Models =
         {
@@ -157,6 +161,19 @@ namespace Halobellum.EditorTools
             EditorApplication.Exit(exit);
         }
 
+        /// <summary>Only the infested vehicles, which carry the growths.</summary>
+        public static void BuildInfestedFromCommandLine()
+        {
+            int exit = 0;
+            try
+            {
+                foreach (Entry entry in Models.Where(e => e.Tint == Infested)) Build(entry);
+                AssetDatabase.SaveAssets();
+            }
+            catch (Exception e) { Debug.LogError("Building the infested vehicles failed: " + e); exit = 1; }
+            EditorApplication.Exit(exit);
+        }
+
         public static void BuildAllFromCommandLine()
         {
             int exit = 0;
@@ -175,6 +192,7 @@ namespace Halobellum.EditorTools
             if (root == null) return; // Rigged and baked instead.
             try
             {
+                if (entry.Tint == Infested) AddGrowths(root, unitName);
                 string path = $"{PrefabFolder}/{unitName}_Model.prefab";
                 unit.prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
                 unit.keepsOwnMaterials = true;
@@ -185,6 +203,22 @@ namespace Halobellum.EditorTools
             finally
             {
                 Object.DestroyImmediate(root);
+            }
+        }
+
+        /// <summary>Flood growths on an infested vehicle. Without the prepared growths it is only tinted, as before.</summary>
+        private static void AddGrowths(GameObject root, string unitName)
+        {
+            GameObject pieces = MakeModel(FloodGrowths.Folder, "Growths", 1f, 0f, false, GrowthTint, "_Infested");
+            if (pieces == null) return;
+            try
+            {
+                FloodGrowths.Result result = FloodGrowths.AddTo(root, pieces, unitName);
+                Debug.Log($"Growths on {unitName}: {result.Big} pods and {result.Small} bubbles, {result.Triangles} triangles");
+            }
+            finally
+            {
+                Object.DestroyImmediate(pieces);
             }
         }
 
