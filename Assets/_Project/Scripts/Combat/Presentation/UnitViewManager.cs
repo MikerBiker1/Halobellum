@@ -423,7 +423,7 @@ namespace Halobellum.Presentation
             BakedBodyDefinition baked = _battle.BakedBodyFor(stats.InfectedFrom ?? stats);
             if (stats.IsTower)
             {
-                view.ModelTop = TowerArt.Build(view.Root.transform, stats.Shockwave.Kind, color, stats.CollisionRadius);
+                view.ModelTop = TowerArt.Build(view.Root.transform, stats.Shockwave.Kind, color, FactionColors.OfTowers(unit.Team), stats.CollisionRadius);
             }
             else if (baked != null && baked.IsReady)
             {

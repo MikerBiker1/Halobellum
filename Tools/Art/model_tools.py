@@ -489,6 +489,81 @@ def reduce_and_repaint(target, size=1024, weld_distance=0.0004, reach=0.02):
     return image
 
 
+def fill_gaps(image):
+    """Spreads the colours into a baked texture's unused parts, which are black. Far away the game reads smaller copies of a texture, where black would darken the seams."""
+    width, height = image.size
+    pixels = np.empty(width * height * 4, dtype=np.float32)
+    image.pixels.foreach_get(pixels)
+    pixels = pixels.reshape(height, width, 4)
+    done = pixels[:, :, :3].sum(axis=2) > 0.0005
+    print(f"REPORT {100 - 100 * done.mean():.0f}% of the texture was unused")
+    while not done.all():
+        total = np.zeros((height, width, 3), dtype=np.float32)
+        count = np.zeros((height, width, 1), dtype=np.float32)
+        for axis, step in ((0, 1), (0, -1), (1, 1), (1, -1)):
+            total += np.roll(pixels[:, :, :3] * done[:, :, None], step, axis)
+            count += np.roll(done[:, :, None], step, axis)
+        grown = ~done & (count[:, :, 0] > 0)
+        pixels[grown, :3] = total[grown] / count[grown]
+        done |= grown
+    pixels[:, :, 3] = 1
+    image.pixels.foreach_set(pixels.ravel())
+    image.update()
+    image.pack()
+
+
+def colour_mask(image, hue, hue_width, least_saturation, least_value, dark=0.05):
+    """
+    Takes the pixels of one colour out of a baked texture, for a part that the game paints in a colour of its own choosing (a tower's lights
+    in its owner's faction colour). Where the colour was, the texture turns dark, and a new image holds how much of it was there and how bright,
+    hooked to the material's glow so that finish() writes it as <name>_<n>_emit.png. Hue in degrees; saturation and value from 0 to 1.
+    Returns the fraction of the texture that is masked.
+    """
+    width, height = image.size
+    pixels = np.empty(width * height * 4, dtype=np.float32)
+    image.pixels.foreach_get(pixels)
+    pixels = pixels.reshape(height, width, 4)
+    rgb = pixels[:, :, :3]
+    high, low = rgb.max(axis=2), rgb.min(axis=2)
+    delta = high - low
+    r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
+    safe = np.maximum(delta, 1e-6)
+    h = np.where(high == r, ((g - b) / safe) % 6, np.where(high == g, (b - r) / safe + 2, (r - g) / safe + 4)) * 60
+    saturation = delta / np.maximum(high, 1e-6)
+    away = np.abs((h - hue + 180) % 360 - 180)
+
+    def ramp(x, start, end):
+        return np.clip((x - start) / (end - start), 0, 1)
+
+    mask = ramp(hue_width - away, 0, hue_width * 0.35) * ramp(saturation, least_saturation, least_saturation + 0.15) * ramp(high, least_value, least_value + 0.1)
+    mask[delta < 1e-6] = 0
+    bright = np.percentile(high[mask > 0.5], 90) if (mask > 0.5).any() else 1.0
+    glow = mask * np.clip(high / max(bright, 1e-3), 0.35, 1.0)
+    rgb[:] = rgb * (1 - mask[:, :, None]) + dark * mask[:, :, None]
+    pixels[:, :, 3] = 1
+    image.pixels.foreach_set(pixels.ravel())
+    image.update()
+    image.pack()
+    out = bpy.data.images.new(image.name + "_mask", width, height, alpha=False)
+    data = np.ones((height, width, 4), dtype=np.float32)
+    data[:, :, 0] = data[:, :, 1] = data[:, :, 2] = glow
+    out.pixels.foreach_set(data.ravel())
+    out.update()
+    out.pack()
+    for o in meshes():
+        for material in o.data.materials:
+            if material is None or not any(n.type == "TEX_IMAGE" and n.image == image for n in material.node_tree.nodes):
+                continue
+            node = material.node_tree.nodes.new("ShaderNodeTexImage")
+            node.image = out
+            shader = _shader(material)
+            material.node_tree.links.new(node.outputs["Color"], shader.inputs["Emission Color"])
+            shader.inputs["Emission Strength"].default_value = 1.0
+    share = float((mask > 0.5).mean())
+    print(f"REPORT masked {100 * share:.1f}% of the texture (hue {hue} +- {hue_width})")
+    return share
+
+
 # ---- Moving parts and muzzles ----
 
 def part(name, pattern, pivot=None):
@@ -586,11 +661,11 @@ def merge_rest():
 
 # ---- Finishing ----
 
-def finish(texture_size=512):
-    """Writes the FBX, the textures and materials.json, then pictures from four sides."""
+def finish(texture_size=512, glow_size=256):
+    """Writes the FBX, the textures and materials.json, then pictures from four sides. A glow texture is written at most glow_size wide."""
     name, folder = _state["name"], _state["folder"]
     bpy.context.view_layer.update()
-    table = _write_materials(texture_size)
+    table = _write_materials(texture_size, glow_size)
     _export(os.path.join(folder, name + ".fbx"))
     for camera in ("quarter", "side", "front", "top"):
         look("after_" + camera, camera)
@@ -779,7 +854,7 @@ def _save_scaled(image, path, size):
     bpy.data.images.remove(copy)
 
 
-def _write_materials(texture_size):
+def _write_materials(texture_size, glow_size=256):
     """Each material gets a plain name, and what Unity needs to know about it goes in materials.json."""
     name, folder = _state["name"], _state["folder"]
     used = []
@@ -805,7 +880,7 @@ def _write_materials(texture_size):
                 entry["cutout"] = True
         emission = _input_image(m, "Emission Color")
         if emission is not None:
-            _save_scaled(emission, os.path.join(folder, new_name + "_emit.png"), min(texture_size, 256))
+            _save_scaled(emission, os.path.join(folder, new_name + "_emit.png"), min(texture_size, glow_size))
             entry["glowTexture"] = new_name + "_emit.png"
         if "glow" in flags:
             entry["glow"] = flags["glow"]

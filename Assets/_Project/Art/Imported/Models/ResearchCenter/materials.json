@@ -1,0 +1,16 @@
+{
+ "materials": [
+  {
+   "name": "ResearchCenter_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "ResearchCenter_0.png",
+   "glowTexture": "ResearchCenter_0_emit.png"
+  }
+ ]
+}
