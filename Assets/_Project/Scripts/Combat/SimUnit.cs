@@ -128,6 +128,8 @@ namespace Halobellum.Combat
         public bool MarkedForInfection;
         /// <summary>Battle time of its next release (units that keep releasing others).</summary>
         public float NextSpawnAt;
+        /// <summary>Releases made so far: with an alternate spawn, the odd ones are the alternate (D79).</summary>
+        public int SpawnsMade;
         /// <summary>The last tick an aura reached it (several auras do not add up).</summary>
         public int AuraTick = -1;
 

@@ -146,6 +146,7 @@ namespace Halobellum.Core
             if (stats.Reinforcement != null) stats.Reinforcement = Apply(stats.Reinforcement, 1, null, null, buffs);
             if (stats.LockedReinforcement != null) stats.LockedReinforcement = Apply(stats.LockedReinforcement, 1, null, null, buffs);
             if (stats.SpawnedUnit != null) stats.SpawnedUnit = Apply(stats.SpawnedUnit, 1, null, null, buffs);
+            if (stats.AlternateSpawnedUnit != null) stats.AlternateSpawnedUnit = Apply(stats.AlternateSpawnedUnit, 1, null, null, buffs);
             if (stats.DeathBurst == null || stats.DeathBurst.Spawns.Length == 0) return;
             var spawns = new SpawnEntry[stats.DeathBurst.Spawns.Length];
             for (int i = 0; i < spawns.Length; i++)

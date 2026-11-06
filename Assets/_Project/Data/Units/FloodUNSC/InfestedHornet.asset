@@ -30,7 +30,7 @@ MonoBehaviour:
   targetFilter: 2
   weapons:
   - weaponName: Scavenged Rockets
-    damagePerShot: 20
+    damagePerShot: 18
     fireInterval: 1
     range: 12
     minRange: 0
@@ -56,7 +56,7 @@ MonoBehaviour:
     hitSlowShare: 0
     windUpSeconds: 0
   - weaponName: Spore Bombs
-    damagePerShot: 40
+    damagePerShot: 36
     fireInterval: 2
     range: 8
     minRange: 0

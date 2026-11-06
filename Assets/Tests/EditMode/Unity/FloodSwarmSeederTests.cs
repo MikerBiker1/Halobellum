@@ -83,6 +83,27 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void TheSpawner_ReleasesInfectionFormsAndAnInfestedElite_InTurn()
+        {
+            // D79: Covenant-based Flood's Spawner (not in the slice units, so straight from its asset).
+            UnitStats spawner = UnityEditor.AssetDatabase.LoadAssetAtPath<Halobellum.Units.UnitDefinition>("Assets/_Project/Data/Units/FloodCovenant/Spawner.asset").ToStats();
+            Assert.AreEqual("Infection Forms", spawner.SpawnedUnit.Name);
+            Assert.AreEqual("Infested Elite", spawner.AlternateSpawnedUnit.Name);
+            Assert.AreEqual(1, spawner.AlternateSpawnedUnit.SquadSize);
+            var sim = new BattleSimulation(HeadlessRunnerTool.LoadRules(), 1);
+            spawner.MoveSpeed = 0f;
+            sim.AddUnit(spawner, Team.A, new Vec2(0f, -30f));
+            UnitStats bystander = AllStats()["Marine"].Clone();
+            bystander.MoveSpeed = 0f;
+            sim.AddUnit(bystander, Team.B, new Vec2(70f, 75f));
+            Steps(sim, spawner.SpawnIntervalSeconds + 0.1f);
+            Assert.IsTrue(sim.Units.Any(x => x.Team == Team.A && x.Stats.Name == "Infection Forms"), "Infection Forms first.");
+            Assert.IsFalse(sim.Units.Any(x => x.Stats.Name == "Infested Elite"));
+            Steps(sim, spawner.SpawnIntervalSeconds);
+            Assert.AreEqual(1, sim.Units.Count(x => x.Team == Team.A && x.Stats.Name == "Infested Elite"), "Then an Infested Elite.");
+        }
+
+        [Test]
         public void ASeededUnit_TheFloodHasNoFormOf_DoesNotRise()
         {
             Dictionary<string, UnitStats> u = AllStats();

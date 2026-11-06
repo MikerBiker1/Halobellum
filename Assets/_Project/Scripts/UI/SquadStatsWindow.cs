@@ -356,7 +356,8 @@ namespace Halobellum.UI
                 foreach (SpawnEntry spawn in s.DeathBurst.Spawns) released += $", releases {spawn.Bodies * spawn.Unit.FormsPerBody} {spawn.Unit.Name}";
                 b.AppendLine(s.DeathBurst.Damage > 0f ? $"On death: {s.DeathBurst.Damage:0} damage in {s.DeathBurst.Radius:0.#} m{released}" : $"On death{released}");
             }
-            if (s.SpawnedUnit != null) b.AppendLine($"Releases {s.SpawnedUnit.Name} every {s.SpawnIntervalSeconds:0.#} s");
+            if (s.SpawnedUnit != null && s.AlternateSpawnedUnit != null) b.AppendLine($"Releases {s.SpawnedUnit.Name} and {s.AlternateSpawnedUnit.Name} in turn, one every {s.SpawnIntervalSeconds:0.#} s");
+            else if (s.SpawnedUnit != null) b.AppendLine($"Releases {s.SpawnedUnit.Name} every {s.SpawnIntervalSeconds:0.#} s");
             if (s.AuraRadius > 0f)
             {
                 string aura = s.AuraSpeedMultiplier > 1f && s.AuraHealPerSecondShare > 0f ? "faster, and they heal" : s.AuraSpeedMultiplier > 1f ? "faster" : "they heal";

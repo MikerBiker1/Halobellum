@@ -83,7 +83,9 @@ MonoBehaviour:
   deathSpawns: []
   spawnedUnit: {fileID: 11400000, guid: 6b41beaaf1cf621860b58e52a70f04fb, type: 2}
   spawnedBodies: 2
-  spawnIntervalSeconds: 6
+  spawnIntervalSeconds: 4
+  alternateSpawnedUnit: {fileID: 11400000, guid: 69784de82acafe068ed3eaae6d7a836d, type: 2}
+  alternateSpawnedBodies: 1
   auraRadius: 0
   auraSpeedMultiplier: 1
   auraHealPerSecondShare: 0

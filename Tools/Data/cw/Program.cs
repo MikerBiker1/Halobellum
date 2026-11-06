@@ -75,6 +75,11 @@ static class Program
                 flood.SpawnedUnit = byId[spawn[0].GetString()].Clone();
                 flood.SpawnedUnit.SquadSize = spawn[1].GetInt32();
                 flood.SpawnIntervalSeconds = spawn[2].GetSingle();
+                if (u.TryGetProperty("spawn2", out JsonElement alternate) && alternate.ValueKind == JsonValueKind.Array)
+                {
+                    flood.AlternateSpawnedUnit = byId[alternate[0].GetString()].Clone(); // D79: the two take turns.
+                    flood.AlternateSpawnedUnit.SquadSize = alternate[1].GetInt32();
+                }
             }
             var aura = u.GetProperty("aura");
             if (aura.ValueKind == JsonValueKind.Array)

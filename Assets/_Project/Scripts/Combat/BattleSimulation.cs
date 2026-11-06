@@ -463,7 +463,9 @@ namespace Halobellum.Combat
                 SimUnit unit = _spawners[i];
                 if (!unit.IsAlive || ElapsedSeconds + 1e-4f < unit.NextSpawnAt) continue;
                 unit.NextSpawnAt += unit.Stats.SpawnIntervalSeconds;
-                SpawnSquad(unit.Stats.SpawnedUnit, unit, unit.Position + Forward(unit) * (unit.Radius + 1f), unit.Stats.SpawnedUnit.SquadSize);
+                UnitStats released = unit.Stats.AlternateSpawnedUnit != null && unit.SpawnsMade % 2 == 1 ? unit.Stats.AlternateSpawnedUnit : unit.Stats.SpawnedUnit;
+                unit.SpawnsMade++;
+                SpawnSquad(released, unit, unit.Position + Forward(unit) * (unit.Radius + 1f), released.SquadSize);
             }
         }
 

@@ -98,6 +98,9 @@ namespace Halobellum.Units
         public UnitDefinition spawnedUnit;
         public int spawnedBodies;
         public float spawnIntervalSeconds;
+        [Tooltip("Every other release is this instead, so the two take turns (the Spawner, D79). Empty = none.")]
+        public UnitDefinition alternateSpawnedUnit;
+        public int alternateSpawnedBodies;
         [Tooltip("Friendly units within this many metres get the aura below. 0 = no aura.")]
         public float auraRadius;
         public float auraSpeedMultiplier = 1f;
@@ -183,6 +186,11 @@ namespace Halobellum.Units
             {
                 stats.SpawnedUnit = spawnedUnit.ToStats(depth + 1);
                 stats.SpawnedUnit.SquadSize = spawnedBodies;
+                if (alternateSpawnedUnit != null && alternateSpawnedBodies > 0)
+                {
+                    stats.AlternateSpawnedUnit = alternateSpawnedUnit.ToStats(depth + 1);
+                    stats.AlternateSpawnedUnit.SquadSize = alternateSpawnedBodies;
+                }
             }
             if (deathBurstDamage > 0f || (deathSpawns != null && deathSpawns.Count > 0))
             {

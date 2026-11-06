@@ -51,11 +51,11 @@ FLANKERS = {"Pelican", "Sparrowhawk", "Longsword", "Vulture", "CondorGunship"}
 
 def U(id, name, faction, role, tier, unlock, squad, cost, hp, armor, speed, radius, turn, filter, weapons,
       shield=0, regen=0, airu=False, arc=None, drop=None, note="", forms=1, flood=False, infects=False, immune=False,
-      selfd=False, seek=False, burst=None, spawn=None, aura=None, leap=None, lifesteal=0, basedmg=None, tint=None, scale=1, sub=None, folder=None, baked=None, seedforms=None):
+      selfd=False, seek=False, burst=None, spawn=None, aura=None, leap=None, lifesteal=0, basedmg=None, tint=None, scale=1, sub=None, folder=None, baked=None, seedforms=None, spawn2=None):
     return dict(id=id, name=name, faction=faction, role=role, tier=tier, unlock=unlock, squad=squad, cost=cost,
                 hp=hp, armor=armor, speed=speed, radius=radius, turn=turn, filter=filter, weapons=weapons,
                 shield=shield, regen=regen, air=airu, arc=arc, drop=drop, note=note, forms=forms, flood=flood, infects=infects,
-                immune=immune, selfd=selfd, seek=seek, burst=burst, spawn=spawn, aura=aura, leap=leap, lifesteal=lifesteal, seedforms=seedforms,
+                immune=immune, selfd=selfd, seek=seek, burst=burst, spawn=spawn, aura=aura, leap=leap, lifesteal=lifesteal, seedforms=seedforms, spawn2=spawn2,
                 basedmg=basedmg, tint=tint, scale=scale, sub=sub, folder=folder or faction, baked=baked)
 
 
@@ -304,6 +304,9 @@ def unit_yaml(u):
     sp = u["spawn"]
     lines += [f"  spawnedUnit: {{fileID: 11400000, guid: {guid('unit-' + sp[0])}, type: 2}}" if sp else "  spawnedUnit: {fileID: 0}",
               f"  spawnedBodies: {sp[1] if sp else 0}", f"  spawnIntervalSeconds: {fmt(sp[2] if sp else 0)}"]
+    s2 = u["spawn2"]
+    lines += [f"  alternateSpawnedUnit: {{fileID: 11400000, guid: {guid('unit-' + s2[0])}, type: 2}}" if s2 else "  alternateSpawnedUnit: {fileID: 0}",
+              f"  alternateSpawnedBodies: {s2[1] if s2 else 0}"]
     au = u["aura"]
     lines += [f"  auraRadius: {fmt(au[0] if au else 0)}", f"  auraSpeedMultiplier: {fmt(au[1] if au else 1)}",
               f"  auraHealPerSecondShare: {fmt(au[2] if au else 0)}", f"  lifestealShare: {fmt(u['lifesteal'])}"]

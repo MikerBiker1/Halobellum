@@ -288,6 +288,8 @@ namespace Halobellum.Core
         /// <summary>Released again and again during the battle (Abomination); SquadSize is the bodies each time. Null = none.</summary>
         public UnitStats SpawnedUnit;
         public float SpawnIntervalSeconds;
+        /// <summary>When set, every other release is this instead, so the two take turns (the Spawner's Infection Forms and Infested Elites, D79). SquadSize is its bodies.</summary>
+        public UnitStats AlternateSpawnedUnit;
         /// <summary>Friendly units within this many metres get the aura below. 0 = no aura.</summary>
         public float AuraRadius;
         public float AuraSpeedMultiplier = 1f;
