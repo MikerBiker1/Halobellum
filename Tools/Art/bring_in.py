@@ -21,7 +21,8 @@ GIVEN_NOTE = "Source: given by the project owner, file {source} in Art_Source. W
 
 
 # A rigged folder has no report.json to say what it was made from.
-THIRD_BATCH_RIGS = {"ODST_Rig": "Meshy/halo_2_odst.glb", "Jackal_Rig": "Meshy/jackal_halo_2.glb", "BruteGrenadier_Rig": "Meshy/enemieshalo_3covenantbrutes.glb"}
+THIRD_BATCH_RIGS = {"ODST_Rig": "Meshy/halo_2_odst.glb", "Jackal_Rig": "Meshy/jackal_halo_2.glb", "BruteGrenadier_Rig": "Meshy/enemieshalo_3covenantbrutes.glb",
+                    "FlamethrowerTrooper_Rig": "Meshy/Meshy_AI_Flamethrower_trooper.glb"}
 
 
 def copy(names):
