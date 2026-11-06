@@ -52,6 +52,6 @@ MonoBehaviour:
     firstRow: 99
     frames: 1
     loops: 0
-  muzzle: {x: 0.1556092, y: 0.34544122, z: 2.112392}
+  muzzle: {x: 0.1556092, y: 0.34544122, z: 1.2228085}
   hasMuzzle: 1
   bodyHeight: 1.9999999

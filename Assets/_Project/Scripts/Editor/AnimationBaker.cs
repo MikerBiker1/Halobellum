@@ -109,7 +109,9 @@ namespace Halobellum.EditorTools
                 Vector3? muzzle = BuildMesh(body, mesh, skin, keptIndex, bones, bindPoses, Source, model);
 
                 int hips = Array.IndexOf(bones, skin.rootBone);
-                Vector3 restHips = bindPoses[hips].inverse.MultiplyPoint3x4(Vector3.zero);
+                // Where the hips stand at rest, in the model's space: a bind pose is in the skinned mesh's own space, which is the model's for
+                // Meshy's files but not for one whose mesh hangs under a turned and scaled rig, as Blender writes them (the Flamethrower Trooper's).
+                Vector3 restHips = model.transform.InverseTransformPoint(skin.transform.TransformPoint(bindPoses[hips].inverse.MultiplyPoint3x4(Vector3.zero)));
                 body.hasMuzzle = muzzle.HasValue;
                 if (muzzle.HasValue)
                 {
