@@ -55,7 +55,7 @@ namespace Halobellum.Tests
         [TestCase("Covenant/HunterPair", BloodKind.Orange)]
         [TestCase("LekgoloColony/HunterCaptain", BloodKind.Orange)]
         [TestCase("LekgoloColony/Goliath", BloodKind.Orange)]
-        [TestCase("Covenant/JackalPlasmaRifle", BloodKind.Purple)]
+        [TestCase("Covenant/JackalBeamRifle", BloodKind.Purple)]
         [TestCase("Covenant/JackalShield", BloodKind.Purple)]
         [TestCase("Banished/BruteGrenadier", BloodKind.DarkRed)]
         public void TheOwnersColours(string path, BloodKind kind) => Assert.AreEqual(kind, BloodLooks.For(Unit(path)));

@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48a24a6f0743ea50b653bb6800d1d896, type: 3}
+  m_Name: JackalBeamRifle
+  m_EditorClassIdentifier: 
+  unitName: Jackal (Beam Rifle)
+  role: 2
+  tier: 1
+  unlockCost: 0
+  squadSize: 4
+  cost: 150
+  baseDamage: 7.5
+  maxHealth: 70
+  armorType: 0
+  maxShield: 0
+  shieldRegenPerSecond: 0
+  moveSpeed: 1.6
+  collisionRadius: 0.5
+  turnTime180: 0.25
+  isAir: 0
+  canFlank: 0
+  targetFilter: 2
+  weapons:
+  - weaponName: Beam Rifle
+    damagePerShot: 45
+    fireInterval: 3
+    range: 24
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 0
+    damageType: 2
+    isAntiArmor: 0
+    canBeBlocked: 0
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+  hasDefenseArc: 0
+  defenseArc:
+    arcDegrees: 0
+    frontDamageMultiplier: 1
+    rearDamageMultiplier: 1
+    blockChance: 0
+    blockedDamageTypes: 
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
+  reinforcementNeedsUpgrade: 0
+  formsPerBody: 1
+  isFlood: 0
+  infects: 0
+  immuneToInfection: 0
+  selfDestructs: 0
+  seeksDensestCluster: 0
+  deathBurstDamage: 0
+  deathBurstRadius: 0
+  deathBurstDamageType: 0
+  deathBurstAntiArmor: 0
+  deathSpawns: []
+  spawnedUnit: {fileID: 0}
+  spawnedBodies: 0
+  spawnIntervalSeconds: 0
+  auraRadius: 0
+  auraSpeedMultiplier: 1
+  auraHealPerSecondShare: 0
+  lifestealShare: 0
+  leapRange: 0
+  leapSpeed: 0
+  leapCooldownSeconds: 0
+  techUpgrades:
+  - {fileID: 11400000, guid: fd950abb020e37f409a23522894d5147, type: 2}
+  - {fileID: 11400000, guid: 733fca66d70b9ba41043efdb9a1295eb, type: 2}
+  - {fileID: 11400000, guid: 9d16a59ee3421606efe9bea4e50660c7, type: 2}
+  prefab: {fileID: 3760541862654182237, guid: 5eed2f1c115c1fc4f8bb9dcd850d8f8c, type: 3}
+  keepsOwnMaterials: 0
+  bakedBody: {fileID: 11400000, guid: ea47e6fdcfe141368bf6649d59f629dd, type: 2}
+  bakedTint: {r: 1, g: 1, b: 1, a: 0}
+  bakedScale: 1
+  strongAgainst: 'Tanks, heavy units'
+  weakAgainst: 'Chaff swarms, flankers'
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Infection Forms (100%). Snipers: few to a squad, they pick targets off from far away with slow, hard shots, and have little to stop a rush. First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

@@ -17,5 +17,5 @@ for n in flood:
     print("   LOSES TO:", ", ".join(f"{o}" for o in names if o != n and m[n, o] <= 0.5))
 print()
 print("Infection Forms vs chaff and armor:")
-for o in ("Marine", "Grunt", "Jackal (Plasma Rifle)", "Elite", "Flamethrower Trooper", "Fuel Rod Grunt", "Warthog", "Scorpion", "Wraith", "Mantis", "Spartan", "Elephant"):
+for o in ("Marine", "Grunt", "Jackal (Beam Rifle)", "Elite", "Flamethrower Trooper", "Fuel Rod Grunt", "Warthog", "Scorpion", "Wraith", "Mantis", "Spartan", "Elephant"):
     print(f"  {o:24} {m['Infection Forms', o]*100:.0f}%")

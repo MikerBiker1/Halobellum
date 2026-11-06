@@ -33,6 +33,8 @@ namespace Halobellum.EditorTools
         }
 
         private static readonly Color Infested = new Color(0.72f, 0.82f, 0.45f);
+        /// <summary>The Phantom's texture is grey: a Covenant purple over it, for the Covenant's own (the Flood's is Infested).</summary>
+        private static readonly Color CovenantHull = new Color(0.9f, 0.72f, 1.2f);
 
         private static readonly Entry[] Models =
         {
@@ -47,6 +49,7 @@ namespace Halobellum.EditorTools
             new Entry { Unit = "Covenant/Scarab", Folder = "Scarab", Length = 14f },
             new Entry { Unit = "Flood/InfectedPelican", Folder = "Pelican", Length = 10f, Tint = Infested },
             new Entry { Unit = "Flood/InfectedPhantom", Folder = "Phantom", Length = 12f, Tint = Infested },
+            new Entry { Unit = "Covenant/CovenantPhantom", Folder = "Phantom", Length = 12f, Tint = CovenantHull },
             // Bigger than life, and lighter than its texture: at its real size a form is a speck from the game's camera.
             new Entry { Unit = "Flood/InfectionForms", Folder = "InfectionForms", Length = 2.2f, Tint = new Color(1.5f, 1.5f, 1.3f) },
             new Entry { Unit = "Flood/CarrierForm", Folder = "CarrierForm", Height = 2.3f },

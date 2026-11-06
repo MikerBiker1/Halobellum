@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c01f1ec4770119518fc3088b4a52ceeb, type: 3}
-  m_Name: JackalPlasmaRifle_Overcharge
+  m_Name: JackalBeamRifle_MarksmanOptics
   m_EditorClassIdentifier: 
-  techName: Rifle Overcharge
-  description: Plasma rifles fire faster.
-  cost: 150
+  techName: Marksman Optics
+  description: Jackal eyes and a better scope reach further.
+  cost: 120
   healthMultiplier: 1
   damageMultiplier: 1
-  fireRateMultiplier: 1.25
+  fireRateMultiplier: 1
   moveSpeedMultiplier: 1
   airDamageMultiplier: 1
-  rangeBonus: 0
+  rangeBonus: 4
   shieldBonus: 0
   shieldRegenBonus: 0
   splashRadiusBonus: 0

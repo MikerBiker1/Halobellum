@@ -140,5 +140,41 @@ namespace Halobellum.Tests
                 Object.DestroyImmediate(half);
             }
         }
+
+        [Test]
+        public void TheSpartanLaser_IsHeardAsItWindsUp_NotWhenItFires()
+        {
+            UnitStats spartan = Unit("UNSC/Spartan");
+            WeaponStats laser = WeaponOf(spartan, "Spartan Laser");
+            Assert.AreEqual(2.5f, laser.WindUpSeconds, 1e-4f);
+            Assert.AreEqual("sfx_fire_spartanlaser", AudioCatalog.WindUpFor(laser).Slot);
+            Assert.IsNull(AudioCatalog.FireFor(laser, spartan, BattleFactions.Unsc), "Its shot is in the sound of its wind-up.");
+            Assert.AreEqual(0f, AudioCatalog.FireSpartanLaser.PitchSpread, "A wandering pitch would move the shot in the file.");
+            UnitStats captain = Unit("LekgoloColony/HunterCaptain");
+            foreach (WeaponStats weapon in captain.Weapons) Assert.IsNull(AudioCatalog.WindUpFor(weapon), "No wind-up, no wind-up sound.");
+        }
+
+        [Test]
+        public void TheSpartanLasersFile_HasItsShotAboutTwoAndAHalfSecondsIn()
+        {
+            AudioClip clip = AudioCatalog.FireSpartanLaser.Clips.Clips[0];
+            var samples = new float[clip.samples * clip.channels];
+            Assert.IsTrue(clip.GetData(samples, 0));
+            // The loudness of each 10 ms, and the moment it jumps most from the 10 ms before: the shot's attack.
+            int window = Mathf.Max(1, clip.frequency / 100) * clip.channels;
+            float previous = 0f, biggestJump = 0f, shotAt = 0f, loudestAt = 0f, loudest = 0f;
+            for (int start = 0; start + window <= samples.Length; start += window)
+            {
+                float sum = 0f;
+                for (int i = start; i < start + window; i++) sum += samples[i] * samples[i];
+                float rms = Mathf.Sqrt(sum / window);
+                float at = start / (float)clip.channels / clip.frequency;
+                if (rms - previous > biggestJump) { biggestJump = rms - previous; shotAt = at; }
+                if (rms > loudest) { loudest = rms; loudestAt = at; }
+                previous = rms;
+            }
+            Debug.Log($"Spartan Laser file: {clip.length:0.00} s long, its sharpest attack at {shotAt:0.00} s, its loudest 10 ms at {loudestAt:0.00} s.");
+            Assert.AreEqual(2.5f, shotAt, 0.25f, "The shot should land with the wind-up's end.");
+        }
     }
 }

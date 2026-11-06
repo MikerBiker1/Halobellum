@@ -98,8 +98,10 @@ UNITS = [
       [W("Plasma Pistol", 5, 0.5, 10, "Energy")]),
     U("FuelRodGrunt", "Fuel Rod Grunt", "Covenant", "ChaffClear", 1, 0, 4, 150, 80, "U", 3, 0.5, 0.25, "G",
       [W("Fuel Rod Gun", 32, 2.0, 16, "Explosive", proj=25, splash=3)]),
-    U("JackalPlasmaRifle", "Jackal (Plasma Rifle)", "Covenant", "SingleTargetDps", 1, 0, 8, 150, 70, "U", 3.2, 0.5, 0.25, "B",
-      [W("Plasma Rifle", 8, 0.3, 12, "Energy")], baked="Jackal"),
+    # A sniper since 2026-11-05 (the owner): fewer to a squad, far more range, slow hard shots that land at once. Was Jackal (Plasma Rifle): 8 per squad, 8 damage every 0.3 s, 12 m.
+    U("JackalBeamRifle", "Jackal (Beam Rifle)", "Covenant", "SingleTargetDps", 1, 0, 4, 150, 70, "U", 3.2, 0.5, 0.25, "B",
+      [W("Beam Rifle", 45, 3.0, 24, "Energy")], baked="Jackal",
+      note="Snipers: few to a squad, they pick targets off from far away with slow, hard shots, and have little to stop a rush."),
     U("JackalShield", "Jackal (Shield)", "Covenant", "Tank", 1, 0, 6, 150, 70, "U", 3, 0.6, 0.25, "B",
       [W("Plasma Pistol", 6, 0.6, 10, "Energy")],
       arc=dict(deg=120, front=0.5, rear=1.0, block=0.8, types=["Ballistic"]), baked="JackalShield"),
@@ -114,6 +116,10 @@ UNITS = [
     U("Banshee", "Banshee", "Covenant", "Aerial", 2, 50, 2, 300, 400, "L", 10, 1.4, 0.8, "B",
       [W("Plasma Cannons", 9, 0.3, 10, "Energy"),
        W("Fuel Rod Bomb", 50, 2.5, 8, "Explosive", proj=30, splash=3, own="G")], airu=True),
+    # The Covenant's dropship (the owner, 2026-11-05): the Pelican's mirror, with Grunts in its bay. Its weapon's name is what its sound goes by.
+    U("CovenantPhantom", "Covenant Phantom", "Covenant", "Aerial", 2, 50, 1, 300, 800, "L", 10, 3, 2, "B",
+      [W("Plasma Turrets", 12, 0.4, 14, "Energy")], airu=True, drop=("Grunt", 7, 10, True, 3, 1.5, 5),
+      note="With its Gravity Lift tech it lands and drops 7 Grunts 5 seconds into the battle wherever it is, then lands behind enemy lines to drop more, up to 3 drops in all (as the Pelican, D60)."),
     U("HunterPair", "Hunter Pair", "Covenant", "Tank", 3, 225, 2, 450, 1500, "H", 2.2, 1.2, 1.5, "G",
       [W("Assault Cannon", 60, 2.0, 16, "Explosive", proj=30, splash=2.5)],
       arc=dict(deg=240, front=0.7, rear=1.5, block=0, types=[]), baked="Hunter"),
@@ -173,7 +179,15 @@ except FileNotFoundError:
     pass
 
 
+# Units renamed after their assets were made: their files were moved with their .meta, so they keep the GUID of their old id and
+# nothing that points at them breaks (the unit and its techs).
+RENAMED = {"JackalBeamRifle": "JackalPlasmaRifle"}
+
+
 def guid(key):
+    for new, old in RENAMED.items():
+        if key == "unit-" + new or key.startswith("tech-" + new + "-"):
+            key = key.replace(new, old, 1)
     return hashlib.md5(("halobellum-m4-" + key).encode()).hexdigest()
 
 

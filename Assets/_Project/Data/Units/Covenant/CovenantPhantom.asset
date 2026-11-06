@@ -10,30 +10,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 48a24a6f0743ea50b653bb6800d1d896, type: 3}
-  m_Name: JackalPlasmaRifle
+  m_Name: CovenantPhantom
   m_EditorClassIdentifier: 
-  unitName: Jackal (Plasma Rifle)
-  role: 2
-  tier: 1
-  unlockCost: 0
-  squadSize: 8
-  cost: 150
-  baseDamage: 3.75
-  maxHealth: 70
-  armorType: 0
+  unitName: Covenant Phantom
+  role: 7
+  tier: 2
+  unlockCost: 50
+  squadSize: 1
+  cost: 300
+  baseDamage: 60
+  maxHealth: 800
+  armorType: 1
   maxShield: 0
   shieldRegenPerSecond: 0
-  moveSpeed: 1.6
-  collisionRadius: 0.5
-  turnTime180: 0.25
-  isAir: 0
+  moveSpeed: 5
+  collisionRadius: 3
+  turnTime180: 2
+  isAir: 1
   canFlank: 0
   targetFilter: 2
   weapons:
-  - weaponName: Plasma Rifle
-    damagePerShot: 8
-    fireInterval: 0.3
-    range: 12
+  - weaponName: Plasma Turrets
+    damagePerShot: 12
+    fireInterval: 0.4
+    range: 14
     minRange: 0
     projectileSpeed: 0
     splashRadius: 0
@@ -61,10 +61,13 @@ MonoBehaviour:
     rearDamageMultiplier: 1
     blockChance: 0
     blockedDamageTypes: 
-  reinforcementUnit: {fileID: 0}
-  reinforcementBodies: 0
-  reinforcementDelaySeconds: 0
-  reinforcementNeedsUpgrade: 0
+  reinforcementUnit: {fileID: 11400000, guid: 268173acf7a0bbc09ed3f3959cde83f0, type: 2}
+  reinforcementBodies: 7
+  reinforcementDelaySeconds: 10
+  reinforcementNeedsUpgrade: 1
+  reinforcementDrops: 3
+  reinforcementLandSeconds: 1.5
+  reinforcementFirstDropSeconds: 5
   formsPerBody: 1
   isFlood: 0
   infects: 0
@@ -87,14 +90,14 @@ MonoBehaviour:
   leapSpeed: 0
   leapCooldownSeconds: 0
   techUpgrades:
-  - {fileID: 11400000, guid: fd950abb020e37f409a23522894d5147, type: 2}
-  - {fileID: 11400000, guid: 733fca66d70b9ba41043efdb9a1295eb, type: 2}
-  - {fileID: 11400000, guid: 9d16a59ee3421606efe9bea4e50660c7, type: 2}
-  prefab: {fileID: 3760541862654182237, guid: 5eed2f1c115c1fc4f8bb9dcd850d8f8c, type: 3}
-  keepsOwnMaterials: 0
-  bakedBody: {fileID: 11400000, guid: ea47e6fdcfe141368bf6649d59f629dd, type: 2}
+  - {fileID: 11400000, guid: 5a7903a5e08863edc601ce8a6eb9aa40, type: 2}
+  - {fileID: 11400000, guid: 1a9425c86332a54c633bd86fc511def9, type: 2}
+  - {fileID: 11400000, guid: 37247b3438a2818a265a31b156c5c9df, type: 2}
+  prefab: {fileID: 7422235978300439459, guid: 6b858392ff498da4caaa9a9019d770fb, type: 3}
+  keepsOwnMaterials: 1
+  bakedBody: {fileID: 0}
   bakedTint: {r: 1, g: 1, b: 1, a: 0}
   bakedScale: 1
-  strongAgainst: 'Tanks, heavy units'
-  weakAgainst: 'Chaff swarms, flankers'
-  notes: 'Best counters (headless runner, equal cost): Marine (100%), Infection Forms (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  strongAgainst: Ground armies without anti-air
+  weakAgainst: Anti-air
+  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Vampire (100%). With its Gravity Lift tech it lands and drops 7 Grunts 5 seconds into the battle wherever it is, then lands behind enemy lines to drop more, up to 3 drops in all (as the Pelican, D60). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

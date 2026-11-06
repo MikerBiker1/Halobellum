@@ -1,5 +1,5 @@
 // SliceRosterTests.cs
-// Checks the slice roster assets (Milestone 4, Bible Section 8): all 12 UNSC and 12 Covenant units
+// Checks the slice roster assets (Milestone 4, Bible Section 8): all 12 UNSC and 13 Covenant units (the Covenant Phantom came later)
 // exist with the Bible's role, tier, unlock price, squad size, cost and health; their data is
 // valid; base damage follows the Bible default; each faction covers every role of Section 7; the
 // abilities named in Section 8 are set up; every unit has a placeholder prefab; and the faction
@@ -42,13 +42,14 @@ namespace Halobellum.Tests
         {
             ("Grunt", UnitRole.Chaff, 1, 0, 20, 100, 40),
             ("Fuel Rod Grunt", UnitRole.ChaffClear, 1, 0, 4, 150, 80),
-            ("Jackal (Plasma Rifle)", UnitRole.SingleTargetDps, 1, 0, 8, 150, 70),
+            ("Jackal (Beam Rifle)", UnitRole.SingleTargetDps, 1, 0, 4, 150, 70), // Snipers since 2026-11-05: was Jackal (Plasma Rifle), 8 to a squad.
             ("Jackal (Shield)", UnitRole.Tank, 1, 0, 6, 150, 70),
             ("Ghost", UnitRole.Flanker, 1, 0, 2, 200, 250),
             ("Elite", UnitRole.SingleTargetDps, 2, 50, 3, 300, 200),
             ("Wraith", UnitRole.Artillery, 2, 50, 1, 300, 900),
             ("Vampire", UnitRole.AntiAir, 2, 50, 1, 300, 500),
             ("Banshee", UnitRole.Aerial, 2, 50, 2, 300, 400),
+            ("Covenant Phantom", UnitRole.Aerial, 2, 50, 1, 300, 800), // Added 2026-11-05: the Pelican's mirror.
             ("Hunter Pair", UnitRole.Tank, 3, 225, 2, 450, 1500),
             ("Zealot", UnitRole.SingleTargetDps, 3, 200, 1, 400, 1400),
             ("Scarab", UnitRole.Titan, 4, 350, 1, 800, 8500),
@@ -163,6 +164,27 @@ namespace Halobellum.Tests
             TechUpgrade bay = u["Pelican"].TechUpgrades.Single(t => t.UnlocksReinforcement);
             Assert.IsTrue(UnitUpgrades.Apply(u["Pelican"], 1, new[] { bay }).HasReinforcement);
             StringAssert.StartsWith("It drops 6 Marines 5 seconds into the battle", bay.Description, "The tech's text tells of the first drop, which needs no landing spot.");
+
+            // The Covenant Phantom mirrors it: Grunts after its Gravity Lift tech, landing behind enemy lines as the Pelican does.
+            UnitStats phantom = u["Covenant Phantom"];
+            Assert.IsTrue(phantom.IsAir);
+            Assert.IsFalse(phantom.HasReinforcement);
+            Assert.AreEqual("Grunt", phantom.LockedReinforcement.Name);
+            Assert.AreEqual(7, phantom.LockedReinforcement.SquadSize);
+            Assert.AreEqual(u["Pelican"].ReinforcementDrops, phantom.ReinforcementDrops);
+            Assert.AreEqual(u["Pelican"].ReinforcementLandSeconds, phantom.ReinforcementLandSeconds, 1e-3f);
+            Assert.AreEqual(u["Pelican"].ReinforcementFirstDropSeconds, phantom.ReinforcementFirstDropSeconds, 1e-3f);
+            TechUpgrade lift = phantom.TechUpgrades.Single(t => t.UnlocksReinforcement);
+            Assert.IsTrue(UnitUpgrades.Apply(phantom, 1, new[] { lift }).HasReinforcement);
+            Assert.AreEqual("Plasma Turrets", phantom.Weapons.Single().Name, "Its sound goes by this name.");
+
+            // Jackal snipers: few to a squad, slow hard shots that land at once, twice the reach of the plasma rifle they had.
+            WeaponStats beamRifle = u["Jackal (Beam Rifle)"].Weapons.Single();
+            Assert.AreEqual("Beam Rifle", beamRifle.Name);
+            Assert.IsTrue(beamRifle.IsInstant);
+            Assert.GreaterOrEqual(beamRifle.Range, 24f);
+            Assert.GreaterOrEqual(beamRifle.FireInterval, 2f);
+            Assert.AreEqual("Plasma Pistol", u["Jackal (Shield)"].Weapons.Single().Name, "The shield Jackals keep their pistols.");
 
             // Directional defense: Shield Jackals (120 degrees, block 80% of ballistic projectiles) and Hunters (240 degrees).
             DefenseArcStats jackal = u["Jackal (Shield)"].DefenseArc;

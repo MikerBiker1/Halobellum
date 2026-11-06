@@ -438,7 +438,7 @@ namespace Halobellum.Tests
         private UnitStats Unit(string name) => _sandbox.Units.Single(u => u.Stats.Name == name).Stats;
 
         private static readonly string[] AllKindsBlue = { "Marine", "Flamethrower Trooper", "Scorpion", "Gauss Warthog", "Wolverine", "Archer Missile Pod", "Hornet", "Pelican", "Spartan", "Warthog" };
-        private static readonly string[] AllKindsRed = { "Grunt", "Fuel Rod Grunt", "Jackal (Plasma Rifle)", "Elite", "Wraith", "Vampire", "Banshee", "Hunter Pair", "Scarab", "Zealot", "Infection Forms", "Carrier Form", "Combat Form", "Pure Form Ranged", "Seeder", "Swarm Form", "Infected Pelican", "Infected Phantom", "Flood Abomination" };
+        private static readonly string[] AllKindsRed = { "Grunt", "Fuel Rod Grunt", "Jackal (Beam Rifle)", "Elite", "Wraith", "Vampire", "Banshee", "Hunter Pair", "Scarab", "Zealot", "Infection Forms", "Carrier Form", "Combat Form", "Pure Form Ranged", "Seeder", "Swarm Form", "Infected Pelican", "Infected Phantom", "Flood Abomination" };
 
         [UnityTest]
         public IEnumerator EveryKindOfFight_RunsWithoutAnError_AndStaysUnderItsCaps()

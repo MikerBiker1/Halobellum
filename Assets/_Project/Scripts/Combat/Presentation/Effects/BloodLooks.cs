@@ -37,11 +37,11 @@ namespace Halobellum.Presentation
             // Hunters: worm colonies, and so is what the Goliath wears.
             { "Hunter Pair", BloodKind.Orange }, { "Hunter Captain", BloodKind.Orange }, { "Goliath", BloodKind.Orange },
             // Jackals and brutes.
-            { "Jackal (Plasma Rifle)", BloodKind.Purple }, { "Jackal (Shield)", BloodKind.Purple }, { "Brute Grenadier", BloodKind.DarkRed },
+            { "Jackal (Beam Rifle)", BloodKind.Purple }, { "Jackal (Shield)", BloodKind.Purple }, { "Brute Grenadier", BloodKind.DarkRed },
 
             // Machines.
             { "Warthog", BloodKind.None }, { "Gauss Warthog", BloodKind.None }, { "Scorpion", BloodKind.None }, { "Wolverine", BloodKind.None }, { "Hornet", BloodKind.None }, { "Archer Missile Pod", BloodKind.None },
-            { "Pelican", BloodKind.None }, { "Mantis", BloodKind.None }, { "Elephant", BloodKind.None }, { "Gremlin", BloodKind.None }, { "Cobra", BloodKind.None }, { "Rhino", BloodKind.None }, { "Grizzly", BloodKind.None },
+            { "Pelican", BloodKind.None }, { "Covenant Phantom", BloodKind.None }, { "Mantis", BloodKind.None }, { "Elephant", BloodKind.None }, { "Gremlin", BloodKind.None }, { "Cobra", BloodKind.None }, { "Rhino", BloodKind.None }, { "Grizzly", BloodKind.None },
             { "Sparrowhawk", BloodKind.None }, { "Longsword", BloodKind.None }, { "Vulture", BloodKind.None }, { "Condor Gunship", BloodKind.None },
             { "Ghost", BloodKind.None }, { "Wraith", BloodKind.None }, { "Vampire", BloodKind.None }, { "Banshee", BloodKind.None }, { "Scarab", BloodKind.None },
             { "Chopper", BloodKind.None }, { "Marauder", BloodKind.None }, { "Reaver", BloodKind.None }, { "Skitterer", BloodKind.None }, { "Grunt Goblin", BloodKind.None },

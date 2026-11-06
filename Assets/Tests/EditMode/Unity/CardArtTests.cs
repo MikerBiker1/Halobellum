@@ -150,7 +150,7 @@ namespace Halobellum.Tests
         [Test]
         public void FileName_KeepsAUnitsNameReadable_AndDropsWhatAFileCantHave()
         {
-            Assert.AreEqual("Jackal (Plasma Rifle)", UnitIcons.FileName("Jackal (Plasma Rifle)"));
+            Assert.AreEqual("Jackal (Beam Rifle)", UnitIcons.FileName("Jackal (Beam Rifle)"));
             Assert.AreEqual("Hunter Pair", UnitIcons.FileName("Hunter: Pair"));
             Assert.AreEqual("A or B", UnitIcons.FileName("A/ or *B?"));
         }

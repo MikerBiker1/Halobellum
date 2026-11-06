@@ -16,7 +16,7 @@ Fuel Rod Grunt	baked
 Ghost	model
 Grunt	baked
 Hunter Pair	baked
-Jackal (Plasma Rifle)	baked
+Jackal (Beam Rifle)	baked
 Jackal (Shield)	baked
 Scarab	model
 Vampire	model
