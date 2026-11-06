@@ -220,7 +220,7 @@ Numbers below are first-pass values for the first playable slice. Costs are per 
 | Wolverine | Anti-air | 2 | 50 | 1 | 300 | 500 | Rocket volleys, bonus damage against air, can still hit ground |
 | Hornet | Aerial | 2 | 50 | 2 | 300 | 400 | Air, rockets, bombs ground |
 | Archer Missile Pod | Artillery | 2 | 50 | 2 | 300 | 350 | Long-range explosive barrage; lobbed; cannot move |
-| Pelican | Aerial | 2 | 50 | 1 | 300 | 800 | Chin-mounted M370 autocannon (ballistic, hits air and ground); with its Troop Bay it lands wherever it is and drops 6 Marines 5 seconds into the battle (about 11.5 seconds if it comes late to a flank zone), then lands behind enemy lines for more, up to 3 drops in all, at least 10 seconds apart |
+| Pelican | Aerial | 2 | 50 | 1 | 300 | 1200 | Chin-mounted M370 autocannon (ballistic, hits air and ground); with its Troop Bay it lands wherever it is and drops 6 Marines 5 seconds into the battle (about 11.5 seconds if it comes late to a flank zone), then lands behind enemy lines for more, up to 3 drops in all, at least 10 seconds apart |
 | Spartan | Single-target DPS | 3 | 250 | 1 | 500 | 1250 | Energy shield, Spartan Laser that winds up for 2.5 s before each shot |
 | Mantis | Tank | 3 | 250 | 1 | 500 | 2500 | Heavy armor; chaingun and rockets |
 | Elephant | Titan | 4 | 350 | 1 | 800 | 8000 | Mobile fortress; turrets for chaff, cannon for armor |
@@ -520,6 +520,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-05 | The owner's sound effects: by weapon and unit, fast guns looping while they fire, the Scarab's beam in order, calls for Seeders and Swarm Forms, Flood howls; files evened out under the music | Per the project owner (D70) |
 | 2026-11-05 | The owner's second batch: the M60 on every machine gun, autocannons, BR85, beam rifle, heavy plasma, the Glassing Beam, nodes of light, a drawn round; real models for the Scorpion, Gremlin, Flamethrower Trooper, plasma and beam rifles, both towers in their faction's colour, Flood growths on infested vehicles; Covenant machines explode light blue | Per the project owner (D71) |
 | 2026-11-05 | Weapons can wind up (the Spartan Laser, 2.5 s; it fires every 3.5 s); a Covenant Phantom on the Covenant roster; the Jackal (Plasma Rifle) becomes the Jackal (Beam Rifle), a sniper, at 175 after the tournament | Per the project owner (D72) |
+| 2026-11-06 | The Pelican at 1200 health (was 800), so it lands its Marines more often | Per the project owner (D73) |
 
 ## 18. Assumptions to confirm
 

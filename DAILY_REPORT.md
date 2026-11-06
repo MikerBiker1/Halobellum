@@ -2,6 +2,11 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## A tougher Pelican, the Grizzly, damage taken (D73)
+- **In the game:** the Pelican has 1200 health (was 800). The Grizzly stays at 500: at 450 the AI bought it into Noble's Spartans and Armored Division fell further.
+- **Tournaments:** can now play fresh matches (`--seed`) and record damage taken, what armour stopped, losses and levels. Over three runs every sub-faction is from 46.2% (Covenant-based) to 53.0% (Noble), Armored Division 48.3%: `Docs/Balance/hard_ai_tournament_d73.txt`.
+- **Not checked:** no Skirmish tournament; nobody has played the tougher Pelican.
+
 ## The Spartan's wind-up, the Covenant Phantom, Jackal snipers (D72)
 - **In the game:** the Spartan Laser charges for 2.5 s before each shot and fires every 3.5 s; a Covenant Phantom for every Covenant sub-faction, dropping Grunts with its Gravity Lift; the Jackal (Beam Rifle), 4 snipers at 24 m.
 - **Tournament at 2000 health:** the snipers first carried Banished to 65% and sank Armored Division to 39%. At 40 damage and 175 credits every sub-faction is from 46% to 54%: `Docs/Balance/hard_ai_tournament_d72.txt`.
