@@ -160,6 +160,15 @@ namespace Halobellum.Core
         public int Bodies;
     }
 
+    /// <summary>What a Seeder's seed turns a unit into when the unit dies seeded: the Flood's own version of it, from a Flood roster (D76).</summary>
+    public sealed class SeedForm
+    {
+        /// <summary>The name of the unit it takes (as in its stats).</summary>
+        public string From;
+        /// <summary>The Flood unit it rises as.</summary>
+        public UnitStats Becomes;
+    }
+
     /// <summary>What a unit does when it dies, however it dies: an explosion and units released on the spot (D38).</summary>
     /// <summary>A side's two towers (D55). The Command Center stands on its owner's left, the Research Center on the right.</summary>
     public enum TowerKind
@@ -384,16 +393,31 @@ namespace Halobellum.Core
         }
 
         /// <summary>A deep copy, so changes to one copy never affect another.</summary>
-        /// <summary>True if the unit uses one weapon at a time, chosen by its target (ODSTs).</summary>
+        /// <summary>
+        /// True if the unit uses one weapon at a time, chosen by its target: the ODST's two, by what they are for, and a unit whose weapons split
+        /// air from ground (the Swarm Form's spat bone at air, its bite on the ground, D76). Each weapon only notices enemies within three times its
+        /// range, so the long one's targets win unless something is right beside it.
+        /// </summary>
         public bool SwitchesWeapons
         {
             get
             {
                 if (Weapons == null) return false;
-                foreach (WeaponStats weapon in Weapons) if (weapon != null && weapon.TargetClass != WeaponTargetClass.Any) return true;
-                return false;
+                bool airOnly = false, groundOnly = false;
+                foreach (WeaponStats weapon in Weapons)
+                {
+                    if (weapon == null) continue;
+                    if (weapon.TargetClass != WeaponTargetClass.Any) return true;
+                    if (!weapon.HasOwnTargetFilter) continue;
+                    if (weapon.TargetFilter == TargetFilter.Air) airOnly = true;
+                    else if (weapon.TargetFilter == TargetFilter.Ground) groundOnly = true;
+                }
+                return airOnly && groundOnly;
             }
         }
+
+        /// <summary>What its seeds turn a unit into when it dies seeded (the Seeder, D76). A seeded unit with no form here does not rise from the seed.</summary>
+        public SeedForm[] SeedForms;
 
         /// <summary>Share of the damage dealt that comes back as health (from its data, such as the Hunter Captain's siphon beam, or from items).</summary>
         public float LifestealShare;

@@ -255,10 +255,12 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void Seed_EatsAndSlowsItsHost_AndAnArmoredHostRisesWhenItDies()
+        public void Seed_EatsAndSlowsItsHost_AndAnArmoredHostRisesWhenItDies_AsTheFloodsFormOfIt()
         {
             var sim = NewSim();
-            sim_AddShooter(sim, SeedDart());
+            SimUnit seeder = sim_AddShooter(sim, SeedDart());
+            UnitStats form = TestUnits.Unit("Infested Tank", health: 50f, speed: 0f);
+            seeder.Stats.SeedForms = new[] { new SeedForm { From = "Tank", Becomes = form } }; // D76: a seed only raises what the Flood has a form of.
             SimUnit tank = Dummy(sim, new Vec2(0f, 20f));
             Bystander(sim);
             sim.Step();
@@ -269,9 +271,25 @@ namespace Halobellum.Tests
             Assert.Greater(tank.Health, 85f);
             tank.Health = 0f;
             RunSeconds(sim, 2.5f);
-            SimUnit risen = Rose(sim);
-            Assert.IsNotNull(risen, "A seeded unit rises whatever its armor.");
+            SimUnit risen = sim.Units.FirstOrDefault(u => u.Stats.Name == "Infested Tank");
+            Assert.IsNotNull(risen, "A seeded unit rises whatever its armor, as the Flood's form of it.");
             Assert.AreEqual(Team.A, risen.Team);
+            Assert.AreEqual(30f, risen.Stats.MaxHealth, 1e-3f, "With the infected share of the form's health.");
+        }
+
+        [Test]
+        public void ASeededHost_TheFloodHasNoFormOf_StaysDead()
+        {
+            var sim = NewSim();
+            sim_AddShooter(sim, SeedDart());
+            SimUnit tank = Dummy(sim, new Vec2(0f, 20f));
+            Bystander(sim);
+            sim.Step();
+            Assert.IsTrue(tank.IsSeeded);
+            tank.Health = 0f;
+            RunSeconds(sim, 2.5f);
+            Assert.IsNull(Rose(sim));
+            Assert.IsFalse(sim.Units.Any(u => u.Team == Team.A && u != sim.Units[0]), "Nothing rose (D76).");
         }
 
         [Test]

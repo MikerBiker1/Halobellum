@@ -27,7 +27,7 @@ MonoBehaviour:
   collisionRadius: 1
   turnTime180: 0.3
   isAir: 1
-  targetFilter: 1
+  targetFilter: 2
   weapons:
   - weaponName: Spat Bone
     damagePerShot: 12
@@ -39,9 +39,35 @@ MonoBehaviour:
     damageType: 0
     isAntiArmor: 0
     canBeBlocked: 0
-    hasOwnTargetFilter: 0
-    targetFilter: 0
+    hasOwnTargetFilter: 1
+    targetFilter: 1
     airDamageMultiplier: 3
+    coneDegrees: 0
+    targetClass: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+    windUpSeconds: 0
+  - weaponName: Bone Barbs
+    damagePerShot: 12
+    fireInterval: 0.4
+    range: 1.5
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 0
+    damageType: 4
+    isAntiArmor: 0
+    canBeBlocked: 0
+    hasOwnTargetFilter: 1
+    targetFilter: 0
+    airDamageMultiplier: 1
     coneDegrees: 0
     targetClass: 0
     lobbed: 0

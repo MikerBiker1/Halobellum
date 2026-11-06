@@ -83,6 +83,7 @@ namespace Halobellum.Combat
         private readonly List<SimSquad> _squads = new List<SimSquad>();
         private readonly List<SimSpell> _spells = new List<SimSpell>();
         private readonly List<PendingRise> _rises = new List<PendingRise>();
+        private readonly Dictionary<UnitStats, UnitStats> _seedForms = new Dictionary<UnitStats, UnitStats>();
         private readonly List<SimUnit> _bursting = new List<SimUnit>();
         private readonly List<SimUnit> _spawners = new List<SimUnit>();
         private readonly List<SimUnit> _auras = new List<SimUnit>();
@@ -442,7 +443,7 @@ namespace Halobellum.Combat
             {
                 PendingRise rise = _rises[i];
                 if (ElapsedSeconds + 1e-4f < rise.At) continue;
-                SimUnit risen = CreateUnit(InfectedFormOf(rise.Corpse.Stats), rise.Team, rise.Corpse.Position, -1);
+                SimUnit risen = CreateUnit(rise.Form ?? InfectedFormOf(rise.Corpse.Stats), rise.Team, rise.Corpse.Position, -1);
                 risen.Facing = rise.Team == Team.A ? Vec2.Up : Vec2.Down;
                 risen.UnlimitedAcquisition = true;
                 SimUnit killer = rise.Corpse.KilledById >= 0 ? _units[rise.Corpse.KilledById] : null;
@@ -507,10 +508,36 @@ namespace Halobellum.Combat
             return infected;
         }
 
+        /// <summary>
+        /// The Flood unit a seeded unit rises as: its planter's form for it, from a Flood roster (a Banshee as an Infested Banshee), with the infected
+        /// share of that unit's health; null if the Flood has none (a Hunter, a Spartan), and then the seed alone does not raise it (D76).
+        /// </summary>
+        private UnitStats SeedFormFor(SimUnit unit)
+        {
+            if (unit.SeededById < 0) return null;
+            SeedForm[] forms = _units[unit.SeededById].Stats.SeedForms;
+            if (forms == null) return null;
+            string name = unit.Stats.Name;
+            foreach (SeedForm form in forms)
+            {
+                if (form?.Becomes == null || form.From != name) continue;
+                if (!_seedForms.TryGetValue(form.Becomes, out UnitStats risen))
+                {
+                    risen = form.Becomes.Clone();
+                    risen.SquadSize = 1;
+                    risen.MaxHealth = form.Becomes.MaxHealth * _rules.InfectedHealthShare;
+                    _seedForms[form.Becomes] = risen;
+                }
+                return risen;
+            }
+            return null;
+        }
+
         /// <summary>True if this unit, just killed, rises as an infected unit.</summary>
         private bool WillRise(SimUnit unit)
         {
-            if (unit.IsSeeded || unit.MarkedForInfection) return true;
+            if (unit.MarkedForInfection) return true;
+            if (unit.IsSeeded && SeedFormFor(unit) != null) return true; // A seed only takes what the Flood has a form of (D76).
             if (unit.Stats.IsFlood || unit.Stats.ImmuneToInfection || unit.IsAir || unit.Stats.ArmorType != ArmorType.Unarmored) return false;
             _movement.Grid.Query(unit.Position, unit.Radius + _rules.InfectionRange + _movement.Grid.MaxRadius, _nearby);
             foreach (SimUnit other in _nearby)
@@ -1502,7 +1529,7 @@ namespace Halobellum.Combat
                 if (unit.Stats.Shockwave != null) ReleaseShockwave(unit);
                 if (WillRise(unit))
                 {
-                    _rises.Add(new PendingRise { Corpse = unit, Team = unit.Team == Team.A ? Team.B : Team.A, At = ElapsedSeconds + _rules.InfectionDelaySeconds });
+                    _rises.Add(new PendingRise { Corpse = unit, Team = unit.Team == Team.A ? Team.B : Team.A, At = ElapsedSeconds + _rules.InfectionDelaySeconds, Form = unit.IsSeeded ? SeedFormFor(unit) : null });
                     Events.RaiseUnitInfected(unit);
                 }
                 if (unit.Stats.DeathBurst != null) _bursting.Add(unit);
@@ -1651,6 +1678,8 @@ namespace Halobellum.Combat
             public SimUnit Corpse;
             public Team Team;
             public float At;
+            /// <summary>What it rises as when a seed raised it (D76); null: the usual infected form.</summary>
+            public UnitStats Form;
         }
 
         /// <summary>A shot in flight. It follows its target and hits when it arrives; a lobbed one flies to a fixed spot.</summary>

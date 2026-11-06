@@ -51,11 +51,11 @@ FLANKERS = {"Pelican", "Sparrowhawk", "Longsword", "Vulture", "CondorGunship"}
 
 def U(id, name, faction, role, tier, unlock, squad, cost, hp, armor, speed, radius, turn, filter, weapons,
       shield=0, regen=0, airu=False, arc=None, drop=None, note="", forms=1, flood=False, infects=False, immune=False,
-      selfd=False, seek=False, burst=None, spawn=None, aura=None, leap=None, lifesteal=0, basedmg=None, tint=None, scale=1, sub=None, folder=None, baked=None):
+      selfd=False, seek=False, burst=None, spawn=None, aura=None, leap=None, lifesteal=0, basedmg=None, tint=None, scale=1, sub=None, folder=None, baked=None, seedforms=None):
     return dict(id=id, name=name, faction=faction, role=role, tier=tier, unlock=unlock, squad=squad, cost=cost,
                 hp=hp, armor=armor, speed=speed, radius=radius, turn=turn, filter=filter, weapons=weapons,
                 shield=shield, regen=regen, air=airu, arc=arc, drop=drop, note=note, forms=forms, flood=flood, infects=infects,
-                immune=immune, selfd=selfd, seek=seek, burst=burst, spawn=spawn, aura=aura, leap=leap, lifesteal=lifesteal,
+                immune=immune, selfd=selfd, seek=seek, burst=burst, spawn=spawn, aura=aura, leap=leap, lifesteal=lifesteal, seedforms=seedforms,
                 basedmg=basedmg, tint=tint, scale=scale, sub=sub, folder=folder or faction, baked=baked)
 
 
@@ -144,12 +144,18 @@ UNITS = [
       [W("Talons", 28, 0.4, 1.5, "Melee")], flood=True),
     U("PureFormRanged", "Pure Form Ranged", "Flood", "Artillery", 2, 50, 2, 250, 400, "L", 1, 1.1, 1, "G",
       [W("Bone Shards", 60, 3, 34, "Explosive", proj=22, splash=3, minr=8, lob=True)], flood=True),
-    U("SwarmForm", "Swarm Form", "Flood", "AntiAir", 2, 50, 4, 250, 200, "U", 3.5, 1, 0.3, "A",
-      [W("Spat Bone", 12, 0.4, 14, "Ballistic", air=3)], airu=True, forms=5, flood=True),
+    # D76 (the owner, 2026-11-06): its spat bone hits air only, from 14 m; on the ground it must close in and bite. Its weapons split air from
+    # ground, so it uses one at a time, and the long one's reach means air comes first.
+    U("SwarmForm", "Swarm Form", "Flood", "AntiAir", 2, 50, 4, 250, 200, "U", 3.5, 1, 0.3, "B",
+      [W("Spat Bone", 12, 0.4, 14, "Ballistic", air=3, own="A"), W("Bone Barbs", 12, 0.4, 1.5, "Melee", own="G")], airu=True, forms=5, flood=True),
     U("PureFormTank", "Pure Form Tank", "Flood", "Tank", 3, 200, 1, 400, 3200, "H", 1.6, 2, 1.5, "G",
       [W("Slam", 200, 2, 3, "Melee", splash=4)], flood=True),
-    U("Seeder", "Seeder", "Flood", "SingleTargetDps", 3, 200, 2, 400, 800, "L", 1.5, 1.6, 1, "G",
-      [W("Seed Spore", 60, 2.5, 24, "Energy", proj=30, seed=8, seedshare=0.08, seedslow=0.4)], airu=True, flood=True),
+    # D76 (the owner, 2026-11-06): it shoots air too, and a seed only raises what a Flood roster has its own version of, as that version.
+    U("Seeder", "Seeder", "Flood", "SingleTargetDps", 3, 200, 2, 400, 800, "L", 1.5, 1.6, 1, "B",
+      [W("Seed Spore", 60, 2.5, 24, "Energy", proj=30, seed=8, seedshare=0.08, seedslow=0.4)], airu=True, flood=True,
+      seedforms=[("Marine", "InfestedMarine"), ("Warthog", "InfestedWarthog"), ("Scorpion", "InfestedScorpion"), ("Hornet", "InfestedHornet"),
+                 ("Grunt", "InfestedGrunt"), ("Elite", "InfestedElite"), ("Ghost", "InfestedGhost"), ("Banshee", "InfestedBanshee"),
+                 ("Wraith", "InfestedWraith"), ("Pelican", "InfectedPelican"), ("Covenant Phantom", "InfectedPhantom")]),
     U("InfectedPelican", "Infected Pelican", "Flood", "Aerial", 3, 200, 1, 400, 900, "L", 6, 2.5, 1, "G",
       [W("Crash Dive", 0, 1, 1, "Explosive", own="G")], airu=True, flood=True, selfd=True, seek=True, leap=(22, 16, 0),
       burst=dict(dmg=900, radius=3.5, type="Explosive", aa=False, spawns=[("InfectionForms", 5), ("CombatForm", 5)])),
@@ -301,6 +307,11 @@ def unit_yaml(u):
     au = u["aura"]
     lines += [f"  auraRadius: {fmt(au[0] if au else 0)}", f"  auraSpeedMultiplier: {fmt(au[1] if au else 1)}",
               f"  auraHealPerSecondShare: {fmt(au[2] if au else 0)}", f"  lifestealShare: {fmt(u['lifesteal'])}"]
+    if u["seedforms"]:
+        lines += ["  seedForms:"] + [line for name, unit_id in u["seedforms"]
+                                     for line in (f"  - from: {name}", f"    becomes: {{fileID: 11400000, guid: {guid('unit-' + unit_id)}, type: 2}}")]
+    else:
+        lines += ["  seedForms: []"]
     lp = u["leap"]
     lines += [f"  leapRange: {fmt(lp[0] if lp else 0)}", f"  leapSpeed: {fmt(lp[1] if lp else 0)}", f"  leapCooldownSeconds: {fmt(lp[2] if lp else 0)}"]
     techs = TECHS.get(u["id"], [])

@@ -84,6 +84,12 @@ static class Program
                 flood.AuraHealPerSecondShare = aura[2].GetSingle();
             }
             flood.LifestealShare = u.GetProperty("lifesteal").GetSingle();
+            if (u.TryGetProperty("seedforms", out JsonElement seeds) && seeds.ValueKind == JsonValueKind.Array)
+            {
+                var forms = new List<SeedForm>();
+                foreach (JsonElement entry in seeds.EnumerateArray()) forms.Add(new SeedForm { From = entry[0].GetString(), Becomes = byId[entry[1].GetString()] });
+                flood.SeedForms = forms.ToArray(); // D76: what the Seeder's seeds raise, and as what.
+            }
         }
         foreach (JsonElement u in doc.RootElement.EnumerateArray())
         {

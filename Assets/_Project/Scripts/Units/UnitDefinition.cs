@@ -105,6 +105,8 @@ namespace Halobellum.Units
         public float auraHealPerSecondShare;
         [Tooltip("Share of the damage it deals that comes back as health (the Hunter Captain's siphon beam). 0 = none.")]
         public float lifestealShare;
+        [Tooltip("What its seeds turn a unit into when it dies seeded: the unit's name, and the Flood unit it rises as (the Seeder, D76).")]
+        public List<SeedFormDefinition> seedForms = new List<SeedFormDefinition>();
 
         [Header("Leap (D39)")]
         [Tooltip("It pounces on a target within this many metres, and jumps this far over anything that holds it up. 0 = never.")]
@@ -217,6 +219,16 @@ namespace Halobellum.Units
                 else stats.Reinforcement = drop;
             }
 
+            if (seedForms != null && seedForms.Count > 0 && depth < 2)
+            {
+                var forms = new List<SeedForm>();
+                foreach (SeedFormDefinition form in seedForms)
+                {
+                    if (form?.becomes != null && !string.IsNullOrEmpty(form.from)) forms.Add(new SeedForm { From = form.from, Becomes = form.becomes.ToStats(depth + 1) });
+                }
+                stats.SeedForms = forms.ToArray();
+            }
+
             var techs = new List<TechUpgrade>();
             if (techUpgrades != null)
             {
@@ -225,6 +237,14 @@ namespace Halobellum.Units
             stats.TechUpgrades = techs.ToArray();
             return stats;
         }
+    }
+
+    /// <summary>Inspector data for what a seed turns a unit into (D76).</summary>
+    [Serializable]
+    public sealed class SeedFormDefinition
+    {
+        public string from;
+        public UnitDefinition becomes;
     }
 
     /// <summary>Inspector data for bodies of a unit type released when a unit dies.</summary>
