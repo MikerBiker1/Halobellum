@@ -1,6 +1,9 @@
 """How much each unit pulls its weight in a tournament's results: python unit_impact.py <results.jsonl> [sub-faction ...]
 
-Ratio = share of its side's damage / share of its side's credits. Mirrors are left out. Units that fight through bodies they make
+Ratio = share of its side's damage / share of its side's credits. From results with damage taken (D73 on):
+tkn% = share of its side's damage taken, soak = tkn% / cr% (above 1: it draws and absorbs more fire than its price), stop% = share of
+the damage aimed at it that armour, shields and defence arcs stopped, died% = share of its bodies dead at a battle's end,
+lvl = average level of its squads still owned at the match's end. Back-line units take little fire, so a low soak is not toughness. Mirrors are left out. Units that fight through bodies they make
 (Seeder, Carrier Form, Infected Phantom) or that block (Jackal with a shield) score low without being weak; dropped Marines count under Marine.
 """
 import collections, json, sys
@@ -15,7 +18,8 @@ def sides(m):
     return [(m["a"], a, m["winner"] == "a"), (m["b"], b, m["winner"] == "b")]
 
 
-per_sub = collections.defaultdict(lambda: {"games": 0, "wins": 0, "dmg": 0.0, "cr": 0.0, "u": collections.defaultdict(lambda: dict(field=0, wins=0, dmg=0.0, cr=0.0, kills=0, sr=0))})
+per_sub = collections.defaultdict(lambda: {"games": 0, "wins": 0, "dmg": 0.0, "cr": 0.0, "tkn": 0.0, "u": collections.defaultdict(lambda: dict(field=0, wins=0, dmg=0.0, cr=0.0, kills=0, sr=0, tkn=0.0, prev=0.0, bodies=0, lost=0, endsq=0, endlv=0))})
+has_taken = False
 for m in matches:
     if m["a"] == m["b"]:
         continue
@@ -23,8 +27,18 @@ for m in matches:
         s = per_sub[sub]
         s["games"] += 1
         s["wins"] += won
-        for name, (sr, cr, dmg, kills, _, _) in side["units"].items():
+        for name, v in side["units"].items():
+            sr, cr, dmg, kills, endsq, endlv = v[:6]
             u = s["u"][name]
+            u["endsq"] += endsq
+            u["endlv"] += endlv
+            if len(v) >= 10:
+                has_taken = True
+                u["tkn"] += v[6]
+                u["prev"] += v[7]
+                u["bodies"] += v[8]
+                u["lost"] += v[9]
+                s["tkn"] += v[6]
             u["field"] += 1
             u["wins"] += won
             u["dmg"] += dmg
@@ -43,17 +57,21 @@ def rows(sub):
         without_w = s["wins"] - u["wins"]
         edge = 100 * (u["wins"] / u["field"] - without_w / without_g) if without_g >= 20 else None
         out.append(dict(name=name, fielded=100 * u["field"] / s["games"], n=u["field"], win=100 * u["wins"] / u["field"], edge=edge,
-                        dshare=100 * u["dmg"] / s["dmg"], cshare=100 * u["cr"] / s["cr"], per100=100 * u["dmg"] / max(1, u["cr"]), kills=u["kills"] / max(1, u["sr"])))
+                        dshare=100 * u["dmg"] / s["dmg"], cshare=100 * u["cr"] / s["cr"], per100=100 * u["dmg"] / max(1, u["cr"]), kills=u["kills"] / max(1, u["sr"]),
+                        tshare=100 * u["tkn"] / max(1, s["tkn"]), stop=100 * u["prev"] / max(1, u["tkn"] + u["prev"]),
+                        died=100 * u["lost"] / max(1, u["bodies"]), lvl=u["endlv"] / u["endsq"] if u["endsq"] else None))
     return out
 
 
 def show(sub):
     r = rows(sub)
     print(f"\n== {sub}: {100*per_sub[sub]['wins']/per_sub[sub]['games']:.1f}% of {per_sub[sub]['games']}")
-    print(f"{'unit':<24}{'field':>6}{'n':>5}{'win':>5}{'edge':>6}{'dmg%':>6}{'cr%':>6}{'ratio':>6}{'d/100':>7}{'kills':>6}")
+    extra = f"{'tkn%':>6}{'soak':>6}{'stop%':>6}{'died%':>6}{'lvl':>5}" if has_taken else ""
+    print(f"{'unit':<24}{'field':>6}{'n':>5}{'win':>5}{'edge':>6}{'dmg%':>6}{'cr%':>6}{'ratio':>6}{'d/100':>7}{'kills':>6}" + extra)
     for x in sorted(r, key=lambda x: x["dshare"] / max(0.01, x["cshare"])):
         e = "  -" if x["edge"] is None else f"{x['edge']:+.0f}"
-        print(f"{x['name']:<24}{x['fielded']:>5.0f}%{x['n']:>5}{x['win']:>5.0f}{e:>6}{x['dshare']:>6.1f}{x['cshare']:>6.1f}{x['dshare']/max(.01,x['cshare']):>6.2f}{x['per100']:>7.0f}{x['kills']:>6.1f}")
+        print(f"{x['name']:<24}{x['fielded']:>5.0f}%{x['n']:>5}{x['win']:>5.0f}{e:>6}{x['dshare']:>6.1f}{x['cshare']:>6.1f}{x['dshare']/max(.01,x['cshare']):>6.2f}{x['per100']:>7.0f}{x['kills']:>6.1f}"
+              + (f"{x['tshare']:>6.1f}{x['tshare']/max(.01,x['cshare']):>6.2f}{x['stop']:>6.0f}{x['died']:>6.0f}" + ("    -" if x['lvl'] is None else f"{x['lvl']:>5.1f}") if has_taken else ""))
 
 
 

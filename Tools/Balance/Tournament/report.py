@@ -213,7 +213,8 @@ for m in matches:
     if m["winner"] == "none":
         continue
     for sub, _, side, won in sides(m):
-        for name, (sr, cr, dmg, kills, end_squads, end_levels) in side["units"].items():
+        for name, v in side["units"].items():
+            sr, cr, dmg, kills, end_squads, end_levels = v[:6]  # D73 adds damage taken, stopped, bodies and lost after these
             u = unit[name]
             if sr == 0:
                 continue  # Dropped by something else, never bought.

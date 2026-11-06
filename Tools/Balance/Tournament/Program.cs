@@ -235,6 +235,9 @@ static class Program
     {
         public int SquadRounds, Kills, EndSquads, EndLevels, CreditRounds;
         public float Damage;
+        // What enemies did to it, what its armour, shields and defence arc stopped, and how many of its bodies fought and fell.
+        public float Taken, Prevented;
+        public int Bodies, Lost;
     }
 
     static string PlayMatch((FactionInfo faction, SubFactionInfo sub) a, (FactionInfo faction, SubFactionInfo sub) b, int i, MatchRules rules, CombatRules combat, List<(string, string, float)> wins)
@@ -280,6 +283,10 @@ static class Program
                 UnitTally tally = Tally(unit.Team == Team.A ? tallyA : tallyB, unit.Stats.Name);
                 tally.Damage += unit.DamageDealt;
                 tally.Kills += unit.Kills;
+                tally.Taken += unit.DamageTaken;
+                tally.Prevented += unit.DamagePrevented;
+                tally.Bodies++;
+                if (!unit.IsAlive) tally.Lost++;
                 if (unit.Stats.HasReinforcement && unit.Stats.ReinforcementLandSeconds > 0f)
                 {
                     int side = unit.Team == Team.A ? 0 : 1;
@@ -358,7 +365,7 @@ static class Program
         text.Append("\"towers\":[").Append(string.Join(",", side.Towers.Select(t => $"[{t.Level},{t.Falls}]"))).Append("],");
         text.Append("\"cards\":[").Append(string.Join(",", ai.Taken.Select(c => JsonSerializer.Serialize(c)))).Append("],");
         text.Append("\"units\":{");
-        text.Append(string.Join(",", tallies.Select(kv => $"{JsonSerializer.Serialize(kv.Key)}:[{kv.Value.SquadRounds},{kv.Value.CreditRounds},{kv.Value.Damage.ToString("0", CultureInfo.InvariantCulture)},{kv.Value.Kills},{kv.Value.EndSquads},{kv.Value.EndLevels}]")));
+        text.Append(string.Join(",", tallies.Select(kv => $"{JsonSerializer.Serialize(kv.Key)}:[{kv.Value.SquadRounds},{kv.Value.CreditRounds},{kv.Value.Damage.ToString("0", CultureInfo.InvariantCulture)},{kv.Value.Kills},{kv.Value.EndSquads},{kv.Value.EndLevels},{kv.Value.Taken.ToString("0", CultureInfo.InvariantCulture)},{kv.Value.Prevented.ToString("0", CultureInfo.InvariantCulture)},{kv.Value.Bodies},{kv.Value.Lost}]")));
         text.Append("}}");
     }
 
