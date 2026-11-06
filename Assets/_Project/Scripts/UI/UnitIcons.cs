@@ -6,11 +6,12 @@
 // The fallback is a dark shape of the unit's kind of body, edged and backed with its faction's colour, with its role's
 // emblem in a badge. The layers are in Resources/CardArt/Layers, drawn by Tools/UI/make_card_art.py. Units are looked
 // up by name, so new units need nothing here. Which body shape a unit gets is decided from its stats (BodyShapeFor).
-// Depends on: Halobellum.Core (UnitStats), UnityEngine.
+// Depends on: Halobellum.Core (UnitStats), Halobellum.Presentation (FactionColors), UnityEngine.
 
 using System.Collections.Generic;
 using System.Text;
 using Halobellum.Core;
+using Halobellum.Presentation;
 using UnityEngine;
 
 namespace Halobellum.UI
@@ -61,16 +62,7 @@ namespace Halobellum.UI
         }
 
         /// <summary>The accent colour of a faction: its fallback icons, card tints and sub-faction banners.</summary>
-        public static Color FactionColor(string faction)
-        {
-            switch (faction)
-            {
-                case "UNSC": return new Color(0.9f, 0.68f, 0.16f);
-                case "Covenant": return new Color(0.62f, 0.42f, 1f);
-                case "Flood": return new Color(0.72f, 0.8f, 0.24f);
-                default: return new Color(0.6f, 0.68f, 0.76f);
-            }
-        }
+        public static Color FactionColor(string faction) => FactionColors.Of(faction); // The towers' lights wear the same.
 
         // ------------------------------------------------------------------ the fallback
 

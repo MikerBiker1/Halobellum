@@ -62,6 +62,7 @@ namespace Halobellum.Presentation
         /// <summary>Where a wreck's hull is, as a share of the height of the whole body with its turret and antennas.</summary>
         private const float HullTopShare = 0.7f;
         private static readonly int TintId = Shader.PropertyToID("_BaseColor");
+        private static readonly int EmissionId = Shader.PropertyToID("_EmissionColor");
         private static readonly Color Burnt = new Color(0.13f, 0.12f, 0.11f);
 
         private struct BurningSpot
@@ -295,6 +296,7 @@ namespace Halobellum.Presentation
             {
                 renderer.GetPropertyBlock(_block);
                 _block.SetColor(TintId, Burnt);
+                _block.SetColor(EmissionId, Color.black); // A tower's lights go out.
                 renderer.SetPropertyBlock(_block);
             }
         }

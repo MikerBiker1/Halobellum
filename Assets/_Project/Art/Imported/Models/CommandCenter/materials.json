@@ -1,0 +1,16 @@
+{
+ "materials": [
+  {
+   "name": "CommandCenter_0",
+   "colour": [
+    1,
+    1,
+    1
+   ],
+   "glass": false,
+   "cutout": false,
+   "texture": "CommandCenter_0.png",
+   "glowTexture": "CommandCenter_0_emit.png"
+  }
+ ]
+}

@@ -1,6 +1,10 @@
 // TowerArt.cs
-// The towers' looks (D55), put together from plain shapes until real models are found (Assets_to_Download.md). The Command Center
-// is a block with a mast and a radar dish, the Research Center a lab with a glowing dome. Each carries a band in its side's colour.
+// The towers' looks (D55). Each is the owner's Meshy model, a prefab in Resources/Towers named after its kind (RealModelBuilder makes
+// them from Tools/Art/units/CommandCenter.py and ResearchCenter.py): the Command Center a domed hall with a radar dish, the Research
+// Center a striped sphere beside a dome. The Command Center's trim and the Research Center's lights are a mask in the model's glow,
+// lit here in the colour of the faction that owns the tower (FactionColors), so the rest of the texture is untouched. A thin slab in
+// the side's colour lies under each, so that two towers of one faction still show whose they are. If a prefab is missing, the tower
+// is put together from plain shapes as before.
 // Depends on: PlaceholderArt, Halobellum.Core (TowerKind), UnityEngine.
 
 using Halobellum.Core;
@@ -10,11 +14,51 @@ namespace Halobellum.Presentation
 {
     public static class TowerArt
     {
+        public const string ResourceFolder = "Towers";
+
         private static readonly Color Steel = new Color(0.34f, 0.36f, 0.4f), DarkSteel = new Color(0.17f, 0.18f, 0.21f);
         private static readonly Color Glow = new Color(0.55f, 0.85f, 1f);
+        private static readonly int EmissionId = Shader.PropertyToID("_EmissionColor");
 
-        /// <summary>Builds the tower under this root, for a body of this radius. Returns how tall it is.</summary>
-        public static float Build(Transform root, TowerKind kind, Color team, float radius)
+        /// <summary>How brightly each tower's mask glows in its faction's colour: the Command Center's trim is paint that catches the light, the Research Center's are lights.</summary>
+        public const float TrimGlow = 0.9f, LightGlow = 1.6f;
+        private const float SlabHeight = 0.06f;
+
+        /// <summary>The prefab of a tower of this kind, or null if it hasn't been built.</summary>
+        public static GameObject PrefabFor(TowerKind kind) => Resources.Load<GameObject>(ResourceFolder + "/" + kind);
+
+        /// <summary>The colour a tower's mask glows in, for its faction's colour.</summary>
+        public static Color GlowFor(TowerKind kind, Color faction)
+        {
+            float strength = kind == TowerKind.CommandCenter ? TrimGlow : LightGlow;
+            return new Color(faction.r * strength, faction.g * strength, faction.b * strength, 1f);
+        }
+
+        /// <summary>Builds the tower under this root, for a body of this radius, with its side's colour and its faction's. Returns how tall it is.</summary>
+        public static float Build(Transform root, TowerKind kind, Color team, Color faction, float radius)
+        {
+            GameObject prefab = PrefabFor(kind);
+            if (prefab == null) return BuildFromShapes(root, kind, team, radius);
+
+            Part(root, PlaceholderArt.Cube, team, new Vector3(0f, SlabHeight * 0.5f, 0f), new Vector3(radius * 2f, SlabHeight, radius * 2f));
+            GameObject body = Object.Instantiate(prefab, root, false);
+            body.name = "Body";
+            var block = new MaterialPropertyBlock();
+            Color glow = GlowFor(kind, faction);
+            float top = 0f;
+            foreach (Renderer renderer in body.GetComponentsInChildren<Renderer>())
+            {
+                renderer.GetPropertyBlock(block);
+                block.SetColor(EmissionId, glow);
+                renderer.SetPropertyBlock(block);
+                top = Mathf.Max(top, renderer.bounds.max.y - root.position.y);
+            }
+            return top;
+        }
+
+        // ------------------------------------------------------------------ plain shapes, if the models are missing
+
+        private static float BuildFromShapes(Transform root, TowerKind kind, Color team, float radius)
         {
             float width = radius * 2f;
             Part(root, PlaceholderArt.Cube, DarkSteel, new Vector3(0f, 0.4f, 0f), new Vector3(width, 0.8f, width));
