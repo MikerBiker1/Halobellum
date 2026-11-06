@@ -32,7 +32,7 @@ namespace Halobellum.Tests
             ("Wolverine", UnitRole.AntiAir, 2, 50, 1, 300, 500),
             ("Hornet", UnitRole.Aerial, 2, 50, 2, 300, 400),
             ("Archer Missile Pod", UnitRole.Artillery, 2, 50, 2, 300, 350),
-            ("Pelican", UnitRole.Aerial, 2, 50, 1, 300, 800),
+            ("Pelican", UnitRole.Aerial, 2, 50, 1, 300, 1200),
             ("Spartan", UnitRole.SingleTargetDps, 3, 250, 1, 500, 1250),
             ("Mantis", UnitRole.Tank, 3, 250, 1, 500, 2500),
             ("Elephant", UnitRole.Titan, 4, 350, 1, 800, 8000),

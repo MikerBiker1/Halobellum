@@ -1279,7 +1279,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Hornet
     defender: Pelican
-    winRate: 1
+    winRate: 0
   - attacker: Hornet
     defender: Spartan
     winRate: 0
@@ -1690,7 +1690,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pelican
     defender: Hornet
-    winRate: 0
+    winRate: 1
   - attacker: Pelican
     defender: Archer Missile Pod
     winRate: 1
@@ -1711,7 +1711,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Pelican
     defender: 'Jackal (Beam Rifle)'
-    winRate: 0
+    winRate: 1
   - attacker: Pelican
     defender: 'Jackal (Shield)'
     winRate: 0
@@ -1732,7 +1732,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pelican
     defender: Covenant Phantom
-    winRate: 0
+    winRate: 1
   - attacker: Pelican
     defender: Hunter Pair
     winRate: 0.5
@@ -1780,7 +1780,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pelican
     defender: Spartan Heavy Weapons
-    winRate: 0
+    winRate: 0.5
   - attacker: Pelican
     defender: Spartan Grenadier
     winRate: 1
@@ -1789,7 +1789,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pelican
     defender: Spartan Fireteam
-    winRate: 0
+    winRate: 1
   - attacker: Pelican
     defender: Gremlin
     winRate: 0
@@ -1810,13 +1810,13 @@ MonoBehaviour:
     winRate: 1
   - attacker: Pelican
     defender: Vulture
-    winRate: 0
+    winRate: 1
   - attacker: Pelican
     defender: Condor Gunship
     winRate: 0
   - attacker: Pelican
     defender: Chopper
-    winRate: 0.9
+    winRate: 1
   - attacker: Pelican
     defender: Brute Grenadier
     winRate: 1
@@ -1849,7 +1849,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pelican
     defender: Infested Warthog
-    winRate: 0.1
+    winRate: 1
   - attacker: Pelican
     defender: Infested Scorpion
     winRate: 0.6
@@ -1864,7 +1864,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pelican
     defender: Infested Ghost
-    winRate: 0
+    winRate: 0.8
   - attacker: Pelican
     defender: Infested Elite
     winRate: 0
@@ -2938,7 +2938,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: 'Jackal (Beam Rifle)'
     defender: Pelican
-    winRate: 1
+    winRate: 0
   - attacker: 'Jackal (Beam Rifle)'
     defender: Spartan
     winRate: 1
@@ -4387,7 +4387,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Covenant Phantom
     defender: Pelican
-    winRate: 1
+    winRate: 0
   - attacker: Covenant Phantom
     defender: Spartan
     winRate: 0
@@ -7699,7 +7699,7 @@ MonoBehaviour:
     winRate: 0.2
   - attacker: Spartan Heavy Weapons
     defender: Pelican
-    winRate: 1
+    winRate: 0.5
   - attacker: Spartan Heavy Weapons
     defender: Spartan
     winRate: 1
@@ -8320,7 +8320,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Fireteam
     defender: Pelican
-    winRate: 1
+    winRate: 0
   - attacker: Spartan Fireteam
     defender: Spartan
     winRate: 1
@@ -9769,7 +9769,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Vulture
     defender: Pelican
-    winRate: 1
+    winRate: 0
   - attacker: Vulture
     defender: Spartan
     winRate: 0
@@ -10183,7 +10183,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Chopper
     defender: Pelican
-    winRate: 0.1
+    winRate: 0
   - attacker: Chopper
     defender: Spartan
     winRate: 1
@@ -12460,7 +12460,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Warthog
     defender: Pelican
-    winRate: 0.9
+    winRate: 0
   - attacker: Infested Warthog
     defender: Spartan
     winRate: 1
@@ -13495,7 +13495,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Ghost
     defender: Pelican
-    winRate: 1
+    winRate: 0.2
   - attacker: Infested Ghost
     defender: Spartan
     winRate: 1
