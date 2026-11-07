@@ -221,10 +221,12 @@ namespace Halobellum.EditorTools
         private static readonly Dictionary<string, float> IconMoments = new Dictionary<string, float>
         {
             { "Zealot", 0.4f },            // The sword thrust out in front; at the middle it is hidden behind him.
-            { "Flood Abomination", 0.7f }, // Rearing up with its arm raised; at the middle it is crouched small, arms spread wide.
+            { "Flood Abomination", 0.5f }, // Reared up, both arms raised over its head before the slam (D93).
             { "Stalker Form", 0.18f },     // Its first lunge, arms and tusks striking (D90); at the middle it is a one-armed swipe.
             { "Combat Form", 0.23f },      // Its first shot, the claw held out and jolting (D92); at the middle it is between shots.
             { "Infested Elite", 0.23f },   // The same with its plasma rifle.
+            { "Seeder", 0.36f },           // Squeezing out its spore, the tendrils lashing (D93).
+            { "Pure Form Tank", 0.47f },   // The club swept round in front (D93).
         };
 
         /// <summary>The baked row a unit's icon shows: a moment of its shooting clip (the middle, unless IconMoments says), or its still frame without one.</summary>

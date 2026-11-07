@@ -14,7 +14,7 @@
 // battle start (decision D25). Squads for which LevelUpReady says yes get a small yellow arrow above
 // them that pulses bright, dim, bright (decision D26). A side suffering a fallen tower's shockwave
 // pulses with a tint over all its bodies for as long as it lasts (D68).
-// A baked body can keep time with the battle (D90): its shooting clip paced and timed so that each blow lands on one of its weapon's strikes
+// A flier with a baked body drops to the ground as its death plays (the Seeder, D93). A baked body can keep time with the battle (D90): its shooting clip paced and timed so that each blow lands on one of its weapon's strikes
 // (the Stalker Form's lunges, the Pure Form Ranged's thrust), or its moving and shooting clips so that it gives birth as it spawns (the Spawner).
 // The simulation's 2D position (x, y) becomes the world position (x, height, y).
 // Depends on: BattleController, SquadSelection, PlaceholderArt, Halobellum.Combat, UnityEngine.
@@ -282,6 +282,8 @@ namespace Halobellum.Presentation
         }
 
         private const float BodySinkSeconds = 1.6f, BodySinkDepth = 1.5f;
+        /// <summary>Battle seconds a flier's baked body takes to fall from its flying height to the ground as it dies (D93).</summary>
+        private const float AirFallSeconds = 1.3f;
         private BattleSimulation _shown;
         private Transform _container;
         private static readonly int BattleTimeId = Shader.PropertyToID("_BattleTime");
@@ -824,7 +826,16 @@ namespace Halobellum.Presentation
                 float left = _falling[i].HideAt - _animationTime;
                 if (left > 0f)
                 {
-                    if (left < BodySinkSeconds) _falling[i].Root.transform.position = _falling[i].CurrentPosition + Vector3.down * (BodySinkDepth * (1f - left / BodySinkSeconds));
+                    // A flier (the Seeder, D93) drops from the sky as its death plays, faster and faster, and lies where it lands.
+                    Vector3 at = _falling[i].CurrentPosition;
+                    bool flier = _falling[i].Unit.IsAir;
+                    if (flier)
+                    {
+                        float fallen = Mathf.Clamp01((_falling[i].Baked.corpseSeconds - left) / AirFallSeconds);
+                        at.y *= 1f - fallen * fallen;
+                    }
+                    if (left < BodySinkSeconds) at += Vector3.down * (BodySinkDepth * (1f - left / BodySinkSeconds));
+                    if (flier || left < BodySinkSeconds) _falling[i].Root.transform.position = at;
                     continue;
                 }
                 _falling[i].Root.SetActive(false);

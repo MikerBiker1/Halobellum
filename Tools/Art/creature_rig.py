@@ -42,20 +42,20 @@ _c = {"name": None, "folder": None, "mesh": None, "arm": None, "fps": 30, "sourc
 
 # ---- Loading ----
 
-def load(name, static, source, height=None, length=None, lift=(1.0, 1.0, 1.0), fps=30, yaw=0.0):
+def load(name, static, source, height=None, length=None, lift=(1.0, 1.0, 1.0), fps=30, yaw=0.0, air=False):
     """
     Empties Blender and loads Art_Source/Prepared/<static>/<static>.fbx, the creature as its static preparation left it, as one mesh "Body":
     stood on the ground, centred, and scaled to its height (or its longest side across the ground) in the game. Its textures become one,
     stacked if it has several, each multiplied by lift (the static model's colour over its texture, as RealModelBuilder set it).
-    yaw turns it about the vertical first, in degrees (the Combat Form came out of its preparation facing backwards). source is the
-    original file, for the credits.
+    yaw turns it about the vertical first, in degrees (the Combat Form came out of its preparation facing backwards). An air unit (air)
+    is centred on its middle instead of stood on the ground, as the game flies it by its middle. source is the original file, for the credits.
     """
     bpy.ops.wm.read_factory_settings(use_empty=True)
     folder = os.path.join(mt.PREPARED, name)
     shutil.rmtree(folder, ignore_errors=True)
     os.makedirs(os.path.join(folder, "shots"))
     mt._state.update(name=name, folder=folder, source=source, flags={}, high=None)
-    _c.update(name=name, folder=folder, fps=fps, source=source, legs={}, radius={}, clips=[], cutout=False)
+    _c.update(name=name, folder=folder, fps=fps, source=source, legs={}, radius={}, clips=[], cutout=False, seams=True)
 
     static_folder = os.path.join(mt.PREPARED, static)
     bpy.ops.import_scene.fbx(filepath=os.path.join(static_folder, static + ".fbx"))
@@ -83,7 +83,8 @@ def load(name, static, source, height=None, length=None, lift=(1.0, 1.0, 1.0), f
     low, high = mt._bounds([mesh])
     span = high - low
     factor = height / span.z if height else length / max(span.x, span.y)
-    centre = Vector(((low.x + high.x) / 2, (low.y + high.y) / 2, low.z))
+    centre = Vector(((low.x + high.x) / 2, (low.y + high.y) / 2, (low.z + high.z) / 2 if air else low.z))
+    _c["ground"] = -3.0 if air else 0.0
     mesh.data.transform(Matrix.Scale(factor, 4) @ Matrix.Translation(-centre))
     mesh.data.update()
     _c["mesh"] = mesh
@@ -162,6 +163,35 @@ def _atlas(mesh, static_folder, table, lift):
     print(f"REPORT texture {width}x{height} from {len(images)}, see-through: {_c['cutout']}, {outside} UV corners outside one tile")
 
 
+def adopt(name, source, mesh, arm, hips, fps=30):
+    """
+    Takes over a creature that came rigged (the Abomination, with Meshy's rig and weights), already at its size in the game, instead of
+    load(), skeleton() and weigh(): its hip bone is renamed Body (its vertex group follows) and a still Root is put over it, as for the rigs
+    made here, so the baker keeps its sway. The rig's object must sit at the origin, unturned and unscaled.
+    """
+    folder = os.path.join(mt.PREPARED, name)
+    shutil.rmtree(folder, ignore_errors=True)
+    os.makedirs(os.path.join(folder, "shots"))
+    mt._state.update(name=name, folder=folder, source=source, flags={}, high=None)
+    _c.update(name=name, folder=folder, fps=fps, source=source, legs={}, radius={}, clips=[], cutout=False, seams=True, mesh=mesh, arm=arm, ground=0.0)
+    bpy.context.scene.render.fps = fps
+    bpy.context.scene.render.fps_base = 1.0
+    arm.data.bones[hips].name = "Body"
+    for o in mesh.vertex_groups:
+        if o.name == hips:
+            o.name = "Body"
+    mt._select([arm])
+    bpy.ops.object.mode_set(mode="EDIT")
+    root = arm.data.edit_bones.new("Root")
+    root.head, root.tail = (0, 0, 0), (0, 0, 0.3)
+    arm.data.edit_bones["Body"].parent = root
+    arm.data.edit_bones["Body"].use_connect = False
+    bpy.ops.object.mode_set(mode="OBJECT")
+    for bone in arm.pose.bones:
+        bone.rotation_mode = "QUATERNION"
+    print(f"REPORT adopted {name}: {len(arm.data.bones)} bones, {len(mesh.data.vertices)} vertices")
+
+
 def double_sided():
     """Copies the see-through faces (the fronds), turned the other way: the crowd shader hides back faces, and a frond is a flat card."""
     mesh = _c["mesh"]
@@ -220,8 +250,8 @@ def chain(prefix, points, parent, radius=None):
 # ---- The weights ----
 
 def _graph(points):
-    """The surface as a graph: each vertex's neighbours with the distance to them (vertices at one place, split by a texture seam, are joined),
-    which piece each vertex is in, and the pieces as lists of vertices."""
+    """The surface as a graph: each vertex's neighbours with the distance to them (vertices at one place, split by a texture seam, are joined,
+    unless _c["seams"] is off: the Seeder's tendrils touch at single points), which piece each vertex is in, and the pieces as lists of vertices."""
     mesh = _c["mesh"]
     count = len(points)
     edges = np.array([e.vertices[:] for e in mesh.data.edges])
@@ -234,7 +264,7 @@ def _graph(points):
     keyed = {}
     for v in range(count):
         keyed.setdefault(tuple(np.round(points[v], 4)), []).append(v)
-    for same in keyed.values():
+    for same in keyed.values() if _c.get("seams", True) else ():
         for a in same:
             for b in same:
                 if a != b:
@@ -260,10 +290,88 @@ def _graph(points):
     return neighbours, piece, pieces
 
 
+def join_seams(on):
+    """Whether vertices at one place count as joined (on by default: texture seams). Off for a model whose separate pieces touch at points."""
+    _c["seams"] = on
+
+
 def pieces():
     """The separate pieces of the mesh, largest first, each a list of vertex indices: how weigh() sees them."""
     points = np.array([v.co for v in _c["mesh"].data.vertices])
     return sorted(_graph(points)[2], key=len, reverse=True)
+
+
+def strands(members, axis=1, step=0.35):
+    """
+    The strands of a piece that branches along an axis (a bundle of tendrils, as the Seeder's are welded together at their roots): the piece
+    is cut into bands across the axis, each band's connected bits are the strands' cross-sections there, and they are followed from band to
+    band. Where one splits in two, the second goes on as a new strand from the split. Returns, per strand, its points from its root (the low
+    end along the axis), the index of the strand it branched from (or -1) and the index of the point of that one where it branched.
+    """
+    mesh = _c["mesh"]
+    member = set(members)
+    co = {v: Vector(mesh.data.vertices[v].co) for v in members}
+    lo = min(c[axis] for c in co.values())
+    band = {v: int(math.floor((co[v][axis] - lo) / step)) for v in members}
+    parent = {v: v for v in members}
+
+    def find(v):
+        while parent[v] != v:
+            parent[v] = parent[parent[v]]
+            v = parent[v]
+        return v
+    crossing = []
+    for e in mesh.data.edges:
+        a, b = e.vertices
+        if a in member and b in member:
+            if band[a] == band[b]:
+                parent[find(a)] = find(b)
+            else:
+                crossing.append((a, b))
+    nodes = {}
+    for v in members:
+        nodes.setdefault(find(v), []).append(v)
+    centre = {n: sum((co[v] for v in vs), Vector()) / len(vs) for n, vs in nodes.items()}
+    level = {n: band[vs[0]] for n, vs in nodes.items()}
+    ahead = {n: set() for n in nodes}
+    behind = {n: set() for n in nodes}
+    for a, b in crossing:
+        na, nb = find(a), find(b)
+        if level[na] + 1 == level[nb]:
+            ahead[na].add(nb)
+            behind[nb].add(na)
+        elif level[nb] + 1 == level[na]:
+            ahead[nb].add(na)
+            behind[na].add(nb)
+    result = []
+    seen = set()
+
+    def follow(start, from_strand, at_point):
+        path = [start]
+        seen.add(start)
+        node = start
+        index = len(result)
+        result.append(None)
+        branches = []
+        while True:
+            nexts = sorted((n for n in ahead[node] if n not in seen), key=lambda n: -len(nodes[n]))
+            if not nexts:
+                break
+            for other in nexts[1:]:
+                branches.append((other, len(path) - 1))
+                seen.add(other)
+            node = nexts[0]
+            seen.add(node)
+            path.append(node)
+        result[index] = ([centre[n] for n in path], from_strand, at_point)
+        for other, at in branches:
+            seen.discard(other)
+            follow(other, index, at)
+
+    for n in sorted(nodes, key=lambda n: level[n]):
+        if n not in seen and not behind[n]:
+            follow(n, -1, -1)
+    return result
 
 
 def piece_axis(members, towards):
@@ -679,7 +787,7 @@ def _scene_for_pictures(size):
         scene.collection.objects.link(eye)
         scene.camera = eye
     if "pic_ground" not in bpy.data.objects:
-        bpy.ops.mesh.primitive_plane_add(size=60, location=(0, 0, -0.005))
+        bpy.ops.mesh.primitive_plane_add(size=60, location=(0, 0, _c.get("ground", 0.0) - 0.005))  # Well below a flier, centred on its middle.
         ground = bpy.context.object
         ground.name = "pic_ground"
         material = bpy.data.materials.new("pic_ground")

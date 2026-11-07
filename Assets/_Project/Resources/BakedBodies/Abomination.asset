@@ -20,16 +20,28 @@ MonoBehaviour:
   shootingClip: Rig|Slam
   deathClip: Rig|Dead
   stillClip: Rig|Still
+  meleeClip: 
+  meleeBlendShare: 0
+  chargeClip: 
   weaponName: 
   weaponLength: 0.8
   weaponInForwardHand: 0
   weaponAlongForearm: 0
   muzzleInRightHand: 0
+  muzzleAtFront: 0
+  shieldName: 
+  shieldDiameter: 1.1
+  shieldOffset: {x: 0, y: 0, z: 0}
+  muzzleBone: 
+  cutout: 0
   transitionSeconds: 0.2
-  corpseSeconds: 14
+  corpseSeconds: 16
+  shotMoment: 0.62
+  spawnMoment: -1
   bakedFps: 30
   mesh: {fileID: 4300000, guid: 376471ee13d226f4fb90c299453d982b, type: 2}
   material: {fileID: 2100000, guid: 1031cb32c20d6674fae40043f9aaa94d, type: 2}
+  glassMaterial: {fileID: 0}
   clips:
   - role: 1
     firstRow: 0
@@ -49,4 +61,4 @@ MonoBehaviour:
     loops: 0
   muzzle: {x: 0, y: 0, z: 0}
   hasMuzzle: 0
-  bodyHeight: 6.9742374
+  bodyHeight: 10.999999

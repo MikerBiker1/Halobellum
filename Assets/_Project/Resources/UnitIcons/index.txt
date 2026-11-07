@@ -30,8 +30,8 @@ Infected Pelican	model
 Infected Phantom	model
 Infection Forms	model
 Pure Form Ranged	baked
-Pure Form Tank	model
-Seeder	model
+Pure Form Tank	baked
+Seeder	baked
 Stalker Form	baked
 Swarm Form	model
 Infested Banshee	model

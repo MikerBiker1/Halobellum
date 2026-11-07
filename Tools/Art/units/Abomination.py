@@ -1,24 +1,30 @@
-# The Flood Abomination, from the owner's Meshy model with Meshy's smart rig (43 bones, no clips, and no human shape for Meshy's library to
-# fit). Its clips are made here from waves along the bones: it lurches on its two legs, swings its arms and writhes its tendrils; it
-# slams with both arms; it collapses forward. Writes Art_Source/Prepared/Abomination/: Abomination.fbx, Abomination.png, and pictures.
+# The Flood Abomination, from the owner's Meshy model with Meshy's smart rig (43 bones and weights, no clips; no human shape for Meshy's
+# library to fit). Its clips are made here (D93, remade from D79's waves): an enormous mass of Flood biomass, it walks in slow, heavy steps
+# on planted feet, the whole bulk dropping onto each and its torso twisting and swaying over them; the great clawed arm swings, the long
+# tentacle arm drags and its three tendrils writhe all the time. Its attack is one slam to a clip, timed to land with the Tendril Slam's
+# strike: it rears up, both arms raised high, a long held anticipation; crashes down; heaves up again slowly; and between slams its long
+# tentacle arm cracks out in a single whip, for its Tendril Whip. It dies sinking to its knees and pitching forward. Sizes in metres at
+# its height in the game (11 m); front toward -Y. The rig is Meshy's, its hips renamed Body under a still Root (creature_rig.adopt).
+# Writes Art_Source/Prepared/Abomination/: Abomination.fbx, Abomination.png, and pictures.
 #   blender --background --factory-startup --python Tools/Art/units/Abomination.py
+#   HB_ONLY=clips (stop after the pictures), HB_CLIPS and HB_PICTURES (which clips to make and film).
 import math
 import os
-import shutil
 import sys
 
 import bpy
-from mathutils import Euler, Quaternion, Vector
+from mathutils import Vector
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
-import model_tools as mt
+import creature_rig as cr  # noqa: E402
+import model_tools as mt  # noqa: E402
 
+ONLY = os.environ.get("HB_ONLY", "")
 HEIGHT = 11.0
 FPS = 30
-folder = os.path.join(mt.PREPARED, "Abomination")
-shutil.rmtree(folder, ignore_errors=True)
-os.makedirs(os.path.join(folder, "shots"))
-mt._state.update(name="Abomination", folder=folder)
+SPEED = 1.25  # Its move speed in the game, m/s.
+SLAM_SECONDS = 2.5  # The Tendril Slam's interval: the attack clip is one slam long.
+SLAM_MOMENT = 0.62  # The share of the attack clip at which the slam lands.
 
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.gltf(filepath=os.path.join(mt.SOURCE, "Meshy", "Abomination_Meshy.glb"))
@@ -27,192 +33,202 @@ for o in list(bpy.context.scene.objects):
         bpy.data.objects.remove(o)
 arm = next(o for o in bpy.context.scene.objects if o.type == "ARMATURE")
 mesh = next(o for o in bpy.context.scene.objects if o.type == "MESH")
-mesh.name = "Body"
+mesh.name = "Body_Mesh"
 arm.name = "Rig"
 arm.data.name = "Rig"
-
-# The texture, at a size the game wants.
-image = mt._input_image(mesh.data.materials[0], "Base Color")
-mt._save_scaled(image, os.path.join(folder, "Abomination.png"), 1024)
-
-# Its height in the game, with the rig: the whole armature is scaled and the scale applied.
+arm.animation_data_clear()
 low = min((mesh.matrix_world @ v.co).z for v in mesh.data.vertices)
 high = max((mesh.matrix_world @ v.co).z for v in mesh.data.vertices)
-bpy.ops.object.select_all(action="DESELECT")
-arm.select_set(True)
-mesh.select_set(True)
+mt._select([arm, mesh])
 bpy.context.view_layer.objects.active = arm
 factor = HEIGHT / (high - low)
 arm.scale = (factor, factor, factor)
 bpy.context.view_layer.update()
 bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
-mesh.select_set(False)
-bpy.context.view_layer.update()
-print(f"REPORT height {high - low} scaled by {factor}")
+cr.adopt("Abomination", "Meshy/Abomination_Meshy.glb", mesh, arm, "Bone_000", fps=FPS)
+image = mt._input_image(mesh.data.materials[0], "Base Color")
+mt._save_scaled(image, os.path.join(cr._c["folder"], "Abomination.png"), 1024)
 
-LEG_R = ["Bone_008", "Bone_007", "Bone_006", "Bone_005"]
-LEG_L = ["Bone_012", "Bone_011", "Bone_010", "Bone_009"]
-SPINE = ["Bone_001", "Bone_004", "Bone_003", "Bone_002"]
-ARM_LEFT = ["Bone_019", "Bone_018", "Bone_017", "Bone_016", "Bone_015"]
-FINGERS_LEFT = [["Bone_028", "Bone_027", "Bone_026"], ["Bone_032", "Bone_031", "Bone_030", "Bone_029"]]
-ARM_RIGHT = ["Bone_025", "Bone_024", "Bone_023", "Bone_022", "Bone_021", "Bone_020"]
-TENDRILS = [["Bone_034", "Bone_033"], ["Bone_038", "Bone_037", "Bone_036", "Bone_035"], ["Bone_042", "Bone_041", "Bone_040", "Bone_039"]]
 HEAD = ["Bone_014", "Bone_013"]
-ROOT = "Bone_000"
+CLAW_ARM = ["Bone_019", "Bone_018", "Bone_017", "Bone_016", "Bone_015"]  # The great clawed arm, on its -X side.
+CLAWS = [["Bone_028", "Bone_027", "Bone_026"], ["Bone_032", "Bone_031", "Bone_030", "Bone_029"]]
+WHIP_ARM = ["Bone_025", "Bone_024", "Bone_023", "Bone_022", "Bone_021", "Bone_020"]  # The long tentacle arm, on its +X side, down to the ground.
+TENDRILS = [["Bone_034", "Bone_033"], ["Bone_038", "Bone_037", "Bone_036", "Bone_035"], ["Bone_042", "Bone_041", "Bone_040", "Bone_039"]]
+
+cr.leg("R", "Bone_008", "Bone_007", "Bone_006", pole=(1, -0.3, 0))  # Its legs are splayed, knees out.
+cr.leg("L", "Bone_012", "Bone_011", "Bone_010", pole=(-1, -0.3, 0))
+CROUCH = 0.6  # Its legs are nearly straight in its model: it carries its bulk lower, knees bent under the weight.
+CONTACT = {"R": Vector((1.1, 0.4, 0.28)), "L": Vector((-3.7, -0.3, 0.22))}
+CYCLE = 2.4  # Seconds per stride: two slow steps.
+DUTY = 0.65
+PHASE = {"R": 0.0, "L": 0.5}
 
 
-def world_turn(bone_name, degrees):
-    """A turn given in the model's axes (x across, y front to back, z up), as a pose bone's local rotation."""
-    rest = arm.data.bones[bone_name].matrix_local.to_3x3().to_quaternion()
-    turn = Euler([math.radians(d) for d in degrees], "XYZ").to_quaternion()
-    return rest.inverted() @ turn @ rest
+def add(pose, bone, x=0.0, y=0.0, z=0.0):
+    old = pose["turn"].get(bone, (0, 0, 0))
+    pose["turn"][bone] = (old[0] + x, old[1] + y, old[2] + z)
 
 
-def key(action_frame, pose):
-    """pose: bone name to degrees; ROOT's "shift" lifts and moves the whole body in metres."""
-    for bone in arm.pose.bones:
-        degrees = pose.get(bone.name, (0, 0, 0))
-        bone.rotation_mode = "QUATERNION"
-        bone.rotation_quaternion = world_turn(bone.name, degrees)
-        bone.keyframe_insert("rotation_quaternion", frame=action_frame)
-    root = arm.pose.bones[ROOT]
-    rest = arm.data.bones[ROOT].matrix_local.to_3x3()
-    root.location = rest.inverted() @ Vector(pose.get("shift", (0, 0, 0)))
-    root.keyframe_insert("location", frame=action_frame)
-
-
-def make(name, frames, pose_at):
-    action = bpy.data.actions.new(name)
-    arm.animation_data_create()
-    arm.animation_data.action = action
-    for frame in range(frames + 1):
-        key(frame + 1, pose_at(frame / frames))
-    action.use_fake_user = True
-    action.use_frame_range = True
-    action.frame_start = 1
-    action.frame_end = frames + 1
-    print(f"REPORT clip {name}, {frames} frames")
-
-
-def sin(t):
-    return math.sin(t * math.pi * 2)
-
-
-def wave(chain, t, size, each=0.12, axis=0):
-    """A wave running down a chain of bones: it grows with its length."""
-    pose = {}
+def wave_down(pose, chain, t, size, lag=0.12, axis=0, grow=0.25):
+    """A wave running down a chain of bones, growing toward its end."""
     for i, name in enumerate(chain):
-        degrees = [0, 0, 0]
-        degrees[axis] = size * (0.5 + 0.25 * i) * sin(t - i * each)
-        pose[name] = tuple(degrees)
+        degrees = [0.0, 0.0, 0.0]
+        degrees[axis] = size * (0.5 + grow * i) * cr.wave(t - i * lag)
+        add(pose, name, *degrees)
+
+
+def writhe(pose, t, size=1.0, speed=2):
+    """The three tendrils of the tentacle arm and the claws, never still, each on its own beat."""
+    for n, chain in enumerate(TENDRILS):
+        wave_down(pose, chain, t * speed + n * 0.31, 12 * size, 0.18, axis=2)
+        wave_down(pose, chain, t * (speed + 1) + n * 0.17, 6 * size, 0.2, axis=0)
+    for n, chain in enumerate(CLAWS):
+        wave_down(pose, chain, t * speed + 0.4 + n * 0.25, 5 * size, 0.15, axis=1)
+
+
+def stance():
+    pose = {"move": (0, 0, -CROUCH), "turn": {}, "feet": {}, "foot_turn": {}}
+    add(pose, "Bone_004", 5)
+    add(pose, "Bone_003", 4)
+    # Its arms reach the ground in its model: crouched, they would sink into it, so both are lifted a little at the shoulder.
+    add(pose, WHIP_ARM[0], 0, -9, 0)
+    add(pose, CLAW_ARM[0], 0, 9, 0)
+    for name, contact in CONTACT.items():
+        pose["feet"][name] = cr.target_for(name, contact)
+        pose["foot_turn"][name] = (0, 0, 0)
     return pose
+
+
+def thud(t, name, width=0.05):
+    """1 as a foot comes down (the end of its swing), falling away."""
+    d = (t - PHASE[name] + 0.5) % 1.0 - 0.5
+    return math.exp(-(d / width) ** 2)
 
 
 def walk(t):
-    pose = {
-        "shift": (0.15 * HEIGHT * 0.1 * sin(t), 0, 0.012 * HEIGHT * sin(t * 2)),
-        LEG_R[0]: (26 * sin(t), 0, 0), LEG_R[1]: (-18 * sin(t + 0.2) - 8, 0, 0), LEG_R[2]: (10 * sin(t + 0.35), 0, 0),
-        LEG_L[0]: (-26 * sin(t), 0, 0), LEG_L[1]: (18 * sin(t + 0.2) - 8, 0, 0), LEG_L[2]: (-10 * sin(t + 0.35), 0, 0),
-        SPINE[0]: (0, 5 * sin(t), 4 * sin(t)), SPINE[1]: (3 * sin(t * 2), 0, -3 * sin(t)), SPINE[3]: (0, -5 * sin(t), 0),
-        HEAD[0]: (6 * sin(t * 2 + 0.2), 0, 8 * sin(t)),
-    }
-    pose.update(wave(ARM_LEFT, t + 0.5, 9))
-    pose.update(wave(ARM_RIGHT, t, 7))
-    for chain in FINGERS_LEFT:
-        pose.update(wave(chain, t * 2, 8, axis=1))
-    for i, chain in enumerate(TENDRILS):
-        pose.update(wave(chain, t * 2 + i * 0.3, 11, 0.2, axis=2))
+    pose = stance()
+    w = cr.wave
+    impact = thud(t, "R") + thud(t, "L")
+    # The bulk drops hard onto each foot, rolls over it, and the torso twists against the stride; the head lags.
+    pose["move"] = (0.35 * w(t + 0.25), 0.0, -CROUCH - 0.25 * impact + 0.08 * w(t * 2 - 0.1))
+    add(pose, "Body", 3 * impact, 6 * w(t + 0.25), 7 * w(t))
+    add(pose, "Bone_001", 2 * impact, 2 * w(t + 0.2), -4 * w(t - 0.05))
+    add(pose, "Bone_004", 2 * w(t * 2 - 0.2), -3 * w(t + 0.15), -7 * w(t - 0.1))
+    add(pose, "Bone_003", 0, -2 * w(t + 0.1), -5 * w(t - 0.15))
+    add(pose, HEAD[0], -5 * impact + 3 * w(t * 2 - 0.3), 0, 6 * w(t - 0.25))
+    # The clawed arm swings heavily against the legs; the tentacle arm drags, swaying.
+    wave_down(pose, CLAW_ARM[:3], t + 0.5, 10, 0.08)
+    add(pose, CLAW_ARM[0], 0, 0, 6 * w(t + 0.4))
+    wave_down(pose, WHIP_ARM, t, 6, 0.1, axis=2)
+    writhe(pose, t)
+    for name, contact in CONTACT.items():
+        stride = SPEED * CYCLE * DUTY
+        offset, planted = cr.step(t, PHASE[name], DUTY, stride, 0.55)
+        u = ((t - PHASE[name]) % 1.0 - DUTY) / (1 - DUTY)
+        turn = (0, 0, 0) if planted else (-20 * math.sin(math.pi * u), 0, 0)
+        pose["feet"][name] = cr.target_for(name, contact + offset, turn)
+        pose["foot_turn"][name] = turn
     return pose
 
 
-def idle(t):
-    pose = {SPINE[1]: (2 * sin(t), 0, 0), HEAD[0]: (0, 0, 5 * sin(t))}
-    for i, chain in enumerate(TENDRILS):
-        pose.update(wave(chain, t + i * 0.3, 6, 0.2, axis=2))
+def still(t):
+    pose = stance()
+    w = cr.wave
+    pose["move"] = (0, 0, -CROUCH - 0.06 * w(t))
+    add(pose, "Bone_004", 2 * w(t), 0, 2 * w(t * 0.5))
+    add(pose, HEAD[0], 2 * w(t + 0.2), 0, 5 * w(t * 0.5 - 0.1))
+    writhe(pose, t, 0.7, 1)
     return pose
 
 
-def slam(t):
-    # Up over 60% of the swing, then down hard, then a slow recovery that ends where it began.
-    if t < 0.45:
-        raised = math.sin(t / 0.45 * math.pi / 2)
-    elif t < 0.6:
-        raised = 1 - 1.4 * (t - 0.45) / 0.15
+def whip_at(t, start, length=0.2):
+    """The single whip of the tentacle arm: drawn back, then a crack running down it to the tip, over length of the clip from start."""
+    u = (t - start) / length
+    if u < 0 or u > 1:
+        return None
+    back = math.sin(math.pi * min(u / 0.4, 1)) if u < 0.4 else 0.0
+    crack = math.sin(math.pi * (u - 0.35) / 0.65) if u > 0.35 else 0.0
+    return back, crack, u
+
+
+def attack(t):
+    """A whip; then it rears, arms raised high (a long anticipation); the slam (SLAM_MOMENT); it heaves up again; another whip."""
+    pose = stance()
+    if t < 0.22:
+        raised, slammed = 0.0, 0.0
+    elif t < 0.55:
+        raised, slammed = cr.ease((t - 0.22) / 0.33), 0.0
+    elif t < SLAM_MOMENT:
+        s = (t - 0.55) / (SLAM_MOMENT - 0.55)
+        raised, slammed = 1 - s, s ** 0.6
     else:
-        raised = -0.4 * (1 - (t - 0.6) / 0.4)
-    pose = {
-        "shift": (0, 0, -0.01 * HEIGHT * max(0, -raised) * 3),
-        SPINE[1]: (-14 * raised, 0, 0), SPINE[3]: (-12 * raised, 0, 0), HEAD[0]: (-14 * raised, 0, 0),
-        ARM_LEFT[0]: (-62 * raised, 0, -8 * raised), ARM_LEFT[1]: (-30 * raised, 0, 0), ARM_LEFT[2]: (-14 * raised, 0, 0),
-        ARM_RIGHT[0]: (-36 * raised, 0, 6 * raised), ARM_RIGHT[1]: (-16 * raised, 0, 0), ARM_RIGHT[2]: (-8 * raised, 0, 0),
-        LEG_R[0]: (6 * max(0, -raised), 0, 0), LEG_L[0]: (6 * max(0, -raised), 0, 0),
-    }
-    for i, chain in enumerate(TENDRILS):
-        pose.update(wave(chain, t * 3 + i * 0.3, 14, 0.2, axis=2))
+        raised, slammed = 0.0, 1 - cr.ease((t - SLAM_MOMENT) / 0.3)
+    shake = math.exp(-max(t - SLAM_MOMENT, 0) * 25) * math.sin(max(t - SLAM_MOMENT, 0) * 80) if t > SLAM_MOMENT else 0.0
+    pose["move"] = (0, 0.4 * raised - 0.9 * slammed, -CROUCH + 0.5 * raised - 0.7 * slammed + 0.15 * shake)
+    # Rearing back, arms high; then pitching forward over the arms as they crash down.
+    add(pose, "Body", -10 * raised + 18 * slammed, 0, -6 * raised + 4 * slammed)
+    add(pose, "Bone_004", -12 * raised + 14 * slammed + 3 * shake)
+    add(pose, "Bone_003", -10 * raised + 10 * slammed)
+    add(pose, HEAD[0], -18 * raised + 14 * slammed)
+    add(pose, CLAW_ARM[0], -70 * raised + 25 * slammed, 0, 25 * raised - 10 * slammed)
+    add(pose, CLAW_ARM[1], -45 * raised + 30 * slammed)
+    add(pose, CLAW_ARM[2], -20 * raised + 25 * slammed)
+    add(pose, WHIP_ARM[0], -55 * raised + 20 * slammed, 0, -20 * raised)
+    add(pose, WHIP_ARM[1], -40 * raised + 25 * slammed)
+    add(pose, WHIP_ARM[2], -25 * raised + 20 * slammed)
+    for start in (0.02, 0.8):
+        lash = whip_at(t, start, 0.18)
+        if lash:
+            back, crack, u = lash
+            # The tentacle arm swings up and back, then cracks forward and across, the crack running down to its tendrils.
+            for i, name in enumerate(WHIP_ARM):
+                k = math.sin(math.pi * min(max(u * 1.6 - i * 0.12, 0), 1))
+                add(pose, name, (30 * back - 45 * crack * k) * (1 if i < 3 else 0.6), 0, (-20 * back + 30 * crack * k) * 0.6)
+            for chain in TENDRILS:
+                wave_down(pose, chain, u * 2, 30 * crack, 0.15, axis=2)
+            add(pose, "Bone_004", 0, 0, 10 * back - 14 * crack)
+    writhe(pose, t, 1.0 + 0.6 * raised, 2)
     return pose
 
 
 def fall(t):
-    s = min(1.0, t / 0.8) ** 1.6
-    pose = {
-        "shift": (0, -0.08 * HEIGHT * s, -0.43 * HEIGHT * s),
-        ROOT: (72 * s, 0, 8 * s),
-        SPINE[1]: (24 * s, 0, 0), SPINE[3]: (22 * s, 0, 0), HEAD[0]: (20 * s, 0, 0),
-        LEG_R[0]: (-70 * s, 0, 0), LEG_R[1]: (58 * s, 0, 0), LEG_L[0]: (-80 * s, 0, 0), LEG_L[1]: (62 * s, 0, 0),
-        ARM_LEFT[0]: (-30 * s, 0, 20 * s), ARM_LEFT[1]: (-22 * s, 0, 0),
-        ARM_RIGHT[0]: (-26 * s, 0, -20 * s), ARM_RIGHT[1]: (-22 * s, 0, 0),
-    }
-    if t < 0.9:
-        for i, chain in enumerate(TENDRILS):
-            pose.update(wave(chain, t * 3 + i * 0.3, 16 * (1 - t), 0.2, axis=2))
+    """Its legs give; it sinks to its knees, then pitches forward onto its arms and face, the tendrils going still."""
+    knees = cr.ease(t / 0.45)
+    pitch = cr.ease((t - 0.3) / 0.55)
+    pose = stance()
+    pose["move"] = (0, -1.2 * pitch, -CROUCH - 2.2 * knees - 1.6 * pitch)
+    add(pose, "Body", 62 * pitch, 0, 6 * pitch)
+    add(pose, "Bone_004", 10 * pitch)
+    add(pose, HEAD[0], 20 * knees)
+    add(pose, CLAW_ARM[0], -40 * pitch, 0, 20 * pitch)
+    add(pose, WHIP_ARM[0], -30 * pitch, 0, -20 * pitch)
+    writhe(pose, t * 0.6, max(0.0, 1 - t * 1.4), 2)
+    for name, contact in CONTACT.items():
+        out = 1 if contact.x > -1.3 else -1
+        pose["feet"][name] = cr.target_for(name, contact + Vector((0.5 * out * knees, 0.6 * knees, 0)), (-30 * knees, 0, 0))
+        pose["foot_turn"][name] = (-30 * knees, 0, 0)
     return pose
 
 
-bpy.context.scene.render.fps = FPS
-make("Walk", 72, walk)
-make("Still", 90, idle)
-make("Slam", 75, slam)
-make("Dead", 105, fall)
-arm.animation_data.action = None
+CLIPS = os.environ.get("HB_CLIPS", "Walk,Still,Slam,Dead").split(",")
+if "Walk" in CLIPS:
+    cr.clip("Walk", round(CYCLE * FPS), walk)
+if "Still" in CLIPS:
+    cr.clip("Still", 3 * FPS, still)
+if "Slam" in CLIPS:
+    cr.clip("Slam", round(SLAM_SECONDS * FPS), attack)
+if "Dead" in CLIPS:
+    cr.clip("Dead", round(3.5 * FPS), fall, floor=True)
+slide = cr.walk_slide("Walk", list(CONTACT), SPEED, floor=0.28) if "Walk" in CLIPS else None
 
-# Pictures of each clip, before writing.
-scene = bpy.context.scene
-scene.render.engine = "BLENDER_EEVEE"
-scene.render.resolution_x, scene.render.resolution_y = 360, 420
-scene.render.image_settings.file_format = "PNG"
-world = bpy.data.worlds.new("sky")
-world.use_nodes = True
-world.node_tree.nodes["Background"].inputs[0].default_value = (0.75, 0.75, 0.78, 1)
-scene.world = world
-sun = bpy.data.objects.new("sun", bpy.data.lights.new("sun", "SUN"))
-sun.data.energy = 3
-sun.rotation_euler = (math.radians(50), 0, math.radians(30))
-scene.collection.objects.link(sun)
-eye = bpy.data.objects.new("eye", bpy.data.cameras.new("eye"))
-scene.collection.objects.link(eye)
-scene.camera = eye
-centre = Vector((0, 0, HEIGHT * 0.45))
-eye.location = centre + Vector((0.7, -1, 0.25)).normalized() * HEIGHT * 2.4
-eye.rotation_euler = (centre - eye.location).to_track_quat("-Z", "Y").to_euler()
-for action in bpy.data.actions:
-    arm.animation_data.action = action
-    if action.slots and arm.animation_data.action_slot is None:
-        arm.animation_data.action_slot = action.slots[0]
-    first, last = (int(f) for f in action.frame_range)
-    for share in (0.0, 0.25, 0.5, 0.75, 1.0):
-        scene.frame_set(int(first + (last - first) * share))
-        scene.render.filepath = os.path.join(folder, "shots", f"{action.name}_{int(share * 100)}.png")
-        bpy.ops.render.render(write_still=True)
-arm.animation_data.action = None
-scene.frame_set(1)
-
-for o in (sun, eye):
-    bpy.data.objects.remove(o)
-for obj in (arm, mesh):
-    obj.select_set(True)
-bpy.context.view_layer.objects.active = arm
-bpy.ops.export_scene.fbx(filepath=os.path.join(folder, "Abomination.fbx"), use_selection=True, object_types={"ARMATURE", "MESH"}, axis_forward="-Z", axis_up="Y",
-                         bake_space_transform=False, apply_scale_options="FBX_SCALE_ALL", mesh_smooth_type="FACE", path_mode="STRIP", embed_textures=False,
-                         add_leaf_bones=False, bake_anim=True, bake_anim_use_all_bones=True, bake_anim_use_nla_strips=False, bake_anim_use_all_actions=True,
-                         bake_anim_force_startend_keying=True, bake_anim_simplify_factor=0.0)
-print("REPORT wrote Abomination.fbx")
+SIDE, QUARTER = (1, 0.05, 0.12), (0.8, -1, 0.3)
+CENTRE = (-0.5, -0.5, 4.5)
+for clip_name, count in (("Walk", 8), ("Slam", 12), ("Dead", 8)):
+    if clip_name not in CLIPS or clip_name not in os.environ.get("HB_PICTURES", "Walk,Slam,Dead").split(","):
+        continue
+    shares = [i / (count - 1) for i in range(count)] if clip_name == "Dead" else [i / count for i in range(count)]
+    for view_name, view in (("side", SIDE), ("quarter", QUARTER)):
+        cr.strip(cr.film(clip_name, f"{clip_name}_{view_name}", view, CENTRE, 30, shares=shares, size=(360, 360)), f"strip_{clip_name}_{view_name}", columns=4)
+if ONLY:
+    sys.exit(0)
+cr.finish({"moving": "Walk", "shooting": "Slam", "dead": "Dead", "still": "Still"}, {"speed": SPEED, "walk_slide": slide, "shot_moment": SLAM_MOMENT})

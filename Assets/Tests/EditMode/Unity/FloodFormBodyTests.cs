@@ -5,6 +5,8 @@
 // leaving from the top of its column at the end of its thrust, and every one of the Spawner's tendrils with bones of its own.
 // The Combat Form and the Infested Elite (D92), one model rigged the same way: each walks at its own pace, swipes with claw and whips one
 // blow a strike, the Combat Form shooting from its claw and the Elite from the plasma rifle in its right hand.
+// The Seeder, the Pure Form Tank and the Abomination (D93): the Seeder a flier centred on its middle, each of its tendril strands with a
+// chain; the Tank's sweep one blow long; the Abomination's slam (with its whip) one slam long, on Meshy's rig put under a still Root.
 // Depends on: Halobellum.Units, Halobellum.Core, NUnit, UnityEditor (loading the assets).
 
 using System.Linq;
@@ -113,10 +115,39 @@ namespace Halobellum.Tests
             Assert.AreNotEqual(elite.movingClip, form.movingClip, "The Elite walks slower, its rifle carried forward.");
         }
 
+        [Test]
+        public void TheSeeder_FloatsWithItsTendrilsOnTheirOwn_AndSpitsOnItsShots()
+        {
+            (UnitDefinition unit, BakedBodyDefinition body) = Load("Flood/Seeder", "Seeder");
+            UnitStats stats = unit.ToStats();
+            Assert.IsTrue(stats.IsAir);
+            Assert.AreEqual(stats.Weapons[0].FireInterval, Seconds(body, BakedAnimation.Shooting), 0.04f, "One spore to the clip.");
+            Assert.That(body.shotMoment, Is.InRange(0.2f, 0.5f));
+            Assert.Less(Mathf.Abs(body.mesh.vertices.Average(v => v.y)), 0.5f, "Centred on its middle, as the game flies it.");
+            Assert.IsTrue(body.hasMuzzle);
+            Assert.Greater(body.muzzle.z, 3f, "Its spore leaves from the tip of its head.");
+            int strands = body.sourceModel.GetComponentsInChildren<Transform>().Count(t => t.name.StartsWith("Tendril_") && t.name.EndsWith("_0"));
+            Assert.GreaterOrEqual(strands, 10, "Its tendrils have chains of their own.");
+        }
+
+        [TestCase("Flood/PureFormTank", "PureFormTank", 0.5f)]
+        [TestCase("Flood/Abomination", "Abomination", 0.62f)]
+        public void ABigFloodForm_StrikesOnItsWeaponsBeat(string unitPath, string bodyName, float moment)
+        {
+            (UnitDefinition unit, BakedBodyDefinition body) = Load(unitPath, bodyName);
+            UnitStats stats = unit.ToStats();
+            Assert.AreEqual(DamageType.Melee, stats.Weapons[0].DamageType);
+            Assert.AreEqual(stats.Weapons[0].FireInterval, Seconds(body, BakedAnimation.Shooting), 0.04f, "One blow to the clip, timed to land on it.");
+            Assert.AreEqual(moment, body.shotMoment, 0.001f);
+        }
+
         [TestCase("StalkerForm")]
         [TestCase("PureFormRanged")]
         [TestCase("Spawner")]
         [TestCase("CombatForm")]
+        [TestCase("Seeder")]
+        [TestCase("PureFormTank")]
+        [TestCase("Abomination")]
         public void ACreatureRig_StandsOnAStillRoot(string body)
         {
             // creature_rig.py's convention: Root, still, over Body, which sways; the baker measures drift by Root, so the sway stays.

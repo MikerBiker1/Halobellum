@@ -1,0 +1,3 @@
+Source: made by the project owner with Meshy AI, file Meshy/Meshy_AI_Seeder.glb in Art_Source.
+Prepared by Tools/Art/units/SeederAnimated.py.
+The repository is private and must stay private.

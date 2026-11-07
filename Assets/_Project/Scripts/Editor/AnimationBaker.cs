@@ -418,7 +418,9 @@ namespace Halobellum.EditorTools
             Matrix4x4 meshToModel = model.transform.worldToLocalMatrix * skin.transform.localToWorldMatrix;
             float highest = positions.Max(p => meshToModel.MultiplyPoint3x4(p).y), lowest = positions.Min(p => meshToModel.MultiplyPoint3x4(p).y);
             body.bodyHeight = highest - lowest;
-            float reach = Mathf.Max(5f, body.bodyHeight * 2.5f);
+            // A long, low body (the Seeder, 8 m of tendrils and 1.5 m tall, D93) needs room for its length too, or its ends vanish at the screen's edge.
+            float across = positions.Max(p => Mathf.Max(Mathf.Abs(meshToModel.MultiplyPoint3x4(p).x), Mathf.Abs(meshToModel.MultiplyPoint3x4(p).z))) * 2f;
+            float reach = Mathf.Max(5f, body.bodyHeight * 2.5f, across * 1.6f);
             mesh.bounds = new Bounds(Vector3.up * Mathf.Max(1f, body.bodyHeight * 0.5f), new Vector3(reach, reach, reach));
             return muzzle;
         }
