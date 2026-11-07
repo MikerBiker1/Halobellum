@@ -3,7 +3,8 @@
 // every effect on the field is only a few Emit calls: no objects are made during battle, and each kind is one draw call however many
 // effects use it. Particles run on battle time, so they pause and speed up with the battle.
 // Some things are redrawn every frame instead, from whatever the simulation says now: "heads" (a shell in flight), flat "ground heads"
-// (the burning spot of a beam), "cloud puffs" (a nuke's cloud, which holds a shape no flying particle could), and lines (beams, lasers,
+// (the burning spot of a beam), "cloud puffs" (a nuke's cloud, which holds a shape no flying particle could), lines and strands (a line
+// through many points: the swirls and coils of a Scarab's beam, D97) (beams, lasers,
 // lightning), which are a pool of LineRenderers.
 // EffectBudget decides what may still start; its limits are per layer. Nothing in here knows what a weapon or a unit is.
 // High quality has more dust than Low. The quality can change in the middle of a battle (the pause menu) while a layer's size is fixed when
@@ -43,6 +44,9 @@ namespace Halobellum.Presentation
         public const int CloudSmokeCapacity = 320;
         public const int CloudFireCapacity = 140;
         private const int LinePool = 64;
+        /// <summary>Strands: lines through up to StrandPoints points each.</summary>
+        private const int StrandPool = 32;
+        public const int StrandPoints = 48;
         private const int FlashedLineCapacity = 40;
 
         /// <summary>The dust layer's size at a ParticleScale of 1.</summary>
@@ -74,6 +78,9 @@ namespace Halobellum.Presentation
         private int _headGlowShown, _headStreakShown, _groundHeadShown, _cloudSmokeShown, _cloudFireShown;
 
         private readonly LineRenderer[] _lines = new LineRenderer[LinePool];
+        private readonly LineRenderer[] _strands = new LineRenderer[StrandPool];
+        private int _strandsUsed, _strandsShown;
+        private static readonly AnimationCurve Tapered = new AnimationCurve(new Keyframe(0f, 0.15f), new Keyframe(0.2f, 1f), new Keyframe(0.8f, 1f), new Keyframe(1f, 0.15f));
         private readonly Material _lineMaterial, _chunkMaterial;
         private int _linesUsed, _linesShown;
         private readonly FlashedLine[] _flashed = new FlashedLine[FlashedLineCapacity];
@@ -251,6 +258,12 @@ namespace Halobellum.Presentation
             var lines = new GameObject("Lines").transform;
             lines.SetParent(_root, false);
             for (int i = 0; i < LinePool; i++) _lines[i] = MakeLine(lines);
+            for (int i = 0; i < StrandPool; i++)
+            {
+                _strands[i] = MakeLine(lines);
+                _strands[i].name = "Strand";
+                _strands[i].widthCurve = Tapered;
+            }
 
             FollowQualityLevel();
             foreach (Layer layer in _layers) layer.System.Play();
@@ -305,6 +318,7 @@ namespace Halobellum.Presentation
 
             _headGlowCount = _headStreakCount = _groundHeadCount = _cloudSmokeCount = _cloudFireCount = 0;
             _linesUsed = 0;
+            _strandsUsed = 0;
         }
 
         /// <summary>The quality can change at any moment: what the dust may use goes with it, whatever is already in the air.</summary>
@@ -350,6 +364,8 @@ namespace Halobellum.Presentation
             }
             for (int i = _linesUsed; i < _linesShown; i++) _lines[i].enabled = false;
             _linesShown = _linesUsed;
+            for (int i = _strandsUsed; i < _strandsShown; i++) _strands[i].enabled = false;
+            _strandsShown = _strandsUsed;
 
             Hand(_headGlow, _headGlowData, _headGlowCount, ref _headGlowShown);
             Hand(_headStreak, _headStreakData, _headStreakCount, ref _headStreakShown);
@@ -597,6 +613,24 @@ namespace Halobellum.Presentation
             LineRenderer line = _lines[_linesUsed++];
             line.SetPosition(0, from);
             line.SetPosition(1, to);
+            line.widthMultiplier = width;
+            line.startColor = color;
+            line.endColor = color;
+            if (!line.enabled) line.enabled = true;
+        }
+
+        /// <summary>
+        /// A glowing line through the first count of these points, for this frame only, thinning toward both ends (a swirl of energy, a coil
+        /// round a beam). Points past StrandPoints are left out.
+        /// </summary>
+        public void Strand(Vector3[] points, int count, float width, Color color)
+        {
+            if (Muted || _strandsUsed >= StrandPool || count < 2) return;
+            LineRenderer line = _strands[_strandsUsed++];
+            count = Mathf.Min(count, StrandPoints);
+            line.positionCount = count;
+            line.SetPositions(points);
+            if (points.Length > count) line.positionCount = count;
             line.widthMultiplier = width;
             line.startColor = color;
             line.endColor = color;

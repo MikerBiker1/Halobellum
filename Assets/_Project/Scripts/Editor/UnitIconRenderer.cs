@@ -226,6 +226,7 @@ namespace Halobellum.EditorTools
             { "Combat Form", 0.23f },      // Its first shot, the claw held out and jolting (D92); at the middle it is between shots.
             { "Infested Elite", 0.23f },   // The same with its plasma rifle.
             { "Seeder", 0.36f },           // Squeezing out its spore, the tendrils lashing (D93).
+            { "Mantis", 0.53f },           // Both arms aimed, the rocket arm kicking up as a rocket leaves (D96).
             { "Pure Form Tank", 0.47f },   // The club swept round in front (D93).
         };
 

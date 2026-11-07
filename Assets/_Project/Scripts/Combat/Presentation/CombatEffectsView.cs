@@ -6,7 +6,8 @@
 //   - shots the simulation hits with at once still appear to fly for a moment, and their impact comes when they arrive;
 //   - projectiles at their real place in flight, in an arc if they are lobbed, blended between ticks as bodies are, with trails laid by
 //     distance where the look asks for one, and a blast as wide as their splash where they land;
-//   - beams: a thin line and a growing spot while charging, then a thick glowing beam with a burning spot, sparks and scorched ground;
+//   - beams (BeamDrawing, D97): energy swirling into the mouth while charging, then a thick beam wound with coils of energy and pulses
+//     running down it to a burning spot that throws sparks and scorches the ground; a Scarab's mouth glows green inside meanwhile;
 //   - a weapon winding up its shot (the Spartan Laser): light gathering at its muzzle, growing until the shot goes;
 //   - dust behind moving ground units, more of it on High quality; a walker's (the Scarab's, D84) where each foot comes down instead;
 //   - blood from what bleeds (BloodLooks) when a weapon hits it, a moment later, when the shot has arrived. The bigger the hit, the likelier.
@@ -523,12 +524,35 @@ namespace Halobellum.Presentation
 
         // ------------------------------------------------------------------ beams
 
+        private readonly Vector3[] _mandibles = new Vector3[2];
+        private List<Light> _mouthsLit = new List<Light>(), _mouthsWereLit = new List<Light>();
+
         private void DrawBeams(float battleDelta)
         {
             if (_shown != null) _shown.GetBeams(_beams);
             else _beams.Clear();
+            (_mouthsWereLit, _mouthsLit) = (_mouthsLit, _mouthsWereLit);
+            _mouthsLit.Clear();
             for (int i = 0; i < _beams.Count && i < _beamEmit.Length; i++) DrawBeam(i, _beams[i], battleDelta);
+            // A mouth whose beam has gone dark goes dark with it.
+            foreach (Light light in _mouthsWereLit)
+            {
+                if (light != null && !_mouthsLit.Contains(light)) light.enabled = false;
+            }
         }
+
+        /// <summary>A Scarab's mouth glows green inside as it charges and fires (D97): its light, at this strength. Gives its mandibles' places, or null.</summary>
+        private Vector3[] GlowMouth(SimUnit attacker, float strength)
+        {
+            if (!_units.TryMouth(attacker, out Light light, _mandibles)) return null;
+            light.enabled = strength > 0.01f;
+            light.intensity = strength * MouthLightIntensity;
+            if (!_mouthsLit.Contains(light)) _mouthsLit.Add(light);
+            return _mandibles;
+        }
+
+        /// <summary>The mouth light's brightness at full strength.</summary>
+        private const float MouthLightIntensity = 9f;
 
         private void DrawBeam(int index, in BeamShot beam, float battleDelta)
         {
@@ -566,49 +590,17 @@ namespace Halobellum.Presentation
 
             if (!beam.Firing)
             {
-                // Charging: a thin wavering line, light gathering at the muzzle, the target spot growing to what it will hit.
+                // Charging: energy swirling into the mouth, the mouth glowing green, the target spot growing to what it will hit.
                 float charge = Mathf.Clamp01(beam.Charge);
-                float flicker = 0.75f + 0.25f * Mathf.Sin(time * 45f);
-                _kit.Line(from, to, Mathf.Lerp(0.08f, 0.5f, charge) * read * flicker, new Color(color.r, color.g, color.b, 0.35f + 0.5f * charge));
-                _kit.HeadGlow(from, Mathf.Lerp(0.8f, 4.5f, charge * charge) * read, new Color(color.r, color.g, color.b, 0.8f));
-                _kit.HeadGlow(from, Mathf.Lerp(0.3f, 1.6f, charge) * read, Color.white);
-                _kit.GroundHead(to, beam.Radius * 2.6f * charge, new Color(color.r, color.g, color.b, 0.75f));
-                _beamEmit[index] += battleDelta * 26f;
-                while (_beamEmit[index] >= 1f)
-                {
-                    _beamEmit[index] -= 1f;
-                    Vector3 away = Random.onUnitSphere * Random.Range(2f, 4f);
-                    _kit.Orb(EffectPriority.Medium, from + away, -away * 2.4f, 0.3f * read, color, 0.4f);
-                }
+                Vector3[] mandibles = GlowMouth(beam.Attacker, 0.25f + 0.75f * charge);
+                BeamDrawing.Charge(_kit, from, to, charge, beam.Radius, color, read, time, battleDelta, ref _beamEmit[index], mandibles);
                 _beamLastScorch[index] = to;
                 return;
             }
 
-            // Firing: a thick glowing beam with a white core, on a burning spot that throws sparks and fire.
-            float pulse = 0.88f + 0.12f * Mathf.Sin(time * 38f) * Mathf.Sin(time * 23f);
-            _kit.Line(from, to, look.ShotWidth * 3.6f * pulse * read, new Color(color.r, color.g, color.b, 0.45f));
-            _kit.Line(from, to, look.ShotWidth * 1.8f * pulse * read, new Color(color.r, color.g, color.b, 0.9f));
-            _kit.Line(from, to, look.ShotWidth * 0.8f * pulse * read, new Color(0.92f, 0.98f, 1f, 1f));
-            _kit.HeadGlow(from, 5f * pulse * read, color);
-            _kit.HeadGlow(to + Vector3.up * 0.6f, beam.Radius * 3.4f * pulse, new Color(1f, 0.88f, 0.65f, 0.95f));
-            _kit.GroundHead(to, beam.Radius * 4.5f * pulse, new Color(1f, 0.52f, 0.16f, 1f));
-
-            _beamEmit[index] += battleDelta * 60f;
-            while (_beamEmit[index] >= 1f)
-            {
-                _beamEmit[index] -= 1f;
-                float roll = Random.value;
-                Vector2 around = Random.insideUnitCircle * beam.Radius;
-                Vector3 spot = to + new Vector3(around.x, 0.2f, around.y);
-                if (roll < 0.55f) _kit.Spark(EffectPriority.Big, spot, Random.onUnitSphere * 9f + Vector3.up * 11f, 0.085f * _kit.ReadScale, EffectRecipes.SparkHot, Random.Range(0.35f, 0.9f));
-                else if (roll < 0.85f) _kit.Fire(EffectPriority.Big, spot, Vector3.up * Random.Range(3f, 8f) + Random.insideUnitSphere * 2f, beam.Radius * Random.Range(0.6f, 1f), Random.Range(0.35f, 0.7f));
-                else _kit.Smoke(EffectPriority.Medium, spot, Vector3.up * Random.Range(3f, 6f), beam.Radius * Random.Range(1f, 1.5f), EffectRecipes.SmokeDark, Random.Range(1.2f, 2.4f));
-            }
-            if ((to - _beamLastScorch[index]).sqrMagnitude > 1.5f)
-            {
-                _beamLastScorch[index] = to;
-                _kit.Scorch(EffectPriority.Medium, to, beam.Radius * 2.2f, EffectRecipes.ScorchBlack, 35f);
-            }
+            // Firing: the beam wound with energy, on a burning spot that throws sparks and fire; the mouth burns green.
+            Vector3[] burning = GlowMouth(beam.Attacker, 0.9f + 0.1f * Mathf.Sin(time * 31f));
+            BeamDrawing.Fire(_kit, from, to, beam.Radius, look.ShotWidth, color, read, time, battleDelta, ref _beamEmit[index], ref _beamLastScorch[index], burning);
         }
 
         // ------------------------------------------------------------------ wind-ups

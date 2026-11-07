@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d50c9e005dbc80ecacdbb7a00a0ff15, type: 3}
+  m_Name: Mantis
+  m_EditorClassIdentifier: 
+  modelFolder: MantisAnimated
+  sourceModel: {fileID: 919132149155446097, guid: b40a9562d073686419fe235deee194e6, type: 3}
+  albedo: {fileID: 2800000, guid: a9e18655586f1974186dd085f8012974, type: 3}
+  albedoFile: 
+  movingClip: Rig|Walk
+  shootingClip: Rig|Fire
+  deathClip: Rig|Dead
+  stillClip: Rig|Idle
+  meleeClip: 
+  meleeBlendShare: 0
+  chargeClip: 
+  weaponName: 
+  weaponLength: 0.8
+  weaponInForwardHand: 0
+  weaponAlongForearm: 0
+  muzzleInRightHand: 0
+  muzzleAtFront: 0
+  shieldName: 
+  shieldDiameter: 1.1
+  shieldOffset: {x: 0, y: 0, z: 0}
+  muzzleBone: Muzzle
+  secondMuzzleBone: MuzzleRockets
+  cutout: 0
+  transitionSeconds: 0.25
+  corpseSeconds: 14
+  shotMoment: 0.041666668
+  spawnMoment: -1
+  bakedFps: 30
+  mesh: {fileID: 4300000, guid: 5166d06bd8bf2314999f1bb05fd79088, type: 2}
+  material: {fileID: 2100000, guid: eb41c6221e48ff044bfd011b998a9f18, type: 2}
+  glassMaterial: {fileID: 0}
+  clips:
+  - role: 1
+    firstRow: 0
+    frames: 48
+    loops: 1
+  - role: 2
+    firstRow: 48
+    frames: 72
+    loops: 1
+  - role: 3
+    firstRow: 120
+    frames: 66
+    loops: 0
+  - role: 0
+    firstRow: 186
+    frames: 1
+    loops: 0
+  muzzle: {x: 1.7487911, y: 3.5201144, z: 3.0498106}
+  hasMuzzle: 1
+  secondMuzzle: {x: -1.4871442, y: 3.384944, z: 1.795318}
+  hasSecondMuzzle: 1
+  bodyHeight: 5.9999995

@@ -5,6 +5,7 @@
 //     game distance) and, if it has one, a prepared weapon merged into the right hand, and a shield on the left in a second, see-through sub-mesh;
 //     a body whose gun is part of its own model (the Flamethrower Trooper) shoots from its furthest-forward point instead (muzzleAtFront),
 //     and a creature from one of its bones at the moment it shoots (muzzleBone: the Pure Form Ranged's spines, D90);
+//     a second weapon far from the first may start from a bone of its own (secondMuzzleBone: the Mantis's rocket pod, D96);
 //   - a texture holding every kept bone's matrix for every frame of every clip;
 //   - the clip table, and a material (cut out by its texture's alpha for a body with fronds, D90).
 // Moving and shooting clips play on the spot: the battle moves the unit, so any forward drift in the clip is
@@ -151,6 +152,17 @@ namespace Halobellum.EditorTools
                 {
                     // BuildMesh left the model in the pose the weapon was aimed in; shooting plays on the spot.
                     body.muzzle = Drift(model, hipsBone, restHips).MultiplyPoint3x4(model.transform.InverseTransformPoint(muzzle.Value));
+                }
+                // A second weapon's own muzzle, a bone of the rig at the same moment of the shooting clip (the Mantis's rocket pod, D96).
+                body.hasSecondMuzzle = false;
+                if (!string.IsNullOrEmpty(body.secondMuzzleBone))
+                {
+                    Transform second = model.GetComponentsInChildren<Transform>().FirstOrDefault(b => b.name == body.secondMuzzleBone);
+                    if (second == null) throw new InvalidOperationException($"{body.name}: no bone named {body.secondMuzzleBone} for its second weapon.");
+                    AnimationClip aim = Source(body.shootingClip);
+                    aim.SampleAnimation(model, aim.length * (body.shotMoment >= 0f ? body.shotMoment : 0.5f));
+                    body.secondMuzzle = Drift(model, hipsBone, restHips).MultiplyPoint3x4(model.transform.InverseTransformPoint(second.position));
+                    body.hasSecondMuzzle = true;
                 }
 
                 void AddClip(BakedAnimation role, AnimationClip source, bool loops, bool onTheSpot, float blendShare = 0f)

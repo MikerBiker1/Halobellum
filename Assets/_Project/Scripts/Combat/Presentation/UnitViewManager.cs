@@ -89,6 +89,9 @@ namespace Halobellum.Presentation
             public float ModelTop;
             /// <summary>What its real model's nodes do, or null if it has none (D45).</summary>
             public ModelParts Parts;
+            /// <summary>A Scarab's mouth (D97): the green light inside it and the two places its sides glow from, if its model has them.</summary>
+            public Light MouthLight;
+            public Transform[] Mandibles;
             /// <summary>The same for each tiny form of a pack.</summary>
             public ModelParts[] FormParts;
             /// <summary>Battle time at which a fallen body disappears.</summary>
@@ -228,6 +231,38 @@ namespace Halobellum.Presentation
         /// <summary>A walker's legs (the Scarab's, D84), or null. For the picture tools.</summary>
         public WalkerLegs WalkerOf(SimUnit unit) => unit.Id >= 0 && unit.Id < _views.Count ? _views[unit.Id].Parts?.Walker : null;
 
+        /// <summary>A model's mouth glow, its nodes MouthGlow (with a Light) and Mandible_0 and _1 (RealModelBuilder, D97), if it has them.</summary>
+        private static void FindMouth(View view, Transform body)
+        {
+            Transform left = null, right = null;
+            foreach (Transform node in body.GetComponentsInChildren<Transform>(true))
+            {
+                if (node.name == "MouthGlow") view.MouthLight = node.GetComponent<Light>();
+                else if (node.name == "Mandible_0") left = node;
+                else if (node.name == "Mandible_1") right = node;
+            }
+            if (left != null && right != null) view.Mandibles = new[] { left, right };
+        }
+
+        /// <summary>
+        /// A Scarab's mouth (D97): the light inside it, and where its two sides glow, written into mandibles (two places). False if its model
+        /// has no mouth glow.
+        /// </summary>
+        public bool TryMouth(SimUnit unit, out Light light, Vector3[] mandibles)
+        {
+            light = null;
+            if (unit.Id < 0 || unit.Id >= _views.Count) return false;
+            View view = _views[unit.Id];
+            light = view.MouthLight;
+            if (light == null) return false;
+            if (view.Mandibles != null && mandibles != null && mandibles.Length >= 2)
+            {
+                mandibles[0] = view.Mandibles[0].position;
+                mandibles[1] = view.Mandibles[1].position;
+            }
+            return true;
+        }
+
         /// <summary>Where a weapon's given shot leaves a body, if its model says (D45). Otherwise the caller picks a point.</summary>
         public bool TryMuzzle(SimUnit unit, int weapon, int shot, out Vector3 position)
         {
@@ -235,7 +270,13 @@ namespace Halobellum.Presentation
             if (unit.Id < 0 || unit.Id >= _views.Count) return false;
             View view = _views[unit.Id];
             if (view.Parts != null && view.Parts.TryMuzzle(weapon, shot, out position)) return true;
-            if (view.Baked == null || !view.Baked.hasMuzzle) return false;
+            if (view.Baked == null) return false;
+            if (weapon == 1 && view.Baked.hasSecondMuzzle)
+            {
+                position = view.BakedRenderer.transform.TransformPoint(view.Baked.secondMuzzle); // Its second weapon on another limb (the Mantis's rockets, D96).
+                return true;
+            }
+            if (!view.Baked.hasMuzzle) return false;
             position = view.BakedRenderer.transform.TransformPoint(view.Baked.muzzle);
             return true;
         }
@@ -545,6 +586,7 @@ namespace Halobellum.Presentation
                 GameObject body = Instantiate(prefab, view.Root.transform, false);
                 body.name = "Body";
                 view.Parts = ModelParts.Find(view.Root.transform, body.transform, stats.IsAir, unit.Id * 0.73f);
+                FindMouth(view, body.transform);
                 // A real model keeps its own paint, except as a grey ghost.
                 if (!_battle.KeepsOwnMaterials(stats.InfectedFrom ?? stats) || GhostTeam == unit.Team)
                 {

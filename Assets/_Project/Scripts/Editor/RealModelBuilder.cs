@@ -10,6 +10,8 @@
 // Every model's glow (its glow texture or colour in materials.json) is on, except on the infested vehicles (D82). An entry with Thrusters gets a
 // Thruster_<size> node at the back of each of its outermost parts (the Banshee's wing tips, the Ghost's fins), which ModelParts lights while it moves.
 // An entry with a Prop holds that weapon model (a Weapon_ folder) at its Muzzle_1, which moves to the weapon's tip (the Infested Elite's plasma rifle).
+// An entry with a Mouth gets a green light inside the mouth its Muzzle_0 is in, MouthGlow, and the two places its sides glow from, Mandible_0
+// and _1, which CombatEffectsView lights as it charges and fires its beam (the Scarab, D97).
 //   Menu: Halobellum > Art > Build Real Model Prefabs
 //   Command line: -executeMethod Halobellum.EditorTools.RealModelBuilder.BuildAllFromCommandLine (or BuildTowersFromCommandLine for the towers alone,
 //   BuildInfestedFromCommandLine for the infested vehicles alone, BuildUnitsFromCommandLine for the units named in HB_UNITS or after -units,
@@ -52,6 +54,8 @@ namespace Halobellum.EditorTools
             public float PropLength;
             /// <summary>Degrees the model is turned about the vertical, for one prepared facing the wrong way (the Combat Form: the owner, 2026-11-07).</summary>
             public float Yaw;
+            /// <summary>A mouth that glows green inside as its beam charges and fires (the Scarab: the owner, 2026-11-07, D97).</summary>
+            public bool Mouth;
         }
 
         /// <summary>
@@ -74,7 +78,7 @@ namespace Halobellum.EditorTools
             new Entry { Unit = "UNSC/Pelican", Folder = "Pelican", Length = 10f },
             new Entry { Unit = "Covenant/Banshee", Folder = "Banshee", Length = 6.6f, Thrusters = true }, // Its wings are wider than it is long: 5.4 m nose to tail.
             new Entry { Unit = "Covenant/Wraith", Folder = "Wraith", Length = 6.2f },
-            new Entry { Unit = "Covenant/Scarab", Folder = "Scarab", Length = 14f },
+            new Entry { Unit = "Covenant/Scarab", Folder = "Scarab", Length = 14f, Mouth = true },
             new Entry { Unit = "Flood/InfectedPelican", Folder = "Pelican", Length = 10f, Tint = Infested },
             new Entry { Unit = "Flood/InfectedPhantom", Folder = "Phantom", Length = 12f, Tint = Infested },
             new Entry { Unit = "Covenant/CovenantPhantom", Folder = "Phantom", Length = 12f, Tint = CovenantHull },
@@ -241,6 +245,7 @@ namespace Halobellum.EditorTools
                 if (infested) AddGrowths(root, unitName);
                 if (entry.Thrusters) AddThrusters(root);
                 if (!string.IsNullOrEmpty(entry.Prop)) AddProp(root, entry.Prop, entry.PropLength);
+                if (entry.Mouth) AddMouth(root);
                 string path = $"{PrefabFolder}/{unitName}_Model.prefab";
                 unit.prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
                 unit.keepsOwnMaterials = true;
@@ -295,6 +300,34 @@ namespace Halobellum.EditorTools
                 node.transform.localPosition = new Vector3(part.Average(p => p.x), (low + high) * 0.5f, part.Min(p => p.z) - 0.3f); // Just clear of the hull, so it shows.
                 Debug.Log($"{root.name}: {node.name} at {node.transform.localPosition}");
             }
+        }
+
+        /// <summary>
+        /// The mouth's glow, about its Muzzle_0 (metres, the model's axes, +Z its front): a green point light just inside the mouth, off until a
+        /// beam lights it, and the two places either side, in the hollows between the jaws, that glow with it.
+        /// </summary>
+        private static void AddMouth(GameObject root)
+        {
+            Transform muzzle = root.GetComponentsInChildren<Transform>().FirstOrDefault(t => t.name == "Muzzle_0");
+            if (muzzle == null) throw new InvalidOperationException($"{root.name}: a mouth needs its Muzzle_0.");
+            Vector3 mouth = root.transform.InverseTransformPoint(muzzle.position);
+            var glow = new GameObject("MouthGlow");
+            glow.transform.SetParent(root.transform, false);
+            glow.transform.localPosition = mouth + new Vector3(0f, 0.35f, -1.1f);
+            Light light = glow.AddComponent<Light>();
+            light.type = LightType.Point;
+            light.color = new Color(0.42f, 1f, 0.36f);
+            light.range = 5.5f;
+            light.intensity = 0f;
+            light.shadows = LightShadows.None;
+            light.enabled = false;
+            for (int side = 0; side < 2; side++)
+            {
+                var place = new GameObject("Mandible_" + side);
+                place.transform.SetParent(root.transform, false);
+                place.transform.localPosition = mouth + new Vector3(side == 0 ? -1.25f : 1.25f, 0.75f, -0.55f);
+            }
+            Debug.Log($"{root.name}: a mouth glow at {glow.transform.localPosition}");
         }
 
         /// <summary>
