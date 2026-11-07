@@ -210,7 +210,7 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 ## The Pelican and the Grizzly (D73)
 
 119. **The Grizzly** is back at 500, as at 450 the Hard AI bought it against Scorpions and lost it to Spartans (D73). A cheaper Grizzly may still play well in your hands. Want another kind of buff for it, or leave it, now that Armored Division is at 48.3%?
-120. **Covenant-based Flood is at 46.2%**, at the band's floor (the Abomination's and Carrier Form's numbers are in the impact file). Leave it?
+120. *(Settled: Covenant-based Flood is at 50.0% since the Spawner change, D79.)* **Covenant-based Flood is at 46.2%**, at the band's floor (the Abomination's and Carrier Form's numbers are in the impact file). Leave it?
 121. **Marauders:** you find them nearly unkillable after a level or two, but the Hard AI's units end matches at level 1.3 to 1.8, so the tournament can't see that. Want a test with levelled squads, or a look at what levels give the Marauder?
 
 
@@ -218,7 +218,7 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 
 122. **The AI buys from the one-on-one table.** Any buff that makes a unit look better one on one makes the Hard AI buy it much more, and the slow melee units (Pure Form Tank, Grizzly) look far better one on one than in a real match, so buffing them made their sides lose (D73, D74). The fix is in the AI, not the units: build its table from whole matches (the tournament) instead of one-on-one fights, or weigh a unit's real results. Want that tried? It would change how the Hard AI plays everywhere.
 123. **Still weak:** UNSC-based Flood's Pure Form Tank (the side does better without it), the Covenant Phantom (the AI uses its drops badly), the Vulture (bought in 89% of Aerospace matches for little), the Elite and the Ghost. Each buff tried made things worse through the AI's buying (item 122). Leave them until the AI's table is settled, or redesign one (the Phantom dropping Elites, say)?
-124. **The Flood is at 46.5%** overall, both its sub-factions at 47.0%, inside the band but last, losing most to Banished and Unggoy (35% to 40%). Leave it, or a Flood-wide nudge?
+124. *(Settled: the Flood is at 50% since D79.)* **The Flood is at 46.5%** overall, both its sub-factions at 47.0%, inside the band but last, losing most to Banished and Unggoy (35% to 40%). Leave it, or a Flood-wide nudge?
 125. **Sound by zoom:** nearer than the starting view up to 1.7 times louder, further down to 0.4, off screen down to 12%. Base hits about 6 dB louder, the music down to 45% (small) or 30% (big) under them. All first guesses for your ears: louder, quieter, or a different curve?
 
 
@@ -226,7 +226,7 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 
 126. **The Seeder** is at 475 with seeds of 4% a second and 45-damage spores, after carrying the Flood to 66%. It is still the Flood's best buy (edge +20 in UNSC-based). Its converts rise with 60% of their own unit's health, as any infected unit does. Keep these, or would you rather it converted less (fewer kinds) and kept its old numbers?
 127. **The whole-match AI table** is set aside (D76): it made the AI chase what won before, Covenant 63% and UNSC 32%. Item 122 stays open: a blend of both tables, or a table learned over several rounds, could still be tried.
-128. **The tutorial:** UNSC Noble against Banished, the Flamethrower Trooper as the unit to unlock, 29 steps. Another faction pair? Wording? Should it offer itself the first time the game starts?
+128. *(Wording: yours since D81, and 30 steps with the exclusive unit.)* **The tutorial:** UNSC Noble against Banished, the Flamethrower Trooper as the unit to unlock. Another faction pair? Should it offer itself the first time the game starts?
 
 
 ## The Spawner (D79)
