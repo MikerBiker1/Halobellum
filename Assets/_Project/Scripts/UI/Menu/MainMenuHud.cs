@@ -1,7 +1,8 @@
 // MainMenuHud.cs
 // The main menu's screen (M10), in the MainMenu scene over MenuBackdrop's picture: the title, and two pages of buttons. The first has Play, Settings and Quit.
 // Play's page has Faction mode, Unlock Skirmish mode, Sandbox and Back: a chosen mode shows a panel on the right with its settings and Start, and the Sandbox leaves at once.
-// The first time it shows after the game starts, the owner's disclaimer (Disclaimer, D96) comes first, and the menu fades in once it is clicked away.
+// The first time it shows after the game starts, the owner's disclaimer (Disclaimer, D96) comes first, and the menu fades in once it is clicked away,
+// with a button's click and only then the menu's music (D101).
 // Its version is in small print in the lower left (D100). It fades in from black and fades out before a scene change. Esc steps back: the card list, then Play's page, and it closes Settings. It scales to any window (HudScale.ApplyFit).
 // Difficulty and base health are remembered (GameSettings). The card filter starts at All cards each time this screen loads, and no mode is chosen.
 // The buttons call plain public methods, which a batch run's tests can call too, since a batch run draws no IMGUI.
@@ -133,7 +134,23 @@ namespace Halobellum.UI
             return true;
         }
 
+        // The disclaimer holds the menu's music back until it is clicked away (the owner, D101). Awake comes before the scene's music is chosen.
+        private void Awake()
+        {
+            if (Disclaimer.Pending) AudioDirector.HoldMenuMusic = true;
+        }
+
         private void Start() => _shownAt = Time.unscaledTime;
+
+        /// <summary>The disclaimer clicked away: a button's click, the menu's music, and the menu fading in from the black.</summary>
+        private void PastDisclaimer()
+        {
+            Disclaimer.Pending = false;
+            _shownAt = Time.unscaledTime;
+            UiAudio.Click();
+            if (AudioDirector.Instance != null) AudioDirector.Instance.ReleaseMenuMusic();
+            else AudioDirector.HoldMenuMusic = false;
+        }
 
         private float _pictureAt = -1f;
 
@@ -172,8 +189,7 @@ namespace Halobellum.UI
 
         private void GoOnForPicture()
         {
-            Disclaimer.Pending = false;
-            _shownAt = Time.unscaledTime;
+            PastDisclaimer();
             Invoke(nameof(MenuPicture), FadeInSeconds + 1.5f);
         }
 
@@ -214,11 +230,7 @@ namespace Halobellum.UI
 
             if (Disclaimer.Pending)
             {
-                if (Disclaimer.Draw(width, height))
-                {
-                    Disclaimer.Pending = false;
-                    _shownAt = Time.unscaledTime; // The menu fades in from the black.
-                }
+                if (Disclaimer.Draw(width, height)) PastDisclaimer();
                 return;
             }
             if (_showSettings)

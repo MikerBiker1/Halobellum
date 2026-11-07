@@ -180,6 +180,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] Hard AI tournament after the animations: every sub-faction 48% to 52%, no change (D95)
 - [x] The owner's disclaimer before the main menu (D96)
 - [x] The disclaimer's request not to share, HALOBELLUM in the menu's font, the version on the menu (D100)
+- [x] The menu's music waits for the disclaimer, a click as it goes; the version is the build number (D101)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

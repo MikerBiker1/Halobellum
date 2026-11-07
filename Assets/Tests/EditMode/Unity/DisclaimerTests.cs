@@ -29,6 +29,14 @@ namespace Halobellum.Tests
         [Test]
         public void TheMenu_ShowsItsVersion() => Assert.AreEqual("Version " + UnityEngine.Application.version, MainMenuHud.VersionLabel);
 
+        [Test]
+        public void ABuildsVersion_IsItsBuildNumber_GivenOrCountedByGit()
+        {
+            Assert.AreEqual("378", Halobellum.EditorTools.PlayerBuildTool.BuildNumber(new[] { "-buildOutput", "x.exe", "-buildNumber", "378" }));
+            string counted = Halobellum.EditorTools.PlayerBuildTool.BuildNumber(new string[0]);
+            if (counted != null) Assert.Greater(int.Parse(counted), 0, "In a Git checkout, the commits are counted.");
+        }
+
         [TestCase(false, new string[0], true)]
         [TestCase(false, new[] { "-screen-width", "1600" }, true)]
         [TestCase(true, new string[0], false)]

@@ -2,6 +2,11 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The menu's music after the disclaimer, and the build number (D101)
+- **In the game:** the menu's music starts only once you click the disclaimer away, with the same click as a menu button. The version in the lower left is now the build number: how many commits main has when the game is built (it goes up with every change pushed).
+- **Checked:** the disclaimer, menu and audio tests, a new one for the build number; a test build's menu picture.
+- **Not checked:** the music's start heard by hand.
+
 ## The disclaimer's addition and the version (D100)
 - **In the game:** Public Availability ends with your request not to share the game publicly; HALOBELLUM on the disclaimer is in the main menu's title font and colour; the main menu shows "Version 0.1.0" small in the lower left.
 - **Checked:** the disclaimer and menu tests; pictures of the disclaimer at 1600x900 and 1024x768 and of the menu (`Docs/M10/menu_version_d100.png`).

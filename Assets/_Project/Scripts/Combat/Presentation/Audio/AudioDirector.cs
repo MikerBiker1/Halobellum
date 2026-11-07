@@ -220,13 +220,23 @@ namespace Halobellum.Presentation
             HandleScene(scene.name);
         }
 
+        /// <summary>True while something shown before the main menu holds its music back (the owner's disclaimer, D101). Set before the menu's scene is handled.</summary>
+        public static bool HoldMenuMusic { get; set; }
+
+        /// <summary>Lets the main menu's music start, once what held it back has gone (D101).</summary>
+        public void ReleaseMenuMusic()
+        {
+            HoldMenuMusic = false;
+            if (Music.CurrentSlot != AudioSlots.MainMenuMusic) Music.Play(AudioSlots.MainMenuMusic);
+        }
+
         /// <summary>Connects to what is in a scene and decides on its music.</summary>
         public void HandleScene(string sceneName)
         {
             if (sceneName == AudioSlots.MainMenuScene || GameFlow.IsMainMenu(sceneName))
             {
                 UiFaction = null;
-                Music.Play(AudioSlots.MainMenuMusic);
+                if (!HoldMenuMusic) Music.Play(AudioSlots.MainMenuMusic);
                 return;
             }
 
