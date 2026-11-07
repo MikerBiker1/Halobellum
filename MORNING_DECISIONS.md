@@ -257,6 +257,11 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 139. **The Spartan Laser** is rebuilt as a closed skin of about 1,300 triangles with its colours per face, 1.4 m long, so it looks a little faceted up close. It comes from the same Sketchfab author as the Scarab, with Halo names in it (see item 137). Longer, shorter, or more detail?
 140. **The firing icons** show each soldier halfway through its shooting clip; the Zealot at 40% of his swing and the Abomination at 70% of its slam read better. Any whose moment you'd change? The Combat Form and the Infested Elite still stand, as their models aren't animated.
 
+## The Hunters (D87)
+
+141. **Both Hunters got the shield and the bash:** the Hunter Pair and the Hunter Captain (Lekgolo Colony), as both are Hunters. Keep the Captain's too, or should it keep shooting close in?
+142. **First numbers, for you to balance:** a charge at whatever comes within 5 m, at 9 m/s, at most every 3 s; the bash 100 damage (the Captain's 120) every 1.5 s, also hitting what stands within 1.5 m of its target; the guns hold fire inside 5 m. Not tested in the tournament, so the Covenant and Lekgolo Colony win rates may move out of the 46-54% band.
+
 
 ## Things my test runs did to your PC
 

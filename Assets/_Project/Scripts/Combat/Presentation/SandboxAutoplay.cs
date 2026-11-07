@@ -16,7 +16,8 @@
 // With "-walkStrip" it only takes a strip of pictures of one unit walking (the Scarab, or the unit -galleryOnly names): twelve over one walk cycle
 // from the side, then twelve from a quarter, the camera held still each time, so that a person can see each foot stay put while it carries
 // weight and the body sway over the feet (D84). -stripFoe names what it meets (a Marine by default; a Combat Form rushes a Hunter into its
-// charge and bash, D87), and -stripFrames, -stripEvery (battle seconds), -stripDelay and -stripViews change how many pictures, how often, from when and from where.
+// charge and bash, D87), and -stripFrames, -stripEvery (battle seconds), -stripDelay, -stripViews, -stripZoom and -stripFollow change how many
+// pictures, how often, from when, from where, from how far, and whether the camera follows the unit.
 // Depends on: SandboxController, BattleController, Halobellum.Combat, Halobellum.Core, UnityEngine.
 
 using System;
@@ -271,19 +272,29 @@ namespace Halobellum.Presentation
             float cycle = walker != null && type.MoveSpeed > 0f ? walker.Stride / type.MoveSpeed : 3.6f;
             int frames = int.Parse(Argument("-stripFrames", "12"));
             float every = float.Parse(Argument("-stripEvery", (cycle / 12f).ToString(System.Globalization.CultureInfo.InvariantCulture)), System.Globalization.CultureInfo.InvariantCulture);
+            // -stripZoom puts the camera further off; -stripFollow keeps it on the unit as it moves, its heading as at the start (to see a fight
+            // rather than its feet).
+            float zoom = float.Parse(Argument("-stripZoom", "1"), System.Globalization.CultureInfo.InvariantCulture);
+            bool follow = Array.IndexOf(Environment.GetCommandLineArgs(), "-stripFollow") >= 0;
             foreach (string side in Argument("-stripViews", "side,quarter").Split(','))
             {
                 SimUnit unit = Body();
                 if (unit == null) break;
-                Vector3 at = views.WorldPosition(unit);
                 var facing = new Vector3(unit.Facing.X, 0f, unit.Facing.Y);
                 Vector3 right = Vector3.Cross(Vector3.up, facing);
                 float top = views.BodyTopOf(unit);
-                Vector3 look = at + facing * 1.4f + Vector3.up * (top * 0.42f);
-                view.transform.position = side == "side" ? look + right * (top * 2f) + Vector3.up * (top * 0.08f) : look + right * (top * 1.45f) + facing * (top * 1.2f) + Vector3.up * (top * 0.75f);
-                view.transform.LookAt(look);
+                Vector3 offset = (side == "side" ? right * (top * 2f) + Vector3.up * (top * 0.08f) : right * (top * 1.45f) + facing * (top * 1.2f) + Vector3.up * (top * 0.75f)) * zoom;
+                void Place()
+                {
+                    Vector3 look = views.WorldPosition(Body()) + facing * 1.4f + Vector3.up * (top * 0.42f);
+                    view.transform.position = look + offset;
+                    view.transform.LookAt(look);
+                }
+                Place();
                 for (int i = 0; i < frames && Body() != null; i++)
                 {
+                    if (follow) Place();
+                    yield return null;
                     Shot($"walk_{side}_{i:00}");
                     yield return UntilBattleSeconds(every);
                 }

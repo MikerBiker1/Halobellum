@@ -535,6 +535,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-07 | The Scarab is the owner's updated model and walks on four planted feet, one in the air at a time, its steps paced by the ground it covers and its body swaying onto the legs that carry it | Per the project owner (D84) |
 | 2026-11-07 | The Spartan carries the owner's Spartan Laser; a soldier's picture on cards and in the shop shows it aiming and firing, not standing | Per the project owner (D85) |
 | 2026-11-07 | The Brute Grenadier carries a Brute Shot, the Spartan CQB a shotgun and the Spartan Sniper a sniper rifle, from the owner's files | Per the project owner (D86) |
+| 2026-11-07 | Hunters aim from behind their shield; an enemy within 5 m draws a charge and shield bashes instead of cannon fire, until it is gone | Per the project owner (D87) |
 
 ## 18. Assumptions to confirm
 
