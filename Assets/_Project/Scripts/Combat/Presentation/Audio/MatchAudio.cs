@@ -140,8 +140,8 @@ namespace Halobellum.Presentation
                 case nameof(MatchController.ChooseCard):
                 case nameof(MatchController.ChooseDraft): GameAudio.Ui(UiSound.CardPick); break;
                 case nameof(MatchController.SkipCards): GameAudio.Ui(UiSound.Skip); break;
-                case nameof(MatchController.PlaceSpellAt):
-                case nameof(MatchController.PlaceItemOn): GameAudio.Ui(UiSound.SpellPlaced); break;
+                case nameof(MatchController.PlaceSpellAt): GameAudio.Ui(UiSound.SpellPlaced); break;
+                case nameof(MatchController.PlaceItemOn): GameAudio.Ui(UiSound.ItemPlaced); break;
                 case nameof(MatchController.PlaceAt): UiAudio.SquadMoved(); break;
                 case nameof(MatchController.ToggleRotation): UiAudio.SquadTurned(); break;
                 case nameof(MatchController.UnplaceSpell): UiAudio.SpellTakenBack(); break;

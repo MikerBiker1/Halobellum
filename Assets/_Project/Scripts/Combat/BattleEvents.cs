@@ -43,6 +43,8 @@ namespace Halobellum.Combat
         public event Action<SimUnit> UnitInfected;
         /// <summary>An infected unit rose: its corpse, the new unit.</summary>
         public event Action<SimUnit, SimUnit> UnitRose;
+        /// <summary>A unit started a leap, a charge or a dive (D91: its sound).</summary>
+        public event Action<SimUnit> UnitLeapt;
 
         internal void RaiseUnitSpawned(SimUnit unit) => UnitSpawned?.Invoke(unit);
         internal void RaiseReinforcementDropped(SimUnit carrier, int squadId) => ReinforcementDropped?.Invoke(carrier, squadId);
@@ -58,6 +60,7 @@ namespace Halobellum.Combat
         internal void RaiseBattleEnded(BattleResult result) => BattleEnded?.Invoke(result);
         internal void RaiseSpellTriggered(SimSpell spell) => SpellTriggered?.Invoke(spell);
         internal void RaiseUnitInfected(SimUnit corpse) => UnitInfected?.Invoke(corpse);
+        internal void RaiseUnitLeapt(SimUnit unit) => UnitLeapt?.Invoke(unit);
         internal void RaiseUnitRose(SimUnit corpse, SimUnit risen) => UnitRose?.Invoke(corpse, risen);
     }
 }

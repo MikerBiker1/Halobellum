@@ -65,6 +65,8 @@ namespace Halobellum.Presentation
         public static readonly Color NeedlePink = new Color(1f, 0.3f, 0.78f);
         public static readonly Color BeamRiflePink = new Color(0.95f, 0.42f, 1f);
         public static readonly Color LaserRed = new Color(1f, 0.1f, 0.12f);
+        /// <summary>The Hunter Captain's siphon laser (the owner, D91).</summary>
+        public static readonly Color SiphonGreen = new Color(0.32f, 1f, 0.36f);
         public static readonly Color GaussWhite = new Color(0.72f, 0.9f, 1f);
         public static readonly Color RocketOrange = new Color(1f, 0.62f, 0.22f);
         public static readonly Color BurningKeg = new Color(1f, 0.48f, 0.1f);
@@ -136,6 +138,8 @@ namespace Halobellum.Presentation
                 case WeaponFeelKind.Needle:
                     return new WeaponLook { Shot = NeedlePink, Flash = NeedlePink, FlashSize = 1.4f, ShotWidth = 0.3f, DrawnSpeed = 75f, Impact = ImpactStyle.Needle };
                 case WeaponFeelKind.Laser:
+                    if (name.Contains("siphon"))
+                        return new WeaponLook { Shot = SiphonGreen, Flash = SiphonGreen, FlashSize = 2.4f, ShotWidth = 0.32f, Impact = ImpactStyle.Laser };
                     return new WeaponLook { Shot = LaserRed, Flash = LaserRed, FlashSize = 2.4f, ShotWidth = 0.5f, Impact = ImpactStyle.Laser };
                 case WeaponFeelKind.Beam:
                     return new WeaponLook { Shot = flood ? FloodPlasma : ScarabBeam, Flash = flood ? FloodPlasma : ScarabBeam, FlashSize = 3f, ShotWidth = 1.6f, Impact = ImpactStyle.None };

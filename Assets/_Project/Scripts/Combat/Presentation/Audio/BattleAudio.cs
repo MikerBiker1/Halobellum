@@ -163,6 +163,7 @@ namespace Halobellum.Presentation
                 events.UnitRose -= OnUnitRose;
                 events.SpellTriggered -= OnSpellTriggered;
                 events.ReinforcementDropped -= OnReinforcementDropped;
+                events.UnitLeapt -= OnUnitLeapt;
                 events.UnitSpawned -= NoteDiver;
             }
             _shown = simulation;
@@ -177,6 +178,7 @@ namespace Halobellum.Presentation
                 events.UnitRose += OnUnitRose;
                 events.SpellTriggered += OnSpellTriggered;
                 events.ReinforcementDropped += OnReinforcementDropped;
+                events.UnitLeapt += OnUnitLeapt;
                 events.UnitSpawned += NoteDiver;
             }
         }
@@ -293,10 +295,18 @@ namespace Halobellum.Presentation
             // A death burst with no reach only leaves bodies behind (the Infected Phantom): nothing goes off.
             if (flood && unit.Stats.DeathBurst != null && unit.Stats.DeathBurst.Radius > 0f) return AudioCatalog.FloodBurst;
             if (!flood && IsLekgolo(unit.Stats) && !AudioCatalog.DeathLekgolo.Clips.IsEmpty) return AudioCatalog.DeathLekgolo;
+            SfxCue own = flood ? null : OwnDeath(unit.Stats);
+            if (own != null && own.HasSound) return own;
             bool living = IsLiving(unit.Stats);
             if (unit.IsAir && !living)
                 return AudioCatalog.DeathAirUnsc.HasSound && BattleFactions.OfUnit(unit.Stats, unit.Team) == BattleFactions.Unsc ? AudioCatalog.DeathAirUnsc : AudioCatalog.DeathAir;
             float radius = unit.Radius;
+            if (flood)
+            {
+                // The owner's Flood deaths by size (D91): a form, a big creature or taken vehicle, the biggest.
+                SfxCue bySize = radius >= 3f ? AudioCatalog.DeathFloodHuge : living || radius < 1f ? AudioCatalog.DeathFloodSmall : AudioCatalog.DeathFloodBig;
+                if (bySize.HasSound) return bySize;
+            }
             if (living || radius < 1f)
             {
                 if (flood) return radius >= 3f ? AudioCatalog.PelicanCrash : AudioCatalog.DeathFlood;
@@ -305,6 +315,36 @@ namespace Halobellum.Presentation
             if (flood) return radius >= 3f ? AudioCatalog.PelicanCrash : AudioCatalog.FloodBurst;
             if (radius >= 3f) return AudioCatalog.ExplosionLarge;
             return radius >= 1.6f ? AudioCatalog.ExplosionMedium : AudioCatalog.DeathVehicle;
+        }
+
+        /// <summary>The owner's death of one kind of soldier (D91), by its name, or null: humans, Spartans, Elites, Grunts, Jackals, Brutes.</summary>
+        public static SfxCue OwnDeath(UnitStats stats)
+        {
+            string n = stats.Name ?? "";
+            bool Has(string part) => n.IndexOf(part, System.StringComparison.OrdinalIgnoreCase) >= 0;
+            if (Has("Goblin")) return null; // A Grunt in a walker: it goes up as a machine.
+            if (Has("Spartan")) return AudioCatalog.DeathSpartan;
+            if (Has("Marine") || Has("ODST") || Has("Flamethrower")) return AudioCatalog.DeathHuman;
+            if (Has("Elite") || Has("Zealot")) return AudioCatalog.DeathElite;
+            if (Has("Grunt") || Has("Cannon Fodder")) return AudioCatalog.DeathGrunt;
+            if (Has("Jackal")) return AudioCatalog.DeathJackal;
+            if (Has("Brute")) return AudioCatalog.DeathBrute;
+            return null;
+        }
+
+        /// <summary>A leap's sound (D91): a Hunter's charge, or a Flood form pouncing. A dive has its own (Update); others leap silently.</summary>
+        private void OnUnitLeapt(SimUnit unit)
+        {
+            if (unit.IsAir) return;
+            SfxCue cue = LeapCue(unit.Stats);
+            if (cue != null && cue.HasSound) GameAudio.Sfx(cue, Place(unit));
+        }
+
+        /// <summary>What a unit's leap sounds like, or null.</summary>
+        public static SfxCue LeapCue(UnitStats stats)
+        {
+            if (stats.LeapCharges) return AudioCatalog.HunterCharge;
+            return IsFloodBody(stats) ? AudioCatalog.FloodLeap : null;
         }
 
         /// <summary>Worm colonies: the Hunters and what the Goliath is.</summary>

@@ -119,6 +119,8 @@ UI SOUNDS (each faction has its own set)
     ui_unsc_matchwon  ui_covenant_matchwon  ui_flood_matchwon
   match lost:
     ui_unsc_matchlost  ui_covenant_matchlost  ui_flood_matchlost
+  an item put in a squad's hexagon (the owner's ui_itemplaced; no generated sound):
+    ui_unsc_itemplaced  ui_covenant_itemplaced  ui_flood_itemplaced
 
 UI SOUNDS BEFORE A SIDE IS CHOSEN (main menu, draft)
   ui_neutral_cardpick              
@@ -162,6 +164,19 @@ ONE WEAPON'S OR UNIT'S OWN (no generated sound: until a file is in, the weapon's
   sfx_call_swarm                   A Swarm Form, 3 to 6 s after its last call. Several: sfx_call_swarm_1 and so on.
   sfx_shield_regen                 An energy shield starting to recharge (one at a time).
   sfx_death_lekgolo                A Hunter's or a Goliath's death.
+  sfx_death_human                  A Marine, an ODST or a Flamethrower Trooper dying.
+  sfx_death_spartan                A Spartan dying.
+  sfx_death_elite                  An Elite or a Zealot dying.
+  sfx_death_grunt                  A Grunt dying (Grunts, Fuel Rod Grunts, Heavy Grunts, Cannon Fodder).
+  sfx_death_jackal                 A Jackal dying.
+  sfx_death_brute                  A Brute dying.
+  sfx_death_flood_small            A Flood form dying (until it is in: sfx_death_flood).
+  sfx_death_flood_big              A big Flood creature or a taken vehicle dying.
+  sfx_death_flood_huge             The biggest Flood dying (until it is in: sfx_pelican_crash).
+  sfx_flood_leap                   A Flood form leaping.
+  sfx_hunter_charge                A Hunter charging.
+  sfx_fire_hunterbash              A Hunter's shield bash.
+  sfx_fire_siphon                  The Hunter Captain's 1 s siphon laser, once as each beam starts.
   sfx_node_small                   A small or medium node of light hitting a base at the end of a round (until it is in: the battle's hits).
   sfx_node_big                     A big node of light (about 60 damage to a base and up, and every Titan's).
 

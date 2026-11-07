@@ -57,6 +57,8 @@ namespace Halobellum.Combat
         public int WeaponIndex;
         public Vec2 Point;
         public float Radius;
+        /// <summary>What it is burning, or null: a laser beam is drawn to its body, at its height (D91).</summary>
+        public SimUnit Target;
         public bool Firing;
         /// <summary>How far the charge has come, 0 to 1 (1 while firing).</summary>
         public float Charge;
@@ -1072,6 +1074,7 @@ namespace Halobellum.Combat
             unit.LeapReadyAt = ElapsedSeconds + unit.Stats.LeapCooldownSeconds;
             unit.HeldUpSeconds = 0f;
             MarkEngaged(unit); // Its squad's formation is over.
+            Events.RaiseUnitLeapt(unit);
         }
 
         /// <summary>How far this weapon notices enemies: weapon range x the acquisition multiplier, or unlimited.</summary>
@@ -1243,6 +1246,14 @@ namespace Halobellum.Combat
                 {
                     SimWeapon weapon = unit.Weapons[w];
                     weapon.Cooldown -= _dt * unit.ShockwaveFireRate;
+                    if (weapon.BeamPhase != BeamPhase.Off && unit.Stats.SwitchesWeapons && w != unit.MainWeaponIndex)
+                    {
+                        // A unit using one weapon at a time drops its beam when it turns to another (the Hunter Captain's laser as it bashes, D91).
+                        weapon.BeamPhase = BeamPhase.Off;
+                        weapon.BeamTarget = null;
+                        weapon.Cooldown = weapon.Stats.BeamRestSeconds;
+                        continue;
+                    }
                     if (weapon.BeamPhase != BeamPhase.Off)
                     {
                         UpdateBeam(unit, weapon);
@@ -1433,6 +1444,7 @@ namespace Halobellum.Combat
                         WeaponIndex = w,
                         Point = weapon.BeamPoint,
                         Radius = weapon.Stats.SplashRadius,
+                        Target = weapon.BeamTarget,
                         Firing = firing,
                         Charge = firing ? 1f : Math.Min(1f, (weapon.BeamTicks + 1f) / TicksFor(weapon.Stats.BeamChargeSeconds)),
                     });

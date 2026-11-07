@@ -30,6 +30,8 @@ namespace Halobellum.Presentation
         RoundLost,
         MatchWon,
         MatchLost,
+        /// <summary>An item put in a squad's hexagon (D91; it was the spell's sound).</summary>
+        ItemPlaced,
     }
 
     public static class AudioSlots
@@ -54,7 +56,7 @@ namespace Halobellum.Presentation
         /// <summary>The UI set used before a side is chosen. It has only the sounds a menu needs; the rest fall back to UNSC.</summary>
         public const string NeutralKey = "neutral";
 
-        private static readonly string[] UiEventNames = { "click", "hover", "buy", "sell", "unlock", "error", "cardpick", "skip", "spellplaced", "levelup", "battlestart", "roundwon", "roundlost", "matchwon", "matchlost" };
+        private static readonly string[] UiEventNames = { "click", "hover", "buy", "sell", "unlock", "error", "cardpick", "skip", "spellplaced", "levelup", "battlestart", "roundwon", "roundlost", "matchwon", "matchlost", "itemplaced" };
 
         /// <summary>The short lower-case key of a faction's name. Anything unknown counts as UNSC, so a new faction still sounds of something.</summary>
         public static string FactionKey(string faction)

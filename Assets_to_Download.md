@@ -73,9 +73,12 @@ A weapon with a sound of its own uses it; the others use their kind's sound.
 | [ ] | `sfx_fire_bullet` | Other rifles, SMGs and pistols, such as the Marines' and the placeholder rifles. | Generated stand-in |
 | [ ] | `sfx_fire_heavybullet` | Only a heavy gun that is none of the above, if one comes. | Generated stand-in |
 | [ ] | `sfx_fire_bomb` | Hornet and Longsword bombs. | Generated stand-in |
-| [ ] | `sfx_fire_laser` | The Hunter Captain's Siphon Laser. | Generated stand-in |
+| [x] | `sfx_fire_siphon` | The Hunter Captain's 1 s siphon laser, as each beam starts (D91). | `Captain hunter cannon and other similar` |
+| [ ] | `sfx_fire_laser` | Any other laser shot with no file of its own (none today). | Generated stand-in |
+| [x] | `sfx_fire_hunterbash` | A Hunter's shield bash (D91). | `hunter_melee_hits` |
 | [ ] | `sfx_fire_bio` | Flood spat bone, bone shards and spores. | Generated stand-in |
-| [ ] | `sfx_fire_melee`, `_covenant`, `_flood` | Melee: claws, talons, tendrils, rams. | Generated stand-ins |
+| [x] | `sfx_fire_melee_flood` | Flood blows landing, one of three at random (D91). | `flood melee impact` 1 to 3 |
+| [ ] | `sfx_fire_melee`, `_covenant` | Other melee: blades, rams. | Generated stand-ins |
 
 ### Explosions, deaths and the Flood
 
@@ -97,7 +100,11 @@ A weapon with a sound of its own uses it; the others use their kind's sound.
 | [ ] | `sfx_death_infantry_covenant` | A Covenant soldier falling. | Generated stand-in |
 | [ ] | `sfx_death_vehicle` | A light vehicle going up. | Generated stand-in |
 | [ ] | `sfx_death_air` | A Covenant or Flood aircraft going down. | Generated stand-in |
-| [ ] | `sfx_death_lekgolo` | A Hunter or Goliath dying. | The Covenant soldier's death |
+| [x] | `sfx_death_lekgolo` | A Hunter, the Hunter Captain or the Goliath dying (D91). | `Hunter death` |
+| [x] | `sfx_death_human`, `_spartan`, `_elite`, `_grunt`, `_jackal`, `_brute` | Each kind of soldier dying (D91); the generated falls stay for any other. | `human death (marine odst)`, `death spartan`, `Elite death`, `grunt death`, `Jackal death`, `Brute death` |
+| [x] | `sfx_death_flood_small`, `_big`, `_huge` | The Flood dying, by size (D91). | `flood death small`, `big`, `huge` |
+| [x] | `sfx_flood_leap` | A Flood form leaping (D91). | `flood leap` |
+| [x] | `sfx_hunter_charge` | A Hunter charging (D91). | `Hunter charge` |
 | [x] | `sfx_pelican_crash` | The biggest Flood units dying: the same as the UNSC air crash, as you said. | `UNSC air unit hitting the ground` (D71) |
 | [ ] | `sfx_infection_start` | A dying unit being infected. | Generated stand-in |
 | [ ] | `sfx_hum_engine`, `sfx_hum_hover` | Loops: UNSC ground engines; what flies or floats. They must close without a click. | Generated stand-ins |
@@ -116,7 +123,8 @@ A UI file named without a faction, such as `ui_click`, serves every faction.
 | [x] | `ui_buy` | A squad bought. | `Unit bought (fall to grid)` |
 | [x] | `ui_unlock` | A unit unlocked or a tech bought. | `Unit unlocked` |
 | [x] | `ui_battlestart` | A round's battle starting, every faction. | Your `Round start.wav` (D78) |
-| [ ] | `ui_hover`, `ui_sell`, `ui_skip`, `ui_spellplaced`, `ui_levelup`, `ui_roundwon`, `ui_roundlost`, `ui_matchwon`, `ui_matchlost` | The rest of the interface. Each can also have one per faction, such as `ui_unsc_hover`. | Generated stand-ins |
+| [x] | `ui_levelup`, `ui_spellplaced`, `ui_itemplaced` | A level-up; a spell placed; an item put in a hexagon (D91). | `Level up`, `Spell placed`, `Move item in Hexagon` |
+| [ ] | `ui_hover`, `ui_sell`, `ui_skip`, `ui_roundwon`, `ui_roundlost`, `ui_matchwon`, `ui_matchlost` | The rest of the interface. Each can also have one per faction, such as `ui_unsc_hover`. | Generated stand-ins |
 
 ### Spells
 

@@ -539,6 +539,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-07 | Level arrows are one size over every squad; the Brute Grenadier cuts with its Brute Shot's blade what is too close for its grenades; reinforcement cards show the role under the name | Per the project owner (D88) |
 | 2026-11-07 | The Brute Grenadier plays Meshy's heavy two-handed swing while it cuts with its blade | Per the project owner (D89) |
 | 2026-11-07 | The Spawner, the Pure Form Ranged and the Stalker Form are animated bodies rigged in Blender; a clip can keep time with the battle, landing its moment on a weapon's strikes or a unit's spawns | Per the project owner (D90) |
+| 2026-11-07 | Soldiers die with their kind's sound, the Flood by size; Flood leaps, Hunter charges and bashes have theirs; the Hunter Captain's laser is a held 1 s green beam | Per the project owner (D91) |
 
 ## 18. Assumptions to confirm
 

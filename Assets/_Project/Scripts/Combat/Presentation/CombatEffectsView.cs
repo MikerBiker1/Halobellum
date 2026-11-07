@@ -543,6 +543,27 @@ namespace Halobellum.Presentation
             Color color = look.Shot;
             float time = _kit.BattleTime;
 
+            // A held laser (the Hunter Captain's siphon laser, D91): a thin bright line with a white core and a small glowing spot where it
+            // burns, no ground fire. It has no charge to speak of.
+            if (WeaponFeel.For(beam.Attacker.Weapons[beam.WeaponIndex].Stats) == WeaponFeelKind.Laser)
+            {
+                if (!beam.Firing) return;
+                if (beam.Target != null && beam.Target.IsAlive) to.y = _units.AimPoint(beam.Target, shotHeight).y; // On its body, an aircraft's too.
+                float shimmer = 0.85f + 0.15f * Mathf.Sin(time * 52f);
+                _kit.Line(from, to, look.ShotWidth * 3f * shimmer * read, new Color(color.r, color.g, color.b, 0.4f));
+                _kit.Line(from, to, look.ShotWidth * 1.3f * shimmer * read, new Color(color.r, color.g, color.b, 0.95f));
+                _kit.Line(from, to, look.ShotWidth * 0.45f * read, new Color(0.9f, 1f, 0.9f, 1f));
+                _kit.HeadGlow(from, 1.6f * shimmer * read, color);
+                _kit.HeadGlow(to + Vector3.up * 0.4f, 1.4f * shimmer * read, new Color(color.r, color.g, color.b, 0.9f));
+                _beamEmit[index] += battleDelta * 18f;
+                while (_beamEmit[index] >= 1f)
+                {
+                    _beamEmit[index] -= 1f;
+                    _kit.Spark(EffectPriority.Medium, to + Vector3.up * 0.3f, Random.onUnitSphere * 6f + Vector3.up * 5f, 0.06f * _kit.ReadScale, color, Random.Range(0.25f, 0.5f));
+                }
+                return;
+            }
+
             if (!beam.Firing)
             {
                 // Charging: a thin wavering line, light gathering at the muzzle, the target spot growing to what it will hit.

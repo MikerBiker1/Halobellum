@@ -205,6 +205,21 @@ namespace Halobellum.Presentation
         // Louder than the rest, about 6 dB, with the music dipping under them: a base being hit must be heard (the owner, 2026-11-06).
         public static readonly SfxCue NodeSmall = OwnerCue("sfx_node_small", SfxGroup.Nodes, 1.6f, 0.08f, 6, -15f);
         public static readonly SfxCue NodeBig = OwnerCue("sfx_node_big", SfxGroup.Nodes, 2f, 0.03f, 9, -10.5f);
+        // The owner's third batch (D91): deaths by who dies, the Flood's leap and deaths by size, the Hunters' charge and bash, the Hunter Captain's laser.
+        public static readonly SfxCue DeathHuman = OwnerCue("sfx_death_human", SfxGroup.InfantryDeaths, 0.6f, 0.1f, 2, -19f);
+        public static readonly SfxCue DeathSpartan = OwnerCue("sfx_death_spartan", SfxGroup.InfantryDeaths, 0.65f, 0.06f, 3, -18f);
+        public static readonly SfxCue DeathElite = OwnerCue("sfx_death_elite", SfxGroup.InfantryDeaths, 0.65f, 0.08f, 3, -18f);
+        public static readonly SfxCue DeathGrunt = OwnerCue("sfx_death_grunt", SfxGroup.InfantryDeaths, 0.55f, 0.1f, 2, -19.5f);
+        public static readonly SfxCue DeathJackal = OwnerCue("sfx_death_jackal", SfxGroup.InfantryDeaths, 0.6f, 0.08f, 2, -19f);
+        public static readonly SfxCue DeathBrute = OwnerCue("sfx_death_brute", SfxGroup.InfantryDeaths, 0.65f, 0.06f, 3, -18f);
+        public static readonly SfxCue DeathFloodSmall = OwnerCue("sfx_death_flood_small", SfxGroup.InfantryDeaths, 0.6f, 0.1f, 2, -18f);
+        public static readonly SfxCue DeathFloodBig = OwnerCue("sfx_death_flood_big", SfxGroup.BigDeaths, 0.85f, 0.06f, 6, -14f);
+        public static readonly SfxCue DeathFloodHuge = OwnerCue("sfx_death_flood_huge", SfxGroup.BigDeaths, 1f, 0.03f, 9, -10.5f);
+        public static readonly SfxCue FloodLeap = OwnerCue("sfx_flood_leap", SfxGroup.Calls, 0.55f, 0.1f, 2, -19f);
+        public static readonly SfxCue HunterCharge = OwnerCue("sfx_hunter_charge", SfxGroup.Ready, 0.8f, 0.05f, 5, -15f);
+        public static readonly SfxCue FireHunterBash = OwnerCue("sfx_fire_hunterbash", SfxGroup.Melee, 0.75f, 0.06f, 3, -16f);
+        /// <summary>The Hunter Captain's siphon laser, a 1 s beam: once as each beam starts (the owner's file runs about as long), and any other laser beam like it.</summary>
+        public static readonly SfxCue FireSiphon = OwnerCue("sfx_fire_siphon", SfxGroup.Lasers, 1f, 0.03f, 7, -14f);
 
         /// <summary>The owner's sounds of one weapon or unit (they have no generated sound).</summary>
         public static IReadOnlyList<SfxCue> OwnerOnly => Owners;
@@ -335,6 +350,8 @@ namespace Halobellum.Presentation
             if (n.Contains("shotgun")) return FireShotgun;
             if (n.Contains("sniper")) return FireSniper;
             if (n.Contains("energy sword")) return FireSword;
+            if (n.Contains("siphon") || (weapon.IsBeam && n.Contains("laser"))) return FireSiphon;
+            if (n == "shield bash") return FireHunterBash;
             if (WeaponFeel.FromName(weapon.Name) == WeaponFeelKind.HeavyBullet) return FireM60;
             return null;
         }

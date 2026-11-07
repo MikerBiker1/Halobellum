@@ -54,7 +54,7 @@ Marauder,Covenant,Banished,Tank,2,50,1,300,1250,Heavy,0,1.5,15,63,52,34,1250,60,
 Reaver,Covenant,Banished,AntiAir,2,50,1,300,700,Light,0,3,20,48,48,48,700,60,"Marine (100%), Spartan Grenadier (100%)"
 Skitterer,Covenant,Lekgolo Colony,Flanker,1,0,6,150,100,Light,0,4.5,7,168,168,126,600,5,"Flamethrower Trooper (100%), Grunt Goblin (100%)"
 Goliath,Covenant,Lekgolo Colony,Tank,3,250,1,500,2200,Heavy,0,1.1,3,82,64,40,2200,250,"Gauss Warthog (100%), Spartan (100%)"
-Hunter Captain,Covenant,Lekgolo Colony,SingleTargetDps,3,225,1,450,2000,Heavy,0,1.25,15,128,171,168,2000,90,"Marine (100%), Grunt (100%)"
+Hunter Captain,Covenant,Lekgolo Colony,SingleTargetDps,3,225,1,450,2000,Heavy,0,1.25,15,129,173,170,2000,90,"Marine (100%), Grunt (100%)"
 Cannon Fodder,Covenant,Unggoy Rebellion,Chaff,1,0,30,100,20,Unarmored,0,1.75,9,180,180,135,600,0.6667,"Flamethrower Trooper (100%), Fuel Rod Grunt (100%)"
 Heavy Grunts,Covenant,Unggoy Rebellion,SingleTargetDps,1,0,8,200,100,Unarmored,30,1.5,12,208,208,156,1040,5,"Marine (100%), Infection Forms (100%)"
 Grunt Goblin,Covenant,Unggoy Rebellion,Tank,3,200,1,400,1500,Heavy,0,2,14,65,65,54,1500,80,"Gauss Warthog (100%), Spartan (100%)"

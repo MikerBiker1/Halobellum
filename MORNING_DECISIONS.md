@@ -275,6 +275,12 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 147. **Where the Spawner's forms appear:** its belly heaves and its maw gapes as each brood appears, but the battle still puts the forms 1 m in front of it, as before. Should they appear under its belly instead? That is a small battle change, which I left alone.
 148. **The Ranged Form's shard** now leaves from the top of its column at the end of its forward thrust, about 1.4 m up and 0.9 m ahead, instead of from its spine tips at 2.5 m. Only how it looks changes; the shot is the same.
 
+## Sounds and the Captain's laser (D91)
+
+149. **Deaths by name:** a unit is heard by what its name says (Spartan, Marine, ODST, Flamethrower, Elite, Zealot, Grunt, Cannon Fodder, Jackal, Brute); the Grunt Goblin still goes up as a machine, and anything else keeps the generated fall. The Infested Elite and other Flood die with the Flood's sounds.
+150. **The Flood by size:** a form or infested soldier (and the Swarm Form) small, a creature or taken vehicle 1 to 3 m across big, the Abomination and the Juggernaut huge. Taken aircraft still crash as aircraft.
+151. **The laser's numbers:** 10 hits of 19.5 over 1 s, then 1 s of rest, for the old 96 a second. Your sound runs about 1.4 s, a little longer than the beam.
+
 ## Things my test runs did to your PC
 
 - **Windows moving, and possibly music:** while the Screen setting was being checked, a test window moved across all three of your screens and briefly went fullscreen on each. Some of those runs weren't silent, so menu music may have played for about 25 seconds at a time. Those checks have finished.

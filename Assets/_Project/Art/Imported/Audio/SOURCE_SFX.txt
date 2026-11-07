@@ -66,7 +66,27 @@ beam_rifle_fire[cov_snip_shot9].wav -> sfx_fire_beamrifle.wav: the Beam Rifle (J
 Glassing beam.mp3 -> sfx_spell_glassing.mp3: Glassing Beam, once for the whole beam, started so that the beam strikes with it
 Small&medium light nodes.wav -> sfx_node_small.wav: a small or medium node of light hitting a base at the end of a round
 big light node.wav -> sfx_node_big.wav: a big node of light hitting a base at the end of a round
-UNSC air unit hitting the ground.wav -> sfx_pelican_crash.wav: the same crash, as asked: the biggest Flood units dying
+UNSC air unit hitting the ground.wav -> sfx_pelican_crash.wav: the same crash, as asked: the biggest Flood units dying (until the huge Flood death is in)
+human death (marine odst).wav -> sfx_death_human.wav: a Marine, an ODST or a Flamethrower Trooper dying
+death spartan.wav -> sfx_death_spartan.wav: a Spartan dying, any of Noble's
+Elite death.wav -> sfx_death_elite.wav: an Elite or a Zealot dying
+grunt death.wav -> sfx_death_grunt.wav: a Grunt dying: Grunts, Fuel Rod Grunts, Heavy Grunts, Cannon Fodder
+Jackal death.wav -> sfx_death_jackal.wav: a Jackal dying
+Brute death.wav -> sfx_death_brute.wav: a Brute dying (the Brute Grenadier)
+Hunter death.wav -> sfx_death_lekgolo.wav: a Hunter, the Hunter Captain or the Goliath dying
+flood death small.wav -> sfx_death_flood_small.wav: a Flood form dying: Combat Forms, the infested soldiers, Stalkers, Swarm Forms
+flood death big.wav -> sfx_death_flood_big.wav: a big Flood creature or a taken vehicle dying
+flood death huge.wav -> sfx_death_flood_huge.wav: the biggest Flood dying: the Abomination, the Juggernaut
+flood leap.wav -> sfx_flood_leap.wav: a Flood form leaping: Infection Forms, Stalkers, the Juggernaut
+flood melee impact1.wav -> sfx_fire_melee_flood_1.wav: a Flood blow landing (one of three, at random)
+flood melee impact2.wav -> sfx_fire_melee_flood_2.wav: a Flood blow landing (one of three, at random)
+flood melee impact3.wav -> sfx_fire_melee_flood_3.wav: a Flood blow landing (one of three, at random)
+Hunter charge.wav -> sfx_hunter_charge.wav: a Hunter or the Hunter Captain charging
+hunter_melee_hits.wav -> sfx_fire_hunterbash.wav: a Hunter's or the Hunter Captain's shield bash
+Captain hunter cannon and other similar.mp3 -> sfx_fire_siphon.mp3: the Hunter Captain's 1 s siphon laser, as each beam starts, and any laser beam like it
+Level up.wav -> ui_levelup.wav: a squad or a tower leveled up, or research bought, every faction
+Spell placed.wav -> ui_spellplaced.wav: a spell placed, every faction
+Move item in Hexagon.wav -> ui_itemplaced.wav: an item put in a squad's hexagon, every faction
 
 Not used:
 plasma_grenade_plasmagrenexpl_plasmagx1.wav: no use for it yet, as the owner said

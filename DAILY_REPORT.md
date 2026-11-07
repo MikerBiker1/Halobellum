@@ -2,6 +2,12 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Your new sounds and the Hunter Captain's laser (D91)
+- **In the game:** all 20 of your files are in: deaths for humans, Spartans, Elites, Grunts, Jackals, the Brute and the Hunters; the Flood's by size; the Flood's leap and three blows; the Hunter's charge and bash; level up, spell placed and an item put in a hexagon. The Hunter Captain's laser is a 1 s green beam with your sound, drawn as a thin laser.
+- **Balance:** the laser deals what it did (96 a second, now 10 hits over a second, then a second's rest), still heals the Captain, and stops when it bashes. No tournament, as you said.
+- **Checked:** new tests for the laser (its hits, rest, damage over time, healing, stopping for the bash) and for the sounds (each death, leap, bash, laser and the hexagon sound); the audio, Hunter and clip tests. One audio test that drops files in failed once in the batch and passed alone.
+- **Not checked:** not heard or seen in the game by hand.
+
 ## The Spawner, the Ranged Form and the Stalker Form animated (D90)
 - **In the game:** all three move limb by limb now, instead of a stiff wobble. The **Stalker Form** runs low on all fours at full speed, legs in diagonal pairs, spine and tail sack rolling; it attacks in sudden lunges, three to a round (both arms and its tusks, then each arm), each sprung back into its crouch, each landing on one of its strikes. The **Pure Form Ranged** crawls lopsided, one leg reaching long and the other hitching short, arms pawing, its column swaying late; to shoot it rears back, then thrusts forward hard and the shard leaves the top of its column at the end of the thrust. The **Spawner** lumbers, swaying heavily onto each foot, every tendril writhing to its own rhythm; its belly swells and heaves forward to the maw, which gapes as each brood appears, timed to its spawns; its lash whips the tendrils forward. Their cards show them attacking. Pictures: `Docs/M10/flood_d90_clips.jpg`, `flood_d90_game.jpg`, `flood_d90_icons.jpg`.
 - **How:** Meshy couldn't rig them (item 19), so I built their skeletons and skin weights myself in Blender (`Tools/Art/creature_rig.py`). Planted feet slide under 2 cm at their walking speeds.

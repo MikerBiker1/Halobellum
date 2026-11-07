@@ -33,8 +33,8 @@ namespace Halobellum.Presentation
     {
         public static WeaponFeelKind For(WeaponStats weapon)
         {
-            if (weapon.IsBeam) return WeaponFeelKind.Beam;
             WeaponFeelKind? named = FromName(weapon.Name);
+            if (weapon.IsBeam) return named == WeaponFeelKind.Laser ? WeaponFeelKind.Laser : WeaponFeelKind.Beam; // A held laser (the Hunter Captain's, D91) is still a laser.
             // A plasma shot that flies and bursts is a heavy gun, not a pistol (the Blisterback's missiles, the Marauder's cannon).
             if (named == WeaponFeelKind.Plasma && !weapon.IsInstant && weapon.SplashRadius > 0f) return WeaponFeelKind.PlasmaHeavy;
             if (named.HasValue) return named.Value;

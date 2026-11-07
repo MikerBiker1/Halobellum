@@ -80,6 +80,7 @@ UI = {
     "click": "any button; quieter, a squad selected or turned", "hover": "the mouse going over a button", "buy": "a squad bought", "sell": "a squad sold; quieter, a spell taken back", "unlock": "a unit unlocked or a tech bought",
     "error": "something that can't be done, or a click on a greyed-out button", "cardpick": "a card taken", "skip": "the cards skipped; quieter, a squad moved", "spellplaced": "a spell or an item placed",
     "levelup": "a squad leveled up", "battlestart": "the battle starts", "roundwon": "round won", "roundlost": "round lost", "matchwon": "match won (a short hit: the stinger follows)", "matchlost": "match lost",
+    "itemplaced": "an item put in a squad's hexagon (the owner's ui_itemplaced; no generated sound)",
 }
 
 
@@ -121,6 +122,19 @@ OWNER_ONLY = [
     "  sfx_call_swarm                   A Swarm Form, 3 to 6 s after its last call. Several: sfx_call_swarm_1 and so on.",
     "  sfx_shield_regen                 An energy shield starting to recharge (one at a time).",
     "  sfx_death_lekgolo                A Hunter's or a Goliath's death.",
+    "  sfx_death_human                  A Marine, an ODST or a Flamethrower Trooper dying.",
+    "  sfx_death_spartan                A Spartan dying.",
+    "  sfx_death_elite                  An Elite or a Zealot dying.",
+    "  sfx_death_grunt                  A Grunt dying (Grunts, Fuel Rod Grunts, Heavy Grunts, Cannon Fodder).",
+    "  sfx_death_jackal                 A Jackal dying.",
+    "  sfx_death_brute                  A Brute dying.",
+    "  sfx_death_flood_small            A Flood form dying (until it is in: sfx_death_flood).",
+    "  sfx_death_flood_big              A big Flood creature or a taken vehicle dying.",
+    "  sfx_death_flood_huge             The biggest Flood dying (until it is in: sfx_pelican_crash).",
+    "  sfx_flood_leap                   A Flood form leaping.",
+    "  sfx_hunter_charge                A Hunter charging.",
+    "  sfx_fire_hunterbash              A Hunter's shield bash.",
+    "  sfx_fire_siphon                  The Hunter Captain's 1 s siphon laser, once as each beam starts.",
     "  sfx_node_small                   A small or medium node of light hitting a base at the end of a round (until it is in: the battle's hits).",
     "  sfx_node_big                     A big node of light (about 60 damage to a base and up, and every Titan's).",
     "",
@@ -177,7 +191,7 @@ def main():
     section("sfx_")
     lines += ["", "UI SOUNDS (each faction has its own set)"]
     for key, what in UI.items():
-        names = [f"ui_{f}_{key}" for f in ("unsc", "covenant", "flood") if f"ui_{f}_{key}" in all_slots]
+        names = [f"ui_{f}_{key}" for f in ("unsc", "covenant", "flood") if f"ui_{f}_{key}" in all_slots or key == "itemplaced"]
         lines.append(f"  {what}:")
         lines.append("    " + "  ".join(names))
     lines += ["", "UI SOUNDS BEFORE A SIDE IS CHOSEN (main menu, draft)"]
