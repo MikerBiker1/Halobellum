@@ -231,7 +231,7 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 
 ## The Spawner (D79)
 
-129. **The Spawner** releases its Infection Forms and an Infested Elite in turn every 4 seconds. The Elites alone weren't enough (48%), so it has 3600 health (was 2800): Covenant-based Flood is now 53.2%, the top of the field but inside the band. The AI now buys it in 85% of Covenant-based matches. If it feels too strong in play, the next step is a 5-second interval.
+129. **The Spawner** releases its Infection Forms and an Infested Elite in turn every 4 seconds. The Elites alone weren't enough (48%); 3600 health gave 53.2%, so, as you asked, 3200 (was 2800): Covenant-based Flood is now 50.0%. The AI now buys it in 88% of Covenant-based matches. If it feels too strong in play, the next step is a 5-second interval.
 
 
 ## Things my test runs did to your PC
