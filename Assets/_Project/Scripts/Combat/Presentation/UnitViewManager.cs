@@ -223,6 +223,9 @@ namespace Halobellum.Presentation
         /// <summary>How far above its base the top of this body is.</summary>
         public float BodyTopOf(SimUnit unit) => unit.Id >= 0 && unit.Id < _views.Count ? BodyTop(_views[unit.Id]) : 0f;
 
+        /// <summary>A walker's legs (the Scarab's, D84), or null. For the picture tools.</summary>
+        public WalkerLegs WalkerOf(SimUnit unit) => unit.Id >= 0 && unit.Id < _views.Count ? _views[unit.Id].Parts?.Walker : null;
+
         /// <summary>Where a weapon's given shot leaves a body, if its model says (D45). Otherwise the caller picks a point.</summary>
         public bool TryMuzzle(SimUnit unit, int weapon, int shot, out Vector3 position)
         {

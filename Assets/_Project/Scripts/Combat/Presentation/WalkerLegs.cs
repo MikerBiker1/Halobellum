@@ -5,6 +5,7 @@
 // The cycle runs on how far the feet's places travel over the ground (walking, turning, being shoved), never on the clock, so a faster or slower
 // walk only steps faster or slower and no planted foot skates. Stopping, a foot in the air finishes its step; standing, a foot left far from its
 // place steps back to it. A foot that would stretch its leg past its reach (a quick turn on the spot, faster than it can step) slides instead.
+// Each foot that comes down is noted for CombatEffectsView, which raises dust there (a walker raises none under its whole body, as a vehicle does).
 // Each leg bends at the hip and the knee, solved in the plane it already bends in as made. The body stands a little lower than the model as made,
 // and each foot a little nearer the middle, so that a leg has room to stretch: the Scarab's legs are nearly straight in its file.
 // The model's nodes (Tools/Art/model_tools.py): Leg_<n>_<phase %> (the upper part, at the hip), its child Knee_<n> (the lower part, at the knee),
@@ -20,11 +21,12 @@ namespace Halobellum.Presentation
     public sealed class WalkerLegs
     {
         // Lengths are shares of the legs' mean reach (hip to foot, stretched straight: about 7 m on the Scarab), so a walker of any size walks alike.
-        /// <summary>Ground covered in one whole cycle, by the body and by each foot (each foot steps once): about 3 m on the Scarab.</summary>
-        public const float StrideShare = 0.43f;
+        /// <summary>Ground covered in one whole cycle, by the body and by each foot (each foot steps once): about 2.8 m on the Scarab.</summary>
+        public const float StrideShare = 0.4f;
         private const float LiftShare = 0.1f;
-        private const float CrouchShare = 0.09f;
-        private const float TuckShare = 0.11f;
+        /// <summary>How much lower the body stands than as made, and how much nearer the middle (front to back) each foot, so the legs have room.</summary>
+        private const float CrouchShare = 0.105f;
+        private const float TuckShare = 0.13f;
         /// <summary>How far the body leans away from a lifted foot, as a share of that foot's distance from the middle.</summary>
         private const float ShiftShare = 0.055f;
         private const float DipShare = 0.012f;
@@ -38,12 +40,17 @@ namespace Halobellum.Presentation
         /// <summary>The fastest it steps (a quick turn), and the slowest a step in the air goes (walking slowly, finishing a step, settling).</summary>
         private const float MostCyclesPerSecond = 0.7f;
         private const float LeastCyclesPerSecond = 0.2f;
+        /// <summary>
+        /// Setting off from a stand, every foot is at its place, not spread along the stride as in a steady walk, so the cycle first runs this far
+        /// ahead of the ground (at its fastest pace): the feet then lift as soon as they would walking, and no leg is held until it stretches straight.
+        /// </summary>
+        private const float StartLead = 0.125f;
         private const float Eps = 1e-4f;
         /// <summary>A planted foot this much of the stride from its place steps back to it once the walker stands.</summary>
         private const float SettleShare = 0.2f;
         /// <summary>A planted foot never stretches its leg past this share of its reach, nor strays further than this share of the stride from its place.</summary>
-        private const float ReachLimit = 0.97f;
-        private const float StrayLimit = 0.75f;
+        private const float ReachLimit = 0.985f;
+        private const float StrayLimit = 0.9f;
         private const float TravelSmoothSeconds = 0.3f;
 
         private sealed class Leg
@@ -68,7 +75,9 @@ namespace Halobellum.Presentation
         private readonly float _stride, _lift, _crouch, _dip, _idleBob, _pivotHeight, _phase;
         /// <summary>Where the walk is in its cycle, how far the cycle has run ahead of the ground covered, and how much the body walks (0 to 1).</summary>
         private float _cycle, _lead, _walk;
-        private bool _planted;
+        private bool _planted, _standing = true;
+        /// <summary>Where feet have come down since the effects last looked (CombatEffectsView raises dust there).</summary>
+        private readonly Queue<Vector3> _landings = new Queue<Vector3>(4);
         private Vector3 _lastRootPosition;
         private Quaternion _lastRootRotation;
 
@@ -96,6 +105,18 @@ namespace Halobellum.Presentation
         /// <summary>Where each foot's tip really is, after the legs are bent.</summary>
         public Vector3 FootTip(int leg) => _legs[leg].Knee.TransformPoint(_legs[leg].FootInKnee);
         public bool IsPlanted(int leg) => !_legs[leg].Swinging;
+
+        /// <summary>The next place a foot came down since the last call, if any. Only the latest few are kept, for nobody may be looking.</summary>
+        public bool TakeLanding(out Vector3 at)
+        {
+            if (_landings.Count == 0)
+            {
+                at = default;
+                return false;
+            }
+            at = _landings.Dequeue();
+            return true;
+        }
         public Transform HipOf(int leg) => _legs[leg].Hip;
         /// <summary>How stretched each leg is now, hip to foot over its whole length.</summary>
         public float Stretch(int leg) => Vector3.Distance(_legs[leg].Hip.position, _legs[leg].Foot) / (_legs[leg].Upper + _legs[leg].Lower);
@@ -199,10 +220,12 @@ namespace Halobellum.Presentation
                 float p = Mathf.Repeat(_cycle + leg.Phase, 1f);
                 if (InAir(p)) remaining = Mathf.Min(remaining, SwingShare - p);
             }
-            float advance;
+            float advance, fastest = MostCyclesPerSecond * delta;
             if (!walking) _lead = 0f;
-            if (remaining < float.MaxValue) advance = Mathf.Min(Mathf.Max(covered - _lead, LeastCyclesPerSecond * delta), remaining);
-            else if (walking) advance = Mathf.Max(0f, covered - _lead);
+            else if (_standing) _lead = -StartLead;
+            _standing = !walking;
+            if (remaining < float.MaxValue) advance = Mathf.Min(Mathf.Max(covered - _lead, LeastCyclesPerSecond * delta), remaining, fastest);
+            else if (walking) advance = Mathf.Min(Mathf.Max(0f, covered - _lead), fastest);
             else advance = Unsettled() ? LeastCyclesPerSecond * delta : 0f;
             if (walking) _lead = Mathf.Clamp(_lead + advance - covered, -SwingShare, SwingShare);
 
@@ -229,6 +252,8 @@ namespace Halobellum.Presentation
                 {
                     leg.Swinging = false;
                     leg.Planted = Landing(leg, SwingShare);
+                    if (_landings.Count >= 4) _landings.Dequeue();
+                    _landings.Enqueue(leg.Planted);
                 }
                 if (leg.Swinging)
                 {
@@ -269,6 +294,7 @@ namespace Halobellum.Presentation
             // Between two steps, every foot down: the first leg just about to lift.
             _cycle = Mathf.Repeat(-_legs[0].Phase, 1f);
             _lead = 0f;
+            _standing = true;
             _walk = 0f;
             _planted = true;
         }

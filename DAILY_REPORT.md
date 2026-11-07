@@ -2,6 +2,11 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The Scarab: your new model and a real walk (D84)
+- **In the game:** the purple Scarab from your `Scarab update.glb` (the last and biggest of the four in the file), with its own textures, at the same size. It walks on four legs, one foot in the air at a time: each planted foot stays put while the body passes over it, and the body sways and dips onto the legs carrying it. Its steps keep pace with its speed, and dust rises where each foot lands. The cap on its mast turns to aim the plasma guns. Pictures from the test game, one walk cycle each: `Docs/M10/scarab_walk_side.jpg` and `Docs/M10/scarab_walk_quarter.jpg`.
+- **Checked:** new walk tests (no planted foot slides more than 1 cm; one foot up at a time; the same steps per metre at three speeds; the sway and dip; stopping and settling; turning on the spot; the muzzles), the model and menu tests; pictures from the test game.
+- **Not checked:** nobody has watched it walk in a real match; turning on the spot faster than it can step, its feet slide a little. The other walkers' weak animations are for later, one by one.
+
 ## The spells: random strikes and a sweeping beam (D83)
 - **In the game:** the Archer barrage, the Plasma Storm and Blight Rain cover a 20 m area, their strikes landing at random spots in it; the Glassing Beam is placed like smoke and sweeps 30 m.
 - **Checked:** the spell tests (new ones for scattered strikes, the same strikes for the same seed, and the beam's course); pictures of the three in the test game.

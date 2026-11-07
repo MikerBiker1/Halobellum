@@ -13,6 +13,9 @@
 // With "-effects" it only takes the pictures of the effects, and with "-effectsBench" it only measures the frame time of a big battle.
 // With "-galleryTowers" it only takes pictures of the towers: UNSC against Covenant, Covenant against Flood and Flood against UNSC, each
 // tower close up and the whole field from straight above, so that the towers' faction colours can be judged.
+// With "-walkStrip" it only takes a strip of pictures of one unit walking (the Scarab, or the unit -galleryOnly names): twelve over one walk cycle
+// from the side, then twelve from a quarter, the camera held still each time, so that a person can see each foot stay put while it carries
+// weight and the body sway over the feet (D84).
 // Depends on: SandboxController, BattleController, Halobellum.Combat, Halobellum.Core, UnityEngine.
 
 using System;
@@ -43,7 +46,7 @@ namespace Halobellum.Presentation
         private SandboxController _sandbox;
         private BattleController _battle;
         private string _shots;
-        private bool _gallery, _all, _effectsOnly, _benchOnly, _towersOnly;
+        private bool _gallery, _all, _effectsOnly, _benchOnly, _towersOnly, _walkStrip;
         private string _only;
         private int _step;
         private float _wait = 1f;
@@ -74,6 +77,7 @@ namespace Halobellum.Presentation
             _effectsOnly = Array.IndexOf(args, EffectsFlag) >= 0;
             _benchOnly = Array.IndexOf(args, BenchFlag) >= 0;
             _towersOnly = Array.IndexOf(args, TowersFlag) >= 0;
+            _walkStrip = Array.IndexOf(args, "-walkStrip") >= 0;
             // Measures one setting of anti-aliasing against another on one build. For this run only: nothing is saved.
             int msaa = Array.IndexOf(args, "-msaa");
             if (msaa >= 0 && msaa + 1 < args.Length && int.TryParse(args[msaa + 1], out int samples) && UniversalRenderPipeline.asset != null) UniversalRenderPipeline.asset.msaaSampleCount = samples;
@@ -86,7 +90,8 @@ namespace Halobellum.Presentation
         {
             _sandbox = GetComponent<SandboxController>();
             _battle = GetComponent<BattleController>();
-            if (_towersOnly) StartCoroutine(TowerGallery());
+            if (_walkStrip) StartCoroutine(WalkStrip());
+            else if (_towersOnly) StartCoroutine(TowerGallery());
             else if (_effectsOnly || _benchOnly) StartCoroutine(EffectsOnly());
             else if (_gallery) StartCoroutine(Gallery());
         }
@@ -230,6 +235,68 @@ namespace Halobellum.Presentation
             effects.Prepare(_shots, _only); // With -galleryOnly, only effects of those names (none, for unit names): the units alone.
             yield return effects.TakeAll();
             Application.Quit();
+        }
+
+        /// <summary>One unit walking toward a far-off Marine: a picture still, then twelve over one cycle from the side and twelve from a quarter.</summary>
+        private IEnumerator WalkStrip()
+        {
+            yield return new WaitForSecondsRealtime(1f);
+            UnitStats type = Find(_only ?? "Scarab");
+            _sandbox.Clear(Team.A);
+            _sandbox.Clear(Team.B);
+            _sandbox.AddSquad(Team.A, type);
+            _sandbox.AddSquad(Team.B, Find("Marine"));
+            yield return new WaitForSecondsRealtime(0.5f);
+            SimUnit Body() => FirstOf(type);
+            yield return CloseUp(Body(), "walk_still");
+            _battle.Speed = 1f;
+            _sandbox.Run();
+            float limit = 20f;
+            while (limit > 0f && Body() != null && Body().State != UnitState.Move)
+            {
+                limit -= Time.unscaledDeltaTime;
+                yield return null;
+            }
+            yield return UntilBattleSeconds(3f); // Into its stride.
+            var views = GetComponent<UnitViewManager>();
+            Camera view = Camera.main;
+            var control = view.GetComponent<BattleCameraController>();
+            if (control != null) control.enabled = false;
+            // One cycle: the walker's stride over the unit's speed. Anything without a walker's legs gets a picture every 0.3 s.
+            WalkerLegs walker = Body() != null ? views.WalkerOf(Body()) : null;
+            float cycle = walker != null && type.MoveSpeed > 0f ? walker.Stride / type.MoveSpeed : 3.6f;
+            foreach (string side in new[] { "side", "quarter" })
+            {
+                SimUnit unit = Body();
+                if (unit == null) break;
+                Vector3 at = views.WorldPosition(unit);
+                var facing = new Vector3(unit.Facing.X, 0f, unit.Facing.Y);
+                Vector3 right = Vector3.Cross(Vector3.up, facing);
+                float top = views.BodyTopOf(unit);
+                Vector3 look = at + facing * 1.4f + Vector3.up * (top * 0.42f);
+                view.transform.position = side == "side" ? look + right * (top * 2f) + Vector3.up * (top * 0.08f) : look + right * (top * 1.45f) + facing * (top * 1.2f) + Vector3.up * (top * 0.75f);
+                view.transform.LookAt(look);
+                for (int i = 0; i < 12 && Body() != null; i++)
+                {
+                    Shot($"walk_{side}_{i:00}");
+                    yield return UntilBattleSeconds(cycle / 12f);
+                }
+            }
+            if (control != null) control.enabled = true;
+            Debug.Log($"Walk strip finished: {type.Name}, a cycle of {cycle:0.00} s.");
+            Application.Quit();
+        }
+
+        /// <summary>Waits until this many more seconds of battle have passed.</summary>
+        private IEnumerator UntilBattleSeconds(float seconds)
+        {
+            float until = _battle.Simulation.ElapsedSeconds + seconds;
+            float limit = seconds * 4f + 2f;
+            while (_battle.Simulation != null && _battle.Simulation.ElapsedSeconds < until && limit > 0f)
+            {
+                limit -= Time.unscaledDeltaTime;
+                yield return null;
+            }
         }
 
         private SimUnit FirstOf(UnitStats type)

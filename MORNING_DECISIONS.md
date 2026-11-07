@@ -247,6 +247,11 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 135. **Thrusters:** the Banshee's and Ghost's glow blue-violet while they move, the infested ones too. Colour and size?
 136. **The new spells (D83):** the barrage, storm and Blight Rain average about 120 damage to a unit in their 20 m area; the beam does 700 a hit along 30 m. Run a balance tournament on them?
 
+## The Scarab's new model and walk (D84)
+
+137. **Which Scarab:** your `Scarab update.glb` holds four Scarabs in a row: a small dark blue one, the grey one the game used before, a dark weathered one, and a big purple one. I used the last and biggest, the purple one, as you asked. The file itself says it is a Sketchfab model ("Vehicles>Covenant>Ground>Scarab" by jameslucino117, CC-BY-4.0), and its parts carry Halo game file names, so it may come from a Halo game. The repository is private. Keep it, or would you rather another of the four?
+138. **The walk:** a step every 0.94 s at its usual speed (2.8 m of ground a cycle), each foot lifted 0.7 m, the body leaning about 0.3 m onto the legs that carry it and sinking 8 cm while a foot is up. Heavier and slower steps, or quicker ones? More or less sway? It stands 0.74 m lower than the model as made, so that its nearly straight legs have room to bend.
+
 
 ## Things my test runs did to your PC
 

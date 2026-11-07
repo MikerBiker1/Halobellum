@@ -384,6 +384,18 @@ namespace Halobellum.Presentation
             _kit.Heat(lesser, position + Vector3.up * radius, Vector3.up * 3f, radius * 4f, 0.9f);
         }
 
+        /// <summary>A walker's foot comes down (the Scarab, D84): a low puff of dust thrown out round it, this wide.</summary>
+        public void Footfall(Vector3 foot, float size)
+        {
+            Vector3 ground = new Vector3(foot.x, 0.2f, foot.z);
+            for (int i = 0; i < 4; i++)
+            {
+                Vector2 out2 = Random.insideUnitCircle.normalized;
+                var out3 = new Vector3(out2.x, 0f, out2.y);
+                _kit.Dust(EffectPriority.Small, ground + out3 * size * 0.15f, out3 * size * Random.Range(0.6f, 1.1f) + Vector3.up * size * 0.25f, size * Random.Range(0.5f, 0.8f), DustTan, Random.Range(0.7f, 1.1f));
+            }
+        }
+
         // ------------------------------------------------------------------ deaths
 
         /// <summary>A body falls with a puff of dust.</summary>

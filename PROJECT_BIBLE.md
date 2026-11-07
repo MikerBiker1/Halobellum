@@ -532,6 +532,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-07 | Hits make no sound; infested vehicles wear Flood tendrils in the growths' colour, not a green wash; models glow; the Banshee's and Ghost's thrusters glow while moving | Per the project owner (D82) |
 | 2026-11-07 | The Infested Elite is the Combat Form's model with a plasma rifle; the outdoor maps are only in the Sandbox, on its Map setting | Per the project owner (D82) |
 | 2026-11-07 | The barrage, storm and Blight Rain strike at random spots over a 20 m area; the Glassing Beam sweeps a 30 m course set like smoke's | Per the project owner (D83) |
+| 2026-11-07 | The Scarab is the owner's updated model and walks on four planted feet, one in the air at a time, its steps paced by the ground it covers and its body swaying onto the legs that carry it | Per the project owner (D84) |
 
 ## 18. Assumptions to confirm
 

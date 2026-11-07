@@ -194,5 +194,5 @@ The colours of the sky, sun and haze for each faction are in `Presentation/Terra
 Fitted to their units, so there is nothing left to do here.
 
 - **UNSC:** Scorpion (your updated one, D71), Spartan (and the 5 Noble Spartans, recoloured), Archer Missile Pod, Cobra, Rhino, Sparrowhawk, Vulture, Longsword (in place of the Shortsword), Wolverine, Mantis, ODST, Condor Gunship.
-- **Covenant:** Covenant Phantom (your Phantom, in Covenant purple), Elite, Zealot (the Elite in gold), Ghost, Hunter Pair, Hunter Captain, Grunt Goblin, Skitterer, both Jackals (the shield is your Halo 5 one), Vampire, Marauder, Reaver, Brute Grenadier (the red Brute of the six), Goliath.
+- **Covenant:** Scarab (your updated one, the purple Scarab of `Scarab update.glb`, D84), Covenant Phantom (your Phantom, in Covenant purple), Elite, Zealot (the Elite in gold), Ghost, Hunter Pair, Hunter Captain, Grunt Goblin, Skitterer, both Jackals (the shield is your Halo 5 one), Vampire, Marauder, Reaver, Brute Grenadier (the red Brute of the six), Goliath.
 - **Flood:** Flood Abomination, Swarm Form, Infested Elite and Infested Ghost (the Elite and Ghost, tinted), Infested Marine, Combat Form, Seeder, Juggernaut, Spawner.

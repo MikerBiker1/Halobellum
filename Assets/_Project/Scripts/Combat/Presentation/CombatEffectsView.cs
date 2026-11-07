@@ -8,7 +8,7 @@
 //     distance where the look asks for one, and a blast as wide as their splash where they land;
 //   - beams: a thin line and a growing spot while charging, then a thick glowing beam with a burning spot, sparks and scorched ground;
 //   - a weapon winding up its shot (the Spartan Laser): light gathering at its muzzle, growing until the shot goes;
-//   - dust behind moving ground units, more of it on High quality;
+//   - dust behind moving ground units, more of it on High quality; a walker's (the Scarab's, D84) where each foot comes down instead;
 //   - blood from what bleeds (BloodLooks) when a weapon hits it, a moment later, when the shot has arrived. The bigger the hit, the likelier.
 //     Spells draw none; a shield in the way doesn't either. Deaths are DeathEffects and spells are SpellEffects.
 // All of it is pooled: nothing is created during battle. Everything runs on battle time: it pauses with the battle and runs faster at
@@ -280,7 +280,11 @@ namespace Halobellum.Presentation
             DrawShots();
             DrawBeams(battleDelta);
             DrawWindUps(battleDelta);
-            if (speed > 0f && _battle.IsPlaying) KickUpDust(battleDelta);
+            if (speed > 0f && _battle.IsPlaying)
+            {
+                KickUpDust(battleDelta);
+                StampFeet();
+            }
             _deaths.Tick(battleDelta);
             _spells.Tick();
             _kit.EndFrame();
@@ -636,6 +640,19 @@ namespace Halobellum.Presentation
             return Mathf.Min(looks, bodies);
         }
 
+        /// <summary>A puff of dust where each of a walker's feet has come down since the last frame (the Scarab, D84).</summary>
+        private void StampFeet()
+        {
+            if (_shown == null) return;
+            foreach (SimUnit unit in _shown.Units)
+            {
+                if (!unit.IsAlive || unit.IsAir) continue;
+                WalkerLegs walker = _units.WalkerOf(unit);
+                if (walker == null) continue;
+                while (walker.TakeLanding(out Vector3 foot)) _recipes.Footfall(foot, walker.Stride * 0.6f);
+            }
+        }
+
         /// <summary>Vehicles and hovering craft kick up dust while they move; infantry a little now and then. The bodies take turns, spread over the time between looks.</summary>
         private void KickUpDust(float battleDelta)
         {
@@ -648,6 +665,7 @@ namespace Halobellum.Presentation
                 SimUnit unit = units[_dustNext];
                 if (!unit.IsAlive || unit.State != UnitState.Move || unit.IsAir || unit.IsLeaping) continue;
                 if (unit.Velocity.LengthSquared < 0.25f) continue;
+                if (_units.WalkerOf(unit) != null) continue; // A walker raises dust where its feet land instead (StampFeet).
                 float radius = unit.Radius;
                 var base3 = new Vector3(unit.Position.X, 0.25f, unit.Position.Y);
                 if (unit.Stats.ArmorType != ArmorType.Unarmored || radius >= 1f)

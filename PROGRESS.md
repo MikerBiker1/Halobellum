@@ -166,6 +166,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] No Marines on the main menu; the tutorial's wording, glowing flank zones and an exclusive unit step; the Pelican's Marines from under it (D81)
 - [x] Your answers: no hit sounds, Flood tendrils on infested vehicles, glow and thrusters, the Infested Elite as the Combat Form with a plasma rifle, any map in the Sandbox (D82)
 - [x] The barrage spells strike at random over a wide area; the Glassing Beam sweeps a course (D83)
+- [x] The Scarab's new model (your updated file) and a walk on planted feet, one foot in the air at a time (D84)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 
