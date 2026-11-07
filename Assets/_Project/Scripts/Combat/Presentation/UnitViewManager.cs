@@ -14,6 +14,8 @@
 // battle start (decision D25). Squads for which LevelUpReady says yes get a small yellow arrow above
 // them that pulses bright, dim, bright (decision D26). A side suffering a fallen tower's shockwave
 // pulses with a tint over all its bodies for as long as it lasts (D68).
+// A baked body can keep time with the battle (D90): its shooting clip paced and timed so that each blow lands on one of its weapon's strikes
+// (the Stalker Form's lunges, the Pure Form Ranged's thrust), or its moving and shooting clips so that it gives birth as it spawns (the Spawner).
 // The simulation's 2D position (x, y) becomes the world position (x, height, y).
 // Depends on: BattleController, SquadSelection, PlaceholderArt, Halobellum.Combat, UnityEngine.
 
@@ -299,6 +301,14 @@ namespace Halobellum.Presentation
             return _views[unit.Id].Playing;
         }
 
+        /// <summary>
+        /// What a baked body plays (first row, frames, start, pace), and the clock it plays on (for tests of clips keeping time, D90). The start
+        /// and the clock are in battle seconds since the battle was shown.
+        /// </summary>
+        public Vector4 PlayingClip(SimUnit unit) => _views[unit.Id].AnimNow;
+
+        public float AnimationClock => _animationTime;
+
         /// <summary>The colour a body is tinted with, whichever way it is drawn (for tests).</summary>
         public Color BodyColor(SimUnit unit)
         {
@@ -321,10 +331,12 @@ namespace Halobellum.Presentation
         {
             BakedClip clip = view.Baked.Clip(role);
             if (clip == null) return;
-            // Bodies of a squad don't march in step: a loop starts somewhere different on each.
+            // Bodies of a squad don't march in step: a loop starts somewhere different on each, unless it keeps time with the battle.
             float phase = clip.loops ? (view.Unit.Id * 0.37f % 1f) * clip.frames / view.Baked.bakedFps : 0f;
             Vector4 old = fade ? view.AnimNow : Vector4.zero;
-            view.AnimNow = new Vector4(clip.firstRow, clip.frames, _animationTime - phase, clip.loops ? 1f : 0f);
+            view.AnimNow = TryBeat(view, clip, out float pace, out float start, out _)
+                ? new Vector4(clip.firstRow, clip.frames, start, pace)
+                : new Vector4(clip.firstRow, clip.frames, _animationTime - phase, clip.loops ? 1f : 0f);
             view.Playing = role;
             _block.Clear();
             _block.SetColor(TintId, view.BakedTint);
@@ -333,6 +345,72 @@ namespace Halobellum.Presentation
             _block.SetVector(AnimBlendId, new Vector4(_animationTime, fade ? view.Baked.transitionSeconds : 0f, 0f, 0f));
             view.BakedRenderer.SetPropertyBlock(_block);
         }
+
+        /// <summary>
+        /// For a clip that keeps time with the battle (D90): the pace it plays at and when it started, so that its moment comes with the next
+        /// strike of the body's main weapon (a shooting clip with a shot moment) or with its next spawn (a body with a spawn moment, in its moving
+        /// and shooting clips), and how far apart those come (beat). A clip as long as several strikes lands one blow on each. False for a clip
+        /// that simply loops, before the battle starts, or while the weapon is ready but holding fire.
+        /// </summary>
+        private bool TryBeat(View view, BakedClip clip, out float pace, out float start, out float beat)
+        {
+            pace = 1f;
+            start = 0f;
+            beat = 0f;
+            BakedBodyDefinition body = view.Baked;
+            SimUnit unit = view.Unit;
+            if (!clip.loops || _shown == null || !_battle.IsPlaying) return false;
+            float moment, untilNext;
+            if (body.spawnMoment >= 0f && unit.Stats.SpawnIntervalSeconds > 0f && (clip.role == BakedAnimation.Moving || clip.role == BakedAnimation.Shooting))
+            {
+                moment = body.spawnMoment;
+                beat = unit.Stats.SpawnIntervalSeconds;
+                untilNext = unit.NextSpawnAt - _shown.ElapsedSeconds;
+            }
+            else if (body.shotMoment >= 0f && clip.role == BakedAnimation.Shooting && unit.Weapons.Length > 0)
+            {
+                SimWeapon weapon = unit.Weapons[unit.MainWeaponIndex];
+                if (weapon.Cooldown <= 0f) return false;
+                float rate = Mathf.Max(0.05f, unit.ShockwaveFireRate);
+                moment = body.shotMoment;
+                beat = weapon.Stats.FireInterval / rate;
+                untilNext = weapon.Cooldown / rate;
+            }
+            else
+            {
+                return false;
+            }
+            if (beat <= 0f) return false;
+            // The battle has run on since its last tick: counted, the moment stays put between ticks.
+            untilNext -= _battle.Clock.Alpha * _shown.TickSeconds;
+            ClipBeat.Time(clip.frames / (float)body.bakedFps, beat, moment, _animationTime, untilNext, out pace, out start);
+            return true;
+        }
+
+        /// <summary>
+        /// Keeps a clip that keeps time in step (D90). Any start a whole beat apart lands on a strike just as well, so the one nearest what it
+        /// plays now is taken; a little drift is mended at once, a big change (a new target, a slower reload) with a short fade.
+        /// </summary>
+        private void KeepTime(View view)
+        {
+            BakedClip clip = view.Baked.Clip(view.Playing);
+            if (clip == null || !TryBeat(view, clip, out float pace, out float start, out float beat)) return;
+            start = ClipBeat.Nearest(start, view.AnimNow.z, beat);
+            float off = Mathf.Abs(start - view.AnimNow.z);
+            if (off < BeatTolerance && Mathf.Abs(pace - view.AnimNow.w) < 0.005f) return;
+            bool fade = off > BeatSnap;
+            Vector4 old = view.AnimNow;
+            view.AnimNow = new Vector4(clip.firstRow, clip.frames, start, pace);
+            _block.Clear();
+            _block.SetColor(TintId, view.BakedTint);
+            _block.SetVector(AnimNowId, view.AnimNow);
+            _block.SetVector(AnimOldId, fade ? old : view.AnimNow);
+            _block.SetVector(AnimBlendId, new Vector4(_animationTime, fade ? view.Baked.transitionSeconds : 0f, 0f, 0f));
+            view.BakedRenderer.SetPropertyBlock(_block);
+        }
+
+        /// <summary>Seconds a timed clip may be off its beat before it is mended, and beyond which it is mended with a fade (D90).</summary>
+        private const float BeatTolerance = 0.03f, BeatSnap = 0.12f;
 
         /// <summary>
         /// What a living body should be playing right now. A body with a charge and a close-in blow (the Hunters, D87) plays the charge while
@@ -769,6 +847,7 @@ namespace Halobellum.Presentation
                 {
                     BakedAnimation wanted = WantedAnimation(unit, view.Baked);
                     if (wanted != view.Playing) Play(view, wanted, true);
+                    else KeepTime(view);
                 }
                 ShowShockwave(view, unit.Team == Team.A ? shockwaveA : shockwaveB);
 

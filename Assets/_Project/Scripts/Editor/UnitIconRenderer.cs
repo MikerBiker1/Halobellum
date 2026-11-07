@@ -222,6 +222,7 @@ namespace Halobellum.EditorTools
         {
             { "Zealot", 0.4f },            // The sword thrust out in front; at the middle it is hidden behind him.
             { "Flood Abomination", 0.7f }, // Rearing up with its arm raised; at the middle it is crouched small, arms spread wide.
+            { "Stalker Form", 0.18f },     // Its first lunge, arms and tusks striking (D90); at the middle it is a one-armed swipe.
         };
 
         /// <summary>The baked row a unit's icon shows: a moment of its shooting clip (the middle, unless IconMoments says), or its still frame without one.</summary>

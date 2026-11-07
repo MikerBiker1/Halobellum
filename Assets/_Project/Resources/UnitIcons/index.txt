@@ -29,17 +29,17 @@ Combat Form	model
 Infected Pelican	model
 Infected Phantom	model
 Infection Forms	model
-Pure Form Ranged	model
+Pure Form Ranged	baked
 Pure Form Tank	model
 Seeder	model
-Stalker Form	model
+Stalker Form	baked
 Swarm Form	model
 Infested Banshee	model
 Infested Elite	model
 Infested Ghost	model
 Infested Grunt	baked
 Infested Wraith	model
-Spawner	model
+Spawner	baked
 Infested Hornet	model
 Infested Marine	baked
 Infested Scorpion	model

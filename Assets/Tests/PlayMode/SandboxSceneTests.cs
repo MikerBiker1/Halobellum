@@ -5,6 +5,7 @@
 // placeholder test units are offered too (sandbox only). Every item can be put on squads (D34).
 // The towers switch: off is as if towers didn't exist; on stands 4 towers on the field, blocks their squares and moves the squads already there;
 // off again puts those squads back. A tower that falls in a battle weakens its side and plays its shockwave here as in a match.
+// The Flood forms' animated bodies keep time with the battle (D90): the Spawner gives birth as it spawns, the Stalker Form's blows land on its strikes.
 // Depends on: Halobellum.Presentation (SandboxController, BattleController), Halobellum.Economy,
 //             Halobellum.Core, NUnit, Unity Test Framework.
 
@@ -750,6 +751,62 @@ namespace Halobellum.Tests
             _sandbox.Run();
             yield return null;
             Assert.AreEqual(marine.MaxHealth * 1.7f, _battle.Simulation.Squads[1].Members[0].Stats.MaxHealth, 1e-2f, "They count in the battle.");
+        }
+    
+        /// <summary>Where a timed clip (from PlayingClip) is, in seconds of the clip, when the battle has run on by ahead seconds more.</summary>
+        private static float ClipSecondsAt(Vector4 clip, float seconds, float clock, float ahead) => (((clock + ahead) - clip.z) * clip.w % seconds + seconds) % seconds;
+
+        /// <summary>How far apart two times in a looping clip are, the short way round a span (the clip, or the gap between its blows).</summary>
+        private static float Apart(float a, float b, float span) => Mathf.Abs(Mathf.Repeat(a - b + span / 2f, span) - span / 2f);
+
+        [UnityTest]
+        public IEnumerator FloodForms_KeepTime_WithTheirSpawnsAndStrikes()
+        {
+            yield return LoadSandbox();
+            _sandbox.AddSquad(Team.A, Unit("Spawner"));
+            _sandbox.AddSquad(Team.A, Unit("Stalker Form"));
+            _sandbox.AddSquad(Team.B, Unit("Marine"));
+            yield return null;
+            var views = _battle.GetComponent<UnitViewManager>();
+            BakedBodyDefinition spawnerBody = Resources.Load<BakedBodyDefinition>("BakedBodies/Spawner");
+            BakedBodyDefinition stalkerBody = Resources.Load<BakedBodyDefinition>("BakedBodies/StalkerForm");
+            _battle.Speed = 2f;
+            _sandbox.Run();
+            int births = 0, blows = 0;
+            float limit = Time.realtimeSinceStartup + 45f;
+            while ((births < 20 || blows < 20) && Time.realtimeSinceStartup < limit && !_battle.Simulation.IsFinished)
+            {
+                yield return new WaitForEndOfFrame(); // After the views have caught up with this frame's ticks.
+                float clock = views.AnimationClock, since = _battle.Clock.Alpha * _battle.Simulation.TickSeconds;
+                SimUnit spawner = _battle.Simulation.Units.FirstOrDefault(u => u.IsAlive && u.Stats.Name == "Spawner");
+                BakedAnimation? spawnerPlays = spawner != null ? views.PlayingAnimation(spawner) : null;
+                if (spawnerPlays == BakedAnimation.Moving || spawnerPlays == BakedAnimation.Shooting)
+                {
+                    // At its next spawn its clip is at the birth.
+                    Vector4 clip = views.PlayingClip(spawner);
+                    float seconds = clip.y / spawnerBody.bakedFps;
+                    float ahead = spawner.NextSpawnAt - _battle.Simulation.ElapsedSeconds - since;
+                    Assert.AreEqual(1f, clip.w, 0.01f, "One spawn to the clip: it plays at its own pace.");
+                    Assert.Less(Apart(ClipSecondsAt(clip, seconds, clock, ahead), spawnerBody.spawnMoment * seconds, seconds), 0.08f, "It gives birth as it spawns.");
+                    births++;
+                }
+                foreach (SimUnit stalker in _battle.Simulation.Units.Where(u => u.IsAlive && u.Stats.Name == "Stalker Form"))
+                {
+                    SimWeapon talons = stalker.Weapons[stalker.MainWeaponIndex];
+                    if (views.PlayingAnimation(stalker) != BakedAnimation.Shooting || talons.Cooldown <= 0.02f) continue;
+                    // At its next strike a blow lands: the first one, or one or two whole strikes after it.
+                    Vector4 clip = views.PlayingClip(stalker);
+                    float seconds = clip.y / stalkerBody.bakedFps;
+                    float strike = talons.Stats.FireInterval / stalker.ShockwaveFireRate;
+                    float ahead = talons.Cooldown / stalker.ShockwaveFireRate - since;
+                    float gap = seconds / 3f; // From one blow to the next, in seconds of the clip.
+                    Assert.AreEqual(seconds / (3f * strike), clip.w, 0.01f, "Three blows to three strikes.");
+                    Assert.Less(Apart(ClipSecondsAt(clip, seconds, clock, ahead), stalkerBody.shotMoment * seconds, gap), 0.08f * clip.w, "Its blow lands on the strike.");
+                    blows++;
+                }
+            }
+            Assert.GreaterOrEqual(births, 20, "The Spawner was seen walking or lashing.");
+            Assert.GreaterOrEqual(blows, 20, "The Stalker Forms were seen fighting.");
         }
     }
 }

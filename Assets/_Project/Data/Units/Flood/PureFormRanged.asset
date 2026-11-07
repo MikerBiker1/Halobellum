@@ -100,7 +100,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 47cad3f6a4d4a04c624541c0c23e1d99, type: 2}
   prefab: {fileID: 121261921755483244, guid: 91368a6571c489a4eb69498d65742f93, type: 3}
   keepsOwnMaterials: 1
-  bakedBody: {fileID: 0}
+  bakedBody: {fileID: 11400000, guid: a745cabc113447d2b51b83f67c79f411, type: 2}
   bakedTint: {r: 1, g: 1, b: 1, a: 0}
   bakedScale: 1
   strongAgainst: Slow, grouped units

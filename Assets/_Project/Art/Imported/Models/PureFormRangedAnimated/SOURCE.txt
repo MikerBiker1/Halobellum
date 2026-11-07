@@ -1,0 +1,7 @@
+Source: found by the project owner on Sketchfab, file sketchfab.com/enemieshalo_3the_floodpure_ranged.glb in Art_Source.
+Prepared by Tools/Art/units/PureFormRangedAnimated.py (decision D45).
+The repository is private and must stay private.
+Title in the file: Enemies>Halo 3>The Flood>Pure Ranged
+Author in the file: jameslucino117 (https://sketchfab.com/jameslucino117)
+Licence in the file: CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+Page in the file: https://sketchfab.com/3d-models/enemieshalo-3the-floodpure-ranged-181f54291ee94c338732080a7be9aa12

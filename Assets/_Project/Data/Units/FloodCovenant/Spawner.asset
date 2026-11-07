@@ -100,7 +100,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ba253e1812308e56d6caeec54eca345d, type: 2}
   prefab: {fileID: 6828447988617261794, guid: e4899ddc482dd3646adaa6cc7d66e086, type: 3}
   keepsOwnMaterials: 1
-  bakedBody: {fileID: 0}
+  bakedBody: {fileID: 11400000, guid: d3e3dd5b5ab34f38a0a89718a8e6ba0a, type: 2}
   bakedTint: {r: 1, g: 1, b: 1, a: 0}
   bakedScale: 1
   strongAgainst: Chaff clear

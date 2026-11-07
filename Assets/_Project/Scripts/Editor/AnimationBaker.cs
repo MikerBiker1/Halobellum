@@ -4,9 +4,9 @@
 //   - a mesh that names two bones per vertex, with finger bones merged into the hands (too small to see at
 //     game distance) and, if it has one, a prepared weapon merged into the right hand, and a shield on the left in a second, see-through sub-mesh;
 //     a body whose gun is part of its own model (the Flamethrower Trooper) shoots from its furthest-forward point instead (muzzleAtFront),
-//     and a creature from one of its bones at the moment it shoots (muzzleBone: the Pure Form Ranged's spines, D89);
+//     and a creature from one of its bones at the moment it shoots (muzzleBone: the Pure Form Ranged's spines, D90);
 //   - a texture holding every kept bone's matrix for every frame of every clip;
-//   - the clip table, and a material (cut out by its texture's alpha for a body with fronds, D89).
+//   - the clip table, and a material (cut out by its texture's alpha for a body with fronds, D90).
 // Moving and shooting clips play on the spot: the battle moves the unit, so any forward drift in the clip is
 // removed. The held standing frame is the moment of the still clip when the feet are closest together.
 //   Menu: Halobellum > Art > Bake Animated Bodies
@@ -136,11 +136,21 @@ namespace Halobellum.EditorTools
                 // Where the hips stand at rest, in the model's space: a bind pose is in the skinned mesh's own space, which is the model's for
                 // Meshy's files but not for one whose mesh hangs under a turned and scaled rig, as Blender writes them (the Flamethrower Trooper's).
                 Vector3 restHips = model.transform.InverseTransformPoint(skin.transform.TransformPoint(bindPoses[hips].inverse.MultiplyPoint3x4(Vector3.zero)));
+                Transform hipsBone = bones[hips];
+                // A creature rigged by Tools/Art/creature_rig.py (D90) stands on a still bone named Root, the parent of its Body, which does all
+                // the swaying. The importer drops Root from the skin, as it moves no vertex; it is the one to measure drift by, and as it never
+                // moves, nothing is taken off: the body's sway and lunges stay.
+                Transform standing = model.GetComponentsInChildren<Transform>().FirstOrDefault(t => t.name == "Body" && t.parent != null && t.parent.name == "Root")?.parent;
+                if (standing != null)
+                {
+                    hipsBone = standing;
+                    restHips = model.transform.InverseTransformPoint(standing.position);
+                }
                 body.hasMuzzle = muzzle.HasValue;
                 if (muzzle.HasValue)
                 {
                     // BuildMesh left the model in the pose the weapon was aimed in; shooting plays on the spot.
-                    body.muzzle = Drift(model, bones[hips], restHips).MultiplyPoint3x4(model.transform.InverseTransformPoint(muzzle.Value));
+                    body.muzzle = Drift(model, hipsBone, restHips).MultiplyPoint3x4(model.transform.InverseTransformPoint(muzzle.Value));
                 }
 
                 void AddClip(BakedAnimation role, AnimationClip source, bool loops, bool onTheSpot, float blendShare = 0f)
@@ -172,7 +182,7 @@ namespace Halobellum.EditorTools
                                 all[i].localRotation = Quaternion.Slerp(all[i].localRotation, firstRotation[i], weight);
                             }
                         }
-                        rows.Add(Row(Pose(), onTheSpot ? Drift(model, bones[hips], restHips) : Matrix4x4.identity));
+                        rows.Add(Row(Pose(), onTheSpot ? Drift(model, hipsBone, restHips) : Matrix4x4.identity));
                     }
                 }
 
@@ -201,7 +211,7 @@ namespace Halobellum.EditorTools
                 }
                 still.SampleAnimation(model, bestTime);
                 clips.Add(new BakedClip { role = BakedAnimation.Still, firstRow = rows.Count, frames = 1, loops = false });
-                rows.Add(Row(Pose(), Drift(model, bones[hips], restHips)));
+                rows.Add(Row(Pose(), Drift(model, hipsBone, restHips)));
 
                 var texture = new Texture2D(kept.Count * 3, rows.Count, TextureFormat.RGBAFloat, false, true)
                 {
@@ -325,7 +335,7 @@ namespace Halobellum.EditorTools
             Vector3? muzzle = null;
             if (string.IsNullOrEmpty(body.weaponName) && !string.IsNullOrEmpty(body.muzzleBone))
             {
-                // A creature's own: where the bone is at the moment of the shot (D89). The rig gives it a bone of its own for this, which
+                // A creature's own: where the bone is at the moment of the shot (D90). The rig gives it a bone of its own for this, which
                 // moves no vertex, so it is looked for in the whole rig and not only among the skin's bones.
                 Transform bone = model.GetComponentsInChildren<Transform>().FirstOrDefault(b => b.name == body.muzzleBone);
                 if (bone == null) throw new InvalidOperationException($"{body.name}: no bone named {body.muzzleBone} for its shots.");
