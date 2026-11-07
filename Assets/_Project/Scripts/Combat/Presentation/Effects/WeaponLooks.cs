@@ -140,6 +140,9 @@ namespace Halobellum.Presentation
                 case WeaponFeelKind.Beam:
                     return new WeaponLook { Shot = flood ? FloodPlasma : ScarabBeam, Flash = flood ? FloodPlasma : ScarabBeam, FlashSize = 3f, ShotWidth = 1.6f, Impact = ImpactStyle.None };
                 case WeaponFeelKind.Melee:
+                    // A shield bash (the Hunters, D87): no flash at the gun and no slash, only the dust it knocks up where it lands.
+                    if (name.Contains("bash"))
+                        return new WeaponLook { Shot = new Color(0.8f, 0.78f, 0.7f), Flash = Color.white, FlashSize = 0f, ShotWidth = 0f, Impact = ImpactStyle.None, Blast = BlastStyle.Dust };
                     if (name.Contains("sword"))
                         return new WeaponLook { Shot = new Color(0.45f, 0.75f, 1f), Flash = new Color(0.45f, 0.75f, 1f), FlashSize = 3f, ShotWidth = 3f, Impact = ImpactStyle.Slash, Blast = BlastStyle.Dust };
                     return new WeaponLook { Shot = flood ? new Color(0.85f, 1f, 0.55f) : new Color(1f, 0.95f, 0.8f), Flash = Color.white, FlashSize = 2f, ShotWidth = 2f, Impact = ImpactStyle.Slash, Blast = BlastStyle.Dust };

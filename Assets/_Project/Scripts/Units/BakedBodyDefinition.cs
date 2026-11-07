@@ -19,6 +19,10 @@ namespace Halobellum.Units
         Moving = 1,
         Shooting = 2,
         Dead = 3,
+        /// <summary>A blow with its close-in weapon (the Hunters' shield bash, D87), for a body that has one.</summary>
+        Melee = 4,
+        /// <summary>A charge along the ground at its target (the Hunters' leap, D87), for a body that has one.</summary>
+        Charge = 5,
     }
 
     /// <summary>Where one animation sits in the baked texture.</summary>
@@ -50,6 +54,10 @@ namespace Halobellum.Units
         public string deathClip;
         [Tooltip("Clip that the held standing frame is taken from (the moment its feet are closest together).")]
         public string stillClip;
+        [Tooltip("Clip played while it strikes with a close-in weapon (a melee one, used one at a time with its gun: the Hunters' shield bash). Empty: it shoots.")]
+        public string meleeClip;
+        [Tooltip("Clip played while its leap is a charge along the ground (the Hunters). Empty: it moves.")]
+        public string chargeClip;
         [Tooltip("Folder in Art/Imported/Models of a prepared weapon (Tools/Art), merged into the right hand and aimed along the shooting pose. Empty for none.")]
         public string weaponName;
         [Tooltip("Length of the weapon in the game, in metres.")]

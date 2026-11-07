@@ -305,6 +305,12 @@ namespace Halobellum.Core
         public float LeapSpeed;
         /// <summary>Seconds from one leap to the next.</summary>
         public float LeapCooldownSeconds;
+        /// <summary>
+        /// Its leap is a charge along the ground, never a jump (the Hunters' shield charge, D87): only at a target, never over what holds it up,
+        /// and drawn without an arc. Such a unit also uses one weapon at a time, so with an enemy within its melee weapon's reach of a charge
+        /// it stops shooting and closes in to bash.
+        /// </summary>
+        public bool LeapCharges;
         /// <summary>The unit this one was before it was infected, or null.</summary>
         public UnitStats InfectedFrom;
 
@@ -405,6 +411,7 @@ namespace Halobellum.Core
             get
             {
                 if (Weapons == null) return false;
+                if (LeapCharges && Weapons.Length > 1) return true; // The Hunters: the cannon at range, the shield bash close in (D87).
                 bool airOnly = false, groundOnly = false;
                 foreach (WeaponStats weapon in Weapons)
                 {

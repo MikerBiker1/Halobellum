@@ -118,6 +118,8 @@ namespace Halobellum.Units
         public float leapSpeed;
         [Tooltip("Seconds from one leap to the next.")]
         public float leapCooldownSeconds;
+        [Tooltip("Its leap is a charge along the ground at a target, never a jump, and it uses one weapon at a time (the Hunters' shield charge, D87).")]
+        public bool leapCharges;
 
         [Header("Tech upgrades (up to 3, Bible Section 9)")]
         public List<TechUpgradeDefinition> techUpgrades = new List<TechUpgradeDefinition>();
@@ -179,6 +181,7 @@ namespace Halobellum.Units
                 LeapRange = leapRange,
                 LeapSpeed = leapSpeed,
                 LeapCooldownSeconds = leapCooldownSeconds,
+                LeapCharges = leapCharges,
             };
 
             // Units spawned by this one are copies with the given body count as their squad size.

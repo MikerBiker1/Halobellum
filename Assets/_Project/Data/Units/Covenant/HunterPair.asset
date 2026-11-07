@@ -34,13 +34,37 @@ MonoBehaviour:
     damagePerShot: 60
     fireInterval: 2
     range: 16
-    minRange: 0
+    minRange: 5
     projectileSpeed: 30
     splashRadius: 2.5
     damageType: 1
     isAntiArmor: 0
     canBeBlocked: 0
     hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+  - weaponName: Shield Bash
+    damagePerShot: 100
+    fireInterval: 1.5
+    range: 2
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 1.5
+    damageType: 4
+    isAntiArmor: 0
+    canBeBlocked: 0
+    hasOwnTargetFilter: 1
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
@@ -83,9 +107,10 @@ MonoBehaviour:
   auraSpeedMultiplier: 1
   auraHealPerSecondShare: 0
   lifestealShare: 0
-  leapRange: 0
-  leapSpeed: 0
-  leapCooldownSeconds: 0
+  leapRange: 5
+  leapSpeed: 9
+  leapCooldownSeconds: 3
+  leapCharges: 1
   techUpgrades:
   - {fileID: 11400000, guid: a8a09fee58237afd1f9c88a8ab04597e, type: 2}
   - {fileID: 11400000, guid: ba2358ae1194474004db1a254a66d050, type: 2}

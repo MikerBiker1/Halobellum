@@ -1,2 +1,7 @@
-Source: found by the project owner on Sketchfab, the white figure in sketchfab.com/enemiesmulticovenanthunters.glb in Art_Source. Rigged and animated by Meshy (Tools/Meshy/rig_inputs.py, meshy_rig.py, rig_finish.py, decision D57).
+Source: found by the project owner on Sketchfab, file sketchfab.com/enemiesmulticovenanthunters.glb in Art_Source.
+Prepared by Tools/Art/units/HunterCaptain.py (decision D45).
 The repository is private and must stay private.
+Title in the file: Enemies>Multi>Covenant>Hunters
+Author in the file: jameslucino117 (https://sketchfab.com/jameslucino117)
+Licence in the file: CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+Page in the file: https://sketchfab.com/3d-models/enemiesmulticovenanthunters-4537d92e15c94fc09e7d4d60b6fc9fec

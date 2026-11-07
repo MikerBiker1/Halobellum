@@ -16,37 +16,52 @@ MonoBehaviour:
   sourceModel: {fileID: 919132149155446097, guid: 0ac1d7e2c7399544686dc74aadcc5e6e, type: 3}
   albedo: {fileID: 2800000, guid: 1dfdfb6a84a392e48a09ffedcb63d1a0, type: 3}
   albedoFile: 
-  movingClip: Monster_Walk
-  shootingClip: Walk_Forward_While_Shooting
-  deathClip: Dead
-  stillClip: walking_2
+  movingClip: Rig|Walk
+  shootingClip: Rig|Aim
+  deathClip: Rig|Dead
+  stillClip: Rig|Guard
+  meleeClip: Rig|Bash
+  chargeClip: Rig|Charge
   weaponName: 
   weaponLength: 0.8
   weaponInForwardHand: 0
   weaponAlongForearm: 0
-  muzzleInRightHand: 1
+  muzzleInRightHand: 0
+  muzzleAtFront: 1
+  shieldName: 
+  shieldDiameter: 1.1
+  shieldOffset: {x: 0, y: 0, z: 0}
   transitionSeconds: 0.2
   corpseSeconds: 14
   bakedFps: 30
   mesh: {fileID: 4300000, guid: 6ba3034097ee2054fb2672c90a064385, type: 2}
   material: {fileID: 2100000, guid: 06eb88d838cf6eb489ef6e8708d97348, type: 2}
+  glassMaterial: {fileID: 0}
   clips:
   - role: 1
     firstRow: 0
-    frames: 123
+    frames: 36
     loops: 1
   - role: 2
-    firstRow: 123
-    frames: 98
+    firstRow: 36
+    frames: 60
     loops: 1
   - role: 3
-    firstRow: 221
-    frames: 89
+    firstRow: 96
+    frames: 60
     loops: 0
+  - role: 4
+    firstRow: 156
+    frames: 45
+    loops: 1
+  - role: 5
+    firstRow: 201
+    frames: 15
+    loops: 1
   - role: 0
-    firstRow: 310
+    firstRow: 216
     frames: 1
     loops: 0
-  muzzle: {x: 0.5126449, y: 2.7099397, z: 0.24134728}
+  muzzle: {x: 0.52403957, y: 1.5779353, z: 2.0789514}
   hasMuzzle: 1
-  bodyHeight: 3.6
+  bodyHeight: 3.5999997

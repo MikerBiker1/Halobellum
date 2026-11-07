@@ -51,11 +51,12 @@ FLANKERS = {"Pelican", "Sparrowhawk", "Longsword", "Vulture", "CondorGunship"}
 
 def U(id, name, faction, role, tier, unlock, squad, cost, hp, armor, speed, radius, turn, filter, weapons,
       shield=0, regen=0, airu=False, arc=None, drop=None, note="", forms=1, flood=False, infects=False, immune=False,
-      selfd=False, seek=False, burst=None, spawn=None, aura=None, leap=None, lifesteal=0, basedmg=None, tint=None, scale=1, sub=None, folder=None, baked=None, seedforms=None, spawn2=None):
+      selfd=False, seek=False, burst=None, spawn=None, aura=None, leap=None, lifesteal=0, basedmg=None, tint=None, scale=1, sub=None, folder=None, baked=None, seedforms=None, spawn2=None,
+      charges=False):
     return dict(id=id, name=name, faction=faction, role=role, tier=tier, unlock=unlock, squad=squad, cost=cost,
                 hp=hp, armor=armor, speed=speed, radius=radius, turn=turn, filter=filter, weapons=weapons,
                 shield=shield, regen=regen, air=airu, arc=arc, drop=drop, note=note, forms=forms, flood=flood, infects=infects,
-                immune=immune, selfd=selfd, seek=seek, burst=burst, spawn=spawn, aura=aura, leap=leap, lifesteal=lifesteal, seedforms=seedforms, spawn2=spawn2,
+                immune=immune, selfd=selfd, seek=seek, burst=burst, spawn=spawn, aura=aura, leap=leap, lifesteal=lifesteal, seedforms=seedforms, spawn2=spawn2, charges=charges,
                 basedmg=basedmg, tint=tint, scale=scale, sub=sub, folder=folder or faction, baked=baked)
 
 
@@ -120,9 +121,11 @@ UNITS = [
     U("CovenantPhantom", "Covenant Phantom", "Covenant", "Aerial", 2, 50, 1, 300, 800, "L", 10, 3, 2, "B",
       [W("Plasma Turrets", 12, 0.4, 14, "Energy")], airu=True, drop=("Grunt", 7, 10, True, 3, 1.5, 5),
       note="With its Gravity Lift tech it lands and drops 7 Grunts 5 seconds into the battle wherever it is, then lands behind enemy lines to drop more, up to 3 drops in all (as the Pelican, D60)."),
+    # The owner, D87: the cannon holds fire at what comes within 5 m; the Hunter charges at it along the ground and bashes it with its shield.
     U("HunterPair", "Hunter Pair", "Covenant", "Tank", 3, 225, 2, 450, 1500, "H", 2.2, 1.2, 1.5, "G",
-      [W("Assault Cannon", 60, 2.0, 16, "Explosive", proj=30, splash=2.5)],
-      arc=dict(deg=240, front=0.7, rear=1.5, block=0, types=[]), baked="Hunter"),
+      [W("Assault Cannon", 60, 2.0, 16, "Explosive", proj=30, splash=2.5, minr=5),
+       W("Shield Bash", 100, 1.5, 2, "Melee", splash=1.5, own="G")],
+      arc=dict(deg=240, front=0.7, rear=1.5, block=0, types=[]), leap=(5, 9, 3), charges=True, baked="Hunter"),
     U("Zealot", "Zealot", "Covenant", "SingleTargetDps", 3, 200, 1, 400, 1400, "U", 6, 0.6, 0.3, "G",
       [W("Energy Sword", 180, 0.75, 1.5, "Melee", aa=True, splash=2)], shield=600, regen=120, leap=(6, 14, 2.5), baked="Zealot",
       note="Leaps onto its enemy, and its energy sword cuts everything around its target."),
@@ -317,6 +320,8 @@ def unit_yaml(u):
         lines += ["  seedForms: []"]
     lp = u["leap"]
     lines += [f"  leapRange: {fmt(lp[0] if lp else 0)}", f"  leapSpeed: {fmt(lp[1] if lp else 0)}", f"  leapCooldownSeconds: {fmt(lp[2] if lp else 0)}"]
+    if u["charges"]:
+        lines += ["  leapCharges: 1"]  # Its leap is a charge along the ground, and it uses one weapon at a time (the Hunters, D87).
     techs = TECHS.get(u["id"], [])
     if techs:
         lines += ["  techUpgrades:"] + [f"  - {{fileID: 11400000, guid: {guid('tech-' + u['id'] + '-' + t['id'])}, type: 2}}" for t in techs]

@@ -1021,6 +1021,7 @@ namespace Halobellum.Combat
         /// <summary>
         /// Decision D39: a walking unit that can leap pounces on a target within its leap range, landing
         /// against it, and jumps over whatever holds it up (a slower friend, a crowd), straight on along its way.
+        /// A unit whose leap is a charge (the Hunters, D87) only charges at what its close-in weapon picked, and never jumps over anything.
         /// </summary>
         private void UpdateLeaps()
         {
@@ -1047,13 +1048,16 @@ namespace Halobellum.Combat
                 if (ElapsedSeconds + 1e-4f < unit.LeapReadyAt) continue;
 
                 SimUnit target = unit.MoveTarget;
-                if (Targeting.IsTargetableEnemy(unit, target) && Targeting.EdgeDistance(unit, target) <= range)
+                // A charge (the Hunters, D87) goes only at what its close-in weapon picked, never at a target its gun walks toward.
+                bool charges = unit.Stats.LeapCharges;
+                if (Targeting.IsTargetableEnemy(unit, target) && Targeting.EdgeDistance(unit, target) <= range
+                    && (!charges || unit.Weapons[unit.MainWeaponIndex].Stats.Range <= range))
                 {
                     Vec2 fromTarget = (unit.Position - target.Position).Normalized;
                     StartLeap(unit, dives ? target.Position : target.Position + fromTarget * (target.Radius + unit.Radius));
                     unit.HasDived = dives;
                 }
-                else if (!dives && unit.HeldUpSeconds >= _rules.LeapWhenHeldUpSeconds)
+                else if (!dives && !charges && unit.HeldUpSeconds >= _rules.LeapWhenHeldUpSeconds)
                 {
                     StartLeap(unit, unit.Position + way * range);
                 }

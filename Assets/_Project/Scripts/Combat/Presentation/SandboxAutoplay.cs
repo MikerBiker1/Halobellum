@@ -15,7 +15,8 @@
 // tower close up and the whole field from straight above, so that the towers' faction colours can be judged.
 // With "-walkStrip" it only takes a strip of pictures of one unit walking (the Scarab, or the unit -galleryOnly names): twelve over one walk cycle
 // from the side, then twelve from a quarter, the camera held still each time, so that a person can see each foot stay put while it carries
-// weight and the body sway over the feet (D84).
+// weight and the body sway over the feet (D84). -stripFoe names what it meets (a Marine by default; a Combat Form rushes a Hunter into its
+// charge and bash, D87), and -stripFrames, -stripEvery (battle seconds), -stripDelay and -stripViews change how many pictures, how often, from when and from where.
 // Depends on: SandboxController, BattleController, Halobellum.Combat, Halobellum.Core, UnityEngine.
 
 using System;
@@ -245,7 +246,10 @@ namespace Halobellum.Presentation
             _sandbox.Clear(Team.A);
             _sandbox.Clear(Team.B);
             _sandbox.AddSquad(Team.A, type);
-            _sandbox.AddSquad(Team.B, Find("Marine"));
+            // What it meets, how many pictures, how far apart in battle seconds, after how long, and from where: -stripFoe, -stripFrames,
+            // -stripEvery, -stripDelay and -stripViews (side, quarter or both). A Combat Form rushing a Hunter shows its charge and bash (D87).
+            string foe = Argument("-stripFoe", "Marine");
+            _sandbox.AddSquad(Team.B, Find(foe));
             yield return new WaitForSecondsRealtime(0.5f);
             SimUnit Body() => FirstOf(type);
             yield return CloseUp(Body(), "walk_still");
@@ -257,7 +261,7 @@ namespace Halobellum.Presentation
                 limit -= Time.unscaledDeltaTime;
                 yield return null;
             }
-            yield return UntilBattleSeconds(3f); // Into its stride.
+            yield return UntilBattleSeconds(float.Parse(Argument("-stripDelay", "3"), System.Globalization.CultureInfo.InvariantCulture)); // Into its stride.
             var views = GetComponent<UnitViewManager>();
             Camera view = Camera.main;
             var control = view.GetComponent<BattleCameraController>();
@@ -265,7 +269,9 @@ namespace Halobellum.Presentation
             // One cycle: the walker's stride over the unit's speed. Anything without a walker's legs gets a picture every 0.3 s.
             WalkerLegs walker = Body() != null ? views.WalkerOf(Body()) : null;
             float cycle = walker != null && type.MoveSpeed > 0f ? walker.Stride / type.MoveSpeed : 3.6f;
-            foreach (string side in new[] { "side", "quarter" })
+            int frames = int.Parse(Argument("-stripFrames", "12"));
+            float every = float.Parse(Argument("-stripEvery", (cycle / 12f).ToString(System.Globalization.CultureInfo.InvariantCulture)), System.Globalization.CultureInfo.InvariantCulture);
+            foreach (string side in Argument("-stripViews", "side,quarter").Split(','))
             {
                 SimUnit unit = Body();
                 if (unit == null) break;
@@ -276,15 +282,23 @@ namespace Halobellum.Presentation
                 Vector3 look = at + facing * 1.4f + Vector3.up * (top * 0.42f);
                 view.transform.position = side == "side" ? look + right * (top * 2f) + Vector3.up * (top * 0.08f) : look + right * (top * 1.45f) + facing * (top * 1.2f) + Vector3.up * (top * 0.75f);
                 view.transform.LookAt(look);
-                for (int i = 0; i < 12 && Body() != null; i++)
+                for (int i = 0; i < frames && Body() != null; i++)
                 {
                     Shot($"walk_{side}_{i:00}");
-                    yield return UntilBattleSeconds(cycle / 12f);
+                    yield return UntilBattleSeconds(every);
                 }
             }
             if (control != null) control.enabled = true;
             Debug.Log($"Walk strip finished: {type.Name}, a cycle of {cycle:0.00} s.");
             Application.Quit();
+        }
+
+        /// <summary>The value after a command-line flag, or the fallback.</summary>
+        private static string Argument(string flag, string fallback)
+        {
+            string[] args = Environment.GetCommandLineArgs();
+            int at = Array.IndexOf(args, flag);
+            return at >= 0 && at + 1 < args.Length ? args[at + 1] : fallback;
         }
 
         /// <summary>Waits until this many more seconds of battle have passed.</summary>

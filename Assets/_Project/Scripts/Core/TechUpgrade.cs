@@ -124,7 +124,7 @@ namespace Halobellum.Core
                 foreach (WeaponStats weapon in stats.Weapons)
                 {
                     weapon.DamagePerShot *= item.DamageMultiplier;
-                    weapon.Range += item.RangeBonus;
+                    if (!KeepsReach(stats, weapon)) weapon.Range += item.RangeBonus;
                 }
             }
             if (buffs != null)
@@ -160,6 +160,12 @@ namespace Halobellum.Core
         /// <summary>Weapons reaching this far or less count as melee, not ranged.</summary>
         public const float MeleeRange = 3f;
 
+        /// <summary>
+        /// A charging unit's close-in weapon keeps its reach whatever adds range (the Hunters' shield bash, D87): "the cannon reaches further"
+        /// is about the cannon, and a bash from further than its charge would never charge.
+        /// </summary>
+        private static bool KeepsReach(UnitStats stats, WeaponStats weapon) => stats.LeapCharges && weapon.Range <= MeleeRange;
+
         private static UnitStats ApplyLevelAndTechs(UnitStats baseStats, int level, IReadOnlyList<TechUpgrade> techs)
         {
             UnitStats stats = baseStats.Clone();
@@ -184,7 +190,7 @@ namespace Halobellum.Core
                 {
                     weapon.DamagePerShot *= tech.DamageMultiplier;
                     weapon.FireInterval /= tech.FireRateMultiplier;
-                    weapon.Range += tech.RangeBonus;
+                    if (!KeepsReach(stats, weapon)) weapon.Range += tech.RangeBonus;
                     if (weapon.SplashRadius > 0f) weapon.SplashRadius += tech.SplashRadiusBonus;
                     if (weapon.ConeDegrees > 0f) weapon.ConeDegrees = Math.Min(360f, weapon.ConeDegrees + tech.ConeDegreesBonus);
                     weapon.AirDamageMultiplier *= tech.AirDamageMultiplier;

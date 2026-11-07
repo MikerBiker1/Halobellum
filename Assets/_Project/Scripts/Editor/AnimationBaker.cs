@@ -158,6 +158,10 @@ namespace Halobellum.EditorTools
                 AddClip(BakedAnimation.Moving, Source(body.movingClip), true, true);
                 AddClip(BakedAnimation.Shooting, Source(body.shootingClip), true, true);
                 AddClip(BakedAnimation.Dead, Source(body.deathClip), false, false);
+                // A close-in blow and a charge, for a body that has them (the Hunters, D87). The blow keeps its step in (it starts and ends
+                // in place); the charge plays on the spot, as the battle moves the unit.
+                if (!string.IsNullOrEmpty(body.meleeClip)) AddClip(BakedAnimation.Melee, Source(body.meleeClip), true, false);
+                if (!string.IsNullOrEmpty(body.chargeClip)) AddClip(BakedAnimation.Charge, Source(body.chargeClip), true, true);
 
                 // The held frame: the moment of the still clip when the feet are closest together.
                 AnimationClip still = Source(body.stillClip);

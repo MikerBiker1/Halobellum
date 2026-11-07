@@ -334,14 +334,20 @@ namespace Halobellum.Presentation
             view.BakedRenderer.SetPropertyBlock(_block);
         }
 
-        /// <summary>What a living body should be playing right now.</summary>
-        private BakedAnimation WantedAnimation(SimUnit unit)
+        /// <summary>
+        /// What a living body should be playing right now. A body with a charge and a close-in blow (the Hunters, D87) plays the charge while
+        /// its leap is a charge, and the blow while it fights with a melee weapon; without them, it moves and shoots as any other.
+        /// </summary>
+        private BakedAnimation WantedAnimation(SimUnit unit, BakedBodyDefinition body)
         {
             if (!_battle.IsPlaying) return BakedAnimation.Still; // Time stands still in deployment.
+            if (unit.IsLeaping && unit.Stats.LeapCharges && body.Clip(BakedAnimation.Charge) != null) return BakedAnimation.Charge;
             switch (unit.State)
             {
                 case UnitState.Move: return BakedAnimation.Moving;
-                case UnitState.Attack: return BakedAnimation.Shooting;
+                case UnitState.Attack:
+                    bool melee = unit.Weapons.Length > 0 && unit.Weapons[unit.MainWeaponIndex].Stats.DamageType == DamageType.Melee;
+                    return melee && body.Clip(BakedAnimation.Melee) != null ? BakedAnimation.Melee : BakedAnimation.Shooting;
                 default: return BakedAnimation.Still;
             }
         }
@@ -446,7 +452,7 @@ namespace Halobellum.Presentation
                 else view.BakedTint = source.bakedTint;
                 if (source != null && source.bakedScale > 0f) body.transform.localScale = Vector3.one * source.bakedScale;
                 view.ModelTop = baked.bodyHeight * body.transform.localScale.y;
-                Play(view, WantedAnimation(unit), false);
+                Play(view, WantedAnimation(unit, baked), false);
             }
             else if (stats.FormsPerBody > 1)
             {
@@ -761,7 +767,7 @@ namespace Halobellum.Presentation
 
                 if (view.Baked != null)
                 {
-                    BakedAnimation wanted = WantedAnimation(unit);
+                    BakedAnimation wanted = WantedAnimation(unit, view.Baked);
                     if (wanted != view.Playing) Play(view, wanted, true);
                 }
                 ShowShockwave(view, unit.Team == Team.A ? shockwaveA : shockwaveB);
@@ -897,7 +903,7 @@ namespace Halobellum.Presentation
                 float t = unit.LeapProgress;
                 // A flier dives, falling faster and faster; anything else jumps in an arc.
                 if (unit.IsAir) height *= 1f - t * t;
-                else height += 4f * leapHeightShare * Vec2.Distance(unit.LeapFrom, unit.LeapTo) * t * (1f - t);
+                else if (!unit.Stats.LeapCharges) height += 4f * leapHeightShare * Vec2.Distance(unit.LeapFrom, unit.LeapTo) * t * (1f - t); // A charge (the Hunters, D87) stays on the ground.
             }
             return new Vector3(unit.Position.X, height, unit.Position.Y);
         }
