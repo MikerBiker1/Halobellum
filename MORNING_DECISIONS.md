@@ -286,6 +286,11 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 152. **One body for both, as before:** the Infested Elite is the animated Combat Form with its plasma rifle. Its walk is slower (its speed), carrying the rifle forward. Anything about the shamble, the swipe or the fall you'd change?
 153. **What you see in a fight is the swipe:** both lead with their claw, so they shoot while closing in (in their walk) and swipe up close; the firing pose shows only on their cards. Should they stop to shoot instead? That would be a battle change.
 
+## The Seeder, the Tank and the Abomination (D93)
+
+154. **The Abomination's whip** shows twice in each slam's clip (the whip and the slam play as one attack, timed to the slam), not on each of its whip's strikes (every 0.8 s), and not while it walks in whipping from 7 to 10 m. A clip of its own for every whip would need the game to play two things at once. Good enough?
+155. **The Tank walks on its club**, knuckles down, as its third foot; its small arm swings free. Keep that, or should it walk on its legs alone?
+
 ## Things my test runs did to your PC
 
 - **Windows moving, and possibly music:** while the Screen setting was being checked, a test window moved across all three of your screens and briefly went fullscreen on each. Some of those runs weren't silent, so menu music may have played for about 25 seconds at a time. Those checks have finished.

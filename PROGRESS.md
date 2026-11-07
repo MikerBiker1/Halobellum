@@ -175,6 +175,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] The Spawner, the Pure Form Ranged and the Stalker Form animated limb by limb: a lumbering walk and a heaving belly timed to its spawns, a lopsided crawl and a recoil-and-thrust shot, a low run and lunges on its strikes (D90)
 - [x] The owner's third batch of sounds; the Hunter Captain's laser a held 1 s green beam (D91)
 - [x] The Combat Form and the Infested Elite animated limb by limb: a lurching run, claw-and-whip swipes on their strikes, the Elite's plasma rifle in hand (D92)
+- [x] The Seeder, the Pure Form Tank and the Abomination animated: a floating Seeder with waving tendrils that falls dead from the sky, a Tank on legs and club with a sweeping blow, the Abomination's heavy steps, overhead slam and tentacle whip (D93)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

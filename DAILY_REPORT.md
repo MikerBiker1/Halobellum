@@ -2,6 +2,11 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The Seeder, the Pure Form Tank and the Abomination animated (D93)
+- **In the game:** the **Seeder** floats like a jellyfish, each tendril waving on its own, the red tips pulsing; it squeezes and lashes as it spits a spore, and when killed it falls from the sky. The **Pure Form Tank** walks on its legs and its club, one limb at a time, heavily; it hauls the club back, sweeps it round and staggers from the blow. The **Abomination** steps slowly and heavily, torso twisting, tentacles writhing; it rears up with both arms overhead and slams down, and its long tentacle arm cracks out in a whip between slams. Their cards show them attacking. Pictures: `Docs/M10/flood_d93_clips.jpg`, `flood_d93_game.jpg`, `flood_d93_icons.jpg`.
+- **Checked:** new tests for the three bodies (clip lengths against their weapons, the Seeder centred and its tendril chains, the rigs' still root); the body, icon, real-model and timing tests; all three in the test game.
+- **Not checked:** balance (nothing in the battle changed); not played by hand.
+
 ## The Combat Form and the Infested Elite animated (D92)
 - **In the game:** both move limb by limb now. They run hunched and lurching, the head hanging off the back lolling, the three whips of the left arm swinging, the feelers on the chest bobbing; up close they slash with the right claw, then lash down with the whips, a blow on each strike; the Infested Elite carries its plasma rifle forward and fires it from the right hand, the Combat Form fires from its claw; they die dropping to their knees and onto their faces. Their cards show them firing. Pictures: `Docs/M10/combat_d92_clips.jpg`, `combat_d92_game.jpg`, `combat_d92_icons.jpg`.
 - **Checked:** new tests for both bodies (clips, speeds, the rifle, the shots' start); the body, icon and real-model tests (one expectation from D82 updated: the Elite now has the Combat Form's animated body); the Sandbox timing test; both in the test game.
