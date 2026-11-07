@@ -532,14 +532,16 @@ namespace Halobellum.EditorTools
             Vector3[] groundPoints = ground.vertices;
             int[] groundTriangles = ground.triangles;
             var under = new float[legs.Count];
-            float middle = 0f;
+            float middle = 0f, feet = 0f;
             for (int i = 0; i < legs.Count; i++)
             {
                 Vector3 foot = LowestPoint(legs[i]);
                 under[i] = MeshHeight(groundPoints, groundTriangles, foot.x, foot.z);
                 middle += under[i] / legs.Count;
+                feet += foot.y / legs.Count;
             }
-            model.position += Vector3.up * (middle - LowestPoint(legs[0]).y);
+            // Level on the feet's middle height, so the slides are shared out: the D84 Scarab's front feet stand a little off the ground as made.
+            model.position += Vector3.up * (middle - feet);
             for (int i = 0; i < legs.Count; i++)
             {
                 float slide = under[i] - FootSink - LowestPoint(legs[i]).y;
@@ -548,15 +550,21 @@ namespace Halobellum.EditorTools
             }
         }
 
-        /// <summary>The lowest vertex of this part of a model, in the world. A model's meshes can be read here in the editor, though not in a game.</summary>
+        /// <summary>
+        /// The lowest vertex of this part of a model and everything under it (a leg, with its knee and foot: D84), in the world. A model's meshes
+        /// can be read here in the editor, though not in a game.
+        /// </summary>
         private static Vector3 LowestPoint(Transform part)
         {
-            Matrix4x4 world = part.localToWorldMatrix;
             var lowest = new Vector3(0f, float.MaxValue, 0f);
-            foreach (Vector3 vertex in part.GetComponent<MeshFilter>().sharedMesh.vertices)
+            foreach (MeshFilter filter in part.GetComponentsInChildren<MeshFilter>(true))
             {
-                Vector3 point = world.MultiplyPoint3x4(vertex);
-                if (point.y < lowest.y) lowest = point;
+                Matrix4x4 world = filter.transform.localToWorldMatrix;
+                foreach (Vector3 vertex in filter.sharedMesh.vertices)
+                {
+                    Vector3 point = world.MultiplyPoint3x4(vertex);
+                    if (point.y < lowest.y) lowest = point;
+                }
             }
             return lowest;
         }
@@ -586,10 +594,11 @@ namespace Halobellum.EditorTools
             backdrop.walker = scarab.transform;
             var legs = new List<Transform>();
             Transform muzzle = null;
+            // Its legs are the walker's (Leg_, each with its knee under it, D84); the beam leaves the focus cannon's muzzle, Muzzle_0, if it has one.
             foreach (Transform node in scarab.GetComponentsInChildren<Transform>(true))
             {
-                if (node.name.StartsWith("Swing_")) legs.Add(node);
-                else if (muzzle == null && node.name.StartsWith("Muzzle_")) muzzle = node;
+                if (node.name.StartsWith("Leg_")) legs.Add(node);
+                else if (node.name.StartsWith("Muzzle_") && (muzzle == null || node.name == "Muzzle_0")) muzzle = node;
             }
             PlantLegs(scarab.transform, legs);
             Debug.Log($"Menu Scarab: {legs.Count} legs, muzzle {(muzzle != null ? muzzle.name : "none")}");

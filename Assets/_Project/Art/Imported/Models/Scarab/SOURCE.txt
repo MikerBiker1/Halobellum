@@ -1,3 +1,7 @@
-Source: found by the project owner on Sketchfab, file sketchfab.com/modified scarab.fbx in Art_Source.
-Prepared by Tools/Art/units/Scarab.py (decision D45).
+Source: given by the project owner, file Meshy/Scarab update.glb in Art_Source. Where it came from before that is not recorded.
+Prepared by Tools/Art/units/Scarab.py.
 The repository is private and must stay private.
+Title in the file: Vehicles>Covenant>Ground>Scarab
+Author in the file: jameslucino117 (https://sketchfab.com/jameslucino117)
+Licence in the file: CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+Page in the file: https://sketchfab.com/3d-models/vehiclescovenantgroundscarab-8a6d9e9c3d384a4ab688acd854ba2b5e

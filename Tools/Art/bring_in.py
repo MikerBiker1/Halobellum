@@ -4,6 +4,7 @@
 #   python Tools/Art/bring_in.py back              Metas, prefabs, materials, baked bodies and unit fields from the batch copy
 # The batch copy mirrors the project, so anything Unity makes must come back or it is lost on the next run.
 
+import json
 import os
 import re
 import shutil
@@ -47,9 +48,26 @@ def copy(names):
         link = os.path.join(SOURCE, origin.split("/")[0], "Source.txt")
         if os.path.exists(link):
             note = "Link: " + open(link, encoding="utf-8").read().strip() + "\n" + note
+        credit = glb_credit(os.path.join(SOURCE, origin.split(",")[0]))
+        if credit:
+            note += credit
         with open(os.path.join(target, "SOURCE.txt"), "w", encoding="utf-8", newline="\n") as f:
             f.write(note)
         print("copied", name)
+
+
+def glb_credit(path):
+    """What a .glb file says about itself (a Sketchfab download names its title, author, licence and page), as lines for SOURCE.txt; empty if nothing."""
+    if not path.lower().endswith(".glb") or not os.path.exists(path):
+        return ""
+    with open(path, "rb") as f:
+        head = f.read(20)
+        if head[:4] != b"glTF":
+            return ""
+        size = int.from_bytes(head[12:16], "little")
+        extras = json.loads(f.read(size)).get("asset", {}).get("extras", {})
+    lines = [f"{label}: {extras[key]}" for key, label in (("title", "Title in the file"), ("author", "Author in the file"), ("license", "Licence in the file"), ("source", "Page in the file")) if extras.get(key)]
+    return "".join(line + "\n" for line in lines)
 
 
 def copy_changed(source_folder, target_folder, keep):

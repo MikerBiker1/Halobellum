@@ -12,7 +12,8 @@
 // An entry with a Prop holds that weapon model (a Weapon_ folder) at its Muzzle_1, which moves to the weapon's tip (the Infested Elite's plasma rifle).
 //   Menu: Halobellum > Art > Build Real Model Prefabs
 //   Command line: -executeMethod Halobellum.EditorTools.RealModelBuilder.BuildAllFromCommandLine (or BuildTowersFromCommandLine for the towers alone,
-//   BuildInfestedFromCommandLine for the infested vehicles alone)
+//   BuildInfestedFromCommandLine for the infested vehicles alone, BuildUnitsFromCommandLine for the units named in HB_UNITS or after -units,
+//   comma separated, such as Covenant/Scarab)
 // Depends on: FloodGrowths, Halobellum.Units (UnitDefinition), UnityEditor.
 
 using System;
@@ -180,6 +181,27 @@ namespace Halobellum.EditorTools
                 AssetDatabase.SaveAssets();
             }
             catch (Exception e) { Debug.LogError("Building the towers failed: " + e); exit = 1; }
+            EditorApplication.Exit(exit);
+        }
+
+        /// <summary>Only the units named in the environment's HB_UNITS or after -units on the command line, comma separated (Covenant/Scarab, D84).</summary>
+        public static void BuildUnitsFromCommandLine()
+        {
+            int exit = 0;
+            try
+            {
+                string[] args = Environment.GetCommandLineArgs();
+                int at = Array.IndexOf(args, "-units");
+                string named = at >= 0 && at + 1 < args.Length ? args[at + 1] : Environment.GetEnvironmentVariable("HB_UNITS");
+                if (string.IsNullOrEmpty(named)) throw new ArgumentException("Name the units in HB_UNITS or after -units, such as Covenant/Scarab.");
+                foreach (string name in named.Split(','))
+                {
+                    Entry entry = Models.FirstOrDefault(e => e.Unit == name.Trim()) ?? throw new ArgumentException("No real model for " + name);
+                    Build(entry);
+                }
+                AssetDatabase.SaveAssets();
+            }
+            catch (Exception e) { Debug.LogError("Building the named units failed: " + e); exit = 1; }
             EditorApplication.Exit(exit);
         }
 

@@ -4,6 +4,8 @@
 //   Turret_<weapon>[letter]  turns toward that weapon's target, around its own origin
 //   Wheel_<n>                spins with the distance the unit moves
 //   Swing_<n>_<phase %>[_<degrees>[_<cycles per second>]]  swings to and fro while the unit moves, like a leg, around its own origin
+//   Leg_<n>_<phase %>, its child Knee_<n>, and Foot_<n>  a walker's leg, bent at hip and knee, whose foot stays planted while it carries
+//                            weight and steps in its turn; the body sways its weight onto the feet that carry it (WalkerLegs, the Scarab: D84)
 //   Flap_L, Flap_R           beats up and down all the time, like a wing, around its own origin
 //   Motion_Hover             the whole body bobs a little, as a hover vehicle does
 //   Motion_Wobble            the whole body sways and squashes, as a Flood form does
@@ -85,6 +87,7 @@ namespace Halobellum.Presentation
         private readonly List<Swing> _swings = new List<Swing>();
         private readonly List<Flap> _flaps = new List<Flap>();
         private readonly List<Thruster> _thrusters = new List<Thruster>();
+        private WalkerLegs _walker;
         private readonly Vector3 _restPosition, _restScale;
         private readonly Quaternion _restRotation;
         private readonly float _phase;
@@ -108,10 +111,20 @@ namespace Halobellum.Presentation
         {
             var parts = new ModelParts(root, body, phase) { _air = isAir };
             Quaternion inverseRoot = Quaternion.Inverse(root.rotation);
+            List<Transform> hips = null;
+            Dictionary<int, Transform> feet = null;
             foreach (Transform node in body.GetComponentsInChildren<Transform>(true))
             {
                 string name = node.name;
-                if (name.StartsWith("Muzzle_"))
+                if (name.StartsWith("Leg_"))
+                {
+                    (hips ??= new List<Transform>()).Add(node);
+                }
+                else if (name.StartsWith("Foot_"))
+                {
+                    if (int.TryParse(name.Substring("Foot_".Length), out int number)) (feet ??= new Dictionary<int, Transform>())[number] = node;
+                }
+                else if (name.StartsWith("Muzzle_"))
                 {
                     int weapon = WeaponOf(name, "Muzzle_".Length);
                     if (!parts._muzzles.TryGetValue(weapon, out List<Transform> list)) parts._muzzles[weapon] = list = new List<Transform>();
@@ -150,9 +163,14 @@ namespace Halobellum.Presentation
                 else if (name == "Motion_Wobble") parts._wobble = true;
             }
             foreach (List<Transform> list in parts._muzzles.Values) list.Sort((a, b) => string.CompareOrdinal(a.name, b.name));
-            bool any = parts._air || parts._hover || parts._wobble || parts._muzzles.Count > 0 || parts._turrets.Count > 0 || parts._wheels.Count > 0 || parts._swings.Count > 0 || parts._flaps.Count > 0 || parts._thrusters.Count > 0;
+            // A walker's legs are read now, while the body is still as made.
+            if (hips != null && feet != null && !isAir) parts._walker = WalkerLegs.Create(root, body, hips, feet, phase);
+            bool any = parts._air || parts._hover || parts._wobble || parts._muzzles.Count > 0 || parts._turrets.Count > 0 || parts._wheels.Count > 0 || parts._swings.Count > 0 || parts._flaps.Count > 0 || parts._thrusters.Count > 0 || parts._walker != null;
             return any ? parts : null;
         }
+
+        /// <summary>The walker's legs, if the model has them (the Scarab, D84). For tests.</summary>
+        public WalkerLegs Walker => _walker;
 
         /// <summary>A glow on a Thruster_ node, unlit until the unit moves. Null without a graphics device, where nothing is drawn anyway.</summary>
         private static Thruster MakeThruster(Transform node, float size)
@@ -201,7 +219,12 @@ namespace Halobellum.Presentation
         /// <summary>One frame of movement. Delta is battle seconds, so nothing moves while the battle stands still.</summary>
         public void Animate(SimUnit unit, float delta, float time)
         {
-            if (delta <= 0f) return;
+            if (delta <= 0f)
+            {
+                // Before the battle (placing the army), a walker stands on its feet wherever it is put.
+                _walker?.Hold(time);
+                return;
+            }
             Vector3 position = _root.position;
             float yaw = _root.eulerAngles.y;
             float moved = _started ? new Vector2(position.x - _lastPosition.x, position.z - _lastPosition.z).magnitude : 0f;
@@ -227,6 +250,7 @@ namespace Halobellum.Presentation
             if (_thrusters.Count > 0) Light(time);
 
             if (_air) Fly(time, turned / delta, delta);
+            else if (_walker != null) _walker.Animate(delta, time);
             else if (_wobble) Wobble(time, unit.State == UnitState.Attack);
             else if (_hover) _body.localPosition = _restPosition + Vector3.up * (Mathf.Sin((time + _phase) * BobSpeed * 2f) * HoverBobHeight);
         }

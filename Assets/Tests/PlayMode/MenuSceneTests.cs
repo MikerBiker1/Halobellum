@@ -140,14 +140,19 @@ namespace Halobellum.Tests
             yield return null;
             var backdrop = Object.FindAnyObjectByType<MenuBackdrop>();
             int emission = Shader.PropertyToID("_EmissionColor");
+            // Its brightest glowing material: since D84 the Scarab's lights, red at the back and green on the cap.
             Renderer panel = null;
             int index = -1;
+            float brightest = 0f;
             foreach (Renderer renderer in backdrop.walker.GetComponentsInChildren<Renderer>(true))
             {
                 Material[] materials = renderer.sharedMaterials;
                 for (int i = 0; i < materials.Length; i++)
                 {
-                    if (materials[i] == null || materials[i].name != "Scarab_1") continue;
+                    if (materials[i] == null || !materials[i].name.StartsWith("Scarab_") || !materials[i].HasProperty(emission)) continue;
+                    float glow = materials[i].GetColor(emission).maxColorComponent;
+                    if (glow <= brightest) continue;
+                    brightest = glow;
                     panel = renderer;
                     index = i;
                 }

@@ -11,6 +11,9 @@
 #   - A node "Wheel_<n>" spins while the unit moves, around the axis across the vehicle.
 #   - A node "Swing_<n>_<phase>" swings to and fro while it moves, like a leg. Its origin is the joint. It can go on with
 #     "_<degrees>" and "_<cycles per second>", for legs that aren't a big walker's.
+#   - A node "Leg_<n>_<phase>" is the upper part of a walker's leg, its origin the hip. Its child "Knee_<n>" is the lower part, its origin the
+#     knee, and an empty "Foot_<n>" (at the top level: the FBX writer misplaces a grandchild) is where the foot meets the ground. ModelParts walks
+#     them: each foot stays planted while it carries weight and steps when its phase (percent of the walk cycle) comes round (the Scarab, D84).
 #   - A node "Flap_L" or "Flap_R" beats up and down all the time, like a wing. Its origin is the wing's root.
 #   - A node "Motion_Hover" or "Motion_Wobble" says how the whole body moves (motion("Hover")).
 #   - Everything else is merged by material, to keep the number of draw calls down.
@@ -36,7 +39,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 SOURCE = os.path.join(ROOT, "Art_Source")
 PREPARED = os.environ.get("HB_PREPARED") or os.path.join(SOURCE, "Prepared")  # A worktree shares Art_Source with the main project, so it can prepare elsewhere.
 
-MOVING_PART = re.compile(r"^(Turret_|Wheel_|Swing_|Flap_)")
+MOVING_PART = re.compile(r"^(Turret_|Wheel_|Swing_|Flap_|Leg_|Knee_)")
 _state = {"name": None, "folder": None, "source": None, "tris_before": 0, "flags": {}, "high": None}
 
 

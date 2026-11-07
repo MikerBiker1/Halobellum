@@ -1,7 +1,8 @@
 // MenuScarabTests.cs
 // The Scarab in the main menu's picture (M10): it stands still with all four legs on the ground. These read the model's vertices against the
-// ground's triangles in the real scene, which only the editor can do: a game can't read a model's meshes. The battle's Scarab keeps its legs
-// as they are in the model, so that a leg here is only a small slide away from the prefab's.
+// ground's triangles in the real scene, which only the editor can do: a game can't read a model's meshes. Here the Scarab keeps its legs
+// as they are in the model, so that a leg here is only a small slide away from the prefab's. A leg is the walker's Leg_ node with its knee and
+// foot under it (D84); in battle WalkerLegs bends them, here nothing does.
 // Depends on: Halobellum.UI (MenuBackdrop), Unity Test Framework, UnityEditor (opening the scene).
 
 using System.Collections.Generic;
@@ -37,19 +38,22 @@ namespace Halobellum.Tests
             var legs = new List<Transform>();
             foreach (Transform node in model.GetComponentsInChildren<Transform>(true))
             {
-                if (node.name.StartsWith("Swing_")) legs.Add(node);
+                if (node.name.StartsWith("Leg_")) legs.Add(node);
             }
             return legs;
         }
 
         private static Vector3 LowestPoint(Transform leg)
         {
-            Matrix4x4 world = leg.localToWorldMatrix;
             var lowest = new Vector3(0f, float.MaxValue, 0f);
-            foreach (Vector3 vertex in leg.GetComponent<MeshFilter>().sharedMesh.vertices)
+            foreach (MeshFilter filter in leg.GetComponentsInChildren<MeshFilter>(true))
             {
-                Vector3 point = world.MultiplyPoint3x4(vertex);
-                if (point.y < lowest.y) lowest = point;
+                Matrix4x4 world = filter.transform.localToWorldMatrix;
+                foreach (Vector3 vertex in filter.sharedMesh.vertices)
+                {
+                    Vector3 point = world.MultiplyPoint3x4(vertex);
+                    if (point.y < lowest.y) lowest = point;
+                }
             }
             return lowest;
         }
@@ -135,7 +139,7 @@ namespace Halobellum.Tests
                 Assert.AreEqual(0f, slide.x, 1e-3f, ours[i].name);
                 Assert.AreEqual(0f, slide.z, 1e-3f, ours[i].name);
                 float metres = Mathf.Abs(slide.y) * ours[i].parent.lossyScale.y;
-                Assert.Less(metres, 1.5f, ours[i].name + " stays joined to the body: the legs stand about 28 m tall.");
+                Assert.Less(metres, 1.5f, ours[i].name + " stays joined to the body: the hips stand about 20 m up.");
             }
         }
     }
