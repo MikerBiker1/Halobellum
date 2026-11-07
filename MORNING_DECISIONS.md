@@ -300,7 +300,7 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 
 160. **Going back to the old menu:** Settings > Menu background > Classic. It is the old scene, untouched, and the choice is remembered. If you'd rather drop the new one altogether, say so and I'll make the classic the main menu again (or revert D94).
 161. **The five shots** (Vista, Line, Covenant, Flood, Titan, 10 to 11 seconds each): any to cut, lengthen, reorder or reframe? The Scarab walks the field once a loop and fires twice, in the Line and Titan shots.
-162. **Darker and busier than before:** a storm, about 130 soldiers and Flood forms, 50 vehicles and aircraft, blasts and lightning. If the menu feels heavy on a weaker PC, tell me and I'll thin it.
+162. **Vehicles only now**, as you asked: no soldiers or Flood forms, the guns firing half as often. The Flood is only its infested vehicles and growths. If it now feels too quiet, or you'd like the big Flood forms (the Abomination, Pure Forms) back just standing, say so.
 
 ## Things my test runs did to your PC
 

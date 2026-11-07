@@ -1,6 +1,6 @@
 // MenuSceneTests.cs
 // Plays the real menu and pause flow (M10): the cinematic MainMenu scene (D94) opens on its battle, cutting through black between its shots, all
-// three sides in it and the Scarab walking and firing its beam; the classic menu kept beside it (MainMenuClassic) opens with its camera moving,
+// three sides in it (vehicles only) and the Scarab walking and firing its beam; the classic menu kept beside it (MainMenuClassic) opens with its camera moving,
 // its Pelicans flying and its Scarab standing still; New Match reaches a
 // working draft; pausing truly stops a battle in every phase and resumes where it was, at the same speed; the HUD and field input are
 // off while paused and back after; leaving for the menu puts time right; the Sandbox's Back button goes where it came from.
@@ -192,8 +192,8 @@ namespace Halobellum.Tests
             Assert.AreSame(Camera.main, cinematic.view);
             Assert.IsNull(PauseMenu.Current, "The menu has no battle to pause.");
             Assert.GreaterOrEqual(cinematic.shots.Length, 4, "Several shots.");
-            Assert.Greater(cinematic.figures.Length, 50, "Soldiers and Flood forms.");
-            Assert.Greater(cinematic.marchers.Length, 10, "Some of them charging.");
+            Assert.AreEqual(0, cinematic.figures.Length, "Vehicles only: no soldiers or Flood forms (the owner, D94).");
+            Assert.Greater(cinematic.marchers.Length, 6, "Vehicles racing across the field.");
             Assert.Greater(cinematic.flyers.Length, 8, "Aircraft.");
             Assert.Greater(cinematic.blasts.Length, 2, "Blasts.");
 

@@ -1,28 +1,28 @@
 // MenuCinematicBuilder.cs
 // Builds Scenes/MainMenu.unity from code (D94): the main menu as a cinematic battlefield, a battle of the three sides under a storm at dusk,
-// seen in a loop of five camera shots that fade into one another (MenuCinematic moves it all). The UNSC holds the west behind a line of
-// concrete barriers and ruins: Scorpions, Mantises, Warthogs, an Elephant, Marines and Spartans firing, Pelicans and Hornets overhead. The
-// Covenant comes from the north-east under its spires: Wraiths lobbing plasma mortars, Ghosts racing in, Elites, Grunts, Jackals and Hunters,
-// Banshees diving, Phantoms hovering, and a Scarab striding through the middle of the field on planted feet, sweeping the human line with its
-// beam. The Flood swarms from the south-east among growths of its biomass, spores drifting over it: an Abomination slamming the ground,
-// Pure Forms, a Spawner, Combat Forms and Stalkers charging, Seeders floating, infested vehicles. Shells and plasma cross the field and
-// burst where they land; blasts go off among each army; fires burn in the wrecks; smoke rises in columns and fog lies low; far off, lightning
-// strikes, flashes light the horizon and an alien warship glasses the land beyond the hills (MenuCinematicSky.shader). Every shot keeps its
-// subject in the right half of the screen, where the menu's own dark panel (MainMenuHud) leaves the picture clear.
-// The models and baked bodies are the project's own; the ground, ruins, growths, spires, sky, smoke and glows are made here and written to
+// seen in a loop of five camera shots that fade into one another (MenuCinematic moves it all). Vehicles only, no soldiers or Flood forms
+// (the owner's word, D94). The UNSC holds the west behind a line of concrete barriers and ruins: Scorpions, Mantises, Warthogs, an Elephant,
+// a Pelican hovering, Pelicans and Hornets overhead. The Covenant comes from the north-east under its spires: Wraiths lobbing plasma mortars,
+// Ghosts waiting and racing in, Banshees diving, Phantoms hovering, and a Scarab striding through the middle of the field on planted feet,
+// sweeping the human line with its beam. The Flood holds the south-east among growths of its biomass, spores drifting over it: infested
+// Wraiths, Scorpions, Warthogs and Ghosts, an infected Phantom, infested Banshees and Hornets and an infected Pelican in the air. Only the
+// vehicles' own guns fire, now and then: tank shells and mortars burst where they land; blasts go off among each army; fires burn in the
+// wrecks; smoke rises in columns and fog lies low; far off, lightning strikes, flashes light the horizon and an alien warship glasses the land
+// beyond the hills (MenuCinematicSky.shader). Every shot keeps its subject in the right half of the screen, where the menu's own dark panel
+// (MainMenuHud) leaves the picture clear.
+// The models are the project's own; the ground, ruins, growths, spires, sky, smoke and glows are made here and written to
 // Art/MenuCinematic. The menu before this one is kept as MainMenuClassic (MainMenuSceneBuilder), chosen in Settings > Menu background.
 //   Menu: Halobellum > Scenes > Rebuild Main Menu Scene
 //   Command line: -executeMethod Halobellum.EditorTools.MenuCinematicBuilder.BuildFromCommandLine
 //   Or ...BuildAndPreviewFromCommandLine, which also renders a picture of each shot (with the menu's dark panel laid over) to
 //   menu_cinematic_*.png, in the folder after -menuPreviewOut or next to the project.
-// Depends on: BattleSceneBuilder (scene paths, build settings), MenuCinematic, MainMenuHud, Halobellum.Units (baked bodies, unit data),
+// Depends on: BattleSceneBuilder (scene paths, build settings), MenuCinematic, MainMenuHud,
 //             URP (post-processing), UnityEditor.
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using Halobellum.UI;
-using Halobellum.Units;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -62,7 +62,6 @@ namespace Halobellum.EditorTools
         private const float MapReach = 330f;
 
         private static readonly List<Vector4> Craters = new List<Vector4>(); // x, z, radius, depth.
-        private static Dictionary<BakedBodyDefinition, UnitDefinition> _unitsByBody;
         private static Mesh _quad;
 
         [MenuItem("Halobellum/Scenes/Rebuild Main Menu Scene")]
@@ -157,7 +156,6 @@ namespace Halobellum.EditorTools
         public static MenuCinematic Build()
         {
             Directory.CreateDirectory(ArtFolder);
-            _unitsByBody = null;
             _quad = Resources.GetBuiltinResource<Mesh>("Quad.fbx");
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             MakeCraters();
@@ -216,7 +214,7 @@ namespace Halobellum.EditorTools
         {
             public Texture2D glow, puff, flame;
             public Material smoke, fog, ember, ash, spore;
-            public Material tracer, shell, plasma, needle, mortar, mortarTrail, fire, spark, blueSpark, flash, blueFlash, farFlash, beam, beamFire;
+            public Material shell, mortar, mortarTrail, fire, spark, blueSpark, flash, blueFlash, farFlash, beam, beamFire;
             public Material engine, covenantEngine, floodGlow, covenantGlow, redLight;
             public Material charred, concrete, rock, bark, growth, growthDark, spire, spireLine, metal;
 
@@ -230,10 +228,7 @@ namespace Halobellum.EditorTools
                 ember = MakeParticleMaterial("CinematicEmber", glow, true, new Color(5f, 1.9f, 0.55f));
                 ash = MakeParticleMaterial("CinematicAsh", glow, false, new Color(0.55f, 0.5f, 0.5f));
                 spore = MakeParticleMaterial("CinematicSpore", glow, true, new Color(1.3f, 1.7f, 0.45f));
-                tracer = MakeParticleMaterial("CinematicTracer", glow, true, new Color(4.2f, 1.7f, 0.45f));
                 shell = MakeParticleMaterial("CinematicShell", glow, true, new Color(6f, 2.8f, 0.9f));
-                plasma = MakeParticleMaterial("CinematicPlasma", glow, true, new Color(0.7f, 1.7f, 5.5f));
-                needle = MakeParticleMaterial("CinematicNeedle", glow, true, new Color(7f, 1.4f, 5.5f));
                 mortar = MakeParticleMaterial("CinematicMortar", glow, true, new Color(1.1f, 2.1f, 6.5f));
                 mortarTrail = MakeParticleMaterial("CinematicMortarTrail", glow, true, new Color(0.4f, 0.9f, 3.2f));
                 fire = MakeParticleMaterial("CinematicFire", flame, true, new Color(4.2f, 1.7f, 0.5f));
@@ -761,30 +756,6 @@ namespace Halobellum.EditorTools
             Spire(262f, 292f, 78f, 14f, 1);
             Spire(212f, 318f, 52f, 9f, 2);
             Spire(305f, 238f, 44f, -7f, 3);
-
-            // The Flood's growths: bulbs and tendrils of biomass over the creep, some glowing.
-            var growths = new List<Mesh>();
-            for (int i = 0; i < 5; i++)
-            {
-                Mesh mesh = MakeGrowthMesh(300 + i);
-                SaveAsset(mesh, $"{ArtFolder}/CinematicGrowth{i}.asset");
-                growths.Add(mesh);
-            }
-            Vector2[] growthSpots =
-            {
-                new Vector2(198f, -150f), new Vector2(225f, -112f), new Vector2(178f, -205f), new Vector2(140f, -200f), new Vector2(240f, -180f),
-                new Vector2(105f, -168f), new Vector2(210f, -70f), new Vector2(255f, -140f), new Vector2(160f, -235f), new Vector2(75f, -140f),
-                new Vector2(120f, -60f), new Vector2(190f, -102f), new Vector2(262f, -95f), new Vector2(222f, -222f), new Vector2(92f, -205f),
-            };
-            for (int i = 0; i < growthSpots.Length; i++)
-            {
-                Vector2 spot = growthSpots[i];
-                float scale = Range(0.8f, 1.8f) * (i < 4 ? 1.5f : 1f);
-                GameObject growth = Solid("Flood Growth", parent, growths[i % growths.Count], i % 3 == 0 ? art.growthDark : art.growth,
-                    Ground(spot.x, spot.y, -0.5f), Quaternion.Euler(0f, Range(0f, 360f), 0f), Vector3.one * scale);
-                growth.GetComponent<MeshRenderer>().shadowCastingMode = ShadowCastingMode.On;
-                if (i % 2 == 0) AddGlowCard(parts, art.floodGlow, parent, Ground(spot.x, spot.y, 1.6f * scale), 2.4f * scale);
-            }
         }
 
         private static GameObject Solid(string name, Transform parent, Mesh mesh, Material material, Vector3 position, Quaternion rotation, Vector3 scale)
@@ -852,61 +823,6 @@ namespace Halobellum.EditorTools
             if (fireSize > 0f) AddFire(art, parts, parent, Ground(x, z, 0.8f), fireSize);
         }
 
-        private static BakedBodyDefinition Body(string name)
-        {
-            var body = AssetDatabase.LoadAssetAtPath<BakedBodyDefinition>(BodyFolder + name + ".asset");
-            if (body == null || !body.IsReady) throw new InvalidOperationException("Missing baked body " + name);
-            return body;
-        }
-
-        private static UnitDefinition UnitOf(BakedBodyDefinition body)
-        {
-            if (_unitsByBody == null)
-            {
-                _unitsByBody = new Dictionary<BakedBodyDefinition, UnitDefinition>();
-                foreach (string guid in AssetDatabase.FindAssets("t:UnitDefinition"))
-                {
-                    var unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>(AssetDatabase.GUIDToAssetPath(guid));
-                    if (unit != null && unit.bakedBody != null && !_unitsByBody.ContainsKey(unit.bakedBody)) _unitsByBody[unit.bakedBody] = unit;
-                }
-            }
-            _unitsByBody.TryGetValue(body, out UnitDefinition found);
-            return found;
-        }
-
-        /// <summary>A baked soldier or Flood form playing one of its clips, looping (or, pace 0, its death played out: a body on the ground).</summary>
-        private static Transform AddFigure(Parts parts, Transform parent, string bodyName, BakedAnimation role, Vector3 position, float yaw, float scale = 1f, float pace = 1f)
-        {
-            BakedBodyDefinition body = Body(bodyName);
-            UnitDefinition unit = UnitOf(body);
-            BakedClip clip = body.Clip(role) ?? body.Clip(BakedAnimation.Moving) ?? body.clips[0];
-            var figure = new GameObject(bodyName);
-            figure.transform.SetParent(parent, false);
-            figure.transform.SetPositionAndRotation(position, Quaternion.Euler(0f, yaw, 0f));
-            figure.transform.localScale = Vector3.one * scale * (unit != null && unit.bakedScale > 0f ? unit.bakedScale : 1f);
-            figure.AddComponent<MeshFilter>().sharedMesh = body.mesh;
-            var renderer = figure.AddComponent<MeshRenderer>();
-            renderer.sharedMaterials = body.Materials;
-            renderer.shadowCastingMode = ShadowCastingMode.Off;
-            parts.figures.Add(new MenuCinematic.Figure
-            {
-                renderer = renderer,
-                firstRow = clip.firstRow,
-                frames = clip.frames,
-                start = pace > 0f ? parts.Range(-20f, 0f) : -1000f,
-                pace = pace > 0f ? pace * parts.Range(0.92f, 1.08f) : 0f,
-                tint = unit != null ? unit.bakedTint : new Color(1f, 1f, 1f, 0f),
-            });
-            return figure.transform;
-        }
-
-        /// <summary>The unit's speed on the field, from its data: what its moving clip was made for.</summary>
-        private static float SpeedOf(string bodyName, float fallback)
-        {
-            UnitDefinition unit = UnitOf(Body(bodyName));
-            return unit != null && unit.moveSpeed > 0f ? unit.moveSpeed : fallback;
-        }
-
         /// <summary>
         /// Something going along the ground again and again, from here toward a point, at its own speed: its line is cut to a whole number of
         /// trips a loop, no longer than the distance given, and it follows the ground's rise and fall.
@@ -938,9 +854,8 @@ namespace Halobellum.EditorTools
         private static void BuildUnsc(MenuCinematic cinematic, Art art, Parts parts)
         {
             var army = new GameObject("UNSC").transform;
-            float Range(float a, float b) => parts.Range(a, b);
 
-            // Armour along the line, facing east; the Elephant behind; a Pelican hovering low over the rear, setting down troops.
+            // Armour along the line behind its barriers, facing east; the Elephant behind; a Pelican hovering low over the rear.
             PlaceVehicle("Scorpion_Model", army, -78f, -48f, 82f, 1f);
             PlaceVehicle("Scorpion_Model", army, -75f, -10f, 94f, 1f);
             PlaceVehicle("Scorpion_Model", army, -80f, 24f, 86f, 1f);
@@ -959,23 +874,6 @@ namespace Halobellum.EditorTools
             PlaceWreck(art, parts, army, "Scorpion_Model", -28f, 24f, 60f, 1f, new Vector3(-6f, 0f, 9f), 1.6f);
             PlaceWreck(art, parts, army, "Mantis_Model", -44f, -52f, 30f, 1.25f, new Vector3(70f, 0f, 12f), 0.9f);
 
-            // Marines behind the barriers and Spartans in front of them, firing; a few Marines going forward; the fallen.
-            for (float z = -66f; z <= 66f; z += Range(7f, 11f))
-            {
-                string body = Range(0f, 1f) < 0.2f ? "ODST" : "Marine";
-                AddFigure(parts, army, body, BakedAnimation.Shooting, Ground(-63.4f, z), 90f + Range(-18f, 18f));
-            }
-            string[] spartans = { "Spartan", "SpartanHeavyWeapons", "SpartanCQB", "SpartanSniper", "Spartan" };
-            float[] spartanSpots = { -22f, -6f, 9f, 27f, 47f };
-            for (int i = 0; i < spartans.Length; i++) AddFigure(parts, army, spartans[i], BakedAnimation.Shooting, Ground(-57.5f + Range(-1f, 1f), spartanSpots[i]), 90f + Range(-12f, 12f));
-            for (int i = 0; i < 6; i++)
-            {
-                float z = Range(-60f, 60f);
-                Transform marine = AddFigure(parts, army, "Marine", BakedAnimation.Moving, Ground(-66f, z), 90f);
-                AddMarcher(parts, marine, new Vector2(-66f + Range(-4f, 4f), z), new Vector2(40f, z + Range(-25f, 25f)), SpeedOf("Marine", 3f), 80f);
-            }
-            for (int i = 0; i < 7; i++) AddFigure(parts, army, "Marine", BakedAnimation.Dead, Ground(Range(-54f, -20f), Range(-60f, 70f)), Range(0f, 360f), 1f, 0f);
-
             // Warthogs racing along behind the line.
             for (int i = 0; i < 2; i++)
             {
@@ -983,30 +881,37 @@ namespace Halobellum.EditorTools
                 AddMarcher(parts, hog.transform, new Vector2(-112f - i * 14f, -110f), new Vector2(-104f - i * 14f, 120f), 12f, 210f);
             }
 
-            // The guns: rifle tracers all along the line, toward the Covenant and toward the Flood.
-            AddTracers(art, army, "Tracers to the Covenant", new Vector3(-63f, 1.5f, 0f), 64f, 130f, 34f);
-            AddTracers(art, army, "Tracers to the Flood", new Vector3(-63f, 1.5f, 0f), 118f, 130f, 24f);
-            AddTracers(art, army, "Tracers ahead", new Vector3(-63f, 1.5f, 0f), 92f, 130f, 20f);
-            // The tanks' shells, arcing a little and bursting where they land.
+            // The tanks' and the Mantises' guns, now and then: a shell arcing a little and bursting where it lands.
             Vector3[] guns = { Ground(-75f, -48f, 2.6f), Ground(-72f, -10f, 2.6f), Ground(-77f, 24f, 2.6f), Ground(-70f, 56f, 2.6f), Ground(-67f, 4f, 4.2f), Ground(-65f, 39f, 4.2f) };
             float[] aims = { 104f, 66f, 58f, 72f, 118f, 62f };
-            for (int i = 0; i < guns.Length; i++) AddShells(art, army, guns[i], aims[i], 0.32f + i * 0.03f, i);
+            for (int i = 0; i < guns.Length; i++) AddShells(art, army, guns[i], aims[i], 0.16f + i * 0.015f, i);
         }
 
         private static void BuildCovenant(MenuCinematic cinematic, Art art, Parts parts)
         {
             var army = new GameObject("Covenant").transform;
             float Range(float a, float b) => parts.Range(a, b);
+            float Face(float x, float z) => Mathf.Atan2(-60f - x, 0f - z) * Mathf.Rad2Deg + Range(-10f, 10f);
 
+            // Wraiths lobbing their mortars at the human line, now and then.
             Vector2[] wraiths = { new Vector2(122f, 152f), new Vector2(168f, 122f), new Vector2(208f, 176f), new Vector2(152f, 208f), new Vector2(232f, 122f) };
             foreach (Vector2 spot in wraiths)
             {
-                float yaw = Mathf.Atan2(-60f - spot.x, 0f - spot.y) * Mathf.Rad2Deg + Range(-10f, 10f);
+                float yaw = Face(spot.x, spot.y);
                 GameObject wraith = PlaceVehicle("Wraith_Model", army, spot.x, spot.y, yaw, 1.5f, null, 0.8f);
                 parts.hovers.Add(wraith.transform);
-                AddMortars(art, army, wraith.transform.position + Vector3.up * 3.2f, yaw, Range(0.18f, 0.26f));
+                AddMortars(art, army, wraith.transform.position + Vector3.up * 3.2f, yaw, Range(0.09f, 0.13f));
             }
-            // Phantoms hovering over the army, setting down more.
+            // More armour around where the camera stands among them: a Wraith and Ghosts hovering, waiting to go.
+            GameObject near = PlaceVehicle("Wraith_Model", army, 170f, 128f, Face(170f, 128f), 1.5f, null, 0.8f);
+            parts.hovers.Add(near.transform);
+            Vector2[] waiting = { new Vector2(185f, 150f), new Vector2(175f, 158f), new Vector2(158f, 172f), new Vector2(148f, 152f), new Vector2(166f, 140f) };
+            foreach (Vector2 spot in waiting)
+            {
+                GameObject ghost = PlaceVehicle("Ghost_Model", army, spot.x, spot.y, Face(spot.x, spot.y), 1.3f, null, 0.7f);
+                parts.hovers.Add(ghost.transform);
+            }
+            // Phantoms hovering over the army.
             GameObject phantom = PlaceModel("CovenantPhantom_Model", army, Ground(218f, 150f, 30f), 222f, 1.6f);
             parts.hovers.Add(phantom.transform);
             AddEngineGlows(phantom, art.covenantEngine, parts.glows);
@@ -1018,36 +923,6 @@ namespace Halobellum.EditorTools
             PlaceWreck(art, parts, army, "Ghost_Model", 18f, 72f, 200f, 1.3f, new Vector3(0f, 0f, 70f), 0.8f);
             PlaceWreck(art, parts, army, "Wraith_Model", 58f, 104f, 236f, 1.5f, new Vector3(-8f, 0f, 6f), 1.8f);
 
-            // The infantry around where the camera stands among them: Jackals' shields in front, Elites, Grunts and Hunters.
-            float Face(float x, float z) => Mathf.Atan2(-40f - x, 10f - z) * Mathf.Rad2Deg + Range(-14f, 14f);
-            void Squad(string body, int count, Vector2 middle, float spread)
-            {
-                for (int i = 0; i < count; i++)
-                {
-                    float x = middle.x + Range(-spread, spread), z = middle.y + Range(-spread, spread);
-                    AddFigure(parts, army, body, BakedAnimation.Shooting, Ground(x, z), Face(x, z));
-                }
-            }
-            Squad("JackalShield", 4, new Vector2(170f, 160f), 9f);
-            Squad("Elite", 3, new Vector2(181f, 176f), 8f);
-            Squad("Zealot", 1, new Vector2(190f, 188f), 2f);
-            Squad("Grunt", 9, new Vector2(176f, 182f), 13f);
-            Squad("FuelRodGrunt", 2, new Vector2(196f, 170f), 5f);
-            Squad("Elite", 3, new Vector2(132f, 182f), 10f);
-            Squad("Grunt", 6, new Vector2(140f, 168f), 12f);
-            Squad("Jackal", 4, new Vector2(112f, 132f), 9f);
-            AddFigure(parts, army, "Hunter", BakedAnimation.Shooting, Ground(162f, 146f), Face(162f, 146f));
-            AddFigure(parts, army, "Hunter", BakedAnimation.Shooting, Ground(170f, 140f), Face(170f, 140f));
-            // Going forward.
-            string[] advancing = { "Elite", "Grunt", "Grunt", "Elite", "Grunt", "Jackal", "Grunt", "Elite" };
-            foreach (string body in advancing)
-            {
-                float x = Range(120f, 200f), z = Range(120f, 200f);
-                Transform figure = AddFigure(parts, army, body, BakedAnimation.Moving, Ground(x, z), 225f);
-                AddMarcher(parts, figure, new Vector2(x, z), new Vector2(-40f, Range(-20f, 60f)), SpeedOf(body, 3f), 95f);
-            }
-            for (int i = 0; i < 6; i++) AddFigure(parts, army, i % 3 == 0 ? "Elite" : "Grunt", BakedAnimation.Dead, Ground(Range(60f, 120f), Range(60f, 140f)), Range(0f, 360f), 1f, 0f);
-
             // Ghosts racing in.
             for (int i = 0; i < 4; i++)
             {
@@ -1055,10 +930,6 @@ namespace Halobellum.EditorTools
                 Vector2 from = new Vector2(Range(170f, 240f), Range(140f, 250f));
                 AddMarcher(parts, ghost.transform, from, new Vector2(-40f, Range(-40f, 80f)), 15f, 200f, 0.6f);
             }
-
-            // Plasma bolts from the whole front toward the human line, and needles.
-            AddPlasma(art, army, "Plasma", new Vector3(150f, 1.6f, 160f), 234f, 110f, 26f, art.plasma);
-            AddPlasma(art, army, "Needles", new Vector3(160f, 1.4f, 175f), 238f, 60f, 9f, art.needle);
         }
 
         private static void BuildFlood(MenuCinematic cinematic, Art art, Parts parts)
@@ -1067,39 +938,52 @@ namespace Halobellum.EditorTools
             float Range(float a, float b) => parts.Range(a, b);
             float Face(float x, float z) => Mathf.Atan2(-60f - x, 0f - z) * Mathf.Rad2Deg + Range(-12f, 12f);
 
-            // The Abomination, slamming the ground; Pure Forms; infested vehicles.
-            AddFigure(parts, horde, "Abomination", BakedAnimation.Shooting, Ground(130f, -122f), 316f);
-            AddFigure(parts, horde, "PureFormTank", BakedAnimation.Shooting, Ground(128f, -92f), Face(128f, -92f));
-            AddFigure(parts, horde, "PureFormTank", BakedAnimation.Shooting, Ground(178f, -120f), Face(178f, -120f));
-            AddFigure(parts, horde, "PureFormRanged", BakedAnimation.Shooting, Ground(150f, -100f), Face(150f, -100f));
-            AddFigure(parts, horde, "PureFormRanged", BakedAnimation.Shooting, Ground(104f, -114f), Face(104f, -114f));
-            AddFigure(parts, horde, "PureFormRanged", BakedAnimation.Shooting, Ground(120f, -152f), Face(120f, -152f));
-            Transform spawner = AddFigure(parts, horde, "Spawner", BakedAnimation.Moving, Ground(178f, -176f), 315f);
-            AddMarcher(parts, spawner, new Vector2(178f, -176f), new Vector2(60f, -60f), SpeedOf("Spawner", 1.5f), 120f);
+            // The Flood's growths: bulbs and tendrils of biomass over the creep, some glowing.
+            var growths = new List<Mesh>();
+            for (int i = 0; i < 5; i++)
+            {
+                Mesh mesh = MakeGrowthMesh(300 + i);
+                SaveAsset(mesh, $"{ArtFolder}/CinematicGrowth{i}.asset");
+                growths.Add(mesh);
+            }
+            Vector2[] growthSpots =
+            {
+                new Vector2(198f, -150f), new Vector2(225f, -112f), new Vector2(178f, -205f), new Vector2(140f, -200f), new Vector2(240f, -180f),
+                new Vector2(105f, -168f), new Vector2(210f, -70f), new Vector2(255f, -140f), new Vector2(160f, -235f), new Vector2(75f, -140f),
+                new Vector2(120f, -60f), new Vector2(190f, -102f), new Vector2(262f, -95f), new Vector2(222f, -222f), new Vector2(92f, -205f),
+                new Vector2(146f, -128f), new Vector2(112f, -138f),
+            };
+            for (int i = 0; i < growthSpots.Length; i++)
+            {
+                Vector2 spot = growthSpots[i];
+                float scale = Range(0.8f, 1.8f) * (i < 4 ? 1.5f : 1f);
+                GameObject growth = Solid("Flood Growth", horde, growths[i % growths.Count], i % 3 == 0 ? art.growthDark : art.growth,
+                    Ground(spot.x, spot.y, -0.5f), Quaternion.Euler(0f, Range(0f, 360f), 0f), Vector3.one * scale);
+                growth.GetComponent<MeshRenderer>().shadowCastingMode = ShadowCastingMode.On;
+                if (i % 2 == 0) AddGlowCard(parts, art.floodGlow, horde, Ground(spot.x, spot.y, 1.6f * scale), 2.4f * scale);
+            }
+
+            // The infested vehicles, overgrown: a Wraith in front, Scorpions, Warthogs and another Wraith behind it; an infected Phantom over them.
+            GameObject wraith = PlaceVehicle("InfestedWraith_Model", horde, 130f, -122f, 316f, 1.5f, null, 0.5f);
+            parts.hovers.Add(wraith.transform);
+            PlaceVehicle("InfestedScorpion_Model", horde, 118f, -90f, 310f, 1f);
             PlaceVehicle("InfestedScorpion_Model", horde, 152f, -142f, 308f, 1f);
             PlaceVehicle("InfestedWarthog_Model", horde, 176f, -142f, 326f, 1.25f);
-            PlaceVehicle("InfestedWraith_Model", horde, 202f, -96f, 298f, 1.5f, null, 0.5f);
+            PlaceVehicle("InfestedWarthog_Model", horde, 160f, -102f, 318f, 1.25f);
+            GameObject far = PlaceVehicle("InfestedWraith_Model", horde, 202f, -96f, 298f, 1.5f, null, 0.5f);
+            parts.hovers.Add(far.transform);
+            GameObject phantom = PlaceModel("InfectedPhantom_Model", horde, Ground(158f, -158f, 24f), Face(158f, -158f), 1.6f);
+            parts.hovers.Add(phantom.transform);
 
-            // Seeders floating over the swarm, at the height fliers fly.
-            Vector3[] seeders = { Ground(150f, -132f, 14f), Ground(112f, -152f, 16f), Ground(178f, -106f, 13f), Ground(200f, -170f, 15f) };
-            foreach (Vector3 spot in seeders)
+            // Infested Ghosts racing at the human line.
+            for (int i = 0; i < 4; i++)
             {
-                Transform seeder = AddFigure(parts, horde, "Seeder", BakedAnimation.Moving, spot, Face(spot.x, spot.z));
-                parts.hovers.Add(seeder);
+                GameObject ghost = PlaceVehicle("InfestedGhost_Model", horde, 180f, -180f, 0f, 1.3f, null, 0.6f);
+                Vector2 from = new Vector2(Range(150f, 220f), Range(-210f, -120f));
+                AddMarcher(parts, ghost.transform, from, new Vector2(-40f, Range(-70f, 0f)), 13f, 200f, 0.6f);
             }
 
-            // The charge: Combat Forms, infested Elites and Marines, and Stalkers, pouring toward the human line.
-            string[] charging = { "CombatForm", "CombatForm", "CombatForm", "InfestedElite", "CombatForm", "InfestedMarine", "StalkerForm", "CombatForm" };
-            for (int i = 0; i < 26; i++)
-            {
-                string body = charging[i % charging.Length];
-                float x = Range(110f, 210f), z = Range(-200f, -110f);
-                Transform figure = AddFigure(parts, horde, body, BakedAnimation.Moving, Ground(x, z), 300f);
-                AddMarcher(parts, figure, new Vector2(x, z), new Vector2(Range(-50f, 0f), Range(-60f, 20f)), SpeedOf(body, body == "StalkerForm" ? 7f : 3.5f), 150f);
-            }
-            for (int i = 0; i < 10; i++) AddFigure(parts, horde, i % 2 == 0 ? "CombatForm" : "InfestedMarine", BakedAnimation.Dead, Ground(Range(10f, 90f), Range(-110f, -30f)), Range(0f, 360f), 1f, 0f);
-
-            // Spores drifting over the swarm, and the Pure Forms' spines toward the humans.
+            // Spores drifting over the creep.
             ParticleSystem spores = MakeParticles("Spores", horde, Ground(160f, -150f, 6f), Quaternion.identity, art.spore);
             ParticleSystem.MainModule main = spores.main;
             main.startLifetime = new ParticleSystem.MinMaxCurve(8f, 14f);
@@ -1112,7 +996,6 @@ namespace Halobellum.EditorTools
             Drift(spores, new Vector2(-0.6f, 0.2f), new Vector2(0.05f, 0.5f), new Vector2(-0.2f, 0.4f));
             Wobble(spores, 0.5f, 0.15f);
             FadeInOut(spores, 0.2f, 0.7f);
-            AddPlasma(art, horde, "Spines", new Vector3(125f, 2f, -95f), 302f, 40f, 7f, art.spore);
         }
 
         private static void BuildWalker(MenuCinematic cinematic, Art art)
@@ -1210,13 +1093,13 @@ namespace Halobellum.EditorTools
             var parent = new GameObject("Battle Effects").transform;
 
             // Blasts among each army, and far-off flashes on the horizon.
-            AddBlast(art, parts, parent, "Shells on the Covenant", false, 1.55f, 0.2f, 26f,
+            AddBlast(art, parts, parent, "Shells on the Covenant", false, 2.7f, 0.2f, 26f,
                 new Vector2(130f, 170f), new Vector2(178f, 138f), new Vector2(196f, 202f), new Vector2(108f, 124f), new Vector2(160f, 228f), new Vector2(222f, 150f),
                 new Vector2(142f, 192f), new Vector2(186f, 166f), new Vector2(92f, 98f), new Vector2(205f, 128f));
-            AddBlast(art, parts, parent, "Shells on the Flood", false, 1.3f, 0.75f, 26f,
+            AddBlast(art, parts, parent, "Shells on the Flood", false, 2.4f, 1.1f, 26f,
                 new Vector2(120f, -140f), new Vector2(150f, -112f), new Vector2(102f, -116f), new Vector2(166f, -160f), new Vector2(142f, -96f), new Vector2(186f, -126f),
                 new Vector2(126f, -172f), new Vector2(104f, -150f), new Vector2(150f, -142f), new Vector2(160f, -84f));
-            AddBlast(art, parts, parent, "Plasma on the line", true, 1.45f, 0.45f, 22f,
+            AddBlast(art, parts, parent, "Plasma on the line", true, 2.6f, 0.6f, 22f,
                 new Vector2(-70f, -36f), new Vector2(-86f, 12f), new Vector2(-58f, 42f), new Vector2(-116f, -76f), new Vector2(-76f, 66f), new Vector2(-112f, -20f),
                 new Vector2(-55f, -4f), new Vector2(-92f, 36f), new Vector2(-48f, 18f), new Vector2(-104f, 70f));
             var far = new List<Vector2>();
@@ -1442,24 +1325,6 @@ namespace Halobellum.EditorTools
 
         // ------------------------------------------------------------------ the guns
 
-        /// <summary>Rifle fire all along a line of soldiers: quick streaks toward the enemy, gone at the end of their reach.</summary>
-        private static void AddTracers(Art art, Transform parent, string name, Vector3 middle, float yaw, float lineLength, float rate)
-        {
-            // Started all along the line (north to south), flying the way they are aimed.
-            ParticleSystem tracers = MakeParticles(name, parent, middle, Quaternion.identity, art.tracer);
-            ParticleSystem.MainModule main = tracers.main;
-            main.startLifetime = new ParticleSystem.MinMaxCurve(0.45f, 1.05f);
-            main.startSpeed = 0f;
-            main.startSize = new ParticleSystem.MinMaxCurve(0.14f, 0.24f);
-            main.maxParticles = 200;
-            Rate(tracers, rate);
-            Box(tracers, new Vector3(1.5f, 0.6f, lineLength));
-            float east = Mathf.Sin(yaw * Mathf.Deg2Rad), north = Mathf.Cos(yaw * Mathf.Deg2Rad);
-            Drift(tracers, new Vector2(Mathf.Min(east * 125f, east * 170f) - 12f, Mathf.Max(east * 125f, east * 170f) + 12f), new Vector2(-1.5f, 2.5f),
-                new Vector2(Mathf.Min(north * 125f, north * 170f) - 22f, Mathf.Max(north * 125f, north * 170f) + 22f));
-            Stretch(tracers, 0.035f);
-        }
-
         /// <summary>A tank's gun: a shell now and then with a flash at the muzzle, falling a little, bursting where it meets the ground.</summary>
         private static void AddShells(Art art, Transform parent, Vector3 muzzle, float yaw, float rate, int index)
         {
@@ -1514,23 +1379,6 @@ namespace Halobellum.EditorTools
             trails.inheritParticleColor = true;
             mortars.GetComponent<ParticleSystemRenderer>().trailMaterial = art.mortarTrail;
             Impacts(art, mortars, true);
-        }
-
-        /// <summary>Bolts from a whole front toward the enemy: slower than bullets, glowing.</summary>
-        private static void AddPlasma(Art art, Transform parent, string name, Vector3 middle, float yaw, float width, float rate, Material material)
-        {
-            ParticleSystem bolts = MakeParticles(name, parent, middle, Quaternion.Euler(-1.5f, yaw, 0f), material);
-            ParticleSystem.MainModule main = bolts.main;
-            main.startLifetime = new ParticleSystem.MinMaxCurve(2.1f, 2.9f);
-            main.startSpeed = new ParticleSystem.MinMaxCurve(55f, 78f);
-            main.startSize = new ParticleSystem.MinMaxCurve(0.35f, 0.55f);
-            main.maxParticles = 160;
-            Rate(bolts, rate);
-            ParticleSystem.ShapeModule shape = bolts.shape;
-            shape.shapeType = ParticleSystemShapeType.Box;
-            shape.scale = new Vector3(width, 1f, width * 0.4f);
-            shape.randomDirectionAmount = 0.05f;
-            Stretch(bolts, 0.05f);
         }
 
         /// <summary>Makes a gun's rounds burst where they meet the ground (taken as flat, at its middle height): a flash, fire and dirt.</summary>
@@ -1637,6 +1485,9 @@ namespace Halobellum.EditorTools
             // The Flood's infested fliers, sweeping over the swarm.
             Group("InfestedBanshee_Model", null, new Vector3(240f, 28f, -280f), new Vector3(-60f, 34f, 30f), 15f, 36.5f, -9f, 1.4f,
                 Vector3.zero, new Vector3(-14f, 4f, -12f));
+            Group("InfestedHornet_Model", null, new Vector3(260f, 36f, -150f), new Vector3(-120f, 30f, -260f), 14f, 34f, 8f, 1.3f,
+                Vector3.zero, new Vector3(12f, -3f, 14f));
+            Group("InfectedPelican_Model", null, new Vector3(320f, 70f, -340f), new Vector3(-260f, 60f, 60f), 28f, 4f, -4f, 1.5f, Vector3.zero);
         }
 
         /// <summary>Two engine glows at the tail of an aircraft, which is taken to fly along +z.</summary>
@@ -1703,8 +1554,8 @@ namespace Halobellum.EditorTools
             Add("Line", Ground(-92f, -58f, 2.2f), Ground(-92f, -26f, 2.4f), Walker(11f, 16f), Walker(21f, 16f), 0.42f, 34f, 34f);
             // 3. Among the Covenant, behind its soldiers, the walker striding away from us toward the humans.
             Add("Covenant", Ground(206f, 212f, 2.6f), Ground(192f, 190f, 4.2f), Walker(21f, 18f), Walker(31f, 18f), 0.34f, 37f, 34f);
-            // 4. Low in the Flood's swarm: the Abomination slamming, forms rushing past toward the humans.
-            Add("Flood", Ground(82f, -72f, 1.6f), Ground(92f, -82f, 2.3f), Ground(130f, -122f, 5f), Ground(130f, -122f, 6f), 0.42f, 38f, 35f);
+            // 4. Low on the Flood's creep, among its growths: an infested Wraith, Ghosts racing past toward the humans.
+            Add("Flood", Ground(103f, -93f, 1.5f), Ground(111f, -101f, 2f), Ground(130f, -122f, 2.4f), Ground(130f, -122f, 2.8f), 0.4f, 38f, 36f);
             // 5. Up at the walker from the human side as it fires its beam across the field; the camera rises.
             Add("Titan", Ground(-12f, -38f, 1.7f), Ground(-6f, -32f, 6f), Walker(41f, 22f), Walker(52f, 26f), 0.42f, 44f, 41f);
             cinematic.shots = shots.ToArray();
