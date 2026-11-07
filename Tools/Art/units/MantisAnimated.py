@@ -1,4 +1,4 @@
-# The Mantis, animated (D96): its static model (Mantis.py) rigged here so the crowd baker can play it, as the owner found it hardly moved
+# The Mantis, animated (D97): its static model (Mantis.py) rigged here so the crowd baker can play it, as the owner found it hardly moved
 # (it only turned at the waist and swung its legs stiffly). A heavy two-legged walker: each stride a planted, weighty step, the hips
 # dropping onto the foot that lands and the torso rolling over it, the knees taking the shock; the arms swing a little against the legs,
 # each with its weight. To fire it brings both arms up to aim, the chaingun shuddering with every round (its 0.2 s) and the rocket arm

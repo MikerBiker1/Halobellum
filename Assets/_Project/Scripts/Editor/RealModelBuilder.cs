@@ -11,7 +11,9 @@
 // Thruster_<size> node at the back of each of its outermost parts (the Banshee's wing tips, the Ghost's fins), which ModelParts lights while it moves.
 // An entry with a Prop holds that weapon model (a Weapon_ folder) at its Muzzle_1, which moves to the weapon's tip (the Infested Elite's plasma rifle).
 // An entry with a Mouth gets a green light inside the mouth its Muzzle_0 is in, MouthGlow, and the two places its sides glow from, Mandible_0
-// and _1, which CombatEffectsView lights as it charges and fires its beam (the Scarab, D97).
+// and _1, which CombatEffectsView lights as it charges and fires its beam (the Scarab, D98).
+// An entry with Seats has a soldier in each of its open seats (D99): one of the posed drivers in Art/Imported/Models/Drivers (Tools/Art/drivers.py),
+// set with its hips where the seat says, as tall as that soldier; a gunner turns with its gun's Turret_ node. Only seats one can see into have one.
 //   Menu: Halobellum > Art > Build Real Model Prefabs
 //   Command line: -executeMethod Halobellum.EditorTools.RealModelBuilder.BuildAllFromCommandLine (or BuildTowersFromCommandLine for the towers alone,
 //   BuildInfestedFromCommandLine for the infested vehicles alone, BuildUnitsFromCommandLine for the units named in HB_UNITS or after -units,
@@ -54,8 +56,29 @@ namespace Halobellum.EditorTools
             public float PropLength;
             /// <summary>Degrees the model is turned about the vertical, for one prepared facing the wrong way (the Combat Form: the owner, 2026-11-07).</summary>
             public float Yaw;
-            /// <summary>A mouth that glows green inside as its beam charges and fires (the Scarab: the owner, 2026-11-07, D97).</summary>
+            /// <summary>A mouth that glows green inside as its beam charges and fires (the Scarab: the owner, 2026-11-07, D98).</summary>
             public bool Mouth;
+            /// <summary>Who sits in its open seats (the owner, 2026-11-07, D99).</summary>
+            public Seat[] Seats;
+        }
+
+        /// <summary>
+        /// A soldier in a seat: a posed driver from Art/Imported/Models/Drivers, its hips here (metres, the model's axes, +Z its front), turned this
+        /// many degrees about the vertical, and the node it turns with (a gun's Turret_), if any. Found with Tools/Art/seat_fit.py.
+        /// </summary>
+        private sealed class Seat
+        {
+            public string Driver;
+            public Vector3 Hips;
+            public float Yaw;
+            public string Turns;
+
+            public Seat(string driver, float x, float y, float z, string turns = null)
+            {
+                Driver = driver;
+                Hips = new Vector3(x, y, z);
+                Turns = turns;
+            }
         }
 
         /// <summary>
@@ -68,12 +91,21 @@ namespace Halobellum.EditorTools
         /// <summary>The growths keep their own texture, a little greener, and lifted: as it is, the dark brown reads as black from the game's camera.</summary>
         private static readonly Color GrowthTint = new Color(1.15f, 1.25f, 0.85f);
 
+        /// <summary>Where the drivers are, and how tall each soldier stands in the game, in metres.</summary>
+        private const string DriverFolder = "Assets/_Project/Art/Imported/Models/Drivers";
+        private static readonly Dictionary<string, float> SoldierHeight = new Dictionary<string, float> { { "Marine", 1.85f }, { "Grunt", 1.4f }, { "Brute", 2.55f }, { "CombatForm", 2.15f } };
+
+        // The seats (D99): a Warthog's driver (on its left) and the gunner at its gun; a Grunt astride a Ghost; a Brute in the Marauder's open hatch
+        // and astride the Chopper; a Marine in the Elephant's front cupola. The Flood's infested ones have Combat Forms in the same seats.
+        private static readonly Seat[] WarthogCrew = { new Seat("Marine_Drive", -0.45f, 1.08f, -0.2f), new Seat("Marine_Gun", 0f, 1.85f, -1.75f, "Turret_0") };
+        private static readonly Seat[] InfestedWarthogCrew = { new Seat("CombatForm_Drive", -0.45f, 1.05f, -0.25f), new Seat("CombatForm_Gun", 0f, 1.75f, -1.8f, "Turret_0") };
+
         private static readonly Entry[] Models =
         {
             new Entry { Unit = "UNSC/Scorpion", Folder = "Scorpion", Length = 6.2f },
-            new Entry { Unit = "UNSC/Elephant", Folder = "Elephant", Length = 10f },
-            new Entry { Unit = "UNSC/Warthog", Folder = "Warthog", Length = 4.6f },
-            new Entry { Unit = "UNSC/GaussWarthog", Folder = "GaussWarthog", Length = 4.6f },
+            new Entry { Unit = "UNSC/Elephant", Folder = "Elephant", Length = 10f, Seats = new[] { new Seat("Marine_Gun", 1.61f, 2.72f, 3.25f, "Turret_2") } },
+            new Entry { Unit = "UNSC/Warthog", Folder = "Warthog", Length = 4.6f, Seats = WarthogCrew },
+            new Entry { Unit = "UNSC/GaussWarthog", Folder = "GaussWarthog", Length = 4.6f, Seats = WarthogCrew },
             new Entry { Unit = "UNSC/Hornet", Folder = "Hornet", Length = 6f },
             new Entry { Unit = "UNSC/Pelican", Folder = "Pelican", Length = 10f },
             new Entry { Unit = "Covenant/Banshee", Folder = "Banshee", Length = 6.6f, Thrusters = true }, // Its wings are wider than it is long: 5.4 m nose to tail.
@@ -91,9 +123,9 @@ namespace Halobellum.EditorTools
             new Entry { Unit = "Flood/PureFormTank", Folder = "PureFormTank", Height = 3.8f },
             // Sub-factions (M10): their own models, and real models over again where that is honest.
             new Entry { Unit = "ArmoredDivision/Grizzly", Folder = "Grizzly", Length = 7.2f },
-            new Entry { Unit = "Banished/Chopper", Folder = "Chopper", Length = 4.8f, Tint = new Color(1.4f, 1.35f, 1.25f) }, // A very dark texture: it read as a black shape.
+            new Entry { Unit = "Banished/Chopper", Folder = "Chopper", Length = 4.8f, Tint = new Color(1.4f, 1.35f, 1.25f), Seats = new[] { new Seat("Brute_Ride", 0f, 1.25f, -0.55f) } }, // A very dark texture: it read as a black shape.
             new Entry { Unit = "AerospaceCommand/CondorGunship", Folder = "Condor", Length = 11f },
-            new Entry { Unit = "FloodUNSC/InfestedWarthog", Folder = "Warthog", Length = 4.6f, Tint = Infested },
+            new Entry { Unit = "FloodUNSC/InfestedWarthog", Folder = "Warthog", Length = 4.6f, Tint = Infested, Seats = InfestedWarthogCrew },
             new Entry { Unit = "FloodUNSC/InfestedScorpion", Folder = "Scorpion", Length = 6.2f, Tint = Infested },
             new Entry { Unit = "FloodUNSC/InfestedHornet", Folder = "Hornet", Length = 6f, Tint = Infested },
             new Entry { Unit = "FloodCovenant/InfestedWraith", Folder = "Wraith", Length = 6.2f, Tint = Infested },
@@ -105,14 +137,14 @@ namespace Halobellum.EditorTools
             new Entry { Unit = "AerospaceCommand/Sparrowhawk", Folder = "Sparrowhawk", Length = 7f },
             new Entry { Unit = "AerospaceCommand/Vulture", Folder = "Vulture", Length = 10f },
             new Entry { Unit = "AerospaceCommand/Longsword", Folder = "Longsword", Length = 11f },
-            new Entry { Unit = "Covenant/Ghost", Folder = "Ghost", Length = 4.4f, Thrusters = true },
-            new Entry { Unit = "FloodCovenant/InfestedGhost", Folder = "Ghost", Length = 4.4f, Tint = Infested, Thrusters = true },
+            new Entry { Unit = "Covenant/Ghost", Folder = "Ghost", Length = 4.4f, Thrusters = true, Seats = new[] { new Seat("Grunt_Ride", 0f, 1f, -1f) } },
+            new Entry { Unit = "FloodCovenant/InfestedGhost", Folder = "Ghost", Length = 4.4f, Tint = Infested, Thrusters = true, Seats = new[] { new Seat("CombatForm_Ride", 0f, 0.98f, -1.05f) } },
             new Entry { Unit = "LekgoloColony/Skitterer", Folder = "Skitterer", Length = 2.6f },
             new Entry { Unit = "Flood/SwarmForm", Folder = "SwarmForm", Length = 3f },
             // The owner's third batch (M11). Radii, for comparison: Mantis 2, Wolverine 1.4, Marauder 1.8, Reaver 1.4, Vampire 1.8, Seeder 1.6, Spawner 2, Juggernaut 1.8, Combat Form 0.6, Goliath 2.4.
             new Entry { Unit = "UNSC/Mantis", Folder = "Mantis", Height = 6f, Tint = new Color(1.3f, 1.3f, 1.3f) }, // A dark texture, between the Chopper's and the Cobra's.
             new Entry { Unit = "UNSC/Wolverine", Folder = "Wolverine", Length = 5.5f },
-            new Entry { Unit = "Banished/Marauder", Folder = "Marauder", Length = 5.8f },
+            new Entry { Unit = "Banished/Marauder", Folder = "Marauder", Length = 5.8f, Seats = new[] { new Seat("Brute_Drive", 0f, 1.55f, -0.55f) } },
             new Entry { Unit = "Banished/Reaver", Folder = "Reaver", Height = 5f },
             new Entry { Unit = "Covenant/Vampire", Folder = "Vampire", Length = 7.5f },
             new Entry { Unit = "Flood/Seeder", Folder = "Seeder", Length = 8f },
@@ -246,6 +278,7 @@ namespace Halobellum.EditorTools
                 if (entry.Thrusters) AddThrusters(root);
                 if (!string.IsNullOrEmpty(entry.Prop)) AddProp(root, entry.Prop, entry.PropLength);
                 if (entry.Mouth) AddMouth(root);
+                if (entry.Seats != null) AddSeats(root, entry.Seats);
                 string path = $"{PrefabFolder}/{unitName}_Model.prefab";
                 unit.prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
                 unit.keepsOwnMaterials = true;
@@ -300,6 +333,62 @@ namespace Halobellum.EditorTools
                 node.transform.localPosition = new Vector3(part.Average(p => p.x), (low + high) * 0.5f, part.Min(p => p.z) - 0.3f); // Just clear of the hull, so it shows.
                 Debug.Log($"{root.name}: {node.name} at {node.transform.localPosition}");
             }
+        }
+
+        /// <summary>
+        /// A soldier in each seat: the posed driver, its hips at the seat, as tall as the soldier, in its own colours (a shared material per soldier),
+        /// casting no shadow, as the vehicle casts none. A gunner is moved under its gun's turning node, staying where it is.
+        /// </summary>
+        private static void AddSeats(GameObject root, Seat[] seats)
+        {
+            foreach (Seat seat in seats)
+            {
+                string soldier = seat.Driver.Split('_')[0];
+                string path = $"{DriverFolder}/{seat.Driver}.fbx";
+                var model = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                if (model == null) throw new InvalidOperationException($"{root.name}: no driver at {path}.");
+                var driver = (GameObject)PrefabUtility.InstantiatePrefab(model);
+                PrefabUtility.UnpackPrefabInstance(driver, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+                driver.name = "Driver_" + seat.Driver;
+                driver.transform.SetParent(root.transform, false);
+                driver.transform.localPosition = seat.Hips;
+                driver.transform.localRotation = Quaternion.Euler(0f, seat.Yaw, 0f) * driver.transform.localRotation;
+                driver.transform.localScale = driver.transform.localScale * SoldierHeight[soldier];
+                Material material = DriverMaterial(soldier);
+                foreach (MeshRenderer renderer in driver.GetComponentsInChildren<MeshRenderer>())
+                {
+                    renderer.sharedMaterials = Enumerable.Repeat(material, renderer.sharedMaterials.Length).ToArray();
+                    renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                    renderer.receiveShadows = false;
+                }
+                if (!string.IsNullOrEmpty(seat.Turns))
+                {
+                    Transform node = root.GetComponentsInChildren<Transform>().FirstOrDefault(t => t.name == seat.Turns);
+                    if (node == null) throw new InvalidOperationException($"{root.name}: no {seat.Turns} for its {seat.Driver}.");
+                    driver.transform.SetParent(node, true);
+                }
+                Debug.Log($"{root.name}: {seat.Driver} at {seat.Hips}{(seat.Turns != null ? " turning with " + seat.Turns : "")}");
+            }
+        }
+
+        /// <summary>A soldier's matte material from its texture, made once and shared by every seat it is in.</summary>
+        private static Material DriverMaterial(string soldier)
+        {
+            string folder = $"{DriverFolder}/GameMaterials";
+            if (!AssetDatabase.IsValidFolder(folder)) AssetDatabase.CreateFolder(DriverFolder, "GameMaterials");
+            string path = $"{folder}/Driver_{soldier}.mat";
+            var material = AssetDatabase.LoadAssetAtPath<Material>(path);
+            bool isNew = material == null;
+            if (isNew) material = new Material(Shader.Find("Universal Render Pipeline/Lit")) { name = "Driver_" + soldier };
+            material.SetTexture("_BaseMap", AssetDatabase.LoadAssetAtPath<Texture2D>($"{DriverFolder}/{soldier}.png"));
+            material.SetColor("_BaseColor", Color.white);
+            material.SetFloat("_Smoothness", 0.15f);
+            material.SetFloat("_Metallic", 0f);
+            material.SetFloat("_SpecularHighlights", 0f);
+            material.SetFloat("_EnvironmentReflections", 0f);
+            if (isNew) AssetDatabase.CreateAsset(material, path);
+            else EditorUtility.SetDirty(material);
+            return material;
         }
 
         /// <summary>

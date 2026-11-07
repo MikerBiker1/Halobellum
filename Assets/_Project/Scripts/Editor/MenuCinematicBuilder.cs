@@ -4,13 +4,14 @@
 // (the owner's word, D94). The UNSC holds the west behind a line of concrete barriers and ruins: Scorpions, Mantises, Warthogs, an Elephant,
 // a Pelican hovering, Pelicans and Hornets overhead. The Covenant comes from the north-east under its spires: Wraiths lobbing plasma mortars,
 // Ghosts waiting and racing in, Banshees diving, Phantoms hovering, and a Scarab striding through the middle of the field on planted feet,
-// sweeping the human line with its beam. The Flood holds the south-east among growths of its biomass, spores drifting over it: infested
+// gathering energy into its glowing mouth and sweeping the human line with its beam, drawn as in battle (D98). The Mantises are animated
+// (D97) and the open seats have their drivers (D99), as in battle; a wreck has none. The Flood holds the south-east among growths of its biomass, spores drifting over it: infested
 // Wraiths, Scorpions, Warthogs and Ghosts, an infected Phantom, infested Banshees and Hornets and an infected Pelican in the air. Only the
 // vehicles' own guns fire, now and then: tank shells and mortars burst where they land; blasts go off among each army; fires burn in the
 // wrecks; smoke rises in columns and fog lies low; far off, lightning strikes, flashes light the horizon and an alien warship glasses the land
 // beyond the hills (MenuCinematicSky.shader). Every shot keeps its subject in the right half of the screen, where the menu's own dark panel
 // (MainMenuHud) leaves the picture clear.
-// The models are the project's own; the ground, ruins, growths, spires, sky, smoke and glows are made here and written to
+// The models and the Mantis's baked body are the project's own; the ground, ruins, growths, spires, sky, smoke and glows are made here and written to
 // Art/MenuCinematic. The menu before this one is kept as MainMenuClassic (MainMenuSceneBuilder), chosen in Settings > Menu background.
 //   Menu: Halobellum > Scenes > Rebuild Main Menu Scene
 //   Command line: -executeMethod Halobellum.EditorTools.MenuCinematicBuilder.BuildFromCommandLine
@@ -22,7 +23,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Halobellum.UI;
+using Halobellum.Units;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -214,7 +217,7 @@ namespace Halobellum.EditorTools
         {
             public Texture2D glow, puff, flame;
             public Material smoke, fog, ember, ash, spore;
-            public Material shell, mortar, mortarTrail, fire, spark, blueSpark, flash, blueFlash, farFlash, beam, beamFire;
+            public Material shell, mortar, mortarTrail, fire, spark, blueSpark, flash, blueFlash, farFlash;
             public Material engine, covenantEngine, floodGlow, covenantGlow, redLight;
             public Material charred, concrete, rock, bark, growth, growthDark, spire, spireLine, metal;
 
@@ -237,8 +240,6 @@ namespace Halobellum.EditorTools
                 flash = MakeParticleMaterial("CinematicFlash", glow, true, new Color(7f, 4.2f, 2.2f));
                 blueFlash = MakeParticleMaterial("CinematicBlueFlash", glow, true, new Color(1.5f, 2.6f, 6.5f));
                 farFlash = MakeParticleMaterial("CinematicFarFlash", glow, true, new Color(5f, 2.6f, 1.2f));
-                beam = MakeParticleMaterial("CinematicBeam", glow, true, new Color(0.6f, 1.15f, 4.4f));
-                beamFire = MakeParticleMaterial("CinematicBeamFire", flame, true, new Color(1.3f, 1.9f, 5f));
                 engine = MakeParticleMaterial("CinematicEngine", glow, true, new Color(5f, 2.2f, 0.8f));
                 covenantEngine = MakeParticleMaterial("CinematicCovenantEngine", glow, true, new Color(2.6f, 1.3f, 6f));
                 floodGlow = MakeParticleMaterial("CinematicFloodGlow", glow, true, new Color(2.2f, 2.6f, 0.7f));
@@ -814,6 +815,7 @@ namespace Halobellum.EditorTools
         private static void PlaceWreck(Art art, Parts parts, Transform parent, string prefab, float x, float z, float yaw, float scale, Vector3 tilt, float fireSize)
         {
             GameObject model = PlaceVehicle(prefab, parent, x, z, yaw, scale, tilt, -0.35f);
+            foreach (Transform driver in model.GetComponentsInChildren<Transform>(true).Where(t => t.name.StartsWith("Driver_")).ToArray()) Object.DestroyImmediate(driver.gameObject);
             foreach (Renderer renderer in model.GetComponentsInChildren<Renderer>())
             {
                 var materials = new Material[renderer.sharedMaterials.Length];
@@ -821,6 +823,26 @@ namespace Halobellum.EditorTools
                 renderer.sharedMaterials = materials;
             }
             if (fireSize > 0f) AddFire(art, parts, parent, Ground(x, z, 0.8f), fireSize);
+        }
+
+        /// <summary>
+        /// A vehicle with an animated body (the Mantis, D97), playing one of its clips again and again on the menu's clock. Not a soldier: the
+        /// menu has none (the owner, D94).
+        /// </summary>
+        private static void AddBakedVehicle(Parts parts, Transform parent, string bodyName, BakedAnimation role, Vector3 position, float yaw, float scale)
+        {
+            var body = AssetDatabase.LoadAssetAtPath<BakedBodyDefinition>(BodyFolder + bodyName + ".asset");
+            if (body == null || !body.IsReady) throw new InvalidOperationException("Missing baked body " + bodyName);
+            BakedClip clip = body.Clip(role) ?? body.clips[0];
+            var thing = new GameObject(bodyName);
+            thing.transform.SetParent(parent, false);
+            thing.transform.SetPositionAndRotation(position, Quaternion.Euler(0f, yaw, 0f));
+            thing.transform.localScale = Vector3.one * scale;
+            thing.AddComponent<MeshFilter>().sharedMesh = body.mesh;
+            var renderer = thing.AddComponent<MeshRenderer>();
+            renderer.sharedMaterials = body.Materials;
+            renderer.shadowCastingMode = ShadowCastingMode.Off;
+            parts.figures.Add(new MenuCinematic.Figure { renderer = renderer, firstRow = clip.firstRow, frames = clip.frames, start = parts.Range(-10f, 0f), pace = 1f });
         }
 
         /// <summary>
@@ -860,8 +882,8 @@ namespace Halobellum.EditorTools
             PlaceVehicle("Scorpion_Model", army, -75f, -10f, 94f, 1f);
             PlaceVehicle("Scorpion_Model", army, -80f, 24f, 86f, 1f);
             PlaceVehicle("Scorpion_Model", army, -73f, 56f, 100f, 1f);
-            PlaceVehicle("Mantis_Model", army, -70f, 4f, 84f, 1.25f);
-            PlaceVehicle("Mantis_Model", army, -68f, 39f, 96f, 1.25f);
+            AddBakedVehicle(parts, army, "Mantis", BakedAnimation.Shooting, Ground(-70f, 4f), 84f, 1.25f);
+            AddBakedVehicle(parts, army, "Mantis", BakedAnimation.Shooting, Ground(-68f, 39f), 96f, 1.25f);
             PlaceVehicle("Elephant_Model", army, -138f, -8f, 72f, 1.5f);
             PlaceVehicle("Warthog_Model", army, -96f, -72f, 58f, 1.25f);
             PlaceVehicle("Warthog_Model", army, -101f, 44f, 116f, 1.25f);
@@ -1020,25 +1042,18 @@ namespace Halobellum.EditorTools
             }
             Debug.Log($"Menu cinematic Scarab: {legs} legs, muzzle {(muzzle != null ? muzzle.name : "none")}, walking {path.magnitude:0} m a loop.");
 
-            var beamObject = new GameObject("Beam");
-            var line = beamObject.AddComponent<LineRenderer>();
-            line.sharedMaterial = art.beam;
-            line.useWorldSpace = true;
-            line.positionCount = 2;
-            line.numCapVertices = 4;
-            line.alignment = LineAlignment.View;
-            line.shadowCastingMode = ShadowCastingMode.Off;
-            line.receiveShadows = false;
-            line.enabled = false;
-            cinematic.beam = line;
+            // The beam, drawn as in battle (BeamDrawing): a charge into its mouth, which glows green, then the beam. Its end sweeps across the
+            // ground in front of the human line, toward the camera's side of it.
             cinematic.beamFrom = muzzle != null ? muzzle : body.transform;
-            // Its end sweeps across the ground in front of the human line, toward the camera's side of it.
             cinematic.beamFromPoint = Ground(-14f, 46f);
             cinematic.beamToPoint = Ground(-50f, -22f);
             cinematic.beamPeriod = Loop / 2f;
             cinematic.beamStart = 18.5f;
             cinematic.beamSeconds = 5f;
-            cinematic.beamWidth = 3.4f;
+            cinematic.beamChargeSeconds = 2f;
+            cinematic.beamWidth = 1.6f;
+            cinematic.beamRadius = 2f;
+            cinematic.beamScale = 1.7f;
             cinematic.beamLightIntensity = 110f;
 
             var lightObject = new GameObject("Beam Light");
@@ -1049,41 +1064,6 @@ namespace Halobellum.EditorTools
             light.shadows = LightShadows.None;
             light.enabled = false;
             cinematic.beamLight = light;
-
-            // Where it strikes: blue fire and sparks thrown up, the fire left burning along its path for a moment.
-            ParticleSystem impact = MakeParticles("Beam Impact", null, cinematic.beamFromPoint, Quaternion.identity, art.beamFire);
-            ParticleSystem.MainModule main = impact.main;
-            main.startLifetime = new ParticleSystem.MinMaxCurve(0.8f, 2.4f);
-            main.startSpeed = new ParticleSystem.MinMaxCurve(1f, 5f);
-            main.startSize = new ParticleSystem.MinMaxCurve(2.5f, 6f);
-            main.startRotation = new ParticleSystem.MinMaxCurve(0f, Mathf.PI * 2f);
-            main.maxParticles = 600;
-            main.gravityModifier = -0.15f;
-            Rate(impact, 90f);
-            ParticleSystem.ShapeModule shape = impact.shape;
-            shape.shapeType = ParticleSystemShapeType.Hemisphere;
-            shape.radius = 2f;
-            shape.rotation = new Vector3(-90f, 0f, 0f);
-            Grow(impact, 0.6f, 1.6f);
-            FadeInOut(impact, 0.05f, 0.4f);
-            ParticleSystem.EmissionModule emission = impact.emission;
-            emission.enabled = false;
-            ParticleSystem sparks = MakeParticles("Beam Sparks", impact.transform, Vector3.zero, Quaternion.Euler(-90f, 0f, 0f), art.blueSpark);
-            main = sparks.main;
-            main.startLifetime = new ParticleSystem.MinMaxCurve(0.6f, 1.5f);
-            main.startSpeed = new ParticleSystem.MinMaxCurve(12f, 30f);
-            main.startSize = new ParticleSystem.MinMaxCurve(0.15f, 0.35f);
-            main.gravityModifier = 1.2f;
-            main.maxParticles = 500;
-            Rate(sparks, 140f);
-            ParticleSystem.ShapeModule cone = sparks.shape;
-            cone.shapeType = ParticleSystemShapeType.Cone;
-            cone.angle = 38f;
-            cone.radius = 1.2f;
-            Stretch(sparks, 0.05f);
-            emission = sparks.emission;
-            emission.enabled = false;
-            cinematic.beamImpact = impact;
         }
 
         // ------------------------------------------------------------------ the fighting: fire, blasts, smoke, fog

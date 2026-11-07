@@ -1,7 +1,8 @@
 // MenuCinematic.cs
 // Makes the cinematic main menu move (D94): a battle of the three sides seen in a loop of camera shots, each a slow move from one place to
 // another, with a fade through black between them, drawn under the menu's own screen so the buttons never flicker. In the picture: a
-// Scarab striding across the field on planted feet (WalkerLegs, as in battle) and sweeping the human line with its beam; armies whose
+// Scarab striding across the field on planted feet (WalkerLegs, as in battle), gathering energy into its mouth and sweeping the human line
+// with its beam, drawn as in battle (BeamDrawing, through an EffectKit of its own, D98), its mouth glowing green as it does; armies whose
 // guns fire on their own (particle systems MenuCinematicBuilder made); timed blasts that flash and throw fire and smoke at changing spots;
 // lightning in the storm; fires flickering; aircraft crossing; troops marching; and soldiers and Flood forms playing their baked clips
 // (D41) on this component's clock. Everything runs from one clock, allocating nothing while it plays. MenuCinematicBuilder makes the scene
@@ -106,12 +107,15 @@ namespace Halobellum.UI
         public Vector3 walkerFrom, walkerTo;
 
         [Header("The walker's beam")]
-        public LineRenderer beam;
         public Transform beamFrom;
+        [Tooltip("Its end sweeps along the ground from the one to the other while it fires.")]
         public Vector3 beamFromPoint, beamToPoint;
         public Light beamLight;
-        public ParticleSystem beamImpact;
-        public float beamPeriod = 13f, beamSeconds = 4.5f, beamStart = 3f, beamWidth = 3f, beamLightIntensity = 90f;
+        [Tooltip("Seconds between firings, of the firing, when the first firing starts, and of the charge before each.")]
+        public float beamPeriod = 13f, beamSeconds = 4.5f, beamStart = 3f, beamChargeSeconds = 2f;
+        [Tooltip("The beam's width and its burning spot's radius as in battle, and how much bigger it is all drawn here, the walker being bigger.")]
+        public float beamWidth = 1.6f, beamRadius = 2f, beamScale = 2.5f, beamLightIntensity = 90f;
+        public Color beamColor = new Color(0.42f, 0.78f, 1f);
         [Tooltip("The walker's glowing panels at rest: this share of their material's colour, and of its glow; and the share of its glow as the beam peaks.")]
         public float panelColorShare = 0.12f, panelGlowAtRest = 0.03f, panelGlowFiring = 0.5f;
 
@@ -145,7 +149,12 @@ namespace Halobellum.UI
             public Color color, glow;
         }
 
-        private readonly Vector3[] _beamPoints = new Vector3[2];
+        private EffectKit _kit;
+        private float _beamEmit;
+        private Vector3 _lastScorch;
+        private Light _mouthLight;
+        private Transform[] _mandibles;
+        private readonly Vector3[] _mandiblePoints = new Vector3[2];
         private WalkerLegs _legs;
         private float _time, _lastWalkerShare;
         private float[] _blastAt;
@@ -156,7 +165,6 @@ namespace Halobellum.UI
         private Vector3[] _hoverRest = Array.Empty<Vector3>();
         private Quaternion[] _hoverTurn = Array.Empty<Quaternion>();
         private GlowingPanel[] _panels;
-        private ParticleSystem[] _impactParts = Array.Empty<ParticleSystem>();
         private MaterialPropertyBlock _panelBlock;
         private float _panelStrength = -1f;
 
@@ -179,6 +187,13 @@ namespace Halobellum.UI
 
         /// <summary>How far the walker's panels have risen toward their firing glow, 0 at rest to 1. For tests.</summary>
         public float PanelStrength => _panelStrength;
+
+        /// <summary>True while the walker's beam fires; how far its charge has come, 0 to 1, while it charges (0 otherwise).</summary>
+        public bool BeamFiring { get; private set; }
+        public float BeamCharge { get; private set; }
+
+        /// <summary>The light inside the walker's mouth (its model's MouthGlow), or null.</summary>
+        public Light MouthLight => _mouthLight;
 
         private void OnEnable()
         {
@@ -244,7 +259,8 @@ namespace Halobellum.UI
                 _hoverRest[i] = hovers[i].position;
                 _hoverTurn[i] = hovers[i].rotation;
             }
-            _impactParts = beamImpact != null ? beamImpact.GetComponentsInChildren<ParticleSystem>(true) : Array.Empty<ParticleSystem>();
+            FindMouth();
+            if (_kit == null && beamFrom != null) _kit = new EffectKit(transform);
             var block = new MaterialPropertyBlock();
             foreach (Figure figure in figures)
             {
@@ -285,7 +301,7 @@ namespace Halobellum.UI
                     _hoverTurn[i] * Quaternion.Euler(Mathf.Sin(time * 0.8f + phase) * 1.2f, 0f, Mathf.Sin(time * 0.67f + phase * 1.3f) * 1.6f));
             }
             Walk(time, delta);
-            FireBeam(time);
+            FireBeam(time, Mathf.Max(0f, delta));
             Storm(time);
             if (view != null)
             {
@@ -363,6 +379,7 @@ namespace Halobellum.UI
         private void OnDestroy()
         {
             if (_black != null) Destroy(_black);
+            _kit?.Destroy();
         }
 
         // ------------------------------------------------------------------ what moves
@@ -450,44 +467,69 @@ namespace Halobellum.UI
             _lastWalkerShare = share;
         }
 
-        private void FireBeam(float time)
+        /// <summary>The walker's mouth glow: its model's MouthGlow light, reaching as far as the model is big, and its Mandible_ places.</summary>
+        private void FindMouth()
         {
-            if (beam == null)
+            if (walkerBody == null || _mouthLight != null) return;
+            Transform left = null, right = null;
+            foreach (Transform node in walkerBody.GetComponentsInChildren<Transform>(true))
+            {
+                if (node.name == "MouthGlow") _mouthLight = node.GetComponent<Light>();
+                else if (node.name == "Mandible_0") left = node;
+                else if (node.name == "Mandible_1") right = node;
+            }
+            if (_mouthLight != null) _mouthLight.range *= walkerBody.lossyScale.x;
+            if (left != null && right != null) _mandibles = new[] { left, right };
+        }
+
+        /// <summary>
+        /// The beam, once each period: a charge (energy swirling into the walker's mouth, which glows green), then the beam itself, its end
+        /// sweeping along the human line, its light on the ground there. Drawn as in battle, bigger as the walker is.
+        /// </summary>
+        private void FireBeam(float time, float delta)
+        {
+            if (beamFrom == null)
             {
                 ShowPanels(0f);
                 return;
             }
-            float cycle = Mathf.Repeat(time - beamStart, Mathf.Max(1f, beamPeriod));
-            bool firing = time >= beamStart && cycle < beamSeconds;
-            if (beam.enabled != firing)
-            {
-                beam.enabled = firing;
-                if (beamLight != null) beamLight.enabled = firing;
-                foreach (ParticleSystem part in _impactParts)
-                {
-                    ParticleSystem.EmissionModule emission = part.emission;
-                    emission.enabled = firing;
-                }
-            }
-            if (!firing)
-            {
-                ShowPanels(0f);
-                return;
-            }
-            // Up quickly, a flicker while it burns, and down again; its end sweeps along the human line.
-            float strength = Mathf.Clamp01(cycle / 0.3f) * Mathf.Clamp01((beamSeconds - cycle) / 0.6f);
+            float cycle = Mathf.Repeat(time - beamStart + beamChargeSeconds, Mathf.Max(1f, beamPeriod));
+            bool begun = time >= beamStart - beamChargeSeconds;
+            BeamCharge = begun && cycle < beamChargeSeconds ? cycle / beamChargeSeconds : 0f;
+            BeamFiring = begun && cycle >= beamChargeSeconds && cycle < beamChargeSeconds + beamSeconds;
+            float into = cycle - beamChargeSeconds;
+            Vector3 from = beamFrom.position;
+            Vector3 to = Vector3.Lerp(beamFromPoint, beamToPoint, BeamFiring ? into / beamSeconds : 0f);
+            float strength = BeamFiring ? Mathf.Clamp01(into / 0.3f) * Mathf.Clamp01((beamSeconds - into) / 0.6f) : 0f;
             float flicker = 0.85f + 0.15f * Mathf.Sin(time * 47f);
-            float width = beamWidth * strength * flicker;
-            beam.startWidth = width;
-            beam.endWidth = width * 1.6f;
-            _beamPoints[0] = beamFrom != null ? beamFrom.position : beamFromPoint;
-            _beamPoints[1] = Vector3.Lerp(beamFromPoint, beamToPoint, cycle / beamSeconds);
-            beam.SetPositions(_beamPoints);
-            if (beamImpact != null) beamImpact.transform.position = _beamPoints[1];
-            ShowPanels(strength);
+
+            // The mouth glows green from the start of the charge, burning as the beam fires.
+            float mouth = BeamFiring ? 0.9f + 0.1f * Mathf.Sin(time * 31f) : BeamCharge > 0f ? 0.25f + 0.75f * BeamCharge : 0f;
+            Vector3[] mandibles = null;
+            if (_mouthLight != null)
+            {
+                _mouthLight.enabled = mouth > 0.01f;
+                _mouthLight.intensity = mouth * 9f;
+            }
+            if (_mandibles != null)
+            {
+                _mandiblePoints[0] = _mandibles[0].position;
+                _mandiblePoints[1] = _mandibles[1].position;
+                mandibles = _mandiblePoints;
+            }
+
+            if (_kit != null)
+            {
+                _kit.BeginFrame(1f, delta, delta);
+                if (BeamFiring) BeamDrawing.Fire(_kit, from, to, beamRadius * beamScale, beamWidth, beamColor, beamScale, time, delta, ref _beamEmit, ref _lastScorch, mandibles);
+                else if (BeamCharge > 0f) BeamDrawing.Charge(_kit, from, to, BeamCharge, beamRadius * beamScale, beamColor, beamScale, time, delta, ref _beamEmit, mandibles);
+                _kit.EndFrame();
+            }
+            ShowPanels(BeamFiring ? strength : BeamCharge * 0.4f);
             if (beamLight != null)
             {
-                beamLight.transform.position = _beamPoints[1] + Vector3.up * 8f;
+                beamLight.enabled = BeamFiring;
+                beamLight.transform.position = to + Vector3.up * 8f;
                 beamLight.intensity = beamLightIntensity * strength * flicker;
             }
         }

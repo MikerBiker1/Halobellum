@@ -2,6 +2,14 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The Mantis animated, the Scarab's beam, drivers in the vehicles (D97, D98, D99)
+- **The Mantis (D97)** walks now, heavily, each foot planted, the hips dropping onto it, the arms swinging a little; it raises both arms to fire, the chaingun shuddering with every round and the rocket arm kicking as a rocket leaves, and falls flat on its chest when it dies. Its rockets leave its left arm now, its rounds its right.
+- **The Scarab (D98)** gathers its shot: energy spirals into its mouth, arcs coil in and a ring of light closes round it, then the beam fires, wound with turning coils of energy, pulses running down it, sparks peeling off; its mouth glows green inside meanwhile, the hollows either side of the cannon lit. The menu's Scarab fires the same way.
+- **Drivers (D99):** a Marine at the wheel and the gun of each Warthog, a Grunt on the Ghost, a Brute in the Marauder's hatch and on the Chopper, a Marine in the Elephant's cupola, Combat Forms in the infested Warthog and Ghost. Closed vehicles have nobody to see.
+- **Menu:** the Mantises animated and firing, the Scarab's charge and beam as in battle, drivers in the vehicles (none in the wrecks). Pictures: `Docs/M10/vehicles_d97_d99.jpg`.
+- **Checked:** new tests (the Mantis's body, its two muzzles and its clip lengths; the Scarab's mouth light and glowing sides; the beam's strands; every crewed vehicle's soldiers and none in the closed ones; a gunner turning with its gun), the menu tests, and pictures in the test game (the Mantis walking and firing, the Scarab charging and firing, every crewed vehicle).
+- **Not checked:** played by hand; balance (nothing in the battle changed).
+
 ## The version: 0.378.0 and on (D102)
 - **In the game:** the menu shows Version 0.378.0. Each push now raises it: the last number for a small change, the middle one for a substantial one (the last back to 0). The first is yours.
 - **How:** `python Tools/version.py patch` or `minor`, in the same commit; the other session knows the rule too.

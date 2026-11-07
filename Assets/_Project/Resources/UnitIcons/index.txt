@@ -65,7 +65,7 @@ Elephant	model
 Flamethrower Trooper	baked
 Gauss Warthog	model
 Hornet	model
-Mantis	model
+Mantis	baked
 Marine	baked
 Pelican	model
 Scorpion	model

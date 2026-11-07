@@ -4,7 +4,7 @@
 // effects use it. Particles run on battle time, so they pause and speed up with the battle.
 // Some things are redrawn every frame instead, from whatever the simulation says now: "heads" (a shell in flight), flat "ground heads"
 // (the burning spot of a beam), "cloud puffs" (a nuke's cloud, which holds a shape no flying particle could), lines and strands (a line
-// through many points: the swirls and coils of a Scarab's beam, D97) (beams, lasers,
+// through many points: the swirls and coils of a Scarab's beam, D98) (beams, lasers,
 // lightning), which are a pool of LineRenderers.
 // EffectBudget decides what may still start; its limits are per layer. Nothing in here knows what a weapon or a unit is.
 // High quality has more dust than Low. The quality can change in the middle of a battle (the pause menu) while a layer's size is fixed when
@@ -114,6 +114,9 @@ namespace Halobellum.Presentation
 
         /// <summary>The most dust the layer may hold now (for tests).</summary>
         public int DustLimit => _dust.Max;
+
+        /// <summary>How many strands were drawn last frame (for tests).</summary>
+        public int StrandsShown => _strandsShown;
 
         /// <summary>How many puffs of dust are in the air now (for the benchmark).</summary>
         public int LiveDust => _dust.System.particleCount;

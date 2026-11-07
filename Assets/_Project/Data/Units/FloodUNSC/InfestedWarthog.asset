@@ -122,6 +122,7 @@ MonoBehaviour:
   leapRange: 0
   leapSpeed: 0
   leapCooldownSeconds: 0
+  leapCharges: 0
   techUpgrades:
   - {fileID: 11400000, guid: 0491c62bff0608b3d139447a500b6400, type: 2}
   - {fileID: 11400000, guid: 47960055afaaedbfc2e44cef08e20caf, type: 2}

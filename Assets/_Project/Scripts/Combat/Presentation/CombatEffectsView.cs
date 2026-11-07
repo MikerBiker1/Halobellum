@@ -6,7 +6,7 @@
 //   - shots the simulation hits with at once still appear to fly for a moment, and their impact comes when they arrive;
 //   - projectiles at their real place in flight, in an arc if they are lobbed, blended between ticks as bodies are, with trails laid by
 //     distance where the look asks for one, and a blast as wide as their splash where they land;
-//   - beams (BeamDrawing, D97): energy swirling into the mouth while charging, then a thick beam wound with coils of energy and pulses
+//   - beams (BeamDrawing, D98): energy swirling into the mouth while charging, then a thick beam wound with coils of energy and pulses
 //     running down it to a burning spot that throws sparks and scorches the ground; a Scarab's mouth glows green inside meanwhile;
 //   - a weapon winding up its shot (the Spartan Laser): light gathering at its muzzle, growing until the shot goes;
 //   - dust behind moving ground units, more of it on High quality; a walker's (the Scarab's, D84) where each foot comes down instead;
@@ -541,7 +541,7 @@ namespace Halobellum.Presentation
             }
         }
 
-        /// <summary>A Scarab's mouth glows green inside as it charges and fires (D97): its light, at this strength. Gives its mandibles' places, or null.</summary>
+        /// <summary>A Scarab's mouth glows green inside as it charges and fires (D98): its light, at this strength. Gives its mandibles' places, or null.</summary>
         private Vector3[] GlowMouth(SimUnit attacker, float strength)
         {
             if (!_units.TryMouth(attacker, out Light light, _mandibles)) return null;

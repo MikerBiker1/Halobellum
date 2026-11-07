@@ -302,6 +302,13 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 161. **The five shots** (Vista, Line, Covenant, Flood, Titan, 10 to 11 seconds each): any to cut, lengthen, reorder or reframe? The Scarab walks the field once a loop and fires twice, in the Line and Titan shots.
 162. **Vehicles only now**, as you asked: no soldiers or Flood forms, the guns firing half as often. The Flood is only its infested vehicles and growths. If it now feels too quiet, or you'd like the big Flood forms (the Abomination, Pure Forms) back just standing, say so.
 
+## The Mantis, the Scarab's beam and the drivers (D97, D98, D99)
+
+163. **The Mantis's walk** is slow and heavy (a stride every 1.6 s at its 1.5 m/s). Heavier, lighter, or more swagger?
+164. **The Scarab's mouth** glows green from inside (a light and the two hollows either side of the cannon). If you meant other parts by the mandibles (the front plates over the legs, say), tell me which and I'll light those.
+165. **No pilot in the Hornet:** its canopy is opaque in the game, so its seat can't be seen. I can make the canopy see-through and seat a Marine (and a Combat Form in the infested one) if you'd like.
+166. **Who drives the Flood's vehicles:** Combat Forms in all of them. A Grunt Combat Form in the infested Ghost instead? There's no Grunt Combat Form model yet.
+
 ## Things my test runs did to your PC
 
 - **Windows moving, and possibly music:** while the Screen setting was being checked, a test window moved across all three of your screens and briefly went fullscreen on each. Some of those runs weren't silent, so menu music may have played for about 25 seconds at a time. Those checks have finished.

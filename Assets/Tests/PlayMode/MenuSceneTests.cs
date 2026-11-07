@@ -192,7 +192,8 @@ namespace Halobellum.Tests
             Assert.AreSame(Camera.main, cinematic.view);
             Assert.IsNull(PauseMenu.Current, "The menu has no battle to pause.");
             Assert.GreaterOrEqual(cinematic.shots.Length, 4, "Several shots.");
-            Assert.AreEqual(0, cinematic.figures.Length, "Vehicles only: no soldiers or Flood forms (the owner, D94).");
+            Assert.AreEqual(2, cinematic.figures.Length, "Vehicles only: no soldiers or Flood forms (the owner, D94); its animated bodies are its two Mantises (D97).");
+            foreach (MenuCinematic.Figure figure in cinematic.figures) Assert.AreEqual("Mantis", figure.renderer.name);
             Assert.Greater(cinematic.marchers.Length, 6, "Vehicles racing across the field.");
             Assert.Greater(cinematic.flyers.Length, 8, "Aircraft.");
             Assert.Greater(cinematic.blasts.Length, 2, "Blasts.");
@@ -249,15 +250,20 @@ namespace Halobellum.Tests
             Assert.IsNotNull(cinematic.Walker, "The Scarab has its walking legs.");
 
             Vector3 before = cinematic.walkerRoot.position;
-            cinematic.Advance(cinematic.beamStart + 1f - cinematic.Clock);
+            cinematic.Advance(cinematic.beamStart - cinematic.beamChargeSeconds * 0.5f - cinematic.Clock);
+            Assert.That(cinematic.BeamCharge, Is.InRange(0.3f, 0.7f), "It charges first, energy gathering in its mouth (D98).");
+            Assert.IsFalse(cinematic.BeamFiring);
+            Assert.IsNotNull(cinematic.MouthLight, "Its mouth has its light.");
+            Assert.IsTrue(cinematic.MouthLight.enabled, "Its mouth glows green as it charges.");
+            cinematic.Advance(cinematic.beamChargeSeconds * 0.5f + 1f);
             yield return null;
             Assert.Greater(Vector3.Distance(before, cinematic.walkerRoot.position), 3f, "It walks across the field.");
-            Assert.IsTrue(cinematic.beam.enabled, "Its beam fires.");
-            Assert.AreEqual(cinematic.beamFrom.position, cinematic.beam.GetPosition(0), "From its gun.");
+            Assert.IsTrue(cinematic.BeamFiring, "Its beam fires.");
             Assert.AreEqual(1f, cinematic.PanelStrength, 1e-3f, "Its panels glow as it fires.");
-            float half = cinematic.beamPeriod * 0.5f;
-            cinematic.Advance(half);
-            Assert.IsFalse(cinematic.beam.enabled, "And stops.");
+            cinematic.Advance(cinematic.beamPeriod * 0.5f);
+            Assert.IsFalse(cinematic.BeamFiring, "And stops.");
+            Assert.AreEqual(0f, cinematic.BeamCharge);
+            Assert.IsFalse(cinematic.MouthLight.enabled, "Its mouth goes dark.");
             Assert.AreEqual(0f, cinematic.PanelStrength);
         }
 

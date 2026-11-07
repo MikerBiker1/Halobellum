@@ -1,5 +1,5 @@
 // BeamDrawing.cs
-// How a great beam looks (D97): the Scarab's focus beam in battle (CombatEffectsView) and in the main menu (MenuCinematic) are drawn by the
+// How a great beam looks (D98): the Scarab's focus beam in battle (CombatEffectsView) and in the main menu (MenuCinematic) are drawn by the
 // same code, through an EffectKit. All of it is worked out from the clock each frame, so it costs no objects and nothing is left behind.
 //   Charging: energy gathers at the mouth. Motes of light spiral in from all round, faster as the charge builds, each with a short tail;
 //   three arcs of energy coil in toward it; a ring of light closes round it; the glow at its heart swells and brightens to white, green
@@ -151,9 +151,10 @@ namespace Halobellum.Presentation
             kit.Line(from, to, width * 1.8f * pulse * read, Alpha(color, 0.9f));
             kit.Line(from, to, width * 0.75f * pulse * read, new Color(0.92f, 0.98f, 1f, 1f));
 
-            // Three coils of energy winding round it, turning as they go, a little wider near the mouth.
-            int count = Mathf.Clamp(Mathf.RoundToInt(length / 1.2f), 12, EffectKit.StrandPoints);
-            float turns = length / 7f;
+            // Three coils of energy winding round it, turning as they go, a little wider near the mouth. A turn every 7 m, or longer on a long
+            // beam, so that each turn has a dozen points and stays round.
+            int count = EffectKit.StrandPoints;
+            float turns = length / Mathf.Max(7f, length * 12f / (count - 1));
             for (int s = 0; s < 3; s++)
             {
                 float start = s * Mathf.PI * 2f / 3f - time * 9f;

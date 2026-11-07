@@ -81,7 +81,7 @@ namespace Halobellum.Units
         public Vector3 shieldOffset;
         [Tooltip("With no weapon of its own: shots start where this bone is at the shot moment of the shooting clip (the Pure Form Ranged's spines, the Spawner's maw, D90). Empty for none.")]
         public string muzzleBone;
-        [Tooltip("Where its second weapon's shots start, a bone as muzzleBone is, when the two are far apart (the Mantis's rocket pod on its other arm, D96). Empty: they start where the first weapon's do.")]
+        [Tooltip("Where its second weapon's shots start, a bone as muzzleBone is, when the two are far apart (the Mantis's rocket pod on its other arm, D97). Empty: they start where the first weapon's do.")]
         public string secondMuzzleBone;
         [Tooltip("See-through where its texture's alpha is under a half: a Flood form's fronds (D90).")]
         public bool cutout;

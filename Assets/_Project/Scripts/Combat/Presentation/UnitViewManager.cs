@@ -89,7 +89,7 @@ namespace Halobellum.Presentation
             public float ModelTop;
             /// <summary>What its real model's nodes do, or null if it has none (D45).</summary>
             public ModelParts Parts;
-            /// <summary>A Scarab's mouth (D97): the green light inside it and the two places its sides glow from, if its model has them.</summary>
+            /// <summary>A Scarab's mouth (D98): the green light inside it and the two places its sides glow from, if its model has them.</summary>
             public Light MouthLight;
             public Transform[] Mandibles;
             /// <summary>The same for each tiny form of a pack.</summary>
@@ -231,7 +231,7 @@ namespace Halobellum.Presentation
         /// <summary>A walker's legs (the Scarab's, D84), or null. For the picture tools.</summary>
         public WalkerLegs WalkerOf(SimUnit unit) => unit.Id >= 0 && unit.Id < _views.Count ? _views[unit.Id].Parts?.Walker : null;
 
-        /// <summary>A model's mouth glow, its nodes MouthGlow (with a Light) and Mandible_0 and _1 (RealModelBuilder, D97), if it has them.</summary>
+        /// <summary>A model's mouth glow, its nodes MouthGlow (with a Light) and Mandible_0 and _1 (RealModelBuilder, D98), if it has them.</summary>
         private static void FindMouth(View view, Transform body)
         {
             Transform left = null, right = null;
@@ -245,7 +245,7 @@ namespace Halobellum.Presentation
         }
 
         /// <summary>
-        /// A Scarab's mouth (D97): the light inside it, and where its two sides glow, written into mandibles (two places). False if its model
+        /// A Scarab's mouth (D98): the light inside it, and where its two sides glow, written into mandibles (two places). False if its model
         /// has no mouth glow.
         /// </summary>
         public bool TryMouth(SimUnit unit, out Light light, Vector3[] mandibles)
@@ -273,7 +273,7 @@ namespace Halobellum.Presentation
             if (view.Baked == null) return false;
             if (weapon == 1 && view.Baked.hasSecondMuzzle)
             {
-                position = view.BakedRenderer.transform.TransformPoint(view.Baked.secondMuzzle); // Its second weapon on another limb (the Mantis's rockets, D96).
+                position = view.BakedRenderer.transform.TransformPoint(view.Baked.secondMuzzle); // Its second weapon on another limb (the Mantis's rockets, D97).
                 return true;
             }
             if (!view.Baked.hasMuzzle) return false;
