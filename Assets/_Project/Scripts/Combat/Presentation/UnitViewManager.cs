@@ -348,7 +348,7 @@ namespace Halobellum.Presentation
 
         /// <summary>
         /// For a clip that keeps time with the battle (D90): the pace it plays at and when it started, so that its moment comes with the next
-        /// strike of the body's main weapon (a shooting clip with a shot moment) or with its next spawn (a body with a spawn moment, in its moving
+        /// strike of the body's main weapon (a shooting or close-in clip with a shot moment: the Combat Form's swipes, D92) or with its next spawn (a body with a spawn moment, in its moving
         /// and shooting clips), and how far apart those come (beat). A clip as long as several strikes lands one blow on each. False for a clip
         /// that simply loops, before the battle starts, or while the weapon is ready but holding fire.
         /// </summary>
@@ -367,7 +367,7 @@ namespace Halobellum.Presentation
                 beat = unit.Stats.SpawnIntervalSeconds;
                 untilNext = unit.NextSpawnAt - _shown.ElapsedSeconds;
             }
-            else if (body.shotMoment >= 0f && clip.role == BakedAnimation.Shooting && unit.Weapons.Length > 0)
+            else if (body.shotMoment >= 0f && (clip.role == BakedAnimation.Shooting || clip.role == BakedAnimation.Melee) && unit.Weapons.Length > 0)
             {
                 SimWeapon weapon = unit.Weapons[unit.MainWeaponIndex];
                 if (weapon.Cooldown <= 0f) return false;

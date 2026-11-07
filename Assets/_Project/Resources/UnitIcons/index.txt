@@ -25,7 +25,7 @@ Wraith	model
 Zealot	baked
 Flood Abomination	baked
 Carrier Form	model
-Combat Form	model
+Combat Form	baked
 Infected Pelican	model
 Infected Phantom	model
 Infection Forms	model
@@ -35,7 +35,7 @@ Seeder	model
 Stalker Form	baked
 Swarm Form	model
 Infested Banshee	model
-Infested Elite	model
+Infested Elite	baked
 Infested Ghost	model
 Infested Grunt	baked
 Infested Wraith	model

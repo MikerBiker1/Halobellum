@@ -126,7 +126,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8d1ef3775e2b630ea3c2e6a961b8b9dc, type: 2}
   prefab: {fileID: 1961926921383704602, guid: 5fac7c0df6a6aef45ae47063e661e92f, type: 3}
   keepsOwnMaterials: 1
-  bakedBody: {fileID: 0}
+  bakedBody: {fileID: 11400000, guid: 01371b5a662c4fd889c3c832ff028dfa, type: 2}
   bakedTint: {r: 1, g: 1, b: 1, a: 0}
   bakedScale: 1
   strongAgainst: Tanks, heavy units

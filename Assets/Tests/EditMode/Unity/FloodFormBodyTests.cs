@@ -3,6 +3,8 @@
 // has its baked body with its clips, each clip as long as the battle beat it keeps time with (the Stalker's three blows to three strikes of
 // its Talons, the Ranged Form's shot to its reload, the Spawner's walk and lash to its spawns), the fronds cut out, the Ranged Form's shard
 // leaving from the top of its column at the end of its thrust, and every one of the Spawner's tendrils with bones of its own.
+// The Combat Form and the Infested Elite (D92), one model rigged the same way: each walks at its own pace, swipes with claw and whips one
+// blow a strike, the Combat Form shooting from its claw and the Elite from the plasma rifle in its right hand.
 // Depends on: Halobellum.Units, Halobellum.Core, NUnit, UnityEditor (loading the assets).
 
 using System.Linq;
@@ -77,9 +79,44 @@ namespace Halobellum.Tests
             Assert.IsTrue(rig.Any(t => t.name == "Belly_0") && rig.Any(t => t.name == "Belly_1"), "Its belly has bones to heave with.");
         }
 
+        [TestCase("Flood/CombatForm", "CombatForm", 2.4f)]
+        [TestCase("FloodCovenant/InfestedElite", "InfestedElite", 2.0f)]
+        public void TheCombatFormsModel_WalksSwipesAndShoots_ForBothUnits(string unitPath, string bodyName, float speed)
+        {
+            (UnitDefinition unit, BakedBodyDefinition body) = Load(unitPath, bodyName);
+            UnitStats stats = unit.ToStats();
+            Assert.AreEqual(speed, stats.MoveSpeed, 0.001f, "Its walk is made for this speed.");
+            Assert.AreEqual("CombatFormAnimated", body.modelFolder, "Both share one rigged model.");
+            Assert.IsNotNull(body.Clip(BakedAnimation.Melee), "It swipes up close.");
+            Assert.AreEqual(DamageType.Melee, stats.Weapons[0].DamageType, "The claw leads, so the swipe plays in a fight.");
+            // Two blows to the swipe: as long as two strikes of the claw, give or take the pace the game keeps (the Elite's claw is a little faster).
+            float swipe = Seconds(body, BakedAnimation.Melee);
+            Assert.AreEqual(2, Mathf.RoundToInt(swipe / stats.Weapons[0].FireInterval));
+            Assert.AreEqual(3f * stats.Weapons[1].FireInterval, Seconds(body, BakedAnimation.Shooting), 0.04f, "Three shots of its gun to a clip.");
+            Assert.That(body.shotMoment, Is.InRange(0f, 0.5f));
+            Assert.IsTrue(body.cutout, "The fronds on its stalks are see-through.");
+            Assert.IsTrue(body.hasMuzzle);
+            Assert.Greater(body.muzzle.z, 0.5f, "Its shots leave ahead of it.");
+            Assert.Greater(body.muzzle.y, 1.2f, "From the arm held out, not its feet.");
+        }
+
+        [Test]
+        public void TheInfestedElite_HoldsItsPlasmaRifle_TheCombatFormItsClaw()
+        {
+            var elite = Resources.Load<BakedBodyDefinition>("BakedBodies/InfestedElite");
+            var form = Resources.Load<BakedBodyDefinition>("BakedBodies/CombatForm");
+            Assert.AreEqual("Weapon_PlasmaRifle", elite.weaponName);
+            Assert.IsTrue(elite.weaponAlongForearm, "Held in the right hand along the forearm.");
+            Assert.Greater(elite.mesh.vertexCount, form.mesh.vertexCount, "The rifle is merged into its mesh.");
+            Assert.IsEmpty(form.weaponName);
+            Assert.AreEqual("Muzzle", form.muzzleBone, "The Combat Form shoots from its claw.");
+            Assert.AreNotEqual(elite.movingClip, form.movingClip, "The Elite walks slower, its rifle carried forward.");
+        }
+
         [TestCase("StalkerForm")]
         [TestCase("PureFormRanged")]
         [TestCase("Spawner")]
+        [TestCase("CombatForm")]
         public void ACreatureRig_StandsOnAStillRoot(string body)
         {
             // creature_rig.py's convention: Root, still, over Body, which sways; the baker measures drift by Root, so the sway stays.

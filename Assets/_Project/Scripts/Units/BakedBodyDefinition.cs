@@ -89,7 +89,7 @@ namespace Halobellum.Units
         public float transitionSeconds = 0.2f;
         [Tooltip("Battle seconds a body stays on the field from the moment it dies, with its fall.")]
         public float corpseSeconds = 14f;
-        [Tooltip("The share of the shooting clip at which a shot leaves or a blow lands. The clip is then timed so that this moment comes with each of its main weapon's strikes, played a little faster or slower to keep pace; a clip as long as several strikes lands one blow on each, the others a whole number of strikes after this one (D90). Below 0: it simply loops.")]
+        [Tooltip("The share of the shooting clip (and of the close-in clip, if it has one: the Combat Form's swipes, D92) at which a shot leaves or a blow lands. The clip is then timed so that this moment comes with each of its main weapon's strikes, played a little faster or slower to keep pace; a clip as long as several strikes lands one blow on each, the others a whole number of strikes after this one (D90). Below 0: it simply loops.")]
         public float shotMoment = -1f;
         [Tooltip("The share of the moving and shooting clips at which it gives birth. They are then timed so that this moment comes with each of its spawns (the Spawner's belly heaving, D90). Below 0: they simply loop.")]
         public float spawnMoment = -1f;

@@ -248,9 +248,12 @@ namespace Halobellum.Tests
         public void InfestedElite_IsTheCombatForm_HoldingAPlasmaRifle_AndShootsFromItsTip()
         {
             // The owner, 2026-11-07 (D82): the Infested Elite is the Combat Form; it was the Elite's body washed green. And it holds its plasma rifle.
+            // Since D92 both are animated from the Combat Form's rigged model, the Elite's with the rifle merged in; the static prefab stays as a fallback.
             var elite = AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/FloodCovenant/InfestedElite.asset");
             var form = AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/Flood/CombatForm.asset");
-            Assert.IsNull(elite.bakedBody, "No longer the Elite's baked body.");
+            Assert.AreEqual("CombatFormAnimated", elite.bakedBody.modelFolder, "Not the Elite's body: the Combat Form's.");
+            Assert.AreEqual(form.bakedBody.modelFolder, elite.bakedBody.modelFolder);
+            Assert.AreEqual("Weapon_PlasmaRifle", elite.bakedBody.weaponName);
             Assert.IsTrue(elite.keepsOwnMaterials);
             Assert.AreEqual(form.prefab.GetComponentsInChildren<MeshFilter>().Sum(f => f.sharedMesh.triangles.Length),
                 elite.prefab.GetComponentsInChildren<MeshFilter>().Where(f => !IsExtra(f.GetComponent<MeshRenderer>())).Sum(f => f.sharedMesh.triangles.Length), "The Combat Form's model.");

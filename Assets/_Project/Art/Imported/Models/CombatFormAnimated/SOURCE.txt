@@ -1,0 +1,7 @@
+Source: given by the project owner, file Meshy/halo_ce_flood_Combat_form.glb in Art_Source. Where it came from before that is not recorded.
+Prepared by Tools/Art/units/CombatFormAnimated.py.
+The repository is private and must stay private.
+Title in the file: Halo Ce Flood Elite Form
+Author in the file: marcosacevez57 (https://sketchfab.com/marcosacevez57)
+Licence in the file: CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+Page in the file: https://sketchfab.com/3d-models/halo-ce-flood-elite-form-e0de438070fd4bfca417939b7408962e

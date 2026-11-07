@@ -42,12 +42,13 @@ _c = {"name": None, "folder": None, "mesh": None, "arm": None, "fps": 30, "sourc
 
 # ---- Loading ----
 
-def load(name, static, source, height=None, length=None, lift=(1.0, 1.0, 1.0), fps=30):
+def load(name, static, source, height=None, length=None, lift=(1.0, 1.0, 1.0), fps=30, yaw=0.0):
     """
     Empties Blender and loads Art_Source/Prepared/<static>/<static>.fbx, the creature as its static preparation left it, as one mesh "Body":
     stood on the ground, centred, and scaled to its height (or its longest side across the ground) in the game. Its textures become one,
     stacked if it has several, each multiplied by lift (the static model's colour over its texture, as RealModelBuilder set it).
-    source is the original file, for the credits.
+    yaw turns it about the vertical first, in degrees (the Combat Form came out of its preparation facing backwards). source is the
+    original file, for the credits.
     """
     bpy.ops.wm.read_factory_settings(use_empty=True)
     folder = os.path.join(mt.PREPARED, name)
@@ -76,6 +77,9 @@ def load(name, static, source, height=None, length=None, lift=(1.0, 1.0, 1.0), f
     mesh.name = "Body"
     mesh.data.name = "Body"
 
+    if yaw:
+        mesh.data.transform(Matrix.Rotation(math.radians(yaw), 4, "Z"))
+        mesh.data.update()
     low, high = mt._bounds([mesh])
     span = high - low
     factor = height / span.z if height else length / max(span.x, span.y)
