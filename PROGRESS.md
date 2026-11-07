@@ -174,6 +174,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] The Brute Grenadier swings its Brute Shot when it cuts (D89)
 - [x] The Spawner, the Pure Form Ranged and the Stalker Form animated limb by limb: a lumbering walk and a heaving belly timed to its spawns, a lopsided crawl and a recoil-and-thrust shot, a low run and lunges on its strikes (D90)
 - [x] The owner's third batch of sounds; the Hunter Captain's laser a held 1 s green beam (D91)
+- [x] The Combat Form and the Infested Elite animated limb by limb: a lurching run, claw-and-whip swipes on their strikes, the Elite's plasma rifle in hand (D92)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

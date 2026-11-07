@@ -2,6 +2,11 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The Combat Form and the Infested Elite animated (D92)
+- **In the game:** both move limb by limb now. They run hunched and lurching, the head hanging off the back lolling, the three whips of the left arm swinging, the feelers on the chest bobbing; up close they slash with the right claw, then lash down with the whips, a blow on each strike; the Infested Elite carries its plasma rifle forward and fires it from the right hand, the Combat Form fires from its claw; they die dropping to their knees and onto their faces. Their cards show them firing. Pictures: `Docs/M10/combat_d92_clips.jpg`, `combat_d92_game.jpg`, `combat_d92_icons.jpg`.
+- **Checked:** new tests for both bodies (clips, speeds, the rifle, the shots' start); the body, icon and real-model tests (one expectation from D82 updated: the Elite now has the Combat Form's animated body); the Sandbox timing test; both in the test game.
+- **Not checked:** balance (nothing in the battle changed); not played by hand.
+
 ## Your new sounds and the Hunter Captain's laser (D91)
 - **In the game:** all 20 of your files are in: deaths for humans, Spartans, Elites, Grunts, Jackals, the Brute and the Hunters; the Flood's by size; the Flood's leap and three blows; the Hunter's charge and bash; level up, spell placed and an item put in a hexagon. The Hunter Captain's laser is a 1 s green beam with your sound, drawn as a thin laser.
 - **Balance:** the laser deals what it did (96 a second, now 10 hits over a second, then a second's rest), still heals the Captain, and stops when it bashes. No tournament, as you said.

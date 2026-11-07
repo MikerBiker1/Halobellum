@@ -281,6 +281,11 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 150. **The Flood by size:** a form or infested soldier (and the Swarm Form) small, a creature or taken vehicle 1 to 3 m across big, the Abomination and the Juggernaut huge. Taken aircraft still crash as aircraft.
 151. **The laser's numbers:** 10 hits of 19.5 over 1 s, then 1 s of rest, for the old 96 a second. Your sound runs about 1.4 s, a little longer than the beam.
 
+## The Combat Form and the Infested Elite (D92)
+
+152. **One body for both, as before:** the Infested Elite is the animated Combat Form with its plasma rifle. Its walk is slower (its speed), carrying the rifle forward. Anything about the shamble, the swipe or the fall you'd change?
+153. **What you see in a fight is the swipe:** both lead with their claw, so they shoot while closing in (in their walk) and swipe up close; the firing pose shows only on their cards. Should they stop to shoot instead? That would be a battle change.
+
 ## Things my test runs did to your PC
 
 - **Windows moving, and possibly music:** while the Screen setting was being checked, a test window moved across all three of your screens and briefly went fullscreen on each. Some of those runs weren't silent, so menu music may have played for about 25 seconds at a time. Those checks have finished.
