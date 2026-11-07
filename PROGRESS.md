@@ -178,6 +178,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] The Seeder, the Pure Form Tank and the Abomination animated: a floating Seeder with waving tendrils that falls dead from the sky, a Tank on legs and club with a sweeping blow, the Abomination's heavy steps, overhead slam and tentacle whip (D93)
 - [x] The main menu remade as a cinematic battlefield: the three sides' vehicles at war under a storm, five camera shots fading into one another, the Scarab walking and firing its beam; the old menu kept as Classic in Settings (D94)
 - [x] Hard AI tournament after the animations: every sub-faction 48% to 52%, no change (D95)
+- [x] The owner's disclaimer before the main menu (D96)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

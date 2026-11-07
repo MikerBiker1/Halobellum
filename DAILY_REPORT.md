@@ -2,6 +2,11 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Your disclaimer before the main menu (D96)
+- **In the game:** when the game starts, your disclaimer shows first: white on black, your words as given, and a glowing "Click anywhere to continue". A click or a key goes on to the menu, which fades in; the Microsoft link opens in the browser. It shows once per start.
+- **Checked:** new tests (the words in order; shown for a player, not in tests or picture runs) and the menu tests; pictures at 1600x900 and 1024x768 (`Docs/M10/disclaimer_d96.png`).
+- **Not checked:** clicking through it by hand.
+
 ## The cinematic main menu (D94)
 - **In the game:** the main menu is now a battle of the three sides' vehicles under a storm at dusk, in five slow camera shots that fade into one another, 52 seconds round: the whole field from high up; low along the human line as its tanks fire; among the Covenant's Wraiths and Ghosts behind the striding Scarab; on the Flood's creep, its infested Wraith among the growths; and up at the Scarab as it sweeps the field with its beam. Tank shells and Wraith mortars burst now and then, wrecks burn, lightning strikes, an alien warship glasses the hills far off. **After your look:** no soldiers or Flood forms any more, and far fewer shots in the air. The menu's text sits on the dark left as before; every shot keeps its action on the right. Pictures: `Docs/M10/menu_d94_shots.jpg`; `menu_d94_game.jpg` is the first version in the test game.
 - **Your old menu is kept:** Settings > Menu background > Classic brings it back (and Cinematic goes back to the new one).

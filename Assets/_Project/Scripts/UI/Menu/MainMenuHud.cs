@@ -1,10 +1,11 @@
 // MainMenuHud.cs
 // The main menu's screen (M10), in the MainMenu scene over MenuBackdrop's picture: the title, and two pages of buttons. The first has Play, Settings and Quit.
 // Play's page has Faction mode, Unlock Skirmish mode, Sandbox and Back: a chosen mode shows a panel on the right with its settings and Start, and the Sandbox leaves at once.
+// The first time it shows after the game starts, the owner's disclaimer (Disclaimer, D96) comes first, and the menu fades in once it is clicked away.
 // It fades in from black and fades out before a scene change. Esc steps back: the card list, then Play's page, and it closes Settings. It scales to any window (HudScale.ApplyFit).
 // Difficulty and base health are remembered (GameSettings). The card filter starts at All cards each time this screen loads, and no mode is chosen.
 // The buttons call plain public methods, which a batch run's tests can call too, since a batch run draws no IMGUI.
-// Depends on: GameFlow, GameSettings, MenuStyle, SettingsScreen, Halobellum.Economy, Unity Input System.
+// Depends on: Disclaimer, GameFlow, GameSettings, MenuStyle, SettingsScreen, Halobellum.Economy, Unity Input System.
 
 using System;
 using Halobellum.Economy;
@@ -134,8 +135,15 @@ namespace Halobellum.UI
 
         private void Start() => _shownAt = Time.unscaledTime;
 
+        private float _pictureAt = -1f;
+
         private void Update()
         {
+            if (Disclaimer.Pending)
+            {
+                TakeDisclaimerPicture();
+                return; // Its own clicks and keys go on to the menu (OnGUI).
+            }
             if (_leaving != null && Time.unscaledTime - _leavingAt >= FadeOutSeconds)
             {
                 Action leave = _leaving;
@@ -146,6 +154,23 @@ namespace Halobellum.UI
             Keyboard keyboard = Keyboard.current;
             if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) HandleEscape();
         }
+
+        /// <summary>With -disclaimerPicture &lt;png&gt;: a picture of the disclaimer after a moment, then the game quits.</summary>
+        private void TakeDisclaimerPicture()
+        {
+            string[] args = Environment.GetCommandLineArgs();
+            int at = Array.IndexOf(args, "-disclaimerPicture");
+            if (at < 0 || at + 1 >= args.Length) return;
+            if (_pictureAt < 0f) _pictureAt = Time.unscaledTime + 2f;
+            else if (_pictureAt > 0f && Time.unscaledTime >= _pictureAt)
+            {
+                ScreenCapture.CaptureScreenshot(args[at + 1]);
+                _pictureAt = 0f;
+                Invoke(nameof(QuitAfterPicture), 1f);
+            }
+        }
+
+        private void QuitAfterPicture() => Application.Quit();
 
         private void CloseSettings()
         {
@@ -172,6 +197,15 @@ namespace Halobellum.UI
         {
             float width = HudScale.ScaledWidth(scale), height = HudScale.ScaledHeight(scale);
 
+            if (Disclaimer.Pending)
+            {
+                if (Disclaimer.Draw(width, height))
+                {
+                    Disclaimer.Pending = false;
+                    _shownAt = Time.unscaledTime; // The menu fades in from the black.
+                }
+                return;
+            }
             if (_showSettings)
             {
                 MenuStyle.Fill(new Rect(0f, 0f, width, height), new Color(0f, 0f, 0f, 0.35f));
