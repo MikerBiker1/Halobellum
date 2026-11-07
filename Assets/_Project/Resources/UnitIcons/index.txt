@@ -35,7 +35,7 @@ Seeder	model
 Stalker Form	model
 Swarm Form	model
 Infested Banshee	model
-Infested Elite	baked
+Infested Elite	model
 Infested Ghost	model
 Infested Grunt	baked
 Infested Wraith	model

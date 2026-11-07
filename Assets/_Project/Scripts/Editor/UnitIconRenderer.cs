@@ -4,7 +4,9 @@
 //   Menu:          Halobellum > Art > Render Unit Icons
 //   Command line:  -executeMethod Halobellum.EditorTools.UnitIconRenderer.RenderAllFromCommandLine
 // It goes through every UnitDefinition asset:
-//   - a baked body (the Marine, the Grunts): its baked mesh through Halobellum/BakedCrowd, held on its still frame;
+//   - a baked body (the Marine, the Grunts): its baked mesh through Halobellum/BakedCrowd, held halfway through its shooting clip, aiming
+//     and firing (the owner, D85; it was its standing frame). That is the moment the baker lines its weapon up between the hands, so the
+//     weapon sits right. A body whose attack is a swing or a slam (the Zealot, the Abomination) shows that instead;
 //   - a real model (keepsOwnMaterials): its prefab;
 //   - anything else is still a placeholder primitive, so it writes the designed fallback (UnitIcons.Compose), in its faction's colour.
 // How it renders: each unit alone in an empty scene, 4 times the size of the icon. The framing is found from the picture
@@ -82,7 +84,7 @@ namespace Halobellum.EditorTools
                 string source = "fallback";
                 if (unit.bakedBody != null && unit.bakedBody.IsReady)
                 {
-                    png = RenderBody(unit, BuildBaked(unit));
+                    png = RenderBody(unit, BuildBaked(unit, IconRow(unit)));
                     source = "baked";
                 }
                 else if (unit.prefab != null && unit.keepsOwnMaterials)
@@ -130,6 +132,43 @@ namespace Halobellum.EditorTools
             EditorApplication.Exit(exitCode);
         }
 
+        /// <summary>
+        /// For choosing a baked body's icon moment: renders the units named in HB_ICON_TRY (comma separated) at nine moments of their shooting
+        /// clip, 10% to 90%, into HB_ICON_TRY_OUT (a folder outside the project), as &lt;unit&gt;_&lt;percent&gt;.png. Writes no icon.
+        /// </summary>
+        public static void TryMomentsFromCommandLine()
+        {
+            int exitCode = 1;
+            try
+            {
+                EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+                RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+                RenderSettings.ambientLight = new Color(0.46f, 0.47f, 0.5f);
+                RenderSettings.fog = false;
+                string folder = Environment.GetEnvironmentVariable("HB_ICON_TRY_OUT");
+                Directory.CreateDirectory(folder);
+                var names = new HashSet<string>(Environment.GetEnvironmentVariable("HB_ICON_TRY").Split(',').Select(n => n.Trim()));
+                foreach (string guid in AssetDatabase.FindAssets("t:UnitDefinition"))
+                {
+                    var unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>(AssetDatabase.GUIDToAssetPath(guid));
+                    if (unit == null || !names.Remove(unit.unitName) || unit.bakedBody == null || !unit.bakedBody.IsReady) continue;
+                    BakedClip shooting = unit.bakedBody.Clip(BakedAnimation.Shooting);
+                    for (int percent = 10; percent <= 90; percent += 10)
+                    {
+                        int row = shooting.firstRow + Mathf.Min(shooting.frames - 1, shooting.frames * percent / 100);
+                        byte[] png = RenderBody(unit, BuildBaked(unit, row));
+                        if (png != null) File.WriteAllBytes(Path.Combine(folder, $"{UnitIcons.FileName(unit.unitName)}_{percent}.png"), png);
+                    }
+                }
+                exitCode = 0;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Trying icon moments failed: " + e);
+            }
+            EditorApplication.Exit(exitCode);
+        }
+
         /// <summary>Which faction each unit belongs to: from the faction assets, and for a spell's dropped unit, from that faction's spells.</summary>
         private static Dictionary<UnitDefinition, string> FactionOfEachUnit()
         {
@@ -157,15 +196,14 @@ namespace Halobellum.EditorTools
             return result;
         }
 
-        private static GameObject BuildBaked(UnitDefinition unit)
+        private static GameObject BuildBaked(UnitDefinition unit, int row)
         {
             BakedBodyDefinition baked = unit.bakedBody;
             var body = new GameObject("Icon subject");
             body.AddComponent<MeshFilter>().sharedMesh = baked.mesh;
             var renderer = body.AddComponent<MeshRenderer>();
             renderer.sharedMaterials = baked.Materials;
-            BakedClip still = baked.Clip(BakedAnimation.Still);
-            var frame = new Vector4(still != null ? still.firstRow : 0, 1f, 0f, 0f);
+            var frame = new Vector4(row, 1f, 0f, 0f);
             var block = new MaterialPropertyBlock();
             block.SetVector(AnimNowId, frame);
             block.SetVector(AnimOldId, frame);
@@ -174,6 +212,30 @@ namespace Halobellum.EditorTools
             renderer.SetPropertyBlock(block);
             Shader.SetGlobalFloat(BattleTimeId, 0f);
             return body;
+        }
+
+        /// <summary>
+        /// Units whose icon shows another moment of their shooting clip than the middle, as a share of it: a swing or a slam reads best at another
+        /// point (chosen from TryMomentsFromCommandLine's pictures).
+        /// </summary>
+        private static readonly Dictionary<string, float> IconMoments = new Dictionary<string, float>
+        {
+            { "Zealot", 0.4f },            // The sword thrust out in front; at the middle it is hidden behind him.
+            { "Flood Abomination", 0.7f }, // Rearing up with its arm raised; at the middle it is crouched small, arms spread wide.
+        };
+
+        /// <summary>The baked row a unit's icon shows: a moment of its shooting clip (the middle, unless IconMoments says), or its still frame without one.</summary>
+        public static int IconRow(UnitDefinition unit)
+        {
+            BakedBodyDefinition baked = unit.bakedBody;
+            BakedClip shooting = baked.Clip(BakedAnimation.Shooting);
+            if (shooting != null && shooting.frames > 0)
+            {
+                float share = IconMoments.TryGetValue(unit.unitName, out float moment) ? moment : 0.5f;
+                return shooting.firstRow + Mathf.Clamp(Mathf.FloorToInt(shooting.frames * share), 0, shooting.frames - 1);
+            }
+            BakedClip still = baked.Clip(BakedAnimation.Still);
+            return still != null ? still.firstRow : 0;
         }
 
         private static GameObject BuildModel(GameObject prefab)

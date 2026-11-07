@@ -252,6 +252,11 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 137. **Which Scarab:** your `Scarab update.glb` holds four Scarabs in a row: a small dark blue one, the grey one the game used before, a dark weathered one, and a big purple one. I used the last and biggest, the purple one, as you asked. The file itself says it is a Sketchfab model ("Vehicles>Covenant>Ground>Scarab" by jameslucino117, CC-BY-4.0), and its parts carry Halo game file names, so it may come from a Halo game. The repository is private. Keep it, or would you rather another of the four?
 138. **The walk:** a step every 0.94 s at its usual speed (2.8 m of ground a cycle), each foot lifted 0.7 m, the body leaning about 0.3 m onto the legs that carry it and sinking 8 cm while a foot is up. Heavier and slower steps, or quicker ones? More or less sway? It stands 0.74 m lower than the model as made, so that its nearly straight legs have room to bend.
 
+## The Spartan Laser and the firing icons (D85)
+
+139. **The Spartan Laser** is rebuilt as a closed skin of about 1,300 triangles with its colours per face, 1.4 m long, so it looks a little faceted up close. It comes from the same Sketchfab author as the Scarab, with Halo names in it (see item 137). Longer, shorter, or more detail?
+140. **The firing icons** show each soldier halfway through its shooting clip; the Zealot at 40% of his swing and the Abomination at 70% of its slam read better. Any whose moment you'd change? The Combat Form and the Infested Elite still stand, as their models aren't animated.
+
 
 ## Things my test runs did to your PC
 

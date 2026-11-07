@@ -88,6 +88,7 @@ namespace Halobellum.Tests
         [TestCase("FloodUNSC/InfestedMarine", "InfestedMarine", "Weapon_AssaultRifle", 2f)]
         [TestCase("Covenant/Elite", "Elite", "Weapon_PlasmaRifle", 2.6f)]
         [TestCase("UNSC/FlamethrowerTrooper", "FlamethrowerTrooper", "", 2f)]
+        [TestCase("UNSC/Spartan", "Spartan", "Weapon_SpartanLaser", 2.3f)] // The owner's Spartan Laser (D85), in place of the rocket launcher.
         public void TheThirdBatch_IsBaked_AndItsUnitsUseIt(string unit, string name, string weapon, float height)
         {
             BakedBodyDefinition body = Resources.Load<BakedBodyDefinition>("BakedBodies/" + name);

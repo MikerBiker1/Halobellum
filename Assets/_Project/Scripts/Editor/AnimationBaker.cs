@@ -9,7 +9,8 @@
 // Moving and shooting clips play on the spot: the battle moves the unit, so any forward drift in the clip is
 // removed. The held standing frame is the moment of the still clip when the feet are closest together.
 //   Menu: Halobellum > Art > Bake Animated Bodies
-//   Command line: -executeMethod Halobellum.EditorTools.AnimationBaker.BakeAllFromCommandLine
+//   Command line: -executeMethod Halobellum.EditorTools.AnimationBaker.BakeAllFromCommandLine (or BakeNamedFromCommandLine for the bodies
+//   named in HB_BODIES, comma separated, such as Spartan)
 // Depends on: Halobellum.Units (BakedBodyDefinition), UnityEditor.
 
 using System;
@@ -54,6 +55,27 @@ namespace Halobellum.EditorTools
                     if (body.IsReady) continue;
                     Bake(body);
                     Debug.Log($"Baked {body.name}: {body.mesh.triangles.Length / 3} triangles.");
+                }
+                AssetDatabase.SaveAssets();
+            }
+            catch (Exception e) { Debug.LogError("Baking failed: " + e); exit = 1; }
+            EditorApplication.Exit(exit);
+        }
+
+        /// <summary>Bakes only the bodies named in the environment's HB_BODIES, comma separated, such as Spartan (D85).</summary>
+        public static void BakeNamedFromCommandLine()
+        {
+            int exit = 0;
+            try
+            {
+                string named = Environment.GetEnvironmentVariable("HB_BODIES");
+                if (string.IsNullOrEmpty(named)) throw new ArgumentException("Name the bodies in HB_BODIES, such as Spartan.");
+                foreach (string name in named.Split(','))
+                {
+                    var body = AssetDatabase.LoadAssetAtPath<BakedBodyDefinition>($"{BodiesFolder}/{name.Trim()}.asset");
+                    if (body == null) throw new ArgumentException("No baked body named " + name);
+                    Bake(body);
+                    Debug.Log($"Baked {body.name}: {body.mesh.triangles.Length / 3} triangles, {body.clips.Sum(c => c.frames)} frames.");
                 }
                 AssetDatabase.SaveAssets();
             }

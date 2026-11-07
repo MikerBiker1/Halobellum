@@ -20,16 +20,21 @@ MonoBehaviour:
   shootingClip: Walk_Forward_While_Shooting
   deathClip: Dead
   stillClip: walking_2
-  weaponName: Weapon_RocketLauncher
-  weaponLength: 1.3
+  weaponName: Weapon_SpartanLaser
+  weaponLength: 1.4
   weaponInForwardHand: 0
   weaponAlongForearm: 0
   muzzleInRightHand: 0
+  muzzleAtFront: 0
+  shieldName: 
+  shieldDiameter: 1.1
+  shieldOffset: {x: 0, y: 0, z: 0}
   transitionSeconds: 0.2
   corpseSeconds: 14
   bakedFps: 30
   mesh: {fileID: 4300000, guid: dc5566ed367de3b48b102f334b301f39, type: 2}
   material: {fileID: 2100000, guid: 6635b92b0757a1944998c8fbcffefaf1, type: 2}
+  glassMaterial: {fileID: 0}
   clips:
   - role: 1
     firstRow: 0
@@ -47,6 +52,6 @@ MonoBehaviour:
     firstRow: 207
     frames: 1
     loops: 0
-  muzzle: {x: 0.029036894, y: 2.0974524, z: 0.7417376}
+  muzzle: {x: 0.04142957, y: 2.1084566, z: 0.7185989}
   hasMuzzle: 1
   bodyHeight: 2.3

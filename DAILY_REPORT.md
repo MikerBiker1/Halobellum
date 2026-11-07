@@ -2,6 +2,11 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The Spartan Laser, and soldiers firing on their cards (D85)
+- **In the game:** the Spartan holds the second laser of your `weaponshumanspartan_laser.glb`, the green one with the small blue screen, in place of the rocket launcher; its shots and charge start at the lens. Every soldier's picture, on the cards, in the shop and in the squad window, now shows them aiming and firing instead of standing; the Zealot thrusts his sword and the Abomination rears up. Every icon was rendered again, so the Scarab's and the D82 changes show too. Pictures: `Docs/M10/icons_aiming.jpg` and `Docs/M10/spartan_laser.jpg`.
+- **Checked:** the icon and baked body tests (a new one for the Spartan's laser); the icons by eye; the Spartan in the test game.
+- **Not checked:** the Combat Form and the Infested Elite are static models, so their pictures still stand.
+
 ## The Scarab: your new model and a real walk (D84)
 - **In the game:** the purple Scarab from your `Scarab update.glb` (the last and biggest of the four in the file), with its own textures, at the same size. It walks on four legs, one foot in the air at a time: each planted foot stays put while the body passes over it, and the body sways and dips onto the legs carrying it. Its steps keep pace with its speed, and dust rises where each foot lands. The cap on its mast turns to aim the plasma guns. Pictures from the test game, one walk cycle each: `Docs/M10/scarab_walk_side.jpg` and `Docs/M10/scarab_walk_quarter.jpg`.
 - **Checked:** new walk tests (no planted foot slides more than 1 cm; one foot up at a time; the same steps per metre at three speeds; the sway and dip; stopping and settling; turning on the spot; the muzzles), the model and menu tests; pictures from the test game.
