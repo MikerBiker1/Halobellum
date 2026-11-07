@@ -32,7 +32,7 @@ def units(U, W):
           [W("Scavenged Plasma Cannons", 8, 0.3, 10, "Energy"),
            W("Spore Bomb", 45, 2.5, 8, "Explosive", proj=30, splash=3, own="G")], flood=True, airu=True, burst=dict(dmg=0, radius=0, type="Explosive", aa=False, spawns=[("InfectionForms", 1)]),
           note="Barely flying, still bombing."),
-        U("Spawner", "Spawner", FACTION, "Tank", 3, 200, 1, 400, 2800, "L", 0.9, 2, 2, "G",
+        U("Spawner", "Spawner", FACTION, "Tank", 3, 200, 1, 400, 3600, "L", 0.9, 2, 2, "G",
           [W("Spore Lash", 40, 1.2, 3, "Melee", splash=2)], flood=True, spawn=("InfectionForms", 2, 4), spawn2=("InfestedElite", 1),
           note="A mobile birthing form: it fights badly, and releases 12 Infection Forms and an Infested Elite in turn, one every 4 seconds; the Elites draw the enemy's fire. Kill it first (D79)."),
     ]
