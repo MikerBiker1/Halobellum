@@ -773,10 +773,15 @@ namespace Halobellum.Tests
             _battle.Speed = 2f;
             _sandbox.Run();
             int births = 0, blows = 0;
-            float limit = Time.realtimeSinceStartup + 45f;
+            float limit = Time.realtimeSinceStartup + 45f, seen = -1f;
             while ((births < 20 || blows < 20) && Time.realtimeSinceStartup < limit && !_battle.Simulation.IsFinished)
             {
-                yield return new WaitForEndOfFrame(); // After the views have caught up with this frame's ticks.
+                // A test resumes after Update and before the views' LateUpdate: in a frame that ticked the battle they are a tick behind, so
+                // only frames without a tick are compared (their clock is then a frame behind the battle's, well within the tolerance).
+                yield return null;
+                bool ticked = _battle.Simulation.ElapsedSeconds != seen;
+                seen = _battle.Simulation.ElapsedSeconds;
+                if (ticked) continue;
                 float clock = views.AnimationClock, since = _battle.Clock.Alpha * _battle.Simulation.TickSeconds;
                 SimUnit spawner = _battle.Simulation.Units.FirstOrDefault(u => u.IsAlive && u.Stats.Name == "Spawner");
                 BakedAnimation? spawnerPlays = spawner != null ? views.PlayingAnimation(spawner) : null;

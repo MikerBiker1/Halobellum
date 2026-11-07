@@ -40,7 +40,7 @@ Full tables and reasons are in `Docs/M10/subfactions.md`. Every number is in `ba
     - The Grunt holds its pistol at shin height.
     - Infection Forms are larger than life, so that they can be seen.
     - The Marine's body stays at about 5,263 triangles.
-19. **Rigs:** the Pure Form Tank's rig was delivered but rated unusable (it's in `Art_Source/Prepared/PureFormTank_Rig`). The Stalker's rig stretches, and its clips weren't bought. Meshy refused the Pure Form Ranged. Try again, or leave them still?
+19. **Rigs:** the Pure Form Tank's rig was delivered but rated unusable (it's in `Art_Source/Prepared/PureFormTank_Rig`). The Stalker's rig stretches, and its clips weren't bought. Meshy refused the Pure Form Ranged. Try again, or leave them still? Settled for the Stalker and the Ranged Form, and the Spawner too: rigged and animated in Blender instead (D90). The Pure Form Tank is still still.
 
 ## Things you may want changed
 
@@ -267,6 +267,13 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 143. **The Grenadier's blade:** 35 damage every 1.5 s at 2 m, about the launcher's damage over time, so it should not move balance much; the launcher holds fire while it cuts. Change the numbers when you balance.
 144. **A swing clip for the Grenadier?** Settled: yes (D89), Meshy's Heavy Hammer Swing, eased into a loop.
 
+
+## The Flood forms' animations (D90)
+
+145. **First versions, for your eye:** the three skeletons and clips are mine, made in Blender (Meshy couldn't rig them). Tell me what reads wrong on any of them, one by one, as with the other walkers.
+146. **The Stalker's attack** is three lunges to a 1.2 s round (both arms and the tusks, then the left arm, then the right), one on each strike of its Talons (every 0.4 s), so it looks frantic up close. A single slower lunge would no longer match its strikes. Keep the three?
+147. **Where the Spawner's forms appear:** its belly heaves and its maw gapes as each brood appears, but the battle still puts the forms 1 m in front of it, as before. Should they appear under its belly instead? That is a small battle change, which I left alone.
+148. **The Ranged Form's shard** now leaves from the top of its column at the end of its forward thrust, about 1.4 m up and 0.9 m ahead, instead of from its spine tips at 2.5 m. Only how it looks changes; the shot is the same.
 
 ## Things my test runs did to your PC
 

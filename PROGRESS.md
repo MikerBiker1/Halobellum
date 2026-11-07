@@ -172,6 +172,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] The Hunters: shield in front when aiming, a charge and shield bashes within 5 m, aiming icons (D87)
 - [x] Level arrows one size; the Brute Grenadier melees close in; reinforcement cards show the role (D88)
 - [x] The Brute Grenadier swings its Brute Shot when it cuts (D89)
+- [x] The Spawner, the Pure Form Ranged and the Stalker Form animated limb by limb: a lumbering walk and a heaving belly timed to its spawns, a lopsided crawl and a recoil-and-thrust shot, a low run and lunges on its strikes (D90)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

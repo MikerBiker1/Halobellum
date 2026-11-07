@@ -2,6 +2,12 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The Spawner, the Ranged Form and the Stalker Form animated (D90)
+- **In the game:** all three move limb by limb now, instead of a stiff wobble. The **Stalker Form** runs low on all fours at full speed, legs in diagonal pairs, spine and tail sack rolling; it attacks in sudden lunges, three to a round (both arms and its tusks, then each arm), each sprung back into its crouch, each landing on one of its strikes. The **Pure Form Ranged** crawls lopsided, one leg reaching long and the other hitching short, arms pawing, its column swaying late; to shoot it rears back, then thrusts forward hard and the shard leaves the top of its column at the end of the thrust. The **Spawner** lumbers, swaying heavily onto each foot, every tendril writhing to its own rhythm; its belly swells and heaves forward to the maw, which gapes as each brood appears, timed to its spawns; its lash whips the tendrils forward. Their cards show them attacking. Pictures: `Docs/M10/flood_d90_clips.jpg`, `flood_d90_game.jpg`, `flood_d90_icons.jpg`.
+- **How:** Meshy couldn't rig them (item 19), so I built their skeletons and skin weights myself in Blender (`Tools/Art/creature_rig.py`). Planted feet slide under 2 cm at their walking speeds.
+- **Checked:** new tests for the clip timing, the three bodies, and in a Sandbox battle that the Spawner gives birth on its spawns and the Stalker's blows land on its strikes; the body, icon and real-model tests; all three in the test game.
+- **Not checked:** balance (nothing in the battle changed); not played by hand; the Spawner's forms still appear in front of it, not under its belly (item 147).
+
 ## The Grenadier's swing (D89)
 - **In the game:** a Brute Grenadier cutting at something beside it plays a heavy two-handed overhead chop with its Brute Shot, instead of its shooting pose.
 - **Checked:** the body and baked body tests (a new one for the Grenadier's blade and swing); the clip rendered frame by frame in Blender; the Grenadiers against Combat Forms in the test game.

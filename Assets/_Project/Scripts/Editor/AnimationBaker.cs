@@ -140,7 +140,7 @@ namespace Halobellum.EditorTools
                 // A creature rigged by Tools/Art/creature_rig.py (D90) stands on a still bone named Root, the parent of its Body, which does all
                 // the swaying. The importer drops Root from the skin, as it moves no vertex; it is the one to measure drift by, and as it never
                 // moves, nothing is taken off: the body's sway and lunges stay.
-                Transform standing = model.GetComponentsInChildren<Transform>().FirstOrDefault(t => t.name == "Body" && t.parent != null && t.parent.name == "Root")?.parent;
+                Transform standing = model.GetComponentsInChildren<Transform>().FirstOrDefault(t => t.name == "Body" && t.parent != null && t.parent.name == "Root" && t.GetComponent<Renderer>() == null)?.parent;
                 if (standing != null)
                 {
                     hipsBone = standing;
