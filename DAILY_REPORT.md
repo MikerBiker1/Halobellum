@@ -2,6 +2,10 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The version: 0.378.0 and on (D102)
+- **In the game:** the menu shows Version 0.378.0. Each push now raises it: the last number for a small change, the middle one for a substantial one (the last back to 0). The first is yours.
+- **How:** `python Tools/version.py patch` or `minor`, in the same commit; the other session knows the rule too.
+
 ## The menu's music after the disclaimer, and the build number (D101)
 - **In the game:** the menu's music starts only once you click the disclaimer away, with the same click as a menu button. The version in the lower left is now the build number: how many commits main has when the game is built (it goes up with every change pushed).
 - **Checked:** the disclaimer, menu and audio tests, a new one for the build number; a test build's menu picture.

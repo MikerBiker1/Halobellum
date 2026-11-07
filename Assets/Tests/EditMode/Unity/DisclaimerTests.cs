@@ -30,11 +30,12 @@ namespace Halobellum.Tests
         public void TheMenu_ShowsItsVersion() => Assert.AreEqual("Version " + UnityEngine.Application.version, MainMenuHud.VersionLabel);
 
         [Test]
-        public void ABuildsVersion_IsItsBuildNumber_GivenOrCountedByGit()
+        public void TheVersion_IsMajorMinorPatch()
         {
-            Assert.AreEqual("378", Halobellum.EditorTools.PlayerBuildTool.BuildNumber(new[] { "-buildOutput", "x.exe", "-buildNumber", "378" }));
-            string counted = Halobellum.EditorTools.PlayerBuildTool.BuildNumber(new string[0]);
-            if (counted != null) Assert.Greater(int.Parse(counted), 0, "In a Git checkout, the commits are counted.");
+            string[] parts = UnityEngine.Application.version.Split('.');
+            Assert.AreEqual(3, parts.Length, "MAJOR.MINOR.PATCH (D102): " + UnityEngine.Application.version);
+            foreach (string part in parts) Assert.IsTrue(int.TryParse(part, out _), UnityEngine.Application.version);
+            Assert.GreaterOrEqual(int.Parse(parts[1]), 378, "Counting on from 0.378.0.");
         }
 
         [TestCase(false, new string[0], true)]
