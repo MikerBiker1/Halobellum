@@ -19,7 +19,7 @@ namespace Halobellum.Presentation
             bool HasUnit(string name) => Me().Squads.Exists(s => s.Type.Name == name);
             bool Unlocked(string name) => Me().Roster.Exists(u => u.Name == name && Me().Unlocked.Contains(u));
             bool TowerOpen(TowerKind kind) => match.Selection != null && match.Selection.SelectedTower is (Team team, TowerKind k) && team == Team.A && k == kind;
-            string shop = TutorialSetup.ShopUnit;
+            string shop = TutorialSetup.ShopUnit, exclusive = TutorialSetup.ExclusiveUnit;
 
             return new List<TutorialStep>
             {
@@ -28,7 +28,7 @@ namespace Halobellum.Presentation
                 {
                     Title = "Welcome to Halobellum",
                     Text = "Each round you buy squads and place them on your side of the field. Then the battle plays itself.\n" +
-                           "Your squads that survive send nodes of light into the enemy base. The first base to fall loses the match.",
+                           "Your squads that survive damage the enemy base. The first base to fall loses the match.",
                 },
                 new TutorialStep
                 {
@@ -48,7 +48,7 @@ namespace Halobellum.Presentation
                 {
                     Title = "The top bar",
                     Text = "Your credits, and what you will earn next round. Squads bought this round: you can buy 2 a round. " +
-                           "Unlocks this round: 1. And both bases' health.",
+                           "You can unlock a squad once a round. And both bases' health.",
                     Target = "area:topbar",
                 },
                 new TutorialStep
@@ -112,8 +112,8 @@ namespace Halobellum.Presentation
                 new TutorialStep
                 {
                     Title = "What the Command Center does",
-                    Text = "If it falls in a battle, your whole army is weakened for a while: level it up for more health and a longer shockwave " +
-                           "against them. It sells, once a round: an extra squad slot, an oil zone (a spell you place once), Rapid Resupply " +
+                    Text = "If it falls in a battle, your whole army is weakened for a while: level it up for more health and a shorter shockwave " +
+                           "debuff. It sells, once a round: an extra squad slot, an oil zone (a spell you place once), Rapid Resupply " +
                            "(credits now, fewer next round) and Elite Recruitment (this round's new squads start at level 2).",
                     Target = "area:tower",
                 },
@@ -127,8 +127,8 @@ namespace Halobellum.Presentation
                 new TutorialStep
                 {
                     Title = "What the Research Center does",
-                    Text = "Research gives your whole army more health or more damage, step by step, for the rest of the match. " +
-                           "It falls and weakens your army as the Command Center does.",
+                    Text = "Research gives your whole army more health or more damage for the rest of the game. Only 2 upgrade steps are possible. " +
+                           "When it falls, it weakens your army as the Command Center does.",
                     Target = "area:tower",
                 },
                 new TutorialStep
@@ -213,8 +213,18 @@ namespace Halobellum.Presentation
                 new TutorialStep
                 {
                     Title = "Flank zones",
-                    Text = "Some units, such as the Pelican and the gunships, can be placed in the zones beside the enemy's area. " +
+                    Text = "Some units, such as the Pelican and the gunships, can be placed in the zones beside the enemy's area, glowing now. " +
                            "They arrive a little late, but behind the enemy's lines.",
+                    FlankZones = true,
+                },
+                new TutorialStep
+                {
+                    Title = "Exclusive units",
+                    Text = "Every sub-faction has units no other has, marked exclusive in the shop. Noble's are Spartans: strong, and dear. " +
+                           "Here are the credits for one: unlock and buy one, the " + exclusive + " for instance.",
+                    Target = "area:shop", Doing = "Unlock and buy one of Noble's exclusive units.",
+                    Done = () => Me().Squads.Exists(s => Me().SubFaction.ExclusiveUnits.Contains(s.Type)),
+                    Started = () => GiveCreditsForExclusive(Me()),
                 },
                 new TutorialStep
                 {
@@ -241,6 +251,15 @@ namespace Halobellum.Presentation
                     ReadyAllowed = true,
                 },
             };
+        }
+
+        /// <summary>Tops the player's credits up to what the exclusive unit costs to unlock (if it isn't yet) and buy.</summary>
+        private static void GiveCreditsForExclusive(PlayerState me)
+        {
+            UnitStats unit = me.Roster.Find(u => u.Name == TutorialSetup.ExclusiveUnit);
+            if (unit == null) return;
+            int needed = unit.Cost + (me.Unlocked.Contains(unit) ? 0 : unit.UnlockCost);
+            if (me.Credits < needed) me.Credits = needed;
         }
     }
 }

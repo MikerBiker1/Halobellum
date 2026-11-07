@@ -27,6 +27,10 @@ namespace Halobellum.Presentation
         public bool ReadyAllowed;
         /// <summary>Said under the text while the step waits for something to be done.</summary>
         public string Doing;
+        /// <summary>The flank zones show during this step, glowing on and off (the owner, 2026-11-07).</summary>
+        public bool FlankZones;
+        /// <summary>Run once as the step begins: the exclusive units' step gives the credits for one.</summary>
+        public Action Started;
     }
 
     /// <summary>How the tutorial's match is fixed (D77).</summary>
@@ -36,6 +40,8 @@ namespace Halobellum.Presentation
         public const int BaseHealth = 600;
         public const string PlayerFaction = "UNSC", PlayerSub = "Noble", EnemyFaction = "Covenant", EnemySub = "Banished";
         public const string StarterUnit = "Marine", ShopUnit = "Flamethrower Trooper";
+        /// <summary>The Noble unit the exclusive units' step names; any of Noble's exclusive units does.</summary>
+        public const string ExclusiveUnit = "Spartan Sniper";
 
         public static MatchSetup Setup() => new MatchSetup { Mode = MatchMode.Faction, BaseHealth = BaseHealth, Cards = CardFilter.AllCards };
 
@@ -175,6 +181,7 @@ namespace Halobellum.Presentation
             Index++;
             _done.Clear();
             _signals.Clear();
+            Current?.Started?.Invoke();
         }
 
         private void Update()

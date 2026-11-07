@@ -104,6 +104,7 @@ namespace Halobellum.Presentation
         {
             if (_battle == null || _battle.Rules == null) return;
             UpdateSquares();
+            UpdateFlankPulse();
             if (_forced) return;
             Wanted(out string a, out string b, out int seed);
             if (a == _shownA && b == _shownB && seed == _shownSeed)
@@ -248,6 +249,9 @@ namespace Halobellum.Presentation
 
         private Transform _flankLeft, _flankRight;
         private Team? _flankTeam;
+        private bool _flankPulsed;
+        /// <summary>The flank zones glow on and off (the tutorial's flank zone step).</summary>
+        public bool PulseFlankZones { get; set; }
 
         /// <summary>Shows the flank zones of this team, beside the enemy's area, or none (D61).</summary>
         public void ShowFlankZones(Team? team)
@@ -313,6 +317,16 @@ namespace Halobellum.Presentation
             {
                 foreach (Material overlay in _overlays) overlay.SetFloat(FadeId, _squares);
             }
+        }
+
+        /// <summary>The flank zones' glow, on and off while pulsing, and back to the squares' fade after.</summary>
+        private void UpdateFlankPulse()
+        {
+            if (!PulseFlankZones && !_flankPulsed) return;
+            _flankPulsed = PulseFlankZones;
+            float fade = PulseFlankZones ? _squares * (0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 4f)) : _squares;
+            foreach (Transform zone in new[] { _flankLeft, _flankRight })
+                if (zone != null) zone.GetComponent<MeshRenderer>().sharedMaterial.SetFloat(FadeId, fade);
         }
 
         /// <summary>The squares show while placing, and fade out while a battle runs or its result is up.</summary>

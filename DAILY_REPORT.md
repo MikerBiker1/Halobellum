@@ -2,6 +2,11 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Your menu, tutorial and Pelican notes (D81)
+- **In the game:** the main menu without its Marines; the tutorial with your wording, glowing flank zones at step 26 and a new step 27 where you buy one of Noble's Spartans; the Pelican's Marines come out from under it.
+- **Checked:** the drop, menu and tutorial tests (103); the menu's picture.
+- **Not checked:** the glowing zones and the new step have not been seen in pictures; nobody has played the tutorial by hand.
+
 ## Battlefield maps: three interior looks (D80)
 - **In the game:** every match is fought inside a UNSC hangar, a Covenant warship, or a ship the Flood has taken (on a UNSC or Covenant hull), with its own floor, light and surroundings. Which one depends on the factions and the match seed (`Docs/M10/terrain.md`). Pictures: `Docs/M10/interior_looks.jpg`.
 - **Checked:** the terrain tests (every look keeps the floor clear and flat, the flank strips open, under the triangle budget over 16 seeds), the camera, right-click and menu tests; pictures of every look from the test game.

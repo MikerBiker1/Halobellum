@@ -107,6 +107,7 @@ namespace Halobellum.Presentation
         public bool IsDeploying => !IsBattle;
         public bool IsPlacing => PlacingType != null || MovingSquadId >= 0;
         public bool ShowsFlankZones => PlacementType != null && PlacementType.CanFlank;
+        public bool PulsesFlankZones => false;
         public bool PlacingRotated { get; private set; }
         public Team PlacingTeam => MovingSquadId >= 0 ? _movingTeam : EditingTeam;
         public UnitStats PlacementType => PlacingType ?? Army(_movingTeam).FindSquad(MovingSquadId)?.Type;

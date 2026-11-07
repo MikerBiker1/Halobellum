@@ -1,6 +1,6 @@
 // MainMenuSceneBuilder.cs
 // Builds Scenes/MainMenu.unity from code (M10), so it can always be made again exactly: a low camera on a darkening battlefield, looking
-// toward the sun. Marines and Scorpions in front; a burnt-out Warthog smoking on the left; Wraiths further on; a huge Scarab standing in
+// toward the sun. Scorpions in front (no Marines: only the vehicles, as the owner asked); a burnt-out Warthog smoking on the left; Wraiths further on; a huge Scarab standing in
 // the haze, all four legs on the ground; ridges behind it, smoke on the horizon, embers in the air, Pelicans crossing the sky. The models are the project's own; the
 // ground, ridges, rocks, sky, smoke and glow are all made here or by MenuSky.shader, and written to Art/Menu. The moving parts are in
 // MenuBackdrop and the screen in MainMenuHud.
@@ -29,7 +29,6 @@ namespace Halobellum.EditorTools
         private const string ArtFolder = "Assets/_Project/Art/Menu";
         private const string UnitFolder = "Assets/_Project/Prefabs/Units/";
         private const string FontFolder = "Assets/_Project/Art/Imported/Fonts/";
-        private const string MarinePath = "Assets/_Project/Resources/BakedBodies/Marine.asset";
         private const string LookPath = "Assets/_Project/Resources/MenuLook.asset";
 
         // Where the sun is: low, ahead of the camera and to the right.
@@ -608,41 +607,8 @@ namespace Halobellum.EditorTools
             PlaceModel("Scorpion_Model", army, -12f, 42f, 12f, 1f);
             PlaceModel("Warthog_Model", army, -4.5f, -9f, 64f, 1.25f, new Vector3(14f, 0f, -22f), -0.2f);
 
-            // Marines holding the front, seen from behind.
-            var marine = AssetDatabase.LoadAssetAtPath<BakedBodyDefinition>(MarinePath);
-            if (marine == null || !marine.IsReady) throw new InvalidOperationException("Missing a baked Marine at " + MarinePath);
-            BakedClip clip = marine.Clip(BakedAnimation.Still);
-            Vector3[] spots =
-            {
-                new Vector3(6.3f, 0f, -37f), new Vector3(9.4f, 0f, -33.5f), new Vector3(5.2f, 0f, -30.5f), new Vector3(12f, 0f, -29.6f),
-                new Vector3(8.6f, 0f, -27.2f), new Vector3(15.4f, 0f, -25.5f), new Vector3(11.6f, 0f, -23.5f), new Vector3(18.8f, 0f, -22f),
-                new Vector3(5.6f, 0f, -22f), new Vector3(15.6f, 0f, -18.5f), new Vector3(22f, 0f, -26f), new Vector3(9f, 0f, -17f),
-            };
-            var figures = new List<MenuBackdrop.Figure>();
-            var random = new System.Random(77);
-            for (int i = 0; i < spots.Length; i++)
-            {
-                var body = new GameObject("Marine " + i);
-                body.transform.SetParent(army, false);
-                float x = spots[i].x, z = spots[i].z;
-                body.transform.position = new Vector3(x, GroundHeight(x, z) - 0.03f, z);
-                body.transform.rotation = Quaternion.Euler(0f, (float)random.NextDouble() * 34f - 10f, 0f);
-                body.AddComponent<MeshFilter>().sharedMesh = marine.mesh;
-                var renderer = body.AddComponent<MeshRenderer>();
-                renderer.sharedMaterial = marine.material;
-                renderer.shadowCastingMode = ShadowCastingMode.Off;
-                renderer.receiveShadows = false;
-                figures.Add(new MenuBackdrop.Figure
-                {
-                    renderer = renderer,
-                    firstRow = clip.firstRow,
-                    frames = clip.frames,
-                    startTime = -(float)random.NextDouble() * clip.frames / marine.bakedFps,
-                    // Their shader has no fog or real lighting: this keeps them dark against the light, as everything facing away from it is.
-                    tint = new Color(0.2f, 0.17f, 0.18f, 1f),
-                });
-            }
-            backdrop.figures = figures.ToArray();
+            // No Marines standing at the front: the owner wants only the vehicles (2026-11-07).
+            backdrop.figures = new MenuBackdrop.Figure[0];
         }
 
         private static void BuildBeam(MenuBackdrop backdrop, Transform from)

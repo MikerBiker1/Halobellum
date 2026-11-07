@@ -43,7 +43,7 @@ Round 1, deployment:
 9. **The Command Center**: *open it* (its button above it on the field). If it falls in battle, your whole army is weakened for a
    while. It sells: Level up (more health, a longer shockwave), Extra slot (one more squad this round), Oil zone (a one-use spell),
    Rapid Resupply (credits now, fewer next round), Elite Recruitment (new squads start at level 2).
-10. **The Research Center**: *open it*. Health and damage for your whole army, step by step, for good.
+10. **The Research Center**: *open it*. Health or damage for your whole army for the rest of the game, 2 steps (D81 wording).
 11. **Ready**: *press Ready*.
 
 Round 1, battle and result:

@@ -19,6 +19,8 @@ namespace Halobellum.Presentation
         bool PlacingRotated { get; }
         /// <summary>True if the placing side's flank zones should show (D61).</summary>
         bool ShowsFlankZones { get; }
+        /// <summary>True if they glow on and off (the tutorial's flank zone step).</summary>
+        bool PulsesFlankZones { get; }
         /// <summary>Whose zone the squad goes in (Team B's grid is the mirror image of Team A's).</summary>
         Team PlacingTeam { get; }
         /// <summary>The placed squad currently selected, or null.</summary>

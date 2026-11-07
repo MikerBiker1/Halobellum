@@ -527,6 +527,8 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-06 | A tutorial: a scripted match from the Play page | Per the project owner (D77) |
 | 2026-11-06 | The Spawner releases 12 Infection Forms and an Infested Elite in turn, one every 4 s, at 3200 health; the Infested Hornet's rockets 18 and spore bombs 36 | Per the project owner (D79) |
 | 2026-11-06 | The battlefield is one of three interior looks per match: UNSC Installation, Covenant Warship, or a Flood-Infested Ship on a UNSC or Covenant hull, picked from the two factions and the match seed; the outdoor maps of M10 leave the matches | Per the project owner (D80) |
+| 2026-11-07 | A landed carrier (Pelican, Phantom) lets its squad out from under it, at its troop bay, not behind its tail | Per the project owner (D81) |
+| 2026-11-07 | The main menu shows vehicles only, no Marines; the tutorial adds a step on exclusive units and makes the flank zones glow | Per the project owner (D81) |
 
 ## 18. Assumptions to confirm
 

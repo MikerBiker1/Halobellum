@@ -83,7 +83,9 @@ namespace Halobellum.Presentation
         public bool PlacingRotated { get; private set; }
         public bool IsPlacing => MovingSquadId >= 0;
         /// <summary>A side that has units that can flank sees where they could go, throughout deployment.</summary>
-        public bool ShowsFlankZones => IsDeploying && Match.Player.Faction != null && HasUnitsThatCanFlank();
+        public bool ShowsFlankZones => IsDeploying && Match.Player.Faction != null && (HasUnitsThatCanFlank() || PulsesFlankZones);
+        /// <summary>The tutorial's flank zone step: the zones glow on and off.</summary>
+        public bool PulsesFlankZones => Tutorial?.Current?.FlankZones == true;
         public bool IsDeploying => Match != null && Match.Phase == MatchPhase.Deployment;
         /// <summary>The player always deploys in their own zone.</summary>
         public Team PlacingTeam => Team.A;

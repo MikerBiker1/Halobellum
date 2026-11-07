@@ -89,6 +89,11 @@ namespace Halobellum.UI
                     }
                     break;
                 case "Undo": _match.Undo(); break;
+                case "Exclusive units":
+                    UnitStats spartan = me.Roster.First(u => u.Name == TutorialSetup.ExclusiveUnit);
+                    if (!me.Unlocked.Contains(spartan)) _match.Unlock(spartan);
+                    _match.Buy(spartan);
+                    break;
                 case "The Command Center": _match.Selection.SelectTower(Team.A, TowerKind.CommandCenter); break;
                 case "The Research Center": _match.Selection.SelectTower(Team.A, TowerKind.ResearchCenter); break;
                 case "Ready": _battle.Speed = 1f; _match.Ready(); break;

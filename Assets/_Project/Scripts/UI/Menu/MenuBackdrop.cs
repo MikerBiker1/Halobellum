@@ -1,5 +1,5 @@
 // MenuBackdrop.cs
-// Makes the main menu's picture move (M10): the camera's slow drift, Pelicans flying past, the Scarab's beam, the baked Marines' idle
+// Makes the main menu's picture move (M10): the camera's slow drift, Pelicans flying past, the Scarab's beam, (no figures since D81) baked figures. idle
 // animation. The Scarab itself stands still, planted on all four legs: MainMenuSceneBuilder puts them on the ground and nothing here moves
 // them. All of it runs from one clock with no objects made and nothing allocated while it plays. MainMenuSceneBuilder makes the scene and
 // fills in the fields here. ApplyAt shows any moment, so the builder can take a preview picture.

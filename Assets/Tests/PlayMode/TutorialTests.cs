@@ -145,7 +145,14 @@ namespace Halobellum.Tests
             _match.BeginPlacingItem(m.Player.Inventory[0]);
             Assert.IsTrue(_match.PlaceItemOn(m.Player.Squads[0]).Ok);
             yield return Step("Flank zones");
+            Assert.IsTrue(_match.ShowsFlankZones && _match.PulsesFlankZones, "The flank zones show, glowing on and off.");
             T.Next();
+            yield return Step("Exclusive units");
+            Assert.IsFalse(_match.PulsesFlankZones, "They stop glowing after their step.");
+            UnitStats spartan = m.Player.Roster.First(u => u.Name == TutorialSetup.ExclusiveUnit);
+            Assert.IsTrue(m.Player.SubFaction.ExclusiveUnits.Contains(spartan), "The step's unit is one of Noble's own.");
+            Assert.IsTrue(_match.Unlock(spartan).Ok, "The step gives the credits to unlock it...");
+            Assert.IsTrue(_match.Buy(spartan).Ok, "...and to buy it.");
             yield return Step("Finish them");
             for (int round = 0; round < 12 && m.Phase != MatchPhase.MatchOver; round++)
             {

@@ -122,7 +122,7 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void ALandingCarrier_LandsBehindTheEnemy_LetsItsSquadOutBehindIt_ThreeTimes_AndGoesBackUp()
+        public void ALandingCarrier_LandsBehindTheEnemy_LetsItsSquadOutFromUnderIt_ThreeTimes_AndGoesBackUp()
         {
             var sim = new BattleSimulation(TestRules.Default(), 1);
             SimUnit carrier = sim.AddUnit(LandingCarrier(), Team.A, new Vec2(0f, -40f));
@@ -142,7 +142,11 @@ namespace Halobellum.Tests
                     Assert.Greater(c.Position.Y, 20f, "Behind the enemy.");
                     Assert.Less(Vec2.Distance(squad.Members[0].Position, c.Position), 16f);
                 }
-                Assert.Greater(Vec2.Dot(squad.Members[0].Position - c.Position, -c.Facing), 0f, "They come out behind it.");
+                Vec2 middle = Vec2.Zero;
+                foreach (SimUnit member in squad.Members) middle += member.Position;
+                middle = middle * (1f / squad.Members.Count);
+                Assert.LessOrEqual(Vec2.Distance(middle, c.Position), c.Radius + 0.5f, "They come out from under it, its troop bay.");
+                Assert.GreaterOrEqual(Vec2.Dot(middle - c.Position, -c.Facing), 0f, "Not ahead of it.");
             };
             while (sim.ElapsedSeconds < 45f && !sim.IsFinished)
             {

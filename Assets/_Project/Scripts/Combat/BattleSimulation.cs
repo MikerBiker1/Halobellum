@@ -345,10 +345,11 @@ namespace Halobellum.Combat
 
         private readonly List<SimUnit> _landers = new List<SimUnit>();
         private const float DropArrivalMetres = 6f, DropBehindLinesMetres = 8f, DropSpotCheckSeconds = 1f;
-        /// <summary>Beyond its collision size, how far behind it a carrier's squad comes out: clear of the Pelican's long tail.</summary>
-        private const float DropBehindCarrierMetres = 8f;
+        /// <summary>How far behind its centre a landed carrier's squad comes out, as a share of its collision size: from under it, the Pelican's troop bay
+        /// and the Phantom's gravity lift (the owner, 2026-11-07; it was 8 m beyond its size, clear of the tail, which put them too far back).</summary>
+        private const float DropUnderCarrierShare = 1f;
 
-        /// <summary>Flies each carrier to its next drop, brings it down, lets its squad out behind it, and takes it back up.</summary>
+        /// <summary>Flies each carrier to its next drop, brings it down, lets its squad out from under it, and takes it back up.</summary>
         private void UpdateDropRuns()
         {
             int count = _landers.Count;
@@ -389,7 +390,7 @@ namespace Halobellum.Combat
                     carrier.Altitude = Math.Max(0f, carrier.Altitude - step);
                     if (carrier.Altitude > 0f) continue;
                     if (!carrier.Stats.HasReinforcement) continue; // An EMP has switched off the tech that opens its bay: it waits on the ground until that is over.
-                    DropSquadFrom(carrier, carrier.Position - carrier.Facing * (carrier.Radius + DropBehindCarrierMetres));
+                    DropSquadFrom(carrier, carrier.Position - carrier.Facing * (carrier.Radius * DropUnderCarrierShare));
                     carrier.DropsMade++;
                     carrier.NextDropAt = ElapsedSeconds + carrier.Stats.ReinforcementDelaySeconds;
                     carrier.DropPhase = DropRunPhase.Ascending;

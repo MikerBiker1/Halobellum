@@ -42,7 +42,11 @@ namespace Halobellum.Presentation
         private void Update()
         {
             if (_match == null) return;
-            if (_field != null) _field.ShowFlankZones(_match.ShowsFlankZones ? _match.PlacingTeam : (Team?)null);
+            if (_field != null)
+            {
+                _field.ShowFlankZones(_match.ShowsFlankZones ? _match.PlacingTeam : (Team?)null);
+                _field.PulseFlankZones = _match.PulsesFlankZones;
+            }
             if (!_match.IsDeploying)
             {
                 if (_match.IsPlacing) _match.CancelPlacement();

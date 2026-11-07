@@ -163,6 +163,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] A tutorial (D77)
 - [x] The Spawner releases Infested Elites between its Infection Forms; the Infested Hornet trimmed; balanced (D79)
 - [x] Battlefield maps: three interior looks (UNSC installation, Covenant warship, Flood-infested ship), one per match (D80)
+- [x] No Marines on the main menu; the tutorial's wording, glowing flank zones and an exclusive unit step; the Pelican's Marines from under it (D81)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 
