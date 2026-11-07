@@ -1462,7 +1462,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Hornet
     defender: Spawner
-    winRate: 0.4
+    winRate: 0.1
   - attacker: Archer Missile Pod
     defender: Marine
     winRate: 1
@@ -2911,7 +2911,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Fuel Rod Grunt
     defender: Spawner
-    winRate: 0.2
+    winRate: 0
   - attacker: 'Jackal (Beam Rifle)'
     defender: Marine
     winRate: 0
@@ -4360,7 +4360,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Banshee
     defender: Spawner
-    winRate: 0.9
+    winRate: 0.3
   - attacker: Covenant Phantom
     defender: Marine
     winRate: 0
@@ -9742,7 +9742,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Longsword
     defender: Spawner
-    winRate: 1
+    winRate: 0.8
   - attacker: Vulture
     defender: Marine
     winRate: 1
@@ -10570,7 +10570,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Brute Grenadier
     defender: Spawner
-    winRate: 0.4
+    winRate: 0.1
   - attacker: Marauder
     defender: Marine
     winRate: 1
@@ -11812,7 +11812,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Cannon Fodder
     defender: Spawner
-    winRate: 0.8
+    winRate: 0.1
   - attacker: Heavy Grunts
     defender: Marine
     winRate: 0
@@ -13468,7 +13468,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Grunt
     defender: Spawner
-    winRate: 0.1
+    winRate: 0
   - attacker: Infested Ghost
     defender: Marine
     winRate: 0
@@ -14296,7 +14296,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Banshee
     defender: Spawner
-    winRate: 1
+    winRate: 0.9
   - attacker: Spawner
     defender: Marine
     winRate: 0
@@ -14317,7 +14317,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spawner
     defender: Hornet
-    winRate: 0.6
+    winRate: 0.9
   - attacker: Spawner
     defender: Archer Missile Pod
     winRate: 1
@@ -14338,7 +14338,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spawner
     defender: Fuel Rod Grunt
-    winRate: 0.8
+    winRate: 1
   - attacker: Spawner
     defender: 'Jackal (Beam Rifle)'
     winRate: 1
@@ -14359,7 +14359,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spawner
     defender: Banshee
-    winRate: 0.1
+    winRate: 0.7
   - attacker: Spawner
     defender: Covenant Phantom
     winRate: 1
@@ -14437,7 +14437,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spawner
     defender: Longsword
-    winRate: 0
+    winRate: 0.2
   - attacker: Spawner
     defender: Vulture
     winRate: 1
@@ -14449,7 +14449,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spawner
     defender: Brute Grenadier
-    winRate: 0.6
+    winRate: 0.9
   - attacker: Spawner
     defender: Marauder
     winRate: 1
@@ -14467,7 +14467,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spawner
     defender: Cannon Fodder
-    winRate: 0.2
+    winRate: 0.9
   - attacker: Spawner
     defender: Heavy Grunts
     winRate: 0
@@ -14491,7 +14491,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spawner
     defender: Infested Grunt
-    winRate: 0.9
+    winRate: 1
   - attacker: Spawner
     defender: Infested Ghost
     winRate: 1
@@ -14503,4 +14503,4 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spawner
     defender: Infested Banshee
-    winRate: 0
+    winRate: 0.1

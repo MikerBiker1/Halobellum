@@ -108,7 +108,7 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Armor | Shield | Speed | Weapons | Wins, average | Best counters |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Cannon Fodder | Chaff | 1 | 0 | 30 | 100 | 20 | Unarmored | 0 | 1.75 | Plasma Pistol (3 per 0.5 s, Energy, 9 m) | 36 of 69, 51% | Flamethrower Trooper 100%, Fuel Rod Grunt 100% |
+| Cannon Fodder | Chaff | 1 | 0 | 30 | 100 | 20 | Unarmored | 0 | 1.75 | Plasma Pistol (3 per 0.5 s, Energy, 9 m) | 35 of 69, 50% | Flamethrower Trooper 100%, Fuel Rod Grunt 100% |
 | Heavy Grunts | Single-target DPS | 1 | 0 | 8 | 200 | 100 | Unarmored | 30 | 1.5 | Needle Rifle (6.5 per 0.25 s, Energy, 12 m) | 42 of 69, 60% | Marine 100%, Infection Forms 100% |
 | Grunt Goblin | Tank | 3 | 200 | 1 | 400 | 1500 | Heavy | 0 | 2 | Goblin Plasma Cannons (9 per 0.2 s, Energy, 14 m); Goblin Fuel Rod (60 per 3 s, Explosive, 16 m, splash 2.5 m) | 43 of 69, 63% | Gauss Warthog 100%, Spartan 100% |
 
@@ -140,8 +140,8 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 | Infested Ghost | Flanker | 1 | 0 | 2 | 200 | 270 | Light | 0 | 5.5 | Hull Ram (45 per 1 s, Melee, 1.5 m, splash 1.5 m); Scavenged Plasma Bolts (8 per 0.25 s, Energy, 9 m) | 26 of 69, 39% | Flamethrower Trooper 100%, Scorpion 100% |
 | Infested Elite | Single-target DPS | 2 | 50 | 3 | 250 | 420 | Unarmored | 0 | 2 | Scythe Claw (42 per 0.7 s, Melee, anti-armor, 1.5 m); Scavenged Plasma Rifle (10 per 0.5 s, Energy, 11 m) | 32 of 69, 48% | Marine 100%, Grunt 100% |
 | Infested Wraith | Artillery | 2 | 50 | 1 | 250 | 1000 | Heavy | 0 | 1 | Scavenged Mortar (70 per 3.5 s, Explosive, 34 m, splash 4 m, lobbed) | 41 of 69, 58% | Hornet 100%, Pelican 100% |
-| Infested Banshee | Aerial | 2 | 50 | 2 | 250 | 360 | Light | 0 | 4.5 | Scavenged Plasma Cannons (8 per 0.3 s, Energy, 10 m); Spore Bomb (45 per 2.5 s, Explosive, 8 m, splash 3 m) | 52 of 69, 77% | Wolverine 100%, Swarm Form 100% |
-| Spawner | Tank | 3 | 200 | 1 | 400 | 2800 | Light | 0 | 0.9 | Spore Lash (40 per 1.2 s, Melee, 3 m, splash 2 m) | 56 of 69, 80% | Zealot 100%, Combat Form 100% |
+| Infested Banshee | Aerial | 2 | 50 | 2 | 250 | 360 | Light | 0 | 4.5 | Scavenged Plasma Cannons (8 per 0.3 s, Energy, 10 m); Spore Bomb (45 per 2.5 s, Explosive, 8 m, splash 3 m) | 52 of 69, 76% | Wolverine 100%, Swarm Form 100% |
+| Spawner | Tank | 3 | 200 | 1 | 400 | 3200 | Light | 0 | 0.9 | Spore Lash (40 per 1.2 s, Melee, 3 m, splash 2 m) | 58 of 69, 84% | Zealot 100%, Combat Form 100% |
 
 - **Infested Grunt.** A rushing crowd with claws. Cannot infect, as only Infection Forms do.
 - **Infested Ghost.** Faster and lighter than the Infested Warthog.
