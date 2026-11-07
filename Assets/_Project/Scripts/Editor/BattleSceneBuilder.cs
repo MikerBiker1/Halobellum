@@ -28,6 +28,8 @@ namespace Halobellum.EditorTools
     public static class BattleSceneBuilder
     {
         public const string MainMenuScenePath = "Assets/_Project/Scenes/MainMenu.unity";
+        /// <summary>The main menu from before the cinematic one (D94), kept for the player who prefers it (Settings > Menu background).</summary>
+        public const string ClassicMenuScenePath = "Assets/_Project/Scenes/MainMenuClassic.unity";
         public const string ScenePath = "Assets/_Project/Scenes/Battle.unity";
         public const string MatchScenePath = "Assets/_Project/Scenes/Match.unity";
         public const string SandboxScenePath = "Assets/_Project/Scenes/Sandbox.unity";
@@ -211,7 +213,7 @@ namespace Halobellum.EditorTools
         }
 
         /// <summary>The game's scenes in build order: the main menu first (a built game starts there; MainMenuSceneBuilder makes it).</summary>
-        public static readonly string[] GameScenes = { MainMenuScenePath, MatchScenePath, SandboxScenePath, ScenePath };
+        public static readonly string[] GameScenes = { MainMenuScenePath, ClassicMenuScenePath, MatchScenePath, SandboxScenePath, ScenePath };
 
         /// <summary>The main menu first, then the Match, the Sandbox and the Battle test scene.</summary>
         public static void UpdateBuildSettings()

@@ -497,6 +497,24 @@ namespace Halobellum.Tests
                 CollectionAssert.Contains(enabled, path);
                 Assert.IsTrue(System.IO.File.Exists(path), path);
             }
+            CollectionAssert.Contains(enabled, BattleSceneBuilder.ClassicMenuScenePath, "The classic menu is kept in the build (D94).");
+        }
+
+        [Test]
+        public void TheMenuChosenInSettings_Opens_ButATestToolAlwaysHasTheCinematicOne()
+        {
+            Assert.AreEqual(GameFlow.MainMenuScene, GameFlow.MenuSceneFor(false, new string[0]));
+            Assert.AreEqual(GameFlow.ClassicMainMenuScene, GameFlow.MenuSceneFor(true, new string[0]));
+            Assert.AreEqual(GameFlow.MainMenuScene, GameFlow.MenuSceneFor(true, new[] { GameFlow.MenuDemoFlag }));
+            Assert.IsTrue(GameFlow.IsMainMenu(GameFlow.MainMenuScene));
+            Assert.IsTrue(GameFlow.IsMainMenu(GameFlow.ClassicMainMenuScene));
+            Assert.IsFalse(GameFlow.IsMainMenu(GameFlow.MatchScene));
+
+            Assert.IsFalse(GameSettings.ClassicMenu, "The cinematic menu unless the player chooses the classic.");
+            GameSettings.ClassicMenu = true;
+            Assert.IsTrue(GameSettings.ClassicMenu);
+            GameSettings.ClassicMenu = false;
+            Assert.IsFalse(GameSettings.ClassicMenu);
         }
 
         [Test]

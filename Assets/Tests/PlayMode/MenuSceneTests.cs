@@ -1,5 +1,7 @@
 // MenuSceneTests.cs
-// Plays the real menu and pause flow (M10): the MainMenu scene opens with its camera moving and its Pelicans flying, and its Scarab standing still; New Match reaches a
+// Plays the real menu and pause flow (M10): the cinematic MainMenu scene (D94) opens on its battle, cutting through black between its shots, all
+// three sides in it and the Scarab walking and firing its beam; the classic menu kept beside it (MainMenuClassic) opens with its camera moving,
+// its Pelicans flying and its Scarab standing still; New Match reaches a
 // working draft; pausing truly stops a battle in every phase and resumes where it was, at the same speed; the HUD and field input are
 // off while paused and back after; leaving for the menu puts time right; the Sandbox's Back button goes where it came from.
 // The Play page, through the plain methods its buttons call: its pages, Esc stepping back, and that a start reaches the match with what was chosen. Its buttons, card list and a real Esc
@@ -76,9 +78,9 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
-        public IEnumerator MainMenu_Opens_WithItsPictureMoving()
+        public IEnumerator ClassicMenu_Opens_WithItsPictureMoving()
         {
-            yield return SceneManager.LoadSceneAsync(GameFlow.MainMenuScene, LoadSceneMode.Single);
+            yield return SceneManager.LoadSceneAsync(GameFlow.ClassicMainMenuScene, LoadSceneMode.Single);
             yield return null;
             yield return null;
             Assert.IsNotNull(Object.FindAnyObjectByType<MainMenuHud>());
@@ -104,9 +106,9 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
-        public IEnumerator MainMenu_TheWalkerStandsStill_AndItsBeamStillFires()
+        public IEnumerator ClassicMenu_TheWalkerStandsStill_AndItsBeamStillFires()
         {
-            yield return SceneManager.LoadSceneAsync(GameFlow.MainMenuScene, LoadSceneMode.Single);
+            yield return SceneManager.LoadSceneAsync(GameFlow.ClassicMainMenuScene, LoadSceneMode.Single);
             yield return null;
             yield return null;
             var backdrop = Object.FindAnyObjectByType<MenuBackdrop>();
@@ -133,9 +135,9 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
-        public IEnumerator MainMenu_TheWalkersPanelsStayDim_UntilTheBeamFires()
+        public IEnumerator ClassicMenu_TheWalkersPanelsStayDim_UntilTheBeamFires()
         {
-            yield return SceneManager.LoadSceneAsync(GameFlow.MainMenuScene, LoadSceneMode.Single);
+            yield return SceneManager.LoadSceneAsync(GameFlow.ClassicMainMenuScene, LoadSceneMode.Single);
             yield return null;
             yield return null;
             var backdrop = Object.FindAnyObjectByType<MenuBackdrop>();
@@ -174,6 +176,89 @@ namespace Halobellum.Tests
             panel.GetPropertyBlock(block, index);
             Assert.Greater(block.GetColor(emission).maxColorComponent, atRest * 2f, $"It rises as the beam fires (block empty: {block.isEmpty}, {panel.name} slot {index}).");
             Assert.AreEqual(own, panel.sharedMaterials[index].GetColor(emission).maxColorComponent, "The shared material is not touched.");
+        }
+
+        [UnityTest]
+        public IEnumerator CinematicMenu_Opens_OnItsBattle_WithTheCameraMoving()
+        {
+            yield return SceneManager.LoadSceneAsync(GameFlow.MainMenuScene, LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+            Assert.IsNotNull(Object.FindAnyObjectByType<MainMenuHud>());
+            var cinematic = Object.FindAnyObjectByType<MenuCinematic>();
+            Assert.IsNotNull(cinematic, "The main menu is the cinematic battlefield (D94).");
+            Assert.IsNull(Object.FindAnyObjectByType<MenuBackdrop>(), "The classic picture is in its own scene.");
+            Assert.IsNotNull(Camera.main);
+            Assert.AreSame(Camera.main, cinematic.view);
+            Assert.IsNull(PauseMenu.Current, "The menu has no battle to pause.");
+            Assert.GreaterOrEqual(cinematic.shots.Length, 4, "Several shots.");
+            Assert.Greater(cinematic.figures.Length, 50, "Soldiers and Flood forms.");
+            Assert.Greater(cinematic.marchers.Length, 10, "Some of them charging.");
+            Assert.Greater(cinematic.flyers.Length, 8, "Aircraft.");
+            Assert.Greater(cinematic.blasts.Length, 2, "Blasts.");
+
+            Vector3 before = Camera.main.transform.position;
+            yield return WaitRealSeconds(1f);
+            Assert.AreNotEqual(before, Camera.main.transform.position, "The camera moves.");
+            Assert.Greater(cinematic.Clock, 0.5f, "Its clock runs on real time.");
+            foreach (Renderer renderer in Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None))
+            {
+                Assert.IsNotNull(renderer.sharedMaterial, renderer.name + " has no material.");
+                Assert.AreNotEqual("Hidden/InternalErrorShader", renderer.sharedMaterial.shader.name, renderer.name);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator CinematicMenu_CutsBetweenItsShots_ThroughBlack()
+        {
+            yield return SceneManager.LoadSceneAsync(GameFlow.MainMenuScene, LoadSceneMode.Single);
+            yield return null;
+            var cinematic = Object.FindAnyObjectByType<MenuCinematic>();
+            float loop = cinematic.LoopSeconds, at = 0f;
+            Assert.AreEqual(1f, cinematic.FadeAt(0f), 1e-4f, "It opens from black.");
+            var places = new Vector3[cinematic.shots.Length];
+            for (int i = 0; i < cinematic.shots.Length; i++)
+            {
+                MenuCinematic.Shot shot = cinematic.shots[i];
+                Assert.AreEqual(i, cinematic.ShotAt(at + shot.seconds * 0.5f, out float share), shot.name);
+                Assert.AreEqual(0.5f, share, 1e-3f);
+                Assert.AreEqual(0f, cinematic.FadeAt(at + shot.seconds * 0.5f), 1e-4f, shot.name + " is clear in its middle.");
+                Assert.Greater(cinematic.FadeAt(at + shot.seconds - 0.05f), 0.8f, shot.name + " ends in black.");
+                Assert.Greater(Vector3.Distance(shot.from, shot.to), 3f, shot.name + " moves.");
+                places[i] = shot.from;
+                at += shot.seconds;
+            }
+            Assert.AreEqual(loop, at, 1e-3f);
+            Assert.AreEqual(0, cinematic.ShotAt(loop + 1f, out _), "It goes round again.");
+            for (int i = 1; i < places.Length; i++) Assert.Greater(Vector3.Distance(places[i], places[i - 1]), 40f, "Each shot is somewhere else.");
+        }
+
+        [UnityTest]
+        public IEnumerator CinematicMenu_HasAllThreeSides_AndItsScarabWalksAndFires()
+        {
+            yield return SceneManager.LoadSceneAsync(GameFlow.MainMenuScene, LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+            var cinematic = Object.FindAnyObjectByType<MenuCinematic>();
+            foreach (string side in new[] { "UNSC", "Covenant", "Flood" })
+            {
+                GameObject army = GameObject.Find(side);
+                Assert.IsNotNull(army, side);
+                Assert.Greater(army.GetComponentsInChildren<Renderer>().Length, 10, side + " is there in strength.");
+            }
+            Assert.IsNotNull(cinematic.Walker, "The Scarab has its walking legs.");
+
+            Vector3 before = cinematic.walkerRoot.position;
+            cinematic.Advance(cinematic.beamStart + 1f - cinematic.Clock);
+            yield return null;
+            Assert.Greater(Vector3.Distance(before, cinematic.walkerRoot.position), 3f, "It walks across the field.");
+            Assert.IsTrue(cinematic.beam.enabled, "Its beam fires.");
+            Assert.AreEqual(cinematic.beamFrom.position, cinematic.beam.GetPosition(0), "From its gun.");
+            Assert.AreEqual(1f, cinematic.PanelStrength, 1e-3f, "Its panels glow as it fires.");
+            float half = cinematic.beamPeriod * 0.5f;
+            cinematic.Advance(half);
+            Assert.IsFalse(cinematic.beam.enabled, "And stops.");
+            Assert.AreEqual(0f, cinematic.PanelStrength);
         }
 
         [UnityTest]

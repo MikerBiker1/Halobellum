@@ -223,7 +223,7 @@ namespace Halobellum.Presentation
         /// <summary>Connects to what is in a scene and decides on its music.</summary>
         public void HandleScene(string sceneName)
         {
-            if (sceneName == AudioSlots.MainMenuScene)
+            if (sceneName == AudioSlots.MainMenuScene || GameFlow.IsMainMenu(sceneName))
             {
                 UiFaction = null;
                 Music.Play(AudioSlots.MainMenuMusic);

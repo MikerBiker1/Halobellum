@@ -1,5 +1,6 @@
 // MainMenuSceneBuilder.cs
-// Builds Scenes/MainMenu.unity from code (M10), so it can always be made again exactly: a low camera on a darkening battlefield, looking
+// Builds Scenes/MainMenuClassic.unity from code (M10), so it can always be made again exactly. It was the main menu until D94 made the
+// cinematic battlefield (MenuCinematicBuilder) the main menu and kept this one for the player who prefers it (Settings > Menu background): a low camera on a darkening battlefield, looking
 // toward the sun. Scorpions in front (no Marines: only the vehicles, as the owner asked); a burnt-out Warthog smoking on the left; Wraiths further on; a huge Scarab standing in
 // the haze, all four legs on the ground; ridges behind it, smoke on the horizon, embers in the air, Pelicans crossing the sky. The models are the project's own; the
 // ground, ridges, rocks, sky, smoke and glow are all made here or by MenuSky.shader, and written to Art/Menu. The moving parts are in
@@ -37,12 +38,12 @@ namespace Halobellum.EditorTools
         // How far the Scarab's feet go into the ground, in metres: enough that no light shows under them.
         private const float FootSink = 0.03f;
 
-        [MenuItem("Halobellum/Scenes/Rebuild Main Menu Scene")]
+        [MenuItem("Halobellum/Scenes/Rebuild Classic Main Menu Scene")]
         public static void BuildFromMenu()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
             Build();
-            Debug.Log("Main menu scene rebuilt at " + BattleSceneBuilder.MainMenuScenePath + ".");
+            Debug.Log("Classic main menu scene rebuilt at " + BattleSceneBuilder.ClassicMenuScenePath + ".");
         }
 
         public static void BuildFromCommandLine()
@@ -123,7 +124,7 @@ namespace Halobellum.EditorTools
             BuildSmokeAndEmbers();
             BuildFlyers(backdrop);
 
-            EditorSceneManager.SaveScene(scene, BattleSceneBuilder.MainMenuScenePath);
+            EditorSceneManager.SaveScene(scene, BattleSceneBuilder.ClassicMenuScenePath);
             BattleSceneBuilder.UpdateBuildSettings();
             AssetDatabase.SaveAssets();
             return backdrop;

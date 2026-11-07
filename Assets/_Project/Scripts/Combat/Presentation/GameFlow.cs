@@ -4,6 +4,9 @@
 // The test tools (-autoplay, -sandboxDemo, -gallery, -crowdBench, -benchmark) skip the menu: as soon as MainMenu has loaded, the
 // game moves on to the scene that tool has always run in. -menuDemo and -screenDemo stay in the menu, because the menu is what they test.
 // It also remembers where the Sandbox was opened from, for the Sandbox's Back button.
+// There are two main menus (D94): the cinematic battlefield, MainMenu, where a build starts, and the classic one from before it, MainMenuClassic,
+// which the player can choose in Settings; then the game goes there instead, straight away from the start and whenever it returns to the menu.
+// A run of a test tool always has the cinematic one.
 // A setup chosen for the next match waits here for the Match scene, which takes it once, so that any other load of the scene
 // (a test tool, a test) always gets Faction mode.
 // Depends on: GamePause, SandboxAutoplay, CrowdBenchmark and AudioCapture (their flags), Halobellum.Economy (MatchSetup), UnityEngine.
@@ -18,6 +21,7 @@ namespace Halobellum.Presentation
     public static class GameFlow
     {
         public const string MainMenuScene = "MainMenu";
+        public const string ClassicMainMenuScene = "MainMenuClassic";
         public const string MatchScene = "Match";
         public const string SandboxScene = "Sandbox";
         public const string BattleScene = "Battle";
@@ -39,7 +43,16 @@ namespace Halobellum.Presentation
         public static string SandboxCameFrom { get; private set; } = MatchScene;
 
         /// <summary>What the Sandbox's Back button says.</summary>
-        public static string SandboxBackLabel => SandboxCameFrom == MainMenuScene ? "Main menu" : "Back to match";
+        public static string SandboxBackLabel => IsMainMenu(SandboxCameFrom) ? "Main menu" : "Back to match";
+
+        /// <summary>True for either main menu (D94).</summary>
+        public static bool IsMainMenu(string scene) => scene == MainMenuScene || scene == ClassicMainMenuScene;
+
+        /// <summary>The main menu the player chose in Settings: the cinematic one unless they chose the classic, and always it in a test run (D94).</summary>
+        public static string MenuSceneToOpen => MenuSceneFor(GameSettings.ClassicMenu, Environment.GetCommandLineArgs());
+
+        /// <summary>The main menu to open with this choice in Settings and this command line.</summary>
+        public static string MenuSceneFor(bool classic, string[] args) => classic && !IsTestRun(args) ? ClassicMainMenuScene : MainMenuScene;
 
         /// <summary>The scene a test tool on this command line runs in, or null to show the main menu as usual.</summary>
         public static string DirectSceneFor(string[] args)
@@ -62,7 +75,7 @@ namespace Halobellum.Presentation
             return Has(args, "-screen-width") || Has(args, "-screen-height") || Has(args, "-screen-fullscreen") || Has(args, "-popupwindow") || Has(args, "-monitor");
         }
 
-        public static void OpenMainMenu() => Load(MainMenuScene);
+        public static void OpenMainMenu() => Load(MenuSceneToOpen);
 
         public static void NewMatch() => Load(MatchScene);
 
@@ -141,6 +154,7 @@ namespace Halobellum.Presentation
             if (!firstScene || scene.name != MainMenuScene) return;
             string direct = DirectSceneFor(Environment.GetCommandLineArgs());
             if (direct != null) SceneManager.LoadScene(direct);
+            else if (MenuSceneToOpen != MainMenuScene) SceneManager.LoadScene(MenuSceneToOpen); // The player chose the classic menu (D94).
         }
     }
 }

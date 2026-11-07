@@ -1,5 +1,5 @@
 // MenuScarabTests.cs
-// The Scarab in the main menu's picture (M10): it stands still with all four legs on the ground. These read the model's vertices against the
+// The Scarab in the classic main menu's picture (M10; the menu kept as MainMenuClassic since D94): it stands still with all four legs on the ground. These read the model's vertices against the
 // ground's triangles in the real scene, which only the editor can do: a game can't read a model's meshes. Here the Scarab keeps its legs
 // as they are in the model, so that a leg here is only a small slide away from the prefab's. A leg is the walker's Leg_ node with its knee and
 // foot under it (D84); in battle WalkerLegs bends them, here nothing does.
@@ -16,7 +16,7 @@ namespace Halobellum.Tests
 {
     public class MenuScarabTests
     {
-        private const string ScenePath = "Assets/_Project/Scenes/MainMenu.unity";
+        private const string ScenePath = "Assets/_Project/Scenes/MainMenuClassic.unity"; // The classic menu, kept since D94.
         private const string PrefabPath = "Assets/_Project/Prefabs/Units/Scarab_Model.prefab";
 
         private MenuBackdrop _backdrop;

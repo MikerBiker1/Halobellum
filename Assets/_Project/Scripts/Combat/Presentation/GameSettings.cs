@@ -11,6 +11,7 @@
 //   Skirmish.BaseHealth                                 int, Unlock Skirmish's base health from the Play page, 100 to 10000 in steps of 100.
 //   Ui.ShowFrameRate                                    int, 1 shows the frame-rate counter in battle, 0 hides it.
 //   Log.BattleLog                                       int, 1 writes a battle log of each game played (D68), 0 writes none (D69).
+//   Ui.MenuBackground                                   int, 0 the cinematic main menu (D94), 1 the classic one kept from before it.
 // A run of a test tool, or one with -screen-width and so on, keeps its window and frame rate: a saved window must not change what
 // another tool measures. Benchmarks turn VSync off for themselves after this has run.
 // A run of a test tool also holds the settings in memory (HoldInMemory): it starts from what the player saved, and what it changes, by a click or the K key
@@ -38,13 +39,14 @@ namespace Halobellum.Presentation
         public const string UiScaleKey = "Ui.Scale", ShowFrameRateKey = "Ui.ShowFrameRate";
         public const string SkirmishBaseHealthKey = "Skirmish.BaseHealth";
         public const string BattleLogKey = "Log.BattleLog";
+        public const string MenuBackgroundKey = "Ui.MenuBackground";
 
         public const float DefaultMasterVolume = 1f, DefaultMusicVolume = 0.6f, DefaultSfxVolume = 1f, DefaultUiVolume = 1f;
         public const float SmallestUiScale = 0.75f, LargestUiScale = 1.25f, UiScaleStep = 0.05f;
         public const int DefaultSkirmishBaseHealth = 2000;
 
         private static readonly string[] SavedFloatKeys = { MasterVolumeKey, MusicVolumeKey, SfxVolumeKey, UiVolumeKey, UiScaleKey };
-        private static readonly string[] SavedIntKeys = { CameraShakeKey, FullscreenKey, WidthKey, HeightKey, QualityKey, VSyncKey, MatchController.DifficultyKey, SkirmishBaseHealthKey, ShowFrameRateKey, BattleLogKey };
+        private static readonly string[] SavedIntKeys = { CameraShakeKey, FullscreenKey, WidthKey, HeightKey, QualityKey, VSyncKey, MatchController.DifficultyKey, SkirmishBaseHealthKey, ShowFrameRateKey, BattleLogKey, MenuBackgroundKey };
 
         private static readonly string[] SavedStringKeys = { ScreenKey };
 
@@ -115,6 +117,13 @@ namespace Halobellum.Presentation
         }
 
         /// <summary>Shows the frame-rate counter in battle. Read every time the battle's HUD draws, so it is kept in memory.</summary>
+        /// <summary>True for the classic main menu, the one from before the cinematic battlefield (D94), kept so the owner can go back to it.</summary>
+        public static bool ClassicMenu
+        {
+            get => GetInt(MenuBackgroundKey, 0) == 1;
+            set => SetInt(MenuBackgroundKey, value ? 1 : 0);
+        }
+
         public static bool ShowFrameRate
         {
             get
