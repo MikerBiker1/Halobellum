@@ -1,7 +1,7 @@
 // SandboxHud.cs
 // The sandbox screen (Milestone 4): a side switch (blue / red), the units of every faction to place
 // on that side, both armies' totals, actions for the selected squad (Move, Turn, Remove), and Run /
-// Reset, Clear side, Copy side, a switch for the towers, the battle seed and a Back button (to the match or the main menu, whichever opened it: GameFlow). An Items panel on the
+// Reset, Clear side, Copy side, a switch for the towers, the Map setting (SandboxMaps, D82: any interior or outdoor map), the battle seed and a Back button (to the match or the main menu, whichever opened it: GameFlow). An Items panel on the
 // left offers every item for free (decision D34): drag one onto the hexagon over a squad of either
 // side. Speed controls and the battle result line come from BattleHud, which puts that line under this screen's bar; the squad stats window from
 // SquadStatsWindow. A tall stats window pushes the Items panel to its right.
@@ -162,6 +162,9 @@ namespace Halobellum.UI
                 string other = SandboxController.SideName(sandbox.EditingTeam.Opponent());
                 if (GUI.Button(new Rect(bar.x + 600f, bar.y + 10f, 106f, 44f), $"Copy to {other}", _button)) sandbox.CopyToOtherSide(sandbox.EditingTeam);
                 if (MenuStyle.SmallFramedButton(new Rect(bar.x + 710f, bar.y + 10f, 104f, 44f), sandbox.TowersOn ? "Towers on" : "Towers off", sandbox.TowersOn, TowersKey)) sandbox.SetTowers(!sandbox.TowersOn);
+                // The map (D82): a click goes to the next one, a right click back. The field changes a moment later.
+                Rect map = new Rect(bar.x + 818f, bar.y + 10f, 170f, 44f);
+                if (GUI.Button(map, "Map\n" + SandboxMaps.NameOf(sandbox.MapChoice), _button)) sandbox.MapChoice += Event.current.button == 1 ? -1 : 1;
                 if (GUI.Button(new Rect(bar.xMax - 300f, bar.y + 10f, 140f, 44f), "Run battle", _bigButton)) sandbox.Run();
             }
             if (GUI.Button(new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f), GameFlow.SandboxBackLabel, _button)) GameFlow.LeaveSandbox();

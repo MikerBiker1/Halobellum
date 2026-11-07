@@ -5,7 +5,11 @@
 // on the unit's position (air units on their middle), makes its matte materials, and points the unit's data asset at it.
 // The unit then keeps the model's own materials. Sizes in the table below are the place to tune how big a unit looks.
 // The two towers (D55) aren't units: each becomes a prefab in Resources/Towers, named after its kind, which TowerArt finds there.
-// An infested vehicle (one tinted Infested) also gets Flood growths on its surface (FloodGrowths, decision D37).
+// An infested vehicle (one tinted Infested) also gets Flood growths on its surface (FloodGrowths, decision D37), and wears its textures' Flood copies,
+// <texture>_Flood.png, with beige tendrils baked over the paint (Tools/Art/flood_tendrils.py, D82) instead of a green wash.
+// Every model's glow (its glow texture or colour in materials.json) is on, except on the infested vehicles (D82). An entry with Thrusters gets a
+// Thruster_<size> node at the back of each of its outermost parts (the Banshee's wing tips, the Ghost's fins), which ModelParts lights while it moves.
+// An entry with a Prop holds that weapon model (a Weapon_ folder) at its Muzzle_1, which moves to the weapon's tip (the Infested Elite's plasma rifle).
 //   Menu: Halobellum > Art > Build Real Model Prefabs
 //   Command line: -executeMethod Halobellum.EditorTools.RealModelBuilder.BuildAllFromCommandLine (or BuildTowersFromCommandLine for the towers alone,
 //   BuildInfestedFromCommandLine for the infested vehicles alone)
@@ -40,9 +44,18 @@ namespace Halobellum.EditorTools
             public string Unit, Folder;
             public float Length, Height;
             public Color Tint = Color.white;
+            /// <summary>Glowing thrusters at the back of the outermost parts, lit while moving (the owner, 2026-11-07, D82).</summary>
+            public bool Thrusters;
+            /// <summary>A weapon held at Muzzle_1, a Weapon_ folder in Art/Imported/Models, and its length in metres.</summary>
+            public string Prop;
+            public float PropLength;
         }
 
-        private static readonly Color Infested = new Color(0.72f, 0.82f, 0.45f);
+        /// <summary>
+        /// The infested vehicles' tint, now only a little warmer: their textures' Flood copies carry the infestation (D82). Before, a green wash
+        /// (0.72, 0.82, 0.45) that the owner turned down. Parts with no texture (glass, dark trim) take it as it is.
+        /// </summary>
+        private static readonly Color Infested = new Color(0.96f, 0.93f, 0.88f);
         /// <summary>The Phantom's texture is grey: a Covenant purple over it, for the Covenant's own (the Flood's is Infested).</summary>
         private static readonly Color CovenantHull = new Color(0.9f, 0.72f, 1.2f);
         /// <summary>The growths keep their own texture, a little greener, and lifted: as it is, the dark brown reads as black from the game's camera.</summary>
@@ -56,7 +69,7 @@ namespace Halobellum.EditorTools
             new Entry { Unit = "UNSC/GaussWarthog", Folder = "GaussWarthog", Length = 4.6f },
             new Entry { Unit = "UNSC/Hornet", Folder = "Hornet", Length = 6f },
             new Entry { Unit = "UNSC/Pelican", Folder = "Pelican", Length = 10f },
-            new Entry { Unit = "Covenant/Banshee", Folder = "Banshee", Length = 6.6f }, // Its wings are wider than it is long: 5.4 m nose to tail.
+            new Entry { Unit = "Covenant/Banshee", Folder = "Banshee", Length = 6.6f, Thrusters = true }, // Its wings are wider than it is long: 5.4 m nose to tail.
             new Entry { Unit = "Covenant/Wraith", Folder = "Wraith", Length = 6.2f },
             new Entry { Unit = "Covenant/Scarab", Folder = "Scarab", Length = 14f },
             new Entry { Unit = "Flood/InfectedPelican", Folder = "Pelican", Length = 10f, Tint = Infested },
@@ -77,7 +90,7 @@ namespace Halobellum.EditorTools
             new Entry { Unit = "FloodUNSC/InfestedScorpion", Folder = "Scorpion", Length = 6.2f, Tint = Infested },
             new Entry { Unit = "FloodUNSC/InfestedHornet", Folder = "Hornet", Length = 6f, Tint = Infested },
             new Entry { Unit = "FloodCovenant/InfestedWraith", Folder = "Wraith", Length = 6.2f, Tint = Infested },
-            new Entry { Unit = "FloodCovenant/InfestedBanshee", Folder = "Banshee", Length = 6.6f, Tint = Infested },
+            new Entry { Unit = "FloodCovenant/InfestedBanshee", Folder = "Banshee", Length = 6.6f, Tint = Infested, Thrusters = true },
             // The owner's second batch (M11).
             new Entry { Unit = "UNSC/ArcherMissilePod", Folder = "ArcherMissilePod", Height = 3.6f },
             new Entry { Unit = "ArmoredDivision/Cobra", Folder = "Cobra", Length = 6f },
@@ -85,8 +98,8 @@ namespace Halobellum.EditorTools
             new Entry { Unit = "AerospaceCommand/Sparrowhawk", Folder = "Sparrowhawk", Length = 7f },
             new Entry { Unit = "AerospaceCommand/Vulture", Folder = "Vulture", Length = 10f },
             new Entry { Unit = "AerospaceCommand/Longsword", Folder = "Longsword", Length = 11f },
-            new Entry { Unit = "Covenant/Ghost", Folder = "Ghost", Length = 4.4f },
-            new Entry { Unit = "FloodCovenant/InfestedGhost", Folder = "Ghost", Length = 4.4f, Tint = Infested },
+            new Entry { Unit = "Covenant/Ghost", Folder = "Ghost", Length = 4.4f, Thrusters = true },
+            new Entry { Unit = "FloodCovenant/InfestedGhost", Folder = "Ghost", Length = 4.4f, Tint = Infested, Thrusters = true },
             new Entry { Unit = "LekgoloColony/Skitterer", Folder = "Skitterer", Length = 2.6f },
             new Entry { Unit = "Flood/SwarmForm", Folder = "SwarmForm", Length = 3f },
             // The owner's third batch (M11). Radii, for comparison: Mantis 2, Wolverine 1.4, Marauder 1.8, Reaver 1.4, Vampire 1.8, Seeder 1.6, Spawner 2, Juggernaut 1.8, Combat Form 0.6, Goliath 2.4.
@@ -97,6 +110,8 @@ namespace Halobellum.EditorTools
             new Entry { Unit = "Covenant/Vampire", Folder = "Vampire", Length = 7.5f },
             new Entry { Unit = "Flood/Seeder", Folder = "Seeder", Length = 8f },
             new Entry { Unit = "Flood/CombatForm", Folder = "CombatForm", Height = 2.6f },
+            // The owner, 2026-11-07 (D82): the Infested Elite is the Combat Form, an infested Elite; it was the Elite's body washed green. It holds its plasma rifle.
+            new Entry { Unit = "FloodCovenant/InfestedElite", Folder = "CombatForm", Height = 2.6f, Prop = "Weapon_PlasmaRifle", PropLength = 0.85f },
             new Entry { Unit = "FloodCovenant/Spawner", Folder = "Spawner", Length = 9f },
             new Entry { Unit = "FloodUNSC/Juggernaut", Folder = "Juggernaut", Length = 8f },
             new Entry { Unit = "LekgoloColony/Goliath", Folder = "Goliath", Height = 6f },
@@ -193,11 +208,15 @@ namespace Halobellum.EditorTools
             var unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>(assetPath);
             if (unit == null) throw new InvalidOperationException("No unit at " + assetPath);
             string unitName = Path.GetFileNameWithoutExtension(assetPath);
-            GameObject root = MakeModel(entry.Folder, unitName + "_Model", entry.Length, entry.Height, unit.isAir, entry.Tint, entry.Tint != Color.white ? "_" + unitName : "");
+            bool infested = entry.Tint == Infested;
+            GameObject root = MakeModel(entry.Folder, unitName + "_Model", entry.Length, entry.Height, unit.isAir, entry.Tint, entry.Tint != Color.white ? "_" + unitName : "",
+                glows: !infested, flood: infested);
             if (root == null) return; // Rigged and baked instead.
             try
             {
-                if (entry.Tint == Infested) AddGrowths(root, unitName);
+                if (infested) AddGrowths(root, unitName);
+                if (entry.Thrusters) AddThrusters(root);
+                if (!string.IsNullOrEmpty(entry.Prop)) AddProp(root, entry.Prop, entry.PropLength);
                 string path = $"{PrefabFolder}/{unitName}_Model.prefab";
                 unit.prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
                 unit.keepsOwnMaterials = true;
@@ -227,6 +246,79 @@ namespace Halobellum.EditorTools
             }
         }
 
+        /// <summary>
+        /// A Thruster_<size> node at the back of the outermost part on each side: the parts reaching furthest out (within 15% of the widest), where
+        /// their back is, half way up them. Size is how wide the glow is at full, in metres.
+        /// </summary>
+        private static void AddThrusters(GameObject root)
+        {
+            Matrix4x4 toRoot = root.transform.worldToLocalMatrix;
+            var points = new List<Vector3>();
+            foreach (MeshFilter filter in root.GetComponentsInChildren<MeshFilter>())
+            {
+                Matrix4x4 meshToRoot = toRoot * filter.transform.localToWorldMatrix;
+                points.AddRange(filter.sharedMesh.vertices.Select(v => meshToRoot.MultiplyPoint3x4(v)));
+            }
+            float widest = points.Max(p => Mathf.Abs(p.x));
+            foreach (float side in new[] { -1f, 1f })
+            {
+                List<Vector3> part = points.Where(p => p.x * side > widest * 0.85f).ToList();
+                if (part.Count == 0) continue;
+                float low = part.Min(p => p.y), high = part.Max(p => p.y);
+                float size = Mathf.Clamp((high - low) * 1.6f, 0.35f, 0.8f);
+                var node = new GameObject(string.Format(System.Globalization.CultureInfo.InvariantCulture, "Thruster_{0:0.00}", size));
+                node.transform.SetParent(root.transform, false);
+                node.transform.localPosition = new Vector3(part.Average(p => p.x), (low + high) * 0.5f, part.Min(p => p.z) - 0.05f);
+                Debug.Log($"{root.name}: {node.name} at {node.transform.localPosition}");
+            }
+        }
+
+        /// <summary>
+        /// A weapon model held at the model's Muzzle_1, pointing forward with its tip just past it, in the weapon's own vertex colours; Muzzle_1
+        /// then moves to the weapon's tip, so that shots leave the barrel.
+        /// </summary>
+        private static void AddProp(GameObject root, string prop, float length)
+        {
+            Transform muzzle = root.GetComponentsInChildren<Transform>().FirstOrDefault(t => t.name == "Muzzle_1");
+            string path = $"{AnimationBaker.ModelsFolder}/{prop}/{prop}.fbx";
+            var model = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (muzzle == null || model == null) throw new InvalidOperationException($"{root.name}: needs a Muzzle_1 and {path}.");
+            var weapon = (GameObject)PrefabUtility.InstantiatePrefab(model);
+            PrefabUtility.UnpackPrefabInstance(weapon, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            weapon.name = prop;
+            weapon.transform.SetParent(root.transform, false);
+            weapon.transform.localPosition = Vector3.zero;
+            weapon.transform.localRotation = Quaternion.identity;
+            weapon.transform.localScale = Vector3.one;
+            MeshFilter filter = weapon.GetComponentInChildren<MeshFilter>();
+            Transform tip = weapon.GetComponentsInChildren<Transform>().FirstOrDefault(t => t.name == "Muzzle");
+            if (filter == null || tip == null) throw new InvalidOperationException($"{path} needs a mesh and a node named Muzzle.");
+            Matrix4x4 meshToRoot = root.transform.worldToLocalMatrix * filter.transform.localToWorldMatrix;
+            float[] along = filter.sharedMesh.vertices.Select(v => meshToRoot.MultiplyPoint3x4(v).z).ToArray();
+            weapon.transform.localScale = Vector3.one * (length / Mathf.Max(0.001f, along.Max() - along.Min()));
+            Vector3 wantedTip = root.transform.InverseTransformPoint(muzzle.position) + Vector3.forward * 0.1f;
+            weapon.transform.localPosition += wantedTip - root.transform.InverseTransformPoint(tip.position);
+            muzzle.position = tip.position;
+            Object.DestroyImmediate(tip.gameObject);
+            string materialPath = $"{AnimationBaker.ModelsFolder}/{prop}/{prop}_Held.mat";
+            var material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+            if (material == null)
+            {
+                // Opaque, and it shows the weapon's vertex colours, which is where its paint is.
+                material = new Material(Shader.Find("Universal Render Pipeline/Particles/Simple Lit")) { name = prop + "_Held" };
+                AssetDatabase.CreateAsset(material, materialPath);
+            }
+            material.SetColor("_BaseColor", Color.white);
+            EditorUtility.SetDirty(material);
+            foreach (MeshRenderer renderer in weapon.GetComponentsInChildren<MeshRenderer>())
+            {
+                renderer.sharedMaterial = material;
+                renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                renderer.receiveShadows = false;
+            }
+            Debug.Log($"{root.name}: holds {prop}, tip at {root.transform.InverseTransformPoint(muzzle.position)}");
+        }
+
         /// <summary>A tower's prefab, in Resources so that the game can find it by its kind's name. Its door faces +Z, as a unit's front does.</summary>
         private static void BuildTower(string folder, float length, float lift)
         {
@@ -251,7 +343,7 @@ namespace Halobellum.EditorTools
         /// ground and centred on the origin (an air unit on its middle), with its matte materials. Null if the folder has no FBX. The caller destroys it.
         /// With glows, a material with a glow texture or colour is switched on to glow (see Matte).
         /// </summary>
-        private static GameObject MakeModel(string modelFolder, string rootName, float length, float height, bool isAir, Color tint, string materialSuffix, bool glows = false)
+        private static GameObject MakeModel(string modelFolder, string rootName, float length, float height, bool isAir, Color tint, string materialSuffix, bool glows = false, bool flood = false)
         {
             string folder = $"{AnimationBaker.ModelsFolder}/{modelFolder}";
             string fbx = $"{folder}/{modelFolder}.fbx";
@@ -285,7 +377,7 @@ namespace Halobellum.EditorTools
             {
                 renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 renderer.receiveShadows = false;
-                renderer.sharedMaterials = renderer.sharedMaterials.Select(m => Matte(m, info, folder, materials, tint, materialSuffix, glows)).ToArray();
+                renderer.sharedMaterials = renderer.sharedMaterials.Select(m => Matte(m, info, folder, materials, tint, materialSuffix, glows, flood)).ToArray();
             }
             return root;
         }
@@ -294,7 +386,7 @@ namespace Halobellum.EditorTools
         /// A matte material from what materials.json says: as imported they are shiny enough to mirror the pale sky,
         /// which turns paint steel grey. Glass stays shiny.
         /// </summary>
-        private static Material Matte(Material imported, MaterialList list, string folder, string materials, Color tint, string suffix, bool glows)
+        private static Material Matte(Material imported, MaterialList list, string folder, string materials, Color tint, string suffix, bool glows, bool flood)
         {
             string path = $"{materials}/{imported.name}{suffix}.mat";
             var material = AssetDatabase.LoadAssetAtPath<Material>(path);
@@ -305,7 +397,14 @@ namespace Halobellum.EditorTools
             bool glass = info?.glass ?? false;
             Color colour = info?.colour != null && info.colour.Length == 3 ? new Color(info.colour[0], info.colour[1], info.colour[2]).gamma : imported.color;
             material.SetColor("_BaseColor", new Color(colour.r * tint.r, colour.g * tint.g, colour.b * tint.b, 1f));
-            if (!string.IsNullOrEmpty(info?.texture)) material.SetTexture("_BaseMap", AssetDatabase.LoadAssetAtPath<Texture2D>($"{folder}/{info.texture}"));
+            if (!string.IsNullOrEmpty(info?.texture))
+            {
+                // An infested vehicle wears the texture's Flood copy, if Tools/Art/flood_tendrils.py has made one.
+                string texture = $"{folder}/{info.texture}";
+                string floodCopy = $"{folder}/{Path.GetFileNameWithoutExtension(info.texture)}_Flood.png";
+                if (flood && File.Exists(floodCopy)) texture = floodCopy;
+                material.SetTexture("_BaseMap", AssetDatabase.LoadAssetAtPath<Texture2D>(texture));
+            }
             material.SetFloat("_Smoothness", glass ? 0.8f : 0.15f);
             material.SetFloat("_Metallic", 0f);
             material.SetFloat("_SpecularHighlights", glass ? 1f : 0f);
@@ -321,10 +420,8 @@ namespace Halobellum.EditorTools
             bool hasGlowColour = info?.glow != null && info.glow.Length == 3;
             if (!string.IsNullOrEmpty(info?.glowTexture) || hasGlowColour)
             {
-                // URP keeps _EMISSION only on a material flagged as emissive, and drops it otherwise when it first checks a new material, while a
-                // material built again kept it: so the other models' glow has never shown, but would have come on with a rebuild. Now it is the same
-                // every time: only the towers' glow (their faction-coloured mask) is switched on. Switching the others on would change how they
-                // look, which is the owner's call.
+                // URP keeps _EMISSION only on a material flagged as emissive, and drops it otherwise when it first checks a new material, so it is
+                // set both ways every time. On for the towers and, since D82 (the owner, 2026-11-07), every other model but the infested ones.
                 if (glows) material.EnableKeyword("_EMISSION");
                 else material.DisableKeyword("_EMISSION");
                 material.globalIlluminationFlags = glows ? MaterialGlobalIlluminationFlags.RealtimeEmissive : MaterialGlobalIlluminationFlags.None;

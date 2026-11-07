@@ -928,11 +928,7 @@ def clip_list():
     add("sfx_fire_melee_covenant", fire_melee_covenant, -20.0, 3)
     add("sfx_fire_melee_flood", fire_melee_flood, -20.0, 3)
     add("sfx_fire_bio", fire_bio, -19.0, 3)
-    add("sfx_impact_flesh", impact_flesh, -25.0, 3)
-    add("sfx_impact_armor", impact_armor, -25.0, 3)
-    add("sfx_impact_shield", impact_shield, -24.0, 3)
-    add("sfx_impact_block", impact_block, -22.0, 2)
-    add("sfx_impact_wet", impact_wet, -24.0, 3)
+    # The hits' stand-ins (sfx_impact_*) were taken out: hits have no sound (the owner, 2026-11-07, D82).
     add("sfx_explosion_small", explosion_small, -15.0, 3)
     add("sfx_explosion_medium", explosion_medium, -12.0, 2)
     add("sfx_explosion_large", explosion_large, -10.0, 2)

@@ -1,7 +1,7 @@
 // BattlefieldView.cs
 // Shows the ground the battle is fought on. Since D80 the whole field is one interior look, picked from the two factions and the match seed by TerrainLooks.Pick: a UNSC installation,
 // a Covenant warship, or a ship the Flood has taken, with its own ground, light, ceiling, surroundings and a mild mood in a post-processing volume. The outdoor maps of M10 (the player's side
-// the player's faction's land, the enemy's side the enemy's, real land to the horizon, sky, sun and air from the player's faction) are still here for the terrain gallery (ShowOutdoor). A map is built by TerrainBuilder from the two factions and the match seed; it rebuilds when those change. In the Sandbox it follows the factions of the units in play.
+// the player's faction's land, the enemy's side the enemy's, real land to the horizon, sky, sun and air from the player's faction) are still here for the terrain gallery (ShowOutdoor). A map is built by TerrainBuilder from the two factions and the match seed; it rebuilds when those change. In the Sandbox it follows the factions of the units in play, or the map its Map setting names (SandboxMaps, D82).
 // Deployment squares (decision D4) are an overlay: clear during deployment and fading out when a battle runs.
 // The fighting floor stays flat and clear: props stand outside it, paint on it can't hide a unit, and from wherever the camera has turned the terrain's shaders leave out what would stand in front of it. Looks only: it reads the battle and the factions and changes neither.
 // Depends on: BattleController (Rules), MatchController, SandboxController, BattleFactions, TerrainBuilder, UnitBlobShadows, UnityEngine.
@@ -39,7 +39,7 @@ namespace Halobellum.Presentation
         private float _squares = 1f;
 
         private string _shownA, _shownB;
-        private int _shownSeed;
+        private int _shownSeed, _shownMap;
         private int _forcedA = -1, _forcedB = -1;
         private bool _forced;
         private TerrainLook _forcedLook;
@@ -107,7 +107,7 @@ namespace Halobellum.Presentation
             UpdateFlankPulse();
             if (_forced) return;
             Wanted(out string a, out string b, out int seed);
-            if (a == _shownA && b == _shownB && seed == _shownSeed)
+            if (a == _shownA && b == _shownB && seed == _shownSeed && SandboxMapChoice == _shownMap)
             {
                 _wantedA = null;
                 return;
@@ -127,6 +127,9 @@ namespace Halobellum.Presentation
             }
             Show(a, b, seed);
         }
+
+        /// <summary>The Sandbox's Map setting (SandboxMaps), 0 for "as in a match" and outside the Sandbox.</summary>
+        private int SandboxMapChoice => _sandbox != null ? _sandbox.MapChoice : 0;
 
         /// <summary>The factions and seed the map ought to show now.</summary>
         private void Wanted(out string a, out string b, out int seed)
@@ -158,19 +161,24 @@ namespace Halobellum.Presentation
             _shownA = factionA;
             _shownB = factionB;
             _shownSeed = seed;
+            _shownMap = SandboxMapChoice;
             _wantedA = null;
+            // The Sandbox can be set to any map (D82); otherwise a match's interior look, or what the terrain gallery forced.
+            SandboxMap chosen = _forced ? null : SandboxMaps.At(_shownMap);
+            bool outdoor = _forcedOutdoor || (chosen != null && chosen.Outdoor);
+            bool oneLand = chosen != null && chosen.Outdoor && chosen.Land != null;
 
             Clear();
             CombatRules rules = _battle.Rules;
             Shader.SetGlobalVector(FloorId, new Vector4(rules.ArenaWidth * 0.5f, rules.DeploymentDepthSquares * rules.SquareSize + rules.NoMansLandSquares * rules.SquareSize * 0.5f, 0f, 0f));
             _map = TerrainBuilder.Build(new TerrainRequest
             {
-                FactionA = factionA,
-                FactionB = factionB,
+                FactionA = oneLand ? chosen.Land : factionA,
+                FactionB = oneLand ? chosen.Land : factionB,
                 Seed = seed,
-                LayoutA = _forcedA,
-                LayoutB = _forcedB,
-                Look = _forcedOutdoor ? null : _forcedLook ?? TerrainLooks.Pick(factionA, factionB, seed),
+                LayoutA = oneLand ? chosen.Layout : _forcedA,
+                LayoutB = oneLand ? chosen.Layout : _forcedB,
+                Look = outdoor ? null : _forcedLook ?? chosen?.Look ?? TerrainLooks.Pick(factionA, factionB, seed),
                 HalfWidth = rules.ArenaWidth * 0.5f,
                 ZoneDepth = rules.DeploymentDepthSquares * rules.SquareSize,
                 Gap = rules.NoMansLandSquares * rules.SquareSize,

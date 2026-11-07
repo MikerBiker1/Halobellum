@@ -181,64 +181,71 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 
 ## Your sound effects (D70)
 
-101. **`fire[grifle03]`:** I guessed it is a gauss rifle, so it plays for the Gauss Warthog, the Cobra and the Gremlin. Say if it is something else.
+101. *(Settled: Yes, it is the gauss rifle (the owner, 2026-11-07).)* **`fire[grifle03]`:** I guessed it is a gauss rifle, so it plays for the Gauss Warthog, the Cobra and the Gremlin. Say if it is something else.
 102. *(Answered: the M60 is on every machine gun and chaingun, and the autocannons have your new file, D71.)* **Machine guns:** only the Warthog's (and the Infested Warthog's) use the M60, as you said. The Scorpion's and Grizzly's coaxial guns, chainguns and autocannons keep the generated heavy gun sound. The M60 could go on all of them.
-103. **Hit sounds:** the generated ones still play, turned down. They can be taken out entirely.
+103. *(Settled: Taken out (D82): hits make no sound.)* **Hit sounds:** the generated ones still play, turned down. They can be taken out entirely.
 104. **The Scarab's beam:** its "in" is 2.4 s and the beam fires for 3 s, so the loop is heard for about half a second before "out".
 105. *(The beam rifle now has a carrier, the Jackal (Beam Rifle), D71 and D72.)* **Not used:** the beam rifle and the magnum (no unit carries one) and the plasma grenade.
 
 ## Your second batch (D71)
 
-106. **Growths, a trial as you said:** pods and bubbles in 3 to 5 clumps on each infested vehicle. They sit properly on the hulls, but read as stuck on rather than grown in, and are small dots from the game's camera. Keep them, change their colour (now orange-brown; a paler Flood tan is easy), more or fewer, or revert (commits `0976829` and `f86f1c4`)?
+106. *(Settled: Growths kept. The green wash is gone: beige Flood tendrils baked into the textures instead (D82).)* **Growths, a trial as you said:** pods and bubbles in 3 to 5 clumps on each infested vehicle. They sit properly on the hulls, but read as stuck on rather than grown in, and are small dots from the game's camera. Keep them, change their colour (now orange-brown; a paler Flood tan is easy), more or fewer, or revert (commits `0976829` and `f86f1c4`)?
 107. **The towers:** they keep their models' proportions inside their 6 m of squares, so they are 5.3 m (Command Center) and 5.8 m (Research Center) tall, against 9 to 9.5 m for the old plain shapes. A thin slab in the side's colour lies under each, so two towers of the same faction show whose they are. In Unlock Skirmish, where no side has a faction, both are neutral grey-blue. Tall enough? Keep the slab?
-108. **Glow on other models:** a builder bug meant glow never showed on any model (the Scarab's cannon, Banshee, Wraith, Hornet, Elephant, Phantom and others). It is fixed, and on only for the towers. Switching it on for the rest is one line and a rebuild. Want it?
+108. *(Settled: On for every model but the infested ones, and the Banshee's wing tips and Ghost's fins glow while moving (D82).)* **Glow on other models:** a builder bug meant glow never showed on any model (the Scarab's cannon, Banshee, Wraith, Hornet, Elephant, Phantom and others). It is fixed, and on only for the towers. Switching it on for the rest is one line and a rebuild. Want it?
 109. **The Flamethrower Trooper:** Meshy's clips bent the crouched figure double and tore its gun (12 credits spent on them, unused), so it runs and sprays with clips made around its own crouched pose. If you'd rather, a Meshy figure standing upright (T- or A-pose) with the flamethrower separate could be rigged like the others.
-110. **The new Scorpion** has its own markings (UNSC, a number, white stripes) in its texture, kept as part of your model. Its textures were very dark, so they are lifted by 1.35. The Gremlin reads dark olive and has no lift. Change any of these?
-111. **The Infested Elite's** weapon is a Scavenged Plasma Rifle, but its body attacks with claws and holds nothing. Give it the plasma rifle?
-112. **Light blue explosions:** the Covenant's machines and their infested copies. The Banished's (Chopper, Marauder, Reaver) and the Unggoy's Grunt Goblin still explode orange, as cruder machines. Blue for them too?
+110. *(Settled: The Scorpion's model was replaced already (the owner's update, M12).)* **The new Scorpion** has its own markings (UNSC, a number, white stripes) in its texture, kept as part of your model. Its textures were very dark, so they are lifted by 1.35. The Gremlin reads dark olive and has no lift. Change any of these?
+111. *(Settled: The Infested Elite is now the Combat Form's model, holding a plasma rifle (D82).)* **The Infested Elite's** weapon is a Scavenged Plasma Rifle, but its body attacks with claws and holds nothing. Give it the plasma rifle?
+112. *(Settled: No: blue explosions stay the Covenant's own.)* **Light blue explosions:** the Covenant's machines and their infested copies. The Banished's (Chopper, Marauder, Reaver) and the Unggoy's Grunt Goblin still explode orange, as cruder machines. Blue for them too?
 113. **Sounds:** the Marauder's Spike Turret now plays the M60, as a machine gun. The biggest Flood ground units (Abomination, Juggernaut) die with the aircraft crash, now that the Pelican crash slot has that file. Your Glassing Beam file burns for about 8 s while the beam is drawn for 3.5 s, so it fades 1.2 s after the beam. The draw stinger is under 1 s, much shorter than the others. Ordinary rifles and pistols still use the generated sound. Any of these to change?
-114. **Nodes of light:** the small file below about 63 damage to a base, the big one above and for every Titan. That puts the Scorpion, Wraith and Pelican on the small file and Spartans and Zealots on the big one. Is that where you want the line?
+114. *(Settled: Yes, the line stays.)* **Nodes of light:** the small file below about 63 damage to a base, the big one above and for every Titan. That puts the Scorpion, Wraith and Pelican on the small file and Spartans and Zealots on the big one. Is that where you want the line?
 
 ## The Spartan, the Phantom, the snipers (D72)
 
-115. **The Spartan:** I made up for the wind-up by a faster reload (every 3.5 s instead of 4) rather than damage, as 600 damage changed whom it beats. A charge broken by an EMP or its death still plays the whole laser sound, and under a shockwave the bang comes early. Laser Capacitor speeds the reload, not the wind-up. Change any of these?
-116. **The Covenant Phantom** drops 7 Grunts per drop, up to 3, behind its Gravity Lift tech, at tier 2 and 300 like the Pelican. The Hard AI rarely buys it (15%), as with the Pelican. Should it drop something else (Elites, Jackals), use the flank zones, or be tier 3? Its purple tint over your grey Phantom: the look you want?
-117. **The Jackal snipers** ended at 40 damage every 3 s, 24 m, 4 to a squad, 175 credits. At 45 damage and 150 they carried Banished to 65%. More range with less damage is possible; 30 m made them far too strong in the counter web.
+115. *(Settled: Yes, the timing stays.)* **The Spartan:** I made up for the wind-up by a faster reload (every 3.5 s instead of 4) rather than damage, as 600 damage changed whom it beats. A charge broken by an EMP or its death still plays the whole laser sound, and under a shockwave the bang comes early. Laser Capacitor speeds the reload, not the wind-up. Change any of these?
+116. *(Settled: The tint stays; drops not changed, balance is tight.)* **The Covenant Phantom** drops 7 Grunts per drop, up to 3, behind its Gravity Lift tech, at tier 2 and 300 like the Pelican. The Hard AI rarely buys it (15%), as with the Pelican. Should it drop something else (Elites, Jackals), use the flank zones, or be tier 3? Its purple tint over your grey Phantom: the look you want?
+117. *(Settled: Balance left as it is.)* **The Jackal snipers** ended at 40 damage every 3 s, 24 m, 4 to a squad, 175 credits. At 45 damage and 150 they carried Banished to 65%. More range with less damage is possible; 30 m made them far too strong in the counter web.
 118. *(Answered: the Pelican is tougher and Armored Division back in the band, D73.)* **Banished was at 54.1%** in the first run. Two more runs on new seeds put it at 52.3% over all three, but **Armored Division at 45.6%**, a hair under the band and last or near last in every run (46.3, 43.3, 47.1). Its Grizzly is its weakest regular unit (0.71 of its credits' share in damage, 43% of the matches it is in won). Leave it, or make the Grizzly cheaper and test again (8 minutes a run)?
 
 
 ## The Pelican and the Grizzly (D73)
 
-119. **The Grizzly** is back at 500, as at 450 the Hard AI bought it against Scorpions and lost it to Spartans (D73). A cheaper Grizzly may still play well in your hands. Want another kind of buff for it, or leave it, now that Armored Division is at 48.3%?
+119. *(Settled: Balance left as it is.)* **The Grizzly** is back at 500, as at 450 the Hard AI bought it against Scorpions and lost it to Spartans (D73). A cheaper Grizzly may still play well in your hands. Want another kind of buff for it, or leave it, now that Armored Division is at 48.3%?
 120. *(Settled: Covenant-based Flood is at 50.0% since the Spawner change, D79.)* **Covenant-based Flood is at 46.2%**, at the band's floor (the Abomination's and Carrier Form's numbers are in the impact file). Leave it?
-121. **Marauders:** you find them nearly unkillable after a level or two, but the Hard AI's units end matches at level 1.3 to 1.8, so the tournament can't see that. Want a test with levelled squads, or a look at what levels give the Marauder?
+121. *(Settled: No levelled-squad test. Noted for later: a tech or unit that does damage by a share of the target's health (item 133).)* **Marauders:** you find them nearly unkillable after a level or two, but the Hard AI's units end matches at level 1.3 to 1.8, so the tournament can't see that. Want a test with levelled squads, or a look at what levels give the Marauder?
 
 
 ## Fine-tuning and your playtest (D74, D75)
 
-122. **The AI buys from the one-on-one table.** Any buff that makes a unit look better one on one makes the Hard AI buy it much more, and the slow melee units (Pure Form Tank, Grizzly) look far better one on one than in a real match, so buffing them made their sides lose (D73, D74). The fix is in the AI, not the units: build its table from whole matches (the tournament) instead of one-on-one fights, or weigh a unit's real results. Want that tried? It would change how the Hard AI plays everywhere.
-123. **Still weak:** UNSC-based Flood's Pure Form Tank (the side does better without it), the Covenant Phantom (the AI uses its drops badly), the Vulture (bought in 89% of Aerospace matches for little), the Elite and the Ghost. Each buff tried made things worse through the AI's buying (item 122). Leave them until the AI's table is settled, or redesign one (the Phantom dropping Elites, say)?
+122. *(Settled: Left: the one-on-one table stays.)* **The AI buys from the one-on-one table.** Any buff that makes a unit look better one on one makes the Hard AI buy it much more, and the slow melee units (Pure Form Tank, Grizzly) look far better one on one than in a real match, so buffing them made their sides lose (D73, D74). The fix is in the AI, not the units: build its table from whole matches (the tournament) instead of one-on-one fights, or weigh a unit's real results. Want that tried? It would change how the Hard AI plays everywhere.
+123. *(Settled: Left as it is.)* **Still weak:** UNSC-based Flood's Pure Form Tank (the side does better without it), the Covenant Phantom (the AI uses its drops badly), the Vulture (bought in 89% of Aerospace matches for little), the Elite and the Ghost. Each buff tried made things worse through the AI's buying (item 122). Leave them until the AI's table is settled, or redesign one (the Phantom dropping Elites, say)?
 124. *(Settled: the Flood is at 50% since D79.)* **The Flood is at 46.5%** overall, both its sub-factions at 47.0%, inside the band but last, losing most to Banished and Unggoy (35% to 40%). Leave it, or a Flood-wide nudge?
-125. **Sound by zoom:** nearer than the starting view up to 1.7 times louder, further down to 0.4, off screen down to 12%. Base hits about 6 dB louder, the music down to 45% (small) or 30% (big) under them. All first guesses for your ears: louder, quieter, or a different curve?
+125. *(Settled: Yes, the curve stays.)* **Sound by zoom:** nearer than the starting view up to 1.7 times louder, further down to 0.4, off screen down to 12%. Base hits about 6 dB louder, the music down to 45% (small) or 30% (big) under them. All first guesses for your ears: louder, quieter, or a different curve?
 
 
 ## The Flood change and the tutorial (D76, D77)
 
-126. **The Seeder** is at 475 with seeds of 4% a second and 45-damage spores, after carrying the Flood to 66%. It is still the Flood's best buy (edge +20 in UNSC-based). Its converts rise with 60% of their own unit's health, as any infected unit does. Keep these, or would you rather it converted less (fewer kinds) and kept its old numbers?
-127. **The whole-match AI table** is set aside (D76): it made the AI chase what won before, Covenant 63% and UNSC 32%. Item 122 stays open: a blend of both tables, or a table learned over several rounds, could still be tried.
-128. *(Wording: yours since D81, and 30 steps with the exclusive unit.)* **The tutorial:** UNSC Noble against Banished, the Flamethrower Trooper as the unit to unlock. Another faction pair? Should it offer itself the first time the game starts?
+126. *(Settled: Balance left as it is.)* **The Seeder** is at 475 with seeds of 4% a second and 45-damage spores, after carrying the Flood to 66%. It is still the Flood's best buy (edge +20 in UNSC-based). Its converts rise with 60% of their own unit's health, as any infected unit does. Keep these, or would you rather it converted less (fewer kinds) and kept its old numbers?
+127. *(Settled: Left: the one-on-one table stays.)* **The whole-match AI table** is set aside (D76): it made the AI chase what won before, Covenant 63% and UNSC 32%. Item 122 stays open: a blend of both tables, or a table learned over several rounds, could still be tried.
+128. *(Settled: No change.)* *(Wording: yours since D81, and 30 steps with the exclusive unit.)* **The tutorial:** UNSC Noble against Banished, the Flamethrower Trooper as the unit to unlock. Another faction pair? Should it offer itself the first time the game starts?
 
 
 ## The Spawner (D79)
 
-129. **The Spawner** releases its Infection Forms and an Infested Elite in turn every 4 seconds. The Elites alone weren't enough (48%); 3600 health gave 53.2%, so, as you asked, 3200 (was 2800): Covenant-based Flood is now 50.0%. The AI now buys it in 88% of Covenant-based matches. If it feels too strong in play, the next step is a 5-second interval.
+129. *(Settled: Balance left as it is.)* **The Spawner** releases its Infection Forms and an Infested Elite in turn every 4 seconds. The Elites alone weren't enough (48%); 3600 health gave 53.2%, so, as you asked, 3200 (was 2800): Covenant-based Flood is now 50.0%. The AI now buys it in 88% of Covenant-based matches. If it feels too strong in play, the next step is a 5-second interval.
 
 
 ## The battlefield's interior looks (D80)
 
-130. **The outdoor maps** (Firebase, Seam Flats, Creep and the rest, D47) are no longer used in matches: every match is one of the three interiors. Keep it so, bring them back into rotation beside the interiors, or make it a setting?
-131. **Which match gets which look:** a mirror match its faction's look; Flood against X the Flood ship on X's hull; UNSC against Covenant and Flood against Flood by the seed, half and half. Would you rather the look followed your own faction always (so a UNSC player always fights in the hangar), or the enemy's?
-132. **One look per faction for now.** Each look varies with the seed (where the pads, crates, pods and tendrils stand), but has one layout. More layouts per look (a UNSC hangar and a UNSC armoury, say), or are three looks enough?
+130. *(Settled: Outdoor maps only in the Sandbox, on its Map setting with every interior and outdoor map (D82).)* **The outdoor maps** (Firebase, Seam Flats, Creep and the rest, D47) are no longer used in matches: every match is one of the three interiors. Keep it so, bring them back into rotation beside the interiors, or make it a setting?
+131. *(Settled: Kept as implemented.)* **Which match gets which look:** a mirror match its faction's look; Flood against X the Flood ship on X's hull; UNSC against Covenant and Flood against Flood by the seed, half and half. Would you rather the look followed your own faction always (so a UNSC player always fights in the hangar), or the enemy's?
+132. *(Settled: One layout per look is enough: quality over quantity.)* **One look per faction for now.** Each look varies with the seed (where the pads, crates, pods and tendrils stand), but has one layout. More layouts per look (a UNSC hangar and a UNSC armoury, say), or are three looks enough?
+
+## Your answers of 2026-11-07 (D82)
+
+133. **For later:** a tech or a unit that does damage by a share of the target's health, so that tough units such as levelled Marauders can be worn down (the owner's note on item 121). Which faction, and tech or unit?
+134. **The infested vehicles' tendrils** are baked into copies of their textures (`Tools/Art/flood_tendrils.py`): beige veins rimmed in dark brown, a few fleshy patches, the paint under them dulled. Thicker, thinner, more or fewer? The infested infantry (Infested Grunt, the Infested Marine) keep their own colours; the Infested Grunt is still washed green, as only the vehicles were named.
+135. **Thrusters:** the Banshee's and Ghost's glow blue-violet while they move, the infested ones too. Colour and size?
+
 
 ## Things my test runs did to your PC
 
@@ -249,7 +256,7 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 
 ## Still to do from M9
 
-26. **Combat identity (Pass 1) and the balance pass** weren't done as stages of their own. The effects and sounds cover much of Pass 1, by weapon kind. I'd do the balance pass after you've played the sub-factions. The order is yours.
+26. *(Settled: Done: the balance passes ran as tournaments after each change, D59 to D79, every sub-faction in the 46-54% band; the owner, 2026-11-07.)* **Combat identity (Pass 1) and the balance pass** weren't done as stages of their own. The effects and sounds cover much of Pass 1, by weapon kind. I'd do the balance pass after you've played the sub-factions. The order is yours.
 
 ## Small things I noticed and left
 

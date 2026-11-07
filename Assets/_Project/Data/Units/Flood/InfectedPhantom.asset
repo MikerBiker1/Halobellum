@@ -86,10 +86,13 @@ MonoBehaviour:
   spawnedUnit: {fileID: 0}
   spawnedBodies: 0
   spawnIntervalSeconds: 0
+  alternateSpawnedUnit: {fileID: 0}
+  alternateSpawnedBodies: 0
   auraRadius: 0
   auraSpeedMultiplier: 1
   auraHealPerSecondShare: 0
   lifestealShare: 0
+  seedForms: []
   leapRange: 0
   leapSpeed: 0
   leapCooldownSeconds: 0

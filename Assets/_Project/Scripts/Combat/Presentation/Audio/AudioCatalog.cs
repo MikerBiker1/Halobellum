@@ -31,8 +31,6 @@ namespace Halobellum.Presentation
         Beams,
         Melee,
         Bio,
-        Impacts,
-        Shields,
         Explosions,
         InfantryDeaths,
         BigDeaths,
@@ -144,12 +142,7 @@ namespace Halobellum.Presentation
         private static readonly SfxCue FireMeleeFlood = Cue("sfx_fire_melee_flood", SfxGroup.Melee, 0.6f, 0.1f, 1, -17.5f);
         private static readonly SfxCue FireBio = Cue("sfx_fire_bio", SfxGroup.Bio, 0.65f, 0.1f, 1, -18.2f);
 
-        // What a hit sounds like.
-        public static readonly SfxCue ImpactFlesh = Cue("sfx_impact_flesh", SfxGroup.Impacts, 0.3f, 0.1f, 0, -21.6f);
-        public static readonly SfxCue ImpactArmor = Cue("sfx_impact_armor", SfxGroup.Impacts, 0.3f, 0.1f, 0, -21.6f);
-        public static readonly SfxCue ImpactShield = Cue("sfx_impact_shield", SfxGroup.Shields, 0.38f, 0.1f, 0, -24f);
-        public static readonly SfxCue ImpactBlock = Cue("sfx_impact_block", SfxGroup.Shields, 0.6f, 0.1f, 1, -22.7f);
-        public static readonly SfxCue ImpactWet = Cue("sfx_impact_wet", SfxGroup.Impacts, 0.3f, 0.12f, 0, -21.4f);
+        // Hits have no sound (the generated stand-ins were taken out, the owner, 2026-11-07, D82).
 
         // Explosions by size, and deaths.
         public static readonly SfxCue ExplosionSmall = Cue("sfx_explosion_small", SfxGroup.Explosions, 0.75f, 0.08f, 3, -14.3f);
@@ -249,8 +242,6 @@ namespace Halobellum.Presentation
             Limit(limiter, SfxGroup.Beams, 4, 0.2f); // The owner's beam has a long charge and a long stop, which mustn't keep the next charge out. Apart from the lasers: a limit doesn't look at priority, and a Scarab's one long beam must not lose its only start to Siphon Lasers overlapping themselves.
             Limit(limiter, SfxGroup.Melee, 3, 0.08f);
             Limit(limiter, SfxGroup.Bio, 3, 0.07f);
-            Limit(limiter, SfxGroup.Impacts, 3, 0.1f);
-            Limit(limiter, SfxGroup.Shields, 2, 0.1f);
             Limit(limiter, SfxGroup.Explosions, 4, 0.1f);
             Limit(limiter, SfxGroup.InfantryDeaths, 3, 0.11f);
             Limit(limiter, SfxGroup.BigDeaths, 4, 0.1f);
@@ -412,7 +403,7 @@ namespace Halobellum.Presentation
         public static SfxCue NodeHit(float size, bool titan)
         {
             if (NodeSmall.HasSound && NodeBig.HasSound) return titan || size >= BigNodeSize ? NodeBig : NodeSmall;
-            return size < 0.45f ? ImpactArmor : size < 0.75f ? ExplosionSmall : size < 0.92f ? ExplosionMedium : ExplosionLarge;
+            return size < 0.75f ? ExplosionSmall : size < 0.92f ? ExplosionMedium : ExplosionLarge;
         }
 
         /// <summary>Forgets the clips of every cue, so that they are looked up again.</summary>

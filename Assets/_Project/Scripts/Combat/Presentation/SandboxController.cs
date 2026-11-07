@@ -94,6 +94,12 @@ namespace Halobellum.Presentation
         public Team EditingTeam { get; set; } = Team.A;
         /// <summary>False while placing; true once Run was pressed (until Reset).</summary>
         public bool IsBattle { get; private set; }
+        /// <summary>
+        /// The Map setting: a place in SandboxMaps.All, 0 for the look a match would get (the owner, 2026-11-07, D82: the outdoor maps only here).
+        /// Kept while the game runs, so it is still set after a trip back to the match.
+        /// </summary>
+        public int MapChoice { get => _mapChoice; set => _mapChoice = ((value % SandboxMaps.All.Count) + SandboxMaps.All.Count) % SandboxMaps.All.Count; }
+        private static int _mapChoice;
         /// <summary>True if both sides have their towers: see SetTowers.</summary>
         public bool TowersOn { get; private set; }
         public string Message { get; private set; } = "";

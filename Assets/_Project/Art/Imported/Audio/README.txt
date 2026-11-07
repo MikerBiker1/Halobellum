@@ -66,11 +66,6 @@ BATTLE SOUNDS
   sfx_flood_burst                  A carrier form going off, a Flood unit bursting, or Bone Shards landing.
   sfx_hum_engine                   A loop: the engines of all UNSC ground vehicles, as loud as how many are alive.
   sfx_hum_hover                    A loop: what flies or floats (aircraft, Covenant vehicles). Loops must close without a click.
-  sfx_impact_armor                 A hit on armor.
-  sfx_impact_block                 A shot stopped by a held shield.
-  sfx_impact_flesh                 A hit on something unarmored.
-  sfx_impact_shield                A hit on an energy shield.
-  sfx_impact_wet                   A hit on the Flood.
   sfx_infection_rise               An infected corpse rising.
   sfx_infection_start              A dying unit being infected.
   sfx_pelican_crash                The Infected Pelican hitting the ground (sfx_death_air_unsc once it is in); also the biggest Flood units dying.

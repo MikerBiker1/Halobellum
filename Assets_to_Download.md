@@ -102,7 +102,7 @@ A weapon with a sound of its own uses it; the others use their kind's sound.
 | [ ] | `sfx_infection_start` | A dying unit being infected. | Generated stand-in |
 | [ ] | `sfx_hum_engine`, `sfx_hum_hover` | Loops: UNSC ground engines; what flies or floats. They must close without a click. | Generated stand-ins |
 | [ ] | `sfx_drop_in` | A squad falling into place: it lands 0.6 s in. | Generated stand-in |
-| — | `sfx_impact_armor`, `_flesh`, `_shield`, `_block`, `_wet` | Hits. You said you won't add these: the stand-ins play quietly. | Generated stand-ins |
+| — | `sfx_impact_armor`, `_flesh`, `_shield`, `_block`, `_wet` | Hits. Taken out (D82): hits have no sound. | Not wanted |
 
 ### Interface
 

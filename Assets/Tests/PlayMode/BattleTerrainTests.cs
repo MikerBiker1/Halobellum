@@ -396,6 +396,47 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
+        public IEnumerator SandboxScene_TheMapSetting_ShowsAnyInteriorOrOutdoorMap_AndBack()
+        {
+            yield return SceneManager.LoadSceneAsync("Sandbox", LoadSceneMode.Single);
+            yield return null;
+            var sandbox = Object.FindAnyObjectByType<SandboxController>();
+            var field = Object.FindAnyObjectByType<BattlefieldView>();
+            try
+            {
+                Assert.AreEqual(15, SandboxMaps.All.Count, "As in a match, four interiors, both lands outdoors, and the nine outdoor layouts.");
+                int wreck = -1, warship = -1;
+                for (int i = 0; i < SandboxMaps.All.Count; i++)
+                {
+                    if (SandboxMaps.All[i].Name == "Outdoor, Wreck") wreck = i;
+                    if (SandboxMaps.All[i].Look == TerrainLooks.CovenantWarship) warship = i;
+                }
+
+                sandbox.MapChoice = wreck;
+                float deadline = Time.realtimeSinceStartup + 3f;
+                while (field.Map.Look != null && Time.realtimeSinceStartup < deadline) yield return null;
+                Assert.IsNull(field.Map.Look, "An outdoor map.");
+                Assert.AreEqual("Wreck", field.Map.LayoutA.Name);
+                Assert.AreEqual("Wreck", field.Map.LayoutB.Name, "One layout, on both halves.");
+
+                sandbox.MapChoice = warship;
+                deadline = Time.realtimeSinceStartup + 3f;
+                while (field.Map.Look != TerrainLooks.CovenantWarship && Time.realtimeSinceStartup < deadline) yield return null;
+                Assert.AreSame(TerrainLooks.CovenantWarship, field.Map.Look, "UNSC against Covenant, set to the Covenant warship.");
+
+                sandbox.MapChoice = 0;
+                sandbox.AddSquad(Team.A, sandbox.Units.Find(u => u.Faction == BattleFactions.Flood).Stats);
+                deadline = Time.realtimeSinceStartup + 3f;
+                while (field.Map.Look != TerrainLooks.FloodOnCovenant && Time.realtimeSinceStartup < deadline) yield return null;
+                Assert.AreSame(TerrainLooks.FloodOnCovenant, field.Map.Look, "As in a match again: Flood against Covenant.");
+            }
+            finally
+            {
+                sandbox.MapChoice = 0; // It is kept while the game runs.
+            }
+        }
+
+        [UnityTest]
         public IEnumerator SandboxScene_AnExclusiveUnit_GetsItsBaseFactionsLand()
         {
             yield return SceneManager.LoadSceneAsync("Sandbox", LoadSceneMode.Single);

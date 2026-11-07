@@ -2,7 +2,7 @@
 
 ## D80: three interior looks, one for the whole field
 
-The owner asked for the battlefield to look much better: the ground, the lighting and the surroundings, in three looks. These are a UNSC military installation or ship interior, a Covenant warship interior, and a Flood-infested ship. Since D80 every match is fought inside one of them. The outdoor maps below are still in the code for the gallery (`-terrainOutdoor`), but no match uses them.
+The owner asked for the battlefield to look much better: the ground, the lighting and the surroundings, in three looks. These are a UNSC military installation or ship interior, a Covenant warship interior, and a Flood-infested ship. Since D80 every match is fought inside one of them. The outdoor maps below are still in the code for the gallery (`-terrainOutdoor`) and, since D82, the Sandbox: its Map button shows any of the four looks or any outdoor map. No match uses them.
 
 ### Which match gets which look
 

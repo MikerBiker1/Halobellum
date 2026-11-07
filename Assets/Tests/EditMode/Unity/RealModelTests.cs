@@ -27,8 +27,11 @@ namespace Halobellum.Tests
             "FloodCovenant/InfestedWraith", "FloodCovenant/InfestedBanshee",
             "UNSC/Mantis", "UNSC/Wolverine", "Banished/Marauder", "Banished/Reaver", "Covenant/Vampire", "Flood/CombatForm",
             "FloodCovenant/Spawner", "FloodUNSC/Juggernaut", "LekgoloColony/Goliath",
-            "ArmoredDivision/Gremlin",
+            "ArmoredDivision/Gremlin", "FloodCovenant/InfestedElite",
         };
+
+        /// <summary>What sits on a model besides it: the Flood's growths (D37) and a held weapon (D82), left out of its size and its materials' check.</summary>
+        private static bool IsExtra(Renderer renderer) => renderer.name == "Growth" || renderer.GetComponentsInParent<Transform>(true).Any(t => t.name.StartsWith("Weapon_"));
 
         [TestCaseSource(nameof(RealModels))]
         public void RealModel_IsSound(string name)
@@ -40,10 +43,11 @@ namespace Halobellum.Tests
             try
             {
                 MeshRenderer[] renderers = model.GetComponentsInChildren<MeshRenderer>();
-                Bounds bounds = renderers.First(r => r.name != "Growth").bounds;
+                Bounds bounds = renderers.First(r => !IsExtra(r)).bounds;
                 foreach (MeshRenderer renderer in renderers)
                 {
-                    if (renderer.name != "Growth") bounds.Encapsulate(renderer.bounds);
+                    if (IsExtra(renderer)) continue;
+                    bounds.Encapsulate(renderer.bounds);
                     foreach (Material material in renderer.sharedMaterials)
                     {
                         Assert.IsNotNull(material, renderer.name + " has lost a material.");
@@ -193,9 +197,10 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void Scorpion_ShowsItsOwnPaintedTextures_AndTheInfestedOneHasTheSameModelInASickColour()
+        public void Scorpion_ShowsItsOwnPaintedTextures_AndTheInfestedOneHasTheSameModelInFloodTendrils()
         {
-            // The owner's updated model (M12) comes painted: its textures show as they are, and the Infested Scorpion tints them.
+            // The owner's updated model (M12) comes painted: its textures show as they are. The Infested Scorpion wears their Flood copies, beige
+            // tendrils over the paint (D82; it was washed green before).
             var sick = AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/FloodUNSC/InfestedScorpion.asset");
             Material[] clean = Scorpion().prefab.GetComponentsInChildren<MeshRenderer>().SelectMany(r => r.sharedMaterials).Distinct().ToArray();
             // The Flood's growths (D37) sit on the Infested one and are left out here.
@@ -210,10 +215,62 @@ namespace Halobellum.Tests
             foreach (Material material in tinted)
             {
                 Assert.IsNotNull(material.GetTexture("_BaseMap"));
-                Assert.Less(material.color.b, 0.6f, material.name + " has the Flood's colour over it.");
+                StringAssert.EndsWith("_Flood", material.GetTexture("_BaseMap").name, material.name + " wears the texture's Flood copy.");
+                Assert.Greater(material.color.g, 0.85f, material.name + " is no longer washed green.");
+                Assert.Greater(material.color.b, 0.8f);
             }
             Assert.AreEqual(Scorpion().prefab.GetComponentsInChildren<MeshFilter>().Sum(f => f.sharedMesh.triangles.Length),
                 sick.prefab.GetComponentsInChildren<MeshFilter>().Where(f => f.name != "Growth").Sum(f => f.sharedMesh.triangles.Length), "The same model.");
+        }
+
+        [TestCase("Covenant/Banshee")]
+        [TestCase("FloodCovenant/InfestedBanshee")]
+        [TestCase("Covenant/Ghost")]
+        [TestCase("FloodCovenant/InfestedGhost")]
+        public void BansheeAndGhost_HaveAThrusterAtTheBackOfEachSide(string name)
+        {
+            // The owner, 2026-11-07 (D82): the Banshee's wing tips and the Ghost's fins glow while they move (ModelParts lights them).
+            var unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>($"Assets/_Project/Data/Units/{name}.asset");
+            Transform[] thrusters = unit.prefab.GetComponentsInChildren<Transform>().Where(t => t.name.StartsWith("Thruster_")).ToArray();
+            Assert.AreEqual(2, thrusters.Length);
+            Bounds bounds = unit.prefab.GetComponentsInChildren<MeshRenderer>().Where(r => !IsExtra(r)).Select(r => r.bounds).Aggregate((a, b) => { a.Encapsulate(b); return a; });
+            Assert.Less(thrusters[0].position.x * thrusters[1].position.x, 0f, "One on each side.");
+            foreach (Transform thruster in thrusters)
+            {
+                Assert.Greater(Mathf.Abs(thruster.position.x), bounds.extents.x * 0.7f, "Out at the side.");
+                Assert.Less(thruster.position.z, bounds.max.z - 1f, "Behind the front: at the back of its wing tip or fin.");
+                Assert.IsTrue(float.TryParse(thruster.name.Substring("Thruster_".Length), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float size));
+                Assert.That(size, Is.InRange(0.35f, 0.8f));
+            }
+        }
+
+        [Test]
+        public void InfestedElite_IsTheCombatForm_HoldingAPlasmaRifle_AndShootsFromItsTip()
+        {
+            // The owner, 2026-11-07 (D82): the Infested Elite is the Combat Form; it was the Elite's body washed green. And it holds its plasma rifle.
+            var elite = AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/FloodCovenant/InfestedElite.asset");
+            var form = AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/Flood/CombatForm.asset");
+            Assert.IsNull(elite.bakedBody, "No longer the Elite's baked body.");
+            Assert.IsTrue(elite.keepsOwnMaterials);
+            Assert.AreEqual(form.prefab.GetComponentsInChildren<MeshFilter>().Sum(f => f.sharedMesh.triangles.Length),
+                elite.prefab.GetComponentsInChildren<MeshFilter>().Where(f => !IsExtra(f.GetComponent<MeshRenderer>())).Sum(f => f.sharedMesh.triangles.Length), "The Combat Form's model.");
+            MeshRenderer rifle = elite.prefab.GetComponentsInChildren<MeshRenderer>().Single(IsExtra);
+            Transform muzzle = elite.prefab.GetComponentsInChildren<Transform>().Single(t => t.name == "Muzzle_1");
+            Assert.AreEqual(0.85f, rifle.bounds.size.z, 0.15f, "A plasma rifle's length, pointing forward.");
+            Assert.AreEqual(rifle.bounds.max.z, muzzle.position.z, 0.15f, "Its shots leave the rifle's tip.");
+            Assert.Less(Vector3.Distance(rifle.bounds.center, muzzle.position), 0.6f);
+        }
+
+        [Test]
+        public void Glow_IsOnForTheModels_ButNotTheInfestedOnes()
+        {
+            // The owner, 2026-11-07 (D82): glow on for every model that has one (it was only the towers'); the infested vehicles stay unlit.
+            Material Body(string name) => AssetDatabase.LoadAssetAtPath<UnitDefinition>($"Assets/_Project/Data/Units/{name}.asset").prefab
+                .GetComponentsInChildren<MeshRenderer>().Where(r => !IsExtra(r)).SelectMany(r => r.sharedMaterials).First(m => m.GetTexture("_EmissionMap") != null);
+            Assert.IsTrue(Body("Covenant/Banshee").IsKeywordEnabled("_EMISSION"));
+            Assert.IsTrue(Body("Covenant/Wraith").IsKeywordEnabled("_EMISSION"));
+            Assert.IsTrue(Body("UNSC/Hornet").IsKeywordEnabled("_EMISSION"));
+            Assert.IsFalse(Body("FloodCovenant/InfestedBanshee").IsKeywordEnabled("_EMISSION"));
         }
 
         [Test]

@@ -158,8 +158,6 @@ namespace Halobellum.Presentation
                 events.WeaponFired -= OnWeaponFired;
                 events.WeaponWindingUp -= OnWeaponWindingUp;
                 events.ShotLanded -= OnShotLanded;
-                events.UnitDamaged -= OnUnitDamaged;
-                events.AttackBlocked -= OnAttackBlocked;
                 events.UnitDied -= OnUnitDied;
                 events.UnitInfected -= OnUnitInfected;
                 events.UnitRose -= OnUnitRose;
@@ -174,8 +172,6 @@ namespace Halobellum.Presentation
                 events.WeaponFired += OnWeaponFired;
                 events.WeaponWindingUp += OnWeaponWindingUp;
                 events.ShotLanded += OnShotLanded;
-                events.UnitDamaged += OnUnitDamaged;
-                events.AttackBlocked += OnAttackBlocked;
                 events.UnitDied += OnUnitDied;
                 events.UnitInfected += OnUnitInfected;
                 events.UnitRose += OnUnitRose;
@@ -283,17 +279,7 @@ namespace Halobellum.Presentation
             if (cue != null) GameAudio.Sfx(cue, new Vector3(point.X, 0f, point.Y));
         }
 
-        private void OnUnitDamaged(SimUnit target, SimUnit attacker, float amount)
-        {
-            if (amount <= 0f || attacker == null) return; // Damage with no attacker is a slow burn, not a hit.
-            SfxCue cue;
-            if (target.Shield > 0f) cue = AudioCatalog.ImpactShield;
-            else if (IsFloodBody(target.Stats)) cue = AudioCatalog.ImpactWet;
-            else cue = target.Stats.ArmorType == ArmorType.Unarmored ? AudioCatalog.ImpactFlesh : AudioCatalog.ImpactArmor;
-            GameAudio.Sfx(cue, Place(target));
-        }
-
-        private void OnAttackBlocked(SimUnit target, SimUnit attacker) => GameAudio.Sfx(AudioCatalog.ImpactBlock, Place(target));
+        // Hits and blocked shots make no sound of their own: the generated stand-ins are gone (the owner, 2026-11-07, D82).
 
         private void OnUnitDied(SimUnit unit, SimUnit killer) => GameAudio.Sfx(DeathCue(unit), Place(unit));
 
