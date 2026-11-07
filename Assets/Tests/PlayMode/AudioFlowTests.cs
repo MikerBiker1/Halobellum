@@ -319,11 +319,11 @@ namespace Halobellum.Tests
             bool heard = false;
             while (!heard && Time.realtimeSinceStartup < deadline)
             {
-                int laser = _played.IndexOf("sfx_fire_laser");
+                int laser = _played.IndexOf("sfx_fire_siphon"); // The owner's siphon laser sound, as each 1 s beam starts (D91).
                 heard = laser >= 0 && System.Math.Max(_played.LastIndexOf("sfx_fire_beam"), _played.LastIndexOf("sfx_beam_charge")) > laser; // With the owner's beam sounds in, it starts with its charge.
                 yield return null;
             }
-            Assert.Greater(Count("sfx_fire_laser"), 3, "The lasers should be firing.");
+            Assert.GreaterOrEqual(Count("sfx_fire_siphon"), 2, "The lasers should be firing (one sound per 1 s beam, every 2 s, since D91).");
             Assert.IsTrue(heard, "The beam should be heard over them.");
             Object.FindAnyObjectByType<BattleController>().Speed = 1f;
         }
