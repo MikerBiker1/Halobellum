@@ -4,6 +4,7 @@
 // damage and kills it dealt, so results and "what killed what" can list it next to the units.
 // Depends on: Halobellum.Core (SpellStats, Team, Vec2).
 
+using System.Collections.Generic;
 using Halobellum.Core;
 
 namespace Halobellum.Combat
@@ -23,6 +24,10 @@ namespace Halobellum.Combat
         public int Kills;
         /// <summary>Squad id of the dropped squad(s) for drop spells, -1 before the drop.</summary>
         public int DroppedSquadId = -1;
+        /// <summary>Where the latest tick landed (D83): a scattered spell's strikes, or a sweeping beam's spot. Empty for a spell that hits its whole area.</summary>
+        public readonly List<Vec2> Strikes = new List<Vec2>();
+        /// <summary>A scattered spell's own dice, from the battle's seed and its id, so the same battle lands the same strikes.</summary>
+        public SimRandom Dice;
 
         public SimSpell(int id, SpellStats stats, Team team, Vec2 position, float angleDegrees = 0f)
         {
@@ -41,5 +46,15 @@ namespace Halobellum.Combat
 
         /// <summary>True if a body at this position touches the spell's area.</summary>
         public bool Covers(SimUnit unit) => Stats.Covers(unit.Position - Position, unit.Radius, AngleDegrees);
+
+        /// <summary>Where a sweeping beam is, this far along its course (0 to 1).</summary>
+        public Vec2 BeamAt(float along) => Stats.BeamPoint(Position, AngleDegrees, along);
+
+        /// <summary>How far along its course a sweeping beam is at this battle time, between its first hit and its last.</summary>
+        public float BeamAlongAt(float seconds)
+        {
+            float span = (Stats.Ticks - 1) * Stats.TickInterval;
+            return span > 0f ? (seconds - Stats.DelaySeconds) / span : 0.5f;
+        }
     }
 }

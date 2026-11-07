@@ -227,7 +227,7 @@ namespace Halobellum.Presentation
             _sandbox.ResetBattle();
             yield return null;
             EffectsGallery effects = gameObject.AddComponent<EffectsGallery>();
-            effects.Prepare(_shots);
+            effects.Prepare(_shots, _only); // With -galleryOnly, only effects of those names (none, for unit names): the units alone.
             yield return effects.TakeAll();
             Application.Quit();
         }

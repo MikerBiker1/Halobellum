@@ -47,7 +47,7 @@ namespace Halobellum.Presentation
             _control = _camera.GetComponent<BattleCameraController>();
         }
 
-        private bool Wanted(string picture) => _only == null || picture.Contains(_only);
+        private bool Wanted(string picture) => _only == null || System.Array.Exists(_only.Split(','), part => part.Length > 0 && picture.Contains(part));
 
         /// <summary>Every picture: weapons, deaths, the crash, spells.</summary>
         public IEnumerator TakeAll()
@@ -433,12 +433,12 @@ namespace Halobellum.Presentation
                 new SpellShot(new SpellStats { Name = "MAC Strike", Offensive = true, Radius = 4f, DamagePerTick = 800f, DamageType = DamageType.Explosive, IsAntiArmor = true, DelaySeconds = 1f }, 0.05f, 0.35f, 1f, 3f),
                 new SpellShot(new SpellStats { Name = "HAVOK Nuke", Offensive = true, Radius = 14f, DamagePerTick = 2500f, DamageType = DamageType.Explosive, DelaySeconds = 4f }, -1f, 0.08f, 0.45f, 1.5f, 3f, 5f, 7f),
                 new SpellShot(new SpellStats { Name = "Plasma Bombardment", Offensive = true, Radius = 5f, DamagePerTick = 450f, DamageType = DamageType.Energy, DelaySeconds = 1f }, 0.1f, 0.5f, 1.5f),
-                new SpellShot(new SpellStats { Name = "Plasma Storm", Offensive = true, Radius = 10f, DamagePerTick = 40f, DamageType = DamageType.Energy, Ticks = 8, TickInterval = 0.5f, DelaySeconds = 1f, Targets = TargetFilter.Both }, 0.3f, 1.5f, 3.2f),
-                new SpellShot(new SpellStats { Name = "Glassing Beam", Offensive = true, Radius = 12f, DamagePerTick = 600f, DamageType = DamageType.Energy, Ticks = 5, TickInterval = 0.6f, DelaySeconds = 4f, Targets = TargetFilter.Both }, -1f, 0.2f, 1.5f, 3.5f, 6f),
-                new SpellShot(new SpellStats { Name = "Archer Missile Barrage", Offensive = true, Radius = 10f, DamagePerTick = 50f, DamageType = DamageType.Explosive, Ticks = 6, TickInterval = 0.5f, DelaySeconds = 1f, Targets = TargetFilter.Both }, 0.15f, 0.7f, 1.8f),
+                new SpellShot(new SpellStats { Name = "Plasma Storm", Offensive = true, Radius = 20f, DamagePerTick = 55f, DamageType = DamageType.Energy, Ticks = 8, TickInterval = 0.5f, DelaySeconds = 1f, Targets = TargetFilter.Both, StrikeRadius = 4f, StrikesPerTick = 5 }, 0.3f, 1.5f, 3.2f),
+                new SpellShot(new SpellStats { Name = "Glassing Beam", Offensive = true, Radius = 6f, AreaWidth = 30f, AreaDepth = 12f, DamagePerTick = 700f, DamageType = DamageType.Energy, Ticks = 10, TickInterval = 0.4f, DelaySeconds = 4f, Targets = TargetFilter.Both }, -1f, 0.2f, 1.5f, 3.5f),
+                new SpellShot(new SpellStats { Name = "Archer Missile Barrage", Offensive = true, Radius = 20f, DamagePerTick = 65f, DamageType = DamageType.Explosive, Ticks = 6, TickInterval = 0.5f, DelaySeconds = 1f, Targets = TargetFilter.Both, StrikeRadius = 4.5f, StrikesPerTick = 6 }, 0.15f, 0.7f, 1.8f),
                 new SpellShot(new SpellStats { Name = "Gravemind's Wrath", Offensive = true, Radius = 13f, DamagePerTick = 1600f, DamageType = DamageType.Explosive, DelaySeconds = 4f, InfectsKills = true }, -1f, 0.1f, 0.6f, 2f, 4f),
                 new SpellShot(new SpellStats { Name = "Spore Burst", Offensive = true, Radius = 5f, DamagePerTick = 350f, DamageType = DamageType.Explosive, DelaySeconds = 1f, InfectsKills = true }, 0.1f, 0.8f),
-                new SpellShot(new SpellStats { Name = "Blight Rain", Offensive = true, Radius = 10f, DamagePerTick = 40f, DamageType = DamageType.Explosive, Ticks = 8, TickInterval = 0.5f, DelaySeconds = 1f, InfectsKills = true, Targets = TargetFilter.Both }, 0.5f, 2f),
+                new SpellShot(new SpellStats { Name = "Blight Rain", Offensive = true, Radius = 20f, DamagePerTick = 55f, DamageType = DamageType.Explosive, Ticks = 8, TickInterval = 0.5f, DelaySeconds = 1f, InfectsKills = true, Targets = TargetFilter.Both, StrikeRadius = 4f, StrikesPerTick = 5 }, 0.5f, 2f),
                 new SpellShot(new SpellStats { Name = "Electromagnetic Pulse", Offensive = true, Effect = SpellEffect.Disrupt, Radius = 10f, ShieldDamage = 100f, TechDisableSeconds = 5f, DelaySeconds = 1f }, 0.08f, 0.35f),
                 new SpellShot(new SpellStats { Name = "Nerve Spores", Offensive = true, Effect = SpellEffect.Disrupt, Radius = 10f, ShieldDamage = 100f, TechDisableSeconds = 5f, DelaySeconds = 1f }, 0.3f),
                 new SpellShot(new SpellStats { Name = "Battlefield Rally", Effect = SpellEffect.Buff, Radius = 10f, DamageMultiplier = 1.3f, DelaySeconds = 1f }, 0.4f),

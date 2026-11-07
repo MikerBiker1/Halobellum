@@ -75,6 +75,7 @@ namespace Halobellum.Combat
     {
         private readonly CombatRules _rules;
         private readonly SimRandom _random;
+        private readonly int _seed;
         private readonly MovementSystem _movement;
         private readonly List<SimUnit> _units = new List<SimUnit>();
         private readonly List<Projectile> _projectiles = new List<Projectile>();
@@ -101,6 +102,7 @@ namespace Halobellum.Combat
             if (rules.TicksPerSecond <= 0) throw new ArgumentException("TicksPerSecond must be above 0.");
             Seed = seed;
             _random = new SimRandom(seed);
+            _seed = seed;
             _movement = new MovementSystem(rules);
             _dt = rules.TickSeconds;
             _tickLimit = (int)MathF.Round(rules.BattleTimeLimitSeconds * rules.TicksPerSecond);
@@ -198,6 +200,7 @@ namespace Halobellum.Combat
             if (Tick > 0) throw new InvalidOperationException("Add spells before the battle starts.");
             if (stats == null) throw new ArgumentNullException(nameof(stats));
             var spell = new SimSpell(_spells.Count, stats, team, position, angleDegrees);
+            if (stats.Scatters) spell.Dice = new SimRandom(_seed * 7919 + spell.Id * 104729 + 17);
             _spells.Add(spell);
             return spell;
         }
@@ -721,13 +724,41 @@ namespace Halobellum.Combat
 
         private void ApplySpellDamage(SimSpell spell)
         {
+            SpellStats stats = spell.Stats;
+            spell.Strikes.Clear();
+            if (stats.Sweeps)
+            {
+                // The beam's spot along its course this tick (D83).
+                Vec2 spot = spell.BeamAt(stats.BeamAlong(spell.TicksDone));
+                spell.Strikes.Add(spot);
+                HitArea(spell, spot, stats.Radius);
+            }
+            else if (stats.Scatters)
+            {
+                // Strikes at random spots inside the area, evenly spread over it (D83).
+                for (int i = 0; i < Math.Max(1, stats.StrikesPerTick); i++)
+                {
+                    float angle = spell.Dice.NextFloat() * (float)(Math.PI * 2.0);
+                    float distance = (float)Math.Sqrt(spell.Dice.NextFloat()) * Math.Max(0f, stats.Radius - stats.StrikeRadius * 0.5f);
+                    Vec2 spot = spell.Position + new Vec2((float)Math.Cos(angle), (float)Math.Sin(angle)) * distance;
+                    spell.Strikes.Add(spot);
+                    HitArea(spell, spot, stats.StrikeRadius);
+                }
+            }
+            else HitArea(spell, spell.Position, -1f);
+        }
+
+        /// <summary>One hit of a damage spell: everyone it may hurt within this radius of this spot, or (radius below 0) in the spell's own area.</summary>
+        private void HitArea(SimSpell spell, Vec2 centre, float radius)
+        {
             WeaponStats weapon = spell.Stats.AsWeapon();
-            _movement.Grid.Query(spell.Position, spell.Stats.Radius + _movement.Grid.MaxRadius, _nearby);
+            float reach = radius >= 0f ? radius : spell.Stats.IsRectangle ? Math.Max(spell.Stats.AreaWidth, spell.Stats.AreaDepth) * 0.75f : spell.Stats.Radius;
+            _movement.Grid.Query(centre, reach + _movement.Grid.MaxRadius, _nearby);
             foreach (SimUnit victim in _nearby)
             {
                 // Offensive spells hit everyone in the area, the caster's own units too (D33).
                 if (!victim.IsAlive || victim.NotArrived || (victim.Team == spell.Team && (!spell.Stats.Offensive || victim.Stats.IsTower)) || !spell.Stats.Targets.Allows(victim.IsAir)) continue;
-                if (!spell.Covers(victim)) continue;
+                if (radius >= 0f ? Vec2.Distance(victim.Position, centre) - victim.Radius > radius : !spell.Covers(victim)) continue;
                 float multiplier = (victim.IsAir ? weapon.AirDamageMultiplier : 1f) * victim.FormsAlive * victim.ShockwaveDamageTaken;
                 if (weapon.DamageType == DamageType.Fire) multiplier *= victim.FireDamageTaken;
                 float pool = PoolOf(victim);

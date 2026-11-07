@@ -49,6 +49,8 @@ namespace Halobellum.EditorTools
             /// <summary>A weapon held at Muzzle_1, a Weapon_ folder in Art/Imported/Models, and its length in metres.</summary>
             public string Prop;
             public float PropLength;
+            /// <summary>Degrees the model is turned about the vertical, for one prepared facing the wrong way (the Combat Form: the owner, 2026-11-07).</summary>
+            public float Yaw;
         }
 
         /// <summary>
@@ -109,9 +111,9 @@ namespace Halobellum.EditorTools
             new Entry { Unit = "Banished/Reaver", Folder = "Reaver", Height = 5f },
             new Entry { Unit = "Covenant/Vampire", Folder = "Vampire", Length = 7.5f },
             new Entry { Unit = "Flood/Seeder", Folder = "Seeder", Length = 8f },
-            new Entry { Unit = "Flood/CombatForm", Folder = "CombatForm", Height = 2.6f },
+            new Entry { Unit = "Flood/CombatForm", Folder = "CombatForm", Height = 2.6f, Yaw = 180f }, // It came out of its preparation facing backwards.
             // The owner, 2026-11-07 (D82): the Infested Elite is the Combat Form, an infested Elite; it was the Elite's body washed green. It holds its plasma rifle.
-            new Entry { Unit = "FloodCovenant/InfestedElite", Folder = "CombatForm", Height = 2.6f, Prop = "Weapon_PlasmaRifle", PropLength = 0.85f },
+            new Entry { Unit = "FloodCovenant/InfestedElite", Folder = "CombatForm", Height = 2.6f, Prop = "Weapon_PlasmaRifle", PropLength = 0.85f, Yaw = 180f },
             new Entry { Unit = "FloodCovenant/Spawner", Folder = "Spawner", Length = 9f },
             new Entry { Unit = "FloodUNSC/Juggernaut", Folder = "Juggernaut", Length = 8f },
             new Entry { Unit = "LekgoloColony/Goliath", Folder = "Goliath", Height = 6f },
@@ -210,7 +212,7 @@ namespace Halobellum.EditorTools
             string unitName = Path.GetFileNameWithoutExtension(assetPath);
             bool infested = entry.Tint == Infested;
             GameObject root = MakeModel(entry.Folder, unitName + "_Model", entry.Length, entry.Height, unit.isAir, entry.Tint, entry.Tint != Color.white ? "_" + unitName : "",
-                glows: !infested, flood: infested);
+                glows: !infested, flood: infested, yaw: entry.Yaw);
             if (root == null) return; // Rigged and baked instead.
             try
             {
@@ -268,7 +270,7 @@ namespace Halobellum.EditorTools
                 float size = Mathf.Clamp((high - low) * 1.6f, 0.35f, 0.8f);
                 var node = new GameObject(string.Format(System.Globalization.CultureInfo.InvariantCulture, "Thruster_{0:0.00}", size));
                 node.transform.SetParent(root.transform, false);
-                node.transform.localPosition = new Vector3(part.Average(p => p.x), (low + high) * 0.5f, part.Min(p => p.z) - 0.05f);
+                node.transform.localPosition = new Vector3(part.Average(p => p.x), (low + high) * 0.5f, part.Min(p => p.z) - 0.3f); // Just clear of the hull, so it shows.
                 Debug.Log($"{root.name}: {node.name} at {node.transform.localPosition}");
             }
         }
@@ -343,7 +345,7 @@ namespace Halobellum.EditorTools
         /// ground and centred on the origin (an air unit on its middle), with its matte materials. Null if the folder has no FBX. The caller destroys it.
         /// With glows, a material with a glow texture or colour is switched on to glow (see Matte).
         /// </summary>
-        private static GameObject MakeModel(string modelFolder, string rootName, float length, float height, bool isAir, Color tint, string materialSuffix, bool glows = false, bool flood = false)
+        private static GameObject MakeModel(string modelFolder, string rootName, float length, float height, bool isAir, Color tint, string materialSuffix, bool glows = false, bool flood = false, float yaw = 0f)
         {
             string folder = $"{AnimationBaker.ModelsFolder}/{modelFolder}";
             string fbx = $"{folder}/{modelFolder}.fbx";
@@ -363,6 +365,7 @@ namespace Halobellum.EditorTools
             var root = new GameObject(rootName);
             var model = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(fbx));
             model.transform.SetParent(root.transform, false);
+            if (yaw != 0f) model.transform.localRotation = Quaternion.Euler(0f, yaw, 0f) * model.transform.localRotation;
 
             Bounds bounds = BoundsOf(root);
             float scale = height > 0f ? height / bounds.size.y : length / Mathf.Max(bounds.size.x, bounds.size.z);

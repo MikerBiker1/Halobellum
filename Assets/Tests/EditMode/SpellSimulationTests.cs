@@ -68,6 +68,75 @@ namespace Halobellum.Tests
             Assert.AreEqual(1000f, flyer.Health, "A ground-only strike ignores air units.");
         }
 
+        private static SpellStats Scattered(int seedTicks = 12) => new SpellStats
+        {
+            Name = "Barrage", Offensive = true, Effect = SpellEffect.Damage, Radius = 20f, DelaySeconds = 0f, DamagePerTick = 10f,
+            DamageType = DamageType.Explosive, Ticks = seedTicks, TickInterval = 0.5f, Targets = TargetFilter.Both, StrikeRadius = 4f, StrikesPerTick = 6,
+        };
+
+        [Test]
+        public void ScatteredStrikes_LandAtRandomSpotsInsideTheWideArea_NotOnEveryone()
+        {
+            // D83: the barrage, the storm and Blight Rain cover a wide area, and luck decides where each strike lands.
+            var sim = new BattleSimulation(TestRules.Default(), 3);
+            var grid = new System.Collections.Generic.List<SimUnit>();
+            for (int x = -16; x <= 16; x += 4)
+                for (int y = 14; y <= 46; y += 4)
+                    if (new Vec2(x, y - 30).Length <= 18f) grid.Add(sim.AddUnit(Dummy(), Team.B, new Vec2(x, y)));
+            sim.AddUnit(Dummy(), Team.A, new Vec2(0f, -40f));
+            SimSpell spell = sim.AddSpell(Scattered(), Team.A, new Vec2(0f, 30f));
+            RunSeconds(sim, 0.05f);
+            Assert.AreEqual(6, spell.Strikes.Count, "Six strikes a tick.");
+            foreach (Vec2 strike in spell.Strikes) Assert.LessOrEqual(Vec2.Distance(strike, spell.Position), 20f, "Inside the area.");
+            Assert.Greater(spell.Strikes.Select(s => s.X).Distinct().Count(), 3, "At different spots.");
+            RunSeconds(sim, 6f);
+            int hit = grid.Count(u => u.Health < 1000f), untouched = grid.Count - hit;
+            Assert.Greater(hit, grid.Count / 3, "Spread over the area.");
+            Assert.Greater(untouched, 0, "Not on everyone: some are lucky.");
+            Assert.Greater(grid.Select(u => u.Health).Distinct().Count(), 2, "Some are hit more often than others.");
+        }
+
+        [Test]
+        public void ScatteredStrikes_AreTheSameForTheSameSeed()
+        {
+            float[] Run(int seed)
+            {
+                var sim = new BattleSimulation(TestRules.Default(), seed);
+                sim.AddUnit(Dummy(), Team.A, new Vec2(0f, -40f));
+                SimSpell spell = sim.AddSpell(Scattered(), Team.A, new Vec2(0f, 30f));
+                RunSeconds(sim, 0.05f);
+                return spell.Strikes.Select(s => s.X).ToArray();
+            }
+            CollectionAssert.AreEqual(Run(5), Run(5));
+            CollectionAssert.AreNotEqual(Run(5), Run(6));
+        }
+
+        [Test]
+        public void SweepingBeam_RunsAlongItsLine_FromOneEndToTheOther()
+        {
+            // D83: the Glassing Beam's course is set like smoke's, and the beam moves along it over its ticks.
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            SimUnit start = sim.AddUnit(Dummy(5000f), Team.B, new Vec2(-15f, 30f));
+            SimUnit end = sim.AddUnit(Dummy(5000f), Team.B, new Vec2(15f, 30f));
+            SimUnit aside = sim.AddUnit(Dummy(5000f), Team.B, new Vec2(0f, 40f));
+            sim.AddUnit(Dummy(), Team.A, new Vec2(0f, -40f));
+            var beam = new SpellStats
+            {
+                Name = "Beam", Offensive = true, Effect = SpellEffect.Damage, Radius = 4f, DelaySeconds = 0f, DamagePerTick = 100f,
+                DamageType = DamageType.Explosive, Ticks = 10, TickInterval = 0.5f, Targets = TargetFilter.Both, AreaWidth = 30f, AreaDepth = 8f,
+            };
+            Assert.IsTrue(beam.Sweeps);
+            SimSpell spell = sim.AddSpell(beam, Team.A, new Vec2(0f, 30f), 0f);
+            RunSeconds(sim, 0.05f);
+            Assert.AreEqual(-15f, spell.Strikes[0].X, 1e-3f, "It starts at the first end.");
+            Assert.Less(start.Health, 5000f);
+            Assert.AreEqual(5000f, end.Health, "Not yet at the other end.");
+            RunSeconds(sim, 5f);
+            Assert.AreEqual(15f, spell.Strikes[0].X, 1e-3f, "It ends at the other.");
+            Assert.Less(end.Health, 5000f);
+            Assert.AreEqual(5000f, aside.Health, "Off its course, nothing.");
+        }
+
         [Test]
         public void Zone_HitsEveryTick_ForItsDuration()
         {

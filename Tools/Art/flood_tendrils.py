@@ -1,7 +1,7 @@
 # flood_tendrils.py
 # Flood tendrils on the infested vehicles' textures (the owner, 2026-11-07, D82: "the green colour on infested vehicles is not good, it should be
 # flood colour, sickly brown/beige, in tendrils"). The infested vehicles share their model and texture with the clean ones, and were only washed
-# green by RealModelBuilder. This bakes a copy of each texture, <texture>_Flood.png beside it, with a network of beige veins rimmed in dark brown
+# green by RealModelBuilder. This bakes a copy of each texture, <texture>_Flood.png beside it, with a network of veins in the growths' orange-brown, rimmed darker,
 # and fleshy patches here and there, over the vehicle's own paint made dirtier. The veins are laid out in 3D, in metres along the vehicle as the
 # game sizes it, and baked into the texture, so they run on across the texture's seams. RealModelBuilder uses the copies for the infested ones.
 #   blender --background --factory-startup --python Tools/Art/flood_tendrils.py -- Warthog:4.6 Pelican:10 ...
@@ -19,9 +19,9 @@ MODELS = os.path.join(ROOT, "Assets", "_Project", "Art", "Imported", "Models")
 CELL = 1.25         # Metres across one cell of the big veins.
 FINE_CELL = 0.5     # And of the finer ones, which grow only where the Flood has taken hold.
 PATCH = 2.8         # Metres across the noise that places fleshy patches and decides where the veins are thick.
-BEIGE = (0.62, 0.50, 0.32)       # Linear: a sickly beige, about #CDB892 on screen.
-PALE = (0.78, 0.66, 0.46)        # Its paler streaks.
-BROWN = (0.10, 0.055, 0.025)     # The dark rim, about #5A3F2B.
+BEIGE = (0.15, 0.065, 0.025)     # Linear: the growths' orange-brown as it shows in the game, about #73452A (the owner, 2026-11-07: the same colour as the growths).
+PALE = (0.24, 0.11, 0.045)      # Its paler streaks, about #8F5A2E.
+BROWN = (0.027, 0.008, 0.003)    # The dark rim, about #2E170A.
 GRIME = (1.0, 0.86, 0.66)        # The vehicle's own paint, warmed and darkened, as if stained.
 
 

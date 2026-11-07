@@ -243,8 +243,9 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 ## Your answers of 2026-11-07 (D82)
 
 133. **For later:** a tech or a unit that does damage by a share of the target's health, so that tough units such as levelled Marauders can be worn down (the owner's note on item 121). Which faction, and tech or unit?
-134. **The infested vehicles' tendrils** are baked into copies of their textures (`Tools/Art/flood_tendrils.py`): beige veins rimmed in dark brown, a few fleshy patches, the paint under them dulled. Thicker, thinner, more or fewer? The infested infantry (Infested Grunt, the Infested Marine) keep their own colours; the Infested Grunt is still washed green, as only the vehicles were named.
+134. **The infested vehicles' tendrils** are baked into copies of their textures (`Tools/Art/flood_tendrils.py`): veins in the growths' orange-brown rimmed darker, a few fleshy patches, the paint under them dulled. Thicker, thinner, more or fewer? The infested infantry (Infested Grunt, the Infested Marine) keep their own colours; the Infested Grunt is still washed green, as only the vehicles were named.
 135. **Thrusters:** the Banshee's and Ghost's glow blue-violet while they move, the infested ones too. Colour and size?
+136. **The new spells (D83):** the barrage, storm and Blight Rain average about 120 damage to a unit in their 20 m area; the beam does 700 a hit along 30 m. Run a balance tournament on them?
 
 
 ## Things my test runs did to your PC

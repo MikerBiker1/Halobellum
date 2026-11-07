@@ -118,8 +118,8 @@ SPELLS = {
     "UNSC": [
         dict(file="MacStrike", name="MAC Strike", desc="A precision round from a frigate's Magnetic Accelerator Cannon in orbit.",
              off=1, eff=0, cost=150, cd=1, max=2, radius=4, delay=1, dmg=800, dtype=1, aa=1, ticks=1, interval=0, targets=0),
-        dict(file="MissileBarrage", name="Archer Missile Barrage", desc="A frigate's Archer pods saturate the area with missiles.",
-             off=1, eff=0, cost=150, cd=2, max=2, radius=10, delay=1, dmg=50, dtype=1, aa=0, ticks=6, interval=0.5, targets=2),
+        dict(file="MissileBarrage", name="Archer Missile Barrage", desc="A frigate's Archer pods saturate a wide area: missiles land at random spots across it, wave after wave.",
+             off=1, eff=0, cost=150, cd=2, max=2, radius=20, delay=1, dmg=65, dtype=1, aa=0, ticks=6, interval=0.5, targets=2, strike=4.5, strikes=6),  # D83
         dict(file="HavokNuke", name="HAVOK Nuke", desc="A tactical nuclear warhead. Devastating, slow to recharge. Mind your own troops.",
              off=1, eff=0, cost=350, cd=4, max=1, radius=14, delay=6, min_round=7, dmg=2500, dtype=1, aa=0, ticks=1, interval=0, targets=0),
         dict(file="OdstDropPods", name="ODST Drop Pods", desc="Orbital drop shock troopers land anywhere on the field for this battle: SMGs for infantry, rocket launchers for armor.",
@@ -133,10 +133,10 @@ SPELLS = {
     "Covenant": [
         dict(file="PlasmaBombardment", name="Plasma Bombardment", desc="A precise plasma shot from a cruiser in orbit.",
              off=1, eff=0, cost=150, cd=1, max=2, radius=5, delay=1, dmg=450, dtype=2, aa=0, ticks=1, interval=0, targets=0),
-        dict(file="PlasmaStorm", name="Plasma Storm", desc="A storm of plasma bolts rains on the area.",
-             off=1, eff=0, cost=150, cd=2, max=2, radius=10, delay=1, dmg=40, dtype=2, aa=0, ticks=8, interval=0.5, targets=2),
-        dict(file="GlassingBeam", name="Glassing Beam", desc="A supercarrier's beam turns the ground to glass. Devastating, slow to recharge. Mind your own troops.",
-             off=1, eff=0, cost=350, cd=4, max=1, radius=12, delay=6, min_round=7, dmg=600, dtype=2, aa=0, ticks=5, interval=0.6, targets=2),
+        dict(file="PlasmaStorm", name="Plasma Storm", desc="A storm of plasma bolts over a wide area: they strike at random spots across it.",
+             off=1, eff=0, cost=150, cd=2, max=2, radius=20, delay=1, dmg=55, dtype=2, aa=0, ticks=8, interval=0.5, targets=2, strike=4, strikes=5),  # D83
+        dict(file="GlassingBeam", name="Glassing Beam", desc="Click where the beam starts, aim where it ends: a supercarrier's beam sweeps 30 m of ground into glass. Devastating, slow to recharge. Mind your own troops.",
+             off=1, eff=0, cost=350, cd=4, max=1, radius=6, width=30, depth=12, delay=6, min_round=7, dmg=700, dtype=2, aa=0, ticks=10, interval=0.4, targets=2),  # D83: a sweeping beam
         dict(file="BansheeAmbush", name="Banshee Ambush", desc="Two Banshee squads descend from high above, anywhere on the map, for this battle.",
              off=1, eff=2, cost=50, cd=3, max=1, radius=5, delay=1, drop_asset="Covenant/Banshee", squads=2),
         SMOKE, EMP,
@@ -148,8 +148,8 @@ SPELLS = {
     "Flood": [
         dict(file="SporeBurst", name="Spore Burst", desc="A pod bursts over the area. Unarmored units it kills rise as Flood.",
              off=1, eff=0, cost=150, cd=1, max=2, radius=5, delay=1, dmg=350, dtype=1, aa=0, ticks=1, interval=0, targets=0, infects=1),
-        dict(file="BlightRain", name="Blight Rain", desc="Spores rain on the area. Unarmored units it kills rise as Flood.",
-             off=1, eff=0, cost=150, cd=2, max=2, radius=10, delay=1, dmg=40, dtype=1, aa=0, ticks=8, interval=0.5, targets=2, infects=1),
+        dict(file="BlightRain", name="Blight Rain", desc="Spores rain over a wide area, bursting at random spots across it. Unarmored units it kills rise as Flood.",
+             off=1, eff=0, cost=150, cd=2, max=2, radius=20, delay=1, dmg=55, dtype=1, aa=0, ticks=8, interval=0.5, targets=2, infects=1, strike=4, strikes=5),  # D83
         dict(file="GravemindsWrath", name="Gravemind's Wrath", desc="The Gravemind turns its whole will on one spot. Unarmored units it kills rise as Flood. Mind your own forms.",
              off=1, eff=0, cost=350, cd=4, max=1, radius=13, delay=6, min_round=7, dmg=1600, dtype=1, aa=0, ticks=1, interval=0, targets=0, infects=1),
         dict(file="DispersalPods", name="Dispersal Pods", desc="Two squads of Infection Forms land anywhere on the field for this battle.",
@@ -196,6 +196,7 @@ for faction, spells in SPELLS.items():
                 f"  damagePerTick: {s.get('dmg', 0)}\n  damageType: {s.get('dtype', 0)}\n  isAntiArmor: {s.get('aa', 0)}\n"
                 f"  infectsKills: {s.get('infects', 0)}\n"
                 f"  ticks: {s.get('ticks', 1)}\n  tickInterval: {s.get('interval', 0)}\n  targets: {s.get('targets', 0)}\n"
+                f"  strikeRadius: {s.get('strike', 0)}\n  strikesPerTick: {s.get('strikes', 1)}\n"
                 f"  shieldBonusShare: {s.get('shield', 0)}\n  damageMultiplier: {s.get('dmgmul', 1)}\n"
                 f"  dropUnit: {drop}\n  dropSquads: {s.get('squads', 1)}\n"
                 f"  shieldDamage: {s.get('shielddmg', 0)}\n  techDisableSeconds: {s.get('techoff', 0)}\n"

@@ -33,6 +33,8 @@ namespace Halobellum.Presentation
             public Color Color;
             /// <summary>The way the camera faced when it started: a mushroom cloud's cap is narrowed along it.</summary>
             public Vector2 Facing;
+            /// <summary>A sweeping beam's spell, whose spot moves along its course (D83); null otherwise.</summary>
+            public SimSpell Spell;
         }
 
         private const int MostRunning = 24;
@@ -88,6 +90,28 @@ namespace Halobellum.Presentation
             float radius = Mathf.Max(1f, stats.Radius);
             bool first = spell.TicksDone <= 1;
 
+            // Scattered strikes (D83): each lands on its own spot, with its own bolt or missile and blast.
+            if (stats.Scatters && spell.Strikes.Count > 0)
+            {
+                float strike = Mathf.Max(1f, stats.StrikeRadius);
+                switch (look)
+                {
+                    case SpellLook.PlasmaStorm:
+                    case SpellLook.BlightRain:
+                    {
+                        Color color = look == SpellLook.PlasmaStorm ? CovenantViolet : FloodGreen;
+                        if (first) Start(look, at, radius, stats.Ticks * stats.TickInterval + 1.5f, color);
+                        foreach (Vec2 spot in spell.Strikes) StrikeBolt(Ground(spot), strike, color);
+                        CameraShake.Kick(at, look == SpellLook.PlasmaStorm ? 0.2f : 0.1f);
+                        return;
+                    }
+                    case SpellLook.MissileRain:
+                        foreach (Vec2 spot in spell.Strikes) MissilesIn(Ground(spot), strike * 0.3f, 1, strike * 0.85f);
+                        return;
+                }
+            }
+            if (stats.Sweeps && spell.Strikes.Count > 0) at = Ground(spell.Strikes[0]); // A sweeping beam hits where it is now.
+
             switch (look)
             {
                 case SpellLook.OrbitalStrike: OrbitalStrike(at, radius); break;
@@ -98,7 +122,7 @@ namespace Halobellum.Presentation
                     StormBolts(at, radius, 4, CovenantViolet);
                     break;
                 case SpellLook.Glassing:
-                    if (first) Start(look, at, radius, stats.Ticks * stats.TickInterval + 0.5f, GlassBeam);
+                    if (first) Start(look, at, radius, stats.Ticks * stats.TickInterval + 0.5f, GlassBeam, stats.Sweeps ? spell : null);
                     GlassingTick(at, radius);
                     break;
                 case SpellLook.MissileRain: MissilesIn(at, radius, 3); break;
@@ -117,10 +141,10 @@ namespace Halobellum.Presentation
             }
         }
 
-        private void Start(SpellLook look, Vector3 at, float radius, float seconds, Color color)
+        private void Start(SpellLook look, Vector3 at, float radius, float seconds, Color color, SimSpell spell = null)
         {
             if (_runningCount >= MostRunning) return;
-            _running[_runningCount++] = new Running { Look = look, Position = at, Radius = radius, Started = _kit.BattleTime, Until = _kit.BattleTime + seconds, Color = color, Facing = CameraFacing() };
+            _running[_runningCount++] = new Running { Look = look, Position = at, Radius = radius, Started = _kit.BattleTime, Until = _kit.BattleTime + seconds, Color = color, Facing = CameraFacing(), Spell = spell };
         }
 
         private static Vector2 CameraFacing()
@@ -166,6 +190,8 @@ namespace Halobellum.Presentation
                     break;
                 case SpellLook.Glassing:
                 {
+                    // A sweeping beam (D83) moves along its course between its hits, smoothly.
+                    if (run.Spell != null && _shown != null) run.Position = Ground(run.Spell.BeamAt(run.Spell.BeamAlongAt(_shown.ElapsedSeconds)));
                     // The beam itself, flickering a little, thick, with a white core.
                     Vector3 top = run.Position + new Vector3(10f, SkyHeight, 25f);
                     float pulse = 0.9f + 0.1f * Mathf.Sin(now * 34f);
@@ -205,6 +231,7 @@ namespace Halobellum.Presentation
                     }
                     case SpellLook.Glassing:
                     {
+                        if (stats.Sweeps) at = Ground(spell.BeamAt(0f)); // A sweeping beam warns where it starts.
                         Vector3 top = at + new Vector3(10f, SkyHeight, 25f);
                         _kit.Line(top, at, Mathf.Lerp(0.15f, 1f, closeness) * _kit.ReadScale, new Color(GlassBeam.r, GlassBeam.g, GlassBeam.b, 0.3f + 0.6f * closeness));
                         _kit.GroundHead(at, stats.Radius * 2f * closeness, new Color(GlassBeam.r, GlassBeam.g, GlassBeam.b, 0.55f));
@@ -378,16 +405,37 @@ namespace Halobellum.Presentation
         private void StormCloudStep(Vector3 at, float radius, bool plasma)
         {
             Color cloud = plasma ? StormCloud : new Color(0.16f, 0.22f, 0.06f, 0.72f);
-            for (int i = 0; i < 5; i++)
+            // A wide storm (D83) has more puffs, not bigger ones.
+            float puff = Mathf.Min(radius, 10f);
+            int puffs = Mathf.Clamp(Mathf.RoundToInt(5f * radius * radius / 100f), 5, 14);
+            for (int i = 0; i < puffs; i++)
             {
                 Vector3 spot = Inside(at, radius * 1.1f) + Vector3.up * (StormHeight + Random.Range(-1.5f, 2.5f));
-                _kit.Smoke(EffectPriority.Big, spot, Random.insideUnitSphere * 1.2f + Vector3.down, radius * Random.Range(0.8f, 1.25f), cloud, Random.Range(1.8f, 2.8f));
+                _kit.Smoke(EffectPriority.Big, spot, Random.insideUnitSphere * 1.2f + Vector3.down, puff * Random.Range(0.8f, 1.25f), cloud, Random.Range(1.8f, 2.8f));
             }
             if (plasma && Random.value < 0.6f)
             {
                 Vector3 a = Inside(at, radius) + Vector3.up * StormHeight, b = Inside(at, radius) + Vector3.up * (StormHeight - 1f);
                 Lightning(a, b, CovenantViolet, 0.5f * _kit.ReadScale, 0.14f);
             }
+        }
+
+        /// <summary>One scattered strike of a storm (D83): a bolt from the cloud and a blast as wide as the strike.</summary>
+        private void StrikeBolt(Vector3 hit, float strikeRadius, Color color)
+        {
+            const float height = StormHeight;
+            Vector3 from = hit + new Vector3(Random.Range(-3f, 3f), height, Random.Range(-3f, 3f));
+            if (color == FloodGreen)
+            {
+                _kit.Bolt(EffectPriority.Big, from, (hit - from).normalized * 58f, 0.5f * _kit.ReadScale, color, height / 58f);
+                _recipes.BlastAfter(height / 58f, hit + Vector3.up * 0.3f, strikeRadius * 0.7f, BlastStyle.Bio, color, EffectPriority.Medium);
+            }
+            else
+            {
+                Lightning(from, hit, color, 0.8f * _kit.ReadScale, 0.22f);
+                _recipes.Blast(hit + Vector3.up * 0.3f, strikeRadius * 0.8f, BlastStyle.Plasma, color, EffectPriority.Big);
+            }
+            _kit.GroundGlow(EffectPriority.Medium, hit, strikeRadius * 1.6f, new Color(color.r, color.g, color.b, 0.6f), 0.35f);
         }
 
         /// <summary>A jagged line, made of three straight ones.</summary>
@@ -417,7 +465,7 @@ namespace Halobellum.Presentation
         }
 
         /// <summary>Missiles come in along smoke trails; each has its own blast when it lands.</summary>
-        private void MissilesIn(Vector3 at, float radius, int missiles)
+        private void MissilesIn(Vector3 at, float radius, int missiles, float blast = -1f)
         {
             const float Flight = 0.34f;
             for (int i = 0; i < missiles; i++)
@@ -428,7 +476,7 @@ namespace Halobellum.Presentation
                 _kit.Streak(EffectPriority.Big, from, velocity.normalized * 110f, 0.45f * _kit.ReadScale, WeaponLooks.RocketOrange, Flight);
                 _kit.Bolt(EffectPriority.Big, from, velocity, 0.7f * _kit.ReadScale, WeaponLooks.RocketOrange, Flight);
                 for (int p = 0; p < 7; p++) _kit.Smoke(EffectPriority.Medium, Vector3.Lerp(from, hit, p / 7f), Random.insideUnitSphere * 0.3f, Random.Range(1f, 1.5f), EffectRecipes.SmokeThin, Random.Range(0.9f, 1.5f));
-                _recipes.BlastAfter(Flight, hit + Vector3.up * 0.5f, Mathf.Max(2.6f, radius * 0.34f), BlastStyle.Fire, Color.white, EffectPriority.Big);
+                _recipes.BlastAfter(Flight, hit + Vector3.up * 0.5f, blast > 0f ? blast : Mathf.Max(2.6f, radius * 0.34f), BlastStyle.Fire, Color.white, EffectPriority.Big);
             }
             CameraShake.Kick(at, 0.2f);
         }

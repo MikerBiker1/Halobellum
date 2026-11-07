@@ -40,7 +40,7 @@ namespace Halobellum.UI
         /// <summary>Under the bar and its message line, level with the unit list.</summary>
         private const float BelowTheMessage = 204f;
 
-        private GUIStyle _text, _small, _smallCentered, _button, _bigButton, _header, _wrapDim;
+        private GUIStyle _text, _small, _smallCentered, _button, _mapButton, _bigButton, _header, _wrapDim;
         private float _scale;
         private Vector2 _scroll;
         private readonly HudLine _seedLine = new HudLine(), _aliveLine = new HudLine(), _blueLine = new HudLine(), _redLine = new HudLine();
@@ -162,12 +162,24 @@ namespace Halobellum.UI
                 string other = SandboxController.SideName(sandbox.EditingTeam.Opponent());
                 if (GUI.Button(new Rect(bar.x + 600f, bar.y + 10f, 106f, 44f), $"Copy to {other}", _button)) sandbox.CopyToOtherSide(sandbox.EditingTeam);
                 if (MenuStyle.SmallFramedButton(new Rect(bar.x + 710f, bar.y + 10f, 104f, 44f), sandbox.TowersOn ? "Towers on" : "Towers off", sandbox.TowersOn, TowersKey)) sandbox.SetTowers(!sandbox.TowersOn);
-                // The map (D82): a click goes to the next one, a right click back. The field changes a moment later.
-                Rect map = new Rect(bar.x + 818f, bar.y + 10f, 170f, 44f);
-                if (GUI.Button(map, "Map\n" + SandboxMaps.NameOf(sandbox.MapChoice), _button)) sandbox.MapChoice += Event.current.button == 1 ? -1 : 1;
                 if (GUI.Button(new Rect(bar.xMax - 300f, bar.y + 10f, 140f, 44f), "Run battle", _bigButton)) sandbox.Run();
             }
             if (GUI.Button(new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f), GameFlow.SandboxBackLabel, _button)) GameFlow.LeaveSandbox();
+            if (!sandbox.IsBattle) DrawMapButton(bar);
+        }
+
+        /// <summary>
+        /// The Map setting (D82: any interior or outdoor map, the outdoor ones only here), in a small panel under the bar's right end, as the bar is full:
+        /// a click goes to the next map, a right click back. The field changes a moment later. It stays clear of the message line and the unit list.
+        /// </summary>
+        public static Rect MapButton(Rect bar) => new Rect(bar.xMax - 156f, bar.yMax + 6f, 156f, 40f);
+
+        private void DrawMapButton(Rect bar)
+        {
+            Rect rect = MapButton(bar);
+            Panel(rect);
+            if (GUI.Button(new Rect(rect.x + 4f, rect.y + 3f, rect.width - 8f, rect.height - 6f), "Map\n" + SandboxMaps.NameOf(sandbox.MapChoice), _small))
+                sandbox.MapChoice += Event.current.button == 1 ? -1 : 1;
         }
 
         private void ArmyLabel(Rect rect, Team team, Color color)
@@ -286,6 +298,7 @@ namespace Halobellum.UI
             _smallCentered = new GUIStyle(_small) { alignment = TextAnchor.MiddleCenter };
             _header = new GUIStyle(_text) { font = HudTheme.TitleFont, fontSize = HudTheme.TitleSize(19), fontStyle = HudTheme.TitleFontStyle, normal = { textColor = HudTheme.TitleColor } };
             _button = new GUIStyle(GUI.skin.button) { fontSize = HudTheme.Size(15) };
+            _mapButton = new GUIStyle(GUI.skin.button) { fontSize = HudTheme.Size(13) };
             _bigButton = new GUIStyle(GUI.skin.button) { fontSize = HudTheme.Size(19), fontStyle = FontStyle.Bold };
             _wrapDim = new GUIStyle(_small) { wordWrap = true, alignment = TextAnchor.UpperLeft };
             HudTheme.Fit(_text, _small, _smallCentered, _header, _button, _bigButton, _wrapDim);

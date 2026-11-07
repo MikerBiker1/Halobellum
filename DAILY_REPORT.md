@@ -2,6 +2,16 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The spells: random strikes and a sweeping beam (D83)
+- **In the game:** the Archer barrage, the Plasma Storm and Blight Rain cover a 20 m area, their strikes landing at random spots in it; the Glassing Beam is placed like smoke and sweeps 30 m.
+- **Checked:** the spell tests (new ones for scattered strikes, the same strikes for the same seed, and the beam's course); pictures of the three in the test game.
+- **Not checked:** the balance tournament (it plays spells); not played by hand.
+
+## Your answers to the open items (D82)
+- **In the game:** no hit sounds; the infested vehicles in tendrils of the growths' colour instead of green; the Combat Form facing forward; glow on the models; the Banshee's wing tips and the Ghost's fins glow while they move; the Infested Elite is the Combat Form holding a plasma rifle; the Sandbox's Map button shows any interior or outdoor map.
+- **Checked:** the model, spell and Sandbox map tests; pictures in the test game of the infested vehicles, the Banshee, the Ghost, the Infested Elite and the Combat Form.
+- **Not checked:** the thrusters are faint in close-ups from the front; not played by hand.
+
 ## Your menu, tutorial and Pelican notes (D81)
 - **In the game:** the main menu without its Marines; the tutorial with your wording, glowing flank zones at step 26 and a new step 27 where you buy one of Noble's Spartans; the Pelican's Marines come out from under it.
 - **Checked:** the drop, menu and tutorial tests (103); the menu's picture.

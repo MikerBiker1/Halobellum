@@ -283,6 +283,23 @@ namespace Halobellum.Tests
             Assert.LessOrEqual(line.xMax, width);
         }
 
+        [TestCase(1140f)]
+        [TestCase(1350f)]
+        [TestCase(1600f)]
+        [TestCase(1920f)]
+        [TestCase(2560f)]
+        public void TheSandboxMapButton_SitsUnderTheBar_ClearOfTheMessageAndTheUnitList(float width)
+        {
+            // D82: the bar is full, so the Map setting has a small panel of its own under the bar's right end.
+            Rect bar = SandboxHud.TopBar(width), map = SandboxHud.MapButton(bar);
+            var message = new Rect(width * 0.5f - 400f, SandboxHud.ResultLineTop, 800f, 30f);
+            var list = new Rect(width - 410f, 204f, 400f, 600f);
+            Assert.IsFalse(map.Overlaps(bar));
+            Assert.IsFalse(map.Overlaps(message), "Clear of the message line.");
+            Assert.IsFalse(map.Overlaps(list), "Clear of the unit list.");
+            Assert.LessOrEqual(map.xMax, width);
+        }
+
         [TestCase(1140f, 912f)]
         [TestCase(1152f, 864f)]
         [TestCase(1227f, 982f)]

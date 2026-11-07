@@ -51,6 +51,9 @@ namespace Halobellum.Units
         public int ticks = 1;
         public float tickInterval;
         public TargetFilter targets = TargetFilter.Ground;
+        [Tooltip("Above 0: each tick lands Strikes Per Tick strikes of this radius at random spots inside Radius, instead of hitting it all (D83).")]
+        public float strikeRadius;
+        public int strikesPerTick = 1;
 
         [Header("Buff")]
         [Tooltip("Bonus shield as a share of each unit's health (0.5 = half its health).")]
@@ -114,6 +117,8 @@ namespace Halobellum.Units
                 Ticks = ticks,
                 TickInterval = tickInterval,
                 Targets = targets,
+                StrikeRadius = strikeRadius,
+                StrikesPerTick = strikesPerTick,
                 ShieldBonusShare = shieldBonusShare,
                 DamageMultiplier = damageMultiplier,
                 DropUnit = drop,

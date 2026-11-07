@@ -529,6 +529,9 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-06 | The battlefield is one of three interior looks per match: UNSC Installation, Covenant Warship, or a Flood-Infested Ship on a UNSC or Covenant hull, picked from the two factions and the match seed; the outdoor maps of M10 leave the matches | Per the project owner (D80) |
 | 2026-11-07 | A landed carrier (Pelican, Phantom) lets its squad out from under it, at its troop bay, not behind its tail | Per the project owner (D81) |
 | 2026-11-07 | The main menu shows vehicles only, no Marines; the tutorial adds a step on exclusive units and makes the flank zones glow | Per the project owner (D81) |
+| 2026-11-07 | Hits make no sound; infested vehicles wear Flood tendrils in the growths' colour, not a green wash; models glow; the Banshee's and Ghost's thrusters glow while moving | Per the project owner (D82) |
+| 2026-11-07 | The Infested Elite is the Combat Form's model with a plasma rifle; the outdoor maps are only in the Sandbox, on its Map setting | Per the project owner (D82) |
+| 2026-11-07 | The barrage, storm and Blight Rain strike at random spots over a 20 m area; the Glassing Beam sweeps a 30 m course set like smoke's | Per the project owner (D83) |
 
 ## 18. Assumptions to confirm
 

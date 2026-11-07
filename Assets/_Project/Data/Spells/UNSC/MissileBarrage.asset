@@ -13,24 +13,26 @@ MonoBehaviour:
   m_Name: MissileBarrage
   m_EditorClassIdentifier:
   spellName: Archer Missile Barrage
-  description: 'A frigate''s Archer pods saturate the area with missiles.'
+  description: 'A frigate''s Archer pods saturate a wide area: missiles land at random spots across it, wave after wave.'
   offensive: 1
   effect: 0
   cost: 150
   cooldownRounds: 2
   maxOwnedCopies: 2
-  radius: 10
+  radius: 20
   delaySeconds: 1
   minRound: 0
   areaWidth: 0
   areaDepth: 0
-  damagePerTick: 50
+  damagePerTick: 65
   damageType: 1
   isAntiArmor: 0
   infectsKills: 0
   ticks: 6
   tickInterval: 0.5
   targets: 2
+  strikeRadius: 4.5
+  strikesPerTick: 6
   shieldBonusShare: 0
   damageMultiplier: 1
   dropUnit: {fileID: 0}

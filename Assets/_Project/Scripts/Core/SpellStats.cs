@@ -5,6 +5,10 @@
 // DelaySeconds after the battle starts:
 //   - Damage: hits the caster's enemies inside Radius, Ticks times, TickInterval seconds apart
 //     (1 tick = a strike, more = a zone such as a plasma storm), through the normal damage table.
+//     Scattered (StrikeRadius above 0, D83): each tick lands StrikesPerTick strikes of StrikeRadius at random spots inside Radius
+//     instead of hitting the whole area (the Archer barrage, the Plasma Storm, Blight Rain: a wide area, luck where it lands).
+//     Sweeping (a damage spell with a line, D83): a beam of Radius that runs along the line from one end to the other over its
+//     ticks (the Glassing Beam, its course set like smoke's).
 //   - Buff: the caster's units inside Radius get a bonus shield (a share of their health) and/or a
 //     damage multiplier for the rest of the battle.
 //   - DropSquad: DropSquads squads of DropUnit land at the spot for that battle only (ODST pods,
@@ -69,6 +73,9 @@ namespace Halobellum.Core
         public float TickInterval;
         /// <summary>Which enemies it hits: ground, air or both.</summary>
         public TargetFilter Targets = TargetFilter.Ground;
+        /// <summary>Scattered strikes (D83): above 0, each tick lands StrikesPerTick strikes of this radius at random spots inside Radius.</summary>
+        public float StrikeRadius;
+        public int StrikesPerTick = 1;
         /// <summary>Unarmored enemies it kills rise as infected units (Flood spells, D38).</summary>
         public bool InfectsKills;
 
@@ -109,6 +116,20 @@ namespace Halobellum.Core
         }
 
         public bool IsRectangle => AreaWidth > 0f;
+        /// <summary>A beam that runs along its line over its ticks (D83): a damage spell whose area is a line.</summary>
+        public bool Sweeps => Effect == SpellEffect.Damage && IsRectangle;
+        /// <summary>A damage spell whose ticks land scattered strikes (D83).</summary>
+        public bool Scatters => Effect == SpellEffect.Damage && !IsRectangle && StrikeRadius > 0f;
+
+        /// <summary>Where a sweeping beam is, this far along its course (0 the first end, 1 the last), for a line centred here at this angle.</summary>
+        public Vec2 BeamPoint(Vec2 centre, float angleDegrees, float along)
+        {
+            float clamped = along < 0f ? 0f : along > 1f ? 1f : along;
+            return centre + Vec2.Right.Rotated(angleDegrees) * (AreaWidth * (clamped - 0.5f));
+        }
+
+        /// <summary>How far along its course a sweeping beam is at its tick-th hit (1 = the first): the first at one end, the last at the other.</summary>
+        public float BeamAlong(int tick) => Ticks > 1 ? (tick - 1) / (float)(Ticks - 1) : 0.5f;
         /// <summary>True for a spell whose area stays after it starts (smoke, oil).</summary>
         public bool Lingers => Effect == SpellEffect.Smoke || Effect == SpellEffect.Oil;
 

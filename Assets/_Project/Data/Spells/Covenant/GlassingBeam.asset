@@ -13,24 +13,26 @@ MonoBehaviour:
   m_Name: GlassingBeam
   m_EditorClassIdentifier:
   spellName: Glassing Beam
-  description: 'A supercarrier''s beam turns the ground to glass. Devastating, slow to recharge. Mind your own troops.'
+  description: 'Click where the beam starts, aim where it ends: a supercarrier''s beam sweeps 30 m of ground into glass. Devastating, slow to recharge. Mind your own troops.'
   offensive: 1
   effect: 0
   cost: 350
   cooldownRounds: 4
   maxOwnedCopies: 1
-  radius: 12
+  radius: 6
   delaySeconds: 6
   minRound: 7
-  areaWidth: 0
-  areaDepth: 0
-  damagePerTick: 600
+  areaWidth: 30
+  areaDepth: 12
+  damagePerTick: 700
   damageType: 2
   isAntiArmor: 0
   infectsKills: 0
-  ticks: 5
-  tickInterval: 0.6
+  ticks: 10
+  tickInterval: 0.4
   targets: 2
+  strikeRadius: 0
+  strikesPerTick: 1
   shieldBonusShare: 0
   damageMultiplier: 1
   dropUnit: {fileID: 0}

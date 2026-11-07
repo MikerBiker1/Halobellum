@@ -36,8 +36,8 @@ namespace Halobellum.Presentation
         private const float MostBank = 22f;
         private const float MovingPitch = 5f;
         /// <summary>A Covenant engine's blue-violet, and how far above 1 it goes for the bloom to catch it.</summary>
-        private static readonly Color ThrusterColour = new Color(0.45f, 0.6f, 1f);
-        private const float ThrusterBoost = 3f;
+        private static readonly Color ThrusterColour = new Color(0.3f, 0.5f, 1f);
+        private const float ThrusterBoost = 6f;
         private static Material _thrusterMaterial;
         private static Mesh _thrusterQuad;
 
