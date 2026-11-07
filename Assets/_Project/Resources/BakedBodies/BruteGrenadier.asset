@@ -20,11 +20,12 @@ MonoBehaviour:
   shootingClip: Walk_Forward_While_Shooting
   deathClip: Dead
   stillClip: walking_2
-  weaponName: Weapon_RocketLauncher
-  weaponLength: 1.2
+  weaponName: Weapon_BruteShot
+  weaponLength: 1.4
   weaponInForwardHand: 0
   weaponAlongForearm: 0
   muzzleInRightHand: 0
+  muzzleAtFront: 0
   shieldName: 
   shieldDiameter: 1.1
   shieldOffset: {x: 0, y: 0, z: 0}
@@ -51,6 +52,6 @@ MonoBehaviour:
     firstRow: 207
     frames: 1
     loops: 0
-  muzzle: {x: 0.17576766, y: 2.2589858, z: 0.65294856}
+  muzzle: {x: 0.2992338, y: 2.2334347, z: 0.4294197}
   hasMuzzle: 1
   bodyHeight: 2.8

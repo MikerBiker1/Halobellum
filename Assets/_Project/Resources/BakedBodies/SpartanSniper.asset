@@ -20,16 +20,21 @@ MonoBehaviour:
   shootingClip: Walk_Forward_While_Shooting
   deathClip: Dead
   stillClip: walking_2
-  weaponName: Weapon_AssaultRifle
-  weaponLength: 1.25
+  weaponName: Weapon_SniperRifle
+  weaponLength: 1.5
   weaponInForwardHand: 0
   weaponAlongForearm: 0
   muzzleInRightHand: 0
+  muzzleAtFront: 0
+  shieldName: 
+  shieldDiameter: 1.1
+  shieldOffset: {x: 0, y: 0, z: 0}
   transitionSeconds: 0.2
   corpseSeconds: 14
   bakedFps: 30
   mesh: {fileID: 4300000, guid: 68bc3a3d28faeba4a9c4dca8c1303174, type: 2}
   material: {fileID: 2100000, guid: 1a38e6b868c8f1f4598c92a1ee516e6a, type: 2}
+  glassMaterial: {fileID: 0}
   clips:
   - role: 1
     firstRow: 0
@@ -47,6 +52,6 @@ MonoBehaviour:
     firstRow: 207
     frames: 1
     loops: 0
-  muzzle: {x: -0.061798424, y: 2.1222067, z: 0.91541123}
+  muzzle: {x: -0.21766816, y: 2.1147676, z: 1.2093561}
   hasMuzzle: 1
   bodyHeight: 2.3

@@ -84,11 +84,13 @@ namespace Halobellum.Tests
         [TestCase("SpellUnits/ODST", "ODST", "Weapon_SMG", 2f)]
         [TestCase("Covenant/JackalBeamRifle", "Jackal", "Weapon_BeamRifle", 2f)]
         [TestCase("Covenant/JackalShield", "JackalShield", "Weapon_PlasmaPistol", 2f)]
-        [TestCase("Banished/BruteGrenadier", "BruteGrenadier", "Weapon_RocketLauncher", 2.8f)]
+        [TestCase("Banished/BruteGrenadier", "BruteGrenadier", "Weapon_BruteShot", 2.8f)] // The owner's Brute Shot (D86).
         [TestCase("FloodUNSC/InfestedMarine", "InfestedMarine", "Weapon_AssaultRifle", 2f)]
         [TestCase("Covenant/Elite", "Elite", "Weapon_PlasmaRifle", 2.6f)]
         [TestCase("UNSC/FlamethrowerTrooper", "FlamethrowerTrooper", "", 2f)]
         [TestCase("UNSC/Spartan", "Spartan", "Weapon_SpartanLaser", 2.3f)] // The owner's Spartan Laser (D85), in place of the rocket launcher.
+        [TestCase("Noble/SpartanCQB", "SpartanCQB", "Weapon_Shotgun", 2.3f)] // The owner's shotgun (D86), in place of the SMG.
+        [TestCase("Noble/SpartanSniper", "SpartanSniper", "Weapon_SniperRifle", 2.3f)] // The owner's sniper rifle (D86), in place of the assault rifle.
         public void TheThirdBatch_IsBaked_AndItsUnitsUseIt(string unit, string name, string weapon, float height)
         {
             BakedBodyDefinition body = Resources.Load<BakedBodyDefinition>("BakedBodies/" + name);

@@ -1,0 +1,7 @@
+Source: found by the project owner on Sketchfab, file sketchfab.com/weaponshumanshotgun.glb in Art_Source.
+Prepared by Tools/Art/units/Weapon_Shotgun.py (decision D45).
+The repository is private and must stay private.
+Title in the file: Weapons>Human>Shotgun
+Author in the file: jameslucino117 (https://sketchfab.com/jameslucino117)
+Licence in the file: CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+Page in the file: https://sketchfab.com/3d-models/weaponshumanshotgun-217eeef6ddad4471882a115d2216d012

@@ -2,6 +2,11 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The Brute Shot, the shotgun and the sniper rifle (D86)
+- **In the game:** the Brute Grenadier holds the first Brute Shot of your file, the Spartan CQB the third shotgun (the darkest) and the Spartan Sniper the third sniper rifle, each in place of a stand-in; shots leave their muzzles, and their icons show them aiming. Pictures: `Docs/M10/weapons_d86_icons.jpg` and `Docs/M10/weapons_d86.jpg`.
+- **Checked:** the baked body tests (new cases for the two Spartans, the Brute's updated) and the icon tests; the three in the test game.
+- **Not checked:** not played by hand.
+
 ## The Spartan Laser, and soldiers firing on their cards (D85)
 - **In the game:** the Spartan holds the second laser of your `weaponshumanspartan_laser.glb`, the green one with the small blue screen, in place of the rocket launcher; its shots and charge start at the lens. Every soldier's picture, on the cards, in the shop and in the squad window, now shows them aiming and firing instead of standing; the Zealot thrusts his sword and the Abomination rears up. Every icon was rendered again, so the Scarab's and the D82 changes show too. Pictures: `Docs/M10/icons_aiming.jpg` and `Docs/M10/spartan_laser.jpg`.
 - **Checked:** the icon and baked body tests (a new one for the Spartan's laser); the icons by eye; the Spartan in the test game.

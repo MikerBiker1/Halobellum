@@ -20,16 +20,21 @@ MonoBehaviour:
   shootingClip: Walk_Forward_While_Shooting
   deathClip: Dead
   stillClip: walking_2
-  weaponName: Weapon_SMG
-  weaponLength: 0.75
+  weaponName: Weapon_Shotgun
+  weaponLength: 1
   weaponInForwardHand: 0
   weaponAlongForearm: 0
   muzzleInRightHand: 0
+  muzzleAtFront: 0
+  shieldName: 
+  shieldDiameter: 1.1
+  shieldOffset: {x: 0, y: 0, z: 0}
   transitionSeconds: 0.2
   corpseSeconds: 14
   bakedFps: 30
   mesh: {fileID: 4300000, guid: ff65c74a690a8d3478dfeadb6ff736ea, type: 2}
   material: {fileID: 2100000, guid: a301695551535604882a644a8493ebdf, type: 2}
+  glassMaterial: {fileID: 0}
   clips:
   - role: 1
     firstRow: 0
@@ -47,6 +52,6 @@ MonoBehaviour:
     firstRow: 207
     frames: 1
     loops: 0
-  muzzle: {x: 0.16552657, y: 1.9900542, z: 0.48077458}
+  muzzle: {x: -0.014755271, y: 2.0135214, z: 0.81981957}
   hasMuzzle: 1
   bodyHeight: 2.3

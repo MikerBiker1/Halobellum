@@ -137,14 +137,14 @@ The Spartans have your model now, each with a placeholder weapon from the game's
 | Done | What | For | Placeholder for now |
 | --- | --- | --- | --- |
 | [x] | Spartan Laser | Spartan. | Your `weaponshumanspartan_laser.glb`: the second laser, the green one with the small blue screen (D85) |
-| [ ] | SRS99 sniper rifle | Spartan Sniper. | Assault rifle, drawn long |
+| [x] | SRS99 sniper rifle | Spartan Sniper. | Your `weaponshumansniper_rifle.glb`, the third (D86) |
 | [ ] | M247H chaingun and Hydra rocket pod | Spartan Heavy Weapons. | Rocket launcher |
 | [ ] | M41 rocket launcher | Spartan Grenadier. | Rocket launcher, drawn short |
-| [ ] | Shotgun | Spartan CQB. | SMG |
+| [x] | Shotgun | Spartan CQB. | Your `weaponshumanshotgun.glb`, the third, the darkest (D86) |
 | [ ] | BR85 battle rifle and M41 rocket launcher | Spartan Fireteam. | Assault rifle |
 | [x] | Plasma rifle | Elite. | Your `halo_-_plasma_rifle.glb` (D71) |
 | [x] | Beam rifle | Jackal (Beam Rifle). | Your `halo_-_beam_rifle.glb` (D71) |
-| [ ] | Spike grenade launcher | Brute Grenadier. | Rocket launcher |
+| [x] | Brute Shot (in place of the spike grenade launcher) | Brute Grenadier. | Your `weaponscovenantbrute_shot.glb`, the first (D86) |
 
 ### UNSC
 
