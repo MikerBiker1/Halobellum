@@ -291,6 +291,11 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 154. **The Abomination's whip** shows twice in each slam's clip (the whip and the slam play as one attack, timed to the slam), not on each of its whip's strikes (every 0.8 s), and not while it walks in whipping from 7 to 10 m. A clip of its own for every whip would need the game to play two things at once. Good enough?
 155. **The Tank walks on its club**, knuckles down, as its third foot; its small arm swings free. Keep that, or should it walk on its legs alone?
 
+## The tournament after the animations (D95)
+
+158. **Units the AI hardly fields:** the Stalker Form (8 of about 1,600 Flood matches), the Infected Pelican (20) and the Spartan CQB (49). Their win rates mean little, and they don't move their sub-factions. I left them; a player may still find them good. Want them looked at (price, or the AI's choices)?
+159. **Two spells with losing sides:** the Glassing Beam (taken in 23% of Covenant matches, edge -16) and Gravemind's Wrath (16% of Flood matches, edge -20). Late cards go mostly to sides already behind, so this may be the AI's timing more than the spells. Left as they are, as the factions are even.
+
 ## Things my test runs did to your PC
 
 - **Windows moving, and possibly music:** while the Screen setting was being checked, a test window moved across all three of your screens and briefly went fullscreen on each. Some of those runs weren't silent, so menu music may have played for about 25 seconds at a time. Those checks have finished.
