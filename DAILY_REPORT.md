@@ -2,6 +2,11 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The disclaimer's addition and the version (D100)
+- **In the game:** Public Availability ends with your request not to share the game publicly; HALOBELLUM on the disclaimer is in the main menu's title font and colour; the main menu shows "Version 0.1.0" small in the lower left.
+- **Checked:** the disclaimer and menu tests; pictures of the disclaimer at 1600x900 and 1024x768 and of the menu (`Docs/M10/menu_version_d100.png`).
+- **Note:** the version comes from Unity's Player Settings (Version), 0.1.0 today; change it there and the menu follows.
+
 ## Your disclaimer before the main menu (D96)
 - **In the game:** when the game starts, your disclaimer shows first: white on black, your words as given, and a glowing "Click anywhere to continue". A click or a key goes on to the menu, which fades in; the Microsoft link opens in the browser. It shows once per start.
 - **Checked:** new tests (the words in order; shown for a player, not in tests or picture runs) and the menu tests; pictures at 1600x900 and 1024x768 (`Docs/M10/disclaimer_d96.png`).

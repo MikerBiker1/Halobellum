@@ -544,6 +544,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-07 | The Seeder, the Pure Form Tank and the Abomination are animated bodies; a flier's baked body falls to the ground as it dies | Per the project owner (D93) |
 | 2026-11-07 | The main menu is a cinematic battlefield of the three sides' vehicles (no soldiers or Flood forms) in five fading camera shots; the old menu stays as Classic, chosen in Settings | Per the project owner (D94) |
 | 2026-11-07 | The owner's disclaimer shows once each time the game starts, before the main menu | Per the project owner (D96) |
+| 2026-11-07 | The disclaimer asks players not to share the game publicly and writes HALOBELLUM as the menu does; the menu shows the version | Per the project owner (D100) |
 
 ## 18. Assumptions to confirm
 

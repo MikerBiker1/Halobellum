@@ -2,7 +2,7 @@
 // The main menu's screen (M10), in the MainMenu scene over MenuBackdrop's picture: the title, and two pages of buttons. The first has Play, Settings and Quit.
 // Play's page has Faction mode, Unlock Skirmish mode, Sandbox and Back: a chosen mode shows a panel on the right with its settings and Start, and the Sandbox leaves at once.
 // The first time it shows after the game starts, the owner's disclaimer (Disclaimer, D96) comes first, and the menu fades in once it is clicked away.
-// It fades in from black and fades out before a scene change. Esc steps back: the card list, then Play's page, and it closes Settings. It scales to any window (HudScale.ApplyFit).
+// Its version is in small print in the lower left (D100). It fades in from black and fades out before a scene change. Esc steps back: the card list, then Play's page, and it closes Settings. It scales to any window (HudScale.ApplyFit).
 // Difficulty and base health are remembered (GameSettings). The card filter starts at All cards each time this screen loads, and no mode is chosen.
 // The buttons call plain public methods, which a batch run's tests can call too, since a batch run draws no IMGUI.
 // Depends on: Disclaimer, GameFlow, GameSettings, MenuStyle, SettingsScreen, Halobellum.Economy, Unity Input System.
@@ -155,7 +155,7 @@ namespace Halobellum.UI
             if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) HandleEscape();
         }
 
-        /// <summary>With -disclaimerPicture &lt;png&gt;: a picture of the disclaimer after a moment, then the game quits.</summary>
+        /// <summary>With -disclaimerPicture &lt;png&gt;: a picture of the disclaimer after a moment, then one of the menu once it has faded in (&lt;png&gt; with _menu), then the game quits.</summary>
         private void TakeDisclaimerPicture()
         {
             string[] args = Environment.GetCommandLineArgs();
@@ -166,8 +166,23 @@ namespace Halobellum.UI
             {
                 ScreenCapture.CaptureScreenshot(args[at + 1]);
                 _pictureAt = 0f;
-                Invoke(nameof(QuitAfterPicture), 1f);
+                Invoke(nameof(GoOnForPicture), 1f);
             }
+        }
+
+        private void GoOnForPicture()
+        {
+            Disclaimer.Pending = false;
+            _shownAt = Time.unscaledTime;
+            Invoke(nameof(MenuPicture), FadeInSeconds + 1.5f);
+        }
+
+        private void MenuPicture()
+        {
+            string[] args = Environment.GetCommandLineArgs();
+            string path = args[Array.IndexOf(args, "-disclaimerPicture") + 1];
+            ScreenCapture.CaptureScreenshot(System.IO.Path.ChangeExtension(path, null) + "_menu.png");
+            Invoke(nameof(QuitAfterPicture), 1f);
         }
 
         private void QuitAfterPicture() => Application.Quit();
@@ -233,7 +248,13 @@ namespace Halobellum.UI
             if (_page == Page.Play) DrawPlayPage(left, y);
             else DrawMainPage(left, y);
             GUI.enabled = true;
+
+            // The game's version, small, in the lower left (the owner, D100): Unity's Player Settings version.
+            GUI.Label(new Rect(16f, height - 30f, 300f, 22f), VersionLabel, MenuStyle.Small);
         }
+
+        /// <summary>What the lower left of the menu says: the version set in Unity's Player Settings.</summary>
+        public static string VersionLabel => "Version " + Application.version;
 
         private void DrawMainPage(float left, float y)
         {

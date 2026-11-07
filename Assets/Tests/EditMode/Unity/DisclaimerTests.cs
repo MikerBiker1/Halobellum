@@ -15,13 +15,19 @@ namespace Halobellum.Tests
         public void ItSays_TheOwnersWords_InOrder()
         {
             string[] lines = Disclaimer.Text.ToArray();
-            Assert.AreEqual("WELCOME TO HALOBELLUM", lines[0]);
+            Assert.AreEqual("WELCOME TO", lines[0]);
+            Assert.AreEqual(MainMenuHud.Title, lines[1], "HALOBELLUM, drawn as the menu's title.");
+            StringAssert.Contains("Please do not publicly share screenshots, recordings, gameplay videos, download links or game files without permission. The less attention this unofficial project attracts, the better its chances of remaining available.",
+                lines.First(l => l.StartsWith("As an unofficial fan creation")), "The owner's addition ends Public Availability (D100).");
             CollectionAssert.IsSubsetOf(new[] { "Unofficial Fan Project", "AI-Assisted Development", "Public Availability", "Thank you for playing, and enjoy the battle!" }, lines);
             StringAssert.Contains("Claude Opus 5.5", string.Join(" ", lines));
             StringAssert.Contains("Created by Miker", string.Join(" ", lines));
             StringAssert.EndsWith(Disclaimer.Link, lines.Last());
             Assert.AreEqual("https://www.xbox.com/en-US/developers/rules", Disclaimer.Link);
         }
+
+        [Test]
+        public void TheMenu_ShowsItsVersion() => Assert.AreEqual("Version " + UnityEngine.Application.version, MainMenuHud.VersionLabel);
 
         [TestCase(false, new string[0], true)]
         [TestCase(false, new[] { "-screen-width", "1600" }, true)]

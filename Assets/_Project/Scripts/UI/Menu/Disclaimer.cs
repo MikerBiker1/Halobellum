@@ -1,6 +1,6 @@
 // Disclaimer.cs
 // The owner's disclaimer (D96), shown once each time the game starts, before the main menu: white text on black, centred, and a glowing
-// "Click anywhere to continue" that pulses. A click or a key goes on to the menu, which then fades in (MainMenuHud). The link to Microsoft's
+// "Click anywhere to continue" that pulses. HALOBELLUM is written as the main menu writes it: its title font and colour, spaced, underlined in its accent. A click or a key goes on to the menu, which then fades in (MainMenuHud). The link to Microsoft's
 // Game Content Usage Rules opens in the browser when clicked, and does not go on. The text shrinks to fit any window.
 // It is skipped in batch runs (tests) and in the picture runs (a -...Demo or -gallery flag); -disclaimerPicture <png> shows it, saves a
 // picture of it and quits.
@@ -17,12 +17,13 @@ namespace Halobellum.UI
         public const string Link = "https://www.xbox.com/en-US/developers/rules";
         public const string Continue = "Click anywhere to continue";
 
-        private enum Kind { Title, Heading, Text, Signature, Link }
+        private enum Kind { Title, Brand, Heading, Text, Signature, Link }
 
         // The owner's words, as given (2026-11-07).
         private static readonly (Kind kind, string text)[] Lines =
         {
-            (Kind.Title, "WELCOME TO HALOBELLUM"),
+            (Kind.Title, "WELCOME TO"),
+            (Kind.Brand, MainMenuHud.Title),
             (Kind.Heading, "Unofficial Fan Project"),
             (Kind.Text, "Halobellum is a free, noncommercial fan-made strategy game inspired by Halo and Mechabellum. It is not affiliated with, sponsored by, approved by, or endorsed by Microsoft, Halo Studios, or the developers of Mechabellum. All third-party intellectual property belongs to its respective owners."),
             (Kind.Heading, "AI-Assisted Development"),
@@ -30,7 +31,7 @@ namespace Halobellum.UI
             (Kind.Heading, "Independent Project — No Guaranteed Support"),
             (Kind.Text, "This game is an independent hobby project, not a professionally supported product. Bugs, crashes, balance issues, and unfinished content may occur. Updates, fixes, and technical support are not guaranteed."),
             (Kind.Heading, "Public Availability"),
-            (Kind.Text, "As an unofficial fan creation, Halobellum may be modified, withdrawn, or removed from public distribution at any time, including at the request of intellectual property rights holders."),
+            (Kind.Text, "As an unofficial fan creation, Halobellum may be modified, withdrawn, or removed from public distribution at any time, including at the request of intellectual property rights holders. Please do not publicly share screenshots, recordings, gameplay videos, download links or game files without permission. The less attention this unofficial project attracts, the better its chances of remaining available."),
             (Kind.Text, "Thank you for playing, and enjoy the battle!"),
             (Kind.Signature, "Created by Miker · Free to play"),
             (Kind.Link, "Microsoft Game Content Usage Rules: " + Link),
@@ -68,7 +69,7 @@ namespace Halobellum.UI
             return true;
         }
 
-        private static GUIStyle _title, _heading, _text, _signature, _link, _continue;
+        private static GUIStyle _title, _brand, _heading, _text, _signature, _link, _continue;
         private static int _sizedFor;
 
         /// <summary>Draws it over the whole window (in IMGUI's scaled units). Returns true when a click or a key asks to go on.</summary>
@@ -96,6 +97,16 @@ namespace Halobellum.UI
             {
                 GUIStyle style = StyleOf(kind);
                 y += GapBefore(kind) * scale;
+                if (kind == Kind.Brand)
+                {
+                    // As the main menu's title: its font and colour, spaced, with the accent line under it.
+                    float spacing = BrandSpacing(scale), wide = SpacedWidth(text, _brand, spacing), tall = BrandHeight();
+                    float left = x + (column - wide) * 0.5f;
+                    MenuStyle.SpacedText(left, y, text, _brand, spacing, Color.white);
+                    MenuStyle.FadeRight(new Rect(left, y + tall + 4f * scale, wide, 2f), MenuStyle.Accent);
+                    y += tall + 10f * scale;
+                    continue;
+                }
                 float h = style.CalcHeight(new GUIContent(text), column);
                 var rect = new Rect(x, y, column, h);
                 if (kind == Kind.Link)
@@ -142,14 +153,28 @@ namespace Halobellum.UI
             return false;
         }
 
-        private static float GapBefore(Kind kind) => kind == Kind.Heading ? 22f : kind == Kind.Signature ? 22f : kind == Kind.Link ? 10f : kind == Kind.Text ? 6f : 0f;
+        private static float BrandSpacing(float scale) => 7f * scale * BrandSize / 108f; // The menu spaces its 108-point title by 7.
+
+        private static float BrandHeight() => _brand.CalcSize(new GUIContent("H")).y;
+
+        /// <summary>How wide MenuStyle.SpacedText draws this text.</summary>
+        private static float SpacedWidth(string text, GUIStyle style, float spacing)
+        {
+            float width = 0f;
+            foreach (char letter in text) width += style.CalcSize(new GUIContent(letter.ToString())).x + spacing;
+            return width - spacing;
+        }
+
+        private const int BrandSize = 66;
+
+        private static float GapBefore(Kind kind) => kind == Kind.Brand ? 4f : kind == Kind.Heading ? 22f : kind == Kind.Signature ? 22f : kind == Kind.Link ? 10f : kind == Kind.Text ? 6f : 0f;
 
         private static GUIStyle StyleOf(Kind kind) => kind == Kind.Title ? _title : kind == Kind.Heading ? _heading : kind == Kind.Signature ? _signature : kind == Kind.Link ? _link : _text;
 
         private static float Measure(float column)
         {
             float total = 0f;
-            foreach (var (kind, text) in Lines) total += GapBefore(kind) + StyleOf(kind).CalcHeight(new GUIContent(text), column);
+            foreach (var (kind, text) in Lines) total += GapBefore(kind) + (kind == Kind.Brand ? BrandHeight() + 10f * _sizedFor / 1000f : StyleOf(kind).CalcHeight(new GUIContent(text), column));
             return total;
         }
 
@@ -167,7 +192,8 @@ namespace Halobellum.UI
                 style.margin = new RectOffset(0, 0, 0, 0);
                 return style;
             }
-            _title = Make(MenuStyle.Heading, 40, FontStyle.Normal, TextAnchor.UpperCenter);
+            _title = Make(MenuStyle.Heading, 26, FontStyle.Normal, TextAnchor.UpperCenter);
+            _brand = new GUIStyle(MenuStyle.Title) { fontSize = Mathf.Max(20, Mathf.RoundToInt(BrandSize * scale)) }; // The menu title's own font and colour (its ink).
             _heading = Make(MenuStyle.Heading, 23, FontStyle.Normal, TextAnchor.UpperCenter);
             _text = Make(MenuStyle.Body, 19, FontStyle.Normal, TextAnchor.UpperCenter);
             _signature = Make(MenuStyle.Body, 19, FontStyle.Bold, TextAnchor.UpperCenter);
