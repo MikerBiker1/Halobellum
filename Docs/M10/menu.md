@@ -2,7 +2,9 @@
 
 ## What the player sees
 
-The game now opens in a new scene, **MainMenu**. It fades in from black on a dusk battlefield seen from ground level: Marines in silhouette, Scorpions on the line, a burnt-out Warthog smoking, Wraiths further on, and a huge Scarab standing in the haze on all four legs, with a low sun beside it. Pelicans cross the sky in three different groups. Every 26 seconds the Scarab fires its beam at the ground. Embers drift past. The camera wanders very slowly.
+**Since D94** the game opens on the **cinematic menu** (MainMenu, built by `Editor/MenuCinematicBuilder.cs`, moved by `UI/Menu/MenuCinematic.cs`, its sky `Art/MenuCinematic/MenuCinematicSky.shader`): the three sides at war under a storm at dusk, in a 52-second loop of five slow camera shots that fade through black into one another (Vista, Line, Covenant, Flood, Titan), the Scarab walking the field on planted feet and firing its beam, shells, plasma and mortars bursting, fires, smoke, fog, lightning and a warship glassing the hills. Every shot keeps its action in the right half, clear of the dark panel under the menu's text. Rebuild it with Halobellum > Scenes > Rebuild Main Menu Scene, or `-executeMethod Halobellum.EditorTools.MenuCinematicBuilder.BuildAndPreviewFromCommandLine`, which also renders a picture of each shot. The menu described below is kept as **MainMenuClassic** (Halobellum > Scenes > Rebuild Classic Main Menu Scene); **Settings > Menu background** chooses between them (`Ui.MenuBackground`: 0 cinematic, 1 classic), and a test tool always opens the cinematic one.
+
+The classic menu: it opened in a new scene, **MainMenu** (now MainMenuClassic). It fades in from black on a dusk battlefield seen from ground level: Marines in silhouette, Scorpions on the line, a burnt-out Warthog smoking, Wraiths further on, and a huge Scarab standing in the haze on all four legs, with a low sun beside it. Pelicans cross the sky in three different groups. Every 26 seconds the Scarab fires its beam at the ground. Embers drift past. The camera wanders very slowly.
 
 On the left, under a soft darkness so the text stands out: the title **HALOBELLUM** and the buttons **Play**, **Settings** and **Quit**. **Play** leads to a second page with **Faction mode**, **Unlock Skirmish mode**, **Sandbox** and **Back**. Choosing a mode opens a panel on the right with its settings and **Start**: difficulty for Faction mode; difficulty, base health (100 to 10000) and a card list for Unlock Skirmish. Esc steps back a page (D62). There are no Halo logos or marks. The look (near-black panels, a fine edge, warm amber) belongs to these screens only, because they belong to no faction.
 
@@ -18,6 +20,7 @@ On the left, under a soft darkness so the text stands out: the title **HALOBELLU
 | VSync | `Video.VSync` (int) | on |
 | UI scale, 75% to 125% | `Ui.Scale` (float) | 100% |
 | Camera shake | `Fx.CameraShake` (int) | on |
+| Menu background: Cinematic or Classic (D94) | `Ui.MenuBackground` (int) | Cinematic |
 
 Each is applied at once and again when the game starts. "Reset to defaults" puts back sound, camera shake and UI scale, and leaves the window, the screen and quality alone.
 

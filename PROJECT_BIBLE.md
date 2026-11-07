@@ -542,6 +542,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-07 | Soldiers die with their kind's sound, the Flood by size; Flood leaps, Hunter charges and bashes have theirs; the Hunter Captain's laser is a held 1 s green beam | Per the project owner (D91) |
 | 2026-11-07 | The Combat Form and the Infested Elite are animated bodies of the Combat Form's model rigged in Blender, the Elite holding its plasma rifle | Per the project owner (D92) |
 | 2026-11-07 | The Seeder, the Pure Form Tank and the Abomination are animated bodies; a flier's baked body falls to the ground as it dies | Per the project owner (D93) |
+| 2026-11-07 | The main menu is a cinematic battlefield of the three sides in five fading camera shots; the old menu stays as Classic, chosen in Settings | Per the project owner (D94) |
 
 ## 18. Assumptions to confirm
 

@@ -189,7 +189,7 @@ Shader "Halobellum/MenuCinematicSky"
                     // Lightning lights the clouds near its stroke, and a little of the whole sky.
                     float3 strokeDirection = normalize(_MenuFlashDirection.xyz + float3(0, 0.0001, 0));
                     float nearStroke = pow(saturate(dot(direction, strokeDirection) * 0.5 + 0.5), 28.0);
-                    cloud += _FlashColor.rgb * _MenuFlash * (0.02 + 1.6 * nearStroke) * (0.3 + detail);
+                    cloud += _FlashColor.rgb * _MenuFlash * (0.02 + 1.1 * nearStroke) * (0.3 + detail);
                     float haze = smoothstep(0.012, 0.1, height);
                     color = lerp(color, cloud, cover * haze);
                 }

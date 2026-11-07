@@ -296,6 +296,12 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 158. **Units the AI hardly fields:** the Stalker Form (8 of about 1,600 Flood matches), the Infected Pelican (20) and the Spartan CQB (49). Their win rates mean little, and they don't move their sub-factions. I left them; a player may still find them good. Want them looked at (price, or the AI's choices)?
 159. **Two spells with losing sides:** the Glassing Beam (taken in 23% of Covenant matches, edge -16) and Gravemind's Wrath (16% of Flood matches, edge -20). Late cards go mostly to sides already behind, so this may be the AI's timing more than the spells. Left as they are, as the factions are even.
 
+## The cinematic main menu (D94)
+
+160. **Going back to the old menu:** Settings > Menu background > Classic. It is the old scene, untouched, and the choice is remembered. If you'd rather drop the new one altogether, say so and I'll make the classic the main menu again (or revert D94).
+161. **The five shots** (Vista, Line, Covenant, Flood, Titan, 10 to 11 seconds each): any to cut, lengthen, reorder or reframe? The Scarab walks the field once a loop and fires twice, in the Line and Titan shots.
+162. **Darker and busier than before:** a storm, about 130 soldiers and Flood forms, 50 vehicles and aircraft, blasts and lightning. If the menu feels heavy on a weaker PC, tell me and I'll thin it.
+
 ## Things my test runs did to your PC
 
 - **Windows moving, and possibly music:** while the Screen setting was being checked, a test window moved across all three of your screens and briefly went fullscreen on each. Some of those runs weren't silent, so menu music may have played for about 25 seconds at a time. Those checks have finished.

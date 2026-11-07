@@ -2,6 +2,12 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The cinematic main menu (D94)
+- **In the game:** the main menu is now a battle of all three sides under a storm at dusk, in five slow camera shots that fade into one another, 52 seconds round: the whole field from high up; low along the human line as it fires; among the Covenant behind the striding Scarab; in front of the Flood's charge with the Abomination slamming; and up at the Scarab as it sweeps the field with its beam. Shells, plasma and mortars fly and burst, wrecks burn, lightning strikes, an alien warship glasses the hills far off. The menu's text sits on the dark left as before; every shot keeps its action on the right. Pictures: `Docs/M10/menu_d94_shots.jpg`, `menu_d94_game.jpg`.
+- **Your old menu is kept:** Settings > Menu background > Classic brings it back (and Cinematic goes back to the new one).
+- **Checked:** the menu tests (the new menu's shots, fades, armies, the Scarab's walk and beam; the classic menu's own tests now on its scene; the build has both scenes; the Settings choice); pictures of every shot from the scene builder and the menu in the test game.
+- **Not checked:** played by hand; the frame rate on a weaker PC.
+
 ## The tournament after the animations (D95)
 - **Result:** every sub-faction wins 48% to 52% (Banished 52%, Noble and Unggoy Rebellion 51%, Aerospace Command and Covenant-based 50%, Lekgolo Colony and Armored Division 49%, UNSC-based 48%), so nothing needed changing. Two rounds, 7,200 matches at 2000 base health. Report: `Docs/Balance/hard_ai_tournament_d95.txt`.
 - **Done first:** the counter web measured again for the Brute Grenadier and the Hunter Captain, whose weapons changed, and the AI's matchup table rebuilt from it.

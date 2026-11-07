@@ -401,8 +401,10 @@ namespace Halobellum.Tests
         public void TheMenuButton_IsWhereItWasDrawn_InTheMenusOwnScale()
         {
             Assert.AreEqual(new Rect(1814f, 1036f, 96f, 34f), PauseMenu.CornerButtonPixels(1920f, 1080f, 1f));
-            Rect narrow = PauseMenu.CornerButtonPixels(1000f, 1080f, 1.25f); // 1.25 here, where the HUD is at 1000 / 1140.
-            Assert.AreEqual(1080f - 44f * 1.25f, narrow.y, 0.01f);
+            // Asked for at 1.25, the menus fit the Settings panel's height here (D94 made it a row taller), and the button goes with them.
+            Rect narrow = PauseMenu.CornerButtonPixels(1000f, 1080f, 1.25f);
+            float fit = Mathf.Min(1.25f, 1080f / (SettingsScreen.PanelHeight + 20f));
+            Assert.AreEqual(1080f - 44f * fit, narrow.y, 0.01f);
         }
 
         [Test]
