@@ -2,6 +2,11 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Battlefield maps: three interior looks (D80)
+- **In the game:** every match is fought inside a UNSC hangar, a Covenant warship, or a ship the Flood has taken (on a UNSC or Covenant hull), with its own floor, light and surroundings. Which one depends on the factions and the match seed (`Docs/M10/terrain.md`). Pictures: `Docs/M10/interior_looks.jpg`.
+- **Checked:** the terrain tests (every look keeps the floor clear and flat, the flank strips open, under the triangle budget over 16 seeds), the camera, right-click and menu tests; pictures of every look from the test game.
+- **Not checked:** nobody has played on them; the outdoor maps are out of the matches (item 130).
+
 ## The Spawner and the Infested Hornet (D79)
 - **In the game:** the Spawner releases 12 Infection Forms and an Infested Elite in turn, one every 4 seconds, and has 3200 health; the Infested Hornet hits a little softer.
 - **Tournaments:** every sub-faction 48.9% to 52.7% over three runs; Covenant-based Flood 47.7% to 50.0%, UNSC-based 53.9% to 50.1%.

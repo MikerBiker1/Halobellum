@@ -28,6 +28,12 @@ namespace Halobellum.Presentation
         /// <summary>Paints the floor and puts up everything around it, on the canvas's current side.</summary>
         public abstract void Furnish(TerrainCanvas c, TerrainRandom r);
 
+        /// <summary>
+        /// For an interior look (D80), the damage across no man's land, drawn once for the whole field after both sides are furnished (canvas Side is 0: use world z).
+        /// Outdoor layouts never get this call: the builder draws its shell holes and churned earth for them.
+        /// </summary>
+        public virtual void NoMansLand(TerrainCanvas c, TerrainRandom r) { }
+
         // ------------------------------------------------------------------ shared by layouts
 
         protected static Color32 C(int r, int g, int b, int a = 255) => new Color32((byte)r, (byte)g, (byte)b, (byte)a);
@@ -91,6 +97,25 @@ namespace Halobellum.Presentation
             c.Decals.FlatDisc(D, x - radius * 0.2f, z + radius * 0.25f, radius * 0.4f, radius * 0.34f, C(204, 200, 152), C(170, 164, 110, 0), 8);
             c.Glow.Uv = new Vector2(0.5f, r.Range(0f, 6.28f));
             c.Glow.FlatDisc(G, x, z, radius * 2.2f, radius * 2.1f, C(170, 190, 60, 16), C(170, 190, 60, 0), 8);
+            c.Glow.Uv = Vector2.zero;
+        }
+
+        /// <summary>A soft pool of light on the floor under a lamp: added light, so it never hides a unit. strength 0 to 1.</summary>
+        protected static void LightPool(TerrainCanvas c, float x, float z, float radius, Color32 color, float strength, float pulse = 0f)
+        {
+            c.Glow.Uv = new Vector2(pulse, x * 0.37f + z * 0.11f);
+            byte a = (byte)Mathf.Clamp(strength * 60f, 0f, 255f);
+            c.Glow.FlatDisc(G, x, z, radius, radius, new Color32(color.r, color.g, color.b, a), new Color32(color.r, color.g, color.b, 0), 16);
+            c.Glow.Uv = Vector2.zero;
+        }
+
+        /// <summary>A strip of light set into the floor: a bright thin core and a soft spill either side.</summary>
+        protected static void LightStrip(TerrainCanvas c, List<Vector2> points, float width, Color32 color, float pulse = 0f, float phase = 0f)
+        {
+            if (points.Count < 2) return;
+            c.Glow.Uv = new Vector2(pulse, phase);
+            c.Glow.FlatRibbon(G, points, width * 8f, width * 8f, new Color32(color.r, color.g, color.b, 40), true);
+            c.Glow.FlatRibbon(G, points, width, width, new Color32(color.r, color.g, color.b, 240));
             c.Glow.Uv = Vector2.zero;
         }
 

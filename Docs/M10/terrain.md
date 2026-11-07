@@ -1,4 +1,61 @@
-# M10: terrain that depends on the faction
+# M10: terrain that depends on the faction (and D80: the interior looks)
+
+## D80: three interior looks, one for the whole field
+
+The owner asked for the battlefield to look much better: the ground, the lighting and the surroundings, in three looks. These are a UNSC military installation or ship interior, a Covenant warship interior, and a Flood-infested ship. Since D80 every match is fought inside one of them. The outdoor maps below are still in the code for the gallery (`-terrainOutdoor`), but no match uses them.
+
+### Which match gets which look
+
+The two factions and the match seed decide it (`TerrainLooks.Pick`), so the look never changes during a match.
+
+| Match | Look |
+| --- | --- |
+| UNSC against UNSC | UNSC Installation |
+| Covenant against Covenant | Covenant Warship |
+| UNSC against Covenant | The seed picks UNSC Installation or Covenant Warship, half and half |
+| Flood against UNSC | Flood-Infested UNSC Ship |
+| Flood against Covenant | Flood-Infested Covenant Ship |
+| Flood against Flood | The seed picks either Flood ship |
+| Unlock Skirmish | The seed picks one land for both teams (D62), so it is a mirror match of that land's look |
+| Sandbox | Follows the factions with the most squads on each side, as before |
+
+A sub-faction counts as its faction, as before. Who is on which side doesn't matter.
+
+### The looks
+
+- **UNSC Installation:** a hangar deck.
+  - **Floor:** gunmetal steel plates of 4 m, with seams every 16 m and small cool lights set where they cross. Yellow and black hazard bands, lift pads and turntables, vents and hatches, faint worn lanes, and thin light strips along the edges.
+  - **Around the field:** a low rail beyond the flank strips, then grated trenches with banded pillars 30 m tall. Yards hold container stacks, crates, weapon racks, tow tractors, generators, tanks and gantry cranes. A plain boxy dropship hangs in a cradle at the far end. Ribbed bulkheads stand all round, with lit doors and a bay door.
+  - **Light and mood:** a cool overhead white.
+- **Covenant Warship:**
+  - **Floor:** polished purple-blue metal with a cool sheen, flowing lens-shaped panels, and thin cyan and violet energy lines that pulse slowly. A faint ring in the back third of each half.
+  - **Around the field:** curved ribs and arches, bulging pillars with violet slits, curved walls with glowing seams, floating light orbs, faint lift columns, and a stepped dais and balcony at the far end.
+  - **Light and mood:** a lavender light under a deep indigo ceiling.
+- **Flood-Infested Ship,** on a UNSC or a Covenant hull:
+  - **Floor:** the hull plates show in the middle of each deployment zone, where units stand. Wet, veined flesh in tan, salmon and red-brown spreads from the edges and corners, with crusts of rot, small pustules, and lifted, cracked plates oozing flesh.
+  - **Around the field:** walls hung with folds of flesh that drip, great tendrils arching from the walls, clusters of infection pods with glowing cores, translucent sacs, and glowing fungus. Underneath is the old ship: grey bulkheads, banded pillars and a crane on the UNSC hull; purple ribs, slit pillars and arches on the Covenant hull. Some of its lights are dying (cold white or violet).
+  - **Light and mood:** dark and murky outside the field, which stays lit enough to read.
+
+All textures are made by scripts in `Tools/TerrainGen/make_interior_*.py`, and all shapes come from boxes, tubes and lumps. Nothing was downloaded, and there are no logos or markings.
+
+### How it is built
+
+- **`TerrainLook.cs`:** a look is a theme plus one layout that furnishes both halves; it also holds the rule above. Each look is in its own file: `TerrainInteriorUnsc.cs`, `TerrainInteriorCovenant.cs`, `TerrainInteriorFlood.cs`.
+- **`TerrainBuilder`:** builds a look as before, with the same layout on both sides and a flat deck (`TerrainHillStyle.Flat`). The layout's `NoMansLand` paints the battle damage across the middle in place of the outdoor shell holes. The sky dome is the dark ceiling.
+- **Shine on the floor:** `TerrainGround.shader` gives each layer a gloss (`TerrainTheme.Gloss`), lit by a light of its own (`GlossLightAngles`) rather than the sun. A polished deck can catch a highlight towards the camera while units stay lit from the front.
+- **Mood:** a global volume, "Battlefield Mood", carries each look's vignette and mild colour grade (`TerrainTheme.Vignette`, `ColorFilter`, `Contrast`, `Saturation`, `Exposure`). It sits above the effects' bloom. The outdoor maps leave it neutral.
+- **Light on the floor:** `TerrainLayout.LightPool` and `LightStrip` lay it down as added light, so it never hides a unit.
+- **The rules for the floor still hold:** nothing solid on it, nothing that could hide it from the camera's default view, and paint below the units. Two more for the looks: nothing taller than 1.5 m within 96 m of the middle line, where flyers deploy in the flank strips (D61); and the Flood's floors have no solid near-black patches.
+- **Tests:** `BattleTerrainTests` checks all of this for every look, and also checks the matches above, the textures, the limits on mood and light, and the triangle budget over 16 seeds.
+- **Seeing them:** `Halobellum.exe -terrainGallery <folder>` now goes through the four looks. Add `-terrainLook <Id>` for one look only, or `-terrainOutdoor` for the old maps.
+
+### Known limits
+
+- **Size and cost:** a look is about 90,000 to 138,000 triangles (the Flood ships are the largest), under the 150,000 budget, and takes 250 to 380 ms to build. The frame time at the game's camera was about 1.0 to 1.1 ms on this PC.
+- **Behind the walls:** dark roof planes stand behind the walls so that the bare deck beyond doesn't show when the camera is zoomed far out.
+- **Light on units:** the sun and ambient light up the units too. They are kept bright enough on every look for units to stay readable.
+
+## M10: terrain by faction
 
 The owner asked: "Make terrain depending on what faction you chose." The Bible's M10 also says "more maps". This is what was built.
 

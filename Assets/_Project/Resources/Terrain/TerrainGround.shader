@@ -3,6 +3,8 @@
 // control map built for this map: R is how much of the second layer, G the third, B how far towards the enemy's ground, A soft shade from what
 // stands nearby. Each layer's alpha is its height, so one ground gives way to another around its stones and lumps rather than in a smooth fade.
 // A slow macro tile breaks up repetition. It has its own light and haze, so it needs no shader keywords that a build could strip.
+// Floors can shine (D80): each layer has a gloss, lit by a light of its own (_GlossDir, _GlossColor) rather than the sun, so a polished deck can catch a highlight
+// towards the camera while units stay lit from the front. The highlight is brightest where a layer's height (alpha) is high: raised plates shine, seams and grime don't.
 // Depends on: TerrainCommon.hlsl, BattlefieldView (sets the textures and the globals).
 Shader "Halobellum/TerrainGround"
 {
@@ -21,6 +23,10 @@ Shader "Halobellum/TerrainGround"
         _TintA("Team A tint", Color) = (1, 1, 1, 1)
         _TintB("Team B tint", Color) = (1, 1, 1, 1)
         _MacroStrength("Macro strength", Float) = 0.35
+        _GlossA("Team A: gloss of each layer, and tightness", Vector) = (0, 0, 0, 24)
+        _GlossB("Team B: gloss of each layer, and tightness", Vector) = (0, 0, 0, 24)
+        _GlossColor("Gloss light colour; a is the sheen away from the highlight", Color) = (1, 1, 1, 0)
+        _GlossDir("Direction towards the gloss light", Vector) = (0, 0.8, 0.6, 0)
     }
 
     SubShader
@@ -36,6 +42,8 @@ Shader "Halobellum/TerrainGround"
             float4 _TileA, _TileB;
             half4 _TintA, _TintB;
             float _MacroStrength;
+            float4 _GlossA, _GlossB, _GlossDir;
+            half4 _GlossColor;
         CBUFFER_END
 
         struct Attributes
@@ -89,14 +97,17 @@ Shader "Halobellum/TerrainGround"
                 return saturate(x * 2.0 - 0.5);
             }
 
-            half4 Layers(TEXTURE2D_PARAM(first, s1), TEXTURE2D_PARAM(second, s2), TEXTURE2D_PARAM(third, s3), float2 xz, float4 tile, float w1, float w2)
+            half4 Layers(TEXTURE2D_PARAM(first, s1), TEXTURE2D_PARAM(second, s2), TEXTURE2D_PARAM(third, s3), float2 xz, float4 tile, float w1, float w2, float4 gloss, out half shine)
             {
                 // Each layer turned its own way, so that their repeats never line up.
                 half4 a = SAMPLE_TEXTURE2D(first, s1, xz * tile.x);
                 half4 b = SAMPLE_TEXTURE2D(second, s2, float2(xz.x * 0.8 - xz.y * 0.6, xz.x * 0.6 + xz.y * 0.8) * tile.y);
                 half4 c = SAMPLE_TEXTURE2D(third, s3, float2(xz.x * 0.92 + xz.y * 0.39, -xz.x * 0.39 + xz.y * 0.92) * tile.z);
-                half4 mix1 = lerp(a, b, HeightMix(w1, a.a, b.a));
-                return lerp(mix1, c, HeightMix(w2, mix1.a, c.a));
+                half m1 = HeightMix(w1, a.a, b.a);
+                half4 mix1 = lerp(a, b, m1);
+                half m2 = HeightMix(w2, mix1.a, c.a);
+                shine = lerp(lerp(gloss.x, gloss.y, m1), gloss.z, m2);
+                return lerp(mix1, c, m2);
             }
 
             half4 Fragment(Varyings input) : SV_Target
@@ -113,17 +124,30 @@ Shader "Halobellum/TerrainGround"
                 control.g = saturate(control.g + rough * 4.0 * control.g * (1.0 - control.g));
                 control.b = saturate(control.b + rough * 4.0 * control.b * (1.0 - control.b));
 
-                half4 sideA = Layers(TEXTURE2D_ARGS(_L0, sampler_L0), TEXTURE2D_ARGS(_L1, sampler_L0), TEXTURE2D_ARGS(_L2, sampler_L0), xz, _TileA, control.r, control.g);
-                half4 sideB = Layers(TEXTURE2D_ARGS(_L3, sampler_L0), TEXTURE2D_ARGS(_L4, sampler_L0), TEXTURE2D_ARGS(_L5, sampler_L0), xz, _TileB, control.r, control.g);
+                half shineA, shineB;
+                half4 sideA = Layers(TEXTURE2D_ARGS(_L0, sampler_L0), TEXTURE2D_ARGS(_L1, sampler_L0), TEXTURE2D_ARGS(_L2, sampler_L0), xz, _TileA, control.r, control.g, _GlossA, shineA);
+                half4 sideB = Layers(TEXTURE2D_ARGS(_L3, sampler_L0), TEXTURE2D_ARGS(_L4, sampler_L0), TEXTURE2D_ARGS(_L5, sampler_L0), xz, _TileB, control.r, control.g, _GlossB, shineB);
                 sideA.rgb *= _TintA.rgb;
                 sideB.rgb *= _TintB.rgb;
 
-                half3 albedo = lerp(sideA.rgb, sideB.rgb, HeightMix(control.b, sideA.a, sideB.a));
+                half toB = HeightMix(control.b, sideA.a, sideB.a);
+                half3 albedo = lerp(sideA.rgb, sideB.rgb, toB);
+                half shine = lerp(shineA, shineB, toB) * (0.35 + 0.65 * lerp(sideA.a, sideB.a, toB));
+                float power = lerp(_GlossA.w, _GlossB.w, toB);
                 // Slow patches of light and dark, so no two tiles look alike. The macro texture is sRGB, hence the squares.
                 half patches = macro.r * 0.6 + macro2.g * 0.4;
                 albedo *= 1.0 + (sqrt(patches) - 0.72) * 2.0 * _MacroStrength;
 
-                half3 lit = albedo * TerrainLight(normalize(input.normalWS)) * control.a;
+                half3 normal = normalize(input.normalWS);
+                half3 lit = albedo * TerrainLight(normal) * control.a;
+                if (shine > 0.001)
+                {
+                    float3 toCamera = normalize(_WorldSpaceCameraPos - input.positionWS);
+                    float3 halfway = normalize(normalize(_GlossDir.xyz) + toCamera);
+                    half highlight = pow(saturate(dot(normal, halfway)), power) * (power + 8.0) / 32.0;
+                    // Shade (from what stands nearby) dims the shine too, so a container's shadow isn't polished.
+                    lit += _GlossColor.rgb * shine * (highlight + _GlossColor.a) * control.a * control.a;
+                }
                 return half4(ApplyWorldFog(lit, input.positionWS), 1.0);
             }
             ENDHLSL

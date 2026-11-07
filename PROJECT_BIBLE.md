@@ -526,6 +526,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-06 | Swarm Forms bite ground units in melee; Seeders shoot air and raise only what a Flood roster has its own version of; the Seeder at 475 with weaker seeds | Per the project owner (D76) |
 | 2026-11-06 | A tutorial: a scripted match from the Play page | Per the project owner (D77) |
 | 2026-11-06 | The Spawner releases 12 Infection Forms and an Infested Elite in turn, one every 4 s, at 3200 health; the Infested Hornet's rockets 18 and spore bombs 36 | Per the project owner (D79) |
+| 2026-11-06 | The battlefield is one of three interior looks per match: UNSC Installation, Covenant Warship, or a Flood-Infested Ship on a UNSC or Covenant hull, picked from the two factions and the match seed; the outdoor maps of M10 leave the matches | Per the project owner (D80) |
 
 ## 18. Assumptions to confirm
 

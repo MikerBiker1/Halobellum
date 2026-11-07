@@ -18,6 +18,8 @@ namespace Halobellum.Presentation
         /// <summary>Which layout each side gets, or -1 for the seed to pick.</summary>
         public int LayoutA, LayoutB;
         public float HalfWidth, ZoneDepth, Gap;
+        /// <summary>An interior look for the whole field (D80), or null for the outdoor maps of D47, each half its own faction's land. The layouts are then ignored.</summary>
+        public TerrainLook Look;
     }
 
     /// <summary>A built map: its meshes and control map, and what it is made of.</summary>
@@ -29,7 +31,12 @@ namespace Halobellum.Presentation
         /// <summary>The theme adjusted by Team A's layout: the sky, sun and air of the whole map.</summary>
         public TerrainTheme Atmosphere;
         public TerrainLayout LayoutA, LayoutB;
+        /// <summary>The interior look of the whole field (D80), or null on an outdoor map.</summary>
+        public TerrainLook Look;
         public float BuildMilliseconds;
+
+        /// <summary>What the map is, for logs and tests.</summary>
+        public string Describe() => Look != null ? $"{Look.Name} ({Look.Id})" : $"{ThemeA.Faction} {LayoutA.Name} against {ThemeB.Faction} {LayoutB.Name}";
 
         public int TriangleCount => Triangles(Ground) + Triangles(Solid) + Triangles(Decals) + Triangles(Glow) + Triangles(Haze) + Triangles(Sky);
 
@@ -55,12 +62,24 @@ namespace Halobellum.Presentation
         public static TerrainMap Build(TerrainRequest request)
         {
             var clock = System.Diagnostics.Stopwatch.StartNew();
-            TerrainTheme themeA = TerrainThemes.For(request.FactionA);
-            TerrainTheme themeB = TerrainThemes.For(request.FactionB);
-            var layoutsA = TerrainLayouts.For(request.FactionA);
-            var layoutsB = TerrainLayouts.For(request.FactionB);
-            TerrainLayout layoutA = layoutsA[Mathf.Clamp(request.LayoutA >= 0 ? request.LayoutA : TerrainLayouts.Pick(request.FactionA, request.Seed, Team.A), 0, layoutsA.Count - 1)];
-            TerrainLayout layoutB = layoutsB[Mathf.Clamp(request.LayoutB >= 0 ? request.LayoutB : TerrainLayouts.Pick(request.FactionB, request.Seed, Team.B), 0, layoutsB.Count - 1)];
+            TerrainLook look = request.Look;
+            TerrainTheme themeA, themeB;
+            TerrainLayout layoutA, layoutB;
+            if (look != null)
+            {
+                // One look for the whole field: the same ground, layout and light on both sides.
+                themeA = themeB = look.Theme;
+                layoutA = layoutB = look.Layout;
+            }
+            else
+            {
+                themeA = TerrainThemes.For(request.FactionA);
+                themeB = TerrainThemes.For(request.FactionB);
+                var layoutsA = TerrainLayouts.For(request.FactionA);
+                var layoutsB = TerrainLayouts.For(request.FactionB);
+                layoutA = layoutsA[Mathf.Clamp(request.LayoutA >= 0 ? request.LayoutA : TerrainLayouts.Pick(request.FactionA, request.Seed, Team.A), 0, layoutsA.Count - 1)];
+                layoutB = layoutsB[Mathf.Clamp(request.LayoutB >= 0 ? request.LayoutB : TerrainLayouts.Pick(request.FactionB, request.Seed, Team.B), 0, layoutsB.Count - 1)];
+            }
             TerrainTheme atmosphere = layoutA.Mood(themeA);
 
             var seeds = new TerrainRandom(request.Seed, 101);
@@ -79,7 +98,13 @@ namespace Halobellum.Presentation
             layoutA.Furnish(canvas, new TerrainRandom(request.Seed, 211));
             canvas.Side = 1;
             layoutB.Furnish(canvas, new TerrainRandom(request.Seed, 307));
-            Battlescars(canvas, themeA, themeB, new TerrainRandom(request.Seed, 401));
+            if (look != null)
+            {
+                canvas.Side = 0;
+                look.Layout.NoMansLand(canvas, new TerrainRandom(request.Seed, 401));
+            }
+            else Battlescars(canvas, themeA, themeB, new TerrainRandom(request.Seed, 401));
+            FloorEdge(canvas);
             Motes(canvas, themeA, themeB, atmosphere, new TerrainRandom(request.Seed, 503));
 
             var map = new TerrainMap
@@ -89,6 +114,7 @@ namespace Halobellum.Presentation
                 Atmosphere = atmosphere,
                 LayoutA = layoutA,
                 LayoutB = layoutB,
+                Look = look,
                 Ground = BuildGround(canvas, Height, layoutA.FlatBand, layoutB.FlatBand),
                 Solid = canvas.Solid.ToMesh("Terrain Solid"),
                 Decals = canvas.Decals.ToMesh("Terrain Decals"),
@@ -362,7 +388,12 @@ namespace Halobellum.Presentation
             // A band of churned, darker ground along the line itself.
             for (float x = -W; x <= W; x += 11f)
                 c.Darken(x + r.Range(-4f, 4f), r.Range(-3f, 3f), r.Range(7f, 13f), r.Range(0.12f, 0.3f));
-            // The floor's edge: a soft dark line all round, so that one can see where the arena ends.
+        }
+
+        /// <summary>The floor's edge: a soft dark line all round, so that one can see where the arena ends. Every map has it.</summary>
+        private static void FloorEdge(TerrainCanvas c)
+        {
+            float W = c.HalfWidth;
             float halfLength = c.HalfLength;
             Color32 edge = new Color32(10, 8, 8, 70);
             c.Decals.FlatRect(TerrainCanvas.DecalHeight, 0f, -halfLength, W * 2f + 0.6f, 0.5f, 0f, edge);

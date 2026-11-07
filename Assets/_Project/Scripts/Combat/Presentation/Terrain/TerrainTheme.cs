@@ -15,6 +15,8 @@ namespace Halobellum.Presentation
         Terraced,
         /// <summary>Swollen mounds with creases between them (Flood).</summary>
         Swollen,
+        /// <summary>No hills at all: a deck inside a ship or a base (D80). What stands around the field is built by the layout.</summary>
+        Flat,
     }
 
     /// <summary>One faction's land and light. Copy with Clone to adjust it for one layout.</summary>
@@ -55,6 +57,22 @@ namespace Halobellum.Presentation
         public Color MoteColor;
         public int MoteCount = 60;
 
+        // Shine on the ground (D80). Per layer of this theme, 0 is matt and 1 a polished floor; w is how tight the highlight is (a Blinn-Phong power).
+        // It is lit by its own light, not the sun, so that the floor can shine towards the camera while the units stay lit from the front.
+        public Vector4 Gloss = new Vector4(0f, 0f, 0f, 24f);
+        /// <summary>The colour of that light's highlight; a is how much a sheen of it lies over a glossy floor even away from the highlight.</summary>
+        public Color GlossColor = Color.white;
+        public Vector2 GlossLightAngles = new Vector2(52f, 180f); // Pitch and yaw: from the north by default, towards the camera's usual view.
+
+        // The mood of the whole picture (D80), in a post-processing volume. Neutral by default, as the outdoor maps had none. Units stay readable: keep these mild.
+        public float Vignette;
+        public Color VignetteColor = Color.black;
+        public Color ColorFilter = Color.white;
+        /// <summary>-100 to 100, as URP's Color Adjustments.</summary>
+        public float Contrast, Saturation;
+        /// <summary>Stops of exposure.</summary>
+        public float Exposure;
+
         public TerrainTheme Clone() => (TerrainTheme)MemberwiseClone();
 
         /// <summary>This theme's hills above flat ground at a point, before they are pressed flat around the arena.</summary>
@@ -62,6 +80,7 @@ namespace Halobellum.Presentation
         {
             float px = (x + seedX) / HillSize;
             float pz = (z + seedZ) / HillSize;
+            if (Hills == TerrainHillStyle.Flat) return 0f;
             float far = TerrainNoise.Smooth(240f, 800f, distanceOut);
             switch (Hills)
             {

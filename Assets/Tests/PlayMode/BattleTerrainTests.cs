@@ -1,5 +1,6 @@
 // BattleTerrainTests.cs
-// The faction terrain (M10): every faction has at least two layouts and the seed picks between them; a seed always gives the same map; the fighting floor stays flat and nothing solid stands on it or can hide it from the camera; a map
+// The interior looks (D80): which match gets which look, and every look keeps the same floor rules as the outdoor maps, keeps the flank strips clear and the Flood's floors free of
+// solid near-black. The faction terrain (M10, now shown only by the gallery): every faction has at least two layouts and the seed picks between them; a seed always gives the same map; the fighting floor stays flat and nothing solid stands on it or can hide it from the camera; a map
 // stays under its triangle budget; and the real scenes show the terrain of the chosen factions, with the deployment squares fading out in battle. The simulation is not involved: the same battle plays the same on any map.
 // Depends on: Halobellum.Presentation, Halobellum.Economy, Halobellum.Core, NUnit, Unity Test Framework.
 
@@ -182,6 +183,152 @@ namespace Halobellum.Tests
             }
         }
 
+        // ------------------------------------------------------------------ the interior looks (D80)
+
+        private static TerrainMap BuildLook(TerrainLook look, int seed) => TerrainBuilder.Build(new TerrainRequest
+        {
+            FactionA = look.Theme.Faction,
+            FactionB = look.Theme.Faction,
+            Seed = seed,
+            LayoutA = -1,
+            LayoutB = -1,
+            HalfWidth = HalfWidth,
+            ZoneDepth = ZoneDepth,
+            Gap = Gap,
+            Look = look,
+        });
+
+        [Test]
+        public void EachMatch_GetsTheRightLook()
+        {
+            string u = BattleFactions.Unsc, c = BattleFactions.Covenant, f = BattleFactions.Flood;
+            var seenUnscCovenant = new HashSet<TerrainLook>();
+            var seenFloodMirror = new HashSet<TerrainLook>();
+            for (int seed = 0; seed < 100; seed++)
+            {
+                Assert.AreSame(TerrainLooks.UnscInstallation, TerrainLooks.Pick(u, u, seed));
+                Assert.AreSame(TerrainLooks.CovenantWarship, TerrainLooks.Pick(c, c, seed));
+                Assert.AreSame(TerrainLooks.FloodOnUnsc, TerrainLooks.Pick(f, u, seed));
+                Assert.AreSame(TerrainLooks.FloodOnUnsc, TerrainLooks.Pick(u, f, seed));
+                Assert.AreSame(TerrainLooks.FloodOnCovenant, TerrainLooks.Pick(f, c, seed));
+                Assert.AreSame(TerrainLooks.FloodOnCovenant, TerrainLooks.Pick(c, f, seed));
+                Assert.AreSame(TerrainLooks.Pick(u, c, seed), TerrainLooks.Pick(c, u, seed), "Who is on which side doesn't change the look.");
+                seenUnscCovenant.Add(TerrainLooks.Pick(u, c, seed));
+                seenFloodMirror.Add(TerrainLooks.Pick(f, f, seed));
+            }
+            CollectionAssert.AreEquivalent(new[] { TerrainLooks.UnscInstallation, TerrainLooks.CovenantWarship }, seenUnscCovenant);
+            CollectionAssert.AreEquivalent(new[] { TerrainLooks.FloodOnUnsc, TerrainLooks.FloodOnCovenant }, seenFloodMirror);
+            Assert.AreSame(TerrainLooks.UnscInstallation, TerrainLooks.Pick("Someone new", "Someone new", 3), "Anything unknown counts as the UNSC.");
+        }
+
+        [Test]
+        public void EveryLook_IsWholeAndDistinct()
+        {
+            var ids = new HashSet<string>();
+            foreach (TerrainLook look in TerrainLooks.All)
+            {
+                Assert.IsTrue(ids.Add(look.Id), look.Id + " twice.");
+                Assert.AreSame(look, TerrainLooks.ById(look.Id));
+                Assert.IsFalse(string.IsNullOrEmpty(look.Name), look.Id);
+                Assert.AreEqual(TerrainHillStyle.Flat, look.Theme.Hills, look.Id + ": an interior has no hills.");
+                Assert.AreEqual(3, look.Theme.Layers.Length, look.Id);
+                foreach (string layer in look.Theme.Layers)
+                    Assert.IsNotNull(Resources.Load<Texture2D>("Terrain/" + layer), $"{look.Id}: no texture {layer}.");
+                Assert.GreaterOrEqual(look.Theme.SunIntensity, 0.95f, look.Id + ": units must stay lit.");
+                Assert.LessOrEqual(look.Theme.Vignette, 0.35f, look.Id);
+                Assert.LessOrEqual(Mathf.Abs(look.Theme.Contrast), 15f, look.Id);
+                Assert.LessOrEqual(Mathf.Abs(look.Theme.Exposure), 0.2f, look.Id);
+            }
+        }
+
+        [Test]
+        public void EveryLook_KeepsTheFloorFlatAndClear_AndTheFlankStripsOpen()
+        {
+            const float flankClear = 96f; // Flyers deploy in strips 84 to 92 m from the middle (D61): nothing taller than 1.5 m within this.
+            foreach (TerrainLook look in TerrainLooks.All)
+            {
+                foreach (int seed in new[] { 4242, 909 })
+                {
+                    TerrainMap map = BuildLook(look, seed);
+                    string name = $"{look.Id}, seed {seed}";
+                    foreach (Vector3 v in map.Ground.vertices)
+                        Assert.AreEqual(TerrainCanvas.GroundHeight, v.y, 0.001f, $"{name}: an interior's deck is flat everywhere, but rises at {v}.");
+                    foreach (Vector3 v in map.Decals.vertices)
+                    {
+                        if (Mathf.Abs(v.x) <= HalfWidth && Mathf.Abs(v.z) <= HalfLength)
+                            Assert.Less(v.y, 0f, $"{name}: paint on the floor stands proud at {v}.");
+                    }
+                    foreach (Vector3 v in map.Solid.vertices)
+                    {
+                        bool overFloor = Mathf.Abs(v.x) < HalfWidth && Mathf.Abs(v.z) < HalfLength;
+                        Assert.IsFalse(overFloor && v.y > -0.5f, $"{name}: something solid stands on the floor at {v}.");
+                        bool byFlanks = Mathf.Abs(v.x) < flankClear && Mathf.Abs(v.z) < HalfLength;
+                        Assert.IsFalse(byFlanks && v.y > 1.5f, $"{name}: something tall stands by the flank strips at {v}.");
+                        if (v.z < -HalfLength && Mathf.Abs(v.x) < HalfWidth)
+                            Assert.LessOrEqual(v.y * TerrainCanvas.SouthLean, -v.z - HalfLength + 1.5f, $"{name}: {v} could hide the floor from the camera.");
+                    }
+                    Assert.Less(map.TriangleCount, 150000, name);
+                    Assert.Greater(map.Solid.vertexCount, 1000, name + ": something stands around the field.");
+                    Assert.Greater(map.Decals.vertexCount, 100, name + ": the floor is painted.");
+                    Assert.Greater(map.Glow.vertexCount, 50, name + ": an interior has lights.");
+                    map.Destroy();
+                }
+            }
+        }
+
+        [Test]
+        public void EveryLook_StaysUnderTheTriangleBudget_OverManySeeds()
+        {
+            foreach (TerrainLook look in TerrainLooks.All)
+            {
+                int most = 0;
+                for (int seed = 1; seed <= 16; seed++)
+                {
+                    TerrainMap map = BuildLook(look, seed * 7919);
+                    most = Mathf.Max(most, map.TriangleCount);
+                    map.Destroy();
+                }
+                Debug.Log($"{look.Id}: at most {most} triangles over 16 seeds.");
+                Assert.Less(most, 150000, look.Id);
+            }
+        }
+
+        [Test]
+        public void EveryLook_SameSeedGivesTheSameMap_OtherSeedsDiffer()
+        {
+            foreach (TerrainLook look in TerrainLooks.All)
+            {
+                TerrainMap first = BuildLook(look, 77), second = BuildLook(look, 77), other = BuildLook(look, 78);
+                CollectionAssert.AreEqual(first.Solid.vertices, second.Solid.vertices, look.Id);
+                CollectionAssert.AreEqual(first.Decals.vertices, second.Decals.vertices, look.Id);
+                CollectionAssert.AreEqual(first.Control.GetPixels32(), second.Control.GetPixels32(), look.Id);
+                CollectionAssert.AreNotEqual(first.Solid.vertices, other.Solid.vertices, look.Id);
+                first.Destroy();
+                second.Destroy();
+                other.Destroy();
+            }
+        }
+
+        [Test]
+        public void TheFloodShips_HaveNoSolidPatchesOfNearBlack()
+        {
+            foreach (TerrainLook look in new[] { TerrainLooks.FloodOnUnsc, TerrainLooks.FloodOnCovenant })
+            {
+                TerrainMap map = BuildLook(look, 4242);
+                Vector3[] vertices = map.Decals.vertices;
+                Color32[] colors = map.Decals.colors32;
+                for (int i = 0; i < vertices.Length; i++)
+                {
+                    if (Mathf.Abs(vertices[i].x) > HalfWidth || Mathf.Abs(vertices[i].z) > HalfLength) continue;
+                    if (Mathf.Abs(vertices[i].z) < 21f) continue; // Battle damage across no man's land is small.
+                    Color32 color = colors[i];
+                    float light = 0.3f * color.r + 0.59f * color.g + 0.11f * color.b;
+                    if (color.a >= 180) Assert.GreaterOrEqual(light, 50f, $"{look.Id}: {color} at {vertices[i]} is too dark and too solid.");
+                }
+                map.Destroy();
+            }
+        }
+
         [Test]
         public void TheSideLine_RunsAcrossNoMansLand()
         {
@@ -212,7 +359,7 @@ namespace Halobellum.Tests
             yield return null;
             Assert.AreEqual(match.Match.Player.Faction.Name, field.ShownFactionA);
             Assert.AreEqual(match.Match.Enemy.Faction.Name, field.ShownFactionB);
-            Assert.AreEqual(TerrainThemes.For(field.ShownFactionA).Faction, field.Map.ThemeA.Faction);
+            Assert.AreSame(TerrainLooks.Pick(field.ShownFactionA, field.ShownFactionB, match.Match.Seed), field.Map.Look, "The whole field is the look the match's factions and seed give.");
 
             match.SkipCards();
             yield return null;
@@ -245,6 +392,7 @@ namespace Halobellum.Tests
             float deadline = Time.realtimeSinceStartup + 3f;
             while (field.ShownFactionA != BattleFactions.Flood && Time.realtimeSinceStartup < deadline) yield return null;
             Assert.AreEqual(BattleFactions.Flood, field.ShownFactionA, "Blue is all Flood now.");
+            Assert.AreSame(TerrainLooks.FloodOnCovenant, field.Map.Look, "Flood against Covenant fights in a Covenant ship the Flood has taken.");
         }
 
         [UnityTest]

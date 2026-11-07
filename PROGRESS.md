@@ -162,6 +162,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] Swarm Forms bite the ground, Seeders shoot air and convert only into Flood units, balanced; the AI's table from whole matches tried and set aside (D76)
 - [x] A tutorial (D77)
 - [x] The Spawner releases Infested Elites between its Infection Forms; the Infested Hornet trimmed; balanced (D79)
+- [x] Battlefield maps: three interior looks (UNSC installation, Covenant warship, Flood-infested ship), one per match (D80)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

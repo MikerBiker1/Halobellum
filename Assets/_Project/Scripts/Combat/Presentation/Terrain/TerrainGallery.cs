@@ -1,7 +1,7 @@
 // TerrainGallery.cs
-// Test tool for built games: goes through every faction and every layout at the game's camera and saves pictures, so that a person can judge the terrain without playing. It does nothing unless the game is started with
+// Test tool for built games: goes through every interior look of D80 (or, with "-terrainOutdoor", every outdoor layout of M10) at the game's camera and saves pictures, so that a person can judge the terrain without playing. It does nothing unless the game is started with
 // "-terrainGallery <folder>". For each map it takes a picture with bare ground, one with armies placed during deployment, one in battle, a wide one zoomed out, a close one, and one looking low at the horizon, and logs the triangle count and build time.
-// Add "-terrainMaps 2" to only do that many maps, for a quick look. Add "-terrainRing" to take instead, for each map, pictures from all round: the bare squares and the ghost of a squad being
+// Add "-terrainLook <Id>" (UnscInstallation, CovenantWarship, FloodOnUnsc, FloodOnCovenant) for one look only. Add "-terrainMaps 2" to only do that many maps, for a quick look. Add "-terrainRing" to take instead, for each map, pictures from all round: the bare squares and the ghost of a squad being
 // placed and the hexagons of an item being picked from four sides, then in battle from 8 directions at the camera's default tilt and at both of its limits, zoomed out, and from 8 directions close up across the floor's edge nearest the camera.
 // Depends on: SandboxController, BattleController, BattlefieldView, BattleCameraController, DeploymentInput, Halobellum.Core, UnityEngine.
 
@@ -55,6 +55,9 @@ namespace Halobellum.Presentation
             int limitAt = Array.IndexOf(args, "-terrainMaps");
             if (limitAt >= 0 && limitAt + 1 < args.Length && int.TryParse(args[limitAt + 1], out int limit)) _limit = limit;
             _ring = Array.IndexOf(args, "-terrainRing") >= 0;
+            _outdoor = Array.IndexOf(args, "-terrainOutdoor") >= 0;
+            int onlyAt = Array.IndexOf(args, "-terrainLook");
+            if (onlyAt >= 0 && onlyAt + 1 < args.Length) _only = args[onlyAt + 1];
 
             _sandbox = GetComponent<SandboxController>();
             _battle = GetComponent<BattleController>();
@@ -67,6 +70,28 @@ namespace Halobellum.Presentation
             yield return new WaitForSecondsRealtime(1f);
             string[] factions = { BattleFactions.Unsc, BattleFactions.Covenant, BattleFactions.Flood };
             int done = 0;
+            if (!_outdoor)
+            {
+                // The interior looks of D80, each with a match that would get it.
+                var looks = new (TerrainLook look, string a, string b)[]
+                {
+                    (TerrainLooks.UnscInstallation, BattleFactions.Unsc, BattleFactions.Covenant),
+                    (TerrainLooks.CovenantWarship, BattleFactions.Covenant, BattleFactions.Unsc),
+                    (TerrainLooks.FloodOnUnsc, BattleFactions.Unsc, BattleFactions.Flood),
+                    (TerrainLooks.FloodOnCovenant, BattleFactions.Flood, BattleFactions.Covenant),
+                };
+                foreach (var (look, a, b) in looks)
+                {
+                    if (done >= _limit || _only != null && look.Id != _only) continue;
+                    _look = look;
+                    yield return _ring ? Ring(a, -1, b, -1, look.Id) : Pictures(a, -1, b, -1, look.Id);
+                    done++;
+                }
+                _look = null;
+                Debug.Log("Terrain gallery finished.");
+                Application.Quit();
+                yield break;
+            }
             for (int f = 0; f < factions.Length && done < _limit; f++)
             {
                 IReadOnlyList<TerrainLayout> layouts = TerrainLayouts.For(factions[f]);
@@ -97,7 +122,7 @@ namespace Halobellum.Presentation
             _sandbox.Clear(Team.A);
             _sandbox.Clear(Team.B);
             yield return null;
-            _field.ShowExactly(a, b, 12345, layoutA, layoutB);
+            Show(a, b, layoutA, layoutB);
             yield return new WaitForSecondsRealtime(0.5f);
             Shot(name + "_a_bare");
             yield return new WaitForSecondsRealtime(0.3f);
@@ -186,7 +211,7 @@ namespace Halobellum.Presentation
             _sandbox.Clear(Team.A);
             _sandbox.Clear(Team.B);
             yield return null;
-            _field.ShowExactly(a, b, 12345, layoutA, layoutB);
+            Show(a, b, layoutA, layoutB);
             Army(Team.A, a);
             Army(Team.B, b);
             yield return new WaitForSecondsRealtime(1f);
@@ -300,6 +325,17 @@ namespace Halobellum.Presentation
                 _sandbox.AddSquad(team, unit.Stats);
                 if (++added >= 7) break;
             }
+        }
+
+        private bool _outdoor;
+        private string _only;
+        private TerrainLook _look;
+
+        /// <summary>The look being shown, or the outdoor map with these layouts.</summary>
+        private void Show(string a, string b, int layoutA, int layoutB)
+        {
+            if (_look != null) _field.ShowLook(_look, a, b, 12345);
+            else _field.ShowOutdoor(a, b, 12345, layoutA, layoutB);
         }
 
         private void Shot(string name) => ScreenCapture.CaptureScreenshot(Path.Combine(_folder, name + ".png"));

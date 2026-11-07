@@ -234,6 +234,12 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 129. **The Spawner** releases its Infection Forms and an Infested Elite in turn every 4 seconds. The Elites alone weren't enough (48%); 3600 health gave 53.2%, so, as you asked, 3200 (was 2800): Covenant-based Flood is now 50.0%. The AI now buys it in 88% of Covenant-based matches. If it feels too strong in play, the next step is a 5-second interval.
 
 
+## The battlefield's interior looks (D80)
+
+130. **The outdoor maps** (Firebase, Seam Flats, Creep and the rest, D47) are no longer used in matches: every match is one of the three interiors. Keep it so, bring them back into rotation beside the interiors, or make it a setting?
+131. **Which match gets which look:** a mirror match its faction's look; Flood against X the Flood ship on X's hull; UNSC against Covenant and Flood against Flood by the seed, half and half. Would you rather the look followed your own faction always (so a UNSC player always fights in the hangar), or the enemy's?
+132. **One look per faction for now.** Each look varies with the seed (where the pads, crates, pods and tendrils stand), but has one layout. More layouts per look (a UNSC hangar and a UNSC armoury, say), or are three looks enough?
+
 ## Things my test runs did to your PC
 
 - **Windows moving, and possibly music:** while the Screen setting was being checked, a test window moved across all three of your screens and briefly went fullscreen on each. Some of those runs weren't silent, so menu music may have played for about 25 seconds at a time. Those checks have finished.
