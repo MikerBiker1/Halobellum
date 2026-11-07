@@ -536,6 +536,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-07 | The Spartan carries the owner's Spartan Laser; a soldier's picture on cards and in the shop shows it aiming and firing, not standing | Per the project owner (D85) |
 | 2026-11-07 | The Brute Grenadier carries a Brute Shot, the Spartan CQB a shotgun and the Spartan Sniper a sniper rifle, from the owner's files | Per the project owner (D86) |
 | 2026-11-07 | Hunters aim from behind their shield; an enemy within 5 m draws a charge and shield bashes instead of cannon fire, until it is gone | Per the project owner (D87) |
+| 2026-11-07 | Level arrows are one size over every squad; the Brute Grenadier cuts with its Brute Shot's blade what is too close for its grenades; reinforcement cards show the role under the name | Per the project owner (D88) |
 
 ## 18. Assumptions to confirm
 

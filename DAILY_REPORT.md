@@ -2,6 +2,11 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Level arrows, the Grenadier's blade, the role on reinforcement cards (D88)
+- **In the game:** the level-up arrow is the same size over every squad (the Scarab's was huge). The Brute Grenadier cuts with its Brute Shot's blade an enemy too close for its grenades (inside 2 m), and holds its grenades meanwhile; two Grenadiers side by side now fight. Reinforcement cards show the unit's role on its own line under the name.
+- **Checked:** new tests for the Grenadier (grenades at range, the blade close in with the launcher quiet, two Grenadiers fighting, range bonuses leaving the blade alone); the Hunter, weapon-switching, roster, counter web, card and level-arrow tests; pictures of the reinforcement cards at 1600x900 and 800x500.
+- **Not checked:** balance (no tournament until you ask); the Grenadier has no swing clip yet, so it cuts in its shooting pose; not played by hand.
+
 ## The Hunters fight like Hunters (D87)
 - **In the game:** both Hunters (the Hunter Pair's and the Hunter Captain) hold their shield in front: braced on guard, walking behind it, crouched low behind it while the cannon fires over it, as in your picture. When an enemy on the ground comes within 5 m, they stop shooting, charge at it along the ground and bash it with the shield, again and again while it stays close. Their icons show them aiming. Pictures: `Docs/M10/hunters_d87.jpg` (the test game), `hunters_d87_clips.jpg` (every clip) and `hunters_d87_icons.jpg`.
 - **Checked:** new tests for the charge and the bash (the cannon at range, the charge and a bash within 5 m, bashing on, no jump over blockers, range techs leaving the bash alone) and for both Hunters' data and clips; the leap, roster, icon, effects and sound tests; the clips in pictures and in the test game.

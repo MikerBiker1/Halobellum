@@ -262,6 +262,11 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 141. **Both Hunters got the shield and the bash:** the Hunter Pair and the Hunter Captain (Lekgolo Colony), as both are Hunters. Keep the Captain's too, or should it keep shooting close in?
 142. **First numbers, for you to balance:** a charge at whatever comes within 5 m, at 9 m/s, at most every 3 s; the bash 100 damage (the Captain's 120) every 1.5 s, also hitting what stands within 1.5 m of its target; the guns hold fire inside 5 m. Not tested in the tournament, so the Covenant and Lekgolo Colony win rates may move out of the 46-54% band.
 
+## Arrows, the Grenadier, reinforcement cards (D88)
+
+143. **The Grenadier's blade:** 35 damage every 1.5 s at 2 m, about the launcher's damage over time, so it should not move balance much; the launcher holds fire while it cuts. Change the numbers when you balance.
+144. **A swing clip for the Grenadier?** It cuts in its shooting pose. Meshy can add a melee clip to its rig (a few credits), as for the Hunters' bash. Want it?
+
 
 ## Things my test runs did to your PC
 

@@ -1117,6 +1117,7 @@ namespace Halobellum.Combat
                 weapon.Target = Targeting.FindClosestLegalTarget(unit, weapon.Stats, _units, AcquisitionRange(unit, weapon.Stats));
             }
             if (unit.Stats.SwitchesWeapons) ChooseWeaponByTarget(unit);
+            else if (unit.Weapons.Length > 1 && unit.Weapons[0].Stats.MinRange > 0f) UseCloseInWeaponWhenTooClose(unit);
             if (unit.Stats.SeeksDensestCluster)
             {
                 SimUnit cluster = DensestCluster(unit);
@@ -1148,6 +1149,37 @@ namespace Halobellum.Combat
                 }
             }
             return best;
+        }
+
+        /// <summary>
+        /// A unit whose main weapon cannot fire close in (the Brute Grenadier's launcher, inside 2 m) fights with its other weapon
+        /// (the Brute Shot's blade) at an enemy that has come inside that minimum range: that weapon leads, decides where the unit
+        /// moves and faces, and the main weapon holds fire until the next look round (the owner, 2026-11-07: a Grenadier stood beside
+        /// an enemy without attacking it). Otherwise the main weapon leads as before.
+        /// </summary>
+        private static void UseCloseInWeaponWhenTooClose(SimUnit unit)
+        {
+            unit.MainWeaponIndex = 0;
+            float tooClose = unit.Weapons[0].Stats.MinRange;
+            int best = -1;
+            float bestDistance = float.MaxValue;
+            for (int w = 1; w < unit.Weapons.Length; w++)
+            {
+                SimUnit target = unit.Weapons[w].Target;
+                if (target == null) continue;
+                float distance = Targeting.EdgeDistance(unit, target);
+                if (distance < tooClose && distance < bestDistance)
+                {
+                    bestDistance = distance;
+                    best = w;
+                }
+            }
+            if (best < 0) return;
+            unit.MainWeaponIndex = best;
+            for (int w = 0; w < unit.Weapons.Length; w++)
+            {
+                if (w != best) unit.Weapons[w].Target = null;
+            }
         }
 
         /// <summary>

@@ -162,9 +162,11 @@ namespace Halobellum.Core
 
         /// <summary>
         /// A charging unit's close-in weapon keeps its reach whatever adds range (the Hunters' shield bash, D87): "the cannon reaches further"
-        /// is about the cannon, and a bash from further than its charge would never charge.
+        /// is about the cannon, and a bash from further than its charge would never charge. So does the blow of a unit whose main weapon cannot
+        /// fire close in (the Brute Grenadier's blade, 2026-11-07).
         /// </summary>
-        private static bool KeepsReach(UnitStats stats, WeaponStats weapon) => stats.LeapCharges && weapon.Range <= MeleeRange;
+        private static bool KeepsReach(UnitStats stats, WeaponStats weapon) =>
+            weapon.Range <= MeleeRange && (stats.LeapCharges || (stats.Weapons.Length > 1 && stats.Weapons[0] != weapon && stats.Weapons[0].MinRange > 0f));
 
         private static UnitStats ApplyLevelAndTechs(UnitStats baseStats, int level, IReadOnlyList<TechUpgrade> techs)
         {

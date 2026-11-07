@@ -829,7 +829,7 @@ namespace Halobellum.Presentation
                 if (!LevelUpReady(squad.Id)) continue;
                 // Above the middle of the squad's living bodies, over the tallest one.
                 Vector3 sum = Vector3.zero;
-                float top = float.MinValue, widest = 0f;
+                float top = float.MinValue;
                 int alive = 0;
                 foreach (SimUnit member in squad.Members)
                 {
@@ -837,7 +837,6 @@ namespace Halobellum.Presentation
                     Vector3 position = _views[member.Id].Root.transform.position;
                     sum += position;
                     top = Mathf.Max(top, position.y + BodyTop(_views[member.Id]));
-                    widest = Mathf.Max(widest, member.Stats.CollisionRadius);
                     alive++;
                 }
                 if (alive == 0) continue;
@@ -851,7 +850,7 @@ namespace Halobellum.Presentation
                     outline.localScale = Vector3.one * 1.22f;
                     _arrows[squad.Id] = arrow;
                 }
-                float size = arrowSize * Mathf.Max(1f, widest * 0.6f);
+                float size = arrowSize; // The same for every squad, a Scarab's as an infantryman's (the owner, 2026-11-07).
                 Vector3 centre = sum / alive;
                 arrow.gameObject.SetActive(true);
                 arrow.SetPositionAndRotation(new Vector3(centre.x, top + arrowGap + size * 0.5f + bob, centre.z), rotation);

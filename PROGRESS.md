@@ -170,6 +170,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] The Spartan holds your Spartan Laser; soldiers' icons and cards show them aiming and firing (D85)
 - [x] Your Brute Shot for the Brute Grenadier, shotgun for the Spartan CQB, sniper rifle for the Spartan Sniper (D86)
 - [x] The Hunters: shield in front when aiming, a charge and shield bashes within 5 m, aiming icons (D87)
+- [x] Level arrows one size; the Brute Grenadier melees close in; reinforcement cards show the role (D88)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

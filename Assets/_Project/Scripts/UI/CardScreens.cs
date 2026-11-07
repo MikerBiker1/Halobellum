@@ -242,10 +242,13 @@ namespace Halobellum.UI
 
             float nameHeight = Mathf.Min(58f, area.height * 0.1f);
             Fit(new Rect(area.x, y, area.width, nameHeight), HudTheme.Title(unit.Name), _title, 26, 15, TextAnchor.MiddleCenter, HudTheme.TitleColor, shadow: true, wrap: true);
-            y += nameHeight + 2f;
+            y += nameHeight;
+            // Its role on a line of its own under the name, as a spell or item card shows its kind (the owner, 2026-11-07).
+            Fit(new Rect(area.x, y, area.width, 30f), HudTheme.Title(RoleName(unit.Role)), _title, 20, 13, TextAnchor.MiddleCenter, Color.Lerp(accent, Color.white, 0.6f));
+            y += 32f;
 
             string squads = $"{reinforcement.Squads} squad{(reinforcement.Squads == 1 ? "" : "s")} at level {reinforcement.Level}";
-            string numbers = $"Tier {unit.Tier}, {RoleName(unit.Role)}, {Bodies(unit.FormsInSquad)} each\nWorth {reinforcement.TotalWorth} ({reinforcement.SquadWorth} per squad)\n"
+            string numbers = $"Tier {unit.Tier}, {Bodies(unit.FormsInSquad)} each\nWorth {reinforcement.TotalWorth} ({reinforcement.SquadWorth} per squad)\n"
                              + (unlocked ? "Placed like squads bought this round, on top of your squad limit." : "Also unlocks the unit for the rest of the match.");
 
             // The big picture takes what the text leaves.
