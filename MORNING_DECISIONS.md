@@ -229,6 +229,11 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 128. **The tutorial:** UNSC Noble against Banished, the Flamethrower Trooper as the unit to unlock, 29 steps. Another faction pair? Wording? Should it offer itself the first time the game starts?
 
 
+## The Spawner (D79)
+
+129. **The Spawner** releases its Infection Forms and an Infested Elite in turn every 4 seconds. The Elites alone weren't enough (48%), so it has 3600 health (was 2800): Covenant-based Flood is now 53.2%, the top of the field but inside the band. The AI now buys it in 85% of Covenant-based matches. If it feels too strong in play, the next step is a 5-second interval.
+
+
 ## Things my test runs did to your PC
 
 - **Windows moving, and possibly music:** while the Screen setting was being checked, a test window moved across all three of your screens and briefly went fullscreen on each. Some of those runs weren't silent, so menu music may have played for about 25 seconds at a time. Those checks have finished.

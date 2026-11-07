@@ -161,6 +161,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] Undo in deployment, base hits heard over the music, battle sounds by zoom and camera, battle stats numbers (D75)
 - [x] Swarm Forms bite the ground, Seeders shoot air and convert only into Flood units, balanced; the AI's table from whole matches tried and set aside (D76)
 - [x] A tutorial (D77)
+- [x] The Spawner releases Infested Elites between its Infection Forms; the Infested Hornet trimmed; balanced (D79)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

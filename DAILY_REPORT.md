@@ -2,6 +2,10 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The Spawner and the Infested Hornet (D79)
+- **In the game:** the Spawner releases 12 Infection Forms and an Infested Elite in turn, one every 4 seconds, and has 3600 health; the Infested Hornet hits a little softer.
+- **Tournaments:** every sub-faction 48.0% to 53.2% over three runs; Covenant-based Flood 47.7% to 53.2%, UNSC-based 53.9% to 49.6%.
+
 ## Your round start sound (D78)
 - **In the game:** `Round start.wav` as each battle starts, every faction.
 
