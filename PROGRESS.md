@@ -171,6 +171,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] Your Brute Shot for the Brute Grenadier, shotgun for the Spartan CQB, sniper rifle for the Spartan Sniper (D86)
 - [x] The Hunters: shield in front when aiming, a charge and shield bashes within 5 m, aiming icons (D87)
 - [x] Level arrows one size; the Brute Grenadier melees close in; reinforcement cards show the role (D88)
+- [x] The Brute Grenadier swings its Brute Shot when it cuts (D89)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

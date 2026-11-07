@@ -20,6 +20,9 @@ MonoBehaviour:
   shootingClip: Walk_Forward_While_Shooting
   deathClip: Dead
   stillClip: walking_2
+  meleeClip: Heavy_Hammer_Swing
+  meleeBlendShare: 0.35
+  chargeClip: 
   weaponName: Weapon_BruteShot
   weaponLength: 1.4
   weaponInForwardHand: 0
@@ -48,8 +51,12 @@ MonoBehaviour:
     firstRow: 118
     frames: 89
     loops: 0
-  - role: 0
+  - role: 4
     firstRow: 207
+    frames: 55
+    loops: 1
+  - role: 0
+    firstRow: 262
     frames: 1
     loops: 0
   muzzle: {x: 0.2992338, y: 2.2334347, z: 0.4294197}

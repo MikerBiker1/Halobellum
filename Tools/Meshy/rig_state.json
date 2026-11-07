@@ -239,16 +239,29 @@
     "credits": 5
    }
   ],
-  "credits": 17,
+  "credits": 32,
   "rig": "01a1a9ee-ee20-7195-a8e6-ea7650e7e30c",
-  "animation": "01a1a9ef-6be5-7594-b32d-6f2a0f90c5ba",
+  "earlier": [
+   {
+    "animation": "01a1a9ef-6be5-7594-b32d-6f2a0f90c5ba",
+    "actions": [
+     98,
+     234,
+     8,
+     566
+    ],
+    "animation_credits": 12
+   }
+  ],
+  "animation": "01a1b786-fe87-711e-96ee-702a3a193046",
   "actions": [
    98,
    234,
    8,
-   566
+   566,
+   128
   ],
-  "animation_credits": 12
+  "animation_credits": 15
  },
  "CombatForm": {
   "attempts": [

@@ -2,7 +2,8 @@
 // A unit's real animated model, baked for big armies (M9, decisions D41 and D42). The top half is filled in by
 // hand: the source model and which of its clips to use. The Animation Baker (Halobellum > Art > Bake Animated
 // Bodies) fills in the bottom half: a mesh, a texture holding every bone of every frame, and the clip table.
-// UnitViewManager plays it through Resources/Crowd/BakedCrowd.shader.
+// UnitViewManager plays it through Resources/Crowd/BakedCrowd.shader. A body can keep time with the battle (D89): its shooting clip
+// timed to land each blow on one of its weapon's strikes, or (the Spawner) its moving and shooting clips timed to give birth as it spawns.
 // Depends on: UnityEngine.
 
 using System;
@@ -56,6 +57,8 @@ namespace Halobellum.Units
         public string stillClip;
         [Tooltip("Clip played while it strikes with a close-in weapon (a melee one, used one at a time with its gun: the Hunters' shield bash). Empty: it shoots.")]
         public string meleeClip;
+        [Tooltip("Share of the melee clip, at its end, eased back into its first pose, so a clip made to be played once (Meshy's swings) loops without a jump (the Brute Grenadier). 0: as it is.")]
+        [Range(0f, 0.8f)] public float meleeBlendShare;
         [Tooltip("Clip played while its leap is a charge along the ground (the Hunters). Empty: it moves.")]
         public string chargeClip;
         [Tooltip("Folder in Art/Imported/Models of a prepared weapon (Tools/Art), merged into the right hand and aimed along the shooting pose. Empty for none.")]
@@ -76,12 +79,20 @@ namespace Halobellum.Units
         public float shieldDiameter = 1.1f;
         [Tooltip("Where the middle of the shield sits from the left hand, in the body's own axes, in the shooting pose.")]
         public Vector3 shieldOffset;
+        [Tooltip("With no weapon of its own: shots start where this bone is at the shot moment of the shooting clip (the Pure Form Ranged's spines, the Spawner's maw, D89). Empty for none.")]
+        public string muzzleBone;
+        [Tooltip("See-through where its texture's alpha is under a half: a Flood form's fronds (D89).")]
+        public bool cutout;
 
         [Header("Playing")]
         [Tooltip("Battle seconds a cross-fade from one animation to the next takes.")]
         public float transitionSeconds = 0.2f;
         [Tooltip("Battle seconds a body stays on the field from the moment it dies, with its fall.")]
         public float corpseSeconds = 14f;
+        [Tooltip("The share of the shooting clip at which a shot leaves or a blow lands. The clip is then timed so that this moment comes with each of its main weapon's strikes, played a little faster or slower to keep pace; a clip as long as several strikes lands one blow on each, the others a whole number of strikes after this one (D89). Below 0: it simply loops.")]
+        public float shotMoment = -1f;
+        [Tooltip("The share of the moving and shooting clips at which it gives birth. They are then timed so that this moment comes with each of its spawns (the Spawner's belly heaving, D89). Below 0: they simply loop.")]
+        public float spawnMoment = -1f;
 
         [Header("Baked (filled in by the Animation Baker)")]
         public int bakedFps = 30;

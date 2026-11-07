@@ -2,6 +2,12 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The Grenadier's swing (D89)
+- **In the game:** a Brute Grenadier cutting at something beside it plays a heavy two-handed overhead chop with its Brute Shot, instead of its shooting pose.
+- **Checked:** the body and baked body tests (a new one for the Grenadier's blade and swing); the clip rendered frame by frame in Blender; the Grenadiers against Combat Forms in the test game.
+- **Not checked:** the swing's timing against the blade's hits (1.8 s against 1.5 s); not played by hand.
+- **Cost:** 15 Meshy credits (785 left).
+
 ## Level arrows, the Grenadier's blade, the role on reinforcement cards (D88)
 - **In the game:** the level-up arrow is the same size over every squad (the Scarab's was huge). The Brute Grenadier cuts with its Brute Shot's blade an enemy too close for its grenades (inside 2 m), and holds its grenades meanwhile; two Grenadiers side by side now fight. Reinforcement cards show the unit's role on its own line under the name.
 - **Checked:** new tests for the Grenadier (grenades at range, the blade close in with the launcher quiet, two Grenadiers fighting, range bonuses leaving the blade alone); the Hunter, weapon-switching, roster, counter web, card and level-arrow tests; pictures of the reinforcement cards at 1600x900 and 800x500.

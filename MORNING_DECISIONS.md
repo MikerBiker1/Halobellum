@@ -265,7 +265,7 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 ## Arrows, the Grenadier, reinforcement cards (D88)
 
 143. **The Grenadier's blade:** 35 damage every 1.5 s at 2 m, about the launcher's damage over time, so it should not move balance much; the launcher holds fire while it cuts. Change the numbers when you balance.
-144. **A swing clip for the Grenadier?** It cuts in its shooting pose. Meshy can add a melee clip to its rig (a few credits), as for the Hunters' bash. Want it?
+144. **A swing clip for the Grenadier?** Settled: yes (D89), Meshy's Heavy Hammer Swing, eased into a loop.
 
 
 ## Things my test runs did to your PC

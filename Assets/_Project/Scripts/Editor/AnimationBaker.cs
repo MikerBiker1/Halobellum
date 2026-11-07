@@ -3,9 +3,10 @@
 // Baked Body asset in Resources/BakedBodies:
 //   - a mesh that names two bones per vertex, with finger bones merged into the hands (too small to see at
 //     game distance) and, if it has one, a prepared weapon merged into the right hand, and a shield on the left in a second, see-through sub-mesh;
-//     a body whose gun is part of its own model (the Flamethrower Trooper) shoots from its furthest-forward point instead (muzzleAtFront);
+//     a body whose gun is part of its own model (the Flamethrower Trooper) shoots from its furthest-forward point instead (muzzleAtFront),
+//     and a creature from one of its bones at the moment it shoots (muzzleBone: the Pure Form Ranged's spines, D89);
 //   - a texture holding every kept bone's matrix for every frame of every clip;
-//   - the clip table, and a material.
+//   - the clip table, and a material (cut out by its texture's alpha for a body with fronds, D89).
 // Moving and shooting clips play on the spot: the battle moves the unit, so any forward drift in the clip is
 // removed. The held standing frame is the moment of the still clip when the feet are closest together.
 //   Menu: Halobellum > Art > Bake Animated Bodies
@@ -142,15 +143,35 @@ namespace Halobellum.EditorTools
                     body.muzzle = Drift(model, bones[hips], restHips).MultiplyPoint3x4(model.transform.InverseTransformPoint(muzzle.Value));
                 }
 
-                void AddClip(BakedAnimation role, AnimationClip source, bool loops, bool onTheSpot)
+                void AddClip(BakedAnimation role, AnimationClip source, bool loops, bool onTheSpot, float blendShare = 0f)
                 {
                     int frames = Mathf.Max(1, Mathf.RoundToInt(source.length * body.bakedFps));
                     clips.Add(new BakedClip { role = role, firstRow = rows.Count, frames = frames, loops = loops });
+                    // A clip made to be played once is eased, over its last share, back into its first pose, bone by bone, so it loops
+                    // without a jump (Meshy's swing for the Brute Grenadier, 2026-11-07).
+                    Transform[] all = model.GetComponentsInChildren<Transform>();
+                    var firstPosition = new Vector3[all.Length];
+                    var firstRotation = new Quaternion[all.Length];
+                    if (blendShare > 0f)
+                    {
+                        source.SampleAnimation(model, 0f);
+                        for (int i = 0; i < all.Length; i++) { firstPosition[i] = all[i].localPosition; firstRotation[i] = all[i].localRotation; }
+                    }
+                    int blendFrom = Mathf.RoundToInt(frames * (1f - blendShare));
                     for (int f = 0; f < frames; f++)
                     {
                         // A loop must not repeat its first frame at the end; a one-shot must reach its last.
                         float time = source.length * (loops ? f / (float)frames : f / Mathf.Max(1f, frames - 1f));
                         source.SampleAnimation(model, time);
+                        if (blendShare > 0f && f >= blendFrom)
+                        {
+                            float weight = Mathf.SmoothStep(0f, 1f, (f - blendFrom + 1f) / (frames - blendFrom + 1f));
+                            for (int i = 0; i < all.Length; i++)
+                            {
+                                all[i].localPosition = Vector3.Lerp(all[i].localPosition, firstPosition[i], weight);
+                                all[i].localRotation = Quaternion.Slerp(all[i].localRotation, firstRotation[i], weight);
+                            }
+                        }
                         rows.Add(Row(Pose(), onTheSpot ? Drift(model, bones[hips], restHips) : Matrix4x4.identity));
                     }
                 }
@@ -160,7 +181,7 @@ namespace Halobellum.EditorTools
                 AddClip(BakedAnimation.Dead, Source(body.deathClip), false, false);
                 // A close-in blow and a charge, for a body that has them (the Hunters, D87). The blow keeps its step in (it starts and ends
                 // in place); the charge plays on the spot, as the battle moves the unit.
-                if (!string.IsNullOrEmpty(body.meleeClip)) AddClip(BakedAnimation.Melee, Source(body.meleeClip), true, false);
+                if (!string.IsNullOrEmpty(body.meleeClip)) AddClip(BakedAnimation.Melee, Source(body.meleeClip), true, false, body.meleeBlendShare);
                 if (!string.IsNullOrEmpty(body.chargeClip)) AddClip(BakedAnimation.Charge, Source(body.chargeClip), true, true);
 
                 // The held frame: the moment of the still clip when the feet are closest together.
@@ -199,6 +220,7 @@ namespace Halobellum.EditorTools
                 material.SetTexture("_MainTex", body.albedo);
                 material.SetTexture("_AnimTex", texture);
                 material.SetFloat("_AnimFps", body.bakedFps);
+                material.SetFloat("_Cutout", body.cutout ? 1f : 0f);
                 AssetDatabase.CreateAsset(material, $"{folder}/{body.name}_Material.mat");
 
                 body.glassMaterial = null;
@@ -301,7 +323,17 @@ namespace Halobellum.EditorTools
             var triangles = new List<int>(from.triangles);
 
             Vector3? muzzle = null;
-            if (string.IsNullOrEmpty(body.weaponName) && body.muzzleAtFront)
+            if (string.IsNullOrEmpty(body.weaponName) && !string.IsNullOrEmpty(body.muzzleBone))
+            {
+                // A creature's own: where the bone is at the moment of the shot (D89). The rig gives it a bone of its own for this, which
+                // moves no vertex, so it is looked for in the whole rig and not only among the skin's bones.
+                Transform bone = model.GetComponentsInChildren<Transform>().FirstOrDefault(b => b.name == body.muzzleBone);
+                if (bone == null) throw new InvalidOperationException($"{body.name}: no bone named {body.muzzleBone} for its shots.");
+                AnimationClip aim = source(body.shootingClip);
+                aim.SampleAnimation(model, aim.length * (body.shotMoment >= 0f ? body.shotMoment : 0.5f));
+                muzzle = bone.position;
+            }
+            else if (string.IsNullOrEmpty(body.weaponName) && body.muzzleAtFront)
             {
                 // The body's own gun: its tip is the vertex furthest forward halfway through the shooting clip, skinned as the shader will.
                 AnimationClip aim = source(body.shootingClip);

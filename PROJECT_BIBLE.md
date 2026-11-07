@@ -537,6 +537,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-07 | The Brute Grenadier carries a Brute Shot, the Spartan CQB a shotgun and the Spartan Sniper a sniper rifle, from the owner's files | Per the project owner (D86) |
 | 2026-11-07 | Hunters aim from behind their shield; an enemy within 5 m draws a charge and shield bashes instead of cannon fire, until it is gone | Per the project owner (D87) |
 | 2026-11-07 | Level arrows are one size over every squad; the Brute Grenadier cuts with its Brute Shot's blade what is too close for its grenades; reinforcement cards show the role under the name | Per the project owner (D88) |
+| 2026-11-07 | The Brute Grenadier plays Meshy's heavy two-handed swing while it cuts with its blade | Per the project owner (D89) |
 
 ## 18. Assumptions to confirm
 

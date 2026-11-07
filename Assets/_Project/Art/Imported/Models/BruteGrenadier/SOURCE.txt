@@ -2,3 +2,4 @@ Source: given by the project owner, file Meshy/enemieshalo_3covenantbrutes.glb i
 Prepared by Tools/Meshy/rig_inputs.py and meshy_rig.py.
 The repository is private and must stay private.
 Its texture is lifted by 2.7 by Tools/Art/lift_texture.py, from a median brightness of 0.09 to about 0.24: it read as a black shape in the game, with no red showing.
+Its clips were bought again on 2026-11-07 with Meshy's Heavy Hammer Swing added, played while it cuts with its blade (D89).

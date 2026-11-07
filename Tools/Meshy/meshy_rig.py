@@ -5,6 +5,9 @@
 #   python Tools/Meshy/meshy_rig.py balance
 #   python Tools/Meshy/meshy_rig.py rig <Unit>                  rigs it (at most 2 attempts), saves the rig and Meshy's free walk
 #   python Tools/Meshy/meshy_rig.py animate <Unit> 98,234,8,566 buys these clips in one merged FBX
+#   python Tools/Meshy/meshy_rig.py animate <Unit> 98,234,8,566,128 --again   buys a new set in place of the clips already bought
+#     (Meshy merges only the clips of one request into one FBX, so a clip added later means buying the set again; the old task is kept
+#     under "earlier": the Brute Grenadier's swing, 2026-11-07)
 # Needs only the Python standard library.
 
 import base64
@@ -142,10 +145,13 @@ def rig(unit):
     return True
 
 
-def animate(unit, action_ids):
+def animate(unit, action_ids, again=False):
     state = load()
     record = state[unit]
     folder = os.path.join(PREPARED, unit + "_Rig")
+    if again and record.get("animation") and record.get("actions") != action_ids:
+        record.setdefault("earlier", []).append({k: record.pop(k) for k in ("animation", "actions", "animation_credits") if k in record})
+        save(state)
     if not record.get("animation"):
         check_budget(state, 3 * len(action_ids))
         record["animation"] = post("/v1/animations", {"rig_task_id": record["rig"], "action_ids": action_ids})
@@ -176,7 +182,7 @@ def main():
     elif command == "rig":
         rig(sys.argv[2])
     elif command == "animate":
-        animate(sys.argv[2], [int(x) for x in sys.argv[3].split(",")])
+        animate(sys.argv[2], [int(x) for x in sys.argv[3].split(",")], again="--again" in sys.argv)
 
 
 if __name__ == "__main__":
