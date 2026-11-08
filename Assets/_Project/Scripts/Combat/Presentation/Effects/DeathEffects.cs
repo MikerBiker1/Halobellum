@@ -2,7 +2,7 @@
 // What happens when a body dies (M10). The kind of death comes from DeathLooks:
 //   infantry fall with a puff (baked bodies play their own death; others tip over and sink);
 //   vehicles blow up and stay as blackened wrecks that burn and smoke for a while, then sink away;
-//   a Ghost is knocked out first: it drifts off in a random direction for 2.1 s, smoking, then blows up blue (the owner, D120);
+//   a Ghost or an Infested Ghost is knocked out first: it drifts off in a random direction for 2.1 s, smoking, then blows up blue (the owner, D120, D121);
 //   Covenant machines, and the Flood's infested ones, do all of that in light blue plasma instead of orange fire (ExplodesBlue);
 //   air units blow up in the air and fall burning to the ground, where they crash;
 //   Flood bodies burst in gore and spores;
@@ -113,8 +113,8 @@ namespace Halobellum.Presentation
             "Infested Ghost", "Infested Banshee", "Infested Wraith", "Infected Phantom",
         };
 
-        /// <summary>True for what is knocked out and drifts away before it blows up: the Ghost (the owner, D120).</summary>
-        public static bool Drifts(UnitStats stats) => stats != null && stats.Name == "Ghost";
+        /// <summary>True for what is knocked out and drifts away before it blows up: the Ghost (the owner, D120) and the Infested Ghost (D121).</summary>
+        public static bool Drifts(UnitStats stats) => stats != null && (stats.Name == "Ghost" || stats.Name == "Infested Ghost");
 
         /// <summary>True for a Covenant machine, which explodes and burns light blue instead of orange.</summary>
         public static bool ExplodesBlue(UnitStats stats)
@@ -185,7 +185,8 @@ namespace Halobellum.Presentation
             bool rises = _rising.Contains(unit);
             DeathStyle style = DeathLooks.For(stats);
             bool blue = ExplodesBlue(stats);
-            switch (style)
+            if (!rises && Drifts(stats)) StartDrift(unit, position, radius, blue);
+            else switch (style)
             {
                 case DeathStyle.Infantry:
                     _recipes.InfantryDeath(position, radius);
@@ -193,20 +194,6 @@ namespace Halobellum.Presentation
                     break;
 
                 case DeathStyle.Vehicle:
-                    if (!rises && Drifts(stats))
-                    {
-                        // Knocked out, it drifts away smoking, and blows up later (Drift).
-                        _recipes.BurningTrail(position, radius, EffectPriority.Big, blue);
-                        Corpse drifting = Keep(unit, CorpseKind.Drifting, GhostDriftSeconds + WreckSeconds, position, false, blue);
-                        if (drifting != null)
-                        {
-                            Vector2 heading = Random.insideUnitCircle.normalized;
-                            if (heading == Vector2.zero) heading = Vector2.up;
-                            drifting.Drift = new Vector3(heading.x, 0f, heading.y) * Mathf.Clamp(stats.MoveSpeed * 1.4f, 4f, 9f);
-                            drifting.Top = _units.BodyTopOf(unit) * HullTopShare;
-                        }
-                        break;
-                    }
                     bool titan = DeathLooks.IsTitan(stats);
                     _recipes.VehicleDeath(position, radius, titan, blue);
                     if (!rises)
@@ -250,6 +237,22 @@ namespace Halobellum.Presentation
                 _recipes.Blast(position + Vector3.up * 0.5f, stats.DeathBurst.Radius, flood ? BlastStyle.Bio : BlastStyle.Fire, WeaponLooks.FloodPlasma, EffectPriority.Big);
                 if (!flood) CameraShake.Kick(position, 0.3f);
             }
+        }
+
+        /// <summary>
+        /// A Ghost knocked out (D120), or an Infested Ghost (D121), whatever its death would otherwise look like: it drifts away smoking, and blows
+        /// up later (Drift). An Infested Ghost bursts in Flood gore as it blows up.
+        /// </summary>
+        private void StartDrift(SimUnit unit, Vector3 position, float radius, bool blue)
+        {
+            _recipes.BurningTrail(position, radius, EffectPriority.Big, blue);
+            bool flood = unit.Stats.IsFlood || unit.Stats.InfectedFrom != null;
+            Corpse drifting = Keep(unit, CorpseKind.Drifting, GhostDriftSeconds + WreckSeconds, position, flood, blue);
+            if (drifting == null) return;
+            Vector2 heading = Random.insideUnitCircle.normalized;
+            if (heading == Vector2.zero) heading = Vector2.up;
+            drifting.Drift = new Vector3(heading.x, 0f, heading.y) * Mathf.Clamp(unit.Stats.MoveSpeed * 1.4f, 4f, 9f);
+            drifting.Top = _units.BodyTopOf(unit) * HullTopShare;
         }
 
         /// <summary>The Infected Pelican's dive: fire and smoke all the way down.</summary>
@@ -402,6 +405,7 @@ namespace Halobellum.Presentation
             }
             if (corpse.Age < GhostDriftSeconds) return false;
             _recipes.VehicleDeath(position, corpse.BodyRadius, false, corpse.Blue);
+            if (corpse.Flood) _recipes.FloodBurst(position, corpse.BodyRadius, false); // What had taken it goes up with it.
             AddFire(position, corpse.BodyRadius, WreckSeconds, corpse.Top, corpse.Blue);
             Blacken(corpse.Root);
             return true;

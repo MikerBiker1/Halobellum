@@ -619,36 +619,55 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
-        public IEnumerator AGhost_DriftsAwayKnockedOut_ThenBlowsUpBlue()
+        public IEnumerator AGhost_DriftsAwayKnockedOut_ThenBlowsUpBlue() => DriftsThenBlowsUp("Ghost");
+
+        [UnityTest]
+        public IEnumerator AnInfestedGhost_DriftsAwayKnockedOut_ThenBlowsUpBlue() => DriftsThenBlowsUp("Infested Ghost");
+
+        /// <summary>
+        /// D120, D121: the body drifts away along the ground, then blows up light blue and stops, heard knocked out then blowing up.
+        /// </summary>
+        private IEnumerator DriftsThenBlowsUp(string name)
         {
             yield return LoadSandbox();
             _sandbox.AddSquad(Team.A, Unit("Warthog"));
-            _sandbox.AddSquad(Team.B, Unit("Ghost"));
+            _sandbox.AddSquad(Team.B, Unit(name));
             yield return null;
-            _battle.Speed = 1f;
+            _battle.Speed = 2f; // Faster than its sounds were made for: the knock-out is fitted to the drift (D121).
             _sandbox.Run();
             yield return null;
-            UnitViewManager views = _battle.GetComponent<UnitViewManager>();
-            SimUnit ghost = _battle.Simulation.Units.First(u => u.Stats.Name == "Ghost");
-            ghost.Health = 0f;
-            float deadline = Time.realtimeSinceStartup + 5f;
-            while (ghost.IsAlive && Time.realtimeSinceStartup < deadline) yield return null;
-            yield return null;
-            Assert.IsTrue(views.IsShown(ghost), "Its body stays, knocked out.");
-            Vector3 start = views.ShownPosition(ghost);
-            float diedAt = Time.time; // Its drift runs on battle time, which goes at the game's time at speed 1, battle over or not.
-            while (Time.time < diedAt + 1f) yield return null;
-            Vector3 drifted = views.ShownPosition(ghost);
-            Assert.Greater(new Vector2(drifted.x - start.x, drifted.z - start.z).magnitude, 2f, "It drifts away (D120).");
-            Assert.AreEqual(start.y, drifted.y, 0.5f, "Along the ground.");
+            var heard = new List<string>();
+            AudioDirector director = AudioDirector.Instance;
+            Assert.IsNotNull(director, "The game's sound is up.");
+            System.Action<string> note = heard.Add;
+            director.SlotPlayed += note;
+            try
+            {
+                UnitViewManager views = _battle.GetComponent<UnitViewManager>();
+                SimUnit ghost = _battle.Simulation.Units.First(u => u.Stats.Name == name);
+                ghost.Health = 0f;
+                float deadline = Time.realtimeSinceStartup + 5f;
+                while (ghost.IsAlive && Time.realtimeSinceStartup < deadline) yield return null;
+                yield return null;
+                Assert.IsTrue(views.IsShown(ghost), "Its body stays, knocked out.");
+                Vector3 start = views.ShownPosition(ghost);
+                float diedAt = Time.time; // Its drift runs on battle time: twice the game's time at speed 2, battle over or not.
+                while (Time.time < diedAt + 0.5f) yield return null;
+                Vector3 drifted = views.ShownPosition(ghost);
+                Assert.Greater(new Vector2(drifted.x - start.x, drifted.z - start.z).magnitude, 2f, "It drifts away.");
+                Assert.AreEqual(start.y, drifted.y, 0.5f, "Along the ground.");
 
-            while (Time.time < diedAt + DeathEffects.GhostDriftSeconds + 0.3f) yield return null;
-            Vector3 stopped = views.ShownPosition(ghost);
-            for (int i = 0; i < 10; i++) yield return null;
-            Assert.IsTrue(views.IsShown(ghost), "Its wreck stays.");
-            Assert.AreEqual(stopped, views.ShownPosition(ghost), "It has blown up and stopped where it got to.");
-            Assert.Greater(_view.Kit.LivePlasmaFire, 0, "Light blue.");
-            Assert.AreEqual(0, _view.Kit.LiveFire, "No orange.");
+                while (Time.time < diedAt + DeathEffects.GhostDriftSeconds / 2f + 0.3f) yield return null;
+                Vector3 stopped = views.ShownPosition(ghost);
+                for (int i = 0; i < 10; i++) yield return null;
+                Assert.IsTrue(views.IsShown(ghost), "Its wreck stays.");
+                Assert.AreEqual(stopped, views.ShownPosition(ghost), "It has blown up and stopped where it got to.");
+                Assert.Greater(_view.Kit.LivePlasmaFire, 0, "Light blue.");
+                Assert.AreEqual(0, _view.Kit.LiveFire, "No orange.");
+                CollectionAssert.Contains(heard, AudioCatalog.GhostKnockedOut.Slot, "Heard knocked out.");
+                CollectionAssert.Contains(heard, AudioCatalog.ExplosionTurret.Slot, "Heard blowing up.");
+            }
+            finally { director.SlotPlayed -= note; }
         }
 
         [UnityTest]

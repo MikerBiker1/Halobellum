@@ -404,7 +404,7 @@ namespace Halobellum.Tests
             Assert.IsTrue(AudioCatalog.GhostKnockedOut.HasSound, "sfx_death_ghost_start is in (D120).");
             Assert.IsTrue(AudioCatalog.ExplosionTurret.HasSound, "sfx_explosion_turret is in (D120).");
             Assert.IsTrue(BattleAudio.DriftsAsItDies(Unit("Covenant/Ghost")));
-            Assert.IsFalse(BattleAudio.DriftsAsItDies(Unit("FloodCovenant/InfestedGhost")), "Only the Ghost, as the owner asked.");
+            Assert.IsTrue(BattleAudio.DriftsAsItDies(Unit("FloodCovenant/InfestedGhost")), "The Infested Ghost too (D121).");
             Assert.IsFalse(BattleAudio.DriftsAsItDies(Unit("UNSC/Warthog")));
             Assert.AreEqual(2.1f, DeathEffects.GhostDriftSeconds, 1e-4f);
             Assert.IsTrue(DeathEffects.ExplodesBlue(Unit("Covenant/Ghost")), "It blows up light blue.");

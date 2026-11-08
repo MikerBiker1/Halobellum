@@ -321,8 +321,12 @@ namespace Halobellum.Presentation
             if (director != null && DriftsAsItDies(unit.Stats) && AudioCatalog.GhostKnockedOut.HasSound)
             {
                 // A Ghost drifts away knocked out before it blows up (DeathEffects, D120): the owner's knock-out now, the blast as it goes off.
-                GameAudio.Sfx(AudioCatalog.GhostKnockedOut, Place(unit));
+                // The knock-out is loudest at its end, made for a drift of 2.1 s: faster, its start is skipped so that it ends as the blast comes,
+                // or the blast would be lost under it (D121); slower, it waits.
                 float drift = DeathEffects.GhostDriftSeconds / Mathf.Max(0.05f, _battle.Speed);
+                float early = DeathEffects.GhostDriftSeconds - drift;
+                if (early >= 0f) GameAudio.SfxShaped(AudioCatalog.GhostKnockedOut, Place(unit), early, drift, 0.08f);
+                else _later.Add(new Later { At = director.BattleClock - early, Cue = AudioCatalog.GhostKnockedOut, Place = Place(unit) });
                 SfxCue blast = AudioCatalog.ExplosionTurret.HasSound ? AudioCatalog.ExplosionTurret : death;
                 if (blast != null) _later.Add(new Later { At = director.BattleClock + drift, Cue = blast, Place = Place(unit) });
                 return;
@@ -349,7 +353,7 @@ namespace Halobellum.Presentation
         /// <summary>The Banshee and the Infested Banshee, whose fall and crash are one file of the owner's (D120).</summary>
         public static bool IsBanshee(UnitStats stats) => stats.Name == "Banshee" || stats.Name == "Infested Banshee";
 
-        /// <summary>A Ghost, which drifts away knocked out before it blows up (DeathEffects.Drifts, D120).</summary>
+        /// <summary>A Ghost or an Infested Ghost, which drifts away knocked out before it blows up (DeathEffects.Drifts, D120, D121).</summary>
         public static bool DriftsAsItDies(UnitStats stats) => DeathEffects.Drifts(stats);
 
         /// <summary>An aircraft that blows up in the air and falls to the ground as it dies (DeathStyle.Air, FloodAir). The Infected Pelican, already down from its dive, does not.</summary>
@@ -483,6 +487,8 @@ namespace Halobellum.Presentation
             if (director == null || _battle == null) return;
             // Either pause stops the battle's sound: the game's (Esc) and BattleHud's own (speed 0).
             director.SetBattlePaused(GamePause.IsPaused || (_battle.IsPlaying && _battle.Speed <= 0f));
+            // Before the battle's end stops the rest (D121): the last aircraft still crashes after it, the last Ghost still blows up.
+            if (!director.BattlePaused) PlayWhatIsDue(director);
             if (!_battle.IsPlaying) return;
 
             // A flying unit that has started its dive has no event of its own.
@@ -499,7 +505,6 @@ namespace Halobellum.Presentation
                 UpdateHums(director);
             }
             if (director.BattlePaused) return;
-            PlayWhatIsDue(director); // Before the end: the last aircraft of a battle still crashes after it.
             if (_shown.IsFinished) return; // A finished battle's time has stopped: OnBattleFinished silenced what it had going.
             UpdateLoops(director);
             if (AudioCatalog.BeamCharge.HasSound) UpdateBeams(director);

@@ -2,6 +2,12 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Ghost blast fixed, Infested Ghost drifts (D121)
+- **No blast heard:** it was playing, but buried. Your knock-out file is loudest at its end, made for 2.1 s at speed 1. At 2x or 4x the blast came in its loudest part. The knock-out now skips ahead at faster speeds, so it ends as the blast comes.
+- **Infested Ghost** drifts and blows up like the Ghost, plus a Flood gore burst.
+- **Also fixed:** the last aircraft of a match battle now still crashes after the battle ends.
+- **Not checked:** not heard in the game; the tests pass, including one at 2x speed.
+
 ## Banshee crash, turret explosion, Ghost drift (D120)
 - **Banshee and Infested Banshee:** your fall-and-crash file plays as one, timed so that the crash comes as the wreck lands at any battle speed.
 - **turret_explosion:** every machine whose death sound was generated (small vehicles, Phantoms, Vampire). The Seeder, a creature, keeps the generated one.
