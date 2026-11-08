@@ -904,7 +904,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Scorpion
     defender: Covenant Phantom
-    winRate: 0
+    winRate: 0.3
   - attacker: Scorpion
     defender: Hunter Pair
     winRate: 0
@@ -1402,17 +1402,17 @@ MonoBehaviour:
     winRate: 0
   - attacker: Hornet
     defender: Chopper
-    winRate: 1
-  - attacker: Hornet
-    defender: Brute Grenadier
-    winRate: 1
-  - attacker: Hornet
-    defender: Marauder
-    winRate: 1
-  - attacker: Hornet
-    defender: Reaver
     winRate: 0
   - attacker: Hornet
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Hornet
+    defender: Marauder
+    winRate: 1
+  - attacker: Hornet
+    defender: Reaver
+    winRate: 0
+  - attacker: Hornet
     defender: Skitterer
     winRate: 1
   - attacker: Hornet
@@ -1432,35 +1432,35 @@ MonoBehaviour:
     winRate: 0
   - attacker: Hornet
     defender: Infested Marine
-    winRate: 1
-  - attacker: Hornet
-    defender: Infested Warthog
-    winRate: 1
-  - attacker: Hornet
-    defender: Infested Scorpion
-    winRate: 1
-  - attacker: Hornet
-    defender: Infested Hornet
-    winRate: 0.1
-  - attacker: Hornet
-    defender: Juggernaut
-    winRate: 1
-  - attacker: Hornet
-    defender: Infested Grunt
-    winRate: 1
-  - attacker: Hornet
-    defender: Infested Ghost
-    winRate: 1
-  - attacker: Hornet
-    defender: Infested Elite
-    winRate: 0.9
-  - attacker: Hornet
-    defender: Infested Wraith
-    winRate: 1
-  - attacker: Hornet
-    defender: Infested Banshee
     winRate: 0
   - attacker: Hornet
+    defender: Infested Warthog
+    winRate: 0
+  - attacker: Hornet
+    defender: Infested Scorpion
+    winRate: 1
+  - attacker: Hornet
+    defender: Infested Hornet
+    winRate: 0.1
+  - attacker: Hornet
+    defender: Juggernaut
+    winRate: 1
+  - attacker: Hornet
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Hornet
+    defender: Infested Ghost
+    winRate: 0
+  - attacker: Hornet
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Hornet
+    defender: Infested Wraith
+    winRate: 1
+  - attacker: Hornet
+    defender: Infested Banshee
+    winRate: 0
+  - attacker: Hornet
     defender: Spawner
     winRate: 0.1
   - attacker: Archer Missile Pod
@@ -1816,14 +1816,14 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pelican
     defender: Chopper
-    winRate: 1
-  - attacker: Pelican
-    defender: Brute Grenadier
-    winRate: 1
-  - attacker: Pelican
-    defender: Marauder
     winRate: 0
   - attacker: Pelican
+    defender: Brute Grenadier
+    winRate: 1
+  - attacker: Pelican
+    defender: Marauder
+    winRate: 0
+  - attacker: Pelican
     defender: Reaver
     winRate: 0
   - attacker: Pelican
@@ -1849,14 +1849,14 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pelican
     defender: Infested Warthog
-    winRate: 1
-  - attacker: Pelican
-    defender: Infested Scorpion
-    winRate: 0.4
-  - attacker: Pelican
-    defender: Infested Hornet
     winRate: 0
   - attacker: Pelican
+    defender: Infested Scorpion
+    winRate: 0.4
+  - attacker: Pelican
+    defender: Infested Hornet
+    winRate: 0
+  - attacker: Pelican
     defender: Juggernaut
     winRate: 1
   - attacker: Pelican
@@ -1864,11 +1864,11 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pelican
     defender: Infested Ghost
-    winRate: 0.8
-  - attacker: Pelican
-    defender: Infested Elite
     winRate: 0
   - attacker: Pelican
+    defender: Infested Elite
+    winRate: 0
+  - attacker: Pelican
     defender: Infested Wraith
     winRate: 1
   - attacker: Pelican
@@ -2278,7 +2278,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Mantis
     defender: Infested Ghost
-    winRate: 0.6
+    winRate: 0.7
   - attacker: Mantis
     defender: Infested Elite
     winRate: 0
@@ -2425,7 +2425,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Elephant
     defender: Sparrowhawk
-    winRate: 0.9
+    winRate: 1
   - attacker: Elephant
     defender: Longsword
     winRate: 1
@@ -2488,7 +2488,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Elephant
     defender: Infested Elite
-    winRate: 0.8
+    winRate: 0.7
   - attacker: Elephant
     defender: Infested Wraith
     winRate: 1
@@ -3109,7 +3109,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: 'Jackal (Beam Rifle)'
     defender: Infested Elite
-    winRate: 0.6
+    winRate: 0.5
   - attacker: 'Jackal (Beam Rifle)'
     defender: Infested Wraith
     winRate: 0
@@ -4093,7 +4093,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Vampire
     defender: Chopper
-    winRate: 1
+    winRate: 0
   - attacker: Vampire
     defender: Brute Grenadier
     winRate: 1
@@ -4141,7 +4141,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Vampire
     defender: Infested Ghost
-    winRate: 0.8
+    winRate: 0
   - attacker: Vampire
     defender: Infested Elite
     winRate: 0
@@ -4300,7 +4300,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Banshee
     defender: Chopper
-    winRate: 1
+    winRate: 0
   - attacker: Banshee
     defender: Brute Grenadier
     winRate: 1
@@ -4333,7 +4333,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Banshee
     defender: Infested Warthog
-    winRate: 1
+    winRate: 0
   - attacker: Banshee
     defender: Infested Scorpion
     winRate: 1
@@ -4345,13 +4345,13 @@ MonoBehaviour:
     winRate: 1
   - attacker: Banshee
     defender: Infested Grunt
-    winRate: 1
+    winRate: 0
   - attacker: Banshee
     defender: Infested Ghost
-    winRate: 1
+    winRate: 0
   - attacker: Banshee
     defender: Infested Elite
-    winRate: 1
+    winRate: 0
   - attacker: Banshee
     defender: Infested Wraith
     winRate: 1
@@ -4375,7 +4375,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Covenant Phantom
     defender: Scorpion
-    winRate: 0.9
+    winRate: 0.7
   - attacker: Covenant Phantom
     defender: Wolverine
     winRate: 0
@@ -4507,13 +4507,13 @@ MonoBehaviour:
     winRate: 0
   - attacker: Covenant Phantom
     defender: Chopper
-    winRate: 0.8
+    winRate: 0
   - attacker: Covenant Phantom
     defender: Brute Grenadier
     winRate: 1
   - attacker: Covenant Phantom
     defender: Marauder
-    winRate: 0.1
+    winRate: 0
   - attacker: Covenant Phantom
     defender: Reaver
     winRate: 0
@@ -6784,7 +6784,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Seeder
     defender: Chopper
-    winRate: 1
+    winRate: 0
   - attacker: Seeder
     defender: Brute Grenadier
     winRate: 1
@@ -6976,7 +6976,7 @@ MonoBehaviour:
     winRate: 0.9
   - attacker: Infected Pelican
     defender: Grizzly
-    winRate: 0.9
+    winRate: 0.3
   - attacker: Infected Pelican
     defender: Sparrowhawk
     winRate: 0
@@ -6997,7 +6997,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infected Pelican
     defender: Marauder
-    winRate: 0.1
+    winRate: 0
   - attacker: Infected Pelican
     defender: Reaver
     winRate: 1
@@ -7024,7 +7024,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infected Pelican
     defender: Infested Warthog
-    winRate: 0.2
+    winRate: 0.6
   - attacker: Infected Pelican
     defender: Infested Scorpion
     winRate: 0
@@ -7039,7 +7039,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infected Pelican
     defender: Infested Ghost
-    winRate: 0.6
+    winRate: 0.9
   - attacker: Infected Pelican
     defender: Infested Elite
     winRate: 1
@@ -7246,7 +7246,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infected Phantom
     defender: Infested Ghost
-    winRate: 1
+    winRate: 0.7
   - attacker: Infected Phantom
     defender: Infested Elite
     winRate: 1
@@ -8077,7 +8077,7 @@ MonoBehaviour:
     winRate: 0.5
   - attacker: Spartan Grenadier
     defender: Infested Elite
-    winRate: 1
+    winRate: 0.9
   - attacker: Spartan Grenadier
     defender: Infested Wraith
     winRate: 0
@@ -9223,7 +9223,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Grizzly
     defender: Infected Pelican
-    winRate: 0.1
+    winRate: 0.7
   - attacker: Grizzly
     defender: Infected Phantom
     winRate: 0
@@ -9364,7 +9364,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Sparrowhawk
     defender: Elephant
-    winRate: 0.1
+    winRate: 0
   - attacker: Sparrowhawk
     defender: Grunt
     winRate: 0
@@ -9508,7 +9508,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Sparrowhawk
     defender: Infested Warthog
-    winRate: 1
+    winRate: 0
   - attacker: Sparrowhawk
     defender: Infested Scorpion
     winRate: 1
@@ -9523,7 +9523,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Sparrowhawk
     defender: Infested Ghost
-    winRate: 1
+    winRate: 0
   - attacker: Sparrowhawk
     defender: Infested Elite
     winRate: 0
@@ -9715,7 +9715,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Longsword
     defender: Infested Warthog
-    winRate: 1
+    winRate: 0.7
   - attacker: Longsword
     defender: Infested Scorpion
     winRate: 1
@@ -9727,10 +9727,10 @@ MonoBehaviour:
     winRate: 1
   - attacker: Longsword
     defender: Infested Grunt
-    winRate: 0
+    winRate: 0.1
   - attacker: Longsword
     defender: Infested Ghost
-    winRate: 1
+    winRate: 0.5
   - attacker: Longsword
     defender: Infested Elite
     winRate: 1
@@ -9919,7 +9919,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Vulture
     defender: Infested Marine
-    winRate: 1
+    winRate: 0
   - attacker: Vulture
     defender: Infested Warthog
     winRate: 1
@@ -9934,13 +9934,13 @@ MonoBehaviour:
     winRate: 1
   - attacker: Vulture
     defender: Infested Grunt
-    winRate: 1
+    winRate: 0
   - attacker: Vulture
     defender: Infested Ghost
-    winRate: 1
+    winRate: 0
   - attacker: Vulture
     defender: Infested Elite
-    winRate: 1
+    winRate: 0.1
   - attacker: Vulture
     defender: Infested Wraith
     winRate: 1
@@ -10096,7 +10096,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Condor Gunship
     defender: Chopper
-    winRate: 1
+    winRate: 0
   - attacker: Condor Gunship
     defender: Brute Grenadier
     winRate: 1
@@ -10129,7 +10129,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Condor Gunship
     defender: Infested Warthog
-    winRate: 1
+    winRate: 0
   - attacker: Condor Gunship
     defender: Infested Scorpion
     winRate: 1
@@ -10144,10 +10144,10 @@ MonoBehaviour:
     winRate: 0
   - attacker: Condor Gunship
     defender: Infested Ghost
-    winRate: 1
+    winRate: 0
   - attacker: Condor Gunship
     defender: Infested Elite
-    winRate: 1
+    winRate: 0
   - attacker: Condor Gunship
     defender: Infested Wraith
     winRate: 1
@@ -10177,13 +10177,13 @@ MonoBehaviour:
     winRate: 1
   - attacker: Chopper
     defender: Hornet
-    winRate: 0
+    winRate: 1
   - attacker: Chopper
     defender: Archer Missile Pod
     winRate: 0.9
   - attacker: Chopper
     defender: Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Chopper
     defender: Spartan
     winRate: 1
@@ -10216,13 +10216,13 @@ MonoBehaviour:
     winRate: 0
   - attacker: Chopper
     defender: Vampire
-    winRate: 0
+    winRate: 1
   - attacker: Chopper
     defender: Banshee
-    winRate: 0
+    winRate: 1
   - attacker: Chopper
     defender: Covenant Phantom
-    winRate: 0.1
+    winRate: 1
   - attacker: Chopper
     defender: Hunter Pair
     winRate: 0
@@ -10255,7 +10255,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Chopper
     defender: Seeder
-    winRate: 0
+    winRate: 1
   - attacker: Chopper
     defender: Infected Pelican
     winRate: 0
@@ -10303,7 +10303,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Chopper
     defender: Condor Gunship
-    winRate: 0
+    winRate: 1
   - attacker: Chopper
     defender: Brute Grenadier
     winRate: 0
@@ -10342,7 +10342,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Chopper
     defender: Infested Hornet
-    winRate: 0
+    winRate: 1
   - attacker: Chopper
     defender: Juggernaut
     winRate: 0
@@ -10636,7 +10636,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Marauder
     defender: Covenant Phantom
-    winRate: 0.9
+    winRate: 1
   - attacker: Marauder
     defender: Hunter Pair
     winRate: 0
@@ -10672,7 +10672,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Marauder
     defender: Infected Pelican
-    winRate: 0.9
+    winRate: 1
   - attacker: Marauder
     defender: Infected Phantom
     winRate: 0
@@ -11182,7 +11182,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Skitterer
     defender: Infested Elite
-    winRate: 0.8
+    winRate: 1
   - attacker: Skitterer
     defender: Infested Wraith
     winRate: 0
@@ -11389,7 +11389,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Goliath
     defender: Infested Elite
-    winRate: 1
+    winRate: 0.9
   - attacker: Goliath
     defender: Infested Wraith
     winRate: 0.6
@@ -11596,7 +11596,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Hunter Captain
     defender: Infested Elite
-    winRate: 0.5
+    winRate: 0.6
   - attacker: Hunter Captain
     defender: Infested Wraith
     winRate: 1
@@ -12247,7 +12247,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Marine
     defender: Hornet
-    winRate: 0
+    winRate: 1
   - attacker: Infested Marine
     defender: Archer Missile Pod
     winRate: 1
@@ -12370,7 +12370,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Marine
     defender: Vulture
-    winRate: 0
+    winRate: 1
   - attacker: Infested Marine
     defender: Condor Gunship
     winRate: 1
@@ -12454,13 +12454,13 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Warthog
     defender: Hornet
-    winRate: 0
+    winRate: 1
   - attacker: Infested Warthog
     defender: Archer Missile Pod
     winRate: 1
   - attacker: Infested Warthog
     defender: Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Infested Warthog
     defender: Spartan
     winRate: 1
@@ -12493,10 +12493,10 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Warthog
     defender: Vampire
-    winRate: 0.8
+    winRate: 1
   - attacker: Infested Warthog
     defender: Banshee
-    winRate: 0
+    winRate: 1
   - attacker: Infested Warthog
     defender: Covenant Phantom
     winRate: 1
@@ -12535,7 +12535,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Warthog
     defender: Infected Pelican
-    winRate: 0.8
+    winRate: 0.4
   - attacker: Infested Warthog
     defender: Infected Phantom
     winRate: 0
@@ -12571,16 +12571,16 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Warthog
     defender: Sparrowhawk
-    winRate: 0
+    winRate: 1
   - attacker: Infested Warthog
     defender: Longsword
-    winRate: 0
+    winRate: 0.3
   - attacker: Infested Warthog
     defender: Vulture
     winRate: 0
   - attacker: Infested Warthog
     defender: Condor Gunship
-    winRate: 0
+    winRate: 1
   - attacker: Infested Warthog
     defender: Chopper
     winRate: 0.8
@@ -12619,7 +12619,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Warthog
     defender: Infested Hornet
-    winRate: 0
+    winRate: 1
   - attacker: Infested Warthog
     defender: Juggernaut
     winRate: 0
@@ -12997,7 +12997,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Hornet
     defender: Chopper
-    winRate: 1
+    winRate: 0
   - attacker: Infested Hornet
     defender: Brute Grenadier
     winRate: 1
@@ -13030,7 +13030,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Hornet
     defender: Infested Warthog
-    winRate: 1
+    winRate: 0
   - attacker: Infested Hornet
     defender: Infested Scorpion
     winRate: 1
@@ -13042,10 +13042,10 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Hornet
     defender: Infested Ghost
-    winRate: 1
+    winRate: 0
   - attacker: Infested Hornet
     defender: Infested Elite
-    winRate: 1
+    winRate: 0
   - attacker: Infested Hornet
     defender: Infested Wraith
     winRate: 1
@@ -13282,7 +13282,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Grunt
     defender: Hornet
-    winRate: 0
+    winRate: 1
   - attacker: Infested Grunt
     defender: Archer Missile Pod
     winRate: 0.9
@@ -13324,7 +13324,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Grunt
     defender: Banshee
-    winRate: 0
+    winRate: 1
   - attacker: Infested Grunt
     defender: Covenant Phantom
     winRate: 1
@@ -13402,10 +13402,10 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Grunt
     defender: Longsword
-    winRate: 1
+    winRate: 0.9
   - attacker: Infested Grunt
     defender: Vulture
-    winRate: 0
+    winRate: 1
   - attacker: Infested Grunt
     defender: Condor Gunship
     winRate: 1
@@ -13465,7 +13465,7 @@ MonoBehaviour:
     winRate: 0.5
   - attacker: Infested Grunt
     defender: Infested Banshee
-    winRate: 0
+    winRate: 1
   - attacker: Infested Grunt
     defender: Spawner
     winRate: 0
@@ -13489,19 +13489,19 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Ghost
     defender: Hornet
-    winRate: 0
+    winRate: 1
   - attacker: Infested Ghost
     defender: Archer Missile Pod
     winRate: 1
   - attacker: Infested Ghost
     defender: Pelican
-    winRate: 0.2
+    winRate: 1
   - attacker: Infested Ghost
     defender: Spartan
     winRate: 1
   - attacker: Infested Ghost
     defender: Mantis
-    winRate: 0.4
+    winRate: 0.3
   - attacker: Infested Ghost
     defender: Elephant
     winRate: 0
@@ -13528,10 +13528,10 @@ MonoBehaviour:
     winRate: 0.8
   - attacker: Infested Ghost
     defender: Vampire
-    winRate: 0.1
+    winRate: 1
   - attacker: Infested Ghost
     defender: Banshee
-    winRate: 0
+    winRate: 1
   - attacker: Infested Ghost
     defender: Covenant Phantom
     winRate: 1
@@ -13570,10 +13570,10 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Ghost
     defender: Infected Pelican
-    winRate: 0.4
+    winRate: 0.1
   - attacker: Infested Ghost
     defender: Infected Phantom
-    winRate: 0
+    winRate: 0.3
   - attacker: Infested Ghost
     defender: Flood Abomination
     winRate: 0
@@ -13606,16 +13606,16 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Ghost
     defender: Sparrowhawk
-    winRate: 0
+    winRate: 1
   - attacker: Infested Ghost
     defender: Longsword
-    winRate: 0
+    winRate: 0.5
   - attacker: Infested Ghost
     defender: Vulture
-    winRate: 0
+    winRate: 1
   - attacker: Infested Ghost
     defender: Condor Gunship
-    winRate: 0
+    winRate: 1
   - attacker: Infested Ghost
     defender: Chopper
     winRate: 0.5
@@ -13657,7 +13657,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Ghost
     defender: Infested Hornet
-    winRate: 0
+    winRate: 1
   - attacker: Infested Ghost
     defender: Juggernaut
     winRate: 0
@@ -13666,13 +13666,13 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Ghost
     defender: Infested Elite
-    winRate: 0.5
+    winRate: 0.6
   - attacker: Infested Ghost
     defender: Infested Wraith
     winRate: 0
   - attacker: Infested Ghost
     defender: Infested Banshee
-    winRate: 0
+    winRate: 0.9
   - attacker: Infested Ghost
     defender: Spawner
     winRate: 0
@@ -13696,7 +13696,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Elite
     defender: Hornet
-    winRate: 0.1
+    winRate: 1
   - attacker: Infested Elite
     defender: Archer Missile Pod
     winRate: 0
@@ -13711,7 +13711,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Elite
     defender: Elephant
-    winRate: 0.2
+    winRate: 0.3
   - attacker: Infested Elite
     defender: Grunt
     winRate: 0
@@ -13720,7 +13720,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Elite
     defender: 'Jackal (Beam Rifle)'
-    winRate: 0.4
+    winRate: 0.5
   - attacker: Infested Elite
     defender: 'Jackal (Shield)'
     winRate: 1
@@ -13738,7 +13738,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Elite
     defender: Banshee
-    winRate: 0
+    winRate: 1
   - attacker: Infested Elite
     defender: Covenant Phantom
     winRate: 1
@@ -13792,7 +13792,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Elite
     defender: Spartan Grenadier
-    winRate: 0
+    winRate: 0.1
   - attacker: Infested Elite
     defender: Spartan CQB
     winRate: 1
@@ -13819,10 +13819,10 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Elite
     defender: Vulture
-    winRate: 0
+    winRate: 0.9
   - attacker: Infested Elite
     defender: Condor Gunship
-    winRate: 0
+    winRate: 1
   - attacker: Infested Elite
     defender: Chopper
     winRate: 1
@@ -13837,13 +13837,13 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Elite
     defender: Skitterer
-    winRate: 0.2
-  - attacker: Infested Elite
-    defender: Goliath
     winRate: 0
   - attacker: Infested Elite
+    defender: Goliath
+    winRate: 0.1
+  - attacker: Infested Elite
     defender: Hunter Captain
-    winRate: 0.5
+    winRate: 0.4
   - attacker: Infested Elite
     defender: Cannon Fodder
     winRate: 0
@@ -13864,7 +13864,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Elite
     defender: Infested Hornet
-    winRate: 0
+    winRate: 1
   - attacker: Infested Elite
     defender: Juggernaut
     winRate: 0.8
@@ -13873,13 +13873,13 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Elite
     defender: Infested Ghost
-    winRate: 0.5
+    winRate: 0.4
   - attacker: Infested Elite
     defender: Infested Wraith
-    winRate: 0.5
+    winRate: 0.3
   - attacker: Infested Elite
     defender: Infested Banshee
-    winRate: 0
+    winRate: 0.6
   - attacker: Infested Elite
     defender: Spawner
     winRate: 0
@@ -14083,7 +14083,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Wraith
     defender: Infested Elite
-    winRate: 0.5
+    winRate: 0.7
   - attacker: Infested Wraith
     defender: Infested Banshee
     winRate: 0
@@ -14284,13 +14284,13 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Banshee
     defender: Infested Grunt
-    winRate: 1
+    winRate: 0
   - attacker: Infested Banshee
     defender: Infested Ghost
-    winRate: 1
+    winRate: 0.1
   - attacker: Infested Banshee
     defender: Infested Elite
-    winRate: 1
+    winRate: 0.4
   - attacker: Infested Banshee
     defender: Infested Wraith
     winRate: 1

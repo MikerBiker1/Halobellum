@@ -108,5 +108,41 @@ namespace Halobellum.Tests
             Assert.Greater(a.Position.Y, 2f, "Team A unit should get past into the enemy zone.");
             Assert.Less(b.Position.Y, -2f, "Team B unit should get past into the enemy zone.");
         }
+
+        // D115 (the owner, 2026-11-08): Infested Ghosts, a ram below and plasma bolts that reach air, stood still while Infested Hornets outranged them.
+
+        private static UnitStats Hornet() => TestUnits.Unit(name: "Hornet", health: 100000f, speed: 0f, air: true, weapon: TestUnits.Weapon(damage: 0f, range: 1f));
+
+        [Test]
+        public void AUnitWhoseMainWeaponCantHitAir_GoesAfterItWithItsOtherWeapon()
+        {
+            UnitStats ghost = TestUnits.Unit(name: "Ghost", speed: 4f, filter: TargetFilter.Ground, weapon: TestUnits.Weapon(damage: 5f, range: 1.5f, type: DamageType.Melee));
+            WeaponStats bolts = TestUnits.Weapon(damage: 1f, range: 9f);
+            bolts.HasOwnTargetFilter = true;
+            bolts.TargetFilter = TargetFilter.Both;
+            ghost.Weapons = new[] { ghost.Weapons[0], bolts };
+            var sim = new BattleSimulation(_rules, 1);
+            SimUnit unit = sim.AddUnit(ghost, Team.A, new Vec2(0f, 30f));
+            SimUnit hornet = sim.AddUnit(Hornet(), Team.B, new Vec2(20f, 40f));
+            unit.UnlimitedAcquisition = true;
+            StepSeconds(sim, 6f);
+            Assert.AreSame(hornet, unit.MoveTarget);
+            Assert.LessOrEqual(Targeting.EdgeDistance(unit, hornet), 9f, "It came within its bolts' reach.");
+            Assert.Less(hornet.Health, 100000f, "And shot at it.");
+        }
+
+        [Test]
+        public void AUnitThatCantHitAirAtAll_StillWalksToIt_AsTheLastThingItDoes()
+        {
+            UnitStats tank = TestUnits.Unit(name: "Tank", speed: 4f, filter: TargetFilter.Ground, weapon: TestUnits.Weapon(damage: 5f, range: 10f));
+            var sim = new BattleSimulation(_rules, 1);
+            SimUnit unit = sim.AddUnit(tank, Team.A, new Vec2(0f, 30f));
+            SimUnit hornet = sim.AddUnit(Hornet(), Team.B, new Vec2(20f, 45f));
+            unit.UnlimitedAcquisition = true;
+            Vec2 start = unit.Position;
+            StepSeconds(sim, 3f);
+            Assert.AreSame(hornet, unit.MoveTarget);
+            Assert.Less(Vec2.Distance(unit.Position, hornet.Position), Vec2.Distance(start, hornet.Position) - 5f, "It walks toward the air unit instead of standing idle.");
+        }
     }
 }

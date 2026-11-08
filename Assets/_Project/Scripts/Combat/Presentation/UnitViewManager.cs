@@ -6,7 +6,7 @@
 // at any frame rate. Dead units disappear (UnitDied event). Health bars face the camera and show
 // only when a unit is damaged or its squad is selected; a unit with an energy shield has a blue shield
 // bar over its health bar (decision D35). Selected squads get a ring under each body.
-// A squad can be dropped in (DropSquad): it starts high above, out of sight, and falls to its spot
+// A squad can be dropped in (DropSquad): it starts high above, out of sight, and falls to its spot (or, hatched on the ground, a flier rises to its height)
 // (used for newly bought squads during deployment; looks only, the simulation is unchanged).
 // Units added during the battle (a Pelican's Marines) get their views when they appear, and fall
 // from their carrier's flying height; squads landed by drop-pod spells fall from high above.
@@ -237,6 +237,8 @@ namespace Halobellum.Presentation
                 return 0f;
             }
             progress = Mathf.Max(0f, progress);
+            // Below its spot (a negative height): it starts on the ground and rises, fast at first, then settling at its height.
+            if (view.DropHeight < 0f) return view.DropHeight * (1f - progress) * (1f - progress);
             return view.DropHeight * (1f - progress * progress);
         }
 
@@ -785,6 +787,13 @@ namespace Halobellum.Presentation
         private void OnReinforcementDropped(SimUnit carrier, int squadId)
         {
             if (carrier.IsAir) DropSquad(squadId, Time.unscaledTime, airHeight);
+            else if (SquadFlies(squadId)) DropSquad(squadId, Time.unscaledTime, -airHeight); // Hatched on the ground, it rises to its flying height (the Spawner's Swarm Form, D115).
+        }
+
+        private bool SquadFlies(int squadId)
+        {
+            foreach (View view in _views) if (view.Unit.SquadId == squadId) return view.Unit.IsAir;
+            return false;
         }
 
         /// <summary>Drop-pod spells: the landed squads fall from high above, like newly bought squads.</summary>

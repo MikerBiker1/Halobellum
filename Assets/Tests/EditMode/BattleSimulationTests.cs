@@ -82,7 +82,7 @@ namespace Halobellum.Tests
         [Test]
         public void Battle_EndsAtTheTimeLimit_WhenNobodyCanFight()
         {
-            // Two ground units that can only shoot air: neither can ever attack.
+            // Two ground units that can only shoot air: neither can ever attack. They walk up to each other (D115) and wait there.
             var sim = NewSim();
             sim.AddUnit(TestUnits.Unit(filter: TargetFilter.Air), Team.A, new Vec2(0f, -10f));
             sim.AddUnit(TestUnits.Unit(filter: TargetFilter.Air), Team.B, new Vec2(0f, 10f));

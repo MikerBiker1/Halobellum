@@ -2,6 +2,13 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## After your play tests (D115)
+- **Units go after air:** a unit whose main weapon has nothing to hit uses its other guns' targets, and failing that walks to the closest enemy even if it can't hurt it. Your Infested Ghosts now chase Infested Hornets with their plasma bolts.
+- **Level 1** shows in unit stats.
+- **Swarm Brood:** your Covenant-based game had no Swarm Forms because the tech wasn't bought. The hatched Swarm Form now rises from the ground so it's easy to see.
+- **Swarm Form:** a 4th tech, Long Range (+8 m, 300).
+- **Not checked:** the chase moves air matchups a lot (melee-plus-gun units now beat most air units at equal cost); not balance-tested in the tournament. The rise not seen in the game.
+
 ## Fourth tech, Double Shot, the range tech, the Condor, gun sounds, and balance (D114)
 - **Swarm Brood** now hatches **one** Swarm Form (a stack of five), not a squad; 200 credits.
 - **Up to 4 techs.** The Grizzly's **Double Shot** (200): 2 shells 0.3 s apart per attack, reload 20% longer.

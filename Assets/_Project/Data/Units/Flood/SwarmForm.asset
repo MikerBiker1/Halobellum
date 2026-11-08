@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 1
   turnTime180: 0.3
   isAir: 1
+  canFlank: 0
   targetFilter: 2
   weapons:
   - weaponName: Spat Bone
@@ -43,7 +44,6 @@ MonoBehaviour:
     targetFilter: 1
     airDamageMultiplier: 3
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -54,7 +54,6 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
-    windUpSeconds: 0
   - weaponName: Bone Barbs
     damagePerShot: 12
     fireInterval: 0.4
@@ -69,7 +68,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -80,7 +78,6 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
-    windUpSeconds: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -92,15 +89,11 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
-  reinforcementDrops: 1
-  reinforcementLandSeconds: 0
-  reinforcementFirstDropSeconds: 0
   formsPerBody: 5
   isFlood: 1
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
-  canFlank: 0
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -124,6 +117,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5786e9ccb6dad88351349ae9b24f582d, type: 2}
   - {fileID: 11400000, guid: d21a487b3029909605e3c15e9f7439ab, type: 2}
   - {fileID: 11400000, guid: 57297a0b92df5af068c54be5b43bef49, type: 2}
+  - {fileID: 11400000, guid: 737e9b40ac82644b542103dccda1ecf7, type: 2}
   prefab: {fileID: 7561759018118204827, guid: 730eba219d5eb4a4db2ac09993365c35, type: 3}
   keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
@@ -131,5 +125,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Aerial
   weakAgainst: Ground units
-  notes: 'Best counters (headless runner, equal cost): Marine (100%), Spartan CQB
-    (100%). First-pass M8 values (DECISIONS D38).'
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Spartan Heavy Weapons (100%). First-pass M8 values (DECISIONS D38).'

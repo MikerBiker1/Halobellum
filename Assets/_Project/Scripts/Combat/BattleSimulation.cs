@@ -894,9 +894,9 @@ namespace Halobellum.Combat
                     unit.State = UnitState.Move;
                     unit.MoveGoal = unit.Position + Forward(unit) * (unit.MoveSpeedNow * _rules.FormationLookaheadSeconds + 1f);
                 }
-                else if (BeamHolds(unit) || Targeting.IsInRange(unit, unit.Weapons[unit.MainWeaponIndex].Stats, target))
+                else if (BeamHolds(unit) || Targeting.IsInRange(unit, ReachWeapon(unit), target))
                 {
-                    unit.State = UnitState.Attack;
+                    unit.State = unit.ChaseWeaponIndex == -2 ? UnitState.Idle : UnitState.Attack; // Beside what it can't hurt, it waits there (D115).
                 }
                 else
                 {
@@ -1132,7 +1132,47 @@ namespace Halobellum.Combat
                 if (cluster != null) unit.Weapons[unit.MainWeaponIndex].Target = cluster;
             }
             unit.MoveTarget = unit.Weapons[unit.MainWeaponIndex].Target;
+            unit.ChaseWeaponIndex = -1;
+            if (unit.MoveTarget == null) ChaseWhatIsLeft(unit);
         }
+
+        /// <summary>
+        /// A unit whose main weapon has nothing to shoot goes after what its other weapons can hit, the closest first (the owner, 2026-11-08: Infested
+        /// Ghosts, rams below and plasma bolts that reach air, stood still while Infested Hornets outranged them). Failing that, once it notices enemies
+        /// everywhere, it walks to the closest enemy even if it can't hurt it, an air unit most often, as the last thing it does (D115).
+        /// </summary>
+        private void ChaseWhatIsLeft(SimUnit unit)
+        {
+            float best = float.MaxValue;
+            for (int w = 0; w < unit.Weapons.Length; w++)
+            {
+                SimUnit target = unit.Weapons[w].Target;
+                if (w == unit.MainWeaponIndex || target == null) continue;
+                float distance = Vec2.DistanceSquared(unit.Position, target.Position);
+                if (distance < best)
+                {
+                    best = distance;
+                    unit.MoveTarget = target;
+                    unit.ChaseWeaponIndex = w;
+                }
+            }
+            if (unit.MoveTarget != null || !unit.UnlimitedAcquisition) return;
+            foreach (SimUnit enemy in _units)
+            {
+                if (!Targeting.IsTargetableEnemy(unit, enemy) || enemy.Stats.IsTower) continue;
+                float distance = Vec2.DistanceSquared(unit.Position, enemy.Position);
+                if (distance < best || (distance == best && unit.MoveTarget != null && enemy.Id < unit.MoveTarget.Id))
+                {
+                    best = distance;
+                    unit.MoveTarget = enemy;
+                    unit.ChaseWeaponIndex = -2;
+                }
+            }
+        }
+
+        /// <summary>The weapon whose reach decides when the unit has come close enough to its move target: the one that has it, or the main weapon.</summary>
+        private static WeaponStats ReachWeapon(SimUnit unit) =>
+            unit.ChaseWeaponIndex >= 0 && unit.ChaseWeaponIndex < unit.Weapons.Length ? unit.Weapons[unit.ChaseWeaponIndex].Stats : unit.Weapons[unit.MainWeaponIndex].Stats;
 
         /// <summary>The enemy with the most other enemies within the unit's death-burst radius (ties: the lowest id).</summary>
         private SimUnit DensestCluster(SimUnit unit)

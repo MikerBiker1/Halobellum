@@ -186,7 +186,7 @@ for _id, _tech in THIRD_TECHS.items():
 # range tech keeps its name for it; every other unit whose main weapon is a gun gets "Long Range" as a fourth tech. Not for melee units, bombers,
 # the flame and shotgun units, or a unit whose fourth tech is one that changes how it plays (GAMEPLAY_TECHS).
 RANGE_TECH_METRES, RANGE_TECH_COST = 8, 300
-NO_RANGE_TECH = {"Longsword", "SpartanCQB", "FlamethrowerTrooper", "SwarmForm"}
+NO_RANGE_TECH = {"Longsword", "SpartanCQB", "FlamethrowerTrooper"}  # The Swarm Form has one: its spat bone at air (the owner, 2026-11-08; D115).
 for _unit in UNITS:
     _techs = TECHS.get(_unit["id"])
     if _techs is None:

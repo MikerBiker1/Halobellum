@@ -195,6 +195,11 @@ namespace Halobellum.Combat
         public Vec2 MoveGoal;
         /// <summary>The closest enemy found at the last target evaluation, which the unit walks toward.</summary>
         public SimUnit MoveTarget;
+        /// <summary>
+        /// Set when MoveTarget is not its main weapon's: the weapon that has it (0 or more), or -2 when no weapon can hit it and the unit only
+        /// walks to it, as the last thing it does (D115). -1 = its main weapon's target, as usual.
+        /// </summary>
+        public int ChaseWeaponIndex = -1;
         /// <summary>Seconds until the next target re-evaluation.</summary>
         public float RetargetTimer;
         /// <summary>Set by the movement system when this body touched a body of another squad this tick.</summary>

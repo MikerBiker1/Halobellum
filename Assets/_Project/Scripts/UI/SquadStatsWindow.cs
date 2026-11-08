@@ -370,7 +370,7 @@ namespace Halobellum.UI
         private string BuildText(UnitStats s, bool fielded, int alive, float totalHealth)
         {
             StringBuilder b = _builder.Clear();
-            b.AppendLine($"Role: {RoleName(s.Role)}    Tier {s.Tier}    Cost {s.Cost}{(s.Level > 1 ? $"    Level {s.Level}" : "")}");
+            b.AppendLine($"Role: {RoleName(s.Role)}    Tier {s.Tier}    Cost {s.Cost}    Level {Mathf.Max(1, s.Level)}"); // Level 1 too (the owner, 2026-11-08; D115).
             string packs = s.FormsPerBody > 1 ? $" in {s.SquadSize} packs" : "";
             b.AppendLine(fielded ? $"Squad size: {s.FormsInSquad}{packs}  ({alive} alive, {totalHealth:0} health left)" : $"Squad size: {s.FormsInSquad}{packs}");
             b.AppendLine($"Health: {s.MaxHealth:0} per {(s.FormsPerBody > 1 ? "pack" : "body")}    Armor: {s.ArmorType}");
