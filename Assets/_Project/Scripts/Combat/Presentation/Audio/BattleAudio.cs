@@ -354,7 +354,11 @@ namespace Halobellum.Presentation
             if (own != null && own.HasSound) return own;
             bool living = IsLiving(unit.Stats);
             if (unit.IsAir && !living)
-                return AudioCatalog.DeathAirUnsc.HasSound && BattleFactions.OfUnit(unit.Stats, unit.Team) == BattleFactions.Unsc ? AudioCatalog.DeathAirUnsc : AudioCatalog.DeathAir;
+            {
+                // A taken aircraft goes down as it would have before (D119): the Infested Hornet and the Infected Pelican crash as UNSC aircraft.
+                string faction = AudioCatalog.TakenVehicle(unit.Stats, out _, out string was) ? was : BattleFactions.OfUnit(unit.Stats, unit.Team);
+                return AudioCatalog.DeathAirUnsc.HasSound && faction == BattleFactions.Unsc ? AudioCatalog.DeathAirUnsc : AudioCatalog.DeathAir;
+            }
             float radius = unit.Radius;
             if (flood)
             {

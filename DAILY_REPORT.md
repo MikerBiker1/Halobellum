@@ -2,6 +2,13 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Taken vehicles' sounds, spell info, heavy towers (D119)
+- **Infected vehicles:** wherever they used a generated sound, they now use the normal vehicle's. The Infested Banshee's spore bomb uses the Banshee's bomb sound. The Infested Hornet and the Infected Pelican crash like UNSC aircraft.
+- **Spells:** click a spell's name in the spell bar (or Place / Move) to see what it does, when it strikes and its recharge.
+- **Towers** have heavy armor.
+- **Generated sounds still playing:** listed in the reply for D119 (deaths of non-UNSC aircraft and small vehicles, Flood bone and spore shots, Hornet bombs, Covenant melee, most spells, engine hums, drop thuds, infection start, UI hover, sell and skip).
+- **Not checked:** not seen or heard in the game; heavy towers not balance-tested. Tests pass.
+
 ## UNSC rockets and bombs heard coming down (D118)
 - `rocket or bomb flying down` now plays for every UNSC rocket, missile and bomb in flight (Longsword, M41s, Hornet, Wolverine, Mantis, Vulture, Hydra pod, Archer pod), ending as it lands. The Archer Missile Barrage and HAVOK spells keep it too.
 - **Not checked:** not heard in the game; the audio tests pass.

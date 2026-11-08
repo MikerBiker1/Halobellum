@@ -250,6 +250,14 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void Towers_HaveHeavyArmor()
+        {
+            Match match = Started(out _);
+            foreach (TowerKind kind in new[] { TowerKind.CommandCenter, TowerKind.ResearchCenter })
+                for (int level = 1; level <= 5; level++) Assert.AreEqual(ArmorType.Heavy, match.TowerStats(kind, level).ArmorType, "The owner, D119.");
+        }
+
+        [Test]
         public void TheExtraSlot_LastsOneRound()
         {
             Match match = Started(out _);

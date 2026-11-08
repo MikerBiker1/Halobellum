@@ -8,7 +8,7 @@
 //     training, or reinforcements every other round from round 4), and Skip with its bonus. Each card has
 //     its kind's border and a big picture (CardScreens, CardArt, UnitIcons).
 //     During deployment a spell bar (left) lists owned spells: Place / Move, take back, or how many
-//     rounds until recharged. Under it the Inventory holds items: drag one, and an empty hexagon
+//     rounds until recharged; a click on a spell's name shows what it does beside the bar (D119). Under it the Inventory holds items: drag one, and an empty hexagon
 //     appears over every squad without an item; drop it on one (squads with an item show it; see
 //     ItemHud). Intensive Training is
 //     an icon at the top left: select a squad, click it, confirm (decision D33).
@@ -414,6 +414,7 @@ namespace Halobellum.UI
             Panel(panel);
             TutorialHud.Mark("area:spells", panel);
             GUI.Label(new Rect(panel.x + 12f, panel.y + 8f, panel.width - 24f, 28f), HudTheme.Title("Spells"), _header);
+            Rect shownRow = default;
             for (int i = 0; i < spells.Count; i++)
             {
                 OwnedSpell spell = spells[i];
@@ -428,6 +429,10 @@ namespace Halobellum.UI
                 string status = !ready ? $"Recharging: {spell.RoundsLeft(m.Round)} round(s)"
                     : match.PlacingSpellId == spell.Id ? "Click on the field" : spell.IsPlaced ? "Placed" : "Ready";
                 GUI.Label(new Rect(row.x + 22f, row.y + 25f, row.width - 130f, 20f), status, _small);
+                // A click on the spell's name opens what it does beside the bar, and closes it again (the owner, D119).
+                if (GUI.Button(new Rect(row.x, row.y, row.width - 112f, row.height), GUIContent.none, GUIStyle.none))
+                    _spellInfoId = _spellInfoId == spell.Id ? -1 : spell.Id;
+                if (_spellInfoId == spell.Id) shownRow = row;
                 if (!ready) continue;
                 if (match.PlacingSpellId == spell.Id)
                 {
@@ -435,12 +440,57 @@ namespace Halobellum.UI
                 }
                 else if (spell.IsPlaced)
                 {
-                    if (GUI.Button(new Rect(row.xMax - 104f, row.y + 8f, 62f, 32f), "Move", _button)) match.BeginPlacingSpell(spell);
+                    if (GUI.Button(new Rect(row.xMax - 104f, row.y + 8f, 62f, 32f), "Move", _button)) PlaceSpell(spell);
                     if (GUI.Button(new Rect(row.xMax - 38f, row.y + 8f, 30f, 32f), "X", _button)) match.UnplaceSpell(spell);
                 }
-                else if (GUI.Button(new Rect(row.xMax - 104f, row.y + 8f, 96f, 32f), "Place", _button)) match.BeginPlacingSpell(spell);
+                else if (GUI.Button(new Rect(row.xMax - 104f, row.y + 8f, 96f, 32f), "Place", _button)) PlaceSpell(spell);
             }
+            OwnedSpell shown = spells.Find(s => s.Id == _spellInfoId);
+            if (shown == null) _spellInfoId = -1;
+            else DrawSpellInfo(shown.Stats, new Vector2(panel.xMax + 8f, shownRow.y));
             return panel.yMax + 6f;
+        }
+
+        /// <summary>The spell whose card is open beside the spell bar, or -1.</summary>
+        private int _spellInfoId = -1;
+
+        /// <summary>Starts placing a spell, with what it does shown beside the bar while it is placed.</summary>
+        private void PlaceSpell(OwnedSpell spell)
+        {
+            _spellInfoId = spell.Id;
+            match.BeginPlacingSpell(spell);
+        }
+
+        /// <summary>What a spell does (D119): its effect with its numbers, its description, when it strikes and how long it takes to recharge, beside the spell bar.</summary>
+        private void DrawSpellInfo(SpellStats stats, Vector2 at)
+        {
+            const float width = 380f, pad = 12f;
+            string effects = stats.EffectsText();
+            if (!string.IsNullOrEmpty(effects)) effects = char.ToUpperInvariant(effects[0]) + effects.Substring(1) + ".";
+            var lines = new List<string>();
+            if (stats.DelaySeconds > 0.05f) lines.Add($"Strikes {stats.DelaySeconds:0.#}\u00A0s after the battle starts.");
+            lines.Add($"Recharge: {stats.CooldownRounds} round{(stats.CooldownRounds == 1 ? "" : "s")} after use.");
+            string footer = string.Join("\n", lines);
+            float inner = width - 2f * pad;
+            float effectsHeight = _wrap.CalcHeight(new GUIContent(effects), inner);
+            float descriptionHeight = string.IsNullOrEmpty(stats.Description) ? 0f : _wrapDim.CalcHeight(new GUIContent(stats.Description), inner);
+            float footerHeight = _wrapDim.CalcHeight(new GUIContent(footer), inner);
+            float height = pad + 30f + effectsHeight + 6f + descriptionHeight + (descriptionHeight > 0f ? 8f : 0f) + footerHeight + pad;
+            var panel = new Rect(at.x, Mathf.Min(at.y, HudScale.ScaledHeight(_scale) - height - 10f), width, height);
+            Panel(panel);
+            TutorialHud.Mark("area:spellinfo", panel);
+            float y = panel.y + pad;
+            GUI.Label(new Rect(panel.x + pad, y, inner - 36f, 28f), HudTheme.Title(stats.Name), _header);
+            if (GUI.Button(new Rect(panel.xMax - pad - 30f, y, 30f, 28f), "X", _button)) _spellInfoId = -1;
+            y += 30f;
+            GUI.Label(new Rect(panel.x + pad, y, inner, effectsHeight), effects, _wrap);
+            y += effectsHeight + 6f;
+            if (descriptionHeight > 0f)
+            {
+                GUI.Label(new Rect(panel.x + pad, y, inner, descriptionHeight), stats.Description, _wrapDim);
+                y += descriptionHeight + 8f;
+            }
+            GUI.Label(new Rect(panel.x + pad, y, inner, footerHeight), footer, _wrapDim);
         }
 
         private const float ShopPanelWidth = 500f, ShopPicture = 50f;

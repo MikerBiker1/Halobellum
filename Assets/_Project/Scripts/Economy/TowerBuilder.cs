@@ -27,7 +27,7 @@ namespace Halobellum.Economy
             return new UnitStats
             {
                 Name = Match.TowerName(kind), Role = UnitRole.Tank, SquadSize = 1, MaxHealth = rules.TowerBaseHealth * MathF.Pow(2f, level - 1),
-                ArmorType = ArmorType.Light, CollisionRadius = rules.TowerRadius, ImmuneToInfection = true, TargetFilter = TargetFilter.Ground,
+                ArmorType = ArmorType.Heavy, CollisionRadius = rules.TowerRadius, ImmuneToInfection = true, TargetFilter = TargetFilter.Ground,
                 Shockwave = new ShockwaveStats
                 {
                     Kind = kind, Seconds = rules.TowerShockwaveSeconds[level - 1], SpeedMultiplier = rules.ShockwaveSpeedMultiplier,

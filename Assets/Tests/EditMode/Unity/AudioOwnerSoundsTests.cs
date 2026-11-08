@@ -3,7 +3,7 @@
 // rest keep their kind's; the M60 is every machine gun and chaingun, the autocannons have their own; the guns that fire fast loop; a UI
 // file named without a faction serves every faction; the owner's files are turned down to their slot's loudness, and the generated ones
 // play as they are; the Glassing Beam starts ahead of its strike; the nodes of light land by size; a drawn round has its stinger; an aircraft
-// falling as it dies is heard diving, and the strikes from the sky coming down (D117).
+// falling as it dies is heard diving, and the strikes from the sky coming down (D117); the Flood's taken vehicles sound as they did (D119).
 // Depends on: Halobellum.Presentation, Halobellum.Combat, Halobellum.Core, Halobellum.Units, NUnit, UnityEditor.
 
 using Halobellum.Combat;
@@ -358,6 +358,33 @@ namespace Halobellum.Tests
             Assert.AreEqual(0f, BattleAudio.WindUpSkip(2.5f, 1f), 1e-4f, "At 1x the file starts with the wind-up.");
             Assert.AreEqual(2.42f - 1.25f, BattleAudio.WindUpSkip(2.5f, 2f), 1e-4f, "At 2x the shot comes 1.25 s later: start that much before the bang.");
             Assert.AreEqual(2.42f - 0.625f, BattleAudio.WindUpSkip(2.5f, 4f), 1e-4f);
+        }
+
+        [TestCase("FloodCovenant/InfestedBanshee", "Spore Bomb", "Covenant/Banshee", "Fuel Rod Bomb")]
+        [TestCase("FloodCovenant/InfestedBanshee", "Scavenged Plasma Cannons", "Covenant/Banshee", "Plasma Cannons")]
+        [TestCase("FloodCovenant/InfestedGhost", "Scavenged Plasma Bolts", "Covenant/Ghost", "Plasma Bolts")]
+        [TestCase("FloodCovenant/InfestedWraith", "Scavenged Mortar", "Covenant/Wraith", "Plasma Mortar")]
+        [TestCase("FloodUNSC/InfestedHornet", "Spore Bombs", "UNSC/Hornet", "Bombs")]
+        [TestCase("FloodUNSC/InfestedHornet", "Scavenged Rockets", "UNSC/Hornet", "Rockets")]
+        [TestCase("FloodUNSC/InfestedScorpion", "Scavenged Cannon", "UNSC/Scorpion", "M512 Cannon")]
+        [TestCase("FloodUNSC/InfestedWarthog", "Scavenged Machine Gun", "UNSC/Warthog", "M41 Machine Gun")]
+        public void ATakenVehiclesGun_SoundsAsItDidOnTheVehicle(string taken, string takenWeapon, string was, string wasWeapon)
+        {
+            string wasFaction = was.StartsWith("UNSC") ? BattleFactions.Unsc : BattleFactions.Covenant;
+            Assert.AreSame(Fire(was, wasWeapon, wasFaction), Fire(taken, takenWeapon, BattleFactions.Flood), "D119.");
+        }
+
+        [Test]
+        public void ATakenAircraft_CrashesAsItWouldHaveBefore()
+        {
+            BattleFactions.Set(BattleFactions.Flood, BattleFactions.Covenant);
+            try
+            {
+                SfxCue unscCrash = AudioCatalog.DeathAirUnsc.HasSound ? AudioCatalog.DeathAirUnsc : AudioCatalog.DeathAir;
+                Assert.AreSame(unscCrash, BattleAudio.DeathCue(Body("FloodUNSC/InfestedHornet")), "D119: a Hornet still.");
+                Assert.AreSame(AudioCatalog.DeathAir, BattleAudio.DeathCue(Body("FloodCovenant/InfestedBanshee")), "As the Banshee.");
+            }
+            finally { BattleFactions.Set(BattleFactions.Unsc, BattleFactions.Covenant); }
         }
     }
 }

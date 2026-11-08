@@ -373,9 +373,65 @@ namespace Halobellum.Presentation
             if (WindUpFor(weapon) != null) return null; // Its shot is in the sound of its wind-up.
             SfxCue own = OwnFire(weapon, shooter);
             if (own != null && own.HasSound) return own;
+            // A taken vehicle's gun sounds as it did on the vehicle (D119): the Infested Banshee's Spore Bomb as the Banshee's Fuel Rod Bomb.
+            if (TakenVehicle(shooter, out _, out string wasFaction) && WeaponItWas.TryGetValue(weapon.Name ?? "", out string was))
+            {
+                if (!Before.TryGetValue(weapon, out WeaponStats before))
+                {
+                    before = weapon.Clone();
+                    before.Name = was;
+                    Before[weapon] = before;
+                }
+                own = OwnFire(before, shooter);
+                if (own != null && own.HasSound) return own;
+                weapon = before;
+                faction = wasFaction;
+            }
             WeaponFeelKind kind = WeaponFeel.For(weapon);
             if (kind == WeaponFeelKind.Beam && BeamCharge.HasSound) return null;
             return Fire(kind, faction);
+        }
+
+        /// <summary>The Flood's vehicles and what each was before it was taken, with that vehicle's faction (D119): they sound as it did, not as generated stand-ins.</summary>
+        private static readonly Dictionary<string, (string Was, string Faction)> TakenVehicles = new Dictionary<string, (string, string)>
+        {
+            { "Infested Banshee", ("Banshee", BattleFactions.Covenant) },
+            { "Infested Ghost", ("Ghost", BattleFactions.Covenant) },
+            { "Infested Wraith", ("Wraith", BattleFactions.Covenant) },
+            { "Infected Phantom", ("Covenant Phantom", BattleFactions.Covenant) },
+            { "Infested Hornet", ("Hornet", BattleFactions.Unsc) },
+            { "Infested Scorpion", ("Scorpion", BattleFactions.Unsc) },
+            { "Infested Warthog", ("Warthog", BattleFactions.Unsc) },
+            { "Infected Pelican", ("Pelican", BattleFactions.Unsc) },
+        };
+
+        /// <summary>A taken vehicle's weapons by the vehicle's weapon each was (D119).</summary>
+        private static readonly Dictionary<string, string> WeaponItWas = new Dictionary<string, string>
+        {
+            { "Spore Bomb", "Fuel Rod Bomb" }, // The Infested Banshee.
+            { "Scavenged Plasma Cannons", "Plasma Cannons" },
+            { "Scavenged Plasma Bolts", "Plasma Bolts" },
+            { "Scavenged Mortar", "Plasma Mortar" },
+            { "Spore Bombs", "Bombs" }, // The Infested Hornet.
+            { "Scavenged Rockets", "Rockets" },
+            { "Scavenged Cannon", "M512 Cannon" },
+            { "Scavenged Machine Gun", "M41 Machine Gun" },
+        };
+
+        /// <summary>A taken vehicle's weapon as it was on the vehicle, made once each.</summary>
+        private static readonly Dictionary<WeaponStats, WeaponStats> Before = new Dictionary<WeaponStats, WeaponStats>();
+
+        /// <summary>True for one of the Flood's vehicles that was another faction's (the Infested Hornet was a UNSC Hornet), with what it was.</summary>
+        public static bool TakenVehicle(UnitStats stats, out string was, out string faction)
+        {
+            if (stats != null && stats.Name != null && TakenVehicles.TryGetValue(stats.Name, out (string Was, string Faction) taken))
+            {
+                was = taken.Was;
+                faction = taken.Faction;
+                return true;
+            }
+            was = faction = null;
+            return false;
         }
 
         /// <summary>

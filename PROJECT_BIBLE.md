@@ -151,7 +151,7 @@ A unit can be unlocked and bought in the same round. Buying a squad is limited t
 
 **Towers (D55).** Each side has two towers in the middle of its zone, the Command Center on its own left and the Research Center on its own right. They make two lanes to defend. Both are rebuilt for every battle, and levels last for the match. A tower is a ground target like any other, but isn't part of the army: it doesn't keep a battle going, deals no base damage and gives no XP.
 
-- **Level:** 1 to 5, 100 credits each. A level 1 tower has 150 health, and each level doubles it.
+- **Level:** 1 to 5, 100 credits each. A level 1 tower has 150 health, and each level doubles it. Towers have heavy armor (D119).
 - **XP:** the squad that destroys it earns the XP of a level 1 squad of the tier of the tower's level (150, 275, 450, 800), and for level 5, of a level 2 Titan (1,200).
 - **Shockwave:** its fall weakens its side's whole army, by 40% in speed, damage and rate of fire, and makes it take 40% more damage. It lasts 10, 8, 6, 4 or 2 seconds by the tower's level. A second fall adds its time, not its severity.
 - **Command Center sells,** each once a round: an extra squad slot for the round (50), a one-use Oil Zone of 8 x 45 m (150), Rapid Resupply (free: +200 now, 300 less next round), Elite Recruitment (100: squads bought this round are level 2, at half their price more).
@@ -566,6 +566,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-08 | No Infested Grunt; the Spawner releases two Infection Forms and two Combat Forms in turn; the Sparrowhawk costs 250 and the Skitterer 125 | Per the project owner (D116) |
 | 2026-11-08 | The SMG and the Ghost sound every shot; an aircraft falling as it dies is heard diving, then crashing as it lands; the Longsword has its own bomb sound; the Archer missiles and the HAVOK are heard coming down | Per the project owner (D117) |
 | 2026-11-08 | Every UNSC rocket, missile and bomb is heard coming down, ending as it lands | Per the project owner (D118) |
+| 2026-11-08 | Taken Flood vehicles use their original vehicle's sounds instead of generated ones; clicking a spell shows what it does; towers have heavy armor | Per the project owner (D119) |
 
 ## 18. Assumptions to confirm
 
