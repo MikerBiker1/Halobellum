@@ -1,7 +1,8 @@
 // MenuCinematicSky.shader
 // The cinematic main menu's sky (D94): a storm at dusk over a battle. A bruised gradient from a burning horizon to a dark top; the low sun
 // tearing through a gap in heavy, fast-moving clouds lit from beneath by the fires along the horizon; an alien warship far off, its belly
-// lights glowing, burning the land with a glassing beam whose foot flares on the horizon; and lightning, which MenuCinematic sets off
+// lights glowing, burning the land with a glassing beam whose foot flares on the horizon (off since D104, _ShipOn: the owner's supercarrier
+// model flies there now, MenuCinematicBuilder); and lightning, which MenuCinematic sets off
 // (_MenuFlash, _MenuFlashDirection: globals), lighting the clouds around its stroke and drawing a jagged bolt. All worked out per pixel
 // from the view direction, so no texture is needed; values above 1 feed the camera's bloom. Set by MenuCinematicBuilder; used nowhere else.
 // Original work. Depends on: nothing.
@@ -25,6 +26,7 @@ Shader "Halobellum/MenuCinematicSky"
         _ShipColor("Warship", Color) = (0.07, 0.055, 0.09, 1)
         _ShipLights("Warship's lights", Color) = (1.2, 0.5, 3.2, 1)
         _BeamColor("Glassing beam", Color) = (2.4, 0.8, 2.0, 1)
+        _ShipOn("Draw the warship and its beam (0 since D104: the owner's supercarrier model flies there)", Range(0, 1)) = 1
     }
 
     SubShader
@@ -42,7 +44,7 @@ Shader "Halobellum/MenuCinematicSky"
 
             float4 _SunDirection, _ShipDirection;
             float4 _Zenith, _Middle, _Horizon, _HorizonSun, _SunColor, _CloudLit, _CloudDark, _FireGlow, _FlashColor, _ShipColor, _ShipLights, _BeamColor;
-            float _CloudAmount, _ShipSize;
+            float _CloudAmount, _ShipSize, _ShipOn;
             // Set by MenuCinematic for the whole scene, so not properties: a material's own value would hide them.
             float _MenuFlash;
             float4 _MenuFlashDirection;
@@ -210,7 +212,8 @@ Shader "Halobellum/MenuCinematicSky"
 
                 // The warship, far off under the clouds, hazed by the distance, and its glassing beam.
                 float lights, rim;
-                float ship = Ship(direction, lights, rim);
+                float ship = Ship(direction, lights, rim) * _ShipOn;
+                lights *= _ShipOn;
                 float3 hazeColor = lerp(horizon, _Middle.rgb, smoothstep(0.0, 0.22, height));
                 float3 hull = lerp(_ShipColor.rgb, hazeColor, 0.3) + _SunColor.rgb * rim * 0.06 + _FlashColor.rgb * _MenuFlash * 0.04;
                 color = lerp(color, hull, ship);
@@ -224,14 +227,14 @@ Shader "Halobellum/MenuCinematicSky"
                 float elevationHere = asin(clamp(direction.y, -1.0, 1.0));
                 float beamAcross = AngleBetween(azimuth, Azimuth(mouth)) * cos(elevationHere);
                 float flicker = 0.88 + 0.12 * sin(time * 29.0) * sin(time * 7.3 + 1.0);
-                float below = step(elevationHere, mouthHeight) * smoothstep(-0.02, 0.0, elevationHere);
+                float below = step(elevationHere, mouthHeight) * smoothstep(-0.02, 0.0, elevationHere) * _ShipOn;
                 float core = exp(-beamAcross * beamAcross / 0.0000045);
                 float glow = exp(-abs(beamAcross) / 0.006);
                 color += _BeamColor.rgb * (core * 2.2 + glow * 0.25) * below * flicker;
                 // Where it strikes the ground, beyond the hills: a flare and a wide glow along the horizon.
                 float2 foot = float2(beamAcross / 0.09, (elevationHere + 0.005) / 0.025);
-                color += (_BeamColor.rgb * 0.35 + _FireGlow.rgb * 0.6) * exp(-dot(foot, foot)) * flicker;
-                color += _FireGlow.rgb * exp(-abs(beamAcross) / 0.2) * exp(-max(elevationHere, 0.0) / 0.012) * 0.35;
+                color += (_BeamColor.rgb * 0.35 + _FireGlow.rgb * 0.6) * exp(-dot(foot, foot)) * flicker * _ShipOn;
+                color += _FireGlow.rgb * exp(-abs(beamAcross) / 0.2) * exp(-max(elevationHere, 0.0) / 0.012) * 0.35 * _ShipOn;
 
                 // Below the horizon nothing shows but the ground; keep it the horizon's colour for any gap.
                 if (direction.y < 0.0) color = horizon * 0.5;

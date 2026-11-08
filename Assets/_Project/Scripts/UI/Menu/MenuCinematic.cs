@@ -119,6 +119,11 @@ namespace Halobellum.UI
         [Tooltip("The walker's glowing panels at rest: this share of their material's colour, and of its glow; and the share of its glow as the beam peaks.")]
         public float panelColorShare = 0.12f, panelGlowAtRest = 0.03f, panelGlowFiring = 0.5f;
 
+        [Header("The supercarrier's glassing beam")]
+        [Tooltip("The beam's lines (a white core and a wide glow, D104), each flickering about its own width.")]
+        public LineRenderer[] glassing = Array.Empty<LineRenderer>();
+        public float[] glassingWidths = Array.Empty<float>();
+
         [Header("The storm")]
         public Light lightning;
         public float lightningIntensity = 3f;
@@ -260,7 +265,11 @@ namespace Halobellum.UI
                 _hoverTurn[i] = hovers[i].rotation;
             }
             FindMouth();
-            if (_kit == null && beamFrom != null) _kit = new EffectKit(transform);
+            if (_kit == null && beamFrom != null)
+            {
+                _kit = new EffectKit(transform);
+                _kit.TestDepth(); // So the walker's own body hides its mouth's glow when the camera is behind it (D104).
+            }
             var block = new MaterialPropertyBlock();
             foreach (Figure figure in figures)
             {
@@ -302,6 +311,11 @@ namespace Halobellum.UI
             }
             Walk(time, delta);
             FireBeam(time, Mathf.Max(0f, delta));
+            float glassingFlicker = 0.86f + 0.14f * Mathf.Sin(time * 29f) * Mathf.Sin(time * 7.3f + 1f);
+            for (int i = 0; i < glassing.Length && i < glassingWidths.Length; i++)
+            {
+                if (glassing[i] != null) glassing[i].widthMultiplier = glassingWidths[i] * glassingFlicker;
+            }
             Storm(time);
             if (view != null)
             {

@@ -115,6 +115,20 @@ namespace Halobellum.Presentation
         /// <summary>The most dust the layer may hold now (for tests).</summary>
         public int DustLimit => _dust.Max;
 
+        /// <summary>
+        /// Glows normally shine over everything, so that a flash reads over the bodies from the game's camera. In a close shot (the main menu,
+        /// D104) that shows a Scarab's mouth through its own back: after this, glows hide behind what stands in front of them, fading where they
+        /// meet it.
+        /// </summary>
+        public void TestDepth()
+        {
+            foreach (Layer layer in new[] { _glow, _headGlow })
+            {
+                layer.Material.SetFloat("_ZTest", (float)UnityEngine.Rendering.CompareFunction.LessEqual);
+                layer.Material.SetFloat("_SoftFade", 1.5f);
+            }
+        }
+
         /// <summary>How many strands were drawn last frame (for tests).</summary>
         public int StrandsShown => _strandsShown;
 

@@ -26,6 +26,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _CloudAmount: 0.7
+    - _ShipOn: 0
     - _ShipSize: 0.11
     m_Colors:
     - _BeamColor: {r: 2.4, g: 0.8, b: 2, a: 1}

@@ -2,6 +2,11 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The menu: your supercarrier, the vehicles firing, no glow through the Scarab (D104)
+- **In the menu:** your Covenant supercarrier hangs far off over the hills in place of the drawn warship, its glassing beam falling to the burning land behind them. The Mantises fire their chaingun and rockets, Ghosts strafe with plasma, the Scorpions fire more often. The Scarab's mouth glow no longer shows through its back when the camera is behind it. Picture: `Docs/M10/menu_d104.jpg`.
+- **Checked:** the menu tests; pictures of every shot and of the menu in the test game.
+- **Not checked:** played by hand.
+
 ## The beam's backdraft gone, an Elite in the Wraith, the Chopper's rider on its seat (D103)
 - **In the game:** the Scarab's beam no longer throws a column of light out behind its mouth. The Wraith's hatch has an Elite sitting in it (a Combat Form in the infested Wraith). The Chopper's Brute sits on the low saddle behind the tank with his feet on the rests, no longer through the tank.
 - **Menu:** the racing Ghosts and Warthogs keep clear of everything standing; the beam shows nothing behind the Scarab; the Wraiths have their Elites.

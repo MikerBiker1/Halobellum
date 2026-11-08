@@ -7,9 +7,9 @@
 // gathering energy into its glowing mouth and sweeping the human line with its beam, drawn as in battle (D98). The Mantises are animated
 // (D97) and the open seats have their drivers (D99), as in battle; a wreck has none. The Flood holds the south-east among growths of its biomass, spores drifting over it: infested
 // Wraiths, Scorpions, Warthogs and Ghosts, an infected Phantom, infested Banshees and Hornets and an infected Pelican in the air. Only the
-// vehicles' own guns fire, now and then: tank shells and mortars burst where they land; blasts go off among each army; fires burn in the
+// vehicles' own guns fire (the Scorpions' shells, the Mantises' chaingun tracers and rockets, the Ghosts' plasma, D104), now and then: tank shells and mortars burst where they land; blasts go off among each army; fires burn in the
 // wrecks; smoke rises in columns and fog lies low; far off, lightning strikes, flashes light the horizon and an alien warship glasses the land
-// beyond the hills (MenuCinematicSky.shader). Every shot keeps its subject in the right half of the screen, where the menu's own dark panel
+// beyond the hills: the owner's supercarrier (D104), its beam drawn in the scene (MenuDistant shaders), the sky's own drawn warship off. Every shot keeps its subject in the right half of the screen, where the menu's own dark panel
 // (MainMenuHud) leaves the picture clear.
 // The models and the Mantis's baked body are the project's own; the ground, ruins, growths, spires, sky, smoke and glows are made here and written to
 // Art/MenuCinematic. The menu before this one is kept as MainMenuClassic (MainMenuSceneBuilder), chosen in Settings > Menu background.
@@ -98,7 +98,7 @@ namespace Halobellum.EditorTools
                     if (args[i] == "-menuPreviewOut") folder = args[i + 1];
                 }
                 Directory.CreateDirectory(folder);
-                float[] times = { 4f, 9f, 14f, 19f, 24.22f, 29f, 34f, 39f, 45f, 49.5f };
+                float[] times = { 4f, 9f, 14f, 19f, 22.5f, 29f, 34f, 39f, 45f, 49.5f };
                 foreach (float time in times) Preview(cinematic, time, Path.Combine(folder, $"menu_cinematic_{time:00.0}.png"));
             }
             catch (Exception e) { Debug.LogError("Previewing the main menu failed: " + e); exitCode = 1; }
@@ -184,6 +184,7 @@ namespace Halobellum.EditorTools
             BuildWalker(cinematic, art);
             BuildEffects(cinematic, art, parts);
             BuildFlyers(art, parts);
+            BuildCarrier(cinematic, art, parts);
             BuildShots(cinematic);
 
             cinematic.figures = parts.figures.ToArray();
@@ -220,7 +221,8 @@ namespace Halobellum.EditorTools
         {
             public Texture2D glow, puff, flame;
             public Material smoke, fog, ember, ash, spore;
-            public Material shell, mortar, mortarTrail, fire, spark, blueSpark, flash, blueFlash, farFlash;
+            public Material shell, mortar, mortarTrail, fire, spark, blueSpark, flash, blueFlash, farFlash, tracer, rocket, rocketTrail, ghostPlasma, floodPlasma;
+            public Texture2D beamGlow;
             public Material engine, covenantEngine, floodGlow, covenantGlow, redLight;
             public Material charred, concrete, rock, bark, growth, growthDark, spire, spireLine, metal;
 
@@ -236,6 +238,12 @@ namespace Halobellum.EditorTools
                 spore = MakeParticleMaterial("CinematicSpore", glow, true, new Color(1.3f, 1.7f, 0.45f));
                 shell = MakeParticleMaterial("CinematicShell", glow, true, new Color(6f, 2.8f, 0.9f));
                 mortar = MakeParticleMaterial("CinematicMortar", glow, true, new Color(1.1f, 2.1f, 6.5f));
+                tracer = MakeParticleMaterial("CinematicTracer", glow, true, new Color(4.2f, 1.8f, 0.5f));
+                rocket = MakeParticleMaterial("CinematicRocket", glow, true, new Color(6f, 3f, 1.2f));
+                rocketTrail = MakeParticleMaterial("CinematicRocketTrail", puff, false, new Color(0.62f, 0.6f, 0.58f));
+                ghostPlasma = MakeParticleMaterial("CinematicGhostPlasma", glow, true, new Color(0.8f, 1.8f, 5.5f));
+                floodPlasma = MakeParticleMaterial("CinematicFloodPlasma", glow, true, new Color(1.9f, 2.6f, 0.7f));
+                beamGlow = SavePng("CinematicBeamGlow", MakeBeamGlow(64), true, TextureWrapMode.Clamp);
                 mortarTrail = MakeParticleMaterial("CinematicMortarTrail", glow, true, new Color(0.4f, 0.9f, 3.2f));
                 fire = MakeParticleMaterial("CinematicFire", flame, true, new Color(4.2f, 1.7f, 0.5f));
                 spark = MakeParticleMaterial("CinematicSpark", glow, true, new Color(7f, 3.2f, 1f));
@@ -276,6 +284,7 @@ namespace Halobellum.EditorTools
             Material sky = SaveMaterial("MenuCinematicSky", new Material(shader));
             sky.SetVector("_SunDirection", sun);
             sky.SetVector("_ShipDirection", Direction(ShipAzimuth, ShipElevation));
+            sky.SetFloat("_ShipOn", 0f); // The owner's supercarrier flies there now (D104, BuildCarrier).
             EditorUtility.SetDirty(sky);
 
             RenderSettings.skybox = sky;
@@ -343,6 +352,7 @@ namespace Halobellum.EditorTools
             UniversalAdditionalCameraData data = camera.GetUniversalAdditionalCameraData();
             data.renderPostProcessing = true;
             data.antialiasing = AntialiasingMode.SubpixelMorphologicalAntiAliasing;
+            data.requiresDepthTexture = true; // The beam's glows fade softly where the walker stands in front of them (D104).
             cinematic.view = camera;
 
             // Ash and embers drifting just in front of the lens, wherever it is.
@@ -837,7 +847,7 @@ namespace Halobellum.EditorTools
         /// A vehicle with an animated body (the Mantis, D97), playing one of its clips again and again on the menu's clock. Not a soldier: the
         /// menu has none (the owner, D94).
         /// </summary>
-        private static void AddBakedVehicle(Parts parts, Transform parent, string bodyName, BakedAnimation role, Vector3 position, float yaw, float scale)
+        private static (Transform Thing, BakedBodyDefinition Body) AddBakedVehicle(Parts parts, Transform parent, string bodyName, BakedAnimation role, Vector3 position, float yaw, float scale)
         {
             var body = AssetDatabase.LoadAssetAtPath<BakedBodyDefinition>(BodyFolder + bodyName + ".asset");
             if (body == null || !body.IsReady) throw new InvalidOperationException("Missing baked body " + bodyName);
@@ -852,6 +862,7 @@ namespace Halobellum.EditorTools
             renderer.shadowCastingMode = ShadowCastingMode.Off;
             parts.figures.Add(new MenuCinematic.Figure { renderer = renderer, firstRow = clip.firstRow, frames = clip.frames, start = parts.Range(-10f, 0f), pace = 1f });
             Blocked.Add((new Vector2(position.x, position.z), 2.5f * scale, thing.transform));
+            return (thing.transform, body);
         }
 
         /// <summary>
@@ -924,8 +935,8 @@ namespace Halobellum.EditorTools
             PlaceVehicle("Scorpion_Model", army, -75f, -10f, 94f, 1f);
             PlaceVehicle("Scorpion_Model", army, -80f, 24f, 86f, 1f);
             PlaceVehicle("Scorpion_Model", army, -73f, 56f, 100f, 1f);
-            AddBakedVehicle(parts, army, "Mantis", BakedAnimation.Shooting, Ground(-70f, 4f), 84f, 1.25f);
-            AddBakedVehicle(parts, army, "Mantis", BakedAnimation.Shooting, Ground(-68f, 39f), 96f, 1.25f);
+            AddMantisGuns(art, army, AddBakedVehicle(parts, army, "Mantis", BakedAnimation.Shooting, Ground(-70f, 4f), 84f, 1.25f));
+            AddMantisGuns(art, army, AddBakedVehicle(parts, army, "Mantis", BakedAnimation.Shooting, Ground(-68f, 39f), 96f, 1.25f));
             PlaceVehicle("Elephant_Model", army, -138f, -8f, 72f, 1.5f);
             PlaceVehicle("Warthog_Model", army, -96f, -72f, 58f, 1.25f);
             PlaceVehicle("Warthog_Model", army, -101f, 44f, 116f, 1.25f);
@@ -951,10 +962,10 @@ namespace Halobellum.EditorTools
                 AddMarcher(parts, hog.transform, from, toward, 12f, 120f);
             }
 
-            // The tanks' and the Mantises' guns, now and then: a shell arcing a little and bursting where it lands.
-            Vector3[] guns = { Ground(-75f, -48f, 2.6f), Ground(-72f, -10f, 2.6f), Ground(-77f, 24f, 2.6f), Ground(-70f, 56f, 2.6f), Ground(-67f, 4f, 4.2f), Ground(-65f, 39f, 4.2f) };
-            float[] aims = { 104f, 66f, 58f, 72f, 118f, 62f };
-            for (int i = 0; i < guns.Length; i++) AddShells(art, army, guns[i], aims[i], 0.16f + i * 0.015f, i);
+            // The Scorpions' guns: a shell every three seconds or so, arcing a little and bursting where it lands (the owner wanted to see them, D104).
+            Vector3[] guns = { Ground(-75f, -48f, 2.6f), Ground(-72f, -10f, 2.6f), Ground(-77f, 24f, 2.6f), Ground(-70f, 56f, 2.6f) };
+            float[] aims = { 104f, 66f, 58f, 72f };
+            for (int i = 0; i < guns.Length; i++) AddShells(art, army, guns[i], aims[i], 0.3f + i * 0.04f, i);
         }
 
         private static void BuildCovenant(MenuCinematic cinematic, Art art, Parts parts)
@@ -979,6 +990,7 @@ namespace Halobellum.EditorTools
             foreach (Vector2 spot in waiting)
             {
                 GameObject ghost = PlaceVehicle("Ghost_Model", army, spot.x, spot.y, Face(spot.x, spot.y), 1.3f, null, 0.7f);
+                AddGhostGuns(art.ghostPlasma, ghost, parts.Range(0f, 2.5f));
                 parts.hovers.Add(ghost.transform);
             }
             // Phantoms hovering over the army.
@@ -999,6 +1011,7 @@ namespace Halobellum.EditorTools
                 GameObject ghost = PlaceVehicle("Ghost_Model", army, 200f, 200f, 0f, 1.3f, null, 0.6f);
                 (Vector2 from, Vector2 toward) = ClearLine(ghost.transform, 15f, 200f, () => (new Vector2(Range(170f, 240f), Range(140f, 250f)), new Vector2(-40f, Range(-40f, 80f))));
                 AddMarcher(parts, ghost.transform, from, toward, 15f, 200f, 0.6f);
+                if (i % 2 == 0) AddGhostGuns(art.ghostPlasma, ghost, parts.Range(0f, 2.5f)); // Some of them strafe as they race in.
             }
         }
 
@@ -1052,6 +1065,7 @@ namespace Halobellum.EditorTools
                 GameObject ghost = PlaceVehicle("InfestedGhost_Model", horde, 180f, -180f, 0f, 1.3f, null, 0.6f);
                 (Vector2 from, Vector2 toward) = ClearLine(ghost.transform, 13f, 200f, () => (new Vector2(Range(150f, 220f), Range(-210f, -120f)), new Vector2(-40f, Range(-70f, 0f))));
                 AddMarcher(parts, ghost.transform, from, toward, 13f, 200f, 0.6f);
+                if (i % 2 == 1) AddGhostGuns(art.floodPlasma, ghost, parts.Range(0f, 2.5f));
             }
 
             // Spores drifting over the creep.
@@ -1383,6 +1397,167 @@ namespace Halobellum.EditorTools
             ParticleSystem.SubEmittersModule sub = shells.subEmitters;
             sub.enabled = true;
             sub.AddSubEmitter(flash, ParticleSystemSubEmitterType.Birth, ParticleSystemSubEmitterProperties.InheritNothing);
+        }
+
+        /// <summary>
+        /// A Mantis's guns, from its own muzzles as its baked body has them (D97): its chaingun's tracers, five a second as its firing clip
+        /// kicks five times a second, and a rocket from its other arm every few seconds, trailing smoke and bursting where it lands.
+        /// </summary>
+        private static void AddMantisGuns(Art art, Transform parent, (Transform Thing, BakedBodyDefinition Body) mantis)
+        {
+            Transform body = mantis.Thing;
+            Quaternion ahead = body.rotation * Quaternion.Euler(-1.5f, 0f, 0f);
+
+            ParticleSystem tracers = MakeParticles("Mantis Chaingun", parent, body.TransformPoint(mantis.Body.muzzle), ahead, art.tracer);
+            ParticleSystem.MainModule main = tracers.main;
+            main.startLifetime = 1.1f;
+            main.startSpeed = new ParticleSystem.MinMaxCurve(150f, 170f);
+            main.startSize = 0.22f;
+            main.gravityModifier = 0.05f;
+            main.maxParticles = 30;
+            Rate(tracers, 5f);
+            ParticleSystem.ShapeModule shape = tracers.shape;
+            shape.shapeType = ParticleSystemShapeType.Cone;
+            shape.angle = 1.2f;
+            shape.radius = 0.05f;
+            Stretch(tracers, 0.035f);
+            ParticleSystem flash = MakeParticles("Muzzle Flash", tracers.transform, Vector3.zero, Quaternion.identity, art.flash);
+            main = flash.main;
+            main.startLifetime = 0.07f;
+            main.startSpeed = 0f;
+            main.startSize = new ParticleSystem.MinMaxCurve(1.6f, 2.4f);
+            main.maxParticles = 6;
+            Burst(flash, 1);
+            FadeInOut(flash, 0f, 0.1f);
+            ParticleSystem.SubEmittersModule sub = tracers.subEmitters;
+            sub.enabled = true;
+            sub.AddSubEmitter(flash, ParticleSystemSubEmitterType.Birth, ParticleSystemSubEmitterProperties.InheritNothing);
+
+            if (!mantis.Body.hasSecondMuzzle) return;
+            ParticleSystem rockets = MakeParticles("Mantis Rockets", parent, body.TransformPoint(mantis.Body.secondMuzzle), body.rotation * Quaternion.Euler(-6f, 0f, 0f), art.rocket);
+            main = rockets.main;
+            main.startLifetime = 6f;
+            main.startSpeed = new ParticleSystem.MinMaxCurve(42f, 48f);
+            main.startSize = 0.5f;
+            main.gravityModifier = 0.12f;
+            main.maxParticles = 8;
+            Rate(rockets, 0.42f);
+            shape = rockets.shape;
+            shape.shapeType = ParticleSystemShapeType.Cone;
+            shape.angle = 2f;
+            shape.radius = 0.05f;
+            ParticleSystem.TrailModule trails = rockets.trails;
+            trails.enabled = true;
+            trails.lifetime = 0.25f;
+            trails.minVertexDistance = 0.5f;
+            trails.widthOverTrail = new ParticleSystem.MinMaxCurve(1.4f, AnimationCurve.Linear(0f, 0.4f, 1f, 1.6f));
+            trails.colorOverTrail = new ParticleSystem.MinMaxGradient(new Color(1f, 1f, 1f, 0.55f), new Color(1f, 1f, 1f, 0f));
+            rockets.GetComponent<ParticleSystemRenderer>().trailMaterial = art.rocketTrail;
+            Impacts(art, rockets, false);
+        }
+
+        /// <summary>
+        /// A Ghost's twin plasma guns, at its Muzzle_0a and _0b: a burst of four bolts now and then, straight ahead, turning with it as it moves
+        /// (D104). start sets where in its round of bursts it begins, so Ghosts side by side don't fire together.
+        /// </summary>
+        private static void AddGhostGuns(Material plasma, GameObject ghost, float start)
+        {
+            foreach (Transform muzzle in ghost.GetComponentsInChildren<Transform>(true).Where(t => t.name.StartsWith("Muzzle_0")).ToArray())
+            {
+                ParticleSystem bolts = MakeParticles("Ghost Plasma", muzzle, Vector3.zero, Quaternion.identity, plasma);
+                bolts.transform.SetPositionAndRotation(muzzle.position, ghost.transform.rotation);
+                ParticleSystem.MainModule main = bolts.main;
+                main.duration = 2.6f;
+                main.startDelay = start;
+                main.startLifetime = 1.4f;
+                main.startSpeed = new ParticleSystem.MinMaxCurve(70f, 80f);
+                main.startSize = 0.32f;
+                main.maxParticles = 20;
+                ParticleSystem.EmissionModule emission = bolts.emission;
+                emission.enabled = true;
+                emission.rateOverTime = 0f;
+                emission.SetBursts(new[] { new ParticleSystem.Burst(0f, 1, 4, 0.13f) });
+                ParticleSystem.ShapeModule shape = bolts.shape;
+                shape.shapeType = ParticleSystemShapeType.Cone;
+                shape.angle = 1.5f;
+                shape.radius = 0.04f;
+                Stretch(bolts, 0.04f);
+            }
+        }
+
+        // ------------------------------------------------------------------ the supercarrier
+
+        private const float CarrierDistance = 2600f, CarrierAzimuth = 70f, CarrierElevation = 7.2f, CarrierLength = 620f;
+
+        /// <summary>
+        /// The owner's Covenant supercarrier (D104), far off over the hills where the sky once drew a warship: broadside to the field, its bow a
+        /// little raised, hazed by the distance but not lost in the fog (MenuDistant.shader), and from its belly the glassing beam down to the
+        /// land beyond the hills, a white core in a wide violet glow, flickering (MenuCinematic), with the glow of the burning land rising behind
+        /// the ridges where it strikes.
+        /// </summary>
+        private static void BuildCarrier(MenuCinematic cinematic, Art art, Parts parts)
+        {
+            const string folder = "Assets/_Project/Art/Imported/Models/Supercarrier";
+            var model = AssetDatabase.LoadAssetAtPath<GameObject>(folder + "/Supercarrier.fbx");
+            if (model == null) throw new InvalidOperationException("Missing " + folder + "/Supercarrier.fbx");
+            var carrier = (GameObject)PrefabUtility.InstantiatePrefab(model);
+            PrefabUtility.UnpackPrefabInstance(carrier, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            carrier.name = "Supercarrier";
+            carrier.transform.rotation = Quaternion.Euler(-2.5f, CarrierAzimuth, 0f) * carrier.transform.rotation;
+            var bounds = new Bounds(carrier.transform.position, Vector3.zero);
+            foreach (Renderer renderer in carrier.GetComponentsInChildren<Renderer>()) bounds.Encapsulate(renderer.bounds);
+            carrier.transform.localScale *= CarrierLength / Mathf.Max(bounds.size.x, bounds.size.z);
+            bounds = new Bounds(carrier.transform.position, Vector3.zero);
+            foreach (Renderer renderer in carrier.GetComponentsInChildren<Renderer>()) bounds.Encapsulate(renderer.bounds);
+            carrier.transform.position += Direction(CarrierAzimuth, CarrierElevation) * CarrierDistance - bounds.center;
+
+            Material hull = SaveMaterial("CinematicCarrier", new Material(Shader.Find("Halobellum/MenuDistant")));
+            hull.SetTexture("_BaseMap", AssetDatabase.LoadAssetAtPath<Texture2D>(folder + "/Supercarrier_0.png"));
+            hull.SetColor("_HazeColor", new Color(0.5f, 0.31f, 0.3f));
+            hull.SetFloat("_Haze", 0.42f);
+            hull.SetVector("_LightDirection", Direction(SunAzimuth, 14f));
+            EditorUtility.SetDirty(hull);
+            foreach (Renderer renderer in carrier.GetComponentsInChildren<Renderer>())
+            {
+                renderer.sharedMaterials = Enumerable.Repeat(hull, renderer.sharedMaterials.Length).ToArray();
+                renderer.shadowCastingMode = ShadowCastingMode.Off;
+                renderer.receiveShadows = false;
+            }
+
+            Transform belly = carrier.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == "Muzzle_0");
+            Vector3 from = belly != null ? belly.position : bounds.center;
+            Vector3 to = new Vector3(from.x, -30f, from.z);
+            LineRenderer Line(string name, Color colour, float width)
+            {
+                Material material = SaveMaterial(name, new Material(Shader.Find("Halobellum/MenuDistantGlow")));
+                material.SetTexture("_BaseMap", art.beamGlow);
+                material.SetColor("_BaseColor", colour);
+                EditorUtility.SetDirty(material);
+                var thing = new GameObject(name);
+                LineRenderer line = thing.AddComponent<LineRenderer>();
+                line.sharedMaterial = material;
+                line.useWorldSpace = true;
+                line.positionCount = 2;
+                line.SetPositions(new[] { from, to });
+                line.alignment = LineAlignment.View;
+                line.textureMode = LineTextureMode.Stretch;
+                line.widthMultiplier = width;
+                line.shadowCastingMode = ShadowCastingMode.Off;
+                line.receiveShadows = false;
+                return line;
+            }
+            LineRenderer glow = Line("CinematicGlassingGlow", new Color(1.3f, 0.35f, 1.1f), 75f);
+            LineRenderer core = Line("CinematicGlassingCore", new Color(3.4f, 1.8f, 3.2f), 20f);
+            cinematic.glassing = new[] { glow, core };
+            cinematic.glassingWidths = new[] { 75f, 20f };
+
+            // The burning land where it strikes, behind the hills: a wide glow on the horizon.
+            Material land = SaveMaterial("CinematicGlassedLand", new Material(Shader.Find("Halobellum/MenuDistantGlow")));
+            land.SetTexture("_BaseMap", art.glow);
+            land.SetColor("_BaseColor", new Color(1.8f, 0.6f, 0.45f));
+            EditorUtility.SetDirty(land);
+            AddGlowCard(parts, land, null, new Vector3(from.x, 70f, from.z), 520f);
+            Debug.Log($"Menu cinematic: the supercarrier at {bounds.center}, {bounds.size.x:0} m across, its beam from {from}.");
         }
 
         /// <summary>A Wraith's mortar: a slow glowing ball lobbed high, trailing light, bursting blue where it lands.</summary>
@@ -2012,6 +2187,18 @@ namespace Halobellum.EditorTools
                     float alpha = Mathf.Clamp01(1f - Mathf.Sqrt(u * u + v * v));
                     pixels[y * size + x] = new Color(1f, 1f, 1f, alpha * alpha);
                 }
+            }
+            return pixels;
+        }
+
+        /// <summary>A beam's glow across its width, the same all along it: bright in the middle, soft at both edges.</summary>
+        private static Color[] MakeBeamGlow(int size)
+        {
+            var pixels = new Color[size * size];
+            for (int y = 0; y < size; y++)
+            {
+                float across = 1f - Mathf.Abs((y + 0.5f) / size * 2f - 1f);
+                for (int x = 0; x < size; x++) pixels[y * size + x] = new Color(1f, 1f, 1f, across * across);
             }
             return pixels;
         }
