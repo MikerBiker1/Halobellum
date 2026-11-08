@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 2
   turnTime180: 1
   isAir: 1
+  canFlank: 1
   targetFilter: 2
   weapons:
   - weaponName: Heavy Autocannon
@@ -43,7 +44,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -54,7 +54,6 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
-    windUpSeconds: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -66,15 +65,11 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
-  reinforcementDrops: 1
-  reinforcementLandSeconds: 0
-  reinforcementFirstDropSeconds: 0
   formsPerBody: 1
   isFlood: 0
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
-  canFlank: 1
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -98,6 +93,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 240d23ce35e4799d2a409362635def63, type: 2}
   - {fileID: 11400000, guid: 6b3c74aa36295832c4e1e5bba1ac7826, type: 2}
   - {fileID: 11400000, guid: 0aa52bf0cbe9be65a672bcfdf706989c, type: 2}
+  - {fileID: 11400000, guid: 0e6156067bd6a2d14bc6597632d1e822, type: 2}
   prefab: {fileID: 1388056773994332158, guid: d8c6e6c30fea8cc49bcb94f194db1725, type: 3}
   keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
@@ -105,6 +101,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air
-  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Swarm Form
-    (100%). Gunship that hunts vehicles. Its gun is poor against infantry. First-pass
-    M10 values, Aerospace Command (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Swarm Form (100%). Gunship that hunts vehicles. Its gun is poor against infantry. First-pass M10 values, Aerospace Command (Docs/M10/subfactions.md).'

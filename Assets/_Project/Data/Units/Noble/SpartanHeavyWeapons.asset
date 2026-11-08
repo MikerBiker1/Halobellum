@@ -103,10 +103,13 @@ MonoBehaviour:
   spawnedUnit: {fileID: 0}
   spawnedBodies: 0
   spawnIntervalSeconds: 0
+  alternateSpawnedUnit: {fileID: 0}
+  alternateSpawnedBodies: 0
   auraRadius: 0
   auraSpeedMultiplier: 1
   auraHealPerSecondShare: 0
   lifestealShare: 0
+  seedForms: []
   leapRange: 0
   leapSpeed: 0
   leapCooldownSeconds: 0
@@ -114,6 +117,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 388b1be732e946404209c3798ad01c89, type: 2}
   - {fileID: 11400000, guid: 3ab748bcff3ba0a85e8803313848a77a, type: 2}
   - {fileID: 11400000, guid: d7ad3170e6d8837b1b1527b608677182, type: 2}
+  - {fileID: 11400000, guid: b38c17cbca24bf2a72c75405120fdc53, type: 2}
   prefab: {fileID: 3443605851021848446, guid: 7bf7e1fa7cd972b4c96f61185bdeda38, type: 3}
   keepsOwnMaterials: 0
   bakedBody: {fileID: 11400000, guid: 0732c076f16837aca945f1ab5a20fec9, type: 2}
@@ -121,4 +125,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
-  notes: 'Best counters (headless runner, equal cost): Jackal (Beam Rifle) (100%), Zealot (100%). A walking wall with a chaingun: mows down infantry, does little to armor. Its Unarmored body makes it weak to anti-infantry weapons once the shield is down. First-pass M10 values, Noble (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Zealot (100%), Combat Form (100%). A walking wall with a chaingun: mows down infantry, does little to armor. Its Unarmored body makes it weak to anti-infantry weapons once the shield is down. First-pass M10 values, Noble (Docs/M10/subfactions.md).'

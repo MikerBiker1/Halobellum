@@ -39,7 +39,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -109,7 +110,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -179,7 +181,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -249,7 +252,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -319,7 +323,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Coaxial Machine Gun",
@@ -345,7 +350,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -415,7 +421,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -485,7 +492,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Bombs",
@@ -511,7 +519,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -581,7 +590,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -651,7 +661,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -729,7 +740,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 2.5
+    "windup": 2.5,
+    "stagger": 0
    }
   ],
   "shield": 400,
@@ -799,7 +811,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Rockets",
@@ -825,7 +838,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -895,7 +909,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Turret (left)",
@@ -921,7 +936,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Turret (right)",
@@ -947,7 +963,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -1017,7 +1034,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -1087,7 +1105,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -1157,7 +1176,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -1227,7 +1247,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -1305,7 +1326,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -1375,7 +1397,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 200,
@@ -1445,7 +1468,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -1515,7 +1539,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -1585,7 +1610,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Fuel Rod Bomb",
@@ -1611,7 +1637,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -1681,7 +1708,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -1759,7 +1787,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Shield Bash",
@@ -1785,7 +1814,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -1865,7 +1895,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 600,
@@ -1939,7 +1970,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Plasma Turret (left)",
@@ -1965,7 +1997,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Plasma Turret (right)",
@@ -1991,7 +2024,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -2061,7 +2095,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -2135,7 +2170,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -2216,7 +2252,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Scavenged Rifle",
@@ -2242,7 +2279,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -2316,7 +2354,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -2386,7 +2425,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -2456,7 +2496,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Bone Barbs",
@@ -2482,7 +2523,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -2552,7 +2594,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -2622,7 +2665,8 @@
     "seedslow": 0.4,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -2737,7 +2781,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -2826,7 +2871,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -2911,7 +2957,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Tendril Whip",
@@ -2937,7 +2984,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -3015,7 +3063,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 200,
@@ -3085,7 +3134,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Hydra Rocket Pod",
@@ -3111,7 +3161,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 250,
@@ -3181,7 +3232,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 300,
@@ -3251,7 +3303,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 450,
@@ -3325,7 +3378,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "M41 Rocket Launcher",
@@ -3351,7 +3405,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 140,
@@ -3421,7 +3476,8 @@
     "seedslow": 0,
     "slow": 2,
     "slowshare": 0.4,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -3491,7 +3547,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -3561,7 +3618,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -3631,7 +3689,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Coaxial Machine Gun",
@@ -3657,7 +3716,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -3727,7 +3787,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -3797,7 +3858,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -3867,7 +3929,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Chin Gun",
@@ -3893,7 +3956,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -3963,7 +4027,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Light Spartan Laser (nose)",
@@ -3989,7 +4054,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 2.5
+    "windup": 2.5,
+    "stagger": 0
    },
    {
     "name": "Light Spartan Laser (front right)",
@@ -4015,7 +4081,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 2.5
+    "windup": 2.5,
+    "stagger": 0.8
    },
    {
     "name": "Light Spartan Laser (front left)",
@@ -4041,7 +4108,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 2.5
+    "windup": 2.5,
+    "stagger": 1.6
    },
    {
     "name": "Light Spartan Laser (rear right)",
@@ -4067,7 +4135,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 2.5
+    "windup": 2.5,
+    "stagger": 2.4
    },
    {
     "name": "Light Spartan Laser (rear left)",
@@ -4093,7 +4162,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 2.5
+    "windup": 2.5,
+    "stagger": 3.2
    }
   ],
   "shield": 0,
@@ -4163,7 +4233,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Chopper Autocannons",
@@ -4189,7 +4260,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -4259,7 +4331,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Brute Shot Blade",
@@ -4285,7 +4358,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -4355,7 +4429,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Spike Turret",
@@ -4381,7 +4456,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -4451,7 +4527,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -4521,7 +4598,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -4591,7 +4669,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Fuel Rod Cannon",
@@ -4617,7 +4696,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -4693,7 +4773,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Shield Bash",
@@ -4719,7 +4800,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -4803,7 +4885,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -4878,7 +4961,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 30,
@@ -4953,7 +5037,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Goblin Fuel Rod",
@@ -4979,7 +5064,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -5053,7 +5139,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Scavenged Rifle",
@@ -5079,7 +5166,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -5153,7 +5241,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Scavenged Machine Gun",
@@ -5179,7 +5268,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -5260,7 +5350,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Tentacle Whip",
@@ -5286,7 +5377,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -5367,7 +5459,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Spore Bombs",
@@ -5393,7 +5486,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -5474,7 +5568,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -5548,7 +5643,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Scavenged Plasma Pistol",
@@ -5574,7 +5670,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -5653,7 +5750,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Scavenged Plasma Bolts",
@@ -5679,7 +5777,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -5760,7 +5859,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Scavenged Plasma Rifle",
@@ -5786,7 +5886,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -5860,7 +5961,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -5941,7 +6043,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    },
    {
     "name": "Spore Bomb",
@@ -5967,7 +6070,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -6048,7 +6152,8 @@
     "seedslow": 0,
     "slow": 0,
     "slowshare": 0,
-    "windup": 0
+    "windup": 0,
+    "stagger": 0
    }
   ],
   "shield": 0,
@@ -6057,11 +6162,11 @@
   "arc": null,
   "drop": [
    "SwarmForm",
-   4,
+   1,
    5,
    true
   ],
-  "note": "A mobile birthing form: it fights badly, and keeps releasing two Infection Forms and an Infested Elite in turn, one every 4 seconds; the Elites draw the enemy's fire. Kill it first (D79). With its Swarm Brood tech it also hatches a full squad of Swarm Forms 5 seconds into each battle (D113).",
+  "note": "A mobile birthing form: it fights badly, and keeps releasing two Infection Forms and an Infested Elite in turn, one every 4 seconds; the Elites draw the enemy's fire. Kill it first (D79). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114).",
   "forms": 1,
   "flood": true,
   "infects": false,

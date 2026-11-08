@@ -4,7 +4,7 @@
 # The 8 sub-factions' exclusive units (M10) come from the sub_*.py modules, one each: SUBFACTIONS below says which are in.
 # Usage: python gen_roster.py
 import hashlib, importlib, json, os, re, struct
-from techs import TECHS, THIRD_TECHS
+from techs import TECHS, THIRD_TECHS, GAMEPLAY_TECHS, T
 
 # Which sub-factions are in the game, in draft-list order. A faction with none here keeps a plain "Standard" card.
 SUBFACTIONS = ["sub_noble", "sub_armored", "sub_aerospace", "sub_banished", "sub_lekgolo", "sub_unggoy", "sub_flood_unsc", "sub_flood_covenant"]
@@ -35,10 +35,10 @@ ROLE_TEXT = {
 
 
 def W(name, dmg, interval, rng, type, proj=0, splash=0, minr=0, aa=False, block=False, own=None, air=1, cone=0,
-      lob=False, beam=0, charge=0, rest=0, sweep=0, seed=0, seedshare=0, seedslow=0, slow=0, slowshare=0, windup=0):
+      lob=False, beam=0, charge=0, rest=0, sweep=0, seed=0, seedshare=0, seedslow=0, slow=0, slowshare=0, windup=0, stagger=0):
     return dict(name=name, dmg=dmg, interval=interval, range=rng, minr=minr, proj=proj, splash=splash, type=type,
                 aa=aa, block=block, own=own, air=air, cone=cone, lob=lob, beam=beam, charge=charge, rest=rest, sweep=sweep,
-                seed=seed, seedshare=seedshare, seedslow=seedslow, slow=slow, slowshare=slowshare, windup=windup)
+                seed=seed, seedshare=seedshare, seedslow=seedslow, slow=slow, slowshare=slowshare, windup=windup, stagger=stagger)
 
 
 # Seconds every Spartan Laser charges before its shot goes (the owner, 2026-11-05: the laser fires 2.5 s into its sound).
@@ -182,6 +182,26 @@ for _module in SUBFACTIONS:
 for _id, _tech in THIRD_TECHS.items():
     TECHS[_id].append(_tech)
 
+# The range tech (the owner, 2026-11-08; D114): a flat 8 m for 300 credits, as Mechabellum does it, so it means most to short guns. A unit that had a
+# range tech keeps its name for it; every other unit whose main weapon is a gun gets "Long Range" as a fourth tech. Not for melee units, bombers,
+# the flame and shotgun units, or a unit whose fourth tech is one that changes how it plays (GAMEPLAY_TECHS).
+RANGE_TECH_METRES, RANGE_TECH_COST = 8, 300
+NO_RANGE_TECH = {"Longsword", "SpartanCQB", "FlamethrowerTrooper", "SwarmForm"}
+for _unit in UNITS:
+    _techs = TECHS.get(_unit["id"])
+    if _techs is None:
+        continue
+    _ranged = [t for t in _techs if t["fx"].get("range")]
+    for _tech in _ranged:
+        _tech["fx"]["range"] = RANGE_TECH_METRES
+        _tech["cost"] = RANGE_TECH_COST
+    _main = _unit["weapons"][0] if _unit["weapons"] else None
+    if (not _ranged and _main and _main["type"] != "Melee" and _main["range"] > 3 and _unit["id"] not in NO_RANGE_TECH
+            and _unit["id"] not in GAMEPLAY_TECHS):
+        _techs.append(T("LongRange", "Long Range", RANGE_TECH_COST, "Every gun reaches 8 m further.", range=RANGE_TECH_METRES))
+for _id, _tech in GAMEPLAY_TECHS.items():
+    TECHS[_id].append(_tech)
+
 # Best counters from the latest counter-web run (filled in by hand after each run; Bible Section 7 rule).
 COUNTERS = {}
 try:
@@ -277,6 +297,8 @@ def unit_yaml(u):
                   f"    hitSlowSeconds: {fmt(w['slow'])}", f"    hitSlowShare: {fmt(w['slowshare'])}"]
         if w["windup"]:
             lines += [f"    windUpSeconds: {fmt(w['windup'])}"]  # Only where there is one, so the other assets stay as they were.
+        if w.get("stagger"):
+            lines += [f"    staggerSeconds: {fmt(w['stagger'])}"]
     arc = u["arc"]
     hexes = "".join(struct.pack("<i", DTYPE[t]).hex() for t in (arc["types"] if arc else []))
     lines += [f"  hasDefenseArc: {fmt(arc is not None)}", "  defenseArc:",
@@ -363,6 +385,7 @@ def tech_yaml(u, t):
         f"  shieldBonus: {fmt(fx.get('shield', 0))}", f"  shieldRegenBonus: {fmt(fx.get('regen', 0))}",
         f"  splashRadiusBonus: {fmt(fx.get('splash', 0))}", f"  coneDegreesBonus: {fmt(fx.get('cone', 0))}",
         f"  addsAirTargeting: {fmt(bool(fx.get('aa', False)))}", f"  unlocksReinforcement: {fmt(bool(fx.get('drop', False)))}",
+        f"  extraShotsPerAttack: {fx.get('shots', 0)}", f"  burstGapSeconds: {fmt(fx.get('gap', 0))}", f"  reloadTimeMultiplier: {fmt(fx.get('reload', 1))}",
     ]) + "\n"
 
 

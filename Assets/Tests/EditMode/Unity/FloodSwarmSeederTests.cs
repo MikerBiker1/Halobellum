@@ -151,15 +151,15 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void TheSpawnersSwarmBrood_HatchesASquadOfSwarmForms_OnlyWithTheTech()
+        public void TheSpawnersSwarmBrood_HatchesOneSwarmForm_OnlyWithTheTech()
         {
-            // D113 (the owner, 2026-11-08): a tech that has the Spawner hatch a full squad of Swarm Forms, once, early in each battle.
+            // D113, D114 (the owner, 2026-11-08): a tech that has the Spawner hatch one Swarm Form (a stack of five forms), once, early in each battle.
             UnitStats spawner = UnityEditor.AssetDatabase.LoadAssetAtPath<Halobellum.Units.UnitDefinition>("Assets/_Project/Data/Units/FloodCovenant/Spawner.asset").ToStats();
             TechUpgrade brood = spawner.TechUpgrades.Single(t => t.UnlocksReinforcement);
             Assert.AreEqual("Swarm Brood", brood.Name);
             Assert.IsFalse(spawner.HasReinforcement, "Nothing without the tech.");
             Assert.AreEqual("Swarm Form", spawner.LockedReinforcement.Name);
-            Assert.AreEqual(4, spawner.LockedReinforcement.SquadSize, "A full squad.");
+            Assert.AreEqual(1, spawner.LockedReinforcement.SquadSize, "One stack, not a squad of four.");
             foreach (bool withTech in new[] { false, true })
             {
                 UnitStats stats = withTech ? UnitUpgrades.Apply(spawner, 1, new[] { brood }) : spawner.Clone();
@@ -170,10 +170,25 @@ namespace Halobellum.Tests
                 bystander.MoveSpeed = 0f;
                 sim.AddUnit(bystander, Team.B, new Vec2(70f, 75f));
                 Steps(sim, spawner.ReinforcementDelaySeconds + 0.5f);
-                Assert.AreEqual(withTech ? 4 : 0, sim.Units.Count(x => x.Team == Team.A && x.Stats.Name == "Swarm Form"), withTech ? "Four Swarm Forms with the tech." : "None without it.");
+                Assert.AreEqual(withTech ? 1 : 0, sim.Units.Count(x => x.Team == Team.A && x.Stats.Name == "Swarm Form"), withTech ? "One Swarm Form with the tech." : "None without it.");
                 Steps(sim, 10f);
-                Assert.AreEqual(withTech ? 4 : 0, sim.Units.Count(x => x.Team == Team.A && x.Stats.Name == "Swarm Form"), "Once a battle.");
+                Assert.AreEqual(withTech ? 1 : 0, sim.Units.Count(x => x.Team == Team.A && x.Stats.Name == "Swarm Form"), "Once a battle.");
             }
+        }
+
+        [Test]
+        public void TheCondorsWindow_ShowsItsMainGunAndItsLasersOnce()
+        {
+            // D114 (the owner, 2026-11-08): not every gun on its own line; the five light lasers fire one after another and a little quieter.
+            UnitStats condor = UnityEditor.AssetDatabase.LoadAssetAtPath<Halobellum.Units.UnitDefinition>("Assets/_Project/Data/Units/AerospaceCommand/CondorGunship.asset").ToStats();
+            var groups = Halobellum.UI.SquadStatsWindow.GroupWeapons(condor);
+            Assert.AreEqual(2, groups.Count);
+            Assert.IsTrue(groups[0].isMain);
+            Assert.AreEqual(5, groups[1].count);
+            Assert.AreEqual("Light Spartan Laser", Halobellum.UI.SquadStatsWindow.BaseName(groups[1].weapon.Name));
+            CollectionAssert.AreEqual(new[] { 0f, 0.8f, 1.6f, 2.4f, 3.2f }, condor.Weapons.Skip(1).Select(w => (float)System.Math.Round(w.StaggerSeconds, 2)).ToArray());
+            Assert.AreSame(Halobellum.Presentation.AudioCatalog.FireLightSpartanLaser, Halobellum.Presentation.AudioCatalog.WindUpFor(condor.Weapons[1]) ?? Halobellum.Presentation.AudioCatalog.FireLightSpartanLaser);
+            Assert.Less(Halobellum.Presentation.AudioCatalog.FireLightSpartanLaser.Volume, Halobellum.Presentation.AudioCatalog.FireSpartanLaser.Volume);
         }
 
         [Test]

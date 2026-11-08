@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 1.4
   turnTime180: 0.8
   isAir: 1
+  canFlank: 0
   targetFilter: 2
   weapons:
   - weaponName: Scavenged Plasma Cannons
@@ -43,7 +44,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -54,7 +54,6 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
-    windUpSeconds: 0
   - weaponName: Spore Bomb
     damagePerShot: 45
     fireInterval: 2.5
@@ -69,7 +68,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -80,7 +78,6 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
-    windUpSeconds: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -92,15 +89,11 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
-  reinforcementDrops: 1
-  reinforcementLandSeconds: 0
-  reinforcementFirstDropSeconds: 0
   formsPerBody: 1
   isFlood: 1
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
-  canFlank: 0
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -126,6 +119,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b0febfbff31d46689f719f3666010e4f, type: 2}
   - {fileID: 11400000, guid: a95e356f94a94cc0998dae79d7af9011, type: 2}
   - {fileID: 11400000, guid: 2d20df4fb448fe383b50067f5f233217, type: 2}
+  - {fileID: 11400000, guid: bfadb1c17c745188fbd0e7f55d518630, type: 2}
   prefab: {fileID: 59249523519874863, guid: 9b1044ae047a9e04f938f0d8dd9b08d7, type: 3}
   keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
@@ -133,5 +127,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air
-  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Swarm Form
-    (100%). Barely flying, still bombing. First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Swarm Form (100%). Barely flying, still bombing. First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'

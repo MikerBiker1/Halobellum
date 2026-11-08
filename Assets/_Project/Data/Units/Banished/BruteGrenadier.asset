@@ -117,6 +117,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1a91d51bead1d16878c5e50018e8b175, type: 2}
   - {fileID: 11400000, guid: 6705a5a9cb17f4ce30995e32fb017662, type: 2}
   - {fileID: 11400000, guid: 8e4900a77fd4a576ef8fd947cfb06709, type: 2}
+  - {fileID: 11400000, guid: 26aed4e06aadbdc9c1020b16dd0d4f4c, type: 2}
   prefab: {fileID: 6433516241000619909, guid: c48b27f1fbad5c743a74d396d855ad94, type: 3}
   keepsOwnMaterials: 0
   bakedBody: {fileID: 11400000, guid: a61f27b89846464ba55b0bb6828d25a3, type: 2}

@@ -385,13 +385,14 @@ namespace Halobellum.UI
                 b.AppendLine(s.ReinforcementFirstDropSeconds > 0f
                     ? $"{(s.Reinforcement == null ? "With its tech: drops" : "Drops")} {drop.SquadSize} {drop.Name}s {s.ReinforcementFirstDropSeconds:0.#} s in, then behind enemy lines, up to {s.ReinforcementDrops} times"
                     : $"{(s.Reinforcement == null ? "With its tech: lands" : "Lands")} behind enemy lines to drop {drop.SquadSize} {drop.Name}s, up to {s.ReinforcementDrops} times");
-            for (int i = 0; i < s.Weapons.Length; i++)
+            else if (drop != null)
+                b.AppendLine($"{(s.Reinforcement == null ? "With its tech: brings" : "Brings")} {drop.SquadSize} {drop.Name}{(drop.SquadSize == 1 ? "" : "s")} {s.ReinforcementDelaySeconds:0.#} s into each battle");
+            foreach ((WeaponStats w, int count, bool isMain) in GroupWeapons(s))
             {
-                WeaponStats w = s.Weapons[i];
                 if (s.SelfDestructs && w.DamagePerShot <= 0f) continue; // Its damage is the death burst, listed above.
-                string main = s.Weapons.Length > 1 && i == 0 ? " (main)" : "";
+                string role = s.Weapons.Length <= 1 ? "" : isMain ? " (main)" : " (secondary)";
                 b.AppendLine();
-                b.AppendLine($"{w.Name}{main}");
+                b.AppendLine(count > 1 ? $"{BaseName(w.Name)} x{count}{role}" : $"{w.Name}{role}");
                 if (w.IsBeam)
                 {
                     b.AppendLine($"  Beam {w.DamagePerShot * w.ShotsPerSecond:0.#} damage/s {w.DamageType}{(w.IsAntiArmor ? ", anti-armor" : "")}");
@@ -401,6 +402,8 @@ namespace Halobellum.UI
                 {
                     b.AppendLine($"  Damage {w.DamagePerShot:0.#} {w.DamageType}{(w.IsAntiArmor ? ", anti-armor" : "")}    Rate {w.ShotsPerSecond:0.##}/s");
                 }
+                if (w.ShotsPerAttack > 1) b.AppendLine($"  Fires {w.ShotsPerAttack} shots {w.BurstGapSeconds:0.##} s apart each attack");
+                if (count > 1) b.AppendLine("  Each aims and fires on its own, one after another");
                 if (w.HasWindUp) b.AppendLine($"  Winds up {w.WindUpSeconds:0.#} s before each shot (the first at a new target comes that much later)");
                 if (w.Lobbed) b.AppendLine("  Lobbed: aims ahead of its target, can miss");
                 if (w.SeedSeconds > 0f) b.AppendLine($"  Seeds its target for {w.SeedSeconds:0.#} s: a host that dies rises as Flood");
@@ -418,6 +421,34 @@ namespace Halobellum.UI
             }
             return b.ToString().TrimEnd();
         }
+
+        /// <summary>
+        /// The unit's weapons with guns of one kind counted once (the Condor's five light Spartan Lasers, the owner, 2026-11-08): the same name before any
+        /// part in brackets ("Light Spartan Laser (nose)") and the same numbers. In order, the main weapon first.
+        /// </summary>
+        public static List<(WeaponStats weapon, int count, bool isMain)> GroupWeapons(UnitStats s)
+        {
+            var groups = new List<(WeaponStats weapon, int count, bool isMain)>();
+            for (int i = 0; i < s.Weapons.Length; i++)
+            {
+                WeaponStats w = s.Weapons[i];
+                int same = groups.FindIndex(g => !g.isMain && SameKind(g.weapon, w));
+                if (i > 0 && same >= 0) groups[same] = (groups[same].weapon, groups[same].count + 1, false);
+                else groups.Add((w, 1, i == 0));
+            }
+            return groups;
+        }
+
+        /// <summary>A weapon's name without the part in brackets that says where it sits.</summary>
+        public static string BaseName(string name)
+        {
+            int bracket = name.IndexOf(" (", System.StringComparison.Ordinal);
+            return bracket > 0 && name.EndsWith(")", System.StringComparison.Ordinal) ? name.Substring(0, bracket) : name;
+        }
+
+        private static bool SameKind(WeaponStats a, WeaponStats b) =>
+            BaseName(a.Name) == BaseName(b.Name) && a.DamagePerShot == b.DamagePerShot && a.FireInterval == b.FireInterval && a.Range == b.Range
+            && a.DamageType == b.DamageType && a.SplashRadius == b.SplashRadius && a.WindUpSeconds == b.WindUpSeconds;
 
         private SimUnit FindAnyOfSquad(int squadId, out int alive, out float totalHealth)
         {

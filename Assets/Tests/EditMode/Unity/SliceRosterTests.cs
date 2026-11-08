@@ -335,7 +335,8 @@ namespace Halobellum.Tests
             foreach (UnitDefinition unit in HeadlessRunnerTool.LoadSliceUnits())
             {
                 UnitStats stats = unit.ToStats();
-                Assert.AreEqual(UnitUpgrades.MaxTechsPerUnit, stats.TechUpgrades.Length, unit.unitName);
+                // Three, and a fourth on some: the flat range tech or one that changes how the unit plays (D114).
+                Assert.That(stats.TechUpgrades.Length, Is.InRange(3, UnitUpgrades.MaxTechsPerUnit), unit.unitName);
                 foreach (TechUpgrade tech in stats.TechUpgrades)
                 {
                     Assert.IsNotNull(tech, unit.unitName + " has an empty tech slot.");

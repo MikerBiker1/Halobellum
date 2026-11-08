@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 2.5
   turnTime180: 2
   isAir: 1
+  canFlank: 1
   targetFilter: 2
   weapons:
   - weaponName: M370 Autocannon
@@ -43,7 +44,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -54,7 +54,6 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
-    windUpSeconds: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -74,7 +73,6 @@ MonoBehaviour:
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
-  canFlank: 1
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -98,6 +96,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 79e06a56c18533b8e5a3dd95255cc166, type: 2}
   - {fileID: 11400000, guid: 6fa37cdbcdbc354189bb8813baa46825, type: 2}
   - {fileID: 11400000, guid: 3a8b921099e6efa4b835b89b29be50dc, type: 2}
+  - {fileID: 11400000, guid: ce63170943c711ed67024c8abcec4838, type: 2}
   prefab: {fileID: 2328204168090518612, guid: e84b1d5ffe2d60341a41d02748f12c83, type: 3}
   keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
@@ -105,8 +104,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air
-  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Vampire
-    (100%). With its Troop Bay tech it lands and drops 6 Marines 5 seconds into the
-    battle wherever it is, then lands behind enemy lines to drop more, up to 3 drops
-    in all (D60). First-pass M4 values (DECISIONS D21); Section 8 numbers are from
-    the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Vampire (100%). With its Troop Bay tech it lands and drops 6 Marines 5 seconds into the battle wherever it is, then lands behind enemy lines to drop more, up to 3 drops in all (D60). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

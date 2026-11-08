@@ -182,6 +182,8 @@ namespace Halobellum.Presentation
         /// <summary>Where the shot is in the owner's Spartan Laser file: its loudest moment, measured (the wind-up is 2.5 s).</summary>
         public const float SpartanLaserShotSeconds = 2.42f;
         public static readonly SfxCue FireSpartanLaser = OwnerCue("sfx_fire_spartanlaser", SfxGroup.Lasers, 1f, 0f, 7, -14f);
+        /// <summary>The same file a little quieter, for the Condor's five light lasers (the owner, 2026-11-08; D114). Not in the slot table: the Spartan Laser's cue owns the slot.</summary>
+        public static readonly SfxCue FireLightSpartanLaser = new SfxCue("sfx_fire_spartanlaser", SfxGroup.Lasers, 0.7f, 0f, 6, -14f);
         public static readonly SfxCue FireSword = OwnerCue("sfx_fire_sword", SfxGroup.Melee, 0.65f, 0.08f, 2, -17.5f);
         public static readonly SfxCue SwordReady = OwnerCue("sfx_sword_ready", SfxGroup.Ready, 0.6f, 0.06f, 3, -17f);
         public static readonly SfxCue BeamCharge = OwnerCue("sfx_beam_charge", SfxGroup.Beams, 1f, 0f, 8, -13f);
@@ -324,7 +326,9 @@ namespace Halobellum.Presentation
         public static SfxCue WindUpFor(WeaponStats weapon)
         {
             if (weapon == null || !weapon.HasWindUp) return null;
-            SfxCue own = (weapon.Name ?? "").IndexOf("spartan laser", System.StringComparison.OrdinalIgnoreCase) >= 0 ? FireSpartanLaser : null;
+            string name = weapon.Name ?? "";
+            SfxCue own = name.IndexOf("spartan laser", System.StringComparison.OrdinalIgnoreCase) < 0 ? null
+                : name.StartsWith("Light ", System.StringComparison.OrdinalIgnoreCase) ? FireLightSpartanLaser : FireSpartanLaser;
             return own != null && own.HasSound ? own : null;
         }
 
@@ -430,6 +434,7 @@ namespace Halobellum.Presentation
         {
             foreach (SfxCue cue in All) cue.Forget();
             foreach (SfxCue cue in Owners) cue.Forget();
+            FireLightSpartanLaser.Forget();
             DeathLekgolo.Forget();
         }
     }

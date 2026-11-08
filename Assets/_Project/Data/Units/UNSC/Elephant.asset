@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 5
   turnTime180: 3
   isAir: 0
+  canFlank: 0
   targetFilter: 2
   weapons:
   - weaponName: Main Cannon
@@ -43,7 +44,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -54,7 +54,6 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
-    windUpSeconds: 0
   - weaponName: Turret (left)
     damagePerShot: 8
     fireInterval: 0.2
@@ -69,7 +68,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -80,7 +78,6 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
-    windUpSeconds: 0
   - weaponName: Turret (right)
     damagePerShot: 8
     fireInterval: 0.2
@@ -95,7 +92,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -106,7 +102,6 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
-    windUpSeconds: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -118,15 +113,11 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
-  reinforcementDrops: 1
-  reinforcementLandSeconds: 0
-  reinforcementFirstDropSeconds: 0
   formsPerBody: 1
   isFlood: 0
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
-  canFlank: 0
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -146,18 +137,16 @@ MonoBehaviour:
   leapRange: 0
   leapSpeed: 0
   leapCooldownSeconds: 0
-  leapCharges: 0
   techUpgrades:
   - {fileID: 11400000, guid: 8a7a4097e82cdfaa16c86b41b25fd9a9, type: 2}
   - {fileID: 11400000, guid: fba21d9b54e7193aea10bc81d6203716, type: 2}
   - {fileID: 11400000, guid: 7b9083980cf02ed1f99ab29d8e9e968d, type: 2}
+  - {fileID: 11400000, guid: b1249853fd820cfd9c84d473f555481b, type: 2}
   prefab: {fileID: 9155767775915828780, guid: 21914af10fa4ce948b809977e52d2ffd, type: 3}
   keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
   bakedTint: {r: 1, g: 1, b: 1, a: 0}
   bakedScale: 1
   strongAgainst: Most things in a straight fight
-  weakAgainst: Single-target DPS, large chaff swarms
-  notes: 'Best counters (headless runner, equal cost): Spartan (100%), Hunter Captain
-    (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the
-    Bible.'
+  weakAgainst: 'Single-target DPS, large chaff swarms'
+  notes: 'Best counters (headless runner, equal cost): Spartan (100%), Hunter Captain (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

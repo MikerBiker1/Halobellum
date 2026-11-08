@@ -34,8 +34,8 @@ def units(U, W):
           note="Barely flying, still bombing."),
         U("Spawner", "Spawner", FACTION, "Tank", 3, 200, 1, 400, 3200, "L", 0.9, 2, 2, "G",
           [W("Spore Lash", 40, 1.2, 3, "Melee", splash=2)], flood=True, spawn=("InfectionForms", 2, 4), spawn2=("InfestedElite", 1),
-          drop=("SwarmForm", 4, 5, True),  # Swarm Brood (the owner, 2026-11-08): a full squad of Swarm Forms, hatched once 5 seconds into each battle.
-          note="A mobile birthing form: it fights badly, and keeps releasing two Infection Forms and an Infested Elite in turn, one every 4 seconds; the Elites draw the enemy's fire. Kill it first (D79). With its Swarm Brood tech it also hatches a full squad of Swarm Forms 5 seconds into each battle (D113)."),
+          drop=("SwarmForm", 1, 5, True),  # Swarm Brood (the owner, 2026-11-08): one Swarm Form (a stack of five), hatched once 5 seconds into each battle (D113, D114).
+          note="A mobile birthing form: it fights badly, and keeps releasing two Infection Forms and an Infested Elite in turn, one every 4 seconds; the Elites draw the enemy's fire. Kill it first (D79). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114)."),
     ]
 
 

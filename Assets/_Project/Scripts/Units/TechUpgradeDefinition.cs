@@ -1,6 +1,6 @@
 // TechUpgradeDefinition.cs
 // The data asset for one tech upgrade (Bible Section 9): a name, a description, a credit price and
-// its effects. A unit asset lists up to 3 of these in its Tech Upgrades slots; once bought, a tech
+// its effects. A unit asset lists up to 4 of these in its Tech Upgrades slots; once bought, a tech
 // applies to every squad of that unit type for the rest of the match. Assets live in
 // Data/Upgrades/<Faction>/. Effects left at 1 (multipliers) or 0 (bonuses) change nothing.
 // ToStats() copies the values into plain C# TechUpgrade.
@@ -44,6 +44,12 @@ namespace Halobellum.Units
         public bool addsAirTargeting;
         [Tooltip("Switches on the unit's mid-battle drop (e.g. the Pelican's troop bay).")]
         public bool unlocksReinforcement;
+        [Tooltip("Shots added to each attack of the main weapon (Double Shot). 0 = none.")]
+        public int extraShotsPerAttack;
+        [Tooltip("Seconds between the shots of one attack.")]
+        public float burstGapSeconds;
+        [Tooltip("The main weapon's reload is multiplied by this (1.2 = 20% longer).")]
+        public float reloadTimeMultiplier = 1f;
 
         public TechUpgrade ToStats()
         {
@@ -64,6 +70,9 @@ namespace Halobellum.Units
                 ConeDegreesBonus = coneDegreesBonus,
                 AddsAirTargeting = addsAirTargeting,
                 UnlocksReinforcement = unlocksReinforcement,
+                ExtraShotsPerAttack = extraShotsPerAttack,
+                BurstGapSeconds = burstGapSeconds,
+                ReloadTimeMultiplier = reloadTimeMultiplier <= 0f ? 1f : reloadTimeMultiplier,
             };
         }
     }

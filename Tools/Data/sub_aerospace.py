@@ -24,11 +24,12 @@ def units(U, W):
         # 300 damage per 4 s across the five, so it isn't too strong (to be balanced in tournaments). No Marine drop any more.
         U("CondorGunship", "Condor Gunship", FACTION, "Aerial", 3, 250, 1, 500, 1500, "L", 3.25, 3, 1.5, "B",
           [W("Twin Autocannons", 20, 0.25, 16, "Ballistic"),
+           # The five fire one after another, 0.8 s apart over their 4 s reload (the owner, 2026-11-08; D114).
            W("Light Spartan Laser (nose)", 20, 4.0, 20, "Energy", aa=True, windup=2.5),
-           W("Light Spartan Laser (front right)", 20, 4.0, 20, "Energy", aa=True, windup=2.5),
-           W("Light Spartan Laser (front left)", 20, 4.0, 20, "Energy", aa=True, windup=2.5),
-           W("Light Spartan Laser (rear right)", 20, 4.0, 20, "Energy", aa=True, windup=2.5),
-           W("Light Spartan Laser (rear left)", 20, 4.0, 20, "Energy", aa=True, windup=2.5)], airu=True,
+           W("Light Spartan Laser (front right)", 20, 4.0, 20, "Energy", aa=True, windup=2.5, stagger=0.8),
+           W("Light Spartan Laser (front left)", 20, 4.0, 20, "Energy", aa=True, windup=2.5, stagger=1.6),
+           W("Light Spartan Laser (rear right)", 20, 4.0, 20, "Energy", aa=True, windup=2.5, stagger=2.4),
+           W("Light Spartan Laser (rear left)", 20, 4.0, 20, "Energy", aa=True, windup=2.5, stagger=3.2)], airu=True,
           note="A gunship: twin autocannons under its belly and five light Spartan Lasers on turrets of their own, each finding its own target."),
     ]
 

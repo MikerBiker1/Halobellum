@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   techName: Extended Range
   description: Longer mortar arcs.
-  cost: 200
+  cost: 300
   healthMultiplier: 1
   damageMultiplier: 1
   fireRateMultiplier: 1
@@ -27,3 +27,6 @@ MonoBehaviour:
   coneDegreesBonus: 0
   addsAirTargeting: 0
   unlocksReinforcement: 0
+  extraShotsPerAttack: 0
+  burstGapSeconds: 0
+  reloadTimeMultiplier: 1

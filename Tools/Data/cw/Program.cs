@@ -435,6 +435,7 @@ static class Program
                 HitSlowSeconds = w.GetProperty("slow").GetSingle(),
                 HitSlowShare = w.GetProperty("slowshare").GetSingle(),
                 WindUpSeconds = w.TryGetProperty("windup", out JsonElement windUp) ? windUp.GetSingle() : 0f,
+                StaggerSeconds = w.TryGetProperty("stagger", out JsonElement stagger) ? stagger.GetSingle() : 0f,
             });
         }
         s.Weapons = weapons.ToArray();

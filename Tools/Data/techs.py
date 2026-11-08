@@ -1,6 +1,7 @@
 # First-pass tech upgrades for the slice rosters (Bible Section 9; DECISIONS D27). Imported by gen_roster.py.
 # Effects: health, damage, fire (rate of fire multiplier), speed, air (damage vs air multiplier),
-# range (m), shield (+points), regen, splash (m), cone (degrees), aa (can shoot air), drop (unlocks the drop).
+# range (m), shield (+points), regen, splash (m), cone (degrees), aa (can shoot air), drop (unlocks the drop),
+# shots, gap, reload (Double Shot: extra shots per attack of the main gun, seconds between them, reload multiplier).
 
 
 def T(id, name, cost, desc, **fx):
@@ -232,5 +233,11 @@ THIRD_TECHS = {
     "InfestedWraith": T("LongArc", "Long Arc", 200, "The mortar reaches further.", range=4),
     "InfestedBanshee": T("HotEngines", "Overburnt Engines", 120, "Barely flying, but faster.", speed=1.25),
     # Its third is Swarm Brood (the owner, 2026-11-08; D113), in place of Barbed Lash (a harder lash on a body that fights badly).
-    "Spawner": T("SwarmBrood", "Swarm Brood", 250, "It hatches a full squad of Swarm Forms 5 seconds into each battle.", drop=True),
+    "Spawner": T("SwarmBrood", "Swarm Brood", 200, "It hatches a Swarm Form 5 seconds into each battle.", drop=True),
+}
+
+# Fourth techs that change how a unit plays (the owner, 2026-11-08; D114). gen_roster.py adds them last, and such a unit gets no Long Range tech.
+# shots: shots added to each attack of the main gun, gap: seconds between them, reload: its reload multiplied by this.
+GAMEPLAY_TECHS = {
+    "Grizzly": T("DoubleShot", "Double Shot", 200, "Each attack fires 2 shells in quick succession, but the reload takes 20% longer.", shots=1, gap=0.3, reload=1.2),
 }

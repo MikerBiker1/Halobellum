@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 0.7
   turnTime180: 0.3
   isAir: 0
+  canFlank: 0
   targetFilter: 2
   weapons:
   - weaponName: Spitter Plasma
@@ -43,7 +44,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -54,7 +54,6 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
-    windUpSeconds: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -66,15 +65,11 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
-  reinforcementDrops: 1
-  reinforcementLandSeconds: 0
-  reinforcementFirstDropSeconds: 0
   formsPerBody: 1
   isFlood: 0
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
-  canFlank: 0
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -98,13 +93,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 90eb81e130b9f55dd39427514a1a36c0, type: 2}
   - {fileID: 11400000, guid: 9ea428d32d1bcc04b89ee7035676de2e, type: 2}
   - {fileID: 11400000, guid: 5ec628c4856388229b463ddc78e2d808, type: 2}
+  - {fileID: 11400000, guid: d5b4d36db3ea37a602115eff927de95e, type: 2}
   prefab: {fileID: 6334100945491920677, guid: 675c4be4f2b47974298eecc2b4412e69, type: 3}
   keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
   bakedTint: {r: 1, g: 1, b: 1, a: 0}
   bakedScale: 1
-  strongAgainst: Artillery, DPS
-  weakAgainst: Chaff clear, tanks
-  notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%),
-    Grunt Goblin (100%). Spider-like machines worked by a few worms: a fast, light
-    swarm of a flanker. First-pass M10 values, Lekgolo Colony (Docs/M10/subfactions.md).'
+  strongAgainst: 'Artillery, DPS'
+  weakAgainst: 'Chaff clear, tanks'
+  notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Scorpion (100%). Spider-like machines worked by a few worms: a fast, light swarm of a flanker. First-pass M10 values, Lekgolo Colony (Docs/M10/subfactions.md).'

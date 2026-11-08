@@ -133,6 +133,7 @@ namespace Halobellum.Economy
             value += reach * tech.ConeDegreesBonus / 90f;
             value += _boardAir * ShareThatHitsAir(type) * (tech.AirDamageMultiplier - 1f);
             if (tech.AddsAirTargeting) value += _boardAir * (1f - ShareThatHitsAir(type));
+            if (tech.ExtraShotsPerAttack > 0 || tech.ReloadTimeMultiplier != 1f) value += reach * ((1f + tech.ExtraShotsPerAttack) / tech.ReloadTimeMultiplier - 1f); // Its main gun's damage per second.
             return 100f * value / System.Math.Max(1, tech.Cost);
         }
 

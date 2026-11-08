@@ -129,7 +129,7 @@ namespace Halobellum.Tests
                 Assert.IsEmpty(problems, string.Join("\n", problems));
                 Assert.IsNotNull(unit.prefab, name + " needs a prefab, even a placeholder.");
                 StringAssert.Contains("Best counters", unit.notes, name + ": Bible Section 7.");
-                Assert.AreEqual(UnitUpgrades.MaxTechsPerUnit, unit.techUpgrades.Count, name);
+                Assert.That(unit.techUpgrades.Count, Is.InRange(3, UnitUpgrades.MaxTechsPerUnit), name); // A fourth on some (D114).
                 Assert.IsFalse(name.StartsWith("Infected "), name + ": that is what the simulation calls a body that rises, so the two would be mixed up.");
                 if (name != "Goliath") Assert.AreEqual(unit.cost / (float)unit.squadSize / 5f, unit.baseDamage, 1e-3f, name);
             }

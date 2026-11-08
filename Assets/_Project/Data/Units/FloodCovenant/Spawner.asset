@@ -62,7 +62,7 @@ MonoBehaviour:
     blockChance: 0
     blockedDamageTypes: 
   reinforcementUnit: {fileID: 11400000, guid: 69462c3646524fc57f5a8b8cf7a94bc3, type: 2}
-  reinforcementBodies: 4
+  reinforcementBodies: 1
   reinforcementDelaySeconds: 5
   reinforcementNeedsUpgrade: 1
   reinforcementDrops: 1
@@ -103,4 +103,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
-  notes: 'Best counters (headless runner, equal cost): Zealot (100%), Combat Form (100%). A mobile birthing form: it fights badly, and keeps releasing two Infection Forms and an Infested Elite in turn, one every 4 seconds; the Elites draw the enemy''s fire. Kill it first (D79). With its Swarm Brood tech it also hatches a full squad of Swarm Forms 5 seconds into each battle (D113). First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Zealot (100%), Combat Form (100%). A mobile birthing form: it fights badly, and keeps releasing two Infection Forms and an Infested Elite in turn, one every 4 seconds; the Elites draw the enemy''s fire. Kill it first (D79). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114). First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'

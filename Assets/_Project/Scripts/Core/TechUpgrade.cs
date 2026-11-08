@@ -39,6 +39,12 @@ namespace Halobellum.Core
         public bool AddsAirTargeting;
         /// <summary>Switches on the unit's mid-battle drop (the Pelican's troop bay, the Spawner's Swarm Brood).</summary>
         public bool UnlocksReinforcement;
+        /// <summary>Shots added to each attack of the unit's main weapon (the Grizzly's Double Shot, D114). 0 = none.</summary>
+        public int ExtraShotsPerAttack;
+        /// <summary>Seconds between the shots of one attack, with ExtraShotsPerAttack.</summary>
+        public float BurstGapSeconds;
+        /// <summary>The main weapon's reload is multiplied by this (1.2 = 20% longer). 1 = no change.</summary>
+        public float ReloadTimeMultiplier = 1f;
 
         /// <summary>A short list of what it does, for the HUD (e.g. "+25% health, +3 m range").</summary>
         public string EffectsText()
@@ -55,6 +61,8 @@ namespace Halobellum.Core
             if (AirDamageMultiplier != 1f) parts.Add(Percent(AirDamageMultiplier) + " damage vs air");
             if (AddsAirTargeting) parts.Add("can shoot air");
             if (UnlocksReinforcement) parts.Add("brings a squad mid-battle");
+            if (ExtraShotsPerAttack > 0) parts.Add($"{1 + ExtraShotsPerAttack} shots per attack");
+            if (ReloadTimeMultiplier != 1f) parts.Add(Percent(ReloadTimeMultiplier) + " reload time");
             return string.Join(", ", parts);
         }
 
@@ -70,7 +78,9 @@ namespace Halobellum.Core
             string label = $"{unitName} tech '{Name}'";
             if (string.IsNullOrEmpty(Name)) problems.Add($"{unitName}: a tech upgrade has no name.");
             if (Cost < 0) problems.Add($"{label}: cost cannot be negative.");
-            if (HealthMultiplier <= 0f || DamageMultiplier <= 0f || FireRateMultiplier <= 0f || MoveSpeedMultiplier <= 0f || AirDamageMultiplier <= 0f)
+            if (ExtraShotsPerAttack < 0) problems.Add($"{label}: extra shots cannot be negative.");
+            if (ExtraShotsPerAttack > 0 && BurstGapSeconds <= 0f) problems.Add($"{label}: extra shots need a gap above 0.");
+            if (HealthMultiplier <= 0f || DamageMultiplier <= 0f || FireRateMultiplier <= 0f || MoveSpeedMultiplier <= 0f || AirDamageMultiplier <= 0f || ReloadTimeMultiplier <= 0f)
                 problems.Add($"{label}: multipliers must be above 0.");
             return problems;
         }
@@ -79,7 +89,8 @@ namespace Halobellum.Core
     public static class UnitUpgrades
     {
         public const int MaxLevel = 5;
-        public const int MaxTechsPerUnit = 3;
+        /// <summary>Three techs, and a fourth on some units: the flat range tech, or one that changes how the unit plays (the owner, 2026-11-08; D114).</summary>
+        public const int MaxTechsPerUnit = 4;
 
         /// <summary>
         /// The unit's stats at this squad level with these techs. Returns the base stats themselves when
@@ -192,7 +203,8 @@ namespace Halobellum.Core
                 {
                     weapon.DamagePerShot *= tech.DamageMultiplier;
                     weapon.FireInterval /= tech.FireRateMultiplier;
-                    if (!KeepsReach(stats, weapon)) weapon.Range += tech.RangeBonus;
+                    // A range tech is for guns: a claw or a ram keeps its reach (the flat 8 m range tech, D114).
+                    if (!KeepsReach(stats, weapon) && weapon.DamageType != DamageType.Melee) weapon.Range += tech.RangeBonus;
                     if (weapon.SplashRadius > 0f) weapon.SplashRadius += tech.SplashRadiusBonus;
                     if (weapon.ConeDegrees > 0f) weapon.ConeDegrees = Math.Min(360f, weapon.ConeDegrees + tech.ConeDegreesBonus);
                     weapon.AirDamageMultiplier *= tech.AirDamageMultiplier;
@@ -203,6 +215,13 @@ namespace Halobellum.Core
                     }
                 }
                 if (tech.AddsAirTargeting && stats.TargetFilter == TargetFilter.Ground) stats.TargetFilter = TargetFilter.Both;
+                if ((tech.ExtraShotsPerAttack > 0 || tech.ReloadTimeMultiplier != 1f) && stats.Weapons.Length > 0)
+                {
+                    WeaponStats main = stats.Weapons[0]; // Double Shot is for the main gun (the Grizzly's cannons, not its machine gun).
+                    main.ShotsPerAttack += tech.ExtraShotsPerAttack;
+                    if (tech.ExtraShotsPerAttack > 0) main.BurstGapSeconds = tech.BurstGapSeconds;
+                    main.FireInterval *= tech.ReloadTimeMultiplier;
+                }
                 if (tech.UnlocksReinforcement && stats.LockedReinforcement != null) stats.Reinforcement = stats.LockedReinforcement;
             }
             return stats;

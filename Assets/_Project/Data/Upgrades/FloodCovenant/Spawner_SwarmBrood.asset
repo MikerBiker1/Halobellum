@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Spawner_SwarmBrood
   m_EditorClassIdentifier: 
   techName: Swarm Brood
-  description: It hatches a full squad of Swarm Forms 5 seconds into each battle.
-  cost: 250
+  description: It hatches a Swarm Form 5 seconds into each battle.
+  cost: 200
   healthMultiplier: 1
   damageMultiplier: 1
   fireRateMultiplier: 1
@@ -27,3 +27,6 @@ MonoBehaviour:
   coneDegreesBonus: 0
   addsAirTargeting: 0
   unlocksReinforcement: 1
+  extraShotsPerAttack: 0
+  burstGapSeconds: 0
+  reloadTimeMultiplier: 1

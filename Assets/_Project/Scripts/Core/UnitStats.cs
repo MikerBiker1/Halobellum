@@ -98,6 +98,19 @@ namespace Halobellum.Core
         /// </summary>
         public float WindUpSeconds;
 
+        /// <summary>
+        /// Shots in each attack (the Grizzly's Double Shot tech, D114): the first goes as any shot does, the rest follow BurstGapSeconds apart at the
+        /// same target, and the reload (FireInterval) counts from the first. 1 = a single shot.
+        /// </summary>
+        public int ShotsPerAttack = 1;
+        /// <summary>Seconds between the shots of one attack (ShotsPerAttack above 1).</summary>
+        public float BurstGapSeconds;
+        /// <summary>
+        /// Seconds this weapon waits before its first shot once it has been idle for a whole reload, so that guns of the same kind on one unit don't
+        /// all fire together (the Condor's five light lasers, D114). 0 = none.
+        /// </summary>
+        public float StaggerSeconds;
+
         public float ShotsPerSecond => FireInterval > 0f ? 1f / FireInterval : 0f;
         public bool IsInstant => ProjectileSpeed <= 0f;
         public bool IsCone => ConeDegrees > 0f;

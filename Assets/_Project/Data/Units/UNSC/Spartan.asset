@@ -80,10 +80,13 @@ MonoBehaviour:
   spawnedUnit: {fileID: 0}
   spawnedBodies: 0
   spawnIntervalSeconds: 0
+  alternateSpawnedUnit: {fileID: 0}
+  alternateSpawnedBodies: 0
   auraRadius: 0
   auraSpeedMultiplier: 1
   auraHealPerSecondShare: 0
   lifestealShare: 0
+  seedForms: []
   leapRange: 0
   leapSpeed: 0
   leapCooldownSeconds: 0
@@ -91,6 +94,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7c972729a7a4a6585352f2dd08f34dd7, type: 2}
   - {fileID: 11400000, guid: 72251052681e383a952893bd3352ea0b, type: 2}
   - {fileID: 11400000, guid: 3f97525ea2aeea1fac39ccc576c9a2ba, type: 2}
+  - {fileID: 11400000, guid: ad14ecbd673ae7e08d3b77c156ac9f15, type: 2}
   prefab: {fileID: 3141885320692605752, guid: bafe5c4c162e99d4098435c1149897ef, type: 3}
   keepsOwnMaterials: 0
   bakedBody: {fileID: 11400000, guid: 90f1d941b8ba4e5d11d307e023af1993, type: 2}

@@ -27,3 +27,6 @@ MonoBehaviour:
   coneDegreesBonus: 30
   addsAirTargeting: 0
   unlocksReinforcement: 0
+  extraShotsPerAttack: 0
+  burstGapSeconds: 0
+  reloadTimeMultiplier: 1

@@ -386,6 +386,71 @@ namespace Halobellum.Tests
             Assert.AreEqual(6, Bodies(UnitUpgrades.Apply(carrier, 1, new[] { bay })), "4 troops dropped with it.");
         }
 
+        [Test]
+        public void DoubleShot_FiresTwoShotsAGapApart_AndReloadsSlower()
+        {
+            // D114 (the owner, 2026-11-08): the Grizzly's Double Shot, two shells in quick succession per attack, the reload 20% longer.
+            UnitStats tank = TestUnits.Unit(name: "Tank", health: 5000f, speed: 0f, weapon: TestUnits.Weapon(damage: 10f, range: 20f, interval: 2f));
+            tank.Weapons = new[] { tank.Weapons[0], TestUnits.Weapon(damage: 1f, range: 20f, interval: 0.2f) };
+            var doubleShot = new TechUpgrade { Name = "Double Shot", ExtraShotsPerAttack = 1, BurstGapSeconds = 0.3f, ReloadTimeMultiplier = 1.2f };
+            Assert.IsEmpty(doubleShot.Validate("Tank"));
+            StringAssert.Contains("2 shots per attack", doubleShot.EffectsText());
+            StringAssert.Contains("+20% reload time", doubleShot.EffectsText());
+            UnitStats upgraded = UnitUpgrades.Apply(tank, 1, new[] { doubleShot });
+            Assert.AreEqual(2, upgraded.Weapons[0].ShotsPerAttack);
+            Assert.AreEqual(2.4f, upgraded.Weapons[0].FireInterval, 1e-4f);
+            Assert.AreEqual(1, upgraded.Weapons[1].ShotsPerAttack, "Only the main gun.");
+            Assert.AreEqual(0.2f, upgraded.Weapons[1].FireInterval, 1e-4f);
+
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            sim.AddUnit(upgraded, Team.A, new Vec2(0f, 0f));
+            sim.AddUnit(TestUnits.Unit(name: "Target", health: 100000f, speed: 0f, weapon: TestUnits.Weapon(damage: 0f, range: 1f)), Team.B, new Vec2(0f, 10f));
+            var shots = new List<float>();
+            sim.Events.WeaponFired += (unit, weapon, target) => { if (unit.Team == Team.A && weapon == 0) shots.Add(sim.ElapsedSeconds); };
+            while (sim.ElapsedSeconds < 5f) sim.Step();
+            Assert.GreaterOrEqual(shots.Count, 4);
+            float tick = 0.06f;
+            Assert.AreEqual(0.3f, shots[1] - shots[0], tick, "The second shell follows the first.");
+            Assert.AreEqual(2.4f, shots[2] - shots[0], tick, "The next attack after the longer reload.");
+            Assert.AreEqual(0.3f, shots[3] - shots[2], tick);
+        }
+
+        [Test]
+        public void TheRangeTech_ReachesGuns_NotClaws()
+        {
+            // D114: the flat range tech is for guns; a claw or a ram keeps its reach.
+            UnitStats unit = TestUnits.Unit(weapon: TestUnits.Weapon(range: 10f));
+            unit.Weapons = new[] { unit.Weapons[0], TestUnits.Weapon(range: 4f, type: DamageType.Melee) };
+            UnitStats upgraded = UnitUpgrades.Apply(unit, 1, new[] { new TechUpgrade { Name = "Long Range", RangeBonus = 8f } });
+            Assert.AreEqual(18f, upgraded.Weapons[0].Range, 1e-4f);
+            Assert.AreEqual(4f, upgraded.Weapons[1].Range, 1e-4f, "The claw keeps its reach.");
+        }
+
+        [Test]
+        public void StaggeredGuns_FireOneAfterAnother()
+        {
+            // D114: the Condor's five light lasers fire 0.8 s apart instead of all at once.
+            UnitStats ship = TestUnits.Unit(name: "Ship", health: 5000f, speed: 0f);
+            ship.Weapons = Enumerable.Range(0, 3).Select(i =>
+            {
+                WeaponStats gun = TestUnits.Weapon(damage: 1f, range: 20f, interval: 4f);
+                gun.Name = "Gun " + i;
+                gun.HasOwnTargetFilter = true;
+                gun.TargetFilter = TargetFilter.Both;
+                gun.StaggerSeconds = 0.8f * i;
+                return gun;
+            }).ToArray();
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            sim.AddUnit(ship, Team.A, new Vec2(0f, 0f));
+            sim.AddUnit(TestUnits.Unit(name: "Target", health: 100000f, speed: 0f, weapon: TestUnits.Weapon(damage: 0f, range: 1f)), Team.B, new Vec2(0f, 10f));
+            var first = new Dictionary<int, float>();
+            sim.Events.WeaponFired += (unit, weapon, target) => { if (unit.Team == Team.A && !first.ContainsKey(weapon)) first[weapon] = sim.ElapsedSeconds; };
+            while (sim.ElapsedSeconds < 4f) sim.Step();
+            Assert.AreEqual(3, first.Count);
+            Assert.AreEqual(0.8f, first[1] - first[0], 0.06f);
+            Assert.AreEqual(1.6f, first[2] - first[0], 0.06f);
+        }
+
         // ------------------------------------------------------------------ the AI uses them
 
         [Test]

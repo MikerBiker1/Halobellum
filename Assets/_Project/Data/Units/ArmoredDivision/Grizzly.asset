@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 2.2
   turnTime180: 2.2
   isAir: 0
+  canFlank: 0
   targetFilter: 0
   weapons:
   - weaponName: Twin Cannons
@@ -43,7 +44,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -54,7 +54,6 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
-    windUpSeconds: 0
   - weaponName: Coaxial Machine Gun
     damagePerShot: 8
     fireInterval: 0.2
@@ -69,7 +68,6 @@ MonoBehaviour:
     targetFilter: 2
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -80,7 +78,6 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
-    windUpSeconds: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -92,15 +89,11 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
-  reinforcementDrops: 1
-  reinforcementLandSeconds: 0
-  reinforcementFirstDropSeconds: 0
   formsPerBody: 1
   isFlood: 0
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
-  canFlank: 0
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -124,6 +117,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ba85d0eb8081ecb6225df13f4d8634b7, type: 2}
   - {fileID: 11400000, guid: 55ca4f913430c7af878031789df4a97d, type: 2}
   - {fileID: 11400000, guid: 5bbd76691c5a00cd2062d2a65fd3f652, type: 2}
+  - {fileID: 11400000, guid: 16ab83c789f3ac20312448874ec1499a, type: 2}
   prefab: {fileID: 7357439957894552572, guid: d8ea384153a397d41b10fa31d0ff9798, type: 3}
   keepsOwnMaterials: 1
   bakedBody: {fileID: 0}
@@ -131,6 +125,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
-  notes: 'Best counters (headless runner, equal cost): Gauss Warthog (100%), Spartan
-    (100%). The upgraded Scorpion: twin barrels and more armor, at a Tier 3 price.
-    First-pass M10 values, Armored Division (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Gauss Warthog (100%), Spartan (100%). The upgraded Scorpion: twin barrels and more armor, at a Tier 3 price. First-pass M10 values, Armored Division (Docs/M10/subfactions.md).'

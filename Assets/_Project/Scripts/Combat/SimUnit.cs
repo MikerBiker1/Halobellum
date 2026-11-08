@@ -49,6 +49,11 @@ namespace Halobellum.Combat
         /// <summary>Seconds of wind-up left, counted down at the unit's rate of fire (a shockwave stretches it).</summary>
         public float WindUpLeft;
         /// <summary>How far the wind-up has come, 0 to 1.</summary>
+        /// <summary>Shots of the current attack still to come (Double Shot), and the seconds until the next of them.</summary>
+        public int BurstShotsLeft;
+        public float BurstGapLeft;
+        /// <summary>Seconds since it last could fire; a weapon with a stagger waits it out again after a whole reload idle.</summary>
+        public float IdleSeconds = float.MaxValue;
         public float WindUpShare => !WindingUp || Stats.WindUpSeconds <= 0f ? 0f : System.Math.Min(1f, System.Math.Max(0f, 1f - WindUpLeft / Stats.WindUpSeconds));
 
         /// <summary>Stops a wind-up without firing (an EMP, or the unit died).</summary>

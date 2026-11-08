@@ -317,6 +317,8 @@ namespace Halobellum.Units
         public float hitSlowShare;
         [Tooltip("Wind-up: seconds it charges before each shot goes, at the target it locked on to (the Spartan Laser). Firing on, the next wind-up overlaps the reload. 0 = none.")]
         public float windUpSeconds;
+        [Tooltip("Stagger: seconds it waits before its first shot after being idle a whole reload, so guns of one kind on a unit fire one after another (the Condor's lasers). 0 = none.")]
+        public float staggerSeconds;
 
         public WeaponStats ToStats()
         {
@@ -348,6 +350,7 @@ namespace Halobellum.Units
                 HitSlowSeconds = hitSlowSeconds,
                 HitSlowShare = hitSlowShare,
                 WindUpSeconds = windUpSeconds,
+                StaggerSeconds = staggerSeconds,
             };
         }
     }

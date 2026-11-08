@@ -1280,6 +1280,8 @@ namespace Halobellum.Combat
                         continue;
                     }
 
+                    if (weapon.BurstShotsLeft > 0) FireRestOfBurst(unit, weapon, w);
+
                     SimUnit target = weapon.Target;
                     if (weapon.WindingUp)
                     {
@@ -1294,8 +1296,15 @@ namespace Halobellum.Combat
                         {
                             // A weapon that is not shooting stays ready, but cannot store up extra shots.
                             if (weapon.Cooldown < 0f) weapon.Cooldown = 0f;
+                            if (weapon.IdleSeconds < float.MaxValue) weapon.IdleSeconds += _dt;
                             continue;
                         }
+                        if (weapon.Stats.StaggerSeconds > 0f && weapon.IdleSeconds >= weapon.Stats.FireInterval)
+                        {
+                            // Back to shooting after a whole reload idle: it waits its turn, so the unit's guns of this kind fire one after another (D114).
+                            weapon.Cooldown = Math.Max(weapon.Cooldown, weapon.Stats.StaggerSeconds + (weapon.Stats.HasWindUp ? weapon.Stats.WindUpSeconds : 0f));
+                        }
+                        weapon.IdleSeconds = 0f;
                         if (weapon.Stats.HasWindUp)
                         {
                             // It starts charging once the rest of its reload is no longer than its wind-up, so firing on keeps its rate.
@@ -1330,16 +1339,40 @@ namespace Halobellum.Combat
                     // A wound-up shot may come long after the weapon was ready: its reload counts from the shot, as any weapon's does.
                     if (weapon.Stats.HasWindUp) weapon.Cooldown = Math.Max(weapon.Cooldown, -_dt * unit.ShockwaveFireRate);
                     weapon.Cooldown += weapon.Stats.FireInterval;
-                    if (weapon.Stats.IsInstant)
+                    if (weapon.Stats.ShotsPerAttack > 1)
                     {
-                        ResolveHit(unit, weapon.Stats, target, target.Position, unit.Position);
+                        weapon.BurstShotsLeft = weapon.Stats.ShotsPerAttack - 1;
+                        weapon.BurstGapLeft = weapon.Stats.BurstGapSeconds;
                     }
-                    else
-                    {
-                        _projectiles.Add(new Projectile(unit, weapon.Stats, target, unit.Position, w, _shotsFired++));
-                    }
+                    Shoot(unit, weapon, w, target);
                 }
             }
+        }
+
+        private void Shoot(SimUnit unit, SimWeapon weapon, int weaponIndex, SimUnit target)
+        {
+            if (weapon.Stats.IsInstant) ResolveHit(unit, weapon.Stats, target, target.Position, unit.Position);
+            else _projectiles.Add(new Projectile(unit, weapon.Stats, target, unit.Position, weaponIndex, _shotsFired++));
+        }
+
+        /// <summary>
+        /// The other shots of an attack (Double Shot, D114): each goes its gap after the one before, at the weapon's target, without touching the reload.
+        /// If the target can no longer be hit, the rest of the attack is lost.
+        /// </summary>
+        private void FireRestOfBurst(SimUnit unit, SimWeapon weapon, int weaponIndex)
+        {
+            weapon.BurstGapLeft -= _dt * unit.ShockwaveFireRate;
+            if (weapon.BurstGapLeft > 1e-4f) return;
+            SimUnit target = weapon.Target;
+            if (!Targeting.IsTargetableEnemy(unit, target) || !Targeting.IsInRange(unit, weapon.Stats, target))
+            {
+                weapon.BurstShotsLeft = 0;
+                return;
+            }
+            weapon.BurstShotsLeft--;
+            weapon.BurstGapLeft += weapon.Stats.BurstGapSeconds;
+            Events.RaiseWeaponFired(unit, weaponIndex, target);
+            Shoot(unit, weapon, weaponIndex, target);
         }
 
         /// <summary>Wind-up times are counted in float steps: this keeps a step's rounding from costing a whole tick.</summary>
