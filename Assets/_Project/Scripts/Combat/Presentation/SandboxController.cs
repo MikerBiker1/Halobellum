@@ -118,6 +118,21 @@ namespace Halobellum.Presentation
         public Team PlacingTeam => MovingSquadId >= 0 ? _movingTeam : EditingTeam;
         public UnitStats PlacementType => PlacingType ?? Army(_movingTeam).FindSquad(MovingSquadId)?.Type;
 
+        /// <summary>The squad being moved, or null (also while a new squad is being placed).</summary>
+        public PlacedSquad MovingSquad => MovingSquadId >= 0 && PlacingType == null ? Army(_movingTeam).FindSquad(MovingSquadId) : null;
+
+        /// <summary>The preview's squad of the squad being moved, or -1 (D109).</summary>
+        public int MovingSimSquadId
+        {
+            get
+            {
+                PlacedSquad squad = MovingSquad;
+                BattleSimulation sim = _battle.Simulation;
+                int index = squad != null ? _previewOrder.IndexOf(squad) : -1;
+                return index >= 0 && sim != null && index < sim.Squads.Count ? sim.Squads[index].Id : -1;
+            }
+        }
+
         public PlayerState Army(Team team) => team == Team.A ? ArmyA : ArmyB;
 
         /// <summary>The group name of the sandbox-only units in the unit list.</summary>

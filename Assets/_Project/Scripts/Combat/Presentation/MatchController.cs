@@ -420,6 +420,19 @@ namespace Halobellum.Presentation
         /// <summary>The type of the squad being moved (for the ghost), or null.</summary>
         public UnitStats PlacementType => Match.Player.FindSquad(MovingSquadId)?.Type;
 
+        /// <summary>The squad being moved, or null.</summary>
+        public PlacedSquad MovingSquad => MovingSquadId >= 0 && Match != null ? Match.Player.FindSquad(MovingSquadId) : null;
+
+        /// <summary>The preview's squad of the squad being moved, or -1 (D109).</summary>
+        public int MovingSimSquadId => SimSquadOf(MovingSquad);
+
+        private int SimSquadOf(PlacedSquad squad)
+        {
+            BattleSimulation sim = _battle.Simulation;
+            int index = squad != null ? _previewOrder.IndexOf(squad) : -1;
+            return index >= 0 && sim != null && index < sim.Squads.Count ? sim.Squads[index].Id : -1;
+        }
+
         /// <summary>Moves the squad being moved to this spot (column and row in the player's grid).</summary>
         public ActionResult PlaceAt(int column, int row)
         {

@@ -25,6 +25,10 @@ namespace Halobellum.Presentation
         Team PlacingTeam { get; }
         /// <summary>The placed squad currently selected, or null.</summary>
         PlacedSquad SelectedPlacedSquad { get; }
+        /// <summary>The squad being moved, or null (placing a new one, or nothing).</summary>
+        PlacedSquad MovingSquad { get; }
+        /// <summary>The preview simulation's squad of the squad being moved, or -1: its bodies are drawn where it would go (D109).</summary>
+        int MovingSimSquadId { get; }
 
         void CancelPlacement();
         /// <summary>Turns the squad being placed or moved, or the selected squad where it stands.</summary>

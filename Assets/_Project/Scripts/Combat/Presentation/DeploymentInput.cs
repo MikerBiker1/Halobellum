@@ -2,7 +2,8 @@
 // Mouse and keyboard during deployment (Bible Section 5, Placement), for any scene with an
 // IDeploymentPlacement (the Match, the Sandbox). While a squad is being placed or moved, a flat
 // "ghost" shows its footprint snapped to the grid squares under the mouse, green where it fits,
-// red where it doesn't. Team B's zone is the mirror image of Team A's.
+// red where it doesn't, and a squad being moved is drawn standing in it, in its formation, turned as it would be (D109; UnitViewManager).
+// Team B's zone is the mirror image of Team A's.
 //   Selected squad: M moves it, R turns it, Delete sells (match) or removes (sandbox) it.
 //   While placing or moving: left-click puts it there, R turns it, a right-click (not a drag: RightClick) or Escape cancels.
 // Depends on: IDeploymentPlacement, BattleController (rules), RightClick, UiHitAreas, PlaceholderArt,
@@ -23,6 +24,7 @@ namespace Halobellum.Presentation
         private IDeploymentPlacement _match;
         private BattleController _battle;
         private BattlefieldView _field;
+        private UnitViewManager _views;
         private Transform _ghost;
         private MeshRenderer _ghostRenderer;
         private Material _validMaterial, _invalidMaterial;
@@ -32,6 +34,7 @@ namespace Halobellum.Presentation
             _match = GetComponent<IDeploymentPlacement>();
             _battle = GetComponent<BattleController>();
             _field = GetComponent<BattlefieldView>();
+            _views = GetComponent<UnitViewManager>();
             _validMaterial = PlaceholderArt.MaterialFor(validColor);
             _invalidMaterial = PlaceholderArt.MaterialFor(invalidColor);
             _ghost = PlaceholderArt.CreatePart("Placement Ghost", null, PlaceholderArt.Cube, _validMaterial);
@@ -50,7 +53,7 @@ namespace Halobellum.Presentation
             if (!_match.IsDeploying)
             {
                 if (_match.IsPlacing) _match.CancelPlacement();
-                _ghost.gameObject.SetActive(false);
+                HideGhost();
                 return;
             }
 
@@ -58,7 +61,7 @@ namespace Halobellum.Presentation
             Mouse mouse = Mouse.current;
             if (!_match.IsPlacing)
             {
-                _ghost.gameObject.SetActive(false);
+                HideGhost();
                 if (keyboard == null) return;
                 PlacedSquad selected = _match.SelectedPlacedSquad;
                 if (selected == null) return;
@@ -84,7 +87,7 @@ namespace Halobellum.Presentation
         {
             if (UiHitAreas.Contains(pointer) || !PointerCell(pointer, out int column, out int row))
             {
-                _ghost.gameObject.SetActive(false);
+                HideGhost();
                 return;
             }
 
@@ -129,6 +132,19 @@ namespace Halobellum.Presentation
             _ghost.localScale = new Vector3(width * rules.SquareSize - 0.1f, 0.1f, depth * rules.SquareSize - 0.1f);
             _ghostRenderer.sharedMaterial = _match.CanPlaceAt(column, row) ? _validMaterial : _invalidMaterial;
             _ghost.gameObject.SetActive(true);
+
+            // The squad itself, standing in the squares it would take (the owner, D109).
+            int squad = _match.MovingSimSquadId;
+            if (_views != null && squad >= 0)
+                _views.PreviewSquadAt(squad, DeploymentGrid.WorldCentre(_match.PlacementType, column, row, _match.PlacingRotated, _match.PlacingTeam, rules), _match.PlacingRotated);
+            else if (_views != null) _views.ClearSquadPreview();
+        }
+
+        /// <summary>No ghost, and every squad drawn where it really is.</summary>
+        private void HideGhost()
+        {
+            if (_ghost.gameObject.activeSelf) _ghost.gameObject.SetActive(false);
+            if (_views != null && _views.PreviewedSquadId >= 0) _views.ClearSquadPreview();
         }
     }
 }

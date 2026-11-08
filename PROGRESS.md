@@ -187,6 +187,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] The disclaimer's request not to share, HALOBELLUM in the menu's font, the version on the menu (D100)
 - [x] The menu's music waits for the disclaimer, a click as it goes; the version is the build number (D101)
 - [x] The version is 0.378.0 and counts on by the size of each push (D102)
+- [x] A squad being moved is drawn standing in the green squares (D109)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

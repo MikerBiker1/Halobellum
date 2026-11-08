@@ -5,6 +5,7 @@
 // Depends on: Halobellum.Presentation, Halobellum.Economy, Halobellum.Combat, Halobellum.Core, NUnit, Unity Test Framework.
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Halobellum.Combat;
 using Halobellum.Core;
@@ -439,6 +440,55 @@ namespace Halobellum.Tests
                     Assert.LessOrEqual(Mathf.Abs(ghost.position.x - wanted.x), square, $"Facing {yaw}, tilted {tilt}.");
                     Assert.LessOrEqual(Mathf.Abs(ghost.position.z - wanted.z), square, $"Facing {yaw}, tilted {tilt}.");
                 }
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator MovingASquad_DrawsItsBodiesInTheSquaresUnderThePointer_ThenBackIfCancelled()
+        {
+            // The owner (D109): while moving a squad, see the squad itself standing in the squares it would take, turned as it would be.
+            yield return Load("Sandbox");
+            SandboxController sandbox = Sandbox;
+            var input = sandbox.GetComponent<DeploymentInput>();
+            var views = sandbox.GetComponent<UnitViewManager>();
+            CombatRules rules = sandbox.GetComponent<BattleController>().Rules;
+            sandbox.AddSquad(Team.A, Unit(sandbox, "Marine"));
+            yield return null;
+            BattleSimulation simulation = sandbox.GetComponent<BattleController>().Simulation;
+            PlacedSquad placed = sandbox.ArmyA.Squads[0];
+            List<SimUnit> bodies = simulation.Units.Where(u => u.Team == Team.A && !u.Stats.IsTower).ToList();
+            var before = bodies.Select(u => views.WorldPosition(u)).ToList(); // Where the battle has them (a body just added may not be drawn yet).
+
+            sandbox.BeginMoving(placed);
+            _control.SetView(new Vector2(0f, -40f), 0f, 60f, 90f);
+            int column = 2, row = 1;
+            Vec2 centre = DeploymentGrid.WorldCentre(placed.Type, column, row, placed.Rotated90, Team.A, rules);
+            input.PointAt(_camera.WorldToScreenPoint(new Vector3(centre.X, 0f, centre.Y)), false);
+            yield return null;
+            yield return null; // A coroutine goes on before the frame's LateUpdate draws the bodies.
+            Assert.AreEqual(simulation.Squads[0].Id, views.PreviewedSquadId);
+            Vector3 middle = Vector3.zero;
+            foreach (SimUnit body in bodies) middle += views.ShownPosition(body);
+            middle /= bodies.Count;
+            Assert.IsTrue(input.PointerCell(_camera.WorldToScreenPoint(new Vector3(centre.X, 0f, centre.Y)), out int c, out int r));
+            Vec2 under = DeploymentGrid.WorldCentre(placed.Type, c, r, placed.Rotated90, Team.A, rules);
+            Assert.AreEqual(under.X, middle.x, 0.6f, "The squad stands in the squares under the pointer.");
+            Assert.AreEqual(under.Y, middle.z, 0.6f);
+            Vector3 was = before.Aggregate(Vector3.zero, (a, p) => a + p) / before.Count;
+            Assert.Greater(Vector2.Distance(new Vector2(middle.x, middle.z), new Vector2(was.x, was.z)), 3f, "It has moved away from where it was.");
+            Assert.AreEqual(before[0].x, views.WorldPosition(bodies[0]).x, 0.01f, "Only the drawing moves: the battle keeps the squad where it is.");
+
+            sandbox.CancelPlacement();
+            yield return null;
+            yield return null;
+            Assert.AreEqual(-1, views.PreviewedSquadId);
+            // Cancelling may rebuild the preview with new bodies: look them up again, in the same order.
+            simulation = sandbox.GetComponent<BattleController>().Simulation;
+            bodies = simulation.Units.Where(u => u.Team == Team.A && !u.Stats.IsTower).ToList();
+            for (int i = 0; i < bodies.Count; i++)
+            {
+                Vector3 now = views.ShownPosition(bodies[i]);
+                Assert.AreEqual(0f, Vector2.Distance(new Vector2(before[i].x, before[i].z), new Vector2(now.x, now.z)), 0.05f, "Back where it is (a new squad may still be dropping in, so across the ground only).");
             }
         }
 

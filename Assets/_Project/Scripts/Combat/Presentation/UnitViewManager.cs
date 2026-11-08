@@ -136,6 +136,60 @@ namespace Halobellum.Presentation
         /// <summary>Level-up arrows by simulation squad id.</summary>
         private readonly Dictionary<int, Transform> _arrows = new Dictionary<int, Transform>();
 
+        // A squad being moved in deployment is drawn where it would go (D109): its bodies in their formation at the spot under the mouse.
+        private int _previewSquadId = -1;
+        private Vec2 _previewCentre;
+        private bool _previewRotated;
+        private readonly Dictionary<int, Vector3> _previewSpots = new Dictionary<int, Vector3>();
+
+        /// <summary>
+        /// Draws this simulation squad's bodies standing in their formation around this centre (metres, the simulation's frame), turned or not,
+        /// as they would stand if the squad were put there (D109). Only the drawing moves; the simulation keeps the squad where it is.
+        /// </summary>
+        public void PreviewSquadAt(int squadId, Vec2 centre, bool rotated90)
+        {
+            if (squadId == _previewSquadId && _previewRotated == rotated90 && Vec2.DistanceSquared(centre, _previewCentre) < 1e-6f) return;
+            _previewSquadId = squadId;
+            _previewCentre = centre;
+            _previewRotated = rotated90;
+            _previewSpots.Clear();
+            var members = new List<View>();
+            foreach (View view in _views) if (view.Unit.SquadId == squadId && view.Unit.IsAlive) members.Add(view);
+            if (members.Count == 0) return;
+            UnitStats stats = members[0].Unit.Stats;
+            Team team = members[0].Unit.Team;
+            List<Vec2> offsets = SquadFormation.Offsets(stats.SquadSize, stats.CollisionRadius, _battle.Rules.FormationGap, rotated90);
+            if (offsets.Count == members.Count)
+            {
+                // Each body to its own place in the formation, as the battle would put it (HeadlessBattleRunner.AddSquad).
+                for (int i = 0; i < members.Count; i++)
+                {
+                    Vec2 spot = centre + (team == Team.A ? offsets[i] : -offsets[i]);
+                    _previewSpots[members[i].Unit.Id] = new Vector3(spot.X, members[i].CurrentPosition.y, spot.Y);
+                }
+                return;
+            }
+            // Bodies lost or added since (not in deployment, but to be safe): the squad as it stands, moved.
+            Vec2 middle = Vec2.Zero;
+            foreach (View view in members) middle += view.Unit.Position;
+            middle /= members.Count;
+            foreach (View view in members)
+            {
+                Vec2 spot = centre + (view.Unit.Position - middle);
+                _previewSpots[view.Unit.Id] = new Vector3(spot.X, view.CurrentPosition.y, spot.Y);
+            }
+        }
+
+        /// <summary>Every squad drawn where it really is again.</summary>
+        public void ClearSquadPreview()
+        {
+            _previewSquadId = -1;
+            _previewSpots.Clear();
+        }
+
+        /// <summary>The simulation squad drawn where it would go, or -1 (for tests).</summary>
+        public int PreviewedSquadId => _previewSquadId;
+
         /// <summary>Units of this side are drawn as grey ghosts (set before the battle is shown), or null.</summary>
         public Team? GhostTeam { get; set; }
         /// <summary>Which simulation squads show the level-up arrow (null = none). Asked every frame.</summary>
@@ -499,6 +553,7 @@ namespace Halobellum.Presentation
         /// <summary>Throws away the old views and makes one view per body of the newly shown battle.</summary>
         private void Rebuild(BattleSimulation simulation)
         {
+            ClearSquadPreview(); // New views: the squad being moved is found again on the next frame.
             Unsubscribe();
             _views.Clear();
             if (_container != null) Destroy(_container.gameObject);
@@ -895,6 +950,7 @@ namespace Halobellum.Presentation
                 root.SetPositionAndRotation(
                     Vector3.LerpUnclamped(view.PreviousPosition, view.CurrentPosition, alpha) + Vector3.up * DropOffset(view),
                     Quaternion.SlerpUnclamped(view.PreviousRotation, view.CurrentRotation, alpha));
+                if (_previewSquadId >= 0 && unit.SquadId == _previewSquadId && _previewSpots.TryGetValue(unit.Id, out Vector3 spot)) root.position = spot; // Being moved (D109).
                 if (unit.Stats.ReinforcementLandSeconds > 0f && view.Ring.activeSelf) view.Ring.transform.localPosition = new Vector3(0f, 0.05f - root.position.y, 0f); // It stays on the ground.
 
                 if (view.Baked != null)
