@@ -115,6 +115,7 @@ static class Program
         }
 
         if (args.Length > 0 && args[0] == "ai") return AiMatches(units, ids, args.Length > 1 ? int.Parse(args[1]) : 20);
+        if (args.Length > 0 && args[0] == "true") return TrueCounters(units, args.Length > 1 ? int.Parse(args[1]) : 10);
         if (args.Length > 0 && args[0] == "stuck")
         {
             // Why Infection Forms stop: a squad behind Carrier Forms against Marines, as far apart as in a match.
@@ -262,6 +263,46 @@ static class Program
     static void Add(string who, string unit) { if (!Armies.TryGetValue(who, out var d)) Armies[who] = d = new(); d[unit] = d.GetValueOrDefault(unit) + 1; }
 
     static string Csv(string name) => name.Replace(",", ";");
+
+    /// <summary>
+    /// The true counters (the owner, 2026-11-07): one squad of each unit against two squads of every other, whatever they cost, half the
+    /// battles with the sides swapped. Writes true_matrix.csv: the row unit's win rate, alone, against two squads of the column unit.
+    /// A unit that beats two squads of another truly counters it. Usage: dotnet run -c Release -- true [battles]
+    /// </summary>
+    static int TrueCounters(List<UnitStats> units, int battles)
+    {
+        string dir = AppContext.BaseDirectory;
+        while (!File.Exists(Path.Combine(dir, "units.json"))) dir = Path.GetDirectoryName(dir);
+        CombatRules rules = TestRules.Default();
+        var runner = new RunnerSettings { Battles = battles, BaseSeed = 1000, PositionJitter = 0.3f, FrontLineDistance = 20f, SquadGap = 3f };
+        var pairs = new List<(int one, int two)>();
+        for (int a = 0; a < units.Count; a++) for (int b = 0; b < units.Count; b++) if (a != b) pairs.Add((a, b));
+        var rates = new float[pairs.Count];
+        var watch = Stopwatch.StartNew();
+        Parallel.For(0, pairs.Count, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, i =>
+        {
+            UnitStats one = units[pairs[i].one], two = units[pairs[i].two];
+            ArmySetup alone = new ArmySetup(one.Name).Add(one, 1), pair = new ArmySetup(two.Name).Add(two, 2);
+            int wins = 0;
+            for (int n = 0; n < battles; n++)
+            {
+                bool swapped = n % 2 == 1;
+                BattleResult result = HeadlessBattleRunner.RunBattle(rules, swapped ? pair : alone, swapped ? alone : pair, runner, runner.BaseSeed + n);
+                bool stalemate = result.TimedOut && result.TeamA.DamageDealt <= 0f && result.TeamB.DamageDealt <= 0f;
+                BattleOutcome won = swapped ? BattleOutcome.TeamBWins : BattleOutcome.TeamAWins;
+                if (!stalemate && result.Outcome == won) wins++;
+            }
+            rates[i] = wins / (float)battles;
+        });
+        Console.WriteLine($"{pairs.Count} pairs x {battles} battles, one squad against two, in {watch.Elapsed.TotalSeconds:0.0} s");
+        var cell = new Dictionary<(int, int), float>();
+        for (int i = 0; i < pairs.Count; i++) cell[pairs[i]] = rates[i];
+        var rows = new List<string> { "one squad of the row unit against two of the column unit," + string.Join(",", units.Select(u => Csv(u.Name))) };
+        for (int a = 0; a < units.Count; a++)
+            rows.Add(Csv(units[a].Name) + "," + string.Join(",", Enumerable.Range(0, units.Count).Select(b => a == b ? "" : cell[(a, b)].ToString("0.00", System.Globalization.CultureInfo.InvariantCulture))));
+        File.WriteAllLines(Path.Combine(dir, "true_matrix.csv"), rows);
+        return 0;
+    }
 
     static JsonDocument _doc;
     static string _dir;
