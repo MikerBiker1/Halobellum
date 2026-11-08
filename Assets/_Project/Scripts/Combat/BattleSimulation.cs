@@ -131,7 +131,7 @@ namespace Halobellum.Combat
                 shots.Add(new ShotInFlight
                 {
                     Position = projectile.Position,
-                    ArcLength = projectile.Weapon.Lobbed ? Vec2.Distance(projectile.Origin, projectile.AimPoint) : 0f,
+                    ArcLength = projectile.Lobbed ? Vec2.Distance(projectile.Origin, projectile.AimPoint) : 0f,
                     Progress = whole > 1e-4f ? Math.Min(1f, flown / whole) : 0f,
                     Attacker = projectile.Attacker,
                     WeaponIndex = projectile.WeaponIndex,
@@ -884,13 +884,17 @@ namespace Halobellum.Combat
                 {
                     unit.State = UnitState.Idle; // Nothing it could ever reach.
                 }
+                else if (target == null && BeamHolds(unit))
+                {
+                    unit.State = UnitState.Idle; // Its beam sweeps on where its last target fell; it waits for the beam to end.
+                }
                 else if (target == null)
                 {
                     // Nothing in sight yet: march straight ahead toward the enemy's side.
                     unit.State = UnitState.Move;
                     unit.MoveGoal = unit.Position + Forward(unit) * (unit.MoveSpeedNow * _rules.FormationLookaheadSeconds + 1f);
                 }
-                else if (Targeting.IsInRange(unit, unit.Weapons[unit.MainWeaponIndex].Stats, target))
+                else if (BeamHolds(unit) || Targeting.IsInRange(unit, unit.Weapons[unit.MainWeaponIndex].Stats, target))
                 {
                     unit.State = UnitState.Attack;
                 }
@@ -978,7 +982,7 @@ namespace Halobellum.Combat
                 SimUnit unit = _units[i];
                 _advancing[i] = false;
                 if (_rules.AdvanceSpeedMultiplier <= 0f || !unit.IsAlive || unit.IsAir || unit.IsLeaping || unit.State != UnitState.Attack
-                    || unit.MoveTarget == null || unit.MoveSpeedNow <= 0f) continue;
+                    || unit.MoveTarget == null || unit.MoveSpeedNow <= 0f || BeamHolds(unit)) continue;
                 WeaponStats weapon = unit.Weapons[unit.MainWeaponIndex].Stats;
                 float step = unit.MoveSpeedNow * _rules.AdvanceSpeedMultiplier * _dt;
                 float closest = Math.Max(weapon.MinRange, weapon.Range * unit.RangeMultiplier * _rules.AdvanceRangeShare);
@@ -1081,7 +1085,8 @@ namespace Halobellum.Combat
         private float AcquisitionRange(SimUnit unit, WeaponStats weapon)
         {
             if (unit.UnlimitedAcquisition || _rules.AcquisitionRangeMultiplier <= 0f) return float.PositiveInfinity;
-            return Math.Max(weapon.Range, unit.Stats.LeapRange) * _rules.AcquisitionRangeMultiplier; // A leap is its reach too.
+            // A leap is its reach too; a unit may notice enemies from further than its reach says (the Infested Grunts, D107).
+            return Math.Max(Math.Max(weapon.Range, unit.Stats.LeapRange) * _rules.AcquisitionRangeMultiplier, unit.Stats.AcquisitionRange);
         }
 
         /// <summary>Straight ahead toward the enemy's side: up for Team A, down for Team B.</summary>
@@ -1187,21 +1192,28 @@ namespace Halobellum.Combat
 
         /// <summary>
         /// Units that switch weapons (ODSTs, D33) use one weapon at a time: the one whose target is the
-        /// closest enemy. It decides where the unit moves; the other weapons wait.
+        /// closest enemy. It decides where the unit moves; the other weapons wait. A weapon that hits only
+        /// air comes first whenever it has a target, however close the ground is (the Swarm Form's spat
+        /// bone: the owner, 2026-11-07, D107; it bit Marauders beside it while Banshees flew over).
         /// </summary>
         private static void ChooseWeaponByTarget(SimUnit unit)
         {
             int best = 0;
             float bestDistance = float.MaxValue;
+            bool bestForAir = false;
             for (int w = 0; w < unit.Weapons.Length; w++)
             {
                 SimUnit target = unit.Weapons[w].Target;
                 if (target == null) continue;
+                WeaponStats stats = unit.Weapons[w].Stats;
+                bool forAir = stats.CanTarget(unit.Stats, true) && !stats.CanTarget(unit.Stats, false);
+                if (bestForAir && !forAir) continue;
                 float distance = Vec2.DistanceSquared(unit.Position, target.Position);
-                if (distance < bestDistance)
+                if (distance < bestDistance || (forAir && !bestForAir))
                 {
                     bestDistance = distance;
                     best = w;
+                    bestForAir = forAir;
                 }
             }
             unit.MainWeaponIndex = best;
@@ -1211,12 +1223,20 @@ namespace Halobellum.Combat
             }
         }
 
+        /// <summary>
+        /// True while the unit's main weapon is a beam that is charging or firing (the Scarab's, the Hunter Captain's). The unit then holds
+        /// its ground and faces the beam's spot, so the beam leaves its front as the spot sweeps on to the next target (the owner,
+        /// 2026-11-07, D107: a Scarab walked and turned toward its next target while its beam still swept, the beam leaving it sideways).
+        /// </summary>
+        private static bool BeamHolds(SimUnit unit) =>
+            unit.Weapons.Length > 0 && unit.Weapons[unit.MainWeaponIndex].BeamPhase != BeamPhase.Off;
+
         private void FaceTargets()
         {
             foreach (SimUnit unit in _units)
             {
                 if (unit.State != UnitState.Attack || unit.MoveTarget == null) continue;
-                Vec2 toTarget = unit.MoveTarget.Position - unit.Position;
+                Vec2 toTarget = (BeamHolds(unit) ? unit.Weapons[unit.MainWeaponIndex].BeamPoint : unit.MoveTarget.Position) - unit.Position;
                 if (toTarget.LengthSquared <= 1e-8f) continue;
                 // Turn toward the target at the unit's own turning speed (instantly if it has none).
                 unit.Facing = unit.Stats.TurnTime180 > 0f
@@ -1764,7 +1784,10 @@ namespace Halobellum.Combat
             public UnitStats Form;
         }
 
-        /// <summary>A shot in flight. It follows its target and hits when it arrives; a lobbed one flies to a fixed spot.</summary>
+        /// <summary>
+        /// A shot in flight. It follows its target and hits when it arrives; a lobbed one flies to a fixed spot. A lobbed weapon fires
+        /// straight at a flyer, as any other does (the Pure Form Ranged's shards at air: the owner, 2026-11-07, D107).
+        /// </summary>
         private sealed class Projectile
         {
             public readonly SimUnit Attacker;
@@ -1772,6 +1795,7 @@ namespace Halobellum.Combat
             public readonly Vec2 Origin;
             public readonly int WeaponIndex, Serial;
             public readonly SimUnit AimedAt;
+            public readonly bool Lobbed;
             public SimUnit Target;
             public Vec2 Position;
             public Vec2 AimPoint;
@@ -1783,11 +1807,12 @@ namespace Halobellum.Combat
                 Serial = serial;
                 Attacker = attacker;
                 Weapon = weapon;
-                Target = weapon.Lobbed ? null : target;
+                Lobbed = weapon.Lobbed && !target.IsAir;
+                Target = Lobbed ? null : target;
                 AimedAt = Target;
                 Origin = origin;
                 Position = origin;
-                AimPoint = weapon.Lobbed ? LeadPoint(origin, target, weapon.ProjectileSpeed) : target.Position;
+                AimPoint = Lobbed ? LeadPoint(origin, target, weapon.ProjectileSpeed) : target.Position;
             }
         }
     }

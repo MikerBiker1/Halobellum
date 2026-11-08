@@ -228,6 +228,7 @@ namespace Halobellum.EditorTools
             { "Seeder", 0.36f },           // Squeezing out its spore, the tendrils lashing (D93).
             { "Mantis", 0.53f },           // Both arms aimed, the rocket arm kicking up as a rocket leaves (D97).
             { "Pure Form Tank", 0.47f },   // The club swept round in front (D93).
+            { "Juggernaut", 0.44f },       // Both blades down in front of it as it lunges (D107).
         };
 
         /// <summary>The baked row a unit's icon shows: a moment of its shooting clip (the middle, unless IconMoments says), or its still frame without one.</summary>

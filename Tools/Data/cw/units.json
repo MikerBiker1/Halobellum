@@ -2356,7 +2356,7 @@
   "speed": 1,
   "radius": 1.1,
   "turn": 1,
-  "filter": "G",
+  "filter": "B",
   "weapons": [
    {
     "name": "Bone Shards",
@@ -2370,7 +2370,7 @@
     "aa": false,
     "block": false,
     "own": null,
-    "air": 1,
+    "air": 0.25,
     "cone": 0,
     "lob": true,
     "beam": 0,
@@ -5471,6 +5471,7 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "sight": 30,
   "basedmg": null,
   "tint": [
    0.55,

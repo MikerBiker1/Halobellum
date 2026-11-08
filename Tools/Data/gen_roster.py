@@ -52,11 +52,11 @@ FLANKERS = {"Pelican", "Sparrowhawk", "Longsword", "Vulture", "CondorGunship"}
 def U(id, name, faction, role, tier, unlock, squad, cost, hp, armor, speed, radius, turn, filter, weapons,
       shield=0, regen=0, airu=False, arc=None, drop=None, note="", forms=1, flood=False, infects=False, immune=False,
       selfd=False, seek=False, burst=None, spawn=None, aura=None, leap=None, lifesteal=0, basedmg=None, tint=None, scale=1, sub=None, folder=None, baked=None, seedforms=None, spawn2=None,
-      charges=False):
+      charges=False, sight=0):
     return dict(id=id, name=name, faction=faction, role=role, tier=tier, unlock=unlock, squad=squad, cost=cost,
                 hp=hp, armor=armor, speed=speed, radius=radius, turn=turn, filter=filter, weapons=weapons,
                 shield=shield, regen=regen, air=airu, arc=arc, drop=drop, note=note, forms=forms, flood=flood, infects=infects,
-                immune=immune, selfd=selfd, seek=seek, burst=burst, spawn=spawn, aura=aura, leap=leap, lifesteal=lifesteal, seedforms=seedforms, spawn2=spawn2, charges=charges,
+                immune=immune, selfd=selfd, seek=seek, burst=burst, spawn=spawn, aura=aura, leap=leap, lifesteal=lifesteal, seedforms=seedforms, spawn2=spawn2, charges=charges, sight=sight,
                 basedmg=basedmg, tint=tint, scale=scale, sub=sub, folder=folder or faction, baked=baked)
 
 
@@ -145,8 +145,10 @@ UNITS = [
        W("Scavenged Rifle", 6, 0.4, 10, "Ballistic", block=True)], flood=True),
     U("StalkerForm", "Stalker Form", "Flood", "Flanker", 2, 50, 3, 250, 450, "L", 5, 0.9, 0.3, "G",
       [W("Talons", 28, 0.4, 1.5, "Melee")], flood=True),
-    U("PureFormRanged", "Pure Form Ranged", "Flood", "Artillery", 2, 50, 2, 250, 400, "L", 1, 1.1, 1, "G",
-      [W("Bone Shards", 60, 3, 34, "Explosive", proj=22, splash=3, minr=8, lob=True)], flood=True),
+    # D107 (the owner, 2026-11-07): it shoots air too; at a flyer its shards fly straight, not lobbed, for a quarter of their damage:
+    # at full damage every aircraft lost to it, and air is artillery's counter (Section 7).
+    U("PureFormRanged", "Pure Form Ranged", "Flood", "Artillery", 2, 50, 2, 250, 400, "L", 1, 1.1, 1, "B",
+      [W("Bone Shards", 60, 3, 34, "Explosive", proj=22, splash=3, minr=8, lob=True, air=0.25)], flood=True),
     # D76 (the owner, 2026-11-06): its spat bone hits air only, from 14 m; on the ground it must close in and bite. Its weapons split air from
     # ground, so it uses one at a time, and the long one's reach means air comes first.
     U("SwarmForm", "Swarm Form", "Flood", "AntiAir", 2, 50, 4, 250, 200, "U", 3.5, 1, 0.3, "B",
@@ -322,6 +324,8 @@ def unit_yaml(u):
     lines += [f"  leapRange: {fmt(lp[0] if lp else 0)}", f"  leapSpeed: {fmt(lp[1] if lp else 0)}", f"  leapCooldownSeconds: {fmt(lp[2] if lp else 0)}"]
     if u["charges"]:
         lines += ["  leapCharges: 1"]  # Its leap is a charge along the ground, and it uses one weapon at a time (the Hunters, D87).
+    if u["sight"]:
+        lines += [f"  acquisitionRange: {fmt(u['sight'])}"]  # It notices enemies from at least this far (the Infested Grunts, D107).
     techs = TECHS.get(u["id"], [])
     if techs:
         lines += ["  techUpgrades:"] + [f"  - {{fileID: 11400000, guid: {guid('tech-' + u['id'] + '-' + t['id'])}, type: 2}}" for t in techs]

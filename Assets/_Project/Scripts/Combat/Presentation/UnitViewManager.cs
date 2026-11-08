@@ -457,12 +457,13 @@ namespace Halobellum.Presentation
 
         /// <summary>
         /// What a living body should be playing right now. A body with a charge and a close-in blow (the Hunters, D87) plays the charge while
-        /// its leap is a charge, and the blow while it fights with a melee weapon; without them, it moves and shoots as any other.
+        /// its leap is a charge, and the blow while it fights with a melee weapon; without them, it moves and shoots as any other. A body that
+        /// leaps through the air plays its charge clip as its leap, if it has one (the Juggernaut's pounce, D107).
         /// </summary>
         private BakedAnimation WantedAnimation(SimUnit unit, BakedBodyDefinition body)
         {
             if (!_battle.IsPlaying) return BakedAnimation.Still; // Time stands still in deployment.
-            if (unit.IsLeaping && unit.Stats.LeapCharges && body.Clip(BakedAnimation.Charge) != null) return BakedAnimation.Charge;
+            if (unit.IsLeaping && body.Clip(BakedAnimation.Charge) != null) return BakedAnimation.Charge;
             switch (unit.State)
             {
                 case UnitState.Move: return BakedAnimation.Moving;

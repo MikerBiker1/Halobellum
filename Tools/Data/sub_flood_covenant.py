@@ -15,7 +15,7 @@ def units(U, W):
     return [
         U("InfestedGrunt", "Infested Grunt", FACTION, "Chaff", 1, 0, 16, 100, 75, "U", 3, 0.45, 0.25, "G",
           [W("Claws", 11, 0.7, 1.5, "Melee"),
-           W("Scavenged Plasma Pistol", 3, 0.5, 9, "Energy", own="B")], flood=True, leap=(4, 10, 4), tint=INFESTED, baked="Grunt",
+           W("Scavenged Plasma Pistol", 3, 0.5, 9, "Energy", own="B")], flood=True, leap=(4, 10, 4), tint=INFESTED, baked="Grunt", sight=30,
           note="A rushing crowd with claws. Cannot infect, as only Infection Forms do."),
         U("InfestedGhost", "Infested Ghost", FACTION, "Flanker", 1, 0, 2, 200, 270, "L", 5.5, 1.2, 0.8, "G",
           [W("Hull Ram", 45, 1.0, 1.5, "Melee", splash=1.5),

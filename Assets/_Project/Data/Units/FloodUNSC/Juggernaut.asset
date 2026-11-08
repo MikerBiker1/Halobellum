@@ -100,7 +100,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a877b4fd9c5c4a05cf348f8bad157da3, type: 2}
   prefab: {fileID: 8081316487958047871, guid: b28e5f7376a990542adb408f486e14f9, type: 3}
   keepsOwnMaterials: 1
-  bakedBody: {fileID: 0}
+  bakedBody: {fileID: 11400000, guid: ffc55a56f155433ca9409a75438a6199, type: 2}
   bakedTint: {r: 1, g: 1, b: 1, a: 0}
   bakedScale: 1
   strongAgainst: Artillery, DPS

@@ -548,6 +548,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-07 | Vehicles with open seats have their soldiers in them, the Flood's Combat Forms | Per the project owner (D99) |
 | 2026-11-07 | The Wraith's hatch has an Elite (the infested one a Combat Form); the Chopper's rider sits on its saddle behind the tank | Per the project owner (D103) |
 | 2026-11-07 | The main menu's warship is the owner's supercarrier model; its vehicles fire their own guns | Per the project owner (D104) |
+| 2026-11-07 | A unit holds still while its beam fires; a unit with an air-only weapon uses it first; the Pure Form Ranged hits air for a quarter of its damage; the Infested Grunts notice enemies from 30 m | Per the project owner (D107) |
 | 2026-11-07 | The owner's disclaimer shows once each time the game starts, before the main menu | Per the project owner (D96) |
 | 2026-11-07 | The disclaimer asks players not to share the game publicly and writes HALOBELLUM as the menu does; the menu shows the version | Per the project owner (D100) |
 | 2026-11-07 | The menu's music starts only once the disclaimer is clicked away, with a button's click; the version shown is the build number (commits on main) | Per the project owner (D101) |

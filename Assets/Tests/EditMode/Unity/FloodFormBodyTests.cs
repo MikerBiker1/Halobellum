@@ -7,6 +7,7 @@
 // blow a strike, the Combat Form shooting from its claw and the Elite from the plasma rifle in its right hand.
 // The Seeder, the Pure Form Tank and the Abomination (D93): the Seeder a flier centred on its middle, each of its tendril strands with a
 // chain; the Tank's sweep one blow long; the Abomination's slam (with its whip) one slam long, on Meshy's rig put under a still Root.
+// The Juggernaut (D107): its scissor strike one blow long, both arms chains of their own, a pounce for its leap.
 // Depends on: Halobellum.Units, Halobellum.Core, NUnit, UnityEditor (loading the assets).
 
 using System.Linq;
@@ -130,8 +131,23 @@ namespace Halobellum.Tests
             Assert.GreaterOrEqual(strands, 10, "Its tendrils have chains of their own.");
         }
 
+        [Test]
+        public void TheJuggernaut_RunsOnItsLegs_WithBothArmsWrithing_AndPouncesOnItsLeap()
+        {
+            (UnitDefinition unit, BakedBodyDefinition body) = Load("FloodUNSC/Juggernaut", "Juggernaut");
+            UnitStats stats = unit.ToStats();
+            Assert.Greater(stats.LeapRange, 0f, "It leaps.");
+            Assert.IsNotNull(body.Clip(BakedAnimation.Charge), "Its pounce, played while it leaps.");
+            Assert.IsTrue(body.Clip(BakedAnimation.Charge).loops);
+            Transform[] rig = body.sourceModel.GetComponentsInChildren<Transform>();
+            Assert.GreaterOrEqual(rig.Count(t => t.name.StartsWith("Low_")), 8, "Its low arm a chain of its own, shoulder to blade.");
+            Assert.GreaterOrEqual(rig.Count(t => t.name.StartsWith("High_")), 7, "And its high arm.");
+            Assert.IsTrue(rig.Any(t => t.name == "LegL_1") && rig.Any(t => t.name == "LegR_1"), "Legs that bend.");
+        }
+
         [TestCase("Flood/PureFormTank", "PureFormTank", 0.5f)]
         [TestCase("Flood/Abomination", "Abomination", 0.62f)]
+        [TestCase("FloodUNSC/Juggernaut", "Juggernaut", 0.42f)]
         public void ABigFloodForm_StrikesOnItsWeaponsBeat(string unitPath, string bodyName, float moment)
         {
             (UnitDefinition unit, BakedBodyDefinition body) = Load(unitPath, bodyName);
@@ -148,6 +164,7 @@ namespace Halobellum.Tests
         [TestCase("Seeder")]
         [TestCase("PureFormTank")]
         [TestCase("Abomination")]
+        [TestCase("Juggernaut")]
         public void ACreatureRig_StandsOnAStillRoot(string body)
         {
             // creature_rig.py's convention: Root, still, over Body, which sways; the baker measures drift by Root, so the sway stays.

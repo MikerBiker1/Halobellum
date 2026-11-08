@@ -27,7 +27,7 @@ MonoBehaviour:
   collisionRadius: 1.1
   turnTime180: 1
   isAir: 0
-  targetFilter: 0
+  targetFilter: 2
   weapons:
   - weaponName: Bone Shards
     damagePerShot: 60
@@ -41,7 +41,7 @@ MonoBehaviour:
     canBeBlocked: 0
     hasOwnTargetFilter: 0
     targetFilter: 0
-    airDamageMultiplier: 1
+    airDamageMultiplier: 0.25
     coneDegrees: 0
     targetClass: 0
     lobbed: 1

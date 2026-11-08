@@ -2,6 +2,15 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The Juggernaut animated, and five changes to how units fight (D107)
+- **The Juggernaut** runs with a bounding stride, its two scythe arms writhing. To strike it rears up and brings both blades down together in front of it. It pounces with its legs tucked when it leaps, and collapses onto its knees when it dies. Pictures: `Docs/M10/juggernaut_d107_strike.jpg`, `Docs/M10/juggernaut_d107_run.jpg`.
+- **The Scarab** stands still while its beam is on and turns with the beam, so the beam always leaves its front. The Hunter Captain's laser does the same.
+- **Swarm Forms** go for flyers first, even with ground units right beside them.
+- **The Pure Form Ranged** shoots flyers, its shards flying straight at them, for a quarter of the damage, so air still beats it (morning item 167).
+- **Seeders** keep drifting when they have nothing to do, instead of freezing in the air.
+- **Infested Grunts** notice enemies from 30 m instead of 12 (morning item 168).
+- **Checked:** tests for each; the counter matchups they touch, in the counter console. **Not checked:** played by hand; no tournament, as you asked.
+
 ## The supercarrier's beam meets the ship (D105)
 - **In the menu:** the glassing beam now comes down from under the supercarrier's hull, a third of the way from its bow, where you drew it.
 - **Checked:** the menu's pictures and its tests. **Not checked:** played by hand.

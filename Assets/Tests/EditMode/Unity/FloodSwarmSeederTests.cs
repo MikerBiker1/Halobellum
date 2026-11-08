@@ -1,7 +1,8 @@
 // FloodSwarmSeederTests.cs
 // D76 (the owner, 2026-11-06), with the game's own unit data: the Swarm Form's spat bone hits air only and it bites ground units in melee,
 // going for air first because its spat bone reaches further; the Seeder shoots air too, and a unit that dies seeded rises as the Flood's own
-// version of it (a Banshee as an Infested Banshee) only if a Flood roster has one: anything else just dies.
+// version of it (a Banshee as an Infested Banshee) only if a Flood roster has one: anything else just dies. D107 (the owner, 2026-11-07): the
+// Swarm Form goes for air even with the ground right beside it, and the Pure Form Ranged shoots air, straight at it, for a quarter of the damage.
 // Depends on: Halobellum.Combat, Halobellum.Core, Halobellum.EditorTools, NUnit.
 
 using System.Collections.Generic;
@@ -52,6 +53,52 @@ namespace Halobellum.Tests
             sim.AddUnit(u["Marine"], Team.B, new Vec2(0f, 0f)); // Nearer, on the ground.
             sim.Step();
             Assert.AreSame(banshee, swarm.MoveTarget, "The flyer, which its spat bone reaches from far off.");
+        }
+
+        [Test]
+        public void TheSwarmForm_GoesForAirFirst_EvenWithGroundRightBesideIt()
+        {
+            // D107: in the owner's round 8 the Swarm Forms bit the Marauders beside them while Banshees flew over.
+            Dictionary<string, UnitStats> u = AllStats();
+            var sim = new BattleSimulation(HeadlessRunnerTool.LoadRules(), 1);
+            SimUnit swarm = sim.AddUnit(u["Swarm Form"], Team.A, new Vec2(0f, -10f));
+            SimUnit banshee = sim.AddUnit(u["Banshee"], Team.B, new Vec2(0f, 25f));
+            sim.AddUnit(u["Marine"], Team.B, new Vec2(0.8f, -9.2f)); // Within its bite's reach.
+            sim.Step();
+            Assert.AreSame(banshee, swarm.MoveTarget, "The flyer, though a Marine stands beside it.");
+            Assert.AreEqual("Spat Bone", swarm.Weapons[swarm.MainWeaponIndex].Stats.Name);
+        }
+
+        [Test]
+        public void ThePureFormRanged_ShootsAir_StraightAtIt_ForAQuarterOfTheDamage()
+        {
+            Dictionary<string, UnitStats> u = AllStats();
+            UnitStats pure = u["Pure Form Ranged"].Clone();
+            Assert.IsTrue(pure.CanTarget(true), "It shoots air (D107).");
+            Assert.AreEqual(0.25f, pure.Weapons[0].AirDamageMultiplier, 1e-4f, "For a quarter of the damage: air is still what beats it.");
+            Assert.IsTrue(pure.Weapons[0].Lobbed, "Lobbed at the ground, as before.");
+            pure.MoveSpeed = 0f;
+
+            var sim = new BattleSimulation(HeadlessRunnerTool.LoadRules(), 1);
+            sim.AddUnit(pure, Team.A, new Vec2(0f, -15f));
+            UnitStats flyer = u["Banshee"].Clone();
+            flyer.MoveSpeed = 0f; // Hovering out of its own reach, 25 m off.
+            SimUnit banshee = sim.AddUnit(flyer, Team.B, new Vec2(0f, 10f));
+            var shots = new List<ShotInFlight>();
+            bool straight = false, arced = false;
+            for (int i = 0; i < 30 * 10 && banshee.Health >= banshee.Stats.MaxHealth; i++)
+            {
+                sim.Step();
+                sim.GetProjectiles(shots);
+                foreach (ShotInFlight shot in shots)
+                {
+                    if (shot.AimedAt == banshee && shot.ArcLength <= 0f) straight = true;
+                    if (shot.ArcLength > 0f) arced = true;
+                }
+            }
+            Assert.IsTrue(straight, "Its shards fly straight at a flyer.");
+            Assert.IsFalse(arced, "Not lobbed onto the ground under it.");
+            Assert.Less(banshee.Health, banshee.Stats.MaxHealth, "And they hit.");
         }
 
         [Test]

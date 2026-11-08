@@ -309,6 +309,12 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 165. **No pilot in the Hornet:** its canopy is opaque in the game, so its seat can't be seen. I can make the canopy see-through and seat a Marine (and a Combat Form in the infested one) if you'd like.
 166. **Who drives the Flood's vehicles:** Combat Forms in all of them. A Grunt Combat Form in the infested Ghost instead? There's no Grunt Combat Form model yet.
 
+## The Juggernaut and how units fight (D107)
+
+167. **The Pure Form Ranged against air** does a quarter of its damage. At full damage it beat every aircraft in every fight (it outranges them all and its splash catches their pairs), and at half it still beat nearly all of them. A quarter keeps air as its counter while it fights back. Should it hit air harder, as a real anti-air piece?
+168. **Infested Grunts notice enemies from 30 m.** Marines notice from 36 m, and the Grunts' pistol reaches 27 m. Further? And should the other clawed Flood (Infested Marines, Combat Forms) notice from further too? They have the same short reach.
+169. **The Juggernaut's strike** brings both blades down together, once a blow (every 1.2 s). Before, its two blades took turns. Would you rather they alternate?
+
 ## Things my test runs did to your PC
 
 - **Windows moving, and possibly music:** while the Screen setting was being checked, a test window moved across all three of your screens and briefly went fullscreen on each. Some of those runs weren't silent, so menu music may have played for about 25 seconds at a time. Those checks have finished.

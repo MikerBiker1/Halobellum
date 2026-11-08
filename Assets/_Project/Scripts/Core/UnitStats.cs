@@ -311,6 +311,11 @@ namespace Halobellum.Core
         /// it stops shooting and closes in to bash.
         /// </summary>
         public bool LeapCharges;
+        /// <summary>
+        /// It notices enemies at least this many metres off (to their edge), however short its weapons' reach: the Infested Grunts, whose claws
+        /// and short leap had them run blind until an enemy was 12 m off (the owner, 2026-11-07, D107). 0: from its weapons and leap, as any unit.
+        /// </summary>
+        public float AcquisitionRange;
         /// <summary>The unit this one was before it was infected, or null.</summary>
         public UnitStats InfectedFrom;
 

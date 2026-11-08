@@ -55,6 +55,8 @@ namespace Halobellum.Units
         public string deathClip;
         [Tooltip("Clip that the held standing frame is taken from (the moment its feet are closest together).")]
         public string stillClip;
+        [Tooltip("With nothing to do it goes on playing its moving clip, looped, instead of holding a frame: a flier that never hangs frozen in the air (the Seeder, D107).")]
+        public bool stillMoves;
         [Tooltip("Clip played while it strikes with a close-in weapon (a melee one, used one at a time with its gun: the Hunters' shield bash). Empty: it shoots.")]
         public string meleeClip;
         [Tooltip("Share of the melee clip, at its end, eased back into its first pose, so a clip made to be played once (Meshy's swings) loops without a jump (the Brute Grenadier). 0: as it is.")]

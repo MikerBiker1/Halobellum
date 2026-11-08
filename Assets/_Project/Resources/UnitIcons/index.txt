@@ -44,7 +44,7 @@ Infested Hornet	model
 Infested Marine	baked
 Infested Scorpion	model
 Infested Warthog	model
-Juggernaut	model
+Juggernaut	baked
 Goliath	model
 Hunter Captain	baked
 Skitterer	model

@@ -206,24 +206,33 @@ namespace Halobellum.EditorTools
                 if (!string.IsNullOrEmpty(body.meleeClip)) AddClip(BakedAnimation.Melee, Source(body.meleeClip), true, false, body.meleeBlendShare);
                 if (!string.IsNullOrEmpty(body.chargeClip)) AddClip(BakedAnimation.Charge, Source(body.chargeClip), true, true);
 
-                // The held frame: the moment of the still clip when the feet are closest together.
-                AnimationClip still = Source(body.stillClip);
-                Transform leftFoot = bones.FirstOrDefault(b => b.name == "LeftFoot"), rightFoot = bones.FirstOrDefault(b => b.name == "RightFoot");
-                float bestTime = 0f, bestGap = float.MaxValue;
-                for (int i = 0; i < 40; i++)
+                // A body that never stands still plays its moving clip when it has nothing to do (the Seeder: the owner, 2026-11-07, D107):
+                // the same rows, looped. Otherwise the held frame: the moment of the still clip when the feet are closest together.
+                if (body.stillMoves)
                 {
-                    float time = still.length * i / 40f;
-                    still.SampleAnimation(model, time);
-                    float gap = leftFoot != null && rightFoot != null ? Vector3.Distance(leftFoot.position, rightFoot.position) : 0f;
-                    if (gap < bestGap)
-                    {
-                        bestGap = gap;
-                        bestTime = time;
-                    }
+                    BakedClip moving = clips.First(c => c.role == BakedAnimation.Moving);
+                    clips.Add(new BakedClip { role = BakedAnimation.Still, firstRow = moving.firstRow, frames = moving.frames, loops = true });
                 }
-                still.SampleAnimation(model, bestTime);
-                clips.Add(new BakedClip { role = BakedAnimation.Still, firstRow = rows.Count, frames = 1, loops = false });
-                rows.Add(Row(Pose(), Drift(model, hipsBone, restHips)));
+                else
+                {
+                    AnimationClip still = Source(body.stillClip);
+                    Transform leftFoot = bones.FirstOrDefault(b => b.name == "LeftFoot"), rightFoot = bones.FirstOrDefault(b => b.name == "RightFoot");
+                    float bestTime = 0f, bestGap = float.MaxValue;
+                    for (int i = 0; i < 40; i++)
+                    {
+                        float time = still.length * i / 40f;
+                        still.SampleAnimation(model, time);
+                        float gap = leftFoot != null && rightFoot != null ? Vector3.Distance(leftFoot.position, rightFoot.position) : 0f;
+                        if (gap < bestGap)
+                        {
+                            bestGap = gap;
+                            bestTime = time;
+                        }
+                    }
+                    still.SampleAnimation(model, bestTime);
+                    clips.Add(new BakedClip { role = BakedAnimation.Still, firstRow = rows.Count, frames = 1, loops = false });
+                    rows.Add(Row(Pose(), Drift(model, hipsBone, restHips)));
+                }
 
                 var texture = new Texture2D(kept.Count * 3, rows.Count, TextureFormat.RGBAFloat, false, true)
                 {
