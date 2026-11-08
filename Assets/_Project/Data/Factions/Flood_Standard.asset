@@ -39,7 +39,6 @@ MonoBehaviour:
   - subFactionName: Covenant-based
     description: 'Infested Covenant troops with their plasma, and the Spawner.'
     exclusiveUnits:
-    - {fileID: 11400000, guid: 09779479e562ecde6161d021017a0a5c, type: 2}
     - {fileID: 11400000, guid: 060db707fcadfc366665578dc412abfd, type: 2}
     - {fileID: 11400000, guid: 69784de82acafe068ed3eaae6d7a836d, type: 2}
     - {fileID: 11400000, guid: fdb04fc25ed560252dd325a71f302c58, type: 2}

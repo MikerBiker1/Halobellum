@@ -228,7 +228,6 @@ THIRD_TECHS = {
     "InfestedScorpion": T("OvergrownCannon", "Overgrown Cannon", 200, "Harder hits all round.", damage=1.3),
     "InfestedHornet": T("HotEngines", "Overburnt Engines", 120, "Barely flying, but faster.", speed=1.25),
     # Flood, Covenant-based
-    "InfestedGrunt": T("BoneBlades", "Bone Blades", 100, "Sharper claws.", damage=1.3),
     "InfestedGhost": T("RamSpikes", "Ram Spikes", 150, "Bone through the hull.", damage=1.3),
     "InfestedWraith": T("LongArc", "Long Arc", 200, "The mortar reaches further.", range=4),
     "InfestedBanshee": T("HotEngines", "Overburnt Engines", 120, "Barely flying, but faster.", speed=1.25),

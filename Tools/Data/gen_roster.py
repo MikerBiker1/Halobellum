@@ -160,7 +160,7 @@ UNITS = [
     U("Seeder", "Seeder", "Flood", "SingleTargetDps", 3, 200, 2, 475, 800, "L", 1.5, 1.6, 1, "B",
       [W("Seed Spore", 45, 2.5, 24, "Energy", proj=30, seed=8, seedshare=0.04, seedslow=0.4)], airu=True, flood=True,
       seedforms=[("Marine", "InfestedMarine"), ("Warthog", "InfestedWarthog"), ("Scorpion", "InfestedScorpion"), ("Hornet", "InfestedHornet"),
-                 ("Grunt", "InfestedGrunt"), ("Elite", "InfestedElite"), ("Ghost", "InfestedGhost"), ("Banshee", "InfestedBanshee"),
+                 ("Elite", "InfestedElite"), ("Ghost", "InfestedGhost"), ("Banshee", "InfestedBanshee"),
                  ("Wraith", "InfestedWraith"), ("Pelican", "InfectedPelican"), ("Covenant Phantom", "InfectedPhantom")]),
     U("InfectedPelican", "Infected Pelican", "Flood", "Aerial", 3, 200, 1, 400, 900, "L", 6, 2.5, 1, "G",
       [W("Crash Dive", 0, 1, 1, "Explosive", own="G")], airu=True, flood=True, selfd=True, seek=True, leap=(22, 16, 0),

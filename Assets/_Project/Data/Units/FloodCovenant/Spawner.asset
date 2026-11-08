@@ -82,8 +82,8 @@ MonoBehaviour:
   spawnedUnit: {fileID: 11400000, guid: 6b41beaaf1cf621860b58e52a70f04fb, type: 2}
   spawnedBodies: 2
   spawnIntervalSeconds: 4
-  alternateSpawnedUnit: {fileID: 11400000, guid: 69784de82acafe068ed3eaae6d7a836d, type: 2}
-  alternateSpawnedBodies: 1
+  alternateSpawnedUnit: {fileID: 11400000, guid: 5f45713bce1607ea1deeeb50c0ca4acb, type: 2}
+  alternateSpawnedBodies: 2
   auraRadius: 0
   auraSpeedMultiplier: 1
   auraHealPerSecondShare: 0
@@ -103,4 +103,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
-  notes: 'Best counters (headless runner, equal cost): Zealot (100%), Combat Form (100%). A mobile birthing form: it fights badly, and keeps releasing two Infection Forms and an Infested Elite in turn, one every 4 seconds; the Elites draw the enemy''s fire. Kill it first (D79). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114). First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Zealot (100%), Combat Form (100%). A mobile birthing form: it fights badly, and keeps releasing two Infection Forms and two Combat Forms in turn, one lot every 4 seconds; the Combat Forms draw the enemy''s fire. Kill it first (D79, D116). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114). First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'

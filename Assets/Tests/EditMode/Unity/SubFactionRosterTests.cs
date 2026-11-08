@@ -31,7 +31,7 @@ namespace Halobellum.Tests
             ("Covenant_Standard", "Lekgolo Colony", "LekgoloColony", new[] { "Goliath", "Skitterer", "Hunter Captain" }),
             ("Covenant_Standard", "Unggoy Rebellion", "UnggoyRebellion", new[] { "Cannon Fodder", "Heavy Grunts", "Grunt Goblin" }),
             ("Flood_Standard", "UNSC-based", "FloodUNSC", new[] { "Infested Marine", "Infested Warthog", "Infested Scorpion", "Infested Hornet", "Juggernaut" }),
-            ("Flood_Standard", "Covenant-based", "FloodCovenant", new[] { "Infested Grunt", "Infested Ghost", "Infested Elite", "Infested Wraith", "Infested Banshee", "Spawner" }),
+            ("Flood_Standard", "Covenant-based", "FloodCovenant", new[] { "Infested Ghost", "Infested Elite", "Infested Wraith", "Infested Banshee", "Spawner" }),
         };
 
         private static FactionDefinition Faction(string asset) => AssetDatabase.LoadAssetAtPath<FactionDefinition>($"Assets/_Project/Data/Factions/{asset}.asset");
@@ -133,7 +133,7 @@ namespace Halobellum.Tests
                 Assert.IsFalse(name.StartsWith("Infected "), name + ": that is what the simulation calls a body that rises, so the two would be mixed up.");
                 if (name != "Goliath") Assert.AreEqual(unit.cost / (float)unit.squadSize / 5f, unit.baseDamage, 1e-3f, name);
             }
-            Assert.AreEqual(34, names.Count);
+            Assert.AreEqual(33, names.Count); // No Infested Grunt (D116).
         }
 
         [Test]

@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 1.6
   turnTime180: 1
   isAir: 1
+  canFlank: 0
   targetFilter: 2
   weapons:
   - weaponName: Seed Spore
@@ -43,7 +44,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -54,7 +54,6 @@ MonoBehaviour:
     seedSlowShare: 0.4
     hitSlowSeconds: 0
     hitSlowShare: 0
-    windUpSeconds: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -66,15 +65,11 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
-  reinforcementDrops: 1
-  reinforcementLandSeconds: 0
-  reinforcementFirstDropSeconds: 0
   formsPerBody: 1
   isFlood: 1
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
-  canFlank: 0
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -99,8 +94,6 @@ MonoBehaviour:
     becomes: {fileID: 11400000, guid: 7db5ae7cdb9ed8372ca8da6d09ac3f25, type: 2}
   - from: Hornet
     becomes: {fileID: 11400000, guid: 7000145f1373bdd0677a388e749f0d83, type: 2}
-  - from: Grunt
-    becomes: {fileID: 11400000, guid: 09779479e562ecde6161d021017a0a5c, type: 2}
   - from: Elite
     becomes: {fileID: 11400000, guid: 69784de82acafe068ed3eaae6d7a836d, type: 2}
   - from: Ghost
@@ -125,7 +118,6 @@ MonoBehaviour:
   bakedBody: {fileID: 11400000, guid: eb2997364cb542b0bde26d532b0f825e, type: 2}
   bakedTint: {r: 1, g: 1, b: 1, a: 0}
   bakedScale: 1
-  strongAgainst: Tanks, heavy units
-  weakAgainst: Chaff swarms, flankers
-  notes: 'Best counters (headless runner, equal cost): Marine (100%), Grunt (100%).
-    First-pass M8 values (DECISIONS D38).'
+  strongAgainst: 'Tanks, heavy units'
+  weakAgainst: 'Chaff swarms, flankers'
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Grunt (100%). First-pass M8 values (DECISIONS D38).'
