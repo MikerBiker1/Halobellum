@@ -2,6 +2,12 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## No Infested Grunt, Spawner Combat Forms, balance (D116)
+- **Infested Grunt removed.** Covenant-based has 5 exclusive units.
+- **Spawner** releases two Combat Forms (not an Infested Elite) in turn with its Infection Forms.
+- **Balance, 2 rounds each:** after D115 and this, Unggoy was 55% and Aerospace 46%. Sparrowhawk back to 250, Skitterer to 125: **every sub-faction 48% to 52%**. Report: `Docs/Balance/hard_ai_tournament_d116.txt`.
+- **Not checked:** not played by hand.
+
 ## After your play tests (D115)
 - **Units go after air:** a unit whose main weapon has nothing to hit uses its other guns' targets, and failing that walks to the closest enemy even if it can't hurt it. Your Infested Ghosts now chase Infested Hornets with their plasma bolts.
 - **Level 1** shows in unit stats.
