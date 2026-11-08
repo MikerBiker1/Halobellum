@@ -548,6 +548,8 @@ namespace Halobellum.Tests
         [TestCase(new[] { "-menuDemo", "x", "-audioOn" }, false, false)]
         [TestCase(new[] { "-menuDemo", "x", "-audioCapture", "x.wav" }, false, false)] // The capture silences the room itself, and needs the mix.
         [TestCase(new[] { "-crowdBench", "x.txt", "-audioCapture", "x.wav" }, true, false)]
+        [TestCase(new[] { "-replayLog", "x.jsonl" }, false, true)]
+        [TestCase(new[] { "-replayLog", "x.jsonl", "-audioOn" }, false, false)]
         public void TestRunsMakeNoNoise(string[] arguments, bool batchMode, bool muted) => Assert.AreEqual(muted, AudioDirector.ShouldMute(arguments, batchMode));
 
         /// <summary>
@@ -558,7 +560,7 @@ namespace Halobellum.Tests
         public void EveryTestToolOnTheCommandLine_IsSilent()
         {
             // These only change what a tool that has already been started does, or record it.
-            string[] notTools = { "-effects", "-effectsBench", "-menuDemoShort", "-menuDemoWatch", "-menuDemoSounds", "-menuDemoUiScale", "-cardsDemoLayout", "-cardsDemoLevelAll", "-cardsDemoPlaytest", "-screenDemoFake", "-screenDemoEndOn", EffectKit.ParticleScaleFlag, AudioCapture.Flag, BattleLogFile.FolderFlag, "-galleryTowers" };
+            string[] notTools = { "-effects", "-effectsBench", "-menuDemoShort", "-menuDemoWatch", "-menuDemoSounds", "-menuDemoUiScale", "-cardsDemoLayout", "-cardsDemoLevelAll", "-cardsDemoPlaytest", "-screenDemoFake", "-screenDemoEndOn", EffectKit.ParticleScaleFlag, AudioCapture.Flag, BattleLogFile.FolderFlag, "-galleryTowers", "-replayShots" };
             var flags = new HashSet<string>();
             var declared = new Regex(@"const string \w*Flag\w* = ""(-\w+)""");
             var checkedByName = new Regex(@"Array\.IndexOf\(args, ""(-\w+)""\) < 0\)");
