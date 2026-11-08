@@ -194,7 +194,7 @@ namespace Halobellum.Presentation
             bool skirmish = Match.Rules.Mode == MatchMode.UnlockSkirmish; // Both sides are the same made-up faction there, so its names say nothing.
             _logFile = new BattleLogFile(folder, BattleLogFile.FileName(now, Match.Rules.Mode.ToString(), skirmish ? null : Match.Player.SubFaction?.Name, skirmish ? null : Match.Enemy.SubFaction?.Name));
             _log = new MatchLog(_logFile.Write);
-            _log.Started(Match, Difficulty.ToString(), now, cardChosen);
+            _log.Started(Match, Difficulty.ToString(), now, cardChosen, Application.version);
         }
 
         private void CloseBattleLog()

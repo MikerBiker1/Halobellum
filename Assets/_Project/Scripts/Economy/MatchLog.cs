@@ -25,16 +25,21 @@ namespace Halobellum.Economy
 
         public MatchLog(Action<string> write) => _write = write;
 
-        /// <summary>The first line, once the player has chosen a starting card: enough to know which game this was, and the cards that were on offer.</summary>
-        public void Started(Match match, string difficulty, DateTime localTime, int cardChosen)
+        /// <summary>
+        /// The first line, once the player has chosen a starting card: enough to know which game this was, and the cards that were on offer. The game's
+        /// version and the card filter say which game played it and how it was set up, for a replay (D106).
+        /// </summary>
+        public void Started(Match match, string difficulty, DateTime localTime, int cardChosen, string gameVersion = null)
         {
             var line = new Line("match_start")
                 .Number("format", FormatVersion)
+                .Text("version", gameVersion)
                 .Text("time", localTime.ToString("yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture))
                 .Number("seed", match.Seed)
                 .Text("mode", match.Rules.Mode.ToString())
                 .Text("difficulty", difficulty)
                 .Number("rule_base_health", match.Rules.BaseHealth)
+                .Text("cards", match.Rules.Cards.ToString())
                 .Number("draft_chosen", cardChosen)
                 .Raw("draft_offered", List(match.PlayerDraft, DraftCardJson))
                 .Raw("player", Side(match.Player, match.Round))

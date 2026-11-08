@@ -2,7 +2,7 @@
 // Tests the battle log's replay (D106): a match logged as the Match scene logs it (MatchLog's own action details) replays on a fresh match from
 // the same start to the same armies at every battle start and the same battles, through the player's actions of every kind used here (buy,
 // move, turn, unlock, a card, a spell, an item, a level, a tower, research, undo, sell); a refused action is skipped; a log that no
-// longer fits the game says where; and the lines' JSON is read back as written.
+// longer fits the game says where; the logged card filter sets the replay's match up; and the lines' JSON is read back as written.
 // Depends on: Halobellum.Economy, Halobellum.Combat, Halobellum.Core, NUnit, TestMatch, TestRules.
 
 using System.Collections.Generic;
@@ -59,7 +59,7 @@ namespace Halobellum.Tests
             }
 
             Assert.IsTrue(match.ChooseDraft(1).Ok);
-            log.Started(match, "Normal", new System.DateTime(2026, 11, 7, 20, 0, 0), 1);
+            log.Started(match, "Normal", new System.DateTime(2026, 11, 7, 20, 0, 0), 1, "0.381.1");
 
             // Round 1: buy, move, turn in place, a refused buy, then undo the turn.
             Act("Buy", infantry.Name, match.Buy(Team.A, infantry));
@@ -112,6 +112,8 @@ namespace Halobellum.Tests
             Assert.AreEqual(Seed, replay.Seed);
             Assert.AreEqual(1, replay.DraftChosen);
             Assert.AreEqual(AiDifficulty.Normal, replay.AiDifficulty);
+            Assert.AreEqual("0.381.1", replay.GameVersion);
+            Assert.AreEqual(CardFilter.AllCards, replay.Setup.Cards);
 
             Match fresh = NewMatch(out _, out _);
             List<string> drift = replay.PlayHeadless(fresh);
@@ -135,6 +137,21 @@ namespace Halobellum.Tests
             List<string> drift = MatchLogReplay.Read(lines).PlayHeadless(NewMatch(out _, out _));
             Assert.IsNotEmpty(drift);
             StringAssert.Contains("round 1", drift[0], "The first difference is where it began.");
+        }
+
+        [Test]
+        public void TheLoggedCardFilter_SetsTheReplaysMatchUp_AndAnOlderLogPlaysWithAllCards()
+        {
+            const string start = "{\"type\":\"match_start\",\"format\":1,\"seed\":3,\"mode\":\"Faction\",\"difficulty\":\"Hard\",\"rule_base_health\":3000,\"draft_chosen\":2";
+            MatchLogReplay filtered = MatchLogReplay.Read(new[] { start + ",\"version\":\"0.381.1\",\"cards\":\"NoReinforcements\"}" });
+            Assert.AreEqual(CardFilter.NoReinforcements, filtered.Setup.Cards);
+            Assert.AreEqual(3000, filtered.Setup.BaseHealth);
+            Assert.AreEqual(AiDifficulty.Hard, filtered.AiDifficulty);
+            Assert.AreEqual("0.381.1", filtered.GameVersion);
+
+            MatchLogReplay older = MatchLogReplay.Read(new[] { start + "}" });
+            Assert.AreEqual(CardFilter.AllCards, older.Setup.Cards, "A log from before the filter was written.");
+            Assert.IsNull(older.GameVersion);
         }
 
         [Test]

@@ -51,7 +51,7 @@ namespace Halobellum.Tests
             var lines = new List<string>();
             var log = new MatchLog(lines.Add);
             Assert.IsTrue(controller.ChooseDraft(0).Ok);
-            log.Started(controller.Match, "Normal", new System.DateTime(2026, 11, 7, 20, 0, 0), 0);
+            log.Started(controller.Match, "Normal", new System.DateTime(2026, 11, 7, 20, 0, 0), 0, Application.version);
             Match m = controller.Match;
 
             UnitStats type = m.Player.Squads[0].Type;

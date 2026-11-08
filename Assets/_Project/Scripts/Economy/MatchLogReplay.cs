@@ -67,6 +67,10 @@ namespace Halobellum.Economy
         public string Difficulty;
         public int BaseHealthRule;
         public int DraftChosen;
+        /// <summary>The game's version that played the log, or null in logs from before 0.381.1.</summary>
+        public string GameVersion;
+        /// <summary>The card filter the match was set up with, as logged (empty in logs from before 0.381.1: all cards).</summary>
+        public string CardFilterName;
         public readonly List<ReplayLine> Lines = new List<ReplayLine>();
 
         /// <summary>What drifted from the log, line by line. Empty if the replay matched it all.</summary>
@@ -76,8 +80,10 @@ namespace Halobellum.Economy
 
         public AiDifficulty AiDifficulty => Enum.TryParse(Difficulty, out AiDifficulty difficulty) ? difficulty : AiDifficulty.Normal;
 
-        /// <summary>The setup the logged match was started with (the card filter isn't in format 1 logs: all cards).</summary>
-        public MatchSetup Setup => new MatchSetup { Mode = MatchMode, BaseHealth = BaseHealthRule };
+        public CardFilter CardFilter => Enum.TryParse(CardFilterName, out CardFilter filter) ? filter : CardFilter.AllCards;
+
+        /// <summary>The setup the logged match was started with: its mode, base health and card filter (all cards if the log is older than the filter's line).</summary>
+        public MatchSetup Setup => new MatchSetup { Mode = MatchMode, BaseHealth = BaseHealthRule, Cards = CardFilter };
 
         /// <summary>Reads a log's lines. Throws FormatException if it has no match_start, which is its first line.</summary>
         public static MatchLogReplay Read(IEnumerable<string> lines)
@@ -102,6 +108,8 @@ namespace Halobellum.Economy
                     replay.Difficulty = LogJson.Text(json, "difficulty");
                     replay.BaseHealthRule = LogJson.Int(json, "rule_base_health");
                     replay.DraftChosen = LogJson.Int(json, "draft_chosen");
+                    replay.GameVersion = LogJson.Text(json, "version");
+                    replay.CardFilterName = LogJson.Text(json, "cards");
                 }
                 replay.Lines.Add(line);
             }

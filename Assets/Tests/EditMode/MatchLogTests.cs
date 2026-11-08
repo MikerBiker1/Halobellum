@@ -20,7 +20,7 @@ namespace Halobellum.Tests
             match.Enemy.BaseHealth = enemyBase;
             var lines = new List<string>();
             var log = new MatchLog(lines.Add);
-            log.Started(match, "Hard", new System.DateTime(2026, 11, 5, 18, 30, 0), 0);
+            log.Started(match, "Hard", new System.DateTime(2026, 11, 5, 18, 30, 0), 0, "0.381.1");
             log.PlayerAction(match, "Buy", infantry.Name, match.Buy(Team.A, infantry, 0, 5, false));
             log.PlayerAction(match, "Sell", "nothing", ActionResult.Fail("Select a squad first."));
             BattleSimulation battle = match.StartBattle();
@@ -39,6 +39,8 @@ namespace Halobellum.Tests
             StringAssert.Contains($"\"seed\":{match.Seed}", lines[0]);
             StringAssert.Contains("\"difficulty\":\"Hard\"", lines[0]);
             StringAssert.Contains("\"time\":\"2026-11-05T18:30:00\"", lines[0]);
+            StringAssert.Contains("\"version\":\"0.381.1\"", lines[0], "Which game played it (D106).");
+            StringAssert.Contains($"\"cards\":\"{match.Rules.Cards}\"", lines[0], "The card filter it was set up with (D106).");
 
             StringAssert.StartsWith("{\"type\":\"action\"", lines[1]);
             StringAssert.Contains("\"action\":\"Buy\"", lines[1]);

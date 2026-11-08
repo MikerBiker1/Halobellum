@@ -14,7 +14,7 @@ Each line is one JSON object, and its `type` says what it is.
 
 | `type` | When | What it holds |
 |---|---|---|
-| `match_start` | A starting card was chosen | Format version, time, match seed, mode, AI difficulty, the base health rule, the draft cards offered and the one chosen, and both sides |
+| `match_start` | A starting card was chosen | Format version, the game's version (`version`), time, match seed, mode, AI difficulty, the base health rule, the card filter (`cards`), the draft cards offered and the one chosen, and both sides |
 | `cards_offered` | A card screen opens | Round, kind, credits, the skip bonus, each card's name and price |
 | `action` | You did or tried something | Round, what, its detail, whether it worked, credits after it, and the game's reason if it was refused |
 | `battle_start` | You pressed Ready | Round, the battle's seed, and both sides as they went in, with the AI's real army |
@@ -52,4 +52,4 @@ Start the game with the log's path, and it plays that game again in the Match sc
 | `-replayStep 0.2` | Seconds between two actions (0.4 if not given) |
 | `-replayShots <folder>` | Also saves pictures (each card screen, each deployment, each battle at 2 and 10 s, each result) and `replay.txt`, then quits |
 
-At every battle start both armies are compared with the log's (each squad's id, unit, place, turn and level, and the credits), and each battle's outcome and both bases after it. Whatever differs is shown at the end and written to `replay.txt`, and the replay carries on regardless. Only actions that worked are done again: a refused one changed nothing. A replay writes no battle log of its own. Logs of format 1 don't hold the card filter, so a game started with one replays with all cards.
+At every battle start both armies are compared with the log's (each squad's id, unit, place, turn and level, and the credits), and each battle's outcome and both bases after it. Whatever differs is shown at the end and written to `replay.txt`, and the replay carries on regardless. Only actions that worked are done again: a refused one changed nothing. A replay writes no battle log of its own. The replay uses the log's card filter and says which version of the game played the log; logs from before 0.381.1 hold neither, so they replay with all cards.

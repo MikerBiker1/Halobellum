@@ -7,7 +7,8 @@
 //   ... -replayShots <folder>                                   also save pictures (each card screen, deployment, battle at 2 and 10 s, result)
 //                                                               and replay.txt, then quit
 // Wherever the game now differs from the log (a balance change since, a squad no longer where it was), MatchLogReplay notes it, in replay.txt and
-// on screen at the end; it carries on regardless. A replay writes no battle log of its own (BattleLogFile).
+// on screen at the end; it carries on regardless. It says which version played the log, and uses the log's card filter. A replay writes no
+// battle log of its own (BattleLogFile).
 // Depends on: MatchController, BattleController, Halobellum.Economy (MatchLogReplay), UnityEngine.
 
 using System;
@@ -105,7 +106,7 @@ namespace Halobellum.Presentation
             var hands = new ControllerHands(_match);
             _match.NewMatch(Replay.Seed, Replay.Setup, difficulty: Replay.AiDifficulty);
             yield return null;
-            Say($"Replaying {LogName}: seed {Replay.Seed}, {Replay.Mode}, {Replay.Difficulty}.");
+            Say($"Replaying {LogName}: seed {Replay.Seed}, {Replay.Mode}, {Replay.Difficulty}, {Replay.CardFilter}, {PlayedWith()}.");
             ActionResult drafted = hands.ChooseDraft(Replay.DraftChosen);
             if (!drafted.Ok) Replay.Drift.Add($"the starting card {Replay.DraftChosen}: {drafted.Message}");
             yield return Wait(StepSeconds);
@@ -180,12 +181,19 @@ namespace Halobellum.Presentation
             if (ShotsFolder != null)
             {
                 var report = new StringBuilder();
-                report.AppendLine($"Replay of {LogName}: seed {Replay.Seed}, {Replay.Mode}, {Replay.Difficulty}, starting card {Replay.DraftChosen}, game version {Application.version}.");
+                report.AppendLine($"Replay of {LogName}: seed {Replay.Seed}, {Replay.Mode}, {Replay.Difficulty}, {Replay.CardFilter}, starting card {Replay.DraftChosen}; {PlayedWith()}.");
                 foreach (string drift in Replay.Drift) report.AppendLine(drift);
                 report.AppendLine(status);
                 File.WriteAllText(Path.Combine(ShotsFolder, "replay.txt"), report.ToString());
             }
             if (QuitAtEnd) StartCoroutine(QuitSoon());
+        }
+
+        /// <summary>Which version played the log and which replays it: a log from another version can drift.</summary>
+        private string PlayedWith()
+        {
+            string logged = string.IsNullOrEmpty(Replay.GameVersion) ? "logged by a version before 0.381.1" : $"logged by {Replay.GameVersion}";
+            return Replay.GameVersion == Application.version ? $"{logged}, as this game" : $"{logged}, replayed by {Application.version}";
         }
 
         private static IEnumerator QuitSoon()
