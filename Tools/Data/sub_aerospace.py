@@ -10,7 +10,7 @@ ORDER = 3
 
 def units(U, W):
     return [
-        U("Sparrowhawk", "Sparrowhawk", FACTION, "Aerial", 2, 50, 1, 250, 550, "L", 4, 2, 1, "B",
+        U("Sparrowhawk", "Sparrowhawk", FACTION, "Aerial", 2, 50, 1, 275, 550, "L", 4, 2, 1, "B",
           [W("Heavy Autocannon", 18, 0.3, 14, "Ballistic", aa=True)], airu=True,
           note="Gunship that hunts vehicles. Its gun is poor against infantry."),
         U("Longsword", "Longsword", FACTION, "Aerial", 2, 50, 1, 300, 600, "L", 5, 2.8, 1, "G",

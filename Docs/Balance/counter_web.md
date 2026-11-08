@@ -13,123 +13,123 @@ Written by `Tools/Data/gen_counter_doc.py`; do not edit by hand.
 
 | Unit | Role | Cost | Wins | Good against | Bad against |
 |---|---|---|---|---|---|
-| **Marine** | Chaff | 100 | 61% | Spawner 100%, Infested Banshee 100%, Infected Phantom 100%, Zealot 100%, Condor Gunship 100% | Archer Missile Pod 0%, Spartan Grenadier 0%, Fuel Rod Grunt 0%, Infection Forms 0%, Brute Grenadier 0% |
-| **Flamethrower Trooper** | ChaffClear | 150 | 39% | Spawner 100%, Infested Marine 100%, Grunt 100%, Infested Grunt 100%, Carrier Form 100% | Wolverine 0%, Archer Missile Pod 0%, Seeder 0%, Spartan Grenadier 0%, Covenant Phantom 0% |
-| **Warthog** | Flanker | 200 | 18% | Infested Hornet 100%, Banshee 100%, Hornet 100%, Spartan Sniper 100%, Swarm Form 100% | Ghost 0%, Chopper 0%, Stalker Form 0%, Jackal (Shield) 0%, Spartan Fireteam 0% |
-| **Gauss Warthog** | SingleTargetDps | 250 | 22% | Grunt Goblin 100%, Pure Form Tank 100%, Scorpion 100%, Grizzly 100%, Juggernaut 100% | Chopper 0%, Stalker Form 0%, Spartan CQB 0%, Jackal (Shield) 0%, Jackal (Beam Rifle) 0% |
-| **Archer Missile Pod** | Artillery | 300 | 34% | Marine 100%, Heavy Grunts 100%, Grunt 100%, Cannon Fodder 100%, Elite 100% | Stalker Form 0%, Spartan CQB 0%, Seeder 0%, Covenant Phantom 0%, Infested Ghost 0% |
-| **Hornet** | Aerial | 300 | 54% | Infested Marine 100%, Zealot 100%, Hunter Pair 100%, Hunter Captain 100%, Pure Form Ranged 100% | Warthog 0%, Ghost 0%, Reaver 0%, Wolverine 0%, Jackal (Shield) 0% |
-| **Pelican** | Aerial | 300 | 44% | Zealot 100%, Vulture 100%, Pure Form Ranged 100%, Pure Form Tank 100%, Infested Wraith 100% | Warthog 0%, Ghost 0%, Reaver 0%, Wolverine 0%, Spartan CQB 0% |
+| **Marine** | Chaff | 100 | 61% | Spawner 100%, Infested Banshee 100%, Infected Phantom 100%, Zealot 100%, Hunter Captain 100% | Archer Missile Pod 0%, Fuel Rod Grunt 0%, Spartan Grenadier 0%, Infection Forms 0%, Brute Grenadier 0% |
+| **Flamethrower Trooper** | ChaffClear | 150 | 39% | Spawner 100%, Infested Marine 100%, Grunt 100%, Infested Grunt 100%, Spartan 100% | Wolverine 0%, Archer Missile Pod 0%, Seeder 0%, Covenant Phantom 0%, Fuel Rod Grunt 0% |
+| **Warthog** | Flanker | 200 | 21% | Banshee 100%, Condor Gunship 100%, Infested Hornet 100%, Hornet 100%, Spartan Sniper 100% | Chopper 0%, Ghost 0%, Stalker Form 0%, Jackal (Shield) 0%, Archer Missile Pod 0% |
+| **Gauss Warthog** | SingleTargetDps | 250 | 22% | Grunt Goblin 100%, Pure Form Tank 100%, Scorpion 100%, Grizzly 100%, Juggernaut 100% | Chopper 0%, Stalker Form 0%, Jackal (Shield) 0%, Spartan CQB 0%, Spartan Fireteam 0% |
+| **Archer Missile Pod** | Artillery | 300 | 34% | Marine 100%, Heavy Grunts 100%, Grunt 100%, Cannon Fodder 100%, Elite 100% | Stalker Form 0%, Spartan CQB 0%, Infested Ghost 0%, Seeder 0%, Covenant Phantom 0% |
+| **Hornet** | Aerial | 300 | 54% | Infested Marine 100%, Zealot 100%, Hunter Pair 100%, Hunter Captain 100%, Pure Form Ranged 100% | Reaver 0%, Warthog 0%, Ghost 0%, Wolverine 0%, Jackal (Shield) 0% |
+| **Pelican** | Aerial | 300 | 44% | Zealot 100%, Vulture 100%, Pure Form Ranged 100%, Infested Wraith 100%, Pure Form Tank 100% | Reaver 0%, Warthog 0%, Ghost 0%, Wolverine 0%, Jackal (Shield) 0% |
 | **Scorpion** | Tank | 300 | 58% | Infested Marine 100%, Marine 100%, Heavy Grunts 100%, Grunt 100%, Infested Grunt 100% | Gauss Warthog 0%, Cobra 0%, Gremlin 0%, Seeder 0%, Covenant Phantom 0% |
-| **Wolverine** | AntiAir | 300 | 28% | Infested Banshee 100%, Condor Gunship 100%, Vulture 100%, Infested Hornet 100%, Banshee 100% | Warthog 0%, Ghost 0%, Reaver 0%, Gauss Warthog 0%, Chopper 0% |
-| **Mantis** | Tank | 500 | 44% | Condor Gunship 100%, Marine 100%, Grunt 100%, Cannon Fodder 100%, Spartan Heavy Weapons 100% | Gauss Warthog 0%, Cobra 0%, Gremlin 0%, Seeder 0%, Infected Pelican 0% |
-| **Spartan** | SingleTargetDps | 500 | 52% | Scarab 100%, Elephant 100%, Vulture 100%, Hunter Pair 100%, Hunter Captain 100% | Chopper 0%, Stalker Form 0%, Spartan CQB 0%, Jackal (Shield) 0%, Jackal (Beam Rifle) 0% |
-| **Elephant** | Titan | 800 | 88% | Infested Banshee 100%, Infected Phantom 100%, Infested Marine 100%, Condor Gunship 100%, Vulture 100% | Combat Form 0%, Spartan Sniper 0%, Spartan 0%, Hunter Captain 0%, Zealot 0% |
+| **Wolverine** | AntiAir | 300 | 28% | Infested Banshee 100%, Vulture 100%, Banshee 100%, Condor Gunship 100%, Infested Hornet 100% | Reaver 0%, Warthog 0%, Chopper 0%, Gauss Warthog 0%, Ghost 0% |
+| **Mantis** | Tank | 500 | 43% | Marine 100%, Grunt 100%, Cannon Fodder 100%, Spartan Heavy Weapons 100%, Swarm Form 100% | Gauss Warthog 0%, Cobra 0%, Gremlin 0%, Seeder 0%, Infected Pelican 0% |
+| **Spartan** | SingleTargetDps | 500 | 54% | Scarab 100%, Elephant 100%, Vulture 100%, Hunter Pair 100%, Grunt Goblin 100% | Chopper 0%, Stalker Form 0%, Jackal (Shield) 0%, Spartan CQB 0%, Spartan Fireteam 0% |
+| **Elephant** | Titan | 800 | 88% | Infested Banshee 100%, Infected Phantom 100%, Infested Marine 100%, Vulture 100%, Hunter Pair 100% | Combat Form 0%, Spartan Sniper 0%, Spartan 0%, Hunter Captain 0%, Zealot 0% |
 
 ## UNSC: Noble
 
 | Unit | Role | Cost | Wins | Good against | Bad against |
 |---|---|---|---|---|---|
-| **Spartan CQB** | Flanker | 400 | 29% | Sparrowhawk 100%, Spartan 100%, Spartan Sniper 100%, Swarm Form 100%, Vampire 100% | Warthog 0%, Chopper 0%, Stalker Form 0%, Jackal (Shield) 0%, Cobra 0% |
-| **Spartan Grenadier** | ChaffClear | 400 | 37% | Marine 100%, Heavy Grunts 100%, Grunt 100%, Cannon Fodder 100%, Elite 100% | Spartan CQB 0%, Archer Missile Pod 0%, Seeder 0%, Covenant Phantom 0%, Infested Warthog 0% |
-| **Spartan Sniper** | SingleTargetDps | 400 | 50% | Scarab 100%, Elephant 100%, Vulture 100%, Hunter Pair 100%, Hunter Captain 100% | Warthog 0%, Ghost 0%, Chopper 0%, Stalker Form 0%, Spartan CQB 0% |
-| **Spartan Heavy Weapons** | Tank | 450 | 50% | Infested Banshee 100%, Vulture 100%, Infested Hornet 100%, Banshee 100%, Heavy Grunts 100% | Infested Ghost 0%, Infected Pelican 0%, Infested Warthog 0%, Infection Forms 0%, Mantis 0% |
-| **Spartan Fireteam** | SingleTargetDps | 500 | 34% | Infested Hornet 100%, Sparrowhawk 100%, Hornet 100%, Spartan 100%, Cannon Fodder 100% | Chopper 0%, Stalker Form 0%, Jackal (Shield) 0%, Jackal (Beam Rifle) 0%, Archer Missile Pod 0% |
+| **Spartan CQB** | Flanker | 400 | 30% | Condor Gunship 100%, Sparrowhawk 100%, Spartan 100%, Spartan Sniper 100%, Swarm Form 100% | Warthog 0%, Chopper 0%, Stalker Form 0%, Jackal (Shield) 0%, Cobra 0% |
+| **Spartan Grenadier** | ChaffClear | 400 | 38% | Marine 100%, Heavy Grunts 100%, Grunt 100%, Cannon Fodder 100%, Elite 100% | Spartan CQB 0%, Archer Missile Pod 0%, Seeder 0%, Covenant Phantom 0%, Infested Warthog 0% |
+| **Spartan Sniper** | SingleTargetDps | 400 | 52% | Scarab 100%, Elephant 100%, Vulture 100%, Hunter Pair 100%, Grunt Goblin 100% | Warthog 0%, Chopper 0%, Ghost 0%, Stalker Form 0%, Jackal (Shield) 0% |
+| **Spartan Heavy Weapons** | Tank | 450 | 51% | Infested Banshee 100%, Vulture 100%, Banshee 100%, Heavy Grunts 100%, Grunt 100% | Infested Ghost 0%, Infected Pelican 0%, Infested Warthog 0%, Infection Forms 0%, Mantis 0% |
+| **Spartan Fireteam** | SingleTargetDps | 500 | 35% | Infested Hornet 100%, Sparrowhawk 100%, Spartan 100%, Hornet 100%, Cannon Fodder 100% | Chopper 0%, Stalker Form 0%, Jackal (Shield) 0%, Archer Missile Pod 0%, Jackal (Beam Rifle) 0% |
 
 ## UNSC: Aerospace Command
 
 | Unit | Role | Cost | Wins | Good against | Bad against |
 |---|---|---|---|---|---|
-| **Sparrowhawk** | Aerial | 250 | 58% | Zealot 100%, Vulture 100%, Hunter Pair 100%, Hunter Captain 100%, Grunt Goblin 100% | Reaver 0%, Wolverine 0%, Spartan CQB 0%, Jackal (Shield) 0%, Jackal (Beam Rifle) 0% |
+| **Sparrowhawk** | Aerial | 275 | 56% | Zealot 100%, Vulture 100%, Hunter Pair 100%, Grunt Goblin 100%, Hunter Captain 100% | Reaver 0%, Ghost 0%, Wolverine 0%, Jackal (Shield) 0%, Spartan CQB 0% |
 | **Longsword** | Aerial | 300 | 56% | Infested Marine 100%, Zealot 100%, Hunter Pair 100%, Hunter Captain 100%, Pure Form Ranged 100% | Reaver 0%, Wolverine 0%, Jackal (Beam Rifle) 0%, Gremlin 0%, Seeder 0% |
-| **Condor Gunship** | Aerial | 400 | 65% | Infested Banshee 100%, Infected Phantom 100%, Zealot 100%, Vulture 100%, Hunter Pair 100% | Reaver 0%, Wolverine 0%, Seeder 0%, Skitterer 0%, Mantis 0% |
-| **Vulture** | Aerial | 400 | 65% | Infested Marine 100%, Zealot 100%, Hunter Pair 100%, Hunter Captain 100%, Marine 100% | Ghost 0%, Reaver 0%, Wolverine 0%, Jackal (Beam Rifle) 0%, Gremlin 0% |
+| **Vulture** | Aerial | 400 | 65% | Infested Marine 100%, Zealot 100%, Hunter Pair 100%, Hunter Captain 100%, Pure Form Ranged 100% | Reaver 0%, Ghost 0%, Wolverine 0%, Jackal (Beam Rifle) 0%, Gremlin 0% |
+| **Condor Gunship** | Aerial | 500 | 59% | Zealot 100%, Vulture 100%, Hunter Pair 100%, Hunter Captain 100%, Pure Form Ranged 100% | Reaver 0%, Warthog 0%, Ghost 0%, Wolverine 0%, Jackal (Shield) 0% |
 
 ## UNSC: Armored Division
 
 | Unit | Role | Cost | Wins | Good against | Bad against |
 |---|---|---|---|---|---|
-| **Gremlin** | Flanker | 200 | 36% | Vulture 100%, Infested Hornet 100%, Grunt Goblin 100%, Banshee 100%, Pure Form Tank 100% | Gauss Warthog 0%, Stalker Form 0%, Spartan CQB 0%, Jackal (Shield) 0%, Jackal (Beam Rifle) 0% |
-| **Cobra** | SingleTargetDps | 300 | 36% | Hunter Pair 100%, Grunt Goblin 100%, Pure Form Tank 100%, Scorpion 100%, Infested Scorpion 100% | Jackal (Shield) 0%, Spartan Fireteam 0%, Gremlin 0%, Seeder 0%, Covenant Phantom 0% |
-| **Rhino** | Artillery | 400 | 49% | Infested Marine 100%, Marine 100%, Pure Form Ranged 100%, Heavy Grunts 100%, Grunt 100% | Cobra 0%, Seeder 0%, Covenant Phantom 0%, Infection Forms 0%, Pelican 0% |
-| **Grizzly** | Tank | 500 | 51% | Condor Gunship 100%, Marine 100%, Heavy Grunts 100%, Grunt 100%, Infested Grunt 100% | Gauss Warthog 0%, Cobra 0%, Gremlin 0%, Seeder 0%, Infested Elite 0% |
+| **Gremlin** | Flanker | 200 | 37% | Vulture 100%, Grunt Goblin 100%, Banshee 100%, Condor Gunship 100%, Infested Hornet 100% | Gauss Warthog 0%, Stalker Form 0%, Jackal (Shield) 0%, Spartan CQB 0%, Spartan Fireteam 0% |
+| **Cobra** | SingleTargetDps | 300 | 36% | Hunter Pair 100%, Grunt Goblin 100%, Pure Form Tank 100%, Scorpion 100%, Grizzly 100% | Jackal (Shield) 0%, Spartan Fireteam 0%, Infested Ghost 0%, Gremlin 0%, Seeder 0% |
+| **Rhino** | Artillery | 400 | 48% | Infested Marine 100%, Pure Form Ranged 100%, Marine 100%, Heavy Grunts 100%, Grunt 100% | Cobra 0%, Seeder 0%, Covenant Phantom 0%, Infection Forms 0%, Pelican 0% |
+| **Grizzly** | Tank | 500 | 51% | Marine 100%, Heavy Grunts 100%, Grunt 100%, Infested Grunt 100%, Cannon Fodder 100% | Gauss Warthog 0%, Cobra 0%, Gremlin 0%, Seeder 0%, Infested Elite 0% |
 
 ## Covenant (every sub-faction)
 
 | Unit | Role | Cost | Wins | Good against | Bad against |
 |---|---|---|---|---|---|
-| **Grunt** | Chaff | 100 | 59% | Spawner 100%, Infested Banshee 100%, Infected Phantom 100%, Zealot 100%, Condor Gunship 100% | Archer Missile Pod 0%, Spartan Grenadier 0%, Fuel Rod Grunt 0%, Flamethrower Trooper 0%, Infection Forms 0% |
-| **Fuel Rod Grunt** | ChaffClear | 150 | 37% | Marine 100%, Heavy Grunts 100%, Grunt 100%, Infested Grunt 100%, Spartan 100% | Wolverine 0%, Spartan CQB 0%, Jackal (Beam Rifle) 0%, Archer Missile Pod 0%, Cobra 0% |
-| **Jackal (Shield)** | Tank | 150 | 29% | Infested Banshee 100%, Infested Hornet 100%, Banshee 100%, Sparrowhawk 100%, Hornet 100% | Chopper 0%, Stalker Form 0%, Wolverine 0%, Jackal (Beam Rifle) 0%, Archer Missile Pod 0% |
-| **Jackal (Beam Rifle)** | SingleTargetDps | 175 | 33% | Vulture 100%, Banshee 100%, Sparrowhawk 100%, Longsword 100%, Hornet 100% | Warthog 0%, Chopper 0%, Stalker Form 0%, Spartan CQB 0%, Archer Missile Pod 0% |
-| **Ghost** | Flanker | 200 | 21% | Vulture 100%, Infested Hornet 100%, Banshee 100%, Hornet 100%, Spartan Sniper 100% | Gauss Warthog 0%, Chopper 0%, Stalker Form 0%, Jackal (Shield) 0%, Spartan Fireteam 0% |
-| **Banshee** | Aerial | 300 | 60% | Infected Phantom 100%, Zealot 100%, Hunter Pair 100%, Infested Hornet 100%, Hunter Captain 100% | Warthog 0%, Ghost 0%, Reaver 0%, Wolverine 0%, Jackal (Shield) 0% |
-| **Covenant Phantom** | Aerial | 300 | 37% | Zealot 100%, Hunter Pair 100%, Hunter Captain 100%, Pure Form Ranged 100%, Pure Form Tank 100% | Warthog 0%, Ghost 0%, Reaver 0%, Wolverine 0%, Spartan CQB 0% |
-| **Elite** | SingleTargetDps | 300 | 49% | Infested Banshee 100%, Infected Phantom 100%, Condor Gunship 100%, Vulture 100%, Infested Hornet 100% | Jackal (Beam Rifle) 0%, Archer Missile Pod 0%, Spartan Grenadier 0%, Fuel Rod Grunt 0%, Infested Ghost 0% |
-| **Vampire** | AntiAir | 300 | 44% | Zealot 100%, Vulture 100%, Banshee 100%, Pure Form Tank 100%, Infested Wraith 100% | Warthog 0%, Ghost 0%, Reaver 0%, Wolverine 0%, Spartan CQB 0% |
-| **Wraith** | Artillery | 300 | 43% | Marine 100%, Pure Form Ranged 100%, Heavy Grunts 100%, Grunt 100%, Infested Grunt 100% | Gauss Warthog 0%, Cobra 0%, Seeder 0%, Covenant Phantom 0%, Mantis 0% |
-| **Zealot** | SingleTargetDps | 400 | 70% | Scarab 100%, Elephant 100%, Spawner 100%, Hunter Pair 100%, Hunter Captain 100% | Seeder 0%, Covenant Phantom 0%, Pelican 0%, Vampire 0%, Swarm Form 0% |
-| **Hunter Pair** | Tank | 450 | 64% | Infested Marine 100%, Grunt Goblin 100%, Marine 100%, Heavy Grunts 100%, Grunt 100% | Cobra 0%, Seeder 0%, Covenant Phantom 0%, Pelican 0%, Vampire 0% |
+| **Grunt** | Chaff | 100 | 59% | Spawner 100%, Infested Banshee 100%, Infected Phantom 100%, Zealot 100%, Hunter Captain 100% | Archer Missile Pod 0%, Fuel Rod Grunt 0%, Spartan Grenadier 0%, Flamethrower Trooper 0%, Infection Forms 0% |
+| **Fuel Rod Grunt** | ChaffClear | 150 | 37% | Marine 100%, Heavy Grunts 100%, Grunt 100%, Infested Grunt 100%, Spartan 100% | Wolverine 0%, Spartan CQB 0%, Archer Missile Pod 0%, Cobra 0%, Jackal (Beam Rifle) 0% |
+| **Jackal (Shield)** | Tank | 150 | 30% | Infested Banshee 100%, Banshee 100%, Condor Gunship 100%, Infested Hornet 100%, Sparrowhawk 100% | Chopper 0%, Stalker Form 0%, Wolverine 0%, Archer Missile Pod 0%, Jackal (Beam Rifle) 0% |
+| **Jackal (Beam Rifle)** | SingleTargetDps | 175 | 36% | Vulture 100%, Banshee 100%, Condor Gunship 100%, Infested Hornet 100%, Sparrowhawk 100% | Warthog 0%, Chopper 0%, Stalker Form 0%, Spartan CQB 0%, Archer Missile Pod 0% |
+| **Ghost** | Flanker | 200 | 23% | Vulture 100%, Banshee 100%, Condor Gunship 100%, Infested Hornet 100%, Sparrowhawk 100% | Chopper 0%, Gauss Warthog 0%, Stalker Form 0%, Jackal (Shield) 0%, Archer Missile Pod 0% |
+| **Banshee** | Aerial | 300 | 60% | Infected Phantom 100%, Zealot 100%, Hunter Pair 100%, Hunter Captain 100%, Pure Form Ranged 100% | Reaver 0%, Warthog 0%, Ghost 0%, Wolverine 0%, Jackal (Shield) 0% |
+| **Covenant Phantom** | Aerial | 300 | 37% | Zealot 100%, Hunter Pair 100%, Hunter Captain 100%, Pure Form Ranged 100%, Infested Wraith 100% | Reaver 0%, Warthog 0%, Ghost 0%, Wolverine 0%, Jackal (Shield) 0% |
+| **Elite** | SingleTargetDps | 300 | 49% | Infested Banshee 100%, Infected Phantom 100%, Vulture 100%, Grunt Goblin 100%, Banshee 100% | Archer Missile Pod 0%, Jackal (Beam Rifle) 0%, Infested Ghost 0%, Fuel Rod Grunt 0%, Spartan Grenadier 0% |
+| **Vampire** | AntiAir | 300 | 47% | Zealot 100%, Vulture 100%, Banshee 100%, Condor Gunship 100%, Infested Wraith 100% | Reaver 0%, Warthog 0%, Ghost 0%, Wolverine 0%, Jackal (Shield) 0% |
+| **Wraith** | Artillery | 300 | 44% | Pure Form Ranged 100%, Marine 100%, Heavy Grunts 100%, Grunt 100%, Infested Grunt 100% | Gauss Warthog 0%, Cobra 0%, Seeder 0%, Covenant Phantom 0%, Mantis 0% |
+| **Zealot** | SingleTargetDps | 400 | 70% | Scarab 100%, Elephant 100%, Spawner 100%, Hunter Pair 100%, Grunt Goblin 100% | Seeder 0%, Covenant Phantom 0%, Pelican 0%, Vampire 0%, Swarm Form 0% |
+| **Hunter Pair** | Tank | 450 | 64% | Infested Marine 100%, Grunt Goblin 100%, Marine 100%, Heavy Grunts 100%, Infested Wraith 100% | Cobra 0%, Seeder 0%, Covenant Phantom 0%, Pelican 0%, Vampire 0% |
 | **Scarab** | Titan | 800 | 94% | Flood Abomination 100%, Elephant 100%, Infested Banshee 100%, Infected Phantom 100%, Infested Marine 100% | Spartan Sniper 0%, Spartan 0%, Zealot 0%, Spawner 0%, Combat Form 70% |
 
 ## Covenant: Banished
 
 | Unit | Role | Cost | Wins | Good against | Bad against |
 |---|---|---|---|---|---|
-| **Brute Grenadier** | ChaffClear | 150 | 41% | Spawner 100%, Marine 100%, Heavy Grunts 100%, Grunt 100%, Carrier Form 100% | Wolverine 0%, Spartan CQB 0%, Jackal (Beam Rifle) 0%, Archer Missile Pod 0%, Seeder 0% |
-| **Chopper** | Flanker | 200 | 22% | Spartan 100%, Spartan Sniper 100%, Swarm Form 100%, Infection Forms 100%, Spartan Fireteam 100% | Cobra 0%, Seeder 0%, Spartan Grenadier 0%, Fuel Rod Grunt 0%, Infected Pelican 0% |
-| **Marauder** | Tank | 300 | 48% | Condor Gunship 100%, Marine 100%, Heavy Grunts 100%, Grunt 100%, Infested Grunt 100% | Gauss Warthog 0%, Spartan Fireteam 0%, Cobra 0%, Gremlin 0%, Seeder 0% |
-| **Reaver** | AntiAir | 300 | 21% | Condor Gunship 100%, Vulture 100%, Infested Hornet 100%, Banshee 100%, Sparrowhawk 100% | Warthog 0%, Ghost 0%, Gauss Warthog 0%, Chopper 0%, Stalker Form 0% |
+| **Brute Grenadier** | ChaffClear | 150 | 41% | Spawner 100%, Marine 100%, Heavy Grunts 100%, Grunt 100%, Spartan 100% | Wolverine 0%, Spartan CQB 0%, Archer Missile Pod 0%, Jackal (Beam Rifle) 0%, Seeder 0% |
+| **Chopper** | Flanker | 200 | 22% | Spartan 100%, Spartan Sniper 100%, Swarm Form 100%, Infection Forms 100%, Jackal (Beam Rifle) 100% | Cobra 0%, Seeder 0%, Fuel Rod Grunt 0%, Spartan Grenadier 0%, Infected Pelican 0% |
+| **Marauder** | Tank | 300 | 47% | Marine 100%, Heavy Grunts 100%, Grunt 100%, Infested Grunt 100%, Cannon Fodder 100% | Gauss Warthog 0%, Spartan Fireteam 0%, Cobra 0%, Gremlin 0%, Seeder 0% |
+| **Reaver** | AntiAir | 300 | 21% | Vulture 100%, Banshee 100%, Condor Gunship 100%, Infested Hornet 100%, Sparrowhawk 100% | Warthog 0%, Chopper 0%, Gauss Warthog 0%, Ghost 0%, Stalker Form 0% |
 
 ## Covenant: Lekgolo Colony
 
 | Unit | Role | Cost | Wins | Good against | Bad against |
 |---|---|---|---|---|---|
-| **Skitterer** | Flanker | 150 | 43% | Spawner 100%, Infected Phantom 100%, Condor Gunship 100%, Sparrowhawk 100%, Spartan 100% | Archer Missile Pod 0%, Spartan Grenadier 0%, Fuel Rod Grunt 0%, Infected Pelican 0%, Flamethrower Trooper 0% |
-| **Hunter Captain** | SingleTargetDps | 450 | 62% | Flood Abomination 100%, Elephant 100%, Infested Marine 100%, Hunter Pair 100%, Grunt Goblin 100% | Seeder 0%, Covenant Phantom 0%, Pelican 0%, Vampire 0%, Swarm Form 0% |
-| **Goliath** | Tank | 500 | 48% | Infested Marine 100%, Condor Gunship 100%, Marine 100%, Infested Grunt 100%, Carrier Form 100% | Gauss Warthog 0%, Cobra 0%, Gremlin 0%, Seeder 0%, Covenant Phantom 0% |
+| **Skitterer** | Flanker | 150 | 43% | Spawner 100%, Infected Phantom 100%, Condor Gunship 100%, Sparrowhawk 100%, Spartan 100% | Archer Missile Pod 0%, Fuel Rod Grunt 0%, Spartan Grenadier 0%, Infected Pelican 0%, Flamethrower Trooper 0% |
+| **Hunter Captain** | SingleTargetDps | 450 | 62% | Flood Abomination 100%, Elephant 100%, Infested Marine 100%, Hunter Pair 100%, Grunt Goblin 100% | Seeder 0%, Covenant Phantom 0%, Pelican 0%, Vampire 0%, Combat Form 0% |
+| **Goliath** | Tank | 500 | 48% | Infested Marine 100%, Marine 100%, Infested Grunt 100%, Carrier Form 100%, Spartan Heavy Weapons 100% | Gauss Warthog 0%, Cobra 0%, Gremlin 0%, Seeder 0%, Covenant Phantom 0% |
 
 ## Covenant: Unggoy Rebellion
 
 | Unit | Role | Cost | Wins | Good against | Bad against |
 |---|---|---|---|---|---|
-| **Cannon Fodder** | Chaff | 100 | 51% | Infested Banshee 100%, Infected Phantom 100%, Zealot 100%, Infested Hornet 100%, Hunter Captain 100% | Wolverine 0%, Spartan Fireteam 0%, Archer Missile Pod 0%, Spartan Grenadier 0%, Fuel Rod Grunt 0% |
-| **Heavy Grunts** | SingleTargetDps | 200 | 60% | Spawner 100%, Infested Banshee 100%, Infected Phantom 100%, Condor Gunship 100%, Infested Hornet 100% | Archer Missile Pod 0%, Spartan Grenadier 0%, Fuel Rod Grunt 0%, Infected Pelican 0%, Infection Forms 0% |
-| **Grunt Goblin** | Tank | 400 | 62% | Infested Banshee 100%, Condor Gunship 100%, Vulture 100%, Infested Hornet 100%, Marine 100% | Gauss Warthog 0%, Cobra 0%, Gremlin 0%, Seeder 0%, Infected Pelican 0% |
+| **Cannon Fodder** | Chaff | 100 | 53% | Infested Banshee 100%, Infected Phantom 100%, Zealot 100%, Hunter Captain 100%, Banshee 100% | Wolverine 0%, Archer Missile Pod 0%, Spartan Fireteam 0%, Fuel Rod Grunt 0%, Spartan Grenadier 0% |
+| **Heavy Grunts** | SingleTargetDps | 200 | 60% | Spawner 100%, Infested Banshee 100%, Infected Phantom 100%, Hunter Captain 100%, Banshee 100% | Archer Missile Pod 0%, Fuel Rod Grunt 0%, Spartan Grenadier 0%, Infected Pelican 0%, Infection Forms 0% |
+| **Grunt Goblin** | Tank | 400 | 62% | Infested Banshee 100%, Vulture 100%, Marine 100%, Banshee 100%, Heavy Grunts 100% | Gauss Warthog 0%, Cobra 0%, Gremlin 0%, Seeder 0%, Infected Pelican 0% |
 
 ## Flood (every sub-faction)
 
 | Unit | Role | Cost | Wins | Good against | Bad against |
 |---|---|---|---|---|---|
-| **Infection Forms** | Chaff | 100 | 40% | Infested Marine 100%, Marine 100%, Heavy Grunts 100%, Grunt 100%, Infested Grunt 100% | Chopper 0%, Seeder 0%, Spartan Grenadier 0%, Covenant Phantom 0%, Fuel Rod Grunt 0% |
+| **Infection Forms** | Chaff | 100 | 40% | Infested Marine 100%, Marine 100%, Heavy Grunts 100%, Grunt 100%, Infested Grunt 100% | Chopper 0%, Infested Ghost 0%, Seeder 0%, Covenant Phantom 0%, Fuel Rod Grunt 0% |
 | **Carrier Form** | ChaffClear | 150 | 52% | Infested Marine 100%, Zealot 100%, Grunt Goblin 100%, Marine 100%, Heavy Grunts 100% | Seeder 0%, Covenant Phantom 0%, Flamethrower Trooper 0%, Brute Grenadier 0%, Pelican 0% |
-| **Combat Form** | SingleTargetDps | 200 | 48% | Elephant 100%, Spawner 100%, Hunter Captain 100%, Grunt Goblin 100%, Scorpion 100% | Seeder 0%, Covenant Phantom 0%, Fuel Rod Grunt 0%, Infected Pelican 0%, Flamethrower Trooper 0% |
-| **Pure Form Ranged** | Artillery | 250 | 60% | Marine 100%, Heavy Grunts 100%, Grunt 100%, Scorpion 100%, Carrier Form 100% | Covenant Phantom 0%, Wraith 0%, Pelican 0%, Rhino 0%, Juggernaut 0% |
-| **Stalker Form** | Flanker | 250 | 23% | Spartan 100%, Spartan Sniper 100%, Gremlin 100%, Archer Missile Pod 100%, Spartan Fireteam 100% | Cobra 0%, Seeder 0%, Spartan Grenadier 0%, Covenant Phantom 0%, Fuel Rod Grunt 0% |
-| **Swarm Form** | AntiAir | 250 | 46% | Infested Banshee 100%, Infected Phantom 100%, Zealot 100%, Hunter Pair 100%, Infested Hornet 100% | Warthog 0%, Ghost 0%, Reaver 0%, Chopper 0%, Wolverine 0% |
-| **Infected Pelican** | Aerial | 400 | 38% | Grunt Goblin 100%, Heavy Grunts 100%, Spartan 100%, Spartan Heavy Weapons 100%, Spartan Sniper 100% | Spartan CQB 0%, Seeder 0%, Covenant Phantom 0%, Fuel Rod Grunt 0%, Flamethrower Trooper 0% |
-| **Infected Phantom** | Aerial | 400 | 75% | Zealot 100%, Vulture 100%, Hunter Pair 100%, Hunter Captain 100%, Grunt Goblin 100% | Skitterer 0%, Swarm Form 0%, Elite 0%, Cannon Fodder 0%, Grunt 0% |
-| **Pure Form Tank** | Tank | 400 | 58% | Infested Marine 100%, Marine 100%, Pure Form Ranged 100%, Heavy Grunts 100%, Infested Grunt 100% | Gauss Warthog 0%, Cobra 0%, Gremlin 0%, Seeder 0%, Covenant Phantom 0% |
-| **Seeder** | SingleTargetDps | 475 | 37% | Condor Gunship 100%, Vulture 100%, Hunter Pair 100%, Hunter Captain 100%, Grunt Goblin 100% | Reaver 0%, Stalker Form 0%, Wolverine 0%, Spartan CQB 0%, Jackal (Shield) 0% |
-| **Flood Abomination** | Titan | 800 | 96% | Spawner 100%, Infested Banshee 100%, Infected Phantom 100%, Infested Marine 100%, Zealot 100% | Hunter Captain 0%, Elephant 0%, Scarab 0%, Warthog 100%, Ghost 100% |
+| **Combat Form** | SingleTargetDps | 200 | 48% | Elephant 100%, Spawner 100%, Grunt Goblin 100%, Hunter Captain 100%, Scorpion 100% | Seeder 0%, Covenant Phantom 0%, Fuel Rod Grunt 0%, Infected Pelican 0%, Flamethrower Trooper 0% |
+| **Pure Form Ranged** | Artillery | 250 | 61% | Marine 100%, Heavy Grunts 100%, Grunt 100%, Scorpion 100%, Cannon Fodder 100% | Covenant Phantom 0%, Pelican 0%, Wraith 0%, Rhino 0%, Juggernaut 0% |
+| **Stalker Form** | Flanker | 250 | 23% | Spartan 100%, Spartan Sniper 100%, Gremlin 100%, Jackal (Beam Rifle) 100%, Spartan Fireteam 100% | Cobra 0%, Infested Ghost 0%, Seeder 0%, Covenant Phantom 0%, Fuel Rod Grunt 0% |
+| **Swarm Form** | AntiAir | 250 | 48% | Infested Banshee 100%, Infected Phantom 100%, Zealot 100%, Hunter Pair 100%, Banshee 100% | Reaver 0%, Warthog 0%, Chopper 0%, Ghost 0%, Wolverine 0% |
+| **Infected Pelican** | Aerial | 400 | 38% | Grunt Goblin 100%, Heavy Grunts 100%, Spartan 100%, Spartan Sniper 100%, Spartan Heavy Weapons 100% | Spartan CQB 0%, Seeder 0%, Covenant Phantom 0%, Fuel Rod Grunt 0%, Flamethrower Trooper 0% |
+| **Infected Phantom** | Aerial | 400 | 77% | Zealot 100%, Vulture 100%, Hunter Pair 100%, Grunt Goblin 100%, Hunter Captain 100% | Skitterer 0%, Swarm Form 0%, Elite 0%, Cannon Fodder 0%, Grunt 0% |
+| **Pure Form Tank** | Tank | 400 | 58% | Infested Marine 100%, Pure Form Ranged 100%, Marine 100%, Heavy Grunts 100%, Infested Wraith 100% | Gauss Warthog 0%, Cobra 0%, Gremlin 0%, Seeder 0%, Covenant Phantom 0% |
+| **Seeder** | SingleTargetDps | 475 | 37% | Vulture 100%, Hunter Pair 100%, Grunt Goblin 100%, Hunter Captain 100%, Banshee 100% | Reaver 0%, Stalker Form 0%, Wolverine 0%, Jackal (Shield) 0%, Spartan CQB 0% |
+| **Flood Abomination** | Titan | 800 | 96% | Spawner 100%, Infested Banshee 100%, Infected Phantom 100%, Infested Marine 100%, Zealot 100% | Hunter Captain 0%, Elephant 0%, Scarab 0%, Reaver 100%, Warthog 100% |
 
 ## Flood: UNSC-based
 
 | Unit | Role | Cost | Wins | Good against | Bad against |
 |---|---|---|---|---|---|
-| **Infested Marine** | Chaff | 100 | 71% | Spawner 100%, Infested Banshee 100%, Infected Phantom 100%, Condor Gunship 100%, Infested Hornet 100% | Flamethrower Trooper 0%, Infection Forms 0%, Goliath 0%, Rhino 0%, Juggernaut 0% |
-| **Infested Warthog** | Flanker | 200 | 40% | Spartan 100%, Spartan Heavy Weapons 100%, Spartan Sniper 100%, Elite 100%, Swarm Form 100% | Fuel Rod Grunt 0%, Flamethrower Trooper 0%, Brute Grenadier 0%, Wraith 0%, Skitterer 0% |
-| **Infested Hornet** | Aerial | 250 | 64% | Infected Phantom 100%, Zealot 100%, Hunter Pair 100%, Hunter Captain 100%, Pure Form Ranged 100% | Warthog 0%, Ghost 0%, Reaver 0%, Wolverine 0%, Jackal (Shield) 0% |
-| **Infested Scorpion** | Tank | 250 | 56% | Infested Marine 100%, Marine 100%, Heavy Grunts 100%, Grunt 100%, Infested Grunt 100% | Cobra 0%, Seeder 0%, Covenant Phantom 0%, Pelican 0%, Vampire 0% |
-| **Juggernaut** | Flanker | 400 | 50% | Infested Marine 100%, Marine 100%, Pure Form Ranged 100%, Heavy Grunts 100%, Infested Grunt 100% | Gauss Warthog 0%, Cobra 0%, Seeder 0%, Covenant Phantom 0%, Pelican 0% |
+| **Infested Marine** | Chaff | 100 | 71% | Spawner 100%, Infested Banshee 100%, Infected Phantom 100%, Grunt Goblin 100%, Pure Form Ranged 100% | Flamethrower Trooper 0%, Infection Forms 0%, Rhino 0%, Goliath 0%, Juggernaut 0% |
+| **Infested Warthog** | Flanker | 200 | 39% | Spartan 100%, Spartan Sniper 100%, Spartan Heavy Weapons 100%, Elite 100%, Swarm Form 100% | Fuel Rod Grunt 0%, Flamethrower Trooper 0%, Brute Grenadier 0%, Mantis 0%, Skitterer 0% |
+| **Infested Hornet** | Aerial | 275 | 59% | Zealot 100%, Hunter Pair 100%, Hunter Captain 100%, Pure Form Ranged 100%, Infested Wraith 100% | Reaver 0%, Warthog 0%, Ghost 0%, Wolverine 0%, Jackal (Shield) 0% |
+| **Infested Scorpion** | Tank | 275 | 47% | Marine 100%, Heavy Grunts 100%, Grunt 100%, Infested Grunt 100%, Cannon Fodder 100% | Gauss Warthog 0%, Cobra 0%, Seeder 0%, Covenant Phantom 0%, Infested Elite 0% |
+| **Juggernaut** | Flanker | 400 | 50% | Infested Marine 100%, Pure Form Ranged 100%, Marine 100%, Heavy Grunts 100%, Infested Grunt 100% | Gauss Warthog 0%, Cobra 0%, Seeder 0%, Covenant Phantom 0%, Pelican 0% |
 
 ## Flood: Covenant-based
 
 | Unit | Role | Cost | Wins | Good against | Bad against |
 |---|---|---|---|---|---|
-| **Infested Grunt** | Chaff | 100 | 59% | Infected Phantom 100%, Condor Gunship 100%, Infested Hornet 100%, Grunt Goblin 100%, Heavy Grunts 100% | Fuel Rod Grunt 0%, Flamethrower Trooper 0%, Infection Forms 0%, Wraith 0%, Marauder 0% |
-| **Infested Ghost** | Flanker | 200 | 38% | Spartan 100%, Spartan Heavy Weapons 100%, Spartan Sniper 100%, Elite 100%, Swarm Form 100% | Fuel Rod Grunt 0%, Flamethrower Trooper 0%, Brute Grenadier 0%, Skitterer 0%, Combat Form 0% |
-| **Infested Banshee** | Aerial | 250 | 76% | Infected Phantom 100%, Zealot 100%, Hunter Pair 100%, Infested Hornet 100%, Hunter Captain 100% | Wolverine 0%, Jackal (Shield) 0%, Swarm Form 0%, Elite 0%, Spartan Heavy Weapons 0% |
-| **Infested Elite** | SingleTargetDps | 250 | 45% | Grunt Goblin 100%, Scorpion 100%, Sparrowhawk 100%, Infested Scorpion 100%, Spartan 100% | Archer Missile Pod 0%, Spartan Grenadier 0%, Fuel Rod Grunt 0%, Infected Pelican 0%, Flamethrower Trooper 0% |
-| **Infested Wraith** | Artillery | 250 | 58% | Infested Marine 100%, Marine 100%, Pure Form Ranged 100%, Heavy Grunts 100%, Grunt 100% | Seeder 0%, Covenant Phantom 0%, Pelican 0%, Vampire 0%, Swarm Form 0% |
-| **Spawner** | Tank | 400 | 82% | Scarab 100%, Elephant 100%, Infected Phantom 100%, Condor Gunship 100%, Vulture 100% | Flamethrower Trooper 0%, Brute Grenadier 0%, Skitterer 0%, Combat Form 0%, Grunt 0% |
+| **Infested Grunt** | Chaff | 100 | 59% | Infected Phantom 100%, Grunt Goblin 100%, Heavy Grunts 100%, Condor Gunship 100%, Infested Hornet 100% | Fuel Rod Grunt 0%, Flamethrower Trooper 0%, Infection Forms 0%, Wraith 0%, Marauder 0% |
+| **Infested Ghost** | Flanker | 200 | 36% | Spartan 100%, Spartan Sniper 100%, Spartan Heavy Weapons 100%, Elite 100%, Swarm Form 100% | Fuel Rod Grunt 0%, Flamethrower Trooper 0%, Brute Grenadier 0%, Skitterer 0%, Marauder 0% |
+| **Infested Banshee** | Aerial | 250 | 78% | Infected Phantom 100%, Zealot 100%, Hunter Pair 100%, Hunter Captain 100%, Pure Form Ranged 100% | Wolverine 0%, Jackal (Shield) 0%, Swarm Form 0%, Elite 0%, Spartan Heavy Weapons 0% |
+| **Infested Elite** | SingleTargetDps | 250 | 45% | Grunt Goblin 100%, Scorpion 100%, Sparrowhawk 100%, Spartan 100%, Spartan Sniper 100% | Archer Missile Pod 0%, Fuel Rod Grunt 0%, Spartan Grenadier 0%, Infected Pelican 0%, Infested Warthog 0% |
+| **Infested Wraith** | Artillery | 250 | 59% | Infested Marine 100%, Pure Form Ranged 100%, Marine 100%, Heavy Grunts 100%, Grunt 100% | Seeder 0%, Covenant Phantom 0%, Pelican 0%, Vampire 0%, Swarm Form 0% |
+| **Spawner** | Tank | 400 | 82% | Scarab 100%, Elephant 100%, Infected Phantom 100%, Vulture 100%, Hunter Pair 100% | Flamethrower Trooper 0%, Brute Grenadier 0%, Skitterer 0%, Combat Form 0%, Grunt 0% |

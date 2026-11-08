@@ -164,10 +164,12 @@ namespace Halobellum.Tests
         public void TheGunsThatFireFast_Loop_AndTheOthersPlayOnceAShot()
         {
             Assert.IsTrue(Fire("SpellUnits/ODST", "M7 SMG").Loops);
-            Assert.IsTrue(Fire("UNSC/Warthog", "M41 Machine Gun").Loops);
+            Assert.IsFalse(Fire("UNSC/Warthog", "M41 Machine Gun").Loops, "Every shot is heard, over the tail of the last (D114).");
             Assert.IsTrue(Fire("Covenant/Ghost", "Plasma Bolts", BattleFactions.Covenant).Loops);
-            Assert.IsTrue(Fire("UNSC/Pelican", "M370 Autocannon").Loops, "The owner's autocannon is a short burst: looped, it keeps up with the gun.");
-            Assert.IsTrue(Fire("Noble/SpartanHeavyWeapons", "M247H Chaingun").Loops);
+            Assert.IsFalse(Fire("UNSC/Pelican", "M370 Autocannon").Loops, "Played for every shot, overlapping (D114).");
+            Assert.Less(AudioCatalog.FireAutocannon.HoldSeconds, 0.3f, "The Pelican fires every 0.3 s: its next shot must not wait for the last one's voice.");
+            Assert.Less(AudioCatalog.FireM60.HoldSeconds, 0.2f, "The Warthog fires every 0.2 s.");
+            Assert.IsFalse(Fire("Noble/SpartanHeavyWeapons", "M247H Chaingun").Loops);
             Assert.IsFalse(Fire("Noble/SpartanFireteam", "BR85 Battle Rifle").Loops);
             Assert.IsFalse(Fire("UNSC/Marine", "MA5 Assault Rifle").Loops, "The owner's assault rifle is one shot.");
             Assert.IsFalse(Fire("UNSC/Scorpion", "M512 Cannon").Loops);

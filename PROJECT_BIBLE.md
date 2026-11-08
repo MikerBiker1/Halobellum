@@ -557,7 +557,11 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-07 | The version is MAJOR.MINOR.PATCH from 0.378.0: each push bumps PATCH for a small change, MINOR for a substantial one; MAJOR is the owner's (Tools/version.py) | Per the project owner (D102) |
 | 2026-11-07 | A squad being moved in deployment is drawn standing in the squares it would take | Per the project owner (D109) |
 | 2026-11-08 | The Infested Scorpion and Infested Hornet cost 275; the Condor costs 500, with five Light Spartan Lasers of 20 and no Marines | Per the project owner (D112) |
-| 2026-11-08 | The Spawner's third tech is Swarm Brood (250): it hatches a full squad of Swarm Forms 5 s into each battle (Barbed Lash removed) | Per the project owner (D113) |
+| 2026-11-08 | The Spawner's third tech is Swarm Brood (200): it hatches one Swarm Form 5 s into each battle (Barbed Lash removed) | Per the project owner (D113, D114) |
+| 2026-11-08 | A unit has up to 4 techs: 3, and a fourth that is the flat range tech or one that changes how it plays; the Grizzly's Double Shot (200): 2 shells 0.3 s apart per attack, reload 20% longer | Per the project owner (D114) |
+| 2026-11-08 | Range techs give a flat 8 m for 300 credits, on almost every gun unit; they don't lengthen melee weapons | Per the project owner (D114) |
+| 2026-11-08 | The Condor's five light lasers fire 0.8 s apart, a little quieter than a Spartan Laser, and show once in its window | Per the project owner (D114) |
+| 2026-11-08 | Machine guns and autocannons sound every shot, overlapping; the Sparrowhawk costs 275 | Per the project owner (D114) |
 
 ## 18. Assumptions to confirm
 

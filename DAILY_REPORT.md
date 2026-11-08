@@ -2,6 +2,16 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Fourth tech, Double Shot, the range tech, the Condor, gun sounds, and balance (D114)
+- **Swarm Brood** now hatches **one** Swarm Form (a stack of five), not a squad; 200 credits.
+- **Up to 4 techs.** The Grizzly's **Double Shot** (200): 2 shells 0.3 s apart per attack, reload 20% longer.
+- **Range tech: a flat +8 m for 300** on almost every gun unit. 20 units kept their own range tech (now 8 m, 300); 28 got "Long Range" as a 4th. None for melee units, the Longsword, the flamethrower, the CQB Spartan, the Swarm Form, or the Grizzly (its 4th is Double Shot). It no longer lengthens claws.
+- **Condor:** its window shows the autocannons and "Light Spartan Laser x5 (secondary)"; the lasers fire 0.8 s apart and a little quieter. The Vampire now beats it.
+- **Gun sounds:** machine guns and autocannons play every shot, overlapping, instead of a loop that didn't keep time.
+- **Balance, 2 rounds:** Aerospace went to 56% (more Sparrowhawks); **Sparrowhawk 275** put every sub-faction at **48% to 52%**. Report: `Docs/Balance/hard_ai_tournament_d114.txt`.
+- **The AI buys few techs:** 0.2 to 1.3 per side per match, nearly all drop techs. So the range tech and Double Shot barely show in the tournament.
+- **Not checked:** not played by hand; the sounds not listened to.
+
 ## The Spawner's Swarm Brood (D113)
 - **Swarm Brood** (250 credits): the Spawner hatches a full squad of Swarm Forms 5 seconds into each battle, once a battle. It replaces **Barbed Lash**, as a unit can have only 3 techs.
 - The AI (Normal and Hard) buys it as soon as it has a Spawner, as it does the Pelican's Troop Bay.

@@ -1,0 +1,289 @@
+Hard AI tournament after D114 (tech cap 4, Double Shot, 8 m range techs, Swarm Brood, staggered Condor lasers) with the Sparrowhawk at 275, seeds 0 and 1
+=========================================================================================================================================================
+7200 matches between two Hard AIs: 5600 between different sub-factions, 1600 of a sub-faction against itself.
+Whole matches under the game's real rules, with towers, cards, techs and spells. Half of each pairing is played with the sides swapped.
+Each side is dealt a random starting card for its sub-faction (250 to 350, with base health to match).
+Matches with no winner after 60 rounds: 0.
+This measures AIs, not good players: a unit the AI uses badly looks weak here. How close numbers must be to mean nothing is given in each table.
+
+Win rate by sub-faction (against the other sub-factions)
+========================================================
+Good to about 3 points either way.
+  Unggoy Rebellion     Covenant   52%   732 of 1400 9.5 rounds on average
+  Banished             Covenant   52%   726 of 1400 9.5 rounds on average
+  Noble                UNSC       52%   723 of 1400 9.2 rounds on average
+  Aerospace Command    UNSC       50%   701 of 1400 9.0 rounds on average
+  UNSC-based           Flood      50%   701 of 1400 8.9 rounds on average
+  Armored Division     UNSC       48%   676 of 1400 9.1 rounds on average
+  Lekgolo Colony       Covenant   48%   673 of 1400 9.3 rounds on average
+  Covenant-based       Flood      48%   668 of 1400 8.9 rounds on average
+
+Win rate by faction (against the other factions)
+================================================
+  Covenant   51%   1531 of 3000
+  UNSC       50%   1500 of 3000
+  Flood      49%   1169 of 2400
+
+Each sub-faction against each other (the row's win rate)
+========================================================
+Good to about 5 points either way. A sub-faction against itself is shown as -.
+                        Unggoy Re   Banished      Noble  Aerospace  UNSC-base  Armored D  Lekgolo C  Covenant-
+  Unggoy Rebellion              -        54%        47%        55%        61%        39%        48%        63%
+  Banished                    46%          -        42%        48%        56%        56%        52%        60%
+  Noble                       53%        58%          -        72%        34%        45%        61%        38%
+  Aerospace Command           45%        52%        28%          -        53%        42%        68%        64%
+  UNSC-based                  39%        44%        66%        47%          -        68%        45%        42%
+  Armored Division            61%        44%        55%        58%        32%          -        47%        42%
+  Lekgolo Colony              52%        48%        39%        32%        55%        53%          -        57%
+  Covenant-based              37%        40%        62%        36%        58%        58%        43%          -
+
+Does the side matter?
+=====================
+All matches: Team A wins 3526, Team B wins 3674: 49% for Team A (good to about 1 points; it should be 50%).
+Sub-faction against itself: Team A wins 757 of 1600: 47% (good to about 2 points).
+
+Starting cards: does the base health make up for the value?
+===========================================================
+  Card worth 250: wins  51% of 4062 (good to about 2 points)
+  Card worth 275: wins  56% of 432 (good to about 5 points)
+  Card worth 300: wins  50% of 4934 (good to about 1 points)
+  Card worth 325: wins  57% of 919 (good to about 3 points)
+  Card worth 350: wins  48% of 4053 (good to about 2 points)
+  By how much dearer a side's card is than the other's:
+     -100 credits: wins  52% of 1132
+      -75 credits: wins  52% of 365
+      -50 credits: wins  52% of 2832
+      -25 credits: wins  50% of 836
+       +0 credits: wins  50% of 4070
+      +25 credits: wins  50% of 836
+      +50 credits: wins  48% of 2832
+      +75 credits: wins  48% of 365
+     +100 credits: wins  48% of 1132
+
+Opening squads (at least 40 matches)
+====================================
+   65%  Unggoy Rebellion: Jackal (Beam Rifle) + Jackal (Shield) (110)
+   64%  Banished: Grunt + Fuel Rod Grunt (108)
+   64%  Banished: Grunt + Chopper (107)
+   61%  Unggoy Rebellion: Fuel Rod Grunt + Jackal (Beam Rifle) (93)
+   61%  Unggoy Rebellion: Grunt + Fuel Rod Grunt (105)
+   61%  Banished: Jackal (Beam Rifle) + Brute Grenadier (74)
+   60%  Banished: Jackal (Beam Rifle) + Jackal (Shield) (120)
+   60%  Lekgolo Colony: Grunt + Jackal (Beam Rifle) (121)
+   59%  Banished: Grunt + Jackal (Beam Rifle) (92)
+   59%  Unggoy Rebellion: Jackal (Shield) + Heavy Grunts (121)
+   57%  Banished: Fuel Rod Grunt + Jackal (Beam Rifle) (109)
+   56%  Banished: Grunt + Brute Grenadier (85)
+  ...
+   44%  Lekgolo Colony: Fuel Rod Grunt + Jackal (Shield) (133)
+   44%  Banished: Jackal (Shield) + Brute Grenadier (102)
+   44%  Lekgolo Colony: Fuel Rod Grunt + Skitterer (134)
+   43%  Lekgolo Colony: Jackal (Shield) + Ghost (145)
+   43%  Banished: Jackal (Shield) + Chopper (100)
+   43%  Lekgolo Colony: Fuel Rod Grunt + Ghost (101)
+   42%  Covenant-based: Carrier Form + Infested Grunt (358)
+   42%  Unggoy Rebellion: Jackal (Shield) + Ghost (125)
+   42%  Lekgolo Colony: Ghost + Skitterer (130)
+   39%  Banished: Fuel Rod Grunt + Ghost (115)
+   39%  Unggoy Rebellion: Ghost + Cannon Fodder (124)
+   34%  Banished: Ghost + Brute Grenadier (96)
+
+How matches go
+==============
+Rounds: shortest 6, median 9, longest 13.
+  6: 24  7: 397  8: 1469  9: 2327  10: 1970  11: 788  12: 193  13: 32
+The side that does more base damage in round 1 goes on to win 53% of matches (3771 of 7168).
+The winner's base at the end: 878 on average.
+
+Towers
+======
+A side loses 1.05 towers per round, of its 2.
+Tower levels at the end of a match: level 1: 23300, level 2: 471, level 3: 5029
+Research steps bought per match, by a side: 0.00.
+The side whose towers fell less often wins 74% of the matches where they differ (4880 of 6606).
+Credits unspent when the match ends: 17 on average.
+
+Pelicans with their Troop Bay
+=============================
+36635 Pelican battles: 2.30 drops per battle, of at most 3.
+
+Rapid Resupply, unlocks and flank squads (per side, per match)
+==============================================================
+  Unggoy Rebellion      0.48 resupplies     8.5 unit types unlocked     0.0 squads in flank zones at the end
+  Banished              0.49 resupplies     8.6 unit types unlocked     0.0 squads in flank zones at the end
+  Noble                 0.51 resupplies     7.8 unit types unlocked     1.5 squads in flank zones at the end
+  Aerospace Command     0.49 resupplies     7.6 unit types unlocked     7.4 squads in flank zones at the end
+  UNSC-based            0.42 resupplies     7.9 unit types unlocked     0.0 squads in flank zones at the end
+  Armored Division      0.53 resupplies     7.7 unit types unlocked     2.0 squads in flank zones at the end
+  Lekgolo Colony        0.54 resupplies     8.7 unit types unlocked     0.0 squads in flank zones at the end
+  Covenant-based        0.45 resupplies     7.8 unit types unlocked     0.0 squads in flank zones at the end
+
+Techs the AI owns at the end of a match (per side)
+==================================================
+  Unggoy Rebellion      0.22 techs   most often: Covenant Phantom: Gravity Lift 13%, Fuel Rod Grunt: Reinforced Harness 4%, Cannon Fodder: Refer a Friend 1%, Jackal (Beam Rifle): Point-Defense Gauntlets 1%
+  Banished              0.30 techs   most often: Covenant Phantom: Gravity Lift 14%, Brute Grenadier: Brute Plate 6%, Jackal (Beam Rifle): Point-Defense Gauntlets 2%, Fuel Rod Grunt: Reinforced Harness 1%
+  Noble                 0.80 techs   most often: Pelican: Troop Bay 46%, Marine: Body Armor 20%, Flamethrower Trooper: Fire-Resistant Suits 4%, Scorpion: Reactive Armor 3%
+  Aerospace Command     0.27 techs   most often: Marine: Body Armor 11%, Pelican: Troop Bay 7%, Longsword: Afterburners 3%, Sparrowhawk: Afterburners 2%
+  UNSC-based            0.48 techs   most often: Infested Marine: Dense Biomass 19%, Carrier Form: Thick Hide 6%, Infested Marine: Bone Blades 3%, Infested Hornet: Biomass Plates 3%
+  Armored Division      0.84 techs   most often: Pelican: Troop Bay 53%, Marine: Body Armor 18%, Flamethrower Trooper: Fire-Resistant Suits 3%, Pelican: Armor Plating 3%
+  Lekgolo Colony        0.29 techs   most often: Covenant Phantom: Gravity Lift 10%, Fuel Rod Grunt: Reinforced Harness 7%, Jackal (Beam Rifle): Point-Defense Gauntlets 2%, Grunt: Reinforced Methane Tanks 2%
+  Covenant-based        1.29 techs   most often: Spawner: Swarm Brood 83%, Infested Grunt: Dense Biomass 12%, Infested Banshee: Biomass Plates 10%, Carrier Form: Thick Hide 9%
+
+Units
+=====
+Fielded: the share of a side's matches, among sub-factions that can buy it, in which it ever fought.
+Win when fielded: the side's win rate in those matches. Edge: that, minus the same sub-faction's win rate without it. High edge can also mean the side was ahead, as winners last longer and can afford more.
+Damage per 100 credits: damage dealt per round fought per 100 credits of squad. Kills are bodies, per round fought per squad.
+
+  Unit                       Fielded   Win   Edge  Dmg/100  Kills  Rounds  Matches
+  Infested Marine                99%   50%    +10      689    2.8    48.9     1780
+  Infested Banshee               98%   48%    -25      850    6.1    30.8     1756
+  Vulture                        96%   50%    -14      414    5.3    22.3     1727
+  Marine                         96%   51%    +16      639    5.2    52.2     5163
+  Scarab                         92%   51%     +2     1418   17.4     6.3     4951
+  Marauder                       91%   51%     -6      478    8.8    20.3     1638
+  Spawner                        88%   46%    -17      235    3.4    13.2     1586
+  Grunt Goblin                   88%   50%    -11      520   10.1    17.1     1585
+  Elephant                       87%   51%     +8      880   17.3     5.3     4718
+  Scorpion                       83%   50%     +2      616    9.6    21.1     4467
+  Flood Abomination              82%   48%    -11     1134   20.7     4.8     2951
+  Brute Grenadier                80%   50%     -6      941    9.0    29.8     1443
+  Carrier Form                   79%   49%     +0      518    3.2    15.6     2857
+  Hunter Pair                    75%   51%     +1      683   14.6    13.2     4047
+  Flamethrower Trooper           74%   49%     -4      921    7.4    17.3     3969
+  Spartan Sniper                 73%   55%    +14     1245    6.7    11.8     1307
+  Infested Grunt                 72%   47%     -3      429    2.0    29.7     1302
+  Fuel Rod Grunt                 71%   51%     -1     1099   10.4    23.8     3860
+  Heavy Grunts                   70%   50%     -7      492    4.1    23.2     1259
+  Infected Phantom               68%   47%     -7      399    3.7    13.7     2452
+  Sparrowhawk                    66%   50%     -1      811    3.3    17.8     1190
+  Banshee                        65%   47%    -10      732    5.7    16.9     3529
+  Zealot                         63%   51%     +0      651    5.6    11.7     3380
+  Infested Warthog               63%   50%     +0      764    5.7     9.0     1126
+  Infested Ghost                 61%   51%     +8      603    5.6     9.1     1096
+  Infested Scorpion              61%   50%     -1      663    6.9    12.8     1095
+  Wraith                         60%   50%     -2      704   12.3    14.8     3259
+  Skitterer                      60%   45%     -9      345    2.2    16.1     1084
+  Warthog                        58%   49%     -4      407    4.8     9.2     3144
+  Infested Wraith                58%   50%     +4      917   13.6    14.7     1043
+  Infested Hornet                57%   45%    -12      916    4.6    13.6     1035
+  Grunt                          56%   56%    +13      709    2.9    27.4     3030
+  Hunter Captain                 53%   51%     +6      674    7.4    10.2      959
+  Spartan Heavy Weapons          52%   53%     +4      636   11.9     8.3      932
+  Spartan                        51%   54%    +11     1261    5.5     7.2     2769
+  Grizzly                        48%   47%     -3      506   11.1     8.9      873
+  Gremlin                        48%   48%     -2      607    3.1    11.2      862
+  Jackal (Beam Rifle)            46%   54%     +6      893    5.2    15.2     2499
+  Longsword                      45%   51%     +1      532    5.8    14.3      806
+  Pure Form Tank                 44%   45%    -10      716   10.3    10.1     1598
+  Cannon Fodder                  44%   53%     +2      344    1.8    24.0      789
+  Pure Form Ranged               43%   52%     +6     1099   10.4    12.3     1544
+  Infection Forms                41%   48%     -2     1314    5.8    10.9     1468
+  Jackal (Shield)                40%   51%     +1      167    1.0    11.4     2176
+  Chopper                        40%   51%     -1      304    3.3    11.2      716
+  Swarm Form                     36%   51%     +3      690    3.3    12.3     1296
+  Pelican                        36%   45%    -10      176    1.5    17.3     1930
+  Rhino                          35%   55%    +10     1016   20.3     7.4      628
+  Hornet                         31%   45%     -7      521    3.9     9.8     1650
+  Condor Gunship                 29%   46%     -6      687   10.7     5.2      530
+  Vampire                        29%   47%     -5      504    3.7    13.1     1550
+  Elite                          28%   47%     -5      469    4.8    12.0     1514
+  Ghost                          27%   43%    -11      322    2.7     9.8     1480
+  Cobra                          26%   54%     +8     1108    5.0    11.8      461
+  Mantis                         25%   50%     +0      391   10.4     5.8     1372
+  Goliath                        25%   51%     +3      355    7.3     5.8      443
+  Seeder                         21%   60%    +14      221    6.2     5.6      772
+  Juggernaut                     21%   50%     -1      787   12.7     5.5      381
+  Spartan Grenadier              18%   55%     +4      701   13.2     6.3      325
+  Archer Missile Pod             14%   50%     -0      498    8.0     9.9      775
+  Wolverine                      14%   51%     +2      737    7.3    10.8      774
+  Covenant Phantom               13%   39%    -14      156    0.7     8.1      677
+  Spartan Fireteam               12%   54%     +3      549    7.7     4.6      221
+  Combat Form                    12%   42%     -8      854    4.8     8.7      433
+  Reaver                          9%   58%     +8      839    4.8    11.2      161
+  Infested Elite                  7%   44%     -4      830    4.4     7.7      124
+  Gauss Warthog                   5%   50%     -0      733    4.1     9.0      267
+  Spartan CQB                     3%   47%     -5      232    3.0     5.0       58
+  Infected Pelican                1%   42%     -7      420    9.4     5.3       45
+
+Cards the AI takes
+==================
+Edge: the side's win rate with the card, minus without it, for the same faction's matches. Late cards mostly go to sides that survive, so compare them with care.
+
+  Covenant
+    Plasma Storm                       taken in  53% of matches   win  49%   edge -3
+    Amplifying Core                    taken in  47% of matches   win  54%   edge +6
+    Hunter Pair                        taken in  44% of matches   win  50%   edge -1
+    Zealot                             taken in  41% of matches   win  55%   edge +8
+    Banshee Ambush                     taken in  39% of matches   win  51%   edge +0
+    Plasma Bombardment                 taken in  33% of matches   win  47%   edge -5
+    Banshee                            taken in  33% of matches   win  46%   edge -7
+    Heavy Armor                        taken in  31% of matches   win  52%   edge +3
+    Improved Firepower System          taken in  31% of matches   win  51%   edge +1
+    Grunt                              taken in  25% of matches   win  59%   edge +12
+    Absorption Module                  taken in  25% of matches   win  52%   edge +2
+    Advanced Defense Tactics           taken in  24% of matches   win  59%   edge +11
+    Advanced Offensive Tactics         taken in  24% of matches   win  52%   edge +2
+    Glassing Beam                      taken in  23% of matches   win  38%   edge -16
+    Wraith                             taken in  22% of matches   win  50%   edge -1
+    Elite                              taken in  21% of matches   win  49%   edge -3
+    Electromagnetic Pulse              taken in  21% of matches   win  47%   edge -5
+    Prophet's Blessing                 taken in  20% of matches   win  47%   edge -4
+    Vampire                            taken in  18% of matches   win  51%   edge +0
+    Haste Stims                        taken in  18% of matches   win  49%   edge -2
+    Supply Enhancement                 taken in  14% of matches   win  58%   edge +8
+    Grunt Goblin                       taken in  13% of matches   win  47%   edge -4
+    Intensive Training                 taken in  13% of matches   win  44%   edge -7
+    Covenant Phantom                   taken in  13% of matches   win  39%   edge -14
+
+  Flood
+    Blight Rain                        taken in  51% of matches   win  47%   edge -4
+    Amplifying Core                    taken in  47% of matches   win  51%   edge +3
+    Infected Phantom                   taken in  42% of matches   win  48%   edge -2
+    Improved Firepower System          taken in  34% of matches   win  51%   edge +3
+    Heavy Armor                        taken in  33% of matches   win  49%   edge +1
+    Spore Burst                        taken in  31% of matches   win  45%   edge -5
+    Pure Form Ranged                   taken in  30% of matches   win  51%   edge +2
+    Pure Form Tank                     taken in  26% of matches   win  46%   edge -4
+    Nerve Spores                       taken in  25% of matches   win  42%   edge -10
+    Absorption Module                  taken in  25% of matches   win  52%   edge +4
+    Swarm Form                         taken in  24% of matches   win  52%   edge +4
+    Hive Frenzy                        taken in  24% of matches   win  45%   edge -5
+    Advanced Defense Tactics           taken in  21% of matches   win  55%   edge +7
+    Infested Banshee                   taken in  21% of matches   win  44%   edge -7
+    Advanced Offensive Tactics         taken in  21% of matches   win  48%   edge -2
+    Spawner                            taken in  20% of matches   win  54%   edge +6
+    Seeder                             taken in  19% of matches   win  60%   edge +13
+    Supply Enhancement                 taken in  17% of matches   win  54%   edge +6
+    Infested Hornet                    taken in  17% of matches   win  43%   edge -7
+    Intensive Training                 taken in  17% of matches   win  46%   edge -4
+    Gravemind's Wrath                  taken in  16% of matches   win  35%   edge -17
+    Haste Stims                        taken in  16% of matches   win  48%   edge -1
+    Infested Marine                    taken in  14% of matches   win  48%   edge -1
+    Infested Wraith                    taken in  13% of matches   win  43%   edge -7
+
+  UNSC
+    Archer Missile Barrage             taken in  51% of matches   win  49%   edge -2
+    Amplifying Core                    taken in  46% of matches   win  52%   edge +4
+    MAC Strike                         taken in  41% of matches   win  51%   edge +1
+    Scorpion                           taken in  40% of matches   win  49%   edge -1
+    Heavy Armor                        taken in  30% of matches   win  49%   edge -1
+    Improved Firepower System          taken in  30% of matches   win  51%   edge +1
+    Spartan                            taken in  29% of matches   win  58%   edge +11
+    Hornet                             taken in  27% of matches   win  45%   edge -6
+    Battlefield Rally                  taken in  27% of matches   win  44%   edge -8
+    Electromagnetic Pulse              taken in  27% of matches   win  47%   edge -4
+    Marine                             taken in  24% of matches   win  59%   edge +12
+    Mantis                             taken in  24% of matches   win  51%   edge +1
+    Absorption Module                  taken in  23% of matches   win  52%   edge +2
+    Advanced Defense Tactics           taken in  22% of matches   win  60%   edge +13
+    Advanced Offensive Tactics         taken in  22% of matches   win  62%   edge +15
+    HAVOK Nuke                         taken in  21% of matches   win  48%   edge -3
+    ODST Drop Pods                     taken in  16% of matches   win  44%   edge -7
+    Intensive Training                 taken in  16% of matches   win  50%   edge +0
+    Haste Stims                        taken in  15% of matches   win  52%   edge +2
+    Supply Enhancement                 taken in  15% of matches   win  56%   edge +7
+    Vulture                            taken in  15% of matches   win  54%   edge +5
+    Archer Missile Pod                 taken in  14% of matches   win  50%   edge -0
+    Pelican                            taken in  12% of matches   win  40%   edge -11
+    Wolverine                          taken in  11% of matches   win  52%   edge +2

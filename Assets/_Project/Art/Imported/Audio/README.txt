@@ -133,7 +133,7 @@ ONE WEAPON'S OR UNIT'S OWN (no generated sound: until a file is in, the weapon's
   sfx_fire_smg                     ODSTs' M7 SMG. Loops while they fire, so the file should loop.
   sfx_fire_m60                     Every machine gun and chaingun: the Warthog's (and the Infested Warthog's), the Scorpion's and the Grizzly's
                                    coaxial guns, the Mantis, the Vulture, the Elephant's turrets, the Spartan's chaingun. Loops while they fire.
-  sfx_fire_autocannon              Autocannons: Pelican, Sparrowhawk, Condor, Chopper. Loops while they fire.
+  sfx_fire_autocannon              Autocannons: Pelican, Sparrowhawk, Condor, Chopper. Once per shot, overlapping.
   sfx_fire_br85                    The BR85 battle rifle (Spartan Fireteam).
   sfx_fire_beamrifle               The Beam Rifle (Jackal).
   sfx_fire_plasmaturret            The Phantoms' and the Scarab's plasma turrets (the same file as sfx_fire_plasmaheavy, in a voice group of its own).

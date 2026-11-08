@@ -18,7 +18,7 @@ OVERRIDE = os.path.join(AUDIO, "Resources", "AudioOverride")
 SLOTS = [
     ("assault_rifle_fire_brown2_1.wav", "sfx_fire_assaultrifle", "Marines' MA5 and the Scavenged Rifle (Infested Marine, Combat Form)"),
     ("fire[smg_new01].wav", "sfx_fire_smg", "ODSTs' M7 SMG, looped while they fire"),
-    ("fire[m60_ster1].wav", "sfx_fire_m60", "every machine gun and chaingun: the Warthog's (and the Infested Warthog's), the coaxial guns, the Mantis, the Vulture, the Elephant's turrets, the Spartan's chaingun, looped while they fire"),
+    ("fire[m60_ster1].wav", "sfx_fire_m60", "every machine gun and chaingun: the Warthog's (and the Infested Warthog's), the coaxial guns, the Mantis, the Vulture, the Elephant's turrets, the Spartan's chaingun, once per shot, overlapping"),
     ("ghost_fire[plasma_ghost].wav", "sfx_fire_ghost", "the Ghost's plasma bolts (and the Infested Ghost's), looped while it fires"),
     ("flamethrower_fire_FT_active.wav", "sfx_fire_flame", "flamethrowers, looped while they fire"),
     ("plas_rifle_fire[plas_rif_fire].wav", "sfx_fire_plasma", "plasma rifles, pistols and turrets"),
@@ -75,7 +75,7 @@ SLOTS = [
     ("Unit bought (fall to grid).wav", "ui_buy", "a squad bought, every faction"),
     ("Unit unlocked.wav", "ui_unlock", "a unit unlocked or a tech bought, every faction"),
     # The owner's second batch (D71).
-    ("Autocannon.mp3", "sfx_fire_autocannon", "autocannons (Pelican, Sparrowhawk, Condor, Chopper), looped while they fire"),
+    ("Autocannon.mp3", "sfx_fire_autocannon", "autocannons (Pelican, Sparrowhawk, Condor, Chopper), once per shot, overlapping"),
     ("fire_BR85.wav", "sfx_fire_br85", "the BR85 battle rifle (Spartan Fireteam)"),
     ("phantom_turret_fire[phantom_fire].wav", "sfx_fire_plasmaheavy", "heavy plasma: the Marauder's plasma cannon, and any heavy plasma shot with no file of its own"),
     ("phantom_turret_fire[phantom_fire].wav", "sfx_fire_plasmaturret", "the Phantoms' and the Scarab's plasma turrets (the same file, in a voice group of its own)"),

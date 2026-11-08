@@ -165,7 +165,11 @@ namespace Halobellum.Presentation
         // One weapon's or unit's own sound, from the owner (see OwnerCue). The guns that fire fast loop while they fire.
         public static readonly SfxCue FireAssaultRifle = OwnerCue("sfx_fire_assaultrifle", SfxGroup.SmallArms, 0.6f, 0.06f, 1, -17f);
         public static readonly SfxCue FireSmg = OwnerCue("sfx_fire_smg", SfxGroup.SmallArms, 0.6f, 0f, 1, -19f, true);
-        public static readonly SfxCue FireM60 = OwnerCue("sfx_fire_m60", SfxGroup.HeavyArms, 0.7f, 0f, 2, -16.5f, true);
+        /// <summary>
+        /// One M60 shot with a half-second tail, played for every shot (the owner, 2026-11-08; D114): looped, it gave about 2 shots a second to a Warthog
+        /// firing 5. Only its first 0.1 s holds a voice, so the next shot starts over the last one's tail.
+        /// </summary>
+        public static readonly SfxCue FireM60 = OwnerCue("sfx_fire_m60", SfxGroup.HeavyArms, 0.6f, 0.04f, 2, -16.5f, hold: 0.1f);
         public static readonly SfxCue FireGhost = OwnerCue("sfx_fire_ghost", SfxGroup.Plasma, 0.65f, 0f, 2, -18f, true);
         public static readonly SfxCue FireBanshee = OwnerCue("sfx_fire_banshee", SfxGroup.Plasma, 0.6f, 0.06f, 2, -18.5f);
         public static readonly SfxCue FireBansheeBomb = OwnerCue("sfx_fire_banshee_bomb", SfxGroup.Rockets, 0.85f, 0.05f, 4, -13f);
@@ -198,7 +202,8 @@ namespace Halobellum.Presentation
         public static readonly SfxCue CallSwarm = OwnerCue("sfx_call_swarm", SfxGroup.Calls, 0.5f, 0.08f, 1, -21f);
         public static readonly SfxCue ShieldRegen = OwnerCue("sfx_shield_regen", SfxGroup.ShieldRegen, 0.45f, 0.05f, 0, -24f);
         // The owner's second batch (D71).
-        public static readonly SfxCue FireAutocannon = OwnerCue("sfx_fire_autocannon", SfxGroup.HeavyArms, 0.75f, 0f, 2, -16f, true);
+        /// <summary>The autocannon's short burst, played for every shot and overlapping the last one (D114), as the M60.</summary>
+        public static readonly SfxCue FireAutocannon = OwnerCue("sfx_fire_autocannon", SfxGroup.HeavyArms, 0.65f, 0.04f, 2, -16f, hold: 0.15f);
         /// <summary>The BR85's file is a burst with almost 3 s of echo: a Spartan fires again long before it ends, so only its burst holds a voice.</summary>
         public static readonly SfxCue FireBr85 = OwnerCue("sfx_fire_br85", SfxGroup.SmallArms, 0.65f, 0.04f, 2, -17f, hold: 0.5f);
         /// <summary>The Phantoms' and the Scarab's plasma turrets: the owner's heavy plasma file, in a group of its own so that their fast fire can't take every heavy plasma voice from the fuel rods and mortars.</summary>
@@ -250,7 +255,7 @@ namespace Halobellum.Presentation
         public static void SetLimits(VoiceLimiter limiter)
         {
             Limit(limiter, SfxGroup.SmallArms, 4, 0.07f);
-            Limit(limiter, SfxGroup.HeavyArms, 3, 0.07f);
+            Limit(limiter, SfxGroup.HeavyArms, 6, 0.04f); // Every shot of the machine guns and autocannons is heard, over the tail of the last (D114).
             Limit(limiter, SfxGroup.BigGuns, 3, 0.14f);
             Limit(limiter, SfxGroup.Rockets, 3, 0.12f);
             Limit(limiter, SfxGroup.Flame, 2, 0.2f);
