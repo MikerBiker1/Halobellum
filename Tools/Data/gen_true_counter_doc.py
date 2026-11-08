@@ -8,12 +8,15 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "..", "..", "Docs", "Balance", "true_counter.md")
 TOP = 5
 HALF = 0.5  # Only matchups won at least half the time are listed.
+RANGE = 100  # Only units costing within this much of each other are compared (the owner, 2026-11-07).
 
 units = json.load(open(os.path.join(HERE, "cw", "units.json"), encoding="utf-8"))
 rows = list(csv.reader(open(os.path.join(HERE, "cw", "true_matrix.csv"), encoding="utf-8")))
 names = rows[0][1:]
 # win[(a, b)]: one squad of a against two squads of b, a's win rate.
-win = {(r[0], names[i]): float(v) for r in rows[1:] for i, v in enumerate(r[1:]) if v != ""}
+COST = {u["name"]: u["cost"] for u in units}
+win = {(r[0], names[i]): float(v) for r in rows[1:] for i, v in enumerate(r[1:])
+       if v != "" and abs(COST.get(r[0], 0) - COST.get(names[i], 0)) <= RANGE}
 ALONE = {n: sum(s for (a, b), s in win.items() if a == n) / max(1, sum(1 for (a, b) in win if a == n)) for n in names}
 
 GROUPS = [("UNSC", None), ("UNSC", "Noble"), ("UNSC", "Aerospace Command"), ("UNSC", "Armored Division"),
@@ -30,16 +33,15 @@ lines = [
     "",
     "Every unit, one squad of it, against two squads of every other unit, whatever they cost; 10 battles a pair, half with the sides swapped,",
     "no techs, no towers, no spells, on open ground (`Tools/Data/cw`, `dotnet run -c Release -- true`). A unit that beats two squads of another",
-    "with one of its own truly counters it.",
+    "with one of its own truly counters it. Only units within 100 credits of each other are compared, so a squad faces squads of about its own price.",
     "",
-    "- **Alone wins:** its average win rate, one squad against two, over every other unit.",
-    "- **Beats two:** how many of the other units it beats, two squads of them, at least half the time.",
+    "- **Alone wins:** its average win rate, one squad against two, over the units within 100 credits of it.",
+    "- **Beats two:** how many of the units within 100 credits of it it beats, two squads of them, at least half the time.",
     "- **Beats two of:** the five it does best against while outnumbered two to one, with its win rate (equal ones: the strongest first).",
     "- **Countered by:** the five whose single squad does best against two squads of it, with their win rate (equal ones: the weakest first).",
     "- Only matchups won at least half the time are listed; \"none\" means no unit manages it.",
     "",
-    "Squads differ in cost: a squad of Grunts is cheaper than one Scarab, so this is about squads, not credits (the counter web, `counter_web.md`,",
-    "matches armies of equal value). The Hard AI doesn't use this table.",
+    "The counter web (`counter_web.md`) matches armies of equal value instead. The Hard AI doesn't use this table.",
     "",
     "Written by `Tools/Data/gen_true_counter_doc.py`; do not edit by hand.",
     "",
