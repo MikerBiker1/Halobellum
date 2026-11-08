@@ -619,6 +619,39 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
+        public IEnumerator AGhost_DriftsAwayKnockedOut_ThenBlowsUpBlue()
+        {
+            yield return LoadSandbox();
+            _sandbox.AddSquad(Team.A, Unit("Warthog"));
+            _sandbox.AddSquad(Team.B, Unit("Ghost"));
+            yield return null;
+            _battle.Speed = 1f;
+            _sandbox.Run();
+            yield return null;
+            UnitViewManager views = _battle.GetComponent<UnitViewManager>();
+            SimUnit ghost = _battle.Simulation.Units.First(u => u.Stats.Name == "Ghost");
+            ghost.Health = 0f;
+            float deadline = Time.realtimeSinceStartup + 5f;
+            while (ghost.IsAlive && Time.realtimeSinceStartup < deadline) yield return null;
+            yield return null;
+            Assert.IsTrue(views.IsShown(ghost), "Its body stays, knocked out.");
+            Vector3 start = views.ShownPosition(ghost);
+            float diedAt = Time.time; // Its drift runs on battle time, which goes at the game's time at speed 1, battle over or not.
+            while (Time.time < diedAt + 1f) yield return null;
+            Vector3 drifted = views.ShownPosition(ghost);
+            Assert.Greater(new Vector2(drifted.x - start.x, drifted.z - start.z).magnitude, 2f, "It drifts away (D120).");
+            Assert.AreEqual(start.y, drifted.y, 0.5f, "Along the ground.");
+
+            while (Time.time < diedAt + DeathEffects.GhostDriftSeconds + 0.3f) yield return null;
+            Vector3 stopped = views.ShownPosition(ghost);
+            for (int i = 0; i < 10; i++) yield return null;
+            Assert.IsTrue(views.IsShown(ghost), "Its wreck stays.");
+            Assert.AreEqual(stopped, views.ShownPosition(ghost), "It has blown up and stopped where it got to.");
+            Assert.Greater(_view.Kit.LivePlasmaFire, 0, "Light blue.");
+            Assert.AreEqual(0, _view.Kit.LiveFire, "No orange.");
+        }
+
+        [UnityTest]
         public IEnumerator ACovenantMachine_ExplodesLightBlue_AndAUnscOneOrange()
         {
             yield return LoadSandbox();

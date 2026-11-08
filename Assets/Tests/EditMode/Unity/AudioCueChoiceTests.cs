@@ -155,14 +155,17 @@ namespace Halobellum.Tests
 
         private static string Death(string path, Team team) => BattleAudio.DeathCue(new SimUnit(0, team, 0, Unit(path), new Vec2(0f, 0f), new Vec2(0f, 1f))).Slot;
 
-        // With the owner's third batch in (D91): soldiers by kind, the Hunters' own, the Flood by size; the generated sounds stay for the rest.
+        // With the owner's third batch in (D91): soldiers by kind, the Hunters' own, the Flood by size; machines with the turret explosion (D120); the generated sounds stay for the rest.
         [TestCase("Flood/SwarmForm", "sfx_death_flood_small")]
         [TestCase("Covenant/HunterPair", "sfx_death_lekgolo")]
         [TestCase("LekgoloColony/HunterCaptain", "sfx_death_lekgolo")]
         [TestCase("LekgoloColony/Goliath", "sfx_death_lekgolo")]
-        [TestCase("Covenant/Banshee", "sfx_death_air")]
-        [TestCase("Flood/InfectedPhantom", "sfx_death_air")]
-        [TestCase("Covenant/Ghost", "sfx_death_vehicle")]
+        [TestCase("Covenant/Banshee", "sfx_explosion_turret")] // The owner's turret explosion for machines (D120); in a battle its own fall-and-crash file plays instead.
+        [TestCase("Flood/InfectedPhantom", "sfx_explosion_turret")]
+        [TestCase("Covenant/Vampire", "sfx_explosion_turret")]
+        [TestCase("Flood/Seeder", "sfx_death_air")] // A Flood creature, not a machine.
+        [TestCase("Covenant/Ghost", "sfx_explosion_turret")]
+        [TestCase("UNSC/Warthog", "sfx_explosion_turret")]
         [TestCase("Covenant/Wraith", "sfx_explosion_medium")]
         [TestCase("Covenant/Scarab", "sfx_death_scarab")]
         [TestCase("Flood/CarrierForm", "sfx_flood_burst")]

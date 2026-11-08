@@ -567,6 +567,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-08 | The SMG and the Ghost sound every shot; an aircraft falling as it dies is heard diving, then crashing as it lands; the Longsword has its own bomb sound; the Archer missiles and the HAVOK are heard coming down | Per the project owner (D117) |
 | 2026-11-08 | Every UNSC rocket, missile and bomb is heard coming down, ending as it lands | Per the project owner (D118) |
 | 2026-11-08 | Taken Flood vehicles use their original vehicle's sounds instead of generated ones; clicking a spell shows what it does; towers have heavy armor | Per the project owner (D119) |
+| 2026-11-08 | The owner's Banshee fall-and-crash file; the turret explosion for every machine whose death was generated; a Ghost drifts knocked out for 2.1 s, then blows up blue | Per the project owner (D120) |
 
 ## 18. Assumptions to confirm
 

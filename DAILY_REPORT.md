@@ -2,6 +2,12 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Banshee crash, turret explosion, Ghost drift (D120)
+- **Banshee and Infested Banshee:** your fall-and-crash file plays as one, timed so that the crash comes as the wreck lands at any battle speed.
+- **turret_explosion:** every machine whose death sound was generated (small vehicles, Phantoms, Vampire). The Seeder, a creature, keeps the generated one.
+- **Ghost:** knocked out, it drifts in a random direction for 2.1 s with `ghost_initial_destroyed`, then blows up light blue with `turret_explosion`.
+- **Not checked:** not seen or heard in the game; the tests pass, including one that watches a Ghost drift and blow up.
+
 ## Taken vehicles' sounds, spell info, heavy towers (D119)
 - **Infected vehicles:** wherever they used a generated sound, they now use the normal vehicle's. The Infested Banshee's spore bomb uses the Banshee's bomb sound. The Infested Hornet and the Infected Pelican crash like UNSC aircraft.
 - **Spells:** click a spell's name in the spell bar (or Place / Move) to see what it does, when it strikes and its recharge.

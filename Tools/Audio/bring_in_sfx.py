@@ -109,6 +109,10 @@ SLOTS = [
     # The owner's fourth batch (D117).
     ("Longsword_firing.wav", "sfx_fire_longsword", "the Longsword's carpet bombs going out"),
     ("rocket or bomb flying down.wav", "sfx_falling_in", "every UNSC rocket, missile and bomb in flight (D118), and the Archer Missile Barrage and the HAVOK Nuke, coming down, ending as they land"),
+    # The owner's fifth batch (D120).
+    ("banshee-banshee-windup-and-explosion.mp3", "sfx_death_banshee", "the Banshee and the Infested Banshee shot down: 1.3 s of falling, then the crash, started so that the crash comes as the wreck lands"),
+    ("turret_explosion.mp3", "sfx_explosion_turret", "every machine whose death had a generated sound (Warthog, Ghost, Chopper, Cobra, Gremlin, Wolverine, Reaver, Grunt Goblin, Archer pod; the Phantoms and the Vampire), and the Ghost's blast after its drift"),
+    ("ghost_initial_destroyed.mp3", "sfx_death_ghost_start", "a Ghost knocked out, as it starts drifting away; it blows up 2.1 s later"),
 ]
 
 # Files not used yet, and why.

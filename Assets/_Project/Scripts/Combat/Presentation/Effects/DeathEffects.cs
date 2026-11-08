@@ -2,6 +2,7 @@
 // What happens when a body dies (M10). The kind of death comes from DeathLooks:
 //   infantry fall with a puff (baked bodies play their own death; others tip over and sink);
 //   vehicles blow up and stay as blackened wrecks that burn and smoke for a while, then sink away;
+//   a Ghost is knocked out first: it drifts off in a random direction for 2.1 s, smoking, then blows up blue (the owner, D120);
 //   Covenant machines, and the Flood's infested ones, do all of that in light blue plasma instead of orange fire (ExplodesBlue);
 //   air units blow up in the air and fall burning to the ground, where they crash;
 //   Flood bodies burst in gore and spores;
@@ -29,6 +30,8 @@ namespace Halobellum.Presentation
             Wreck,
             /// <summary>Falling from the sky on fire.</summary>
             Falling,
+            /// <summary>A Ghost knocked out, drifting away before it blows up (D120).</summary>
+            Drifting,
         }
 
         private sealed class Corpse
@@ -44,6 +47,10 @@ namespace Halobellum.Presentation
             public float NextPuff;
             public bool Flood;
             public bool Blue;
+            /// <summary>A drifting Ghost's speed and heading as it is knocked out (m/s).</summary>
+            public Vector3 Drift;
+            /// <summary>Where a drifting Ghost's fire starts once it is a wreck: the top of its hull.</summary>
+            public float Top;
         }
 
         private struct Pending
@@ -58,6 +65,10 @@ namespace Halobellum.Presentation
         private const float InfantryCorpseSeconds = 14f;
         private const float SinkSeconds = 1.6f;
         private const float FallGravity = 15f;
+        /// <summary>Seconds a Ghost drifts away knocked out before it blows up (the owner, D120). BattleAudio plays its blast after as long.</summary>
+        public const float GhostDriftSeconds = 2.1f;
+        /// <summary>A drifting Ghost slows to this share of its speed by the time it blows up.</summary>
+        private const float DriftEndSpeedShare = 1f / 3f;
         private const float DivePuffsPerSecond = 60f;
         /// <summary>Where a wreck's hull is, as a share of the height of the whole body with its turret and antennas.</summary>
         private const float HullTopShare = 0.7f;
@@ -101,6 +112,9 @@ namespace Halobellum.Presentation
             "Ghost", "Banshee", "Wraith", "Scarab", "Vampire", "Covenant Phantom",
             "Infested Ghost", "Infested Banshee", "Infested Wraith", "Infected Phantom",
         };
+
+        /// <summary>True for what is knocked out and drifts away before it blows up: the Ghost (the owner, D120).</summary>
+        public static bool Drifts(UnitStats stats) => stats != null && stats.Name == "Ghost";
 
         /// <summary>True for a Covenant machine, which explodes and burns light blue instead of orange.</summary>
         public static bool ExplodesBlue(UnitStats stats)
@@ -179,6 +193,20 @@ namespace Halobellum.Presentation
                     break;
 
                 case DeathStyle.Vehicle:
+                    if (!rises && Drifts(stats))
+                    {
+                        // Knocked out, it drifts away smoking, and blows up later (Drift).
+                        _recipes.BurningTrail(position, radius, EffectPriority.Big, blue);
+                        Corpse drifting = Keep(unit, CorpseKind.Drifting, GhostDriftSeconds + WreckSeconds, position, false, blue);
+                        if (drifting != null)
+                        {
+                            Vector2 heading = Random.insideUnitCircle.normalized;
+                            if (heading == Vector2.zero) heading = Vector2.up;
+                            drifting.Drift = new Vector3(heading.x, 0f, heading.y) * Mathf.Clamp(stats.MoveSpeed * 1.4f, 4f, 9f);
+                            drifting.Top = _units.BodyTopOf(unit) * HullTopShare;
+                        }
+                        break;
+                    }
                     bool titan = DeathLooks.IsTitan(stats);
                     _recipes.VehicleDeath(position, radius, titan, blue);
                     if (!rises)
@@ -246,10 +274,10 @@ namespace Halobellum.Presentation
 
         // ------------------------------------------------------------------ bodies left on the field
 
-        private void Keep(SimUnit unit, CorpseKind kind, float life, Vector3 position, bool flood, bool blue = false)
+        private Corpse Keep(SimUnit unit, CorpseKind kind, float life, Vector3 position, bool flood, bool blue = false)
         {
             Transform root = _units.KeepCorpse(unit);
-            if (root == null) return;
+            if (root == null) return null;
             if (_corpses.Count >= MostCorpses) DropOldest();
 
             Corpse corpse = _spareCorpses.Count > 0 ? _spareCorpses.Pop() : new Corpse();
@@ -264,8 +292,11 @@ namespace Halobellum.Presentation
             corpse.NextPuff = 0f;
             corpse.Flood = flood;
             corpse.Blue = blue;
+            corpse.Drift = Vector3.zero;
+            corpse.Top = 0f;
             _corpses.Add(corpse);
-            if (kind != CorpseKind.Infantry) Blacken(root);
+            if (kind != CorpseKind.Infantry && kind != CorpseKind.Drifting) Blacken(root); // A drifting Ghost is blackened as it blows up.
+            return corpse;
         }
 
         private void DropOldest()
@@ -273,7 +304,7 @@ namespace Halobellum.Presentation
             // Wrecks and tipped-over bodies can go at once; something falling is left to land.
             for (int i = 0; i < _corpses.Count; i++)
             {
-                if (_corpses[i].Kind == CorpseKind.Falling) continue;
+                if (_corpses[i].Kind == CorpseKind.Falling || _corpses[i].Kind == CorpseKind.Drifting) continue;
                 Remove(i);
                 return;
             }
@@ -329,6 +360,16 @@ namespace Halobellum.Presentation
                     case CorpseKind.Falling:
                         if (Fall(corpse)) { Remove(i); continue; }
                         break;
+                    case CorpseKind.Drifting:
+                        if (Drift(corpse))
+                        {
+                            // It has blown up: a wreck from here on, where it stopped.
+                            corpse.Kind = CorpseKind.Wreck;
+                            corpse.Start = corpse.Root.position;
+                            corpse.Age = 0f;
+                            corpse.Life = WreckSeconds;
+                        }
+                        break;
                 }
                 if (corpse.Age >= corpse.Life) Remove(i);
             }
@@ -339,6 +380,31 @@ namespace Halobellum.Presentation
         {
             float sinking = (corpse.Age - (corpse.Life - SinkSeconds)) / SinkSeconds;
             return sinking <= 0f ? 0f : sinking * (Mathf.Max(1.5f, corpse.BodyRadius * 2f));
+        }
+
+        /// <summary>
+        /// Moves a knocked-out Ghost along its drift, slowing, wobbling and turning, with smoke behind it. True once its time is up and it has
+        /// blown up, light blue, where it got to (D120).
+        /// </summary>
+        private bool Drift(Corpse corpse)
+        {
+            float t = Mathf.Min(corpse.Age, GhostDriftSeconds);
+            // Its speed falls in a straight line to DriftEndSpeedShare of the start: the distance is that speed's integral.
+            float along = t - 0.5f * (1f - DriftEndSpeedShare) * t * t / GhostDriftSeconds;
+            Vector3 position = corpse.Start + corpse.Drift * along;
+            float wobble = Mathf.Sin(corpse.Age * 9f) * 7f;
+            float turn = corpse.Age * 60f * (corpse.SpinAxis.y >= 0f ? 1f : -1f);
+            corpse.Root.SetPositionAndRotation(position, Quaternion.AngleAxis(turn, Vector3.up) * corpse.StartRotation * Quaternion.Euler(wobble, 0f, wobble * 0.6f));
+            if (corpse.Age >= corpse.NextPuff)
+            {
+                corpse.NextPuff = corpse.Age + 0.06f;
+                _recipes.BurningTrail(position, corpse.BodyRadius * 0.6f, EffectPriority.Small, corpse.Blue);
+            }
+            if (corpse.Age < GhostDriftSeconds) return false;
+            _recipes.VehicleDeath(position, corpse.BodyRadius, false, corpse.Blue);
+            AddFire(position, corpse.BodyRadius, WreckSeconds, corpse.Top, corpse.Blue);
+            Blacken(corpse.Root);
+            return true;
         }
 
         /// <summary>Moves a falling body and burns its way down. True once it has hit the ground.</summary>

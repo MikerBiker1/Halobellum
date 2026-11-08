@@ -318,16 +318,39 @@ namespace Halobellum.Presentation
         {
             SfxCue death = DeathCue(unit);
             AudioDirector director = AudioDirector.Instance;
+            if (director != null && DriftsAsItDies(unit.Stats) && AudioCatalog.GhostKnockedOut.HasSound)
+            {
+                // A Ghost drifts away knocked out before it blows up (DeathEffects, D120): the owner's knock-out now, the blast as it goes off.
+                GameAudio.Sfx(AudioCatalog.GhostKnockedOut, Place(unit));
+                float drift = DeathEffects.GhostDriftSeconds / Mathf.Max(0.05f, _battle.Speed);
+                SfxCue blast = AudioCatalog.ExplosionTurret.HasSound ? AudioCatalog.ExplosionTurret : death;
+                if (blast != null) _later.Add(new Later { At = director.BattleClock + drift, Cue = blast, Place = Place(unit) });
+                return;
+            }
             if (!FallsAsItDies(unit) || director == null)
             {
                 GameAudio.Sfx(death, Place(unit));
                 return;
             }
-            // It blows up in the air and falls burning (DeathEffects): the dive while it falls, fading as it lands, then its crash (D117).
             float fall = AirFallRealSeconds(_battle.Speed);
+            if (IsBanshee(unit.Stats) && AudioCatalog.DeathBanshee.HasSound)
+            {
+                // The owner's file falls for 1.3 s and then blows up (D120): started so that its blast comes as the wreck lands, whatever the battle speed.
+                float early = AudioCatalog.BansheeFallInFile - fall;
+                if (early >= 0f) GameAudio.SfxShaped(AudioCatalog.DeathBanshee, Place(unit), early, 10f, 0.1f); // Played out to its end.
+                else _later.Add(new Later { At = director.BattleClock - early, Cue = AudioCatalog.DeathBanshee, Place = Place(unit) });
+                return;
+            }
+            // It blows up in the air and falls burning (DeathEffects): the dive while it falls, fading as it lands, then its crash (D117).
             GameAudio.SfxShaped(AudioCatalog.AirFall, Place(unit), 0f, fall, 0.15f);
             if (death != null) _later.Add(new Later { At = director.BattleClock + fall, Cue = death, Place = Place(unit) });
         }
+
+        /// <summary>The Banshee and the Infested Banshee, whose fall and crash are one file of the owner's (D120).</summary>
+        public static bool IsBanshee(UnitStats stats) => stats.Name == "Banshee" || stats.Name == "Infested Banshee";
+
+        /// <summary>A Ghost, which drifts away knocked out before it blows up (DeathEffects.Drifts, D120).</summary>
+        public static bool DriftsAsItDies(UnitStats stats) => DeathEffects.Drifts(stats);
 
         /// <summary>An aircraft that blows up in the air and falls to the ground as it dies (DeathStyle.Air, FloodAir). The Infected Pelican, already down from its dive, does not.</summary>
         public static bool FallsAsItDies(SimUnit unit)
@@ -356,8 +379,12 @@ namespace Halobellum.Presentation
             if (unit.IsAir && !living)
             {
                 // A taken aircraft goes down as it would have before (D119): the Infested Hornet and the Infected Pelican crash as UNSC aircraft.
-                string faction = AudioCatalog.TakenVehicle(unit.Stats, out _, out string was) ? was : BattleFactions.OfUnit(unit.Stats, unit.Team);
-                return AudioCatalog.DeathAirUnsc.HasSound && faction == BattleFactions.Unsc ? AudioCatalog.DeathAirUnsc : AudioCatalog.DeathAir;
+                bool taken = AudioCatalog.TakenVehicle(unit.Stats, out _, out string was);
+                string faction = taken ? was : BattleFactions.OfUnit(unit.Stats, unit.Team);
+                if (AudioCatalog.DeathAirUnsc.HasSound && faction == BattleFactions.Unsc) return AudioCatalog.DeathAirUnsc;
+                // Any other machine goes up with the owner's turret explosion (D120); a Flood creature (the Seeder) isn't one.
+                if ((!flood || taken) && AudioCatalog.ExplosionTurret.HasSound) return AudioCatalog.ExplosionTurret;
+                return AudioCatalog.DeathAir;
             }
             float radius = unit.Radius;
             if (flood)
@@ -373,7 +400,8 @@ namespace Halobellum.Presentation
             }
             if (flood) return radius >= 3f ? AudioCatalog.PelicanCrash : AudioCatalog.FloodBurst;
             if (radius >= 3f) return AudioCatalog.ExplosionLarge;
-            return radius >= 1.6f ? AudioCatalog.ExplosionMedium : AudioCatalog.DeathVehicle;
+            if (radius >= 1.6f) return AudioCatalog.ExplosionMedium;
+            return AudioCatalog.ExplosionTurret.HasSound ? AudioCatalog.ExplosionTurret : AudioCatalog.DeathVehicle; // The owner's, D120.
         }
 
         /// <summary>The owner's death of one kind of soldier (D91), by its name, or null: humans, Spartans, Elites, Grunts, Jackals, Brutes.</summary>

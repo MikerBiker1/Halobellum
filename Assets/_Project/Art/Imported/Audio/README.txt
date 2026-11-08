@@ -37,11 +37,11 @@ STINGERS
   stinger_match_victory            A round won, when its window opens.
 
 BATTLE SOUNDS
-  sfx_death_air                    An aircraft hit, falling and crashing.
+  sfx_death_air                    An aircraft hit, falling and crashing (machines: sfx_explosion_turret once it is in; the Seeder keeps this).
   sfx_death_flood                  A Flood form dying.
   sfx_death_infantry               A UNSC soldier falling.
   sfx_death_infantry_covenant      A Covenant soldier falling.
-  sfx_death_vehicle                A light vehicle going up.
+  sfx_death_vehicle                A light vehicle going up (sfx_explosion_turret once it is in).
   sfx_drop_in                      A squad falling into place: it lands 0.6 s in.
   sfx_explosion_large              The biggest units going up.
   sfx_explosion_medium             Medium vehicles and walkers going up.
@@ -180,6 +180,9 @@ ONE WEAPON'S OR UNIT'S OWN (no generated sound: until a file is in, the weapon's
   sfx_fire_siphon                  The Hunter Captain's 1 s siphon laser, once as each beam starts.
   sfx_fire_longsword               The Longsword's carpet bombs going out (D117).
   sfx_falling_in                   UNSC rockets and bombs in flight, the Archer missiles and the HAVOK, coming down (D117, D118).
+  sfx_death_banshee                The Banshee and the Infested Banshee shot down: falling 1.3 s, then the crash (D120).
+  sfx_explosion_turret             Every machine whose death had a generated sound, and the Ghost's blast after its drift (D120).
+  sfx_death_ghost_start            A Ghost knocked out, as it starts drifting away (D120).
   sfx_node_small                   A small or medium node of light hitting a base at the end of a round (until it is in: the battle's hits).
   sfx_node_big                     A big node of light (about 60 damage to a base and up, and every Titan's).
 

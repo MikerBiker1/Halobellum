@@ -35,7 +35,7 @@ All in, from your `Art_Source/Music` (D67). To change one, replace the file ther
 
 ## Sound effects
 
-All your files from `Art_Source/SFX` are in: 55 of the first 59 (D70), and the 7 of the second batch (D71), the third batch (D91) and the Longsword and falling-strike sounds (D117). `Assets/_Project/Art/Imported/Audio/SOURCE_SFX.txt` says which file fills which slot. To add or change one, put it in `Art_Source/SFX` and tell me, or run `Tools/Audio/bring_in_sfx.py` after adding its line there.
+All your files from `Art_Source/SFX` are in: 55 of the first 59 (D70), and the 7 of the second batch (D71), the third batch (D91) and the Longsword and falling-strike sounds (D117), and the Banshee crash, turret explosion and Ghost knock-out (D120). `Assets/_Project/Art/Imported/Audio/SOURCE_SFX.txt` says which file fills which slot. To add or change one, put it in `Art_Source/SFX` and tell me, or run `Tools/Audio/bring_in_sfx.py` after adding its line there.
 
 Not used: the plasma grenade (no use yet), the magnum (no unit carries one), and `fire[plasmarifle1]` (the same file as the Banshee's). The beam rifle now has a carrier, the Jackal (Beam Rifle).
 
@@ -76,6 +76,9 @@ A weapon with a sound of its own uses it; the others use their kind's sound.
 | [x] | `sfx_fire_siphon` | The Hunter Captain's 1 s siphon laser, as each beam starts (D91). | `Captain hunter cannon and other similar` |
 | [x] | `sfx_fire_longsword` | The Longsword's carpet bombs going out (D117). | `Longsword_firing` |
 | [x] | `sfx_falling_in` | Every UNSC rocket, missile and bomb in flight (D118), and the Archer Missile Barrage and the HAVOK Nuke (D117), heard coming down, ending as they land. | `rocket or bomb flying down` |
+| [x] | `sfx_death_banshee` | The Banshee and the Infested Banshee shot down: 1.3 s of falling, then the crash as the wreck lands (D120). | `banshee-banshee-windup-and-explosion` |
+| [x] | `sfx_explosion_turret` | Every machine whose death had a generated sound (Warthog, Ghost, Chopper, Cobra, Gremlin, Wolverine, Reaver, Grunt Goblin, Archer pod, the Phantoms, the Vampire), and the Ghost's blast after its drift (D120). | `turret_explosion` |
+| [x] | `sfx_death_ghost_start` | A Ghost knocked out, as it starts drifting away; it blows up 2.1 s later (D120). | `ghost_initial_destroyed` |
 | [ ] | `sfx_fire_laser` | Any other laser shot with no file of its own (none today). | Generated stand-in |
 | [x] | `sfx_fire_hunterbash` | A Hunter's shield bash (D91). | `hunter_melee_hits` |
 | [ ] | `sfx_fire_bio` | Flood spat bone, bone shards and spores. | Generated stand-in |

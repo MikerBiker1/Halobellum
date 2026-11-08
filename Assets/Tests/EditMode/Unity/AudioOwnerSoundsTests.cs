@@ -3,7 +3,7 @@
 // rest keep their kind's; the M60 is every machine gun and chaingun, the autocannons have their own; the guns that fire fast loop; a UI
 // file named without a faction serves every faction; the owner's files are turned down to their slot's loudness, and the generated ones
 // play as they are; the Glassing Beam starts ahead of its strike; the nodes of light land by size; a drawn round has its stinger; an aircraft
-// falling as it dies is heard diving, and the strikes from the sky coming down (D117); the Flood's taken vehicles sound as they did (D119).
+// falling as it dies is heard diving, and the strikes from the sky coming down (D117); the Flood's taken vehicles sound as they did (D119); the Banshee's fall-and-crash file, the turret explosion and the Ghost's drift (D120).
 // Depends on: Halobellum.Presentation, Halobellum.Combat, Halobellum.Core, Halobellum.Units, NUnit, UnityEditor.
 
 using Halobellum.Combat;
@@ -382,9 +382,32 @@ namespace Halobellum.Tests
             {
                 SfxCue unscCrash = AudioCatalog.DeathAirUnsc.HasSound ? AudioCatalog.DeathAirUnsc : AudioCatalog.DeathAir;
                 Assert.AreSame(unscCrash, BattleAudio.DeathCue(Body("FloodUNSC/InfestedHornet")), "D119: a Hornet still.");
-                Assert.AreSame(AudioCatalog.DeathAir, BattleAudio.DeathCue(Body("FloodCovenant/InfestedBanshee")), "As the Banshee.");
+                Assert.AreSame(AudioCatalog.ExplosionTurret, BattleAudio.DeathCue(Body("FloodCovenant/InfestedBanshee")), "As the Banshee: a machine (D120).");
             }
             finally { BattleFactions.Set(BattleFactions.Unsc, BattleFactions.Covenant); }
+        }
+
+        [Test]
+        public void TheBanshees_FallAndCrashToTheOwnersOneFile()
+        {
+            Assert.IsTrue(AudioCatalog.DeathBanshee.HasSound, "sfx_death_banshee is in (D120).");
+            Assert.IsTrue(BattleAudio.IsBanshee(Unit("Covenant/Banshee")));
+            Assert.IsTrue(BattleAudio.IsBanshee(Unit("FloodCovenant/InfestedBanshee")));
+            Assert.IsFalse(BattleAudio.IsBanshee(Unit("Covenant/Vampire")));
+            Assert.AreEqual(UnitViewManager.AirFallSeconds, AudioCatalog.BansheeFallInFile, 1e-4f, "The file falls for as long as the wreck does.");
+            Assert.Greater(AudioCatalog.DeathBanshee.Clips.AverageLength, AudioCatalog.BansheeFallInFile, "The crash comes after the fall.");
+        }
+
+        [Test]
+        public void AGhost_IsKnockedOut_DriftsAway_ThenBlowsUp()
+        {
+            Assert.IsTrue(AudioCatalog.GhostKnockedOut.HasSound, "sfx_death_ghost_start is in (D120).");
+            Assert.IsTrue(AudioCatalog.ExplosionTurret.HasSound, "sfx_explosion_turret is in (D120).");
+            Assert.IsTrue(BattleAudio.DriftsAsItDies(Unit("Covenant/Ghost")));
+            Assert.IsFalse(BattleAudio.DriftsAsItDies(Unit("FloodCovenant/InfestedGhost")), "Only the Ghost, as the owner asked.");
+            Assert.IsFalse(BattleAudio.DriftsAsItDies(Unit("UNSC/Warthog")));
+            Assert.AreEqual(2.1f, DeathEffects.GhostDriftSeconds, 1e-4f);
+            Assert.IsTrue(DeathEffects.ExplodesBlue(Unit("Covenant/Ghost")), "It blows up light blue.");
         }
     }
 }
