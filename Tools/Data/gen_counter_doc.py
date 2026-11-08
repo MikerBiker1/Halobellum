@@ -1,10 +1,11 @@
-# Writes Docs/Balance/counter_web.md from cw/units.json and cw/matrix.csv: every unit with whom it beats and whom it loses to.
+# Writes Docs/Balance/counter_web.md from cw/units.json and cw/matrix.csv: every unit with the five it does best against and the five
+# it does worst against (the owner, 2026-11-07: top 5 only).
 # Run it after the counter web changes: python gen_counter_doc.py
 import csv, json, os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "..", "..", "Docs", "Balance", "counter_web.md")
-GOOD, BAD = 0.7, 0.3
+TOP = 5
 
 units = json.load(open(os.path.join(HERE, "cw", "units.json"), encoding="utf-8"))
 rows = list(csv.reader(open(os.path.join(HERE, "cw", "matrix.csv"), encoding="utf-8")))
@@ -16,18 +17,25 @@ GROUPS = [("UNSC", None), ("UNSC", "Noble"), ("UNSC", "Aerospace Command"), ("UN
           ("Flood", None), ("Flood", "UNSC-based"), ("Flood", "Covenant-based")]
 
 
+def average(name):
+    mine = [s for (a, b), s in win.items() if a == name]
+    return sum(mine) / max(1, len(mine))
+
+
+AVERAGE = {n: average(n) for n in names}
+
+
 def listed(pairs):
-    # Surest first, then by name; a share under 1 is shown.
-    pairs = sorted(pairs, key=lambda p: (-abs(p[1] - 0.5), p[0]))
-    return ", ".join(n if s in (0.0, 1.0) else f"{n} ({round(100 * s)}%)" for n, s in pairs) or "-"
+    return ", ".join(f"{n} {round(100 * s)}%" for n, s in pairs) or "-"
 
 
 lines = [
     "# The counter web: good against, bad against",
     "",
     "Every unit against every other, one army against another of the same value (about 1,800 credits each), 10 battles a pair,",
-    "no techs, no towers, no spells, on open ground (`Tools/Data/cw`). **Good against:** units it beats in at least 7 of 10 battles.",
-    "**Bad against:** units that beat it in at least 7 of 10. A share in brackets is its own win rate where it is not 10 of 10 or 0 of 10.",
+    "no techs, no towers, no spells, on open ground (`Tools/Data/cw`). **Good against:** the five it does best against, with its own win rate;",
+    "where several are equal, the strongest of them first (beating a strong unit says more). **Bad against:** the five it does worst against;",
+    "where several are equal, the weakest of them first (losing to a weak unit says more).",
     "**Wins** is its average win rate against all the others. The Hard AI picks its counters from this same table.",
     "It measures armies of one unit in a straight fight: a unit that shines behind a screen of chaff, or with levels and techs, can look worse here than in play.",
     "",
@@ -45,8 +53,8 @@ for faction, sub in GROUPS:
             continue
         mine = [(o, win[(n, o)]) for o in names if o != n and (n, o) in win]
         avg = 100 * sum(s for _, s in mine) / max(1, len(mine))
-        good = [(o, s) for o, s in mine if s >= GOOD]
-        bad = [(o, s) for o, s in mine if s <= BAD]
+        good = sorted(mine, key=lambda p: (-p[1], -AVERAGE[p[0]], p[0]))[:TOP]
+        bad = sorted(mine, key=lambda p: (p[1], AVERAGE[p[0]], p[0]))[:TOP]
         lines.append(f"| **{n}** | {u['role']} | {u['cost']} | {avg:.0f}% | {listed(good)} | {listed(bad)} |")
     lines.append("")
 open(OUT, "w", encoding="utf-8", newline="\n").write("\n".join(lines))
