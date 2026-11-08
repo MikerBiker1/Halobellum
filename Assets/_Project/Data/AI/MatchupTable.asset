@@ -817,14 +817,14 @@ MonoBehaviour:
     winRate: 0
   - attacker: Gauss Warthog
     defender: Infested Scorpion
-    winRate: 0.6
-  - attacker: Gauss Warthog
-    defender: Infested Hornet
-    winRate: 0
-  - attacker: Gauss Warthog
-    defender: Juggernaut
     winRate: 1
   - attacker: Gauss Warthog
+    defender: Infested Hornet
+    winRate: 0
+  - attacker: Gauss Warthog
+    defender: Juggernaut
+    winRate: 1
+  - attacker: Gauss Warthog
     defender: Infested Grunt
     winRate: 0
   - attacker: Gauss Warthog
@@ -1024,14 +1024,14 @@ MonoBehaviour:
     winRate: 1
   - attacker: Scorpion
     defender: Infested Scorpion
-    winRate: 0.7
-  - attacker: Scorpion
-    defender: Infested Hornet
-    winRate: 0
-  - attacker: Scorpion
-    defender: Juggernaut
     winRate: 1
   - attacker: Scorpion
+    defender: Infested Hornet
+    winRate: 0
+  - attacker: Scorpion
+    defender: Juggernaut
+    winRate: 1
+  - attacker: Scorpion
     defender: Infested Grunt
     winRate: 1
   - attacker: Scorpion
@@ -1441,7 +1441,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Hornet
     defender: Infested Hornet
-    winRate: 0
+    winRate: 0.1
   - attacker: Hornet
     defender: Juggernaut
     winRate: 1
@@ -1852,7 +1852,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Pelican
     defender: Infested Scorpion
-    winRate: 0.6
+    winRate: 0.4
   - attacker: Pelican
     defender: Infested Hornet
     winRate: 0
@@ -2062,11 +2062,11 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan
     defender: Infested Hornet
-    winRate: 0.2
-  - attacker: Spartan
-    defender: Juggernaut
     winRate: 1
   - attacker: Spartan
+    defender: Juggernaut
+    winRate: 1
+  - attacker: Spartan
     defender: Infested Grunt
     winRate: 0
   - attacker: Spartan
@@ -2269,7 +2269,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Mantis
     defender: Infested Hornet
-    winRate: 0
+    winRate: 0.7
   - attacker: Mantis
     defender: Juggernaut
     winRate: 0.3
@@ -3097,7 +3097,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: 'Jackal (Beam Rifle)'
     defender: Infested Hornet
-    winRate: 0
+    winRate: 1
   - attacker: 'Jackal (Beam Rifle)'
     defender: Juggernaut
     winRate: 0
@@ -3715,7 +3715,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Elite
     defender: Infested Scorpion
-    winRate: 0.3
+    winRate: 0.6
   - attacker: Elite
     defender: Infested Hornet
     winRate: 1
@@ -3922,7 +3922,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Wraith
     defender: Infested Scorpion
-    winRate: 0.2
+    winRate: 0.8
   - attacker: Wraith
     defender: Infested Hornet
     winRate: 0
@@ -6199,20 +6199,20 @@ MonoBehaviour:
     winRate: 1
   - attacker: Pure Form Ranged
     defender: Infested Scorpion
-    winRate: 0.2
-  - attacker: Pure Form Ranged
-    defender: Infested Hornet
-    winRate: 0
-  - attacker: Pure Form Ranged
-    defender: Juggernaut
-    winRate: 0
-  - attacker: Pure Form Ranged
-    defender: Infested Grunt
-    winRate: 0.5
-  - attacker: Pure Form Ranged
-    defender: Infested Ghost
     winRate: 1
   - attacker: Pure Form Ranged
+    defender: Infested Hornet
+    winRate: 0
+  - attacker: Pure Form Ranged
+    defender: Juggernaut
+    winRate: 0
+  - attacker: Pure Form Ranged
+    defender: Infested Grunt
+    winRate: 0.5
+  - attacker: Pure Form Ranged
+    defender: Infested Ghost
+    winRate: 1
+  - attacker: Pure Form Ranged
     defender: Infested Elite
     winRate: 1
   - attacker: Pure Form Ranged
@@ -7237,7 +7237,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infected Phantom
     defender: Infested Hornet
-    winRate: 0
+    winRate: 0.2
   - attacker: Infected Phantom
     defender: Juggernaut
     winRate: 1
@@ -7855,7 +7855,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Heavy Weapons
     defender: Infested Scorpion
-    winRate: 0
+    winRate: 0.6
   - attacker: Spartan Heavy Weapons
     defender: Infested Hornet
     winRate: 1
@@ -8062,20 +8062,20 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Grenadier
     defender: Infested Scorpion
-    winRate: 0.3
-  - attacker: Spartan Grenadier
-    defender: Infested Hornet
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Juggernaut
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Infested Grunt
-    winRate: 0
-  - attacker: Spartan Grenadier
-    defender: Infested Ghost
     winRate: 0.5
   - attacker: Spartan Grenadier
+    defender: Infested Hornet
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Juggernaut
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Infested Grunt
+    winRate: 0
+  - attacker: Spartan Grenadier
+    defender: Infested Ghost
+    winRate: 0.5
+  - attacker: Spartan Grenadier
     defender: Infested Elite
     winRate: 1
   - attacker: Spartan Grenadier
@@ -8272,7 +8272,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan CQB
     defender: Infested Hornet
-    winRate: 0
+    winRate: 0.2
   - attacker: Spartan CQB
     defender: Juggernaut
     winRate: 0
@@ -8476,7 +8476,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Fireteam
     defender: Infested Scorpion
-    winRate: 0.1
+    winRate: 0.9
   - attacker: Spartan Fireteam
     defender: Infested Hornet
     winRate: 1
@@ -8683,7 +8683,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Gremlin
     defender: Infested Scorpion
-    winRate: 0
+    winRate: 0.1
   - attacker: Gremlin
     defender: Infested Hornet
     winRate: 1
@@ -9097,11 +9097,11 @@ MonoBehaviour:
     winRate: 0.9
   - attacker: Rhino
     defender: Infested Scorpion
-    winRate: 0.4
-  - attacker: Rhino
-    defender: Infested Hornet
     winRate: 0
   - attacker: Rhino
+    defender: Infested Hornet
+    winRate: 0
+  - attacker: Rhino
     defender: Juggernaut
     winRate: 0
   - attacker: Rhino
@@ -9304,7 +9304,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Grizzly
     defender: Infested Scorpion
-    winRate: 0
+    winRate: 0.8
   - attacker: Grizzly
     defender: Infested Hornet
     winRate: 0
@@ -9514,7 +9514,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Sparrowhawk
     defender: Infested Hornet
-    winRate: 0.1
+    winRate: 1
   - attacker: Sparrowhawk
     defender: Juggernaut
     winRate: 1
@@ -9928,7 +9928,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Vulture
     defender: Infested Hornet
-    winRate: 0.8
+    winRate: 1
   - attacker: Vulture
     defender: Juggernaut
     winRate: 1
@@ -11374,7 +11374,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Goliath
     defender: Infested Scorpion
-    winRate: 0
+    winRate: 1
   - attacker: Goliath
     defender: Infested Hornet
     winRate: 0
@@ -12202,7 +12202,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Grunt Goblin
     defender: Infested Scorpion
-    winRate: 0.5
+    winRate: 0.6
   - attacker: Grunt Goblin
     defender: Infested Hornet
     winRate: 1
@@ -12409,7 +12409,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Marine
     defender: Infested Scorpion
-    winRate: 0
+    winRate: 0.1
   - attacker: Infested Marine
     defender: Infested Hornet
     winRate: 1
@@ -12652,10 +12652,10 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Scorpion
     defender: Gauss Warthog
-    winRate: 0.4
+    winRate: 0
   - attacker: Infested Scorpion
     defender: Scorpion
-    winRate: 0.3
+    winRate: 0
   - attacker: Infested Scorpion
     defender: Wolverine
     winRate: 1
@@ -12667,115 +12667,115 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Scorpion
     defender: Pelican
-    winRate: 0
-  - attacker: Infested Scorpion
-    defender: Spartan
-    winRate: 0
-  - attacker: Infested Scorpion
-    defender: Mantis
-    winRate: 1
-  - attacker: Infested Scorpion
-    defender: Elephant
-    winRate: 0
-  - attacker: Infested Scorpion
-    defender: Grunt
-    winRate: 1
-  - attacker: Infested Scorpion
-    defender: Fuel Rod Grunt
-    winRate: 1
-  - attacker: Infested Scorpion
-    defender: 'Jackal (Beam Rifle)'
-    winRate: 1
-  - attacker: Infested Scorpion
-    defender: 'Jackal (Shield)'
-    winRate: 1
-  - attacker: Infested Scorpion
-    defender: Ghost
-    winRate: 1
-  - attacker: Infested Scorpion
-    defender: Elite
-    winRate: 0.7
-  - attacker: Infested Scorpion
-    defender: Wraith
-    winRate: 0.8
-  - attacker: Infested Scorpion
-    defender: Vampire
-    winRate: 0
-  - attacker: Infested Scorpion
-    defender: Banshee
-    winRate: 0
-  - attacker: Infested Scorpion
-    defender: Covenant Phantom
-    winRate: 0
-  - attacker: Infested Scorpion
-    defender: Hunter Pair
-    winRate: 0
-  - attacker: Infested Scorpion
-    defender: Zealot
-    winRate: 0
-  - attacker: Infested Scorpion
-    defender: Scarab
-    winRate: 0
-  - attacker: Infested Scorpion
-    defender: Infection Forms
-    winRate: 1
-  - attacker: Infested Scorpion
-    defender: Carrier Form
-    winRate: 1
-  - attacker: Infested Scorpion
-    defender: Combat Form
-    winRate: 0
-  - attacker: Infested Scorpion
-    defender: Stalker Form
-    winRate: 1
-  - attacker: Infested Scorpion
-    defender: Pure Form Ranged
-    winRate: 0.8
-  - attacker: Infested Scorpion
-    defender: Swarm Form
-    winRate: 0
-  - attacker: Infested Scorpion
-    defender: Pure Form Tank
-    winRate: 0
-  - attacker: Infested Scorpion
-    defender: Seeder
-    winRate: 0
-  - attacker: Infested Scorpion
-    defender: Infected Pelican
-    winRate: 1
-  - attacker: Infested Scorpion
-    defender: Infected Phantom
-    winRate: 0
-  - attacker: Infested Scorpion
-    defender: Flood Abomination
-    winRate: 0
-  - attacker: Infested Scorpion
-    defender: Spartan Sniper
-    winRate: 0
-  - attacker: Infested Scorpion
-    defender: Spartan Heavy Weapons
-    winRate: 1
-  - attacker: Infested Scorpion
-    defender: Spartan Grenadier
-    winRate: 0.7
-  - attacker: Infested Scorpion
-    defender: Spartan CQB
-    winRate: 1
-  - attacker: Infested Scorpion
-    defender: Spartan Fireteam
-    winRate: 0.9
-  - attacker: Infested Scorpion
-    defender: Gremlin
-    winRate: 1
-  - attacker: Infested Scorpion
-    defender: Cobra
-    winRate: 0
-  - attacker: Infested Scorpion
-    defender: Rhino
     winRate: 0.6
   - attacker: Infested Scorpion
-    defender: Grizzly
+    defender: Spartan
+    winRate: 0
+  - attacker: Infested Scorpion
+    defender: Mantis
     winRate: 1
+  - attacker: Infested Scorpion
+    defender: Elephant
+    winRate: 0
+  - attacker: Infested Scorpion
+    defender: Grunt
+    winRate: 1
+  - attacker: Infested Scorpion
+    defender: Fuel Rod Grunt
+    winRate: 1
+  - attacker: Infested Scorpion
+    defender: 'Jackal (Beam Rifle)'
+    winRate: 1
+  - attacker: Infested Scorpion
+    defender: 'Jackal (Shield)'
+    winRate: 1
+  - attacker: Infested Scorpion
+    defender: Ghost
+    winRate: 1
+  - attacker: Infested Scorpion
+    defender: Elite
+    winRate: 0.4
+  - attacker: Infested Scorpion
+    defender: Wraith
+    winRate: 0.2
+  - attacker: Infested Scorpion
+    defender: Vampire
+    winRate: 0
+  - attacker: Infested Scorpion
+    defender: Banshee
+    winRate: 0
+  - attacker: Infested Scorpion
+    defender: Covenant Phantom
+    winRate: 0
+  - attacker: Infested Scorpion
+    defender: Hunter Pair
+    winRate: 0
+  - attacker: Infested Scorpion
+    defender: Zealot
+    winRate: 0
+  - attacker: Infested Scorpion
+    defender: Scarab
+    winRate: 0
+  - attacker: Infested Scorpion
+    defender: Infection Forms
+    winRate: 1
+  - attacker: Infested Scorpion
+    defender: Carrier Form
+    winRate: 1
+  - attacker: Infested Scorpion
+    defender: Combat Form
+    winRate: 0
+  - attacker: Infested Scorpion
+    defender: Stalker Form
+    winRate: 1
+  - attacker: Infested Scorpion
+    defender: Pure Form Ranged
+    winRate: 0
+  - attacker: Infested Scorpion
+    defender: Swarm Form
+    winRate: 0
+  - attacker: Infested Scorpion
+    defender: Pure Form Tank
+    winRate: 0
+  - attacker: Infested Scorpion
+    defender: Seeder
+    winRate: 0
+  - attacker: Infested Scorpion
+    defender: Infected Pelican
+    winRate: 1
+  - attacker: Infested Scorpion
+    defender: Infected Phantom
+    winRate: 0
+  - attacker: Infested Scorpion
+    defender: Flood Abomination
+    winRate: 0
+  - attacker: Infested Scorpion
+    defender: Spartan Sniper
+    winRate: 0
+  - attacker: Infested Scorpion
+    defender: Spartan Heavy Weapons
+    winRate: 0.4
+  - attacker: Infested Scorpion
+    defender: Spartan Grenadier
+    winRate: 0.5
+  - attacker: Infested Scorpion
+    defender: Spartan CQB
+    winRate: 1
+  - attacker: Infested Scorpion
+    defender: Spartan Fireteam
+    winRate: 0.1
+  - attacker: Infested Scorpion
+    defender: Gremlin
+    winRate: 0.9
+  - attacker: Infested Scorpion
+    defender: Cobra
+    winRate: 0
+  - attacker: Infested Scorpion
+    defender: Rhino
+    winRate: 1
+  - attacker: Infested Scorpion
+    defender: Grizzly
+    winRate: 0.2
   - attacker: Infested Scorpion
     defender: Sparrowhawk
     winRate: 0
@@ -12805,7 +12805,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Scorpion
     defender: Goliath
-    winRate: 1
+    winRate: 0
   - attacker: Infested Scorpion
     defender: Hunter Captain
     winRate: 0
@@ -12817,10 +12817,10 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Scorpion
     defender: Grunt Goblin
-    winRate: 0.5
+    winRate: 0.4
   - attacker: Infested Scorpion
     defender: Infested Marine
-    winRate: 1
+    winRate: 0.9
   - attacker: Infested Scorpion
     defender: Infested Warthog
     winRate: 1
@@ -12841,7 +12841,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Scorpion
     defender: Infested Wraith
-    winRate: 1
+    winRate: 0
   - attacker: Infested Scorpion
     defender: Infested Banshee
     winRate: 0
@@ -12868,7 +12868,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Hornet
     defender: Hornet
-    winRate: 1
+    winRate: 0.9
   - attacker: Infested Hornet
     defender: Archer Missile Pod
     winRate: 1
@@ -12877,10 +12877,10 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Hornet
     defender: Spartan
-    winRate: 0.8
+    winRate: 0
   - attacker: Infested Hornet
     defender: Mantis
-    winRate: 1
+    winRate: 0.3
   - attacker: Infested Hornet
     defender: Elephant
     winRate: 0
@@ -12892,7 +12892,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Hornet
     defender: 'Jackal (Beam Rifle)'
-    winRate: 1
+    winRate: 0
   - attacker: Infested Hornet
     defender: 'Jackal (Shield)'
     winRate: 0
@@ -12952,7 +12952,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Hornet
     defender: Infected Phantom
-    winRate: 1
+    winRate: 0.8
   - attacker: Infested Hornet
     defender: Flood Abomination
     winRate: 0
@@ -12967,7 +12967,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Hornet
     defender: Spartan CQB
-    winRate: 1
+    winRate: 0.8
   - attacker: Infested Hornet
     defender: Spartan Fireteam
     winRate: 0
@@ -12985,13 +12985,13 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Hornet
     defender: Sparrowhawk
-    winRate: 0.9
+    winRate: 0
   - attacker: Infested Hornet
     defender: Longsword
     winRate: 1
   - attacker: Infested Hornet
     defender: Vulture
-    winRate: 0.2
+    winRate: 0
   - attacker: Infested Hornet
     defender: Condor Gunship
     winRate: 0
@@ -14068,7 +14068,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Wraith
     defender: Infested Scorpion
-    winRate: 0
+    winRate: 1
   - attacker: Infested Wraith
     defender: Infested Hornet
     winRate: 0
