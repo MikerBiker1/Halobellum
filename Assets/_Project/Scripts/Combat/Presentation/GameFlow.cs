@@ -1,7 +1,7 @@
 // GameFlow.cs
 // Which scene the game goes to, and when (M10). A built game starts in the MainMenu scene; New Match, Sandbox and Quit to Main
 // Menu all come through here, so that the scene names live in one place and leaving a scene always un-pauses first.
-// The test tools (-autoplay, -sandboxDemo, -gallery, -crowdBench, -benchmark) skip the menu: as soon as MainMenu has loaded, the
+// The test tools (-autoplay, -sandboxDemo, -gallery, -crowdBench, -benchmark) and a battle log's replay (-replayLog, D106) skip the menu: as soon as MainMenu has loaded, the
 // game moves on to the scene that tool has always run in. -menuDemo and -screenDemo stay in the menu, because the menu is what they test.
 // It also remembers where the Sandbox was opened from, for the Sandbox's Back button.
 // There are two main menus (D94): the cinematic battlefield, MainMenu, where a build starts, and the classic one from before it, MainMenuClassic,
@@ -9,7 +9,7 @@
 // A run of a test tool always has the cinematic one.
 // A setup chosen for the next match waits here for the Match scene, which takes it once, so that any other load of the scene
 // (a test tool, a test) always gets Faction mode.
-// Depends on: GamePause, SandboxAutoplay, CrowdBenchmark and AudioCapture (their flags), Halobellum.Economy (MatchSetup), UnityEngine.
+// Depends on: GamePause, SandboxAutoplay, CrowdBenchmark, AudioCapture and MatchReplay (their flags), Halobellum.Economy (MatchSetup), UnityEngine.
 
 using System;
 using Halobellum.Economy;
@@ -58,7 +58,7 @@ namespace Halobellum.Presentation
         public static string DirectSceneFor(string[] args)
         {
             if (Has(args, SandboxAutoplay.Flag) || Has(args, GalleryFlag)) return SandboxScene;
-            if (Has(args, AutoplayFlag) || Has(args, CrowdBenchmark.Flag) || Has(args, CardsDemoFlag)) return MatchScene;
+            if (Has(args, AutoplayFlag) || Has(args, CrowdBenchmark.Flag) || Has(args, CardsDemoFlag) || Has(args, MatchReplay.LogFlag)) return MatchScene;
             if (Has(args, BenchmarkFlag)) return BattleScene;
             return null;
         }

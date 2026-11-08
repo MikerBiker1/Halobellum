@@ -16,6 +16,7 @@
 // is remembered, so that "New match" plays the same again. In Unlock Skirmish both sides draft from one made-up faction
 // (SkirmishFaction), the seed picks one land for the whole field, and each unit keeps the looks of its real faction.
 // The HUD (Scripts/UI/MatchHud) and DeploymentInput call the public methods here; tests do too.
+// With -replayLog it adds a MatchReplay, which plays a battle log again through these same methods (D106).
 // Depends on: BattleController, SquadSelection, UnitViewManager,
 //             Halobellum.Economy (Match, RuleBasedAi, DeploymentGrid),
 //             Halobellum.Units (MatchRulesDefinition, FactionDefinition, UnitDefinition), UnityEngine.
@@ -110,6 +111,7 @@ namespace Halobellum.Presentation
             }
             if (GameFlow.TakeTutorial()) StartTutorial();
             else NewMatch(setup: setup);
+            if (MatchReplay.Requested(args) && gameObject.GetComponent<MatchReplay>() == null && !gameObject.AddComponent<MatchReplay>().ReadCommandLine(args)) Message = "The battle log to replay can't be read."; // D106
         }
 
         // ------------------------------------------------------------------ the tutorial (D77)
@@ -207,7 +209,7 @@ namespace Halobellum.Presentation
             if (Match.Phase == MatchPhase.Cards) _log?.CardsOffered(Match);
         }
 
-        private static string Label(PlacedSquad squad) => squad == null ? null : $"{squad.Type.Name} #{squad.Id}";
+        private static string Label(PlacedSquad squad) => MatchLog.SquadLabel(squad);
 
         /// <summary>In Unlock Skirmish every unit is in the roster, so only those unlocked say anything about this side.</summary>
         private bool HasUnitsThatCanFlank()
@@ -224,7 +226,7 @@ namespace Halobellum.Presentation
         /// Starts a fresh match at the draft. fixedSeed overrides the Inspector seed (tests). A setup is remembered for the
         /// matches after this one; without one, the last one is played again.
         /// </summary>
-        public void NewMatch(int? fixedSeed = null, MatchSetup setup = null, IMatchAi enemy = null, bool tutorial = false)
+        public void NewMatch(int? fixedSeed = null, MatchSetup setup = null, IMatchAi enemy = null, bool tutorial = false, AiDifficulty? difficulty = null)
         {
             if (!tutorial && Tutorial != null)
             {
@@ -248,7 +250,7 @@ namespace Halobellum.Presentation
             foreach (var pair in cache) _sources[pair.Value] = pair.Key;
 
             int matchSeed = fixedSeed ?? (seed != 0 ? seed : Environment.TickCount & 0x7FFFFFFF);
-            Difficulty = GameSettings.Difficulty;
+            Difficulty = difficulty ?? GameSettings.Difficulty; // A replay's own difficulty (D106) is not saved as the player's.
             _matchups = matchupTable != null ? matchupTable.ToTable() : null;
             MatchRules rules = matchRules.ToRules();
             applied?.ApplyTo(rules);
@@ -411,7 +413,8 @@ namespace Halobellum.Presentation
             }
             PlacedSquad squad = SelectedPlacedSquad;
             if (squad == null) return;
-            if (Report(Match.Move(Team.A, squad.Id, squad.Column, squad.Row, !squad.Rotated90), $"{Label(squad)} turned to {!squad.Rotated90}").Ok) RefreshPreview(squad.Id);
+            bool turned = !squad.Rotated90;
+            if (Report(Match.Move(Team.A, squad.Id, squad.Column, squad.Row, turned), MatchLog.TurnDetail(squad, turned)).Ok) RefreshPreview(squad.Id);
         }
 
         /// <summary>The type of the squad being moved (for the ghost), or null.</summary>
@@ -422,7 +425,7 @@ namespace Halobellum.Presentation
         {
             if (MovingSquadId < 0) return ActionResult.Fail("Nothing to place.");
             int placedId = MovingSquadId;
-            ActionResult result = Report(Match.Move(Team.A, placedId, column, row, PlacingRotated), $"{Label(Match.Player.FindSquad(placedId))} to column {column}, row {row}, turned {PlacingRotated}");
+            ActionResult result = Report(Match.Move(Team.A, placedId, column, row, PlacingRotated), MatchLog.MoveDetail(Match.Player.FindSquad(placedId), column, row, PlacingRotated));
             if (result.Ok)
             {
                 CancelPlacement();
@@ -496,7 +499,7 @@ namespace Halobellum.Presentation
 
         public ActionResult BuyTech(UnitStats type, TechUpgrade tech, int reselectSquadId = -1)
         {
-            ActionResult result = Report(Match.BuyTech(Team.A, type, tech), $"{type?.Name}: {tech?.Name}");
+            ActionResult result = Report(Match.BuyTech(Team.A, type, tech), MatchLog.TechDetail(type, tech));
             if (result.Ok) RefreshPreview(reselectSquadId);
             return result;
         }
@@ -822,7 +825,7 @@ namespace Halobellum.Presentation
         public ActionResult PlaceSpellAt(Vec2 position, float angleDegrees = 0f)
         {
             if (PlacingSpellId < 0) return ActionResult.Fail("No spell to place.");
-            ActionResult result = Report(Match.PlaceSpell(Team.A, PlacingSpellId, position, angleDegrees), PlacingSpell == null ? null : FormattableString.Invariant($"{PlacingSpell.Stats.Name} at {position.X:0.##}, {position.Y:0.##}, angle {angleDegrees:0.#}"));
+            ActionResult result = Report(Match.PlaceSpell(Team.A, PlacingSpellId, position, angleDegrees), PlacingSpell == null ? null : MatchLog.SpellDetail(PlacingSpell.Stats, position, angleDegrees));
             if (result.Ok) CancelSpellPlacement();
             return result;
         }
@@ -855,7 +858,7 @@ namespace Halobellum.Presentation
         public ActionResult PlaceItemOn(PlacedSquad squad)
         {
             if (PlacingItem == null || squad == null) return ActionResult.Fail("Pick an item first.");
-            ActionResult result = Report(Match.PlaceItem(Team.A, PlacingItem, squad.Id), $"{PlacingItem.Name} on {Label(squad)}");
+            ActionResult result = Report(Match.PlaceItem(Team.A, PlacingItem, squad.Id), MatchLog.ItemDetail(PlacingItem, squad));
             if (result.Ok)
             {
                 int squadId = squad.Id;
@@ -997,6 +1000,9 @@ namespace Halobellum.Presentation
             }
             SelectPlaced(selectPlacedSquadId);
         }
+
+        /// <summary>Selects one of the player's squads, as clicking it does (a replayed turn in place, D106).</summary>
+        public void SelectSquad(PlacedSquad squad) => SelectPlaced(squad?.Id ?? -1);
 
         /// <summary>Selects the preview squad showing this placed squad (nothing if it is not shown).</summary>
         private void SelectPlaced(int placedSquadId)

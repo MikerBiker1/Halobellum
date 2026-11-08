@@ -2,7 +2,8 @@
 // The battle log of a game played by a person (D68): one line of JSON for each thing that happened, handed to whoever writes it down
 // (Presentation's BattleLogFile). It says what was offered and chosen, what the player did and in what order, both armies as they went into each
 // battle, and how each battle went. It only reads the match, so a game plays the same with or without it. Docs/battle_log.md explains each line.
-// Nothing reads these files yet. They are kept so that an AI could perhaps learn from them one day.
+// MatchLogReplay reads them back to play a game again (D106), with the action details written here (MoveDetail and the others); they are also
+// kept so that an AI could perhaps learn from them one day.
 // Depends on: Match, PlayerState, RoundSummary, Halobellum.Core, Halobellum.Combat.
 
 using System;
@@ -93,6 +94,22 @@ namespace Halobellum.Economy
         {
             _write(new Line("match_end").Number("rounds", match.Round).Text("winner", TeamName(match.Winner)).Number("player_base", match.Player.BaseHealth).Number("enemy_base", match.Enemy.BaseHealth).ToString());
         }
+
+        // ------------------------------------------------------------------ what an action's detail says (MatchController writes them, MatchLogReplay reads them, D106)
+
+        /// <summary>A squad as actions name it: its unit and id, as in "Scorpion #19".</summary>
+        public static string SquadLabel(PlacedSquad squad) => squad == null ? null : $"{squad.Type.Name} #{squad.Id}";
+
+        public static string MoveDetail(PlacedSquad squad, int column, int row, bool turned) => $"{SquadLabel(squad)} to column {column}, row {row}, turned {turned}";
+
+        public static string TurnDetail(PlacedSquad squad, bool turned) => $"{SquadLabel(squad)} turned to {turned}";
+
+        public static string TechDetail(UnitStats type, TechUpgrade tech) => $"{type?.Name}: {tech?.Name}";
+
+        public static string SpellDetail(SpellStats spell, Vec2 position, float angleDegrees) =>
+            FormattableString.Invariant($"{spell.Name} at {position.X:0.##}, {position.Y:0.##}, angle {angleDegrees:0.#}");
+
+        public static string ItemDetail(ItemStats item, PlacedSquad squad) => $"{item?.Name} on {SquadLabel(squad)}";
 
         private static string TeamName(Team? team) => team == null ? "none" : team == Team.A ? "player" : "enemy";
 

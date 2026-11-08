@@ -1,6 +1,6 @@
 # The battle log (D68)
 
-Every game you play yourself, in Faction mode or Unlock Skirmish, writes one file, unless the Battle log setting is off (Settings, D69). Nothing reads these files yet. They are kept in case an AI learns from them one day.
+Every game you play yourself, in Faction mode or Unlock Skirmish, writes one file, unless the Battle log setting is off (Settings, D69). The game can replay them (below); they are also kept in case an AI learns from them one day.
 
 **Where they are:** `C:\Users\Mike\AppData\LocalLow\DefaultCompany\Halobellum\BattleLogs`, or press **Open battle logs** on the screen at the end of a game. The Sandbox and the test game write none.
 
@@ -31,10 +31,25 @@ Each line is one JSON object, and its `type` says what it is.
 
 ## The `action` names
 
-`Unlock`, `Buy`, `Sell`, `PlaceAt` (a squad moved), `ToggleRotation`, `LevelUp`, `LevelUpAll`, `BuyTech`, `LevelUpTower`, `BuyExtraSlot`, `BuyOilZone`, `RapidResupply`, `BuyEliteRecruitment`, `BuyResearch`, `ChooseCard`, `SkipCards`, `PlaceSpellAt`, `UnplaceSpell`, `PlaceItemOn`, `UseTraining`.
+`Unlock`, `Buy`, `Sell`, `PlaceAt` (a squad moved), `ToggleRotation`, `LevelUp`, `LevelUpAll`, `BuyTech`, `LevelUpTower`, `BuyExtraSlot`, `BuyOilZone`, `RapidResupply`, `BuyEliteRecruitment`, `BuyResearch`, `ChooseCard`, `SkipCards`, `PlaceSpellAt`, `UnplaceSpell`, `PlaceItemOn`, `UseTraining`, `Undo`.
 
 ## What to know before training on them
 
 - **The numbers move.** A log says what happened under that day's balance. It has the unit names and not their stats, so a log from before a balance change describes a different game. `match_start` has the time, and `DECISIONS.md` has what changed when.
 - **The format can change.** `match_start` has a `format` number, now 1, which goes up if a line changes meaning.
-- **Replaying is not promised.** The seed and your actions are there, and a match is meant to play the same from them, but nothing replays a log yet and nothing has tested that it would.
+- **A replay can drift.** A log replays exactly under the balance it was played with (D106, below). After a balance change the AI may buy otherwise and battles end otherwise; the replay says where.
+
+## Replaying a log (D106)
+
+Start the game with the log's path, and it plays that game again in the Match scene: the same match from its seed, mode, difficulty and starting card, then each of your actions in its order, done as your clicks did them, with the AI answering as it did.
+
+    Halobellum.exe -replayLog "C:\Users\Mike\AppData\LocalLow\DefaultCompany\Halobellum\BattleLogs\2026-11-07_13-18-09_Faction_Armored-Division_vs_Armored-Division.jsonl"
+
+| Add | What it does |
+|---|---|
+| `-replayStop 4` | Stops at round 4's deployment once that round's actions are done, before its battle: look around, or play on from there |
+| `-replaySpeed 4` | Battle speed (2 if not given) |
+| `-replayStep 0.2` | Seconds between two actions (0.4 if not given) |
+| `-replayShots <folder>` | Also saves pictures (each card screen, each deployment, each battle at 2 and 10 s, each result) and `replay.txt`, then quits |
+
+At every battle start both armies are compared with the log's (each squad's id, unit, place, turn and level, and the credits), and each battle's outcome and both bases after it. Whatever differs is shown at the end and written to `replay.txt`, and the replay carries on regardless. Only actions that worked are done again: a refused one changed nothing. A replay writes no battle log of its own. Logs of format 1 don't hold the card filter, so a game started with one replays with all cards.
