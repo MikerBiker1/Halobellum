@@ -35,7 +35,7 @@ All in, from your `Art_Source/Music` (D67). To change one, replace the file ther
 
 ## Sound effects
 
-All your files from `Art_Source/SFX` are in: 55 of the first 59 (D70), and the 7 of the second batch (D71). `Assets/_Project/Art/Imported/Audio/SOURCE_SFX.txt` says which file fills which slot. To add or change one, put it in `Art_Source/SFX` and tell me, or run `Tools/Audio/bring_in_sfx.py` after adding its line there.
+All your files from `Art_Source/SFX` are in: 55 of the first 59 (D70), and the 7 of the second batch (D71), the third batch (D91) and the Longsword and falling-strike sounds (D117). `Assets/_Project/Art/Imported/Audio/SOURCE_SFX.txt` says which file fills which slot. To add or change one, put it in `Art_Source/SFX` and tell me, or run `Tools/Audio/bring_in_sfx.py` after adding its line there.
 
 Not used: the plasma grenade (no use yet), the magnum (no unit carries one), and `fire[plasmarifle1]` (the same file as the Banshee's). The beam rifle now has a carrier, the Jackal (Beam Rifle).
 
@@ -46,14 +46,14 @@ A weapon with a sound of its own uses it; the others use their kind's sound.
 | Done | Slot | Used by | Your file |
 | --- | --- | --- | --- |
 | [x] | `sfx_fire_assaultrifle` | Marines, Infested Marines, Combat Forms. | `assault_rifle_fire_brown2_1` |
-| [x] | `sfx_fire_smg` | ODSTs. Loops while firing. | `fire[smg_new01]` |
+| [x] | `sfx_fire_smg` | ODSTs. Once per shot, overlapping (D117). | `fire[smg_new01]` |
 | [x] | `sfx_fire_m60` | Every machine gun and chaingun (D71): Warthog and Infested Warthog, Scorpion and Grizzly coaxial guns, Mantis, Spartan Heavy Weapons' M247H, Vulture, Elephant turrets, Marauder's Spike Turret. Loops while firing. | `fire[m60_ster1]` |
 | [x] | `sfx_fire_autocannon` | Autocannons: Pelican, Sparrowhawk, Condor, Chopper. Loops while firing. | `Autocannon` (D71) |
 | [x] | `sfx_fire_br85` | The BR85 (Spartan Fireteam). | `fire_BR85` (D71) |
 | [x] | `sfx_fire_beamrifle` | The Jackal (Beam Rifle)'s Beam Rifle. | `beam_rifle_fire[cov_snip_shot9]` (D71) |
 | [x] | `sfx_fire_spartanlaser` | The Spartan Laser: played as its 2.5 s wind-up starts, so the shot in the file lands with the shot. | `Spartan_laser_shoots_at_2` (D71) |
 | [x] | `sfx_fire_plasmaheavy`, `sfx_fire_plasmaturret` | Heavy plasma: the Marauder's cannon; and the plasma turrets of both Phantoms and the Scarab. | `phantom_turret_fire[phantom_fire]` (D71) |
-| [x] | `sfx_fire_ghost` | Ghost and Infested Ghost. Loops while firing. | `ghost_fire[plasma_ghost]` |
+| [x] | `sfx_fire_ghost` | Ghost and Infested Ghost. Once per shot, overlapping (D117). | `ghost_fire[plasma_ghost]` |
 | [x] | `sfx_fire_flame` | Flamethrowers. Loops while firing. | `flamethrower_fire_FT_active` |
 | [x] | `sfx_fire_plasma` | Plasma rifles, pistols and turrets. | `plas_rifle_fire[plas_rif_fire]` |
 | [x] | `sfx_fire_banshee` | Banshee and Infested Banshee plasma cannons. | `banshee_fire[plasmarifle1]` |
@@ -74,6 +74,8 @@ A weapon with a sound of its own uses it; the others use their kind's sound.
 | [ ] | `sfx_fire_heavybullet` | Only a heavy gun that is none of the above, if one comes. | Generated stand-in |
 | [ ] | `sfx_fire_bomb` | Hornet and Longsword bombs. | Generated stand-in |
 | [x] | `sfx_fire_siphon` | The Hunter Captain's 1 s siphon laser, as each beam starts (D91). | `Captain hunter cannon and other similar` |
+| [x] | `sfx_fire_longsword` | The Longsword's carpet bombs going out (D117). | `Longsword_firing` |
+| [x] | `sfx_falling_in` | The Archer Missile Barrage and the HAVOK Nuke heard coming down, ending as they hit (D117). | `rocket or bomb flying down` |
 | [ ] | `sfx_fire_laser` | Any other laser shot with no file of its own (none today). | Generated stand-in |
 | [x] | `sfx_fire_hunterbash` | A Hunter's shield bash (D91). | `hunter_melee_hits` |
 | [ ] | `sfx_fire_bio` | Flood spat bone, bone shards and spores. | Generated stand-in |
@@ -89,7 +91,7 @@ A weapon with a sound of its own uses it; the others use their kind's sound.
 | [x] | `sfx_explosion_large` | The biggest units going up. | `large_explosion_1`, `_12` |
 | [x] | `sfx_death_scarab`, `sfx_walk_scarab` | A Scarab dying, and walking. | `Scarab dying`, `Scarab walking` |
 | [x] | `sfx_death_air_unsc` | A UNSC aircraft crashing, and the Infected Pelican's crash dive. | `UNSC air unit hitting the ground` |
-| [x] | `sfx_pelican_dive` | The Infected Pelican starting its dive. | `Infested pelican dive` |
+| [x] | `sfx_pelican_dive` | The Infected Pelican starting its dive; any aircraft falling as it dies, until it hits the ground, where its crash is heard (D117). | `Infested pelican dive` |
 | [x] | `sfx_death_flood` | A Flood form dying. | `combatform_body_destroyed` |
 | [x] | `sfx_death_infectionform` | An Infection Form popping. | `infectionform_die2` |
 | [x] | `sfx_flood_burst` | A Carrier Form going off, and other Flood bursts. | `flood carrier explosion` |

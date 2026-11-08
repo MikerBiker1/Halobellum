@@ -5,7 +5,9 @@
 // same with or without it. What a weapon sounds like is worked out once per weapon and kept: the many shots of a battle allocate nothing.
 // The battle's sounds stop while it stands still, by the battle's own speed or by the game's pause (GamePause).
 // With the owner's files in, some sounds go by more than a shot (each only once its file is in; until then the old sound plays):
-//   - guns that fire fast (SMG, the Warthog's machine gun, the Ghost, flamethrowers) loop while any of them fire, louder the more do;
+//   - flamethrowers loop while any of them fire, louder the more do (the SMG, the machine guns and the Ghost play every shot, overlapping: D114, D117);
+//   - an aircraft that blows up and falls is heard diving as it falls (the Infected Pelican's dive), and its crash comes as it hits the ground (D117);
+//   - the Archer missiles and the HAVOK warhead are heard coming down, ending as they hit (D117);
 //   - a Wraith's shell is heard in the air until it lands;
 //   - the Scarab's beam: its charge as it starts charging (heard to its end), then "in" as it fires, the loop after that, and "out" as it stops;
 //   - a Scarab walking is a loop;
@@ -64,6 +66,8 @@ namespace Halobellum.Presentation
         /// <summary>Spells whose sound started ahead of their first hit (the Glassing Beam), and how far ahead each kind's must start.</summary>
         private readonly HashSet<SimSpell> _spellsAhead = new HashSet<SimSpell>();
         private readonly Dictionary<SpellStats, float> _spellLeads = new Dictionary<SpellStats, float>();
+        /// <summary>Strikes heard coming down already (AudioCatalog.FallingIn).</summary>
+        private readonly HashSet<SimSpell> _fallingIn = new HashSet<SimSpell>();
 
         private struct Later
         {
@@ -122,6 +126,7 @@ namespace Halobellum.Presentation
             _nextCall.Clear();
             _recharging.Clear();
             _spellsAhead.Clear();
+            _fallingIn.Clear();
             _later.Clear();
             _shells = 0;
         }
@@ -283,7 +288,31 @@ namespace Halobellum.Presentation
 
         // Hits and blocked shots make no sound of their own: the generated stand-ins are gone (the owner, 2026-11-07, D82).
 
-        private void OnUnitDied(SimUnit unit, SimUnit killer) => GameAudio.Sfx(DeathCue(unit), Place(unit));
+        private void OnUnitDied(SimUnit unit, SimUnit killer)
+        {
+            SfxCue death = DeathCue(unit);
+            AudioDirector director = AudioDirector.Instance;
+            if (!FallsAsItDies(unit) || director == null)
+            {
+                GameAudio.Sfx(death, Place(unit));
+                return;
+            }
+            // It blows up in the air and falls burning (DeathEffects): the dive while it falls, fading as it lands, then its crash (D117).
+            float fall = AirFallRealSeconds(_battle.Speed);
+            GameAudio.SfxShaped(AudioCatalog.AirFall, Place(unit), 0f, fall, 0.15f);
+            if (death != null) _later.Add(new Later { At = director.BattleClock + fall, Cue = death, Place = Place(unit) });
+        }
+
+        /// <summary>An aircraft that blows up in the air and falls to the ground as it dies (DeathStyle.Air, FloodAir). The Infected Pelican, already down from its dive, does not.</summary>
+        public static bool FallsAsItDies(SimUnit unit)
+        {
+            if (unit.HasDived || !unit.IsAir) return false;
+            DeathStyle style = DeathLooks.For(unit.Stats);
+            return style == DeathStyle.Air || style == DeathStyle.FloodAir;
+        }
+
+        /// <summary>Real seconds a dead aircraft takes to reach the ground at this battle speed (its fall runs on battle time: UnitViewManager.AirFallSeconds).</summary>
+        public static float AirFallRealSeconds(float speed) => UnitViewManager.AirFallSeconds / Mathf.Max(0.05f, speed);
 
         /// <summary>What a death sounds like, by what died.</summary>
         public static SfxCue DeathCue(SimUnit unit)
@@ -411,10 +440,11 @@ namespace Halobellum.Presentation
                 _nextHumCheck = Time.unscaledTime + 0.5f;
                 UpdateHums(director);
             }
-            if (director.BattlePaused || _shown.IsFinished) return; // A finished battle's time has stopped: OnBattleFinished silenced what it had going.
+            if (director.BattlePaused) return;
+            PlayWhatIsDue(director); // Before the end: the last aircraft of a battle still crashes after it.
+            if (_shown.IsFinished) return; // A finished battle's time has stopped: OnBattleFinished silenced what it had going.
             UpdateLoops(director);
             if (AudioCatalog.BeamCharge.HasSound) UpdateBeams(director);
-            PlayWhatIsDue(director);
             StartSpellsAhead();
             if (Time.unscaledTime >= _nextScan)
             {
@@ -509,6 +539,7 @@ namespace Halobellum.Presentation
             for (int i = 0; i < spells.Count; i++)
             {
                 SimSpell spell = spells[i];
+                if (spell.TicksDone == 0 && !_fallingIn.Contains(spell)) HearComingDown(spell, now, speed);
                 if (spell.TicksDone > 0 || _spellsAhead.Contains(spell)) continue;
                 if (!_spellLeads.TryGetValue(spell.Stats, out float lead))
                 {
@@ -520,6 +551,16 @@ namespace Halobellum.Presentation
                 SfxCue cue = AudioCatalog.Spell(spell.Stats, 1, CasterFaction(spell.Stats, spell.Team));
                 if (cue != null) GameAudio.SfxShaped(cue, new Vector3(spell.Position.X, 0f, spell.Position.Y), skip, fadeAfter, AudioCatalog.GlassingFadeSeconds);
             }
+        }
+
+        /// <summary>A strike from the sky (AudioCatalog.FallsIn) is heard coming down, so that the sound ends as it hits; started part way in if the hit is closer than the sound is long.</summary>
+        private void HearComingDown(SimSpell spell, float now, float speed)
+        {
+            if (!AudioCatalog.FallingIn.HasSound || !AudioCatalog.FallsIn(spell.Stats)) return;
+            float length = AudioCatalog.FallingIn.Clips.AverageLength;
+            if (!SpellAhead(spell.Stats, length, now, speed, out float skip, out _)) return;
+            _fallingIn.Add(spell);
+            GameAudio.SfxShaped(AudioCatalog.FallingIn, new Vector3(spell.Position.X, 0f, spell.Position.Y), skip, Mathf.Max(0f, length - skip - 0.05f), 0.05f);
         }
 
         /// <summary>

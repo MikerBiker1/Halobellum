@@ -17,9 +17,9 @@ OVERRIDE = os.path.join(AUDIO, "Resources", "AudioOverride")
 # The owner's file -> the slot it fills, and what for.
 SLOTS = [
     ("assault_rifle_fire_brown2_1.wav", "sfx_fire_assaultrifle", "Marines' MA5 and the Scavenged Rifle (Infested Marine, Combat Form)"),
-    ("fire[smg_new01].wav", "sfx_fire_smg", "ODSTs' M7 SMG, looped while they fire"),
+    ("fire[smg_new01].wav", "sfx_fire_smg", "ODSTs' M7 SMG, once per shot, overlapping (D117)"),
     ("fire[m60_ster1].wav", "sfx_fire_m60", "every machine gun and chaingun: the Warthog's (and the Infested Warthog's), the coaxial guns, the Mantis, the Vulture, the Elephant's turrets, the Spartan's chaingun, once per shot, overlapping"),
-    ("ghost_fire[plasma_ghost].wav", "sfx_fire_ghost", "the Ghost's plasma bolts (and the Infested Ghost's), looped while it fires"),
+    ("ghost_fire[plasma_ghost].wav", "sfx_fire_ghost", "the Ghost's plasma bolts (and the Infested Ghost's), once per shot, overlapping (D117)"),
     ("flamethrower_fire_FT_active.wav", "sfx_fire_flame", "flamethrowers, looped while they fire"),
     ("plas_rifle_fire[plas_rif_fire].wav", "sfx_fire_plasma", "plasma rifles, pistols and turrets"),
     ("banshee_fire[plasmarifle1].wav", "sfx_fire_banshee", "the Banshee's plasma cannons (and the Infested Banshee's)"),
@@ -53,7 +53,7 @@ SLOTS = [
     ("large_explosion_1.wav", "sfx_explosion_large_1", "the biggest units going up"),
     ("large_explosion_12.wav", "sfx_explosion_large_2", "the biggest units going up"),
     ("UNSC air unit hitting the ground.wav", "sfx_death_air_unsc", "a UNSC aircraft crashing, and the Infected Pelican's crash dive"),
-    ("Infested pelican dive.wav", "sfx_pelican_dive", "the Infected Pelican starting its dive"),
+    ("Infested pelican dive.wav", "sfx_pelican_dive", "the Infected Pelican starting its dive, and any aircraft falling as it dies, until it hits the ground (D117)"),
     ("combatform_body_destroyed[combat_body_destroyed3].wav", "sfx_death_flood", "a Flood form dying"),
     ("infectionform_die2.wav", "sfx_death_infectionform", "an Infection Form popping"),
     ("flood carrier explosion.mp3", "sfx_flood_burst", "a Carrier Form going off, and other Flood bursts"),
@@ -106,6 +106,9 @@ SLOTS = [
     ("Level up.wav", "ui_levelup", "a squad or a tower leveled up, or research bought, every faction"),
     ("Spell placed.wav", "ui_spellplaced", "a spell placed, every faction"),
     ("Move item in Hexagon.wav", "ui_itemplaced", "an item put in a squad's hexagon, every faction"),
+    # The owner's fourth batch (D117).
+    ("Longsword_firing.wav", "sfx_fire_longsword", "the Longsword's carpet bombs going out"),
+    ("rocket or bomb flying down.wav", "sfx_falling_in", "the Archer Missile Barrage and the HAVOK Nuke coming down, ending as they hit"),
 ]
 
 # Files not used yet, and why.

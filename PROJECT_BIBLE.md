@@ -564,6 +564,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-08 | Machine guns and autocannons sound every shot, overlapping; the Sparrowhawk costs 275 | Per the project owner (D114) |
 | 2026-11-08 | A unit whose main weapon has nothing to shoot goes after what its other weapons can hit, and failing that walks to the closest enemy, air included; the Swarm Form has a Long Range tech | Per the project owner (D115) |
 | 2026-11-08 | No Infested Grunt; the Spawner releases two Infection Forms and two Combat Forms in turn; the Sparrowhawk costs 250 and the Skitterer 125 | Per the project owner (D116) |
+| 2026-11-08 | The SMG and the Ghost sound every shot; an aircraft falling as it dies is heard diving, then crashing as it lands; the Longsword has its own bomb sound; the Archer missiles and the HAVOK are heard coming down | Per the project owner (D117) |
 
 ## 18. Assumptions to confirm
 

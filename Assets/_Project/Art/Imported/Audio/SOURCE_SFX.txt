@@ -2,9 +2,9 @@ The owner's sound effects, from their Art_Source/SFX, brought in by Tools/Audio/
 File, the slot it fills, and what for. The game evens out how loud each one is (AudioLibrary).
 
 assault_rifle_fire_brown2_1.wav -> sfx_fire_assaultrifle.wav: Marines' MA5 and the Scavenged Rifle (Infested Marine, Combat Form)
-fire[smg_new01].wav -> sfx_fire_smg.wav: ODSTs' M7 SMG, looped while they fire
-fire[m60_ster1].wav -> sfx_fire_m60.wav: every machine gun and chaingun: the Warthog's (and the Infested Warthog's), the coaxial guns, the Mantis, the Vulture, the Elephant's turrets, the Spartan's chaingun, looped while they fire
-ghost_fire[plasma_ghost].wav -> sfx_fire_ghost.wav: the Ghost's plasma bolts (and the Infested Ghost's), looped while it fires
+fire[smg_new01].wav -> sfx_fire_smg.wav: ODSTs' M7 SMG, once per shot, overlapping (D117)
+fire[m60_ster1].wav -> sfx_fire_m60.wav: every machine gun and chaingun: the Warthog's (and the Infested Warthog's), the coaxial guns, the Mantis, the Vulture, the Elephant's turrets, the Spartan's chaingun, once per shot, overlapping
+ghost_fire[plasma_ghost].wav -> sfx_fire_ghost.wav: the Ghost's plasma bolts (and the Infested Ghost's), once per shot, overlapping (D117)
 flamethrower_fire_FT_active.wav -> sfx_fire_flame.wav: flamethrowers, looped while they fire
 plas_rifle_fire[plas_rif_fire].wav -> sfx_fire_plasma.wav: plasma rifles, pistols and turrets
 banshee_fire[plasmarifle1].wav -> sfx_fire_banshee.wav: the Banshee's plasma cannons (and the Infested Banshee's)
@@ -37,7 +37,7 @@ med_explosion_15.wav -> sfx_explosion_medium.wav: medium vehicles and walkers go
 large_explosion_1.wav -> sfx_explosion_large_1.wav: the biggest units going up
 large_explosion_12.wav -> sfx_explosion_large_2.wav: the biggest units going up
 UNSC air unit hitting the ground.wav -> sfx_death_air_unsc.wav: a UNSC aircraft crashing, and the Infected Pelican's crash dive
-Infested pelican dive.wav -> sfx_pelican_dive.wav: the Infected Pelican starting its dive
+Infested pelican dive.wav -> sfx_pelican_dive.wav: the Infected Pelican starting its dive, and any aircraft falling as it dies, until it hits the ground (D117)
 combatform_body_destroyed[combat_body_destroyed3].wav -> sfx_death_flood.wav: a Flood form dying
 infectionform_die2.wav -> sfx_death_infectionform.wav: an Infection Form popping
 flood carrier explosion.mp3 -> sfx_flood_burst.mp3: a Carrier Form going off, and other Flood bursts
@@ -58,7 +58,7 @@ Card chosen.wav -> ui_cardpick.wav: a card taken, every faction
 Round start.wav -> ui_battlestart.wav: a round's battle starting, every faction (D78)
 Unit bought (fall to grid).wav -> ui_buy.wav: a squad bought, every faction
 Unit unlocked.wav -> ui_unlock.wav: a unit unlocked or a tech bought, every faction
-Autocannon.mp3 -> sfx_fire_autocannon.mp3: autocannons (Pelican, Sparrowhawk, Condor, Chopper), looped while they fire
+Autocannon.mp3 -> sfx_fire_autocannon.mp3: autocannons (Pelican, Sparrowhawk, Condor, Chopper), once per shot, overlapping
 fire_BR85.wav -> sfx_fire_br85.wav: the BR85 battle rifle (Spartan Fireteam)
 phantom_turret_fire[phantom_fire].wav -> sfx_fire_plasmaheavy.wav: heavy plasma: the Marauder's plasma cannon, and any heavy plasma shot with no file of its own
 phantom_turret_fire[phantom_fire].wav -> sfx_fire_plasmaturret.wav: the Phantoms' and the Scarab's plasma turrets (the same file, in a voice group of its own)
@@ -88,6 +88,8 @@ Captain hunter cannon and other similar.mp3 -> sfx_fire_siphon.mp3: the Hunter C
 Level up.wav -> ui_levelup.wav: a squad or a tower leveled up, or research bought, every faction
 Spell placed.wav -> ui_spellplaced.wav: a spell placed, every faction
 Move item in Hexagon.wav -> ui_itemplaced.wav: an item put in a squad's hexagon, every faction
+Longsword_firing.wav -> sfx_fire_longsword.wav: the Longsword's carpet bombs going out
+rocket or bomb flying down.wav -> sfx_falling_in.wav: the Archer Missile Barrage and the HAVOK Nuke coming down, ending as they hit
 
 Not used:
 plasma_grenade_plasmagrenexpl_plasmagx1.wav: no use for it yet, as the owner said

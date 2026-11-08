@@ -380,7 +380,7 @@ namespace Halobellum.Presentation
 
         private const float BodySinkSeconds = 1.6f, BodySinkDepth = 1.5f;
         /// <summary>Battle seconds a flier's baked body takes to fall from its flying height to the ground as it dies (D93).</summary>
-        private const float AirFallSeconds = 1.3f;
+        public const float AirFallSeconds = 1.3f; // Also how long BattleAudio's dive plays before the crash (D117); DeathEffects' falls take about as long from 13 m.
         private BattleSimulation _shown;
         private Transform _container;
         private static readonly int BattleTimeId = Shader.PropertyToID("_BattleTime");

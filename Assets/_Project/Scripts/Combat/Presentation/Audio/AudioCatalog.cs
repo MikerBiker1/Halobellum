@@ -44,6 +44,10 @@ namespace Halobellum.Presentation
         ShieldRegen,
         PlasmaTurrets,
         Nodes,
+        /// <summary>The SMG's shots, one a shot (D117): a group of their own, so that ten a second don't take every small arms voice.</summary>
+        Smg,
+        /// <summary>Aircraft falling as they die (D117).</summary>
+        AirFalls,
         Count,
     }
 
@@ -164,13 +168,18 @@ namespace Halobellum.Presentation
 
         // One weapon's or unit's own sound, from the owner (see OwnerCue). The guns that fire fast loop while they fire.
         public static readonly SfxCue FireAssaultRifle = OwnerCue("sfx_fire_assaultrifle", SfxGroup.SmallArms, 0.6f, 0.06f, 1, -17f);
-        public static readonly SfxCue FireSmg = OwnerCue("sfx_fire_smg", SfxGroup.SmallArms, 0.6f, 0f, 1, -19f, true);
+        /// <summary>
+        /// One SMG shot, played for every shot (the owner, 2026-11-08; D117): the file is one shot and 0.7 s of quiet, so looped it gave one shot a second
+        /// to an ODST firing ten. Only its first 0.06 s holds a voice, so the next shot starts over the last one's tail.
+        /// </summary>
+        public static readonly SfxCue FireSmg = OwnerCue("sfx_fire_smg", SfxGroup.Smg, 0.55f, 0.05f, 1, -19f, hold: 0.06f);
         /// <summary>
         /// One M60 shot with a half-second tail, played for every shot (the owner, 2026-11-08; D114): looped, it gave about 2 shots a second to a Warthog
         /// firing 5. Only its first 0.1 s holds a voice, so the next shot starts over the last one's tail.
         /// </summary>
         public static readonly SfxCue FireM60 = OwnerCue("sfx_fire_m60", SfxGroup.HeavyArms, 0.6f, 0.04f, 2, -16.5f, hold: 0.1f);
-        public static readonly SfxCue FireGhost = OwnerCue("sfx_fire_ghost", SfxGroup.Plasma, 0.65f, 0f, 2, -18f, true);
+        /// <summary>The Ghost's bolt, played for every shot (D117), as the SMG: looped, its file gave one bolt a second to a Ghost firing four.</summary>
+        public static readonly SfxCue FireGhost = OwnerCue("sfx_fire_ghost", SfxGroup.Plasma, 0.6f, 0.05f, 2, -18f, hold: 0.12f);
         public static readonly SfxCue FireBanshee = OwnerCue("sfx_fire_banshee", SfxGroup.Plasma, 0.6f, 0.06f, 2, -18.5f);
         public static readonly SfxCue FireBansheeBomb = OwnerCue("sfx_fire_banshee_bomb", SfxGroup.Rockets, 0.85f, 0.05f, 4, -13f);
         public static readonly SfxCue ExplosionBanshee = OwnerCue("sfx_explosion_banshee", SfxGroup.Explosions, 0.8f, 0.06f, 3, -13.5f);
@@ -229,6 +238,27 @@ namespace Halobellum.Presentation
         public static readonly SfxCue FireHunterBash = OwnerCue("sfx_fire_hunterbash", SfxGroup.Melee, 0.75f, 0.06f, 3, -16f);
         /// <summary>The Hunter Captain's siphon laser, a 1 s beam: once as each beam starts (the owner's file runs about as long), and any other laser beam like it.</summary>
         public static readonly SfxCue FireSiphon = OwnerCue("sfx_fire_siphon", SfxGroup.Lasers, 1f, 0.03f, 7, -14f);
+        // The owner's fourth batch (D117).
+        /// <summary>The Longsword's carpet bombs going out: a loud second and a long tail, so only the first second holds a voice.</summary>
+        public static readonly SfxCue FireLongsword = OwnerCue("sfx_fire_longsword", SfxGroup.Rockets, 0.85f, 0.04f, 4, -13f, hold: 1f);
+        /// <summary>
+        /// Something coming down from the sky, louder as it nears (the owner's "rocket or bomb flying down"): played ahead of the strikes that fall from
+        /// orbit (FallsIn), so that it ends as they hit. No pitch spread, which would move its end.
+        /// </summary>
+        public static readonly SfxCue FallingIn = OwnerCue("sfx_falling_in", SfxGroup.Spells, 0.9f, 0f, 9, -14f);
+        /// <summary>
+        /// The Infected Pelican's dive, a little quieter, for any aircraft falling to the ground as it dies (the owner, 2026-11-08; D117): it plays while the
+        /// wreck falls and fades as it hits, where its crash is heard (BattleAudio). Not in the slot table: the Pelican's dive owns the slot.
+        /// </summary>
+        public static readonly SfxCue AirFall = new SfxCue("sfx_pelican_dive", SfxGroup.AirFalls, 0.75f, 0.05f, 6, -16f);
+
+        /// <summary>The strikes that fall from the sky as a rocket or a bomb would, and are heard coming (FallingIn): the Archer missiles and the HAVOK warhead.</summary>
+        public static bool FallsIn(SpellStats spell)
+        {
+            if (spell == null || spell.Effect != SpellEffect.Damage) return false;
+            string n = (spell.Name ?? "").ToLowerInvariant();
+            return n.Contains("missile") || n.Contains("nuke") || n.Contains("havok");
+        }
 
         /// <summary>The owner's sounds of one weapon or unit (they have no generated sound).</summary>
         public static IReadOnlyList<SfxCue> OwnerOnly => Owners;
@@ -279,6 +309,8 @@ namespace Halobellum.Presentation
             Limit(limiter, SfxGroup.ShieldRegen, 1, 1.2f);
             Limit(limiter, SfxGroup.PlasmaTurrets, 3, 0.15f);
             Limit(limiter, SfxGroup.Nodes, 5, 0.05f); // A crowd's nodes land 0.08 s apart at the closest.
+            Limit(limiter, SfxGroup.Smg, 6, 0.05f); // One ODST is heard shot for shot; a crowd of them, 20 shots a second at most.
+            Limit(limiter, SfxGroup.AirFalls, 3, 0.15f);
         }
 
         private static void Limit(VoiceLimiter limiter, SfxGroup group, int voices, float gap) => limiter.SetLimit((int)group, voices, gap);
@@ -361,6 +393,7 @@ namespace Halobellum.Presentation
             if (n.Contains("shotgun")) return FireShotgun;
             if (n.Contains("sniper")) return FireSniper;
             if (n.Contains("energy sword")) return FireSword;
+            if (n.Contains("carpet bomb")) return FireLongsword;
             if (n.Contains("siphon") || (weapon.IsBeam && n.Contains("laser"))) return FireSiphon;
             if (n == "shield bash") return FireHunterBash;
             if (WeaponFeel.FromName(weapon.Name) == WeaponFeelKind.HeavyBullet) return FireM60;

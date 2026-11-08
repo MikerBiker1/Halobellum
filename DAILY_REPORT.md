@@ -2,6 +2,12 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Sounds: SMG, falling aircraft, your new files (D117)
+- **SMG:** your file is one shot and then silence, so looping it gave one shot a second while an ODST fires ten. It now plays every shot, overlapping. **The Ghost** had the same fault and has the same fix.
+- **Falling aircraft:** any aircraft that blows up and falls plays the Pelican dive while it falls; its crash comes as it hits the ground.
+- **New:** `Longsword_firing` is the Longsword's bombs; `rocket or bomb flying down` plays before the Archer Missile Barrage and the HAVOK Nuke land.
+- **Not checked:** not heard in the game; the audio tests pass.
+
 ## No Infested Grunt, Spawner Combat Forms, balance (D116)
 - **Infested Grunt removed.** Covenant-based has 5 exclusive units.
 - **Spawner** releases two Combat Forms (not an Infested Elite) in turn with its Infection Forms.

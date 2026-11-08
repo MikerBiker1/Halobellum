@@ -2,9 +2,11 @@
 // Tests the owner's sound effects (D70, D71): each weapon or unit with a sound of its own gets it, read from the game's own data, and the
 // rest keep their kind's; the M60 is every machine gun and chaingun, the autocannons have their own; the guns that fire fast loop; a UI
 // file named without a faction serves every faction; the owner's files are turned down to their slot's loudness, and the generated ones
-// play as they are; the Glassing Beam starts ahead of its strike; the nodes of light land by size; a drawn round has its stinger.
+// play as they are; the Glassing Beam starts ahead of its strike; the nodes of light land by size; a drawn round has its stinger; an aircraft
+// falling as it dies is heard diving, and the strikes from the sky coming down (D117).
 // Depends on: Halobellum.Presentation, Halobellum.Combat, Halobellum.Core, Halobellum.Units, NUnit, UnityEditor.
 
+using Halobellum.Combat;
 using Halobellum.Core;
 using Halobellum.Presentation;
 using Halobellum.Units;
@@ -58,6 +60,7 @@ namespace Halobellum.Tests
         [TestCase("Covenant/Scarab", "Plasma Turret (right)", "sfx_fire_plasmaturret")]
         [TestCase("Banished/Marauder", "Plasma Cannon", "sfx_fire_plasmaheavy")]
         [TestCase("Covenant/Ghost", "Plasma Bolts", "sfx_fire_ghost")]
+        [TestCase("AerospaceCommand/Longsword", "Carpet Bombs", "sfx_fire_longsword")]
         [TestCase("Covenant/Banshee", "Plasma Cannons", "sfx_fire_banshee")]
         [TestCase("Covenant/Banshee", "Fuel Rod Bomb", "sfx_fire_banshee_bomb")]
         [TestCase("UnggoyRebellion/GruntGoblin", "Goblin Plasma Cannons", "sfx_fire_plasma")]
@@ -163,9 +166,12 @@ namespace Halobellum.Tests
         [Test]
         public void TheGunsThatFireFast_Loop_AndTheOthersPlayOnceAShot()
         {
-            Assert.IsTrue(Fire("SpellUnits/ODST", "M7 SMG").Loops);
+            Assert.IsFalse(Fire("SpellUnits/ODST", "M7 SMG").Loops, "Played for every shot, overlapping (D117): looped, one shot in ten was heard.");
+            Assert.Less(AudioCatalog.FireSmg.HoldSeconds, 0.1f, "The ODST fires every 0.1 s.");
             Assert.IsFalse(Fire("UNSC/Warthog", "M41 Machine Gun").Loops, "Every shot is heard, over the tail of the last (D114).");
-            Assert.IsTrue(Fire("Covenant/Ghost", "Plasma Bolts", BattleFactions.Covenant).Loops);
+            Assert.IsFalse(Fire("Covenant/Ghost", "Plasma Bolts", BattleFactions.Covenant).Loops, "Played for every shot (D117).");
+            Assert.Less(AudioCatalog.FireGhost.HoldSeconds, 0.25f, "The Ghost fires every 0.25 s.");
+            Assert.IsTrue(Fire("UNSC/FlamethrowerTrooper", "M7057 Flamethrower").Loops, "A flame is one long sound.");
             Assert.IsFalse(Fire("UNSC/Pelican", "M370 Autocannon").Loops, "Played for every shot, overlapping (D114).");
             Assert.Less(AudioCatalog.FireAutocannon.HoldSeconds, 0.3f, "The Pelican fires every 0.3 s: its next shot must not wait for the last one's voice.");
             Assert.Less(AudioCatalog.FireM60.HoldSeconds, 0.2f, "The Warthog fires every 0.2 s.");
@@ -173,6 +179,40 @@ namespace Halobellum.Tests
             Assert.IsFalse(Fire("Noble/SpartanFireteam", "BR85 Battle Rifle").Loops);
             Assert.IsFalse(Fire("UNSC/Marine", "MA5 Assault Rifle").Loops, "The owner's assault rifle is one shot.");
             Assert.IsFalse(Fire("UNSC/Scorpion", "M512 Cannon").Loops);
+        }
+
+        private static SimUnit Body(string path) => new SimUnit(0, Team.A, 0, Unit(path), new Vec2(0f, 0f), new Vec2(0f, 1f));
+
+        private static SpellStats Spell(string path) => AssetDatabase.LoadAssetAtPath<SpellDefinition>($"Assets/_Project/Data/Spells/{path}.asset").ToStats();
+
+        [Test]
+        public void AnAircraftFallingAsItDies_IsHeardDiving_ThenCrashing()
+        {
+            Assert.IsTrue(BattleAudio.FallsAsItDies(Body("UNSC/Hornet")));
+            Assert.IsTrue(BattleAudio.FallsAsItDies(Body("Covenant/Banshee")));
+            Assert.IsTrue(BattleAudio.FallsAsItDies(Body("AerospaceCommand/Longsword")));
+            Assert.IsFalse(BattleAudio.FallsAsItDies(Body("Flood/SwarmForm")), "It bursts in the air.");
+            Assert.IsFalse(BattleAudio.FallsAsItDies(Body("Flood/InfectedPelican")), "Its dive and crash are its own.");
+            Assert.IsFalse(BattleAudio.FallsAsItDies(Body("UNSC/Warthog")));
+            Assert.AreEqual("sfx_pelican_dive", AudioCatalog.AirFall.Slot);
+            Assert.IsTrue(AudioCatalog.AirFall.HasSound);
+            Assert.AreEqual(UnitViewManager.AirFallSeconds / 2f, BattleAudio.AirFallRealSeconds(2f), 1e-4f, "The fall runs on battle time.");
+        }
+
+        [Test]
+        public void TheStrikesFromTheSky_AreHeardComingDown()
+        {
+            Assert.IsTrue(AudioCatalog.FallingIn.HasSound);
+            Assert.IsTrue(AudioCatalog.FallsIn(Spell("UNSC/MissileBarrage")));
+            Assert.IsTrue(AudioCatalog.FallsIn(Spell("UNSC/HavokNuke")));
+            Assert.IsFalse(AudioCatalog.FallsIn(Spell("UNSC/MacStrike")), "A slug from a cannon, not a rocket or a bomb.");
+            Assert.IsFalse(AudioCatalog.FallsIn(Spell("Covenant/GlassingBeam")));
+            // The HAVOK hits 6 s in: its 3.4 s sound starts once the hit is that close, from its start.
+            SpellStats nuke = Spell("UNSC/HavokNuke");
+            float length = AudioCatalog.FallingIn.Clips.AverageLength;
+            Assert.IsFalse(BattleAudio.SpellAhead(nuke, length, 1f, 1f, out _, out _));
+            Assert.IsTrue(BattleAudio.SpellAhead(nuke, length, 6f - length + 0.01f, 1f, out float skip, out _));
+            Assert.Less(skip, 0.05f);
         }
 
         [Test]
