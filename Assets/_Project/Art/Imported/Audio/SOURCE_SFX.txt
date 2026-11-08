@@ -89,7 +89,7 @@ Level up.wav -> ui_levelup.wav: a squad or a tower leveled up, or research bough
 Spell placed.wav -> ui_spellplaced.wav: a spell placed, every faction
 Move item in Hexagon.wav -> ui_itemplaced.wav: an item put in a squad's hexagon, every faction
 Longsword_firing.wav -> sfx_fire_longsword.wav: the Longsword's carpet bombs going out
-rocket or bomb flying down.wav -> sfx_falling_in.wav: the Archer Missile Barrage and the HAVOK Nuke coming down, ending as they hit
+rocket or bomb flying down.wav -> sfx_falling_in.wav: every UNSC rocket, missile and bomb in flight (D118), and the Archer Missile Barrage and the HAVOK Nuke, coming down, ending as they land
 
 Not used:
 plasma_grenade_plasmagrenexpl_plasmagx1.wav: no use for it yet, as the owner said

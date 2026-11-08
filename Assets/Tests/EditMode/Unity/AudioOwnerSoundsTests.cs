@@ -215,6 +215,32 @@ namespace Halobellum.Tests
             Assert.Less(skip, 0.05f);
         }
 
+        [TestCase("AerospaceCommand/Longsword", "Carpet Bombs")]
+        [TestCase("SpellUnits/ODST", "M41 Rocket Launcher")]
+        [TestCase("Noble/SpartanGrenadier", "M41 Rocket Launcher")]
+        [TestCase("Noble/SpartanHeavyWeapons", "Hydra Rocket Pod")]
+        [TestCase("UNSC/Hornet", "Rockets")]
+        [TestCase("UNSC/Hornet", "Bombs")]
+        [TestCase("UNSC/Wolverine", "Rocket Volley")]
+        [TestCase("UNSC/ArcherMissilePod", "Archer Missile Barrage")]
+        [TestCase("AerospaceCommand/Vulture", "Missile Barrage")]
+        public void UnscRocketsAndBombs_AreHeardComingDown(string path, string weaponName)
+        {
+            UnitStats unit = Unit(path);
+            Assert.IsTrue(AudioCatalog.ComesDown(WeaponOf(unit, weaponName), BattleFactions.Unsc), "D118");
+            Assert.AreEqual("sfx_falling_in", AudioCatalog.Incoming.Slot);
+            Assert.IsTrue(AudioCatalog.Incoming.HasSound);
+        }
+
+        [Test]
+        public void OtherShots_AreNotHeardComingDown()
+        {
+            Assert.IsFalse(AudioCatalog.ComesDown(WeaponOf(Unit("FloodUNSC/InfestedHornet"), "Scavenged Rockets"), BattleFactions.Flood), "The Flood's scavenged rockets.");
+            Assert.IsFalse(AudioCatalog.ComesDown(WeaponOf(Unit("Banished/Reaver"), "Spike Rockets"), BattleFactions.Covenant), "Not the UNSC's.");
+            Assert.IsFalse(AudioCatalog.ComesDown(WeaponOf(Unit("UNSC/Scorpion"), "M512 Cannon"), BattleFactions.Unsc), "A shell, not a rocket.");
+            Assert.IsFalse(AudioCatalog.ComesDown(WeaponOf(Unit("UNSC/Marine"), "MA5 Assault Rifle"), BattleFactions.Unsc));
+        }
+
         [Test]
         public void TheScarabsBeam_IsPlayedByItsPhases_NotAsOneShot()
         {

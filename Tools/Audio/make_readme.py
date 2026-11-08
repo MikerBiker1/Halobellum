@@ -137,7 +137,7 @@ OWNER_ONLY = [
     "  sfx_fire_hunterbash              A Hunter's shield bash.",
     "  sfx_fire_siphon                  The Hunter Captain's 1 s siphon laser, once as each beam starts.",
     "  sfx_fire_longsword               The Longsword's carpet bombs going out (D117).",
-    "  sfx_falling_in                   The Archer missiles and the HAVOK Nuke coming down, ending as they hit (D117).",
+    "  sfx_falling_in                   UNSC rockets and bombs in flight, the Archer missiles and the HAVOK, coming down (D117, D118).",
     "  sfx_node_small                   A small or medium node of light hitting a base at the end of a round (until it is in: the battle's hits).",
     "  sfx_node_big                     A big node of light (about 60 damage to a base and up, and every Titan's).",
     "",

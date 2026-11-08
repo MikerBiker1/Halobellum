@@ -75,7 +75,7 @@ A weapon with a sound of its own uses it; the others use their kind's sound.
 | [ ] | `sfx_fire_bomb` | Hornet and Longsword bombs. | Generated stand-in |
 | [x] | `sfx_fire_siphon` | The Hunter Captain's 1 s siphon laser, as each beam starts (D91). | `Captain hunter cannon and other similar` |
 | [x] | `sfx_fire_longsword` | The Longsword's carpet bombs going out (D117). | `Longsword_firing` |
-| [x] | `sfx_falling_in` | The Archer Missile Barrage and the HAVOK Nuke heard coming down, ending as they hit (D117). | `rocket or bomb flying down` |
+| [x] | `sfx_falling_in` | Every UNSC rocket, missile and bomb in flight (D118), and the Archer Missile Barrage and the HAVOK Nuke (D117), heard coming down, ending as they land. | `rocket or bomb flying down` |
 | [ ] | `sfx_fire_laser` | Any other laser shot with no file of its own (none today). | Generated stand-in |
 | [x] | `sfx_fire_hunterbash` | A Hunter's shield bash (D91). | `hunter_melee_hits` |
 | [ ] | `sfx_fire_bio` | Flood spat bone, bone shards and spores. | Generated stand-in |

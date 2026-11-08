@@ -108,7 +108,7 @@ SLOTS = [
     ("Move item in Hexagon.wav", "ui_itemplaced", "an item put in a squad's hexagon, every faction"),
     # The owner's fourth batch (D117).
     ("Longsword_firing.wav", "sfx_fire_longsword", "the Longsword's carpet bombs going out"),
-    ("rocket or bomb flying down.wav", "sfx_falling_in", "the Archer Missile Barrage and the HAVOK Nuke coming down, ending as they hit"),
+    ("rocket or bomb flying down.wav", "sfx_falling_in", "every UNSC rocket, missile and bomb in flight (D118), and the Archer Missile Barrage and the HAVOK Nuke, coming down, ending as they land"),
 ]
 
 # Files not used yet, and why.

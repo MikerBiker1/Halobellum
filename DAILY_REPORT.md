@@ -2,6 +2,10 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## UNSC rockets and bombs heard coming down (D118)
+- `rocket or bomb flying down` now plays for every UNSC rocket, missile and bomb in flight (Longsword, M41s, Hornet, Wolverine, Mantis, Vulture, Hydra pod, Archer pod), ending as it lands. The Archer Missile Barrage and HAVOK spells keep it too.
+- **Not checked:** not heard in the game; the audio tests pass.
+
 ## Sounds: SMG, falling aircraft, your new files (D117)
 - **SMG:** your file is one shot and then silence, so looping it gave one shot a second while an ODST fires ten. It now plays every shot, overlapping. **The Ghost** had the same fault and has the same fix.
 - **Falling aircraft:** any aircraft that blows up and falls plays the Pelican dive while it falls; its crash comes as it hits the ground.

@@ -48,6 +48,8 @@ namespace Halobellum.Presentation
         Smg,
         /// <summary>Aircraft falling as they die (D117).</summary>
         AirFalls,
+        /// <summary>UNSC rockets and bombs heard coming down before they land (D118).</summary>
+        Incoming,
         Count,
     }
 
@@ -251,6 +253,25 @@ namespace Halobellum.Presentation
         /// wreck falls and fades as it hits, where its crash is heard (BattleAudio). Not in the slot table: the Pelican's dive owns the slot.
         /// </summary>
         public static readonly SfxCue AirFall = new SfxCue("sfx_pelican_dive", SfxGroup.AirFalls, 0.75f, 0.05f, 6, -16f);
+        /// <summary>
+        /// The same file, quieter, for each UNSC rocket or bomb in flight (ComesDown; the owner, 2026-11-08; D118): its end, as long as the shot flies, so
+        /// that it ends as the shot lands. Not in the slot table: the strikes' cue owns the slot.
+        /// </summary>
+        public static readonly SfxCue Incoming = new SfxCue("sfx_falling_in", SfxGroup.Incoming, 0.55f, 0f, 2, -14f);
+
+        /// <summary>
+        /// A shot heard coming down before it lands (Incoming): what the UNSC fires as a rocket, a missile or a bomb that flies (the Longsword's carpet bombs,
+        /// the M41s, the Hornet's, the Wolverine's, the Mantis's, the Vulture's, the Hydra pod, the Archer pod). Not the Flood's scavenged rockets, nor the Banished's.
+        /// </summary>
+        public static bool ComesDown(WeaponStats weapon, string faction)
+        {
+            if (weapon == null || weapon.ProjectileSpeed <= 0f || faction != BattleFactions.Unsc) return false;
+            WeaponFeelKind kind = WeaponFeel.For(weapon);
+            return kind == WeaponFeelKind.Rocket || kind == WeaponFeelKind.Bomb;
+        }
+
+        /// <summary>A shot must fly at least this long (real seconds) for its coming down to be heard.</summary>
+        public const float ShortestIncomingSeconds = 0.12f;
 
         /// <summary>The strikes that fall from the sky as a rocket or a bomb would, and are heard coming (FallingIn): the Archer missiles and the HAVOK warhead.</summary>
         public static bool FallsIn(SpellStats spell)
@@ -311,6 +332,7 @@ namespace Halobellum.Presentation
             Limit(limiter, SfxGroup.Nodes, 5, 0.05f); // A crowd's nodes land 0.08 s apart at the closest.
             Limit(limiter, SfxGroup.Smg, 6, 0.05f); // One ODST is heard shot for shot; a crowd of them, 20 shots a second at most.
             Limit(limiter, SfxGroup.AirFalls, 3, 0.15f);
+            Limit(limiter, SfxGroup.Incoming, 4, 0.12f);
         }
 
         private static void Limit(VoiceLimiter limiter, SfxGroup group, int voices, float gap) => limiter.SetLimit((int)group, voices, gap);

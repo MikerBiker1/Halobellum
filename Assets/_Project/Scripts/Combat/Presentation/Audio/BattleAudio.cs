@@ -7,7 +7,7 @@
 // With the owner's files in, some sounds go by more than a shot (each only once its file is in; until then the old sound plays):
 //   - flamethrowers loop while any of them fire, louder the more do (the SMG, the machine guns and the Ghost play every shot, overlapping: D114, D117);
 //   - an aircraft that blows up and falls is heard diving as it falls (the Infected Pelican's dive), and its crash comes as it hits the ground (D117);
-//   - the Archer missiles and the HAVOK warhead are heard coming down, ending as they hit (D117);
+//   - the Archer missiles and the HAVOK warhead are heard coming down, ending as they hit (D117), and so is every UNSC rocket and bomb in flight (D118);
 //   - a Wraith's shell is heard in the air until it lands;
 //   - the Scarab's beam: its charge as it starts charging (heard to its end), then "in" as it fires, the loop after that, and "out" as it stops;
 //   - a Scarab walking is a loop;
@@ -33,6 +33,8 @@ namespace Halobellum.Presentation
         private readonly Dictionary<WeaponStats, SfxCue> _fireB = new Dictionary<WeaponStats, SfxCue>();
         private readonly Dictionary<WeaponStats, SfxCue> _landings = new Dictionary<WeaponStats, SfxCue>();
         private readonly Dictionary<WeaponStats, SfxCue> _windUps = new Dictionary<WeaponStats, SfxCue>();
+        private readonly Dictionary<WeaponStats, bool> _comesDownA = new Dictionary<WeaponStats, bool>();
+        private readonly Dictionary<WeaponStats, bool> _comesDownB = new Dictionary<WeaponStats, bool>();
         private readonly List<SimUnit> _divers = new List<SimUnit>();
         private float _nextHumCheck;
         private bool _wasPlaying;
@@ -103,6 +105,8 @@ namespace Halobellum.Presentation
         {
             _fireA.Clear();
             _fireB.Clear();
+            _comesDownA.Clear();
+            _comesDownB.Clear();
         }
 
         private void OnBattleChanged(BattleSimulation simulation)
@@ -237,11 +241,33 @@ namespace Halobellum.Presentation
             if (!cue.Loops) GameAudio.Sfx(cue, Place(attacker));
             else Keep(cue, attacker.Id, _shown.ElapsedSeconds + Mathf.Max(0.25f, weapon.FireInterval * 1.6f), Place(attacker)); // Until it would have fired again, and a little more.
 
+            if (target != null && ComesDown(weapon, attacker.Stats, attacker.Team))
+            {
+                // Heard coming down for as long as it flies, so that the sound ends as it lands (D118).
+                float flight = Vec2.Distance(attacker.Position, target.Position) / weapon.ProjectileSpeed / Mathf.Max(0.05f, _battle.Speed);
+                if (flight >= AudioCatalog.ShortestIncomingSeconds)
+                {
+                    float length = AudioCatalog.Incoming.Clips.AverageLength;
+                    GameAudio.SfxShaped(AudioCatalog.Incoming, Place(target), Mathf.Max(0f, length - flight), flight, 0.05f);
+                }
+            }
+
             if (cue == AudioCatalog.FireMortar && AudioCatalog.FlightMortar.HasSound && target != null && weapon.ProjectileSpeed > 0f)
             {
                 float flight = Vec2.Distance(attacker.Position, target.Position) / weapon.ProjectileSpeed;
                 Keep(AudioCatalog.FlightMortar, --_shells, _shown.ElapsedSeconds + flight, (Place(attacker) + Place(target)) * 0.5f);
             }
+        }
+
+        /// <summary>Whether this weapon's shots are heard coming down (AudioCatalog.ComesDown), by the side's faction. Worked out once per weapon.</summary>
+        private bool ComesDown(WeaponStats weapon, UnitStats shooter, Team team)
+        {
+            if (!AudioCatalog.Incoming.HasSound) return false;
+            Dictionary<WeaponStats, bool> known = team == Team.A ? _comesDownA : _comesDownB;
+            if (known.TryGetValue(weapon, out bool down)) return down;
+            down = AudioCatalog.ComesDown(weapon, BattleFactions.OfUnit(shooter, team));
+            known[weapon] = down;
+            return down;
         }
 
         /// <summary>A weapon starts its wind-up: its own sound, if it has one, carries the shot at the end of it.</summary>
