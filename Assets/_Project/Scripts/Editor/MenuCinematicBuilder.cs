@@ -1524,8 +1524,19 @@ namespace Halobellum.EditorTools
                 renderer.receiveShadows = false;
             }
 
-            Transform belly = carrier.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == "Muzzle_0");
-            Vector3 from = belly != null ? belly.position : bounds.center;
+            // Where the beam leaves (the owner, D105): along the hull, a little over a third of its length from its pronged bow (on the left
+            // as the field sees it), and from inside the hull, which hides the beam's top, so that beam and ship meet.
+            var points = new List<Vector3>();
+            foreach (MeshFilter filter in carrier.GetComponentsInChildren<MeshFilter>())
+                points.AddRange(filter.sharedMesh.vertices.Select(v => filter.transform.TransformPoint(v)));
+            Vector3 middle = points.Aggregate(Vector3.zero, (sum, p) => sum + p) / points.Count;
+            Vector3 Flat(Vector3 v) => new Vector3(v.x, 0f, v.z).normalized;
+            float Extent(Vector3 axis) => points.Max(p => Vector3.Dot(p, axis)) - points.Min(p => Vector3.Dot(p, axis));
+            Vector3 along = Extent(Flat(carrier.transform.right)) >= Extent(Flat(carrier.transform.forward)) ? Flat(carrier.transform.right) : Flat(carrier.transform.forward);
+            Vector3 fieldRight = new Vector3(Mathf.Cos(CarrierAzimuth * Mathf.Deg2Rad), 0f, -Mathf.Sin(CarrierAzimuth * Mathf.Deg2Rad));
+            if (Vector3.Dot(along, fieldRight) < 0f) along = -along; // Its length, pointing to the right as seen from the field.
+            float bow = points.Min(p => Vector3.Dot(p, along)), stern = points.Max(p => Vector3.Dot(p, along));
+            Vector3 from = middle + along * (bow + 0.355f * (stern - bow) - Vector3.Dot(middle, along)); // Where the owner drew it, from the bow's tip.
             Vector3 to = new Vector3(from.x, -30f, from.z);
             LineRenderer Line(string name, Color colour, float width)
             {
@@ -1557,7 +1568,7 @@ namespace Halobellum.EditorTools
             land.SetColor("_BaseColor", new Color(1.8f, 0.6f, 0.45f));
             EditorUtility.SetDirty(land);
             AddGlowCard(parts, land, null, new Vector3(from.x, 70f, from.z), 520f);
-            Debug.Log($"Menu cinematic: the supercarrier at {bounds.center}, {bounds.size.x:0} m across, its beam from {from}.");
+            Debug.Log($"Menu cinematic: the supercarrier at {middle}, its beam from {from}.");
         }
 
         /// <summary>A Wraith's mortar: a slow glowing ball lobbed high, trailing light, bursting blue where it lands.</summary>

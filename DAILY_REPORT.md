@@ -2,6 +2,10 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The supercarrier's beam meets the ship (D105)
+- **In the menu:** the glassing beam now comes down from under the supercarrier's hull, a third of the way from its bow, where you drew it.
+- **Checked:** the menu's pictures and its tests. **Not checked:** played by hand.
+
 ## The menu: your supercarrier, the vehicles firing, no glow through the Scarab (D104)
 - **In the menu:** your Covenant supercarrier hangs far off over the hills in place of the drawn warship, its glassing beam falling to the burning land behind them. The Mantises fire their chaingun and rockets, Ghosts strafe with plasma, the Scorpions fire more often. The Scarab's mouth glow no longer shows through its back when the camera is behind it. Picture: `Docs/M10/menu_d104.jpg`.
 - **Checked:** the menu tests; pictures of every shot and of the menu in the test game.
