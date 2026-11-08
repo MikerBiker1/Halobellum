@@ -169,17 +169,20 @@ namespace Halobellum.Presentation
                 kit.Strand(Points, count, width * 0.35f * read, Alpha(coil, 0.75f));
             }
 
-            // Bright pulses running down it, from the mouth to the target.
+            // Bright pulses running down it, from the mouth to the target. A pulse's streak trails behind it, so it is never longer than the way
+            // back to the mouth: nothing shines out behind the mouth (the owner, D103).
             for (int k = 0; k < 6; k++)
             {
                 float f = Mathf.Repeat(time * 1.9f + k / 6f, 1f);
                 Vector3 at = from + span * f;
-                kit.HeadGlow(at, width * 3.2f * read * (0.7f + 0.3f * Mathf.Sin(time * 30f + k)), Alpha(Color.Lerp(color, Color.white, 0.5f), 0.85f * Mathf.Sin(f * Mathf.PI) + 0.15f));
-                kit.HeadStreak(at, axis, width * 6f * read, width * 1.1f * read, Alpha(Color.white, 0.6f));
+                float fade = 0.85f * Mathf.Sin(f * Mathf.PI) + 0.15f;
+                kit.HeadGlow(at, width * 3.2f * read * (0.7f + 0.3f * Mathf.Sin(time * 30f + k)), Alpha(Color.Lerp(color, Color.white, 0.5f), fade));
+                float trail = Mathf.Min(width * 6f * read, f * length);
+                if (trail > width * 1.5f * read) kit.HeadStreak(at, axis, trail, width * 1.1f * read, Alpha(Color.white, 0.6f * fade));
             }
 
             // At the mouth: a flare with turning rays, and the mandibles burning green.
-            kit.HeadGlow(from, 5.5f * pulse * read, color);
+            kit.HeadGlow(from, 4.2f * pulse * read, color);
             kit.HeadGlow(from, 3.2f * pulse * read, Alpha(MouthGreen, 0.65f));
             kit.HeadGlow(from, 1.8f * read, Color.white);
             for (int r = 0; r < 6; r++)

@@ -168,7 +168,7 @@ namespace Halobellum.Tests
                 Material hull = wraith.GetComponentsInChildren<MeshRenderer>().First(r => !r.name.StartsWith("Turret")).sharedMaterial;
                 Assert.IsNotNull(hull.GetTexture("_BaseMap"));
                 Assert.AreEqual(0.15f, hull.GetFloat("_Smoothness"), 0.01f, "Matte, or it mirrors the sky.");
-                Assert.Less(wraith.GetComponentsInChildren<MeshFilter>().Sum(f => f.sharedMesh.triangles.Length / 3), 8100);
+                Assert.Less(wraith.GetComponentsInChildren<MeshFilter>().Where(f => f.GetComponentsInParent<Transform>(true).All(t => !t.name.StartsWith("Driver_"))).Sum(f => f.sharedMesh.triangles.Length / 3), 8100); // The Wraith itself, not the Elite in its hatch (D103).
             }
             finally
             {

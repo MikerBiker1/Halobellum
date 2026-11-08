@@ -2,6 +2,12 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The beam's backdraft gone, an Elite in the Wraith, the Chopper's rider on its seat (D103)
+- **In the game:** the Scarab's beam no longer throws a column of light out behind its mouth. The Wraith's hatch has an Elite sitting in it (a Combat Form in the infested Wraith). The Chopper's Brute sits on the low saddle behind the tank with his feet on the rests, no longer through the tank.
+- **Menu:** the racing Ghosts and Warthogs keep clear of everything standing; the beam shows nothing behind the Scarab; the Wraiths have their Elites.
+- **Checked:** the crew and menu tests; pictures in the test game (the Wraith, the infested Wraith, the Chopper, the Scarab firing) and of the menu.
+- **Not checked:** played by hand.
+
 ## The Mantis animated, the Scarab's beam, drivers in the vehicles (D97, D98, D99)
 - **The Mantis (D97)** walks now, heavily, each foot planted, the hips dropping onto it, the arms swinging a little; it raises both arms to fire, the chaingun shuddering with every round and the rocket arm kicking as a rocket leaves, and falls flat on its chest when it dies. Its rockets leave its left arm now, its rounds its right.
 - **The Scarab (D98)** gathers its shot: energy spirals into its mouth, arcs coil in and a ring of light closes round it, then the beam fires, wound with turning coils of energy, pulses running down it, sparks peeling off; its mouth glows green inside meanwhile, the hollows either side of the cannon lit. The menu's Scarab fires the same way.

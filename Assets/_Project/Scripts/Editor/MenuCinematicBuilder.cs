@@ -65,6 +65,8 @@ namespace Halobellum.EditorTools
         private const float MapReach = 330f;
 
         private static readonly List<Vector4> Craters = new List<Vector4>(); // x, z, radius, depth.
+        /// <summary>What stands on the field, which a marcher's line must keep clear of (D103): where, how far round it, and the vehicle itself, if one.</summary>
+        private static readonly List<(Vector2 At, float Radius, Transform Body)> Blocked = new List<(Vector2, float, Transform)>();
         private static Mesh _quad;
 
         [MenuItem("Halobellum/Scenes/Rebuild Main Menu Scene")]
@@ -162,6 +164,7 @@ namespace Halobellum.EditorTools
             _quad = Resources.GetBuiltinResource<Mesh>("Quad.fbx");
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             MakeCraters();
+            Blocked.Clear();
 
             var root = new GameObject("Menu Cinematic");
             var cinematic = root.AddComponent<MenuCinematic>();
@@ -683,6 +686,8 @@ namespace Halobellum.EditorTools
                 Mesh mesh = MakeWallMesh(width, height, 0.6f, seed);
                 SaveAsset(mesh, $"{ArtFolder}/CinematicWall{seed}.asset");
                 GameObject wall = Solid("Ruin", parent, mesh, art.concrete, Ground(x, z, -0.4f), Quaternion.Euler(0f, yaw, 0f), Vector3.one);
+                Vector3 along = Quaternion.Euler(0f, yaw, 0f) * Vector3.right;
+                for (float d = -width * 0.5f; d <= width * 0.5f; d += 2f) Blocked.Add((new Vector2(x + along.x * d, z + along.z * d), 1.6f, null));
                 wall.GetComponent<MeshRenderer>().shadowCastingMode = ShadowCastingMode.On;
             }
             Wall(-108f, -58f, 12f, 16f, 7f, 1);
@@ -808,6 +813,9 @@ namespace Halobellum.EditorTools
             float lowest = float.MaxValue;
             foreach (Renderer renderer in model.GetComponentsInChildren<Renderer>()) lowest = Mathf.Min(lowest, renderer.bounds.min.y);
             if (lowest < float.MaxValue) model.transform.position += Vector3.up * (GroundHeight(x, z) - lowest + lift);
+            var bounds = new Bounds(model.transform.position, Vector3.zero);
+            foreach (Renderer renderer in model.GetComponentsInChildren<Renderer>()) bounds.Encapsulate(renderer.bounds);
+            Blocked.Add((new Vector2(x, z), Mathf.Max(bounds.extents.x, bounds.extents.z), model.transform));
             return model;
         }
 
@@ -843,6 +851,7 @@ namespace Halobellum.EditorTools
             renderer.sharedMaterials = body.Materials;
             renderer.shadowCastingMode = ShadowCastingMode.Off;
             parts.figures.Add(new MenuCinematic.Figure { renderer = renderer, firstRow = clip.firstRow, frames = clip.frames, start = parts.Range(-10f, 0f), pace = 1f });
+            Blocked.Add((new Vector2(position.x, position.z), 2.5f * scale, thing.transform));
         }
 
         /// <summary>
@@ -851,10 +860,9 @@ namespace Halobellum.EditorTools
         /// </summary>
         private static void AddMarcher(Parts parts, Transform body, Vector2 from, Vector2 toward, float speed, float longest, float lift = 0f)
         {
-            float loop = Loop;
-            int trips = Mathf.Max(1, Mathf.CeilToInt(speed * loop / longest));
-            float length = speed * loop / trips;
-            Vector2 to = from + (toward - from).normalized * length;
+            Vector2 to = MarchEnd(from, toward, speed, longest);
+            float length = Vector2.Distance(from, to);
+            Blocked.RemoveAll(b => b.Body == body); // Moving, it is no longer in anyone's way where it was put.
             var heights = new float[24];
             for (int i = 0; i < heights.Length; i++)
             {
@@ -871,6 +879,40 @@ namespace Halobellum.EditorTools
                 size = body.localScale,
                 heights = heights,
             });
+        }
+
+        /// <summary>Where a marcher's line ends, from here toward there at this speed: a whole number of trips a loop, no longer than longest.</summary>
+        private static Vector2 MarchEnd(Vector2 from, Vector2 toward, float speed, float longest)
+        {
+            int trips = Mathf.Max(1, Mathf.CeilToInt(speed * Loop / longest));
+            return from + (toward - from).normalized * (speed * Loop / trips);
+        }
+
+        /// <summary>True if a line keeps this far clear of everything standing on the field but the one going along it.</summary>
+        private static bool Clear(Vector2 from, Vector2 to, float clearance, Transform self)
+        {
+            Vector2 line = to - from;
+            float lengthSquared = Mathf.Max(1e-4f, line.sqrMagnitude);
+            foreach ((Vector2 at, float radius, Transform body) in Blocked)
+            {
+                if (body == self) continue;
+                float share = Mathf.Clamp01(Vector2.Dot(at - from, line) / lengthSquared);
+                if (Vector2.Distance(at, from + line * share) < radius + clearance) return false;
+            }
+            return true;
+        }
+
+        /// <summary>A start and an aim for a marcher whose line keeps clear of everything standing (the owner, D103), from as many tries as it takes.</summary>
+        private static (Vector2 From, Vector2 Toward) ClearLine(Transform self, float speed, float longest, Func<(Vector2, Vector2)> pick)
+        {
+            (Vector2 from, Vector2 toward) = pick();
+            for (int tries = 0; tries < 200; tries++)
+            {
+                if (Clear(from, MarchEnd(from, toward, speed, longest), 2.5f, self)) return (from, toward);
+                (from, toward) = pick();
+            }
+            Debug.LogWarning($"Menu cinematic: no clear line for {self.name}.");
+            return (from, toward);
         }
 
         private static void BuildUnsc(MenuCinematic cinematic, Art art, Parts parts)
@@ -900,7 +942,13 @@ namespace Halobellum.EditorTools
             for (int i = 0; i < 2; i++)
             {
                 GameObject hog = PlaceVehicle("Warthog_Model", army, -112f, -100f, 0f, 1.25f);
-                AddMarcher(parts, hog.transform, new Vector2(-112f - i * 14f, -110f), new Vector2(-104f - i * 14f, 120f), 12f, 210f);
+                // Somewhere behind the line, on a lane clear of the ruins and the parked vehicles (their old lane ran through a wall, D103).
+                (Vector2 from, Vector2 toward) = ClearLine(hog.transform, 12f, 120f, () =>
+                {
+                    var start = new Vector2(parts.Range(-200f, -85f), parts.Range(-130f, 40f));
+                    return (start, start + new Vector2(parts.Range(-40f, 40f), 200f));
+                });
+                AddMarcher(parts, hog.transform, from, toward, 12f, 120f);
             }
 
             // The tanks' and the Mantises' guns, now and then: a shell arcing a little and bursting where it lands.
@@ -949,8 +997,8 @@ namespace Halobellum.EditorTools
             for (int i = 0; i < 4; i++)
             {
                 GameObject ghost = PlaceVehicle("Ghost_Model", army, 200f, 200f, 0f, 1.3f, null, 0.6f);
-                Vector2 from = new Vector2(Range(170f, 240f), Range(140f, 250f));
-                AddMarcher(parts, ghost.transform, from, new Vector2(-40f, Range(-40f, 80f)), 15f, 200f, 0.6f);
+                (Vector2 from, Vector2 toward) = ClearLine(ghost.transform, 15f, 200f, () => (new Vector2(Range(170f, 240f), Range(140f, 250f)), new Vector2(-40f, Range(-40f, 80f))));
+                AddMarcher(parts, ghost.transform, from, toward, 15f, 200f, 0.6f);
             }
         }
 
@@ -981,6 +1029,7 @@ namespace Halobellum.EditorTools
                 float scale = Range(0.8f, 1.8f) * (i < 4 ? 1.5f : 1f);
                 GameObject growth = Solid("Flood Growth", horde, growths[i % growths.Count], i % 3 == 0 ? art.growthDark : art.growth,
                     Ground(spot.x, spot.y, -0.5f), Quaternion.Euler(0f, Range(0f, 360f), 0f), Vector3.one * scale);
+                Blocked.Add((spot, 2.5f * scale, null));
                 growth.GetComponent<MeshRenderer>().shadowCastingMode = ShadowCastingMode.On;
                 if (i % 2 == 0) AddGlowCard(parts, art.floodGlow, horde, Ground(spot.x, spot.y, 1.6f * scale), 2.4f * scale);
             }
@@ -1001,8 +1050,8 @@ namespace Halobellum.EditorTools
             for (int i = 0; i < 4; i++)
             {
                 GameObject ghost = PlaceVehicle("InfestedGhost_Model", horde, 180f, -180f, 0f, 1.3f, null, 0.6f);
-                Vector2 from = new Vector2(Range(150f, 220f), Range(-210f, -120f));
-                AddMarcher(parts, ghost.transform, from, new Vector2(-40f, Range(-70f, 0f)), 13f, 200f, 0.6f);
+                (Vector2 from, Vector2 toward) = ClearLine(ghost.transform, 13f, 200f, () => (new Vector2(Range(150f, 220f), Range(-210f, -120f)), new Vector2(-40f, Range(-70f, 0f))));
+                AddMarcher(parts, ghost.transform, from, toward, 13f, 200f, 0.6f);
             }
 
             // Spores drifting over the creep.

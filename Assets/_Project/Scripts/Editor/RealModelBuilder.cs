@@ -93,10 +93,11 @@ namespace Halobellum.EditorTools
 
         /// <summary>Where the drivers are, and how tall each soldier stands in the game, in metres.</summary>
         private const string DriverFolder = "Assets/_Project/Art/Imported/Models/Drivers";
-        private static readonly Dictionary<string, float> SoldierHeight = new Dictionary<string, float> { { "Marine", 1.85f }, { "Grunt", 1.4f }, { "Brute", 2.55f }, { "CombatForm", 2.15f } };
+        private static readonly Dictionary<string, float> SoldierHeight = new Dictionary<string, float> { { "Marine", 1.85f }, { "Grunt", 1.4f }, { "Brute", 2.55f }, { "CombatForm", 2.15f }, { "Elite", 2.4f } };
 
         // The seats (D99): a Warthog's driver (on its left) and the gunner at its gun; a Grunt astride a Ghost; a Brute in the Marauder's open hatch
-        // and astride the Chopper; a Marine in the Elephant's front cupola. The Flood's infested ones have Combat Forms in the same seats.
+        // and on the Chopper's low saddle behind its tank, feet on the rests either side (D103); an Elite in the Wraith's round hatch (D103); a
+        // Marine in the Elephant's front cupola. The Flood's infested ones have Combat Forms in the same seats.
         private static readonly Seat[] WarthogCrew = { new Seat("Marine_Drive", -0.45f, 1.08f, -0.2f), new Seat("Marine_Gun", 0f, 1.85f, -1.75f, "Turret_0") };
         private static readonly Seat[] InfestedWarthogCrew = { new Seat("CombatForm_Drive", -0.45f, 1.05f, -0.25f), new Seat("CombatForm_Gun", 0f, 1.75f, -1.8f, "Turret_0") };
 
@@ -109,7 +110,7 @@ namespace Halobellum.EditorTools
             new Entry { Unit = "UNSC/Hornet", Folder = "Hornet", Length = 6f },
             new Entry { Unit = "UNSC/Pelican", Folder = "Pelican", Length = 10f },
             new Entry { Unit = "Covenant/Banshee", Folder = "Banshee", Length = 6.6f, Thrusters = true }, // Its wings are wider than it is long: 5.4 m nose to tail.
-            new Entry { Unit = "Covenant/Wraith", Folder = "Wraith", Length = 6.2f },
+            new Entry { Unit = "Covenant/Wraith", Folder = "Wraith", Length = 6.2f, Seats = new[] { new Seat("Elite_Hatch", 0f, 1.84f, 0.48f) } },
             new Entry { Unit = "Covenant/Scarab", Folder = "Scarab", Length = 14f, Mouth = true },
             new Entry { Unit = "Flood/InfectedPelican", Folder = "Pelican", Length = 10f, Tint = Infested },
             new Entry { Unit = "Flood/InfectedPhantom", Folder = "Phantom", Length = 12f, Tint = Infested },
@@ -123,12 +124,12 @@ namespace Halobellum.EditorTools
             new Entry { Unit = "Flood/PureFormTank", Folder = "PureFormTank", Height = 3.8f },
             // Sub-factions (M10): their own models, and real models over again where that is honest.
             new Entry { Unit = "ArmoredDivision/Grizzly", Folder = "Grizzly", Length = 7.2f },
-            new Entry { Unit = "Banished/Chopper", Folder = "Chopper", Length = 4.8f, Tint = new Color(1.4f, 1.35f, 1.25f), Seats = new[] { new Seat("Brute_Ride", 0f, 1.25f, -0.55f) } }, // A very dark texture: it read as a black shape.
+            new Entry { Unit = "Banished/Chopper", Folder = "Chopper", Length = 4.8f, Tint = new Color(1.4f, 1.35f, 1.25f), Seats = new[] { new Seat("Brute_Chopper", 0f, 1.08f, -1.22f) } }, // A very dark texture: it read as a black shape.
             new Entry { Unit = "AerospaceCommand/CondorGunship", Folder = "Condor", Length = 11f },
             new Entry { Unit = "FloodUNSC/InfestedWarthog", Folder = "Warthog", Length = 4.6f, Tint = Infested, Seats = InfestedWarthogCrew },
             new Entry { Unit = "FloodUNSC/InfestedScorpion", Folder = "Scorpion", Length = 6.2f, Tint = Infested },
             new Entry { Unit = "FloodUNSC/InfestedHornet", Folder = "Hornet", Length = 6f, Tint = Infested },
-            new Entry { Unit = "FloodCovenant/InfestedWraith", Folder = "Wraith", Length = 6.2f, Tint = Infested },
+            new Entry { Unit = "FloodCovenant/InfestedWraith", Folder = "Wraith", Length = 6.2f, Tint = Infested, Seats = new[] { new Seat("CombatForm_Hatch", 0f, 1.84f, 0.48f) } },
             new Entry { Unit = "FloodCovenant/InfestedBanshee", Folder = "Banshee", Length = 6.6f, Tint = Infested, Thrusters = true },
             // The owner's second batch (M11).
             new Entry { Unit = "UNSC/ArcherMissilePod", Folder = "ArcherMissilePod", Height = 3.6f },

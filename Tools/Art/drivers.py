@@ -34,9 +34,11 @@ SOLDIERS = {
     "Grunt": ("Grunt/Grunt.fbx", "Grunt/Grunt.png", MESHY),
     "Brute": ("BruteGrenadier/BruteGrenadier.fbx", "BruteGrenadier/BruteGrenadier.png", MESHY),
     "CombatForm": ("CombatFormAnimated/CombatFormAnimated.fbx", "CombatFormAnimated/CombatFormAnimated.png", FLOOD),
+    "Elite": ("Elite/Elite.fbx", "Elite/Elite.png", MESHY),
 }
 # The seats one can see into: no cockpit under glass (the Hornet's, the Sparrowhawk's) shows its pilot, so Pilot is posed only on request.
-DRIVERS = ["Marine_Drive", "Marine_Gun", "Grunt_Ride", "Brute_Drive", "Brute_Ride", "CombatForm_Drive", "CombatForm_Gun", "CombatForm_Ride"]
+DRIVERS = ["Marine_Drive", "Marine_Gun", "Grunt_Ride", "Brute_Drive", "Brute_Chopper", "CombatForm_Drive", "CombatForm_Gun", "CombatForm_Ride",
+           "Elite_Hatch", "CombatForm_Hatch"]
 
 
 def direction(forward, up, right, f=0.0, u=0.0, r=0.0):
@@ -78,7 +80,19 @@ def poses(F, U, R):
     gun.update(both(lambda s, o: {
         f"thigh{s}": direction(F, U, R, f=0.12, u=-1) + o * 0.1, f"shin{s}": direction(F, U, R, f=-0.12, u=-1), f"foot{s}": direction(F, U, R, f=1, u=-0.2),
         f"arm{s}": direction(F, U, R, f=0.6, u=-0.75) + o * 0.05, f"forearm{s}": direction(F, U, R, f=1, u=0.05) - o * 0.4, f"hand{s}": direction(F, U, R, f=1) - o * 0.3}))
-    return {"Drive": drive, "Pilot": pilot, "Ride": ride, "Gun": gun}
+    # Chopper: sitting back on a low saddle behind the tank (the owner, D103), knees up and wide, feet forward on the rests either side,
+    # leaning over the tank to the bars.
+    chopper = {"spine": direction(F, U, R, f=0.38, u=1), "neck": direction(F, U, R, f=0.25, u=1), "head": direction(F, U, R, f=0.4, u=1)}
+    chopper.update(both(lambda s, o: {
+        f"thigh{s}": direction(F, U, R, f=0.8, u=0.12) + o * 0.55, f"shin{s}": direction(F, U, R, f=0.35, u=-1) + o * 0.15, f"foot{s}": direction(F, U, R, f=1, u=-0.1),
+        f"arm{s}": direction(F, U, R, f=0.9, u=-0.3) + o * 0.12, f"forearm{s}": direction(F, U, R, f=1, u=0.05) - o * 0.1, f"hand{s}": direction(F, U, R, f=1)}))
+
+    # Hatch: sitting upright in a round hatch (the Wraith's, D103), the legs down inside it, the forearms resting forward on its rim.
+    hatch = {"spine": direction(F, U, R, f=0.05, u=1), "neck": direction(F, U, R, f=0.12, u=1), "head": direction(F, U, R, f=0.15, u=1)}
+    hatch.update(both(lambda s, o: {
+        f"thigh{s}": direction(F, U, R, f=0.85, u=-0.5) + o * 0.1, f"shin{s}": direction(F, U, R, f=-0.2, u=-1), f"foot{s}": direction(F, U, R, f=1, u=-0.25),
+        f"arm{s}": direction(F, U, R, f=0.35, u=-0.9) + o * 0.12, f"forearm{s}": direction(F, U, R, f=1, u=-0.05) - o * 0.25, f"hand{s}": direction(F, U, R, f=1, u=-0.1)}))
+    return {"Drive": drive, "Pilot": pilot, "Ride": ride, "Gun": gun, "Chopper": chopper, "Hatch": hatch}
 
 
 def aim(arm, name, want):

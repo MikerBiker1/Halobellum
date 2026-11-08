@@ -109,9 +109,11 @@ namespace Halobellum.Tests
             CollectionAssert.AreEqual(new[] { "Grunt_Ride" }, DriversOf(Prefab("Ghost")));
             CollectionAssert.AreEqual(new[] { "CombatForm_Ride" }, DriversOf(Prefab("InfestedGhost")));
             CollectionAssert.AreEqual(new[] { "Brute_Drive" }, DriversOf(Prefab("Marauder")), "The Banished's exclusive, a Brute's.");
-            CollectionAssert.AreEqual(new[] { "Brute_Ride" }, DriversOf(Prefab("Chopper")));
+            CollectionAssert.AreEqual(new[] { "Brute_Chopper" }, DriversOf(Prefab("Chopper")), "On its saddle behind the tank (D103).");
+            CollectionAssert.AreEqual(new[] { "Elite_Hatch" }, DriversOf(Prefab("Wraith")), "An Elite in its hatch (D103).");
+            CollectionAssert.AreEqual(new[] { "CombatForm_Hatch" }, DriversOf(Prefab("InfestedWraith")));
             CollectionAssert.AreEqual(new[] { "Marine_Gun" }, DriversOf(Prefab("Elephant")));
-            foreach (string closed in new[] { "Scorpion", "Wraith", "Banshee", "Hornet", "Pelican", "Grizzly", "Cobra", "Rhino" })
+            foreach (string closed in new[] { "Scorpion", "Banshee", "Hornet", "Pelican", "Grizzly", "Cobra", "Rhino" })
                 Assert.IsEmpty(DriversOf(Prefab(closed)), closed + " shows no seat.");
         }
 

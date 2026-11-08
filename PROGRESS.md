@@ -179,6 +179,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] The main menu remade as a cinematic battlefield: the three sides' vehicles at war under a storm, five camera shots fading into one another, the Scarab walking and firing its beam; the old menu kept as Classic in Settings (D94)
 - [x] Hard AI tournament after the animations: every sub-faction 48% to 52%, no change (D95)
 - [x] The Mantis animated, its rockets from its own arm (D97); the Scarab's beam with its charge, coils and pulses, its mouth glowing green (D98); drivers and gunners in every open seat (D99)
+- [x] The Scarab's beam without its backdraft; an Elite in the Wraith's hatch, a Combat Form in the infested one; the Chopper's Brute on its real seat; the menu's racers clear of the vehicles (D103)
 - [x] The owner's disclaimer before the main menu (D96)
 - [x] The disclaimer's request not to share, HALOBELLUM in the menu's font, the version on the menu (D100)
 - [x] The menu's music waits for the disclaimer, a click as it goes; the version is the build number (D101)

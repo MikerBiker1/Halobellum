@@ -21,7 +21,7 @@ DRIVERS = os.path.join(os.environ.get("HB_PREPARED") or os.path.join(ROOT, "Art_
 OUT = os.path.join(DRIVERS, "shots")
 
 # Each soldier's height standing, in metres in the game.
-HEIGHT = {"Marine": 1.85, "Grunt": 1.4, "Brute": 2.55, "CombatForm": 2.15}
+HEIGHT = {"Marine": 1.85, "Grunt": 1.4, "Brute": 2.55, "CombatForm": 2.15, "Elite": 2.4}
 
 # Each vehicle: its model folder, its size (("length", m) or ("height", m)) as in RealModelBuilder, and its seats:
 # (driver, hips (x, y, z) in metres here, yaw in degrees, the node it turns with or None).
@@ -29,7 +29,8 @@ VEHICLES = {
     "Warthog": ("Warthog", ("length", 4.6), [("Marine_Drive", (0.45, 0.2, 1.08), 0, None), ("Marine_Gun", (0.0, 1.75, 1.85), 0, "Turret_0")]),
     "Ghost": ("Ghost", ("length", 4.4), [("Grunt_Ride", (0.0, 1.0, 1.0), 0, None)]),
     "Marauder": ("Marauder", ("length", 5.8), [("Brute_Drive", (0.0, 0.55, 1.55), 0, None)]),
-    "Chopper": ("Chopper", ("length", 4.8), [("Brute_Ride", (0.0, 0.55, 1.25), 0, None)]),
+    # Its seat is the low saddle behind the tank (y 1.0 to 1.5, at 0.95 m), its foot rests either side ahead of it (0.6 m out, at 0.7 m).
+    "Chopper": ("Chopper", ("length", 4.8), [("Brute_Chopper", (0.0, 1.22, 1.08), 0, None)]),
     "Elephant": ("Elephant", ("length", 10.0), [("Marine_Gun", (-1.61, -3.25, 2.72), 0, "Turret_2")]),
     "GaussWarthog": ("GaussWarthog", ("length", 4.6), [("Marine_Drive", (0.45, 0.2, 1.08), 0, None), ("Marine_Gun", (0.0, 1.75, 1.85), 0, "Turret_0")]),
     # Looked at and found closed (no seat to be seen), kept to look again: the Gremlin, the Grizzly, the Sparrowhawk, the Reaver; the Hornet's
@@ -38,6 +39,9 @@ VEHICLES = {
     "Grizzly": ("Grizzly", ("length", 7.2), []),
     "Sparrowhawk": ("Sparrowhawk", ("length", 7.0), []),
     "Reaver": ("Reaver", ("height", 5.0), []),
+    # Its hatch is the round disc on top of the front dome (part of the hull, so it doesn't turn), at 1.98 m.
+    "Wraith": ("Wraith", ("length", 6.2), [("Elite_Hatch", (0.0, -0.48, 1.84), 0, None)]),
+    "InfestedWraith": ("Wraith", ("length", 6.2), [("CombatForm_Hatch", (0.0, -0.48, 1.84), 0, None)]),
     "InfestedWarthog": ("Warthog", ("length", 4.6), [("CombatForm_Drive", (0.45, 0.25, 1.05), 0, None), ("CombatForm_Gun", (0.0, 1.8, 1.75), 0, "Turret_0")]),
     "InfestedGhost": ("Ghost", ("length", 4.4), [("CombatForm_Ride", (0.0, 1.05, 0.98), 0, None)]),
 }
@@ -146,12 +150,29 @@ def pictures(label, extent):
     print(f"REPORT pictures seat_{label}: across the side and top views {span:.2f} m, 640 px; middle at height {extent.z / 2:.2f}")
 
 
+def probe(extent):
+    """The surface under points across the vehicle: down its middle every 10 cm and across at HB_ACROSS (x values), printing height and part."""
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    span = extent.y / 2
+    for x in [float(v) for v in os.environ.get("HB_ACROSS", "0").split(",")]:
+        line = []
+        steps = int(span * 2 / 0.1)
+        for i in range(steps + 1):
+            y = -span + i * 0.1
+            hit, where, _, _, thing, _ = bpy.context.scene.ray_cast(depsgraph, Vector((x, y, extent.z + 5)), Vector((0, 0, -1)))
+            line.append(f"{y:+.1f}:{where.z:.2f}{'' if not hit else ('/' + thing.name[:10])}" if hit else f"{y:+.1f}:-")
+        print(f"REPORT probe x={x}: " + " ".join(line))
+
+
 chosen = os.environ.get("HB_SEATS", "").split(",") if os.environ.get("HB_SEATS") else list(VEHICLES)
 bare = bool(os.environ.get("HB_BARE"))
 os.makedirs(OUT, exist_ok=True)
 for key in chosen:
     folder, size, seats = VEHICLES[key]
     extent = load_vehicle(folder, size)
+    if os.environ.get("HB_PROBE"):
+        probe(extent)
+        continue
     if bare:
         grid(extent)
     else:

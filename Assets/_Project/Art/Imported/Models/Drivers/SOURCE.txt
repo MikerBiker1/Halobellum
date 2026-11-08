@@ -1,6 +1,7 @@
 The drivers and gunners in vehicles' open seats (decision D99), posed and frozen by Tools/Art/drivers.py from the soldiers' own rigged models:
 - Marine_Drive, Marine_Gun, Marine.png: from Models/Marine, made by the project owner with Meshy AI (meshy.ai).
 - Grunt_Ride, Grunt.png: from Models/Grunt, found by the project owner on Sketchfab (file Grunt/grunt.glb in Art_Source), rigged through Meshy.
-- Brute_Drive, Brute_Ride, Brute.png: from Models/BruteGrenadier, given by the project owner (file Meshy/enemieshalo_3covenantbrutes.glb in Art_Source).
-- CombatForm_Drive, CombatForm_Gun, CombatForm_Ride, CombatForm.png: from Models/CombatFormAnimated, given by the project owner (file Meshy/halo_ce_flood_Combat_form.glb in Art_Source).
+- Brute_Drive, Brute_Chopper, Brute.png: from Models/BruteGrenadier, given by the project owner (file Meshy/enemieshalo_3covenantbrutes.glb in Art_Source).
+- CombatForm_Drive, CombatForm_Gun, CombatForm_Ride, CombatForm_Hatch, CombatForm.png: from Models/CombatFormAnimated, given by the project owner (file Meshy/halo_ce_flood_Combat_form.glb in Art_Source).
+- Elite_Hatch, Elite.png: from Models/Elite, found by the project owner on Sketchfab (file sketchfab.com/enemieshalo_3covenantelitesminor.glb in Art_Source), rigged by Meshy (D103).
 Where each seat is was found with Tools/Art/seat_fit.py. The repository is private and must stay private.
