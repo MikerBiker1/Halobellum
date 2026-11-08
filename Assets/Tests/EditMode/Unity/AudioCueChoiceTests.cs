@@ -155,17 +155,22 @@ namespace Halobellum.Tests
 
         private static string Death(string path, Team team) => BattleAudio.DeathCue(new SimUnit(0, team, 0, Unit(path), new Vec2(0f, 0f), new Vec2(0f, 1f))).Slot;
 
-        [TestCase("Flood/SwarmForm", "sfx_death_flood")]
-        [TestCase("Covenant/HunterPair", "sfx_death_infantry_covenant")]
-        [TestCase("LekgoloColony/HunterCaptain", "sfx_death_infantry_covenant")]
+        // With the owner's third batch in (D91): soldiers by kind, the Hunters' own, the Flood by size; the generated sounds stay for the rest.
+        [TestCase("Flood/SwarmForm", "sfx_death_flood_small")]
+        [TestCase("Covenant/HunterPair", "sfx_death_lekgolo")]
+        [TestCase("LekgoloColony/HunterCaptain", "sfx_death_lekgolo")]
+        [TestCase("LekgoloColony/Goliath", "sfx_death_lekgolo")]
         [TestCase("Covenant/Banshee", "sfx_death_air")]
         [TestCase("Flood/InfectedPhantom", "sfx_death_air")]
         [TestCase("Covenant/Ghost", "sfx_death_vehicle")]
         [TestCase("Covenant/Wraith", "sfx_explosion_medium")]
         [TestCase("Covenant/Scarab", "sfx_death_scarab")]
         [TestCase("Flood/CarrierForm", "sfx_flood_burst")]
-        [TestCase("Flood/CombatForm", "sfx_death_flood")]
-        [TestCase("Flood/Abomination", "sfx_pelican_crash")]
+        [TestCase("Flood/CombatForm", "sfx_death_flood_small")]
+        [TestCase("Flood/PureFormTank", "sfx_death_flood_big")]
+        [TestCase("Flood/Abomination", "sfx_death_flood_huge")]
+        [TestCase("UNSC/Marine", "sfx_death_human")]
+        [TestCase("Covenant/Grunt", "sfx_death_grunt")]
         public void ADeath_GoesByWhatDied(string path, string expected)
         {
             Assert.AreEqual(expected, Death(path, Team.B));
@@ -175,52 +180,42 @@ namespace Halobellum.Tests
         public void ADeath_FollowsTheBodyInAMixedSandboxArmy()
         {
             BattleFactions.Set(BattleFactions.Unsc, BattleFactions.Covenant);
-            Assert.AreEqual("sfx_death_flood", Death("Flood/CombatForm", Team.A), "A Flood form in a mostly UNSC army.");
+            Assert.AreEqual("sfx_death_flood_small", Death("Flood/CombatForm", Team.A), "A Flood form in a mostly UNSC army.");
             BattleFactions.Set(BattleFactions.Flood, BattleFactions.Covenant);
-            Assert.AreEqual("sfx_death_infantry", Death("UNSC/Marine", Team.A), "A Marine in a mostly Flood army.");
+            Assert.AreEqual("sfx_death_human", Death("UNSC/Marine", Team.A), "A Marine in a mostly Flood army.");
         }
 
-        [TestCase("Covenant/HunterPair", "sfx_death_infantry_covenant")]
-        [TestCase("LekgoloColony/HunterCaptain", "sfx_death_infantry_covenant")]
-        [TestCase("LekgoloColony/Goliath", "sfx_explosion_medium")]
-        public void AHuntersDeath_KeepsTodaysCue_UntilThereIsAFileInItsOwnSlot(string path, string today)
+        [Test]
+        public void WithoutTheOwnersFile_ADeathFallsBackOnTheGeneratedOnes()
         {
-            AudioLibrary.Forget();
-            Assert.IsTrue(AudioCatalog.DeathLekgolo.Clips.IsEmpty, "The slot is waiting for the owner's file: a generated one would change every Hunter's death.");
-            Assert.AreEqual(today, Death(path, Team.B));
-        }
-
-        [TestCase("Covenant/HunterPair")]
-        [TestCase("LekgoloColony/HunterCaptain")]
-        [TestCase("LekgoloColony/Goliath")]
-        public void AHuntersDeath_UsesTheOwnersFile_OnceThereIsOne(string path)
-        {
+            // The owner's soldiers' and Flood deaths only replace the generated ones while their files are in.
             System.Func<string, AudioClip> real = AudioLibrary.Loader;
-            AudioClip clip = AudioClip.Create("Test", 100, 1, 44100, false);
             try
             {
-                AudioLibrary.Loader = wanted => wanted == AudioLibrary.OverrideFolder + "sfx_death_lekgolo" ? clip : real(wanted);
+                AudioLibrary.Loader = wanted => wanted.StartsWith(AudioLibrary.OverrideFolder + "sfx_death_") ? null : real(wanted);
                 AudioLibrary.Forget();
-                Assert.AreEqual("sfx_death_lekgolo", Death(path, Team.B));
-                Assert.AreEqual("sfx_death_infantry", Death("UNSC/Marine", Team.A), "Nobody else's.");
+                AudioCatalog.ForgetClips();
+                Assert.AreEqual("sfx_death_infantry", Death("UNSC/Marine", Team.A));
+                Assert.AreEqual("sfx_death_infantry_covenant", Death("Covenant/HunterPair", Team.B), "No Hunter file: a Covenant soldier's fall.");
                 Assert.AreEqual("sfx_death_flood", Death("Flood/CombatForm", Team.B));
+                Assert.AreEqual("sfx_pelican_crash", Death("Flood/Abomination", Team.B));
             }
             finally
             {
                 AudioLibrary.Loader = real;
                 AudioLibrary.Forget();
-                Object.DestroyImmediate(clip);
+                AudioCatalog.ForgetClips();
             }
         }
 
         [Test]
-        public void InASkirmish_ADeathGoesByTheBodysOwnFaction_NotTheLand()
+        public void InASkirmish_ADeathGoesByTheBody_NotTheLand()
         {
             var factions = new Dictionary<string, string> { { "Grunt", BattleFactions.Covenant }, { "Marine", BattleFactions.Unsc } };
             BattleFactions.SetSkirmish(BattleFactions.Unsc, factions);
-            Assert.AreEqual("sfx_death_infantry_covenant", Death("Covenant/Grunt", Team.A), "A Grunt on the UNSC's land.");
+            Assert.AreEqual("sfx_death_grunt", Death("Covenant/Grunt", Team.A), "A Grunt on the UNSC's land.");
             BattleFactions.SetSkirmish(BattleFactions.Covenant, factions);
-            Assert.AreEqual("sfx_death_infantry", Death("UNSC/Marine", Team.B), "A Marine on the Covenant's land.");
+            Assert.AreEqual("sfx_death_human", Death("UNSC/Marine", Team.B), "A Marine on the Covenant's land.");
         }
 
         [Test]
