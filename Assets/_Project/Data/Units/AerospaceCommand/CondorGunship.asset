@@ -55,6 +55,136 @@ MonoBehaviour:
     hitSlowSeconds: 0
     hitSlowShare: 0
     windUpSeconds: 0
+  - weaponName: Light Spartan Laser (nose)
+    damagePerShot: 60
+    fireInterval: 4
+    range: 20
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 0
+    damageType: 2
+    isAntiArmor: 1
+    canBeBlocked: 0
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    targetClass: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+    windUpSeconds: 2.5
+  - weaponName: Light Spartan Laser (front right)
+    damagePerShot: 60
+    fireInterval: 4
+    range: 20
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 0
+    damageType: 2
+    isAntiArmor: 1
+    canBeBlocked: 0
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    targetClass: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+    windUpSeconds: 2.5
+  - weaponName: Light Spartan Laser (front left)
+    damagePerShot: 60
+    fireInterval: 4
+    range: 20
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 0
+    damageType: 2
+    isAntiArmor: 1
+    canBeBlocked: 0
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    targetClass: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+    windUpSeconds: 2.5
+  - weaponName: Light Spartan Laser (rear right)
+    damagePerShot: 60
+    fireInterval: 4
+    range: 20
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 0
+    damageType: 2
+    isAntiArmor: 1
+    canBeBlocked: 0
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    targetClass: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+    windUpSeconds: 2.5
+  - weaponName: Light Spartan Laser (rear left)
+    damagePerShot: 60
+    fireInterval: 4
+    range: 20
+    minRange: 0
+    projectileSpeed: 0
+    splashRadius: 0
+    damageType: 2
+    isAntiArmor: 1
+    canBeBlocked: 0
+    hasOwnTargetFilter: 0
+    targetFilter: 0
+    airDamageMultiplier: 1
+    coneDegrees: 0
+    targetClass: 0
+    lobbed: 0
+    beamSeconds: 0
+    beamChargeSeconds: 0
+    beamRestSeconds: 0
+    beamSweepSpeed: 0
+    seedSeconds: 0
+    seedDamageSharePerSecond: 0
+    seedSlowShare: 0
+    hitSlowSeconds: 0
+    hitSlowShare: 0
+    windUpSeconds: 2.5
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -62,9 +192,9 @@ MonoBehaviour:
     rearDamageMultiplier: 1
     blockChance: 0
     blockedDamageTypes: 
-  reinforcementUnit: {fileID: 11400000, guid: 63fe08127caa6095039aa26ce7f4e1c8, type: 2}
-  reinforcementBodies: 6
-  reinforcementDelaySeconds: 7
+  reinforcementUnit: {fileID: 0}
+  reinforcementBodies: 0
+  reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
   reinforcementDrops: 1
   reinforcementLandSeconds: 0
@@ -94,6 +224,7 @@ MonoBehaviour:
   leapRange: 0
   leapSpeed: 0
   leapCooldownSeconds: 0
+  leapCharges: 0
   techUpgrades:
   - {fileID: 11400000, guid: 5cfb2a00ab6505104641697605f3029b, type: 2}
   - {fileID: 11400000, guid: 76f76226365fbb866a15928665b1a8cc, type: 2}
@@ -106,5 +237,6 @@ MonoBehaviour:
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air
   notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Reaver (100%).
-    A gunship that also drops 6 Marines after 7 seconds, without needing a tech.
-    First-pass M10 values, Aerospace Command (Docs/M10/subfactions.md).'
+    A gunship: twin autocannons under its belly and five light Spartan Lasers on
+    turrets of their own, each finding its own target. First-pass M10 values, Aerospace
+    Command (Docs/M10/subfactions.md).'

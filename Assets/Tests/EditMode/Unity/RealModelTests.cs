@@ -5,6 +5,7 @@
 // Depends on: Halobellum.Units, NUnit, UnityEditor, UnityEngine.
 
 using System.Linq;
+using Halobellum.Core;
 using Halobellum.Units;
 using NUnit.Framework;
 using UnityEditor;
@@ -139,6 +140,27 @@ namespace Halobellum.Tests
             Assert.AreEqual("Condor_0", material.name);
             Assert.AreEqual(1f, material.color.r, 0.01f, "It shows its texture as it is.");
             Assert.IsNotNull(unit.prefab.GetComponentsInChildren<Transform>().Single(t => t.name == "Turret_0").Find("Muzzle_0a"));
+        }
+
+        [Test]
+        public void Condor_FiveGunPods_AreTurretsOfTheirOwn_EachWithTwoMuzzles_AndAWeapon()
+        {
+            // D111: what were taken for landing legs are gun pods, each a light Spartan Laser turning on its own mount toward its own target.
+            var unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/AerospaceCommand/CondorGunship.asset");
+            Transform[] nodes = unit.prefab.GetComponentsInChildren<Transform>();
+            UnitStats stats = unit.ToStats();
+            Assert.AreEqual(6, stats.Weapons.Length, "Its belly gun and five lasers.");
+            for (int k = 1; k <= 5; k++)
+            {
+                Transform turret = nodes.Single(t => t.name == "Turret_" + k);
+                Assert.IsNotNull(turret.Find($"Muzzle_{k}a"), $"Turret_{k}'s first barrel.");
+                Assert.IsNotNull(turret.Find($"Muzzle_{k}b"), $"Turret_{k}'s second barrel.");
+                Vector3 barrel = unit.prefab.transform.InverseTransformPoint(turret.Find($"Muzzle_{k}a").position) - unit.prefab.transform.InverseTransformPoint(turret.position);
+                Assert.Greater(barrel.z, 0.3f, $"Turret_{k} rests looking forward, as a turret aims by turning from forward.");
+                StringAssert.Contains("Spartan Laser", stats.Weapons[k].Name);
+                Assert.IsTrue(stats.Weapons[k].HasWindUp, "It charges before it fires.");
+            }
+            Assert.IsNull(stats.Reinforcement, "It drops no Marines any more.");
         }
 
         [Test]

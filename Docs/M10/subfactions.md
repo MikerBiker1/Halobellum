@@ -27,7 +27,7 @@ The brief says to prefer what exists, and almost every unit does. Only two thing
 
 A third field is looks only: `bakedTint` and `bakedScale` let units that share a baked body look different.
 
-What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested Marines, Grunts and Elites), auras (Hunter Captain, Grunt Goblin), mid-battle drops (Condor Gunship), spawners (Spawner), death bursts (Methane Wagon), defense arcs (Goliath, Hunter Captain), lobbed shots, beams, and a melee main weapon with a gun on the side, which makes a unit charge in while firing (Chopper, Infested Warthog and Ghost).
+What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested Marines, Grunts and Elites), auras (Hunter Captain, Grunt Goblin), mid-battle drops (the Condor Gunship's, until D111), spawners (Spawner), death bursts (Methane Wagon), defense arcs (Goliath, Hunter Captain), lobbed shots, beams, and a melee main weapon with a gun on the side, which makes a unit charge in while firing (Chopper, Infested Warthog and Ghost).
 
 ## The units
 
@@ -71,12 +71,12 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 | Sparrowhawk | Aerial | 2 | 50 | 1 | 250 | 550 | Light | 0 | 4 | Heavy Autocannon (18 per 0.3 s, Ballistic, anti-armor, 14 m) | 39 of 69, 58% | Wolverine 100%, Swarm Form 100% |
 | Longsword | Aerial | 2 | 50 | 1 | 300 | 600 | Light | 0 | 5 | Carpet Bombs (150 per 2.5 s, Explosive, 5 m, splash 5 m) | 39 of 69, 56% | Wolverine 100%, Vampire 100% |
 | Vulture | Aerial | 3 | 200 | 1 | 400 | 900 | Heavy | 0 | 2.5 | Missile Barrage (50 per 3 s, Explosive, 22 m, splash 3 m); Chin Gun (10 per 0.2 s, Ballistic, 14 m) | 45 of 69, 65% | Wolverine 100%, Vampire 100% |
-| Condor Gunship | Aerial | 3 | 200 | 1 | 400 | 1500 | Light | 0 | 3.25 | Twin Autocannons (20 per 0.25 s, Ballistic, 16 m) | 44 of 69, 65% | Wolverine 100%, Reaver 100% |
+| Condor Gunship | Aerial | 3 | 200 | 1 | 400 | 1500 | Light | 0 | 3.25 | Twin Autocannons (20 per 0.25 s, Ballistic, 16 m); five Light Spartan Lasers (60 per 4 s each, Energy, anti-armor, 20 m, 2.5 s wind-up) | 44 of 69, 65% | Wolverine 100%, Reaver 100% |
 
 - **Sparrowhawk.** Gunship that hunts vehicles. Its gun is poor against infantry.
 - **Longsword.** Heavy bomber. It has to fly over its target, and cannot fight other aircraft at all.
 - **Vulture.** The heaviest gunship: heavy armor, slow, long-range missiles.
-- **Condor Gunship.** A gunship that also drops 6 Marines after 7 seconds, without needing a tech.
+- **Condor Gunship.** A gunship: twin autocannons under its belly and five light Spartan Lasers on turrets of their own, each finding its own target. It dropped 6 Marines until D111.
 
 ### Banished
 

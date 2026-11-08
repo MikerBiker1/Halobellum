@@ -20,9 +20,16 @@ def units(U, W):
           [W("Missile Barrage", 50, 3, 22, "Explosive", proj=40, splash=3),
            W("Chin Gun", 10, 0.2, 14, "Ballistic", block=True)], airu=True,
           note="The heaviest gunship: heavy armor, slow, long-range missiles."),
+        # D111 (the owner, 2026-11-08): its five gun pods are guns, each a light Spartan Laser on a turret of its own, finding its own target;
+        # 300 damage per 4 s across the five, so it isn't too strong (to be balanced in tournaments). No Marine drop any more.
         U("CondorGunship", "Condor Gunship", FACTION, "Aerial", 3, 200, 1, 400, 1500, "L", 3.25, 3, 1.5, "B",
-          [W("Twin Autocannons", 20, 0.25, 16, "Ballistic")], airu=True, drop=("Marine", 6, 7),
-          note="A gunship that also drops 6 Marines after 7 seconds, without needing a tech."),
+          [W("Twin Autocannons", 20, 0.25, 16, "Ballistic"),
+           W("Light Spartan Laser (nose)", 60, 4.0, 20, "Energy", aa=True, windup=2.5),
+           W("Light Spartan Laser (front right)", 60, 4.0, 20, "Energy", aa=True, windup=2.5),
+           W("Light Spartan Laser (front left)", 60, 4.0, 20, "Energy", aa=True, windup=2.5),
+           W("Light Spartan Laser (rear right)", 60, 4.0, 20, "Energy", aa=True, windup=2.5),
+           W("Light Spartan Laser (rear left)", 60, 4.0, 20, "Energy", aa=True, windup=2.5)], airu=True,
+          note="A gunship: twin autocannons under its belly and five light Spartan Lasers on turrets of their own, each finding its own target."),
     ]
 
 

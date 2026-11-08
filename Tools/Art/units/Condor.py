@@ -2,7 +2,9 @@
 # All 13 of its materials show one 1024 texture, so they become one and it keeps its UVs. What cannot be seen from any side goes.
 # Under the belly hangs a long twin-railed gun on a round mount, and it becomes the turret. The file has it aimed out to the +X side,
 # with the barrel 33 degrees down, and a turret must rest looking forward, so it is turned a quarter round on its mount. Its rails
-# are where the Twin Autocannons fire from. The five jointed legs are landing gear, and they stay as they are.
+# are where the Twin Autocannons fire from. What looked like five jointed landing legs are gun pods (the owner, 2026-11-08, D111): each a
+# twin-barrelled gun on a round mount of its own, as the belly gun is. Each becomes a turret too, turned on its mount to rest looking
+# forward, its muzzles at its two barrel tips: weapons 1 to 5, the light Spartan Lasers.
 import os
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
@@ -14,10 +16,10 @@ from mathutils import Matrix, Vector
 from mathutils.bvhtree import BVHTree
 
 GUN = "^Object_(3|9)$"
-LEGS = "^Object_(2|4|6|10|13)$"
-MOUNTS = "^Object_(5|7|8|11|12)$"
+LEGS = "^Object_(2|4|6|10|13)$"  # The gun pods' guns.
+MOUNTS = "^Object_(5|7|8|11|12)$"  # Their mounts.
 HULL = "^Object_(14|15)$"
-STILL = "^(?!Object_(3|9)$)"
+STILL = HULL
 
 mt.start("Condor", "Meshy/unsc_condor.glb")
 
@@ -32,15 +34,38 @@ RAILS = (0.77, 1.073)  # Where the two rails run across the barrel, before it is
 TIP = (2.44, -1.065)  # How far out the rails end, and at what height, before it is turned.
 
 
+# The gun pods, weapons 1 to 5 in this order: each pod's gun and mount, the middle of its mount up against the hull, which way its barrels
+# point across the ground (degrees from forward, toward +X), and its two barrel tips, all before it is turned. Measured in the same size.
+PODS = [
+    ("^Object_(2|7)$", (0.027, -3.645, 0.86), -13, (-0.229, -4.65, -0.252), (-0.152, -4.661, -0.233)),  # The nose.
+    ("^Object_(6|8)$", (-0.544, -0.713, 0.96), -75, (-1.517, -0.946, -0.158), (-1.489, -1.021, -0.134)),  # Front right (-X).
+    ("^Object_(10|11)$", (0.575, -0.723, 0.96), 48, (1.294, -1.401, -0.153), (1.342, -1.338, -0.133)),  # Front left (+X).
+    ("^Object_(13|5)$", (-0.507, 2.808, 1.35), -149, (-1.002, 3.663, 0.241), (-1.066, 3.61, 0.257)),  # Rear right.
+    ("^Object_(4|12)$", (0.468, 2.8, 1.35), 121, (1.319, 3.289, 0.236), (1.275, 3.355, 0.253)),  # Rear left.
+]
+
+
+def around(pivot, degrees, point):
+    """Where a point goes when it is turned this many degrees about the upright through pivot (toward +Y from +X)."""
+    return Vector(pivot) + Matrix.Rotation(math.radians(degrees), 3, "Z") @ (Vector(point) - Vector(pivot))
+
+
+def turn(pattern, pivot, degrees):
+    pivot = Vector(pivot)
+    matrix = Matrix.Translation(pivot) @ Matrix.Rotation(math.radians(degrees), 4, "Z") @ Matrix.Translation(-pivot)
+    for o in mt.meshes(pattern):
+        o.data.transform(matrix)
+        o.data.update()
+
+
 def turned(point):
     """Where a point of the gun goes when it is turned from looking at +X to looking at -Y."""
-    return PIVOT + Matrix.Rotation(math.radians(-90), 3, "Z") @ (Vector(point) - PIVOT)
+    return around(PIVOT, -90, point)
 
 
-quarter = Matrix.Translation(PIVOT) @ Matrix.Rotation(math.radians(-90), 4, "Z") @ Matrix.Translation(-PIVOT)
-for o in mt.meshes(GUN):
-    o.data.transform(quarter)
-    o.data.update()
+turn(GUN, PIVOT, -90)
+for pattern, pivot, heading, _, _ in PODS:
+    turn(pattern, pivot, -heading)  # From pointing that way to pointing forward.
 
 mt.weld(0.002)
 mt.report("welded")
@@ -120,9 +145,11 @@ def remove_tiny(smaller_than, pattern):
         mesh.free()
 
 
-# The gun turns, so it must not hide anything for good and nothing may be hidden from it for good: it is looked at on its own.
+# The guns turn, so none must hide anything for good and nothing may be hidden from them for good: each is looked at on its own.
 tidy(STILL)
 tidy(GUN)
+for pattern, _, _, _, _ in PODS:
+    tidy(pattern)
 remove_tiny(0.12, LEGS)
 remove_tiny(0.08, HULL)
 remove_tiny(0.06, GUN)
@@ -180,6 +207,10 @@ mt.smooth(40)
 mt.part("Turret_0", GUN, pivot=PIVOT + shift)
 mt.muzzle("Muzzle_0a", turned((TIP[0], RAILS[0], TIP[1])) + shift, parent="Turret_0")
 mt.muzzle("Muzzle_0b", turned((TIP[0], RAILS[1], TIP[1])) + shift, parent="Turret_0")
+for k, (pattern, pivot, heading, tip_a, tip_b) in enumerate(PODS, 1):
+    mt.part(f"Turret_{k}", pattern, pivot=Vector(pivot) + shift)
+    mt.muzzle(f"Muzzle_{k}a", around(pivot, -heading, tip_a) + shift, parent=f"Turret_{k}")
+    mt.muzzle(f"Muzzle_{k}b", around(pivot, -heading, tip_b) + shift, parent=f"Turret_{k}")
 mt.motion("Hover")
 mt.merge_rest()
 mt.report("done")

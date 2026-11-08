@@ -2,6 +2,12 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The Condor Gunship's other guns (D111)
+- **Five more guns:** the jointed things under the Condor that looked like landing legs are gun pods. Each now turns on its own mount toward its own target and fires a light Spartan Laser: a 2.5 s charge, then a red beam, with the Spartan Laser's sound. The belly autocannon is unchanged. Picture: `Docs/M10/condor_d111.jpg`.
+- **Numbers:** 60 damage each every 4 s, so 300 every 4 s across the five, as you asked. The top session balances them next.
+- **No more Marine drop.**
+- **Checked:** the model's and roster's tests; the guns' turrets and muzzles in the model's pictures. **Not checked:** played by hand; balance.
+
 ## The counter web measured again (D110)
 - **Done:** `Docs/Balance/counter_web.md` shows each unit's top 5 good and bad matchups; the counter web measured again for the latest changes and the Hard AI's buying table rebuilt. Biggest moves: Combat Form +4, Pure Form Ranged +4, Infected Pelican +3 points. Version 0.382.4.
 - **Not checked:** no tournament (you'll ask when you want one).

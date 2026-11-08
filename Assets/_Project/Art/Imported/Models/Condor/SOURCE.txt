@@ -1,3 +1,7 @@
 Source: given by the project owner, file Meshy/unsc_condor.glb in Art_Source. Where it came from before that is not recorded.
 Prepared by Tools/Art/units/Condor.py.
 The repository is private and must stay private.
+Title in the file: UNSC Condor
+Author in the file: Nateluke2020 (https://sketchfab.com/Nateluke2020)
+Licence in the file: CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+Page in the file: https://sketchfab.com/3d-models/unsc-condor-a43868a0db9a43249cf0fb5a22733424

@@ -158,8 +158,8 @@ namespace Halobellum.Tests
 
             foreach (string flyer in Table[2].units) Assert.IsTrue(u[flyer].IsAir, flyer);
             Assert.IsFalse(u["Longsword"].CanTarget(true), "A bomber cannot fight aircraft.");
-            Assert.AreEqual("Marine", u["Condor Gunship"].Reinforcement.Name);
-            Assert.AreEqual(6, u["Condor Gunship"].Reinforcement.SquadSize);
+            Assert.IsNull(u["Condor Gunship"].Reinforcement, "It drops no Marines any more (D111).");
+            Assert.AreEqual(5, u["Condor Gunship"].Weapons.Count(w => w.Name.Contains("Spartan Laser")), "Five light Spartan Lasers, one a gun pod.");
 
             Assert.Less(u["Chopper"].Weapons[0].Range, 3f, "It rams: its main weapon is melee.");
             Assert.Greater(u["Reaver"].Weapons[0].AirDamageMultiplier, 1f);
