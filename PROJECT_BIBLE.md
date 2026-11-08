@@ -557,6 +557,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-07 | The version is MAJOR.MINOR.PATCH from 0.378.0: each push bumps PATCH for a small change, MINOR for a substantial one; MAJOR is the owner's (Tools/version.py) | Per the project owner (D102) |
 | 2026-11-07 | A squad being moved in deployment is drawn standing in the squares it would take | Per the project owner (D109) |
 | 2026-11-08 | The Infested Scorpion and Infested Hornet cost 275; the Condor costs 500, with five Light Spartan Lasers of 20 and no Marines | Per the project owner (D112) |
+| 2026-11-08 | The Spawner's third tech is Swarm Brood (250): it hatches a full squad of Swarm Forms 5 s into each battle (Barbed Lash removed) | Per the project owner (D113) |
 
 ## 18. Assumptions to confirm
 

@@ -373,6 +373,8 @@ static class Program
         w.Num("flankSquads", side.Squads.Count(squad => DeploymentGrid.IsInFlankZone(squad, match.CombatRules)));
         text.Append("\"towers\":[").Append(string.Join(",", side.Towers.Select(t => $"[{t.Level},{t.Falls}]"))).Append("],");
         text.Append("\"cards\":[").Append(string.Join(",", ai.Taken.Select(c => JsonSerializer.Serialize(c)))).Append("],");
+        // The techs it owns at the end, as "Unit: Tech" (the owner asked how often the AI buys them, 2026-11-08).
+        text.Append("\"techs\":[").Append(string.Join(",", side.Techs.SelectMany(kv => kv.Value.Select(t => JsonSerializer.Serialize(kv.Key.Name + ": " + t.Name))))).Append("],");
         text.Append("\"units\":{");
         text.Append(string.Join(",", tallies.Select(kv => $"{JsonSerializer.Serialize(kv.Key)}:[{kv.Value.SquadRounds},{kv.Value.CreditRounds},{kv.Value.Damage.ToString("0", CultureInfo.InvariantCulture)},{kv.Value.Kills},{kv.Value.EndSquads},{kv.Value.EndLevels},{kv.Value.Taken.ToString("0", CultureInfo.InvariantCulture)},{kv.Value.Prevented.ToString("0", CultureInfo.InvariantCulture)},{kv.Value.Bodies},{kv.Value.Lost},{kv.Value.Credited.ToString("0", CultureInfo.InvariantCulture)}]")));
         text.Append("}}");

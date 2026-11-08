@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 2
   turnTime180: 2
   isAir: 0
+  canFlank: 0
   targetFilter: 0
   weapons:
   - weaponName: Spore Lash
@@ -43,7 +44,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -54,7 +54,6 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
-    windUpSeconds: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -62,10 +61,10 @@ MonoBehaviour:
     rearDamageMultiplier: 1
     blockChance: 0
     blockedDamageTypes: 
-  reinforcementUnit: {fileID: 0}
-  reinforcementBodies: 0
-  reinforcementDelaySeconds: 0
-  reinforcementNeedsUpgrade: 0
+  reinforcementUnit: {fileID: 11400000, guid: 69462c3646524fc57f5a8b8cf7a94bc3, type: 2}
+  reinforcementBodies: 4
+  reinforcementDelaySeconds: 5
+  reinforcementNeedsUpgrade: 1
   reinforcementDrops: 1
   reinforcementLandSeconds: 0
   reinforcementFirstDropSeconds: 0
@@ -74,7 +73,6 @@ MonoBehaviour:
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
-  canFlank: 0
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -97,7 +95,7 @@ MonoBehaviour:
   techUpgrades:
   - {fileID: 11400000, guid: f85fd51eabde38c75127bc4dfd39192f, type: 2}
   - {fileID: 11400000, guid: c6d52f78c630c7d6ca07f0df427ed9f1, type: 2}
-  - {fileID: 11400000, guid: ba253e1812308e56d6caeec54eca345d, type: 2}
+  - {fileID: 11400000, guid: 1c0d5e62fdac6ca494f465c750507bf0, type: 2}
   prefab: {fileID: 6828447988617261794, guid: e4899ddc482dd3646adaa6cc7d66e086, type: 3}
   keepsOwnMaterials: 1
   bakedBody: {fileID: 11400000, guid: d3e3dd5b5ab34f38a0a89718a8e6ba0a, type: 2}
@@ -105,6 +103,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
-  notes: 'Best counters (headless runner, equal cost): Zealot (100%), Combat Form
-    (100%). A mobile birthing form: it fights badly, and releases 12 Infection Forms
-    every 6 seconds. Kill it first. First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Zealot (100%), Combat Form (100%). A mobile birthing form: it fights badly, and keeps releasing two Infection Forms and an Infested Elite in turn, one every 4 seconds; the Elites draw the enemy''s fire. Kill it first (D79). With its Swarm Brood tech it also hatches a full squad of Swarm Forms 5 seconds into each battle (D113). First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'

@@ -231,5 +231,6 @@ THIRD_TECHS = {
     "InfestedGhost": T("RamSpikes", "Ram Spikes", 150, "Bone through the hull.", damage=1.3),
     "InfestedWraith": T("LongArc", "Long Arc", 200, "The mortar reaches further.", range=4),
     "InfestedBanshee": T("HotEngines", "Overburnt Engines", 120, "Barely flying, but faster.", speed=1.25),
-    "Spawner": T("BarbedLash", "Barbed Lash", 150, "A harder lash.", damage=1.3),
+    # Its third is Swarm Brood (the owner, 2026-11-08; D113), in place of Barbed Lash (a harder lash on a body that fights badly).
+    "Spawner": T("SwarmBrood", "Swarm Brood", 250, "It hatches a full squad of Swarm Forms 5 seconds into each battle.", drop=True),
 }

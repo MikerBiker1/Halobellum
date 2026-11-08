@@ -377,7 +377,11 @@ namespace Halobellum.Presentation
             return BattleFactions.PerUnitLooks && spell.DropUnit != null ? BattleFactions.OfUnit(spell.DropUnit, team) : BattleFactions.For(team);
         }
 
-        private void OnReinforcementDropped(SimUnit carrier, int squadId) => GameAudio.Sfx(AudioCatalog.DropIn, Place(carrier));
+        /// <summary>A squad landing from a carrier. One hatched by a body on the ground (the Spawner's Swarm Brood, D113) comes with no landing thud.</summary>
+        private void OnReinforcementDropped(SimUnit carrier, int squadId)
+        {
+            if (carrier.IsAir) GameAudio.Sfx(AudioCatalog.DropIn, Place(carrier));
+        }
 
         private void NoteDiver(SimUnit unit)
         {

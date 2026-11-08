@@ -151,6 +151,32 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void TheSpawnersSwarmBrood_HatchesASquadOfSwarmForms_OnlyWithTheTech()
+        {
+            // D113 (the owner, 2026-11-08): a tech that has the Spawner hatch a full squad of Swarm Forms, once, early in each battle.
+            UnitStats spawner = UnityEditor.AssetDatabase.LoadAssetAtPath<Halobellum.Units.UnitDefinition>("Assets/_Project/Data/Units/FloodCovenant/Spawner.asset").ToStats();
+            TechUpgrade brood = spawner.TechUpgrades.Single(t => t.UnlocksReinforcement);
+            Assert.AreEqual("Swarm Brood", brood.Name);
+            Assert.IsFalse(spawner.HasReinforcement, "Nothing without the tech.");
+            Assert.AreEqual("Swarm Form", spawner.LockedReinforcement.Name);
+            Assert.AreEqual(4, spawner.LockedReinforcement.SquadSize, "A full squad.");
+            foreach (bool withTech in new[] { false, true })
+            {
+                UnitStats stats = withTech ? UnitUpgrades.Apply(spawner, 1, new[] { brood }) : spawner.Clone();
+                stats.MoveSpeed = 0f;
+                var sim = new BattleSimulation(HeadlessRunnerTool.LoadRules(), 1);
+                sim.AddUnit(stats, Team.A, new Vec2(0f, -30f));
+                UnitStats bystander = AllStats()["Marine"].Clone();
+                bystander.MoveSpeed = 0f;
+                sim.AddUnit(bystander, Team.B, new Vec2(70f, 75f));
+                Steps(sim, spawner.ReinforcementDelaySeconds + 0.5f);
+                Assert.AreEqual(withTech ? 4 : 0, sim.Units.Count(x => x.Team == Team.A && x.Stats.Name == "Swarm Form"), withTech ? "Four Swarm Forms with the tech." : "None without it.");
+                Steps(sim, 10f);
+                Assert.AreEqual(withTech ? 4 : 0, sim.Units.Count(x => x.Team == Team.A && x.Stats.Name == "Swarm Form"), "Once a battle.");
+            }
+        }
+
+        [Test]
         public void ASeededUnit_TheFloodHasNoFormOf_DoesNotRise()
         {
             Dictionary<string, UnitStats> u = AllStats();

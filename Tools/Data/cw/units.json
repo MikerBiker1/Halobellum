@@ -6055,8 +6055,13 @@
   "regen": 0,
   "air": false,
   "arc": null,
-  "drop": null,
-  "note": "A mobile birthing form: it fights badly, and releases 12 Infection Forms and an Infested Elite in turn, one every 4 seconds; the Elites draw the enemy's fire. Kill it first (D79).",
+  "drop": [
+   "SwarmForm",
+   4,
+   5,
+   true
+  ],
+  "note": "A mobile birthing form: it fights badly, and keeps releasing two Infection Forms and an Infested Elite in turn, one every 4 seconds; the Elites draw the enemy's fire. Kill it first (D79). With its Swarm Brood tech it also hatches a full squad of Swarm Forms 5 seconds into each battle (D113).",
   "forms": 1,
   "flood": true,
   "infects": false,

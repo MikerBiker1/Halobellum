@@ -37,7 +37,7 @@ namespace Halobellum.Core
         public float AirDamageMultiplier = 1f;
         /// <summary>Lets the unit's weapons shoot air units too (anti-air upgrades).</summary>
         public bool AddsAirTargeting;
-        /// <summary>Switches on the unit's mid-battle drop (the Pelican's troop bay).</summary>
+        /// <summary>Switches on the unit's mid-battle drop (the Pelican's troop bay, the Spawner's Swarm Brood).</summary>
         public bool UnlocksReinforcement;
 
         /// <summary>A short list of what it does, for the HUD (e.g. "+25% health, +3 m range").</summary>
@@ -54,7 +54,7 @@ namespace Halobellum.Core
             if (ConeDegreesBonus != 0f) parts.Add($"+{ConeDegreesBonus:0} degree cone");
             if (AirDamageMultiplier != 1f) parts.Add(Percent(AirDamageMultiplier) + " damage vs air");
             if (AddsAirTargeting) parts.Add("can shoot air");
-            if (UnlocksReinforcement) parts.Add("drops troops mid-battle");
+            if (UnlocksReinforcement) parts.Add("brings a squad mid-battle");
             return string.Join(", ", parts);
         }
 

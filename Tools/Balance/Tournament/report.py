@@ -195,6 +195,20 @@ for sub in ranked:
     n, resupplies, unlocked, flank = tally[sub]
     line(f"  {sub:<20} {resupplies / n:>5.2f} resupplies   {unlocked / n:>5.1f} unit types unlocked   {flank / n:>5.1f} squads in flank zones at the end")
 
+if any("techs" in s[2] for m in matches for s in sides(m)):
+    heading("Techs the AI owns at the end of a match (per side)")
+    tally = collections.defaultdict(lambda: [0, 0, collections.Counter()])
+    for m in matches:
+        for sub, _, side, _ in sides(m):
+            row = tally[sub]
+            row[0] += 1
+            row[1] += len(side.get("techs", []))
+            row[2].update(set(side.get("techs", [])))
+    for sub in ranked:
+        n, owned, which = tally[sub]
+        top = ", ".join(f"{name} {100 * count / n:.0f}%" for name, count in which.most_common(4))
+        line(f"  {sub:<20} {owned / n:>5.2f} techs   most often: {top or 'none'}")
+
 heading("Units")
 line("Fielded: the share of a side's matches, among sub-factions that can buy it, in which it ever fought.")
 line("Win when fielded: the side's win rate in those matches. Edge: that, minus the same sub-faction's win rate without it. High edge can also mean the side was ahead, as winners last longer and can afford more.")
