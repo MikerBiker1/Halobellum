@@ -2,6 +2,14 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Every unit notices enemies from 30 m, the Combat Form leaps, your Infection Form leap sound (D108)
+- **30 m for everyone:** no unit runs blind any more. Short-reach units used to notice nothing until an enemy was close: Stalkers, the Chopper and the infested Warthog and Ghost only at 4.5 m, the Pure Form Tank, Spawner and Goliath at 9 m, the infested soldiers at 12 to 15 m, Infection Forms and Zealots at 18 m. The Infested Grunts' own 30 m from D107 is folded into this.
+- **The Combat Form leaps**, as the Infested Elite does.
+- **Your `Infection form leap.wav`** plays when Infection Forms leap. Other Flood forms keep the Flood leap sound.
+- **Morning items 167 to 169:** your no is recorded, and all three stay as they are.
+- **One counter is now close:** Hunter Captains beat the Abomination 8 or 9 times in 10 (it was 10 in 10), since its Infection Forms see them from 30 m. The counter test wants 9 in 10, so it may fail on that pair until the next balance pass. I left balance alone.
+- **Checked:** the simulation, Flood, Scarab, sound, rules and replay tests; every listed counter in the counter console. **Not checked:** played by hand.
+
 ## The Juggernaut animated, and five changes to how units fight (D107)
 - **The Juggernaut** runs with a bounding stride, its two scythe arms writhing. To strike it rears up and brings both blades down together in front of it. It pounces with its legs tucked when it leaps, and collapses onto its knees when it dies. Pictures: `Docs/M10/juggernaut_d107_strike.jpg`, `Docs/M10/juggernaut_d107_run.jpg`.
 - **The Scarab** stands still while its beam is on and turns with the beam, so the beam always leaves its front. The Hunter Captain's laser does the same.

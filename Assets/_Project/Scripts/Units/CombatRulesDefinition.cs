@@ -29,6 +29,8 @@ namespace Halobellum.Units
         public float mainWeaponFacingToleranceDegrees;
         [Tooltip("Units notice enemies within weapon range x this. With nothing in sight they march ahead; inside the enemy's zone the range is unlimited.")]
         public float acquisitionRangeMultiplier;
+        [Tooltip("Metres: every unit notices enemies at least this far off, however short its reach (D108).")]
+        public float minAcquisitionRange;
 
         [Header("Arena (deployment-grid squares)")]
         [Tooltip("Size of one deployment-grid square in metres.")]
@@ -110,6 +112,7 @@ namespace Halobellum.Units
                 BattleTimeLimitSeconds = battleTimeLimitSeconds,
                 MainWeaponFacingToleranceDegrees = mainWeaponFacingToleranceDegrees,
                 AcquisitionRangeMultiplier = acquisitionRangeMultiplier,
+                MinAcquisitionRange = minAcquisitionRange,
                 SquareSize = squareSize,
                 ArenaWidthSquares = arenaWidthSquares,
                 DeploymentDepthSquares = deploymentDepthSquares,

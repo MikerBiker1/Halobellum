@@ -340,10 +340,11 @@ namespace Halobellum.Presentation
             if (cue != null && cue.HasSound) GameAudio.Sfx(cue, Place(unit));
         }
 
-        /// <summary>What a unit's leap sounds like, or null.</summary>
+        /// <summary>What a unit's leap sounds like, or null: Infection Forms have their own (the owner's, D108).</summary>
         public static SfxCue LeapCue(UnitStats stats)
         {
             if (stats.LeapCharges) return AudioCatalog.HunterCharge;
+            if (stats.Name == "Infection Forms") return AudioCatalog.InfectionFormLeap;
             return IsFloodBody(stats) ? AudioCatalog.FloodLeap : null;
         }
 

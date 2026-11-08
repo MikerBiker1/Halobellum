@@ -174,6 +174,7 @@ ONE WEAPON'S OR UNIT'S OWN (no generated sound: until a file is in, the weapon's
   sfx_death_flood_big              A big Flood creature or a taken vehicle dying.
   sfx_death_flood_huge             The biggest Flood dying (until it is in: sfx_pelican_crash).
   sfx_flood_leap                   A Flood form leaping.
+  sfx_infectionform_leap           Infection Forms leaping (D108).
   sfx_hunter_charge                A Hunter charging.
   sfx_fire_hunterbash              A Hunter's shield bash.
   sfx_fire_siphon                  The Hunter Captain's 1 s siphon laser, once as each beam starts.

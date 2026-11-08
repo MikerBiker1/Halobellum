@@ -104,6 +104,7 @@ A weapon with a sound of its own uses it; the others use their kind's sound.
 | [x] | `sfx_death_human`, `_spartan`, `_elite`, `_grunt`, `_jackal`, `_brute` | Each kind of soldier dying (D91); the generated falls stay for any other. | `human death (marine odst)`, `death spartan`, `Elite death`, `grunt death`, `Jackal death`, `Brute death` |
 | [x] | `sfx_death_flood_small`, `_big`, `_huge` | The Flood dying, by size (D91). | `flood death small`, `big`, `huge` |
 | [x] | `sfx_flood_leap` | A Flood form leaping (D91). | `flood leap` |
+| [x] | `sfx_infectionform_leap` | Infection Forms leaping (D108). | `Infection form leap` |
 | [x] | `sfx_hunter_charge` | A Hunter charging (D91). | `Hunter charge` |
 | [x] | `sfx_pelican_crash` | The biggest Flood units dying: the same as the UNSC air crash, as you said. | `UNSC air unit hitting the ground` (D71) |
 | [ ] | `sfx_infection_start` | A dying unit being infected. | Generated stand-in |

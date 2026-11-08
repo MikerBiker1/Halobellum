@@ -67,9 +67,24 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void EveryUnit_NoticesEnemiesFrom30m_HoweverShortItsReach()
+        {
+            // D108: a claw's 1.5 m reach x 3 would be 4.5 m; the rules' minimum, 30 m, holds.
+            var sim = new BattleSimulation(_rules, 1);
+            var near = sim.AddUnit(Walker(1.5f), Team.A, new Vec2(-30f, -40f));
+            var far = sim.AddUnit(Walker(1.5f), Team.A, new Vec2(30f, -40f));
+            var enemyNear = sim.AddUnit(Dummy(), Team.B, new Vec2(-30f, -40f + 29f)); // 28.5 m to its edge.
+            sim.AddUnit(Dummy(), Team.B, new Vec2(30f, -40f + 32f));                  // 31.5 m.
+
+            sim.Step();
+            Assert.AreSame(enemyNear, near.MoveTarget);
+            Assert.IsNull(far.MoveTarget);
+        }
+
+        [Test]
         public void EnteringTheEnemyZone_MakesAcquisitionUnlimited()
         {
-            // Range 5 (acquisition 15 m) and an enemy far away to the side: nothing in sight until the zone.
+            // Range 5 (acquisition 30 m, the minimum) and an enemy far away to the side: nothing in sight until the zone.
             var sim = new BattleSimulation(_rules, 1);
             var unit = sim.AddUnit(Walker(5f), Team.A, new Vec2(-70f, -6f));
             var enemy = sim.AddUnit(Dummy(), Team.B, new Vec2(70f, 70f));

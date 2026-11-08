@@ -182,6 +182,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] The Scarab's beam without its backdraft; an Elite in the Wraith's hatch, a Combat Form in the infested one; the Chopper's Brute on its real seat; the menu's racers clear of the vehicles (D103)
 - [x] The menu: the owner's supercarrier glassing the hills in place of the drawn warship, the vehicles' guns firing, no glow through the Scarab's back (D104)
 - [x] The Juggernaut animated (a run, a two-bladed strike, a pounce, a collapse); the Scarab holding still while its beam fires; the Swarm Form at air first; the Pure Form Ranged at air; the Seeder drifting when idle; the Infested Grunts noticing enemies from 30 m (D107)
+- [x] Every unit notices enemies from at least 30 m; the Combat Form leaps; the owner's Infection Form leap sound (D108)
 - [x] The owner's disclaimer before the main menu (D96)
 - [x] The disclaimer's request not to share, HALOBELLUM in the menu's font, the version on the menu (D100)
 - [x] The menu's music waits for the disclaimer, a click as it goes; the version is the build number (D101)

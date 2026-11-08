@@ -110,7 +110,6 @@ MonoBehaviour:
   leapRange: 4
   leapSpeed: 10
   leapCooldownSeconds: 4
-  acquisitionRange: 30
   techUpgrades:
   - {fileID: 11400000, guid: e820c0ba45bc193af5e481876cb35c7e, type: 2}
   - {fileID: 11400000, guid: 4f585b8e75185f75a56220b1cf47c123, type: 2}

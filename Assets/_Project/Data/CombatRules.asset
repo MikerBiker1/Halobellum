@@ -18,6 +18,7 @@ MonoBehaviour:
   battleTimeLimitSeconds: 90
   mainWeaponFacingToleranceDegrees: 15
   acquisitionRangeMultiplier: 3
+  minAcquisitionRange: 30
   squareSize: 2
   arenaWidthSquares: 80
   deploymentDepthSquares: 40

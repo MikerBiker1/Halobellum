@@ -126,16 +126,17 @@ namespace Halobellum.Tests
         [Test]
         public void NoticesEnemiesAsFarAsItsLeapReaches_NotOnlyItsMeleeRange()
         {
+            // A 12 m leap x 3 reaches 36 m; a melee weapon notices only as far as every unit does, the rules' 30 m (D108).
             var sim = NewSim();
-            SimUnit leaper = sim.AddUnit(Leaper(), Team.A, new Vec2(0f, -60f));
+            SimUnit leaper = sim.AddUnit(Leaper(12f), Team.A, new Vec2(0f, -60f));
             UnitStats plain = Leaper(0f);
             plain.Name = "Plain";
             SimUnit walker = sim.AddUnit(plain, Team.A, new Vec2(40f, -60f));
-            SimUnit enemy = Enemy(sim, new Vec2(0f, -45f));
-            Enemy(sim, new Vec2(40f, -45f));
+            SimUnit enemy = Enemy(sim, new Vec2(0f, -26f));  // 33.5 m to its edge.
+            Enemy(sim, new Vec2(40f, -26f));
             sim.Step();
             Assert.AreSame(enemy, leaper.MoveTarget, "Leap range x the acquisition multiplier.");
-            Assert.IsNull(walker.MoveTarget, "Melee range x the multiplier is only 3 m.");
+            Assert.IsNull(walker.MoveTarget, "Melee range x the multiplier is only 3 m, and the floor 30 m.");
         }
 
         [Test]

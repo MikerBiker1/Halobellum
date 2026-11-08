@@ -27,6 +27,11 @@ namespace Halobellum.Core
         /// straight ahead; once inside the enemy's deployment zone they notice enemies at any distance.
         /// </summary>
         public float AcquisitionRangeMultiplier;
+        /// <summary>
+        /// ...but never closer than this many metres, however short their reach: a unit with claws and a short leap ran blind until an enemy was
+        /// 12 m off (the owner, 2026-11-07, D108: every unit notices from at least 30 m).
+        /// </summary>
+        public float MinAcquisitionRange;
 
         // Arena (decision D4): measured in deployment-grid squares, like Mechabellum.
         // Team A's deployment zone, then a strip of no man's land, then Team B's zone.

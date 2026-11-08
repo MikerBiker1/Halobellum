@@ -216,6 +216,8 @@ namespace Halobellum.Presentation
         public static readonly SfxCue DeathFloodBig = OwnerCue("sfx_death_flood_big", SfxGroup.BigDeaths, 0.85f, 0.06f, 6, -14f);
         public static readonly SfxCue DeathFloodHuge = OwnerCue("sfx_death_flood_huge", SfxGroup.BigDeaths, 1f, 0.03f, 9, -10.5f);
         public static readonly SfxCue FloodLeap = OwnerCue("sfx_flood_leap", SfxGroup.Calls, 0.55f, 0.1f, 2, -19f);
+        /// <summary>Infection Forms leaping, the owner's own sound for them (D108): they leap by the dozen, so it is quiet and low in priority, the group's voices shared.</summary>
+        public static readonly SfxCue InfectionFormLeap = OwnerCue("sfx_infectionform_leap", SfxGroup.Calls, 0.5f, 0.12f, 1, -19.5f);
         public static readonly SfxCue HunterCharge = OwnerCue("sfx_hunter_charge", SfxGroup.Ready, 0.8f, 0.05f, 5, -15f);
         public static readonly SfxCue FireHunterBash = OwnerCue("sfx_fire_hunterbash", SfxGroup.Melee, 0.75f, 0.06f, 3, -16f);
         /// <summary>The Hunter Captain's siphon laser, a 1 s beam: once as each beam starts (the owner's file runs about as long), and any other laser beam like it.</summary>

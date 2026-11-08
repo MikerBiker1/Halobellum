@@ -77,7 +77,8 @@ Hunter death.wav -> sfx_death_lekgolo.wav: a Hunter, the Hunter Captain or the G
 flood death small.wav -> sfx_death_flood_small.wav: a Flood form dying: Combat Forms, the infested soldiers, Stalkers, Swarm Forms
 flood death big.wav -> sfx_death_flood_big.wav: a big Flood creature or a taken vehicle dying
 flood death huge.wav -> sfx_death_flood_huge.wav: the biggest Flood dying: the Abomination, the Juggernaut
-flood leap.wav -> sfx_flood_leap.wav: a Flood form leaping: Infection Forms, Stalkers, the Juggernaut
+flood leap.wav -> sfx_flood_leap.wav: a Flood form leaping: Stalkers, Combat Forms, the infested soldiers, the Juggernaut
+Infection form leap.wav -> sfx_infectionform_leap.wav: Infection Forms leaping (D108)
 flood melee impact1.wav -> sfx_fire_melee_flood_1.wav: a Flood blow landing (one of three, at random)
 flood melee impact2.wav -> sfx_fire_melee_flood_2.wav: a Flood blow landing (one of three, at random)
 flood melee impact3.wav -> sfx_fire_melee_flood_3.wav: a Flood blow landing (one of three, at random)

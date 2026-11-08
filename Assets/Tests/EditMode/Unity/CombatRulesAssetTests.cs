@@ -30,6 +30,7 @@ namespace Halobellum.Tests
             Assert.AreEqual(expected.BattleTimeLimitSeconds, fromAsset.BattleTimeLimitSeconds, 1e-5f);
             Assert.AreEqual(expected.MainWeaponFacingToleranceDegrees, fromAsset.MainWeaponFacingToleranceDegrees, 1e-5f);
             Assert.AreEqual(expected.AcquisitionRangeMultiplier, fromAsset.AcquisitionRangeMultiplier, 1e-5f);
+            Assert.AreEqual(expected.MinAcquisitionRange, fromAsset.MinAcquisitionRange, 1e-5f);
             // Square size (D10) is meant to be tuned freely in the Inspector, so any positive value passes.
             Assert.Greater(fromAsset.SquareSize, 0f, "squareSize must be above 0.");
             Assert.AreEqual(expected.ArenaWidthSquares, fromAsset.ArenaWidthSquares);

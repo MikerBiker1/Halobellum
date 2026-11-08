@@ -2260,7 +2260,11 @@
   "burst": null,
   "spawn": null,
   "aura": null,
-  "leap": null,
+  "leap": [
+   5,
+   12,
+   4
+  ],
   "lifesteal": 0,
   "seedforms": null,
   "spawn2": null,
@@ -5471,7 +5475,6 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
-  "sight": 30,
   "basedmg": null,
   "tint": [
    0.55,

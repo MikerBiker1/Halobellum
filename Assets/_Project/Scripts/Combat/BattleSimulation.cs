@@ -1085,8 +1085,8 @@ namespace Halobellum.Combat
         private float AcquisitionRange(SimUnit unit, WeaponStats weapon)
         {
             if (unit.UnlimitedAcquisition || _rules.AcquisitionRangeMultiplier <= 0f) return float.PositiveInfinity;
-            // A leap is its reach too; a unit may notice enemies from further than its reach says (the Infested Grunts, D107).
-            return Math.Max(Math.Max(weapon.Range, unit.Stats.LeapRange) * _rules.AcquisitionRangeMultiplier, unit.Stats.AcquisitionRange);
+            // A leap is its reach too; and every unit notices enemies from at least the rules' minimum (D108).
+            return Math.Max(Math.Max(weapon.Range, unit.Stats.LeapRange) * _rules.AcquisitionRangeMultiplier, _rules.MinAcquisitionRange);
         }
 
         /// <summary>Straight ahead toward the enemy's side: up for Team A, down for Team B.</summary>

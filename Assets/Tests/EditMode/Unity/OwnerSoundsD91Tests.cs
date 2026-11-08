@@ -1,7 +1,8 @@
 // OwnerSoundsD91Tests.cs
 // The owner's third batch of sounds (D91): each kind of soldier dies with its own sound, the Flood by size, a Flood form's leap and a Hunter's
 // charge have theirs, the Hunters' bash and the Hunter Captain's laser theirs, and moving an item into a hexagon has its own UI sound. The
-// Captain's laser is a laser held as a beam: green, not the Scarab's beam.
+// Captain's laser is a laser held as a beam: green, not the Scarab's beam. D108: Infection Forms leap with the owner's own sound for them, and
+// the Combat Form, which now leaps, with the Flood's.
 // Depends on: Halobellum.Presentation (AudioCatalog, BattleAudio, AudioSlots, WeaponFeel, WeaponLooks), Halobellum.Units, NUnit, UnityEditor.
 
 using Halobellum.Core;
@@ -60,6 +61,18 @@ namespace Halobellum.Tests
             Assert.AreSame(AudioCatalog.HunterCharge, BattleAudio.LeapCue(Unit("LekgoloColony/HunterCaptain")));
             Assert.AreSame(AudioCatalog.FloodLeap, BattleAudio.LeapCue(Unit("Flood/StalkerForm")));
             Assert.IsNull(BattleAudio.LeapCue(Unit("Covenant/Zealot")), "A Zealot leaps without a sound of its own.");
+        }
+
+        [Test]
+        public void InfectionForms_LeapWithTheirOwnSound_TheCombatFormWithTheFloods()
+        {
+            Assert.AreSame(AudioCatalog.InfectionFormLeap, BattleAudio.LeapCue(Unit("Flood/InfectionForms")));
+            AudioLibrary.Forget();
+            AudioCatalog.ForgetClips();
+            Assert.IsTrue(AudioCatalog.InfectionFormLeap.HasSound && AudioCatalog.InfectionFormLeap.Clips.IsOverride, "The owner's Infection form leap.wav.");
+            UnitStats combatForm = Unit("Flood/CombatForm");
+            Assert.Greater(combatForm.LeapRange, 0f, "The Combat Form leaps (D108).");
+            Assert.AreSame(AudioCatalog.FloodLeap, BattleAudio.LeapCue(combatForm));
         }
 
         [Test]

@@ -22,6 +22,7 @@ namespace Halobellum.Tests
                 BattleTimeLimitSeconds = 90f,
                 MainWeaponFacingToleranceDegrees = 15f,
                 AcquisitionRangeMultiplier = 3f,
+                MinAcquisitionRange = 30f,
                 SquareSize = 2f,
                 ArenaWidthSquares = 80,
                 DeploymentDepthSquares = 40,

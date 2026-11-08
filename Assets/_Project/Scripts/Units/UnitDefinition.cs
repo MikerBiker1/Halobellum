@@ -121,10 +121,6 @@ namespace Halobellum.Units
         [Tooltip("Its leap is a charge along the ground at a target, never a jump, and it uses one weapon at a time (the Hunters' shield charge, D87).")]
         public bool leapCharges;
 
-        [Header("Noticing enemies")]
-        [Tooltip("It notices enemies at least this many metres off, however short its weapons' reach (the Infested Grunts, D107). 0 = from its weapons' reach and its leap, as any unit.")]
-        public float acquisitionRange;
-
         [Header("Tech upgrades (up to 3, Bible Section 9)")]
         public List<TechUpgradeDefinition> techUpgrades = new List<TechUpgradeDefinition>();
 
@@ -186,7 +182,6 @@ namespace Halobellum.Units
                 LeapSpeed = leapSpeed,
                 LeapCooldownSeconds = leapCooldownSeconds,
                 LeapCharges = leapCharges,
-                AcquisitionRange = acquisitionRange,
             };
 
             // Units spawned by this one are copies with the given body count as their squad size.

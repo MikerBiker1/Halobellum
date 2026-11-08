@@ -56,7 +56,6 @@ static class Program
                 flood.LeapSpeed = leap[1].GetSingle();
                 flood.LeapCooldownSeconds = leap[2].GetSingle();
             }
-            if (u.TryGetProperty("sight", out JsonElement sight)) flood.AcquisitionRange = sight.GetSingle(); // D107: the Infested Grunts notice enemies from 30 m.
             var burst = u.GetProperty("burst");
             if (burst.ValueKind == JsonValueKind.Object)
             {
