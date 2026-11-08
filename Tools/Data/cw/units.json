@@ -3929,9 +3929,9 @@
   "faction": "UNSC",
   "role": "Aerial",
   "tier": 3,
-  "unlock": 200,
+  "unlock": 250,
   "squad": 1,
-  "cost": 400,
+  "cost": 500,
   "hp": 1500,
   "armor": "L",
   "speed": 3.25,
@@ -3967,7 +3967,7 @@
    },
    {
     "name": "Light Spartan Laser (nose)",
-    "dmg": 60,
+    "dmg": 20,
     "interval": 4.0,
     "range": 20,
     "minr": 0,
@@ -3993,7 +3993,7 @@
    },
    {
     "name": "Light Spartan Laser (front right)",
-    "dmg": 60,
+    "dmg": 20,
     "interval": 4.0,
     "range": 20,
     "minr": 0,
@@ -4019,7 +4019,7 @@
    },
    {
     "name": "Light Spartan Laser (front left)",
-    "dmg": 60,
+    "dmg": 20,
     "interval": 4.0,
     "range": 20,
     "minr": 0,
@@ -4045,7 +4045,7 @@
    },
    {
     "name": "Light Spartan Laser (rear right)",
-    "dmg": 60,
+    "dmg": 20,
     "interval": 4.0,
     "range": 20,
     "minr": 0,
@@ -4071,7 +4071,7 @@
    },
    {
     "name": "Light Spartan Laser (rear left)",
-    "dmg": 60,
+    "dmg": 20,
     "interval": 4.0,
     "range": 20,
     "minr": 0,

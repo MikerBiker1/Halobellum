@@ -556,6 +556,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-07 | The menu's music starts only once the disclaimer is clicked away, with a button's click; the version shown is the build number (commits on main) | Per the project owner (D101) |
 | 2026-11-07 | The version is MAJOR.MINOR.PATCH from 0.378.0: each push bumps PATCH for a small change, MINOR for a substantial one; MAJOR is the owner's (Tools/version.py) | Per the project owner (D102) |
 | 2026-11-07 | A squad being moved in deployment is drawn standing in the squares it would take | Per the project owner (D109) |
+| 2026-11-08 | The Infested Scorpion and Infested Hornet cost 275; the Condor costs 500, with five Light Spartan Lasers of 20 and no Marines | Per the project owner (D112) |
 
 ## 18. Assumptions to confirm
 

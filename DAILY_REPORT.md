@@ -2,6 +2,12 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Overnight: UNSC-based Flood and the Condor balanced (D112)
+- **UNSC-based Flood (56%):** your suggestion order, one at a time. A weaker Infested Marine made it **stronger** (62%: the AI bought more Seeders), so it was undone. The Infested Scorpion at 275, then the Infested Hornet at 275, brought it to 50%.
+- **Condor:** the other session rigged its five gun pods as Light Spartan Lasers and removed the Marines (D111). As given it made Aerospace win 83%: without the drop it fights from the start. Now 500 credits, lasers 20 each: Aerospace 54%.
+- **Result over two rounds:** every sub-faction 47% to 54%. Aerospace sits on the top edge (54%); Armored Division and Covenant-based Flood at 47%. Report: `Docs/Balance/hard_ai_tournament_d112.txt`. Version 0.383.2.
+- **Not checked:** not played by hand.
+
 ## The Condor Gunship's other guns (D111)
 - **Five more guns:** the jointed things under the Condor that looked like landing legs are gun pods. Each now turns on its own mount toward its own target and fires a light Spartan Laser: a 2.5 s charge, then a red beam, with the Spartan Laser's sound. The belly autocannon is unchanged. Picture: `Docs/M10/condor_d111.jpg`.
 - **Numbers:** 60 damage each every 4 s, so 300 every 4 s across the five, as you asked. The top session balances them next.

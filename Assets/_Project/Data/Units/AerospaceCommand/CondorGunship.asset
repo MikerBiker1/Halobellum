@@ -15,10 +15,10 @@ MonoBehaviour:
   unitName: Condor Gunship
   role: 7
   tier: 3
-  unlockCost: 200
+  unlockCost: 250
   squadSize: 1
-  cost: 400
-  baseDamage: 80
+  cost: 500
+  baseDamage: 100
   maxHealth: 1500
   armorType: 1
   maxShield: 0
@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 3
   turnTime180: 1.5
   isAir: 1
+  canFlank: 1
   targetFilter: 2
   weapons:
   - weaponName: Twin Autocannons
@@ -43,7 +44,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -54,9 +54,8 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
-    windUpSeconds: 0
   - weaponName: Light Spartan Laser (nose)
-    damagePerShot: 60
+    damagePerShot: 20
     fireInterval: 4
     range: 20
     minRange: 0
@@ -69,7 +68,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -82,7 +80,7 @@ MonoBehaviour:
     hitSlowShare: 0
     windUpSeconds: 2.5
   - weaponName: Light Spartan Laser (front right)
-    damagePerShot: 60
+    damagePerShot: 20
     fireInterval: 4
     range: 20
     minRange: 0
@@ -95,7 +93,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -108,7 +105,7 @@ MonoBehaviour:
     hitSlowShare: 0
     windUpSeconds: 2.5
   - weaponName: Light Spartan Laser (front left)
-    damagePerShot: 60
+    damagePerShot: 20
     fireInterval: 4
     range: 20
     minRange: 0
@@ -121,7 +118,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -134,7 +130,7 @@ MonoBehaviour:
     hitSlowShare: 0
     windUpSeconds: 2.5
   - weaponName: Light Spartan Laser (rear right)
-    damagePerShot: 60
+    damagePerShot: 20
     fireInterval: 4
     range: 20
     minRange: 0
@@ -147,7 +143,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -160,7 +155,7 @@ MonoBehaviour:
     hitSlowShare: 0
     windUpSeconds: 2.5
   - weaponName: Light Spartan Laser (rear left)
-    damagePerShot: 60
+    damagePerShot: 20
     fireInterval: 4
     range: 20
     minRange: 0
@@ -173,7 +168,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -196,15 +190,11 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
-  reinforcementDrops: 1
-  reinforcementLandSeconds: 0
-  reinforcementFirstDropSeconds: 0
   formsPerBody: 1
   isFlood: 0
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
-  canFlank: 1
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -224,7 +214,6 @@ MonoBehaviour:
   leapRange: 0
   leapSpeed: 0
   leapCooldownSeconds: 0
-  leapCharges: 0
   techUpgrades:
   - {fileID: 11400000, guid: 5cfb2a00ab6505104641697605f3029b, type: 2}
   - {fileID: 11400000, guid: 76f76226365fbb866a15928665b1a8cc, type: 2}
@@ -236,7 +225,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air
-  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Reaver (100%).
-    A gunship: twin autocannons under its belly and five light Spartan Lasers on
-    turrets of their own, each finding its own target. First-pass M10 values, Aerospace
-    Command (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Reaver (100%). A gunship: twin autocannons under its belly and five light Spartan Lasers on turrets of their own, each finding its own target. First-pass M10 values, Aerospace Command (Docs/M10/subfactions.md).'

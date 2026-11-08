@@ -315,6 +315,13 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 168. *(Answered: no, and every unit now notices from at least 30 m, D108.)* **Infested Grunts notice enemies from 30 m.** Marines notice from 36 m, and the Grunts' pistol reaches 27 m. Further? And should the other clawed Flood (Infested Marines, Combat Forms) notice from further too? They have the same short reach.
 169. *(Answered: no, they strike together, D108.)* **The Juggernaut's strike** brings both blades down together, once a blow (every 1.2 s). Before, its two blades took turns. Would you rather they alternate?
 
+## Overnight balance (D112)
+
+170. **Aerospace Command at 54%:** the top edge of the band over two rounds. If it plays strong for you, the next step would be the lasers at 15, or the Vulture (fielded in 94% of its matches).
+171. **The Seeder drives UNSC-based Flood:** it raises dead UNSC units as this sub-faction's own infested units, so it beats the UNSC sub-factions hardest. The two price rises fixed the total, but the Seeder is what to watch if UNSC-based climbs again.
+172. **The Seeder doesn't attack Flood, Titans, shielded or already-seeded units at all** (it only shoots what its seed can take). Change that?
+173. **A counter test fails, from before tonight:** the Hunter Captain, the Flood Abomination's listed counter, beats it only 70% with the game's real rules (the test wants 90%; the counter web's own measure still says 100%). Neither unit changed tonight; it likely came with the Captain's beam (D91) or the 30 m noticing (D108). Find a new listed counter, or look at the matchup?
+
 ## Things my test runs did to your PC
 
 - **Windows moving, and possibly music:** while the Screen setting was being checked, a test window moved across all three of your screens and briefly went fullscreen on each. Some of those runs weren't silent, so menu music may have played for about 25 seconds at a time. Those checks have finished.
