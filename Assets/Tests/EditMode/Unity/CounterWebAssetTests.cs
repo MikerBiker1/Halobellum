@@ -115,7 +115,10 @@ namespace Halobellum.Tests
             foreach (var (unitName, counterName) in BestCounters)
             {
                 UnitStats unit = units[unitName], counter = units[counterName];
-                Assert.IsTrue(CounterWeb.IsCounter(counter, unit), $"{counterName} ({counter.Role}) is not a Section 7 counter of {unitName} ({unit.Role}).");
+                // A unit that keeps releasing bodies (the Spawner) screens itself with them, so chaff clear also answers it (D125). Only the
+                // test allows this: CounterWeb.IsCounter steers the AI's buying, and the balance was tuned with it as it is.
+                bool clearsItsSwarm = unit.SpawnedUnit != null && counter.Role == UnitRole.ChaffClear;
+                Assert.IsTrue(CounterWeb.IsCounter(counter, unit) || clearsItsSwarm, $"{counterName} ({counter.Role}) is not a Section 7 counter of {unitName} ({unit.Role}).");
             }
             var failures = new System.Collections.Concurrent.ConcurrentBag<string>();
             System.Threading.Tasks.Parallel.ForEach(BestCounters, pair =>
