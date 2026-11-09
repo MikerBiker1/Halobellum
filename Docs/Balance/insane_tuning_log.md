@@ -227,3 +227,19 @@ How the Insane AI beats it (round 7): Covenant-based Flood bought Spawners in 1,
 | Banished | 56% | 49% | 50% |
 | Armored Division | 43% | 49% | 49% |
 | Unggoy Rebellion | 49% | 49% | 52% |
+
+## The other difficulties after tuning (for the owner's curiosity; no changes made)
+Run on the same final data, each AI against itself, seeds 0 and 1. Reports: hard_vs_hard_after_d125.txt, normal_vs_normal_after_d125.txt, easy_vs_easy_after_d125.txt.
+
+| Sub-faction | Insane | Hard | Normal | Easy |
+|---|---|---|---|---|
+| Covenant-based Flood | 52% | 77% | 77% | 59% |
+| UNSC-based Flood | 51% | 45% | 61% | 53% |
+| Aerospace Command | 51% | 49% | 23% | 48% |
+| Lekgolo Colony | 50% | 39% | 62% | 50% |
+| Noble | 49% | 62% | 20% | 49% |
+| Banished | 49% | 38% | 58% | 45% |
+| Armored Division | 49% | 48% | 37% | 52% |
+| Unggoy Rebellion | 49% | 42% | 62% | 42% |
+
+Hard was at 48–52% before this tuning (D116). The Hard AI fields the stronger Spawner in 91% of Covenant-based Flood's matches and wins 78% of them. Under Normal the UNSC sub-factions lean on Flamethrower Troopers and Scorpions that lose most of their matches.
