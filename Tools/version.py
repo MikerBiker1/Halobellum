@@ -8,6 +8,8 @@
 #   python Tools/version.py            prints the version
 #   python Tools/version.py patch      0.378.0 -> 0.378.1
 #   python Tools/version.py minor      0.378.4 -> 0.379.0
+# Each version gets its entry in the wiki's changelog (Tools/Wiki/content/42_changelog.md, newest first) in the same commit; a bump
+# reminds you while the entry is missing. Then rebuild the wiki (python Tools/Wiki/build_wiki.py).
 # Needs only the Python standard library.
 
 import os
@@ -15,6 +17,7 @@ import re
 import sys
 
 PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "ProjectSettings", "ProjectSettings.asset")
+CHANGELOG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Wiki", "content", "42_changelog.md")
 LINE = re.compile(r"^(  bundleVersion: )(\d+)\.(\d+)\.(\d+)(\r?)$", re.M)
 
 
@@ -36,6 +39,8 @@ def main():
         text = text[:match.start()] + f"{match.group(1)}{version}{match.group(5)}" + text[match.end():]
         open(PATH, "w", encoding="utf-8", newline="").write(text)
     print(version)
+    if what is not None and os.path.exists(CHANGELOG) and f"## {version} " not in open(CHANGELOG, encoding="utf-8").read():
+        print(f"Add a '## {version} · <date>' entry at the top of Tools/Wiki/content/42_changelog.md, then rebuild the wiki.", file=sys.stderr)
 
 
 if __name__ == "__main__":

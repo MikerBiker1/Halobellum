@@ -573,6 +573,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-08 | The Ghost's blast heard at any battle speed; the Infested Ghost drifts and blows up too | Per the project owner (D121) |
 | 2026-11-08 | Taken aircraft (Infested Banshee, Infested Hornet) fall as their originals do; the shockwave line has a bar that runs down; a machine a seed takes over grows the Flood's growths for 2 s and rises, without blowing up or falling | Per the project owner (D122) |
 | 2026-11-09 | Balance is measured with the Insane AI against itself (46% to 54%), and was tuned to it: every sub-faction at 49% to 51%, the Spawner at 3,600 health; swarm clearers count as the Spawner's counter | Per the project owner (D125) |
+| 2026-11-09 | The wiki has a Changelog page, one entry per version, added with every version bump | Per the project owner (D126) |
 
 ## 18. Assumptions to confirm
 

@@ -2,6 +2,10 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## A changelog (D126)
+- **Wiki → Reference → Changelog:** every version from 0.378.0, newest first, in a few plain lines each. Each new version adds its entry.
+- **Wiki → The AI → Balance:** the Insane tournament numbers.
+
 ## Balance tuned for the Insane AI (D125)
 - **New standard:** balance is measured with Insane against Insane. Before tuning it ran from 37% (Noble) to 60% (UNSC-based Flood).
 - **Now:** every sub-faction is at 49–52%, two rounds running. Covenant-based Flood 52, UNSC-based Flood 51, Aerospace 51, Lekgolo 50, Noble, Banished, Armored and Unggoy 49.
