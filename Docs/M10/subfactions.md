@@ -146,7 +146,7 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 - **Infested Elite.** The classic combat form: no shield, more health, and a claw that opens armor.
 - **Infested Wraith.** A little tougher and shorter-ranged than the real thing.
 - **Infested Banshee.** Barely flying, still bombing.
-- **Spawner.** A mobile birthing form: it fights badly, and keeps releasing two Infection Forms and three Combat Forms in turn, one lot every 2.5 seconds; the Combat Forms draw the enemy's fire. Kill it first (D79, D116). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114).
+- **Spawner.** A mobile birthing form: it fights badly, and keeps releasing three Infection Forms and five Combat Forms in turn, one lot every 4 seconds; the Combat Forms draw the enemy's fire. Kill it first (D79, D116). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114).
 
 <!-- end tables -->
 

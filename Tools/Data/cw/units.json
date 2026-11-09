@@ -6055,7 +6055,7 @@
    5,
    true
   ],
-  "note": "A mobile birthing form: it fights badly, and keeps releasing two Infection Forms and three Combat Forms in turn, one lot every 2.5 seconds; the Combat Forms draw the enemy's fire. Kill it first (D79, D116). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114).",
+  "note": "A mobile birthing form: it fights badly, and keeps releasing three Infection Forms and five Combat Forms in turn, one lot every 4 seconds; the Combat Forms draw the enemy's fire. Kill it first (D79, D116). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114).",
   "forms": 1,
   "flood": true,
   "infects": false,
@@ -6065,8 +6065,8 @@
   "burst": null,
   "spawn": [
    "InfectionForms",
-   2,
-   2.5
+   3,
+   4
   ],
   "aura": null,
   "leap": null,
@@ -6074,7 +6074,7 @@
   "seedforms": null,
   "spawn2": [
    "CombatForm",
-   3
+   5
   ],
   "charges": false,
   "basedmg": null,
