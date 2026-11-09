@@ -34,7 +34,7 @@ namespace Halobellum.Tests
             ("Wolverine", "Warthog"),
             ("Hornet", "Wolverine"),
             ("Archer Missile Pod", "Hornet"),
-            ("Pelican", "Swarm Form"),
+            ("Pelican", "Wolverine"),
             ("Spartan", "Marine"),
             ("Mantis", "Gauss Warthog"),
             ("Elephant", "Spartan"),

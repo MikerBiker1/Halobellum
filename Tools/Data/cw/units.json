@@ -629,8 +629,8 @@
   "tier": 2,
   "unlock": 50,
   "squad": 1,
-  "cost": 250,
-  "hp": 1500,
+  "cost": 300,
+  "hp": 1200,
   "armor": "L",
   "speed": 6.0,
   "radius": 2.5,
@@ -5433,7 +5433,7 @@
   "weapons": [
    {
     "name": "Scavenged Rockets",
-    "dmg": 16,
+    "dmg": 15,
     "interval": 1.0,
     "range": 12,
     "minr": 0,
@@ -5460,7 +5460,7 @@
    },
    {
     "name": "Spore Bombs",
-    "dmg": 32,
+    "dmg": 29,
     "interval": 2.0,
     "range": 8,
     "minr": 0,

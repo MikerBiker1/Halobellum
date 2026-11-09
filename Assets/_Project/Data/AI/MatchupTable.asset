@@ -445,7 +445,7 @@ MonoBehaviour:
     winRate: 0.7
   - attacker: Warthog
     defender: Pelican
-    winRate: 0.9
+    winRate: 1
   - attacker: Warthog
     defender: Spartan
     winRate: 0.2
@@ -853,7 +853,7 @@ MonoBehaviour:
     winRate: 0.8
   - attacker: Scorpion
     defender: Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Scorpion
     defender: Spartan
     winRate: 0
@@ -1057,7 +1057,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Wolverine
     defender: Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Wolverine
     defender: Spartan
     winRate: 0
@@ -1654,16 +1654,16 @@ MonoBehaviour:
     winRate: 1
   - attacker: Pelican
     defender: Warthog
-    winRate: 0.1
+    winRate: 0
   - attacker: Pelican
     defender: Gauss Warthog
     winRate: 1
   - attacker: Pelican
     defender: Scorpion
-    winRate: 1
+    winRate: 0
   - attacker: Pelican
     defender: Wolverine
-    winRate: 1
+    winRate: 0
   - attacker: Pelican
     defender: Hornet
     winRate: 1
@@ -1702,16 +1702,16 @@ MonoBehaviour:
     winRate: 1
   - attacker: Pelican
     defender: Vampire
-    winRate: 1
+    winRate: 0
   - attacker: Pelican
     defender: Banshee
-    winRate: 1
+    winRate: 0
   - attacker: Pelican
     defender: Covenant Phantom
     winRate: 1
   - attacker: Pelican
     defender: Hunter Pair
-    winRate: 1
+    winRate: 0
   - attacker: Pelican
     defender: Zealot
     winRate: 1
@@ -1738,7 +1738,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pelican
     defender: Pure Form Tank
-    winRate: 0
+    winRate: 1
   - attacker: Pelican
     defender: Seeder
     winRate: 0
@@ -1747,22 +1747,22 @@ MonoBehaviour:
     winRate: 1
   - attacker: Pelican
     defender: Infected Phantom
-    winRate: 0.7
+    winRate: 0
   - attacker: Pelican
     defender: Flood Abomination
     winRate: 0
   - attacker: Pelican
     defender: Spartan Sniper
-    winRate: 1
+    winRate: 0
   - attacker: Pelican
     defender: Spartan Heavy Weapons
-    winRate: 1
+    winRate: 0
   - attacker: Pelican
     defender: Spartan Grenadier
     winRate: 1
   - attacker: Pelican
     defender: Spartan CQB
-    winRate: 1
+    winRate: 0
   - attacker: Pelican
     defender: Spartan Fireteam
     winRate: 1
@@ -1777,10 +1777,10 @@ MonoBehaviour:
     winRate: 1
   - attacker: Pelican
     defender: Grizzly
-    winRate: 0.6
+    winRate: 0
   - attacker: Pelican
     defender: Sparrowhawk
-    winRate: 1
+    winRate: 0
   - attacker: Pelican
     defender: Longsword
     winRate: 1
@@ -1789,16 +1789,16 @@ MonoBehaviour:
     winRate: 1
   - attacker: Pelican
     defender: Condor Gunship
-    winRate: 1
+    winRate: 0
   - attacker: Pelican
     defender: Chopper
-    winRate: 1
+    winRate: 0
   - attacker: Pelican
     defender: Brute Grenadier
     winRate: 1
   - attacker: Pelican
     defender: Marauder
-    winRate: 1
+    winRate: 0
   - attacker: Pelican
     defender: Reaver
     winRate: 0
@@ -1828,7 +1828,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pelican
     defender: Infested Scorpion
-    winRate: 1
+    winRate: 0.4
   - attacker: Pelican
     defender: Infested Hornet
     winRate: 1
@@ -1840,13 +1840,13 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pelican
     defender: Infested Elite
-    winRate: 1
+    winRate: 0
   - attacker: Pelican
     defender: Infested Wraith
     winRate: 1
   - attacker: Pelican
     defender: Infested Banshee
-    winRate: 1
+    winRate: 0
   - attacker: Pelican
     defender: Spawner
     winRate: 0
@@ -2080,7 +2080,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Mantis
     defender: Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Mantis
     defender: Spartan
     winRate: 0
@@ -3916,7 +3916,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Vampire
     defender: Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Vampire
     defender: Spartan
     winRate: 0
@@ -4120,7 +4120,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Banshee
     defender: Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Banshee
     defender: Spartan
     winRate: 0
@@ -6976,7 +6976,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infected Phantom
     defender: Pelican
-    winRate: 0.3
+    winRate: 1
   - attacker: Infected Phantom
     defender: Spartan
     winRate: 1
@@ -7384,7 +7384,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan Sniper
     defender: Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Spartan Sniper
     defender: Spartan
     winRate: 0
@@ -7588,7 +7588,7 @@ MonoBehaviour:
     winRate: 0.6
   - attacker: Spartan Heavy Weapons
     defender: Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Spartan Heavy Weapons
     defender: Spartan
     winRate: 1
@@ -7996,7 +7996,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan CQB
     defender: Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Spartan CQB
     defender: Spartan
     winRate: 1
@@ -8155,7 +8155,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan CQB
     defender: Infested Hornet
-    winRate: 0.9
+    winRate: 1
   - attacker: Spartan CQB
     defender: Juggernaut
     winRate: 0
@@ -9016,7 +9016,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Grizzly
     defender: Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Grizzly
     defender: Spartan
     winRate: 0
@@ -9175,7 +9175,7 @@ MonoBehaviour:
     winRate: 0.9
   - attacker: Grizzly
     defender: Infested Hornet
-    winRate: 0.7
+    winRate: 0.8
   - attacker: Grizzly
     defender: Juggernaut
     winRate: 1
@@ -9220,7 +9220,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Sparrowhawk
     defender: Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Sparrowhawk
     defender: Spartan
     winRate: 0
@@ -9379,7 +9379,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Sparrowhawk
     defender: Infested Hornet
-    winRate: 0.1
+    winRate: 0.4
   - attacker: Sparrowhawk
     defender: Juggernaut
     winRate: 1
@@ -9832,7 +9832,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Condor Gunship
     defender: Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Condor Gunship
     defender: Spartan
     winRate: 0
@@ -10036,7 +10036,7 @@ MonoBehaviour:
     winRate: 0.9
   - attacker: Chopper
     defender: Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Chopper
     defender: Spartan
     winRate: 1
@@ -10444,7 +10444,7 @@ MonoBehaviour:
     winRate: 0.6
   - attacker: Marauder
     defender: Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Marauder
     defender: Spartan
     winRate: 0
@@ -12484,7 +12484,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Scorpion
     defender: Pelican
-    winRate: 0
+    winRate: 0.6
   - attacker: Infested Scorpion
     defender: Spartan
     winRate: 0
@@ -12781,7 +12781,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Hornet
     defender: Spartan CQB
-    winRate: 0.1
+    winRate: 0
   - attacker: Infested Hornet
     defender: Spartan Fireteam
     winRate: 0
@@ -12796,10 +12796,10 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Hornet
     defender: Grizzly
-    winRate: 0.3
+    winRate: 0.2
   - attacker: Infested Hornet
     defender: Sparrowhawk
-    winRate: 0.9
+    winRate: 0.6
   - attacker: Infested Hornet
     defender: Longsword
     winRate: 1
@@ -13300,7 +13300,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Elite
     defender: Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Infested Elite
     defender: Spartan
     winRate: 1
@@ -13708,7 +13708,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infested Banshee
     defender: Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Infested Banshee
     defender: Spartan
     winRate: 1
