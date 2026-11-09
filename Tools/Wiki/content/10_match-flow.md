@@ -49,7 +49,7 @@ Free draft squads can be moved, turned or sold in round 1, and they don't use up
 
 ## The result
 
-- **A time-out isn't special.** Whether the battle ended in a wipe or at 90 seconds, every body still alive deals its **base damage** to the enemy base.
+- **A time-out isn't special.** Whether the battle ended in a wipe or at 90 seconds, every body still alive deals its **base damage** to the enemy base. There's no extra base damage for losing, but the kills you gave up become the enemy's experience.
 - Base damage is set per unit. The usual value is **(squad cost ÷ squad size) ÷ 5** per body: a 300-credit single tank deals 60, and each body of an 18-strong 100-credit squad deals about 1.1. Every unit page shows its value.
 - Temporary bodies (dropped troops, released Flood forms, risen infected units, spell squads) count too if they're alive at the end.
 - Each survivor sends a node of light to the enemy base: small ones first, then bigger ones, then each Titan alone.

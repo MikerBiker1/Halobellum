@@ -19,7 +19,7 @@ The game is about **counterplay**. Read the enemy's army, buy what beats it, and
 - A base at 0 or below loses. If both fall in the same round, the side further below zero loses. An exact tie undoes that round's damage and the match goes on.
 - There is no round limit: the match ends when a base falls.
 
-> **Tip:** Losing a battle carries no extra penalty. What counts is how many of your bodies survive, and how much each is worth. A wiped-out army deals nothing; a few expensive survivors can deal a lot.
+> **Tip:** The base damage comes from how many of your bodies survive and how much each is worth: a wiped-out army deals nothing, and a few expensive survivors can deal a lot. Losing also costs you in experience. Every body the enemy kills feeds XP to the squads that killed it, so a one-sided battle levels up their army while yours falls behind (see [Levels and experience](#/page/levels)).
 
 ## A match at a glance
 
