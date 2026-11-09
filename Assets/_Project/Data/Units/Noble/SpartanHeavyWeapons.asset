@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 1
   cost: 450
   baseDamage: 90
-  maxHealth: 1700
+  maxHealth: 2100
   armorType: 0
   maxShield: 250
   shieldRegenPerSecond: 60
@@ -31,7 +31,7 @@ MonoBehaviour:
   targetFilter: 2
   weapons:
   - weaponName: M247H Chaingun
-    damagePerShot: 11
+    damagePerShot: 13
     fireInterval: 0.12
     range: 15
     minRange: 0

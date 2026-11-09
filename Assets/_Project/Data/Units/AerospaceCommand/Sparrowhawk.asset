@@ -31,7 +31,7 @@ MonoBehaviour:
   targetFilter: 2
   weapons:
   - weaponName: Heavy Autocannon
-    damagePerShot: 18
+    damagePerShot: 13
     fireInterval: 0.3
     range: 14
     minRange: 0

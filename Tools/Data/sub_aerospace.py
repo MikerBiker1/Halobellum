@@ -11,10 +11,10 @@ ORDER = 3
 def units(U, W):
     return [
         U("Sparrowhawk", "Sparrowhawk", FACTION, "Aerial", 2, 50, 1, 250, 550, "L", 4, 2, 1, "B",
-          [W("Heavy Autocannon", 18, 0.3, 14, "Ballistic", aa=True)], airu=True,
+          [W("Heavy Autocannon", 13, 0.3, 14, "Ballistic", aa=True)], airu=True,
           note="Gunship that hunts vehicles. Its gun is poor against infantry."),
         U("Longsword", "Longsword", FACTION, "Aerial", 2, 50, 1, 300, 600, "L", 5, 2.8, 1, "G",
-          [W("Carpet Bombs", 150, 2.5, 5, "Explosive", proj=18, splash=5, own="G")], airu=True,
+          [W("Carpet Bombs", 135, 2.5, 5, "Explosive", proj=18, splash=5, own="G")], airu=True,
           note="Heavy bomber. It has to fly over its target, and cannot fight other aircraft at all."),
         U("Vulture", "Vulture", FACTION, "Aerial", 3, 200, 1, 400, 900, "H", 2.5, 3, 1.5, "B",
           [W("Missile Barrage", 50, 3, 22, "Explosive", proj=40, splash=3),

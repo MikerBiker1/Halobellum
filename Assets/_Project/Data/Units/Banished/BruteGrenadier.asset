@@ -31,7 +31,7 @@ MonoBehaviour:
   targetFilter: 0
   weapons:
   - weaponName: Spike Grenade Launcher
-    damagePerShot: 34
+    damagePerShot: 31
     fireInterval: 2
     range: 13
     minRange: 2

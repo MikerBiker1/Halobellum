@@ -150,7 +150,7 @@
   "unlock": 0,
   "squad": 2,
   "cost": 200,
-  "hp": 300,
+  "hp": 360,
   "armor": "L",
   "speed": 5.0,
   "radius": 1.2,
@@ -629,8 +629,8 @@
   "tier": 2,
   "unlock": 50,
   "squad": 1,
-  "cost": 300,
-  "hp": 1200,
+  "cost": 250,
+  "hp": 1500,
   "armor": "L",
   "speed": 6.0,
   "radius": 2.5,
@@ -887,7 +887,7 @@
   "weapons": [
    {
     "name": "Main Cannon",
-    "dmg": 220,
+    "dmg": 300,
     "interval": 3.0,
     "range": 20,
     "minr": 0,
@@ -2139,7 +2139,7 @@
   "unlock": 0,
   "squad": 4,
   "cost": 150,
-  "hp": 140,
+  "hp": 170,
   "armor": "U",
   "speed": 2,
   "radius": 0.8,
@@ -2403,7 +2403,7 @@
   "weapons": [
    {
     "name": "Bone Shards",
-    "dmg": 60,
+    "dmg": 44,
     "interval": 3,
     "range": 34,
     "minr": 8,
@@ -2836,7 +2836,7 @@
   "unlock": 200,
   "squad": 1,
   "cost": 400,
-  "hp": 1100,
+  "hp": 1250,
   "armor": "L",
   "speed": 2.5,
   "radius": 3,
@@ -2922,7 +2922,7 @@
   "unlock": 350,
   "squad": 1,
   "cost": 800,
-  "hp": 8500,
+  "hp": 10000,
   "armor": "H",
   "speed": 1.25,
   "radius": 5,
@@ -3099,7 +3099,7 @@
   "unlock": 225,
   "squad": 1,
   "cost": 450,
-  "hp": 1700,
+  "hp": 2100,
   "armor": "U",
   "speed": 1.3,
   "radius": 0.8,
@@ -3108,7 +3108,7 @@
   "weapons": [
    {
     "name": "M247H Chaingun",
-    "dmg": 11,
+    "dmg": 13,
     "interval": 0.12,
     "range": 15,
     "minr": 0,
@@ -3343,7 +3343,7 @@
   "unlock": 250,
   "squad": 3,
   "cost": 500,
-  "hp": 420,
+  "hp": 500,
   "armor": "U",
   "speed": 1.75,
   "radius": 0.6,
@@ -3761,7 +3761,7 @@
   "weapons": [
    {
     "name": "Heavy Autocannon",
-    "dmg": 18,
+    "dmg": 13,
     "interval": 0.3,
     "range": 14,
     "minr": 0,
@@ -3832,7 +3832,7 @@
   "weapons": [
    {
     "name": "Carpet Bombs",
-    "dmg": 150,
+    "dmg": 135,
     "interval": 2.5,
     "range": 5,
     "minr": 0,
@@ -4305,7 +4305,7 @@
   "weapons": [
    {
     "name": "Spike Grenade Launcher",
-    "dmg": 34,
+    "dmg": 31,
     "interval": 2.0,
     "range": 13,
     "minr": 2,
@@ -4935,7 +4935,7 @@
   "weapons": [
    {
     "name": "Needle Rifle",
-    "dmg": 6.5,
+    "dmg": 8,
     "interval": 0.25,
     "range": 12,
     "minr": 0,
@@ -5002,7 +5002,7 @@
   "unlock": 200,
   "squad": 1,
   "cost": 400,
-  "hp": 1500,
+  "hp": 1750,
   "armor": "H",
   "speed": 2,
   "radius": 1.5,
@@ -5011,7 +5011,7 @@
   "weapons": [
    {
     "name": "Goblin Plasma Cannons",
-    "dmg": 9,
+    "dmg": 10,
     "interval": 0.2,
     "range": 14,
     "minr": 0,
@@ -5113,7 +5113,7 @@
   "weapons": [
    {
     "name": "Scythe Limb",
-    "dmg": 20,
+    "dmg": 18,
     "interval": 0.8,
     "range": 1.5,
     "minr": 0,
@@ -5324,7 +5324,7 @@
   "weapons": [
    {
     "name": "Scavenged Cannon",
-    "dmg": 80,
+    "dmg": 72,
     "interval": 3,
     "range": 14,
     "minr": 0,
@@ -5433,7 +5433,7 @@
   "weapons": [
    {
     "name": "Scavenged Rockets",
-    "dmg": 18,
+    "dmg": 16,
     "interval": 1.0,
     "range": 12,
     "minr": 0,
@@ -5460,7 +5460,7 @@
    },
    {
     "name": "Spore Bombs",
-    "dmg": 36,
+    "dmg": 32,
     "interval": 2.0,
     "range": 8,
     "minr": 0,
@@ -5608,7 +5608,7 @@
   "unlock": 0,
   "squad": 2,
   "cost": 200,
-  "hp": 270,
+  "hp": 330,
   "armor": "L",
   "speed": 5.5,
   "radius": 1.2,
@@ -6010,7 +6010,7 @@
   "unlock": 200,
   "squad": 1,
   "cost": 400,
-  "hp": 3200,
+  "hp": 4000,
   "armor": "L",
   "speed": 0.9,
   "radius": 2,
@@ -6055,7 +6055,7 @@
    5,
    true
   ],
-  "note": "A mobile birthing form: it fights badly, and keeps releasing two Infection Forms and two Combat Forms in turn, one lot every 4 seconds; the Combat Forms draw the enemy's fire. Kill it first (D79, D116). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114).",
+  "note": "A mobile birthing form: it fights badly, and keeps releasing two Infection Forms and two Combat Forms in turn, one lot every 2.5 seconds; the Combat Forms draw the enemy's fire. Kill it first (D79, D116). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114).",
   "forms": 1,
   "flood": true,
   "infects": false,
@@ -6066,7 +6066,7 @@
   "spawn": [
    "InfectionForms",
    2,
-   4
+   2.5
   ],
   "aura": null,
   "leap": null,

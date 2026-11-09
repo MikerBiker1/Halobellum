@@ -66,7 +66,7 @@ UNITS = [
       [W("MA5 Assault Rifle", 5, 0.5, 12, "Ballistic", block=True)]),
     U("FlamethrowerTrooper", "Flamethrower Trooper", "UNSC", "ChaffClear", 1, 0, 6, 150, 90, "U", 3.5, 0.5, 0.25, "G",
       [W("M7057 Flamethrower", 3, 0.1, 11, "Fire", cone=15)]),
-    U("Warthog", "Warthog", "UNSC", "Flanker", 1, 0, 2, 200, 300, "L", 8, 1.2, 1, "B",
+    U("Warthog", "Warthog", "UNSC", "Flanker", 1, 0, 2, 200, 360, "L", 8, 1.2, 1, "B",
       [W("M41 Machine Gun", 8, 0.2, 11, "Ballistic", block=True)]),
     U("GaussWarthog", "Gauss Warthog", "UNSC", "SingleTargetDps", 2, 50, 1, 250, 300, "L", 7.5, 1.2, 1, "G",
       [W("M68 Gauss Cannon", 220, 2.5, 22, "Ballistic", proj=150, aa=True)]),
@@ -80,7 +80,7 @@ UNITS = [
        W("Bombs", 45, 2.0, 8, "Explosive", proj=20, splash=3, own="G")], airu=True),
     U("ArcherMissilePod", "Archer Missile Pod", "UNSC", "Artillery", 2, 50, 2, 300, 350, "L", 0, 1.4, 1.5, "G",
       [W("Archer Missile Barrage", 55, 4.0, 42, "Explosive", proj=28, splash=3.5, minr=8, lob=True)]),
-    U("Pelican", "Pelican", "UNSC", "Aerial", 2, 50, 1, 300, 1200, "L", 12, 2.5, 2, "B",
+    U("Pelican", "Pelican", "UNSC", "Aerial", 2, 50, 1, 250, 1500, "L", 12, 2.5, 2, "B",
       [W("M370 Autocannon", 14, 0.3, 14, "Ballistic")], airu=True, drop=("Marine", 6, 10, True, 3, 1.5, 5),
       note="With its Troop Bay tech it lands and drops 6 Marines 5 seconds into the battle wherever it is, then lands behind enemy lines to drop more, up to 3 drops in all (D60)."),
     U("Spartan", "Spartan", "UNSC", "SingleTargetDps", 3, 250, 1, 500, 1250, "U", 3.5, 0.6, 0.5, "B",
@@ -90,7 +90,7 @@ UNITS = [
       [W("Chaingun", 8, 0.2, 14, "Ballistic", block=True),
        W("Rockets", 60, 2.5, 18, "Explosive", proj=35, splash=2, own="G")]),
     U("Elephant", "Elephant", "UNSC", "Titan", 4, 350, 1, 800, 8000, "H", 1.5, 5, 3, "B",
-      [W("Main Cannon", 220, 3.0, 20, "Explosive", proj=40, splash=2, aa=True, own="G"),
+      [W("Main Cannon", 300, 3.0, 20, "Explosive", proj=40, splash=2, aa=True, own="G"),
        W("Turret (left)", 8, 0.2, 14, "Ballistic", block=True),
        W("Turret (right)", 8, 0.2, 14, "Ballistic", block=True)]),
 
@@ -137,7 +137,7 @@ UNITS = [
     # One Infection Forms body is a pack of 5 forms: health and damage below are for the whole pack.
     U("InfectionForms", "Infection Forms", "Flood", "Chaff", 1, 0, 10, 100, 228, "U", 5, 0.8, 0.2, "G",
       [W("Infectious Bite", 36, 0.5, 1, "Melee")], forms=6, flood=True, infects=True, leap=(6, 14, 2.5)),
-    U("CarrierForm", "Carrier Form", "Flood", "ChaffClear", 1, 0, 4, 150, 140, "U", 2, 0.8, 0.4, "G",
+    U("CarrierForm", "Carrier Form", "Flood", "ChaffClear", 1, 0, 4, 150, 170, "U", 2, 0.8, 0.4, "G",
       [W("Burst", 0, 1, 1.5, "Explosive")], flood=True, selfd=True,
       burst=dict(dmg=110, radius=4.5, type="Explosive", aa=False, spawns=[("InfectionForms", 2)])),
     # D108 (the owner, 2026-11-07): it leaps, as the Infested Elite on its model does.
@@ -149,7 +149,7 @@ UNITS = [
     # D107 (the owner, 2026-11-07): it shoots air too; at a flyer its shards fly straight, not lobbed, for a quarter of their damage:
     # at full damage every aircraft lost to it, and air is artillery's counter (Section 7).
     U("PureFormRanged", "Pure Form Ranged", "Flood", "Artillery", 2, 50, 2, 250, 400, "L", 1, 1.1, 1, "B",
-      [W("Bone Shards", 60, 3, 34, "Explosive", proj=22, splash=3, minr=8, lob=True, air=0.25)], flood=True),
+      [W("Bone Shards", 44, 3, 34, "Explosive", proj=22, splash=3, minr=8, lob=True, air=0.25)], flood=True),
     # D76 (the owner, 2026-11-06): its spat bone hits air only, from 14 m; on the ground it must close in and bite. Its weapons split air from
     # ground, so it uses one at a time, and the long one's reach means air comes first.
     U("SwarmForm", "Swarm Form", "Flood", "AntiAir", 2, 50, 4, 250, 200, "U", 3.5, 1, 0.3, "B",
@@ -165,10 +165,10 @@ UNITS = [
     U("InfectedPelican", "Infected Pelican", "Flood", "Aerial", 3, 200, 1, 400, 900, "L", 6, 2.5, 1, "G",
       [W("Crash Dive", 0, 1, 1, "Explosive", own="G")], airu=True, flood=True, selfd=True, seek=True, leap=(22, 16, 0),
       burst=dict(dmg=900, radius=3.5, type="Explosive", aa=False, spawns=[("InfectionForms", 5), ("CombatForm", 5)])),
-    U("InfectedPhantom", "Infected Phantom", "Flood", "Aerial", 3, 200, 1, 400, 1100, "L", 2.5, 3, 1.5, "B",
+    U("InfectedPhantom", "Infected Phantom", "Flood", "Aerial", 3, 200, 1, 400, 1250, "L", 2.5, 3, 1.5, "B",
       [W("Plasma Turrets", 12, 0.3, 14, "Energy")], airu=True, flood=True, drop=("CombatForm", 5, 8),
       burst=dict(dmg=0, radius=0, type="Explosive", aa=False, spawns=[("InfectionForms", 1)])),
-    U("Abomination", "Flood Abomination", "Flood", "Titan", 4, 350, 1, 800, 8500, "H", 1.25, 5, 3, "B",
+    U("Abomination", "Flood Abomination", "Flood", "Titan", 4, 350, 1, 800, 10000, "H", 1.25, 5, 3, "B",
       [W("Tendril Slam", 400, 2.5, 7, "Melee", splash=5, own="G"),
        W("Tendril Whip", 50, 0.8, 10, "Melee")], flood=True, spawn=("InfectionForms", 2, 14), aura=(14, 1.2, 0.01), baked="Abomination"),
 ]

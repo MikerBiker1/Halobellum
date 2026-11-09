@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 1.2
   turnTime180: 1
   isAir: 0
+  canFlank: 0
   targetFilter: 0
   weapons:
   - weaponName: M68 Gauss Cannon
@@ -43,7 +44,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -54,7 +54,6 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
-    windUpSeconds: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -66,15 +65,11 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
-  reinforcementDrops: 1
-  reinforcementLandSeconds: 0
-  reinforcementFirstDropSeconds: 0
   formsPerBody: 1
   isFlood: 0
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
-  canFlank: 0
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -94,7 +89,6 @@ MonoBehaviour:
   leapRange: 0
   leapSpeed: 0
   leapCooldownSeconds: 0
-  leapCharges: 0
   techUpgrades:
   - {fileID: 11400000, guid: 944c92efea92c58e0ee42467c16db362, type: 2}
   - {fileID: 11400000, guid: 391ec40b24c7446588828146e2a8b4b3, type: 2}
@@ -104,7 +98,6 @@ MonoBehaviour:
   bakedBody: {fileID: 0}
   bakedTint: {r: 1, g: 1, b: 1, a: 0}
   bakedScale: 1
-  strongAgainst: Tanks, heavy units
-  weakAgainst: Chaff swarms, flankers
-  notes: 'Best counters (headless runner, equal cost): Marine (100%), Grunt (100%).
-    First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  strongAgainst: 'Tanks, heavy units'
+  weakAgainst: 'Chaff swarms, flankers'
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Grunt (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

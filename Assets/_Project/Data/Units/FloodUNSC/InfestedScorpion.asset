@@ -31,7 +31,7 @@ MonoBehaviour:
   targetFilter: 0
   weapons:
   - weaponName: Scavenged Cannon
-    damagePerShot: 80
+    damagePerShot: 72
     fireInterval: 3
     range: 14
     minRange: 0
@@ -126,4 +126,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
-  notes: 'Best counters (headless runner, equal cost): Spartan (100%), Zealot (100%). A little tougher and shorter-ranged than the real thing, with tentacles for what gets close. First-pass M10 values, UNSC-based (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Gauss Warthog (100%), Spartan (100%). A little tougher and shorter-ranged than the real thing, with tentacles for what gets close. First-pass M10 values, UNSC-based (Docs/M10/subfactions.md).'

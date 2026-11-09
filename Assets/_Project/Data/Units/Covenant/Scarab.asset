@@ -27,6 +27,7 @@ MonoBehaviour:
   collisionRadius: 5
   turnTime180: 3
   isAir: 0
+  canFlank: 0
   targetFilter: 2
   weapons:
   - weaponName: Focus Beam
@@ -43,7 +44,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 3
     beamChargeSeconds: 2
@@ -54,7 +54,6 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
-    windUpSeconds: 0
   - weaponName: Plasma Turret (left)
     damagePerShot: 10
     fireInterval: 0.25
@@ -69,7 +68,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -80,7 +78,6 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
-    windUpSeconds: 0
   - weaponName: Plasma Turret (right)
     damagePerShot: 10
     fireInterval: 0.25
@@ -95,7 +92,6 @@ MonoBehaviour:
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
-    targetClass: 0
     lobbed: 0
     beamSeconds: 0
     beamChargeSeconds: 0
@@ -106,7 +102,6 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
-    windUpSeconds: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -118,15 +113,11 @@ MonoBehaviour:
   reinforcementBodies: 0
   reinforcementDelaySeconds: 0
   reinforcementNeedsUpgrade: 0
-  reinforcementDrops: 1
-  reinforcementLandSeconds: 0
-  reinforcementFirstDropSeconds: 0
   formsPerBody: 1
   isFlood: 0
   infects: 0
   immuneToInfection: 0
   selfDestructs: 0
-  canFlank: 0
   seeksDensestCluster: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
@@ -146,7 +137,6 @@ MonoBehaviour:
   leapRange: 0
   leapSpeed: 0
   leapCooldownSeconds: 0
-  leapCharges: 0
   techUpgrades:
   - {fileID: 11400000, guid: 97ad07379e511319140f46b5855a8494, type: 2}
   - {fileID: 11400000, guid: 9f1639418395e56709e955b69c8cdeb9, type: 2}
@@ -157,6 +147,5 @@ MonoBehaviour:
   bakedTint: {r: 1, g: 1, b: 1, a: 0}
   bakedScale: 1
   strongAgainst: Most things in a straight fight
-  weakAgainst: Single-target DPS, large chaff swarms
-  notes: 'Best counters (headless runner, equal cost): Spartan (100%), Zealot (100%).
-    First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  weakAgainst: 'Single-target DPS, large chaff swarms'
+  notes: 'Best counters (headless runner, equal cost): Spartan (100%), Zealot (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

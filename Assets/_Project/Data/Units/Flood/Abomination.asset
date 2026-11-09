@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 1
   cost: 800
   baseDamage: 160
-  maxHealth: 8500
+  maxHealth: 10000
   armorType: 2
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -103,10 +103,13 @@ MonoBehaviour:
   spawnedUnit: {fileID: 11400000, guid: 6b41beaaf1cf621860b58e52a70f04fb, type: 2}
   spawnedBodies: 2
   spawnIntervalSeconds: 14
+  alternateSpawnedUnit: {fileID: 0}
+  alternateSpawnedBodies: 0
   auraRadius: 14
   auraSpeedMultiplier: 1.2
   auraHealPerSecondShare: 0.01
   lifestealShare: 0
+  seedForms: []
   leapRange: 0
   leapSpeed: 0
   leapCooldownSeconds: 0

@@ -15,7 +15,7 @@ def units(U, W):
            W("Chopper Autocannons", 10, 0.25, 9, "Ballistic", block=True, own="B")],
           note="It rams: its main weapon is its front wheel, so it drives straight into the enemy, guns firing on the way."),
         U("BruteGrenadier", "Brute Grenadier", FACTION, "ChaffClear", 1, 0, 4, 150, 150, "U", 1.5, 0.6, 0.3, "G",
-          [W("Spike Grenade Launcher", 34, 2.0, 13, "Explosive", proj=18, splash=2.8, minr=2, lob=True),
+          [W("Spike Grenade Launcher", 31, 2.0, 13, "Explosive", proj=18, splash=2.8, minr=2, lob=True),
            # The owner, 2026-11-07: too close for its grenades, it swings the Brute Shot's blade (its launcher holds fire meanwhile).
            W("Brute Shot Blade", 35, 1.5, 2, "Melee")], baked="BruteGrenadier",
           note="Tough infantry with lobbed grenades. Shorter range than a Fuel Rod Grunt, can miss what moves, but takes much more killing."),

@@ -31,7 +31,7 @@ MonoBehaviour:
   targetFilter: 2
   weapons:
   - weaponName: Needle Rifle
-    damagePerShot: 6.5
+    damagePerShot: 8
     fireInterval: 0.25
     range: 12
     minRange: 0

@@ -230,4 +230,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air
-  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Reaver (100%). A gunship: twin autocannons under its belly and five light Spartan Lasers on turrets of their own, each finding its own target. First-pass M10 values, Aerospace Command (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Vampire (100%). A gunship: twin autocannons under its belly and five light Spartan Lasers on turrets of their own, each finding its own target. First-pass M10 values, Aerospace Command (Docs/M10/subfactions.md).'

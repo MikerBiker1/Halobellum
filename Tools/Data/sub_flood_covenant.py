@@ -14,7 +14,7 @@ INFESTED = (0.55, 0.68, 0.18, 0.55)
 def units(U, W):
     return [
         # No Infested Grunt: the Flood don't take Grunts as combat forms in Halo (the owner, 2026-11-08; D116).
-        U("InfestedGhost", "Infested Ghost", FACTION, "Flanker", 1, 0, 2, 200, 270, "L", 5.5, 1.2, 0.8, "G",
+        U("InfestedGhost", "Infested Ghost", FACTION, "Flanker", 1, 0, 2, 200, 330, "L", 5.5, 1.2, 0.8, "G",
           [W("Hull Ram", 45, 1.0, 1.5, "Melee", splash=1.5),
            W("Scavenged Plasma Bolts", 8, 0.25, 9, "Energy", own="B")], flood=True, burst=dict(dmg=0, radius=0, type="Explosive", aa=False, spawns=[("InfectionForms", 1)]),
           note="Faster and lighter than the Infested Warthog."),
@@ -29,10 +29,10 @@ def units(U, W):
           [W("Scavenged Plasma Cannons", 8, 0.3, 10, "Energy"),
            W("Spore Bomb", 45, 2.5, 8, "Explosive", proj=30, splash=3, own="G")], flood=True, airu=True, burst=dict(dmg=0, radius=0, type="Explosive", aa=False, spawns=[("InfectionForms", 1)]),
           note="Barely flying, still bombing."),
-        U("Spawner", "Spawner", FACTION, "Tank", 3, 200, 1, 400, 3200, "L", 0.9, 2, 2, "G",
-          [W("Spore Lash", 40, 1.2, 3, "Melee", splash=2)], flood=True, spawn=("InfectionForms", 2, 4), spawn2=("CombatForm", 2),  # Combat Forms, not Infested Elites with Covenant guns (the owner, 2026-11-08; D116).
+        U("Spawner", "Spawner", FACTION, "Tank", 3, 200, 1, 400, 4000, "L", 0.9, 2, 2, "G",
+          [W("Spore Lash", 40, 1.2, 3, "Melee", splash=2)], flood=True, spawn=("InfectionForms", 2, 2.5), spawn2=("CombatForm", 2),  # Combat Forms, not Infested Elites with Covenant guns (the owner, 2026-11-08; D116).
           drop=("SwarmForm", 1, 5, True),  # Swarm Brood (the owner, 2026-11-08): one Swarm Form (a stack of five), hatched once 5 seconds into each battle (D113, D114).
-          note="A mobile birthing form: it fights badly, and keeps releasing two Infection Forms and two Combat Forms in turn, one lot every 4 seconds; the Combat Forms draw the enemy's fire. Kill it first (D79, D116). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114)."),
+          note="A mobile birthing form: it fights badly, and keeps releasing two Infection Forms and two Combat Forms in turn, one lot every 2.5 seconds; the Combat Forms draw the enemy's fire. Kill it first (D79, D116). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114)."),
     ]
 
 
