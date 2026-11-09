@@ -569,6 +569,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-08 | Taken Flood vehicles use their original vehicle's sounds instead of generated ones; clicking a spell shows what it does; towers have heavy armor | Per the project owner (D119) |
 | 2026-11-08 | The owner's Banshee fall-and-crash file; the turret explosion for every machine whose death was generated; a Ghost drifts knocked out for 2.1 s, then blows up blue | Per the project owner (D120) |
 | 2026-11-08 | The Ghost's blast heard at any battle speed; the Infested Ghost drifts and blows up too | Per the project owner (D121) |
+| 2026-11-08 | Taken aircraft (Infested Banshee, Infested Hornet) fall as their originals do; the shockwave line has a bar that runs down; a machine a seed takes over grows the Flood's growths for 2 s and rises, without blowing up or falling | Per the project owner (D122) |
 
 ## 18. Assumptions to confirm
 

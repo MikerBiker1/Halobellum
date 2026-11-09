@@ -18,7 +18,7 @@
 //     for its stats), and an "Unlock units" button that opens a page of every unit by tier and price, over a dimmed field. Esc, a
 //     right-click, its x or a successful unlock closes the page. Its state is in plain methods, so that batch tests can use them.
 //   Battle: both base health bars and a live army-value comparison (speed controls are in BattleHud), and how long
-//     a fallen tower's shockwave still weakens each army.
+//     a fallen tower's shockwave still weakens each army, over a bar that runs down smoothly with the time left (D122).
 //   Result: base damage dealt by each side, income, survivors, top damage dealers, what killed what.
 //   Match over: the winner, a New match button and a Main Menu button, Open battle logs, and Battle stats, which opens a window
 //     with a tab for each battle: the field from above as it started, and both armies' damage dealt, taken and stopped (BattleStatsWindow, D69).
@@ -971,18 +971,47 @@ namespace Halobellum.UI
 
         private (Team team, TowerKind kind)? _towerPanelShown;
 
-        /// <summary>A line under a side's panel while a fallen tower's shockwave weakens its army.</summary>
+        /// <summary>The colour of a shockwave's bar: the pulse its army's bodies show (UnitViewManager).</summary>
+        private static readonly Color ShockwaveBarColor = new Color(0.45f, 0.92f, 1f);
+
+        /// <summary>The most seconds of shockwave each side has had since its shockwave began: the bar's full length (two add up, D68).</summary>
+        private readonly float[] _shockwaveLongest = new float[2];
+
+        /// <summary>A line under a side's panel while a fallen tower's shockwave weakens its army, over a bar that runs down with the time left (D122).</summary>
         private void DrawShockwave(Rect under, HudLine line, Team team)
         {
-            BattleSimulation simulation = battle.Simulation;
-            ShockwaveStats shockwave = simulation?.ActiveShockwave(team);
-            if (shockwave == null) return;
-            int seconds = Mathf.CeilToInt(simulation.ShockwaveSecondsLeft(team));
+            float share = ShockwaveShare(team, true);
+            if (share <= 0f) return;
+            int seconds = Mathf.CeilToInt(battle.Simulation.ShockwaveSecondsLeft(team));
             if (line.Changed(seconds)) line.Text = $"Shockwave: weakened for {seconds} s";
-            var rect = new Rect(under.x, under.yMax + 4f, under.width, 30f);
+            var rect = new Rect(under.x, under.yMax + 4f, under.width, 44f);
             Panel(rect);
-            GUI.Label(rect, line.Text, _smallCentered);
+            GUI.Label(new Rect(rect.x, rect.y + 2f, rect.width, 22f), line.Text, _smallCentered);
+            HudTheme.Bar(new Rect(rect.x + 12f, rect.y + 26f, rect.width - 24f, 10f), share, ShockwaveBarColor);
         }
+
+        /// <summary>
+        /// The share of its bar a side's shockwave fills: the time left over the most it has had since it began (a second tower falling adds its
+        /// time, D68, and the bar grows back). 0 without a shockwave. Smoothed between the simulation's ticks, so that it runs down rather than in steps.
+        /// </summary>
+        private float ShockwaveShare(Team team, bool smooth)
+        {
+            BattleSimulation simulation = battle != null ? battle.Simulation : null;
+            int side = team == Team.A ? 0 : 1;
+            ShockwaveStats shockwave = simulation?.ActiveShockwave(team);
+            if (shockwave == null)
+            {
+                _shockwaveLongest[side] = 0f;
+                return 0f;
+            }
+            float left = simulation.ShockwaveSecondsLeft(team);
+            _shockwaveLongest[side] = Mathf.Max(_shockwaveLongest[side], Mathf.Max(left, shockwave.Seconds));
+            if (smooth && battle.IsPlaying && battle.Clock != null) left -= battle.Clock.Alpha * simulation.TickSeconds;
+            return Mathf.Clamp(left / _shockwaveLongest[side], 0.001f, 1f);
+        }
+
+        /// <summary>The share of its bar a side's shockwave fills, 0 without one (for tests).</summary>
+        public float ShockwaveBarShare(Team team) => ShockwaveShare(team, false);
 
         // ------------------------------------------------------------------ battle
 

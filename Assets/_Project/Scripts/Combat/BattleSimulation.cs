@@ -160,6 +160,24 @@ namespace Halobellum.Combat
         /// <summary>The shockwave this side's army suffers now, or null.</summary>
         public ShockwaveStats ActiveShockwave(Team team) => ShockwaveSecondsLeft(team) > 0f ? (team == Team.A ? _shockwaveA : _shockwaveB) : null;
 
+        /// <summary>
+        /// True if this dead unit is still to rise for the other side, with what a seed raises it as (null: the usual infected form) and the battle
+        /// second it rises at. Known already as the unit's death is raised (D122), so that what dies can be shown taken over rather than destroyed.
+        /// </summary>
+        public bool RiseOf(SimUnit corpse, out UnitStats seedForm, out float riseAt)
+        {
+            foreach (PendingRise rise in _rises)
+            {
+                if (rise.Corpse != corpse) continue;
+                seedForm = rise.Form;
+                riseAt = rise.At;
+                return true;
+            }
+            seedForm = null;
+            riseAt = 0f;
+            return false;
+        }
+
         // ------------------------------------------------------------------ setup
 
         /// <summary>Adds one body. Team A faces up (+Y), Team B faces down (-Y).</summary>
@@ -1700,13 +1718,12 @@ namespace Halobellum.Combat
                     weapon.CancelWindUp(); // A charge dies with its shooter.
                 }
                 SimUnit killer = unit.KilledById >= 0 ? _units[unit.KilledById] : null;
+                // Whether it rises is settled before its death is raised, so that whoever hears of the death can ask (RiseOf, D122).
+                bool rises = WillRise(unit);
+                if (rises) _rises.Add(new PendingRise { Corpse = unit, Team = unit.Team == Team.A ? Team.B : Team.A, At = ElapsedSeconds + _rules.InfectionDelaySeconds, Form = unit.IsSeeded ? SeedFormFor(unit) : null });
                 Events.RaiseUnitDied(unit, killer);
                 if (unit.Stats.Shockwave != null) ReleaseShockwave(unit);
-                if (WillRise(unit))
-                {
-                    _rises.Add(new PendingRise { Corpse = unit, Team = unit.Team == Team.A ? Team.B : Team.A, At = ElapsedSeconds + _rules.InfectionDelaySeconds, Form = unit.IsSeeded ? SeedFormFor(unit) : null });
-                    Events.RaiseUnitInfected(unit);
-                }
+                if (rises) Events.RaiseUnitInfected(unit);
                 if (unit.Stats.DeathBurst != null) _bursting.Add(unit);
             }
             foreach (SimUnit unit in _bursting) ApplyDeathBurst(unit);

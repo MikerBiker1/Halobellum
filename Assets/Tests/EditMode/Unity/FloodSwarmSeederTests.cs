@@ -116,6 +116,12 @@ namespace Halobellum.Tests
             bystander.MoveSpeed = 0f;
             sim.AddUnit(bystander, Team.B, new Vec2(60f, 75f));
             bool seeded = false;
+            string toRiseAs = null;
+            sim.Events.UnitDied += (dead, killer) =>
+            {
+                // Known as its death is raised, so that it can be shown taken over rather than destroyed (D122).
+                if (dead == banshee && sim.RiseOf(dead, out UnitStats form, out float at) && form != null) toRiseAs = form.Name;
+            };
             for (int i = 0; i < 30 * 40 && banshee.IsAlive; i++)
             {
                 sim.Step();
@@ -123,6 +129,7 @@ namespace Halobellum.Tests
             }
             Assert.IsTrue(seeded, "The Seeder's spores reach it in the air.");
             Assert.IsFalse(banshee.IsAlive);
+            Assert.AreEqual("Infested Banshee", toRiseAs, "What it will rise as is known as it dies.");
             Steps(sim, 3f); // The rise takes a moment.
             SimUnit risen = sim.Units.FirstOrDefault(x => x.Team == Team.A && x.Stats.Name == "Infested Banshee");
             Assert.IsNotNull(risen, "It rose as the Flood's own Banshee.");

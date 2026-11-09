@@ -16,6 +16,8 @@
 // pulses with a tint over all its bodies for as long as it lasts (D68).
 // A flier with a baked body drops to the ground as its death plays (the Seeder, D93). A baked body can keep time with the battle (D90): its shooting clip paced and timed so that each blow lands on one of its weapon's strikes
 // (the Stalker Form's lunges, the Pure Form Ranged's thrust), or its moving and shooting clips so that it gives birth as it spawns (the Spawner).
+// A machine a Seeder's seed has taken over (D122) neither blows up nor falls: it stays where it died, in the air if it flew, while the growths of the
+// Flood's version of it (copied from that model) swell on it from nothing, until it rises as that unit.
 // The simulation's 2D position (x, y) becomes the world position (x, height, y).
 // Depends on: BattleController, SquadSelection, PlaceholderArt, Halobellum.Combat, UnityEngine.
 
@@ -123,6 +125,11 @@ namespace Halobellum.Presentation
             public Renderer[] Tinted;
             public Color[] TintedFrom;
             public bool[] TintedHadBlock;
+            /// <summary>A machine a seed took over (D122): the Flood's growths on it, each at its full size, swelling from nothing until it rises.</summary>
+            public Transform[] Growths;
+            public Vector3[] GrowthSizes;
+            /// <summary>Battle seconds its growths started at and are full at (when it rises).</summary>
+            public float GrowFrom, GrowUntil;
         }
 
         private BattleController _battle;
@@ -390,6 +397,8 @@ namespace Halobellum.Presentation
         private static readonly int AnimBlendId = Shader.PropertyToID("_AnimBlend");
         private MaterialPropertyBlock _block;
         private readonly List<View> _falling = new List<View>();
+        /// <summary>Machines a seed took over, their growths swelling until they rise (D122).</summary>
+        private readonly List<View> _growing = new List<View>();
         /// <summary>The clock baked animations run on: battle time, so they pause and speed up with the battle.</summary>
         private float _animationTime;
 
@@ -561,6 +570,7 @@ namespace Halobellum.Presentation
             if (_container != null) Destroy(_container.gameObject);
             _shown = simulation;
             _falling.Clear();
+            _growing.Clear();
             _animationTime = 0f;
             Shader.SetGlobalFloat(BattleTimeId, 0f);
             if (simulation == null) return;
@@ -803,7 +813,10 @@ namespace Halobellum.Presentation
             for (int n = 0; n < spell.Stats.DropSquads; n++) DropSquad(spell.DroppedSquadId + n, Time.unscaledTime, dropHeight);
         }
 
-        /// <summary>A body that will rise stays on the ground, turning sick green, until it does.</summary>
+        /// <summary>
+        /// A body that will rise stays on the ground, turning sick green, until it does. A machine a seed took over (D122) stays where it was, in the
+        /// air if it flew, and the Flood's growths swell on it until it rises as the Flood's own.
+        /// </summary>
         private void OnUnitInfected(SimUnit corpse)
         {
             if (corpse.Id < 0 || corpse.Id >= _views.Count) return;
@@ -811,6 +824,7 @@ namespace Halobellum.Presentation
             view.Root.SetActive(true);
             view.Bar.gameObject.SetActive(false);
             view.Ring.SetActive(false);
+            if (DeathEffects.GrowsIntoFlood(_shown, corpse) && StartGrowing(view)) return;
             if (view.Baked != null)
             {
                 view.BakedTint = new Color(infectedColor.r, infectedColor.g, infectedColor.b, 0.8f);
@@ -829,12 +843,69 @@ namespace Halobellum.Presentation
             if (corpse.Id < 0 || corpse.Id >= _views.Count) return;
             _views[corpse.Id].Root.SetActive(false);
             _falling.Remove(_views[corpse.Id]);
+            _growing.Remove(_views[corpse.Id]);
+        }
+
+        /// <summary>
+        /// Copies the growths of the Flood's version of a machine (its model's "Growth" pieces, FloodGrowths) onto the machine's own body, where they
+        /// sit on the Flood's model: both are built from the same model at the same size. They start at nothing. False if there are none to copy.
+        /// </summary>
+        private bool StartGrowing(View view)
+        {
+            if (!_shown.RiseOf(view.Unit, out UnitStats form, out float riseAt) || form == null) return false;
+            GameObject prefab = _battle.PrefabFor(form);
+            Transform body = view.Root.transform.Find("Body");
+            if (prefab == null || body == null) return false;
+            Matrix4x4 toPrefab = prefab.transform.worldToLocalMatrix;
+            var growths = new List<Transform>();
+            var sizes = new List<Vector3>();
+            foreach (Transform piece in prefab.GetComponentsInChildren<Transform>(true))
+            {
+                if (piece.name != "Growth") continue;
+                Matrix4x4 pose = toPrefab * piece.localToWorldMatrix;
+                GameObject copy = Instantiate(piece.gameObject, body, false);
+                copy.transform.localPosition = pose.GetColumn(3);
+                copy.transform.localRotation = pose.rotation;
+                sizes.Add(pose.lossyScale);
+                copy.transform.localScale = Vector3.zero;
+                growths.Add(copy.transform);
+            }
+            if (growths.Count == 0) return false;
+            view.Growths = growths.ToArray();
+            view.GrowthSizes = sizes.ToArray();
+            view.GrowFrom = _shown.ElapsedSeconds;
+            view.GrowUntil = riseAt;
+            _growing.Add(view);
+            return true;
+        }
+
+        /// <summary>A taken machine's growths, swelling with battle time from nothing to full as it rises: fast at first, settling at the end.</summary>
+        private void Grow(float alpha)
+        {
+            if (_growing.Count == 0) return;
+            float now = _shown.ElapsedSeconds + (_battle.IsPlaying ? alpha * _shown.TickSeconds : 0f);
+            foreach (View view in _growing)
+            {
+                float t = Mathf.Clamp01((now - view.GrowFrom) / Mathf.Max(0.01f, view.GrowUntil - view.GrowFrom));
+                float size = 1f - (1f - t) * (1f - t);
+                for (int i = 0; i < view.Growths.Length; i++) view.Growths[i].localScale = view.GrowthSizes[i] * size;
+            }
+        }
+
+        /// <summary>How far a taken machine's growths have swollen, 0 to 1, or -1 if it isn't growing them (for tests).</summary>
+        public float GrowthShare(SimUnit unit)
+        {
+            if (unit.Id < 0 || unit.Id >= _views.Count) return -1f;
+            View view = _views[unit.Id];
+            if (!_growing.Contains(view) || view.Growths.Length == 0) return -1f;
+            return view.GrowthSizes[0].x > 0f ? view.Growths[0].localScale.x / view.GrowthSizes[0].x : 1f;
         }
 
         private void OnUnitDied(SimUnit unit, SimUnit killer)
         {
             // Unit ids are their index in the simulation's unit list.
             if (unit.Id < 0 || unit.Id >= _views.Count) return;
+            if (DeathEffects.GrowsIntoFlood(_shown, unit)) return; // Taken over, not killed: it stays as it is, growing the Flood's growths (OnUnitInfected, D122).
             View view = _views[unit.Id];
             if (view.Baked == null || view.Baked.Clip(BakedAnimation.Dead) == null)
             {
@@ -949,6 +1020,7 @@ namespace Halobellum.Presentation
                 _falling.RemoveAt(i);
             }
 
+            Grow(alpha);
             float shockwaveA = ShockwaveStrength(Team.A), shockwaveB = ShockwaveStrength(Team.B);
             foreach (View view in _views)
             {

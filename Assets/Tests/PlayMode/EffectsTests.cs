@@ -286,6 +286,8 @@ namespace Halobellum.Tests
             Assert.AreEqual(DeathStyle.FloodBurst, DeathLooks.For(new UnitStats { IsFlood = true, ArmorType = ArmorType.Heavy }));
             Assert.AreEqual(DeathStyle.FloodAirBurst, DeathLooks.For(new UnitStats { IsFlood = true, IsAir = true, CollisionRadius = 1f }));
             Assert.AreEqual(DeathStyle.FloodAir, DeathLooks.For(new UnitStats { IsFlood = true, IsAir = true, CollisionRadius = 3f }));
+            Assert.AreEqual(DeathStyle.FloodAir, DeathLooks.For(new UnitStats { Name = "Infested Banshee", IsFlood = true, IsAir = true, CollisionRadius = 1.4f }), "Still a Banshee: it falls (D122).");
+            Assert.AreEqual(DeathStyle.FloodAir, DeathLooks.For(new UnitStats { Name = "Infested Hornet", IsFlood = true, IsAir = true, CollisionRadius = 1.5f }), "Still a Hornet.");
             Assert.AreEqual(DeathStyle.CrashBurst, DeathLooks.For(new UnitStats { IsFlood = true, IsAir = true, CollisionRadius = 2.5f, DeathBurst = new DeathBurstStats { Radius = 7f } }));
         }
 
@@ -616,6 +618,100 @@ namespace Halobellum.Tests
             while ((views.IsShown(car) || views.IsShown(flier)) && Time.realtimeSinceStartup < deadline) yield return null;
             Assert.IsFalse(views.IsShown(flier), "It has crashed.");
             Assert.IsFalse(views.IsShown(car), "The wreck has gone.");
+        }
+
+        [UnityTest]
+        public IEnumerator AnInfestedBanshee_FallsBurning_AsTheBansheeDoes() => FallsBurning("Infested Banshee");
+
+        [UnityTest]
+        public IEnumerator AnInfestedHornet_FallsBurning_AsTheHornetDoes() => FallsBurning("Infested Hornet");
+
+        /// <summary>D122: a taken aircraft burst in the air, as a small Flood flier does; it falls as it did before it was taken.</summary>
+        private IEnumerator FallsBurning(string name)
+        {
+            yield return LoadSandbox();
+            _sandbox.AddSquad(Team.A, Unit(name));
+            _sandbox.AddSquad(Team.B, Unit("Marine"));
+            yield return null;
+            _battle.Speed = 1f;
+            _sandbox.Run();
+            yield return null;
+            UnitViewManager views = _battle.GetComponent<UnitViewManager>();
+            SimUnit flier = _battle.Simulation.Units.First(u => u.Stats.Name == name);
+            flier.Health = 0f;
+            float deadline = Time.realtimeSinceStartup + 5f;
+            while (flier.IsAlive && Time.realtimeSinceStartup < deadline) yield return null;
+            yield return null;
+            Assert.IsTrue(views.IsShown(flier), "Its body stays, falling.");
+            float startHeight = views.ShownPosition(flier).y;
+            for (int i = 0; i < 20; i++) yield return null;
+            Assert.Less(views.ShownPosition(flier).y, startHeight, "Downward.");
+            Assert.Greater(_view.Deaths.CorpsesOnField, 0);
+        }
+
+        [UnityTest]
+        public IEnumerator ASeededBanshee_StaysInTheAir_GrowsTheFloodsGrowths_ThenRisesAsAnInfestedBanshee()
+        {
+            // D122: a machine a seed takes over neither blows up nor falls; the Flood's growths swell on it for 2 s, and then it is the Flood's.
+            yield return LoadSandbox();
+            _sandbox.AddSquad(Team.A, Unit("Seeder"));
+            _sandbox.AddSquad(Team.B, Unit("Banshee"));
+            _sandbox.AddSquad(Team.B, Unit("Marine"));
+            yield return null;
+            _battle.Speed = 1f;
+            _sandbox.Run();
+            yield return null;
+            var heard = new List<string>();
+            AudioDirector director = AudioDirector.Instance;
+            System.Action<string> note = heard.Add;
+            if (director != null) director.SlotPlayed += note;
+            try
+            {
+                UnitViewManager views = _battle.GetComponent<UnitViewManager>();
+                SimUnit seeder = _battle.Simulation.Units.First(u => u.Stats.Name == "Seeder");
+                SimUnit banshee = _battle.Simulation.Units.First(u => u.Stats.Name == "Banshee");
+                banshee.IsSeeded = true;
+                banshee.SeededById = seeder.Id;
+                banshee.SeededUntil = _battle.Simulation.ElapsedSeconds + 10f; // A seed that lasts, as a Seeder's shot plants.
+                banshee.Health = 0f;
+                float deadline = Time.realtimeSinceStartup + 5f;
+                while (banshee.IsAlive && Time.realtimeSinceStartup < deadline) yield return null;
+                yield return null;
+                Assert.IsTrue(_battle.Simulation.RiseOf(banshee, out UnitStats form, out _), "It is to rise.");
+                Assert.AreEqual("Infested Banshee", form.Name);
+                Assert.IsTrue(views.IsShown(banshee), "Its body stays.");
+                Vector3 start = views.ShownPosition(banshee);
+                Assert.Greater(start.y, 5f, "Up in the air.");
+                Assert.AreEqual(0, _view.Deaths.CorpsesOnField, "Not a wreck: it didn't blow up.");
+                float first = views.GrowthShare(banshee);
+                Assert.GreaterOrEqual(first, 0f, "It grows the Flood's growths.");
+                Assert.Less(first, 0.5f, "From almost nothing.");
+
+                float diedAt = Time.time;
+                while (Time.time < diedAt + 1f) yield return null;
+                Assert.AreEqual(start, views.ShownPosition(banshee), "It hasn't moved, still in the air.");
+                float half = views.GrowthShare(banshee);
+                Assert.Greater(half, first, "Its growths swell.");
+                Assert.Less(half, 1f, "Over the time until it rises.");
+
+                deadline = Time.time + 3f;
+                SimUnit risen = null;
+                while (risen == null && Time.time < deadline)
+                {
+                    risen = _battle.Simulation.Units.FirstOrDefault(u => u.Team == Team.A && u.Stats.Name == "Infested Banshee");
+                    yield return null;
+                }
+                Assert.IsNotNull(risen, "It rose as the Flood's own Banshee.");
+                Assert.Greater(Time.time - diedAt, 1.7f, "About 2 s after.");
+                yield return null;
+                Assert.IsFalse(views.IsShown(banshee), "The Covenant's body is gone, replaced by the Flood's.");
+                Assert.IsTrue(views.IsShown(risen));
+                Assert.AreEqual(start.y, views.ShownPosition(risen).y, 1f, "At the same height.");
+                Assert.AreEqual(0, _view.Deaths.CorpsesOnField, "Nothing fell.");
+                CollectionAssert.DoesNotContain(heard, AudioCatalog.DeathBanshee.Slot, "Nor crashed.");
+                CollectionAssert.DoesNotContain(heard, AudioCatalog.ExplosionTurret.Slot, "Nor blew up.");
+            }
+            finally { if (director != null) director.SlotPlayed -= note; }
         }
 
         [UnityTest]

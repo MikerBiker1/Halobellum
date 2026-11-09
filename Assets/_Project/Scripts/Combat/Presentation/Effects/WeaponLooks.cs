@@ -173,7 +173,7 @@ namespace Halobellum.Presentation
         FloodBurst,
         /// <summary>A flying Flood body that bursts in the air (Swarm Form).</summary>
         FloodAirBurst,
-        /// <summary>A big Flood flier: blows up and falls burning, spilling spores (Infected Phantom).</summary>
+        /// <summary>A big Flood flier, or a taken aircraft (D122): blows up and falls burning, spilling spores (Infected Phantom).</summary>
         FloodAir,
         /// <summary>About a titan's blast: a flier with a death burst comes down on the enemy (Infected Pelican).</summary>
         CrashBurst,
@@ -187,7 +187,9 @@ namespace Halobellum.Presentation
             if (stats.IsAir)
             {
                 if (stats.DeathBurst != null && stats.DeathBurst.Radius > 0f) return DeathStyle.CrashBurst;
-                if (flood) return stats.CollisionRadius >= 2f ? DeathStyle.FloodAir : DeathStyle.FloodAirBurst;
+                // A small Flood flier (the Swarm Form) bursts in the air, but a taken aircraft is still that aircraft: the Infested Banshee and the
+                // Infested Hornet fall burning as the Banshee and the Hornet do (the owner, D122).
+                if (flood) return stats.CollisionRadius >= 2f || AudioCatalog.TakenVehicle(stats, out _, out _) ? DeathStyle.FloodAir : DeathStyle.FloodAirBurst;
                 return DeathStyle.Air;
             }
             if (stats.IsFlood) return DeathStyle.FloodBurst;

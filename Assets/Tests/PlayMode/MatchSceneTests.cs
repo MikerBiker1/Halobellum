@@ -58,6 +58,33 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
+        public IEnumerator AFallenTowersShockwave_HasABarThatRunsDownWithTheTimeLeft()
+        {
+            // D122.
+            yield return LoadMatch();
+            _match.ChooseDraft(0);
+            yield return null;
+            _battle.Speed = 1f;
+            _match.Ready();
+            float started = Time.realtimeSinceStartup + 10f;
+            while (!(_match.Match.Phase == MatchPhase.Battle && _battle.IsPlaying) && Time.realtimeSinceStartup < started) yield return null;
+            Assert.AreEqual(MatchPhase.Battle, _match.Match.Phase);
+            MatchHud hud = Object.FindAnyObjectByType<MatchHud>();
+            Assert.AreEqual(0f, hud.ShockwaveBarShare(Team.A), "No shockwave, no bar.");
+            SimUnit tower = _battle.Simulation.Units.First(u => u.Team == Team.A && u.Stats.IsTower);
+            tower.Health = 0f;
+            float deadline = Time.realtimeSinceStartup + 5f;
+            while (_battle.Simulation.ActiveShockwave(Team.A) == null && Time.realtimeSinceStartup < deadline) yield return null;
+            float full = hud.ShockwaveBarShare(Team.A);
+            Assert.Greater(full, 0.9f, "A full bar as it begins.");
+            float from = Time.time;
+            while (Time.time < from + 1f) yield return null;
+            float later = hud.ShockwaveBarShare(Team.A);
+            float seconds = tower.Stats.Shockwave.Seconds;
+            Assert.AreEqual(full - 1f / seconds, later, 0.5f / seconds, "It runs down with the time left.");
+        }
+
+        [UnityTest]
         public IEnumerator TheCards_CanBePutAsideToSeeTheBoard_AndComeBack()
         {
             yield return LoadMatch();

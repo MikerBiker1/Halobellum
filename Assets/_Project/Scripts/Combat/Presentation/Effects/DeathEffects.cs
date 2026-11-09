@@ -5,6 +5,7 @@
 //   a Ghost or an Infested Ghost is knocked out first: it drifts off in a random direction for 2.1 s, smoking, then blows up blue (the owner, D120, D121);
 //   Covenant machines, and the Flood's infested ones, do all of that in light blue plasma instead of orange fire (ExplodesBlue);
 //   air units blow up in the air and fall burning to the ground, where they crash;
+//   a machine a Seeder's seed has taken over neither blows up nor falls: it is left to UnitViewManager, which grows the Flood's growths on it (D122);
 //   Flood bodies burst in gore and spores;
 //   the Infected Pelican trails fire and smoke in its dive, and its crash is a blast about as big as a titan's;
 //   and whatever has blood (BloodLooks) goes in a burst of it, which leaves a pool on the ground.
@@ -116,6 +117,18 @@ namespace Halobellum.Presentation
         /// <summary>True for what is knocked out and drifts away before it blows up: the Ghost (the owner, D120) and the Infested Ghost (D121).</summary>
         public static bool Drifts(UnitStats stats) => stats != null && (stats.Name == "Ghost" || stats.Name == "Infested Ghost");
 
+        /// <summary>
+        /// True for a machine a Seeder's seed has taken over (the owner, D122): it neither blows up nor falls, but stays where it was, in the air if it
+        /// flew, while the Flood's growths swell on it (UnitViewManager), and rises as the Flood's own version of it. Soldiers rise as before.
+        /// </summary>
+        public static bool GrowsIntoFlood(BattleSimulation simulation, SimUnit unit)
+        {
+            if (simulation == null || unit == null) return false;
+            UnitStats stats = unit.Stats;
+            if (stats.IsFlood || stats.InfectedFrom != null || stats.ArmorType == ArmorType.Unarmored) return false;
+            return simulation.RiseOf(unit, out UnitStats form, out _) && form != null;
+        }
+
         /// <summary>True for a Covenant machine, which explodes and burns light blue instead of orange.</summary>
         public static bool ExplodesBlue(UnitStats stats)
         {
@@ -179,6 +192,7 @@ namespace Halobellum.Presentation
 
         private void Die(SimUnit unit)
         {
+            if (GrowsIntoFlood(_shown, unit)) return; // Taken over by a seed, not destroyed (D122).
             UnitStats stats = unit.Stats;
             Vector3 position = _units.ShownPosition(unit);
             float radius = stats.CollisionRadius;

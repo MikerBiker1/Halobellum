@@ -316,6 +316,7 @@ namespace Halobellum.Presentation
 
         private void OnUnitDied(SimUnit unit, SimUnit killer)
         {
+            if (DeathEffects.GrowsIntoFlood(_battle.Simulation, unit)) return; // Taken over by a seed, not destroyed: only the infection is heard (D122).
             SfxCue death = DeathCue(unit);
             AudioDirector director = AudioDirector.Instance;
             if (director != null && DriftsAsItDies(unit.Stats) && AudioCatalog.GhostKnockedOut.HasSound)

@@ -2,6 +2,12 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Taken aircraft fall, shockwave bar, seeded machines grow (D122)
+- **Flood fliers:** the Infested Banshee and Infested Hornet now fall burning like the Banshee and Hornet, with their sounds. The Infected Phantom already did. The Infected Pelican keeps its crash.
+- **Shockwave:** its line has a bar under it that runs down smoothly with the time left.
+- **Seeded machines:** no explosion, no fall, no death sound. The body stays where it was, in the air if it flew, and the Flood's growths swell on it for 2 s, then it turns.
+- **Not checked:** not seen in the game; the tests pass.
+
 ## Ghost blast fixed, Infested Ghost drifts (D121)
 - **No blast heard:** it was playing, but buried. Your knock-out file is loudest at its end, made for 2.1 s at speed 1. At 2x or 4x the blast came in its loudest part. The knock-out now skips ahead at faster speeds, so it ends as the blast comes.
 - **Infested Ghost** drifts and blows up like the Ghost, plus a Flood gore burst.
