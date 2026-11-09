@@ -4228,7 +4228,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Banshee
     defender: Sparrowhawk
-    winRate: 0
+    winRate: 1
   - attacker: Banshee
     defender: Longsword
     winRate: 1
@@ -4237,7 +4237,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Banshee
     defender: Condor Gunship
-    winRate: 0.3
+    winRate: 1
   - attacker: Banshee
     defender: Chopper
     winRate: 0
@@ -6676,7 +6676,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Seeder
     defender: Sparrowhawk
-    winRate: 0.6
+    winRate: 1
   - attacker: Seeder
     defender: Longsword
     winRate: 1
@@ -9256,7 +9256,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Sparrowhawk
     defender: Banshee
-    winRate: 1
+    winRate: 0
   - attacker: Sparrowhawk
     defender: Covenant Phantom
     winRate: 1
@@ -9292,7 +9292,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Sparrowhawk
     defender: Seeder
-    winRate: 0.4
+    winRate: 0
   - attacker: Sparrowhawk
     defender: Infected Pelican
     winRate: 1
@@ -9337,7 +9337,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Sparrowhawk
     defender: Condor Gunship
-    winRate: 0.4
+    winRate: 0.5
   - attacker: Sparrowhawk
     defender: Chopper
     winRate: 0
@@ -9379,7 +9379,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Sparrowhawk
     defender: Infested Hornet
-    winRate: 0.4
+    winRate: 0
   - attacker: Sparrowhawk
     defender: Juggernaut
     winRate: 1
@@ -9868,7 +9868,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Condor Gunship
     defender: Banshee
-    winRate: 0.7
+    winRate: 0
   - attacker: Condor Gunship
     defender: Covenant Phantom
     winRate: 1
@@ -9943,7 +9943,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Condor Gunship
     defender: Sparrowhawk
-    winRate: 0.6
+    winRate: 0.5
   - attacker: Condor Gunship
     defender: Longsword
     winRate: 1
@@ -12799,7 +12799,7 @@ MonoBehaviour:
     winRate: 0.1
   - attacker: Infested Hornet
     defender: Sparrowhawk
-    winRate: 0.6
+    winRate: 1
   - attacker: Infested Hornet
     defender: Longsword
     winRate: 1

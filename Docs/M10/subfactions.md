@@ -68,10 +68,10 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Armor | Shield | Speed | Weapons | Wins, average | Best counters |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Sparrowhawk | Aerial | 2 | 50 | 1 | 250 | 550 | Light | 0 | 4 | Heavy Autocannon (13 per 0.3 s, Ballistic, anti-armor, 14 m) | 33 of 68, 50% | Wolverine 100%, Vampire 100% |
+| Sparrowhawk | Aerial | 2 | 50 | 1 | 250 | 480 | Light | 0 | 4 | Heavy Autocannon (13 per 0.3 s, Ballistic, anti-armor, 14 m) | 32 of 68, 48% | Wolverine 100%, Vampire 100% |
 | Longsword | Aerial | 2 | 50 | 1 | 300 | 600 | Light | 0 | 5 | Carpet Bombs (135 per 2.5 s, Explosive, 5 m, splash 5 m) | 34 of 68, 50% | Wolverine 100%, Vampire 100% |
 | Vulture | Aerial | 3 | 200 | 1 | 400 | 650 | Heavy | 0 | 2.5 | Missile Barrage (44 per 3 s, Explosive, 22 m, splash 3 m); Chin Gun (10 per 0.2 s, Ballistic, 14 m) | 31 of 68, 45% | Wolverine 100%, Vampire 100% |
-| Condor Gunship | Aerial | 3 | 250 | 1 | 500 | 1300 | Light | 0 | 3.25 | Twin Autocannons (20 per 0.25 s, Ballistic, 16 m); Light Spartan Laser (nose) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (front right) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (front left) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (rear right) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (rear left) (20 per 4 s, Energy, anti-armor, 20 m) | 36 of 68, 52% | Wolverine 100%, Vampire 100% |
+| Condor Gunship | Aerial | 3 | 250 | 1 | 500 | 1150 | Light | 0 | 3.25 | Twin Autocannons (20 per 0.25 s, Ballistic, 16 m); Light Spartan Laser (nose) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (front right) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (front left) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (rear right) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (rear left) (20 per 4 s, Energy, anti-armor, 20 m) | 34 of 68, 51% | Wolverine 100%, Vampire 100% |
 
 - **Sparrowhawk.** Gunship that hunts vehicles. Its gun is poor against infantry.
 - **Longsword.** Heavy bomber. It has to fly over its target, and cannot fight other aircraft at all.

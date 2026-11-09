@@ -10,7 +10,7 @@ ORDER = 3
 
 def units(U, W):
     return [
-        U("Sparrowhawk", "Sparrowhawk", FACTION, "Aerial", 2, 50, 1, 250, 550, "L", 4, 2, 1, "B",
+        U("Sparrowhawk", "Sparrowhawk", FACTION, "Aerial", 2, 50, 1, 250, 480, "L", 4, 2, 1, "B",
           [W("Heavy Autocannon", 13, 0.3, 14, "Ballistic", aa=True)], airu=True,
           note="Gunship that hunts vehicles. Its gun is poor against infantry."),
         U("Longsword", "Longsword", FACTION, "Aerial", 2, 50, 1, 300, 600, "L", 5, 2.8, 1, "G",
@@ -22,7 +22,7 @@ def units(U, W):
           note="The heaviest gunship: heavy armor, slow, long-range missiles."),
         # D111 (the owner, 2026-11-08): its five gun pods are guns, each a light Spartan Laser on a turret of its own, finding its own target;
         # 300 damage per 4 s across the five, so it isn't too strong (to be balanced in tournaments). No Marine drop any more.
-        U("CondorGunship", "Condor Gunship", FACTION, "Aerial", 3, 250, 1, 500, 1300, "L", 3.25, 3, 1.5, "B",
+        U("CondorGunship", "Condor Gunship", FACTION, "Aerial", 3, 250, 1, 500, 1150, "L", 3.25, 3, 1.5, "B",
           [W("Twin Autocannons", 20, 0.25, 16, "Ballistic"),
            # The five fire one after another, 0.8 s apart over their 4 s reload (the owner, 2026-11-08; D114).
            W("Light Spartan Laser (nose)", 20, 4.0, 20, "Energy", aa=True, windup=2.5),
