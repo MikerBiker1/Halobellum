@@ -26,7 +26,7 @@ namespace Halobellum.Tests
         {
             ("Marine", UnitRole.Chaff, 1, 0, 18, 100, 60),
             ("Flamethrower Trooper", UnitRole.ChaffClear, 1, 0, 6, 150, 90),
-            ("Warthog", UnitRole.Flanker, 1, 0, 2, 200, 300),
+            ("Warthog", UnitRole.Flanker, 1, 0, 2, 200, 360), // 300 until tuned for the Insane AI (D125).
             ("Gauss Warthog", UnitRole.SingleTargetDps, 2, 50, 1, 250, 300),
             ("Scorpion", UnitRole.Tank, 2, 50, 1, 300, 1200),
             ("Wolverine", UnitRole.AntiAir, 2, 50, 1, 300, 500),
@@ -58,7 +58,7 @@ namespace Halobellum.Tests
         private static readonly (string name, UnitRole role, int tier, int unlock, int squad, int cost, float health)[] Flood =
         {
             ("Infection Forms", UnitRole.Chaff, 1, 0, 10, 100, 228),
-            ("Carrier Form", UnitRole.ChaffClear, 1, 0, 4, 150, 140),
+            ("Carrier Form", UnitRole.ChaffClear, 1, 0, 4, 150, 170), // 140 until D125.
             ("Combat Form", UnitRole.SingleTargetDps, 2, 50, 6, 200, 260),
             ("Stalker Form", UnitRole.Flanker, 2, 50, 3, 250, 450),
             ("Pure Form Ranged", UnitRole.Artillery, 2, 50, 2, 250, 400),
@@ -66,8 +66,8 @@ namespace Halobellum.Tests
             ("Pure Form Tank", UnitRole.Tank, 3, 200, 1, 400, 3200),
             ("Seeder", UnitRole.SingleTargetDps, 3, 200, 2, 475, 800),
             ("Infected Pelican", UnitRole.Aerial, 3, 200, 1, 400, 900),
-            ("Infected Phantom", UnitRole.Aerial, 3, 200, 1, 400, 1100),
-            ("Flood Abomination", UnitRole.Titan, 4, 350, 1, 800, 8500),
+            ("Infected Phantom", UnitRole.Aerial, 3, 200, 1, 400, 1250), // 1100 until D125.
+            ("Flood Abomination", UnitRole.Titan, 4, 350, 1, 800, 10000), // 8500 until D125.
         };
 
         private static Dictionary<string, UnitDefinition> Load(string folder) =>

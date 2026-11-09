@@ -143,7 +143,7 @@ namespace Halobellum.Tests
             UnitStats spawner = UnityEditor.AssetDatabase.LoadAssetAtPath<Halobellum.Units.UnitDefinition>("Assets/_Project/Data/Units/FloodCovenant/Spawner.asset").ToStats();
             Assert.AreEqual("Infection Forms", spawner.SpawnedUnit.Name);
             Assert.AreEqual("Combat Form", spawner.AlternateSpawnedUnit.Name, "Not Infested Elites with Covenant guns (D116).");
-            Assert.AreEqual(2, spawner.AlternateSpawnedUnit.SquadSize);
+            Assert.AreEqual(5, spawner.AlternateSpawnedUnit.SquadSize, "Five a lot since D125 (two before).");
             var sim = new BattleSimulation(HeadlessRunnerTool.LoadRules(), 1);
             spawner.MoveSpeed = 0f;
             sim.AddUnit(spawner, Team.A, new Vec2(0f, -30f));
@@ -154,7 +154,7 @@ namespace Halobellum.Tests
             Assert.IsTrue(sim.Units.Any(x => x.Team == Team.A && x.Stats.Name == "Infection Forms"), "Infection Forms first.");
             Assert.IsFalse(sim.Units.Any(x => x.Stats.Name == "Combat Form"));
             Steps(sim, spawner.SpawnIntervalSeconds);
-            Assert.AreEqual(2, sim.Units.Count(x => x.Team == Team.A && x.Stats.Name == "Combat Form"), "Then two Combat Forms.");
+            Assert.AreEqual(5, sim.Units.Count(x => x.Team == Team.A && x.Stats.Name == "Combat Form"), "Then five Combat Forms (D125).");
         }
 
         [Test]
