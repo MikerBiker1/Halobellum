@@ -31,7 +31,7 @@ MonoBehaviour:
   targetFilter: 2
   weapons:
   - weaponName: M247H Chaingun
-    damagePerShot: 13
+    damagePerShot: 14
     fireInterval: 0.12
     range: 15
     minRange: 0

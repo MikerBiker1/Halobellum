@@ -6,16 +6,16 @@ Price bands: Tier 1 100–200, Tier 2 250–300, Tier 3 400–500, Titans 800.
 
 ## Win rates
 
-| Sub-faction | Hard (D116) | Insane before | Trial 1 (seed 0) | Trial 2 (seed 0) | Trial 3 (seed 0) | Trial 4 (seed 0) | Trial 5 (seed 0) | Trial 6 (seed 0) | Trial 7 (seeds 0 + 1) | Trial 8 (seeds 0 + 1) | Real data (seeds 0 + 1) | Real data, round 2 | Real data, round 3 |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| UNSC-based Flood | 52% | 60% (57 / 62) | 53% | 55% | **57%** | **57%** | 51% | 51% | 52% (50 / 53) | 52% (49 / 54) | **56% (55 / 57)** | 53% (51 / 55) | running |
-| Aerospace Command | 49% | 58% (56 / 60) | 51% | 51% | 50% | 50% | 52% | 54% | **55% (54 / 57)** | 53% (52 / 53) | **44% (43 / 46)** | **56% (55 / 58)** | running |
-| Banished | 50% | 56% (59 / 53) | 56% | 52% | 51% | 50% | 50% | 47% | 47% (49 / 45) | 50% (52 / 48) | 52% (52 / 51) | 53% (54 / 53) | running |
-| Lekgolo Colony | 49% | 52% (52 / 53) | 53% | 54% | 54% | 52% | 52% | 50% | 48% (48 / 48) | 48% (49 / 48) | 54% (55 / 53) | 52% (52 / 51) | running |
-| Unggoy Rebellion | 52% | 49% (47 / 51) | 46% | 50% | 48% | 47% | 51% | 47% | 50% (49 / 52) | 51% (50 / 52) | 52% (51 / 53) | 51% (51 / 52) | running |
-| Covenant-based Flood | 48% | 45% (44 / 45) | 44% | **41%** | **45%** | 49% | 49% | 48% | 47% (46 / 48) | 47% (47 / 48) | 47% (47 / 48) | **44% (45 / 43)** | running |
-| Armored Division | 49% | 43% (45 / 42) | 51% | 49% | 47% | 49% | 49% | 52% | 51% (51 / 51) | 50% (50 / 50) | 50% (49 / 50) | 47% (48 / 46) | running |
-| Noble | 51% | 37% (40 / 34) | 45% | 48% | 47% | **45%** | **45%** | 52% | 49% (52 / 46) | 49% (51 / 46) | **45% (48 / 42)** | **43% (45 / 41)** | running |
+| Sub-faction | Hard (D116) | Insane before | Trial 1 (seed 0) | Trial 2 (seed 0) | Trial 3 (seed 0) | Trial 4 (seed 0) | Trial 5 (seed 0) | Trial 6 (seed 0) | Trial 7 (seeds 0 + 1) | Trial 8 (seeds 0 + 1) | Real data (seeds 0 + 1) | Real data, round 2 | Real data, round 3 | Real data, round 4 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| UNSC-based Flood | 52% | 60% (57 / 62) | 53% | 55% | **57%** | **57%** | 51% | 51% | 52% (50 / 53) | 52% (49 / 54) | **56% (55 / 57)** | 53% (51 / 55) | 51% (49 / 54) | running |
+| Aerospace Command | 49% | 58% (56 / 60) | 51% | 51% | 50% | 50% | 52% | 54% | **55% (54 / 57)** | 53% (52 / 53) | **44% (43 / 46)** | **56% (55 / 58)** | **56% (54 / 58)** | running |
+| Banished | 50% | 56% (59 / 53) | 56% | 52% | 51% | 50% | 50% | 47% | 47% (49 / 45) | 50% (52 / 48) | 52% (52 / 51) | 53% (54 / 53) | 52% (52 / 51) | running |
+| Lekgolo Colony | 49% | 52% (52 / 53) | 53% | 54% | 54% | 52% | 52% | 50% | 48% (48 / 48) | 48% (49 / 48) | 54% (55 / 53) | 52% (52 / 51) | 51% (51 / 50) | running |
+| Unggoy Rebellion | 52% | 49% (47 / 51) | 46% | 50% | 48% | 47% | 51% | 47% | 50% (49 / 52) | 51% (50 / 52) | 52% (51 / 53) | 51% (51 / 52) | 51% (50 / 52) | running |
+| Covenant-based Flood | 48% | 45% (44 / 45) | 44% | **41%** | **45%** | 49% | 49% | 48% | 47% (46 / 48) | 47% (47 / 48) | 47% (47 / 48) | **44% (45 / 43)** | **42% (43 / 41)** | running |
+| Armored Division | 49% | 43% (45 / 42) | 51% | 49% | 47% | 49% | 49% | 52% | 51% (51 / 51) | 50% (50 / 50) | 50% (49 / 50) | 47% (48 / 46) | 49% (50 / 49) | running |
+| Noble | 51% | 37% (40 / 34) | 45% | 48% | 47% | **45%** | **45%** | 52% | 49% (52 / 46) | 49% (51 / 46) | **45% (48 / 42)** | **43% (45 / 41)** | 48% (51 / 44) | running |
 
 "Insane before" shows both seeds together, then seed 0 / seed 1. A trial run on one seed should be compared with the seed 0 number.
 
@@ -159,7 +159,7 @@ The trial 8 set has been written into the unit data (`Tools/Data`). `gen_roster.
 - Noble and Armored still field the Pelican in about 60% of matches and get a quarter of its price's worth from it. Aerospace avoids it (9%).
 - The AI buys the Pelican because it wins its counter-web duels: its autocannon hits ground units that can't shoot back at aircraft. In real matches, its value is the Marines it drops.
 
-### Real data, round 3 (seeds 0 and 1), running
+### Real data, round 3 (seeds 0 and 1): done
 | Change | Why |
 |---|---|
 | Pelican autocannon 14 → 10 | A transport, not a gunship. The counter web should rate it lower, so that Noble and Armored spend their money elsewhere, as Aerospace does |
@@ -167,3 +167,15 @@ The trial 8 set has been written into the unit data (`Tools/Data`). `gen_roster.
 | Spartan Heavy Weapons health 2,100 → 2,400 (1,700 before tuning) | Noble at 43%; now fielded in 77% of its matches |
 | Spawner Spore Lash 40 → 55 | Covenant-based Flood at 44%; the Spawner is in 86% of its matches and does 0.6 times its share |
 | Grizzly cannons 100 → 110 | Armored at 47% |
+
+**Result:** the Pelican fix worked. Noble now buys it in 27% of matches (58% before) and Armored in 36% (62%); Noble rose to 48% and Armored to 49%. Two are still out:
+- **Covenant-based Flood is at 42%.** It loses badly to UNSC-based Flood (30%) and Unggoy (26%). It rarely buys Pure Form Ranged now (19% of matches), and leans on the Spawner (90% of matches, 0.65 times its share) and on weak shared Flood units.
+- **Aerospace is at 56%.** It beats Noble 64% and most others about 58%. Its Vulture is in 92% of its matches and survives a lot: 59% of them die by a battle's end, against 90% or more for most units.
+
+### Real data, round 4 (seeds 0 and 1), running
+| Change | Why |
+|---|---|
+| Pure Form Ranged shards 44 → 48 (60 before tuning) | UNSC-based Flood is at 51% and has room; Covenant-based Flood should buy it again |
+| Spawner releases 3 Combat Forms a lot (was 2) | Covenant-based Flood only, still 0.65 times its share |
+| Infested Elite health 420 → 500, claw 42 → 46 | Covenant-based Flood only; bought in 19% of its matches, 0.47 times its share |
+| Vulture missiles 50 → 44 | Aerospace only |

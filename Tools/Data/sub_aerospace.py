@@ -16,13 +16,13 @@ def units(U, W):
         U("Longsword", "Longsword", FACTION, "Aerial", 2, 50, 1, 300, 600, "L", 5, 2.8, 1, "G",
           [W("Carpet Bombs", 135, 2.5, 5, "Explosive", proj=18, splash=5, own="G")], airu=True,
           note="Heavy bomber. It has to fly over its target, and cannot fight other aircraft at all."),
-        U("Vulture", "Vulture", FACTION, "Aerial", 3, 200, 1, 400, 800, "H", 2.5, 3, 1.5, "B",
+        U("Vulture", "Vulture", FACTION, "Aerial", 3, 200, 1, 400, 650, "H", 2.5, 3, 1.5, "B",
           [W("Missile Barrage", 44, 3, 22, "Explosive", proj=40, splash=3),
            W("Chin Gun", 10, 0.2, 14, "Ballistic", block=True)], airu=True,
           note="The heaviest gunship: heavy armor, slow, long-range missiles."),
         # D111 (the owner, 2026-11-08): its five gun pods are guns, each a light Spartan Laser on a turret of its own, finding its own target;
         # 300 damage per 4 s across the five, so it isn't too strong (to be balanced in tournaments). No Marine drop any more.
-        U("CondorGunship", "Condor Gunship", FACTION, "Aerial", 3, 250, 1, 500, 1500, "L", 3.25, 3, 1.5, "B",
+        U("CondorGunship", "Condor Gunship", FACTION, "Aerial", 3, 250, 1, 500, 1300, "L", 3.25, 3, 1.5, "B",
           [W("Twin Autocannons", 20, 0.25, 16, "Ballistic"),
            # The five fire one after another, 0.8 s apart over their 4 s reload (the owner, 2026-11-08; D114).
            W("Light Spartan Laser (nose)", 20, 4.0, 20, "Energy", aa=True, windup=2.5),
