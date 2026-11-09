@@ -94,7 +94,7 @@ namespace Halobellum.Tests
             ("Infested Elite", "Marine"),
             ("Infested Wraith", "Hornet"),
             ("Infested Banshee", "Wolverine"),
-            ("Spawner", "Heavy Grunts"),
+            ("Spawner", "Flamethrower Trooper"),
         };
 
         // With the sub-factions there are 69 units (no Infested Grunt, D116): they run side by side, and may take longer than a test's usual 3 minutes on a busy machine.

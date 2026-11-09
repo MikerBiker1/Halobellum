@@ -15,6 +15,9 @@ COUNTERED_BY = {"Chaff": ["ChaffClear"], "ChaffClear": ["Tank", "Flanker"], "Sin
 
 
 def is_counter(counter, target):
+    # A unit that keeps releasing bodies (the Spawner) screens itself with them, so the units that clear swarms also answer it (D125).
+    if target["spawn"] and counter["role"] == "ChaffClear":
+        return True
     if target["role"] == "AntiAir":
         return not counter["air"] and counter["role"] != "AntiAir"
     return counter["role"] in COUNTERED_BY.get(target["role"], [])
