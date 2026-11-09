@@ -31,7 +31,7 @@ MonoBehaviour:
   targetFilter: 2
   weapons:
   - weaponName: Missile Barrage
-    damagePerShot: 50
+    damagePerShot: 44
     fireInterval: 3
     range: 22
     minRange: 0

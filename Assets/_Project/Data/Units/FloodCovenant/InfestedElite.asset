@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 3
   cost: 250
   baseDamage: 16.6667
-  maxHealth: 420
+  maxHealth: 500
   armorType: 0
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -31,7 +31,7 @@ MonoBehaviour:
   targetFilter: 0
   weapons:
   - weaponName: Scythe Claw
-    damagePerShot: 42
+    damagePerShot: 46
     fireInterval: 0.7
     range: 1.5
     minRange: 0

@@ -6,16 +6,16 @@ Price bands: Tier 1 100–200, Tier 2 250–300, Tier 3 400–500, Titans 800.
 
 ## Win rates
 
-| Sub-faction | Hard (D116) | Insane before | Trial 1 (seed 0) | Trial 2 (seed 0) | Trial 3 (seed 0) | Trial 4 (seed 0) | Trial 5 (seed 0) | Trial 6 (seed 0) | Trial 7 (seeds 0 + 1) | Trial 8 (seeds 0 + 1) |
-|---|---|---|---|---|---|---|---|---|---|---|
-| UNSC-based Flood | 52% | 60% (57 / 62) | 53% | 55% | **57%** | **57%** | 51% | 51% | 52% (50 / 53) | running |
-| Aerospace Command | 49% | 58% (56 / 60) | 51% | 51% | 50% | 50% | 52% | 54% | **55% (54 / 57)** | running |
-| Banished | 50% | 56% (59 / 53) | 56% | 52% | 51% | 50% | 50% | 47% | 47% (49 / 45) | running |
-| Lekgolo Colony | 49% | 52% (52 / 53) | 53% | 54% | 54% | 52% | 52% | 50% | 48% (48 / 48) | running |
-| Unggoy Rebellion | 52% | 49% (47 / 51) | 46% | 50% | 48% | 47% | 51% | 47% | 50% (49 / 52) | running |
-| Covenant-based Flood | 48% | 45% (44 / 45) | 44% | **41%** | **45%** | 49% | 49% | 48% | 47% (46 / 48) | running |
-| Armored Division | 49% | 43% (45 / 42) | 51% | 49% | 47% | 49% | 49% | 52% | 51% (51 / 51) | running |
-| Noble | 51% | 37% (40 / 34) | 45% | 48% | 47% | **45%** | **45%** | 52% | 49% (52 / 46) | running |
+| Sub-faction | Hard (D116) | Insane before | Trial 1 (seed 0) | Trial 2 (seed 0) | Trial 3 (seed 0) | Trial 4 (seed 0) | Trial 5 (seed 0) | Trial 6 (seed 0) | Trial 7 (seeds 0 + 1) | Trial 8 (seeds 0 + 1) | Real data (seeds 0 + 1) | Real data, round 2 | Real data, round 3 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| UNSC-based Flood | 52% | 60% (57 / 62) | 53% | 55% | **57%** | **57%** | 51% | 51% | 52% (50 / 53) | 52% (49 / 54) | **56% (55 / 57)** | 53% (51 / 55) | running |
+| Aerospace Command | 49% | 58% (56 / 60) | 51% | 51% | 50% | 50% | 52% | 54% | **55% (54 / 57)** | 53% (52 / 53) | **44% (43 / 46)** | **56% (55 / 58)** | running |
+| Banished | 50% | 56% (59 / 53) | 56% | 52% | 51% | 50% | 50% | 47% | 47% (49 / 45) | 50% (52 / 48) | 52% (52 / 51) | 53% (54 / 53) | running |
+| Lekgolo Colony | 49% | 52% (52 / 53) | 53% | 54% | 54% | 52% | 52% | 50% | 48% (48 / 48) | 48% (49 / 48) | 54% (55 / 53) | 52% (52 / 51) | running |
+| Unggoy Rebellion | 52% | 49% (47 / 51) | 46% | 50% | 48% | 47% | 51% | 47% | 50% (49 / 52) | 51% (50 / 52) | 52% (51 / 53) | 51% (51 / 52) | running |
+| Covenant-based Flood | 48% | 45% (44 / 45) | 44% | **41%** | **45%** | 49% | 49% | 48% | 47% (46 / 48) | 47% (47 / 48) | 47% (47 / 48) | **44% (45 / 43)** | running |
+| Armored Division | 49% | 43% (45 / 42) | 51% | 49% | 47% | 49% | 49% | 52% | 51% (51 / 51) | 50% (50 / 50) | 50% (49 / 50) | 47% (48 / 46) | running |
+| Noble | 51% | 37% (40 / 34) | 45% | 48% | 47% | **45%** | **45%** | 52% | 49% (52 / 46) | 49% (51 / 46) | **45% (48 / 42)** | **43% (45 / 41)** | running |
 
 "Insane before" shows both seeds together, then seed 0 / seed 1. A trial run on one seed should be compared with the seed 0 number.
 
@@ -128,10 +128,42 @@ Everything from trial 6 with three small tweaks. It runs on both seeds: if every
 
 **Result:** with both seeds together, Aerospace is at 55% (54 and 57), outside the band. Banished and Covenant-based Flood are at 47% (in the band, but under the 48% target), and the rest are at 48–52%. Aerospace's gain comes mostly from the Elephant and Warthog buffs (the Elephant went from 0.75 to 0.98 times its share there). Its own aircraft lift it as well. Aerospace's own units are trimmed rather than the Elephant, which Noble needs.
 
-### Trial 8 (seeds 0 and 1), running
+### Trial 8 (seeds 0 and 1): done
 Everything from trial 7, plus:
 | Change | Why |
 |---|---|
 | Sparrowhawk autocannon 14 → 13 (18 before tuning) | Aerospace at 55% |
 | Longsword carpet bombs 150 → 135 | Aerospace only; in 73% of its matches |
 | Brute Grenadier grenades 29 → 31 (34 before tuning) | Banished still at 47% |
+
+**Result:** every sub-faction is inside 46–54% on both seeds together. Aerospace is at 53% and Covenant-based Flood at 47%, one point outside the 48–52% target and within one run's margin. The other six are at 48–52%.
+
+## In the game's data
+The trial 8 set has been written into the unit data (`Tools/Data`). `gen_roster.py` was run, then the counter web for the 19 changed units, then the counter list, the AI's matchup table and the sub-faction doc. Trials don't regenerate the counter web that the AI uses to choose what to buy, so the real check is a run on the game's own exported data, with no trial file.
+
+### Confirmation run (seeds 0 and 1): done
+**Result:** it came out differently from the trial. Aerospace fell to 44%, UNSC-based Flood rose to 56%, Noble is at 45% and Lekgolo at 54%. The cause is the Pelican: at 250 credits with 1,500 health it wins its counter-web duels, so the AI now buys it far more.
+- Aerospace fields it in 75% of matches (10% in the trial), and Noble in 96% (62%).
+- It still does only about a third of its price's worth of damage in real matches.
+- That money used to go to the Sparrowhawk and Longsword (the Sparrowhawk went from 69% of matches to 25%).
+- UNSC-based Flood now fields its Infested Hornet more (70% of matches), where it does 1.45 times its share.
+
+### Real data, round 2 (seeds 0 and 1): done
+| Change | Why |
+|---|---|
+| Pelican back to 300 credits and 1,200 health (as before tuning) | Cheaper and tougher, it looks good in the counter web but not in real matches, and it took over Aerospace's and Noble's money |
+| Infested Hornet rockets 16 → 15, spore bombs 32 → 29 | UNSC-based Flood at 56%; the Hornet does 1.45 times its share |
+
+**Result:** it swung the other way. Aerospace is back up to 56%, and Noble is down to 43%, Covenant-based Flood to 44% and Armored to 47%. The counter web moves the AI's buying in ways the trials can't show:
+- Covenant-based Flood now fields Pure Form Ranged in only 20% of matches (48% before), since its weaker damage makes the counter web rate it lower.
+- Noble and Armored still field the Pelican in about 60% of matches and get a quarter of its price's worth from it. Aerospace avoids it (9%).
+- The AI buys the Pelican because it wins its counter-web duels: its autocannon hits ground units that can't shoot back at aircraft. In real matches, its value is the Marines it drops.
+
+### Real data, round 3 (seeds 0 and 1), running
+| Change | Why |
+|---|---|
+| Pelican autocannon 14 → 10 | A transport, not a gunship. The counter web should rate it lower, so that Noble and Armored spend their money elsewhere, as Aerospace does |
+| Vulture health 900 → 800 | Aerospace at 56%; fielded in 94% of its matches |
+| Spartan Heavy Weapons health 2,100 → 2,400 (1,700 before tuning) | Noble at 43%; now fielded in 77% of its matches |
+| Spawner Spore Lash 40 → 55 | Covenant-based Flood at 44%; the Spawner is in 86% of its matches and does 0.6 times its share |
+| Grizzly cannons 100 → 110 | Armored at 47% |

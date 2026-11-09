@@ -17,7 +17,7 @@ def units(U, W):
           [W("Carpet Bombs", 135, 2.5, 5, "Explosive", proj=18, splash=5, own="G")], airu=True,
           note="Heavy bomber. It has to fly over its target, and cannot fight other aircraft at all."),
         U("Vulture", "Vulture", FACTION, "Aerial", 3, 200, 1, 400, 800, "H", 2.5, 3, 1.5, "B",
-          [W("Missile Barrage", 50, 3, 22, "Explosive", proj=40, splash=3),
+          [W("Missile Barrage", 44, 3, 22, "Explosive", proj=40, splash=3),
            W("Chin Gun", 10, 0.2, 14, "Ballistic", block=True)], airu=True,
           note="The heaviest gunship: heavy armor, slow, long-range missiles."),
         # D111 (the owner, 2026-11-08): its five gun pods are guns, each a light Spartan Laser on a turret of its own, finding its own target;

@@ -31,7 +31,7 @@ MonoBehaviour:
   targetFilter: 2
   weapons:
   - weaponName: Bone Shards
-    damagePerShot: 44
+    damagePerShot: 48
     fireInterval: 3
     range: 34
     minRange: 8

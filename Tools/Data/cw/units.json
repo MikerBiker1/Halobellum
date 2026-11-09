@@ -2403,7 +2403,7 @@
   "weapons": [
    {
     "name": "Bone Shards",
-    "dmg": 44,
+    "dmg": 48,
     "interval": 3,
     "range": 34,
     "minr": 8,
@@ -3903,7 +3903,7 @@
   "weapons": [
    {
     "name": "Missile Barrage",
-    "dmg": 50,
+    "dmg": 44,
     "interval": 3,
     "range": 22,
     "minr": 0,
@@ -5717,7 +5717,7 @@
   "unlock": 50,
   "squad": 3,
   "cost": 250,
-  "hp": 420,
+  "hp": 500,
   "armor": "U",
   "speed": 2,
   "radius": 0.6,
@@ -5726,7 +5726,7 @@
   "weapons": [
    {
     "name": "Scythe Claw",
-    "dmg": 42,
+    "dmg": 46,
     "interval": 0.7,
     "range": 1.5,
     "minr": 0,
@@ -6055,7 +6055,7 @@
    5,
    true
   ],
-  "note": "A mobile birthing form: it fights badly, and keeps releasing two Infection Forms and two Combat Forms in turn, one lot every 2.5 seconds; the Combat Forms draw the enemy's fire. Kill it first (D79, D116). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114).",
+  "note": "A mobile birthing form: it fights badly, and keeps releasing two Infection Forms and three Combat Forms in turn, one lot every 2.5 seconds; the Combat Forms draw the enemy's fire. Kill it first (D79, D116). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114).",
   "forms": 1,
   "flood": true,
   "infects": false,
@@ -6074,7 +6074,7 @@
   "seedforms": null,
   "spawn2": [
    "CombatForm",
-   2
+   3
   ],
   "charges": false,
   "basedmg": null,

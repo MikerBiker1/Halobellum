@@ -149,7 +149,7 @@ UNITS = [
     # D107 (the owner, 2026-11-07): it shoots air too; at a flyer its shards fly straight, not lobbed, for a quarter of their damage:
     # at full damage every aircraft lost to it, and air is artillery's counter (Section 7).
     U("PureFormRanged", "Pure Form Ranged", "Flood", "Artillery", 2, 50, 2, 250, 400, "L", 1, 1.1, 1, "B",
-      [W("Bone Shards", 44, 3, 34, "Explosive", proj=22, splash=3, minr=8, lob=True, air=0.25)], flood=True),
+      [W("Bone Shards", 48, 3, 34, "Explosive", proj=22, splash=3, minr=8, lob=True, air=0.25)], flood=True),
     # D76 (the owner, 2026-11-06): its spat bone hits air only, from 14 m; on the ground it must close in and bite. Its weapons split air from
     # ground, so it uses one at a time, and the long one's reach means air comes first.
     U("SwarmForm", "Swarm Form", "Flood", "AntiAir", 2, 50, 4, 250, 200, "U", 3.5, 1, 0.3, "B",
