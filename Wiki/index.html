@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halobellum Field Manual</title>
+<meta name="description" content="The Halobellum wiki: units, techs, spells, items, towers and how the game plays, built from the game's own data.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="wiki.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2l12 7v14l-12 7-12-7V9z' fill='%2309121c' stroke='%235ad1ff' stroke-width='2'/%3E%3Cpath d='M10 12h12M10 16h12M10 20h8' stroke='%235ad1ff' stroke-width='2'/%3E%3C/svg%3E">
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"></div>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open the menu"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  <a class="brand" href="#/">
+    <span class="brand-mark"><svg viewBox="0 0 32 32"><path d="M16 2l12 7v14l-12 7-12-7V9z"/><path d="M10 12h12M10 16h12M10 20h8"/></svg></span>
+    <span class="brand-text"><b>HALOBELLUM</b><small>Field Manual</small></span>
+  </a>
+  <button class="search-trigger" id="searchBtn" aria-label="Search the wiki">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+    <span>Search units, techs, spells…</span>
+    <kbd>Ctrl K</kbd>
+  </button>
+  <span class="version" id="version"></span>
+</header>
+<nav class="sidebar" id="sidebar" aria-label="Wiki sections"></nav>
+<div class="scrim" id="scrim"></div>
+<main class="main" id="main" tabindex="-1"></main>
+<div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="Search" hidden>
+  <div class="palette-box">
+    <div class="palette-input"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="paletteInput" type="search" placeholder="Search the wiki" autocomplete="off" spellcheck="false"><kbd>Esc</kbd></div>
+    <div class="palette-results" id="paletteResults"></div>
+  </div>
+</div>
+<div class="tooltip" id="tooltip" role="tooltip" hidden></div>
+<script src="data.js"></script>
+<script src="wiki.js"></script>
+</body>
+</html>
