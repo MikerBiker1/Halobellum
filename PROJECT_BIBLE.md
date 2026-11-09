@@ -145,7 +145,7 @@ A unit can be unlocked and bought in the same round. Buying a squad is limited t
 
 **Flank zones (D61).** Beside the enemy's area, on each side, 2 empty columns away from it, is a strip 4 columns wide and as deep as that area. Only the Pelican and Aerospace Command's Sparrowhawk, Longsword, Vulture and Condor Gunship can deploy there. A squad arrives 10 seconds late the first time it deploys there, and at the start of the battle after that. Only the Hard AI uses the zones, and only it defends against them.
 
-**Balance target (D61).** Every sub-faction must win 46% to 54% in the Hard AI tournament (`Tools/Balance/Tournament`, 100 matches per pairing). When units are added, removed or changed, it is run again, and anything outside that gets adjusted.
+**Balance target (D61, D125).** Every sub-faction must win 46% to 54% in the Insane AI tournament, Insane against Insane (`Tools/Balance/Tournament --vs Insane,Insane`, 100 matches per pairing; the Hard AI tournament until D125). When units are added, removed or changed, it is run again, and anything outside that gets adjusted, with whatever fits the unit: damage, fire rate, range, health or price.
 
 **Credit sinks.** Credits are spent on squads, unit unlocks, tech upgrades, squad level-ups, spell cards, reinforcement cards, and what the towers sell.
 
@@ -204,6 +204,8 @@ Every faction must have at least one unit that fills each role below. Anti-armor
 
 **Rule:** whenever a unit is added, list its two best counters in the unit’s data file notes. If a unit has no counter, it is a bug in the design.
 
+A unit that keeps releasing bodies (the Spawner) screens itself with them, so chaff clear also counts as its counter (D125).
+
 ## 8. Factions and rosters
 
 Numbers below are first-pass values for the first playable slice. Costs are per squad, and health is per body. Unlock prices follow Section 5.
@@ -214,7 +216,7 @@ Numbers below are first-pass values for the first playable slice. Costs are per 
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Marine | Chaff | 1 | 0 | 18 | 100 | 60 | Ballistic rifles, range 12 |
 | Flamethrower Trooper | Chaff clear | 1 | 0 | 6 | 150 | 90 | Fire, short range, splash cone |
-| Warthog | Flanker | 1 | 0 | 2 | 200 | 300 | Fast; light armor; machine gun |
+| Warthog | Flanker | 1 | 0 | 2 | 200 | 360 | Fast; light armor; machine gun |
 | Gauss Warthog | Single-target DPS | 2 | 50 | 1 | 250 | 300 | Fast; light armor; anti-armor gauss cannon |
 | Scorpion | Tank | 2 | 50 | 1 | 300 | 1200 | Heavy armor; cannon (explosive) plus coax |
 | Wolverine | Anti-air | 2 | 50 | 1 | 300 | 500 | Rocket volleys, bonus damage against air, can still hit ground |
@@ -254,7 +256,7 @@ The Flood win by spreading. They have a roster of their own, plus temporary infe
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Infection Forms | Chaff | 1 | 0 | 60 forms in 10 packs | 100 | 228 per pack | Fast; the only unit that infects |
-| Carrier Form | Chaff clear | 1 | 0 | 4 | 150 | 140 | Explodes on reaching an enemy or when killed, releases 12 Infection Forms |
+| Carrier Form | Chaff clear | 1 | 0 | 4 | 150 | 170 | Explodes on reaching an enemy or when killed, releases 12 Infection Forms |
 | Combat Form | Single-target DPS | 2 | 50 | 6 | 200 | 260 | Anti-armor claws, scavenged rifle |
 | Stalker Form | Flanker | 2 | 50 | 3 | 250 | 450 | Very fast pure form |
 | Pure Form Ranged | Artillery | 2 | 50 | 2 | 250 | 400 | Lobs bone shards |
@@ -262,8 +264,8 @@ The Flood win by spreading. They have a roster of their own, plus temporary infe
 | Pure Form Tank | Tank | 3 | 200 | 1 | 400 | 3200 | Heavy armor, splash slam |
 | Seeder | Single-target DPS | 3 | 200 | 2 | 475 | 800 | Flies; seeds enemies on the ground and in the air from range; a unit that dies seeded rises as the Flood's own version of it if a Flood roster has one (an Infested Banshee from a Banshee), otherwise it stays dead |
 | Infected Pelican | Aerial | 3 | 200 | 1 | 400 | 900 | One-shot crash dive (900 damage within 3.5 m) |
-| Infected Phantom | Aerial | 3 | 200 | 1 | 400 | 1100 | Drops 5 Combat Forms after 8 seconds |
-| Flood Abomination | Titan | 4 | 350 | 1 | 800 | 8500 | Very tall and large; aura for nearby Flood, keeps releasing Infection Forms |
+| Infected Phantom | Aerial | 3 | 200 | 1 | 400 | 1250 | Drops 5 Combat Forms after 8 seconds |
+| Flood Abomination | Titan | 4 | 350 | 1 | 800 | 10000 | Very tall and large; aura for nearby Flood, keeps releasing Infection Forms |
 
 **Packs.** One Infection Forms body is a pack of 6 tiny forms that move and act as one. A pack shows and deals less as its forms die. A single shot hurts one form; an area hit (splash, cone, beam, spell) hurts every form in the pack. A pack pounces on a target within 6 metres and jumps over anything that holds it up, flying over bodies; it cannot attack in the air (D39).
 
@@ -570,6 +572,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-08 | The owner's Banshee fall-and-crash file; the turret explosion for every machine whose death was generated; a Ghost drifts knocked out for 2.1 s, then blows up blue | Per the project owner (D120) |
 | 2026-11-08 | The Ghost's blast heard at any battle speed; the Infested Ghost drifts and blows up too | Per the project owner (D121) |
 | 2026-11-08 | Taken aircraft (Infested Banshee, Infested Hornet) fall as their originals do; the shockwave line has a bar that runs down; a machine a seed takes over grows the Flood's growths for 2 s and rises, without blowing up or falling | Per the project owner (D122) |
+| 2026-11-09 | Balance is measured with the Insane AI against itself (46% to 54%), and was tuned to it: every sub-faction at 49% to 52%; swarm clearers count as the Spawner's counter | Per the project owner (D125) |
 
 ## 18. Assumptions to confirm
 

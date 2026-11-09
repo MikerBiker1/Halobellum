@@ -6,16 +6,16 @@ Price bands: Tier 1 100–200, Tier 2 250–300, Tier 3 400–500, Titans 800.
 
 ## Win rates
 
-| Sub-faction | Hard (D116) | Insane before | Trial 1 (seed 0) | Trial 2 (seed 0) | Trial 3 (seed 0) | Trial 4 (seed 0) | Trial 5 (seed 0) | Trial 6 (seed 0) | Trial 7 (seeds 0 + 1) | Trial 8 (seeds 0 + 1) | Real data (seeds 0 + 1) | Real data, round 2 | Real data, round 3 | Real data, round 4 | Real data, round 5 | Real data, round 6 |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| UNSC-based Flood | 52% | 60% (57 / 62) | 53% | 55% | **57%** | **57%** | 51% | 51% | 52% (50 / 53) | 52% (49 / 54) | **56% (55 / 57)** | 53% (51 / 55) | 51% (49 / 54) | 52% (51 / 52) | 50% (48 / 51) | running |
-| Aerospace Command | 49% | 58% (56 / 60) | 51% | 51% | 50% | 50% | 52% | 54% | **55% (54 / 57)** | 53% (52 / 53) | **44% (43 / 46)** | **56% (55 / 58)** | **56% (54 / 58)** | **56% (54 / 59)** | **55% (53 / 57)** | running |
-| Banished | 50% | 56% (59 / 53) | 56% | 52% | 51% | 50% | 50% | 47% | 47% (49 / 45) | 50% (52 / 48) | 52% (52 / 51) | 53% (54 / 53) | 52% (52 / 51) | 49% (49 / 48) | 48% (50 / 47) | running |
-| Lekgolo Colony | 49% | 52% (52 / 53) | 53% | 54% | 54% | 52% | 52% | 50% | 48% (48 / 48) | 48% (49 / 48) | 54% (55 / 53) | 52% (52 / 51) | 51% (51 / 50) | 49% (48 / 49) | 49% (48 / 49) | running |
-| Unggoy Rebellion | 52% | 49% (47 / 51) | 46% | 50% | 48% | 47% | 51% | 47% | 50% (49 / 52) | 51% (50 / 52) | 52% (51 / 53) | 51% (51 / 52) | 51% (50 / 52) | 49% (48 / 50) | 48% (46 / 50) | running |
-| Covenant-based Flood | 48% | 45% (44 / 45) | 44% | **41%** | **45%** | 49% | 49% | 48% | 47% (46 / 48) | 47% (47 / 48) | 47% (47 / 48) | **44% (45 / 43)** | **42% (43 / 41)** | 52% (53 / 50) | 53% (54 / 52) | running |
-| Armored Division | 49% | 43% (45 / 42) | 51% | 49% | 47% | 49% | 49% | 52% | 51% (51 / 51) | 50% (50 / 50) | 50% (49 / 50) | 47% (48 / 46) | 49% (50 / 49) | 47% (47 / 47) | 48% (50 / 47) | running |
-| Noble | 51% | 37% (40 / 34) | 45% | 48% | 47% | **45%** | **45%** | 52% | 49% (52 / 46) | 49% (51 / 46) | **45% (48 / 42)** | **43% (45 / 41)** | 48% (51 / 44) | 47% (50 / 45) | 49% (50 / 48) | running |
+| Sub-faction | Hard (D116) | Insane before | Trial 1 (seed 0) | Trial 2 (seed 0) | Trial 3 (seed 0) | Trial 4 (seed 0) | Trial 5 (seed 0) | Trial 6 (seed 0) | Trial 7 (seeds 0 + 1) | Trial 8 (seeds 0 + 1) | Real data (seeds 0 + 1) | Real data, round 2 | Real data, round 3 | Real data, round 4 | Real data, round 5 | Real data, round 6 | Real data, round 7 (final) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| UNSC-based Flood | 52% | 60% (57 / 62) | 53% | 55% | **57%** | **57%** | 51% | 51% | 52% (50 / 53) | 52% (49 / 54) | **56% (55 / 57)** | 53% (51 / 55) | 51% (49 / 54) | 52% (51 / 52) | 50% (48 / 51) | 51% (50 / 52) | **51% (51 / 52)** |
+| Aerospace Command | 49% | 58% (56 / 60) | 51% | 51% | 50% | 50% | 52% | 54% | **55% (54 / 57)** | 53% (52 / 53) | **44% (43 / 46)** | **56% (55 / 58)** | **56% (54 / 58)** | **56% (54 / 59)** | **55% (53 / 57)** | 51% (50 / 53) | **51% (50 / 52)** |
+| Banished | 50% | 56% (59 / 53) | 56% | 52% | 51% | 50% | 50% | 47% | 47% (49 / 45) | 50% (52 / 48) | 52% (52 / 51) | 53% (54 / 53) | 52% (52 / 51) | 49% (49 / 48) | 48% (50 / 47) | 49% (50 / 47) | **49% (51 / 48)** |
+| Lekgolo Colony | 49% | 52% (52 / 53) | 53% | 54% | 54% | 52% | 52% | 50% | 48% (48 / 48) | 48% (49 / 48) | 54% (55 / 53) | 52% (52 / 51) | 51% (51 / 50) | 49% (48 / 49) | 49% (48 / 49) | 50% (49 / 52) | **50% (48 / 52)** |
+| Unggoy Rebellion | 52% | 49% (47 / 51) | 46% | 50% | 48% | 47% | 51% | 47% | 50% (49 / 52) | 51% (50 / 52) | 52% (51 / 53) | 51% (51 / 52) | 51% (50 / 52) | 49% (48 / 50) | 48% (46 / 50) | 49% (48 / 50) | **49% (48 / 49)** |
+| Covenant-based Flood | 48% | 45% (44 / 45) | 44% | **41%** | **45%** | 49% | 49% | 48% | 47% (46 / 48) | 47% (47 / 48) | 47% (47 / 48) | **44% (45 / 43)** | **42% (43 / 41)** | 52% (53 / 50) | 53% (54 / 52) | 52% (54 / 51) | **52% (53 / 51)** |
+| Armored Division | 49% | 43% (45 / 42) | 51% | 49% | 47% | 49% | 49% | 52% | 51% (51 / 51) | 50% (50 / 50) | 50% (49 / 50) | 47% (48 / 46) | 49% (50 / 49) | 47% (47 / 47) | 48% (50 / 47) | 49% (50 / 48) | **49% (50 / 48)** |
+| Noble | 51% | 37% (40 / 34) | 45% | 48% | 47% | **45%** | **45%** | 52% | 49% (52 / 46) | 49% (51 / 46) | **45% (48 / 42)** | **43% (45 / 41)** | 48% (51 / 44) | 47% (50 / 45) | 49% (50 / 48) | 49% (50 / 48) | **49% (50 / 48)** |
 
 "Insane before" shows both seeds together, then seed 0 / seed 1. A trial run on one seed should be compared with the seed 0 number.
 
@@ -194,9 +194,36 @@ Why Aerospace stays high: its aircraft live through battles. Only 59–61% of it
 
 **Result:** seven sub-factions are at 48–53%, and Aerospace is down to 55% (53 and 57), one point over the band. Its Sparrowhawk is back up to 54% of its matches (1.14 times its share), and its Condor still survives 40% of battles.
 
-### Real data, round 6 (seeds 0 and 1), running
+### Real data, round 6 (seeds 0 and 1): done
 | Change | Why |
 |---|---|
 | Sparrowhawk health 550 → 480 | Aerospace at 55% |
 | Condor Gunship health 1,300 → 1,150 (1,500 before tuning) | Same; it survives 40% of battles |
-If every sub-faction is inside 46–54% after this round, the tuning is finished.
+
+**Result:** every sub-faction is at 49–52% (48–54% per seed). Aerospace came down from 55% to 51%.
+
+### The Spawner's rhythm
+An earlier round had the Spawner release a lot every 2.5 seconds. Its walk and lash animations are baked for one 4-second cycle, and a test checks that they match, so the rhythm went back to 4 seconds. Bigger lots make up for it: three Infection Forms and five Combat Forms in turn (two and two before tuning).
+
+### Real data, round 7 (seeds 0 and 1), the final data: done
+The same numbers as round 6, with the Spawner back on its 4-second rhythm and the Pelican's autocannon at 10, on a fresh export of the game's own data.
+
+**Result:** every sub-faction is at 49–52% again. With rounds 6 and 7 both inside 48–52%, **the tuning is finished.** The report is in insane_ai_tournament_d125.txt.
+
+### The Spawner's counter
+With five Combat Forms a lot, the Spawner screens itself. The single-target units that the Bible's counter table sets against tanks no longer beat it head-on (Heavy Grunts went from over 90% to 0%). The swarm clearers and aircraft beat it every time: the Flamethrower Trooper, Banshee, Hornet, Longsword, Infested Banshee and Infested Hornet. The owner kept the Spawner as it is, so the counter list now lets swarm clearers count as the counter of a unit that releases bodies. The test now checks the Spawner against the Flamethrower Trooper.
+
+How the Insane AI beats it (round 7): Covenant-based Flood bought Spawners in 1,307 of its 1,400 matches and won 51% of them. 80% of Spawner bodies died by a battle's end. UNSC-based Flood (61%) and Unggoy (60%) beat Spawner armies most often, and Lekgolo and Banished (39%) least.
+
+## Final numbers
+
+| Sub-faction | Insane before tuning | Insane after (D125) | Hard (D116) |
+|---|---|---|---|
+| Covenant-based Flood | 45% | 52% | 48% |
+| UNSC-based Flood | 60% | 51% | 52% |
+| Aerospace Command | 58% | 51% | 49% |
+| Lekgolo Colony | 52% | 50% | 49% |
+| Noble | 37% | 49% | 51% |
+| Banished | 56% | 49% | 50% |
+| Armored Division | 43% | 49% | 49% |
+| Unggoy Rebellion | 49% | 49% | 52% |

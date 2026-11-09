@@ -2,6 +2,14 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Balance tuned for the Insane AI (D125)
+- **New standard:** balance is measured with Insane against Insane. Before tuning it ran from 37% (Noble) to 60% (UNSC-based Flood).
+- **Now:** every sub-faction is at 49–52%, two rounds running. Covenant-based Flood 52, UNSC-based Flood 51, Aerospace 51, Lekgolo 50, Noble, Banished, Armored and Unggoy 49.
+- **How:** damage, health and spawn changes on 25 units, with no price changes. The full list is in DECISIONS D125, and every trial and round is in `Docs/Balance/insane_tuning_log.md`.
+- **Spawner:** with five Combat Forms a lot it screens itself, so single-target units no longer beat it. You kept it as it is: swarm clearers (the Flamethrower Trooper) now count as its counter in the tests.
+- **Still open:** morning item 173 (Hunter Captain vs Flood Abomination at 70%). The Abomination now has 10,000 health.
+- **Not checked:** not played in the game; the data tests pass.
+
 ## Taken aircraft fall, shockwave bar, seeded machines grow (D122)
 - **Flood fliers:** the Infested Banshee and Infested Hornet now fall burning like the Banshee and Hornet, with their sounds. The Infected Phantom already did. The Infected Pelican keeps its crash.
 - **Shockwave:** its line has a bar under it that runs down smoothly with the time left.
