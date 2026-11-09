@@ -6010,7 +6010,7 @@
   "unlock": 200,
   "squad": 1,
   "cost": 400,
-  "hp": 4000,
+  "hp": 3600,
   "armor": "L",
   "speed": 0.9,
   "radius": 2,

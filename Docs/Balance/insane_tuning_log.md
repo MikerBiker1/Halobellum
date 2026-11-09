@@ -219,13 +219,13 @@ How the Insane AI beats it (round 7): Covenant-based Flood bought Spawners in 1,
 
 | Sub-faction | Insane before tuning | Insane after (D125) | Hard (D116) |
 |---|---|---|---|
-| Covenant-based Flood | 45% | 52% | 48% |
+| Covenant-based Flood | 45% | 52% → 50% | 48% |
 | UNSC-based Flood | 60% | 51% | 52% |
 | Aerospace Command | 58% | 51% | 49% |
 | Lekgolo Colony | 52% | 50% | 49% |
 | Noble | 37% | 49% | 51% |
 | Banished | 56% | 49% | 50% |
-| Armored Division | 43% | 49% | 49% |
+| Armored Division | 43% | 49% → 50% | 49% |
 | Unggoy Rebellion | 49% | 49% | 52% |
 
 ## The other difficulties after tuning (for the owner's curiosity; no changes made)
@@ -243,3 +243,19 @@ Run on the same final data, each AI against itself, seeds 0 and 1. Reports: hard
 | Unggoy Rebellion | 49% | 42% | 62% | 42% |
 
 Hard was at 48–52% before this tuning (D116). The Hard AI fields the stronger Spawner in 91% of Covenant-based Flood's matches and wins 78% of them. Under Normal the UNSC sub-factions lean on Flamethrower Troopers and Scorpions that lose most of their matches.
+
+## The Spawner at 3,600 health (the owner's choice)
+The owner thought that under Insane, where both sides play well and counter, a 2-point edge can matter, and could be what grows under the weaker AIs. So the Spawner went from 4,000 to 3,600 health, with the counter web run again for it, and every level was run against itself (seeds 0 and 1):
+
+| Sub-faction | Insane 4000 → 3600 | Hard 4000 → 3600 | Normal 4000 → 3600 | Easy 4000 → 3600 |
+|---|---|---|---|---|
+| Covenant-based Flood | 52 → 50 | 77 → 75 | 77 → 77 | 59 → 59 |
+| UNSC-based Flood | 51 → 51 | 45 → 46 | 61 → 61 | 53 → 53 |
+| Aerospace Command | 51 → 51 | 49 → 49 | 23 → 22 | 48 → 48 |
+| Lekgolo Colony | 50 → 50 | 39 → 39 | 62 → 63 | 50 → 50 |
+| Noble | 49 → 49 | 62 → 63 | 20 → 20 | 49 → 49 |
+| Banished | 49 → 49 | 38 → 38 | 58 → 57 | 45 → 45 |
+| Armored Division | 49 → 50 | 48 → 48 | 37 → 37 | 52 → 52 |
+| Unggoy Rebellion | 49 → 49 | 42 → 42 | 62 → 62 | 42 → 43 |
+
+The owner chose 3,600. The Spawner is not what carries Covenant-based Flood under Hard and Normal: it wins about as often in its matches with Spawners as overall (76% under Hard, 78% under Normal), and under Normal it spends most on Infested Elites, Infested Ghosts and Carrier Forms. Easy buys Spawners in only 42% of its matches. Reports: insane_ai_tournament_d125_spawner_3600.txt and the hard, normal and easy ..._spawner_3600.txt files.

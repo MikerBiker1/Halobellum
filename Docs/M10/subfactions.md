@@ -140,7 +140,7 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 | Infested Elite | Single-target DPS | 2 | 50 | 3 | 250 | 500 | Unarmored | 0 | 2 | Scythe Claw (46 per 0.7 s, Melee, anti-armor, 1.5 m); Scavenged Plasma Rifle (10 per 0.5 s, Energy, 11 m) | 46 of 68, 67% | Marine 100%, Grunt 100% |
 | Infested Wraith | Artillery | 2 | 50 | 1 | 250 | 1000 | Heavy | 0 | 1 | Scavenged Mortar (70 per 3.5 s, Explosive, 34 m, splash 4 m, lobbed) | 38 of 68, 56% | Hornet 100%, Banshee 100% |
 | Infested Banshee | Aerial | 2 | 50 | 2 | 250 | 360 | Light | 0 | 4.5 | Scavenged Plasma Cannons (8 per 0.3 s, Energy, 10 m); Spore Bomb (45 per 2.5 s, Explosive, 8 m, splash 3 m) | 50 of 68, 74% | Wolverine 100%, Swarm Form 100% |
-| Spawner | Tank | 3 | 200 | 1 | 400 | 4000 | Light | 0 | 0.9 | Spore Lash (55 per 1.2 s, Melee, 3 m, splash 2 m) | 60 of 68, 88% | Gauss Warthog 0%, Spartan 0% |
+| Spawner | Tank | 3 | 200 | 1 | 400 | 3600 | Light | 0 | 0.9 | Spore Lash (55 per 1.2 s, Melee, 3 m, splash 2 m) | 60 of 68, 88% | Zealot 20%, Gauss Warthog 0% |
 
 - **Infested Ghost.** Faster and lighter than the Infested Warthog.
 - **Infested Elite.** The classic combat form: no shield, more health, and a claw that opens armor.

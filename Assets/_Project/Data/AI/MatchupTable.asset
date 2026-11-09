@@ -4909,7 +4909,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Zealot
     defender: Spawner
-    winRate: 0
+    winRate: 0.2
   - attacker: Scarab
     defender: Marine
     winRate: 1
@@ -13957,7 +13957,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spawner
     defender: Zealot
-    winRate: 1
+    winRate: 0.8
   - attacker: Spawner
     defender: Scarab
     winRate: 1

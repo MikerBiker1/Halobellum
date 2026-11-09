@@ -6,7 +6,8 @@ Earlier reports are in this file's Git history. **M10 is built and merged**, and
 - **New standard:** balance is measured with Insane against Insane. Before tuning it ran from 37% (Noble) to 60% (UNSC-based Flood).
 - **Now:** every sub-faction is at 49–52%, two rounds running. Covenant-based Flood 52, UNSC-based Flood 51, Aerospace 51, Lekgolo 50, Noble, Banished, Armored and Unggoy 49.
 - **How:** damage, health and spawn changes on 23 units, with no price changes. The full list is in DECISIONS D125, and every trial and round is in `Docs/Balance/insane_tuning_log.md`.
-- **Spawner:** with five Combat Forms a lot it screens itself, so single-target units no longer beat it. You kept it as it is: swarm clearers (the Flamethrower Trooper) now count as its counter in the tests.
+- **Spawner at 3,600 health (you chose it):** Covenant-based Flood 52% → 50% under Insane, 77% → 75% under Hard, unchanged under Normal (77%) and Easy (59%). The Spawner is not what makes Covenant-based Flood strong under Hard and Normal.
+- **Spawner counter:** with five Combat Forms a lot it screens itself, so single-target units no longer beat it. You kept it as it is: swarm clearers (the Flamethrower Trooper) now count as its counter in the tests.
 - **Still open:** morning item 173 (Hunter Captain vs Flood Abomination at 70%). The Abomination now has 10,000 health.
 - **Not checked:** not played in the game; the data tests pass.
 
