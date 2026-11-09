@@ -14,12 +14,12 @@ Each launch opens with a disclaimer; click anywhere to go on. The main menu has 
 
 | Mode | What it is |
 | --- | --- |
-| **Faction mode** | The full game: the 5-card faction draft, a faction and sub-faction, towers and cards. Choose a **difficulty** (Easy, Normal, Hard). Base health is 2,000, moved up or down by your starting card. |
+| **Faction mode** | The full game: the 5-card faction draft, a faction and sub-faction, towers and cards. Choose a **difficulty** (Easy, Normal, Hard, Insane). Base health is 2,000, moved up or down by your starting card. |
 | **Unlock Skirmish** | No factions: any unit can be unlocked (one a round, at the usual unlock prices), and every spell and card of all three factions can appear, each once. You get 5 starting cards of 2 random tier 1 squads, and towers as usual. Choose a **difficulty**, a **base health** from 100 to 10,000, and which **cards** appear: all, none of the reinforcement cards, or only reinforcement cards. |
 | **Tutorial** | A guided, scripted match. |
 | **Sandbox** | Build both armies freely and watch them fight. |
 
-Your difficulty is remembered between matches (Normal at first). See [The AI](#/page/ai) for what each one does.
+Your difficulty is remembered between matches (Normal at first). See [The AI](#/page/ai) for what each one does, including **Insane**, the hardest.
 
 ## The Tutorial
 

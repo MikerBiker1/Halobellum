@@ -6,7 +6,8 @@
 // Use one results file per trial and setup: what it carries on from is only the pairing and the match number, so a file would mix them without a word.
 // --setup goes through the game's own MatchSetup; hp is the base health, and cards is all, no or only (reinforcement cards). With mode=skirmish the field is the
 // one made-up faction of all units, and its "sub-factions" are the AI difficulties Hard, Normal and Easy; that needs an export made since Unlock Skirmish came in.
-// In Faction mode every side is a Hard AI.
+// In Faction mode every side is a Hard AI, unless --vs "Insane,Hard" pits two difficulties: the first plays sub-faction a on matches 0 and 1 of every 4 and
+// b on 2 and 3, so it has each side and each sub-faction half the time; each line says which team it was ("vsTeam") and whether it won ("vsWon").
 // A trial file tries balance changes without touching the game, one per line:
 //   Flood Abomination|MaxHealth=6000            a field of the unit
 //   Flood Abomination|Tendril Slam|DamagePerShot=300     a field of one of its weapons
@@ -38,6 +39,8 @@ static class Program
     static int MostRounds = 60;
     // --seed N plays a different set of matches with the same data, to check a result is not luck; 0 keeps the old matches.
     static int SeedOffset = 0;
+    // --vs First,Second: the two difficulties of a Faction-mode match, or null for Hard against Hard.
+    static AiDifficulty[] Vs;
 
     static int Main(string[] args)
     {
@@ -46,6 +49,8 @@ static class Program
         int threads = int.Parse(Option(args, "--threads") ?? Math.Max(1, Environment.ProcessorCount - 2).ToString());
         MostRounds = int.Parse(Option(args, "--most-rounds") ?? MostRounds.ToString());
         SeedOffset = int.Parse(Option(args, "--seed") ?? "0");
+        string vs = Option(args, "--vs");
+        if (vs != null) Vs = vs.Split(',').Select(d => (AiDifficulty)Enum.Parse(typeof(AiDifficulty), d)).ToArray();
 
         using JsonDocument doc = JsonDocument.Parse(File.ReadAllText(dataPath));
         var reader = new GraphReader();
@@ -254,8 +259,18 @@ static class Program
 
         var table = new MatchupTable();
         foreach ((string row, string column, float rate) in wins) table.Set(row, column, rate);
-        var aiA = new RecordingAi(new RuleBasedAi(DifficultyOf(teamA.sub, rules), unchecked(seed + 1), table));
-        var aiB = new RecordingAi(new RuleBasedAi(DifficultyOf(teamB.sub, rules), unchecked(seed + 2), table));
+        AiDifficulty difficultyA = DifficultyOf(teamA.sub, rules), difficultyB = DifficultyOf(teamB.sub, rules);
+        // --vs: the first difficulty plays sub-faction a on matches 0 and 1 of every 4, so it is on each team and with each sub-faction half the time.
+        Team vsTeam = Team.A;
+        if (Vs != null && rules.Mode == MatchMode.Faction)
+        {
+            bool firstPlaysA = i % 4 < 2;
+            vsTeam = firstPlaysA == aFirst ? Team.A : Team.B;
+            difficultyA = vsTeam == Team.A ? Vs[0] : Vs[1];
+            difficultyB = vsTeam == Team.A ? Vs[1] : Vs[0];
+        }
+        var aiA = new RecordingAi(new RuleBasedAi(difficultyA, unchecked(seed + 1), table));
+        var aiB = new RecordingAi(new RuleBasedAi(difficultyB, unchecked(seed + 2), table));
         var match = new Match(rules, combat, new List<FactionInfo> { teamA.faction, teamB.faction }, seed, aiB);
         var random = new SimRandom(unchecked(seed + 3));
         SetCard(match.PlayerDraft, teamA, rules, random);
@@ -320,6 +335,12 @@ static class Program
         w.Str("winner", winner);
         w.Str("winnerTeam", match.Winner == null ? "none" : match.Winner == Team.A ? "A" : "B");
         w.Num("aOnTeam", aFirst ? 1 : 2);
+        if (Vs != null && rules.Mode == MatchMode.Faction)
+        {
+            w.Str("vs", string.Join(",", Vs));
+            w.Str("vsTeam", vsTeam == Team.A ? "A" : "B");
+            w.Num("vsWon", match.Winner == vsTeam ? 1 : 0);
+        }
         w.Num("rounds", rounds);
         w.Num("mostRounds", MostRounds);
         w.Num("firstBattle", firstBattle);

@@ -27,6 +27,9 @@
 //            counters and avoids units the opponent's army beats; changes strategy when the last
 //            round went badly. Without a table it falls back to the role table. When it is behind and
 //            about to lose, it takes the Research Center's Rapid Resupply.
+//   Insane - Hard, plus the owner's habits from their games (RuleBasedAi.Insane.cs, D123): reads the last battle's results to stop
+//            feeding a farmed unit and to counter what did the damage, answers air at once, levels and techs its best units first,
+//            times economy cards, and places new squads spread out and differently each match.
 // In Unlock Skirmish, where a side can unlock any of the game's units (decided by view.Rules.Mode, so Faction mode plays on as it did):
 //   - Hard wants a flyer far less for being able to flank (MatchRules.AiSkirmishFlankBonus), or it would field nothing else;
 //   - Normal and Hard only unlock a unit that is clearly better than what they own, by more the dearer it is to unlock;
@@ -56,9 +59,11 @@ namespace Halobellum.Economy
         Easy = 0,
         Normal = 1,
         Hard = 2,
+        /// <summary>Hard plus the owner's own habits, learned from their games (D123).</summary>
+        Insane = 3,
     }
 
-    public sealed class RuleBasedAi : IMatchAi
+    public sealed partial class RuleBasedAi : IMatchAi
     {
         private readonly SimRandom _random;
         private readonly MatchupTable _matchups;
@@ -144,7 +149,7 @@ namespace Halobellum.Economy
             _matchups = matchups != null && matchups.Count > 0 ? matchups : null;
         }
 
-        private bool UsesMatchups => Difficulty == AiDifficulty.Hard && _matchups != null;
+        private bool UsesMatchups => Difficulty >= AiDifficulty.Hard && _matchups != null;
 
         /// <summary>What a draft card's free squad is worth extra to Normal and Hard if it is an exclusive unit, in credits (M10).</summary>
         private const int ExclusiveDraftBonus = 40;
@@ -183,7 +188,7 @@ namespace Halobellum.Economy
             foreach (SeenSquad squad in seen)
             {
                 _threats.TryGetValue(squad.Type, out float value);
-                _threats[squad.Type] = value + squad.Value;
+                _threats[squad.Type] = value + squad.Value * ThreatWeight(squad.Type);
             }
             foreach (UnitStats type in new List<UnitStats>(_threats.Keys))
             {
@@ -270,9 +275,10 @@ namespace Halobellum.Economy
                 else
                 {
                     // Keep enough for squads this round (Normal keeps more than Hard).
-                    int reserve = Difficulty == AiDifficulty.Hard ? 100 : 200;
+                    int reserve = Difficulty >= AiDifficulty.Hard ? 100 : 200;
                     if (credits - price < reserve) continue;
                     value = CardValue(view, offer.Cards[i]);
+                    if (IsInsane) value = InsaneCardValue(view, offer.Cards[i], value);
                 }
                 if (value > bestValue)
                 {
@@ -368,12 +374,13 @@ namespace Halobellum.Economy
             {
                 var free = squads.FindAll(s => s.Item == null);
                 if (free.Count == 0) break;
-                PlacedSquad target = Difficulty == AiDifficulty.Easy ? free[_random.RangeInt(0, free.Count)] : item.FreeDeployment ? free[free.Count - 1] : free[0];
+                var preferred = IsInsane && !item.FreeDeployment ? CarriesFirst(free) : free;
+                PlacedSquad target = Difficulty == AiDifficulty.Easy ? free[_random.RangeInt(0, free.Count)] : item.FreeDeployment ? free[free.Count - 1] : preferred[0];
                 if (view.PlaceItem(item, target).Ok) upgrades.Add($"{item.Name} on {target.Type.Name}");
             }
             while (view.CanUseTraining)
             {
-                PlacedSquad trainee = squads.Find(s => s.Level < UnitUpgrades.MaxLevel && !view.CanLevelUp(s));
+                PlacedSquad trainee = (IsInsane ? CarriesFirst(squads) : squads).Find(s => s.Level < UnitUpgrades.MaxLevel && !view.CanLevelUp(s));
                 if (trainee == null || !view.UseTraining(trainee).Ok) break;
                 upgrades.Add($"training for {trainee.Type.Name}");
             }
@@ -442,11 +449,12 @@ namespace Halobellum.Economy
                 CounteredRole = (UnitRole)top;
             }
 
-            if (Difficulty == AiDifficulty.Hard) NoteFlanking(view, seen);
+            if (Difficulty >= AiDifficulty.Hard) NoteFlanking(view, seen);
 
             // 2. Strategy.
+            if (IsInsane) ReadLastBattle(view);
             if (UsesMatchups) UpdateThreats(view, seen);
-            if (Difficulty == AiDifficulty.Hard) ReadBoard(seen);
+            if (Difficulty >= AiDifficulty.Hard) ReadBoard(seen);
             Strategy = ChooseStrategy(view, seen, valueByRole, totalSeen);
 
             // In round 1, put the free draft squads where their role belongs.
@@ -461,7 +469,8 @@ namespace Halobellum.Economy
             }
 
             // In Unlock Skirmish, so do the squads a reinforcement card just brought: with only those cards they would otherwise be the whole army, all in the middle of the zone.
-            if (skirmish)
+            // Insane does it in every mode, or a card's titan can sit at the back of the zone for the whole match (D123).
+            if (skirmish || IsInsane)
             {
                 foreach (PlacedSquad squad in self.Squads.ToArray())
                 {
@@ -473,17 +482,18 @@ namespace Halobellum.Economy
             // 3-4. Unlock at most one unit type, then buy up to the squad limit.
             var bought = new List<string>();
             var upgrades = new List<string>();
-            if (Difficulty == AiDifficulty.Hard) TakeRapidResupply(view, upgrades);
+            if (Difficulty >= AiDifficulty.Hard) TakeRapidResupply(view, upgrades);
             string unlocked = TryUnlock(view, seen, totalSeen);
-            if (Difficulty == AiDifficulty.Hard) ShoreUpFlankedTowers(view, upgrades);
+            if (Difficulty >= AiDifficulty.Hard) ShoreUpFlankedTowers(view, upgrades);
             if (Difficulty != AiDifficulty.Easy) BuyCarrierTechs(view, upgrades);
+            if (IsInsane && !skirmish) InvestInCarries(view, seen, totalSeen, upgrades);
             // In Unlock Skirmish, Hard levels what it has and buys a tech before new squads. New squads first left it nothing for these, which add up: at 10000 base health it lost to Normal (D63).
-            if (skirmish && Difficulty == AiDifficulty.Hard)
+            if (skirmish && Difficulty >= AiDifficulty.Hard)
             {
                 UseItemsAndTraining(view, upgrades);
                 SpendOnUpgrades(view, upgrades);
             }
-            if (Difficulty == AiDifficulty.Hard && self.Towers.Count > 0 && self.Credits >= HardEliteCredits) view.BuyEliteRecruitment();
+            if (Difficulty >= AiDifficulty.Hard && self.Towers.Count > 0 && self.Credits >= HardEliteCredits) view.BuyEliteRecruitment();
             for (int i = 0; i < view.SquadsPerRound; i++)
             {
                 if (Difficulty == AiDifficulty.Easy && _random.NextFloat() < 0.35f) break; // Easy wastes budget.
@@ -495,7 +505,7 @@ namespace Halobellum.Economy
                 if (UsesMatchups) UpdateThreats(view, seen); // The new squad covers part of the threat.
             }
             // Hard with credits to spare after its squads: one slot more. So too Normal in Unlock Skirmish, only once its savings have piled up.
-            bool wantsSlot = Difficulty == AiDifficulty.Hard ? self.Credits >= HardExtraSlotCredits : Difficulty == AiDifficulty.Normal && skirmish && self.Credits >= NormalSkirmishFlushCredits;
+            bool wantsSlot = Difficulty >= AiDifficulty.Hard ? self.Credits >= HardExtraSlotCredits : Difficulty == AiDifficulty.Normal && skirmish && self.Credits >= NormalSkirmishFlushCredits;
             if (wantsSlot && self.Towers.Count > 0 && view.BuyExtraSlot().Ok)
             {
                 UnitStats choice = BestAffordable(view, seen, totalSeen, unlockedOnly: true);
@@ -550,7 +560,7 @@ namespace Halobellum.Economy
             {
                 if (type.TechUpgrades == null || invested[type] < type.Cost * 2) continue; // Only worth it with 2+ squads' worth.
                 TechUpgrade cheapest = null;
-                bool byValue = Difficulty == AiDifficulty.Hard;
+                bool byValue = Difficulty >= AiDifficulty.Hard;
                 float bestValue = 0f;
                 foreach (TechUpgrade tech in type.TechUpgrades)
                 {
@@ -599,22 +609,23 @@ namespace Halobellum.Economy
         {
             PlayerState self = view.Self;
             if (Difficulty == AiDifficulty.Easy || self.Towers.Count == 0) return;
-            int spare = Difficulty == AiDifficulty.Hard ? HardTowerCredits : NormalTowerCredits;
+            int spare = Difficulty >= AiDifficulty.Hard ? HardTowerCredits : NormalTowerCredits;
 
             PlacedTower weakest = null;
             foreach (PlacedTower tower in self.Towers)
             {
                 if (tower.Falls > 0 && (weakest == null || tower.Falls - tower.Level > weakest.Falls - weakest.Level)) weakest = tower;
             }
-            if (weakest != null && self.Credits >= spare && view.LevelUpTower(weakest.Kind).Ok) upgrades.Add($"{Match.TowerName(weakest.Kind)} to level {weakest.Level}");
+            if (weakest != null && !IsInsane && self.Credits >= spare && view.LevelUpTower(weakest.Kind).Ok) upgrades.Add($"{Match.TowerName(weakest.Kind)} to level {weakest.Level}");
 
             MatchRules rules = view.Rules;
             bool health = self.ResearchHealthSteps <= self.ResearchDamageSteps;
             int steps = health ? self.ResearchHealthSteps : self.ResearchDamageSteps;
-            if (steps < rules.ResearchCosts.Length && self.Credits >= rules.ResearchCosts[steps] + spare && view.BuyResearch(health).Ok)
+            int researchSpare = IsInsane && view.Round >= 3 ? 0 : spare;
+            if (steps < rules.ResearchCosts.Length && self.Credits >= rules.ResearchCosts[steps] + researchSpare && view.BuyResearch(health).Ok)
                 upgrades.Add(health ? "health research" : "damage research");
 
-            if (Difficulty == AiDifficulty.Hard && seen.Count >= 3 && self.Credits >= HardOilCredits && view.BuyOilZone().Ok) upgrades.Add("oil");
+            if (Difficulty >= AiDifficulty.Hard && seen.Count >= 3 && self.Credits >= HardOilCredits && view.BuyOilZone().Ok) upgrades.Add("oil");
         }
 
         /// <summary>
@@ -676,7 +687,7 @@ namespace Halobellum.Economy
             }
 
             // Hard adapts: after a bad round (more base damage taken than dealt) it avoids repeating its strategy.
-            if (Difficulty == AiDifficulty.Hard && view.Round > 1 && view.LastBaseDamageTaken > view.LastBaseDamageDealt)
+            if (Difficulty >= AiDifficulty.Hard && view.Round > 1 && view.LastBaseDamageTaken > view.LastBaseDamageDealt)
                 fit[(int)Strategy] *= 0.6f;
 
             int best = 0;
@@ -734,11 +745,12 @@ namespace Halobellum.Economy
             {
                 score += _random.Range(-0.3f, 0.3f);
             }
-            if (Difficulty == AiDifficulty.Hard)
+            if (Difficulty >= AiDifficulty.Hard)
             {
                 if (unit.CanFlank) score += _flankBonus;
                 if (_flanked.Count > 0 && unit.TargetFilter != TargetFilter.Ground) score += unit.Role == UnitRole.AntiAir ? 2f * HardFlankDefenceBonus : HardFlankDefenceBonus;
             }
+            if (IsInsane) score += InsaneAdjustment(unit);
             return score;
         }
 
@@ -808,6 +820,7 @@ namespace Halobellum.Economy
                 if (Difficulty == AiDifficulty.Normal && self.Credits > NormalSkirmishFlushCredits && bestLocked.UnlockCost * 4 <= self.Credits) hurdle *= NormalSkirmishFlushCredits / (float)self.Credits;
                 ownedScore += hurdle;
             }
+            if (IsInsane && view.Rules.Mode != MatchMode.UnlockSkirmish) ownedScore += InsaneUnlockHurdle(view, bestLocked);
             if (lockedScore <= ownedScore && Difficulty != AiDifficulty.Easy) return null;
             return view.Unlock(bestLocked).Ok ? bestLocked.Name : null;
         }
@@ -823,10 +836,10 @@ namespace Halobellum.Economy
             column = 0;
             PlayerState self = view.Self;
             if (Difficulty == AiDifficulty.Easy || self.Towers.Count < 2) return false;
-            if (Difficulty == AiDifficulty.Hard && sameKind % 2 == 0 && WeakLaneColumn(view, out column)) return true;
+            if (Difficulty >= AiDifficulty.Hard && sameKind % 2 == 0 && WeakLaneColumn(view, out column)) return true;
 
             PlacedTower left = self.FindTower(TowerKind.CommandCenter), right = self.FindTower(TowerKind.ResearchCenter);
-            if (left.Falls == right.Falls) return Difficulty == AiDifficulty.Hard && WeakLaneColumn(view, out column);
+            if (left.Falls == right.Falls) return Difficulty >= AiDifficulty.Hard && WeakLaneColumn(view, out column);
             PlacedTower defended = left.Falls > right.Falls ? left : right;
             column = defended.Column + defended.Squares / 2;
             return true;
@@ -923,7 +936,7 @@ namespace Halobellum.Economy
         {
             column = row = 0;
             CarrierPlacement placement = view.Rules.AiCarrierPlacement;
-            if (placement == CarrierPlacement.Default || Difficulty != AiDifficulty.Hard || type.LockedReinforcement == null) return false;
+            if (placement == CarrierPlacement.Default || Difficulty < AiDifficulty.Hard || type.LockedReinforcement == null) return false;
 
             CombatRules rules = view.CombatRules;
             DeploymentGrid.Footprint(type, false, rules, out int width, out int depth);
@@ -950,7 +963,7 @@ namespace Halobellum.Economy
         {
             CombatRules rules = view.CombatRules;
             if (ignoreSquadId < 0 && ChooseCarrierCorner(view, type, out column, out row)) return true;
-            if (Difficulty == AiDifficulty.Hard && ignoreSquadId < 0 && type.CanFlank && ChooseFlankSpot(view, type, out column, out row)) return true;
+            if (Difficulty >= AiDifficulty.Hard && ignoreSquadId < 0 && type.CanFlank && ChooseFlankSpot(view, type, out column, out row)) return true;
             DeploymentGrid.Footprint(type, false, rules, out int width, out _);
             int depth = rules.DeploymentDepthSquares, arenaWidth = rules.ArenaWidthSquares;
             int targetRow;
@@ -989,7 +1002,7 @@ namespace Halobellum.Economy
             }
 
             // Hard guards a tower that was taken from the flank with what can shoot at aircraft (D61).
-            if (Difficulty == AiDifficulty.Hard && _flanked.Count > 0 && type.TargetFilter != TargetFilter.Ground)
+            if (Difficulty >= AiDifficulty.Hard && _flanked.Count > 0 && type.TargetFilter != TargetFilter.Ground)
             {
                 PlacedTower guarded = view.Self.FindTower(_flanked[sameKind % _flanked.Count]);
                 targetColumn = guarded.Column + guarded.Squares / 2 - width / 2;
@@ -1004,6 +1017,7 @@ namespace Halobellum.Economy
             targetColumn = Math.Max(0, Math.Min(arenaWidth - width, targetColumn));
             targetRow = Math.Max(0, Math.Min(depth - 1, targetRow));
 
+            if (IsInsane && ignoreSquadId < 0 && InsaneFindSpot(view, type, targetColumn, targetRow, out column, out row)) return true;
             if (ignoreSquadId < 0) return DeploymentGrid.FindFreeSpotNear(view.Self, type, false, rules, targetColumn, targetRow, out column, out row);
 
             // Moving an existing squad: search as if it were not there.

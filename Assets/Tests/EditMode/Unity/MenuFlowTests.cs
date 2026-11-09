@@ -107,7 +107,7 @@ namespace Halobellum.Tests
             Assert.IsTrue(GameSettings.HeldInMemory);
             Assert.AreEqual(savedMusic, GameSettings.MusicVolume, "A hold starts from what was saved.");
             float changedMusic = savedMusic > 0.5f ? 0.125f : 0.875f;
-            AiDifficulty changedDifficulty = savedDifficulty == AiDifficulty.Hard ? AiDifficulty.Easy : AiDifficulty.Hard;
+            AiDifficulty changedDifficulty = savedDifficulty == AiDifficulty.Insane ? AiDifficulty.Easy : AiDifficulty.Insane; // Insane is the highest: it must get through the setting's limits (D123).
             GameSettings.MusicVolume = changedMusic;
             GameSettings.Difficulty = changedDifficulty;
             CameraShake.ShakeEnabled = !GameSettings.CameraShake; // What the K key does: it also saves.

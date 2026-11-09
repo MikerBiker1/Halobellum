@@ -2,7 +2,8 @@
 // Everything an AI player is allowed to know and do (Bible Section 11: "The AI must never cheat on
 // information or income"). An AI never gets the Match itself, only this view of it:
 //   - its own state (credits, roster, unlocks, squads, base) and the match rules and round;
-//   - public information: both bases, the opponent's faction once it has been seen in a battle;
+//   - public information: both bases, the opponent's faction once it has been seen in a battle, and the last battle's
+//     results (what killed what, and each squad's damage, from the result screen and the Battle stats window);
 //   - the opponent's army only as it was revealed at the start of the last battle (SeenOpponentArmy),
 //     never the opponent's current deployment;
 //   - its own actions, which go through the same Match rules as the player's (Unlock, Buy, Move,
@@ -60,6 +61,20 @@ namespace Halobellum.Economy
         public int LastBaseDamageTaken => _match.LastSummary == null ? 0 : Team == Team.A ? _match.LastSummary.BaseDamageByB : _match.LastSummary.BaseDamageByA;
         /// <summary>Base damage this side dealt in the last round.</summary>
         public int LastBaseDamageDealt => _match.LastSummary == null ? 0 : Team == Team.A ? _match.LastSummary.BaseDamageByA : _match.LastSummary.BaseDamageByB;
+
+        /// <summary>What killed what in the last battle (shown to both players on the result screen), or empty before the first battle.</summary>
+        public IReadOnlyList<KillCount> LastKills => _match.LastSummary?.Kills ?? (IReadOnlyList<KillCount>)System.Array.Empty<KillCount>();
+
+        /// <summary>The last finished battle's statistics (the Battle stats window both players can open), or null before the first battle.</summary>
+        public BattleStats LastBattle
+        {
+            get
+            {
+                IReadOnlyList<BattleStats> history = _match.BattleHistory;
+                for (int i = history.Count - 1; i >= 0; i--) if (history[i].Finished) return history[i];
+                return null;
+            }
+        }
 
         /// <summary>The opponent's army as revealed at the start of the last battle (empty before the first battle).</summary>
         public IReadOnlyList<SeenSquad> SeenOpponentArmy => _match.SeenArmy(Team.Opponent());
