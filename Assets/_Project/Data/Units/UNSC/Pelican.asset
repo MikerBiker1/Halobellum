@@ -31,7 +31,7 @@ MonoBehaviour:
   targetFilter: 2
   weapons:
   - weaponName: M370 Autocannon
-    damagePerShot: 14
+    damagePerShot: 10
     fireInterval: 0.3
     range: 14
     minRange: 0

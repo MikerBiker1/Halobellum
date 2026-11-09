@@ -20,7 +20,7 @@ def units(U, W):
           [W("Heavy Cannon", 140, 5, 50, "Explosive", proj=22, splash=4.5, minr=12, lob=True)],
           note="The longest gun in the game. Slow to turn and move, lobbed so it can miss, helpless up close."),
         U("Grizzly", "Grizzly", FACTION, "Tank", 3, 250, 1, 500, 2100, "H", 1.35, 2.2, 2.2, "G",
-          [W("Twin Cannons", 100, 2.5, 17, "Explosive", proj=35, splash=2.5),
+          [W("Twin Cannons", 110, 2.5, 17, "Explosive", proj=35, splash=2.5),
            W("Coaxial Machine Gun", 8, 0.2, 13, "Ballistic", block=True, own="B")],
           note="The upgraded Scorpion: twin barrels and more armor, at a Tier 3 price."),
     ]

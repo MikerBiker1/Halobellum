@@ -16,7 +16,7 @@ def units(U, W):
           [W("SRS99 Sniper Rifle", 200, 3.0, 42, "Ballistic", aa=True)], shield=200, regen=60, immune=True,
           note="Kills one armored target at a time from very far away; has no answer to a crowd or to anything that reaches it.",
           baked="SpartanSniper"),
-        U("SpartanHeavyWeapons", "Spartan Heavy Weapons", FACTION, "Tank", 3, 225, 1, 450, 2100, "U", 1.3, 0.8, 0.7, "B",
+        U("SpartanHeavyWeapons", "Spartan Heavy Weapons", FACTION, "Tank", 3, 225, 1, 450, 2400, "U", 1.3, 0.8, 0.7, "B",
           [W("M247H Chaingun", 13, 0.12, 15, "Ballistic", block=True),
            W("Hydra Rocket Pod", 80, 3.5, 20, "Explosive", proj=40, splash=1.5, own="G")], shield=250, regen=60, immune=True,
           note="A walking wall with a chaingun: mows down infantry, does little to armor. Its Unarmored body makes it weak to anti-infantry weapons once the shield is down.",

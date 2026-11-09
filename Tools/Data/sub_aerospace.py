@@ -16,7 +16,7 @@ def units(U, W):
         U("Longsword", "Longsword", FACTION, "Aerial", 2, 50, 1, 300, 600, "L", 5, 2.8, 1, "G",
           [W("Carpet Bombs", 135, 2.5, 5, "Explosive", proj=18, splash=5, own="G")], airu=True,
           note="Heavy bomber. It has to fly over its target, and cannot fight other aircraft at all."),
-        U("Vulture", "Vulture", FACTION, "Aerial", 3, 200, 1, 400, 900, "H", 2.5, 3, 1.5, "B",
+        U("Vulture", "Vulture", FACTION, "Aerial", 3, 200, 1, 400, 800, "H", 2.5, 3, 1.5, "B",
           [W("Missile Barrage", 50, 3, 22, "Explosive", proj=40, splash=3),
            W("Chin Gun", 10, 0.2, 14, "Ballistic", block=True)], airu=True,
           note="The heaviest gunship: heavy armor, slow, long-range missiles."),

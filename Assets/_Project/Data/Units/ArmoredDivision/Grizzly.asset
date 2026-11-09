@@ -31,7 +31,7 @@ MonoBehaviour:
   targetFilter: 0
   weapons:
   - weaponName: Twin Cannons
-    damagePerShot: 100
+    damagePerShot: 110
     fireInterval: 2.5
     range: 17
     minRange: 0

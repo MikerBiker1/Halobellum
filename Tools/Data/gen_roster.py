@@ -81,7 +81,7 @@ UNITS = [
     U("ArcherMissilePod", "Archer Missile Pod", "UNSC", "Artillery", 2, 50, 2, 300, 350, "L", 0, 1.4, 1.5, "G",
       [W("Archer Missile Barrage", 55, 4.0, 42, "Explosive", proj=28, splash=3.5, minr=8, lob=True)]),
     U("Pelican", "Pelican", "UNSC", "Aerial", 2, 50, 1, 300, 1200, "L", 12, 2.5, 2, "B",
-      [W("M370 Autocannon", 14, 0.3, 14, "Ballistic")], airu=True, drop=("Marine", 6, 10, True, 3, 1.5, 5),
+      [W("M370 Autocannon", 10, 0.3, 14, "Ballistic")], airu=True, drop=("Marine", 6, 10, True, 3, 1.5, 5),
       note="With its Troop Bay tech it lands and drops 6 Marines 5 seconds into the battle wherever it is, then lands behind enemy lines to drop more, up to 3 drops in all (D60)."),
     U("Spartan", "Spartan", "UNSC", "SingleTargetDps", 3, 250, 1, 500, 1250, "U", 3.5, 0.6, 0.5, "B",
       [W("Spartan Laser", 450, 3.5, 24, "Energy", aa=True)], shield=400, regen=80, immune=True, baked="Spartan",

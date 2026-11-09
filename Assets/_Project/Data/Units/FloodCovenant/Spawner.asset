@@ -31,7 +31,7 @@ MonoBehaviour:
   targetFilter: 0
   weapons:
   - weaponName: Spore Lash
-    damagePerShot: 40
+    damagePerShot: 55
     fireInterval: 1.2
     range: 3
     minRange: 0
