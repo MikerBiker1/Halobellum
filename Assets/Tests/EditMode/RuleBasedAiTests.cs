@@ -61,6 +61,7 @@ namespace Halobellum.Tests
         [TestCase(AiDifficulty.Easy)]
         [TestCase(AiDifficulty.Normal)]
         [TestCase(AiDifficulty.Hard)]
+        [TestCase(AiDifficulty.Insane)]
         public void PlaysByThePlayersLimits_AndSpendsItsCredits(AiDifficulty difficulty)
         {
             var ai = new RuleBasedAi(difficulty, 7);
@@ -431,6 +432,7 @@ namespace Halobellum.Tests
 
         [TestCase(AiDifficulty.Normal, AiDifficulty.Normal)]
         [TestCase(AiDifficulty.Hard, AiDifficulty.Easy)]
+        [TestCase(AiDifficulty.Insane, AiDifficulty.Hard)]
         public void AFullMatchBetweenTwoAis_Ends(AiDifficulty playerSide, AiDifficulty enemySide)
         {
             var enemy = new RuleBasedAi(enemySide, 11);

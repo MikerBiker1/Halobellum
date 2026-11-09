@@ -29,7 +29,7 @@ namespace Halobellum.UI
         private const float ButtonWidth = 400f, ButtonHeight = 64f, ButtonGap = 6f;
         private const float PanelGap = 24f, PanelWidth = 560f, PanelMargin = 24f, RowHeight = 52f, RowLabelWidth = 140f, ControlHeight = 36f;
         private const float StepperWidth = 170f, StartHeight = 48f;
-        private static readonly string[] Difficulties = { "Easy", "Normal", "Hard" };
+        private static readonly string[] Difficulties = { "Easy", "Normal", "Hard", "Insane" };
         private static readonly string[] CardLabels = { "All cards", "No reinforcement cards", "Only reinforcement cards" }; // In CardFilter's order.
 
         private readonly SettingsScreen _settings = new SettingsScreen();

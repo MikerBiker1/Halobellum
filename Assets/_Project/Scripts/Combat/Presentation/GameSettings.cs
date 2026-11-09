@@ -155,7 +155,7 @@ namespace Halobellum.Presentation
         /// <summary>The AI's difficulty, on the menu and the draft screen alike.</summary>
         public static AiDifficulty Difficulty
         {
-            get => (AiDifficulty)Mathf.Clamp(GetInt(MatchController.DifficultyKey, (int)AiDifficulty.Normal), 0, 2);
+            get => (AiDifficulty)Mathf.Clamp(GetInt(MatchController.DifficultyKey, (int)AiDifficulty.Normal), 0, (int)AiDifficulty.Insane);
             set => SetInt(MatchController.DifficultyKey, (int)value);
         }
 
