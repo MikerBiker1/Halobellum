@@ -13,6 +13,13 @@
 //     clusters and from where the opponent's spells landed last battle, face the threat they counter (and air, if they shoot it), and the whole
 //     layout shifts by an offset drawn each match, so it never places the same way twice.
 // Spells aim as Hard's do, at the densest crowd: the owner found that killing the chaff that screens an army is worth it.
+// Revision 2 (D127), from the owner's first games against Insane, where a round lost outright left its whole army dead:
+//   - a farmed type is judged against the rest of its own army only (the opponent's army only when it fields one type), so its worst
+//     types stand out even when everything died, and its best still count as carries;
+//   - the opponent's top damage dealer (a third or more of its damage) is countered directly: a unit's score rises or falls with how it
+//     fares against that one unit;
+//   - past three squads of chaff, each more is wanted less (its last credits went on 210 Cannon Fodder for a Zealot to cut down).
+// InsaneRevision = 1 plays as before, for the tournament's comparison only.
 // Depends on: AiView (LastBattle, LastKills), BattleStats, MatchupTable, DeploymentGrid, Halobellum.Core.
 
 using System;
@@ -36,6 +43,17 @@ namespace Halobellum.Economy
         private const float InsaneCarryShare = 0.15f;
         /// <summary>The round from which an economy card is worth nothing (its income would not pay back).</summary>
         private const int InsaneLastEconomyRound = 8;
+        /// <summary>Revision 2: how much a unit's score moves with its win rate against the opponent's top damage dealer (from -1.5x to +1.5x this at 0 and 100%).</summary>
+        private const float InsaneTopThreatWeight = 6f;
+        /// <summary>Revision 2: the opponent's top damage dealer counts once it did this share of the damage.</summary>
+        private const float InsaneTopThreatShare = 0.33f;
+        /// <summary>Revision 2: chaff squads it may field before each more is wanted less, and how much less.</summary>
+        private const int InsaneChaffSquads = 3;
+        private const float InsaneExtraChaffPenalty = 1f;
+
+        /// <summary>Which Insane plays: 2 (the default, D127) or 1 (D123), kept so the tournament can measure one against the other.</summary>
+        public int InsaneRevision { get; set; } = 2;
+        private UnitStats _topThreat;
 
         private readonly Dictionary<UnitStats, float> _farmed = new Dictionary<UnitStats, float>();
         private readonly Dictionary<UnitStats, float> _damageShare = new Dictionary<UnitStats, float>();
@@ -65,6 +83,7 @@ namespace Halobellum.Economy
             _carries.Clear();
             _enemySpellSpots.Clear();
             _airUncovered = 0f;
+            _topThreat = null;
             if (!_matchShiftDrawn)
             {
                 _matchShiftDrawn = true;
@@ -110,12 +129,19 @@ namespace Halobellum.Economy
 
             if (enemyTotalDamage > 0f)
             {
-                foreach (var pair in enemyDamage) _damageShare[pair.Key] = pair.Value / enemyTotalDamage;
+                foreach (var pair in enemyDamage)
+                {
+                    _damageShare[pair.Key] = pair.Value / enemyTotalDamage;
+                    if (InsaneRevision >= 2 && _damageShare[pair.Key] >= InsaneTopThreatShare && (_topThreat == null || _damageShare[pair.Key] > _damageShare[_topThreat])) _topThreat = pair.Key;
+                }
             }
 
             // Farmed: most of its bodies died, and it did less for its worth than its army as a whole, or than the opponent's army did (so a whole
             // army of one type that was farmed counts too).
-            float average = Math.Max(ownTotalWorth > 0f ? ownTotalDamage / ownTotalWorth : 0f, enemyTotalWorth > 0f ? enemyTotalDamage / enemyTotalWorth : 0f);
+            float ownAverage = ownTotalWorth > 0f ? ownTotalDamage / ownTotalWorth : 0f;
+            float enemyAverage = enemyTotalWorth > 0f ? enemyTotalDamage / enemyTotalWorth : 0f;
+            // Revision 2: against its own army only, unless it fielded one type, so a round lost outright still tells its worst types from its best.
+            float average = InsaneRevision >= 2 && ownWorth.Count >= 2 ? ownAverage : Math.Max(ownAverage, enemyAverage);
             foreach (var pair in ownWorth)
             {
                 int bodies = ownBodies[pair.Key];
@@ -161,6 +187,18 @@ namespace Halobellum.Economy
         {
             float adjust = -InsaneFarmedPenalty * FarmedShare(unit);
             if (_airUncovered > 0f) adjust += InsaneAirAnswerBonus * _airUncovered * ShareThatHitsAir(unit);
+            if (InsaneRevision < 2) return adjust;
+            if (_topThreat != null && _matchups != null)
+            {
+                float? rate = _matchups.WinRate(unit, _topThreat);
+                if (rate.HasValue) adjust += InsaneTopThreatWeight * (rate.Value - 0.5f);
+            }
+            if (unit.Role == UnitRole.Chaff && _self != null)
+            {
+                int chaff = 0;
+                foreach (PlacedSquad squad in _self.Squads) if (squad.Type.Role == UnitRole.Chaff) chaff++;
+                adjust -= InsaneExtraChaffPenalty * Math.Max(0, chaff + 1 - InsaneChaffSquads);
+            }
             return adjust;
         }
 
