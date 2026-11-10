@@ -8,9 +8,6 @@
 // one made-up faction of all units, and its "sub-factions" are the AI difficulties Hard, Normal and Easy; that needs an export made since Unlock Skirmish came in.
 // In Faction mode every side is a Hard AI, unless --vs "Insane,Hard" pits two difficulties: the first plays sub-faction a on matches 0 and 1 of every 4 and
 // b on 2 and 3, so it has each side and each sub-faction half the time; each line says which team it was ("vsTeam") and whether it won ("vsWon").
-// "Insane1" names the first Insane (D123) against the current one (D127), as in --vs "Insane,Insane1".
-// --replay <game_data.json> <matrix.csv> <log.jsonl>...: plays the owner's battle logs again (MatchLogReplay.PlayHeadless), their moves done again in order,
-// against the first Insane and the current one, and says who won, the bases and how far each drifted from the log.
 // A trial file tries balance changes without touching the game, one per line:
 //   Flood Abomination|MaxHealth=6000            a field of the unit
 //   Flood Abomination|Tendril Slam|DamagePerShot=300     a field of one of its weapons
@@ -44,24 +41,16 @@ static class Program
     static int SeedOffset = 0;
     // --vs First,Second: the two difficulties of a Faction-mode match, or null for Hard against Hard.
     static AiDifficulty[] Vs;
-    // An Insane revision for each of --vs's sides: "Insane1" is the first Insane (D123), plain "Insane" the current one.
-    static int[] VsRevision;
 
     static int Main(string[] args)
     {
-        if (args.Length > 0 && args[0] == "--replay") return Replay(args);
         string dataPath = args[0], matrixPath = args[1], resultsPath = args[2];
         int matches = int.Parse(Option(args, "--matches") ?? "100");
         int threads = int.Parse(Option(args, "--threads") ?? Math.Max(1, Environment.ProcessorCount - 2).ToString());
         MostRounds = int.Parse(Option(args, "--most-rounds") ?? MostRounds.ToString());
         SeedOffset = int.Parse(Option(args, "--seed") ?? "0");
         string vs = Option(args, "--vs");
-        if (vs != null)
-        {
-            string[] names = vs.Split(',');
-            Vs = names.Select(d => (AiDifficulty)Enum.Parse(typeof(AiDifficulty), d.TrimEnd('1'))).ToArray();
-            VsRevision = names.Select(d => d == "Insane1" ? 1 : 2).ToArray();
-        }
+        if (vs != null) Vs = vs.Split(',').Select(d => (AiDifficulty)Enum.Parse(typeof(AiDifficulty), d)).ToArray();
 
         using JsonDocument doc = JsonDocument.Parse(File.ReadAllText(dataPath));
         var reader = new GraphReader();
@@ -118,61 +107,6 @@ static class Program
         });
         Console.WriteLine($"Finished {work.Count} matches in {clock.Elapsed.TotalMinutes:0.0} minutes.");
         return 0;
-    }
-
-    /// <summary>--replay: each log against Insane revisions 1 and 2. Revision 1 should give back the log itself (no drift) if the data matches the game it was played on.</summary>
-    static int Replay(string[] args)
-    {
-        string dataPath = args[1], matrixPath = args[2];
-        var wins = LoadMatrix(matrixPath);
-        foreach (string log in args.Skip(3))
-        {
-            Console.WriteLine(Path.GetFileName(log));
-            foreach (int revision in new[] { 1, 2 })
-            {
-                using JsonDocument doc = JsonDocument.Parse(File.ReadAllText(dataPath));
-                var reader = new GraphReader();
-                var factions = (List<FactionInfo>)reader.Read(doc.RootElement.GetProperty("factions"), typeof(List<FactionInfo>));
-                var rules = (MatchRules)reader.Read(doc.RootElement.GetProperty("rules"), typeof(MatchRules));
-                var combat = (CombatRules)reader.Read(doc.RootElement.GetProperty("combat"), typeof(CombatRules));
-                MatchLogReplay replay = MatchLogReplay.Read(File.ReadLines(log));
-                replay.Setup.ApplyTo(rules);
-                var table = new MatchupTable();
-                foreach ((string row, string column, float rate) in wins) table.Set(row, column, rate);
-                // The game's faction order deals the starting cards: the order that deals the log's cards is the game's.
-                string logged = DraftSignature(File.ReadLines(log).First());
-                Match match = null;
-                foreach (List<FactionInfo> order in Orders(factions))
-                {
-                    var ai = new RuleBasedAi(replay.AiDifficulty, replay.Seed, table) { InsaneRevision = revision };
-                    match = new Match(rules, combat, order, replay.Seed, ai);
-                    if (string.Join(" | ", match.PlayerDraft.Select(c => c.SubFaction?.Name + ": " + string.Join(" + ", c.Squads.Select(u => u.Name)))) == logged) break;
-                }
-                List<string> drift = replay.PlayHeadless(match);
-                string winner = match.Winner == null ? "nobody yet" : match.Winner == Team.A ? "the owner" : "Insane";
-                Console.WriteLine($"  Insane {revision}: {winner} won after round {match.Round}, bases {match.Player.BaseHealth} / {match.Enemy.BaseHealth}, {drift.Count} drift notes");
-                foreach (string note in drift.Take(revision == 1 ? 3 : 2)) Console.WriteLine("      " + note);
-            }
-        }
-        return 0;
-    }
-
-    static string DraftSignature(string matchStart)
-    {
-        using JsonDocument start = JsonDocument.Parse(matchStart);
-        return string.Join(" | ", start.RootElement.GetProperty("draft_offered").EnumerateArray().Select(c =>
-            c.GetProperty("sub_faction").GetString() + ": " + string.Join(" + ", c.GetProperty("squads").EnumerateArray().Select(u => u.GetString()))));
-    }
-
-    static IEnumerable<List<FactionInfo>> Orders(List<FactionInfo> items)
-    {
-        if (items.Count <= 1) { yield return new List<FactionInfo>(items); yield break; }
-        for (int i = 0; i < items.Count; i++)
-        {
-            var rest = new List<FactionInfo>(items);
-            rest.RemoveAt(i);
-            foreach (List<FactionInfo> tail in Orders(rest)) { tail.Insert(0, items[i]); yield return tail; }
-        }
     }
 
     static string Option(string[] args, string name)
@@ -335,15 +269,8 @@ static class Program
             difficultyA = vsTeam == Team.A ? Vs[0] : Vs[1];
             difficultyB = vsTeam == Team.A ? Vs[1] : Vs[0];
         }
-        var ruleA = new RuleBasedAi(difficultyA, unchecked(seed + 1), table);
-        var ruleB = new RuleBasedAi(difficultyB, unchecked(seed + 2), table);
-        if (Vs != null && rules.Mode == MatchMode.Faction)
-        {
-            ruleA.InsaneRevision = VsRevision[vsTeam == Team.A ? 0 : 1];
-            ruleB.InsaneRevision = VsRevision[vsTeam == Team.A ? 1 : 0];
-        }
-        var aiA = new RecordingAi(ruleA);
-        var aiB = new RecordingAi(ruleB);
+        var aiA = new RecordingAi(new RuleBasedAi(difficultyA, unchecked(seed + 1), table));
+        var aiB = new RecordingAi(new RuleBasedAi(difficultyB, unchecked(seed + 2), table));
         var match = new Match(rules, combat, new List<FactionInfo> { teamA.faction, teamB.faction }, seed, aiB);
         var random = new SimRandom(unchecked(seed + 3));
         SetCard(match.PlayerDraft, teamA, rules, random);
@@ -410,7 +337,7 @@ static class Program
         w.Num("aOnTeam", aFirst ? 1 : 2);
         if (Vs != null && rules.Mode == MatchMode.Faction)
         {
-            w.Str("vs", string.Join(",", Vs.Select((d, k) => d == AiDifficulty.Insane && VsRevision[k] == 1 ? "Insane1" : d.ToString())));
+            w.Str("vs", string.Join(",", Vs));
             w.Str("vsTeam", vsTeam == Team.A ? "A" : "B");
             w.Num("vsWon", match.Winner == vsTeam ? 1 : 0);
         }
