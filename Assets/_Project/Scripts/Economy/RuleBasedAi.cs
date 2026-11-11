@@ -63,7 +63,7 @@ namespace Halobellum.Economy
         Insane = 3,
     }
 
-    /// <summary>How the Insane AI plays a match (D128): drawn from the match's seed, or set by a test or the tournament.</summary>
+    /// <summary>How the Insane AI plays a match (D128): TowerRush in Unlock Skirmish, Typical in Faction mode, or whatever a test or the tournament sets.</summary>
     public enum InsanePlaystyle
     {
         /// <summary>Insane as it was (D123).</summary>
@@ -161,7 +161,6 @@ namespace Halobellum.Economy
             _random = new SimRandom(unchecked(seed * 31 + 17 + (int)difficulty));
             _matchups = matchups != null && matchups.Count > 0 ? matchups : null;
             _styleSeed = seed;
-            Playstyle = DrawPlaystyle(seed);
         }
 
         private bool UsesMatchups => Difficulty >= AiDifficulty.Hard && _matchups != null;

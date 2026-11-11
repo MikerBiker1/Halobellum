@@ -1,6 +1,6 @@
 // RuleBasedAiSkirmishTests.cs
 // Tests how the AI plays Unlock Skirmish: it deploys at all with the one made-up faction, Hard doesn't field only flyers, Normal and Hard
-// don't unlock on a whim, Normal spends savings that pile up, reinforcement squads go where their role belongs, and a squad in a flank zone doesn't waste a spell.
+// don't unlock on a whim, Normal spends savings that pile up, Insane rushes a tower (D128), reinforcement squads go where their role belongs, and a squad in a flank zone doesn't waste a spell.
 // Each has Faction mode alongside it, which keeps the behaviour it was measured with. The carrier corners trial is here too.
 // The roster here is a test fixture with one unit per role, not game balance.
 // Depends on: Halobellum.Economy, Halobellum.Combat, Halobellum.Core, NUnit, TestUnits, TestRules, TestMatch.
@@ -75,6 +75,30 @@ namespace Halobellum.Tests
                 bought += match.Enemy.SquadsBoughtThisRound;
             }
             Assert.Greater(bought, 0, "It buys squads.");
+        }
+
+        // ------------------------------------------------------------------ Insane's playstyle (D128)
+
+        [TestCase(MatchMode.UnlockSkirmish, InsanePlaystyle.TowerRush)]
+        [TestCase(MatchMode.Faction, InsanePlaystyle.Typical)]
+        public void Insane_RushesATowerInUnlockSkirmish_AndPlaysAsBeforeInFactionMode(MatchMode mode, InsanePlaystyle expected)
+        {
+            for (int seed = 1; seed <= 5; seed++)
+            {
+                var ai = new RuleBasedAi(AiDifficulty.Insane, seed);
+                Match match = NewMatch(mode, ai, seed);
+                match.ChooseDraft(0);
+                Assert.AreEqual(expected, ai.Playstyle, ai.LastDecision);
+                StringAssert.Contains(expected.ToString(), ai.LastDecision);
+            }
+        }
+
+        [Test]
+        public void APlaystyleSetByTheTournament_IsKept_WhateverTheMode()
+        {
+            var ai = new RuleBasedAi(AiDifficulty.Insane, 1) { Playstyle = InsanePlaystyle.Defender };
+            NewMatch(MatchMode.UnlockSkirmish, ai, 1).ChooseDraft(0);
+            Assert.AreEqual(InsanePlaystyle.Defender, ai.Playstyle);
         }
 
         // ------------------------------------------------------------------ flyers and unlocks

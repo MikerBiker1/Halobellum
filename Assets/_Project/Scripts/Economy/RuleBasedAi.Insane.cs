@@ -13,7 +13,7 @@
 //     clusters and from where the opponent's spells landed last battle, face the threat they counter (and air, if they shoot it), and the whole
 //     layout shifts by an offset drawn each match, so it never places the same way twice.
 // Spells aim as Hard's do, at the densest crowd: the owner found that killing the chaff that screens an army is worth it.
-// Playstyles (D128): each match Insane plays one of four ways, Typical (all of the above), TowerRush, Synergy or Defender (see Playstyle).
+// Playstyles (D128): Insane plays Typical (all of the above) in Faction mode and TowerRush in Unlock Skirmish; Synergy and Defender exist for the tournament.
 // Depends on: AiView (LastBattle, LastKills), BattleStats, MatchupTable, DeploymentGrid, Halobellum.Core.
 
 using System;
@@ -328,12 +328,17 @@ namespace Halobellum.Economy
         // ------------------------------------------------------------------ playstyles (D128, the owner's idea)
 
         /// <summary>
-        /// How Insane plays this match, drawn at the start from the match's seed so the same match always plays the same way (the owner, 2026-11-11):
-        /// Typical is Insane as it was; TowerRush sends the whole army up one lane at one tower and levels its tower on the other side so the opponent
-        /// loses time there; Synergy picks a front-line and a back-line unit that cover each other early, and buys mostly them and their techs;
-        /// Defender forms its line just in front of its towers, keeps out of the flank zones, and keeps both towers levelled.
+        /// How Insane plays this match (the owner's idea, 2026-11-11). Typical is Insane as it was; TowerRush sends the whole army up one lane at one
+        /// tower and levels its tower on the other side so the opponent loses time there; Synergy picks a front-line and a back-line unit that cover
+        /// each other early, and buys mostly them and their techs; Defender forms its line just in front of its towers, keeps out of the flank zones,
+        /// and keeps both towers levelled. Unless a test or the tournament sets it, it is chosen at the first deployment by the mode (D128):
+        /// TowerRush in Unlock Skirmish, where it beats Hard about 63% of the time against Typical's 44%, and Typical in Faction mode.
         /// </summary>
-        public InsanePlaystyle Playstyle { get; set; }
+        public InsanePlaystyle Playstyle
+        {
+            get => _playstyle;
+            set { _playstyle = value; _playstyleForced = true; }
+        }
 
         /// <summary>The two unit types the Synergy playstyle commits to, once chosen (round 1).</summary>
         public IReadOnlyList<UnitStats> SynergyPair => _synergyPair;
@@ -343,6 +348,8 @@ namespace Halobellum.Economy
 
         private readonly List<UnitStats> _synergyPair = new List<UnitStats>();
         private bool _rushLeft;
+        private InsanePlaystyle _playstyle;
+        private bool _playstyleForced;
         private int _styleSeed;
         private bool _playstyleSet;
         /// <summary>How much more Synergy wants its two units, on the score's scale: enough that it buys little else.</summary>
@@ -350,11 +357,13 @@ namespace Halobellum.Economy
         /// <summary>The row in front of the towers where Defender's front line stands (towers are in the middle of the zone's depth).</summary>
         private const int DefenderFrontRowsAheadOfTowers = 4;
 
-        private static InsanePlaystyle DrawPlaystyle(int seed) => (InsanePlaystyle)new SimRandom(unchecked(seed * 131 + 7)).RangeInt(0, 4);
+        /// <summary>The playstyle for a mode when nothing set one (D128): TowerRush in Unlock Skirmish, Typical in Faction mode.</summary>
+        public static InsanePlaystyle PlaystyleFor(MatchMode mode) => mode == MatchMode.UnlockSkirmish ? InsanePlaystyle.TowerRush : InsanePlaystyle.Typical;
 
-        /// <summary>Once a match: the lane TowerRush takes, and the pair Synergy commits to.</summary>
+        /// <summary>Once a match: the playstyle, unless one was set; the lane TowerRush takes; and the pair Synergy commits to.</summary>
         private void SetUpPlaystyle(AiView view)
         {
+            if (!_playstyleForced) _playstyle = PlaystyleFor(view.Rules.Mode);
             var random = new SimRandom(unchecked(_styleSeed * 977 + 13));
             _rushLeft = random.NextFloat() < 0.5f;
             if (Playstyle == InsanePlaystyle.Synergy && _synergyPair.Count == 0) ChooseSynergyPair(view.Self, random);

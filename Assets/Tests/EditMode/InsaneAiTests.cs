@@ -1,6 +1,7 @@
 // InsaneAiTests.cs
 // The Insane AI (D123): it reads the last battle, stops buying a unit type that was farmed, answers air at once, and levels its
-// carries before buying new squads. (It also plays by the player's limits and finishes a match against Hard: RuleBasedAiTests.)
+// carries before buying new squads; and the playstyles (D128) do what they say. (It also plays by the player's limits and finishes a match
+// against Hard: RuleBasedAiTests; which playstyle each mode gets: RuleBasedAiSkirmishTests.)
 
 using System.Collections.Generic;
 using System.Linq;
@@ -112,19 +113,6 @@ namespace Halobellum.Tests
         }
 
         // ------------------------------------------------------------------ playstyles (D128)
-
-        [Test]
-        public void APlaystyle_IsDrawnFromTheMatchSeed_AndAllFourComeUp()
-        {
-            var seen = new HashSet<InsanePlaystyle>();
-            for (int seed = 0; seed < 60; seed++)
-            {
-                InsanePlaystyle style = new RuleBasedAi(AiDifficulty.Insane, seed).Playstyle;
-                Assert.AreEqual(style, new RuleBasedAi(AiDifficulty.Insane, seed).Playstyle, "The same match plays the same way.");
-                seen.Add(style);
-            }
-            Assert.AreEqual(4, seen.Count);
-        }
 
         [Test]
         public void TowerRush_SendsEveryNewSquadUpOneLane_AndLevelsItsOtherTower()

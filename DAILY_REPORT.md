@@ -2,6 +2,14 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Insane rushes a tower in Unlock Skirmish (D128)
+- **The problem:** in skirmish Hard beat Insane, 56% to 44%.
+- **Your four playstyles:** all four were built and measured. In Faction mode none beat the usual Insane (Tower Rush 43%, Synergy 45%, Defender 42%), so Faction Insane is unchanged.
+- **Skirmish:** Insane now always plays Tower Rush. It beats Hard 62% and 65% on two seeds, Normal 86% and 81% (94% before), and Easy 100%.
+- **How it plays:** it picks a lane at the start, sends every new squad up it, and levels its tower on the other side once a round.
+- **Synergy and Defender** stay in the code for the tournament (`--styles`); the game doesn't use them.
+- **Not checked:** not played in the game; the tests pass.
+
 ## Seeders attack everything; the Seeder's death sound (D127)
 - **Why they ignored the Elephant and Spartans:** a Seeder could only aim at what its seed can infect: no Titans, no raised shields, no Flood, nothing already seeded. Flamethrower Troopers qualified, so it shot those.
 - **Now:** it seeds the closest enemy in range that it can; with none in range, it shoots the closest enemy anyway, without a seed.

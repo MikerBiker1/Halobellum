@@ -8,6 +8,9 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.392.0 · 2026-11-11
+- **Insane in Unlock Skirmish rushes a tower.** It sends its whole army up one lane at one of your towers and levels its other tower, so you lose time there. It now beats Hard about 63% of the time in skirmish, up from 44%. Insane in Faction mode plays as before. (D128)
+
 ## 0.391.0 · 2026-11-10
 - **Seeder seeds:** a seed now only eats a host the Flood can turn into one of its own (Marines, Warthogs, Scorpions, Hornets, Elites, Ghosts, Banshees, Wraiths, Pelicans, Phantoms) or an aircraft. Anything else, such as a Spartan or a Hunter, is only slowed. Every sub-faction wins 49% to 51% Insane against Insane. (D127)
 
