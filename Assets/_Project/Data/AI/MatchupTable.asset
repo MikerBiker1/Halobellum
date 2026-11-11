@@ -3985,7 +3985,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Vampire
     defender: Seeder
-    winRate: 1
+    winRate: 0.1
   - attacker: Vampire
     defender: Infected Pelican
     winRate: 1
@@ -6601,7 +6601,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Seeder
     defender: Vampire
-    winRate: 0
+    winRate: 0.9
   - attacker: Seeder
     defender: Banshee
     winRate: 1
@@ -6676,7 +6676,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Sparrowhawk
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Longsword
     winRate: 1
@@ -6685,7 +6685,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Seeder
     defender: Condor Gunship
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Chopper
     winRate: 0
@@ -9292,7 +9292,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Sparrowhawk
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Sparrowhawk
     defender: Infected Pelican
     winRate: 1
@@ -9904,7 +9904,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Condor Gunship
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Condor Gunship
     defender: Infected Pelican
     winRate: 1
