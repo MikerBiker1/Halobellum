@@ -203,11 +203,11 @@ namespace Halobellum.Tests
         public void ASeedersDeath_IsTheInfectionFormsLeap_NotTheGeneratedAirDeath()
         {
             // The owner, 2026-11-10: the Seeder's generated death in the air replaced by the Infection Form's leap.
-            Assert.AreSame(AudioCatalog.SeederDeath, BattleAudio.DeathCue(Body("Flood/Seeder")));
+            Assert.AreEqual("sfx_infectionform_leap", BattleAudio.DeathCue(Body("Flood/Seeder")).Slot);
             Assert.AreEqual("sfx_infectionform_leap", AudioCatalog.SeederDeath.Slot);
             Assert.IsTrue(AudioCatalog.SeederDeath.HasSound && AudioCatalog.SeederDeath.Clips.IsOverride, "The owner's file.");
-            Assert.AreNotSame(AudioCatalog.SeederDeath, BattleAudio.DeathCue(Body("FloodCovenant/InfestedBanshee")), "A taken aircraft goes down as a machine.");
-            Assert.AreNotSame(AudioCatalog.SeederDeath, BattleAudio.DeathCue(Body("UNSC/Hornet")));
+            Assert.AreNotEqual("sfx_infectionform_leap", BattleAudio.DeathCue(Body("FloodCovenant/InfestedBanshee")).Slot, "A taken aircraft goes down as a machine.");
+            Assert.AreNotEqual("sfx_infectionform_leap", BattleAudio.DeathCue(Body("UNSC/Hornet")).Slot);
         }
 
         [Test]

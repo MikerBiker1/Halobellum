@@ -277,7 +277,7 @@ The Flood win by spreading. They have a roster of their own, plus temporary infe
 - Vehicles, Heavy and Light Armor, Spartans, and Hunters cannot be infected by Infection Forms. A unit with an Unarmored body and an energy shield, such as an Elite, can be infected only after its shield is depleted.
 - A killed unit rises as an infected unit after 2 seconds. Its stats come from its original definition scaled to 60% health. It becomes a dumb melee charger: moves to the nearest enemy, no special abilities. It keeps its base damage and cannot be infected again.
 - Infected units exist only for that round and are discarded at round end.
-- **Seeder:** it flies, so only what can reach air can hit it, and its Seed Spore hits ground units only (D66). A hit plants a seed for 8 seconds. The host loses health and is slowed, and if it dies seeded it rises as an infected unit, whatever its armor. A shield that is up stops the seed. Titans and Flood cannot be seeded. So it does nothing to Flood: against Flood that can't reach air it stands off until the time limit, and the counter web counts such a battle as no win for either side, so the Hard AI doesn't buy Seeders for it.
+- **Seeder:** it flies, so only what can reach air can hit it, and its Seed Spore hits ground units only (D66). A hit plants a seed for 8 seconds. The host loses health and is slowed, and if it dies seeded it rises as an infected unit, whatever its armor. A shield that is up stops the seed. Titans and Flood cannot be seeded. It takes the closest enemy in range that it can seed; with none in range it shoots the closest enemy like any other unit, Titans, raised shields, Flood and seeded hosts included, doing its damage without a seed (D127; before, it stood by them without firing).
 - **Infected Pelican:** a one-shot Tier 3 unit that crashes into the densest enemy cluster, dealing heavy splash damage and spawning 30 Infection Forms and 5 Combat Forms on impact. If it is shot down, it does the same where it falls.
 - Counters: Fire, splash, and armored units. Players are expected to invest in chaff clear. Fighting the Flood with chaff feeds them.
 
@@ -574,6 +574,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-08 | Taken aircraft (Infested Banshee, Infested Hornet) fall as their originals do; the shockwave line has a bar that runs down; a machine a seed takes over grows the Flood's growths for 2 s and rises, without blowing up or falling | Per the project owner (D122) |
 | 2026-11-09 | Balance is measured with the Insane AI against itself (46% to 54%), and was tuned to it: every sub-faction at 49% to 51%, the Spawner at 3,600 health; swarm clearers count as the Spawner's counter | Per the project owner (D125) |
 | 2026-11-09 | The wiki has a Changelog page, one entry per version, added with every version bump | Per the project owner (D126) |
+| 2026-11-10 | A Seeder with nothing it can seed in range shoots the closest enemy without seeding it; its death is the owner's Infection Form leap | Per the project owner (D127) |
 
 ## 18. Assumptions to confirm
 

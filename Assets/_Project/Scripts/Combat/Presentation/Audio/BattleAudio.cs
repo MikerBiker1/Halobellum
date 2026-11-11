@@ -385,12 +385,13 @@ namespace Halobellum.Presentation
             {
                 // A taken aircraft goes down as it would have before (D119): the Infested Hornet and the Infected Pelican crash as UNSC aircraft.
                 bool taken = AudioCatalog.TakenVehicle(unit.Stats, out _, out string was);
+                // The Seeder, a Flood creature and not a taken machine, dies with the owner's Infection Form leap, not the generated air death
+                // (the owner, 2026-11-10).
+                if (flood && !taken && AudioCatalog.SeederDeath.HasSound) return AudioCatalog.SeederDeath;
                 string faction = taken ? was : BattleFactions.OfUnit(unit.Stats, unit.Team);
                 if (AudioCatalog.DeathAirUnsc.HasSound && faction == BattleFactions.Unsc) return AudioCatalog.DeathAirUnsc;
                 // Any other machine goes up with the owner's turret explosion (D120); a Flood creature (the Seeder) isn't one.
                 if ((!flood || taken) && AudioCatalog.ExplosionTurret.HasSound) return AudioCatalog.ExplosionTurret;
-                // The Seeder dies with the owner's Infection Form leap, not the generated air death (the owner, 2026-11-10).
-                if (flood && AudioCatalog.SeederDeath.HasSound) return AudioCatalog.SeederDeath;
                 return AudioCatalog.DeathAir;
             }
             float radius = unit.Radius;

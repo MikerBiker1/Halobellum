@@ -163,7 +163,7 @@ namespace Halobellum.Tests
         [TestCase("Covenant/Banshee", "sfx_explosion_turret")] // The owner's turret explosion for machines (D120); in a battle its own fall-and-crash file plays instead.
         [TestCase("Flood/InfectedPhantom", "sfx_explosion_turret")]
         [TestCase("Covenant/Vampire", "sfx_explosion_turret")]
-        [TestCase("Flood/Seeder", "sfx_death_air")] // A Flood creature, not a machine.
+        [TestCase("Flood/Seeder", "sfx_infectionform_leap")] // A Flood creature, not a machine: the owner's Infection Form leap (2026-11-10).
         [TestCase("Covenant/Ghost", "sfx_explosion_turret")]
         [TestCase("UNSC/Warthog", "sfx_explosion_turret")]
         [TestCase("Covenant/Wraith", "sfx_explosion_medium")]

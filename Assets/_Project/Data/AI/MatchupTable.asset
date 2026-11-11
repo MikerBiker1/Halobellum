@@ -3985,7 +3985,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Vampire
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Vampire
     defender: Infected Pelican
     winRate: 1
@@ -6025,7 +6025,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pure Form Ranged
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Pure Form Ranged
     defender: Infected Pelican
     winRate: 1
@@ -6433,7 +6433,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pure Form Tank
     defender: Seeder
-    winRate: 0
+    winRate: 1
   - attacker: Pure Form Tank
     defender: Infected Pelican
     winRate: 1
@@ -6601,7 +6601,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Seeder
     defender: Vampire
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Banshee
     winRate: 1
@@ -6613,25 +6613,25 @@ MonoBehaviour:
     winRate: 1
   - attacker: Seeder
     defender: Zealot
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Scarab
     winRate: 0
   - attacker: Seeder
     defender: Infection Forms
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Carrier Form
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Combat Form
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Stalker Form
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Pure Form Ranged
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Swarm Form
     winRate: 0
@@ -6640,7 +6640,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Infected Pelican
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Infected Phantom
     winRate: 0
@@ -6652,16 +6652,16 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Spartan Heavy Weapons
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Spartan Grenadier
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Spartan CQB
     winRate: 0
   - attacker: Seeder
     defender: Spartan Fireteam
-    winRate: 0
+    winRate: 0.8
   - attacker: Seeder
     defender: Gremlin
     winRate: 0
@@ -6715,7 +6715,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Grunt Goblin
-    winRate: 0.8
+    winRate: 1
   - attacker: Seeder
     defender: Infested Marine
     winRate: 0
@@ -6724,13 +6724,13 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Infested Scorpion
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Infested Hornet
     winRate: 0
   - attacker: Seeder
     defender: Juggernaut
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Infested Ghost
     winRate: 0
@@ -6739,7 +6739,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Infested Wraith
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Infested Banshee
     winRate: 0
@@ -7660,7 +7660,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Heavy Weapons
     defender: Seeder
-    winRate: 1
+    winRate: 0
   - attacker: Spartan Heavy Weapons
     defender: Infected Pelican
     winRate: 0
@@ -8272,7 +8272,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Fireteam
     defender: Seeder
-    winRate: 1
+    winRate: 0.2
   - attacker: Spartan Fireteam
     defender: Infected Pelican
     winRate: 0
@@ -11944,7 +11944,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Grunt Goblin
     defender: Seeder
-    winRate: 0.2
+    winRate: 0
   - attacker: Grunt Goblin
     defender: Infected Pelican
     winRate: 0.4
@@ -13984,7 +13984,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spawner
     defender: Seeder
-    winRate: 0
+    winRate: 1
   - attacker: Spawner
     defender: Infected Pelican
     winRate: 1

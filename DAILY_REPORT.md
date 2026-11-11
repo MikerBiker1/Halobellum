@@ -2,6 +2,13 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Seeders attack everything; the Seeder's death sound (D127)
+- **Why they ignored the Elephant and Spartans:** a Seeder could only aim at what its seed can infect: no Titans, no raised shields, no Flood, nothing already seeded. Flamethrower Troopers qualified, so it shot those.
+- **Now:** it seeds the closest enemy in range that it can; with none in range, it shoots the closest enemy anyway, without a seed.
+- **Stronger:** its counter web row now beats Spartans, Zealots, the Juggernaut and most Flood forms that can't reach air. No tournament run yet.
+- **Sound:** a Seeder's death is your Infection Form leap.
+- **Not checked:** not played in the game; the tests pass.
+
 ## A changelog (D126)
 - **Wiki → Reference → Changelog:** every version from 0.378.0, newest first, in a few plain lines each. Each new version adds its entry.
 - **Wiki → The AI → Balance:** the Insane tournament numbers.

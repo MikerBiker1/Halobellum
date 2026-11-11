@@ -36,6 +36,7 @@ The Flood win by spreading. They turn enemy dead into temporary Flood units, rel
 
 - The Seeder's spores plant a **seed for 8 s**. The host loses **4% of its maximum health a second** and moves **40% slower**.
 - Seeds hit ground and air, but only targets that **can be seeded**: not Flood, not Titans, not towers, no shield up, not already seeded.
+- A Seeder first takes the closest enemy in range that it can seed. With none in range it **shoots the closest enemy anyway**, a Titan, a Spartan with its shield up or a Flood unit, doing its damage without a seed.
 - If the host dies seeded, it rises **only if a Flood roster has its own version of that unit**, with 60% of that unit's health. Ten units can be taken this way: the Marine, Warthog, Scorpion, Hornet, Elite, Ghost, Banshee, Wraith, Pelican and Covenant Phantom. **Anything else that dies seeded just dies.**
 - A taken machine stays where it died (in the air, if it flew) and sprouts Flood growths for 2 s before it rises.
 
