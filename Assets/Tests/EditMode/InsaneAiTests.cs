@@ -32,11 +32,13 @@ namespace Halobellum.Tests
             Unit("Gunship", UnitRole.Aerial, 2, 300, 400f, 20f, 12f, air: true),
         };
 
-        private static Match NewMatch(IMatchAi enemy, int seed)
+        private static Match NewMatch(IMatchAi enemy, int seed, bool towers = false)
         {
             List<UnitStats> roster = Roster();
             var factions = new List<FactionInfo> { TestMatch.Faction("Alpha", roster, "Standard"), TestMatch.Faction("Beta", roster, "Standard") };
-            return new Match(TestMatch.Rules(), TestRules.Default(), factions, seed, enemy);
+            MatchRules rules = TestMatch.Rules();
+            if (towers) rules.TowerBaseHealth = 150f;
+            return new Match(rules, TestRules.Default(), factions, seed, enemy);
         }
 
         private static void Place(Match match, PlayerState side, string unitName, int squads, int firstId)
@@ -52,10 +54,10 @@ namespace Halobellum.Tests
 
         /// <summary>Round 1 is fought between the armies given; then, with every unit unlocked and plenty of credits, Insane deploys for round 2.</summary>
         private static (Match match, RuleBasedAi ai) AfterBattle(string aiUnit, int aiSquads, string playerUnit, int playerSquads,
-            int seed = 3, System.Action<Match> beforeDeploying = null)
+            int seed = 3, System.Action<Match> beforeDeploying = null, InsanePlaystyle style = InsanePlaystyle.Typical, bool towers = false)
         {
-            var ai = new RuleBasedAi(AiDifficulty.Insane, seed);
-            Match match = NewMatch(ai, seed);
+            var ai = new RuleBasedAi(AiDifficulty.Insane, seed) { Playstyle = style };
+            Match match = NewMatch(ai, seed, towers);
             match.ChooseDraft(0);
             match.Player.Squads.Clear();
             match.Enemy.Squads.Clear();
@@ -107,6 +109,64 @@ namespace Halobellum.Tests
             });
             Assert.IsTrue(ai.Carries.Any(t => t.Name == "Rifle"), ai.LastDecision);
             Assert.AreEqual(2, veteran.Level, ai.LastDecision);
+        }
+
+        // ------------------------------------------------------------------ playstyles (D128)
+
+        [Test]
+        public void APlaystyle_IsDrawnFromTheMatchSeed_AndAllFourComeUp()
+        {
+            var seen = new HashSet<InsanePlaystyle>();
+            for (int seed = 0; seed < 60; seed++)
+            {
+                InsanePlaystyle style = new RuleBasedAi(AiDifficulty.Insane, seed).Playstyle;
+                Assert.AreEqual(style, new RuleBasedAi(AiDifficulty.Insane, seed).Playstyle, "The same match plays the same way.");
+                seen.Add(style);
+            }
+            Assert.AreEqual(4, seen.Count);
+        }
+
+        [Test]
+        public void TowerRush_SendsEveryNewSquadUpOneLane_AndLevelsItsOtherTower()
+        {
+            var (match, ai) = AfterBattle("Rifle", 2, "Grunt", 2, style: InsanePlaystyle.TowerRush, towers: true);
+            List<PlacedSquad> bought = BoughtThisRound(match);
+            Assert.IsNotEmpty(bought, ai.LastDecision);
+            int half = match.CombatRules.ArenaWidthSquares / 2;
+            foreach (PlacedSquad squad in bought)
+            {
+                DeploymentGrid.Footprint(squad.Type, squad.Rotated90, match.CombatRules, out int width, out _);
+                Assert.AreEqual(ai.RushesLeft, squad.Column + width / 2 < half, $"{squad.Type.Name} at column {squad.Column}. {ai.LastDecision}");
+            }
+            foreach (PlacedTower tower in match.Enemy.Towers)
+            {
+                bool onLeft = tower.Column + tower.Squares / 2 < half;
+                if (onLeft == ai.RushesLeft) Assert.AreEqual(1, tower.Level, "The tower on its own lane isn't levelled.");
+                else Assert.Greater(tower.Level, 1, $"The tower it leaves alone is. {ai.LastDecision}");
+            }
+        }
+
+        [Test]
+        public void Defender_FormsItsLineInFrontOfItsTowers_AndLevelsThem()
+        {
+            var (match, ai) = AfterBattle("Rifle", 2, "Grunt", 2, style: InsanePlaystyle.Defender, towers: true);
+            List<PlacedSquad> bought = BoughtThisRound(match);
+            Assert.IsNotEmpty(bought, ai.LastDecision);
+            int towerRow = match.Enemy.Towers[0].Row;
+            foreach (PlacedSquad squad in bought) Assert.GreaterOrEqual(squad.Row, towerRow - 6, $"{squad.Type.Name} at row {squad.Row}, not at the front edge. {ai.LastDecision}");
+            Assert.IsTrue(match.Enemy.Towers.Any(t => t.Level > 1), ai.LastDecision);
+        }
+
+        [Test]
+        public void Synergy_CommitsToAFrontAndABackUnit_AndBuysThem()
+        {
+            var (match, ai) = AfterBattle("Rifle", 2, "Grunt", 2, style: InsanePlaystyle.Synergy);
+            Assert.AreEqual(2, ai.SynergyPair.Count, ai.LastDecision);
+            Assert.IsTrue(ai.SynergyPair.Any(u => u.Role == UnitRole.Chaff || u.Role == UnitRole.Tank || u.Role == UnitRole.Flanker), "A front-line unit.");
+            Assert.IsTrue(ai.SynergyPair.Any(u => u.Role == UnitRole.SingleTargetDps || u.Role == UnitRole.ChaffClear || u.Role == UnitRole.Artillery), "A back-line unit.");
+            List<PlacedSquad> bought = BoughtThisRound(match);
+            Assert.IsNotEmpty(bought, ai.LastDecision);
+            Assert.IsTrue(bought.All(s => ai.SynergyPair.Contains(s.Type)), $"Only its pair. {ai.LastDecision}");
         }
     }
 }
