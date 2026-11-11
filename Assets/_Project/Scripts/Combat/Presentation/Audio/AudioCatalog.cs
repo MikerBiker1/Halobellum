@@ -262,6 +262,11 @@ namespace Halobellum.Presentation
         /// </summary>
         public static readonly SfxCue AirFall = new SfxCue("sfx_pelican_dive", SfxGroup.AirFalls, 0.75f, 0.05f, 6, -16f);
         /// <summary>
+        /// The owner's Infection Form leap, louder, for a Flood creature falling as it dies (the Seeder; the owner, 2026-11-10) in place of the dive above.
+        /// Not in the slot table: the Infection Forms' leap owns the slot.
+        /// </summary>
+        public static readonly SfxCue FloodCreatureFall = new SfxCue("sfx_infectionform_leap", SfxGroup.AirFalls, 0.8f, 0.08f, 6, -16f);
+        /// <summary>
         /// The same file, quieter, for each UNSC rocket or bomb in flight (ComesDown; the owner, 2026-11-08; D118): its end, as long as the shot flies, so
         /// that it ends as the shot lands. Not in the slot table: the strikes' cue owns the slot.
         /// </summary>

@@ -347,8 +347,16 @@ namespace Halobellum.Presentation
                 return;
             }
             // It blows up in the air and falls burning (DeathEffects): the dive while it falls, fading as it lands, then its crash (D117).
-            GameAudio.SfxShaped(AudioCatalog.AirFall, Place(unit), 0f, fall, 0.15f);
+            // A Flood creature (the Seeder) falls with the Infection Form's leap instead (the owner, 2026-11-10).
+            GameAudio.SfxShaped(FallCue(unit.Stats), Place(unit), 0f, fall, 0.15f);
             if (death != null) _later.Add(new Later { At = director.BattleClock + fall, Cue = death, Place = Place(unit) });
+        }
+
+        /// <summary>What a dying aircraft sounds like as it falls: the dive, or for a Flood creature that isn't a taken machine (the Seeder) the Infection Form's leap.</summary>
+        public static SfxCue FallCue(UnitStats stats)
+        {
+            bool creature = IsFloodBody(stats) && !AudioCatalog.TakenVehicle(stats, out _, out _);
+            return creature && AudioCatalog.FloodCreatureFall.HasSound ? AudioCatalog.FloodCreatureFall : AudioCatalog.AirFall;
         }
 
         /// <summary>The Banshee and the Infested Banshee, whose fall and crash are one file of the owner's (D120).</summary>

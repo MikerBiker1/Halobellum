@@ -44,7 +44,6 @@ namespace Halobellum.Combat
             if (!IsTargetableEnemy(shooter, target)) return false;
             if (weapon != null ? !weapon.CanTarget(shooter.Stats, target.IsAir) : !shooter.Stats.CanTarget(target.IsAir)) return false;
             if (weapon != null && !weapon.FitsClass(target.Stats)) return false;
-            if (weapon != null && weapon.SeedSeconds > 0f && (!CanBeSeeded(target) || target.IsSeeded)) return false;
             float minRange = weapon?.MinRange ?? 0f;
             return minRange <= 0f || EdgeDistance(shooter, target) >= minRange;
         }
@@ -61,8 +60,23 @@ namespace Halobellum.Combat
         /// If the result is out of range, no legal enemy is in range, so the unit should move toward it.
         /// </summary>
         /// <param name="acquisitionRange">Enemies further than this (to their edge) are not noticed at all. Infinity = no limit.</param>
+        /// <remarks>
+        /// A seeding weapon (the Seeder's) first takes the closest enemy in range that its seed can take in and that isn't seeded yet.
+        /// With none in range it shoots like any other weapon, at the closest enemy, Titans, raised shields and seeded hosts included,
+        /// doing its damage without a seed (the owner, 2026-11-10: Seeders stood by an Elephant and a Spartan without attacking them).
+        /// </remarks>
         public static SimUnit FindClosestLegalTarget(SimUnit shooter, WeaponStats weapon, IReadOnlyList<SimUnit> units,
             float acquisitionRange = float.PositiveInfinity)
+        {
+            if (weapon != null && weapon.SeedSeconds > 0f)
+            {
+                SimUnit host = Closest(shooter, weapon, units, acquisitionRange, seedableInRange: true);
+                if (host != null) return host;
+            }
+            return Closest(shooter, weapon, units, acquisitionRange, seedableInRange: false);
+        }
+
+        private static SimUnit Closest(SimUnit shooter, WeaponStats weapon, IReadOnlyList<SimUnit> units, float acquisitionRange, bool seedableInRange)
         {
             SimUnit best = null;
             float bestDistanceSquared = float.MaxValue;
@@ -70,6 +84,7 @@ namespace Halobellum.Combat
             {
                 SimUnit candidate = units[i];
                 if (!IsLegalTarget(shooter, weapon, candidate)) continue;
+                if (seedableInRange && (!CanBeSeeded(candidate) || candidate.IsSeeded || !IsInRange(shooter, weapon, candidate))) continue;
                 if (!float.IsPositiveInfinity(acquisitionRange) && EdgeDistance(shooter, candidate) > acquisitionRange) continue;
 
                 float distanceSquared = Vec2.DistanceSquared(shooter.Position, candidate.Position);

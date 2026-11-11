@@ -310,7 +310,26 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void Seeder_IgnoresShieldsThatAreUp_AndTitans_AndFlood_AndHostsAlreadySeeded()
+        public void Seeder_ShootsATitanAndARaisedShield_WhenNothingItCanSeedIsInRange_WithoutSeedingThem()
+        {
+            // The owner, 2026-11-10: Seeders stood by an Elephant and a Spartan without attacking them.
+            var sim = NewSim();
+            sim_AddShooter(sim, SeedDart());
+            SimUnit titan = Dummy(sim, new Vec2(0f, 10f), role: UnitRole.Titan);
+            RunSeconds(sim, 0.5f);
+            Assert.Less(titan.Health, 100f, "It shoots the Titan.");
+            Assert.IsFalse(titan.IsSeeded);
+
+            var shieldSim = NewSim();
+            sim_AddShooter(shieldSim, SeedDart());
+            SimUnit shielded = Dummy(shieldSim, new Vec2(0f, 10f), shield: 50f);
+            RunSeconds(shieldSim, 0.5f);
+            Assert.Less(shielded.Shield, 50f, "It shoots the shield.");
+            Assert.IsFalse(shielded.IsSeeded);
+        }
+
+        [Test]
+        public void Seeder_PrefersAHostItCanSeed_OverShieldsThatAreUp_Titans_AndFlood()
         {
             var sim = NewSim();
             sim_AddShooter(sim, SeedDart());
@@ -322,7 +341,7 @@ namespace Halobellum.Tests
             Assert.IsFalse(shielded.IsSeeded);
             Assert.IsFalse(titan.IsSeeded);
             Assert.IsFalse(flood.IsSeeded);
-            Assert.IsTrue(plain.IsSeeded, "It reaches past them for one it can seed.");
+            Assert.IsTrue(plain.IsSeeded, "It reaches past them for one in range that it can seed.");
         }
 
         // ------------------------------------------------------------------ death bursts
