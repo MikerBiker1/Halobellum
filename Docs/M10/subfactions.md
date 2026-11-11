@@ -68,10 +68,10 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Armor | Shield | Speed | Weapons | Wins, average | Best counters |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Sparrowhawk | Aerial | 2 | 50 | 1 | 250 | 480 | Light | 0 | 4 | Heavy Autocannon (13 per 0.3 s, Ballistic, anti-armor, 14 m) | 33 of 68, 49% | Wolverine 100%, Vampire 100% |
+| Sparrowhawk | Aerial | 2 | 50 | 1 | 250 | 480 | Light | 0 | 4 | Heavy Autocannon (13 per 0.3 s, Ballistic, anti-armor, 14 m) | 32 of 68, 48% | Wolverine 100%, Vampire 100% |
 | Longsword | Aerial | 2 | 50 | 1 | 300 | 600 | Light | 0 | 5 | Carpet Bombs (135 per 2.5 s, Explosive, 5 m, splash 5 m) | 34 of 68, 50% | Wolverine 100%, Vampire 100% |
 | Vulture | Aerial | 3 | 200 | 1 | 400 | 650 | Heavy | 0 | 2.5 | Missile Barrage (44 per 3 s, Explosive, 22 m, splash 3 m); Chin Gun (10 per 0.2 s, Ballistic, 14 m) | 31 of 68, 45% | Wolverine 100%, Vampire 100% |
-| Condor Gunship | Aerial | 3 | 250 | 1 | 500 | 1150 | Light | 0 | 3.25 | Twin Autocannons (20 per 0.25 s, Ballistic, 16 m); Light Spartan Laser (nose) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (front right) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (front left) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (rear right) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (rear left) (20 per 4 s, Energy, anti-armor, 20 m) | 35 of 68, 52% | Wolverine 100%, Vampire 100% |
+| Condor Gunship | Aerial | 3 | 250 | 1 | 500 | 1150 | Light | 0 | 3.25 | Twin Autocannons (20 per 0.25 s, Ballistic, 16 m); Light Spartan Laser (nose) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (front right) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (front left) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (rear right) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (rear left) (20 per 4 s, Energy, anti-armor, 20 m) | 34 of 68, 51% | Wolverine 100%, Vampire 100% |
 
 - **Sparrowhawk.** Gunship that hunts vehicles. Its gun is poor against infantry.
 - **Longsword.** Heavy bomber. It has to fly over its target, and cannot fight other aircraft at all.
@@ -84,7 +84,7 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Chopper | Flanker | 1 | 0 | 2 | 200 | 300 | Light | 0 | 5.5 | Ramming Blades (60 per 1 s, Melee, 1.5 m, splash 1.5 m); Chopper Autocannons (10 per 0.25 s, Ballistic, 9 m) | 23 of 68, 35% | Flamethrower Trooper 100%, Scorpion 100% |
 | Brute Grenadier | Chaff clear | 1 | 0 | 4 | 150 | 150 | Unarmored | 0 | 1.5 | Spike Grenade Launcher (31 per 2 s, Explosive, 13 m, splash 2.8 m, lobbed); Brute Shot Blade (35 per 1.5 s, Melee, 2 m) | 25 of 68, 38% | Scorpion 100%, Mantis 100% |
-| Marauder | Tank | 2 | 50 | 1 | 300 | 1250 | Heavy | 0 | 1.5 | Plasma Cannon (80 per 2.2 s, Energy, 15 m, splash 2 m); Spike Turret (8 per 0.3 s, Ballistic, 12 m) | 32 of 68, 47% | Gauss Warthog 100%, Spartan 100% |
+| Marauder | Tank | 2 | 50 | 1 | 300 | 1250 | Heavy | 0 | 1.5 | Plasma Cannon (80 per 2.2 s, Energy, 15 m, splash 2 m); Spike Turret (8 per 0.3 s, Ballistic, 12 m) | 31 of 68, 46% | Gauss Warthog 100%, Spartan 100% |
 | Reaver | Anti-air | 2 | 50 | 1 | 300 | 700 | Light | 0 | 3 | Spike Rockets (24 per 0.5 s, Explosive, 20 m, x3 vs air) | 14 of 68, 21% | Marine 100%, Flamethrower Trooper 100% |
 
 - **Chopper.** It rams: its main weapon is its front wheel, so it drives straight into the enemy, guns firing on the way.

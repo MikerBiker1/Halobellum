@@ -3985,7 +3985,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Vampire
     defender: Seeder
-    winRate: 0.1
+    winRate: 0
   - attacker: Vampire
     defender: Infected Pelican
     winRate: 1
@@ -6433,7 +6433,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Pure Form Tank
     defender: Seeder
-    winRate: 0
+    winRate: 1
   - attacker: Pure Form Tank
     defender: Infected Pelican
     winRate: 1
@@ -6601,7 +6601,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Seeder
     defender: Vampire
-    winRate: 0.9
+    winRate: 1
   - attacker: Seeder
     defender: Banshee
     winRate: 1
@@ -6694,7 +6694,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Seeder
     defender: Marauder
-    winRate: 0
+    winRate: 0.7
   - attacker: Seeder
     defender: Reaver
     winRate: 0
@@ -10516,7 +10516,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Marauder
     defender: Seeder
-    winRate: 1
+    winRate: 0.3
   - attacker: Marauder
     defender: Infected Pelican
     winRate: 1

@@ -17,8 +17,8 @@ MonoBehaviour:
   tier: 3
   unlockCost: 200
   squadSize: 2
-  cost: 500
-  baseDamage: 50
+  cost: 475
+  baseDamage: 47.5
   maxHealth: 800
   armorType: 1
   maxShield: 0
