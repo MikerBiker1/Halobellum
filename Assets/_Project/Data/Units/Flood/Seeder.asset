@@ -31,7 +31,7 @@ MonoBehaviour:
   targetFilter: 2
   weapons:
   - weaponName: Seed Spore
-    damagePerShot: 45
+    damagePerShot: 40
     fireInterval: 2.5
     range: 24
     minRange: 0

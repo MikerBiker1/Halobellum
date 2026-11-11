@@ -42,7 +42,7 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 | Spartan Heavy Weapons | Tank | 3 | 225 | 1 | 450 | 2400 | Unarmored | 250 | 1.3 | M247H Chaingun (14 per 0.12 s, Ballistic, 15 m); Hydra Rocket Pod (80 per 3.5 s, Explosive, 20 m, splash 1.5 m) | 49 of 68, 71% | Combat Form 100%, Seeder 100% |
 | Spartan Grenadier | Chaff clear | 3 | 200 | 1 | 400 | 1000 | Unarmored | 300 | 1.75 | M41 Rocket Launcher (62 per 1.5 s, Explosive, 19 m, splash 3.2 m) | 23 of 68, 35% | Scorpion 100%, Hunter Pair 100% |
 | Spartan CQB | Flanker | 3 | 200 | 1 | 400 | 1200 | Unarmored | 450 | 3.5 | M45 Shotgun (80 per 0.8 s, Ballistic, 6 m, cone 25 deg) | 21 of 68, 33% | Flamethrower Trooper 100%, Scorpion 100% |
-| Spartan Fireteam | Single-target DPS | 3 | 250 | 3 | 500 | 500 | Unarmored | 140 | 1.75 | BR85 Battle Rifle (22 per 0.6 s, Ballistic, 16 m); M41 Rocket Launcher (110 per 5 s, Explosive, anti-armor, 18 m) | 26 of 68, 39% | Marine 100%, Grunt 100% |
+| Spartan Fireteam | Single-target DPS | 3 | 250 | 3 | 500 | 500 | Unarmored | 140 | 1.75 | BR85 Battle Rifle (22 per 0.6 s, Ballistic, 16 m); M41 Rocket Launcher (110 per 5 s, Explosive, anti-armor, 18 m) | 27 of 68, 39% | Marine 100%, Grunt 100% |
 
 - **Spartan Sniper.** Kills one armored target at a time from very far away; has no answer to a crowd or to anything that reaches it.
 - **Spartan Heavy Weapons.** A walking wall with a chaingun: mows down infantry, does little to armor. Its Unarmored body makes it weak to anti-infantry weapons once the shield is down.

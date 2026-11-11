@@ -3373,7 +3373,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Ghost
     defender: Seeder
-    winRate: 0.5
+    winRate: 0.9
   - attacker: Ghost
     defender: Infected Pelican
     winRate: 0
@@ -3985,7 +3985,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Vampire
     defender: Seeder
-    winRate: 0.1
+    winRate: 0.6
   - attacker: Vampire
     defender: Infected Pelican
     winRate: 1
@@ -6592,7 +6592,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Ghost
-    winRate: 0.5
+    winRate: 0.1
   - attacker: Seeder
     defender: Elite
     winRate: 0
@@ -6601,7 +6601,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Seeder
     defender: Vampire
-    winRate: 0.9
+    winRate: 0.4
   - attacker: Seeder
     defender: Banshee
     winRate: 1
@@ -6661,7 +6661,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Spartan Fireteam
-    winRate: 0.8
+    winRate: 0.4
   - attacker: Seeder
     defender: Gremlin
     winRate: 0
@@ -6730,7 +6730,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Juggernaut
-    winRate: 1
+    winRate: 0
   - attacker: Seeder
     defender: Infested Ghost
     winRate: 0
@@ -8272,7 +8272,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Fireteam
     defender: Seeder
-    winRate: 0.2
+    winRate: 0.6
   - attacker: Spartan Fireteam
     defender: Infected Pelican
     winRate: 0

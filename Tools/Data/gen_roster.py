@@ -158,7 +158,7 @@ UNITS = [
       [W("Slam", 200, 2, 3, "Melee", splash=4)], flood=True),
     # D76 (the owner, 2026-11-06): it shoots air too, and a seed only raises what a Flood roster has its own version of, as that version.
     U("Seeder", "Seeder", "Flood", "SingleTargetDps", 3, 200, 2, 500, 800, "L", 1.5, 1.6, 1, "B",
-      [W("Seed Spore", 45, 2.5, 24, "Energy", proj=30, seed=8, seedshare=0.04, seedslow=0.4)], airu=True, flood=True,
+      [W("Seed Spore", 40, 2.5, 24, "Energy", proj=30, seed=8, seedshare=0.04, seedslow=0.4)], airu=True, flood=True,
       seedforms=[("Marine", "InfestedMarine"), ("Warthog", "InfestedWarthog"), ("Scorpion", "InfestedScorpion"), ("Hornet", "InfestedHornet"),
                  ("Elite", "InfestedElite"), ("Ghost", "InfestedGhost"), ("Banshee", "InfestedBanshee"),
                  ("Wraith", "InfestedWraith"), ("Pelican", "InfectedPelican"), ("Covenant Phantom", "InfectedPhantom")]),
