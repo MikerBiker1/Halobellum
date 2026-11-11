@@ -200,15 +200,14 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void AFallingSeeder_IsHeardWithTheInfectionFormsLeap_NotTheDive()
+        public void ASeedersDeath_IsTheInfectionFormsLeap_NotTheGeneratedAirDeath()
         {
-            // The owner, 2026-11-10: the Seeder's generated fall replaced by the Infection Form's leap.
-            Assert.IsTrue(BattleAudio.FallsAsItDies(Body("Flood/Seeder")));
-            Assert.AreSame(AudioCatalog.FloodCreatureFall, BattleAudio.FallCue(Unit("Flood/Seeder")));
-            Assert.AreEqual("sfx_infectionform_leap", AudioCatalog.FloodCreatureFall.Slot);
-            Assert.IsTrue(AudioCatalog.FloodCreatureFall.HasSound && AudioCatalog.FloodCreatureFall.Clips.IsOverride, "The owner's file.");
-            Assert.AreSame(AudioCatalog.AirFall, BattleAudio.FallCue(Unit("FloodCovenant/InfestedBanshee")), "A taken aircraft still dives.");
-            Assert.AreSame(AudioCatalog.AirFall, BattleAudio.FallCue(Unit("UNSC/Hornet")));
+            // The owner, 2026-11-10: the Seeder's generated death in the air replaced by the Infection Form's leap.
+            Assert.AreSame(AudioCatalog.SeederDeath, BattleAudio.DeathCue(Body("Flood/Seeder")));
+            Assert.AreEqual("sfx_infectionform_leap", AudioCatalog.SeederDeath.Slot);
+            Assert.IsTrue(AudioCatalog.SeederDeath.HasSound && AudioCatalog.SeederDeath.Clips.IsOverride, "The owner's file.");
+            Assert.AreNotSame(AudioCatalog.SeederDeath, BattleAudio.DeathCue(Body("FloodCovenant/InfestedBanshee")), "A taken aircraft goes down as a machine.");
+            Assert.AreNotSame(AudioCatalog.SeederDeath, BattleAudio.DeathCue(Body("UNSC/Hornet")));
         }
 
         [Test]
