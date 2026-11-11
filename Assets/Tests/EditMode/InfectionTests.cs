@@ -297,6 +297,22 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void ASeededAircraft_IsEatenBySeed_EvenWhenTheFloodHasNoFormOfIt()
+        {
+            // The owner, 2026-11-10 (D127): the seed eats any aircraft, as well as the hosts the Flood can convert.
+            var sim = NewSim();
+            sim_AddShooter(sim, SeedDart());
+            SimUnit jet = sim.AddUnit(TestUnits.Unit("Jet", health: 100f, armor: ArmorType.Light, speed: 0f, air: true,
+                weapon: TestUnits.Weapon(damage: 0f, range: 0.1f)), Team.B, new Vec2(0f, 20f));
+            Bystander(sim);
+            sim.Step();
+            Assert.IsTrue(jet.IsSeeded);
+            float hit = jet.Health;
+            RunSeconds(sim, 1f);
+            Assert.Less(jet.Health, hit - 5f, "10% of its health a second.");
+        }
+
+        [Test]
         public void Seed_RunsOut_AndThenTheHostStaysDeadIfKilled()
         {
             var sim = NewSim();

@@ -8,6 +8,9 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.391.0 · 2026-11-10
+- **Seeder seeds:** a seed now only eats a host the Flood can turn into one of its own (Marines, Warthogs, Scorpions, Hornets, Elites, Ghosts, Banshees, Wraiths, Pelicans, Phantoms) or an aircraft. Anything else, such as a Spartan or a Hunter, is only slowed. Every sub-faction wins 49% to 51% Insane against Insane. (D127)
+
 ## 0.390.0 · 2026-11-10
 - **Seeders shoot what they can't seed.** With nothing it can seed in range, a Seeder now attacks the closest enemy anyway: an Elephant, a Spartan with its shield up, a Flood unit. It still seeds first when it can. (D127)
 - **Seeder:** its death is the Infection Form leap sound.

@@ -259,3 +259,20 @@ The owner thought that under Insane, where both sides play well and counter, a 2
 | Unggoy Rebellion | 49 → 49 | 42 → 42 | 62 → 62 | 42 → 43 |
 
 The owner chose 3,600. The Spawner is not what carries Covenant-based Flood under Hard and Normal: it wins about as often in its matches with Spawners as overall (76% under Hard, 78% under Normal), and under Normal it spends most on Infested Elites, Infested Ghosts and Carrier Forms. Easy buys Spawners in only 42% of its matches. Reports: insane_ai_tournament_d125_spawner_3600.txt and the hard, normal and easy ..._spawner_3600.txt files.
+
+## The Seeder after it shoots what it can't seed (D127)
+The owner's Seeders stood by an Elephant and a Spartan without firing. Now a Seeder shoots the closest enemy when nothing it can seed is in range. Each round: Insane against Insane, seeds 0 and 1, the Seeder's counter web row measured again.
+
+| Sub-faction | Before (0.389.3) | R1: Seeder 500 | R2: + Seed Spore 40 | R3: 45, seed eats only convertible hosts | R4: + any aircraft | R5: R4 at 475 (pushed) |
+|---|---|---|---|---|---|---|
+| UNSC-based Flood | 51% | 53% | 53% | 48% | 48% | 49% |
+| Aerospace Command | 51% | 50% | 51% | 53% | 51% | 51% |
+| Lekgolo Colony | 50% | 51% | 51% | 51% | 51% | 51% |
+| Covenant-based Flood | 50% | 52% | 51% | 50% | 50% | 50% |
+| Armored Division | 50% | 48% | 49% | 49% | 49% | 49% |
+| Noble | 49% | 46% | 47% | 49% | 49% | 50% |
+| Unggoy Rebellion | 49% | 49% | 50% | 50% | 50% | 50% |
+| Banished | 49% | 49% | 49% | 50% | 51% | 50% |
+
+Rounds 1 and 2: the seed's damage melted Spartans, so Noble fell against both Floods (43% and 38%), and the AI fielded Seeders in 51 to 64% of Flood matches. Round 3 was the owner's idea; round 4 also let the seed eat aircraft, which took Aerospace from 53% to 51% without hurting the Covenant sub-factions that field Vampires. The owner chose round 5.
+

@@ -5,7 +5,8 @@ Earlier reports are in this file's Git history. **M10 is built and merged**, and
 ## Seeders attack everything; the Seeder's death sound (D127)
 - **Why they ignored the Elephant and Spartans:** a Seeder could only aim at what its seed can infect: no Titans, no raised shields, no Flood, nothing already seeded. Flamethrower Troopers qualified, so it shot those.
 - **Now:** it seeds the closest enemy in range that it can; with none in range, it shoots the closest enemy anyway, without a seed.
-- **Stronger:** its counter web row now beats Spartans, Zealots, the Juggernaut and most Flood forms that can't reach air. No tournament run yet.
+- **Seeds (your idea):** a seed now only eats a host the Flood can convert, or an aircraft; a Spartan or a Hunter is only slowed. The Seeder stays at 475 with Seed Spore 45.
+- **Balanced:** five Insane rounds; your pick, round 5, has every sub-faction at 49–51%. Noble had fallen to 46% when Seeders melted Spartans.
 - **Sound:** a Seeder's death is your Infection Form leap.
 - **Not checked:** not played in the game; the tests pass.
 
