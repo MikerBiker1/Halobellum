@@ -63,6 +63,19 @@ namespace Halobellum.Economy
         Insane = 3,
     }
 
+    /// <summary>How the Insane AI plays a match (D128): drawn from the match's seed, or set by a test or the tournament.</summary>
+    public enum InsanePlaystyle
+    {
+        /// <summary>Insane as it was (D123).</summary>
+        Typical = 0,
+        /// <summary>The whole army up one lane at one tower; its tower on the other side levelled so the opponent loses time there.</summary>
+        TowerRush = 1,
+        /// <summary>A front-line and a back-line unit that cover each other, picked in round 1; mostly those two and their techs.</summary>
+        Synergy = 2,
+        /// <summary>The line just in front of its towers, no flank zones, both towers levelled.</summary>
+        Defender = 3,
+    }
+
     public sealed partial class RuleBasedAi : IMatchAi
     {
         private readonly SimRandom _random;
@@ -147,6 +160,8 @@ namespace Halobellum.Economy
             Difficulty = difficulty;
             _random = new SimRandom(unchecked(seed * 31 + 17 + (int)difficulty));
             _matchups = matchups != null && matchups.Count > 0 ? matchups : null;
+            _styleSeed = seed;
+            Playstyle = DrawPlaystyle(seed);
         }
 
         private bool UsesMatchups => Difficulty >= AiDifficulty.Hard && _matchups != null;
@@ -452,7 +467,21 @@ namespace Halobellum.Economy
             if (Difficulty >= AiDifficulty.Hard) NoteFlanking(view, seen);
 
             // 2. Strategy.
-            if (IsInsane) ReadLastBattle(view);
+            if (IsInsane)
+            {
+                if (!_playstyleSet)
+                {
+                    _playstyleSet = true;
+                    SetUpPlaystyle(view);
+                }
+                ReadLastBattle(view);
+                if (Playstyle == InsanePlaystyle.Synergy)
+                {
+                    // Synergy's carries are its pair, whatever did the most last battle.
+                    _carries.Clear();
+                    foreach (UnitStats unit in _synergyPair) if (self.Unlocked.Contains(unit)) _carries.Add(unit);
+                }
+            }
             if (UsesMatchups) UpdateThreats(view, seen);
             if (Difficulty >= AiDifficulty.Hard) ReadBoard(seen);
             Strategy = ChooseStrategy(view, seen, valueByRole, totalSeen);
@@ -486,7 +515,7 @@ namespace Halobellum.Economy
             string unlocked = TryUnlock(view, seen, totalSeen);
             if (Difficulty >= AiDifficulty.Hard) ShoreUpFlankedTowers(view, upgrades);
             if (Difficulty != AiDifficulty.Easy) BuyCarrierTechs(view, upgrades);
-            if (IsInsane && !skirmish) InvestInCarries(view, seen, totalSeen, upgrades);
+            if (IsInsane && (!skirmish || Playstyle == InsanePlaystyle.Synergy)) InvestInCarries(view, seen, totalSeen, upgrades);
             // In Unlock Skirmish, Hard levels what it has and buys a tech before new squads. New squads first left it nothing for these, which add up: at 10000 base health it lost to Normal (D63).
             if (skirmish && Difficulty >= AiDifficulty.Hard)
             {
@@ -519,7 +548,7 @@ namespace Halobellum.Economy
             var spells = new List<string>();
             PlaceSpells(view, spells);
 
-            LastDecision = $"Round {view.Round}: {Strategy}" + (CounteredRole.HasValue ? $", countering {CounteredRole}" : "")
+            LastDecision = $"Round {view.Round}: " + (IsInsane ? $"{Playstyle}, " : "") + $"{Strategy}" + (CounteredRole.HasValue ? $", countering {CounteredRole}" : "")
                            + (unlocked != null ? $", unlocked {unlocked}" : "")
                            + (bought.Count > 0 ? ", bought " + string.Join(" + ", bought) : ", bought nothing")
                            + (upgrades.Count > 0 ? ", upgraded " + string.Join(" + ", upgrades) : "")
@@ -617,6 +646,7 @@ namespace Halobellum.Economy
                 if (tower.Falls > 0 && (weakest == null || tower.Falls - tower.Level > weakest.Falls - weakest.Level)) weakest = tower;
             }
             if (weakest != null && !IsInsane && self.Credits >= spare && view.LevelUpTower(weakest.Kind).Ok) upgrades.Add($"{Match.TowerName(weakest.Kind)} to level {weakest.Level}");
+            if (IsInsane) PlaystyleTowers(view, upgrades);
 
             MatchRules rules = view.Rules;
             bool health = self.ResearchHealthSteps <= self.ResearchDamageSteps;
@@ -802,6 +832,11 @@ namespace Halobellum.Economy
         {
             PlayerState self = view.Self;
             if (self.UnlocksThisRound >= view.Rules.UnlocksPerRound) return null;
+            if (IsInsane)
+            {
+                string pair = UnlockSynergyPair(view);
+                if (pair != null) return pair;
+            }
             UnitStats bestLocked = null, bestOwned = BestAffordable(view, seen, totalSeen, unlockedOnly: true);
             float lockedScore = float.MinValue;
             foreach (UnitStats unit in self.Roster)
@@ -963,7 +998,8 @@ namespace Halobellum.Economy
         {
             CombatRules rules = view.CombatRules;
             if (ignoreSquadId < 0 && ChooseCarrierCorner(view, type, out column, out row)) return true;
-            if (Difficulty >= AiDifficulty.Hard && ignoreSquadId < 0 && type.CanFlank && ChooseFlankSpot(view, type, out column, out row)) return true;
+            bool defends = IsInsane && Playstyle == InsanePlaystyle.Defender;
+            if (Difficulty >= AiDifficulty.Hard && ignoreSquadId < 0 && type.CanFlank && !defends && ChooseFlankSpot(view, type, out column, out row)) return true;
             DeploymentGrid.Footprint(type, false, rules, out int width, out _);
             int depth = rules.DeploymentDepthSquares, arenaWidth = rules.ArenaWidthSquares;
             int targetRow;
@@ -1009,6 +1045,8 @@ namespace Halobellum.Economy
                 targetRow = guarded.Row;
             }
 
+            bool styled = IsInsane && PlaystyleSpot(view, type, width, sameKind, ref targetColumn, ref targetRow);
+
             if (Difficulty == AiDifficulty.Easy)
             {
                 targetColumn += _random.RangeInt(-12, 13);
@@ -1017,7 +1055,7 @@ namespace Halobellum.Economy
             targetColumn = Math.Max(0, Math.Min(arenaWidth - width, targetColumn));
             targetRow = Math.Max(0, Math.Min(depth - 1, targetRow));
 
-            if (IsInsane && ignoreSquadId < 0 && InsaneFindSpot(view, type, targetColumn, targetRow, out column, out row)) return true;
+            if (IsInsane && !styled && ignoreSquadId < 0 && InsaneFindSpot(view, type, targetColumn, targetRow, out column, out row)) return true;
             if (ignoreSquadId < 0) return DeploymentGrid.FindFreeSpotNear(view.Self, type, false, rules, targetColumn, targetRow, out column, out row);
 
             // Moving an existing squad: search as if it were not there.

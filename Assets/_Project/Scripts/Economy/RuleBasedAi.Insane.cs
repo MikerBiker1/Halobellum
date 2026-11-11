@@ -13,6 +13,7 @@
 //     clusters and from where the opponent's spells landed last battle, face the threat they counter (and air, if they shoot it), and the whole
 //     layout shifts by an offset drawn each match, so it never places the same way twice.
 // Spells aim as Hard's do, at the densest crowd: the owner found that killing the chaff that screens an army is worth it.
+// Playstyles (D128): each match Insane plays one of four ways, Typical (all of the above), TowerRush, Synergy or Defender (see Playstyle).
 // Depends on: AiView (LastBattle, LastKills), BattleStats, MatchupTable, DeploymentGrid, Halobellum.Core.
 
 using System;
@@ -161,6 +162,7 @@ namespace Halobellum.Economy
         {
             float adjust = -InsaneFarmedPenalty * FarmedShare(unit);
             if (_airUncovered > 0f) adjust += InsaneAirAnswerBonus * _airUncovered * ShareThatHitsAir(unit);
+            if (Playstyle == InsanePlaystyle.Synergy && _synergyPair.Contains(unit)) adjust += SynergyBonus;
             return adjust;
         }
 
@@ -321,6 +323,162 @@ namespace Halobellum.Economy
                 }
             }
             return bestX;
+        }
+
+        // ------------------------------------------------------------------ playstyles (D128, the owner's idea)
+
+        /// <summary>
+        /// How Insane plays this match, drawn at the start from the match's seed so the same match always plays the same way (the owner, 2026-11-11):
+        /// Typical is Insane as it was; TowerRush sends the whole army up one lane at one tower and levels its tower on the other side so the opponent
+        /// loses time there; Synergy picks a front-line and a back-line unit that cover each other early, and buys mostly them and their techs;
+        /// Defender forms its line just in front of its towers, keeps out of the flank zones, and keeps both towers levelled.
+        /// </summary>
+        public InsanePlaystyle Playstyle { get; set; }
+
+        /// <summary>The two unit types the Synergy playstyle commits to, once chosen (round 1).</summary>
+        public IReadOnlyList<UnitStats> SynergyPair => _synergyPair;
+
+        /// <summary>The lane TowerRush pushes up, in its own frame: true for its left.</summary>
+        public bool RushesLeft => _rushLeft;
+
+        private readonly List<UnitStats> _synergyPair = new List<UnitStats>();
+        private bool _rushLeft;
+        private int _styleSeed;
+        private bool _playstyleSet;
+        /// <summary>How much more Synergy wants its two units, on the score's scale: enough that it buys little else.</summary>
+        private const float SynergyBonus = 6f;
+        /// <summary>The row in front of the towers where Defender's front line stands (towers are in the middle of the zone's depth).</summary>
+        private const int DefenderFrontRowsAheadOfTowers = 4;
+
+        private static InsanePlaystyle DrawPlaystyle(int seed) => (InsanePlaystyle)new SimRandom(unchecked(seed * 131 + 7)).RangeInt(0, 4);
+
+        /// <summary>Once a match: the lane TowerRush takes, and the pair Synergy commits to.</summary>
+        private void SetUpPlaystyle(AiView view)
+        {
+            var random = new SimRandom(unchecked(_styleSeed * 977 + 13));
+            _rushLeft = random.NextFloat() < 0.5f;
+            if (Playstyle == InsanePlaystyle.Synergy && _synergyPair.Count == 0) ChooseSynergyPair(view.Self, random);
+        }
+
+        /// <summary>
+        /// A ground front-line unit (chaff, tank or flanker) and a ground back-line unit (single-target DPS, chaff clear or artillery), no Titans:
+        /// the pair that, between them, beats the most of the game's units by the measured matchups (each unit counts by the better of the two),
+        /// plus their own strength. One of the three best pairs, drawn from the match's seed, so it doesn't always pick the same two.
+        /// </summary>
+        private void ChooseSynergyPair(PlayerState self, SimRandom random)
+        {
+            var front = new List<UnitStats>();
+            var back = new List<UnitStats>();
+            foreach (UnitStats unit in self.Roster)
+            {
+                if (unit.IsAir || unit.Role == UnitRole.Titan) continue;
+                if (unit.Role == UnitRole.Chaff || unit.Role == UnitRole.Tank || unit.Role == UnitRole.Flanker) front.Add(unit);
+                else if (unit.Role == UnitRole.SingleTargetDps || unit.Role == UnitRole.ChaffClear || unit.Role == UnitRole.Artillery) back.Add(unit);
+            }
+            var pairs = new List<(UnitStats a, UnitStats b, float score)>();
+            foreach (UnitStats a in front)
+            {
+                foreach (UnitStats b in back)
+                {
+                    float score;
+                    if (_matchups != null)
+                    {
+                        float covered = 0f;
+                        int count = 0;
+                        foreach (UnitStats other in self.Roster)
+                        {
+                            float? ra = _matchups.WinRate(a, other), rb = _matchups.WinRate(b, other);
+                            if (!ra.HasValue && !rb.HasValue) continue;
+                            covered += Math.Max(ra ?? 0f, rb ?? 0f);
+                            count++;
+                        }
+                        score = (count > 0 ? covered / count : 0f) + 0.25f * (_matchups.OverallStrength(a) + _matchups.OverallStrength(b));
+                    }
+                    else score = 0.1f * (a.Tier + b.Tier) + (a.Cost + b.Cost) / 1000f;
+                    pairs.Add((a, b, score));
+                }
+            }
+            if (pairs.Count == 0) return;
+            pairs.Sort((x, y) => y.score.CompareTo(x.score));
+            var (first, second, _) = pairs[random.RangeInt(0, Math.Min(3, pairs.Count))];
+            _synergyPair.Add(first);
+            _synergyPair.Add(second);
+        }
+
+        /// <summary>Synergy: unlock a unit of its pair that it can afford to unlock and buy, before anything else.</summary>
+        private string UnlockSynergyPair(AiView view)
+        {
+            PlayerState self = view.Self;
+            if (Playstyle != InsanePlaystyle.Synergy || self.UnlocksThisRound >= view.Rules.UnlocksPerRound) return null;
+            foreach (UnitStats unit in _synergyPair)
+            {
+                if (self.Unlocked.Contains(unit) || unit.UnlockCost + view.SquadPrice(unit) > self.Credits) continue;
+                if (view.Unlock(unit).Ok) return unit.Name;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Where TowerRush and Defender put a squad, in place of Insane's usual spot: TowerRush, every squad up its lane, spread across it;
+        /// Defender, its line just in front of its towers and the rest behind, alternating between the two towers. False for the other styles.
+        /// </summary>
+        private bool PlaystyleSpot(AiView view, UnitStats type, int width, int sameKind, ref int targetColumn, ref int targetRow)
+        {
+            PlayerState self = view.Self;
+            int arenaWidth = view.CombatRules.ArenaWidthSquares;
+            int spread = (sameKind + 1) / 2 * (sameKind % 2 == 1 ? 1 : -1);
+            if (Playstyle == InsanePlaystyle.TowerRush)
+            {
+                int lane = _rushLeft ? arenaWidth / 4 : arenaWidth - arenaWidth / 4;
+                targetColumn = lane - width / 2 + spread * (width + 1);
+                return true;
+            }
+            if (Playstyle == InsanePlaystyle.Defender && self.Towers.Count > 0)
+            {
+                PlacedTower tower = self.Towers[sameKind % self.Towers.Count];
+                int towerRow = tower.Row;
+                switch (type.Role)
+                {
+                    case UnitRole.Chaff:
+                    case UnitRole.Tank:
+                    case UnitRole.Titan: targetRow = towerRow - DefenderFrontRowsAheadOfTowers; break;
+                    case UnitRole.Flanker: targetRow = towerRow - 2; break;
+                    case UnitRole.ChaffClear:
+                    case UnitRole.SingleTargetDps: targetRow = towerRow + tower.Squares; break;
+                    case UnitRole.AntiAir:
+                    case UnitRole.Aerial: targetRow = towerRow + tower.Squares + 4; break;
+                    default: targetRow = towerRow + tower.Squares + 8; break; // Artillery.
+                }
+                int beside = sameKind / self.Towers.Count;
+                int offset = (beside + 1) / 2 * (beside % 2 == 1 ? 1 : -1);
+                targetColumn = tower.Column + tower.Squares / 2 - width / 2 + offset * (width + 1);
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>TowerRush levels the tower on the side it leaves empty, one level a round; Defender levels its lower tower, one level a round.</summary>
+        private void PlaystyleTowers(AiView view, List<string> upgrades)
+        {
+            PlayerState self = view.Self;
+            if (self.Towers.Count < 2) return;
+            int arenaWidth = view.CombatRules.ArenaWidthSquares;
+            PlacedTower chosen = null;
+            if (Playstyle == InsanePlaystyle.TowerRush)
+            {
+                foreach (PlacedTower tower in self.Towers)
+                {
+                    bool onLeft = tower.Column + tower.Squares / 2 < arenaWidth / 2;
+                    if (onLeft != _rushLeft) chosen = tower;
+                }
+            }
+            else if (Playstyle == InsanePlaystyle.Defender)
+            {
+                if (self.Credits < view.Rules.TowerLevelUpCost + HardTowerCredits) return;
+                foreach (PlacedTower tower in self.Towers) if (chosen == null || tower.Level < chosen.Level) chosen = tower;
+            }
+            if (chosen == null || chosen.Level >= view.Rules.TowerMaxLevel || self.Credits < view.Rules.TowerLevelUpCost) return;
+            if (view.LevelUpTower(chosen.Kind).Ok) upgrades.Add($"{Match.TowerName(chosen.Kind)} to level {chosen.Level} ({Playstyle})");
         }
     }
 }

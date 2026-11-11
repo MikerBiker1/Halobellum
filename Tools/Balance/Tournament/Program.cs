@@ -6,6 +6,7 @@
 // Use one results file per trial and setup: what it carries on from is only the pairing and the match number, so a file would mix them without a word.
 // --setup goes through the game's own MatchSetup; hp is the base health, and cards is all, no or only (reinforcement cards). With mode=skirmish the field is the
 // one made-up faction of all units, and its "sub-factions" are the AI difficulties Hard, Normal and Easy; that needs an export made since Unlock Skirmish came in.
+// --styles TowerRush,Typical forces the Insane playstyles (D128): with --vs, one for each side in that order; a single name, every Insane side.
 // In Faction mode every side is a Hard AI, unless --vs "Insane,Hard" pits two difficulties: the first plays sub-faction a on matches 0 and 1 of every 4 and
 // b on 2 and 3, so it has each side and each sub-faction half the time; each line says which team it was ("vsTeam") and whether it won ("vsWon").
 // A trial file tries balance changes without touching the game, one per line:
@@ -41,6 +42,8 @@ static class Program
     static int SeedOffset = 0;
     // --vs First,Second: the two difficulties of a Faction-mode match, or null for Hard against Hard.
     static AiDifficulty[] Vs;
+    // --styles First[,Second]: the Insane playstyle of each --vs side (D128), or of every Insane side with one name; unset, each match draws its own.
+    static InsanePlaystyle[] Styles;
 
     static int Main(string[] args)
     {
@@ -51,6 +54,8 @@ static class Program
         SeedOffset = int.Parse(Option(args, "--seed") ?? "0");
         string vs = Option(args, "--vs");
         if (vs != null) Vs = vs.Split(',').Select(d => (AiDifficulty)Enum.Parse(typeof(AiDifficulty), d)).ToArray();
+        string styles = Option(args, "--styles");
+        if (styles != null) Styles = styles.Split(',').Select(d => (InsanePlaystyle)Enum.Parse(typeof(InsanePlaystyle), d)).ToArray();
 
         using JsonDocument doc = JsonDocument.Parse(File.ReadAllText(dataPath));
         var reader = new GraphReader();
@@ -269,8 +274,17 @@ static class Program
             difficultyA = vsTeam == Team.A ? Vs[0] : Vs[1];
             difficultyB = vsTeam == Team.A ? Vs[1] : Vs[0];
         }
-        var aiA = new RecordingAi(new RuleBasedAi(difficultyA, unchecked(seed + 1), table));
-        var aiB = new RecordingAi(new RuleBasedAi(difficultyB, unchecked(seed + 2), table));
+        var ruleA = new RuleBasedAi(difficultyA, unchecked(seed + 1), table);
+        var ruleB = new RuleBasedAi(difficultyB, unchecked(seed + 2), table);
+        if (Styles != null)
+        {
+            // With --vs the first style goes with the first difficulty; one style alone goes to every Insane side.
+            InsanePlaystyle StyleFor(Team team) => Styles.Length > 1 && Vs != null ? (team == vsTeam ? Styles[0] : Styles[1]) : Styles[0];
+            if (difficultyA == AiDifficulty.Insane) ruleA.Playstyle = StyleFor(Team.A);
+            if (difficultyB == AiDifficulty.Insane) ruleB.Playstyle = StyleFor(Team.B);
+        }
+        var aiA = new RecordingAi(ruleA);
+        var aiB = new RecordingAi(ruleB);
         var match = new Match(rules, combat, new List<FactionInfo> { teamA.faction, teamB.faction }, seed, aiB);
         var random = new SimRandom(unchecked(seed + 3));
         SetCard(match.PlayerDraft, teamA, rules, random);
