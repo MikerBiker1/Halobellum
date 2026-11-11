@@ -39,10 +39,10 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Armor | Shield | Speed | Weapons | Wins, average | Best counters |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Spartan Sniper | Single-target DPS | 3 | 200 | 1 | 400 | 650 | Unarmored | 200 | 1.75 | SRS99 Sniper Rifle (200 per 3 s, Ballistic, anti-armor, 42 m) | 35 of 68, 52% | Marine 100%, Warthog 100% |
-| Spartan Heavy Weapons | Tank | 3 | 225 | 1 | 450 | 2400 | Unarmored | 250 | 1.3 | M247H Chaingun (14 per 0.12 s, Ballistic, 15 m); Hydra Rocket Pod (80 per 3.5 s, Explosive, 20 m, splash 1.5 m) | 50 of 68, 72% | Combat Form 100%, Hunter Captain 100% |
+| Spartan Heavy Weapons | Tank | 3 | 225 | 1 | 450 | 2400 | Unarmored | 250 | 1.3 | M247H Chaingun (14 per 0.12 s, Ballistic, 15 m); Hydra Rocket Pod (80 per 3.5 s, Explosive, 20 m, splash 1.5 m) | 49 of 68, 71% | Combat Form 100%, Seeder 100% |
 | Spartan Grenadier | Chaff clear | 3 | 200 | 1 | 400 | 1000 | Unarmored | 300 | 1.75 | M41 Rocket Launcher (62 per 1.5 s, Explosive, 19 m, splash 3.2 m) | 23 of 68, 35% | Scorpion 100%, Hunter Pair 100% |
 | Spartan CQB | Flanker | 3 | 200 | 1 | 400 | 1200 | Unarmored | 450 | 3.5 | M45 Shotgun (80 per 0.8 s, Ballistic, 6 m, cone 25 deg) | 21 of 68, 33% | Flamethrower Trooper 100%, Scorpion 100% |
-| Spartan Fireteam | Single-target DPS | 3 | 250 | 3 | 500 | 500 | Unarmored | 140 | 1.75 | BR85 Battle Rifle (22 per 0.6 s, Ballistic, 16 m); M41 Rocket Launcher (110 per 5 s, Explosive, anti-armor, 18 m) | 27 of 68, 40% | Marine 100%, Grunt 100% |
+| Spartan Fireteam | Single-target DPS | 3 | 250 | 3 | 500 | 500 | Unarmored | 140 | 1.75 | BR85 Battle Rifle (22 per 0.6 s, Ballistic, 16 m); M41 Rocket Launcher (110 per 5 s, Explosive, anti-armor, 18 m) | 26 of 68, 39% | Marine 100%, Grunt 100% |
 
 - **Spartan Sniper.** Kills one armored target at a time from very far away; has no answer to a crowd or to anything that reaches it.
 - **Spartan Heavy Weapons.** A walking wall with a chaingun: mows down infantry, does little to armor. Its Unarmored body makes it weak to anti-infantry weapons once the shield is down.
@@ -140,7 +140,7 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 | Infested Elite | Single-target DPS | 2 | 50 | 3 | 250 | 500 | Unarmored | 0 | 2 | Scythe Claw (46 per 0.7 s, Melee, anti-armor, 1.5 m); Scavenged Plasma Rifle (10 per 0.5 s, Energy, 11 m) | 46 of 68, 67% | Marine 100%, Grunt 100% |
 | Infested Wraith | Artillery | 2 | 50 | 1 | 250 | 1000 | Heavy | 0 | 1 | Scavenged Mortar (70 per 3.5 s, Explosive, 34 m, splash 4 m, lobbed) | 38 of 68, 56% | Hornet 100%, Banshee 100% |
 | Infested Banshee | Aerial | 2 | 50 | 2 | 250 | 360 | Light | 0 | 4.5 | Scavenged Plasma Cannons (8 per 0.3 s, Energy, 10 m); Spore Bomb (45 per 2.5 s, Explosive, 8 m, splash 3 m) | 50 of 68, 74% | Wolverine 100%, Swarm Form 100% |
-| Spawner | Tank | 3 | 200 | 1 | 400 | 3600 | Light | 0 | 0.9 | Spore Lash (55 per 1.2 s, Melee, 3 m, splash 2 m) | 60 of 68, 88% | Zealot 20%, Gauss Warthog 0% |
+| Spawner | Tank | 3 | 200 | 1 | 400 | 3600 | Light | 0 | 0.9 | Spore Lash (55 per 1.2 s, Melee, 3 m, splash 2 m) | 61 of 68, 89% | Zealot 20%, Gauss Warthog 0% |
 
 - **Infested Ghost.** Faster and lighter than the Infested Warthog.
 - **Infested Elite.** The classic combat form: no shield, more health, and a claw that opens armor.
