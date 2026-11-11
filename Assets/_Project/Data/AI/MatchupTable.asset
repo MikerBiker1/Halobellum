@@ -2149,7 +2149,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Mantis
     defender: Seeder
-    winRate: 0
+    winRate: 1
   - attacker: Mantis
     defender: Infected Pelican
     winRate: 0
@@ -3373,7 +3373,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Ghost
     defender: Seeder
-    winRate: 0.9
+    winRate: 0.5
   - attacker: Ghost
     defender: Infected Pelican
     winRate: 0
@@ -3985,7 +3985,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Vampire
     defender: Seeder
-    winRate: 0.6
+    winRate: 1
   - attacker: Vampire
     defender: Infected Pelican
     winRate: 1
@@ -6574,7 +6574,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Mantis
-    winRate: 1
+    winRate: 0
   - attacker: Seeder
     defender: Elephant
     winRate: 0
@@ -6592,7 +6592,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Ghost
-    winRate: 0.1
+    winRate: 0.5
   - attacker: Seeder
     defender: Elite
     winRate: 0
@@ -6601,7 +6601,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Seeder
     defender: Vampire
-    winRate: 0.4
+    winRate: 0
   - attacker: Seeder
     defender: Banshee
     winRate: 1
@@ -6652,7 +6652,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Spartan Heavy Weapons
-    winRate: 1
+    winRate: 0
   - attacker: Seeder
     defender: Spartan Grenadier
     winRate: 1
@@ -6661,7 +6661,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Spartan Fireteam
-    winRate: 0.4
+    winRate: 0
   - attacker: Seeder
     defender: Gremlin
     winRate: 0
@@ -6673,10 +6673,10 @@ MonoBehaviour:
     winRate: 1
   - attacker: Seeder
     defender: Grizzly
-    winRate: 1
+    winRate: 0
   - attacker: Seeder
     defender: Sparrowhawk
-    winRate: 1
+    winRate: 0
   - attacker: Seeder
     defender: Longsword
     winRate: 1
@@ -6685,7 +6685,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Seeder
     defender: Condor Gunship
-    winRate: 1
+    winRate: 0
   - attacker: Seeder
     defender: Chopper
     winRate: 0
@@ -6694,7 +6694,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Seeder
     defender: Marauder
-    winRate: 1
+    winRate: 0
   - attacker: Seeder
     defender: Reaver
     winRate: 0
@@ -6703,7 +6703,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Goliath
-    winRate: 1
+    winRate: 0
   - attacker: Seeder
     defender: Hunter Captain
     winRate: 1
@@ -6715,7 +6715,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Grunt Goblin
-    winRate: 1
+    winRate: 0
   - attacker: Seeder
     defender: Infested Marine
     winRate: 0
@@ -6730,7 +6730,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Seeder
     defender: Juggernaut
-    winRate: 0
+    winRate: 1
   - attacker: Seeder
     defender: Infested Ghost
     winRate: 0
@@ -7660,7 +7660,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Heavy Weapons
     defender: Seeder
-    winRate: 0
+    winRate: 1
   - attacker: Spartan Heavy Weapons
     defender: Infected Pelican
     winRate: 0
@@ -8272,7 +8272,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Fireteam
     defender: Seeder
-    winRate: 0.6
+    winRate: 1
   - attacker: Spartan Fireteam
     defender: Infected Pelican
     winRate: 0
@@ -9088,7 +9088,7 @@ MonoBehaviour:
     winRate: 0.5
   - attacker: Grizzly
     defender: Seeder
-    winRate: 0
+    winRate: 1
   - attacker: Grizzly
     defender: Infected Pelican
     winRate: 1
@@ -9292,7 +9292,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Sparrowhawk
     defender: Seeder
-    winRate: 0
+    winRate: 1
   - attacker: Sparrowhawk
     defender: Infected Pelican
     winRate: 1
@@ -9904,7 +9904,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Condor Gunship
     defender: Seeder
-    winRate: 0
+    winRate: 1
   - attacker: Condor Gunship
     defender: Infected Pelican
     winRate: 1
@@ -10516,7 +10516,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Marauder
     defender: Seeder
-    winRate: 0
+    winRate: 1
   - attacker: Marauder
     defender: Infected Pelican
     winRate: 1
@@ -11128,7 +11128,7 @@ MonoBehaviour:
     winRate: 0.6
   - attacker: Goliath
     defender: Seeder
-    winRate: 0
+    winRate: 1
   - attacker: Goliath
     defender: Infected Pelican
     winRate: 1
@@ -11944,7 +11944,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Grunt Goblin
     defender: Seeder
-    winRate: 0
+    winRate: 1
   - attacker: Grunt Goblin
     defender: Infected Pelican
     winRate: 0.4

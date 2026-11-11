@@ -76,9 +76,11 @@ namespace Halobellum.Tests
                 WeaponStats dart = TestUnits.Weapon(damage: 1f, range: 30f, interval: 100f);
                 dart.SeedSeconds = 8f;
                 dart.SeedDamageSharePerSecond = 0.1f;
-                sim.AddUnit(TestUnits.Unit(health: 100000f, speed: 0f, weapon: dart), Team.A, new Vec2(0f, 0f));
+                SimUnit seeder = sim.AddUnit(TestUnits.Unit(health: 100000f, speed: 0f, weapon: dart), Team.A, new Vec2(0f, 0f));
                 SimUnit tower = sim.AddUnit(Tower(), Team.A, new Vec2(50f, -50f));
                 SimUnit host = sim.AddUnit(TestUnits.Unit(health: 1000f, armor: ArmorType.Heavy, speed: 0f, weapon: TestUnits.Weapon(damage: 0f, range: 1f)), Team.B, new Vec2(0f, 20f));
+                // Only a host the Flood can convert is eaten by the seed (2026-11-10).
+                seeder.Stats.SeedForms = new[] { new SeedForm { From = host.Stats.Name, Becomes = TestUnits.Unit("Infested", health: 50f) } };
                 sim.AddUnit(TestUnits.Unit(health: 100000f, speed: 0f), Team.B, new Vec2(0f, 90f));
                 if (towerFalls) tower.Health = 0f;
                 sim.Step();

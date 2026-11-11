@@ -700,15 +700,18 @@ namespace Halobellum.Combat
             }
         }
 
-        /// <summary>A hit from a Seeder plants its seed, if the target can take one.</summary>
+        /// <summary>
+        /// A hit from a Seeder plants its seed, if the target can take one. Only a host the Flood can convert (its planter has a form of it, D76)
+        /// is eaten by the seed; any other (a Spartan, a Hunter) is only slowed by it (the owner, 2026-11-10).
+        /// </summary>
         private void PlantSeed(SimUnit target, SimUnit attacker, WeaponStats weapon)
         {
             if (!Targeting.CanBeSeeded(target)) return;
             target.IsSeeded = true;
             target.SeededUntil = ElapsedSeconds + weapon.SeedSeconds;
-            target.SeedDamagePerSecond = target.Stats.MaxHealth * weapon.SeedDamageSharePerSecond;
             target.SeedSlowShare = weapon.SeedSlowShare;
             target.SeededById = attacker.Id;
+            target.SeedDamagePerSecond = SeedFormFor(target) != null ? target.Stats.MaxHealth * weapon.SeedDamageSharePerSecond : 0f;
         }
 
         /// <summary>A hit from a weapon that slows (the Gremlin's EMP, M10). Titans shrug it off; the strongest slow in force applies.</summary>

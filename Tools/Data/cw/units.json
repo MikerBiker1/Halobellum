@@ -2643,7 +2643,7 @@
   "weapons": [
    {
     "name": "Seed Spore",
-    "dmg": 40,
+    "dmg": 45,
     "interval": 2.5,
     "range": 24,
     "minr": 0,

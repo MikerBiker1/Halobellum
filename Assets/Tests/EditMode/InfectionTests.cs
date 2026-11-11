@@ -286,6 +286,10 @@ namespace Halobellum.Tests
             Bystander(sim);
             sim.Step();
             Assert.IsTrue(tank.IsSeeded);
+            float hit = tank.Health;
+            RunSeconds(sim, 1f);
+            Assert.AreEqual(hit, tank.Health, 1e-3f, "A host the Flood can't convert isn't eaten by the seed (the owner, 2026-11-10).");
+            Assert.Less(tank.SpeedMultiplier, 1f, "It is still slowed.");
             tank.Health = 0f;
             RunSeconds(sim, 2.5f);
             Assert.IsNull(Rose(sim));
