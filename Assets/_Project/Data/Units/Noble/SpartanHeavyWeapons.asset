@@ -15,10 +15,10 @@ MonoBehaviour:
   unitName: Spartan Heavy Weapons
   role: 3
   tier: 3
-  unlockCost: 225
+  unlockCost: 200
   squadSize: 1
-  cost: 450
-  baseDamage: 90
+  cost: 400
+  baseDamage: 80
   maxHealth: 2400
   armorType: 0
   maxShield: 250
@@ -31,9 +31,9 @@ MonoBehaviour:
   targetFilter: 2
   weapons:
   - weaponName: M247H Chaingun
-    damagePerShot: 14
+    damagePerShot: 18
     fireInterval: 0.12
-    range: 15
+    range: 20
     minRange: 0
     projectileSpeed: 0
     splashRadius: 0

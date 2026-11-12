@@ -276,3 +276,19 @@ The owner's Seeders stood by an Elephant and a Spartan without firing. Now a See
 
 Rounds 1 and 2: the seed's damage melted Spartans, so Noble fell against both Floods (43% and 38%), and the AI fielded Seeders in 51 to 64% of Flood matches. Round 3 was the owner's idea; round 4 also let the seed eat aircraft, which took Aerospace from 53% to 51% without hurting the Covenant sub-factions that field Vampires. The owner chose round 5.
 
+## Noble after the CQB lost its leap and the Heavy its rockets (D133)
+The owner asked for the Insane tournament after D130 (the CQB's leap gone) and D132 (the Heavy's Hydra pod gone). Each round: Insane against Insane, seeds 0 and 1, 100 matches a pairing.
+
+| Sub-faction | 0.391.0 | 0.395.0 | R1: CQB ground only, 300, shotgun 100, shield 600; Heavy chaingun 18 | R2: + Heavy 400, CQB shotgun 120 | R3: + chaingun 20 m (seeds 0-3) | R4: + unlocks at half price (pushed) |
+|---|---|---|---|---|---|---|
+| Noble | 50% | 45% | 44% | 44% | 51% | 52% |
+| Aerospace Command | 51% | 52% | 53% | 53% | 51% | 52% |
+| Banished | 50% | 53% | 53% | 53% | 50% | 50% |
+| Lekgolo Colony | 51% | 52% | 52% | 52% | 49% | 50% |
+| Armored Division | 49% | 50% | 49% | 48% | 50% | 49% |
+| Covenant-based Flood | 50% | 50% | 50% | 51% | 50% | 49% |
+| Unggoy Rebellion | 50% | 51% | 51% | 50% | 51% | 48% |
+| UNSC-based Flood | 49% | 49% | 48% | 48% | 48% | 48% |
+
+The Heavy was Noble's main unit (fielded in 93% of its matches at 0.391.0, damage 0.94 times its price's worth); without the pod it fell to 32% and 0.51, and lost to every armoured or shielded unit, as its chaingun can be blocked and does little to armour. Banished, who field Hunters in 78% of their matches, went from 43% to 59% against Noble. The CQB was fielded in 5% of Noble's matches before and after its leap went, at about a quarter of its price's worth.
+An anti-armour chaingun measured far too strong one on one (78% on average against 65%), so round 3 gave it the pod's 20 m reach. Round 3 on seeds 2 and 3, nothing changed: Noble 49%, every sub-faction 47% to 53%; four seeds together 48% to 51%. Round 4 brought the unlocks to half the new prices (the Bible's Tier 3 rule); the Heavy was then in 96% of Noble's matches at 1.04, the CQB in 23% at 0.50.

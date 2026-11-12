@@ -104,7 +104,8 @@ namespace Halobellum.Tests
                         break;
                     case 3:
                         Assert.AreEqual(unit.cost / 2, unit.unlockCost, name);
-                        Assert.That(unit.cost, Is.InRange(400, 500), name);
+                        // The Spartan CQB costs 300, under the band: the owner's choice once it could no longer shoot aircraft (D133).
+                        Assert.That(unit.cost, Is.InRange(name == "Spartan CQB" ? 300 : 400, 500), name);
                         break;
                     default:
                         Assert.AreEqual(4, unit.tier, name);
@@ -147,6 +148,8 @@ namespace Halobellum.Tests
                 Assert.AreEqual(ArmorType.Unarmored, u[spartan].ArmorType, spartan);
             }
             Assert.AreEqual(0f, u["Spartan CQB"].LeapRange, "No leap: it stops at its range and shoots (the owner, D130).");
+            Assert.IsFalse(u["Spartan CQB"].CanTarget(true), "A shotgun can't reach aircraft (the owner, D133).");
+            Assert.IsTrue(u["Spartan CQB"].CanTarget(false));
             Assert.AreEqual(3, u["Spartan Fireteam"].SquadSize);
             Assert.Greater(u["Spartan Sniper"].Weapons[0].Range, u["Spartan"].Weapons[0].Range);
 

@@ -2,6 +2,14 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Noble rebalanced: the CQB and the Heavy (D133)
+- **The tournament you asked for:** Noble had fallen to 45%. The Heavy losing its rockets did it; the CQB was fielded in only 5% of Noble's matches with or without its leap.
+- **CQB, your changes:** ground only (a shotgun can't reach aircraft), 300 credits, shotgun 100, shield 600. Not too strong: still fielded in only about a quarter of Noble's matches, so I raised the shotgun to 120.
+- **Heavy:** 400 credits, chaingun 18 damage and 20 m (the rockets' reach). Both unlock for half their price, as the Bible's Tier 3 rule asks: CQB 150, Heavy 200.
+- **The CQB's 300 is under the Tier 3 band (400 to 500):** noted as your exception in the Bible and its test.
+- **Result:** every sub-faction 48–52%, two rounds running. Noble 52%, the Heavy in 96% of Noble's matches again.
+- **Not checked:** not played in the game; the tests pass apart from the old Hunter Captain one (item 173).
+
 ## The Heavy Spartan's machine gun (D132)
 - **Your gun:** whole, shield and mount and all, every triangle kept.
 - **Carried like a minigun:** low in front at the belt in both hands, the body leaning into it; it walks heavily and fires from the hip, the gun shaking as it rattles.

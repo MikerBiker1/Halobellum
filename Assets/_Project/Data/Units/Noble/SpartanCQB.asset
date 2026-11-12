@@ -15,23 +15,23 @@ MonoBehaviour:
   unitName: Spartan CQB
   role: 4
   tier: 3
-  unlockCost: 200
+  unlockCost: 150
   squadSize: 1
-  cost: 400
-  baseDamage: 80
+  cost: 300
+  baseDamage: 60
   maxHealth: 1200
   armorType: 0
-  maxShield: 450
+  maxShield: 600
   shieldRegenPerSecond: 80
   moveSpeed: 3.5
   collisionRadius: 0.6
   turnTime180: 0.35
   isAir: 0
   canFlank: 0
-  targetFilter: 2
+  targetFilter: 0
   weapons:
   - weaponName: M45 Shotgun
-    damagePerShot: 80
+    damagePerShot: 120
     fireInterval: 0.8
     range: 6
     minRange: 0
@@ -100,4 +100,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: 'Artillery, DPS'
   weakAgainst: 'Chaff clear, tanks'
-  notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Grunt Goblin (100%). Quick on its feet with a shotgun: it runs up to its short range and fires. Very strong against artillery and DPS once there. First-pass M10 values, Noble (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Grunt Goblin (100%). Quick on its feet with a shotgun: it runs up to its short range and fires. Very strong against artillery and DPS once there; it can''t shoot aircraft. First-pass M10 values, Noble (Docs/M10/subfactions.md).'
