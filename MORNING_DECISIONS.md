@@ -108,7 +108,7 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 
 ## From the second batch of models (D57)
 
-58. *(Still open: you will playtest it.)* **Longsword:** a slower, tougher bomber than the Shortsword at the same 300: 600 health, speed 5, 150 per bomb, 5 m splash. It wins 41 of 68 matchups against the roster, in a quick 3-battle run, where the Shortsword won 39. Good, or do you want it more clearly heavier? That would take it over the Bible's 300 limit for tier 2, so it would have to move up to tier 3.
+58. *(Played: fine as it is, the owner, 2026-11-12.)* **Longsword:** a slower, tougher bomber than the Shortsword at the same 300: 600 health, speed 5, 150 per bomb, 5 m splash. It wins 41 of 68 matchups against the roster, in a quick 3-battle run, where the Shortsword won 39. Good, or do you want it more clearly heavier? That would take it over the Bible's 300 limit for tier 2, so it would have to move up to tier 3.
 59. *(Left to my judgement: clips stay as they are, with no Meshy credits spent.)* **Clips you may want swapped:** Hunters and the Goblin walk with Meshy's Monster Walk, which holds the Hunter's shield out in front, and fire with the rifle clip. The Zealot swings with a one-handed slash, and the Infested Elite attacks with a punch combo. Meshy has about 680 clips, and a new one costs 3 credits.
 60. *(OK.)* **Noble colours:** Sniper blue, Heavy Weapons red, Grenadier orange, CQB near-black, Fireteam green. They are a single line each in `Tools/Art/recolour.py`.
 
@@ -134,7 +134,7 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 
 ## From the flank zones (D61)
 
-72. *(Still open: you will playtest it.)* **The Infected Pelican's forms:** it costs 400 again, and keeps the 30 forms you asked for. The AI barely fields it, in 2% of its matches. Good as it is?
+72. *(Played: fine, but tougher and harder-hitting so it surely crashes on the enemy: health 900 to 1,350, blast 900 to 1,200, D134.)* **The Infected Pelican's forms:** it costs 400 again, and keeps the 30 forms you asked for. The AI barely fields it, in 2% of its matches. Good as it is?
 73. *(The first drop is now 5 seconds in, wherever it is. The back-corner idea was tested: see D62.)* **The Pelican still loses more than it wins for the AI:** sides that field it win 38%. It makes 1.59 drops per battle now. It may simply need a player to use it well. Worth a look once you have played with it?
 
 ## From Unlock Skirmish (D62)
@@ -317,17 +317,17 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 
 ## Overnight balance (D112)
 
-170. **Aerospace Command at 54%:** the top edge of the band over two rounds. If it plays strong for you, the next step would be the lasers at 15, or the Vulture (fielded in 94% of its matches).
+170. *(Settled by later balancing: 52% after D133.)* **Aerospace Command at 54%:** the top edge of the band over two rounds. If it plays strong for you, the next step would be the lasers at 15, or the Vulture (fielded in 94% of its matches).
 171. **The Seeder drives UNSC-based Flood:** it raises dead UNSC units as this sub-faction's own infested units, so it beats the UNSC sub-factions hardest. The two price rises fixed the total, but the Seeder is what to watch if UNSC-based climbs again.
-172. **The Seeder doesn't attack Flood, Titans, shielded or already-seeded units at all** (it only shoots what its seed can take). Change that?
-173. **A counter test fails, from before tonight:** the Hunter Captain, the Flood Abomination's listed counter, beats it only 70% with the game's real rules (the test wants 90%; the counter web's own measure still says 100%). Neither unit changed tonight; it likely came with the Captain's beam (D91) or the 30 m noticing (D108). Find a new listed counter, or look at the matchup?
+172. *(Answered: it now shoots the closest enemy when nothing it can seed is in range, D127.)* **The Seeder doesn't attack Flood, Titans, shielded or already-seeded units at all** (it only shoots what its seed can take). Change that?
+173. *(Answered: the Captain costs 450 and shouldn't be expected to beat a Titan; but under the real rules no other unit beats the Abomination at all at equal credits (all 67 lose every battle), so the Captain stays listed and the test accepts 70% for this one pair, D134.)* **A counter test fails, from before tonight:** the Hunter Captain, the Flood Abomination's listed counter, beats it only 70% with the game's real rules (the test wants 90%; the counter web's own measure still says 100%). Neither unit changed tonight; it likely came with the Captain's beam (D91) or the 30 m noticing (D108). Find a new listed counter, or look at the matchup?
 
 ## The soldiers' animations (D129)
 
-174. **Spartan Heavy Weapons** carries its weapon on the shoulder like the Spartan (it holds the rocket launcher model). Or should it walk like the Fireteam?
-175. **The Grenadier and the Sniper** walk like the Fireteam: weapon low in front, shouldered to fire. Or on the shoulder like the Spartan?
-176. **On the shoulder** means resting on it pointing ahead and a little up, the hand on the grip, the barrel's back behind the shoulder. Would you rather the barrel pointed back over the shoulder?
-177. **The Elite holds its plasma rifle in the right hand** now (it was in the left), so the arm that fires is the one held out. Left again?
+174. *(Overtaken: it carries your machine gun low like a minigun, D132.)* **Spartan Heavy Weapons** carries its weapon on the shoulder like the Spartan (it holds the rocket launcher model). Or should it walk like the Fireteam?
+175. *(Answered: the Grenadier (a rocket launcher only) carries it on the shoulder like the Spartan, D135; the Sniper stays like the Fireteam.)* **The Grenadier and the Sniper** walk like the Fireteam: weapon low in front, shouldered to fire. Or on the shoulder like the Spartan?
+176. *(No change asked, so kept as it is.)* **On the shoulder** means resting on it pointing ahead and a little up, the hand on the grip, the barrel's back behind the shoulder. Would you rather the barrel pointed back over the shoulder?
+177. *(Answered: the Elite's animation is great, right hand, as it is.)* **The Elite holds its plasma rifle in the right hand** now (it was in the left), so the arm that fires is the one held out. Left again?
 
 ## Things my test runs did to your PC
 

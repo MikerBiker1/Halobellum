@@ -65,7 +65,7 @@ namespace Halobellum.Tests
             ("Swarm Form", UnitRole.AntiAir, 2, 50, 4, 250, 200),
             ("Pure Form Tank", UnitRole.Tank, 3, 200, 1, 400, 3200),
             ("Seeder", UnitRole.SingleTargetDps, 3, 200, 2, 475, 800),
-            ("Infected Pelican", UnitRole.Aerial, 3, 200, 1, 400, 900),
+            ("Infected Pelican", UnitRole.Aerial, 3, 200, 1, 400, 1350), // 900 until D134.
             ("Infected Phantom", UnitRole.Aerial, 3, 200, 1, 400, 1250), // 1100 until D125.
             ("Flood Abomination", UnitRole.Titan, 4, 350, 1, 800, 10000), // 8500 until D125.
         };
@@ -301,6 +301,7 @@ namespace Halobellum.Tests
             Assert.IsTrue(pelican.IsAir && pelican.SelfDestructs && pelican.SeeksDensestCluster);
             Assert.AreEqual(30, pelican.DeathBurst.Spawns.Where(s => s.Unit.Name == "Infection Forms").Sum(s => s.Bodies * s.Unit.FormsPerBody), "D60: 30 Infection Forms.");
             Assert.AreEqual(5, pelican.DeathBurst.Spawns.Where(s => s.Unit.Name == "Combat Form").Sum(s => s.Bodies), "Bible: 5 Combat Forms.");
+            Assert.AreEqual(1200f, pelican.DeathBurst.Damage, "D134: the owner's harder blast (900 before), so its dive is worth the 400.");
 
             Assert.IsNotNull(u["Infected Phantom"].Reinforcement, "It carries Combat Forms.");
             Assert.AreEqual("Combat Form", u["Infected Phantom"].Reinforcement.Name);

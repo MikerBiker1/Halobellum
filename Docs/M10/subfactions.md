@@ -40,7 +40,7 @@ What already existed and got new uses: leaps (Spartan CQB until D130, Juggernaut
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Spartan Sniper | Single-target DPS | 3 | 200 | 1 | 400 | 650 | Unarmored | 200 | 1.75 | SRS99 Sniper Rifle (200 per 3 s, Ballistic, anti-armor, 42 m) | 35 of 68, 52% | Marine 100%, Warthog 100% |
 | Spartan Heavy Weapons | Tank | 3 | 200 | 1 | 400 | 2400 | Unarmored | 250 | 1.3 | M247H Chaingun (18 per 0.12 s, Ballistic, 20 m) | 48 of 68, 70% | Combat Form 100%, Hunter Captain 100% |
-| Spartan Grenadier | Chaff clear | 3 | 200 | 1 | 400 | 1000 | Unarmored | 300 | 1.75 | M41 Rocket Launcher (62 per 1.5 s, Explosive, 19 m, splash 3.2 m) | 23 of 68, 35% | Scorpion 100%, Hunter Pair 100% |
+| Spartan Grenadier | Chaff clear | 3 | 200 | 1 | 400 | 1000 | Unarmored | 300 | 1.75 | M41 Rocket Launcher (62 per 1.5 s, Explosive, 19 m, splash 3.2 m) | 23 of 68, 34% | Scorpion 100%, Hunter Pair 100% |
 | Spartan CQB | Flanker | 3 | 150 | 1 | 300 | 1200 | Unarmored | 600 | 3.5 | M45 Shotgun (120 per 0.8 s, Ballistic, 6 m, cone 25 deg) | 31 of 68, 46% | Scorpion 100%, Jackal (Shield) 100% |
 | Spartan Fireteam | Single-target DPS | 3 | 250 | 3 | 500 | 500 | Unarmored | 140 | 1.75 | BR85 Battle Rifle (22 per 0.6 s, Ballistic, 16 m); M41 Rocket Launcher (110 per 5 s, Explosive, anti-armor, 18 m) | 26 of 68, 38% | Marine 100%, Grunt 100% |
 
@@ -98,7 +98,7 @@ What already existed and got new uses: leaps (Spartan CQB until D130, Juggernaut
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Skitterer | Flanker | 1 | 0 | 6 | 125 | 100 | Light | 0 | 4.5 | Spitter Plasma (7 per 0.25 s, Energy, 7 m) | 32 of 68, 48% | Flamethrower Trooper 100%, Scorpion 100% |
 | Goliath | Tank | 3 | 250 | 1 | 500 | 2200 | Heavy | 0 | 1.1 | Fist Slam (120 per 2 s, Melee, 3 m, splash 3.5 m); Fuel Rod Cannon (55 per 2.5 s, Explosive, 14 m, splash 2 m) | 35 of 68, 51% | Gauss Warthog 100%, Spartan 100% |
-| Hunter Captain | Single-target DPS | 3 | 225 | 1 | 450 | 2000 | Heavy | 0 | 1.25 | Siphon Laser (19.5 per 0.1 s, Energy, anti-armor, 15 m, splash 0.3 m, beam); Shield Bash (120 per 1.5 s, Melee, 2.2 m, splash 1.5 m) | 43 of 68, 62% | Marine 100%, Grunt 100% |
+| Hunter Captain | Single-target DPS | 3 | 225 | 1 | 450 | 2000 | Heavy | 0 | 1.25 | Siphon Laser (19.5 per 0.1 s, Energy, anti-armor, 15 m, splash 0.3 m, beam); Shield Bash (120 per 1.5 s, Melee, 2.2 m, splash 1.5 m) | 42 of 68, 61% | Marine 100%, Grunt 100% |
 
 - **Skitterer.** Spider-like machines worked by a few worms: a fast, light swarm of a flanker.
 - **Goliath.** Two colonies in one suit. Its old job as a building-killer shows as 2.5 times the base damage if it survives a battle.

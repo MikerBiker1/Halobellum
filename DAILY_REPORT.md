@@ -2,6 +2,13 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The Infected Pelican, the Abomination's counter, your answers (D134)
+- **Infected Pelican, after your play test:** health 900 → 1,350 so it reaches the enemy, blast 900 → 1,200.
+- **The tournament you asked for before the push:** every sub-faction 48–52%. Covenant-based Flood 49 → 50%; UNSC-based Flood stays at 48% (48.0 → 48.5). The AI buys the Pelican in only about 1% of Flood matches; those it buys now do 11–29% more damage. Most Infected Pelicans are Pelicans the Seeders took.
+- **Item 173:** no unit but the Hunter Captain beats the Abomination at equal credits under the real rules (four Captains against two Abominations, 70%); all 67 others lose every battle. As you chose, the Captain stays listed and the test accepts 70% for that pair only.
+- **Items 175–177:** the Grenadier will carry its rocket launcher on the shoulder like the Spartan (D135, the Scarab session). The Sniper and the Elite stay as they are.
+- **Not checked:** not played in the game.
+
 ## Noble rebalanced: the CQB and the Heavy (D133)
 - **The tournament you asked for:** Noble had fallen to 45%. The Heavy losing its rockets did it; the CQB was fielded in only 5% of Noble's matches with or without its leap.
 - **CQB, your changes:** ground only (a shotgun can't reach aircraft), 300 credits, shotgun 100, shield 600. Not too strong: still fielded in only about a quarter of Noble's matches, so I raised the shotgun to 120.

@@ -194,6 +194,8 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] The Spartan CQB stops at its range and shoots, without a leap (D130)
 - [x] The owner's twinblade (glowing), MA5B and battle rifle in the game (D131)
 - [x] The Heavy Spartan carries the owner's machine gun like a minigun, no rockets (D132)
+- [x] Noble rebalanced after the CQB and Heavy changes (D133)
+- [x] The Infected Pelican tougher and harder-hitting; the Abomination's counter test at 70% (D134)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

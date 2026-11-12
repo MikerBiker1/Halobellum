@@ -6859,59 +6859,59 @@ MonoBehaviour:
     winRate: 1
   - attacker: Infected Pelican
     defender: Spartan Grenadier
-    winRate: 0.3
-  - attacker: Infected Pelican
-    defender: Spartan CQB
-    winRate: 0
-  - attacker: Infected Pelican
-    defender: Spartan Fireteam
-    winRate: 1
-  - attacker: Infected Pelican
-    defender: Gremlin
-    winRate: 1
-  - attacker: Infected Pelican
-    defender: Cobra
-    winRate: 1
-  - attacker: Infected Pelican
-    defender: Rhino
-    winRate: 0.9
-  - attacker: Infected Pelican
-    defender: Grizzly
-    winRate: 0
-  - attacker: Infected Pelican
-    defender: Sparrowhawk
-    winRate: 0
-  - attacker: Infected Pelican
-    defender: Longsword
-    winRate: 0
-  - attacker: Infected Pelican
-    defender: Vulture
-    winRate: 0
-  - attacker: Infected Pelican
-    defender: Condor Gunship
-    winRate: 0
-  - attacker: Infected Pelican
-    defender: Chopper
-    winRate: 1
-  - attacker: Infected Pelican
-    defender: Brute Grenadier
-    winRate: 0
-  - attacker: Infected Pelican
-    defender: Marauder
-    winRate: 0
-  - attacker: Infected Pelican
-    defender: Reaver
-    winRate: 1
-  - attacker: Infected Pelican
-    defender: Skitterer
-    winRate: 0.5
-  - attacker: Infected Pelican
-    defender: Goliath
-    winRate: 0
-  - attacker: Infected Pelican
-    defender: Hunter Captain
     winRate: 0.4
   - attacker: Infected Pelican
+    defender: Spartan CQB
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Spartan Fireteam
+    winRate: 1
+  - attacker: Infected Pelican
+    defender: Gremlin
+    winRate: 1
+  - attacker: Infected Pelican
+    defender: Cobra
+    winRate: 1
+  - attacker: Infected Pelican
+    defender: Rhino
+    winRate: 0.9
+  - attacker: Infected Pelican
+    defender: Grizzly
+    winRate: 0.1
+  - attacker: Infected Pelican
+    defender: Sparrowhawk
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Longsword
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Vulture
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Condor Gunship
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Chopper
+    winRate: 1
+  - attacker: Infected Pelican
+    defender: Brute Grenadier
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Marauder
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Reaver
+    winRate: 1
+  - attacker: Infected Pelican
+    defender: Skitterer
+    winRate: 0.5
+  - attacker: Infected Pelican
+    defender: Goliath
+    winRate: 0
+  - attacker: Infected Pelican
+    defender: Hunter Captain
+    winRate: 0.5
+  - attacker: Infected Pelican
     defender: Cannon Fodder
     winRate: 0
   - attacker: Infected Pelican
@@ -6928,7 +6928,7 @@ MonoBehaviour:
     winRate: 0.6
   - attacker: Infected Pelican
     defender: Infested Scorpion
-    winRate: 0
+    winRate: 0.1
   - attacker: Infected Pelican
     defender: Infested Hornet
     winRate: 0
@@ -7867,7 +7867,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan Grenadier
     defender: Infected Pelican
-    winRate: 0.7
+    winRate: 0.6
   - attacker: Spartan Grenadier
     defender: Infected Phantom
     winRate: 0
@@ -9091,7 +9091,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Grizzly
     defender: Infected Pelican
-    winRate: 1
+    winRate: 0.9
   - attacker: Grizzly
     defender: Infected Phantom
     winRate: 0
@@ -11335,7 +11335,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Hunter Captain
     defender: Infected Pelican
-    winRate: 0.6
+    winRate: 0.5
   - attacker: Hunter Captain
     defender: Infected Phantom
     winRate: 0
@@ -12559,7 +12559,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Infested Scorpion
     defender: Infected Pelican
-    winRate: 1
+    winRate: 0.9
   - attacker: Infested Scorpion
     defender: Infected Phantom
     winRate: 0

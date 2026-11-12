@@ -2746,7 +2746,7 @@
   "unlock": 200,
   "squad": 1,
   "cost": 400,
-  "hp": 900,
+  "hp": 1350,
   "armor": "L",
   "speed": 6,
   "radius": 2.5,
@@ -2794,7 +2794,7 @@
   "selfd": true,
   "seek": true,
   "burst": {
-   "dmg": 900,
+   "dmg": 1200,
    "radius": 3.5,
    "type": "Explosive",
    "aa": false,

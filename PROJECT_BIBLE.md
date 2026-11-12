@@ -581,6 +581,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-11 | The Zealot carries the owner's twinblade, its blades drawn as glowing light; the Marines the owner's MA5B; the Spartan Fireteam the owner's battle rifle | Per the project owner (D131) |
 | 2026-11-11 | The Spartan Heavy Weapons carries the owner's machine gun like a minigun and has no rocket pod | Per the project owner (D132) |
 | 2026-11-11 | The Spartan CQB shoots ground only, costs 300 (unlock 150) with a stronger shotgun and shield; the Heavy Weapons costs 400 (unlock 200) and its chaingun hits harder and reaches 20 m; every sub-faction 48% to 52% under Insane | Per the project owner, balanced by the tournament (D133) |
+| 2026-11-12 | The Infected Pelican has 1,350 health and a 1,200 blast; every sub-faction 48% to 52% under Insane. The Hunter Captain, the only unit that beats the Flood Abomination at equal credits, is its listed counter at 70% | Per the project owner (D134) |
 
 ## 18. Assumptions to confirm
 

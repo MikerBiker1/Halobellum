@@ -8,6 +8,10 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.397.0 · 2026-11-12
+- **Infected Pelican:** tougher and harder-hitting, so it reaches the enemy before it is shot down: health 1,350 (was 900), blast 1,200 (900). Every sub-faction still wins 48% to 52% Insane against Insane; Covenant-based Flood 49% → 50%, UNSC-based Flood unchanged at 48%. (D134)
+- **The counter test** accepts 70% for the Hunter Captain against the Flood Abomination: no other unit beats the Abomination at equal credits. (D134)
+
 ## 0.396.0 · 2026-11-11
 - **Spartan CQB:** its shotgun can't reach aircraft any more, so it shoots ground only, and is much stronger for it: 300 credits (was 400), unlock 150 (200), shotgun 120 (80), shield 600 (450). (D133)
 - **Spartan Heavy Weapons:** 400 credits (was 450), unlock 200 (225); its chaingun 18 (14) and reaching 20 m (15), as far as the rockets did. Noble had fallen to 45% after the Heavy lost its rockets; every sub-faction now wins 48% to 52% Insane against Insane. (D133)

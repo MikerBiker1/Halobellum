@@ -1,7 +1,7 @@
 // CounterWebAssetTests.cs
 // Verifies the counter web on the real slice roster assets (Milestone 4): for every unit, its best
 // counter from the latest full counter-web run (Halobellum > Headless Runner > Run Counter Web, also
-// listed in each unit's notes) still wins at least 90% of equal-cost battles against it (D23). This runs
+// listed in each unit's notes) still wins at least 90% of equal-cost battles against it (D23), the Hunter Captain against the Flood Abomination 70% (D134). This runs
 // only one pair per unit, so it stays quick; the full run checks every pair. If a balance change moves a
 // unit's best counter, run the console in Tools/Data/cw again, then Tools/Data/gen_counter_list.py, which rewrites
 // this list, and Tools/Data/gen_matchup_asset.py. Also checks that the
@@ -97,10 +97,16 @@ namespace Halobellum.Tests
             ("Spawner", "Flamethrower Trooper"),
         };
 
+        /// <summary>The Hunter Captain's bar against the Flood Abomination, the one pair below 90% (D134).</summary>
+        private const float AbominationBar = 0.7f;
+
         // With the sub-factions there are 69 units (no Infested Grunt, D116): they run side by side, and may take longer than a test's usual 3 minutes on a busy machine.
         [Test, Timeout(600000)]
         public void EveryUnit_HasACounterThatWinsAtLeast90Percent()
         {
+            // One exception, the Flood Abomination: under the game's real rules only the Hunter Captain ever beats it at equal credits
+            // (four Captains against two Abominations), 70% of the time; every other unit loses every battle. The owner kept the Captain
+            // as its listed counter at 70% (morning item 173, D134).
             Dictionary<string, UnitStats> units = HeadlessRunnerTool.LoadSliceUnits()
                 .ToDictionary(u => u.unitName, HeadlessRunnerTool.ValidatedStats);
             Assert.AreEqual(69, units.Count);
@@ -125,7 +131,8 @@ namespace Halobellum.Tests
             {
                 UnitStats unit = units[pair.unit], counter = units[pair.counter];
                 CounterMatchup matchup = CounterWeb.RunPair(rules, counter, unit, settings);
-                if (matchup.WinRateA < settings.Threshold - 1e-4f)
+                float bar = pair.unit == "Flood Abomination" ? AbominationBar : settings.Threshold;
+                if (matchup.WinRateA < bar - 1e-4f)
                     failures.Add($"{pair.counter} beats {pair.unit} only {CounterWeb.Percent(matchup.WinRateA)} ({matchup.CostA} vs {matchup.CostB} credits)");
             });
             Assert.IsEmpty(failures, string.Join("\n", failures));

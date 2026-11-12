@@ -292,3 +292,19 @@ The owner asked for the Insane tournament after D130 (the CQB's leap gone) and D
 
 The Heavy was Noble's main unit (fielded in 93% of its matches at 0.391.0, damage 0.94 times its price's worth); without the pod it fell to 32% and 0.51, and lost to every armoured or shielded unit, as its chaingun can be blocked and does little to armour. Banished, who field Hunters in 78% of their matches, went from 43% to 59% against Noble. The CQB was fielded in 5% of Noble's matches before and after its leap went, at about a quarter of its price's worth.
 An anti-armour chaingun measured far too strong one on one (78% on average against 65%), so round 3 gave it the pod's 20 m reach. Round 3 on seeds 2 and 3, nothing changed: Noble 49%, every sub-faction 47% to 53%; four seeds together 48% to 51%. Round 4 brought the unlocks to half the new prices (the Bible's Tier 3 rule); the Heavy was then in 96% of Noble's matches at 1.04, the CQB in 23% at 0.50.
+
+## The Infected Pelican tougher and harder-hitting (D134)
+The owner played it and asked for more health, so it surely crashes on the enemy, and more damage; and for a tournament before the push, expecting UNSC-based Flood to rise slightly. Insane against Insane, seeds 0 and 1, 100 matches a pairing.
+
+| Sub-faction | 0.396.0 | 0.397.0: Pelican 1,350 health, 1,200 blast (pushed) |
+|---|---|---|
+| Aerospace Command | 52% | 52% |
+| Noble | 52% | 52% |
+| Banished | 50% | 50% |
+| Lekgolo Colony | 50% | 50% |
+| Covenant-based Flood | 49% | 50% |
+| Armored Division | 49% | 49% |
+| UNSC-based Flood | 48% | 48% (48.0 → 48.5) |
+| Unggoy Rebellion | 48% | 48% |
+
+The AI buys the Infected Pelican in about 1% of Flood matches (UNSC-based 14 of 1,400 before, 15 after; Covenant-based 13), and the damage of those it bought rose 29% (UNSC-based) and 11% (Covenant-based). About five times as many are Pelicans the Flood's Seeders took (439 bodies in 74 UNSC-based matches, 282 in 52 Covenant-based), whose damage counts under the Seeder. Its damage per 100 credits went from 587 to 683 (UNSC-based) and from 670 to 707 (Covenant-based). The counter web hardly moves (23 of 68 units beaten either way, even at 1,800 health): its paired fights don't show what a dive into a crowd does. Seed 0 put UNSC-based at 46% and seed 1 at 51%; Aerospace 50% and 54%; within the band on each seed.

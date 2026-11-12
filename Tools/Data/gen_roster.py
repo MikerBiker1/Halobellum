@@ -162,9 +162,10 @@ UNITS = [
       seedforms=[("Marine", "InfestedMarine"), ("Warthog", "InfestedWarthog"), ("Scorpion", "InfestedScorpion"), ("Hornet", "InfestedHornet"),
                  ("Elite", "InfestedElite"), ("Ghost", "InfestedGhost"), ("Banshee", "InfestedBanshee"),
                  ("Wraith", "InfestedWraith"), ("Pelican", "InfectedPelican"), ("Covenant Phantom", "InfectedPhantom")]),
-    U("InfectedPelican", "Infected Pelican", "Flood", "Aerial", 3, 200, 1, 400, 900, "L", 6, 2.5, 1, "G",
+    U("InfectedPelican", "Infected Pelican", "Flood", "Aerial", 3, 200, 1, 400, 1350, "L", 6, 2.5, 1, "G",
       [W("Crash Dive", 0, 1, 1, "Explosive", own="G")], airu=True, flood=True, selfd=True, seek=True, leap=(22, 16, 0),
-      burst=dict(dmg=900, radius=3.5, type="Explosive", aa=False, spawns=[("InfectionForms", 5), ("CombatForm", 5)])),
+      # Health 900 -> 1350 so it reaches the enemy before it is shot down, and its blast 900 -> 1200 (the owner, after playing it, D134).
+      burst=dict(dmg=1200, radius=3.5, type="Explosive", aa=False, spawns=[("InfectionForms", 5), ("CombatForm", 5)])),
     U("InfectedPhantom", "Infected Phantom", "Flood", "Aerial", 3, 200, 1, 400, 1250, "L", 2.5, 3, 1.5, "B",
       [W("Plasma Turrets", 12, 0.3, 14, "Energy")], airu=True, flood=True, drop=("CombatForm", 5, 8),
       burst=dict(dmg=0, radius=0, type="Explosive", aa=False, spawns=[("InfectionForms", 1)])),
