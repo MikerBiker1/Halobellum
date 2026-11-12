@@ -8,6 +8,9 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.393.1 · 2026-11-11
+- **Spartan CQB:** no more thruster leap. It runs up to its shotgun's range and fires. (D130)
+
 ## 0.393.0 · 2026-11-11
 - **New animations for the Spartans, the Elite and the Zealot.** They used the Marines' walk and shot. Now the Spartan and Heavy Weapons walk with the big weapon on the shoulder and stand to fire it shouldered; the Fireteam, Grenadier and Sniper walk with the weapon low in front and shoulder it to aim; the CQB runs and fires with the shotgun at the hip; the Elite carries its plasma rifle at the hip in its right hand and fires with the arm straight out; the Zealot runs with its sword pointing down behind it. Each shot gives a small kick, and the walks match each unit's speed. (D129)
 

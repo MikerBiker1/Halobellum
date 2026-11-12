@@ -577,6 +577,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-10 | A Seeder with nothing it can seed in range shoots the closest enemy without seeding it; the seed eats only hosts the Flood can convert, and aircraft; its death is the owner's Infection Form leap | Per the project owner (D127) |
 | 2026-11-11 | In Unlock Skirmish the Insane AI rushes one tower: its whole army up one lane, its other tower levelled; Faction-mode Insane is unchanged | Per the project owner (D128) |
 | 2026-11-11 | The Spartans, the Elite and the Zealot have walks and shots of their own, made on Meshy's rigs by Tools/Art/units/SoldierClips.py: weapons on the shoulder, held low, at the hip or held out, as the owner described | Per the project owner (D129) |
+| 2026-11-11 | The Spartan CQB has no leap: it stops at its range and shoots | Per the project owner (D130) |
 
 ## 18. Assumptions to confirm
 

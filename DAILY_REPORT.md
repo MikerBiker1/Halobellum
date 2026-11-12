@@ -2,6 +2,12 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The CQB stops and shoots (D130)
+- **No more jump:** the Spartan CQB runs up to its shotgun's range and fires; its thruster leap is gone. Better Thrusters (25% faster) stays.
+- **Balance:** not measured, as you asked for no tournaments for now. The leap was how it reached artillery, so Noble may come out weaker.
+- **The Zealot's sword:** I made it glow (a white core in a cyan halo), but this sword model's blades are so thin it hardly showed. When your new model is in, I'll put the glow on it. The Zealot is unchanged for now.
+- **Checked:** the roster, leap and body tests. **Not checked:** played in the game.
+
 ## The Spartans', the Elite's and the Zealot's own animations (D129)
 - **Why:** they walked and fired with the Marines' clips, which didn't fit them.
 - **Spartan:** walks with the laser resting on its right shoulder, the left arm swinging; fires standing, the laser shouldered, a small kick each shot. **Heavy Weapons** the same, slower, its chaingun rattling.

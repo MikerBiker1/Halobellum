@@ -86,9 +86,9 @@ MonoBehaviour:
   auraHealPerSecondShare: 0
   lifestealShare: 0
   seedForms: []
-  leapRange: 9
-  leapSpeed: 16
-  leapCooldownSeconds: 5
+  leapRange: 0
+  leapSpeed: 0
+  leapCooldownSeconds: 0
   techUpgrades:
   - {fileID: 11400000, guid: 8316b531ae98ba7ebaba259f15f42902, type: 2}
   - {fileID: 11400000, guid: e37a60d4aaf64a65806d3ceb5cc656b2, type: 2}
@@ -100,4 +100,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: 'Artillery, DPS'
   weakAgainst: 'Chaff clear, tanks'
-  notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Grunt Goblin (100%). A thruster pack jumps it onto its target. Very strong against artillery and DPS once there; short reach. First-pass M10 values, Noble (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Grunt Goblin (100%). Quick on its feet with a shotgun: it runs up to its short range and fires. Very strong against artillery and DPS once there. First-pass M10 values, Noble (Docs/M10/subfactions.md).'

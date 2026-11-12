@@ -3308,7 +3308,7 @@
   "air": false,
   "arc": null,
   "drop": null,
-  "note": "A thruster pack jumps it onto its target. Very strong against artillery and DPS once there; short reach.",
+  "note": "Quick on its feet with a shotgun: it runs up to its short range and fires. Very strong against artillery and DPS once there.",
   "forms": 1,
   "flood": false,
   "infects": false,
@@ -3318,11 +3318,7 @@
   "burst": null,
   "spawn": null,
   "aura": null,
-  "leap": [
-   9,
-   16,
-   5
-  ],
+  "leap": null,
   "lifesteal": 0,
   "seedforms": null,
   "spawn2": null,

@@ -191,6 +191,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] A squad being moved is drawn standing in the green squares (D109)
 - [x] UNSC-based Flood back in the band, the Condor's lasers balanced: every sub-faction 47% to 54% (D112)
 - [x] The Spartans, the Elite and the Zealot walk and fire with clips of their own (D129)
+- [x] The Spartan CQB stops at its range and shoots, without a leap (D130)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

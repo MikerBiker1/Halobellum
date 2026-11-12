@@ -146,7 +146,7 @@ namespace Halobellum.Tests
                 Assert.IsTrue(u[spartan].ImmuneToInfection, spartan + ": Spartans cannot be infected.");
                 Assert.AreEqual(ArmorType.Unarmored, u[spartan].ArmorType, spartan);
             }
-            Assert.Greater(u["Spartan CQB"].LeapRange, 0f, "Its thruster pack.");
+            Assert.AreEqual(0f, u["Spartan CQB"].LeapRange, "No leap: it stops at its range and shoots (the owner, D130).");
             Assert.AreEqual(3, u["Spartan Fireteam"].SquadSize);
             Assert.Greater(u["Spartan Sniper"].Weapons[0].Range, u["Spartan"].Weapons[0].Range);
 

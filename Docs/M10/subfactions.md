@@ -27,7 +27,7 @@ The brief says to prefer what exists, and almost every unit does. Only two thing
 
 A third field is looks only: `bakedTint` and `bakedScale` let units that share a baked body look different.
 
-What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested Marines, Grunts and Elites), auras (Hunter Captain, Grunt Goblin), mid-battle drops (the Condor Gunship's, until D111), spawners (Spawner), death bursts (Methane Wagon), defense arcs (Goliath, Hunter Captain), lobbed shots, beams, and a melee main weapon with a gun on the side, which makes a unit charge in while firing (Chopper, Infested Warthog and Ghost).
+What already existed and got new uses: leaps (Spartan CQB until D130, Juggernaut, Infested Marines, Grunts and Elites), auras (Hunter Captain, Grunt Goblin), mid-battle drops (the Condor Gunship's, until D111), spawners (Spawner), death bursts (Methane Wagon), defense arcs (Goliath, Hunter Captain), lobbed shots, beams, and a melee main weapon with a gun on the side, which makes a unit charge in while firing (Chopper, Infested Warthog and Ghost).
 
 ## The units
 
@@ -47,7 +47,7 @@ What already existed and got new uses: leaps (Spartan CQB, Juggernaut, Infested 
 - **Spartan Sniper.** Kills one armored target at a time from very far away; has no answer to a crowd or to anything that reaches it.
 - **Spartan Heavy Weapons.** A walking wall with a chaingun: mows down infantry, does little to armor. Its Unarmored body makes it weak to anti-infantry weapons once the shield is down.
 - **Spartan Grenadier.** Rockets in a straight line: strong against crowds, weak against tanks and flankers.
-- **Spartan CQB.** A thruster pack jumps it onto its target. Very strong against artillery and DPS once there; short reach.
+- **Spartan CQB.** Quick on its feet with a shotgun: it runs up to its short range and fires. Very strong against artillery and DPS once there. Its thruster leap was removed in D130.
 - **Spartan Fireteam.** Three Spartans: an all-round squad with rifles and a rocket each. No single strength, no single weakness.
 
 ### Armored Division

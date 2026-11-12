@@ -26,8 +26,8 @@ def units(U, W):
           note="Rockets in a straight line: strong against crowds, weak against tanks and flankers.",
           baked="SpartanGrenadier"),
         U("SpartanCQB", "Spartan CQB", FACTION, "Flanker", 3, 200, 1, 400, 1200, "U", 3.5, 0.6, 0.35, "B",
-          [W("M45 Shotgun", 80, 0.8, 6, "Ballistic", cone=25, block=True)], shield=450, regen=80, immune=True, leap=(9, 16, 5),
-          note="A thruster pack jumps it onto its target. Very strong against artillery and DPS once there; short reach.",
+          [W("M45 Shotgun", 80, 0.8, 6, "Ballistic", cone=25, block=True)], shield=450, regen=80, immune=True,  # No leap: it stops at its range and shoots (the owner, 2026-11-11; D130).
+          note="Quick on its feet with a shotgun: it runs up to its short range and fires. Very strong against artillery and DPS once there.",
           baked="SpartanCQB"),
         U("SpartanFireteam", "Spartan Fireteam", FACTION, "SingleTargetDps", 3, 250, 3, 500, 500, "U", 1.75, 0.6, 0.5, "B",
           [W("BR85 Battle Rifle", 22, 0.6, 16, "Ballistic", block=True),
