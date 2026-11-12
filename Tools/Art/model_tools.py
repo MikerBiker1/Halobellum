@@ -680,12 +680,18 @@ def snapshot():
     _state["high"] = _triangles_of(meshes())
 
 
-def finish_weapon(grip, tip, length_note):
+def finish_weapon(grip, tip, length_note, glow=None):
     """
     A weapon goes in the hand of a baked body, so it is one mesh with a colour per face and no texture.
     Its origin becomes the grip, it points along -Y, and a node "Muzzle" marks the tip of its barrel. Unity sets its size.
+    glow: a pattern of the parts whose faces glow in the game (an energy blade, D131): their colour's alpha is 0, every other face's 1, and a
+    body with weaponGlows draws them as light (AnimationBaker).
     """
     name, folder = _state["name"], _state["folder"]
+    for part in meshes():
+        marks = part.data.attributes.new("glows", "INT", "FACE")
+        lit = 1 if glow and re.search(glow, part.name) else 0
+        marks.data.foreach_set("value", [lit] * len(part.data.polygons))
     _select(meshes())
     if len(meshes()) > 1:
         bpy.ops.object.join()
@@ -693,6 +699,18 @@ def finish_weapon(grip, tip, length_note):
     o.name = "Weapon"
     high = _state["high"] or _triangles_of([o])
     _paint_faces_from(o, high)
+    if glow:
+        colours = o.data.color_attributes["Col"]
+        marks = o.data.attributes["glows"]
+        lit = 0
+        for polygon in o.data.polygons:
+            if marks.data[polygon.index].value:
+                lit += 1
+                for loop in polygon.loop_indices:
+                    c = colours.data[loop].color
+                    colours.data[loop].color = (c[0], c[1], c[2], 0.0)
+        print(f"REPORT {lit} of {len(o.data.polygons)} faces glow")
+    o.data.attributes.remove(o.data.attributes["glows"])
     shift = -Vector(grip)
     o.data.transform(Matrix.Translation(shift))
     o.data.update()

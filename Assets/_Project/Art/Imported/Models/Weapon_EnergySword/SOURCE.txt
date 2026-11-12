@@ -1,3 +1,3 @@
-Source: found by the project owner on Sketchfab, file sketchfab.com/For Later/halo_3_energy_sword_by_abisv.glb in Art_Source.
-Prepared by Tools/Art/units/Weapon_EnergySword.py (decision D45).
+Source: made by the project owner with Meshy AI, file Meshy/Meshy_AI_Twinblade_of_the_Azur_1112012036_texture.glb in Art_Source (the twinblade, D131), in place of the Sketchfab sword.
+Prepared by Tools/Art/units/Weapon_EnergySword.py: the blades kept whole and marked to glow, the hilt reduced.
 The repository is private and must stay private.

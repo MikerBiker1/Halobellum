@@ -155,7 +155,10 @@ The Spartans have your model now, each with a placeholder weapon from the game's
 | [ ] | M247H chaingun and Hydra rocket pod | Spartan Heavy Weapons. | Rocket launcher |
 | [ ] | M41 rocket launcher | Spartan Grenadier. | Rocket launcher, drawn short |
 | [x] | Shotgun | Spartan CQB. | Your `weaponshumanshotgun.glb`, the third, the darkest (D86) |
-| [ ] | BR85 battle rifle and M41 rocket launcher | Spartan Fireteam. | Assault rifle |
+| [x] | BR85 battle rifle | Spartan Fireteam. | Your `br55_-_halo_battle_rifle.glb` (D131) |
+| [ ] | M41 rocket launcher | Spartan Fireteam. | None: its rockets leave the rifle |
+| [x] | Energy sword | Zealot. | Your twinblade, `Meshy_AI_Twinblade_of_the_Azur_1112012036_texture.glb`, its blades glowing (D131) |
+| [x] | MA5B assault rifle | Marines, Infested Marines. | Your `ma5b_remaster.glb` (D131) |
 | [x] | Plasma rifle | Elite. | Your `halo_-_plasma_rifle.glb` (D71) |
 | [x] | Beam rifle | Jackal (Beam Rifle). | Your `halo_-_beam_rifle.glb` (D71) |
 | [x] | Brute Shot (in place of the spike grenade launcher) | Brute Grenadier. | Your `weaponscovenantbrute_shot.glb`, the first (D86) |

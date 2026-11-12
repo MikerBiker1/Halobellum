@@ -15,18 +15,36 @@ MonoBehaviour:
   modelFolder: 
   sourceModel: {fileID: -927199367670048503, guid: 3347dcd200a4f5cf25613a4ae8c78457, type: 3}
   albedo: {fileID: 2800000, guid: 3566b12b06bf22015de86840bf9adad3, type: 3}
+  albedoFile: 
   movingClip: Run_and_Shoot
   shootingClip: Walk_Forward_While_Shooting
   deathClip: Dead
   stillClip: Walking
+  stillMoves: 0
+  meleeClip: 
+  meleeBlendShare: 0
+  chargeClip: 
   weaponName: Weapon_AssaultRifle
   weaponLength: 0.8
   weaponInForwardHand: 0
+  weaponAlongForearm: 0
+  weaponGlows: 0
+  muzzleInRightHand: 0
+  muzzleAtFront: 0
+  shieldName: 
+  shieldDiameter: 1.1
+  shieldOffset: {x: 0, y: 0, z: 0}
+  muzzleBone: 
+  secondMuzzleBone: 
+  cutout: 0
   transitionSeconds: 0.2
   corpseSeconds: 14
+  shotMoment: -1
+  spawnMoment: -1
   bakedFps: 30
   mesh: {fileID: 4300000, guid: 84c562d34d4e8684fb223e4703bf41fb, type: 2}
   material: {fileID: 2100000, guid: ba0004f41d8fa5e419d03711de510f6b, type: 2}
+  glassMaterial: {fileID: 0}
   clips:
   - role: 1
     firstRow: 0
@@ -44,5 +62,8 @@ MonoBehaviour:
     firstRow: 207
     frames: 1
     loops: 0
-  muzzle: {x: 0.010976225, y: 1.5530018, z: 0.6032895}
+  muzzle: {x: -0.00992161, y: 1.6060872, z: 0.64968103}
   hasMuzzle: 1
+  secondMuzzle: {x: 0, y: 0, z: 0}
+  hasSecondMuzzle: 0
+  bodyHeight: 1.7

@@ -24,10 +24,11 @@ MonoBehaviour:
   meleeClip: 
   meleeBlendShare: 0
   chargeClip: 
-  weaponName: Weapon_AssaultRifle
+  weaponName: Weapon_BattleRifle
   weaponLength: 0.95
   weaponInForwardHand: 0
   weaponAlongForearm: 0
+  weaponGlows: 0
   muzzleInRightHand: 0
   muzzleAtFront: 0
   shieldName: 
@@ -61,7 +62,7 @@ MonoBehaviour:
     firstRow: 135
     frames: 1
     loops: 0
-  muzzle: {x: 0.10779351, y: 1.9879179, z: 0.9060519}
+  muzzle: {x: 0.10800063, y: 1.9970094, z: 0.8582846}
   hasMuzzle: 1
   secondMuzzle: {x: 0, y: 0, z: 0}
   hasSecondMuzzle: 0

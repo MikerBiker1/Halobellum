@@ -8,6 +8,11 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.394.0 · 2026-11-11
+- **Zealot:** your twinblade, its blades glowing white in a cyan haze. (D131)
+- **Marines and Infested Marines:** your MA5B. (D131)
+- **Spartan Fireteam:** your battle rifle, in place of the assault rifle. (D131)
+
 ## 0.393.2 · 2026-11-11
 - **The AI** knows the Spartan CQB has no leap: its counter numbers were measured again (it now beats 20 of 68 units one on one, against 21). (D130)
 

@@ -28,6 +28,7 @@ MonoBehaviour:
   weaponLength: 1.4
   weaponInForwardHand: 0
   weaponAlongForearm: 1
+  weaponGlows: 1
   muzzleInRightHand: 0
   muzzleAtFront: 0
   shieldName: 
@@ -43,7 +44,7 @@ MonoBehaviour:
   bakedFps: 30
   mesh: {fileID: 4300000, guid: 31591ed05bf46054cbd07a4b4161e02e, type: 2}
   material: {fileID: 2100000, guid: b31b067870c613a469a2c696b84c451a, type: 2}
-  glassMaterial: {fileID: 0}
+  glassMaterial: {fileID: 2100000, guid: 68496f91e062a494294b77d900c619f2, type: 2}
   clips:
   - role: 1
     firstRow: 0
@@ -61,7 +62,7 @@ MonoBehaviour:
     firstRow: 156
     frames: 1
     loops: 0
-  muzzle: {x: -0.7822423, y: 2.0578375, z: -1.7046378}
+  muzzle: {x: -0.7622566, y: 2.0592372, z: -1.6417558}
   hasMuzzle: 1
   secondMuzzle: {x: 0, y: 0, z: 0}
   hasSecondMuzzle: 0

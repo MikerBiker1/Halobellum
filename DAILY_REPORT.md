@@ -2,6 +2,13 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Your twinblade, MA5B and battle rifle (D131)
+- **Twinblade:** the Zealot carries it now. Its blades are as you made them; only the hilt went from 8,795 triangles to 899.
+- **The glow:** the blades are drawn as light, a white core inside three cyan halos that fade outwards, like your picture. The Zealot's icon shows the white blade (icons can't show a see-through glow).
+- **MA5B:** the Marines' and Infested Marines' rifle, down to about 900 triangles, as they come 18 to a squad.
+- **Battle rifle:** the Spartan Fireteam carries it now, in place of the assault rifle.
+- **Checked:** the tests and the game's gallery pictures. **Not checked:** played in a match.
+
 ## The CQB stops and shoots (D130)
 - **No more jump:** the Spartan CQB runs up to its shotgun's range and fires; its thruster leap is gone. Better Thrusters (25% faster) stays.
 - **Balance:** not measured, as you asked for no tournaments for now. The leap was how it reached artillery, so Noble may come out weaker.

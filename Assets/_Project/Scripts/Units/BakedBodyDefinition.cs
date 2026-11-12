@@ -71,6 +71,8 @@ namespace Halobellum.Units
         public bool weaponInForwardHand;
         [Tooltip("Hold it in the right hand, in line with the forearm, like a blade.")]
         public bool weaponAlongForearm;
+        [Tooltip("The faces its weapon's file marks as glowing (colour alpha 0) glow, unlit, a white core in a cyan halo: the Zealot's twinblade (D131).")]
+        public bool weaponGlows;
         [Tooltip("With no weapon of its own: shots start from the right hand, where the model has its gun.")]
         public bool muzzleInRightHand;
         [Tooltip("With no weapon of its own: shots start from the point of the body furthest forward in the shooting pose, the end of a gun that is part of its model.")]

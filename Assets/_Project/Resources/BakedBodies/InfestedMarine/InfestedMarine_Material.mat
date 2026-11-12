@@ -35,6 +35,7 @@ Material:
     m_Floats:
     - _AnimFps: 30
     - _Cull: 2
+    - _Cutout: 0
     - _DstBlend: 0
     - _Glass: 0
     - _SrcBlend: 1

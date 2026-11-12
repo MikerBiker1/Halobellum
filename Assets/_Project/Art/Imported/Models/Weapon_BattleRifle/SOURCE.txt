@@ -1,0 +1,3 @@
+Source: brought in by the project owner, file Meshy/br55_-_halo_battle_rifle.glb in Art_Source (the BR55 battle rifle, D131), for the Spartan Fireteam.
+Prepared by Tools/Art/units/Weapon_BattleRifle.py.
+The repository is private and must stay private.

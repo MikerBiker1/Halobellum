@@ -6,6 +6,7 @@
 //     a body whose gun is part of its own model (the Flamethrower Trooper) shoots from its furthest-forward point instead (muzzleAtFront),
 //     and a creature from one of its bones at the moment it shoots (muzzleBone: the Pure Form Ranged's spines, D90);
 //     a second weapon far from the first may start from a bone of its own (secondMuzzleBone: the Mantis's rocket pod, D97);
+//     the faces a glowing weapon marks go to the see-through sub-mesh, a white core in a cyan halo (weaponGlows: the Zealot's twinblade, D131);
 //   - a texture holding every kept bone's matrix for every frame of every clip;
 //   - the clip table, and a material (cut out by its texture's alpha for a body with fronds, D90).
 // Moving and shooting clips play on the spot: the battle moves the unit, so any forward drift in the clip is
@@ -352,6 +353,7 @@ namespace Halobellum.EditorTools
                 weights.Add(new Vector2(share, 0f));
             }
             var triangles = new List<int>(from.triangles);
+            var glass = new List<int>(); // The see-through sub-mesh: a shield, a glowing blade.
 
             Vector3? muzzle = null;
             if (string.IsNullOrEmpty(body.weaponName) && !string.IsNullOrEmpty(body.muzzleBone))
@@ -412,10 +414,10 @@ namespace Halobellum.EditorTools
                     holding = hand;
                 }
                 Matrix4x4 weaponToWorld = Matrix4x4.TRS(bones[holding].position, Quaternion.LookRotation(direction, Vector3.up), Vector3.one);
-                muzzle = AddProp(body, body.weaponName, body.weaponLength, false, weaponToWorld, bindPoses[holding].inverse * bones[holding].worldToLocalMatrix, keptIndex[holding], positions, normals, uvs, colors, boneIds, weights, triangles);
+                muzzle = AddProp(body, body.weaponName, body.weaponLength, false, weaponToWorld, bindPoses[holding].inverse * bones[holding].worldToLocalMatrix, keptIndex[holding], positions, normals, uvs, colors, boneIds, weights, triangles,
+                    body.weaponGlows ? glass : null);
             }
 
-            var glass = new List<int>();
             if (!string.IsNullOrEmpty(body.shieldName))
             {
                 int arm = Array.FindIndex(bones, b => b.name == "LeftHand");
@@ -450,9 +452,10 @@ namespace Halobellum.EditorTools
         /// Merges a prepared weapon or shield into the mesh, fixed to one bone. Its origin is its grip, it points along +Z, and a node
         /// "Muzzle" marks the tip of its barrel. Returns where that tip is in the world. A weapon's size is its length; a shield's, its width,
         /// and a shield's vertices say in their colour's alpha how much they show: more at the rim, as a field of energy does.
+        /// With glow (a list of see-through triangles), the faces the weapon marks as glowing go there instead (the twinblade's blades, D131).
         /// </summary>
         private static Vector3 AddProp(BakedBodyDefinition body, string prop, float size, bool shield, Matrix4x4 weaponToWorld, Matrix4x4 worldToMesh, int bone, List<Vector3> positions, List<Vector3> normals,
-            List<Vector2> uvs, List<Color> colors, List<Vector2> boneIds, List<Vector2> weights, List<int> triangles)
+            List<Vector2> uvs, List<Color> colors, List<Vector2> boneIds, List<Vector2> weights, List<int> triangles, List<int> glow = null)
         {
             string path = $"{ModelsFolder}/{prop}/{prop}.fbx";
             var importer = (ModelImporter)AssetImporter.GetAtPath(path);
@@ -492,12 +495,83 @@ namespace Halobellum.EditorTools
                     boneIds.Add(new Vector2(bone, bone));
                     weights.Add(new Vector2(1f, 0f));
                 }
-                foreach (int index in from.triangles) triangles.Add(first + index);
+                if (glow == null)
+                {
+                    foreach (int index in from.triangles) triangles.Add(first + index);
+                }
+                else
+                {
+                    Glow(from.triangles, fromColors, first, bone, positions, normals, uvs, colors, boneIds, weights, triangles, glow);
+                }
                 return (weaponToWorld * sized).MultiplyPoint3x4(tip.position);
             }
             finally
             {
                 Object.DestroyImmediate(weapon);
+            }
+        }
+
+        /// <summary>
+        /// A glowing blade's layers, from the outside in (D131): three cyan halos pushed out along its surface (metres), fainter further out,
+        /// then its white core, drawn last so that it shows through them (the see-through sub-mesh writes no depth). Its pass draws them unlit
+        /// and brightened.
+        /// </summary>
+        private static readonly (float Push, Color Colour)[] GlowLayers =
+        {
+            (0.11f, new Color(0.08f, 0.55f, 1f, 0.14f)),
+            (0.07f, new Color(0.12f, 0.68f, 1f, 0.24f)),
+            (0.035f, new Color(0.3f, 0.88f, 1f, 0.42f)),
+            (0f, new Color(0.82f, 1f, 1f, 1f)), // Solid, so the unit's icon (UnitIconRenderer: what differs on black and white is background) keeps it.
+        };
+
+        /// <summary>
+        /// Whether a weapon's face glows: its file marks it with colour alpha 0 (model_tools.finish_weapon's glow, the twinblade's blades), where
+        /// every other face has 1.
+        /// </summary>
+        public static bool Glows(Color c) => c.a < 0.5f;
+
+        /// <summary>Sends a weapon's glowing faces to the see-through triangles, in its glow's layers; the rest stays with the body.</summary>
+        private static void Glow(int[] fromTriangles, Color[] fromColors, int first, int bone, List<Vector3> positions, List<Vector3> normals, List<Vector2> uvs,
+            List<Color> colors, List<Vector2> boneIds, List<Vector2> weights, List<int> triangles, List<int> glow)
+        {
+            var glowing = new List<int>();
+            for (int t = 0; t < fromTriangles.Length; t += 3)
+            {
+                Color c = Color.clear;
+                for (int k = 0; k < 3; k++) c += fromColors.Length > fromTriangles[t + k] ? fromColors[fromTriangles[t + k]] : Color.white;
+                if (Glows(c / 3f)) glowing.Add(t);
+                else for (int k = 0; k < 3; k++) triangles.Add(first + fromTriangles[t + k]);
+            }
+
+            // The halos swell out along the surface as a whole: at each point, the normals of the faces meeting there added up, so the shell stays closed.
+            var outward = new Dictionary<Vector3Int, Vector3>();
+            Vector3Int Key(Vector3 p) => Vector3Int.RoundToInt(p * 2000f);
+            foreach (int t in glowing)
+            {
+                for (int k = 0; k < 3; k++)
+                {
+                    int v = first + fromTriangles[t + k];
+                    outward.TryGetValue(Key(positions[v]), out Vector3 sum);
+                    outward[Key(positions[v])] = sum + normals[v];
+                }
+            }
+
+            foreach ((float push, Color colour) in GlowLayers)
+            {
+                foreach (int t in glowing)
+                {
+                    for (int k = 0; k < 3; k++)
+                    {
+                        int v = first + fromTriangles[t + k];
+                        glow.Add(positions.Count);
+                        positions.Add(positions[v] + outward[Key(positions[v])].normalized * push);
+                        normals.Add(normals[v]);
+                        uvs.Add(Vector2.zero);
+                        colors.Add(colour);
+                        boneIds.Add(new Vector2(bone, bone));
+                        weights.Add(new Vector2(1f, 0f));
+                    }
+                }
             }
         }
     }
