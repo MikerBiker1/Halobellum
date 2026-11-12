@@ -8,6 +8,9 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.397.1 · 2026-11-12
+- **Spartan Grenadier:** carries its rocket launcher on the shoulder when walking, like the Spartan. (D135)
+
 ## 0.397.0 · 2026-11-12
 - **Infected Pelican:** tougher and harder-hitting, so it reaches the enemy before it is shot down: health 1,350 (was 900), blast 1,200 (900). Every sub-faction still wins 48% to 52% Insane against Insane; Covenant-based Flood 49% → 50%, UNSC-based Flood unchanged at 48%. (D134)
 - **The counter test** accepts 70% for the Hunter Captain against the Flood Abomination: no other unit beats the Abomination at equal credits. (D134)

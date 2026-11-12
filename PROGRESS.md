@@ -196,6 +196,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] The Heavy Spartan carries the owner's machine gun like a minigun, no rockets (D132)
 - [x] Noble rebalanced after the CQB and Heavy changes (D133)
 - [x] The Infected Pelican tougher and harder-hitting; the Abomination's counter test at 70% (D134)
+- [x] The Spartan Grenadier carries its rocket launcher on the shoulder, like the Spartan (D135)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

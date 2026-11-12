@@ -2,6 +2,12 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The Grenadier carries its launcher like the Spartan (D135)
+- **Walking and standing:** the rocket launcher rests on the right shoulder, the left arm swinging free, as the Spartan carries its laser.
+- **Firing:** it stands still, launcher shouldered, with a small kick on each rocket (unchanged).
+- **Left as they are:** the Sniper (it already walks like the Fireteam) and the Elite.
+- **Checked:** the tests, Blender's pictures and the game's gallery pictures. **Not checked:** played in a match.
+
 ## The Infected Pelican, the Abomination's counter, your answers (D134)
 - **Infected Pelican, after your play test:** health 900 → 1,350 so it reaches the enemy, blast 900 → 1,200.
 - **The tournament you asked for before the push:** every sub-faction 48–52%. Covenant-based Flood 49 → 50%; UNSC-based Flood stays at 48% (48.0 → 48.5). The AI buys the Pelican in only about 1% of Flood matches; those it buys now do 11–29% more damage. Most Infected Pelicans are Pelicans the Seeders took.

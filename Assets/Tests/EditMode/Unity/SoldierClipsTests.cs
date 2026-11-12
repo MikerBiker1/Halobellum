@@ -2,8 +2,8 @@
 // The Spartans', the Elite's and the Zealot's own walks and shots (D129), made by Tools/Art/units/SoldierClips.py on Meshy's rigs in place of
 // the library clips they shared with the Marines: each body plays its own clips from its shared model; a clip that shoots lasts one shot of
 // its main weapon and kicks on it; each walk or run is timed to its unit's speed; the weapons sit where the owner asked (the Spartan's on
-// its shoulder, the CQB's at the hip, the Elite's rifle held out in its right hand when firing; the Heavy's machine gun low in both hands,
-// carried like a minigun, D132).
+// its shoulder, and the Grenadier's rocket launcher too, D135; the CQB's at the hip; the Elite's rifle held out in its right hand when firing;
+// the Heavy's machine gun low in both hands, carried like a minigun, D132).
 // Depends on: Halobellum.Units, Halobellum.Core, NUnit, UnityEditor (loading the assets).
 
 using System.Linq;
@@ -32,7 +32,7 @@ namespace Halobellum.Tests
         [TestCase("UNSC/Spartan", "Spartan", "Carry_Walk", "Laser_Fire", "Carry_Stand")]
         [TestCase("Noble/SpartanHeavyWeapons", "SpartanHeavyWeapons", "Minigun_Walk", "Minigun_Fire", "Minigun_Stand")]
         [TestCase("Noble/SpartanFireteam", "SpartanFireteam", "Ready_Walk", "Rifle_Fire", "Ready_Stand")]
-        [TestCase("Noble/SpartanGrenadier", "SpartanGrenadier", "Ready_Walk", "Rocket_Fire", "Ready_Stand")]
+        [TestCase("Noble/SpartanGrenadier", "SpartanGrenadier", "Carry_Walk", "Rocket_Fire", "Carry_Stand")]
         [TestCase("Noble/SpartanSniper", "SpartanSniper", "Ready_Walk", "Sniper_Fire", "Ready_Stand")]
         [TestCase("Noble/SpartanCQB", "SpartanCQB", "Hip_Run", "Shotgun_Fire", "Hip_Stand")]
         [TestCase("Covenant/Elite", "Elite", "Elite_Walk", "Plasma_Fire", "Elite_Stand")]
@@ -77,7 +77,8 @@ namespace Halobellum.Tests
             BakedBodyDefinition Body(string n) => Resources.Load<BakedBodyDefinition>("BakedBodies/" + n);
             Assert.AreNotEqual(Body("Spartan").movingClip, Body("SpartanHeavyWeapons").movingClip, "The Heavy carries its gun low, like a minigun (D132).");
             Assert.AreEqual(Body("SpartanFireteam").movingClip, Body("SpartanSniper").movingClip, "Held low in front, aimed at nothing.");
-            Assert.AreEqual(Body("SpartanFireteam").movingClip, Body("SpartanGrenadier").movingClip);
+            Assert.AreEqual(Body("Spartan").movingClip, Body("SpartanGrenadier").movingClip, "The rocket launcher on the shoulder, like the Spartan's laser (D135).");
+            Assert.AreEqual(Body("Spartan").stillClip, Body("SpartanGrenadier").stillClip);
             Assert.AreNotEqual(Body("Spartan").movingClip, Body("SpartanFireteam").movingClip);
             Assert.AreEqual(-1f, Body("SpartanHeavyWeapons").shotMoment, "Its chaingun rattles on, too fast to kick on every shot.");
             Assert.Greater(Body("Spartan").muzzle.y, 1.7f, "Firing, the laser is shouldered at the height of the eyes.");

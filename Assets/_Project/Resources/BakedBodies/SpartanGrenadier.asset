@@ -16,10 +16,10 @@ MonoBehaviour:
   sourceModel: {fileID: 919132149155446097, guid: 4424365796ebe9948a5ae74cb23a1922, type: 3}
   albedo: {fileID: 2800000, guid: bce2ca7cc902c414a997dd9fdff08edf, type: 3}
   albedoFile: Spartan_Grenadier.png
-  movingClip: Armature|Ready_Walk
+  movingClip: Armature|Carry_Walk
   shootingClip: Armature|Rocket_Fire
   deathClip: Armature|Dead
-  stillClip: Armature|Ready_Stand
+  stillClip: Armature|Carry_Stand
   stillMoves: 0
   meleeClip: 
   meleeBlendShare: 0

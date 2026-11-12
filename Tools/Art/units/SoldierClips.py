@@ -1,9 +1,9 @@
 # The Spartans', the Elite's and the Zealot's own walks and shots (D129), at the owner's word: Meshy's library clips, which they shared with
 # the Marines, did not fit them. Each keeps Meshy's rig, weights and death; the new clips are added beside Meshy's in its file:
-#   Spartan                         walks with the big weapon resting on the right shoulder, the left arm swinging free; when firing it stands
-#                                   still and shoulders it, with a small kick on each shot;
+#   Spartan, Spartan Grenadier      walk with the big weapon resting on the right shoulder, the left arm swinging free; when firing they stand
+#                                   still and shoulder it, with a small kick on each shot (the Grenadier's rocket launcher, D135);
 #   Spartan Heavy Weapons           carries its machine gun like a minigun, low in front in both hands, and fires it from there (D132);
-#   Spartan Fireteam, Grenadier, Sniper  walk with the weapon held low in front of them, aimed at nothing; when firing they stand, shoulder it
+#   Spartan Fireteam, Sniper        walk with the weapon held low in front of them, aimed at nothing; when firing they stand, shoulder it
 #                                   and aim, with a small kick on each shot;
 #   Spartan CQB                     runs low with the shotgun close to the right hip in both hands, and fires it from there;
 #   Elite                           walks with the plasma rifle in the right hand at hip level, pointing forward; when firing the arm comes up,
@@ -507,7 +507,7 @@ if UNIT == "Spartan":
 
     make("Laser_Fire", round(3.5 * FPS), firing(3.5, size=1.0))          # The Spartan Laser, one every 3.5 s.
     make("Rifle_Fire", round(0.6 * FPS), firing(0.6, size=0.6))          # The Fireteam's battle rifle, 0.6 s.
-    make("Rocket_Fire", round(1.5 * FPS), firing(1.5, size=1.0))         # The Grenadier's rockets, 1.5 s.
+    make("Rocket_Fire", round(1.5 * FPS), firing(1.5, size=1.0))         # The Grenadier's rockets, 1.5 s, shouldered like the laser.
     make("Sniper_Fire", round(3.0 * FPS), firing(3.0, size=0.9))         # The sniper rifle, 3 s.
 
     GRIPS.update({c: GRIP_AIM for c in ("Laser_Fire", "Rifle_Fire", "Rocket_Fire", "Sniper_Fire")})
@@ -721,7 +721,7 @@ if UNIT == "Spartan":
     body("Spartan", "Weapon_SpartanLaser", 1.4, False, "Carry_Walk", "Laser_Fire", "Carry_Stand", shot=0.1)
     body("SpartanHeavyWeapons", "Weapon_Chaingun", 1.4, False, "Minigun_Walk", "Minigun_Fire", "Minigun_Stand")
     body("SpartanFireteam", "Weapon_BattleRifle", 0.95, False, "Ready_Walk", "Rifle_Fire", "Ready_Stand", shot=0.1)
-    body("SpartanGrenadier", "Weapon_RocketLauncher", 0.95, False, "Ready_Walk", "Rocket_Fire", "Ready_Stand", shot=0.1)
+    body("SpartanGrenadier", "Weapon_RocketLauncher", 0.95, False, "Carry_Walk", "Rocket_Fire", "Carry_Stand", shot=0.1)  # Like the Spartan (D135).
     body("SpartanSniper", "Weapon_SniperRifle", 1.5, False, "Ready_Walk", "Sniper_Fire", "Ready_Stand", shot=0.1)
     body("SpartanCQB", "Weapon_Shotgun", 1.0, False, "Hip_Run", "Shotgun_Fire", "Hip_Stand", shot=0.1)
 
