@@ -63,7 +63,7 @@ namespace Halobellum.Tests
             ("Infected Phantom", "Swarm Form"),
             ("Flood Abomination", "Hunter Captain"),
             ("Spartan Sniper", "Marine"),
-            ("Spartan Heavy Weapons", "Combat Form"),
+            ("Spartan Heavy Weapons", "Zealot"),
             ("Spartan Grenadier", "Scorpion"),
             ("Spartan CQB", "Flamethrower Trooper"),
             ("Spartan Fireteam", "Marine"),

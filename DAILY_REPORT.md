@@ -2,6 +2,12 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The Heavy Spartan's machine gun (D132)
+- **Your gun:** whole, shield and mount and all, every triangle kept.
+- **Carried like a minigun:** low in front at the belt in both hands, the body leaning into it; it walks heavily and fires from the hip, the gun shaking as it rattles.
+- **No more rockets:** the Hydra pod is gone. One on one it now beats 31 of the other 68 units (50 before), so Noble is likely weaker; the top session is running the Insane tournaments you asked for.
+- **Checked:** the tests, the game's gallery pictures. **Not checked:** played in a match.
+
 ## Your twinblade, MA5B and battle rifle (D131)
 - **Twinblade:** the Zealot carries it now. Its blades are as you made them; only the hilt went from 8,795 triangles to 899.
 - **The glow:** the blades are drawn as light, a white core inside three cyan halos that fade outwards, like your picture. The Zealot's icon shows the white blade (icons can't show a see-through glow).

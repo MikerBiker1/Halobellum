@@ -274,7 +274,7 @@ namespace Halobellum.Presentation
 
         /// <summary>
         /// A shot heard coming down before it lands (Incoming): what the UNSC fires as a rocket, a missile or a bomb that flies (the Longsword's carpet bombs,
-        /// the M41s, the Hornet's, the Wolverine's, the Mantis's, the Vulture's, the Hydra pod, the Archer pod). Not the Flood's scavenged rockets, nor the Banished's.
+        /// the M41s, the Hornet's, the Wolverine's, the Mantis's, the Vulture's, the Archer pod). Not the Flood's scavenged rockets, nor the Banished's.
         /// </summary>
         public static bool ComesDown(WeaponStats weapon, string faction)
         {

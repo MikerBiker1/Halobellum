@@ -54,30 +54,6 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
-  - weaponName: Hydra Rocket Pod
-    damagePerShot: 80
-    fireInterval: 3.5
-    range: 20
-    minRange: 0
-    projectileSpeed: 40
-    splashRadius: 1.5
-    damageType: 1
-    isAntiArmor: 0
-    canBeBlocked: 0
-    hasOwnTargetFilter: 1
-    targetFilter: 0
-    airDamageMultiplier: 1
-    coneDegrees: 0
-    lobbed: 0
-    beamSeconds: 0
-    beamChargeSeconds: 0
-    beamRestSeconds: 0
-    beamSweepSpeed: 0
-    seedSeconds: 0
-    seedDamageSharePerSecond: 0
-    seedSlowShare: 0
-    hitSlowSeconds: 0
-    hitSlowShare: 0
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0

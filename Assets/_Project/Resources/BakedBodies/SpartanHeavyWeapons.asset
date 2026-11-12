@@ -16,18 +16,19 @@ MonoBehaviour:
   sourceModel: {fileID: 919132149155446097, guid: 4424365796ebe9948a5ae74cb23a1922, type: 3}
   albedo: {fileID: 2800000, guid: f39e15f8ce6f0584eb8c14d5b3910220, type: 3}
   albedoFile: Spartan_HeavyWeapons.png
-  movingClip: Armature|Carry_Walk_Slow
-  shootingClip: Armature|Chaingun_Fire
+  movingClip: Armature|Minigun_Walk
+  shootingClip: Armature|Minigun_Fire
   deathClip: Armature|Dead
-  stillClip: Armature|Carry_Stand
+  stillClip: Armature|Minigun_Stand
   stillMoves: 0
   meleeClip: 
   meleeBlendShare: 0
   chargeClip: 
-  weaponName: Weapon_RocketLauncher
-  weaponLength: 1.2
+  weaponName: Weapon_Chaingun
+  weaponLength: 1.4
   weaponInForwardHand: 0
   weaponAlongForearm: 0
+  weaponGlows: 0
   muzzleInRightHand: 0
   muzzleAtFront: 0
   shieldName: 
@@ -61,7 +62,7 @@ MonoBehaviour:
     firstRow: 137
     frames: 1
     loops: 0
-  muzzle: {x: 0.107883416, y: 2.0259974, z: 0.861848}
+  muzzle: {x: 0.038798284, y: 1.3637086, z: 1.6361424}
   hasMuzzle: 1
   secondMuzzle: {x: 0, y: 0, z: 0}
   hasSecondMuzzle: 0

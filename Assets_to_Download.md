@@ -152,7 +152,7 @@ The Spartans have your model now, each with a placeholder weapon from the game's
 | --- | --- | --- | --- |
 | [x] | Spartan Laser | Spartan. | Your `weaponshumanspartan_laser.glb`: the second laser, the green one with the small blue screen (D85) |
 | [x] | SRS99 sniper rifle | Spartan Sniper. | Your `weaponshumansniper_rifle.glb`, the third (D86) |
-| [ ] | M247H chaingun and Hydra rocket pod | Spartan Heavy Weapons. | Rocket launcher |
+| [x] | M247H machine gun | Spartan Heavy Weapons. | Your `Meshy_AI_UNSC_machinegun.glb`, whole; it has no rocket pod any more (D132) |
 | [ ] | M41 rocket launcher | Spartan Grenadier. | Rocket launcher, drawn short |
 | [x] | Shotgun | Spartan CQB. | Your `weaponshumanshotgun.glb`, the third, the darkest (D86) |
 | [x] | BR85 battle rifle | Spartan Fireteam. | Your `br55_-_halo_battle_rifle.glb` (D131) |

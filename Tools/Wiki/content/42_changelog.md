@@ -8,6 +8,9 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.395.0 · 2026-11-11
+- **Spartan Heavy Weapons:** your machine gun, carried like a minigun and fired from the hip. It no longer fires rockets. (D132)
+
 ## 0.394.0 · 2026-11-11
 - **Zealot:** your twinblade, its blades glowing white in a cyan haze. (D131)
 - **Marines and Infested Marines:** your MA5B. (D131)

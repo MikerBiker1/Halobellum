@@ -1,7 +1,8 @@
 # The Spartans', the Elite's and the Zealot's own walks and shots (D129), at the owner's word: Meshy's library clips, which they shared with
 # the Marines, did not fit them. Each keeps Meshy's rig, weights and death; the new clips are added beside Meshy's in its file:
-#   Spartan, Spartan Heavy Weapons  walk with the big weapon resting on the right shoulder, the left arm swinging free; when firing they stand
-#                                   still and shoulder it, with a small kick on each shot;
+#   Spartan                         walks with the big weapon resting on the right shoulder, the left arm swinging free; when firing it stands
+#                                   still and shoulders it, with a small kick on each shot;
+#   Spartan Heavy Weapons           carries its machine gun like a minigun, low in front in both hands, and fires it from there (D132);
 #   Spartan Fireteam, Grenadier, Sniper  walk with the weapon held low in front of them, aimed at nothing; when firing they stand, shoulder it
 #                                   and aim, with a small kick on each shot;
 #   Spartan CQB                     runs low with the shotgun close to the right hip in both hands, and fires it from there;
@@ -509,15 +510,7 @@ if UNIT == "Spartan":
     make("Rocket_Fire", round(1.5 * FPS), firing(1.5, size=1.0))         # The Grenadier's rockets, 1.5 s.
     make("Sniper_Fire", round(3.0 * FPS), firing(3.0, size=0.9))         # The sniper rifle, 3 s.
 
-    def chaingun(t):
-        # The Heavy Weapons' chaingun fires every 0.12 s: a fast rattle, not kept on its shots, still at its middle like the others.
-        k = sum(math.exp(-((((t - m) % 1.0) - 0.06) / 0.05) ** 2) for m in (0.55, 0.8, 0.05, 0.3)) * 0.25
-        p = aim_body(k)
-        p["arms"] = aim_arms(aim_weapon(k), GRIP_AIM, k if k > 1e-3 else 0.0)
-        return p
-
-    make("Chaingun_Fire", 16, chaingun)
-    GRIPS.update({c: GRIP_AIM for c in ("Laser_Fire", "Rifle_Fire", "Rocket_Fire", "Sniper_Fire", "Chaingun_Fire")})
+    GRIPS.update({c: GRIP_AIM for c in ("Laser_Fire", "Rifle_Fire", "Rocket_Fire", "Sniper_Fire")})
 
     # ---- Walking with the weapon on the right shoulder, pointing ahead and a little up, the left arm swinging; chest out, head up.
     CARRY_AT = Vector((-0.31, -0.20, 1.87))
@@ -538,7 +531,6 @@ if UNIT == "Spartan":
         return description
 
     make("Carry_Walk", 28, carrying(1.75, 28 / FPS))     # The Spartan, 1.75 m/s.
-    make("Carry_Walk_Slow", 32, carrying(1.3, 32 / FPS))  # Heavy Weapons, 1.3 m/s.
 
     def carry_stand(t):
         p = {"hips": -0.02, "hips_turn": (0, 0, -4), "spine": [(-1 + 0.5 * sin(t), 0, 2)] * 3, "head": (-2, 0, 0),
@@ -652,9 +644,83 @@ if UNIT == "Spartan":
 
     make("Hip_Stand", 60, hip_stand)
 
+    # ---- Heavy Weapons: the machine gun carried like a minigun (the owner, D132): low in front at the belt, both hands on it, the right on the
+    # spade handles at its back and the left on the gun ahead of them, the body turned a little behind it and leaning into its weight, feet
+    # wide. It walks heavily so, and fires from there, the gun shaking with a fast rattle (0.12 s a shot, not kept on each shot).
+    def mini_body(k=0.0):
+        return {
+            "hips": -0.09,
+            "hips_turn": (6, 0, -12),
+            "spine": [(3, 0, -5), (3, 0, -5), (2 - 2 * k, 0, -3)],
+            "head": (-6, -2, 0),
+            "feet": {"Left": foot("Left", 0.16, wide=0.10, yaw=-2), "Right": foot("Right", -0.14, wide=0.12, yaw=22)},
+        }
+
+    MINI_AT = Vector((-0.10, -0.30, 1.42))
+    MINI_LINE = [unit(0.04, -1, -0.05)]
+
+    def mini_weapon(k):
+        direction = about(Vector((-1, 0, 0)), 3 * k) @ MINI_LINE[0]
+        return placed(frame(direction), MINI_AT + Vector((0, 0.025 * k, 0.01 * k)))
+
+    def mini_arms(w, grip, k=0.0, shoulder=None):
+        direction = w.to_3x3() @ Vector((0, 1, 0))
+        shoulder = shoulder if shoulder is not None else chest_move(mini_body()) @ SHOULDER["Left"]
+        right = {"target": w.translation, "pole": unit(-0.9, 0.5, -0.5)}
+        if grip is not None and k > 0:
+            right.update(hand=hand_for(w.to_3x3(), grip))
+        elif grip is not None:
+            right.update(hand=hand_for(w.to_3x3(), grip), swivel=40)
+        return {"Right": right, "Left": {"target": on_line(w.translation, direction, shoulder, 0.22, 0.45), "pole": unit(0.4, 0.2, -1)}}
+
+    for attempt in range(2):  # As the shotgun's: the line found again from where the left hand took it.
+        p0 = mini_body()
+        p0["arms"] = mini_arms(mini_weapon(0), None)
+        posed0, short0 = pose(p0)
+        GRIP_MINI = grip_of(posed0, False)
+        MINI_LINE[0] = (posed0["LeftHand"].translation - posed0["RightHand"].translation).normalized()
+    print(f"REPORT minigun pose: short {[(k, round(v, 3)) for k, v in short0.items()]}")
+
+    def minigun_fire(t):
+        k = sum(math.exp(-((((t - m) % 1.0) - 0.06) / 0.05) ** 2) for m in (0.55, 0.8, 0.05, 0.3)) * 0.5
+        k = k if k > 1e-3 else 0.0
+        p = mini_body(k)
+        p["arms"] = mini_arms(mini_weapon(k), GRIP_MINI if k > 0 else None, k)
+        return p
+
+    make("Minigun_Fire", 16, minigun_fire)  # Four kicks in 0.53 s: the rattle, still at the middle.
+    GRIPS["Minigun_Fire"] = GRIP_MINI
+
+    def mini_held(p, base):
+        """The gun as when it fires, swaying with the chest's sway in p."""
+        neutral = dict(p, hips_turn=base["hips_turn"], spine=base["spine"])
+        chest = chest_move(p)
+        w = chest @ chest_move(neutral).inverted() @ mini_weapon(0)
+        return mini_arms(w, GRIP_MINI, 0.0, chest @ SHOULDER["Left"])
+
+    def minigun_walk(t):
+        p = walker(t, 1.3, 32 / FPS, 0.62, 0.11, hips=-0.09, bob=0.035, lean=0, sway=5, counter=3, wide=0.06, toes=10, strike=6, push=18)
+        base = mini_body()
+        p["hips_turn"] = tuple(a + b for a, b in zip(p["hips_turn"], base["hips_turn"]))
+        p["spine"] = [tuple(a + b for a, b in zip(s, d)) for s, d in zip(p["spine"], base["spine"])]
+        p["head"] = base["head"]
+        p["arms"] = mini_held(p, base)
+        return p
+
+    make("Minigun_Walk", 32, minigun_walk)  # 1.3 m/s, heavy.
+
+    def minigun_stand(t):
+        base = mini_body()
+        p = dict(base, hips=-0.06, spine=[(d[0] + 0.5 * sin(t), d[1], d[2]) for d in base["spine"]],
+                 feet={"Left": foot("Left", 0.10, wide=0.10, yaw=0), "Right": foot("Right", -0.08, wide=0.12, yaw=18)})
+        p["arms"] = mini_held(p, dict(base, hips=-0.06, feet=p["feet"]))
+        return p
+
+    make("Minigun_Stand", 60, minigun_stand)
+
     body("Spartan", "Weapon_SpartanLaser", 1.4, False, "Carry_Walk", "Laser_Fire", "Carry_Stand", shot=0.1)
-    body("SpartanHeavyWeapons", "Weapon_RocketLauncher", 1.2, False, "Carry_Walk_Slow", "Chaingun_Fire", "Carry_Stand")
-    body("SpartanFireteam", "Weapon_AssaultRifle", 0.95, False, "Ready_Walk", "Rifle_Fire", "Ready_Stand", shot=0.1)
+    body("SpartanHeavyWeapons", "Weapon_Chaingun", 1.4, False, "Minigun_Walk", "Minigun_Fire", "Minigun_Stand")
+    body("SpartanFireteam", "Weapon_BattleRifle", 0.95, False, "Ready_Walk", "Rifle_Fire", "Ready_Stand", shot=0.1)
     body("SpartanGrenadier", "Weapon_RocketLauncher", 0.95, False, "Ready_Walk", "Rocket_Fire", "Ready_Stand", shot=0.1)
     body("SpartanSniper", "Weapon_SniperRifle", 1.5, False, "Ready_Walk", "Sniper_Fire", "Ready_Stand", shot=0.1)
     body("SpartanCQB", "Weapon_Shotgun", 1.0, False, "Hip_Run", "Shotgun_Fire", "Hip_Stand", shot=0.1)

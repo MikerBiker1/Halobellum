@@ -229,7 +229,6 @@ namespace Halobellum.Tests
         [TestCase("AerospaceCommand/Longsword", "Carpet Bombs")]
         [TestCase("SpellUnits/ODST", "M41 Rocket Launcher")]
         [TestCase("Noble/SpartanGrenadier", "M41 Rocket Launcher")]
-        [TestCase("Noble/SpartanHeavyWeapons", "Hydra Rocket Pod")]
         [TestCase("UNSC/Hornet", "Rockets")]
         [TestCase("UNSC/Hornet", "Bombs")]
         [TestCase("UNSC/Wolverine", "Rocket Volley")]

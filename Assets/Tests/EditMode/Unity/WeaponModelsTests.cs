@@ -1,7 +1,7 @@
 // WeaponModelsTests.cs
 // The owner's weapon models of D131: the Zealot's twinblade, its blades kept whole and glowing (a white core in cyan halos, in the body's
 // see-through sub-mesh), only its hilt reduced; the MA5B the Marines carry, light enough for 18 to a squad; and the Spartan Fireteam's
-// battle rifle in place of the assault rifle it borrowed.
+// battle rifle in place of the assault rifle it borrowed. The Spartan Heavy Weapons' machine gun, whole (D132).
 // Depends on: Halobellum.Units, Halobellum.EditorTools (AnimationBaker.Glows), NUnit, UnityEditor (loading the assets).
 
 using System.Linq;
@@ -56,6 +56,16 @@ namespace Halobellum.Tests
             Assert.Less(WeaponMesh("Weapon_AssaultRifle").triangles.Length / 3, 1000);
             foreach (string body in new[] { "Marine", "InfestedMarine" })
                 Assert.AreEqual("Weapon_AssaultRifle", Resources.Load<BakedBodyDefinition>("BakedBodies/" + body).weaponName, body);
+        }
+
+        [Test]
+        public void TheHeavy_CarriesTheWholeMachineGun_AndNoRockets()
+        {
+            BakedBodyDefinition heavy = Resources.Load<BakedBodyDefinition>("BakedBodies/SpartanHeavyWeapons");
+            Assert.AreEqual("Weapon_Chaingun", heavy.weaponName);
+            Assert.Greater(WeaponMesh("Weapon_Chaingun").triangles.Length / 3, 10000, "Whole, as the owner asked: shield, mount and all (D132).");
+            var unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/Noble/SpartanHeavyWeapons.asset");
+            Assert.AreEqual(1, unit.ToStats().Weapons.Length, "Its chaingun only: no rocket pod (D132).");
         }
 
         [Test]

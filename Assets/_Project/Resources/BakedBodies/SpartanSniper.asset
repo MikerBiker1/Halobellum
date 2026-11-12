@@ -28,6 +28,7 @@ MonoBehaviour:
   weaponLength: 1.5
   weaponInForwardHand: 0
   weaponAlongForearm: 0
+  weaponGlows: 0
   muzzleInRightHand: 0
   muzzleAtFront: 0
   shieldName: 

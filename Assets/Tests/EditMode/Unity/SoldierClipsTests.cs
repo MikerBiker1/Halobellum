@@ -2,7 +2,8 @@
 // The Spartans', the Elite's and the Zealot's own walks and shots (D129), made by Tools/Art/units/SoldierClips.py on Meshy's rigs in place of
 // the library clips they shared with the Marines: each body plays its own clips from its shared model; a clip that shoots lasts one shot of
 // its main weapon and kicks on it; each walk or run is timed to its unit's speed; the weapons sit where the owner asked (the Spartan's on
-// its shoulder, the CQB's at the hip, the Elite's rifle held out in its right hand when firing).
+// its shoulder, the CQB's at the hip, the Elite's rifle held out in its right hand when firing; the Heavy's machine gun low in both hands,
+// carried like a minigun, D132).
 // Depends on: Halobellum.Units, Halobellum.Core, NUnit, UnityEditor (loading the assets).
 
 using System.Linq;
@@ -29,7 +30,7 @@ namespace Halobellum.Tests
         private static float Seconds(BakedBodyDefinition body, BakedAnimation role) => body.Clip(role).frames / (float)body.bakedFps;
 
         [TestCase("UNSC/Spartan", "Spartan", "Carry_Walk", "Laser_Fire", "Carry_Stand")]
-        [TestCase("Noble/SpartanHeavyWeapons", "SpartanHeavyWeapons", "Carry_Walk_Slow", "Chaingun_Fire", "Carry_Stand")]
+        [TestCase("Noble/SpartanHeavyWeapons", "SpartanHeavyWeapons", "Minigun_Walk", "Minigun_Fire", "Minigun_Stand")]
         [TestCase("Noble/SpartanFireteam", "SpartanFireteam", "Ready_Walk", "Rifle_Fire", "Ready_Stand")]
         [TestCase("Noble/SpartanGrenadier", "SpartanGrenadier", "Ready_Walk", "Rocket_Fire", "Ready_Stand")]
         [TestCase("Noble/SpartanSniper", "SpartanSniper", "Ready_Walk", "Sniper_Fire", "Ready_Stand")]
@@ -74,7 +75,7 @@ namespace Halobellum.Tests
         public void TheSpartans_WalkWithTheirWeaponsAsTheOwnerAsked()
         {
             BakedBodyDefinition Body(string n) => Resources.Load<BakedBodyDefinition>("BakedBodies/" + n);
-            Assert.AreEqual(Body("Spartan").stillClip, Body("SpartanHeavyWeapons").stillClip, "Both rest the big weapon on the shoulder.");
+            Assert.AreNotEqual(Body("Spartan").movingClip, Body("SpartanHeavyWeapons").movingClip, "The Heavy carries its gun low, like a minigun (D132).");
             Assert.AreEqual(Body("SpartanFireteam").movingClip, Body("SpartanSniper").movingClip, "Held low in front, aimed at nothing.");
             Assert.AreEqual(Body("SpartanFireteam").movingClip, Body("SpartanGrenadier").movingClip);
             Assert.AreNotEqual(Body("Spartan").movingClip, Body("SpartanFireteam").movingClip);

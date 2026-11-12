@@ -17,8 +17,7 @@ def units(U, W):
           note="Kills one armored target at a time from very far away; has no answer to a crowd or to anything that reaches it.",
           baked="SpartanSniper"),
         U("SpartanHeavyWeapons", "Spartan Heavy Weapons", FACTION, "Tank", 3, 225, 1, 450, 2400, "U", 1.3, 0.8, 0.7, "B",
-          [W("M247H Chaingun", 14, 0.12, 15, "Ballistic", block=True),
-           W("Hydra Rocket Pod", 80, 3.5, 20, "Explosive", proj=40, splash=1.5, own="G")], shield=250, regen=60, immune=True,
+          [W("M247H Chaingun", 14, 0.12, 15, "Ballistic", block=True)], shield=250, regen=60, immune=True,  # No rocket pod (the owner, D132).
           note="A walking wall with a chaingun: mows down infantry, does little to armor. Its Unarmored body makes it weak to anti-infantry weapons once the shield is down.",
           baked="SpartanHeavyWeapons"),
         U("SpartanGrenadier", "Spartan Grenadier", FACTION, "ChaffClear", 3, 200, 1, 400, 1000, "U", 1.75, 0.6, 0.5, "G",

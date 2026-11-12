@@ -1,0 +1,3 @@
+Source: made by the project owner with Meshy AI, file Meshy/Meshy_AI_UNSC_machinegun.glb in Art_Source (the M247H machine gun, D132), for the Spartan Heavy Weapons.
+Prepared by Tools/Art/units/Weapon_Chaingun.py: whole, as the owner asked, with a colour per face.
+The repository is private and must stay private.

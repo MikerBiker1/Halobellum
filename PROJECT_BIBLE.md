@@ -579,6 +579,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-11 | The Spartans, the Elite and the Zealot have walks and shots of their own, made on Meshy's rigs by Tools/Art/units/SoldierClips.py: weapons on the shoulder, held low, at the hip or held out, as the owner described | Per the project owner (D129) |
 | 2026-11-11 | The Spartan CQB has no leap: it stops at its range and shoots | Per the project owner (D130) |
 | 2026-11-11 | The Zealot carries the owner's twinblade, its blades drawn as glowing light; the Marines the owner's MA5B; the Spartan Fireteam the owner's battle rifle | Per the project owner (D131) |
+| 2026-11-11 | The Spartan Heavy Weapons carries the owner's machine gun like a minigun and has no rocket pod | Per the project owner (D132) |
 
 ## 18. Assumptions to confirm
 
