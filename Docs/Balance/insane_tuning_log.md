@@ -308,3 +308,19 @@ The owner played it and asked for more health, so it surely crashes on the enemy
 | Unggoy Rebellion | 48% | 48% |
 
 The AI buys the Infected Pelican in about 1% of Flood matches (UNSC-based 14 of 1,400 before, 15 after; Covenant-based 13), and the damage of those it bought rose 29% (UNSC-based) and 11% (Covenant-based). About five times as many are Pelicans the Flood's Seeders took (439 bodies in 74 UNSC-based matches, 282 in 52 Covenant-based), whose damage counts under the Seeder. Its damage per 100 credits went from 587 to 683 (UNSC-based) and from 670 to 707 (Covenant-based). The counter web hardly moves (23 of 68 units beaten either way, even at 1,800 health): its paired fights don't show what a dive into a crowd does. Seed 0 put UNSC-based at 46% and seed 1 at 51%; Aerospace 50% and 54%; within the band on each seed.
+
+## XP for what a squad brings into the battle (D136)
+The owner: created units give XP to their creator when they kill; if this unbalances Covenant-based Flood, revert. Also in this change: a battle ends only once what a death burst killed is dead. Insane against Insane, seeds 0 and 1, 100 matches a pairing.
+
+| Sub-faction | 0.397.0 | 0.398.0 (pushed) | seed 0 | seed 1 |
+|---|---|---|---|---|
+| Aerospace Command | 52.4% | 52.6% | 51% | 55% |
+| Covenant-based Flood | 49.6% | 51.4% | 53% | 50% |
+| Noble | 52% | 51% | 51% | 50% |
+| Banished | 50% | 50% | 53% | 47% |
+| Lekgolo Colony | 50% | 50% | 48% | 51% |
+| Armored Division | 49% | 50% | 49% | 50% |
+| Unggoy Rebellion | 48% | 49% | 49% | 49% |
+| UNSC-based Flood | 48.5% | 46.9% | 45% | 48% |
+
+Every pairing moved within its 7-point noise. Creator units' average level at the match's end rose 0.1 to 0.2: Covenant-based Carrier Form 1.3 → 1.4, Spawner 1.3 → 1.5, Infected Phantom 1.3 → 1.4; UNSC-based Carrier Form 1.5 → 1.7, Infected Phantom 1.5 → 1.6. Covenant-based is not unbalanced, so the change stays; UNSC-based Flood at 47% is inside the band but the lowest.

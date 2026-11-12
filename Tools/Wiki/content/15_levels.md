@@ -13,9 +13,11 @@ A **squad** is what you buy and place. It's made of **bodies**, the individual u
 ## Earning experience
 
 - Squads earn experience (XP) from **kills**. Each enemy body killed is worth its squad's price ÷ squad size, **+50% for each level it had above 1**.
-- Kills by splash, turrets and death bursts count. A Seeder earns XP for bodies its seeds kill.
+- Kills by splash, turrets and death bursts count, even a blast the unit dies in (the Infected Pelican's dive): its squad comes back next round with the XP. A Seeder earns XP for bodies its seeds kill.
+- **What a squad brings into the battle earns for it:** kills by the bodies it drops (the Infected Phantom's Combat Forms), releases (a Carrier Form's or a Spawner's forms, the Pelican's crash) or raises (infected and seeded hosts) count as its own.
 - Destroying a tower gives the tower's XP for its level (see [Towers](#/page/towers)).
-- **No XP** for kills by spells, kills by temporary units (drops, spawns, risen infected), or killing generic risen infected bodies.
+- **No XP** for kills by spells or by squads a spell brought, or for killing generic risen infected bodies.
+- **The bar fills during the battle:** select a squad and watch it rise as it kills. The XP is its own from then on; it can level up once the battle is over.
 - **The XP bar is 2× the squad's base price**, at every level. XP stops at a full bar (nothing carries over) and goes back to 0 on a level-up. A squad at the top level earns no more.
 - A squad that can level up shows a pulsing yellow arrow, and the round result window lists it.
 

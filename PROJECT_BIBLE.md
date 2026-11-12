@@ -133,7 +133,7 @@ A unit can be unlocked and bought in the same round. Buying a squad is limited t
 - Anything temporary is discarded: units infected during the battle, units spawned by abilities, spell effects.
 - Units destroyed during the battle are remade, so each round starts from the same state as the previous round started, plus whatever the player bought.
 
-**Squad leveling.** Squads earn XP from kills. The XP bar is visible when a squad is selected. When it is full, the player may pay **half of the squad’s base deployment price** to level it up. The XP needed to fill the bar is the same at every level. Level multipliers apply to base health and damage, and the total equals the level number:
+**Squad leveling.** Squads earn XP from kills, also the kills of the bodies they drop, release or raise in the battle (D136). The XP bar is visible when a squad is selected, and fills during the battle as the squad kills. When it is full, the player may pay **half of the squad’s base deployment price** to level it up. The XP needed to fill the bar is the same at every level. Level multipliers apply to base health and damage, and the total equals the level number:
 
 | Level | Total multiplier | Step increase |
 | --- | --- | --- |
@@ -583,6 +583,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-11 | The Spartan CQB shoots ground only, costs 300 (unlock 150) with a stronger shotgun and shield; the Heavy Weapons costs 400 (unlock 200) and its chaingun hits harder and reaches 20 m; every sub-faction 48% to 52% under Insane | Per the project owner, balanced by the tournament (D133) |
 | 2026-11-12 | The Infected Pelican has 1,350 health and a 1,200 blast; every sub-faction 48% to 52% under Insane. The Hunter Captain, the only unit that beats the Flood Abomination at equal credits, is its listed counter at 70% | Per the project owner (D134) |
 | 2026-11-12 | The Spartan Grenadier walks with its rocket launcher on the shoulder, like the Spartan | Per the project owner (D135) |
+| 2026-11-12 | The XP bar fills during the battle; kills by the bodies a squad drops, releases or raises earn XP for that squad; a battle ends only once what a blast killed is dead | Per the project owner (D136) |
 
 ## 18. Assumptions to confirm
 

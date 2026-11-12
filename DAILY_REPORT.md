@@ -2,6 +2,13 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## XP: the bar fills in battle, created units earn for their maker (D136)
+- **Live bar:** select a squad during a battle and its XP bar rises as it kills (5 times a second). When it fills, the window says it can level up after the battle.
+- **Created units:** kills by the bodies a squad drops, releases or raises now earn XP for that squad: Carrier Forms for their Infection Forms, the Spawner and the Abomination for their broods, Infected Phantoms for their Combat Forms, a Seeder for the hosts it took, the Infected Pelican for the forms of its crash. Squads a spell brings still earn nothing.
+- **The Infected Pelican's blast:** it already gave its squad XP (the squad comes back next round). One gap fixed: when its blast ended the battle, its victims were left standing at 0 health as survivors and the kills were lost. A battle now ends only once they are dead.
+- **Tournament, as you asked:** Covenant-based Flood 50 → 51%, not unbalanced, so it stays. Every sub-faction 47–53%: Aerospace 53%, UNSC-based Flood 47% (45% on one seed); each moved within the measure's noise.
+- **Not checked:** not played in the game; the tests pass (the play-mode test checks the bar rising in the real match scene).
+
 ## The Grenadier carries its launcher like the Spartan (D135)
 - **Walking and standing:** the rocket launcher rests on the right shoulder, the left arm swinging free, as the Spartan carries its laser.
 - **Firing:** it stands still, launcher shouldered, with a small kick on each rocket (unchanged).

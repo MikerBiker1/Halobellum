@@ -1,6 +1,7 @@
 // LevelingAndTechTests.cs
 // Tests squad leveling (Bible Section 5, rule 10 "leveling") and tech upgrades (Section 9),
 // Milestone 6: level multipliers, XP from kills (capped at a bar that is the same at every level),
+// XP the bar shows during a battle, XP for the bodies a squad releases and for a blast it dies in (D136),
 // level-ups for half the base price, leveling every ready squad of a type at once, level and XP
 // surviving the round reset, sell value, techs
 // bought once per unit type and applied to every squad of that type, a drop unlocked by a tech,
@@ -73,6 +74,78 @@ namespace Halobellum.Tests
             Assert.AreEqual(expected, summary.XpGained[killer.Id], 1e-3f);
             Assert.AreEqual(System.Math.Min(expected, match.XpNeeded(killer)), killer.Xp, 1e-3f);
             Assert.AreEqual(killer.Type.Cost * match.Rules.XpBarPerSquadCost, match.XpNeeded(killer), 1e-3f);
+        }
+
+        [Test]
+        public void XpBar_FillsDuringTheBattle_AndEndsWhereTheAwardPutsIt()
+        {
+            Match match = KillingRound(out PlacedSquad killer, out _);
+            BattleSimulation battle = match.StartBattle();
+            Assert.AreEqual(0f, match.XpSoFar(killer));
+            float last = 0f;
+            bool roseMidBattle = false;
+            while (!battle.IsFinished)
+            {
+                battle.Step();
+                float now = match.XpSoFar(killer);
+                Assert.GreaterOrEqual(now, last - 1e-4f, "The bar never goes down.");
+                if (now > 0f && !battle.IsFinished) roseMidBattle = true;
+                last = now;
+            }
+            Assert.IsTrue(roseMidBattle, "The bar fills while the battle runs (the owner, D136).");
+            Assert.AreEqual(0f, killer.Xp, "Nothing is banked until the battle is finished.");
+            match.FinishBattle();
+            Assert.AreEqual(last, killer.Xp, 1e-3f, "The bar ends where the award puts it.");
+            Assert.AreEqual(killer.Xp, match.XpSoFar(killer), 1e-3f, "After the battle it shows the banked XP, not counted twice.");
+        }
+
+        private static int KilledBy(BattleSimulation battle, string killerName) =>
+            battle.Units.Count(u => u.Team == Team.B && !u.IsAlive && u.KilledById >= 0 && battle.Units[u.KilledById].Stats.Name == killerName);
+
+        [Test]
+        public void ABodyItReleases_EarnsXpForTheSquadItCameFrom()
+        {
+            Match match = KillingRound(out PlacedSquad killer, out UnitStats chaff);
+            UnitStats nest = TestUnits.Unit("Nest", health: 100000f, speed: 0f, radius: 2f, cost: 300, weapon: TestUnits.Weapon(damage: 0f, range: 1f));
+            nest.Tier = 2;
+            nest.SpawnedUnit = TestUnits.Unit("Brood", health: 400f, speed: 4f, squadSize: 2, cost: 100, weapon: TestUnits.Weapon(damage: 30f, range: 12f, interval: 0.5f));
+            nest.SpawnIntervalSeconds = 2f;
+            killer.Type = nest;
+            match.Player.Unlocked.Add(nest);
+            match.StartBattle().Run();
+            RoundSummary summary = match.FinishBattle();
+
+            int byBrood = KilledBy(match.CurrentBattle, "Brood");
+            Assert.Greater(byBrood, 0, "Its brood should kill some infantry.");
+            Assert.AreEqual(0, KilledBy(match.CurrentBattle, "Nest"), "The nest itself kills nothing.");
+            Assert.AreEqual(byBrood * chaff.Cost / (float)chaff.SquadSize, summary.XpGained[killer.Id], 1e-3f,
+                "What it releases earns for its squad (the owner, D136).");
+        }
+
+        [Test]
+        public void ABlastItDiesIn_StillEarnsXpForItsSquad()
+        {
+            // The Infected Pelican's dive: it dies in its own blast, and its squad comes back next round with the XP.
+            Match match = KillingRound(out PlacedSquad killer, out UnitStats chaff);
+            UnitStats crasher = TestUnits.Unit("Crasher", health: 5000f, speed: 20f, radius: 2f, air: true, filter: TargetFilter.Ground, cost: 300,
+                weapon: TestUnits.Weapon(damage: 0f, range: 1f));
+            crasher.Tier = 2;
+            crasher.IsFlood = true;
+            crasher.SelfDestructs = true;
+            crasher.SeeksDensestCluster = true;
+            crasher.DeathBurst = new DeathBurstStats { Damage = 500f, Radius = 6f, DamageType = DamageType.Explosive };
+            killer.Type = crasher;
+            match.Player.Unlocked.Add(crasher);
+            match.StartBattle().Run();
+            RoundSummary summary = match.FinishBattle();
+
+            int blasted = KilledBy(match.CurrentBattle, "Crasher");
+            Assert.Greater(blasted, 0, "Its blast should kill some infantry.");
+            float expected = blasted * chaff.Cost / (float)chaff.SquadSize;
+            Assert.AreEqual(expected, summary.XpGained[killer.Id], 1e-3f);
+            Assert.AreEqual(System.Math.Min(expected, match.XpNeeded(killer)), killer.Xp, 1e-3f);
+            Assert.IsFalse(match.CurrentBattle.Units.Any(u => u.IsAlive && u.Health <= 0f),
+                "Its blast ended the battle, yet what it killed is dead, not left standing as survivors (D136).");
         }
 
         [Test]

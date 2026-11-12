@@ -16,7 +16,8 @@
 //     RefundAfterBattle of their cost.
 //   - Every battle is built fresh from both deployments, so each round starts like the last one
 //     started, plus whatever was bought (round reset). Squads keep their level and XP.
-//   - Leveling (Section 5): squads earn XP from kills (the victim's worth per body); when the bar
+//   - Leveling (Section 5): squads earn XP from kills (the victim's worth per body), also those of the bodies they drop,
+//     release or raise (D136), and the bar fills during the battle (XpSoFar); when the bar
 //     (XpBarPerSquadCost x the squad's price, the same at every level) is full, LevelUp costs half
 //     the base price and raises the level (health and damage x level, up to 5). LevelUpAll does that for
 //     every ready squad of a unit type at once, all or nothing.
@@ -372,27 +373,33 @@ namespace Halobellum.Economy
             return ActionResult.Success($"{tech.Name} researched for every {type.Name}.");
         }
 
-        /// <summary>
-        /// Gives each placed squad the XP its bodies earned in the finished battle: for every enemy body
-        /// killed, the victim's worth (its squad price per body, plus half per level above 1). A tower is worth
-        /// what the rules say for its level (D59).
-        /// Simulation squad i is placed squad i (Team A's squads first, then Team B's); units dropped
-        /// mid-battle belong to no placed squad and earn nothing.
-        /// </summary>
-        private void AwardXp(BattleSimulation battle, RoundSummary summary)
+        /// <summary>The placed squads in the order the battle made them: simulation squad i is placed squad i (Team A's squads first, then Team B's).</summary>
+        private List<PlacedSquad> PlacedInBattleOrder()
         {
-            var placed = new List<(PlacedSquad squad, PlayerState owner)>();
-            foreach (PlacedSquad squad in Player.Squads) placed.Add((squad, Player));
-            foreach (PlacedSquad squad in Enemy.Squads) placed.Add((squad, Enemy));
+            var placed = new List<PlacedSquad>(Player.Squads.Count + Enemy.Squads.Count);
+            placed.AddRange(Player.Squads);
+            placed.AddRange(Enemy.Squads);
+            return placed;
+        }
+
+        /// <summary>
+        /// The XP each placed squad has earned in this battle so far (all of it once the battle is over): for every enemy body
+        /// killed, the victim's worth (its squad price per body, plus half per level above 1). A tower is worth what the rules
+        /// say for its level (D59). A body dropped, released or risen in the battle earns for the squad it came from
+        /// (SimUnit.CreditSquadId), so a Carrier Form earns what its Infection Forms kill and a Seeder what its seeded hosts do
+        /// (the owner, D136); bodies a spell brought earn nothing. A unit that dies in a blast it deals itself (the Infected
+        /// Pelican's dive) still earns for its squad, which comes back next round.
+        /// </summary>
+        private float[] XpEarnedIn(BattleSimulation battle, List<PlacedSquad> placed)
+        {
             var bySimSquad = new Dictionary<int, int>();
             for (int i = 0; i < battle.Squads.Count && i < placed.Count; i++) bySimSquad[battle.Squads[i].Id] = i;
-
             var earned = new float[placed.Count];
             foreach (SimUnit victim in battle.Units)
             {
                 if (victim.IsAlive || victim.KilledById < 0) continue;
                 SimUnit killer = battle.Units[victim.KilledById];
-                if (!bySimSquad.TryGetValue(killer.SquadId, out int index)) continue;
+                if (!bySimSquad.TryGetValue(killer.CreditSquadId, out int index)) continue;
                 UnitStats v = victim.Stats;
                 if (v.IsTower)
                 {
@@ -401,9 +408,30 @@ namespace Halobellum.Economy
                 }
                 earned[index] += v.Cost / (float)Math.Max(1, v.SquadSize) * (1f + 0.5f * (v.Level - 1));
             }
+            return earned;
+        }
+
+        /// <summary>
+        /// The squad's XP as its bar should show it now: during a battle, what it had plus what it has earned so far in it
+        /// (capped at the bar), so that the bar fills as it kills (the owner, D136); otherwise its XP.
+        /// </summary>
+        public float XpSoFar(PlacedSquad squad)
+        {
+            if (squad == null || Phase != MatchPhase.Battle || CurrentBattle == null || squad.Level >= UnitUpgrades.MaxLevel) return squad?.Xp ?? 0f;
+            List<PlacedSquad> placed = PlacedInBattleOrder();
+            int index = placed.IndexOf(squad);
+            if (index < 0) return squad.Xp;
+            return Math.Min(XpNeeded(squad), squad.Xp + XpEarnedIn(CurrentBattle, placed)[index]);
+        }
+
+        /// <summary>Gives each placed squad the XP it earned in the finished battle (XpEarnedIn).</summary>
+        private void AwardXp(BattleSimulation battle, RoundSummary summary)
+        {
+            List<PlacedSquad> placed = PlacedInBattleOrder();
+            float[] earned = XpEarnedIn(battle, placed);
             for (int i = 0; i < placed.Count; i++)
             {
-                PlacedSquad squad = placed[i].squad;
+                PlacedSquad squad = placed[i];
                 if (earned[i] <= 0f) continue;
                 summary.XpGained[squad.Id] = earned[i];
                 if (squad.Level < UnitUpgrades.MaxLevel) squad.Xp = Math.Min(XpNeeded(squad), squad.Xp + earned[i]);

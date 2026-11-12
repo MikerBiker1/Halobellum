@@ -687,14 +687,17 @@ namespace Halobellum.Presentation
             bool deploying = Match.Phase == MatchPhase.Deployment;
             PlayerState player = Match.Player;
             view.ShowXp = squad.Level < UnitUpgrades.MaxLevel;
-            view.Xp = squad.Xp;
+            view.Xp = Match.XpSoFar(squad); // During a battle the bar fills as the squad kills (D136); the window asks again 5 times a second.
             view.XpNeeded = Match.XpNeeded(squad);
             if (squad.Level < UnitUpgrades.MaxLevel)
             {
                 view.LevelUpLabel = $"Level up ({Match.LevelUpCost(squad)})";
                 view.LevelUpEnabled = deploying && Match.CanLevelUp(squad) && player.Credits >= Match.LevelUpCost(squad);
                 view.OnLevelUp = () => LevelUp(squad);
-                view.Note = Match.CanLevelUp(squad) ? "XP bar full: ready to level up." : "Earns XP from kills.";
+                bool fullNow = view.Xp >= view.XpNeeded - 1e-3f;
+                view.Note = Match.CanLevelUp(squad) ? "XP bar full: ready to level up."
+                    : fullNow ? "XP bar full: it can level up after the battle."
+                    : "Earns XP from kills.";
             }
             else view.Note = "Maximum level.";
 

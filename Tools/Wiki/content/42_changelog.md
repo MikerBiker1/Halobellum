@@ -8,6 +8,11 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.398.0 · 2026-11-12
+- **The XP bar fills during the battle:** select a squad and watch it rise as it kills. (D136)
+- **What a squad brings into the battle earns XP for it:** kills by the bodies it drops, releases or raises count as its own, so a Carrier Form earns for its Infection Forms, a Spawner for its broods, an Infected Phantom for its Combat Forms, a Seeder for the hosts it took. Squads a spell brings still earn nothing. Insane against Insane, every sub-faction wins 47% to 53% (Covenant-based Flood 50% → 51%). (D136)
+- **The Infected Pelican's dive** already earned XP; now it also does when its blast ends the battle, and what a blast kills as the battle ends is dead, no longer left standing as survivors. (D136)
+
 ## 0.397.1 · 2026-11-12
 - **Spartan Grenadier:** carries its rocket launcher on the shoulder when walking, like the Spartan. (D135)
 

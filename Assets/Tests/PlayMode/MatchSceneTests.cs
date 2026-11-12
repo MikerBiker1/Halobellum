@@ -286,6 +286,32 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
+        public IEnumerator TheStatsWindowsXpBar_FillsDuringTheBattle()
+        {
+            yield return LoadMatch();
+            _match.ChooseDraft(0);
+            yield return null;
+            Match m = _match.Match;
+            foreach (PlacedSquad squad in m.Player.Squads) squad.Level = 4; // Strong enough to kill in round 1 (on this seed, at level 1 they kill nothing), and below the top level, so the bar shows.
+            _battle.Speed = 4f;
+            _match.Ready();
+            float deadline = Time.realtimeSinceStartup + 120f;
+            bool rose = false;
+            while (m.Phase == MatchPhase.Battle && Time.realtimeSinceStartup < deadline && !rose)
+            {
+                for (int i = 0; i < m.Player.Squads.Count; i++)
+                {
+                    SquadProgressView view = _match.DescribeProgress(_battle.Simulation.Squads[i].Id);
+                    if (view != null && view.ShowXp && view.Xp > m.Player.Squads[i].Xp + 1e-3f) rose = true;
+                }
+                yield return null;
+            }
+            BattleSimulation sim = m.CurrentBattle;
+            int killsByA = sim.Units.Count(u => u.Team == Team.B && !u.IsAlive && u.KilledById >= 0 && sim.Units[u.KilledById].Team == Team.A);
+            Assert.IsTrue(rose, $"A selected squad's bar fills as it kills, before the battle ends (the owner, D136). The player's squads killed {killsByA}.");
+        }
+
+        [UnityTest]
         public IEnumerator LevelAll_ShowsFromTwoReadySquads_WhicheverIsSelected_AndGoesTheWayLevelUpGoes()
         {
             yield return LoadMatch();

@@ -1752,6 +1752,16 @@ namespace Halobellum.Combat
             Events.RaiseShockwaveReleased(tower);
         }
 
+        /// <summary>True if a body has no health left but isn't dead yet (killed by a death burst after this tick's deaths were applied).</summary>
+        private bool AnyBodyStillDying()
+        {
+            foreach (SimUnit unit in _units)
+            {
+                if (unit.IsAlive && unit.Health <= 0f) return true;
+            }
+            return false;
+        }
+
         private void CheckForEnd()
         {
             int aliveA = 0, aliveB = 0;
@@ -1778,7 +1788,9 @@ namespace Halobellum.Combat
             }
 
             // The shots in the air still land, and what they kill no longer hits the base. Nobody acts meanwhile.
-            if (_projectiles.Count > 0 && _settlingTicks < MostSettlingSeconds / _dt)
+            // So do the bodies a death burst killed this tick: ApplyDeaths marks them dead only next tick, and until then they would count as
+            // survivors and their killer would lose the kill (an Infected Pelican's dive that ends the battle, D136).
+            if ((_projectiles.Count > 0 || AnyBodyStillDying()) && _settlingTicks < MostSettlingSeconds / _dt)
             {
                 IsSettling = true;
                 _settlingTicks++;
