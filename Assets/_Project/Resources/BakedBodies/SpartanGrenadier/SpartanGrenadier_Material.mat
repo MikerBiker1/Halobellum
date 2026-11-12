@@ -34,6 +34,12 @@ Material:
     m_Ints: []
     m_Floats:
     - _AnimFps: 30
+    - _Cull: 2
+    - _Cutout: 0
+    - _DstBlend: 0
+    - _Glass: 0
+    - _SrcBlend: 1
+    - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 0}
   m_BuildTextureStacks: []

@@ -2,6 +2,17 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## The Spartans', the Elite's and the Zealot's own animations (D129)
+- **Why:** they walked and fired with the Marines' clips, which didn't fit them.
+- **Spartan:** walks with the laser resting on its right shoulder, the left arm swinging; fires standing, the laser shouldered, a small kick each shot. **Heavy Weapons** the same, slower, its chaingun rattling.
+- **Fireteam, Grenadier, Sniper:** walk with the weapon held low in front, aimed at nothing; fire standing, shouldered and aimed.
+- **CQB:** both hands on the shotgun at the hip, always: it runs low with it and fires from there, crouched (both hands, as you asked).
+- **Elite:** walks with the plasma rifle in its right hand at hip level (it was in the left); fires with the arm straight out in front.
+- **Zealot:** runs with the right arm straight, the sword pointing down behind it. Its strike is unchanged.
+- **Feet:** each walk is timed to its unit's speed, so the feet don't skate.
+- **To confirm:** morning items 174 to 177.
+- **Checked:** the new tests, the pictures, the icons. **Not checked:** played in the game.
+
 ## Insane rushes a tower in Unlock Skirmish (D128)
 - **The problem:** in skirmish Hard beat Insane, 56% to 44%.
 - **Your four playstyles:** all four were built and measured. In Faction mode none beat the usual Insane (Tower Rush 43%, Synergy 45%, Defender 42%), so Faction Insane is unchanged.

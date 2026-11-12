@@ -16,37 +16,53 @@ MonoBehaviour:
   sourceModel: {fileID: 919132149155446097, guid: 4424365796ebe9948a5ae74cb23a1922, type: 3}
   albedo: {fileID: 2800000, guid: bce2ca7cc902c414a997dd9fdff08edf, type: 3}
   albedoFile: Spartan_Grenadier.png
-  movingClip: Run_and_Shoot
-  shootingClip: Walk_Forward_While_Shooting
-  deathClip: Dead
-  stillClip: walking_2
+  movingClip: Armature|Ready_Walk
+  shootingClip: Armature|Rocket_Fire
+  deathClip: Armature|Dead
+  stillClip: Armature|Ready_Stand
+  stillMoves: 0
+  meleeClip: 
+  meleeBlendShare: 0
+  chargeClip: 
   weaponName: Weapon_RocketLauncher
   weaponLength: 0.95
   weaponInForwardHand: 0
   weaponAlongForearm: 0
   muzzleInRightHand: 0
+  muzzleAtFront: 0
+  shieldName: 
+  shieldDiameter: 1.1
+  shieldOffset: {x: 0, y: 0, z: 0}
+  muzzleBone: 
+  secondMuzzleBone: 
+  cutout: 0
   transitionSeconds: 0.2
   corpseSeconds: 14
+  shotMoment: 0.1
+  spawnMoment: -1
   bakedFps: 30
   mesh: {fileID: 4300000, guid: 6133c170a006f594899cc1b7f255d294, type: 2}
   material: {fileID: 2100000, guid: af0d50b3f7e3a0b4fb90679fc9c6d0c0, type: 2}
+  glassMaterial: {fileID: 0}
   clips:
   - role: 1
     firstRow: 0
-    frames: 20
+    frames: 28
     loops: 1
   - role: 2
-    firstRow: 20
-    frames: 98
+    firstRow: 28
+    frames: 45
     loops: 1
   - role: 3
-    firstRow: 118
+    firstRow: 73
     frames: 89
     loops: 0
   - role: 0
-    firstRow: 207
+    firstRow: 162
     frames: 1
     loops: 0
-  muzzle: {x: 0.10715586, y: 2.0215108, z: 0.59237707}
+  muzzle: {x: 0.10718412, y: 1.9925648, z: 0.73590595}
   hasMuzzle: 1
-  bodyHeight: 2.3
+  secondMuzzle: {x: 0, y: 0, z: 0}
+  hasSecondMuzzle: 0
+  bodyHeight: 2.2999997

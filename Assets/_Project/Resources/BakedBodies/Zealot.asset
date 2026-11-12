@@ -16,37 +16,53 @@ MonoBehaviour:
   sourceModel: {fileID: 919132149155446097, guid: 37a35d96d7eae024daf98c924a1ad388, type: 3}
   albedo: {fileID: 2800000, guid: 4678e1a567d1cf84196d4c8353a51e09, type: 3}
   albedoFile: Elite_Zealot.png
-  movingClip: Run_and_Shoot
-  shootingClip: Right_Hand_Sword_Slash
-  deathClip: Dead
-  stillClip: walking_2
+  movingClip: Armature|Zealot_Run
+  shootingClip: Armature|Right_Hand_Sword_Slash
+  deathClip: Armature|Dead
+  stillClip: Armature|Zealot_Stand
+  stillMoves: 0
+  meleeClip: 
+  meleeBlendShare: 0
+  chargeClip: 
   weaponName: Weapon_EnergySword
   weaponLength: 1.4
   weaponInForwardHand: 0
   weaponAlongForearm: 1
   muzzleInRightHand: 0
+  muzzleAtFront: 0
+  shieldName: 
+  shieldDiameter: 1.1
+  shieldOffset: {x: 0, y: 0, z: 0}
+  muzzleBone: 
+  secondMuzzleBone: 
+  cutout: 0
   transitionSeconds: 0.2
   corpseSeconds: 14
+  shotMoment: -1
+  spawnMoment: -1
   bakedFps: 30
   mesh: {fileID: 4300000, guid: 31591ed05bf46054cbd07a4b4161e02e, type: 2}
   material: {fileID: 2100000, guid: b31b067870c613a469a2c696b84c451a, type: 2}
+  glassMaterial: {fileID: 0}
   clips:
   - role: 1
     firstRow: 0
-    frames: 20
+    frames: 22
     loops: 1
   - role: 2
-    firstRow: 20
+    firstRow: 22
     frames: 45
     loops: 1
   - role: 3
-    firstRow: 65
+    firstRow: 67
     frames: 89
     loops: 0
   - role: 0
-    firstRow: 154
+    firstRow: 156
     frames: 1
     loops: 0
-  muzzle: {x: -0.78224224, y: 2.0578403, z: -1.7046372}
+  muzzle: {x: -0.7822423, y: 2.0578375, z: -1.7046378}
   hasMuzzle: 1
-  bodyHeight: 2.5999997
+  secondMuzzle: {x: 0, y: 0, z: 0}
+  hasSecondMuzzle: 0
+  bodyHeight: 2.5999994

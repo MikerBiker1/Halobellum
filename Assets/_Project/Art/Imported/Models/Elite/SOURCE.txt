@@ -1,3 +1,4 @@
 Source: found by the project owner on Sketchfab, file sketchfab.com/enemieshalo_3covenantelitesminor.glb in Art_Source. Rigged and animated by Meshy (Tools/Meshy/rig_inputs.py, meshy_rig.py, rig_finish.py, decision D57).
 The Zealot's gold comes from Tools/Art/recolour.py.
+Its walks and shots, the Elite's and the Zealot's (all but Meshy's Dead and sword slash), are made by Tools/Art/units/SoldierClips.py on Meshy's rig (D129).
 The repository is private and must stay private.

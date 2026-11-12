@@ -16,10 +16,14 @@ MonoBehaviour:
   sourceModel: {fileID: 919132149155446097, guid: 4424365796ebe9948a5ae74cb23a1922, type: 3}
   albedo: {fileID: 2800000, guid: 70576584603bcb943ba3188d6f924324, type: 3}
   albedoFile: Spartan_Sniper.png
-  movingClip: Run_and_Shoot
-  shootingClip: Walk_Forward_While_Shooting
-  deathClip: Dead
-  stillClip: walking_2
+  movingClip: Armature|Ready_Walk
+  shootingClip: Armature|Sniper_Fire
+  deathClip: Armature|Dead
+  stillClip: Armature|Ready_Stand
+  stillMoves: 0
+  meleeClip: 
+  meleeBlendShare: 0
+  chargeClip: 
   weaponName: Weapon_SniperRifle
   weaponLength: 1.5
   weaponInForwardHand: 0
@@ -29,8 +33,13 @@ MonoBehaviour:
   shieldName: 
   shieldDiameter: 1.1
   shieldOffset: {x: 0, y: 0, z: 0}
+  muzzleBone: 
+  secondMuzzleBone: 
+  cutout: 0
   transitionSeconds: 0.2
   corpseSeconds: 14
+  shotMoment: 0.1
+  spawnMoment: -1
   bakedFps: 30
   mesh: {fileID: 4300000, guid: 68bc3a3d28faeba4a9c4dca8c1303174, type: 2}
   material: {fileID: 2100000, guid: 1a38e6b868c8f1f4598c92a1ee516e6a, type: 2}
@@ -38,11 +47,11 @@ MonoBehaviour:
   clips:
   - role: 1
     firstRow: 0
-    frames: 20
+    frames: 28
     loops: 1
   - role: 2
-    firstRow: 20
-    frames: 98
+    firstRow: 28
+    frames: 90
     loops: 1
   - role: 3
     firstRow: 118
@@ -52,6 +61,8 @@ MonoBehaviour:
     firstRow: 207
     frames: 1
     loops: 0
-  muzzle: {x: -0.21766816, y: 2.1147676, z: 1.2093561}
+  muzzle: {x: 0.105977885, y: 1.9715141, z: 1.4387122}
   hasMuzzle: 1
-  bodyHeight: 2.3
+  secondMuzzle: {x: 0, y: 0, z: 0}
+  hasSecondMuzzle: 0
+  bodyHeight: 2.2999997

@@ -16,21 +16,30 @@ MonoBehaviour:
   sourceModel: {fileID: 919132149155446097, guid: 37a35d96d7eae024daf98c924a1ad388, type: 3}
   albedo: {fileID: 2800000, guid: 994b6333d9096f34eb59e43edd05372d, type: 3}
   albedoFile: Elite.png
-  movingClip: Run_and_Shoot
-  shootingClip: Walk_Forward_While_Shooting
-  deathClip: Dead
-  stillClip: walking_2
+  movingClip: Armature|Elite_Walk
+  shootingClip: Armature|Plasma_Fire
+  deathClip: Armature|Dead
+  stillClip: Armature|Elite_Stand
+  stillMoves: 0
+  meleeClip: 
+  meleeBlendShare: 0
+  chargeClip: 
   weaponName: Weapon_PlasmaRifle
   weaponLength: 0.85
-  weaponInForwardHand: 1
-  weaponAlongForearm: 0
+  weaponInForwardHand: 0
+  weaponAlongForearm: 1
   muzzleInRightHand: 0
   muzzleAtFront: 0
   shieldName: 
   shieldDiameter: 1.1
   shieldOffset: {x: 0, y: 0, z: 0}
+  muzzleBone: 
+  secondMuzzleBone: 
+  cutout: 0
   transitionSeconds: 0.2
   corpseSeconds: 14
+  shotMoment: 0.1
+  spawnMoment: -1
   bakedFps: 30
   mesh: {fileID: 4300000, guid: 96bca8d0b4095524da70f49dbc898cf4, type: 2}
   material: {fileID: 2100000, guid: 79e9bbd524a7af64c87cfc05de8e59b1, type: 2}
@@ -38,20 +47,22 @@ MonoBehaviour:
   clips:
   - role: 1
     firstRow: 0
-    frames: 20
+    frames: 34
     loops: 1
   - role: 2
-    firstRow: 20
-    frames: 98
+    firstRow: 34
+    frames: 15
     loops: 1
   - role: 3
-    firstRow: 118
+    firstRow: 49
     frames: 89
     loops: 0
   - role: 0
-    firstRow: 207
+    firstRow: 138
     frames: 1
     loops: 0
-  muzzle: {x: 0.09010948, y: 2.343037, z: 1.2934786}
+  muzzle: {x: 0.2691104, y: 2.0233278, z: 1.0133475}
   hasMuzzle: 1
-  bodyHeight: 2.5999997
+  secondMuzzle: {x: 0, y: 0, z: 0}
+  hasSecondMuzzle: 0
+  bodyHeight: 2.5999994

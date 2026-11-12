@@ -322,6 +322,13 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 172. **The Seeder doesn't attack Flood, Titans, shielded or already-seeded units at all** (it only shoots what its seed can take). Change that?
 173. **A counter test fails, from before tonight:** the Hunter Captain, the Flood Abomination's listed counter, beats it only 70% with the game's real rules (the test wants 90%; the counter web's own measure still says 100%). Neither unit changed tonight; it likely came with the Captain's beam (D91) or the 30 m noticing (D108). Find a new listed counter, or look at the matchup?
 
+## The soldiers' animations (D129)
+
+174. **Spartan Heavy Weapons** carries its weapon on the shoulder like the Spartan (it holds the rocket launcher model). Or should it walk like the Fireteam?
+175. **The Grenadier and the Sniper** walk like the Fireteam: weapon low in front, shouldered to fire. Or on the shoulder like the Spartan?
+176. **On the shoulder** means resting on it pointing ahead and a little up, the hand on the grip, the barrel's back behind the shoulder. Would you rather the barrel pointed back over the shoulder?
+177. **The Elite holds its plasma rifle in the right hand** now (it was in the left), so the arm that fires is the one held out. Left again?
+
 ## Things my test runs did to your PC
 
 - **Windows moving, and possibly music:** while the Screen setting was being checked, a test window moved across all three of your screens and briefly went fullscreen on each. Some of those runs weren't silent, so menu music may have played for about 25 seconds at a time. Those checks have finished.

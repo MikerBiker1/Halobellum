@@ -16,10 +16,14 @@ MonoBehaviour:
   sourceModel: {fileID: 919132149155446097, guid: 4424365796ebe9948a5ae74cb23a1922, type: 3}
   albedo: {fileID: 2800000, guid: 5c4f72f69a7726c4ea483a525d741f89, type: 3}
   albedoFile: Spartan_CQB.png
-  movingClip: Run_and_Shoot
-  shootingClip: Walk_Forward_While_Shooting
-  deathClip: Dead
-  stillClip: walking_2
+  movingClip: Armature|Hip_Run
+  shootingClip: Armature|Shotgun_Fire
+  deathClip: Armature|Dead
+  stillClip: Armature|Hip_Stand
+  stillMoves: 0
+  meleeClip: 
+  meleeBlendShare: 0
+  chargeClip: 
   weaponName: Weapon_Shotgun
   weaponLength: 1
   weaponInForwardHand: 0
@@ -29,8 +33,13 @@ MonoBehaviour:
   shieldName: 
   shieldDiameter: 1.1
   shieldOffset: {x: 0, y: 0, z: 0}
+  muzzleBone: 
+  secondMuzzleBone: 
+  cutout: 0
   transitionSeconds: 0.2
   corpseSeconds: 14
+  shotMoment: 0.1
+  spawnMoment: -1
   bakedFps: 30
   mesh: {fileID: 4300000, guid: ff65c74a690a8d3478dfeadb6ff736ea, type: 2}
   material: {fileID: 2100000, guid: a301695551535604882a644a8493ebdf, type: 2}
@@ -42,16 +51,18 @@ MonoBehaviour:
     loops: 1
   - role: 2
     firstRow: 20
-    frames: 98
+    frames: 24
     loops: 1
   - role: 3
-    firstRow: 118
+    firstRow: 44
     frames: 89
     loops: 0
   - role: 0
-    firstRow: 207
+    firstRow: 133
     frames: 1
     loops: 0
-  muzzle: {x: -0.014755271, y: 2.0135214, z: 0.81981957}
+  muzzle: {x: 0.07275462, y: 1.4117961, z: 1.0892528}
   hasMuzzle: 1
-  bodyHeight: 2.3
+  secondMuzzle: {x: 0, y: 0, z: 0}
+  hasSecondMuzzle: 0
+  bodyHeight: 2.2999997

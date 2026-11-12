@@ -16,10 +16,14 @@ MonoBehaviour:
   sourceModel: {fileID: 919132149155446097, guid: 4424365796ebe9948a5ae74cb23a1922, type: 3}
   albedo: {fileID: 2800000, guid: 4028545fe8ca38c4f92e36d5824bba3d, type: 3}
   albedoFile: Spartan.png
-  movingClip: Run_and_Shoot
-  shootingClip: Walk_Forward_While_Shooting
-  deathClip: Dead
-  stillClip: walking_2
+  movingClip: Armature|Carry_Walk
+  shootingClip: Armature|Laser_Fire
+  deathClip: Armature|Dead
+  stillClip: Armature|Carry_Stand
+  stillMoves: 0
+  meleeClip: 
+  meleeBlendShare: 0
+  chargeClip: 
   weaponName: Weapon_SpartanLaser
   weaponLength: 1.4
   weaponInForwardHand: 0
@@ -29,8 +33,13 @@ MonoBehaviour:
   shieldName: 
   shieldDiameter: 1.1
   shieldOffset: {x: 0, y: 0, z: 0}
+  muzzleBone: 
+  secondMuzzleBone: 
+  cutout: 0
   transitionSeconds: 0.2
   corpseSeconds: 14
+  shotMoment: 0.1
+  spawnMoment: -1
   bakedFps: 30
   mesh: {fileID: 4300000, guid: dc5566ed367de3b48b102f334b301f39, type: 2}
   material: {fileID: 2100000, guid: 6635b92b0757a1944998c8fbcffefaf1, type: 2}
@@ -38,20 +47,22 @@ MonoBehaviour:
   clips:
   - role: 1
     firstRow: 0
-    frames: 20
+    frames: 28
     loops: 1
   - role: 2
-    firstRow: 20
-    frames: 98
+    firstRow: 28
+    frames: 105
     loops: 1
   - role: 3
-    firstRow: 118
+    firstRow: 133
     frames: 89
     loops: 0
   - role: 0
-    firstRow: 207
+    firstRow: 222
     frames: 1
     loops: 0
-  muzzle: {x: 0.04142957, y: 2.1084566, z: 0.7185989}
+  muzzle: {x: 0.10954113, y: 2.0542116, z: 0.8887137}
   hasMuzzle: 1
-  bodyHeight: 2.3
+  secondMuzzle: {x: 0, y: 0, z: 0}
+  hasSecondMuzzle: 0
+  bodyHeight: 2.2999997
