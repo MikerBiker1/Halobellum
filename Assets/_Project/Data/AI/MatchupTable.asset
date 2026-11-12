@@ -1354,7 +1354,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Hornet
     defender: Spartan CQB
-    winRate: 1
+    winRate: 0.3
   - attacker: Hornet
     defender: Spartan Fireteam
     winRate: 0
@@ -1558,7 +1558,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Archer Missile Pod
     defender: Spartan CQB
-    winRate: 0
+    winRate: 0.2
   - attacker: Archer Missile Pod
     defender: Spartan Fireteam
     winRate: 1
@@ -2986,7 +2986,7 @@ MonoBehaviour:
     winRate: 0.9
   - attacker: 'Jackal (Beam Rifle)'
     defender: Spartan CQB
-    winRate: 0
+    winRate: 0.1
   - attacker: 'Jackal (Beam Rifle)'
     defender: Spartan Fireteam
     winRate: 1
@@ -3394,7 +3394,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Ghost
     defender: Spartan CQB
-    winRate: 0.7
+    winRate: 1
   - attacker: Ghost
     defender: Spartan Fireteam
     winRate: 0
@@ -6862,7 +6862,7 @@ MonoBehaviour:
     winRate: 0.3
   - attacker: Infected Pelican
     defender: Spartan CQB
-    winRate: 0
+    winRate: 1
   - attacker: Infected Pelican
     defender: Spartan Fireteam
     winRate: 1
@@ -7990,10 +7990,10 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan CQB
     defender: Hornet
-    winRate: 0
+    winRate: 0.7
   - attacker: Spartan CQB
     defender: Archer Missile Pod
-    winRate: 1
+    winRate: 0.8
   - attacker: Spartan CQB
     defender: Pelican
     winRate: 1
@@ -8014,13 +8014,13 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan CQB
     defender: 'Jackal (Beam Rifle)'
-    winRate: 1
+    winRate: 0.9
   - attacker: Spartan CQB
     defender: 'Jackal (Shield)'
     winRate: 0
   - attacker: Spartan CQB
     defender: Ghost
-    winRate: 0.3
+    winRate: 0
   - attacker: Spartan CQB
     defender: Elite
     winRate: 0
@@ -8071,7 +8071,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan CQB
     defender: Infected Pelican
-    winRate: 1
+    winRate: 0
   - attacker: Spartan CQB
     defender: Infected Phantom
     winRate: 0
@@ -8098,7 +8098,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan CQB
     defender: Rhino
-    winRate: 0.2
+    winRate: 0.1
   - attacker: Spartan CQB
     defender: Grizzly
     winRate: 0
@@ -8107,10 +8107,10 @@ MonoBehaviour:
     winRate: 1
   - attacker: Spartan CQB
     defender: Longsword
-    winRate: 0.9
+    winRate: 1
   - attacker: Spartan CQB
     defender: Vulture
-    winRate: 0.4
+    winRate: 0
   - attacker: Spartan CQB
     defender: Condor Gunship
     winRate: 1
@@ -8119,7 +8119,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Spartan CQB
     defender: Brute Grenadier
-    winRate: 1
+    winRate: 0.3
   - attacker: Spartan CQB
     defender: Marauder
     winRate: 0
@@ -8905,7 +8905,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Rhino
     defender: Spartan CQB
-    winRate: 0.8
+    winRate: 0.9
   - attacker: Rhino
     defender: Spartan Fireteam
     winRate: 1
@@ -9517,7 +9517,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Longsword
     defender: Spartan CQB
-    winRate: 0.1
+    winRate: 0
   - attacker: Longsword
     defender: Spartan Fireteam
     winRate: 1
@@ -9721,7 +9721,7 @@ MonoBehaviour:
     winRate: 1
   - attacker: Vulture
     defender: Spartan CQB
-    winRate: 0.6
+    winRate: 1
   - attacker: Vulture
     defender: Spartan Fireteam
     winRate: 0
@@ -10333,7 +10333,7 @@ MonoBehaviour:
     winRate: 0
   - attacker: Brute Grenadier
     defender: Spartan CQB
-    winRate: 0
+    winRate: 0.7
   - attacker: Brute Grenadier
     defender: Spartan Fireteam
     winRate: 0

@@ -8,6 +8,9 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.393.2 · 2026-11-11
+- **The AI** knows the Spartan CQB has no leap: its counter numbers were measured again (it now beats 20 of 68 units one on one, against 21). (D130)
+
 ## 0.393.1 · 2026-11-11
 - **Spartan CQB:** no more thruster leap. It runs up to its shotgun's range and fires. (D130)
 

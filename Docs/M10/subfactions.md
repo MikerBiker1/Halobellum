@@ -41,13 +41,13 @@ What already existed and got new uses: leaps (Spartan CQB until D130, Juggernaut
 | Spartan Sniper | Single-target DPS | 3 | 200 | 1 | 400 | 650 | Unarmored | 200 | 1.75 | SRS99 Sniper Rifle (200 per 3 s, Ballistic, anti-armor, 42 m) | 35 of 68, 52% | Marine 100%, Warthog 100% |
 | Spartan Heavy Weapons | Tank | 3 | 225 | 1 | 450 | 2400 | Unarmored | 250 | 1.3 | M247H Chaingun (14 per 0.12 s, Ballistic, 15 m); Hydra Rocket Pod (80 per 3.5 s, Explosive, 20 m, splash 1.5 m) | 50 of 68, 72% | Combat Form 100%, Hunter Captain 100% |
 | Spartan Grenadier | Chaff clear | 3 | 200 | 1 | 400 | 1000 | Unarmored | 300 | 1.75 | M41 Rocket Launcher (62 per 1.5 s, Explosive, 19 m, splash 3.2 m) | 23 of 68, 35% | Scorpion 100%, Hunter Pair 100% |
-| Spartan CQB | Flanker | 3 | 200 | 1 | 400 | 1200 | Unarmored | 450 | 3.5 | M45 Shotgun (80 per 0.8 s, Ballistic, 6 m, cone 25 deg) | 21 of 68, 33% | Flamethrower Trooper 100%, Scorpion 100% |
+| Spartan CQB | Flanker | 3 | 200 | 1 | 400 | 1200 | Unarmored | 450 | 3.5 | M45 Shotgun (80 per 0.8 s, Ballistic, 6 m, cone 25 deg) | 20 of 68, 30% | Flamethrower Trooper 100%, Scorpion 100% |
 | Spartan Fireteam | Single-target DPS | 3 | 250 | 3 | 500 | 500 | Unarmored | 140 | 1.75 | BR85 Battle Rifle (22 per 0.6 s, Ballistic, 16 m); M41 Rocket Launcher (110 per 5 s, Explosive, anti-armor, 18 m) | 27 of 68, 40% | Marine 100%, Grunt 100% |
 
 - **Spartan Sniper.** Kills one armored target at a time from very far away; has no answer to a crowd or to anything that reaches it.
 - **Spartan Heavy Weapons.** A walking wall with a chaingun: mows down infantry, does little to armor. Its Unarmored body makes it weak to anti-infantry weapons once the shield is down.
 - **Spartan Grenadier.** Rockets in a straight line: strong against crowds, weak against tanks and flankers.
-- **Spartan CQB.** Quick on its feet with a shotgun: it runs up to its short range and fires. Very strong against artillery and DPS once there. Its thruster leap was removed in D130.
+- **Spartan CQB.** Quick on its feet with a shotgun: it runs up to its short range and fires. Very strong against artillery and DPS once there.
 - **Spartan Fireteam.** Three Spartans: an all-round squad with rifles and a rocket each. No single strength, no single weakness.
 
 ### Armored Division
@@ -70,7 +70,7 @@ What already existed and got new uses: leaps (Spartan CQB until D130, Juggernaut
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Sparrowhawk | Aerial | 2 | 50 | 1 | 250 | 480 | Light | 0 | 4 | Heavy Autocannon (13 per 0.3 s, Ballistic, anti-armor, 14 m) | 32 of 68, 48% | Wolverine 100%, Vampire 100% |
 | Longsword | Aerial | 2 | 50 | 1 | 300 | 600 | Light | 0 | 5 | Carpet Bombs (135 per 2.5 s, Explosive, 5 m, splash 5 m) | 34 of 68, 50% | Wolverine 100%, Vampire 100% |
-| Vulture | Aerial | 3 | 200 | 1 | 400 | 650 | Heavy | 0 | 2.5 | Missile Barrage (44 per 3 s, Explosive, 22 m, splash 3 m); Chin Gun (10 per 0.2 s, Ballistic, 14 m) | 31 of 68, 45% | Wolverine 100%, Vampire 100% |
+| Vulture | Aerial | 3 | 200 | 1 | 400 | 650 | Heavy | 0 | 2.5 | Missile Barrage (44 per 3 s, Explosive, 22 m, splash 3 m); Chin Gun (10 per 0.2 s, Ballistic, 14 m) | 31 of 68, 46% | Wolverine 100%, Vampire 100% |
 | Condor Gunship | Aerial | 3 | 250 | 1 | 500 | 1150 | Light | 0 | 3.25 | Twin Autocannons (20 per 0.25 s, Ballistic, 16 m); Light Spartan Laser (nose) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (front right) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (front left) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (rear right) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (rear left) (20 per 4 s, Energy, anti-armor, 20 m) | 34 of 68, 51% | Wolverine 100%, Vampire 100% |
 
 - **Sparrowhawk.** Gunship that hunts vehicles. Its gun is poor against infantry.
@@ -83,7 +83,7 @@ What already existed and got new uses: leaps (Spartan CQB until D130, Juggernaut
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Armor | Shield | Speed | Weapons | Wins, average | Best counters |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Chopper | Flanker | 1 | 0 | 2 | 200 | 300 | Light | 0 | 5.5 | Ramming Blades (60 per 1 s, Melee, 1.5 m, splash 1.5 m); Chopper Autocannons (10 per 0.25 s, Ballistic, 9 m) | 23 of 68, 35% | Flamethrower Trooper 100%, Scorpion 100% |
-| Brute Grenadier | Chaff clear | 1 | 0 | 4 | 150 | 150 | Unarmored | 0 | 1.5 | Spike Grenade Launcher (31 per 2 s, Explosive, 13 m, splash 2.8 m, lobbed); Brute Shot Blade (35 per 1.5 s, Melee, 2 m) | 25 of 68, 38% | Scorpion 100%, Mantis 100% |
+| Brute Grenadier | Chaff clear | 1 | 0 | 4 | 150 | 150 | Unarmored | 0 | 1.5 | Spike Grenade Launcher (31 per 2 s, Explosive, 13 m, splash 2.8 m, lobbed); Brute Shot Blade (35 per 1.5 s, Melee, 2 m) | 26 of 68, 39% | Scorpion 100%, Mantis 100% |
 | Marauder | Tank | 2 | 50 | 1 | 300 | 1250 | Heavy | 0 | 1.5 | Plasma Cannon (80 per 2.2 s, Energy, 15 m, splash 2 m); Spike Turret (8 per 0.3 s, Ballistic, 12 m) | 31 of 68, 46% | Gauss Warthog 100%, Spartan 100% |
 | Reaver | Anti-air | 2 | 50 | 1 | 300 | 700 | Light | 0 | 3 | Spike Rockets (24 per 0.5 s, Explosive, 20 m, x3 vs air) | 14 of 68, 21% | Marine 100%, Flamethrower Trooper 100% |
 
