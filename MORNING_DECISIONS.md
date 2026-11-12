@@ -329,6 +329,22 @@ A second round fixed what the reviewers had noted as lesser, and each area got a
 176. *(No change asked, so kept as it is.)* **On the shoulder** means resting on it pointing ahead and a little up, the hand on the grip, the barrel's back behind the shoulder. Would you rather the barrel pointed back over the shoulder?
 177. *(Answered: the Elite's animation is great, right hand, as it is.)* **The Elite holds its plasma rifle in the right hand** now (it was in the left), so the arm that fires is the one held out. Left again?
 
+## Unit balance (D137)
+
+The questions at the end of `Docs/Balance/unit_intent.md`, which has the details. Slot test values are in points of margin: 0 is as good as the army's average credit, about ±4 is chance.
+
+178. **The band:** every unit within about ±5 points in the slot test, except where its row in the intent sheet says otherwise (transports, anti-air, units you want stronger)?
+179. **Chaff and tanks:** judge chaff by the fire it takes, and tanks by damage plus fire taken? Then the Marine is too strong, as you said, and Cannon Fodder too weak.
+180. **Carries:** does what you said of the Pure Form Ranged go for other fragile, long-range units (Spartan Sniper, Rhino, Jackal (Beam Rifle), Infested Wraith)?
+181. **Splash units:** the Fuel Rod Grunt, Brute Grenadier and Flamethrower Trooper top the damage list. In the slot test the Fuel Rod Grunt is +11, the Brute Grenadier +6, the Flamethrower −12. Judge them by the slot test?
+182. **Flankers:** most measure −15 to −22 in the slot test. Bring them up to fair, or keep them as they are (item 52)?
+183. **Transports:** the Pelican and the Covenant Phantom are at a fifth of their worth, drops counted (slot −21 and −25). Hold them to fair, or accept units the AI uses badly?
+184. **Zealot:** is the impact of 1.5 you asked for in D65 still the target? It is 0.69 now, slot −1.
+185. **Hunter Captain:** 500 credits or 450 (the game says 450)? And if it should lose to a Titan one on one, what should counter the Abomination?
+186. **Spartan and Condor Gunship:** close the gap (slot +13 against −12) from both sides, or mostly from one?
+187. **Titans:** the AI buys one in 89% to 94% of matches. Is a Titan meant to be in nearly every army?
+188. **Effects the ratio can't see** (auras, the Gremlin's slow, the Goliath's base damage): leave them to the slot test?
+
 ## Things my test runs did to your PC
 
 - **Windows moving, and possibly music:** while the Screen setting was being checked, a test window moved across all three of your screens and briefly went fullscreen on each. Some of those runs weren't silent, so menu music may have played for about 25 seconds at a time. Those checks have finished.

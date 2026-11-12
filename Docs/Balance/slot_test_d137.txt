@@ -1,0 +1,228 @@
+Agreement of the first two runs over 130 units: r = 0.93, average difference 3.3 points of margin.
+margin = points of the army's base damage left over the baseline (0 = worth the army's average credit); ± = 95% interval;
+win = the same in points of win rate; lvl = the level its slot came at; in = share of the source armies that had it.
+
+== Aerospace Command
+unit                     cost  lvl  margin    ±    win    in
+Marine                    100  1.9   +13.8  4.5  +11.7   94%
+Spartan                   500  1.9   +12.9  4.5  +12.7   59%
+Wolverine                 300  1.9    +4.7  4.1   +2.9   17%
+Scorpion                  300  1.9    +4.0  4.1   +3.6   77%
+Gauss Warthog             250  2.0    +2.5  4.4   +4.1    6%
+Elephant                  800  1.3    +2.3  3.6   +0.9   92%
+Mantis                    500  1.4    -3.7  4.1   -2.2   34%
+Archer Missile Pod        300  1.9   -10.9  3.6  -14.1   16%
+Flamethrower Trooper      150  2.3   -10.9  4.0   -8.1   84%
+Condor Gunship            500  1.7   -11.8  4.2  -10.6   62%
+Warthog                   200  1.8   -16.8  3.5  -12.8   74%
+Sparrowhawk               250  1.8   -17.0  3.9  -11.8   39%
+Longsword                 300  1.8   -19.4  3.5  -15.2   76%
+Pelican                   300  1.3   -19.5  4.0  -16.2    4%
+Hornet                    300  1.6   -19.6  3.6  -14.7   23%
+Vulture                   400  1.4   -22.6  3.9  -18.5   74%
+
+== Armored Division
+unit                     cost  lvl  margin    ±    win    in
+Spartan                   500  1.8   +14.9  4.0  +14.5   59%
+Cobra                     300  2.2    +9.7  4.0   +9.2   35%
+Marine                    100  1.9    +8.3  4.2   +8.1   94%
+Grizzly                   500  1.7    +1.7  3.6   +3.8   88%
+Gauss Warthog             250  1.9    +1.1  3.8   +1.5    6%
+Elephant                  800  1.2    -1.6  3.4   -1.0   93%
+Scorpion                  300  1.9    -2.0  3.4   +0.0   87%
+Wolverine                 300  1.9    -2.0  3.8   -3.5   20%
+Rhino                     400  2.0    -3.6  3.6   -4.7   27%
+Flamethrower Trooper      150  2.3   -12.7  3.6   -8.9   78%
+Hornet                    300  1.9   -13.6  3.7  -11.3   47%
+Mantis                    500  1.4   -14.3  3.6  -10.0   29%
+Gremlin                   200  1.8   -16.7  3.4  -13.3   62%
+Warthog                   200  1.6   -19.1  3.3  -14.5   45%
+Pelican                   300  1.3   -19.9  3.8  -16.4   38%
+Archer Missile Pod        300  1.8   -21.2  3.6  -22.3   13%
+
+== Banished
+unit                     cost  lvl  margin    ±    win    in
+Fuel Rod Grunt            150  2.5   +10.8  3.5  +11.6   58%
+Hunter Pair               450  1.8    +9.7  3.7  +10.2   80%
+Grunt                     100  1.7    +6.5  4.1   +7.2   64%
+Jackal (Beam Rifle)       175  2.2    +6.0  3.8   +8.8   40%
+Brute Grenadier           150  2.5    +5.7  3.6   +6.3   80%
+Scarab                    800  1.4    -0.5  3.5   +0.2   94%
+Zealot                    400  1.7    -1.5  4.0   -0.8   56%
+Marauder                  300  1.9    -6.1  3.4   -4.7   83%
+Banshee                   300  1.8    -9.8  3.4   -9.8   64%
+Jackal (Shield)           150  1.4   -10.4  3.8   -7.2   44%
+Reaver                    300  1.6   -10.7  3.6  -10.5   18%
+Elite                     300  1.6   -13.0  3.5  -12.2   35%
+Wraith                    300  1.6   -14.6  3.8  -15.2   24%
+Vampire                   300  1.8   -14.7  3.8  -14.6   34%
+Chopper                   200  2.0   -20.4  3.6  -16.1   40%
+Ghost                     200  1.7   -23.8  3.5  -20.9   26%
+Covenant Phantom          300  1.6   -25.6  3.8  -21.4   16%
+
+== Covenant-based
+unit                     cost  lvl  margin    ±    win    in
+Flood Abomination         800  1.3   +12.4  4.7   +9.4   84%
+Spawner                   400  1.4   +11.0  5.5   +5.5   93%
+Pure Form Tank            400  1.6    +3.9  4.8   +3.3   34%
+Swarm Form                250  1.5    -5.4  5.1   -1.9   26%
+Infested Banshee          250  2.1    -8.2  4.2   -3.8   92%
+Seeder                    475  1.8    -9.1  4.6   -6.9   44%
+Carrier Form              150  1.4   -10.6  4.3   -5.5   96%
+Pure Form Ranged          250  2.2   -12.1  4.3   -7.1   20%
+Infection Forms           100  1.6   -12.2  4.7   -8.1   65%
+Infested Wraith           250  2.3   -13.9  4.1  -10.2   68%
+Infected Pelican          400  1.6   -14.2  4.7   -8.3    0%
+Infested Ghost            200  2.0   -16.2  4.1  -10.2   81%
+Combat Form               200  1.5   -16.4  4.4   -9.8   17%
+Infected Phantom          400  1.4   -18.9  4.2  -13.2   70%
+Infested Elite            250  1.6   -22.6  4.2  -15.7   26%
+Stalker Form              250  1.2   -25.4  4.2  -17.9    0%
+
+== Lekgolo Colony
+unit                     cost  lvl  margin    ±    win    in
+Grunt                     100  1.8   +10.8  3.9   +9.6   60%
+Fuel Rod Grunt            150  3.1    +9.8  3.5   +9.2   95%
+Hunter Pair               450  1.7    +8.5  3.6   +7.4   69%
+Jackal (Beam Rifle)       175  2.2    +5.9  3.5   +7.7   46%
+Hunter Captain            450  1.6    +0.6  3.6   -1.9   54%
+Scarab                    800  1.4    -1.9  3.5   -3.5   89%
+Zealot                    400  1.7    -3.5  3.5   -4.6   50%
+Skitterer                 125  1.7    -4.0  3.3   -3.0   65%
+Elite                     300  1.6    -4.6  3.4   -2.9   43%
+Goliath                   500  1.3    -7.6  3.2   -7.0   37%
+Vampire                   300  1.9    -9.6  3.6  -10.2   34%
+Banshee                   300  1.8   -12.2  3.4  -11.4   60%
+Jackal (Shield)           150  1.4   -12.2  3.6  -10.3   48%
+Wraith                    300  1.9   -15.9  3.3  -15.0   74%
+Ghost                     200  1.6   -16.8  3.5  -14.6   30%
+Covenant Phantom          300  1.6   -20.9  3.6  -19.6   12%
+
+== Noble
+unit                     cost  lvl  margin    ±    win    in
+Spartan                   500  1.9   +11.5  3.9   +9.4   35%
+Gauss Warthog             250  2.1    +9.2  4.1   +6.0   14%
+Spartan Heavy Weapons     400  1.9    +7.7  3.9   +5.7   96%
+Scorpion                  300  1.8    +5.9  3.8   +4.8   85%
+Marine                    100  1.7    +2.7  4.4   +1.7   94%
+Spartan Grenadier         400  1.6    -0.3  3.7   -1.5   13%
+Spartan Sniper            400  2.0    -0.8  4.0   -2.0   74%
+Elephant                  800  1.2    -4.3  3.6   -5.8   96%
+Wolverine                 300  1.6    -5.2  3.6   -7.1    9%
+Spartan CQB               300  1.5   -10.7  3.5   -9.4   24%
+Spartan Fireteam          500  1.6   -12.7  4.0  -12.2   11%
+Mantis                    500  1.4   -13.3  3.8  -12.5   29%
+Flamethrower Trooper      150  2.3   -13.7  3.6  -12.2   84%
+Archer Missile Pod        300  1.8   -15.2  4.0  -20.4   10%
+Hornet                    300  1.8   -15.3  3.9  -14.4   34%
+Warthog                   200  1.7   -23.1  3.5  -19.6   75%
+Pelican                   300  1.3   -23.5  3.9  -21.2   26%
+
+== UNSC-based
+unit                     cost  lvl  margin    ±    win    in
+Flood Abomination         800  1.3    +9.3  3.6   +5.0   91%
+Pure Form Ranged          250  2.8    +7.3  3.7   +3.3   28%
+Infested Scorpion         275  2.0    -2.4  3.9   -3.1   37%
+Infested Hornet           275  1.9    -3.4  3.5   -2.0   73%
+Seeder                    475  1.9    -3.5  4.0   -3.8   49%
+Pure Form Tank            400  1.5    -5.6  3.6   -5.5   61%
+Infested Marine           100  1.9    -5.7  4.0   -3.4   98%
+Juggernaut                400  1.6    -5.9  3.7   -5.2   26%
+Swarm Form                250  1.8    -7.4  4.0   -4.8   46%
+Infected Phantom          400  1.6    -8.1  3.9   -6.8   89%
+Infected Pelican          400  1.5   -10.8  4.1   -7.9    0%
+Carrier Form              150  1.7   -12.3  3.7   -9.2   74%
+Infection Forms           100  2.2   -13.6  4.1   -9.4   42%
+Combat Form               200  1.5   -14.6  3.9   -9.8   39%
+Infested Warthog          200  1.9   -14.8  3.5   -9.8   64%
+Stalker Form              250  1.2   -18.9  3.4  -14.3    0%
+
+== Unggoy Rebellion
+unit                     cost  lvl  margin    ±    win    in
+Fuel Rod Grunt            150  3.0   +12.8  4.0  +13.2   80%
+Grunt                     100  1.7   +12.4  4.3  +10.2   51%
+Hunter Pair               450  1.6   +11.8  3.9   +9.4   52%
+Heavy Grunts              200  1.9    +7.2  3.9   +5.2   76%
+Jackal (Beam Rifle)       175  2.2    +1.7  3.8   +3.9   37%
+Zealot                    400  1.6    +0.8  4.2   +0.2   61%
+Cannon Fodder             100  1.5    +0.7  4.3   -0.4   42%
+Grunt Goblin              400  1.8    -0.1  3.6   -0.7   96%
+Scarab                    800  1.3    -5.5  3.9   -6.4   92%
+Jackal (Shield)           150  1.4   -12.2  4.0  -13.6   39%
+Elite                     300  1.8   -12.3  3.9  -12.4   20%
+Banshee                   300  1.9   -14.8  3.8  -14.3   59%
+Vampire                   300  1.6   -23.4  3.8  -22.4   19%
+Ghost                     200  1.6   -24.4  3.6  -22.9   26%
+Wraith                    300  2.0   -24.8  4.0  -25.7   66%
+Covenant Phantom          300  1.5   -27.5  3.7  -25.6   11%
+
+== Every unit across the sub-factions that field it (margin)
+Spartan                   +13.1   Aerospace Command +13, Armored Division +15, Noble +12
+Fuel Rod Grunt            +11.1   Banished +11, Lekgolo Colony +10, Unggoy Rebellion +13
+Spawner                   +11.0   Covenant-based +11
+Flood Abomination         +10.9   Covenant-based +12, UNSC-based +9
+Hunter Pair               +10.0   Banished +10, Lekgolo Colony +8, Unggoy Rebellion +12
+Grunt                      +9.9   Banished +7, Lekgolo Colony +11, Unggoy Rebellion +12
+Cobra                      +9.7   Armored Division +10
+Marine                     +8.3   Aerospace Command +14, Armored Division +8, Noble +3
+Spartan Heavy Weapons      +7.7   Noble +8
+Heavy Grunts               +7.2   Unggoy Rebellion +7
+Brute Grenadier            +5.7   Banished +6
+Jackal (Beam Rifle)        +4.5   Banished +6, Lekgolo Colony +6, Unggoy Rebellion +2
+Gauss Warthog              +4.3   Aerospace Command +2, Armored Division +1, Noble +9
+Scorpion                   +2.6   Aerospace Command +4, Armored Division -2, Noble +6
+Grizzly                    +1.7   Armored Division +2
+Cannon Fodder              +0.7   Unggoy Rebellion +1
+Hunter Captain             +0.6   Lekgolo Colony +1
+Grunt Goblin               -0.1   Unggoy Rebellion -0
+Spartan Grenadier          -0.3   Noble -0
+Spartan Sniper             -0.8   Noble -1
+Wolverine                  -0.8   Aerospace Command +5, Armored Division -2, Noble -5
+Pure Form Tank             -0.9   Covenant-based +4, UNSC-based -6
+Elephant                   -1.2   Aerospace Command +2, Armored Division -2, Noble -4
+Zealot                     -1.4   Banished -1, Lekgolo Colony -4, Unggoy Rebellion +1
+Pure Form Ranged           -2.4   Covenant-based -12, UNSC-based +7
+Infested Scorpion          -2.4   UNSC-based -2
+Scarab                     -2.6   Banished -0, Lekgolo Colony -2, Unggoy Rebellion -6
+Infested Hornet            -3.4   UNSC-based -3
+Rhino                      -3.6   Armored Division -4
+Skitterer                  -4.0   Lekgolo Colony -4
+Infested Marine            -5.7   UNSC-based -6
+Juggernaut                 -5.9   UNSC-based -6
+Marauder                   -6.1   Banished -6
+Seeder                     -6.3   Covenant-based -9, UNSC-based -4
+Swarm Form                 -6.4   Covenant-based -5, UNSC-based -7
+Goliath                    -7.6   Lekgolo Colony -8
+Infested Banshee           -8.2   Covenant-based -8
+Elite                     -10.0   Banished -13, Lekgolo Colony -5, Unggoy Rebellion -12
+Mantis                    -10.5   Aerospace Command -4, Armored Division -14, Noble -13
+Reaver                    -10.7   Banished -11
+Spartan CQB               -10.7   Noble -11
+Carrier Form              -11.4   Covenant-based -11, UNSC-based -12
+Jackal (Shield)           -11.6   Banished -10, Lekgolo Colony -12, Unggoy Rebellion -12
+Condor Gunship            -11.8   Aerospace Command -12
+Banshee                   -12.3   Banished -10, Lekgolo Colony -12, Unggoy Rebellion -15
+Flamethrower Trooper      -12.4   Aerospace Command -11, Armored Division -13, Noble -14
+Infected Pelican          -12.5   Covenant-based -14, UNSC-based -11
+Spartan Fireteam          -12.7   Noble -13
+Infection Forms           -12.9   Covenant-based -12, UNSC-based -14
+Infected Phantom          -13.5   Covenant-based -19, UNSC-based -8
+Infested Wraith           -13.9   Covenant-based -14
+Infested Warthog          -14.8   UNSC-based -15
+Combat Form               -15.5   Covenant-based -16, UNSC-based -15
+Archer Missile Pod        -15.8   Aerospace Command -11, Armored Division -21, Noble -15
+Vampire                   -15.9   Banished -15, Lekgolo Colony -10, Unggoy Rebellion -23
+Hornet                    -16.2   Aerospace Command -20, Armored Division -14, Noble -15
+Infested Ghost            -16.2   Covenant-based -16
+Gremlin                   -16.7   Armored Division -17
+Sparrowhawk               -17.0   Aerospace Command -17
+Wraith                    -18.4   Banished -15, Lekgolo Colony -16, Unggoy Rebellion -25
+Longsword                 -19.4   Aerospace Command -19
+Warthog                   -19.7   Aerospace Command -17, Armored Division -19, Noble -23
+Chopper                   -20.4   Banished -20
+Pelican                   -21.0   Aerospace Command -20, Armored Division -20, Noble -23
+Ghost                     -21.7   Banished -24, Lekgolo Colony -17, Unggoy Rebellion -24
+Stalker Form              -22.2   Covenant-based -25, UNSC-based -19
+Vulture                   -22.6   Aerospace Command -23
+Infested Elite            -22.6   Covenant-based -23
+Covenant Phantom          -24.7   Banished -26, Lekgolo Colony -21, Unggoy Rebellion -28

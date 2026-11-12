@@ -2,6 +2,12 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## Balance by unit: the intent sheet and the army slot test (D137)
+- **Intent sheet** (`Docs/Balance/unit_intent.md`): all 69 units, each with its job, what it should beat and lose to, its target for its price, and what it measures now. Your words from today are in it. Its 11 questions are also items 178–188 of `MORNING_DECISIONS.md`.
+- **Army slot test** (`Docs/Balance/unit_balance.md`): what a slot of a unit adds to the armies the AI really builds, at equal credits and at the levels units reach. All eight sub-factions in about 2.5 minutes on 8 threads, one in 20 seconds. Two runs on different armies agree at r = 0.93.
+- **First results:** the Spartan +13 in all three UNSC armies, the Condor −12; the Marine +14 in Aerospace, +8 in Armored, +3 in Noble; the Vulture −23; the Combat Form −16 and −15; the Pure Form Ranged +7 in UNSC-based Flood, −12 in Covenant-based. 19 units are within ±5, 11 above, 39 below.
+- **Not done:** no unit is changed. The balance pass waits for your answers.
+
 ## XP: the bar fills in battle, created units earn for their maker (D136)
 - **Live bar:** select a squad during a battle and its XP bar rises as it kills (5 times a second). When it fills, the window says it can level up after the battle.
 - **Created units:** kills by the bodies a squad drops, releases or raises now earn XP for that squad: Carrier Forms for their Infection Forms, the Spawner and the Abomination for their broods, Infected Phantoms for their Combat Forms, a Seeder for the hosts it took, the Infected Pelican for the forms of its crash. Squads a spell brings still earn nothing.

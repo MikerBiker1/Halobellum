@@ -198,6 +198,8 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] The Infected Pelican tougher and harder-hitting; the Abomination's counter test at 70% (D134)
 - [x] The Spartan Grenadier carries its rocket launcher on the shoulder, like the Spartan (D135)
 - [x] XP: the bar fills during the battle; created units earn XP for their maker (D136)
+- [x] Balance by unit: the unit intent sheet and the army slot test (D137)
+- [ ] The unit-by-unit balance pass, after the owner's answers to the intent sheet (D137)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

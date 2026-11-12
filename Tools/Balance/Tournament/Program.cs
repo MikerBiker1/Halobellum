@@ -16,6 +16,7 @@
 //   rules|AiCarrierPlacement=FlankFarCorners    an enum goes by its name
 //   without|Armored Division|Pelican            a sub-faction can't have this base unit
 // (# starts a comment.)
+// --slot results.jsonl runs the army slot test instead of matches (D137, see SlotTest.cs): what each unit is worth inside the real armies of that results file.
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -71,6 +72,15 @@ static class Program
             // The rules are read without their initial values, so an older export would quietly play with these at 0.
             if (rules.AiSkirmishFlankBonus == 0f && rules.AiSkirmishUnlockMargin == 0f) throw new InvalidOperationException($"{dataPath} is older than Unlock Skirmish: export it again to a new file.");
             factions = new List<FactionInfo> { SkirmishField(factions) };
+        }
+        string slotSource = Option(args, "--slot");
+        if (slotSource != null)
+        {
+            // The army slot test (D137, SlotTest.cs): battles only, so the matrix argument is not read.
+            string slotOnly = Option(args, "--only");
+            return SlotTest.Run(slotSource, resultsPath, factions, rules, combat, threads, int.Parse(Option(args, "--pairs") ?? "210"), int.Parse(Option(args, "--budget") ?? "4000"),
+                float.Parse(Option(args, "--slot-share") ?? "0.2", CultureInfo.InvariantCulture), (Option(args, "--levels") ?? "real") != "one",
+                slotOnly != null ? new HashSet<string>(slotOnly.Split(',')) : null);
         }
         var wins = LoadMatrix(matrixPath);
 

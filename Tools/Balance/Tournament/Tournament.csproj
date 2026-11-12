@@ -15,5 +15,6 @@
     <Compile Include="../../../Assets/_Project/Scripts/Combat/**/*.cs" Exclude="../../../Assets/_Project/Scripts/Combat/Presentation/**/*.cs" />
     <Compile Include="../../../Assets/_Project/Scripts/Economy/**/*.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="SlotTest.cs" />
   </ItemGroup>
 </Project>

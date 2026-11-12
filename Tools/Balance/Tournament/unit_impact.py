@@ -5,7 +5,7 @@ tkn% = share of its side's damage taken, soak = tkn% / cr% (above 1: it draws an
 the damage aimed at it that armour, shields and defence arcs stopped, died% = share of its bodies dead at a battle's end,
 lvl = average level of its squads still owned at the match's end. From results with credited damage (D74 on), dmg% and ratio count
 what a unit's drops, spawns and the bodies it infected did as its own, and the units that only come that way are left out. Back-line units take little fire, so a low soak is not toughness. Mirrors are left out. Units that fight through bodies they make
-(Seeder, Carrier Form, Infected Phantom) or that block (Jackal with a shield) score low without being weak; dropped Marines count under Marine.
+(Seeder, Carrier Form, Infected Phantom) or that block (Jackal with a shield) score low without being weak; a carrier's numbers count what it drops (the Pelican's Marines count under the Pelican).
 """
 import collections, json, sys
 

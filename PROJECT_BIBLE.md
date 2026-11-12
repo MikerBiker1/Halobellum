@@ -263,7 +263,7 @@ The Flood win by spreading. They have a roster of their own, plus temporary infe
 | Swarm Form | Anti-air | 2 | 50 | 20 forms in 4 packs | 250 | 200 per pack | Flying packs, bonus damage against air from range; they bite ground units in melee, going for air first |
 | Pure Form Tank | Tank | 3 | 200 | 1 | 400 | 3200 | Heavy armor, splash slam |
 | Seeder | Single-target DPS | 3 | 200 | 2 | 475 | 800 | Flies; seeds enemies on the ground and in the air from range; a unit that dies seeded rises as the Flood's own version of it if a Flood roster has one (an Infested Banshee from a Banshee), otherwise it stays dead |
-| Infected Pelican | Aerial | 3 | 200 | 1 | 400 | 900 | One-shot crash dive (900 damage within 3.5 m) |
+| Infected Pelican | Aerial | 3 | 200 | 1 | 400 | 1350 | One-shot crash dive (1,200 damage within 3.5 m) |
 | Infected Phantom | Aerial | 3 | 200 | 1 | 400 | 1250 | Drops 5 Combat Forms after 8 seconds |
 | Flood Abomination | Titan | 4 | 350 | 1 | 800 | 10000 | Very tall and large; aura for nearby Flood, keeps releasing Infection Forms |
 
@@ -584,6 +584,7 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-12 | The Infected Pelican has 1,350 health and a 1,200 blast; every sub-faction 48% to 52% under Insane. The Hunter Captain, the only unit that beats the Flood Abomination at equal credits, is its listed counter at 70% | Per the project owner (D134) |
 | 2026-11-12 | The Spartan Grenadier walks with its rocket launcher on the shoulder, like the Spartan | Per the project owner (D135) |
 | 2026-11-12 | The XP bar fills during the battle; kills by the bodies a squad drops, releases or raises earn XP for that squad; a battle ends only once what a blast killed is dead | Per the project owner (D136) |
+| 2026-11-12 | Balance goes by unit: a unit intent sheet the owner decides (what each unit is for and how strong it should be for its price), and the army slot test, which measures what each unit adds to the armies the AI really builds | Per the project owner (D137) |
 
 ## 18. Assumptions to confirm
 
