@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d50c9e005dbc80ecacdbb7a00a0ff15, type: 3}
+  m_Name: Goliath
+  m_EditorClassIdentifier: 
+  modelFolder: GoliathAnimated
+  sourceModel: {fileID: 919132149155446097, guid: 4afb709caea9490497cd6cadba38e707, type: 3}
+  albedo: {fileID: 2800000, guid: 8f11dea0fcb34d5c955261de7e3c305e, type: 3}
+  albedoFile: 
+  movingClip: Rig|Walk
+  shootingClip: Rig|Slam
+  deathClip: Rig|Dead
+  stillClip: Rig|Idle
+  stillMoves: 0
+  stillLoops: 1
+  meleeClip: 
+  meleeBlendShare: 0
+  chargeClip: Rig|Charge
+  weaponName: 
+  weaponLength: 0.8
+  weaponInForwardHand: 0
+  weaponAlongForearm: 0
+  weaponGlows: 0
+  muzzleInRightHand: 0
+  muzzleAtFront: 0
+  shieldName: 
+  shieldDiameter: 1.1
+  shieldOffset: {x: 0, y: 0, z: 0}
+  muzzleBone: 
+  secondMuzzleBone: 
+  cutout: 0
+  transitionSeconds: 0.2
+  corpseSeconds: 14
+  shotMoment: 0.5
+  spawnMoment: -1
+  bakedFps: 30
+  mesh: {fileID: 4300000, guid: 5aaa21f41de3d2449993fdbf0b39a6d7, type: 2}
+  material: {fileID: 2100000, guid: 154deb77ddbb8584382efe7822f69bfe, type: 2}
+  glassMaterial: {fileID: 0}
+  clips:
+  - role: 1
+    firstRow: 0
+    frames: 48
+    loops: 1
+  - role: 2
+    firstRow: 48
+    frames: 60
+    loops: 1
+  - role: 3
+    firstRow: 108
+    frames: 75
+    loops: 0
+  - role: 5
+    firstRow: 183
+    frames: 18
+    loops: 1
+  - role: 0
+    firstRow: 201
+    frames: 90
+    loops: 1
+  muzzle: {x: 0, y: 0, z: 0}
+  hasMuzzle: 0
+  secondMuzzle: {x: 0, y: 0, z: 0}
+  hasSecondMuzzle: 0
+  bodyHeight: 5.999999

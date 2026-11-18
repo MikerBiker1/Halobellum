@@ -10,7 +10,8 @@
 //   - a texture holding every kept bone's matrix for every frame of every clip;
 //   - the clip table, and a material (cut out by its texture's alpha for a body with fronds, D90).
 // Moving and shooting clips play on the spot: the battle moves the unit, so any forward drift in the clip is
-// removed. The held standing frame is the moment of the still clip when the feet are closest together.
+// removed. The held standing frame is the moment of the still clip when the feet are closest together, unless the body loops its
+// still clip as an idle (stillLoops: the Goliath, D139).
 //   Menu: Halobellum > Art > Bake Animated Bodies
 //   Command line: -executeMethod Halobellum.EditorTools.AnimationBaker.BakeAllFromCommandLine (or BakeNamedFromCommandLine for the bodies
 //   named in HB_BODIES, comma separated, such as Spartan)
@@ -208,11 +209,16 @@ namespace Halobellum.EditorTools
                 if (!string.IsNullOrEmpty(body.chargeClip)) AddClip(BakedAnimation.Charge, Source(body.chargeClip), true, true);
 
                 // A body that never stands still plays its moving clip when it has nothing to do (the Seeder: the owner, 2026-11-07, D107):
-                // the same rows, looped. Otherwise the held frame: the moment of the still clip when the feet are closest together.
+                // the same rows, looped. One with an idle of its own plays it, looped, on the spot (the Goliath breathing and looking about:
+                // the owner's playtest of 2026-11-18, D139). Otherwise the held frame: the moment of the still clip when the feet are closest together.
                 if (body.stillMoves)
                 {
                     BakedClip moving = clips.First(c => c.role == BakedAnimation.Moving);
                     clips.Add(new BakedClip { role = BakedAnimation.Still, firstRow = moving.firstRow, frames = moving.frames, loops = true });
+                }
+                else if (body.stillLoops)
+                {
+                    AddClip(BakedAnimation.Still, Source(body.stillClip), true, true);
                 }
                 else
                 {

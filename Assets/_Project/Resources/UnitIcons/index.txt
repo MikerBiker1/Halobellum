@@ -44,7 +44,7 @@ Infested Marine	baked
 Infested Scorpion	model
 Infested Warthog	model
 Juggernaut	baked
-Goliath	model
+Goliath	baked
 Hunter Captain	baked
 Skitterer	model
 Spartan CQB	baked

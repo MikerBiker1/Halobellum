@@ -15,6 +15,8 @@
 // doesn't depend on how the render pipeline treats alpha. Then it is shrunk by 4 with premultiplied colours for clean edges.
 // Two things are there so that a picture still reads at the size of a shop row (about 40 pixels). A tall thin figure, like a
 // soldier, is framed from the waist up. A dark picture is brightened to a common level (Brighten).
+// A unit can be seen from another side, or framed closer, where the usual view hides what it is (IconViews: the Jackals, D139).
+// TryViewsFromCommandLine renders units from several such views, for choosing one.
 // A baked body wears its unit's bakedTint, as it does in battle.
 // It also writes UnitIcons/index.txt: each unit, and how its icon was made. Needs a GPU, which batch mode has here (d3d12).
 // Depends on: Halobellum.Units, Halobellum.UI (UnitIcons), UnityEditor, UnityEngine.
@@ -58,6 +60,28 @@ namespace Halobellum.EditorTools
         private static readonly int AnimOldId = Shader.PropertyToID("_AnimOld");
         private static readonly int AnimBlendId = Shader.PropertyToID("_AnimBlend");
         private static readonly int BattleTimeId = Shader.PropertyToID("_BattleTime");
+
+        /// <summary>
+        /// Units seen from another side than the usual three-quarter front, or framed closer: yaw in degrees round from the unit's front
+        /// towards its left (as YawDegrees), pitch looking down, and keep, the share of the figure's height that shows from the top (as
+        /// PortraitKeep, with its fade at the bottom), 0 for the usual framing. The owner found the Jackals' icons poor (2026-11-18, D139):
+        /// from the usual side the Shield Jackal's see-through shield covered its body, and the Beam Rifle Jackal's head hid behind its rifle.
+        /// </summary>
+        private static readonly Dictionary<string, (float Yaw, float Pitch, float Keep)> IconViews = new Dictionary<string, (float, float, float)>
+        {
+            { "Jackal (Shield)", (-42f, 10f, 0.55f) },     // From its right front, close: its eye past the glowing edge of its shield.
+            { "Jackal (Beam Rifle)", (-42f, 10f, 0.55f) }, // The same: its eye at the scope, the rifle reaching out in front of it.
+        };
+
+        /// <summary>While TryViewsFromCommandLine runs: the view being tried, for every unit.</summary>
+        private static (float Yaw, float Pitch, float Keep)? _tryingView;
+
+        private static (float Yaw, float Pitch, float Keep) ViewFor(UnitDefinition unit)
+        {
+            if (_tryingView.HasValue) return _tryingView.Value;
+            if (IconViews.TryGetValue(unit.unitName, out (float, float, float) view)) return view;
+            return (YawDegrees, unit.isAir ? AirPitchDegrees : PitchDegrees, 0f);
+        }
 
         [MenuItem("Halobellum/Art/Render Unit Icons")]
         public static void RenderAll()
@@ -169,6 +193,58 @@ namespace Halobellum.EditorTools
             EditorApplication.Exit(exitCode);
         }
 
+        /// <summary>
+        /// For choosing a unit's view (IconViews): renders the units named in HB_ICON_TRY (comma separated), each at its icon moment (or at
+        /// HB_ICON_MOMENT, a share of its shooting clip), from every view in HB_ICON_VIEWS ("yaw/pitch/keep", separated by ";"), into
+        /// HB_ICON_TRY_OUT as &lt;unit&gt;_v&lt;n&gt;.png, n counting the views from 0. Writes no icon.
+        /// </summary>
+        public static void TryViewsFromCommandLine()
+        {
+            int exitCode = 1;
+            try
+            {
+                EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+                RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+                RenderSettings.ambientLight = new Color(0.46f, 0.47f, 0.5f);
+                RenderSettings.fog = false;
+                string folder = Environment.GetEnvironmentVariable("HB_ICON_TRY_OUT");
+                Directory.CreateDirectory(folder);
+                var names = new HashSet<string>(Environment.GetEnvironmentVariable("HB_ICON_TRY").Split(',').Select(n => n.Trim()));
+                var views = Environment.GetEnvironmentVariable("HB_ICON_VIEWS").Split(';')
+                    .Select(v => v.Split('/').Select(n => float.Parse(n.Trim(), System.Globalization.CultureInfo.InvariantCulture)).ToArray())
+                    .Select(n => (n[0], n[1], n.Length > 2 ? n[2] : 0f)).ToArray();
+                string moment = Environment.GetEnvironmentVariable("HB_ICON_MOMENT");
+                foreach (string guid in AssetDatabase.FindAssets("t:UnitDefinition"))
+                {
+                    var unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>(AssetDatabase.GUIDToAssetPath(guid));
+                    if (unit == null || !names.Remove(unit.unitName) || unit.bakedBody == null || !unit.bakedBody.IsReady) continue;
+                    int row = IconRow(unit);
+                    if (!string.IsNullOrEmpty(moment))
+                    {
+                        BakedClip shooting = unit.bakedBody.Clip(BakedAnimation.Shooting);
+                        float share = float.Parse(moment, System.Globalization.CultureInfo.InvariantCulture);
+                        row = shooting.firstRow + Mathf.Clamp(Mathf.FloorToInt(shooting.frames * share), 0, shooting.frames - 1);
+                    }
+                    for (int v = 0; v < views.Length; v++)
+                    {
+                        _tryingView = views[v];
+                        byte[] png = RenderBody(unit, BuildBaked(unit, row));
+                        if (png != null) File.WriteAllBytes(Path.Combine(folder, $"{UnitIcons.FileName(unit.unitName)}_v{v}.png"), png);
+                    }
+                }
+                exitCode = 0;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Trying icon views failed: " + e);
+            }
+            finally
+            {
+                _tryingView = null;
+            }
+            EditorApplication.Exit(exitCode);
+        }
+
         /// <summary>Which faction each unit belongs to: from the faction assets, and for a spell's dropped unit, from that faction's spells.</summary>
         private static Dictionary<UnitDefinition, string> FactionOfEachUnit()
         {
@@ -229,6 +305,7 @@ namespace Halobellum.EditorTools
             { "Mantis", 0.53f },           // Both arms aimed, the rocket arm kicking up as a rocket leaves (D97).
             { "Pure Form Tank", 0.47f },   // The club swept round in front (D93).
             { "Juggernaut", 0.44f },       // Both blades down in front of it as it lunges (D107).
+            { "Goliath", 0.16f },          // Starting to rear for the slam, its fists lifting off the ground, its head showing (D139).
         };
 
         /// <summary>The baked row a unit's icon shows: a moment of its shooting clip (the middle, unless IconMoments says), or its still frame without one.</summary>
@@ -272,9 +349,9 @@ namespace Halobellum.EditorTools
                 camera.clearFlags = CameraClearFlags.SolidColor;
                 camera.enabled = false;
 
-                // Looking back at the unit's front (it faces +Z), from a little to its left, and a little above.
-                float pitch = unit.isAir ? AirPitchDegrees : PitchDegrees;
-                Quaternion view = Quaternion.Euler(pitch, 180f + YawDegrees, 0f);
+                // Looking back at the unit's front (it faces +Z), from a little to its left, and a little above (unless IconViews says).
+                (float yaw, float pitch, float keep) = ViewFor(unit);
+                Quaternion view = Quaternion.Euler(pitch, 180f + yaw, 0f);
                 Vector3 forward = view * Vector3.forward;
                 camera.transform.rotation = view;
 
@@ -305,7 +382,7 @@ namespace Halobellum.EditorTools
                     float size = Mathf.Max(maxX - minX + 1, maxY - minY + 1) / (float)probe;
                     distance = touchesEdge ? distance * 1.6f : distance * Mathf.Clamp(size / Fill, 0.2f, 1.6f);
                 }
-                bool portrait = FrameTallFigure(camera, ref target, forward, ref distance);
+                bool portrait = FrameTallFigure(camera, ref target, forward, ref distance, keep);
                 PlaceCamera(camera, target, forward, distance);
 
                 int big = IconSize * Supersample;
@@ -323,19 +400,21 @@ namespace Halobellum.EditorTools
 
         /// <summary>
         /// A tall thin figure that fills the frame from top to bottom is a sliver at the size of a shop row. This moves the camera
-        /// in, to show it from the waist up. Returns false, and leaves the camera alone, for any other shape.
+        /// in, to show it from the waist up. Returns false, and leaves the camera alone, for any other shape. A keep above 0 (IconViews)
+        /// frames any figure so, showing that share of its height from the top.
         /// </summary>
-        private static bool FrameTallFigure(Camera camera, ref Vector3 target, Vector3 forward, ref float distance)
+        private static bool FrameTallFigure(Camera camera, ref Vector3 target, Vector3 forward, ref float distance, float keep = 0f)
         {
             const int probe = IconSize;
             PlaceCamera(camera, target, forward, distance);
             if (!SolidBounds(RenderSolid(camera, probe, out _), probe, out int minX, out int minY, out int maxX, out int maxY)) return false;
             float figureHeight = maxY - minY + 1;
-            if ((maxX - minX + 1) / figureHeight >= TallFigure) return false;
+            if (keep <= 0f && (maxX - minX + 1) / figureHeight >= TallFigure) return false;
+            float kept = keep > 0f ? keep : PortraitKeep;
 
             float viewHeight = 2f * distance * Mathf.Tan(CameraFov * 0.5f * Mathf.Deg2Rad);
             float perPixel = viewHeight / probe;
-            float newViewHeight = PortraitKeep * figureHeight * perPixel / PortraitFill;
+            float newViewHeight = kept * figureHeight * perPixel / PortraitFill;
             // The top of the head a little under the top of the frame. Rows run from the bottom.
             float figureTop = (maxY + 1 - probe * 0.5f) * perPixel;
             target += camera.transform.up * (figureTop + (1f - PortraitFill) * newViewHeight - newViewHeight * 0.5f);
