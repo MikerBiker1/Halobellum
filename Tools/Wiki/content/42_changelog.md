@@ -8,6 +8,9 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.413.6 · 2026-11-21
+- **A unit's stats window shows its damage against aircraft** when it isn't the usual: "x3 damage against aircraft (48 a shot)" for the Vampire, the Reaver, the Wolverine and the Swarm Form, x0.25 for the Pure Form Ranged. (D166)
+
 ## 0.413.5 · 2026-11-21
 - **Animations fit the units' new speeds and fire rates:** the Combat Form and the Infested Elite walk with longer strides for 3 m/s, so their feet no longer slide; the Infested Elite's firing keeps up with its faster rifle; the Spartan's laser shot lasts its 4.2 s, and the Spartan Grenadier and Spartan Sniper kick on every shot of their magazines. (D165)
 

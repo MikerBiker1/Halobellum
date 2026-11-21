@@ -185,6 +185,16 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void TheStatsWindow_TellsAnAntiAirWeaponsDamageAgainstAircraft()
+        {
+            // The owner, 2026-11-21: "Mention the x3 damage in the stats for anti-air units".
+            UnitStats vampire = UnityEditor.AssetDatabase.LoadAssetAtPath<Halobellum.Units.UnitDefinition>("Assets/_Project/Data/Units/Covenant/Vampire.asset").ToStats();
+            WeaponStats needles = vampire.Weapons[0];
+            Assert.AreEqual(3f, needles.AirDamageMultiplier);
+            Assert.AreEqual($"  x3 damage against aircraft ({needles.DamagePerShot * 3f:0.#} a shot)", Halobellum.UI.SquadStatsWindow.AirDamageLine(needles));
+        }
+
+        [Test]
         public void TheCondorsWindow_ShowsItsMainGunAndItsLasersOnce()
         {
             // D114 (the owner, 2026-11-08): not every gun on its own line; the five light lasers fire one after another and a little quieter.

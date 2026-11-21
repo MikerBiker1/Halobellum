@@ -428,6 +428,7 @@ namespace Halobellum.UI
                 {
                     b.AppendLine($"  Damage {w.DamagePerShot:0.#} {w.DamageType}{(w.IsAntiArmor ? ", anti-armor" : "")}    Rate {w.ShotsPerSecond:0.##}/s");
                 }
+                if (w.AirDamageMultiplier != 1f) b.AppendLine(AirDamageLine(w));
                 if (w.ShotsPerAttack > 1) b.AppendLine($"  Fires {w.ShotsPerAttack} shots {w.BurstGapSeconds:0.##} s apart each attack");
                 if (w.IsRam) b.AppendLine($"  Rams once, then again only after {w.RamRechargeSeconds:0.#} s of driving to build up speed");
                 if (w.HasMagazine) b.AppendLine($"  Magazine: {w.MagazineSize} shots {w.FireInterval:0.##} s apart, then a {w.MagazineReloadSeconds:0.#} s reload (rate over time above)");
@@ -477,7 +478,16 @@ namespace Halobellum.UI
 
         private static bool SameKind(WeaponStats a, WeaponStats b) =>
             BaseName(a.Name) == BaseName(b.Name) && a.DamagePerShot == b.DamagePerShot && a.FireInterval == b.FireInterval && a.Range == b.Range
-            && a.DamageType == b.DamageType && a.SplashRadius == b.SplashRadius && a.WindUpSeconds == b.WindUpSeconds;
+            && a.DamageType == b.DamageType && a.SplashRadius == b.SplashRadius && a.WindUpSeconds == b.WindUpSeconds
+            && a.AirDamageMultiplier == b.AirDamageMultiplier;
+
+        /// <summary>The weapon's damage against aircraft when it isn't its usual damage (the Vampire's x3, the owner, 2026-11-21): "x3 damage against aircraft (48 a shot)".</summary>
+        public static string AirDamageLine(WeaponStats w)
+        {
+            float perHit = w.DamagePerShot * w.AirDamageMultiplier;
+            string what = w.IsBeam ? $"{perHit * w.ShotsPerSecond:0.#} damage/s" : $"{perHit:0.#} a shot";
+            return $"  x{w.AirDamageMultiplier:0.##} damage against aircraft ({what})";
+        }
 
         private SimUnit FindAnyOfSquad(int squadId, out int alive, out float totalHealth)
         {
