@@ -28,10 +28,12 @@ MonoBehaviour:
   turnTime180: 1.5
   isAir: 0
   canFlank: 0
-  targetFilter: 0
+  goesForTowers: 0
+  squadGap: 0
+  targetFilter: 2
   weapons:
   - weaponName: Siphon Laser
-    damagePerShot: 19.5
+    damagePerShot: 15.5
     fireInterval: 0.1
     range: 15
     minRange: 5
@@ -45,7 +47,7 @@ MonoBehaviour:
     airDamageMultiplier: 1
     coneDegrees: 0
     lobbed: 0
-    beamSeconds: 1
+    beamSeconds: 2
     beamChargeSeconds: 0
     beamRestSeconds: 1
     beamSweepSpeed: 30
@@ -55,7 +57,7 @@ MonoBehaviour:
     hitSlowSeconds: 0
     hitSlowShare: 0
   - weaponName: Shield Bash
-    damagePerShot: 120
+    damagePerShot: 90
     fireInterval: 1.5
     range: 2.2
     minRange: 0
@@ -82,7 +84,7 @@ MonoBehaviour:
   defenseArc:
     arcDegrees: 240
     frontDamageMultiplier: 0.7
-    rearDamageMultiplier: 1.5
+    rearDamageMultiplier: 1
     blockChance: 0
     blockedDamageTypes: 
   reinforcementUnit: {fileID: 0}
@@ -95,6 +97,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0

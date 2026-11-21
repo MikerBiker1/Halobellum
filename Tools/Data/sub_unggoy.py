@@ -10,15 +10,19 @@ ORDER = 6
 
 def units(U, W):
     return [
-        U("CannonFodder", "Cannon Fodder", FACTION, "Chaff", 1, 0, 30, 100, 20, "U", 1.75, 0.4, 0.25, "B",
-          [W("Plasma Pistol", 3, 0.5, 9, "Energy")], tint=(0.72, 0.6, 0.42, 0.35), scale=0.9, baked="Grunt",
+        U("CannonFodder", "Cannon Fodder", FACTION, "Chaff", 1, 0, 30, 100, 45, "U", 1.75, 0.4, 0.25, "B",
+          [W("Plasma Pistol", 3.5, 0.5, 9, "Energy")], tint=(0.72, 0.6, 0.42, 0.35), scale=0.9, baked="Grunt", gap=1,  # 1 m apart (the owner, D157).
           note="The largest squad in the game: 30 Grunts who barely fight. They are there to be shot instead of something else."),
-        U("HeavyGrunts", "Heavy Grunts", FACTION, "SingleTargetDps", 1, 0, 8, 200, 100, "U", 1.5, 0.55, 0.3, "B",
-          [W("Needle Rifle", 8, 0.25, 12, "Energy")], shield=30, regen=10, tint=(0.75, 0.22, 0.2, 0.4), scale=1.1, baked="Grunt",
+        # Needles are ballistic, not energy (the owner, D150). Then 10 damage (9.5), no shield (was 30, 10 a second) and health 110 -> 150 (the owner, D151).
+        # Damage 10 -> 11 (the owner, D155). Cannon Fodder above: 3 -> 3.5 (D155).
+        U("HeavyGrunts", "Heavy Grunts", FACTION, "SingleTargetDps", 1, 0, 8, 200, 150, "U", 1.5, 0.55, 0.3, "B",
+          [W("Needle Rifle", 11, 0.25, 12, "Ballistic")], tint=(0.75, 0.22, 0.2, 0.4), scale=1.1, baked="Grunt",
           note="Grunts in heavy armor with a small shield, at the top of the Tier 1 price band."),
-        U("GruntGoblin", "Grunt Goblin", FACTION, "Tank", 3, 200, 1, 400, 1750, "H", 2, 1.5, 1, "B",
-          [W("Goblin Plasma Cannons", 10, 0.2, 14, "Energy"),
-           W("Goblin Fuel Rod", 60, 3, 16, "Explosive", proj=30, splash=2.5, own="G")], aura=(14, 1.2, 0.006), baked="GruntGoblin",
+        U("GruntGoblin", "Grunt Goblin", FACTION, "Tank", 3, 200, 1, 400, 2400, "H", 2, 1.5, 1, "B",
+          # Needle cannons like the Vampire's, with its sound and look: explosive with a 0.5 m splash (plasma cannons, energy, until D151, the owner).
+          # Its fuel rod gone; the needles 10 -> 14 with a 1 m splash (0.5) and 16 m range (14) (the owner, D157).
+          # Needles 14 -> 13.5 (D163): at 13 Unggoy fell to 47%, at 14 it stood at 53%; the Goblin is Unggoy's answer to aircraft.
+          [W("Goblin Needle Cannons", 13.5, 0.2, 16, "Explosive", splash=1)], aura=(14, 1.2, 0.006), baked="GruntGoblin",
           note="A Grunt in a hero's mech. A quick tank with a strong aura: friends within 14 m move 20% faster and heal 0.6% per second."),
     ]
 

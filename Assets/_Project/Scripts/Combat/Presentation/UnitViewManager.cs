@@ -165,7 +165,7 @@ namespace Halobellum.Presentation
             if (members.Count == 0) return;
             UnitStats stats = members[0].Unit.Stats;
             Team team = members[0].Unit.Team;
-            List<Vec2> offsets = SquadFormation.Offsets(stats.SquadSize, stats.CollisionRadius, _battle.Rules.FormationGap, rotated90);
+            List<Vec2> offsets = SquadFormation.Offsets(stats, _battle.Rules.FormationGap, rotated90);
             if (offsets.Count == members.Count)
             {
                 // Each body to its own place in the formation, as the battle would put it (HeadlessBattleRunner.AddSquad).

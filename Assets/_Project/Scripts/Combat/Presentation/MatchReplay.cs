@@ -193,7 +193,9 @@ namespace Halobellum.Presentation
         private string PlayedWith()
         {
             string logged = string.IsNullOrEmpty(Replay.GameVersion) ? "logged by a version before 0.381.1" : $"logged by {Replay.GameVersion}";
-            return Replay.GameVersion == Application.version ? $"{logged}, as this game" : $"{logged}, replayed by {Application.version}";
+            string played = Replay.GameVersion == Application.version ? $"{logged}, as this game" : $"{logged}, replayed by {Application.version}";
+            // A replay is a test run and always plays the assets' values (mod_json).
+            return string.IsNullOrEmpty(Replay.UnitStats) ? played : $"{played}, played with modded unit stats ({Replay.UnitStats}; the replay uses the defaults)";
         }
 
         private static IEnumerator QuitSoon()

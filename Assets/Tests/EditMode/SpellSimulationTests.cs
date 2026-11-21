@@ -211,7 +211,7 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void DropSpell_LandsSquadsForTheCaster_ThatFightAndCountForBaseDamage()
+        public void DropSpell_LandsSquadsForTheCaster_ThatFight_ButDealNoBaseDamage()
         {
             var sim = new BattleSimulation(TestRules.Default(), 1);
             UnitStats trooper = TestUnits.Unit(name: "Trooper", squadSize: 4, speed: 3f, weapon: TestUnits.Weapon(damage: 5f, range: 10f));
@@ -225,6 +225,7 @@ namespace Halobellum.Tests
             var landed = sim.Units.Where(u => u.Stats == trooper).ToList();
             Assert.AreEqual(8, landed.Count, "2 squads of 4.");
             Assert.IsTrue(landed.All(u => u.Team == Team.A));
+            Assert.IsTrue(landed.All(u => u.Origin == BodyOrigin.Summoned && !u.HitsEnemyBase), "A spell's squads are summoned: they deal no base damage.");
             Assert.AreEqual(2, landed.Select(u => u.SquadId).Distinct().Count());
             Assert.GreaterOrEqual(cast.DroppedSquadId, 0);
             Assert.Less(landed.Max(u => Vec2.Distance(u.Position, new Vec2(0f, 20f))), 8f, "They land around the spot.");
@@ -359,6 +360,23 @@ namespace Halobellum.Tests
             Assert.AreEqual(0.5f, inside.RangeMultiplier, 1e-5f, "Still there 80 s in.");
             Assert.IsFalse(cast.IsOverAt(sim.ElapsedSeconds));
             CollectionAssert.IsEmpty(smoke.Validate());
+        }
+
+        [Test]
+        public void Oil_WithoutADuration_LastsTheWholeBattle()
+        {
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            SimUnit inside = sim.AddUnit(Dummy(), Team.B, new Vec2(0f, 30f));
+            sim.AddUnit(Dummy(), Team.A, new Vec2(0f, -40f));
+            var oil = new SpellStats { Name = "Oil", Offensive = true, Effect = SpellEffect.Oil, AreaWidth = 15f, AreaDepth = 4f, DurationSeconds = 0f, SlowShare = 0.4f, FireDamageMultiplier = 1.5f };
+            SimSpell cast = sim.AddSpell(oil, Team.A, new Vec2(0f, 30f));
+            RunSeconds(sim, 80f);
+            Assert.AreEqual(0.6f, inside.SpeedMultiplier, 1e-3f, "Still slowed 80 s in.");
+            Assert.AreEqual(1.5f, inside.FireDamageTaken, 1e-3f);
+            Assert.IsFalse(cast.IsOverAt(sim.ElapsedSeconds));
+            CollectionAssert.IsEmpty(oil.Validate());
+            var negative = new SpellStats { Name = "Oil", Offensive = true, Effect = SpellEffect.Oil, AreaWidth = 15f, AreaDepth = 4f, DurationSeconds = -1f, SlowShare = 0.4f, FireDamageMultiplier = 1.5f };
+            CollectionAssert.IsNotEmpty(negative.Validate());
         }
 
         [Test]

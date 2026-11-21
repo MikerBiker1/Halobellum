@@ -73,7 +73,7 @@ namespace Halobellum.Tests
             var rows = new List<UnitStats>();
             MatchHud.FillUnitBarRows(player.Roster, player.Unlocked, rows);
             CollectionAssert.AreEqual(new[] { first, middle, last }, rows);
-            Assert.AreEqual(70, player.Roster.Count, "The roster itself is untouched.");
+            Assert.AreEqual(69, player.Roster.Count, "The roster itself is untouched."); // 70 until D116 took the Infested Grunt off the Flood roster.
         }
 
         [UnityTest]

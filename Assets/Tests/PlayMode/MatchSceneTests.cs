@@ -286,6 +286,42 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
+        public IEnumerator TechIcons_ShowOverSquadsInDeployment_TheEnemysOnlyAsSeenAtTheLastBattle_AndGoInBattle()
+        {
+            // D145: each squad shows its techs as small icons during deployment: the player's as they are now, the enemy's ghosts as they were at
+            // the last battle start, never the enemy's current ones; none during the battle.
+            yield return LoadMatch();
+            _match.ChooseDraft(0);
+            yield return null;
+            Match m = _match.Match;
+            m.Player.Credits = 5000;
+            m.Enemy.Credits = 5000;
+            UnitStats mine = m.Player.Squads[0].Type, theirs = m.Enemy.Squads[0].Type;
+            TechUpgrade myTech = mine.TechUpgrades[0], theirTech = theirs.TechUpgrades[0];
+            Assert.IsTrue(_match.BuyTech(mine, myTech).Ok, _match.Message);
+            Assert.IsTrue(m.BuyTech(Team.B, theirs, theirTech).Ok, "The enemy buys a tech during this deployment.");
+            yield return null;
+            var rows = new List<(Vector3 screen, IReadOnlyList<TechUpgrade> techs)>();
+            _match.SquadTechs(rows);
+            Assert.IsTrue(rows.Any(r => r.techs.Contains(myTech)), "The player's squad shows the tech it has now.");
+            Assert.IsFalse(rows.Any(r => r.techs.Contains(theirTech)), "Not the enemy's tech bought this deployment: the player hasn't seen it.");
+            Assert.IsNotNull(TechIcons.Icon(myTech), "Its icon is drawn.");
+
+            _battle.Speed = 16f;
+            _match.Ready();
+            yield return null;
+            _match.SquadTechs(rows);
+            Assert.IsEmpty(rows, "No tech icons during the battle.");
+            float deadline = Time.realtimeSinceStartup + 120f;
+            while (m.Phase == MatchPhase.Battle && Time.realtimeSinceStartup < deadline) yield return null;
+            ContinueAndSkipCards();
+            yield return null;
+            Assert.AreEqual(MatchPhase.Deployment, m.Phase);
+            _match.SquadTechs(rows);
+            Assert.IsTrue(rows.Any(r => r.techs.Contains(theirTech)), "Next deployment: the enemy's ghosts show the tech they fought with.");
+        }
+
+        [UnityTest]
         public IEnumerator TheStatsWindowsXpBar_FillsDuringTheBattle()
         {
             yield return LoadMatch();
@@ -445,6 +481,9 @@ namespace Halobellum.Tests
             Match m = _match.Match;
             m.Enemy.BaseHealth = 1;        // Whoever lives at the end of a round finishes this base...
             m.Player.BaseHealth = 100000;  // ...and this one holds until then.
+            // Level 5, so that the starting squads reach the enemy and land hits in that first fight: since D138-D141 seed 3's Flood draft
+            // (Infection Forms and Carrier Forms) fell to the AI's Fuel Rod Grunts at level 1 before reaching them, and dealt nothing.
+            foreach (PlacedSquad squad in m.Player.Squads) squad.Level = UnitUpgrades.MaxLevel;
             int rounds = 0;
             while (m.Phase != MatchPhase.MatchOver && rounds < 4)
             {

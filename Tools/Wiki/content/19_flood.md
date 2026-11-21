@@ -29,12 +29,12 @@ The Flood win by spreading. They turn enemy dead into temporary Flood units, rel
   - **1.5× move speed**;
   - one melee attack every second, at 1.2 m, dealing the unit's **whole damage per second**;
   - it attacks ground only and notices enemies at any distance;
-  - it keeps its **base damage**, so it hurts its old owner's base if it survives. It can't be infected again and gives no XP.
+  - it deals **no base damage** at the end of the round, like every body summoned in a battle. It can't be infected again and gives no XP.
 - A body that is about to rise keeps the battle going. Infected units last only for that round.
 
 ## Seeds
 
-- The Seeder's spores plant a **seed for 8 s**. The host moves **40% slower**. If the Flood can convert it (see below), or if it is an **aircraft**, it also loses **4% of its maximum health a second**; anything else, such as a Spartan or a Hunter, is only slowed.
+- The Seeder's spores plant a **seed for 8 s**. The host moves **40% slower** and loses **2.5% of its maximum health a second**, whatever it is. The spore has a **0.5 m splash**, and everything the splash hits is seeded too.
 - Seeds hit ground and air, but only targets that **can be seeded**: not Flood, not Titans, not towers, no shield up, not already seeded.
 - A Seeder first takes the closest enemy in range that it can seed. With none in range it **shoots the closest enemy anyway**, a Titan, a Spartan with its shield up or a Flood unit, doing its damage without a seed.
 - If the host dies seeded, it rises **only if a Flood roster has its own version of that unit**, with 60% of that unit's health. Ten units can be taken this way: the Marine, Warthog, Scorpion, Hornet, Elite, Ghost, Banshee, Wraith, Pelican and Covenant Phantom. **Anything else that dies seeded just dies.**
@@ -43,16 +43,17 @@ The Flood win by spreading. They turn enemy dead into temporary Flood units, rel
 ## Death bursts and released forms
 
 - **Every Flood vehicle** (the infested ground vehicles and aircraft, and the Infected Phantom) releases **a pack of 6 Infection Forms** when it dies.
-- The **Carrier Form** explodes when it reaches an enemy (its attack is its own death) or when it's killed, releasing more packs.
+- The **Carrier Form** explodes when it reaches an enemy (its attack is its own death) or when it's killed, releasing more packs. It walks through its own Infection Forms, so a swarm around a vehicle doesn't hold it back.
 - The **Infected Pelican** heads for the thickest group of enemies and dives on it, dying where it lands in a big explosion that releases forms and Combat Forms.
-- Death bursts hit ground units only, can't be blocked, and grow with level, damage techs, items, research and buff cards. Released units fight with the army's bonuses.
+- Death bursts hit ground units only, can't be blocked, and grow with level, damage techs, items, research and buff cards. Released units fight with the army's bonuses, at the level of the unit that released them.
 
 ## Spawners
 
 - The **Flood Abomination** (the Flood's Titan) releases Infection Forms every 14 s, and has an aura: friends close by move faster and heal.
-- The Covenant-based **Spawner** releases Infection Forms and Combat Forms in turn.
+- The Covenant-based **Spawner** releases 3 Infection Forms and 3 Combat Forms in turn, one lot every 4 seconds. Its Swarm Brood tech (300) also hatches a Swarm Form 5 seconds into each battle.
 - The **Infected Phantom** drops Combat Forms during the battle.
-- Spawned and dropped units appear in front of or under their source and last only for that battle.
+- Spawned and dropped units appear in front of or under their source and last only for that battle. They fight at their source's **level** (not its techs), and their kills and damage earn XP for its squad.
+- **Summoned bodies deal no base damage:** a Spawner's brood, the Abomination's forms, every death burst, and risen and seeded bodies. A Spawner that can't reach an aircraft keeps releasing until the time-out, but that costs only time. Only the Combat Forms a **bought** Infected Phantom drops count for base damage.
 
 Each unit's page gives its exact numbers.
 

@@ -58,6 +58,18 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void ModdedUnitStats_AreInTheFirstLine_OnlyWhenUsed()
+        {
+            List<string> plain = PlayARound(out _);
+            StringAssert.DoesNotContain("unit_stats", plain[0], "The game's own unit stats: nothing is added.");
+
+            Match match = TestMatch.Started(out _, out _, out _, out _);
+            var lines = new List<string>();
+            new MatchLog(lines.Add).Started(match, "Hard", new System.DateTime(2026, 11, 5, 18, 30, 0), 0, "0.399.0", "modded:4");
+            StringAssert.Contains("\"version\":\"0.399.0\",\"unit_stats\":\"modded:4\"", lines[0], "A game played with the player's unit stats files says so (mod_json).");
+        }
+
+        [Test]
         public void ABaseOverkilled_IsLoggedBelowZero_AndTheMatchsEndIsWritten()
         {
             List<string> lines = PlayARound(out Match match, enemyBase: 1);

@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 1
   cost: 400
   baseDamage: 80
-  maxHealth: 3200
+  maxHealth: 3400
   armorType: 2
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -28,6 +28,8 @@ MonoBehaviour:
   turnTime180: 1.5
   isAir: 0
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 0
   weapons:
   - weaponName: Slam
@@ -71,6 +73,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0
@@ -100,4 +103,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
-  notes: 'Best counters (headless runner, equal cost): Gauss Warthog (100%), Spartan (100%). First-pass M8 values (DECISIONS D38).'
+  notes: 'Best counters (headless runner, equal cost): Gauss Warthog (100%), Zealot (100%). First-pass M8 values (DECISIONS D38).'

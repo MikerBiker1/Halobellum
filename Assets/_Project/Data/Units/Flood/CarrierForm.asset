@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 4
   cost: 150
   baseDamage: 7.5
-  maxHealth: 170
+  maxHealth: 255
   armorType: 0
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -28,6 +28,8 @@ MonoBehaviour:
   turnTime180: 0.4
   isAir: 0
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 0
   weapons:
   - weaponName: Burst
@@ -71,7 +73,8 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 1
   seeksDensestCluster: 0
-  deathBurstDamage: 110
+  passesThroughOwnChaff: 1
+  deathBurstDamage: 158
   deathBurstRadius: 4.5
   deathBurstDamageType: 1
   deathBurstAntiArmor: 0
@@ -102,4 +105,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Chaff
   weakAgainst: 'Tanks, flankers'
-  notes: 'Best counters (headless runner, equal cost): Spawner (100%), Scorpion (100%). First-pass M8 values (DECISIONS D38).'
+  notes: 'Best counters (headless runner, equal cost): Spawner (100%), Hunter Pair (100%). First-pass M8 values (DECISIONS D38).'

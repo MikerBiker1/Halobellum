@@ -173,6 +173,70 @@ namespace Halobellum.Tests
             Assert.IsTrue(T.Finished);
         }
 
+        // The Oil Zone stays in your spells and recharges after use: one cast in round 1 is still recharging in round 2, so the
+        // Spells step cannot wait for it to be placed (Ready would stay locked there).
+        [UnityTest]
+        public IEnumerator TheSpellsStep_MovesOn_WhenTheOnlySpell_IsAnOilZoneStillRecharging()
+        {
+            yield return LoadTutorial();
+            Match m = _match.Match;
+            yield return Step("Welcome to Halobellum");
+            T.Next();
+            yield return Step("Your starting card");
+            Assert.IsTrue(_match.ChooseDraft(0).Ok);
+            yield return Step("The camera");
+            T.Next();
+            yield return Step("The top bar");
+            T.Next();
+            UnitStats flamer = m.Player.Roster.First(u => u.Name == TutorialSetup.ShopUnit);
+            yield return Step("The shop: unlocking");
+            Assert.IsTrue(_match.Unlock(flamer).Ok);
+            yield return Step("The shop: buying");
+            Assert.IsTrue(_match.Buy(flamer).Ok);
+            yield return Step("Selecting a squad");
+            _match.Selection.Select(_battle.Simulation.Squads[0].Id);
+            yield return Step("Squad stats");
+            T.Next();
+            yield return Step("Stats before buying");
+            T.Signal("ShopUnit");
+            yield return Step("Moving a squad");
+            PlacedSquad squad = m.Player.Squads[0];
+            bool moved = false;
+            for (int dx = -6; dx <= 6 && !moved; dx += 2)
+            {
+                _match.BeginMoving(squad);
+                moved = _match.PlaceAt(squad.Column + dx, squad.Row + 1).Ok;
+            }
+            Assert.IsTrue(moved);
+            yield return Step("Undo");
+            Assert.IsTrue(_match.Undo().Ok);
+            yield return Step("The Command Center");
+            _match.Selection.SelectTower(Team.A, TowerKind.CommandCenter);
+            yield return Step("What the Command Center does");
+            T.Next();
+            yield return Step("The Research Center");
+            _match.Selection.SelectTower(Team.A, TowerKind.ResearchCenter);
+            yield return Step("What the Research Center does");
+            T.Next();
+            yield return Step("Ready");
+
+            m.Player.Credits = Mathf.Max(m.Player.Credits, m.Rules.OilZone.Cost);
+            Assert.IsTrue(_match.BuyOilZone().Ok, "The oil can be bought in round 1.");
+            OwnedSpell oil = m.Player.Spells.Single(s => s.Stats == m.Rules.OilZone);
+            _match.BeginPlacingSpell(oil);
+            Assert.IsTrue(_match.PlaceSpellAt(new Vec2(0f, 30f)).Ok);
+            yield return Fight();
+            yield return Step("The round's result");
+            _match.Continue();
+
+            yield return Step("Cards");
+            Assert.IsTrue(_match.SkipCards().Ok);
+            yield return null;
+            Assert.AreEqual(1, m.Player.Spells.Count, "The oil is kept...");
+            Assert.IsFalse(m.Player.Spells[0].IsReady(m.Round), "...and still recharging.");
+            yield return Step("Levels");
+        }
+
         [UnityTest]
         public IEnumerator ANewMatch_AfterTheTutorial_IsAnOrdinaryOne()
         {

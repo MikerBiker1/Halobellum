@@ -186,9 +186,13 @@ namespace Halobellum.Presentation
                 }
                 default:
                 {
-                    float flight = distance / Mathf.Max(1f, look.DrawnSpeed);
-                    _kit.Streak(EffectPriority.Small, from, direction * look.DrawnSpeed, look.ShotWidth * read, look.Shot, flight);
-                    return flight;
+                    // The streak is drawn behind its head: it starts its own length ahead of the muzzle, so its tail leaves from the gun and not
+                    // from above and behind it (the owner's Sparrowhawk shooting down, D155).
+                    float speed = Mathf.Max(1f, look.DrawnSpeed), width = look.ShotWidth * read;
+                    float ahead = Mathf.Min(EffectKit.StreakLength(speed, width), distance * 0.9f);
+                    float flight = (distance - ahead) / speed;
+                    _kit.Streak(EffectPriority.Small, from + direction * ahead, direction * speed, width, look.Shot, Mathf.Max(0.02f, flight));
+                    return Mathf.Max(0.02f, flight); // When its head reaches the target.
                 }
             }
         }

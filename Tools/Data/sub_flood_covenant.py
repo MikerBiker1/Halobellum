@@ -14,25 +14,28 @@ INFESTED = (0.55, 0.68, 0.18, 0.55)
 def units(U, W):
     return [
         # No Infested Grunt: the Flood don't take Grunts as combat forms in Halo (the owner, 2026-11-08; D116).
-        U("InfestedGhost", "Infested Ghost", FACTION, "Flanker", 1, 0, 2, 200, 330, "L", 5.5, 1.2, 0.8, "G",
-          [W("Hull Ram", 45, 1.0, 1.5, "Melee", splash=1.5),
-           W("Scavenged Plasma Bolts", 8, 0.25, 9, "Energy", own="B")], flood=True, burst=dict(dmg=0, radius=0, type="Explosive", aa=False, spawns=[("InfectionForms", 1)]),
+        U("InfestedGhost", "Infested Ghost", FACTION, "Flanker", 1, 0, 2, 200, 150, "L", 5.5, 1.2, 0.8, "G",
+          [W("Hull Ram", 37, 1.0, 1.5, "Melee", splash=1.5),
+           W("Scavenged Plasma Bolts", 7, 0.25, 9, "Energy", own="B")], flood=True, burst=dict(dmg=0, radius=0, type="Explosive", aa=False, spawns=[("InfectionForms", 1)]),
           note="Faster and lighter than the Infested Warthog."),
-        U("InfestedElite", "Infested Elite", FACTION, "SingleTargetDps", 2, 50, 3, 250, 500, "U", 2, 0.6, 0.35, "G",
-          [W("Scythe Claw", 46, 0.7, 1.5, "Melee", aa=True),
-           W("Scavenged Plasma Rifle", 10, 0.5, 11, "Energy", own="B")], flood=True, leap=(5, 12, 4),  # The Combat Form's model, holding a plasma rifle (RealModelBuilder, D82).
+        # Speed 2 -> 3 and its plasma rifle twice as fast, 0.5 -> 0.25 s (the owner, D157).
+        U("InfestedElite", "Infested Elite", FACTION, "SingleTargetDps", 2, 50, 3, 250, 600, "U", 3, 0.6, 0.35, "G",
+          [W("Scythe Claw", 60, 0.7, 1.5, "Melee", aa=True),
+           W("Scavenged Plasma Rifle", 11, 0.25, 11, "Energy", own="B")], flood=True, leap=(5, 12, 4),  # The Combat Form's model, holding a plasma rifle (RealModelBuilder, D82).
           note="The classic combat form: no shield, more health, and a claw that opens armor."),
         U("InfestedWraith", "Infested Wraith", FACTION, "Artillery", 2, 50, 1, 250, 1000, "H", 1, 2, 2, "G",
-          [W("Scavenged Mortar", 70, 3.5, 34, "Explosive", proj=20, splash=4, minr=10, lob=True)], flood=True, burst=dict(dmg=0, radius=0, type="Explosive", aa=False, spawns=[("InfectionForms", 1)]),
+          # 70 -> 80 (the owner, D153), then 95 (D157), then 90 (D158).
+          [W("Scavenged Mortar", 90, 3.5, 34, "Explosive", proj=20, splash=4, minr=10, lob=True)], flood=True, burst=dict(dmg=0, radius=0, type="Explosive", aa=False, spawns=[("InfectionForms", 1)]),
           note="A little tougher and shorter-ranged than the real thing."),
-        U("InfestedBanshee", "Infested Banshee", FACTION, "Aerial", 2, 50, 2, 250, 360, "L", 4.5, 1.4, 0.8, "B",
-          [W("Scavenged Plasma Cannons", 8, 0.3, 10, "Energy"),
-           W("Spore Bomb", 45, 2.5, 8, "Explosive", proj=30, splash=3, own="G")], flood=True, airu=True, burst=dict(dmg=0, radius=0, type="Explosive", aa=False, spawns=[("InfectionForms", 1)]),
+        # Health 340 -> 400 (the owner, D155).
+        U("InfestedBanshee", "Infested Banshee", FACTION, "Aerial", 2, 50, 2, 250, 400, "L", 4.5, 1.4, 0.8, "B",
+          [W("Scavenged Plasma Cannons", 7, 0.3, 10, "Energy"),
+           W("Spore Bomb", 37, 2.5, 8, "Explosive", proj=30, splash=3, own="G")], flood=True, airu=True, burst=dict(dmg=0, radius=0, type="Explosive", aa=False, spawns=[("InfectionForms", 1)]),
           note="Barely flying, still bombing."),
-        U("Spawner", "Spawner", FACTION, "Tank", 3, 200, 1, 400, 3600, "L", 0.9, 2, 2, "G",
-          [W("Spore Lash", 55, 1.2, 3, "Melee", splash=2)], flood=True, spawn=("InfectionForms", 3, 4), spawn2=("CombatForm", 5),  # Combat Forms, not Infested Elites with Covenant guns (the owner, 2026-11-08; D116).
+        U("Spawner", "Spawner", FACTION, "Tank", 3, 200, 1, 400, 2700, "L", 0.9, 2, 2, "G",
+          [W("Spore Lash", 55, 1.2, 3, "Melee", splash=2)], flood=True, spawn=("InfectionForms", 3, 4), spawn2=("CombatForm", 3),  # 5 -> 3 (the owner, D143: "absurd, remove 2 of them"). Combat Forms, not Infested Elites with Covenant guns (the owner, 2026-11-08; D116).
           drop=("SwarmForm", 1, 5, True),  # Swarm Brood (the owner, 2026-11-08): one Swarm Form (a stack of five), hatched once 5 seconds into each battle (D113, D114).
-          note="A mobile birthing form: it fights badly, and keeps releasing three Infection Forms and five Combat Forms in turn, one lot every 4 seconds; the Combat Forms draw the enemy's fire. Kill it first (D79, D116). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114)."),
+          note="A mobile birthing form: it fights badly, and keeps releasing three Infection Forms and three Combat Forms in turn, one lot every 4 seconds; the Combat Forms draw the enemy's fire. Kill it first (D79, D116). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114)."),
     ]
 
 

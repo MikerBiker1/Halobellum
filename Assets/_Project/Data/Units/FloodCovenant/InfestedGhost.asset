@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 2
   cost: 200
   baseDamage: 20
-  maxHealth: 330
+  maxHealth: 150
   armorType: 1
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -28,10 +28,12 @@ MonoBehaviour:
   turnTime180: 0.8
   isAir: 0
   canFlank: 0
+  goesForTowers: 1
+  squadGap: 0
   targetFilter: 0
   weapons:
   - weaponName: Hull Ram
-    damagePerShot: 45
+    damagePerShot: 37
     fireInterval: 1
     range: 1.5
     minRange: 0
@@ -55,7 +57,7 @@ MonoBehaviour:
     hitSlowSeconds: 0
     hitSlowShare: 0
   - weaponName: Scavenged Plasma Bolts
-    damagePerShot: 8
+    damagePerShot: 7
     fireInterval: 0.25
     range: 9
     minRange: 0
@@ -95,6 +97,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 1
@@ -126,4 +129,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: 'Artillery, DPS'
   weakAgainst: 'Chaff clear, tanks'
-  notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Goliath (100%). Faster and lighter than the Infested Warthog. First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Grunt Goblin (100%). Faster and lighter than the Infested Warthog. First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'

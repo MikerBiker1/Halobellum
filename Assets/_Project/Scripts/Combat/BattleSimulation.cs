@@ -21,7 +21,9 @@
 //      damage against air).
 //   7. Units at 0 health die. Deaths are applied at the end of the tick, so units that shoot in
 //      the same tick are treated fairly regardless of list order.
-//   8. The battle ends when a side has no units left or the time limit is reached.
+//   8. The battle ends when a side has no units left or the time limit is reached. Each surviving
+//      body deals its base damage, except bodies summoned in the battle (SimUnit.Origin): brood,
+//      death bursts, risen and seeded bodies, spell squads, and what a summoned carrier drops.
 // A tower (D55) is a ground target like any other, the closest enemy being the closest enemy, but it
 // doesn't count as a unit left. When it falls, its side's whole army suffers its shockwave: a second
 // tower adds to how long that lasts, not to how bad it is.
@@ -48,6 +50,8 @@ namespace Halobellum.Combat
         public SimUnit AimedAt;
         /// <summary>Counts every shot of the battle, so that a model's muzzles can take turns.</summary>
         public int Serial;
+        /// <summary>A charged bolt (the Jackal's plasma pistol, D151): drawn as a big slow green ball.</summary>
+        public bool Charged;
     }
 
     /// <summary>A beam charging or firing, for drawing.</summary>
@@ -137,6 +141,7 @@ namespace Halobellum.Combat
                     WeaponIndex = projectile.WeaponIndex,
                     AimedAt = projectile.AimedAt,
                     Serial = projectile.Serial,
+                    Charged = projectile.Weapon.IsChargedShot,
                 });
             }
         }
@@ -184,13 +189,15 @@ namespace Halobellum.Combat
         public SimUnit AddUnit(UnitStats stats, Team team, Vec2 position, int squadId = -1)
         {
             if (Tick > 0) throw new InvalidOperationException("Add units before the battle starts.");
-            return CreateUnit(stats, team, position, squadId);
+            return CreateUnit(stats, team, position, squadId, BodyOrigin.Deployed);
         }
 
-        private SimUnit CreateUnit(UnitStats stats, Team team, Vec2 position, int squadId)
+        /// <summary>Makes one body. Its origin is set before UnitSpawned is raised, so every listener sees it.</summary>
+        private SimUnit CreateUnit(UnitStats stats, Team team, Vec2 position, int squadId, BodyOrigin origin)
         {
             Vec2 facing = team == Team.A ? Vec2.Up : Vec2.Down;
             var unit = new SimUnit(_units.Count, team, squadId, stats, position, facing);
+            unit.Origin = origin;
             _units.Add(unit);
             if (!_unitTypeOrder.Contains(stats.Name)) _unitTypeOrder.Add(stats.Name);
             if (stats.SpawnedUnit != null)
@@ -237,7 +244,7 @@ namespace Halobellum.Combat
         public int AddSquad(UnitStats stats, Team team, Vec2 center, bool rotated90 = false)
         {
             int squadId = NewSquadId();
-            List<Vec2> offsets = SquadFormation.Offsets(stats.SquadSize, stats.CollisionRadius, _rules.FormationGap, rotated90);
+            List<Vec2> offsets = SquadFormation.Offsets(stats, _rules.FormationGap, rotated90);
             foreach (Vec2 offset in offsets)
             {
                 // Team B's squads face the other way, so their formation is mirrored.
@@ -311,33 +318,48 @@ namespace Halobellum.Combat
 
         private readonly List<SimUnit> _dropping = new List<SimUnit>();
 
-        /// <summary>Drops the reinforcement squad of every living unit whose drop delay has passed (once per unit).</summary>
+        /// <summary>
+        /// Drops the reinforcement squad of every living carrier that does not land, from the air straight under it, wherever it is, when due: the first at
+        /// ReinforcementFirstDropSeconds (or at the delay when that is 0), then the delay after each drop, ReinforcementDrops times (the Infected Phantom once at 8 s;
+        /// the Covenant Phantom at 5, 15 and 25 s, the owner 2026-11-18). It never comes down and is never sent anywhere to drop: it moves and fights like any aircraft.
+        /// While an EMP has its tech off, a due drop waits until the tech is back.
+        /// </summary>
         private void SpawnReinforcements()
         {
             _dropping.Clear();
             foreach (SimUnit unit in _units)
             {
-                if (!unit.IsAlive || unit.NotArrived || unit.ReinforcementDropped || !unit.Stats.HasReinforcement || unit.Stats.ReinforcementLandSeconds > 0f) continue;
-                if (ElapsedSeconds + 1e-4f >= unit.Stats.ReinforcementDelaySeconds) _dropping.Add(unit);
+                if (!unit.IsAlive || unit.NotArrived || !unit.Stats.HasReinforcement || unit.Stats.ReinforcementLandSeconds > 0f) continue;
+                if (unit.DropsMade >= unit.Stats.ReinforcementDrops) continue;
+                float due = unit.DropsMade > 0 ? unit.NextDropAt
+                    : unit.Stats.ReinforcementFirstDropSeconds > 0f ? unit.Stats.ReinforcementFirstDropSeconds : unit.Stats.ReinforcementDelaySeconds;
+                if (ElapsedSeconds + 1e-4f >= due) _dropping.Add(unit);
             }
             foreach (SimUnit carrier in _dropping)
             {
-                carrier.ReinforcementDropped = true;
+                carrier.DropsMade++;
+                carrier.NextDropAt = ElapsedSeconds + carrier.Stats.ReinforcementDelaySeconds;
                 DropSquadFrom(carrier, carrier.Position);
             }
         }
 
+        /// <summary>
+        /// A carrier's squad, on the spot. What an air carrier brings in (Pelican, Covenant Phantom, a bought Infected Phantom) is Carried and keeps its base damage;
+        /// what a ground "carrier" hatches (the Spawner's Swarm Form) is brood, and anything a summoned carrier drops (an Infected Phantom raised by a seed) is Summoned too.
+        /// Stats.IsAir, not SimUnit.IsAir: a landing carrier drops while it is down.
+        /// </summary>
         private void DropSquadFrom(SimUnit carrier, Vec2 centre)
         {
             UnitStats stats = carrier.Stats.Reinforcement;
             int squadId = NewSquadId();
             Vec2 forward = carrier.Team == Team.A ? Vec2.Up : Vec2.Down;
-            List<Vec2> offsets = SquadFormation.Offsets(stats.SquadSize, stats.CollisionRadius, _rules.FormationGap, false);
+            BodyOrigin origin = carrier.Origin == BodyOrigin.Summoned || !carrier.Stats.IsAir ? BodyOrigin.Summoned : BodyOrigin.Carried;
+            List<Vec2> offsets = SquadFormation.Offsets(stats, _rules.FormationGap, false);
             centre = KeepFormationOnTheField(centre, offsets, stats.CollisionRadius);
             foreach (Vec2 offset in offsets)
             {
                 Vec2 placed = carrier.Team == Team.A ? offset : -offset;
-                SimUnit dropped = CreateUnit(stats, carrier.Team, centre + placed, squadId);
+                SimUnit dropped = CreateUnit(stats, carrier.Team, centre + placed, squadId, origin);
                 dropped.Facing = forward;
                 dropped.UnlimitedAcquisition = carrier.UnlimitedAcquisition || IsInEnemyZone(dropped);
                 dropped.CreditSquadId = carrier.CreditSquadId;
@@ -367,12 +389,15 @@ namespace Halobellum.Combat
         // ------------------------------------------------------------------ carriers that land (the Pelican, D60)
 
         private readonly List<SimUnit> _landers = new List<SimUnit>();
-        private const float DropArrivalMetres = 6f, DropBehindLinesMetres = 8f, DropSpotCheckSeconds = 1f;
         /// <summary>How far behind its centre a landed carrier's squad comes out, as a share of its collision size: from under it, the Pelican's troop bay
-        /// and the Phantom's gravity lift (the owner, 2026-11-07; it was 8 m beyond its size, clear of the tail, which put them too far back).</summary>
+        /// (the owner, 2026-11-07; it was 8 m beyond its size, clear of the tail, which put them too far back).</summary>
         private const float DropUnderCarrierShare = 1f;
 
-        /// <summary>Flies each carrier to its next drop, brings it down, lets its squad out from under it, and takes it back up.</summary>
+        /// <summary>
+        /// Brings each landing carrier down where it is, lets its squad out from under it, and takes it back up. It never flies anywhere to drop (the owner, D143:
+        /// it flew behind the enemy's lines until then): between drops it moves and fights like any aircraft. It starts down early enough for each squad to be out
+        /// on time: at ReinforcementFirstDropSeconds (or the delay when that is 0), then the delay after each drop, ReinforcementDrops times (the Pelican at 5, 15 and 25 s).
+        /// </summary>
         private void UpdateDropRuns()
         {
             int count = _landers.Count;
@@ -380,34 +405,23 @@ namespace Halobellum.Combat
             {
                 SimUnit carrier = _landers[i];
                 if (!carrier.IsAlive || carrier.NotArrived) continue;
+                float land = carrier.Stats.ReinforcementLandSeconds;
                 if (carrier.DropPhase == DropRunPhase.Flying)
                 {
                     if (carrier.DropsMade >= carrier.Stats.ReinforcementDrops) continue; // All out: it fights like anything else.
-                    float now = ElapsedSeconds;
-                    // A first drop with its own time needs no landing spot: it starts down early enough for the squad to be out on time.
-                    bool freeFirst = carrier.DropsMade == 0 && carrier.Stats.ReinforcementFirstDropSeconds > 0f;
                     if (carrier.DropsMade == 0 && carrier.NextDropAt <= 0f)
-                        carrier.NextDropAt = freeFirst
-                            ? Math.Max(0f, carrier.Stats.ReinforcementFirstDropSeconds - carrier.Stats.ReinforcementLandSeconds)
-                            : carrier.Stats.ReinforcementDelaySeconds;
-                    if (now + 1e-4f >= carrier.DropSpotCheckAt)
                     {
-                        carrier.DropSpot = BehindEnemyLines(carrier);
-                        carrier.DropSpotCheckAt = now + DropSpotCheckSeconds;
+                        float first = carrier.Stats.ReinforcementFirstDropSeconds > 0f ? carrier.Stats.ReinforcementFirstDropSeconds : carrier.Stats.ReinforcementDelaySeconds;
+                        carrier.NextDropAt = Math.Max(1e-3f, first - land);
                     }
-                    carrier.State = UnitState.Move;
-                    carrier.MoveGoal = carrier.DropSpot;
-                    if (now + 1e-4f >= carrier.NextDropAt && (freeFirst || Vec2.Distance(carrier.Position, carrier.DropSpot) <= DropArrivalMetres))
-                    {
-                        carrier.DropPhase = DropRunPhase.Descending;
-                        carrier.MoveGoal = carrier.Position;
-                    }
-                    continue;
+                    if (ElapsedSeconds + 1e-4f < carrier.NextDropAt) continue;
+                    carrier.DropPhase = DropRunPhase.Descending;
                 }
 
                 // Coming down or going up, it stays where it is, and its gun keeps firing.
                 if (carrier.State == UnitState.Move) carrier.MoveGoal = carrier.Position;
-                float step = _dt / carrier.Stats.ReinforcementLandSeconds;
+                carrier.Advancing = false;
+                float step = _dt / land;
                 if (carrier.DropPhase == DropRunPhase.Descending)
                 {
                     carrier.Altitude = Math.Max(0f, carrier.Altitude - step);
@@ -415,7 +429,7 @@ namespace Halobellum.Combat
                     if (!carrier.Stats.HasReinforcement) continue; // An EMP has switched off the tech that opens its bay: it waits on the ground until that is over.
                     DropSquadFrom(carrier, carrier.Position - carrier.Facing * (carrier.Radius * DropUnderCarrierShare));
                     carrier.DropsMade++;
-                    carrier.NextDropAt = ElapsedSeconds + carrier.Stats.ReinforcementDelaySeconds;
+                    carrier.NextDropAt = ElapsedSeconds + carrier.Stats.ReinforcementDelaySeconds - land; // Down again in time for the next squad to be out on the delay.
                     carrier.DropPhase = DropRunPhase.Ascending;
                     continue;
                 }
@@ -424,34 +438,15 @@ namespace Halobellum.Combat
             }
         }
 
-        /// <summary>
-        /// Where a carrier wants to land: behind the enemy's rearmost ground unit, towers aside, or as far back as the arena goes if there is no room behind it.
-        /// With no enemy on the ground, in the middle of the enemy's zone.
-        /// </summary>
-        private Vec2 BehindEnemyLines(SimUnit carrier)
-        {
-            float back = carrier.Team == Team.A ? 1f : -1f;
-            SimUnit rearmost = null;
-            foreach (SimUnit unit in _units)
-            {
-                if (!unit.IsAlive || unit.Team == carrier.Team || unit.IsAir || unit.Stats.IsTower) continue;
-                if (rearmost == null || unit.Position.Y * back > rearmost.Position.Y * back) rearmost = unit;
-            }
-            float furthest = _rules.ArenaLength * 0.5f - carrier.Radius - 1f;
-            if (rearmost == null) return new Vec2(carrier.Position.X, back * Math.Min(furthest, (_rules.DeploymentZoneFront + _rules.ArenaLength * 0.5f) * 0.5f));
-            float depth = rearmost.Position.Y * back + rearmost.Radius + DropBehindLinesMetres;
-            return new Vec2(rearmost.Position.X, back * Math.Min(furthest, depth));
-        }
-
-        /// <summary>A new squad of this unit type on the spot, for this battle only.</summary>
+        /// <summary>A new squad of this unit type on the spot, for this battle only. Summoned (a spawner's brood, a death burst): it deals no base damage.</summary>
         private void SpawnSquad(UnitStats stats, SimUnit parent, Vec2 centre, int bodies)
         {
             Team team = parent.Team;
             int squadId = NewSquadId();
             Vec2 forward = team == Team.A ? Vec2.Up : Vec2.Down;
-            foreach (Vec2 offset in SquadFormation.Offsets(bodies, stats.CollisionRadius, _rules.FormationGap, false))
+            foreach (Vec2 offset in SquadFormation.Offsets(bodies, stats.CollisionRadius, SquadFormation.GapFor(stats, _rules.FormationGap), false))
             {
-                SimUnit spawned = CreateUnit(stats, team, centre + (team == Team.A ? offset : -offset), squadId);
+                SimUnit spawned = CreateUnit(stats, team, centre + (team == Team.A ? offset : -offset), squadId, BodyOrigin.Summoned);
                 spawned.Facing = forward;
                 spawned.UnlimitedAcquisition = IsInEnemyZone(spawned);
                 spawned.CreditSquadId = parent.CreditSquadId;
@@ -460,14 +455,14 @@ namespace Halobellum.Combat
             _squadById[squadId].FormUp();
         }
 
-        /// <summary>Killed units whose time has come get up on the other side.</summary>
+        /// <summary>Killed units whose time has come get up on the other side. A risen body is Summoned: it deals no base damage.</summary>
         private void UpdateRises()
         {
             for (int i = 0; i < _rises.Count; i++)
             {
                 PendingRise rise = _rises[i];
                 if (ElapsedSeconds + 1e-4f < rise.At) continue;
-                SimUnit risen = CreateUnit(rise.Form ?? InfectedFormOf(rise.Corpse.Stats), rise.Team, rise.Corpse.Position, -1);
+                SimUnit risen = CreateUnit(rise.Form ?? InfectedFormOf(rise.Corpse.Stats), rise.Team, rise.Corpse.Position, -1, BodyOrigin.Summoned);
                 risen.Facing = rise.Team == Team.A ? Vec2.Up : Vec2.Down;
                 risen.UnlimitedAcquisition = true;
                 SimUnit killer = rise.Corpse.KilledById >= 0 ? _units[rise.Corpse.KilledById] : null;
@@ -690,7 +685,12 @@ namespace Halobellum.Combat
             if (unit.Health <= 0f) return;
             float bite = Math.Min(unit.Health, unit.SeedDamagePerSecond * planterShockwaveDamage * _dt);
             unit.DamageTaken += bite;
-            if (unit.SeededById >= 0) _units[unit.SeededById].SeedDamageDealt += bite;
+            if (unit.SeededById >= 0)
+            {
+                SimUnit planter = _units[unit.SeededById];
+                planter.SeedDamageDealt += bite;
+                unit.AddSquadDamage(planter.CreditSquadId, bite); // for the kill XP split (xp_split)
+            }
             unit.Health -= unit.SeedDamagePerSecond * planterShockwaveDamage * _dt;
             unit.SecondsSinceDamaged = 0f;
             if (unit.Health <= 0f && unit.KilledById < 0 && unit.KilledBySpell == null && unit.SeededById >= 0)
@@ -701,8 +701,8 @@ namespace Halobellum.Combat
         }
 
         /// <summary>
-        /// A hit from a Seeder plants its seed, if the target can take one. Only a host the Flood can convert (its planter has a form of it, D76)
-        /// or any aircraft is eaten by the seed; any other (a Spartan, a Hunter) is only slowed by it (the owner, 2026-11-10).
+        /// A hit from a Seeder plants its seed, if the target can take one, and its rot eats it (any unit since D155; before, only a host the
+        /// Flood can convert or an aircraft, any other only slowed). Only a host the Flood has a form of rises as it (D76).
         /// </summary>
         private void PlantSeed(SimUnit target, SimUnit attacker, WeaponStats weapon)
         {
@@ -711,8 +711,8 @@ namespace Halobellum.Combat
             target.SeededUntil = ElapsedSeconds + weapon.SeedSeconds;
             target.SeedSlowShare = weapon.SeedSlowShare;
             target.SeededById = attacker.Id;
-            bool eaten = target.IsAir || SeedFormFor(target) != null;
-            target.SeedDamagePerSecond = eaten ? target.Stats.MaxHealth * weapon.SeedDamageSharePerSecond : 0f;
+            // Its rot eats any unit the seed takes (the owner, D155); it ate only hosts the Flood can convert and aircraft before.
+            target.SeedDamagePerSecond = target.Stats.MaxHealth * weapon.SeedDamageSharePerSecond;
         }
 
         /// <summary>A hit from a weapon that slows (the Gremlin's EMP, M10). Titans shrug it off; the strongest slow in force applies.</summary>
@@ -814,7 +814,7 @@ namespace Halobellum.Combat
             }
         }
 
-        /// <summary>Drop pods: the spell's squads land in formation around the spot, facing the enemy, for this battle only.</summary>
+        /// <summary>Drop pods: the spell's squads land in formation around the spot, facing the enemy, for this battle only. Summoned: they deal no base damage.</summary>
         private void DropSpellSquads(SimSpell spell)
         {
             UnitStats stats = spell.Stats.DropUnit;
@@ -828,10 +828,10 @@ namespace Halobellum.Combat
                 // Several squads stand side by side, centred on the spot.
                 float offsetX = (n - (spell.Stats.DropSquads - 1) * 0.5f) * (width + _rules.FormationGap * 2f);
                 Vec2 centre = spell.Position + new Vec2(spell.Team == Team.A ? offsetX : -offsetX, 0f);
-                foreach (Vec2 offset in SquadFormation.Offsets(stats.SquadSize, stats.CollisionRadius, _rules.FormationGap, false))
+                foreach (Vec2 offset in SquadFormation.Offsets(stats, _rules.FormationGap, false))
                 {
                     Vec2 placed = spell.Team == Team.A ? offset : -offset;
-                    SimUnit dropped = CreateUnit(stats, spell.Team, centre + placed, squadId);
+                    SimUnit dropped = CreateUnit(stats, spell.Team, centre + placed, squadId, BodyOrigin.Summoned);
                     dropped.Facing = forward;
                     dropped.UnlimitedAcquisition = IsInEnemyZone(dropped);
                     dropped.CreditSquadId = -1;
@@ -1029,6 +1029,7 @@ namespace Halobellum.Combat
             foreach (SimUnit friend in _nearby)
             {
                 if (friend == unit || friend.Team != unit.Team || friend.IsAir || !friend.IsAlive || friend.IsLeaping) continue;
+                if (friend.Stats.PassesThroughOwnChaff && unit.Stats.Role == UnitRole.Chaff) continue; // It walks through, not against it (D146).
                 bool pushing = friend.State == UnitState.Move || friend.Advancing;
                 if (!pushing) continue;
 
@@ -1155,7 +1156,44 @@ namespace Halobellum.Combat
             }
             unit.MoveTarget = unit.Weapons[unit.MainWeaponIndex].Target;
             unit.ChaseWeaponIndex = -1;
+            if (unit.Stats.GoesForTowers && HeadForTower(unit)) return;
             if (unit.MoveTarget == null) ChaseWhatIsLeft(unit);
+        }
+
+        /// <summary>
+        /// A unit that goes for towers (UnitStats.GoesForTowers, D138) walks to the nearest enemy tower one of its weapons can hit, its weapons
+        /// still shooting the closest enemies on the way; once the tower is in that weapon's reach, that weapon turns on the tower.
+        /// False when no such tower stands, so the unit fights as usual.
+        /// </summary>
+        private bool HeadForTower(SimUnit unit)
+        {
+            SimUnit tower = null;
+            int weaponIndex = -1;
+            float best = float.MaxValue;
+            foreach (SimUnit enemy in _units)
+            {
+                if (!enemy.Stats.IsTower || !Targeting.IsTargetableEnemy(unit, enemy)) continue;
+                int usable = -1;
+                for (int w = 0; w < unit.Weapons.Length && usable < 0; w++)
+                {
+                    int index = w == 0 ? unit.MainWeaponIndex : (w <= unit.MainWeaponIndex ? w - 1 : w);
+                    if (Targeting.IsLegalTarget(unit, unit.Weapons[index].Stats, enemy)) usable = index;
+                }
+                if (usable < 0) continue;
+                float distance = Vec2.DistanceSquared(unit.Position, enemy.Position);
+                if (distance < best || (distance == best && enemy.Id < tower.Id))
+                {
+                    best = distance;
+                    tower = enemy;
+                    weaponIndex = usable;
+                }
+            }
+            if (tower == null) return false;
+            unit.MoveTarget = tower;
+            unit.ChaseWeaponIndex = weaponIndex == unit.MainWeaponIndex ? -1 : weaponIndex;
+            SimWeapon reach = unit.Weapons[weaponIndex];
+            if (Targeting.IsInRange(unit, reach.Stats, tower)) reach.Target = tower;
+            return true;
         }
 
         /// <summary>
@@ -1328,6 +1366,18 @@ namespace Halobellum.Combat
                 {
                     SimWeapon weapon = unit.Weapons[w];
                     weapon.Cooldown -= _dt * unit.ShockwaveFireRate;
+                    if (weapon.RamSpent)
+                    {
+                        // A spent ram builds up speed again (the Infested Warthog, D160): only seconds of driving count.
+                        if (unit.Velocity.LengthSquared > RamRollingSpeed * RamRollingSpeed) weapon.RamRolledSeconds += _dt;
+                        if (weapon.RamRolledSeconds < weapon.Stats.RamRechargeSeconds)
+                        {
+                            if (weapon.Cooldown < 0f) weapon.Cooldown = 0f;
+                            continue;
+                        }
+                        weapon.RamSpent = false;
+                        weapon.RamRolledSeconds = 0f;
+                    }
                     if (weapon.BeamPhase != BeamPhase.Off && unit.Stats.SwitchesWeapons && w != unit.MainWeaponIndex)
                     {
                         // A unit using one weapon at a time drops its beam when it turns to another (the Hunter Captain's laser as it bashes, D91).
@@ -1345,8 +1395,10 @@ namespace Halobellum.Combat
                     if (weapon.BurstShotsLeft > 0) FireRestOfBurst(unit, weapon, w);
 
                     SimUnit target = weapon.Target;
+                    bool charged = false;
                     if (weapon.WindingUp)
                     {
+                        charged = weapon.ChargingShot;
                         target = WindUpShot(unit, weapon);
                         if (target == null) continue; // Still charging, or the shot was spent.
                     }
@@ -1359,6 +1411,7 @@ namespace Halobellum.Combat
                             // A weapon that is not shooting stays ready, but cannot store up extra shots.
                             if (weapon.Cooldown < 0f) weapon.Cooldown = 0f;
                             if (weapon.IdleSeconds < float.MaxValue) weapon.IdleSeconds += _dt;
+                            if (weapon.Stats.HasMagazine && weapon.IdleSeconds >= weapon.Stats.MagazineReloadSeconds) weapon.MagazineShots = 0; // Reloaded while idle (D157).
                             continue;
                         }
                         if (weapon.Stats.StaggerSeconds > 0f && weapon.IdleSeconds >= weapon.Stats.FireInterval)
@@ -1367,18 +1420,42 @@ namespace Halobellum.Combat
                             weapon.Cooldown = Math.Max(weapon.Cooldown, weapon.Stats.StaggerSeconds + (weapon.Stats.HasWindUp ? weapon.Stats.WindUpSeconds : 0f));
                         }
                         weapon.IdleSeconds = 0f;
+                        if (weapon.ChargedShot != null && target.Shield > 0f)
+                        {
+                            // A target with shield: charge the bolt that strips it (the Jackal's plasma pistol, D151). As a wind-up, it starts
+                            // once the rest of the reload is no longer than the charge.
+                            float charge = weapon.Stats.ShieldBreakChargeSeconds;
+                            if (weapon.Cooldown > charge + WindUpEpsilon) continue;
+                            weapon.WindingUp = true;
+                            weapon.ChargingShot = true;
+                            weapon.WindUpTarget = target;
+                            weapon.WindUpLeft = weapon.WindUpTotal = charge;
+                            MarkEngaged(unit);
+                            Events.RaiseWeaponWindingUp(unit, w, target, charge / Math.Max(1e-3f, unit.ShockwaveFireRate));
+                            continue;
+                        }
                         if (weapon.Stats.HasWindUp)
                         {
                             // It starts charging once the rest of its reload is no longer than its wind-up, so firing on keeps its rate.
                             if (weapon.Cooldown > weapon.Stats.WindUpSeconds + WindUpEpsilon) continue;
                             weapon.WindingUp = true;
                             weapon.WindUpTarget = target;
-                            weapon.WindUpLeft = weapon.Stats.WindUpSeconds;
+                            weapon.WindUpLeft = weapon.WindUpTotal = weapon.Stats.WindUpSeconds;
                             MarkEngaged(unit);
                             Events.RaiseWeaponWindingUp(unit, w, target, weapon.Stats.WindUpSeconds / Math.Max(1e-3f, unit.ShockwaveFireRate));
                             continue;
                         }
                         if (weapon.Cooldown > 0f) continue;
+                    }
+
+                    if (charged)
+                    {
+                        // The charged bolt (D151): its reload counts from the shot, as a wound-up shot's does.
+                        weapon.Cooldown = Math.Max(weapon.Cooldown, -_dt * unit.ShockwaveFireRate) + weapon.Stats.FireInterval;
+                        Events.RaiseChargedShotFired(unit, w, target);
+                        MarkEngaged(unit);
+                        _projectiles.Add(new Projectile(unit, weapon.ChargedShot, target, unit.Position, w, _shotsFired++));
+                        continue;
                     }
 
                     Events.RaiseWeaponFired(unit, w, target);
@@ -1401,6 +1478,13 @@ namespace Halobellum.Combat
                     // A wound-up shot may come long after the weapon was ready: its reload counts from the shot, as any weapon's does.
                     if (weapon.Stats.HasWindUp) weapon.Cooldown = Math.Max(weapon.Cooldown, -_dt * unit.ShockwaveFireRate);
                     weapon.Cooldown += weapon.Stats.FireInterval;
+                    if (weapon.Stats.IsRam) weapon.RamSpent = true; // It needs speed again before the next ram (D160).
+                    if (weapon.Stats.HasMagazine && ++weapon.MagazineShots >= weapon.Stats.MagazineSize)
+                    {
+                        // The magazine's last shot (the owner, D157): the next comes a whole reload after it.
+                        weapon.Cooldown += weapon.Stats.MagazineReloadSeconds - weapon.Stats.FireInterval;
+                        weapon.MagazineShots = 0;
+                    }
                     if (weapon.Stats.ShotsPerAttack > 1)
                     {
                         weapon.BurstShotsLeft = weapon.Stats.ShotsPerAttack - 1;
@@ -1413,8 +1497,49 @@ namespace Halobellum.Combat
 
         private void Shoot(SimUnit unit, SimWeapon weapon, int weaponIndex, SimUnit target)
         {
-            if (weapon.Stats.IsInstant) ResolveHit(unit, weapon.Stats, target, target.Position, unit.Position);
+            if (weapon.Stats.IsInstant)
+            {
+                ResolveHit(unit, weapon.Stats, target, target.Position, unit.Position);
+                if (weapon.Stats.PiercesKills) PierceOnKill(unit, weapon.Stats, weaponIndex, target);
+            }
             else _projectiles.Add(new Projectile(unit, weapon.Stats, target, unit.Position, weaponIndex, _shotsFired++));
+        }
+
+        /// <summary>
+        /// A shot that killed its target goes on through (the Jackal's beam rifle, the owner, D155): it hits the nearest enemy beyond the dead
+        /// one on the line from the shooter through it, if that enemy's body is on the line and within the weapon's range, and goes on while it kills.
+        /// </summary>
+        private void PierceOnKill(SimUnit unit, WeaponStats weapon, int weaponIndex, SimUnit killed)
+        {
+            Vec2 from = unit.Position;
+            float reach = weapon.Range * unit.RangeMultiplier + unit.Radius;
+            SimUnit last = killed;
+            for (int n = 0; n < 8 && last.Health <= 0f; n++)
+            {
+                Vec2 line = last.Position - from;
+                float passed = line.Length;
+                if (passed < 1e-4f) return;
+                Vec2 direction = line * (1f / passed);
+                SimUnit next = null;
+                float nearest = float.MaxValue;
+                foreach (SimUnit victim in _units)
+                {
+                    if (victim == last || victim.Health <= 0f || !Targeting.IsLegalTarget(unit, weapon, victim)) continue;
+                    Vec2 toVictim = victim.Position - from;
+                    float along = Vec2.Dot(toVictim, direction);
+                    if (along <= passed || along - victim.Radius > reach) continue; // Not beyond the dead one, or out of range.
+                    if ((toVictim - direction * along).Length > victim.Radius) continue; // Its body is off the line.
+                    if (along < nearest)
+                    {
+                        nearest = along;
+                        next = victim;
+                    }
+                }
+                if (next == null) return;
+                Events.RaiseShotPierced(unit, weaponIndex, last, next);
+                ResolveHit(unit, weapon, next, next.Position, last.Position);
+                last = next;
+            }
         }
 
         /// <summary>
@@ -1436,6 +1561,9 @@ namespace Halobellum.Combat
             Events.RaiseWeaponFired(unit, weaponIndex, target);
             Shoot(unit, weapon, weaponIndex, target);
         }
+
+        /// <summary>Above this speed, m/s, a unit counts as driving, for a ram building up speed again (D160).</summary>
+        private const float RamRollingSpeed = 0.5f;
 
         /// <summary>Wind-up times are counted in float steps: this keeps a step's rounding from costing a whole tick.</summary>
         private const float WindUpEpsilon = 1e-4f;
@@ -1604,6 +1732,12 @@ namespace Halobellum.Combat
         /// </summary>
         private void ResolveHit(SimUnit attacker, WeaponStats weapon, SimUnit directTarget, Vec2 impactPoint, Vec2 sourcePosition)
         {
+            if (weapon.IsChargedShot)
+            {
+                if (directTarget != null && Targeting.IsTargetableEnemy(attacker, directTarget)) StripShield(directTarget, attacker, weapon.ShieldBreak);
+                Events.RaiseShotLanded(attacker, weapon, impactPoint);
+                return;
+            }
             if (directTarget != null && Targeting.IsTargetableEnemy(attacker, directTarget))
             {
                 DefenseResult defense = DirectionalDefense.Evaluate(directTarget.Stats.DefenseArc, directTarget.Position,
@@ -1637,6 +1771,7 @@ namespace Halobellum.Combat
                 DefenseResult defense = DirectionalDefense.Evaluate(victim.Stats.DefenseArc, victim.Position,
                     victim.Facing, impactPoint, weapon, false, _random);
                 DealDamage(victim, attacker, weapon, defense.DamageMultiplier, true);
+                if (weapon.SeedSeconds > 0f) PlantSeed(victim, attacker, weapon); // The Seeder's splash seeds too (the owner, D155).
             }
         }
 
@@ -1694,6 +1829,7 @@ namespace Halobellum.Combat
             CountTaken(target, weapon.DamagePerShot * NominalMultiplier(target, attacker, weapon, areaHit), pool, dealt);
             target.SecondsSinceDamaged = 0f;
             attacker.DamageDealt += dealt;
+            target.AddSquadDamage(attacker.CreditSquadId, dealt); // for the kill XP split (xp_split); the battle never reads it
             MarkEngaged(target);
             Events.RaiseUnitDamaged(target, attacker, dealt);
             if (attacker.Stats.LifestealShare > 0f && attacker.IsAlive && attacker.Health > 0f)
@@ -1704,6 +1840,20 @@ namespace Halobellum.Combat
                 target.KilledById = attacker.Id;
                 attacker.Kills++;
             }
+        }
+
+        /// <summary>The charged bolt landing (D151): it takes up to this many shield points off the target, and nothing from its health.</summary>
+        private void StripShield(SimUnit target, SimUnit attacker, float amount)
+        {
+            float stripped = Math.Min(Math.Max(0f, target.Shield), amount);
+            if (stripped <= 0f) return;
+            target.Shield -= stripped;
+            target.DamageTaken += stripped;
+            target.SecondsSinceDamaged = 0f;
+            attacker.DamageDealt += stripped;
+            target.AddSquadDamage(attacker.CreditSquadId, stripped);
+            MarkEngaged(target);
+            Events.RaiseUnitDamaged(target, attacker, stripped);
         }
 
         private void ApplyDeaths()
@@ -1838,17 +1988,26 @@ namespace Halobellum.Combat
                 byName[name] = typeResult;
             }
 
+            float worthPlaced = 0f, worthLeft = 0f;
             foreach (SimUnit unit in _units)
             {
                 if (unit.Team != team || unit.Stats.IsTower) continue;
+                if (unit.Origin == BodyOrigin.Deployed)
+                {
+                    // How much of what was placed is left (D154): health and shield, weighted by the body's share of its squad's cost.
+                    float worth = unit.Stats.Cost / (float)Math.Max(1, unit.Stats.SquadSize);
+                    float full = unit.Stats.MaxHealth + unit.Stats.MaxShield;
+                    worthPlaced += worth;
+                    if (unit.IsAlive && full > 0f) worthLeft += worth * Math.Min(1f, (Math.Max(0f, unit.Health) + Math.Max(0f, unit.Shield)) / full);
+                }
                 UnitTypeResult typeResult = byName[unit.Stats.Name];
                 typeResult.Deployed++;
                 typeResult.DamageDealt += unit.DamageDealt;
                 typeResult.Kills += unit.Kills;
                 if (unit.IsAlive)
                 {
-                    typeResult.Survivors++;
-                    typeResult.SurvivorBaseDamage += unit.Stats.BaseDamage;
+                    typeResult.Survivors++; // Every living body, summoned or not: the outcome's tiebreak and the HUD read it.
+                    if (unit.HitsEnemyBase) typeResult.SurvivorBaseDamage += unit.Stats.BaseDamage;
                 }
             }
 
@@ -1863,6 +2022,7 @@ namespace Halobellum.Combat
                 teamResult.Kills += typeResult.Kills;
                 teamResult.SurvivorBaseDamage += typeResult.SurvivorBaseDamage;
             }
+            teamResult.HealthLeftShare = worthPlaced > 0f ? worthLeft / worthPlaced : 0f;
 
             // Spells: one line per spell name (several copies of one spell add up).
             foreach (SimSpell spell in _spells)

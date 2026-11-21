@@ -49,10 +49,13 @@ namespace Halobellum.Combat
         }
 
         /// <summary>True if the target is within the weapon's range (and outside its minimum range).</summary>
+        /// <summary>The weapon's range against this target: more against an aircraft with an air range bonus (D149).</summary>
+        public static float RangeAgainst(WeaponStats weapon, SimUnit target) => target.IsAir ? weapon.Range + weapon.AirRangeBonus : weapon.Range;
+
         public static bool IsInRange(SimUnit shooter, WeaponStats weapon, SimUnit target)
         {
             float distance = EdgeDistance(shooter, target);
-            return distance <= weapon.Range * shooter.RangeMultiplier && distance >= weapon.MinRange;
+            return distance <= RangeAgainst(weapon, target) * shooter.RangeMultiplier && distance >= weapon.MinRange;
         }
 
         /// <summary>
@@ -85,9 +88,17 @@ namespace Halobellum.Combat
                 SimUnit candidate = units[i];
                 if (!IsLegalTarget(shooter, weapon, candidate)) continue;
                 if (seedableInRange && (!CanBeSeeded(candidate) || candidate.IsSeeded || !IsInRange(shooter, weapon, candidate))) continue;
-                if (!float.IsPositiveInfinity(acquisitionRange) && EdgeDistance(shooter, candidate) > acquisitionRange) continue;
+                // An air range bonus (D149) reaches aircraft further: they are noticed that much further, and count as that much closer,
+                // so the closest target is still the one in range when any is.
+                float airBonus = weapon != null && candidate.IsAir ? weapon.AirRangeBonus * shooter.RangeMultiplier : 0f;
+                if (!float.IsPositiveInfinity(acquisitionRange) && EdgeDistance(shooter, candidate) - airBonus > acquisitionRange) continue;
 
                 float distanceSquared = Vec2.DistanceSquared(shooter.Position, candidate.Position);
+                if (weapon != null && weapon.AirRangeBonus > 0f)
+                {
+                    float closeness = MathF.Sqrt(distanceSquared) - airBonus;
+                    distanceSquared = closeness * Math.Abs(closeness); // Signed, so a target well within the bonus still ranks first.
+                }
                 bool closer = distanceSquared < bestDistanceSquared;
                 bool tieWithLowerId = distanceSquared == bestDistanceSquared && best != null && candidate.Id < best.Id;
                 if (closer || tieWithLowerId)

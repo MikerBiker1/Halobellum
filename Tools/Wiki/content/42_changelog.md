@@ -8,6 +8,86 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.413.3 · 2026-11-21
+- **Balance to 48–52%,** seven rounds of Insane against Insane tournaments: Spartan Sniper 72 → 76 damage; Spartan Heavy Weapons chaingun 13 → 14; Spartan Fireteam battle rifle 31 → 33; Infested Marine 130 → 125 health; Infested Warthog ram 60 → 50; Grunt Goblin needles 14 → 13.5; Marauder 1,600 health (was 1,500) and cannon 104 (88); Brute Grenadier 158 health (150) and 35 damage (32); Chopper 315 health (300) and blades 66 (60); Condor Gunship autocannons 24 → 22. Over six seeds (21,600 matches) every sub-faction wins 49.1% to 51.2% and every faction 49.6% to 50.5%. (D163)
+
+## 0.413.2 · 2026-11-20
+- **Spartan Grenadier:** 350 credits (was 400); unlock stays 200. **Chopper:** 300 health (250), so it lives long enough to reach the towers. (D162)
+
+## 0.413.1 · 2026-11-20
+- **Rhino:** a shell every 4 s (was 5). **Gremlin:** 360 health (340). **Condor Gunship:** 1,200 health (1,130). (D161)
+
+## 0.413.0 · 2026-11-20
+- **Rams:** the Infested Warthog's ram hits for 60, but only once it has built up speed: after a ram it must drive for half a second before it can ram again, so against a squad it rams the first body only. (D160)
+- **Spartan Heavy Weapons:** light armor under its shield (was none). **Infested Marine:** 130 health (140). (D160)
+
+## 0.412.1 · 2026-11-20
+- **Spartan Sniper** 72 damage, reload 2.4 s; **Spartan Grenadier** 65 damage; **Gremlin** range 14 m; **Grizzly** fires every 2 s (2.5). (D159)
+
+## 0.412.0 · 2026-11-20
+- **Prices per sub-faction:** a unit can cost differently in one sub-faction; the Hunter Pair costs 400 for the Lekgolo Colony only. (D158)
+- **Spartan Sniper:** 70 damage, reload 2.5 s, and every shot is heard: each shot's sound starts over the last one's echo. **Spartan Grenadier** reload 2 s. **Infested Wraith** 90. **Brute Grenadier** range 14 m. **Skitterer** 80 health a body. **Reaver** heavy armor. (D158)
+
+## 0.411.0 · 2026-11-20
+- **Magazines:** a weapon can fire a few quick shots, then reload. The Spartan Sniper fires 4 rounds 0.5 s apart, then reloads; the Spartan Grenadier fires 2 rockets, then reloads. (D157)
+- **Infested Elite** faster (3 m/s) and firing twice as often; **Infested Warthog** no longer releases Infection Forms; **Spartan CQB** shotgun 150; **Infested Scorpion** 1,500 health; **Marauder** 1,500 health; **Infested Wraith** 95. The Infected Pelican is UNSC-based Flood only and the Infected Phantom Covenant-based only. Cannon Fodder stand 1 m apart. The Grunt Goblin drops its fuel rod; its needle cannon hits 14 with a 1 m splash at 16 m. Vampire and Goblin louder. (D157)
+
+## 0.410.1 · 2026-11-20
+- **Seeder:** its rot eats 2.5% of the host's health a second (was 4%). (D156)
+
+## 0.410.0 · 2026-11-20
+- **Shots that go through:** the Jackal's beam rifle carries on to the next enemy behind when its shot kills. (D155)
+- **Seeder:** its rot eats any unit a seed takes, and its spore seeds in a 0.5 m splash. (D155)
+- **Grunt** pistol 5 and **Cannon Fodder** 3.5, every plasma pistol shoots green; **Heavy Grunts** 11; **Hunter Captain** beam held 2 s; Hunters no longer weak from behind; **Elite** shield 300; **Spartan Sniper** fires faster; **Infested Banshee** 400 health; **Pelican** 1,400 health; **Vampire** 800 health and louder; the **Hornet** and **Infested Hornet** lose their bombs and their main gun gets a 1 m splash. The Sparrowhawk's tracers start at its gun muzzles. (D155)
+
+## 0.409.0 · 2026-11-20
+- **The AI's counter table can measure by how much a unit wins,** not only how often, and favour units that help against the whole enemy army. Insane against Insane it gained nothing clear, so it is off for now. (D154)
+
+## 0.408.0 · 2026-11-20
+- **Sparrowhawk remade:** two miniguns firing together, 15 rounds a second each, not anti-armor, each from its own gun pod. (D153)
+- **Infested Warthog** ram 25% weaker; **Infested Scorpion** back to 300 credits; **Rhino** range 46 m; **Vulture** chin gun reaches 22 m like its missiles; **Longsword** 1,000 health; **Condor Gunship** main cannon explosive with a 0.5 m splash; **Infested Wraith** 80; **Combat Form** melee only, at 3 m/s. (D153)
+
+## 0.407.0 · 2026-11-20
+- **Covenant pass:** **Heavy Grunts** needle rifle 10, no shield, 150 health; **Grunt Goblin** fires explosive needles like the Vampire's, with its sound; **Reaver** 900 health; **Goliath** no longer weak from behind; **Elite** shield 250; **Jackal (Shield)** retuned; **Covenant Phantom** turrets 15. (D151, D152)
+
+## 0.406.1 · 2026-11-20
+- **Vampire:** explosive needles, 16 damage with a 0.5 m splash and triple against aircraft, with its own needler sound. **Heavy Grunts:** needle rifle ballistic. (D150)
+
+## 0.406.0 · 2026-11-19
+- **New tech, Aim for Their Wings** (Jackal sniper, 150): +4 m range and +50% damage against aircraft. **Vampire:** hits aircraft harder, 700 health. (D149)
+
+## 0.405.3 · 2026-11-19
+- **The Hunter Pair and the Hunter Captain shoot aircraft.** Their shield bash and charge stay on the ground. (D148)
+
+## 0.405.2 · 2026-11-19
+- **Spartan CQB:** fights the closest enemy instead of running for the towers. (D147)
+
+## 0.405.1 · 2026-11-19
+- **Tech icons** sit closer above the squads. **The Carrier Form** walks through its own Infection Forms to reach its target. (D146)
+
+## 0.405.0 · 2026-11-19
+- **Insane reads levels and techs** on both sides when choosing counters, and stops piling into a unit type that keeps failing. (D145)
+- **Tech icons over squads** during deployment: the techs each squad had last round, for both sides. (D145)
+
+## 0.404.0 · 2026-11-19
+- **Laser Sights:** +4 m range (was +2). **The AI aims the Glassing Beam** where enemy squads will be, not where they are. (D144)
+
+## 0.403.0 · 2026-11-19
+- **Pelican:** never flies behind enemy lines; it lands where it is, lets its Marines out and takes off again. **Spawner** releases 3 Combat Forms (was 5); **Swarm Brood** 300. Clicking a unit in the Sandbox opens its stats. (D143)
+
+## 0.402.0 · 2026-11-18
+- **The owner's playtest batch:** the Covenant Phantom drops its Grunts from the air; Pelican autocannon 25 with a 1 m splash; each Condor laser 60. **Summoned bodies deal no damage to the base** and fight at their maker's level. **Kill XP is split:** half to the killer, half by damage dealt. The Oil Zone lasts the whole round and stays in your spells, recharging between uses. Skitterer range 12 m; Heavy Weapons chaingun 13; the Goliath is melee only and charges like the Hunters. A glow marks each side's top squad of the battle. Unit stats can be modded from files, and the Unlock Skirmish icons show stats. (D142)
+
+## 0.401.0 · 2026-11-15
+- **Balance remade in two steps:** first the three factions' base units to 50% each with no exclusive units, then exclusive units so every sub-faction has a matchup it clearly wins. Every Titan unlocks for 150; many base units retuned. (D141)
+
+## 0.400.0 · 2026-11-13
+- **Second balance pass,** measured by how much each unit's absence costs its army. Titans' unlock costs cut so the AI can afford them; exclusive units bring every sub-faction to 48–51% but the Lekgolo Colony (53.5%). (D140)
+
+## 0.399.0 · 2026-11-12
+- **Unit balance pass:** 40 units retuned by type and price, chaff damage moved into its techs; flankers go for towers, and Hard and Insane guard a raided tower. (D138)
+- **Goliath animated anew** (knuckle-walk, charge, two-fisted slam), and both Jackals' icons remade. (D139)
+
 ## 0.398.1 · 2026-11-12
 - **No change to the game.** New balance tools: a unit intent sheet (what each unit is for and how strong it should be for its price) and the army slot test, which measures what each unit adds to the armies the AI really builds. Balance now goes unit by unit. (D137)
 

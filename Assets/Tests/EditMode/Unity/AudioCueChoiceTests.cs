@@ -37,7 +37,7 @@ namespace Halobellum.Tests
 
         [TestCase("UNSC/Pelican", "M370 Autocannon")]
         [TestCase("AerospaceCommand/CondorGunship", "Twin Autocannons")]
-        [TestCase("AerospaceCommand/Sparrowhawk", "Heavy Autocannon")]
+        [TestCase("AerospaceCommand/Sparrowhawk", "Left Minigun")]
         [TestCase("Banished/Chopper", "Chopper Autocannons")]
         public void Autocannons_AreHeavyGuns_WithNoExplosionOnEveryHit(string path, string weaponName)
         {
@@ -69,8 +69,7 @@ namespace Halobellum.Tests
         [TestCase("UNSC/Mantis", "Rockets", "sfx_explosion_small")]
         [TestCase("Covenant/Banshee", "Plasma Cannons", null)]
         [TestCase("Covenant/Banshee", "Fuel Rod Bomb", "sfx_explosion_small")]
-        [TestCase("LekgoloColony/Goliath", "Fist Slam", null)]
-        [TestCase("LekgoloColony/Goliath", "Fuel Rod Cannon", "sfx_explosion_small")]
+        [TestCase("LekgoloColony/Goliath", "Fist Slam", null)] // Its Fuel Rod Cannon (sfx_explosion_small) is gone: melee only since D142.
         [TestCase("Banished/Marauder", "Plasma Cannon", "sfx_explosion_small")]
         [TestCase("Covenant/Elite", "Plasma Rifle", null)]
         public void ALanding_GoesByTheWeaponThatFired(string path, string weaponName, string expected)
@@ -122,7 +121,6 @@ namespace Halobellum.Tests
         {
             Assert.AreEqual("sfx_flood_burst", Landing("Flood/PureFormRanged", "Bone Shards"));
             Assert.AreEqual("sfx_flood_burst", Landing("FloodCovenant/InfestedBanshee", "Spore Bomb"), "Drawn bursting in gore and spores.");
-            Assert.AreEqual("sfx_flood_burst", Landing("FloodUNSC/InfestedHornet", "Spore Bombs"));
             Assert.IsNull(Landing("Flood/SwarmForm", "Spat Bone"), "It has no blast.");
             Assert.IsNull(Landing("FloodCovenant/Spawner", "Spore Lash"), "Its burst comes with the lash.");
         }
@@ -249,7 +247,7 @@ namespace Halobellum.Tests
                     Assert.AreEqual(WeaponFeelKind.HeavyBullet, WeaponFeel.For(weapon), weapon.Name);
                 }
             }
-            Assert.GreaterOrEqual(names.Count, 4);
+            Assert.GreaterOrEqual(names.Count, 3); // 4 until D153, when the Sparrowhawk's autocannon became two miniguns.
         }
     }
 }

@@ -11,6 +11,7 @@ banshee_fire[plasmarifle1].wav -> sfx_fire_banshee.wav: the Banshee's plasma can
 banshee_cannon_fire[banshee_cannon__fire].wav -> sfx_fire_banshee_bomb.wav: the Banshee's fuel rod bomb, fired
 banshee_cannon_expl[banshee_cannon_explo2].wav -> sfx_explosion_banshee.wav: the Banshee's fuel rod bomb, landing
 fire[needlefire11].wav -> sfx_fire_needle.wav: needle weapons
+NeedlerRifle.mp3 -> sfx_fire_vampire.mp3: the Vampire's needle cannons, once per shot, overlapping (D150)
 fire[rocket16].wav -> sfx_fire_rocket.wav: rocket launchers and missiles
 scorpion_cannon_fire[cannon_fire].wav -> sfx_fire_cannon.wav: tank cannons
 fire[grifle03].wav -> sfx_fire_gauss.wav: gauss guns and railguns (Gauss Warthog, Cobra, Gremlin)
@@ -18,7 +19,7 @@ Sniper fire[ruger24].wav -> sfx_fire_sniper.wav: the Spartan Sniper's rifle
 Spartan_laser_shoots_at_2.mp3 -> sfx_fire_spartanlaser.mp3: the Spartan Laser's wind-up and shot, played as it starts winding up
 fire[shotgun2].wav -> sfx_fire_shotgun.wav: the Spartan CQB's shotgun
 brute_shot_fire[brute_fire1].wav -> sfx_fire_bruteshot.wav: the Brute Grenadier's spike grenade launcher
-Fuelrod_fire_grunt.wav -> sfx_fire_fuelrod.wav: fuel rod guns (Fuel Rod Grunt, Grunt Goblin, Goliath)
+Fuelrod_fire_grunt.wav -> sfx_fire_fuelrod.wav: fuel rod guns (Fuel Rod Grunt, Grunt Goblin)
 Hunter_fuel_rod_gun_fire_fuelrod_fire.wav -> sfx_fire_hunter.wav: the Hunters' assault cannon
 fuel_rod_gun_explosion_fuelrod_explo1.wav -> sfx_explosion_fuelrod_1.wav: a fuel rod landing
 fuel_rod_gun_explosion_fuelrod_explo2.wav -> sfx_explosion_fuelrod_2.wav: a fuel rod landing

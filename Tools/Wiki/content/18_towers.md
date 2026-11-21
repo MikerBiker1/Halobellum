@@ -17,7 +17,7 @@ Each side has a **Command Center** on its left and a **Research Center** on its 
 
 ## Health and levels
 
-A tower's health doubles with every level, and its shockwave gets shorter. A level-up costs **100 credits**, from either tower's panel, up to level 5. The **XP** column is what the squad that destroys it earns.
+A tower's health doubles with every level, and its shockwave gets shorter. A level-up costs **100 credits**, from either tower's panel, up to level 5. The **XP** column is what destroying it is worth: **50%** to the squad that lands the last hit, and the rest shared by the squads that damaged it, by the damage each dealt.
 
 {{tower-levels}}
 
@@ -34,4 +34,6 @@ When a tower falls, **its own side's whole army** suffers a shockwave:
 - It also weakens seeds planted by that side, and stretches beam charges and wind-ups.
 - A side under a shockwave pulses pale blue, and a bar under its panel shows the time left.
 
-> **Tip:** Higher tower levels make a tower harder to reach and cut the shockwave short. The Hard AI levels a tower that has been flanked up to level 3 and puts anti-air beside it.
+> **Flankers go for towers:** every flanker heads for the nearest enemy tower, shooting what it passes without stopping for it, then attacks the tower. With no tower left it fights like any unit. The Spartan CQB is the exception: it fights the closest enemy, like any unit.
+
+> **Tip:** Higher tower levels make a tower harder to reach and cut the shockwave short. The Hard AI levels a tower that has been flanked (from a flank zone, or by flankers going for towers) up to level 3 and puts anti-air beside it.

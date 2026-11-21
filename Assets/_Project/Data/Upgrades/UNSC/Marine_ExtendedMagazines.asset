@@ -17,10 +17,11 @@ MonoBehaviour:
   cost: 120
   healthMultiplier: 1
   damageMultiplier: 1
-  fireRateMultiplier: 1.25
+  fireRateMultiplier: 1.4
   moveSpeedMultiplier: 1
   airDamageMultiplier: 1
   rangeBonus: 0
+  airRangeBonus: 0
   shieldBonus: 0
   shieldRegenBonus: 0
   splashRadiusBonus: 0

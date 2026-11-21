@@ -18,6 +18,10 @@ namespace Halobellum.Combat
         public event Action<SimUnit, int> ReinforcementDropped;
         /// <summary>A weapon fired: attacker, weapon index on the attacker, target.</summary>
         public event Action<SimUnit, int, SimUnit> WeaponFired;
+        /// <summary>A weapon fired its charged bolt (the Jackal's plasma pistol, D151): attacker, weapon index, target. Not also raised as WeaponFired.</summary>
+        public event Action<SimUnit, int, SimUnit> ChargedShotFired;
+        /// <summary>A shot that killed went on through to the next enemy on its line (D155): attacker, weapon index, the body it passed, the one it hits.</summary>
+        public event Action<SimUnit, int, SimUnit, SimUnit> ShotPierced;
         /// <summary>A weapon with a wind-up started charging its shot: attacker, weapon index, the target it locked on to, seconds until the shot (at its rate of fire now).</summary>
         public event Action<SimUnit, int, SimUnit, float> WeaponWindingUp;
         /// <summary>A shot arrived and was not blocked: attacker, the weapon that fired it, where. Once per shot, however many it hits, and also if it hits nothing.</summary>
@@ -49,6 +53,8 @@ namespace Halobellum.Combat
         internal void RaiseUnitSpawned(SimUnit unit) => UnitSpawned?.Invoke(unit);
         internal void RaiseReinforcementDropped(SimUnit carrier, int squadId) => ReinforcementDropped?.Invoke(carrier, squadId);
         internal void RaiseWeaponFired(SimUnit attacker, int weaponIndex, SimUnit target) => WeaponFired?.Invoke(attacker, weaponIndex, target);
+        internal void RaiseChargedShotFired(SimUnit attacker, int weaponIndex, SimUnit target) => ChargedShotFired?.Invoke(attacker, weaponIndex, target);
+        internal void RaiseShotPierced(SimUnit attacker, int weaponIndex, SimUnit passed, SimUnit hit) => ShotPierced?.Invoke(attacker, weaponIndex, passed, hit);
         internal void RaiseWeaponWindingUp(SimUnit attacker, int weaponIndex, SimUnit target, float seconds) => WeaponWindingUp?.Invoke(attacker, weaponIndex, target, seconds);
         internal void RaiseShotLanded(SimUnit attacker, WeaponStats weapon, Vec2 point) => ShotLanded?.Invoke(attacker, weapon, point);
         internal void RaiseUnitDamaged(SimUnit target, SimUnit attacker, float amount) => UnitDamaged?.Invoke(target, attacker, amount);

@@ -1,7 +1,8 @@
 // LevelingAndTechTests.cs
 // Tests squad leveling (Bible Section 5, rule 10 "leveling") and tech upgrades (Section 9),
 // Milestone 6: level multipliers, XP from kills (capped at a bar that is the same at every level),
-// XP the bar shows during a battle, XP for the bodies a squad releases and for a blast it dies in (D136),
+// XP the bar shows during a battle, XP for the bodies a squad releases and for a blast it dies in (D136), the share a body made in the battle is worth (D138),
+// a kill's XP split between the killer and the squads that damaged the victim (xp_split),
 // level-ups for half the base price, leveling every ready squad of a type at once, level and XP
 // surviving the round reset, sell value, techs
 // bought once per unit type and applied to every squad of that type, a drop unlocked by a tech,
@@ -122,6 +123,31 @@ namespace Halobellum.Tests
                 "What it releases earns for its squad (the owner, D136).");
         }
 
+        [TestCase(1f)]
+        [TestCase(0.25f)]
+        [TestCase(0f)]
+        public void ABodyMadeInTheBattle_IsWorthBattleBodyXpShareOfItsPrice(float share)
+        {
+            // The enemy's nest never dies; its brood, released during the battle, does. 1 is the game as it is (D138's measuring option).
+            Match match = KillingRound(out PlacedSquad killer, out _);
+            match.Rules.BattleBodyXpShare = share;
+            UnitStats nest = TestUnits.Unit("Nest", health: 1e7f, speed: 0f, radius: 2f, cost: 300, weapon: TestUnits.Weapon(damage: 0f, range: 1f));
+            nest.Tier = 2;
+            nest.SpawnedUnit = TestUnits.Unit("Brood", health: 50f, speed: 4f, squadSize: 2, cost: 100, weapon: TestUnits.Weapon(damage: 1f, range: 3f, interval: 1f));
+            nest.SpawnIntervalSeconds = 2f;
+            match.Enemy.Squads[0].Type = nest;
+            match.Enemy.Unlocked.Add(nest);
+            match.StartBattle().Run();
+            RoundSummary summary = match.FinishBattle();
+
+            BattleSimulation battle = match.CurrentBattle;
+            int brood = battle.Units.Count(u => u.Stats.Name == "Brood" && !u.IsAlive && u.KilledById >= 0 && battle.Units[u.KilledById].Team == Team.A);
+            Assert.Greater(brood, 0, "The tank should kill some of the brood.");
+            Assert.IsTrue(battle.Units.Where(u => u.Stats.Name == "Nest").All(u => u.IsAlive), "The nest itself survives, so all the XP is the brood's.");
+            summary.XpGained.TryGetValue(killer.Id, out float gained);
+            Assert.AreEqual(brood * 50f * share, gained, 1e-3f);
+        }
+
         [Test]
         public void ABlastItDiesIn_StillEarnsXpForItsSquad()
         {
@@ -146,6 +172,101 @@ namespace Halobellum.Tests
             Assert.AreEqual(System.Math.Min(expected, match.XpNeeded(killer)), killer.Xp, 1e-3f);
             Assert.IsFalse(match.CurrentBattle.Units.Any(u => u.IsAlive && u.Health <= 0f),
                 "Its blast ended the battle, yet what it killed is dead, not left standing as survivors (D136).");
+        }
+
+        // ------------------------------------------------------------------ XP split (xp_split)
+
+        [Test]
+        public void KillXp_TheKillerGetsHalf_AndTheOtherHalfGoesByDamage()
+        {
+            // The owner's example: a Spartan (0) deals 90%, a Scorpion (1) finishes it -> the Scorpion 55%, the Spartan 45%.
+            var earned = new float[2];
+            Match.SplitKillXp(100f, 0.5f, 1, new List<int> { 0, 1 }, new List<float> { 90f, 10f }, earned);
+            Assert.AreEqual(55f, earned[1], 1e-3f);
+            Assert.AreEqual(45f, earned[0], 1e-3f);
+            Assert.AreEqual(100f, earned.Sum(), 1e-3f, "No XP is lost or made.");
+        }
+
+        [Test]
+        public void KillXp_WithNoDamageOnRecord_AllGoesToTheKiller()
+        {
+            var earned = new float[2];
+            Match.SplitKillXp(100f, 0.5f, 1, new List<int>(), new List<float>(), earned);
+            Assert.AreEqual(100f, earned[1], 1e-3f);
+            Assert.AreEqual(0f, earned[0]);
+        }
+
+        [Test]
+        public void KillXp_KillShare1_IsTheRuleBefore()
+        {
+            var earned = new float[3];
+            Match.SplitKillXp(100f, 1f, 2, new List<int> { 0, 1, 2 }, new List<float> { 60f, 30f, 10f }, earned);
+            Assert.AreEqual(100f, earned[2], 1e-3f);
+            Assert.AreEqual(0f, earned[0], 1e-6f);
+            Assert.AreEqual(0f, earned[1], 1e-6f);
+        }
+
+        /// <summary>
+        /// KillingRound plus a second Player squad (Id 501); in the battle, body X of the enemy squad took 90 from squad 500 and 10 from
+        /// squad 501, which killed it, and body Y took 50 from squad 500 but died to no squad (a spell or a self-kill). Every other enemy
+        /// body (and tower) dies to nobody.
+        /// </summary>
+        private static RoundSummary SplitRound(float killXpShare, out UnitStats chaff)
+        {
+            Match match = KillingRound(out PlacedSquad first, out chaff);
+            match.Rules.KillXpShare = killXpShare;
+            match.Player.Squads.Add(new PlacedSquad { Id = 501, Type = first.Type, Column = 30, Row = 0, RoundBought = 1 });
+            BattleSimulation battle = match.StartBattle();
+            SimSquad squad500 = battle.Squads[0], squad501 = battle.Squads[1], enemy = battle.Squads[2];
+            Assert.AreEqual(Team.A, squad501.Team);
+            Assert.AreEqual(Team.B, enemy.Team);
+            foreach (SimUnit unit in battle.Units)
+                if (unit.Team == Team.B) unit.Health = 0f;
+            SimUnit x = enemy.Members[0], y = enemy.Members[1];
+            x.AddSquadDamage(squad500.Id, 90f);
+            x.AddSquadDamage(squad501.Id, 10f);
+            x.KilledById = squad501.Members[0].Id;
+            y.AddSquadDamage(squad500.Id, 50f);
+            while (!battle.IsFinished) battle.Step();
+            return match.FinishBattle();
+        }
+
+        [Test]
+        public void KillXp_InAMatch_SplitsByTheRecord_AndAKillByNoSquadGivesNothing()
+        {
+            RoundSummary summary = SplitRound(0.5f, out UnitStats chaff);
+            float worth = chaff.Cost / (float)chaff.SquadSize;
+            Assert.AreEqual(0.55f * worth, summary.XpGained[501], 1e-3f, "The killer: half, plus its 10% of the other half.");
+            Assert.AreEqual(0.45f * worth, summary.XpGained[500], 1e-3f, "The damager: its 90% of the other half; body Y gives nothing.");
+            Assert.AreEqual(2, summary.XpGained.Count);
+        }
+
+        [Test]
+        public void KillXp_InAMatch_KillShare1_GivesItAllToTheKiller()
+        {
+            RoundSummary summary = SplitRound(1f, out UnitStats chaff);
+            Assert.AreEqual(chaff.Cost / (float)chaff.SquadSize, summary.XpGained[501], 1e-3f);
+            Assert.IsFalse(summary.XpGained.ContainsKey(500));
+        }
+
+        [Test]
+        public void TwoSquadsOnTheSameEnemy_NoXpIsLost()
+        {
+            // A real battle: the split only moves XP between the squads; the total is what the kills are worth.
+            Match match = KillingRound(out PlacedSquad first, out UnitStats chaff);
+            match.Player.Squads.Add(new PlacedSquad { Id = 501, Type = first.Type, Column = 38, Row = 4, RoundBought = 1 });
+            match.StartBattle().Run();
+            RoundSummary summary = match.FinishBattle();
+
+            BattleSimulation battle = match.CurrentBattle;
+            int squad500 = battle.Squads[0].Id, squad501 = battle.Squads[1].Id;
+            int killed = battle.Units.Count(u => u.Team == Team.B && !u.Stats.IsTower && !u.IsAlive && u.KilledById >= 0
+                                                 && (battle.Units[u.KilledById].CreditSquadId == squad500 || battle.Units[u.KilledById].CreditSquadId == squad501));
+            Assert.Greater(killed, 0, "The tanks should kill some infantry.");
+            Assert.IsTrue(battle.Units.Any(u => u.Team == Team.B && u.SquadDamageCount > 0), "The record is filled by the battle's hits.");
+            summary.XpGained.TryGetValue(500, out float a);
+            summary.XpGained.TryGetValue(501, out float b);
+            Assert.AreEqual(killed * chaff.Cost / (float)chaff.SquadSize, a + b, 1e-2f);
         }
 
         [Test]

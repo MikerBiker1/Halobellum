@@ -24,18 +24,18 @@ namespace Halobellum.Tests
         // Bible Section 8: name, role, tier, unlock, squad size, cost, health (per body).
         private static readonly (string name, UnitRole role, int tier, int unlock, int squad, int cost, float health)[] Unsc =
         {
-            ("Marine", UnitRole.Chaff, 1, 0, 18, 100, 60),
-            ("Flamethrower Trooper", UnitRole.ChaffClear, 1, 0, 6, 150, 90),
-            ("Warthog", UnitRole.Flanker, 1, 0, 2, 200, 360), // 300 until tuned for the Insane AI (D125).
+            ("Marine", UnitRole.Chaff, 1, 0, 18, 100, 50), // Health 60 until D140.
+            ("Flamethrower Trooper", UnitRole.ChaffClear, 1, 0, 6, 150, 95), // 90 until the balance pass (D138). Health 120 until D140.
+            ("Warthog", UnitRole.Flanker, 1, 0, 2, 200, 380), // 300 until tuned for the Insane AI (D125). Health 360 until D140.
             ("Gauss Warthog", UnitRole.SingleTargetDps, 2, 50, 1, 250, 300),
             ("Scorpion", UnitRole.Tank, 2, 50, 1, 300, 1200),
-            ("Wolverine", UnitRole.AntiAir, 2, 50, 1, 300, 500),
-            ("Hornet", UnitRole.Aerial, 2, 50, 2, 300, 400),
+            ("Wolverine", UnitRole.AntiAir, 2, 50, 1, 300, 480), // Health 500 until D140.
+            ("Hornet", UnitRole.Aerial, 2, 50, 2, 300, 505), // 400 until D138. Health 500 until D140, 490 until D141.
             ("Archer Missile Pod", UnitRole.Artillery, 2, 50, 2, 300, 350),
-            ("Pelican", UnitRole.Aerial, 2, 50, 1, 300, 1200),
+            ("Pelican", UnitRole.Aerial, 2, 50, 1, 300, 1400), // Health 1200 until D140, 1380 until D141, 1550 until D155.
             ("Spartan", UnitRole.SingleTargetDps, 3, 250, 1, 500, 1250),
-            ("Mantis", UnitRole.Tank, 3, 250, 1, 500, 2500),
-            ("Elephant", UnitRole.Titan, 4, 350, 1, 800, 8000),
+            ("Mantis", UnitRole.Tank, 3, 250, 1, 500, 3360), // 2500 until D138. Health 2700 until D140.
+            ("Elephant", UnitRole.Titan, 4, 150, 1, 800, 8240), // Unlock 350; health 8000 until D140, 8580 until D141.
         };
 
         private static readonly (string name, UnitRole role, int tier, int unlock, int squad, int cost, float health)[] Covenant =
@@ -43,31 +43,31 @@ namespace Halobellum.Tests
             ("Grunt", UnitRole.Chaff, 1, 0, 20, 100, 40),
             ("Fuel Rod Grunt", UnitRole.ChaffClear, 1, 0, 4, 150, 80),
             ("Jackal (Beam Rifle)", UnitRole.SingleTargetDps, 1, 0, 4, 175, 70), // Snipers since 2026-11-05: was Jackal (Plasma Rifle), 8 to a squad at 150; 175 after the tournament (D72).
-            ("Jackal (Shield)", UnitRole.Tank, 1, 0, 6, 150, 70),
+            ("Jackal (Shield)", UnitRole.Tank, 1, 0, 6, 150, 80), // 70 until D138.
             ("Ghost", UnitRole.Flanker, 1, 0, 2, 200, 250),
-            ("Elite", UnitRole.SingleTargetDps, 2, 50, 3, 300, 200),
+            ("Elite", UnitRole.SingleTargetDps, 2, 50, 3, 300, 230), // 200 until D138.
             ("Wraith", UnitRole.Artillery, 2, 50, 1, 300, 900),
-            ("Vampire", UnitRole.AntiAir, 2, 50, 1, 300, 500),
-            ("Banshee", UnitRole.Aerial, 2, 50, 2, 300, 400),
-            ("Covenant Phantom", UnitRole.Aerial, 2, 50, 1, 300, 800), // Added 2026-11-05: the Pelican's mirror.
-            ("Hunter Pair", UnitRole.Tank, 3, 225, 2, 450, 1500),
+            ("Vampire", UnitRole.AntiAir, 2, 50, 1, 300, 800), // 500 until D138, 550 until D141, 570 until D149, 700 until D155.
+            ("Banshee", UnitRole.Aerial, 2, 50, 2, 300, 440), // Health 400 until D140, 410 until D141.
+            ("Covenant Phantom", UnitRole.Aerial, 2, 50, 1, 300, 1550), // Added 2026-11-05: the Pelican's mirror. 800 until D151.
+            ("Hunter Pair", UnitRole.Tank, 3, 225, 2, 450, 1440), // Health 1500 until D140.
             ("Zealot", UnitRole.SingleTargetDps, 3, 200, 1, 400, 1400),
-            ("Scarab", UnitRole.Titan, 4, 350, 1, 800, 8500),
+            ("Scarab", UnitRole.Titan, 4, 150, 1, 800, 9050), // Unlock 350, 50 until D141; health 8500 until D140, 8780 until D141.
         };
 
         private static readonly (string name, UnitRole role, int tier, int unlock, int squad, int cost, float health)[] Flood =
         {
-            ("Infection Forms", UnitRole.Chaff, 1, 0, 10, 100, 228),
-            ("Carrier Form", UnitRole.ChaffClear, 1, 0, 4, 150, 170), // 140 until D125.
-            ("Combat Form", UnitRole.SingleTargetDps, 2, 50, 6, 200, 260),
+            ("Infection Forms", UnitRole.Chaff, 1, 0, 10, 100, 290), // 228 until D138. Health 235 until D140, 310 until D141.
+            ("Carrier Form", UnitRole.ChaffClear, 1, 0, 4, 150, 255), // 140 until D125, 170 until D138. Health 190 until D140, 230 until D141.
+            ("Combat Form", UnitRole.SingleTargetDps, 2, 50, 6, 200, 280), // 260 until D138.
             ("Stalker Form", UnitRole.Flanker, 2, 50, 3, 250, 450),
             ("Pure Form Ranged", UnitRole.Artillery, 2, 50, 2, 250, 400),
-            ("Swarm Form", UnitRole.AntiAir, 2, 50, 4, 250, 200),
-            ("Pure Form Tank", UnitRole.Tank, 3, 200, 1, 400, 3200),
-            ("Seeder", UnitRole.SingleTargetDps, 3, 200, 2, 475, 800),
-            ("Infected Pelican", UnitRole.Aerial, 3, 200, 1, 400, 1350), // 900 until D134.
-            ("Infected Phantom", UnitRole.Aerial, 3, 200, 1, 400, 1250), // 1100 until D125.
-            ("Flood Abomination", UnitRole.Titan, 4, 350, 1, 800, 10000), // 8500 until D125.
+            ("Swarm Form", UnitRole.AntiAir, 2, 50, 4, 250, 275), // 200 until D138. Health 230 until D140, 240 until D141.
+            ("Pure Form Tank", UnitRole.Tank, 3, 200, 1, 400, 3400), // 3200 until D138.
+            ("Seeder", UnitRole.SingleTargetDps, 3, 200, 2, 475, 900), // 800 until D138.
+            ("Infected Pelican", UnitRole.Aerial, 3, 200, 1, 400, 1500), // 900 until D134, 1350 until D138.
+            ("Infected Phantom", UnitRole.Aerial, 3, 200, 1, 400, 1400), // 1100 until D125. Health 1250 until D140, 1350 until D141.
+            ("Flood Abomination", UnitRole.Titan, 4, 150, 1, 800, 10570), // 8500 until D125. Unlock 350, 250 until D141; health 10000 until D140.
         };
 
         private static Dictionary<string, UnitDefinition> Load(string folder) =>
@@ -149,10 +149,13 @@ namespace Halobellum.Tests
             Assert.Greater(u["Wraith"].Weapons[0].SplashRadius, 0f, "Mortar splash.");
             Assert.AreEqual(DamageType.Explosive, u["Scorpion"].Weapons[0].DamageType, "Cannon (explosive) plus coax.");
             Assert.AreEqual(2, u["Scorpion"].Weapons.Length);
-            WeaponStats hornetBombs = u["Hornet"].Weapons.Single(w => w.HasOwnTargetFilter);
-            Assert.IsFalse(hornetBombs.CanTarget(u["Hornet"], targetIsAir: true), "Hornet bombs hit ground only.");
+            Assert.AreEqual(1, u["Hornet"].Weapons.Length, "Its rockets only: no bombs since D155.");
+            Assert.AreEqual(1f, u["Hornet"].Weapons[0].SplashRadius, 1e-4f, "Its rockets' 1 m splash (D155).");
             Assert.IsTrue(u["Pelican"].Weapons[0].CanTarget(u["Pelican"], true) && u["Pelican"].Weapons[0].CanTarget(u["Pelican"], false),
                 "Pelican autocannon hits air and ground.");
+            Assert.AreEqual(25f, u["Pelican"].Weapons[0].DamagePerShot, 1e-3f, "2.5 times the autocannon's 10 of D125 (the owner, D142).");
+            Assert.AreEqual(1f, u["Pelican"].Weapons[0].SplashRadius, 1e-3f, "A 1 m splash (the owner, D142).");
+            Assert.AreEqual(DamageType.Ballistic, u["Pelican"].Weapons[0].DamageType);
 
             // Pelican: a plain air unit until its Troop Bay tech (decision D22), which drops 6 Marines at 5 s, then at least 10 s apart.
             Assert.IsFalse(u["Pelican"].HasReinforcement, "The Pelican only carries Marines after its Troop Bay tech.");
@@ -163,19 +166,24 @@ namespace Halobellum.Tests
             Assert.AreEqual(5f, u["Pelican"].ReinforcementFirstDropSeconds, 1e-3f);
             TechUpgrade bay = u["Pelican"].TechUpgrades.Single(t => t.UnlocksReinforcement);
             Assert.IsTrue(UnitUpgrades.Apply(u["Pelican"], 1, new[] { bay }).HasReinforcement);
-            StringAssert.StartsWith("It drops 6 Marines 5 seconds into the battle", bay.Description, "The tech's text tells of the first drop, which needs no landing spot.");
+            StringAssert.StartsWith("It lands where it is to drop 6 Marines 5 seconds into the battle", bay.Description);
+            StringAssert.DoesNotContain("behind enemy lines", bay.Description, "It never lands since D143.");
+            Assert.AreEqual(1.5f, u["Pelican"].ReinforcementLandSeconds, 1e-3f, "It comes down to let its Marines out, where it is (D143).");
 
-            // The Covenant Phantom mirrors it: Grunts after its Gravity Lift tech, landing behind enemy lines as the Pelican does.
+            // The Covenant Phantom: Grunts after its Gravity Lift tech, dropped from the air like the Infected Phantom's; it never lands (D142).
             UnitStats phantom = u["Covenant Phantom"];
             Assert.IsTrue(phantom.IsAir);
             Assert.IsFalse(phantom.HasReinforcement);
             Assert.AreEqual("Grunt", phantom.LockedReinforcement.Name);
             Assert.AreEqual(7, phantom.LockedReinforcement.SquadSize);
             Assert.AreEqual(u["Pelican"].ReinforcementDrops, phantom.ReinforcementDrops);
-            Assert.AreEqual(u["Pelican"].ReinforcementLandSeconds, phantom.ReinforcementLandSeconds, 1e-3f);
+            Assert.AreEqual(0f, phantom.ReinforcementLandSeconds, 1e-3f, "It never lands, like the Infected Phantom (landed for 1.5 s until D142).");
             Assert.AreEqual(u["Pelican"].ReinforcementFirstDropSeconds, phantom.ReinforcementFirstDropSeconds, 1e-3f);
+            Assert.AreEqual(10f, phantom.ReinforcementDelaySeconds, 1e-3f);
             TechUpgrade lift = phantom.TechUpgrades.Single(t => t.UnlocksReinforcement);
             Assert.IsTrue(UnitUpgrades.Apply(phantom, 1, new[] { lift }).HasReinforcement);
+            StringAssert.DoesNotContain("behind enemy lines", lift.Description);
+            StringAssert.DoesNotContain("lands", lift.Description);
             Assert.AreEqual("Plasma Turrets", phantom.Weapons.Single().Name, "Its sound goes by this name.");
 
             // Jackal snipers: few to a squad, slow hard shots that land at once, twice the reach of the plasma rifle they had.
@@ -195,7 +203,7 @@ namespace Halobellum.Tests
             DefenseArcStats hunter = u["Hunter Pair"].DefenseArc;
             Assert.AreEqual(240f, hunter.ArcDegrees, 1e-3f);
             Assert.Less(hunter.FrontDamageMultiplier, 1f, "Very resistant inside the arc.");
-            Assert.Greater(hunter.RearDamageMultiplier, 1f, "Weak from behind.");
+            Assert.AreEqual(1f, hunter.RearDamageMultiplier, 1e-4f, "No weaker from behind (the owner, D155; x1.5 until then).");
 
             // Titans have several weapons (turrets for chaff, a main gun for armor).
             Assert.GreaterOrEqual(u["Elephant"].Weapons.Length, 2);
@@ -238,7 +246,7 @@ namespace Halobellum.Tests
                 var unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>(AssetDatabase.GUIDToAssetPath(guid));
                 all[unit.unitName] = unit.ToStats();
             }
-            foreach (string name in new[] { "Infested Warthog", "Infested Scorpion", "Infested Hornet", "Infested Ghost", "Infested Wraith", "Infested Banshee", "Infected Phantom" })
+            foreach (string name in new[] { "Infested Scorpion", "Infested Hornet", "Infested Ghost", "Infested Wraith", "Infested Banshee", "Infected Phantom" })
             {
                 SpawnEntry spawn = all[name].DeathBurst.Spawns.Single();
                 Assert.AreEqual("Infection Forms", spawn.Unit.Name, name);
@@ -258,6 +266,34 @@ namespace Halobellum.Tests
             CollectionAssert.AreEquivalent(new[] { "Pelican", "Sparrowhawk", "Longsword", "Vulture", "Condor Gunship" }, flankers);
         }
 
+        [TestCase("Covenant/HunterPair")]
+        [TestCase("LekgoloColony/HunterCaptain")]
+        public void Hunters_ShootAircraft_ButBashOnlyTheGround(string path)
+        {
+            // The owner, D148: "make hunters and the captain be able to target air units". The shield bash stays a ground blow.
+            UnitStats hunter = AssetDatabase.LoadAssetAtPath<UnitDefinition>($"Assets/_Project/Data/Units/{path}.asset").ToStats();
+            Assert.IsTrue(hunter.Weapons[0].CanTarget(hunter, true) && hunter.Weapons[0].CanTarget(hunter, false), hunter.Weapons[0].Name);
+            Assert.IsTrue(!hunter.Weapons[1].CanTarget(hunter, true) && hunter.Weapons[1].CanTarget(hunter, false), hunter.Weapons[1].Name);
+        }
+
+        [Test]
+        public void EveryFlankerGoesForTowers_ButTheSpartanCQB_Fights()
+        {
+            // D138: Flankers head for the nearest tower. D147, the owner: "CQB should definitely not just run to the towers though, they should fight".
+            var flankers = new List<string>();
+            var towerGoers = new List<string>();
+            foreach (string guid in AssetDatabase.FindAssets("t:UnitDefinition"))
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                if (path.Contains("/Placeholder/")) continue; // The prototype stand-ins, not generated from the roster.
+                var unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>(path);
+                if (unit.role == UnitRole.Flanker) flankers.Add(unit.unitName);
+                if (unit.goesForTowers) towerGoers.Add(unit.unitName);
+            }
+            CollectionAssert.Contains(flankers, "Spartan CQB");
+            CollectionAssert.AreEquivalent(flankers.Where(n => n != "Spartan CQB"), towerGoers);
+        }
+
         [Test]
         public void ArcherMissilePods_CannotMove()
         {
@@ -266,12 +302,12 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void ThePelican_LandsToDrop_ThreeTimes()
+        public void ThePelican_LandsWhereItIs_ThreeTimes()
         {
             UnitStats pelican = AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/UNSC/Pelican.asset").ToStats();
             Assert.AreEqual(6f, pelican.MoveSpeed, 1e-3f, "Twice its old 3 m/s.");
             Assert.AreEqual(3, pelican.ReinforcementDrops);
-            Assert.Greater(pelican.ReinforcementLandSeconds, 0f);
+            Assert.Greater(pelican.ReinforcementLandSeconds, 0f, "It comes down to let its Marines out.");
             Assert.IsNull(pelican.Reinforcement, "Only with its tech.");
             Assert.AreEqual("Marine", pelican.LockedReinforcement.Name);
         }
@@ -373,7 +409,8 @@ namespace Halobellum.Tests
             CollectionAssert.AreEquivalent(Unsc.Select(r => r.name), unsc.baseRoster.Select(u => u.unitName));
             CollectionAssert.AreEquivalent(Covenant.Select(r => r.name), covenant.baseRoster.Select(u => u.unitName));
             var flood = AssetDatabase.LoadAssetAtPath<FactionDefinition>("Assets/_Project/Data/Factions/Flood_Standard.asset");
-            CollectionAssert.AreEquivalent(Flood.Select(r => r.name), flood.baseRoster.Select(u => u.unitName));
+            // The Infected Pelican and the Infected Phantom belong to one sub-faction each since D157 (the owner): not the base roster.
+            CollectionAssert.AreEquivalent(Flood.Select(r => r.name).Except(new[] { "Infected Pelican", "Infected Phantom" }), flood.baseRoster.Select(u => u.unitName));
         }
     }
 }

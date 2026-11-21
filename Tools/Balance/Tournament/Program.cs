@@ -1,17 +1,20 @@
 // The Hard AI tournament: two Hard AIs play whole matches under the game's real rules, for every pairing of sub-factions, half of them with the sides
 // swapped. It loads what TournamentDataExport wrote from the game's assets, and writes one line per match to a results file as soon as the match ends,
 // so that a run stopped by a power cut carries on where it was when started again. report.py turns that file into the text report.
-// Usage: dotnet run -c Release -- <game_data.json> <matrix.csv> <results.jsonl> [--matches 100] [--trial trial.txt] [--only "Sub A,Sub B"] [--threads N]
+// Usage: dotnet run -c Release -- <game_data.json> <matrix.csv> <results.jsonl> [--matches 100] [--trial trial.txt] [--only "Sub A,Sub B"] [--among "Sub A,Sub B"] [--threads N]
 //                                  [--setup mode=skirmish,hp=10000,cards=only] [--most-rounds 60]
 // Use one results file per trial and setup: what it carries on from is only the pairing and the match number, so a file would mix them without a word.
 // --setup goes through the game's own MatchSetup; hp is the base health, and cards is all, no or only (reinforcement cards). With mode=skirmish the field is the
 // one made-up faction of all units, and its "sub-factions" are the AI difficulties Hard, Normal and Easy; that needs an export made since Unlock Skirmish came in.
-// --styles TowerRush,Typical forces the Insane playstyles (D128): with --vs, one for each side in that order; a single name, every Insane side.
+// --styles TowerRush,Typical forces the Insane playstyles (D128): with --vs, one for each side in that order; a single name, every Insane side. In Unlock
+// Skirmish two names split each Insane mirror, the first style on each team half the time ("vsTeam", "vsWon"), and other Insane sides take the first (D138).
 // In Faction mode every side is a Hard AI, unless --vs "Insane,Hard" pits two difficulties: the first plays sub-faction a on matches 0 and 1 of every 4 and
 // b on 2 and 3, so it has each side and each sub-faction half the time; each line says which team it was ("vsTeam") and whether it won ("vsWon").
 // A trial file tries balance changes without touching the game, one per line:
 //   Flood Abomination|MaxHealth=6000            a field of the unit
 //   Flood Abomination|Tendril Slam|DamagePerShot=300     a field of one of its weapons
+//   Carrier Form|DeathBurst|Damage=150          a field of its death burst
+//   Marine|tech:Extended Magazines|FireRateMultiplier=1.4    a field of one of its techs
 //   rules|TowerBaseHealth=150                   a field of the match rules
 //   rules|AiCarrierPlacement=FlankFarCorners    an enum goes by its name
 //   without|Armored Division|Pelican            a sub-faction can't have this base unit
@@ -45,6 +48,14 @@ static class Program
     static AiDifficulty[] Vs;
     // --styles First[,Second]: the Insane playstyle of each --vs side (D128), or of every Insane side with one name; unset, each match draws its own.
     static InsanePlaystyle[] Styles;
+    /// <summary>--old-insane with --vs Insane,Insane: the second Insane plays as before D145 (no reading of levels and techs, no farmed memory).</summary>
+    static bool OldInsane;
+    /// <summary>--d145 Edges,Memory,...: which of D145's habits the new Insane uses (all if not given), against --old-insane.</summary>
+    static InsaneReads NewReads = InsaneReads.All;
+    /// <summary>--base-reads Edges,Concentration with --vs Insane,Insane: the second Insane's habits (D154: today's Insane without the margins); None for none.</summary>
+    static InsaneReads? BaseReads;
+    /// <summary>margin.csv beside the matrix (D154), if there is one: by how much each row unit wins.</summary>
+    static List<(string, string, float)> Margins = new List<(string, string, float)>();
 
     static int Main(string[] args)
     {
@@ -55,6 +66,11 @@ static class Program
         SeedOffset = int.Parse(Option(args, "--seed") ?? "0");
         string vs = Option(args, "--vs");
         if (vs != null) Vs = vs.Split(',').Select(d => (AiDifficulty)Enum.Parse(typeof(AiDifficulty), d)).ToArray();
+        OldInsane = args.Contains("--old-insane");
+        string d145 = Option(args, "--d145");
+        if (d145 != null) NewReads = d145.Split(',').Aggregate(InsaneReads.None, (all, part) => all | (InsaneReads)Enum.Parse(typeof(InsaneReads), part));
+        string baseReads = Option(args, "--base-reads");
+        if (baseReads != null) BaseReads = baseReads.Split(',').Aggregate(InsaneReads.None, (all, part) => all | (InsaneReads)Enum.Parse(typeof(InsaneReads), part));
         string styles = Option(args, "--styles");
         if (styles != null) Styles = styles.Split(',').Select(d => (InsanePlaystyle)Enum.Parse(typeof(InsanePlaystyle), d)).ToArray();
 
@@ -80,9 +96,20 @@ static class Program
             string slotOnly = Option(args, "--only");
             return SlotTest.Run(slotSource, resultsPath, factions, rules, combat, threads, int.Parse(Option(args, "--pairs") ?? "210"), int.Parse(Option(args, "--budget") ?? "4000"),
                 float.Parse(Option(args, "--slot-share") ?? "0.2", CultureInfo.InvariantCulture), (Option(args, "--levels") ?? "real") != "one",
-                slotOnly != null ? new HashSet<string>(slotOnly.Split(',')) : null);
+                (Option(args, "--towers") ?? "yes") != "no", (Option(args, "--techs") ?? "real") != "none", slotOnly != null ? new HashSet<string>(slotOnly.Split(',')) : null);
         }
         var wins = LoadMatrix(matrixPath);
+        string marginPath = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(matrixPath)) ?? ".", "margin.csv");
+        if (File.Exists(marginPath)) Margins = LoadMatrix(marginPath);
+        string duel = Option(args, "--duel");
+        if (duel != null) return Duel.Run(duel, factions, combat);
+        string replayLog = Option(args, "--replay");
+        if (replayLog != null)
+        {
+            var replayTable = new MatchupTable();
+            foreach ((string row, string column, float rate) in wins) replayTable.Set(row, column, rate);
+            return LogReplay.Run(replayLog, factions, rules, combat, replayTable, OldInsane, SkirmishField);
+        }
 
         var subs = new List<(FactionInfo faction, SubFactionInfo sub)>();
         foreach (FactionInfo faction in factions) foreach (SubFactionInfo sub in faction.SubFactions) subs.Add((faction, sub));
@@ -90,6 +117,10 @@ static class Program
 
         string only = Option(args, "--only");
         HashSet<string> onlyNames = only != null ? new HashSet<string>(only.Split(',')) : null;
+        // --among "A,B,C": only the pairings between two different listed sub-factions, no mirrors (D141: one sub-faction of each faction,
+        // their exclusives taken out by the trial, plays the factions' base rosters against each other).
+        string among = Option(args, "--among");
+        HashSet<string> amongNames = among != null ? new HashSet<string>(among.Split(',')) : null;
 
         var work = new List<(int a, int b, int i)>();
         var done = LoadDone(resultsPath);
@@ -98,6 +129,7 @@ static class Program
             for (int b = a; b < subs.Count; b++)
             {
                 if (onlyNames != null && !onlyNames.Contains(subs[a].sub.Name) && !onlyNames.Contains(subs[b].sub.Name)) continue;
+                if (amongNames != null && (a == b || !amongNames.Contains(subs[a].sub.Name) || !amongNames.Contains(subs[b].sub.Name))) continue;
                 for (int i = 0; i < matches; i++)
                 {
                     if (!done.Contains((subs[a].sub.Name, subs[b].sub.Name, i))) work.Add((a, b, i));
@@ -217,17 +249,43 @@ static class Program
                 continue;
             }
             string[] assignment = parts[parts.Length - 1].Split('=');
-            object target;
-            if (parts[0] == "rules") target = rules;
+            var targets = new List<object>();
+            if (parts[0] == "rules") targets.Add(rules);
             else
             {
                 if (!units.TryGetValue(parts[0], out UnitStats unit)) throw new InvalidOperationException($"No such unit: {parts[0]}");
-                target = parts.Length == 2 ? unit : (object)unit.Weapons.First(w => w.Name == parts[1]);
+                // The unit and every copy of it that other units carry (a Spawner's brood, a dropship's squad, what a burst or a seed raises),
+                // as the game builds those copies from the unit's asset (D138).
+                foreach (UnitStats copy in new[] { unit }.Concat(CopiesOf(unit.Name, units.Values)))
+                {
+                    // Unit|field, Unit|weapon|field, Unit|DeathBurst|field, or Unit|tech:Tech name|field (D138).
+                    if (parts.Length == 2) targets.Add(copy);
+                    else if (parts[1] == "DeathBurst") targets.Add(copy.DeathBurst);
+                    else if (parts[1].StartsWith("tech:", StringComparison.Ordinal)) { if (copy == unit) targets.Add(unit.TechUpgrades.First(t => t != null && t.Name == parts[1].Substring(5))); }
+                    else targets.Add(copy.Weapons.First(w => w.Name == parts[1]));
+                }
             }
-            FieldInfo field = target.GetType().GetField(assignment[0], BindingFlags.Instance | BindingFlags.Public);
-            if (field == null) throw new InvalidOperationException($"No such field: {line}");
-            field.SetValue(target, field.FieldType.IsEnum ? Enum.Parse(field.FieldType, assignment[1]) : Convert.ChangeType(assignment[1], field.FieldType, CultureInfo.InvariantCulture));
-            Console.WriteLine("Trial: " + line);
+            foreach (object target in targets.Distinct())
+            {
+                FieldInfo field = target.GetType().GetField(assignment[0], BindingFlags.Instance | BindingFlags.Public);
+                if (field == null) throw new InvalidOperationException($"No such field: {line}");
+                field.SetValue(target, field.FieldType.IsEnum ? Enum.Parse(field.FieldType, assignment[1]) : Convert.ChangeType(assignment[1], field.FieldType, CultureInfo.InvariantCulture));
+            }
+            Console.WriteLine("Trial: " + line + (targets.Count > 1 ? $" (and {targets.Count - 1} copies)" : ""));
+        }
+    }
+
+    /// <summary>The copies of a unit that other units carry: spawned and dropped squads, and what death bursts and seeds raise.</summary>
+    static IEnumerable<UnitStats> CopiesOf(string name, IEnumerable<UnitStats> all)
+    {
+        foreach (UnitStats unit in all)
+        {
+            foreach (UnitStats copy in new[] { unit.SpawnedUnit, unit.AlternateSpawnedUnit, unit.Reinforcement, unit.LockedReinforcement })
+                if (copy != null && copy.Name == name) yield return copy;
+            if (unit.DeathBurst?.Spawns != null)
+                foreach (SpawnEntry spawn in unit.DeathBurst.Spawns) if (spawn.Unit != null && spawn.Unit.Name == name) yield return spawn.Unit;
+            if (unit.SeedForms != null)
+                foreach (SeedForm form in unit.SeedForms) if (form.Becomes != null && form.Becomes.Name == name) yield return form.Becomes;
         }
     }
 
@@ -274,9 +332,14 @@ static class Program
 
         var table = new MatchupTable();
         foreach ((string row, string column, float rate) in wins) table.Set(row, column, rate);
+        foreach ((string row, string column, float margin) in Margins) table.SetMargin(row, column, margin);
         AiDifficulty difficultyA = DifficultyOf(teamA.sub, rules), difficultyB = DifficultyOf(teamB.sub, rules);
         // --vs: the first difficulty plays sub-faction a on matches 0 and 1 of every 4, so it is on each team and with each sub-faction half the time.
         Team vsTeam = Team.A;
+        // In Unlock Skirmish two styles split an Insane mirror the same way (D138): the first style plays sub-faction a on matches 0 and 1 of every 4.
+        bool styleMirror = Styles != null && Styles.Length > 1 && rules.Mode == MatchMode.UnlockSkirmish
+                           && difficultyA == AiDifficulty.Insane && difficultyB == AiDifficulty.Insane;
+        if (styleMirror) vsTeam = (i % 4 < 2) == aFirst ? Team.A : Team.B;
         if (Vs != null && rules.Mode == MatchMode.Faction)
         {
             bool firstPlaysA = i % 4 < 2;
@@ -286,10 +349,20 @@ static class Program
         }
         var ruleA = new RuleBasedAi(difficultyA, unchecked(seed + 1), table);
         var ruleB = new RuleBasedAi(difficultyB, unchecked(seed + 2), table);
+        if (OldInsane && Vs != null)
+        {
+            (vsTeam == Team.A ? ruleB : ruleA).ReadsUpgrades = false;
+            (vsTeam == Team.A ? ruleA : ruleB).Reads = NewReads;
+        }
+        if (BaseReads.HasValue && Vs != null)
+        {
+            (vsTeam == Team.A ? ruleB : ruleA).Reads = BaseReads.Value;
+            (vsTeam == Team.A ? ruleA : ruleB).Reads = NewReads;
+        }
         if (Styles != null)
         {
             // With --vs the first style goes with the first difficulty; one style alone goes to every Insane side.
-            InsanePlaystyle StyleFor(Team team) => Styles.Length > 1 && Vs != null ? (team == vsTeam ? Styles[0] : Styles[1]) : Styles[0];
+            InsanePlaystyle StyleFor(Team team) => Styles.Length > 1 && (Vs != null || styleMirror) ? (team == vsTeam ? Styles[0] : Styles[1]) : Styles[0];
             if (difficultyA == AiDifficulty.Insane) ruleA.Playstyle = StyleFor(Team.A);
             if (difficultyB == AiDifficulty.Insane) ruleB.Playstyle = StyleFor(Team.B);
         }
@@ -359,11 +432,16 @@ static class Program
         w.Str("winner", winner);
         w.Str("winnerTeam", match.Winner == null ? "none" : match.Winner == Team.A ? "A" : "B");
         w.Num("aOnTeam", aFirst ? 1 : 2);
-        if (Vs != null && rules.Mode == MatchMode.Faction)
+        if (Vs != null && rules.Mode == MatchMode.Faction || styleMirror)
         {
-            w.Str("vs", string.Join(",", Vs));
+            w.Str("vs", Vs != null && rules.Mode == MatchMode.Faction ? string.Join(",", Vs) : "Insane,Insane");
             w.Str("vsTeam", vsTeam == Team.A ? "A" : "B");
             w.Num("vsWon", match.Winner == vsTeam ? 1 : 0);
+        }
+        if (Styles != null)
+        {
+            if (difficultyA == AiDifficulty.Insane) w.Str("styleA", ruleA.Playstyle.ToString());
+            if (difficultyB == AiDifficulty.Insane) w.Str("styleB", ruleB.Playstyle.ToString());
         }
         w.Num("rounds", rounds);
         w.Num("mostRounds", MostRounds);

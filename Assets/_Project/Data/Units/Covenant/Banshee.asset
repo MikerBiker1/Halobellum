@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 2
   cost: 300
   baseDamage: 30
-  maxHealth: 400
+  maxHealth: 440
   armorType: 1
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -28,10 +28,12 @@ MonoBehaviour:
   turnTime180: 0.8
   isAir: 1
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 2
   weapons:
   - weaponName: Plasma Cannons
-    damagePerShot: 9
+    damagePerShot: 10.25
     fireInterval: 0.3
     range: 10
     minRange: 0
@@ -55,7 +57,7 @@ MonoBehaviour:
     hitSlowSeconds: 0
     hitSlowShare: 0
   - weaponName: Fuel Rod Bomb
-    damagePerShot: 50
+    damagePerShot: 57
     fireInterval: 2.5
     range: 8
     minRange: 0
@@ -95,6 +97,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0

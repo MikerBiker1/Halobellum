@@ -324,3 +324,20 @@ The owner: created units give XP to their creator when they kill; if this unbala
 | UNSC-based Flood | 48.5% | 46.9% | 45% | 48% |
 
 Every pairing moved within its 7-point noise. Creator units' average level at the match's end rose 0.1 to 0.2: Covenant-based Carrier Form 1.3 → 1.4, Spawner 1.3 → 1.5, Infected Phantom 1.3 → 1.4; UNSC-based Carrier Form 1.5 → 1.7, Infected Phantom 1.5 → 1.6. Covenant-based is not unbalanced, so the change stays; UNSC-based Flood at 47% is inside the band but the lowest.
+
+## The unit balance pass (D138)
+
+Trials on the old export (game_data_d134), then rounds on fresh exports with the counter web measured again each time. One seed is 700 matches a sub-faction, two seeds 1,400, four 2,800.
+
+| Run | What changed | Result |
+|---|---|---|
+| Trial 2 (2 seeds) | About 45 units sized by the slot test, flankers go for towers | Flood 69% (Covenant-based 75%), Aerospace 38%, Unggoy 37% |
+| Trial 3 (seed 0) | Half the Flood and Covenant changes taken back | Covenant-based 72%, Aerospace 41%, Unggoy 40% |
+| Trial 3, flankers as before (seed 0) | Same, without going for towers | 44% to 57%; Covenant-based 49% |
+| Trial 3, AI guards raided towers (seed 0) | `NoteFlanking` counts squads that go for towers | Covenant-based 62% |
+| Trials 4 to 6 | Raiders trimmed, Aerospace's and Unggoy's own units up, Noble's trimmed | Trial 6, 2 seeds: 47% to 53% |
+| First export (2 seeds) | Trial 6 in the roster, the AI's table measured again | Aerospace 40%, Noble 58%, Covenant-based 56% |
+| Rounds 1 to 6 | Aircraft up, Archer and Mantis back, anti-air and Elite partly back, Flood trims | Round 6, 2 seeds: 48% to 51%; seeds 2 + 3: 46% to 53% |
+| Round 7 (4 seeds) | Hunter Captain and Brute Grenadier up a little | 48% to 52% over four seeds |
+
+Final, all four seeds: Aerospace Command 52, Unggoy Rebellion 52, Covenant-based Flood 50, UNSC-based Flood 50, Armored Division 49, Noble 49, Banished 49, Lekgolo Colony 48.

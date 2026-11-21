@@ -17,9 +17,9 @@ MonoBehaviour:
   tier: 1
   unlockCost: 0
   squadSize: 6
-  cost: 125
-  baseDamage: 4.1667
-  maxHealth: 100
+  cost: 150
+  baseDamage: 5
+  maxHealth: 80
   armorType: 1
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -28,12 +28,14 @@ MonoBehaviour:
   turnTime180: 0.3
   isAir: 0
   canFlank: 0
+  goesForTowers: 1
+  squadGap: 0
   targetFilter: 2
   weapons:
   - weaponName: Spitter Plasma
     damagePerShot: 7
     fireInterval: 0.25
-    range: 7
+    range: 12
     minRange: 0
     projectileSpeed: 0
     splashRadius: 0
@@ -71,6 +73,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0
@@ -101,4 +104,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: 'Artillery, DPS'
   weakAgainst: 'Chaff clear, tanks'
-  notes: 'Best counters (headless runner, equal cost): Flamethrower Trooper (100%), Scorpion (100%). Spider-like machines worked by a few worms: a fast, light swarm of a flanker. First-pass M10 values, Lekgolo Colony (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Spawner (100%), Scorpion (100%). Spider-like machines worked by a few worms: a fast, light swarm of a flanker. First-pass M10 values, Lekgolo Colony (Docs/M10/subfactions.md).'

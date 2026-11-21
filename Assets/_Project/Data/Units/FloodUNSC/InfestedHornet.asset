@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 2
   cost: 275
   baseDamage: 27.5
-  maxHealth: 360
+  maxHealth: 400
   armorType: 1
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -28,43 +28,21 @@ MonoBehaviour:
   turnTime180: 1
   isAir: 1
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 2
   weapons:
   - weaponName: Scavenged Rockets
-    damagePerShot: 15
+    damagePerShot: 16
     fireInterval: 1
     range: 12
     minRange: 0
     projectileSpeed: 40
-    splashRadius: 0
+    splashRadius: 1
     damageType: 1
     isAntiArmor: 0
     canBeBlocked: 0
     hasOwnTargetFilter: 0
-    targetFilter: 0
-    airDamageMultiplier: 1
-    coneDegrees: 0
-    lobbed: 0
-    beamSeconds: 0
-    beamChargeSeconds: 0
-    beamRestSeconds: 0
-    beamSweepSpeed: 0
-    seedSeconds: 0
-    seedDamageSharePerSecond: 0
-    seedSlowShare: 0
-    hitSlowSeconds: 0
-    hitSlowShare: 0
-  - weaponName: Spore Bombs
-    damagePerShot: 29
-    fireInterval: 2
-    range: 8
-    minRange: 0
-    projectileSpeed: 20
-    splashRadius: 3
-    damageType: 1
-    isAntiArmor: 0
-    canBeBlocked: 0
-    hasOwnTargetFilter: 1
     targetFilter: 0
     airDamageMultiplier: 1
     coneDegrees: 0
@@ -95,6 +73,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 1
@@ -127,4 +106,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air
-  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Swarm Form (100%). Barely flying, still bombing. First-pass M10 values, UNSC-based (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Vampire (100%). Barely flying, still bombing. First-pass M10 values, UNSC-based (Docs/M10/subfactions.md).'

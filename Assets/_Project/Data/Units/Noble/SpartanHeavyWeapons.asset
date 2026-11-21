@@ -19,8 +19,8 @@ MonoBehaviour:
   squadSize: 1
   cost: 400
   baseDamage: 80
-  maxHealth: 2400
-  armorType: 0
+  maxHealth: 1930
+  armorType: 1
   maxShield: 250
   shieldRegenPerSecond: 60
   moveSpeed: 1.3
@@ -28,10 +28,12 @@ MonoBehaviour:
   turnTime180: 0.7
   isAir: 0
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 2
   weapons:
   - weaponName: M247H Chaingun
-    damagePerShot: 18
+    damagePerShot: 14
     fireInterval: 0.12
     range: 20
     minRange: 0
@@ -71,6 +73,7 @@ MonoBehaviour:
   immuneToInfection: 1
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0
@@ -101,4 +104,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
-  notes: 'Best counters (headless runner, equal cost): Zealot (100%), Combat Form (100%). A walking wall with a chaingun: mows down infantry, does little to armor. Its Unarmored body makes it weak to anti-infantry weapons once the shield is down. First-pass M10 values, Noble (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Elite (100%), Combat Form (100%). A walking wall with a chaingun: mows down infantry, does little to armor. Under its shield, light armor. First-pass M10 values, Noble (Docs/M10/subfactions.md).'

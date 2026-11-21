@@ -16,11 +16,12 @@ MonoBehaviour:
   description: Hotter pistol bolts.
   cost: 100
   healthMultiplier: 1
-  damageMultiplier: 1.25
+  damageMultiplier: 1.4
   fireRateMultiplier: 1
   moveSpeedMultiplier: 1
   airDamageMultiplier: 1
   rangeBonus: 0
+  airRangeBonus: 0
   shieldBonus: 0
   shieldRegenBonus: 0
   splashRadiusBonus: 0

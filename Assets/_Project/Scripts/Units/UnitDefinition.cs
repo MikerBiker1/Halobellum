@@ -62,15 +62,15 @@ namespace Halobellum.Units
         public UnitDefinition reinforcementUnit;
         [Tooltip("Number of bodies dropped (one squad).")]
         public int reinforcementBodies;
-        [Tooltip("Seconds after the battle starts before the drop (only if this unit is still alive).")]
+        [Tooltip("Seconds after the battle starts before the drop (only if this unit is still alive), and between drops when it drops more than once.")]
         public float reinforcementDelaySeconds;
         [Tooltip("If ticked, the drop only works once a tech upgrade with 'Unlocks Reinforcement' is bought (e.g. the Pelican's troop bay).")]
         public bool reinforcementNeedsUpgrade;
         [Tooltip("How many times it drops its squad in a battle, the delay apart at least.")]
         public int reinforcementDrops = 1;
-        [Tooltip("Above 0: it lands behind the enemy's lines to drop, taking this many seconds to come down and as long to go back up.")]
+        [Tooltip("Above 0: it lands where it is to drop (the Pelican), taking this many seconds to come down and as long to go back up. 0 = it drops from the air straight under itself, wherever it is, and never lands (the Phantoms).")]
         public float reinforcementLandSeconds;
-        [Tooltip("Above 0, on a unit that lands: its first squad is out this many seconds into the battle, wherever it has got to. 0 = the first drop is like the others.")]
+        [Tooltip("Above 0: its first squad is out this many seconds into the battle, wherever it has got to; later drops follow the delay apart. 0 = the first drop is like the others.")]
         public float reinforcementFirstDropSeconds;
 
         [Header("Flood (D38)")]
@@ -86,8 +86,14 @@ namespace Halobellum.Units
         public bool selfDestructs;
         [Tooltip("It can deploy in the flank zones beside the enemy's area (D61).")]
         public bool canFlank;
+        [Tooltip("It heads for the nearest enemy tower, shooting what it passes, then attacks the tower (flankers, D138).")]
+        public bool goesForTowers;
+        [Tooltip("Metres between its squadmates, edge to edge, in formation and while they walk; 0 keeps the rules' formation gap (the Elites, D151).")]
+        public float squadGap;
         [Tooltip("The unit heads for the thickest group of enemies instead of the closest one.")]
         public bool seeksDensestCluster;
+        [Tooltip("Walks through its own side's chaff (the Carrier Form through the Infection Forms, D146).")]
+        public bool passesThroughOwnChaff;
         [Tooltip("Damage of the explosion when it dies. Together with Death Spawns, this makes a death burst.")]
         public float deathBurstDamage;
         public float deathBurstRadius;
@@ -172,7 +178,10 @@ namespace Halobellum.Units
                 ImmuneToInfection = immuneToInfection,
                 SelfDestructs = selfDestructs,
                 CanFlank = canFlank,
+                GoesForTowers = goesForTowers,
+                SquadGap = squadGap,
                 SeeksDensestCluster = seeksDensestCluster,
+                PassesThroughOwnChaff = passesThroughOwnChaff,
                 SpawnIntervalSeconds = spawnIntervalSeconds,
                 AuraRadius = auraRadius,
                 AuraSpeedMultiplier = auraSpeedMultiplier,
@@ -246,6 +255,10 @@ namespace Halobellum.Units
                 foreach (TechUpgradeDefinition tech in techUpgrades) techs.Add(tech != null ? tech.ToStats() : null);
             }
             stats.TechUpgrades = techs.ToArray();
+
+            // A built game's UnitStats files (mod_json): the values a player changed, over this asset's. Null everywhere else. A nested copy above
+            // got its own unit's changes in its own ToStats; the body counts set here after it, and this unit's own "spawn"/"reinforcement" changes, win.
+            UnitStatOverrides.Active?.Apply(stats);
             return stats;
         }
     }
@@ -319,6 +332,17 @@ namespace Halobellum.Units
         public float windUpSeconds;
         [Tooltip("Stagger: seconds it waits before its first shot after being idle a whole reload, so guns of one kind on a unit fire one after another (the Condor's lasers). 0 = none.")]
         public float staggerSeconds;
+        [Tooltip("Charged shot: at a target with shield, it charges this long and fires a slow bolt that strips this many shield points (the Jackal's plasma pistol, D151). 0 = none.")]
+        public float shieldBreak;
+        public float shieldBreakChargeSeconds;
+        public float shieldBreakProjectileSpeed;
+        [Tooltip("A shot that kills goes on through to the next enemy on its line, within range (the Jackal's beam rifle, D155).")]
+        public bool piercesKills;
+        [Tooltip("A magazine: this many shots, then a reload of magazineReloadSeconds (the owner, D157). 0 = none.")]
+        public int magazineSize;
+        public float magazineReloadSeconds;
+        [Tooltip("A ram: it hits once, then again only after the unit has driven this many seconds (the Infested Warthog, D160). 0 = none.")]
+        public float ramRechargeSeconds;
 
         public WeaponStats ToStats()
         {
@@ -351,6 +375,13 @@ namespace Halobellum.Units
                 HitSlowShare = hitSlowShare,
                 WindUpSeconds = windUpSeconds,
                 StaggerSeconds = staggerSeconds,
+                ShieldBreak = shieldBreak,
+                ShieldBreakChargeSeconds = shieldBreakChargeSeconds,
+                ShieldBreakProjectileSpeed = shieldBreakProjectileSpeed,
+                PiercesKills = piercesKills,
+                MagazineSize = magazineSize,
+                MagazineReloadSeconds = magazineReloadSeconds,
+                RamRechargeSeconds = ramRechargeSeconds,
             };
         }
     }

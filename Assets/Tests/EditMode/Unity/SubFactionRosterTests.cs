@@ -76,7 +76,9 @@ namespace Halobellum.Tests
                 FactionDefinition.SubFactionEntry entry = faction.subFactions.SingleOrDefault(s => s.subFactionName == row.sub);
                 Assert.IsNotNull(entry, row.sub);
                 Assert.IsNotEmpty(entry.description, row.sub + " has a line for the draft card.");
-                CollectionAssert.AreEquivalent(row.units, entry.exclusiveUnits.Select(u => u.unitName), row.sub);
+                // Base Flood units that one sub-faction alone has (the owner, D157): their files stay in the Flood folder.
+                string[] alsoExclusive = row.sub == "UNSC-based" ? new[] { "Infected Pelican" } : row.sub == "Covenant-based" ? new[] { "Infected Phantom" } : new string[0];
+                CollectionAssert.AreEquivalent(row.units.Concat(alsoExclusive), entry.exclusiveUnits.Select(u => u.unitName), row.sub);
                 CollectionAssert.AreEquivalent(row.units, HeadlessRunnerTool.LoadUnitsInFolder("Assets/_Project/Data/Units/" + row.folder).Select(u => u.unitName), row.sub + "'s folder");
             }
             foreach (string asset in new[] { "UNSC_Standard", "Covenant_Standard", "Flood_Standard" })
@@ -103,9 +105,10 @@ namespace Halobellum.Tests
                         Assert.That(unit.cost, Is.InRange(200, 300), name);
                         break;
                     case 3:
-                        Assert.AreEqual(unit.cost / 2, unit.unlockCost, name);
-                        // The Spartan CQB costs 300, under the band: the owner's choice once it could no longer shoot aircraft (D133).
-                        Assert.That(unit.cost, Is.InRange(name == "Spartan CQB" ? 300 : 400, 500), name);
+                        // Half its price to unlock; the Spartan Grenadier keeps its 200 at a price of 350 (the owner asked for the price only, D162).
+                        Assert.AreEqual(name == "Spartan Grenadier" ? 200 : unit.cost / 2, unit.unlockCost, name);
+                        // The Spartan CQB costs 300, under the band: the owner's choice once it could no longer shoot aircraft (D133); the Spartan Grenadier 350 (D162).
+                        Assert.That(unit.cost, Is.InRange(name == "Spartan CQB" ? 300 : name == "Spartan Grenadier" ? 350 : 400, 500), name);
                         break;
                     default:
                         Assert.AreEqual(4, unit.tier, name);
@@ -145,7 +148,8 @@ namespace Halobellum.Tests
             {
                 Assert.IsTrue(u[spartan].HasShield, spartan);
                 Assert.IsTrue(u[spartan].ImmuneToInfection, spartan + ": Spartans cannot be infected.");
-                Assert.AreEqual(ArmorType.Unarmored, u[spartan].ArmorType, spartan);
+                // Light armor under the Heavy Weapons' shield (the owner, D160); the other Spartans are unarmored under theirs.
+                Assert.AreEqual(spartan == "Spartan Heavy Weapons" ? ArmorType.Light : ArmorType.Unarmored, u[spartan].ArmorType, spartan);
             }
             Assert.AreEqual(0f, u["Spartan CQB"].LeapRange, "No leap: it stops at its range and shoots (the owner, D130).");
             Assert.IsFalse(u["Spartan CQB"].CanTarget(true), "A shotgun can't reach aircraft (the owner, D133).");
@@ -163,6 +167,8 @@ namespace Halobellum.Tests
             Assert.IsFalse(u["Longsword"].CanTarget(true), "A bomber cannot fight aircraft.");
             Assert.IsNull(u["Condor Gunship"].Reinforcement, "It drops no Marines any more (D111).");
             Assert.AreEqual(5, u["Condor Gunship"].Weapons.Count(w => w.Name.Contains("Spartan Laser")), "Five light Spartan Lasers, one a gun pod.");
+            foreach (WeaponStats laser in u["Condor Gunship"].Weapons.Where(w => w.Name.Contains("Spartan Laser")))
+                Assert.AreEqual(60f, laser.DamagePerShot, 1e-3f, laser.Name + ": 60 each, so it deals like the other 500-credit units (19.5 until D142).");
 
             Assert.Less(u["Chopper"].Weapons[0].Range, 3f, "It rams: its main weapon is melee.");
             Assert.Greater(u["Reaver"].Weapons[0].AirDamageMultiplier, 1f);
@@ -170,6 +176,16 @@ namespace Halobellum.Tests
 
             Assert.AreEqual(250f, u["Goliath"].BaseDamage, 1e-3f, "A building-killer.");
             Assert.IsTrue(u["Goliath"].HasDefenseArc);
+            // Melee only, with a charge like the Hunters' (the owner, D142; a Fuel Rod Cannon and a 120 slam until D142).
+            Assert.AreEqual(1, u["Goliath"].Weapons.Length, "Melee only (the owner, D142).");
+            Assert.AreEqual("Fist Slam", u["Goliath"].Weapons[0].Name);
+            Assert.AreEqual(DamageType.Melee, u["Goliath"].Weapons[0].DamageType);
+            Assert.AreEqual(240f, u["Goliath"].Weapons[0].DamagePerShot, 1e-3f, "Doubled to make up for the cannon.");
+            Assert.LessOrEqual(u["Goliath"].Weapons[0].Range, UnitUpgrades.MeleeRange);
+            Assert.IsTrue(u["Goliath"].LeapCharges, "It charges like the Hunters.");
+            Assert.Greater(u["Goliath"].LeapRange, u["Goliath"].Weapons[0].Range, "A charge starts beyond the fist's reach.");
+            Assert.GreaterOrEqual(u["Goliath"].LeapRange - u["Goliath"].CollisionRadius, 3.5f, "Its charge covers about what a Hunter's does beyond its body (5 - 1.2 = 3.8 m).");
+            Assert.IsFalse(u["Goliath"].CanTarget(true), "Fists can't reach aircraft.");
             Assert.Greater(u["Hunter Captain"].LifestealShare, 0f, "Its siphon beam.");
             Assert.Greater(u["Hunter Captain"].AuraHealPerSecondShare, 0f);
 
@@ -180,6 +196,34 @@ namespace Halobellum.Tests
             foreach (string flood in Table[6].units.Concat(Table[7].units)) Assert.AreNotEqual(4, u[flood].Tier, flood + ": the Abomination is the Flood's only Titan.");
             Assert.AreEqual("Infection Forms", u["Spawner"].SpawnedUnit.Name);
             foreach (string flood in Table[6].units.Concat(Table[7].units)) Assert.IsFalse(u[flood].Infects, flood + ": only Infection Forms infect.");
+        }
+
+        /// <summary>The Skitterer's spitter reaches 12 m (7 until D142), a ranged gun, and its Long Range tech still adds 8 m.</summary>
+        [Test]
+        public void Skitterer_ShootsFrom12Metres_AsARangedGun()
+        {
+            UnitStats s = Stats()["Skitterer"];
+            Assert.AreEqual(1, s.Weapons.Length);
+            WeaponStats spit = s.Weapons[0];
+            Assert.AreEqual(12f, spit.Range, 1e-3f, "The owner, D142.");
+            Assert.Greater(spit.Range, UnitUpgrades.MeleeRange, "A gun, not a melee weapon.");
+            Assert.AreNotEqual(DamageType.Melee, spit.DamageType);
+            Assert.IsTrue(spit.IsInstant);
+            TechUpgrade longRange = s.TechUpgrades.SingleOrDefault(t => t.Name == "Long Range");
+            Assert.IsNotNull(longRange, "Its Long Range tech is kept.");
+            Assert.AreEqual(20f, UnitUpgrades.Apply(s, 1, new[] { longRange }).Weapons[0].Range, 1e-3f);
+        }
+
+        /// <summary>The Spartan Heavy Weapons' chaingun 15 -> 13, as it grew too strong with levels (the owner, D142).</summary>
+        [Test]
+        public void SpartanHeavyWeapons_ChaingunCutForLevels()
+        {
+            UnitStats h = Stats()["Spartan Heavy Weapons"];
+            Assert.AreEqual(14f, h.Weapons[0].DamagePerShot, 1e-3f, "15 until D142, 13 until D163.");
+            UnitStats top = UnitUpgrades.Apply(h, 5, null);
+            Assert.AreEqual(70f, top.Weapons[0].DamagePerShot, 1e-3f, "Level 5 multiplies its damage by 5.");
+            Assert.AreEqual(250f, top.MaxShield, 1e-3f);
+            Assert.AreEqual(5f * 1930f, top.MaxHealth, 1e-3f);
         }
 
         [Test]

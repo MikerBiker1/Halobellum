@@ -45,13 +45,13 @@ See the cards themselves on [Spells](#/spells) and [Items & cards](#/cards).
 
 - **Damage:** one strike in a circle, several strikes over time, **scattered strikes** (small blasts at random spots inside a wide circle), or a **sweeping beam** along a line. Damage uses the normal [damage table](#/page/combat) and the spell's target filter. Some Flood spells make the Unarmored enemies they kill rise as infected units.
 - **Buff:** your units inside the circle **when it goes off** get a bonus shield worth a share of their health, and/or a damage bonus, for the rest of the battle.
-- **Drop squad:** one or more squads land at the spot, for that battle only.
+- **Drop squad:** one or more squads land at the spot, for that battle only. They're level 1 and, like every summoned body, deal no base damage.
 - **Disrupt (EMP):** strips shields, switches off techs, slows **armored** (Light and Heavy) units by 40%, and cancels wind-ups in its area, on both sides.
 - **Smoke:** an 8 × 45 m line. Every unit inside, on both sides and air included, has its weapon range **halved** for the rest of the battle.
 
 ## Oil Zone
 
-Bought from the Command Center for 150 credits, once per round, it becomes a **single-use offensive spell**. It's an **8 × 45 m line** placed like smoke. For **15 s** from the start of the battle, **ground** units of both sides inside it move **40% slower** and take **1.5× fire damage**.
+Bought **once** from the Command Center for 150 credits, it joins your **spells for the rest of the match**. It's an offensive spell, an **8 × 45 m line** placed like smoke. For the **whole battle**, **ground** units of both sides inside it move **40% slower** and take **1.5× fire damage**. After each use it recharges for **2 rounds**: cast in round 1, it's ready again in round 4.
 
 ## Items
 

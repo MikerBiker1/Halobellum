@@ -50,6 +50,20 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void MatchRulesAsset_OilZone_LastsTheWholeRound_AndRechargesFor2Rounds()
+        {
+            var asset = AssetDatabase.LoadAssetAtPath<MatchRulesDefinition>(MatchRulesDefinition.DefaultAssetPath);
+            Assert.IsNotNull(asset, "Missing " + MatchRulesDefinition.DefaultAssetPath);
+            SpellStats oil = asset.ToRules().OilZone;
+            Assert.IsNotNull(oil);
+            Assert.AreEqual(0f, oil.DurationSeconds, "0 = the whole round (the owner).");
+            Assert.AreEqual(2, oil.CooldownRounds, "2 rounds to recharge (the owner).");
+            Assert.AreEqual(150, oil.Cost);
+            CollectionAssert.IsEmpty(oil.Validate());
+            StringAssert.Contains("for the whole round", oil.EffectsText());
+        }
+
+        [Test]
         public void Factions_LoadWithRosters_AndGiveAPlayableDraft()
         {
             var factions = AssetDatabase.FindAssets("t:" + nameof(FactionDefinition), new[] { "Assets/_Project/Data/Factions" })

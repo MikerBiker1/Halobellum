@@ -1,7 +1,8 @@
 // BattleStatsTests.cs
 // Tests the Battle stats (D69): what a body takes is what the other side dealt; what armor stops is counted, and never
 // past what the body had; a shot a defense arc blocks counts whole as stopped; the match keeps a line for each squad of
-// both sides, where it stood, and adds the numbers up when the battle ends.
+// both sides, where it stood, and adds the numbers up when the battle ends. Each body's record of what each squad dealt to
+// it (for the kill XP split, xp_split): no overkill, no spells.
 // Depends on: Halobellum.Combat, Halobellum.Economy, Halobellum.Core, NUnit, TestRules, TestUnits, TestMatch.
 
 using System.Linq;
@@ -45,6 +46,34 @@ namespace Halobellum.Tests
             Assert.IsFalse(target.IsAlive);
             Assert.AreEqual(25f, target.DamageTaken, 0.01f);
             Assert.AreEqual(0f, target.DamagePrevented, 0.01f, "Nothing stopped a hit to an unarmored body, and the overkill isn't stopped damage.");
+        }
+
+        [Test]
+        public void DamageBySquad_IsWhatTheSquadDealt_WithoutOverkill()
+        {
+            // The record the kill XP split reads (xp_split).
+            BattleSimulation sim = Duel(ArmorType.Unarmored, 25f); // Three hits of 10: the last one only finds 5.
+            sim.Run();
+            SimUnit shooter = sim.Units[0], target = sim.Units[1];
+            Assert.IsFalse(target.IsAlive);
+            Assert.AreEqual(1, target.SquadDamageCount);
+            Assert.AreEqual(shooter.CreditSquadId, target.SquadDamageSquadId(0));
+            Assert.AreEqual(25f, target.SquadDamageAmount(0), 0.01f);
+            Assert.AreEqual(shooter.DamageDealt, target.SquadDamageAmount(0), 0.01f);
+            Assert.AreEqual(target.DamageTaken, target.SquadDamageAmount(0), 0.01f);
+        }
+
+        [Test]
+        public void ASpellsDamage_IsNotOnTheSquadDamageRecord()
+        {
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            sim.AddSquad(TestUnits.Unit("Watcher", health: 10000f, speed: 0f, weapon: TestUnits.Weapon(damage: 0f, range: 1f)), Team.A, new Vec2(0f, -30f));
+            sim.AddSquad(TestUnits.Unit("Target", health: 1000f, speed: 0f, weapon: TestUnits.Weapon(damage: 0f, range: 1f)), Team.B, new Vec2(0f, 30f));
+            sim.AddSpell(new SpellStats { Name = "Strike", Offensive = true, Effect = SpellEffect.Damage, Radius = 5f, DamagePerTick = 100f, DamageType = DamageType.Explosive }, Team.A, new Vec2(0f, 30f));
+            for (int i = 0; i < 20; i++) sim.Step();
+            SimUnit target = sim.Units[1];
+            Assert.Greater(target.DamageTaken, 0f, "The spell hurt it.");
+            Assert.AreEqual(0, target.SquadDamageCount);
         }
 
         [Test]

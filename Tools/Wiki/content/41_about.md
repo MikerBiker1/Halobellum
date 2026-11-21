@@ -18,6 +18,8 @@ Nothing in the unit, tech, spell, item or tower pages is typed by hand. A builde
 
 Figures marked *DPS* are worked out from the data: damage per shot ÷ seconds between shots, times the bodies in a squad, then times the [damage table](#/page/combat) for each armor. They leave out splash, misses, travel time and movement, so treat them as a guide.
 
+The pages show the game's **default** values. A player can change them in the game folder's `UnitStats` files: see [Modding unit stats](#/page/modding).
+
 ## Rebuilding
 
 After any change to units, techs, spells, cards, rules or these pages, rebuild from the repository root:

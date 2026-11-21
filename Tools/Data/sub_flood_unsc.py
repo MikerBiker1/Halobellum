@@ -13,23 +13,28 @@ INFESTED = (0.55, 0.68, 0.18, 0.55)
 
 def units(U, W):
     return [
-        U("InfestedMarine", "Infested Marine", FACTION, "Chaff", 1, 0, 12, 100, 140, "U", 3, 0.5, 0.25, "G",
-          [W("Scythe Limb", 18, 0.8, 1.5, "Melee"),
+        # Health 140 -> 130 (the owner, D160), 125 (D163).
+        U("InfestedMarine", "Infested Marine", FACTION, "Chaff", 1, 0, 12, 100, 125, "U", 3, 0.5, 0.25, "G",
+          [W("Scythe Limb", 17, 0.8, 1.5, "Melee"),
            W("Scavenged Rifle", 4, 0.5, 10, "Ballistic", block=True, own="B")], flood=True, leap=(4, 10, 4), baked="InfestedMarine",
           note="Fewer bodies than a Marine squad, each much tougher: it leaps in with a scythe limb. Cannot infect, as only Infection Forms do."),
-        U("InfestedWarthog", "Infested Warthog", FACTION, "Flanker", 1, 0, 2, 200, 320, "L", 5, 1.2, 1, "G",
-          [W("Ramming Mass", 50, 1.0, 1.5, "Melee", splash=1.5),
-           W("Scavenged Machine Gun", 7, 0.2, 10, "Ballistic", block=True, own="B")], flood=True, burst=dict(dmg=0, radius=0, type="Explosive", aa=False, spawns=[("InfectionForms", 1)]),
+        U("InfestedWarthog", "Infested Warthog", FACTION, "Flanker", 1, 0, 2, 200, 180, "L", 5, 1.2, 1, "G",
+          # Its ram 25% less (the owner, D153): 46 -> 34.5. Then 60, but once: it rams again only after 0.5 s of driving, to build up speed,
+          # so against a squad it rams the first body and has no speed for the rest (the owner, D160).
+          [W("Ramming Mass", 50, 1.0, 1.5, "Melee", splash=1.5, ram=0.5),  # 60 -> 50 (D163).
+           W("Scavenged Machine Gun", 7, 0.2, 10, "Ballistic", block=True, own="B")], flood=True,  # No Infection Form when it dies (the owner, D157).
           note="Drives straight into the enemy, its gun still firing."),
-        U("InfestedScorpion", "Infested Scorpion", FACTION, "Tank", 2, 50, 1, 275, 1350, "H", 1.4, 2, 2, "G",
+        # 300 credits (the owner, D153; 275 since D112).
+        # Health 1820 -> 1500 (the owner, D157).
+        U("InfestedScorpion", "Infested Scorpion", FACTION, "Tank", 2, 50, 1, 300, 1500, "H", 1.4, 2, 2, "G",
           [W("Scavenged Cannon", 72, 3, 14, "Explosive", proj=35, splash=2.5),
            W("Tentacle Whip", 30, 1.0, 4, "Melee", own="G")], flood=True, burst=dict(dmg=0, radius=0, type="Explosive", aa=False, spawns=[("InfectionForms", 1)]),
           note="A little tougher and shorter-ranged than the real thing, with tentacles for what gets close."),
-        U("InfestedHornet", "Infested Hornet", FACTION, "Aerial", 2, 50, 2, 275, 360, "L", 4, 1.5, 1, "B",
-          [W("Scavenged Rockets", 15, 1.0, 12, "Explosive", proj=40),
-           W("Spore Bombs", 29, 2.0, 8, "Explosive", proj=20, splash=3, own="G")], flood=True, airu=True, burst=dict(dmg=0, radius=0, type="Explosive", aa=False, spawns=[("InfectionForms", 1)]),
+        U("InfestedHornet", "Infested Hornet", FACTION, "Aerial", 2, 50, 2, 275, 400, "L", 4, 1.5, 1, "B",
+          # Its spore bombs gone, its rockets a 1 m splash, as the Hornet's (the owner, D155).
+          [W("Scavenged Rockets", 16, 1.0, 12, "Explosive", proj=40, splash=1)], flood=True, airu=True, burst=dict(dmg=0, radius=0, type="Explosive", aa=False, spawns=[("InfectionForms", 1)]),
           note="Barely flying, still bombing."),
-        U("Juggernaut", "Juggernaut", FACTION, "Flanker", 3, 200, 1, 400, 2300, "H", 3.25, 1.8, 1, "G",
+        U("Juggernaut", "Juggernaut", FACTION, "Flanker", 3, 200, 1, 400, 2780, "H", 3.25, 1.8, 1, "G",
           [W("Crushing Charge", 130, 1.2, 2.5, "Melee", splash=2.5)], flood=True, leap=(10, 14, 6),
           note="A pure form the size of a tank that moves like a flanker and leaps onto what it hunts."),
     ]

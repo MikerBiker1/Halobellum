@@ -58,7 +58,7 @@ A weapon with a sound of its own uses it; the others use their kind's sound.
 | [x] | `sfx_fire_plasma` | Plasma rifles, pistols and turrets. | `plas_rifle_fire[plas_rif_fire]` |
 | [x] | `sfx_fire_banshee` | Banshee and Infested Banshee plasma cannons. | `banshee_fire[plasmarifle1]` |
 | [x] | `sfx_fire_banshee_bomb`, `sfx_explosion_banshee` | The Banshee's fuel rod bomb, fired and landing. | `banshee_cannon_fire`, `banshee_cannon_expl` |
-| [x] | `sfx_fire_fuelrod`, `sfx_explosion_fuelrod` | Fuel Rod Grunt, Grunt Goblin, Goliath; their shots landing. | `Fuelrod_fire_grunt`, `fuel_rod_gun_explosion` 1 and 2 |
+| [x] | `sfx_fire_fuelrod`, `sfx_explosion_fuelrod` | Fuel Rod Grunt, Grunt Goblin; their shots landing. | `Fuelrod_fire_grunt`, `fuel_rod_gun_explosion` 1 and 2 |
 | [x] | `sfx_fire_hunter` | Hunters' assault cannon. | `Hunter_fuel_rod_gun_fire` |
 | [x] | `sfx_fire_mortar`, `sfx_flight_mortar` | Wraith and Infested Wraith mortar, and the shell in the air. | `wraith_fire_mortar`, `Wraith airborn projectile loop` |
 | [x] | `sfx_fire_bruteshot` | Brute Grenadier. | `brute_shot_fire` |
@@ -66,6 +66,7 @@ A weapon with a sound of its own uses it; the others use their kind's sound.
 | [x] | `sfx_fire_sniper` | Spartan Sniper. | `Sniper fire[ruger24]` |
 | [x] | `sfx_fire_sword`, `sfx_sword_ready` | Zealots: the sword, and readying it as a battle starts. | `sword_impact_character`, `sword_ready` |
 | [x] | `sfx_fire_needle` | Needle weapons. | `fire[needlefire11]` |
+| [x] | `sfx_fire_vampire` | The Vampire's needle cannons, once per shot (D150). | `NeedlerRifle` |
 | [x] | `sfx_fire_rocket` | Rockets and missiles. | `fire[rocket16]` |
 | [x] | `sfx_fire_cannon` | Tank cannons. | `scorpion_cannon_fire` |
 | [x] | `sfx_fire_gauss` | Gauss Warthog, Cobra, Gremlin (my guess for this file). | `fire[grifle03]` |

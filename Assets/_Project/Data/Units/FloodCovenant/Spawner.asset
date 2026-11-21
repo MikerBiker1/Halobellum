@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 1
   cost: 400
   baseDamage: 80
-  maxHealth: 3600
+  maxHealth: 2700
   armorType: 1
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -28,6 +28,8 @@ MonoBehaviour:
   turnTime180: 2
   isAir: 0
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 0
   weapons:
   - weaponName: Spore Lash
@@ -74,6 +76,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0
@@ -83,7 +86,7 @@ MonoBehaviour:
   spawnedBodies: 3
   spawnIntervalSeconds: 4
   alternateSpawnedUnit: {fileID: 11400000, guid: 5f45713bce1607ea1deeeb50c0ca4acb, type: 2}
-  alternateSpawnedBodies: 5
+  alternateSpawnedBodies: 3
   auraRadius: 0
   auraSpeedMultiplier: 1
   auraHealPerSecondShare: 0
@@ -103,4 +106,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
-  notes: 'Best counters (headless runner, equal cost): Zealot (100%), Combat Form (100%). A mobile birthing form: it fights badly, and keeps releasing three Infection Forms and five Combat Forms in turn, one lot every 4 seconds; the Combat Forms draw the enemy''s fire. Kill it first (D79, D116). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114). First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Zealot (100%), Heavy Grunts (100%). A mobile birthing form: it fights badly, and keeps releasing three Infection Forms and three Combat Forms in turn, one lot every 4 seconds; the Combat Forms draw the enemy''s fire. Kill it first (D79, D116). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114). First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'

@@ -91,8 +91,8 @@ namespace Halobellum.Economy
 
         /// <summary>This player's towers, in the order of TowerKind (none in a match without towers, or in the Sandbox).</summary>
         public readonly List<PlacedTower> Towers = new List<PlacedTower>();
-        /// <summary>This round's Command Center purchases: each once a round (D55).</summary>
-        public bool BoughtExtraSlot, BoughtOilZone, UsedRapidResupply, EliteRecruitment;
+        /// <summary>This round's Command Center purchases: each once a round (D55). The oil is bought once a match and kept in Spells.</summary>
+        public bool BoughtExtraSlot, UsedRapidResupply, EliteRecruitment;
         /// <summary>Credits Rapid Resupply takes from the next round's income.</summary>
         public int IncomePenalty;
         /// <summary>Research Center steps bought.</summary>
@@ -121,6 +121,9 @@ namespace Halobellum.Economy
         }
 
         public OwnedSpell FindSpell(int spellId) => Spells.Find(s => s.Id == spellId);
+
+        /// <summary>True if this spell (the same stats object, like the Command Center's oil) is in the player's spells.</summary>
+        public bool OwnsSpell(SpellStats stats) => stats != null && Spells.Exists(s => s.Stats == stats);
 
         /// <summary>Tech upgrades bought, per unit type (they apply to every squad of that type).</summary>
         public readonly Dictionary<UnitStats, List<TechUpgrade>> Techs = new Dictionary<UnitStats, List<TechUpgrade>>();
@@ -189,7 +192,7 @@ namespace Halobellum.Economy
         public sealed class Snapshot
         {
             internal int Credits, SquadsBoughtThisRound, UnlocksThisRound, BonusIncome, ExtraSquadsPerRound, IncomePenalty, ResearchHealthSteps, ResearchDamageSteps;
-            internal bool BoughtExtraSlot, BoughtOilZone, UsedRapidResupply, EliteRecruitment;
+            internal bool BoughtExtraSlot, UsedRapidResupply, EliteRecruitment;
             internal ArmyBuffs Buffs;
             internal CardOffer Offer;
             internal List<UnitStats> Unlocked;
@@ -208,7 +211,7 @@ namespace Halobellum.Economy
             {
                 Credits = Credits, SquadsBoughtThisRound = SquadsBoughtThisRound, UnlocksThisRound = UnlocksThisRound, BonusIncome = BonusIncome,
                 ExtraSquadsPerRound = ExtraSquadsPerRound, IncomePenalty = IncomePenalty, ResearchHealthSteps = ResearchHealthSteps, ResearchDamageSteps = ResearchDamageSteps,
-                BoughtExtraSlot = BoughtExtraSlot, BoughtOilZone = BoughtOilZone, UsedRapidResupply = UsedRapidResupply, EliteRecruitment = EliteRecruitment,
+                BoughtExtraSlot = BoughtExtraSlot, UsedRapidResupply = UsedRapidResupply, EliteRecruitment = EliteRecruitment,
                 Buffs = Buffs, Offer = Offer, Unlocked = new List<UnitStats>(Unlocked),
                 Squads = new List<(PlacedSquad, PlacedSquad)>(), Spells = new List<(OwnedSpell, OwnedSpell)>(),
                 Trainings = new List<(OwnedTraining, int)>(), Towers = new List<(PlacedTower, int, int)>(),
@@ -226,7 +229,7 @@ namespace Halobellum.Economy
         {
             Credits = s.Credits; SquadsBoughtThisRound = s.SquadsBoughtThisRound; UnlocksThisRound = s.UnlocksThisRound; BonusIncome = s.BonusIncome;
             ExtraSquadsPerRound = s.ExtraSquadsPerRound; IncomePenalty = s.IncomePenalty; ResearchHealthSteps = s.ResearchHealthSteps; ResearchDamageSteps = s.ResearchDamageSteps;
-            BoughtExtraSlot = s.BoughtExtraSlot; BoughtOilZone = s.BoughtOilZone; UsedRapidResupply = s.UsedRapidResupply; EliteRecruitment = s.EliteRecruitment;
+            BoughtExtraSlot = s.BoughtExtraSlot; UsedRapidResupply = s.UsedRapidResupply; EliteRecruitment = s.EliteRecruitment;
             Offer = s.Offer;
             SetBuffs(s.Buffs);
             Unlocked.Clear();
@@ -267,7 +270,7 @@ namespace Halobellum.Economy
         private static OwnedSpell CopySpell(OwnedSpell from, OwnedSpell to)
         {
             to.Id = from.Id; to.Stats = from.Stats; to.ReadyRound = from.ReadyRound; to.IsPlaced = from.IsPlaced;
-            to.Position = from.Position; to.AngleDegrees = from.AngleDegrees; to.SingleUse = from.SingleUse;
+            to.Position = from.Position; to.AngleDegrees = from.AngleDegrees;
             return to;
         }
     }

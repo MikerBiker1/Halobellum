@@ -37,6 +37,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 24c605a8c8846d1a0df350b40c7843b9, type: 2}
     - {fileID: 11400000, guid: a96bafc074f125d18ac9596d2b1f3dab, type: 2}
     - {fileID: 11400000, guid: 947fe31141fe96a81bb132bf0a3c8480, type: 2}
+    unitCosts: []
   - subFactionName: Armored Division
     description: 'Heavy ground vehicles: the biggest tank, long guns and fast EMP scouts.'
     exclusiveUnits:
@@ -44,6 +45,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: ad43332f1cd5ff1f2f11a7eb67cf3ae8, type: 2}
     - {fileID: 11400000, guid: c33f0a2ce151814ed3f79484f3e270a1, type: 2}
     - {fileID: 11400000, guid: f6faa4c586ec2f9226ad5a2d2ae8d9b1, type: 2}
+    unitCosts: []
   - subFactionName: Aerospace Command
     description: 'Aircraft: gunships, bombers and a heavy transport.'
     exclusiveUnits:
@@ -51,6 +53,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 2efb3a51cd149d96ce2fabbb7f0050be, type: 2}
     - {fileID: 11400000, guid: b782de6e73a396fab21cee4b875a9536, type: 2}
     - {fileID: 11400000, guid: a2fad471944b6d3b66269468f087159a, type: 2}
+    unitCosts: []
   spells:
   - {fileID: 11400000, guid: 5451f873c026b5e85899a826e3e97dff, type: 2}
   - {fileID: 11400000, guid: 79141c9de434beef4ba8576c0320d40e, type: 2}

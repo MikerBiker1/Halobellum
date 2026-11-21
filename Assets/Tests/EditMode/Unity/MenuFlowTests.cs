@@ -1,7 +1,7 @@
 // MenuFlowTests.cs
 // The main menu's rules that need no running game (M10): where each test tool goes, what the settings default to and how they are kept
 // in range, how the HUD fits a window, and that the build starts in the MainMenu scene with every scene it can reach. Also how the HUD's parts
-// keep clear of each other, the shop's order of tier then price, Unlock Skirmish's bar and hover window, the selection ring, and that the game's fonts keep a non-breaking space together.
+// keep clear of each other, the shop's order of tier then price, Unlock Skirmish's bar and hover window (and the card screens' hover window, and a cell's "i" corner), the selection ring, and that the game's fonts keep a non-breaking space together.
 // Settings tests hold the settings in memory, since PlayerPrefs outlive a test. The two that are about PlayerPrefs itself put back whatever was stored.
 // Depends on: Halobellum.Presentation, Halobellum.UI, Halobellum.Core, Halobellum.Economy, Halobellum.Editor (scene paths), Halobellum.Units, NUnit.
 
@@ -431,6 +431,44 @@ namespace Halobellum.Tests
             Assert.IsNull(view.Techs[0].ButtonLabel, "It can't be bought from here.");
             StringAssert.Contains("In the shop", view.SideLabel);
             StringAssert.DoesNotContain("shop", SquadStatsWindow.ShopProgress(new UnitStats { Name = "tank" }, hovered: true).SideLabel, "Unlock Skirmish has no shop.");
+        }
+
+        [Test]
+        public void AHoveredCardsUnitWindow_GoesBesideTheCard_OnTheSideWithRoom()
+        {
+            var left = new Rect(100f, 110f, 340f, 800f);
+            float right = MatchHud.CardHoverRight(left, 1920f, 440f);
+            Assert.AreEqual(886f, right, 0.01f, "Right of a card in the left half.");
+            Rect window = SquadStatsWindow.HoverRect(440f, 600f, right, left.yMax, right, 1080f);
+            Assert.AreEqual(new Rect(446f, 310f, 440f, 600f), window);
+            Assert.GreaterOrEqual(window.x, left.xMax);
+            Assert.AreEqual(left.yMax, window.yMax, 0.01f, "Its bottom at the card's.");
+
+            var rightCard = new Rect(1480f, 110f, 340f, 800f);
+            right = MatchHud.CardHoverRight(rightCard, 1920f, 440f);
+            Assert.AreEqual(1474f, right, 0.01f, "Left of a card in the right half.");
+            Assert.LessOrEqual(SquadStatsWindow.HoverRect(440f, 600f, right, rightCard.yMax, right, 1080f).xMax, rightCard.x);
+
+            Assert.AreEqual(990f, MatchHud.CardHoverRight(new Rect(300f, 110f, 340f, 800f), 1000f, 440f), 0.01f, "It stays on a narrow screen, on the right.");
+            Assert.AreEqual(450f, MatchHud.CardHoverRight(new Rect(400f, 110f, 340f, 800f), 1000f, 440f), 0.01f, "And on the left.");
+            Assert.AreEqual(1576f, MatchHud.CardHoverRight(new Rect(790f, 110f, 340f, 800f), 1920f, 440f), 0.01f, "A card in the very middle has it on the right.");
+
+            Rect tall = SquadStatsWindow.HoverRect(440f, 900f, 886f, 910f, 886f, 1080f);
+            Assert.AreEqual(446f, tall.x, 0.01f, "Too tall to end at the card's bottom, it still stands beside the card.");
+            Assert.AreEqual(170f, tall.y, 0.01f);
+            Assert.AreEqual(0f, SquadStatsWindow.HoverRect(440f, 2000f, 886f, 910f, 886f, 1080f).y);
+        }
+
+        [Test]
+        public void ACellsICorner_IsInItsTopRight()
+        {
+            foreach (Rect cell in new[] { new Rect(100f, 200f, 64f, 86f), new Rect(0f, 26f, 84f, 104f) })
+            {
+                Rect corner = MatchHud.InfoCorner(cell);
+                Assert.IsTrue(cell.Contains(corner.min) && cell.Contains(corner.max), $"{corner} is inside {cell}.");
+                Assert.Greater(corner.center.x, cell.center.x);
+                Assert.Less(corner.center.y, cell.y + cell.height * 0.3f);
+            }
         }
 
         [Test]

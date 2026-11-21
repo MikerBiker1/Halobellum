@@ -56,6 +56,8 @@ static class Program
                 flood.LeapSpeed = leap[1].GetSingle();
                 flood.LeapCooldownSeconds = leap[2].GetSingle();
             }
+            // A charge along the ground, one weapon at a time (the Hunters, D87; the Goliath, D142), as the game reads leapCharges.
+            if (u.TryGetProperty("charges", out JsonElement charges) && charges.ValueKind == JsonValueKind.True) flood.LeapCharges = true;
             var burst = u.GetProperty("burst");
             if (burst.ValueKind == JsonValueKind.Object)
             {
@@ -222,31 +224,11 @@ static class Program
             i => results[i] = CounterWeb.RunPair(rules, pairs[i].a, pairs[i].b, settings));
         CounterWebReport report = CounterWeb.BuildReport(units, results.ToList(), settings.Threshold);
         Console.WriteLine($"{pairs.Count} pairs x {battles} battles in {watch.Elapsed.TotalSeconds:0.0} s");
-        if (args.Length <= 1)
-        {
-            Console.Write(CounterWeb.FormatReport(report));
-            File.WriteAllText(Path.Combine(dir, "matrix.csv"), CounterWeb.MatrixCsv(report));
-        }
-        else
-        {
-            // Only some units were measured again: the rest of the table stays as it was.
-            string path = Path.Combine(dir, "matrix.csv");
-            List<string[]> old = File.Exists(path) ? File.ReadAllLines(path).Select(l => l.Split(',')).ToList() : new List<string[]>();
-            var known = new Dictionary<(string, string), string>();
-            if (old.Count > 0)
-            {
-                for (int r = 1; r < old.Count; r++) for (int c = 1; c < old[r].Length && c < old[0].Length; c++) known[(old[r][0], old[0][c])] = old[r][c];
-            }
-            foreach (CounterMatchup m in results)
-            {
-                known[(Csv(m.A.Name), Csv(m.B.Name))] = m.WinRateA.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
-                known[(Csv(m.B.Name), Csv(m.A.Name))] = m.WinRateB.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
-            }
-            var names = units.Select(u => Csv(u.Name)).ToList();
-            var rows = new List<string> { "unit \\ against," + string.Join(",", names) };
-            foreach (string row in names) rows.Add(row + "," + string.Join(",", names.Select(column => row != column && known.TryGetValue((row, column), out string v) ? v : "")));
-            File.WriteAllLines(path, rows);
-        }
+        if (args.Length <= 1) Console.Write(CounterWeb.FormatReport(report));
+        // A whole run writes the tables afresh; a run of some units only measures them again, and the rest of each table stays as it was.
+        // margin.csv (D154): by how much the row unit wins, -1 to 1, the share of its army left less the column unit's.
+        WriteTable(Path.Combine(dir, "matrix.csv"), units, results, m => m.WinRateA, m => m.WinRateB, args.Length <= 1);
+        WriteTable(Path.Combine(dir, "margin.csv"), units, results, m => m.MarginA, m => m.MarginB, args.Length <= 1);
 
         // Two best counters per unit, for the asset notes.
         var counters = new Dictionary<string, string>();
@@ -261,6 +243,26 @@ static class Program
 
     static readonly Dictionary<string, Dictionary<string, int>> Armies = new();
     static void Add(string who, string unit) { if (!Armies.TryGetValue(who, out var d)) Armies[who] = d = new(); d[unit] = d.GetValueOrDefault(unit) + 1; }
+
+    /// <summary>Writes a row-against-column table of the pairs measured, over the old one unless fresh (D154: the matrix and the margins).</summary>
+    static void WriteTable(string path, List<UnitStats> units, CounterMatchup[] results, Func<CounterMatchup, float> ofA, Func<CounterMatchup, float> ofB, bool fresh)
+    {
+        List<string[]> old = !fresh && File.Exists(path) ? File.ReadAllLines(path).Select(l => l.Split(',')).ToList() : new List<string[]>();
+        var known = new Dictionary<(string, string), string>();
+        if (old.Count > 0)
+        {
+            for (int r = 1; r < old.Count; r++) for (int c = 1; c < old[r].Length && c < old[0].Length; c++) known[(old[r][0], old[0][c])] = old[r][c];
+        }
+        foreach (CounterMatchup m in results)
+        {
+            known[(Csv(m.A.Name), Csv(m.B.Name))] = ofA(m).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+            known[(Csv(m.B.Name), Csv(m.A.Name))] = ofB(m).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+        }
+        var names = units.Select(u => Csv(u.Name)).ToList();
+        var rows = new List<string> { "unit \\ against," + string.Join(",", names) };
+        foreach (string row in names) rows.Add(row + "," + string.Join(",", names.Select(column => row != column && known.TryGetValue((row, column), out string v) ? v : "")));
+        File.WriteAllLines(path, rows);
+    }
 
     static string Csv(string name) => name.Replace(",", ";");
 
@@ -396,6 +398,7 @@ static class Program
             MaxHealth = u.GetProperty("hp").GetSingle(),
             ArmorType = (ArmorType)"ULH".IndexOf(u.GetProperty("armor").GetString()[0]),
             MaxShield = u.GetProperty("shield").GetSingle(),
+            SquadGap = u.TryGetProperty("gap", out JsonElement gap) ? gap.GetSingle() : 0f, // The Elites, D151.
             ShieldRegenPerSecond = u.GetProperty("regen").GetSingle(),
             MoveSpeed = u.GetProperty("speed").GetSingle(),
             CollisionRadius = u.GetProperty("radius").GetSingle(),
@@ -436,6 +439,14 @@ static class Program
                 HitSlowShare = w.GetProperty("slowshare").GetSingle(),
                 WindUpSeconds = w.TryGetProperty("windup", out JsonElement windUp) ? windUp.GetSingle() : 0f,
                 StaggerSeconds = w.TryGetProperty("stagger", out JsonElement stagger) ? stagger.GetSingle() : 0f,
+                // The charged shot (D151): [shield it strips, seconds of charge, bolt speed].
+                ShieldBreak = w.TryGetProperty("sbreak", out JsonElement sb) && sb.ValueKind == JsonValueKind.Array ? sb[0].GetSingle() : 0f,
+                PiercesKills = w.TryGetProperty("pierce", out JsonElement pierce) && pierce.ValueKind == JsonValueKind.True,
+                RamRechargeSeconds = w.TryGetProperty("ram", out JsonElement ram) && ram.ValueKind == JsonValueKind.Number ? ram.GetSingle() : 0f,
+                MagazineSize = w.TryGetProperty("mag", out JsonElement mag) && mag.ValueKind == JsonValueKind.Array ? mag[0].GetInt32() : 0,
+                MagazineReloadSeconds = w.TryGetProperty("mag", out JsonElement mag2) && mag2.ValueKind == JsonValueKind.Array ? mag2[1].GetSingle() : 0f,
+                ShieldBreakChargeSeconds = sb.ValueKind == JsonValueKind.Array ? sb[1].GetSingle() : 0f,
+                ShieldBreakProjectileSpeed = sb.ValueKind == JsonValueKind.Array ? sb[2].GetSingle() : 0f,
             });
         }
         s.Weapons = weapons.ToArray();

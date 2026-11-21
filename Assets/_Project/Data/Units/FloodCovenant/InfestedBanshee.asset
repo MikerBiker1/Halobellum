@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 2
   cost: 250
   baseDamage: 25
-  maxHealth: 360
+  maxHealth: 400
   armorType: 1
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -28,10 +28,12 @@ MonoBehaviour:
   turnTime180: 0.8
   isAir: 1
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 2
   weapons:
   - weaponName: Scavenged Plasma Cannons
-    damagePerShot: 8
+    damagePerShot: 7
     fireInterval: 0.3
     range: 10
     minRange: 0
@@ -55,7 +57,7 @@ MonoBehaviour:
     hitSlowSeconds: 0
     hitSlowShare: 0
   - weaponName: Spore Bomb
-    damagePerShot: 45
+    damagePerShot: 37
     fireInterval: 2.5
     range: 8
     minRange: 0
@@ -95,6 +97,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 1
@@ -127,4 +130,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air
-  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Swarm Form (100%). Barely flying, still bombing. First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Vampire (100%). Barely flying, still bombing. First-pass M10 values, Covenant-based (Docs/M10/subfactions.md).'

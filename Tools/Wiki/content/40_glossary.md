@@ -11,14 +11,14 @@ blurb: Every game term in one place.
 | Term | Meaning |
 | --- | --- |
 | **Squad** | What you buy and place: a set number of bodies of one unit type. The price is per squad. |
-| **Body** | One unit in a squad. Health and damage are per body; base damage is per surviving body. |
+| **Body** | One unit in a squad. Health and damage are per body; base damage is per surviving body (summoned bodies deal none). |
 | **Pack / forms** | A Flood body that stands for 6 tiny forms moving as one. |
 | **Tier** | A unit's class, 1 to 4. It sets the unlock price and the price range. Tier 4 is a Titan. |
 | **Unlock** | A one-time purchase that lets you buy a unit type for the match. One per round. |
 | **Exclusive unit** | A unit only one sub-faction can field. |
 | **Faction / sub-faction** | UNSC, Covenant or Flood. Each sub-faction adds exclusive units to its faction's base roster. |
 | **Starting card / draft** | The card chosen before round 1: faction, sub-faction, 2 free squads and base health. |
-| **Level / XP bar** | Squads earn XP from kills. A full bar (2× the base price) lets you pay half the base price for +1 level, up to 5. |
+| **Level / XP bar** | Squads earn XP from kills: half to the squad that lands the killing blow, half shared by the squads that damaged the body, by damage. A full bar (2× the base price) lets you pay half the base price for +1 level, up to 5. |
 | **Level all** | Level every ready squad of a type at once. |
 | **Tech** | An upgrade for one unit type, bought once for the match. Up to 4 per unit. |
 
@@ -57,7 +57,8 @@ blurb: Every game term in one place.
 | **Block** | A defense arc stopping a blockable projectile completely, splash included. |
 | **Hit slow** | A direct hit that slows the target briefly (not Titans). |
 | **Leap / charge / dive** | A pounce on a target or over obstacles / a ground charge into melee / an aircraft's suicide fall. |
-| **Drop / carrier** | A unit that brings a temporary squad during the battle. Landing carriers count as ground while they're down. |
+| **Drop / carrier** | A unit that brings a temporary squad during the battle, at its own level. The Pelican comes down where it is to drop and counts as ground while it's down; air carriers (the Phantoms) drop from the air under themselves. |
+| **Summoned body** | A body made during the battle: released or spawned forms, risen and seeded bodies, spell squads. It fights and keeps the battle going but deals no base damage. Troops a bought air transport drops are not summoned. |
 | **Death burst** | An explosion and/or released units when a unit dies. |
 | **Spawner** | A unit that keeps releasing units during the battle. |
 | **Aura** | Speed and/or healing for friends close by. |
@@ -70,7 +71,8 @@ blurb: Every game term in one place.
 | Term | Meaning |
 | --- | --- |
 | **Base / base health** | Each side's life total. Survivors damage it after every battle. |
-| **Base damage** | What each surviving body deals to the enemy base at the end of a round (usually squad cost ÷ size ÷ 5). |
+| **Base damage** | What each surviving body deals to the enemy base at the end of a round (usually squad cost ÷ size ÷ 5). Summoned bodies deal none. |
+| **Top squad glow** | Blue under your squad with the most damage this battle, red under the enemy's. It lasts until the next battle starts. |
 | **Card offer** | From round 2: 3 cards to take or skip. |
 | **Spell** | A placed, recharging effect: offensive (red, anywhere) or defensive (blue, your zone). |
 | **Item / inventory / hexagon** | A card placed on one squad for the match. Kept in the inventory until dropped on a squad's hexagon. |
@@ -81,10 +83,11 @@ blurb: Every game term in one place.
 | **Command Center / Research Center** | Your two towers. The Command Center sells help for the round; the Research Center sells lasting research. |
 | **Rapid Resupply** | +200 credits now, −300 next income. |
 | **Elite Recruitment** | This round's bought squads start at level 2, for 1.5× the price. |
-| **Oil Zone** | A one-use line that slows ground units and makes fire hurt more. |
+| **Oil Zone** | A Command Center spell, bought once and kept: a line that slows ground units and makes fire hurt more for the whole battle. Recharges for 2 rounds. |
 | **Flank zone** | Strips beside the enemy's zone where certain aircraft can deploy. They arrive 10 s late the first time. |
 | **No man's land** | The 2-square (4 m) gap between the two deployment zones. |
 | **Ghosts** | Grey copies of the enemy's army as it was at the last battle start, shown while you deploy. |
 | **Undo** | Takes back this round's deployment actions, as far back as the card choice. |
 | **Counter web** | The measured table of unit-against-unit battles at equal value. |
+| **Unit stats files** | The JSON files in the game folder's `UnitStats` folder that players can edit to change unit numbers. See [Modding unit stats](#/page/modding). |
 | **Battle stats** | The end-of-match window with every battle's damage dealt, taken and stopped. |

@@ -155,3 +155,13 @@ Exact steps for anything an agent cannot do (editor clicks, importing assets, de
 - [ ] **Dust on High.** Watch a Warthog or Scorpion move. The frame rate shows if you turn on Frame rate counter in Settings.
 - [ ] **Pelican timing.** With Troop Bay it should drop its first Marines 5 seconds in. Try it in a back corner (items 58 and 72 of `MORNING_DECISIONS.md` are also yours to playtest).
 - [ ] **Real mouse.** Agents may not send real input, so slider dragging, real wheel scrolling and real double-clicks have never been tried. Tell me if any of them misbehave.
+
+## 2026-11-18: play-test the D142 batch
+
+- [ ] **Read `MORNING_DECISIONS.md` items 205 to 219.** They are the calls I made on your playtest list.
+- [ ] **Covenant Phantom.** With Gravity Lift, it should stay in the air and drop 7 Grunts under itself at 5, 15 and 25 seconds, wherever it is fighting.
+- [ ] **Glow.** A blue glow under your top-damage squad and a red one under the enemy's. Check that it stays through the next deployment and clears when the battle starts. Are the hues and brightness right?
+- [ ] **Unlock Skirmish icons with a real mouse.** Hover a unit bar cell, an Unlock units page cell, a draft card squad and a reinforcement card. Click the "i" corner of a cell to pin its stats. Only the code was read for real-pointer hover; a test drove it without a mouse.
+- [ ] **Oil Zone.** Buy it once, cast it, and check that it covers the whole battle and is ready again two rounds later.
+- [ ] **Unit stats files.** In a built game, edit a number in `UnitStats/UNSC.json` and launch: the main menu should say "Unit stats: modded (1 change)". Break the file (delete a comma) and launch again: a panel lists the mistake and the game uses its own values. Each game build overwrites these files.
+- [ ] **Goliath.** Melee only, with a charge. Its new body is on the art branch, waiting for your OK to merge.

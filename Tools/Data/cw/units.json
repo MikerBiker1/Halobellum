@@ -8,7 +8,7 @@
   "unlock": 0,
   "squad": 18,
   "cost": 100,
-  "hp": 60,
+  "hp": 50,
   "armor": "U",
   "speed": 1.5,
   "radius": 0.5,
@@ -17,7 +17,7 @@
   "weapons": [
    {
     "name": "MA5 Assault Rifle",
-    "dmg": 5,
+    "dmg": 4,
     "interval": 0.5,
     "range": 12,
     "minr": 0,
@@ -40,7 +40,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -63,6 +67,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -79,7 +86,7 @@
   "unlock": 0,
   "squad": 6,
   "cost": 150,
-  "hp": 90,
+  "hp": 95,
   "armor": "U",
   "speed": 1.75,
   "radius": 0.5,
@@ -88,7 +95,7 @@
   "weapons": [
    {
     "name": "M7057 Flamethrower",
-    "dmg": 3,
+    "dmg": 3.5,
     "interval": 0.1,
     "range": 11,
     "minr": 0,
@@ -111,7 +118,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -134,6 +145,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -150,7 +164,7 @@
   "unlock": 0,
   "squad": 2,
   "cost": 200,
-  "hp": 360,
+  "hp": 380,
   "armor": "L",
   "speed": 5.0,
   "radius": 1.2,
@@ -182,7 +196,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -205,6 +223,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": true,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -253,7 +274,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -276,6 +301,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -324,7 +352,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Coaxial Machine Gun",
@@ -351,7 +383,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -374,6 +410,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -390,7 +429,7 @@
   "unlock": 50,
   "squad": 1,
   "cost": 300,
-  "hp": 500,
+  "hp": 480,
   "armor": "L",
   "speed": 2.0,
   "radius": 1.4,
@@ -399,7 +438,7 @@
   "weapons": [
    {
     "name": "Rocket Volley",
-    "dmg": 30,
+    "dmg": 29,
     "interval": 1.0,
     "range": 24,
     "minr": 0,
@@ -422,7 +461,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -445,6 +488,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -461,7 +507,7 @@
   "unlock": 50,
   "squad": 2,
   "cost": 300,
-  "hp": 400,
+  "hp": 505,
   "armor": "L",
   "speed": 4.5,
   "radius": 1.5,
@@ -470,12 +516,12 @@
   "weapons": [
    {
     "name": "Rockets",
-    "dmg": 22,
+    "dmg": 24.5,
     "interval": 1.0,
     "range": 12,
     "minr": 0,
     "proj": 40,
-    "splash": 0,
+    "splash": 1,
     "type": "Explosive",
     "aa": false,
     "block": false,
@@ -493,34 +539,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
-   },
-   {
-    "name": "Bombs",
-    "dmg": 45,
-    "interval": 2.0,
-    "range": 8,
-    "minr": 0,
-    "proj": 20,
-    "splash": 3,
-    "type": "Explosive",
-    "aa": false,
-    "block": false,
-    "own": "G",
-    "air": 1,
-    "cone": 0,
-    "lob": false,
-    "beam": 0,
-    "charge": 0,
-    "rest": 0,
-    "sweep": 0,
-    "seed": 0,
-    "seedshare": 0,
-    "seedslow": 0,
-    "slow": 0,
-    "slowshare": 0,
-    "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -543,6 +566,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -568,7 +594,7 @@
   "weapons": [
    {
     "name": "Archer Missile Barrage",
-    "dmg": 55,
+    "dmg": 58,
     "interval": 4.0,
     "range": 42,
     "minr": 8,
@@ -591,7 +617,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -614,6 +644,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -630,7 +663,7 @@
   "unlock": 50,
   "squad": 1,
   "cost": 300,
-  "hp": 1200,
+  "hp": 1400,
   "armor": "L",
   "speed": 6.0,
   "radius": 2.5,
@@ -639,12 +672,12 @@
   "weapons": [
    {
     "name": "M370 Autocannon",
-    "dmg": 10,
+    "dmg": 25,
     "interval": 0.3,
     "range": 14,
     "minr": 0,
     "proj": 0,
-    "splash": 0,
+    "splash": 1,
     "type": "Ballistic",
     "aa": false,
     "block": false,
@@ -662,7 +695,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -678,7 +715,7 @@
    1.5,
    5
   ],
-  "note": "With its Troop Bay tech it lands and drops 6 Marines 5 seconds into the battle wherever it is, then lands behind enemy lines to drop more, up to 3 drops in all (D60).",
+  "note": "With its Troop Bay tech it lands where it is and drops 6 Marines 5 seconds into the battle, then every 10 seconds, up to 3 drops in all; it never flies behind enemy lines (D143).",
   "forms": 1,
   "flood": false,
   "infects": false,
@@ -693,6 +730,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -719,7 +759,7 @@
    {
     "name": "Spartan Laser",
     "dmg": 450,
-    "interval": 3.5,
+    "interval": 4.2,
     "range": 24,
     "minr": 0,
     "proj": 0,
@@ -741,7 +781,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 2.5,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 400,
@@ -764,6 +808,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -780,7 +827,7 @@
   "unlock": 250,
   "squad": 1,
   "cost": 500,
-  "hp": 2500,
+  "hp": 3360,
   "armor": "H",
   "speed": 1.5,
   "radius": 2,
@@ -789,7 +836,7 @@
   "weapons": [
    {
     "name": "Chaingun",
-    "dmg": 8,
+    "dmg": 9,
     "interval": 0.2,
     "range": 14,
     "minr": 0,
@@ -812,7 +859,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Rockets",
@@ -839,7 +890,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -862,6 +917,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -875,10 +933,10 @@
   "faction": "UNSC",
   "role": "Titan",
   "tier": 4,
-  "unlock": 350,
+  "unlock": 150,
   "squad": 1,
   "cost": 800,
-  "hp": 8000,
+  "hp": 8240,
   "armor": "H",
   "speed": 0.75,
   "radius": 5,
@@ -887,7 +945,7 @@
   "weapons": [
    {
     "name": "Main Cannon",
-    "dmg": 300,
+    "dmg": 310,
     "interval": 3.0,
     "range": 20,
     "minr": 0,
@@ -910,11 +968,15 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Turret (left)",
-    "dmg": 8,
+    "dmg": 8.5,
     "interval": 0.2,
     "range": 14,
     "minr": 0,
@@ -937,11 +999,15 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Turret (right)",
-    "dmg": 8,
+    "dmg": 8.5,
     "interval": 0.2,
     "range": 14,
     "minr": 0,
@@ -964,7 +1030,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -987,6 +1057,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -1035,7 +1108,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -1058,6 +1135,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -1083,9 +1163,9 @@
   "weapons": [
    {
     "name": "Fuel Rod Gun",
-    "dmg": 32,
+    "dmg": 24.5,
     "interval": 2.0,
-    "range": 16,
+    "range": 14,
     "minr": 0,
     "proj": 25,
     "splash": 3,
@@ -1106,7 +1186,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -1129,6 +1213,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -1177,7 +1264,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": true,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -1200,6 +1291,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -1216,7 +1310,7 @@
   "unlock": 0,
   "squad": 6,
   "cost": 150,
-  "hp": 70,
+  "hp": 80,
   "armor": "U",
   "speed": 1.5,
   "radius": 0.6,
@@ -1248,7 +1342,15 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": [
+     100,
+     1,
+     12
+    ],
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -1279,6 +1381,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -1327,7 +1432,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -1350,6 +1459,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": true,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -1366,7 +1478,7 @@
   "unlock": 50,
   "squad": 3,
   "cost": 300,
-  "hp": 200,
+  "hp": 230,
   "armor": "U",
   "speed": 1.75,
   "radius": 0.6,
@@ -1375,9 +1487,9 @@
   "weapons": [
    {
     "name": "Plasma Rifle",
-    "dmg": 24,
+    "dmg": 26,
     "interval": 0.5,
-    "range": 12,
+    "range": 14,
     "minr": 0,
     "proj": 0,
     "splash": 0,
@@ -1398,10 +1510,14 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
-  "shield": 200,
+  "shield": 300,
   "regen": 50,
   "air": false,
   "arc": null,
@@ -1421,6 +1537,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 1.5,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -1446,7 +1565,7 @@
   "weapons": [
    {
     "name": "Plasma Mortar",
-    "dmg": 80,
+    "dmg": 98,
     "interval": 3.5,
     "range": 38,
     "minr": 10,
@@ -1469,7 +1588,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -1492,6 +1615,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -1508,7 +1634,7 @@
   "unlock": 50,
   "squad": 1,
   "cost": 300,
-  "hp": 500,
+  "hp": 800,
   "armor": "L",
   "speed": 3.5,
   "radius": 1.8,
@@ -1517,13 +1643,13 @@
   "weapons": [
    {
     "name": "Needle Cannons",
-    "dmg": 12,
+    "dmg": 16,
     "interval": 0.4,
     "range": 18,
     "minr": 0,
     "proj": 0,
-    "splash": 0,
-    "type": "Energy",
+    "splash": 0.5,
+    "type": "Explosive",
     "aa": false,
     "block": false,
     "own": null,
@@ -1540,7 +1666,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -1563,6 +1693,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -1579,7 +1712,7 @@
   "unlock": 50,
   "squad": 2,
   "cost": 300,
-  "hp": 400,
+  "hp": 440,
   "armor": "L",
   "speed": 5.0,
   "radius": 1.4,
@@ -1588,7 +1721,7 @@
   "weapons": [
    {
     "name": "Plasma Cannons",
-    "dmg": 9,
+    "dmg": 10.25,
     "interval": 0.3,
     "range": 10,
     "minr": 0,
@@ -1611,11 +1744,15 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Fuel Rod Bomb",
-    "dmg": 50,
+    "dmg": 57,
     "interval": 2.5,
     "range": 8,
     "minr": 0,
@@ -1638,7 +1775,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -1661,6 +1802,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -1677,7 +1821,7 @@
   "unlock": 50,
   "squad": 1,
   "cost": 300,
-  "hp": 800,
+  "hp": 1550,
   "armor": "L",
   "speed": 5.0,
   "radius": 3,
@@ -1686,12 +1830,12 @@
   "weapons": [
    {
     "name": "Plasma Turrets",
-    "dmg": 12,
-    "interval": 0.4,
+    "dmg": 15,
+    "interval": 0.3,
     "range": 14,
     "minr": 0,
     "proj": 0,
-    "splash": 0,
+    "splash": 1,
     "type": "Energy",
     "aa": false,
     "block": false,
@@ -1709,7 +1853,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -1722,10 +1870,10 @@
    10,
    true,
    3,
-   1.5,
+   0,
    5
   ],
-  "note": "With its Gravity Lift tech it lands and drops 7 Grunts 5 seconds into the battle wherever it is, then lands behind enemy lines to drop more, up to 3 drops in all (as the Pelican, D60).",
+  "note": "With its Gravity Lift tech it drops 7 Grunts from the air 5 seconds into the battle, then every 10 seconds, up to 3 drops in all, wherever it is; it never lands (D142).",
   "forms": 1,
   "flood": false,
   "infects": false,
@@ -1740,6 +1888,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -1756,16 +1907,16 @@
   "unlock": 225,
   "squad": 2,
   "cost": 450,
-  "hp": 1500,
+  "hp": 1440,
   "armor": "H",
   "speed": 1.1,
   "radius": 1.2,
   "turn": 1.5,
-  "filter": "G",
+  "filter": "B",
   "weapons": [
    {
     "name": "Assault Cannon",
-    "dmg": 60,
+    "dmg": 57,
     "interval": 2.0,
     "range": 16,
     "minr": 5,
@@ -1788,7 +1939,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Shield Bash",
@@ -1815,7 +1970,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -1824,7 +1983,7 @@
   "arc": {
    "deg": 240,
    "front": 0.7,
-   "rear": 1.5,
+   "rear": 1.0,
    "block": 0,
    "types": []
   },
@@ -1848,6 +2007,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": true,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -1896,7 +2058,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 600,
@@ -1923,6 +2089,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -1936,10 +2105,10 @@
   "faction": "Covenant",
   "role": "Titan",
   "tier": 4,
-  "unlock": 350,
+  "unlock": 150,
   "squad": 1,
   "cost": 800,
-  "hp": 8500,
+  "hp": 9050,
   "armor": "H",
   "speed": 0.75,
   "radius": 5,
@@ -1948,7 +2117,7 @@
   "weapons": [
    {
     "name": "Focus Beam",
-    "dmg": 30,
+    "dmg": 32,
     "interval": 0.1,
     "range": 24,
     "minr": 0,
@@ -1971,11 +2140,15 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Plasma Turret (left)",
-    "dmg": 10,
+    "dmg": 11,
     "interval": 0.25,
     "range": 16,
     "minr": 0,
@@ -1998,11 +2171,15 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Plasma Turret (right)",
-    "dmg": 10,
+    "dmg": 11,
     "interval": 0.25,
     "range": 16,
     "minr": 0,
@@ -2025,7 +2202,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -2048,6 +2229,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -2064,7 +2248,7 @@
   "unlock": 0,
   "squad": 10,
   "cost": 100,
-  "hp": 228,
+  "hp": 290,
   "armor": "U",
   "speed": 5,
   "radius": 0.8,
@@ -2073,7 +2257,7 @@
   "weapons": [
    {
     "name": "Infectious Bite",
-    "dmg": 36,
+    "dmg": 37,
     "interval": 0.5,
     "range": 1,
     "minr": 0,
@@ -2096,7 +2280,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -2123,6 +2311,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -2139,7 +2330,7 @@
   "unlock": 0,
   "squad": 4,
   "cost": 150,
-  "hp": 170,
+  "hp": 255,
   "armor": "U",
   "speed": 2,
   "radius": 0.8,
@@ -2171,7 +2362,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -2187,7 +2382,7 @@
   "selfd": true,
   "seek": false,
   "burst": {
-   "dmg": 110,
+   "dmg": 158,
    "radius": 4.5,
    "type": "Explosive",
    "aa": false,
@@ -2205,6 +2400,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": true,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -2221,16 +2419,16 @@
   "unlock": 50,
   "squad": 6,
   "cost": 200,
-  "hp": 260,
+  "hp": 280,
   "armor": "U",
-  "speed": 2.4,
+  "speed": 3,
   "radius": 0.6,
   "turn": 0.3,
   "filter": "G",
   "weapons": [
    {
     "name": "Claw Swipe",
-    "dmg": 50,
+    "dmg": 60,
     "interval": 0.8,
     "range": 1.5,
     "minr": 0,
@@ -2253,34 +2451,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
-   },
-   {
-    "name": "Scavenged Rifle",
-    "dmg": 6,
-    "interval": 0.4,
-    "range": 10,
-    "minr": 0,
-    "proj": 0,
-    "splash": 0,
-    "type": "Ballistic",
-    "aa": false,
-    "block": true,
-    "own": null,
-    "air": 1,
-    "cone": 0,
-    "lob": false,
-    "beam": 0,
-    "charge": 0,
-    "rest": 0,
-    "sweep": 0,
-    "seed": 0,
-    "seedshare": 0,
-    "seedslow": 0,
-    "slow": 0,
-    "slowshare": 0,
-    "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -2299,7 +2474,7 @@
   "spawn": null,
   "aura": null,
   "leap": [
-   5,
+   10,
    12,
    4
   ],
@@ -2307,6 +2482,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -2355,7 +2533,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -2378,6 +2560,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": true,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -2403,7 +2588,7 @@
   "weapons": [
    {
     "name": "Bone Shards",
-    "dmg": 48,
+    "dmg": 45,
     "interval": 3,
     "range": 34,
     "minr": 8,
@@ -2426,7 +2611,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -2449,6 +2638,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -2465,7 +2657,7 @@
   "unlock": 50,
   "squad": 4,
   "cost": 250,
-  "hp": 200,
+  "hp": 275,
   "armor": "U",
   "speed": 3.5,
   "radius": 1,
@@ -2474,7 +2666,7 @@
   "weapons": [
    {
     "name": "Spat Bone",
-    "dmg": 12,
+    "dmg": 13,
     "interval": 0.4,
     "range": 14,
     "minr": 0,
@@ -2497,11 +2689,15 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Bone Barbs",
-    "dmg": 12,
+    "dmg": 12.5,
     "interval": 0.4,
     "range": 1.5,
     "minr": 0,
@@ -2524,7 +2720,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -2547,6 +2747,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -2563,7 +2766,7 @@
   "unlock": 200,
   "squad": 1,
   "cost": 400,
-  "hp": 3200,
+  "hp": 3400,
   "armor": "H",
   "speed": 1.6,
   "radius": 2,
@@ -2595,7 +2798,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -2618,6 +2825,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -2634,7 +2844,7 @@
   "unlock": 200,
   "squad": 2,
   "cost": 475,
-  "hp": 800,
+  "hp": 900,
   "armor": "L",
   "speed": 1.5,
   "radius": 1.6,
@@ -2643,12 +2853,12 @@
   "weapons": [
    {
     "name": "Seed Spore",
-    "dmg": 45,
+    "dmg": 43,
     "interval": 2.5,
     "range": 24,
     "minr": 0,
     "proj": 30,
-    "splash": 0,
+    "splash": 0.5,
     "type": "Energy",
     "aa": false,
     "block": false,
@@ -2661,12 +2871,16 @@
     "rest": 0,
     "sweep": 0,
     "seed": 8,
-    "seedshare": 0.04,
+    "seedshare": 0.025,
     "seedslow": 0.4,
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -2730,6 +2944,9 @@
   ],
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -2746,7 +2963,7 @@
   "unlock": 200,
   "squad": 1,
   "cost": 400,
-  "hp": 1350,
+  "hp": 1500,
   "armor": "L",
   "speed": 6,
   "radius": 2.5,
@@ -2778,7 +2995,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -2820,10 +3041,13 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
-  "sub": null,
+  "sub": "UNSC-based",
   "folder": "Flood",
   "baked": null
  },
@@ -2836,7 +3060,7 @@
   "unlock": 200,
   "squad": 1,
   "cost": 400,
-  "hp": 1250,
+  "hp": 1400,
   "armor": "L",
   "speed": 2.5,
   "radius": 3,
@@ -2845,7 +3069,7 @@
   "weapons": [
    {
     "name": "Plasma Turrets",
-    "dmg": 12,
+    "dmg": 12.5,
     "interval": 0.3,
     "range": 14,
     "minr": 0,
@@ -2868,7 +3092,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -2906,10 +3134,13 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
-  "sub": null,
+  "sub": "Covenant-based",
   "folder": "Flood",
   "baked": null
  },
@@ -2919,10 +3150,10 @@
   "faction": "Flood",
   "role": "Titan",
   "tier": 4,
-  "unlock": 350,
+  "unlock": 150,
   "squad": 1,
   "cost": 800,
-  "hp": 10000,
+  "hp": 10570,
   "armor": "H",
   "speed": 1.25,
   "radius": 5,
@@ -2931,7 +3162,7 @@
   "weapons": [
    {
     "name": "Tendril Slam",
-    "dmg": 400,
+    "dmg": 381,
     "interval": 2.5,
     "range": 7,
     "minr": 0,
@@ -2954,11 +3185,15 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Tendril Whip",
-    "dmg": 50,
+    "dmg": 53,
     "interval": 0.8,
     "range": 10,
     "minr": 0,
@@ -2981,7 +3216,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -3012,6 +3251,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -3037,8 +3279,8 @@
   "weapons": [
    {
     "name": "SRS99 Sniper Rifle",
-    "dmg": 200,
-    "interval": 3.0,
+    "dmg": 76,
+    "interval": 0.5,
     "range": 42,
     "minr": 0,
     "proj": 0,
@@ -3060,7 +3302,14 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": [
+     4,
+     2.4
+    ],
+    "ram": 0
    }
   ],
   "shield": 200,
@@ -3083,6 +3332,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -3099,8 +3351,8 @@
   "unlock": 200,
   "squad": 1,
   "cost": 400,
-  "hp": 2400,
-  "armor": "U",
+  "hp": 1930,
+  "armor": "L",
   "speed": 1.3,
   "radius": 0.8,
   "turn": 0.7,
@@ -3108,7 +3360,7 @@
   "weapons": [
    {
     "name": "M247H Chaingun",
-    "dmg": 18,
+    "dmg": 14,
     "interval": 0.12,
     "range": 20,
     "minr": 0,
@@ -3131,7 +3383,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 250,
@@ -3139,7 +3395,7 @@
   "air": false,
   "arc": null,
   "drop": null,
-  "note": "A walking wall with a chaingun: mows down infantry, does little to armor. Its Unarmored body makes it weak to anti-infantry weapons once the shield is down.",
+  "note": "A walking wall with a chaingun: mows down infantry, does little to armor. Under its shield, light armor.",
   "forms": 1,
   "flood": false,
   "infects": false,
@@ -3154,6 +3410,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -3169,8 +3428,8 @@
   "tier": 3,
   "unlock": 200,
   "squad": 1,
-  "cost": 400,
-  "hp": 1000,
+  "cost": 350,
+  "hp": 980,
   "armor": "U",
   "speed": 1.75,
   "radius": 0.6,
@@ -3179,8 +3438,8 @@
   "weapons": [
    {
     "name": "M41 Rocket Launcher",
-    "dmg": 62,
-    "interval": 1.5,
+    "dmg": 65,
+    "interval": 0.5,
     "range": 19,
     "minr": 3,
     "proj": 22,
@@ -3202,7 +3461,14 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": [
+     2,
+     2
+    ],
+    "ram": 0
    }
   ],
   "shield": 300,
@@ -3225,6 +3491,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -3241,7 +3510,7 @@
   "unlock": 150,
   "squad": 1,
   "cost": 300,
-  "hp": 1200,
+  "hp": 1160,
   "armor": "U",
   "speed": 3.5,
   "radius": 0.6,
@@ -3250,7 +3519,7 @@
   "weapons": [
    {
     "name": "M45 Shotgun",
-    "dmg": 120,
+    "dmg": 150,
     "interval": 0.8,
     "range": 6,
     "minr": 0,
@@ -3273,7 +3542,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 600,
@@ -3296,6 +3569,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -3312,7 +3588,7 @@
   "unlock": 250,
   "squad": 3,
   "cost": 500,
-  "hp": 500,
+  "hp": 560,
   "armor": "U",
   "speed": 1.75,
   "radius": 0.6,
@@ -3321,7 +3597,7 @@
   "weapons": [
    {
     "name": "BR85 Battle Rifle",
-    "dmg": 22,
+    "dmg": 33,
     "interval": 0.6,
     "range": 16,
     "minr": 0,
@@ -3344,11 +3620,15 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "M41 Rocket Launcher",
-    "dmg": 110,
+    "dmg": 129,
     "interval": 5,
     "range": 18,
     "minr": 0,
@@ -3371,7 +3651,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 140,
@@ -3394,6 +3678,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -3410,7 +3697,7 @@
   "unlock": 0,
   "squad": 2,
   "cost": 200,
-  "hp": 240,
+  "hp": 360,
   "armor": "L",
   "speed": 4.5,
   "radius": 1.1,
@@ -3421,7 +3708,7 @@
     "name": "EMP Railgun",
     "dmg": 38,
     "interval": 1.0,
-    "range": 13,
+    "range": 14,
     "minr": 0,
     "proj": 0,
     "splash": 0,
@@ -3442,7 +3729,11 @@
     "slow": 2,
     "slowshare": 0.4,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -3465,6 +3756,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": true,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -3490,7 +3784,7 @@
   "weapons": [
    {
     "name": "M66 Railgun",
-    "dmg": 175,
+    "dmg": 198,
     "interval": 2.2,
     "range": 26,
     "minr": 0,
@@ -3513,7 +3807,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -3536,6 +3834,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -3561,9 +3862,9 @@
   "weapons": [
    {
     "name": "Heavy Cannon",
-    "dmg": 140,
-    "interval": 5,
-    "range": 50,
+    "dmg": 143,
+    "interval": 4,
+    "range": 46,
     "minr": 12,
     "proj": 22,
     "splash": 4.5,
@@ -3584,7 +3885,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -3607,6 +3912,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -3623,7 +3931,7 @@
   "unlock": 250,
   "squad": 1,
   "cost": 500,
-  "hp": 2400,
+  "hp": 3200,
   "armor": "H",
   "speed": 1.35,
   "radius": 2.2,
@@ -3633,7 +3941,7 @@
    {
     "name": "Twin Cannons",
     "dmg": 110,
-    "interval": 2.5,
+    "interval": 2.0,
     "range": 17,
     "minr": 0,
     "proj": 35,
@@ -3655,7 +3963,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Coaxial Machine Gun",
@@ -3682,7 +3994,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -3705,6 +4021,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -3721,7 +4040,7 @@
   "unlock": 50,
   "squad": 1,
   "cost": 250,
-  "hp": 480,
+  "hp": 600,
   "armor": "L",
   "speed": 4,
   "radius": 2,
@@ -3729,15 +4048,15 @@
   "filter": "B",
   "weapons": [
    {
-    "name": "Heavy Autocannon",
-    "dmg": 13,
-    "interval": 0.3,
+    "name": "Left Minigun",
+    "dmg": 3.5,
+    "interval": 0.0666,
     "range": 14,
     "minr": 0,
     "proj": 0,
     "splash": 0,
     "type": "Ballistic",
-    "aa": true,
+    "aa": false,
     "block": false,
     "own": null,
     "air": 1,
@@ -3753,7 +4072,42 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
+   },
+   {
+    "name": "Right Minigun",
+    "dmg": 3.5,
+    "interval": 0.0666,
+    "range": 14,
+    "minr": 0,
+    "proj": 0,
+    "splash": 0,
+    "type": "Ballistic",
+    "aa": false,
+    "block": false,
+    "own": null,
+    "air": 1,
+    "cone": 0,
+    "lob": false,
+    "beam": 0,
+    "charge": 0,
+    "rest": 0,
+    "sweep": 0,
+    "seed": 0,
+    "seedshare": 0,
+    "seedslow": 0,
+    "slow": 0,
+    "slowshare": 0,
+    "windup": 0,
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -3761,7 +4115,7 @@
   "air": true,
   "arc": null,
   "drop": null,
-  "note": "Gunship that hunts vehicles. Its gun is poor against infantry.",
+  "note": "Gunship with two miniguns firing together, 15 rounds a second each: it shreds infantry and light vehicles, less so heavy armor.",
   "forms": 1,
   "flood": false,
   "infects": false,
@@ -3776,6 +4130,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -3792,7 +4149,7 @@
   "unlock": 50,
   "squad": 1,
   "cost": 300,
-  "hp": 600,
+  "hp": 1000,
   "armor": "L",
   "speed": 5,
   "radius": 2.8,
@@ -3801,7 +4158,7 @@
   "weapons": [
    {
     "name": "Carpet Bombs",
-    "dmg": 135,
+    "dmg": 180,
     "interval": 2.5,
     "range": 5,
     "minr": 0,
@@ -3824,7 +4181,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -3847,6 +4208,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -3863,7 +4227,7 @@
   "unlock": 200,
   "squad": 1,
   "cost": 400,
-  "hp": 650,
+  "hp": 1080,
   "armor": "H",
   "speed": 2.5,
   "radius": 3,
@@ -3872,7 +4236,7 @@
   "weapons": [
    {
     "name": "Missile Barrage",
-    "dmg": 44,
+    "dmg": 69,
     "interval": 3,
     "range": 22,
     "minr": 0,
@@ -3895,13 +4259,17 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Chin Gun",
     "dmg": 10,
     "interval": 0.2,
-    "range": 14,
+    "range": 22,
     "minr": 0,
     "proj": 0,
     "splash": 0,
@@ -3922,7 +4290,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -3945,6 +4317,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -3961,7 +4336,7 @@
   "unlock": 250,
   "squad": 1,
   "cost": 500,
-  "hp": 1150,
+  "hp": 1200,
   "armor": "L",
   "speed": 3.25,
   "radius": 3,
@@ -3970,13 +4345,13 @@
   "weapons": [
    {
     "name": "Twin Autocannons",
-    "dmg": 20,
-    "interval": 0.25,
+    "dmg": 22,
+    "interval": 0.2,
     "range": 16,
     "minr": 0,
     "proj": 0,
-    "splash": 0,
-    "type": "Ballistic",
+    "splash": 0.5,
+    "type": "Explosive",
     "aa": false,
     "block": false,
     "own": null,
@@ -3993,12 +4368,16 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Light Spartan Laser (nose)",
-    "dmg": 20,
-    "interval": 4.0,
+    "dmg": 60,
+    "interval": 3.5,
     "range": 20,
     "minr": 0,
     "proj": 0,
@@ -4020,12 +4399,16 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 2.5,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Light Spartan Laser (front right)",
-    "dmg": 20,
-    "interval": 4.0,
+    "dmg": 60,
+    "interval": 3.5,
     "range": 20,
     "minr": 0,
     "proj": 0,
@@ -4047,12 +4430,16 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 2.5,
-    "stagger": 0.8
+    "stagger": 0.8,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Light Spartan Laser (front left)",
-    "dmg": 20,
-    "interval": 4.0,
+    "dmg": 60,
+    "interval": 3.5,
     "range": 20,
     "minr": 0,
     "proj": 0,
@@ -4074,12 +4461,16 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 2.5,
-    "stagger": 1.6
+    "stagger": 1.6,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Light Spartan Laser (rear right)",
-    "dmg": 20,
-    "interval": 4.0,
+    "dmg": 60,
+    "interval": 3.5,
     "range": 20,
     "minr": 0,
     "proj": 0,
@@ -4101,12 +4492,16 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 2.5,
-    "stagger": 2.4
+    "stagger": 2.4,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Light Spartan Laser (rear left)",
-    "dmg": 20,
-    "interval": 4.0,
+    "dmg": 60,
+    "interval": 3.5,
     "range": 20,
     "minr": 0,
     "proj": 0,
@@ -4128,7 +4523,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 2.5,
-    "stagger": 3.2
+    "stagger": 3.2,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -4151,6 +4550,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -4166,8 +4568,8 @@
   "tier": 1,
   "unlock": 0,
   "squad": 2,
-  "cost": 200,
-  "hp": 300,
+  "cost": 175,
+  "hp": 315,
   "armor": "L",
   "speed": 5.5,
   "radius": 1.3,
@@ -4176,7 +4578,7 @@
   "weapons": [
    {
     "name": "Ramming Blades",
-    "dmg": 60,
+    "dmg": 66,
     "interval": 1.0,
     "range": 1.5,
     "minr": 0,
@@ -4199,7 +4601,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Chopper Autocannons",
@@ -4226,7 +4632,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -4249,6 +4659,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": true,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -4265,7 +4678,7 @@
   "unlock": 0,
   "squad": 4,
   "cost": 150,
-  "hp": 150,
+  "hp": 158,
   "armor": "U",
   "speed": 1.5,
   "radius": 0.6,
@@ -4274,9 +4687,9 @@
   "weapons": [
    {
     "name": "Spike Grenade Launcher",
-    "dmg": 31,
+    "dmg": 35,
     "interval": 2.0,
-    "range": 13,
+    "range": 14,
     "minr": 2,
     "proj": 18,
     "splash": 2.8,
@@ -4297,7 +4710,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Brute Shot Blade",
@@ -4324,7 +4741,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -4347,6 +4768,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -4363,7 +4787,7 @@
   "unlock": 50,
   "squad": 1,
   "cost": 300,
-  "hp": 1250,
+  "hp": 1600,
   "armor": "H",
   "speed": 1.5,
   "radius": 1.8,
@@ -4372,7 +4796,7 @@
   "weapons": [
    {
     "name": "Plasma Cannon",
-    "dmg": 80,
+    "dmg": 104,
     "interval": 2.2,
     "range": 15,
     "minr": 0,
@@ -4395,7 +4819,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Spike Turret",
@@ -4422,7 +4850,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -4445,6 +4877,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -4460,9 +4895,9 @@
   "tier": 2,
   "unlock": 50,
   "squad": 1,
-  "cost": 300,
-  "hp": 700,
-  "armor": "L",
+  "cost": 250,
+  "hp": 900,
+  "armor": "H",
   "speed": 3,
   "radius": 1.4,
   "turn": 1.2,
@@ -4470,7 +4905,7 @@
   "weapons": [
    {
     "name": "Spike Rockets",
-    "dmg": 24,
+    "dmg": 25,
     "interval": 0.5,
     "range": 20,
     "minr": 0,
@@ -4493,7 +4928,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -4516,6 +4955,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -4531,8 +4973,8 @@
   "tier": 1,
   "unlock": 0,
   "squad": 6,
-  "cost": 125,
-  "hp": 100,
+  "cost": 150,
+  "hp": 80,
   "armor": "L",
   "speed": 4.5,
   "radius": 0.7,
@@ -4543,7 +4985,7 @@
     "name": "Spitter Plasma",
     "dmg": 7,
     "interval": 0.25,
-    "range": 7,
+    "range": 12,
     "minr": 0,
     "proj": 0,
     "splash": 0,
@@ -4564,7 +5006,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -4587,6 +5033,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": true,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -4603,7 +5052,7 @@
   "unlock": 250,
   "squad": 1,
   "cost": 500,
-  "hp": 2200,
+  "hp": 2400,
   "armor": "H",
   "speed": 1.1,
   "radius": 2.4,
@@ -4612,7 +5061,7 @@
   "weapons": [
    {
     "name": "Fist Slam",
-    "dmg": 120,
+    "dmg": 240,
     "interval": 2,
     "range": 3,
     "minr": 0,
@@ -4635,34 +5084,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
-   },
-   {
-    "name": "Fuel Rod Cannon",
-    "dmg": 55,
-    "interval": 2.5,
-    "range": 14,
-    "minr": 0,
-    "proj": 30,
-    "splash": 2,
-    "type": "Explosive",
-    "aa": false,
-    "block": false,
-    "own": "G",
-    "air": 1,
-    "cone": 0,
-    "lob": false,
-    "beam": 0,
-    "charge": 0,
-    "rest": 0,
-    "sweep": 0,
-    "seed": 0,
-    "seedshare": 0,
-    "seedslow": 0,
-    "slow": 0,
-    "slowshare": 0,
-    "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -4671,12 +5097,12 @@
   "arc": {
    "deg": 240,
    "front": 0.7,
-   "rear": 1.5,
+   "rear": 1.0,
    "block": 0,
    "types": []
   },
   "drop": null,
-  "note": "Two colonies in one suit. Its old job as a building-killer shows as 2.5 times the base damage if it survives a battle.",
+  "note": "Two colonies in one suit, fighting with its fists: it charges at what comes near, as the Hunters do. Its old job as a building-killer shows as 2.5 times the base damage if it survives a battle.",
   "forms": 1,
   "flood": false,
   "infects": false,
@@ -4686,17 +5112,24 @@
   "burst": null,
   "spawn": null,
   "aura": null,
-  "leap": null,
+  "leap": [
+   6,
+   9,
+   3
+  ],
   "lifesteal": 0,
   "seedforms": null,
   "spawn2": null,
-  "charges": false,
+  "charges": true,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": 250,
   "tint": null,
   "scale": 1,
   "sub": "Lekgolo Colony",
   "folder": "LekgoloColony",
-  "baked": null
+  "baked": "Goliath"
  },
  {
   "id": "HunterCaptain",
@@ -4712,11 +5145,11 @@
   "speed": 1.25,
   "radius": 1.4,
   "turn": 1.5,
-  "filter": "G",
+  "filter": "B",
   "weapons": [
    {
     "name": "Siphon Laser",
-    "dmg": 19.5,
+    "dmg": 15.5,
     "interval": 0.1,
     "range": 15,
     "minr": 5,
@@ -4729,7 +5162,7 @@
     "air": 1,
     "cone": 0,
     "lob": false,
-    "beam": 1,
+    "beam": 2,
     "charge": 0,
     "rest": 1,
     "sweep": 30,
@@ -4739,11 +5172,15 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Shield Bash",
-    "dmg": 120,
+    "dmg": 90,
     "interval": 1.5,
     "range": 2.2,
     "minr": 0,
@@ -4766,7 +5203,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -4775,7 +5216,7 @@
   "arc": {
    "deg": 240,
    "front": 0.7,
-   "rear": 1.5,
+   "rear": 1.0,
    "block": 0,
    "types": []
   },
@@ -4803,6 +5244,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": true,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -4819,7 +5263,7 @@
   "unlock": 0,
   "squad": 30,
   "cost": 100,
-  "hp": 20,
+  "hp": 45,
   "armor": "U",
   "speed": 1.75,
   "radius": 0.4,
@@ -4828,7 +5272,7 @@
   "weapons": [
    {
     "name": "Plasma Pistol",
-    "dmg": 3,
+    "dmg": 3.5,
     "interval": 0.5,
     "range": 9,
     "minr": 0,
@@ -4851,7 +5295,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -4874,6 +5322,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 1,
   "basedmg": null,
   "tint": [
    0.72,
@@ -4895,7 +5346,7 @@
   "unlock": 0,
   "squad": 8,
   "cost": 200,
-  "hp": 100,
+  "hp": 150,
   "armor": "U",
   "speed": 1.5,
   "radius": 0.55,
@@ -4904,13 +5355,13 @@
   "weapons": [
    {
     "name": "Needle Rifle",
-    "dmg": 8,
+    "dmg": 11,
     "interval": 0.25,
     "range": 12,
     "minr": 0,
     "proj": 0,
     "splash": 0,
-    "type": "Energy",
+    "type": "Ballistic",
     "aa": false,
     "block": false,
     "own": null,
@@ -4927,11 +5378,15 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
-  "shield": 30,
-  "regen": 10,
+  "shield": 0,
+  "regen": 0,
   "air": false,
   "arc": null,
   "drop": null,
@@ -4950,6 +5405,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": [
    0.75,
@@ -4971,7 +5429,7 @@
   "unlock": 200,
   "squad": 1,
   "cost": 400,
-  "hp": 1750,
+  "hp": 2400,
   "armor": "H",
   "speed": 2,
   "radius": 1.5,
@@ -4979,14 +5437,14 @@
   "filter": "B",
   "weapons": [
    {
-    "name": "Goblin Plasma Cannons",
-    "dmg": 10,
+    "name": "Goblin Needle Cannons",
+    "dmg": 13.5,
     "interval": 0.2,
-    "range": 14,
+    "range": 16,
     "minr": 0,
     "proj": 0,
-    "splash": 0,
-    "type": "Energy",
+    "splash": 1,
+    "type": "Explosive",
     "aa": false,
     "block": false,
     "own": null,
@@ -5003,34 +5461,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
-   },
-   {
-    "name": "Goblin Fuel Rod",
-    "dmg": 60,
-    "interval": 3,
-    "range": 16,
-    "minr": 0,
-    "proj": 30,
-    "splash": 2.5,
-    "type": "Explosive",
-    "aa": false,
-    "block": false,
-    "own": "G",
-    "air": 1,
-    "cone": 0,
-    "lob": false,
-    "beam": 0,
-    "charge": 0,
-    "rest": 0,
-    "sweep": 0,
-    "seed": 0,
-    "seedshare": 0,
-    "seedslow": 0,
-    "slow": 0,
-    "slowshare": 0,
-    "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -5057,6 +5492,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -5073,7 +5511,7 @@
   "unlock": 0,
   "squad": 12,
   "cost": 100,
-  "hp": 140,
+  "hp": 125,
   "armor": "U",
   "speed": 3,
   "radius": 0.5,
@@ -5082,7 +5520,7 @@
   "weapons": [
    {
     "name": "Scythe Limb",
-    "dmg": 18,
+    "dmg": 17,
     "interval": 0.8,
     "range": 1.5,
     "minr": 0,
@@ -5105,7 +5543,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Scavenged Rifle",
@@ -5132,7 +5574,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -5159,6 +5605,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -5175,7 +5624,7 @@
   "unlock": 0,
   "squad": 2,
   "cost": 200,
-  "hp": 320,
+  "hp": 180,
   "armor": "L",
   "speed": 5,
   "radius": 1.2,
@@ -5207,7 +5656,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0.5
    },
    {
     "name": "Scavenged Machine Gun",
@@ -5234,7 +5687,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -5249,18 +5706,7 @@
   "immune": false,
   "selfd": false,
   "seek": false,
-  "burst": {
-   "dmg": 0,
-   "radius": 0,
-   "type": "Explosive",
-   "aa": false,
-   "spawns": [
-    [
-     "InfectionForms",
-     1
-    ]
-   ]
-  },
+  "burst": null,
   "spawn": null,
   "aura": null,
   "leap": null,
@@ -5268,6 +5714,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": true,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -5283,8 +5732,8 @@
   "tier": 2,
   "unlock": 50,
   "squad": 1,
-  "cost": 275,
-  "hp": 1350,
+  "cost": 300,
+  "hp": 1500,
   "armor": "H",
   "speed": 1.4,
   "radius": 2,
@@ -5316,7 +5765,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Tentacle Whip",
@@ -5343,7 +5796,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -5377,6 +5834,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -5393,7 +5853,7 @@
   "unlock": 50,
   "squad": 2,
   "cost": 275,
-  "hp": 360,
+  "hp": 400,
   "armor": "L",
   "speed": 4,
   "radius": 1.5,
@@ -5402,12 +5862,12 @@
   "weapons": [
    {
     "name": "Scavenged Rockets",
-    "dmg": 15,
+    "dmg": 16,
     "interval": 1.0,
     "range": 12,
     "minr": 0,
     "proj": 40,
-    "splash": 0,
+    "splash": 1,
     "type": "Explosive",
     "aa": false,
     "block": false,
@@ -5425,34 +5885,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
-   },
-   {
-    "name": "Spore Bombs",
-    "dmg": 29,
-    "interval": 2.0,
-    "range": 8,
-    "minr": 0,
-    "proj": 20,
-    "splash": 3,
-    "type": "Explosive",
-    "aa": false,
-    "block": false,
-    "own": "G",
-    "air": 1,
-    "cone": 0,
-    "lob": false,
-    "beam": 0,
-    "charge": 0,
-    "rest": 0,
-    "sweep": 0,
-    "seed": 0,
-    "seedshare": 0,
-    "seedslow": 0,
-    "slow": 0,
-    "slowshare": 0,
-    "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -5486,6 +5923,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -5502,7 +5942,7 @@
   "unlock": 200,
   "squad": 1,
   "cost": 400,
-  "hp": 2300,
+  "hp": 2780,
   "armor": "H",
   "speed": 3.25,
   "radius": 1.8,
@@ -5534,7 +5974,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -5561,6 +6005,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": true,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -5577,7 +6024,7 @@
   "unlock": 0,
   "squad": 2,
   "cost": 200,
-  "hp": 330,
+  "hp": 150,
   "armor": "L",
   "speed": 5.5,
   "radius": 1.2,
@@ -5586,7 +6033,7 @@
   "weapons": [
    {
     "name": "Hull Ram",
-    "dmg": 45,
+    "dmg": 37,
     "interval": 1.0,
     "range": 1.5,
     "minr": 0,
@@ -5609,11 +6056,15 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Scavenged Plasma Bolts",
-    "dmg": 8,
+    "dmg": 7,
     "interval": 0.25,
     "range": 9,
     "minr": 0,
@@ -5636,7 +6087,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -5670,6 +6125,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": true,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -5686,16 +6144,16 @@
   "unlock": 50,
   "squad": 3,
   "cost": 250,
-  "hp": 500,
+  "hp": 600,
   "armor": "U",
-  "speed": 2,
+  "speed": 3,
   "radius": 0.6,
   "turn": 0.35,
   "filter": "G",
   "weapons": [
    {
     "name": "Scythe Claw",
-    "dmg": 46,
+    "dmg": 60,
     "interval": 0.7,
     "range": 1.5,
     "minr": 0,
@@ -5718,12 +6176,16 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Scavenged Plasma Rifle",
-    "dmg": 10,
-    "interval": 0.5,
+    "dmg": 11,
+    "interval": 0.25,
     "range": 11,
     "minr": 0,
     "proj": 0,
@@ -5745,7 +6207,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -5772,6 +6238,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -5797,7 +6266,7 @@
   "weapons": [
    {
     "name": "Scavenged Mortar",
-    "dmg": 70,
+    "dmg": 90,
     "interval": 3.5,
     "range": 34,
     "minr": 10,
@@ -5820,7 +6289,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -5854,6 +6327,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -5870,7 +6346,7 @@
   "unlock": 50,
   "squad": 2,
   "cost": 250,
-  "hp": 360,
+  "hp": 400,
   "armor": "L",
   "speed": 4.5,
   "radius": 1.4,
@@ -5879,7 +6355,7 @@
   "weapons": [
    {
     "name": "Scavenged Plasma Cannons",
-    "dmg": 8,
+    "dmg": 7,
     "interval": 0.3,
     "range": 10,
     "minr": 0,
@@ -5902,11 +6378,15 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    },
    {
     "name": "Spore Bomb",
-    "dmg": 45,
+    "dmg": 37,
     "interval": 2.5,
     "range": 8,
     "minr": 0,
@@ -5929,7 +6409,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -5963,6 +6447,9 @@
   "seedforms": null,
   "spawn2": null,
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,
@@ -5979,7 +6466,7 @@
   "unlock": 200,
   "squad": 1,
   "cost": 400,
-  "hp": 3600,
+  "hp": 2700,
   "armor": "L",
   "speed": 0.9,
   "radius": 2,
@@ -6011,7 +6498,11 @@
     "slow": 0,
     "slowshare": 0,
     "windup": 0,
-    "stagger": 0
+    "stagger": 0,
+    "sbreak": null,
+    "pierce": false,
+    "mag": null,
+    "ram": 0
    }
   ],
   "shield": 0,
@@ -6024,7 +6515,7 @@
    5,
    true
   ],
-  "note": "A mobile birthing form: it fights badly, and keeps releasing three Infection Forms and five Combat Forms in turn, one lot every 4 seconds; the Combat Forms draw the enemy's fire. Kill it first (D79, D116). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114).",
+  "note": "A mobile birthing form: it fights badly, and keeps releasing three Infection Forms and three Combat Forms in turn, one lot every 4 seconds; the Combat Forms draw the enemy's fire. Kill it first (D79, D116). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114).",
   "forms": 1,
   "flood": true,
   "infects": false,
@@ -6043,9 +6534,12 @@
   "seedforms": null,
   "spawn2": [
    "CombatForm",
-   5
+   3
   ],
   "charges": false,
+  "phase": false,
+  "towers": false,
+  "gap": 0,
   "basedmg": null,
   "tint": null,
   "scale": 1,

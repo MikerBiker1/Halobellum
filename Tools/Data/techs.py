@@ -58,7 +58,7 @@ TECHS = {
     # ------------------------------------------------------------------ UNSC
     "Marine": [
         T("BodyArmor", "Body Armor", 100, "Ceramic plates for every Marine.", health=1.3),
-        T("ExtendedMagazines", "Extended Magazines", 120, "Fewer reloads, more bullets downrange.", fire=1.25),
+        T("ExtendedMagazines", "Extended Magazines", 120, "Fewer reloads, more bullets downrange.", fire=1.4),
     ],
     "FlamethrowerTrooper": [
         T("WideNozzle", "Wide Nozzle", 150, "Sprays a much wider cone of fire.", cone=30),
@@ -92,7 +92,7 @@ TECHS = {
         T("ClusterWarheads", "Cluster Warheads", 200, "Each missile covers more ground.", splash=1.5),
     ],
     "Pelican": [
-        T("TroopBay", "Troop Bay", 200, "It drops 6 Marines 5 seconds into the battle, then lands behind enemy lines for more, up to 3 drops in all.", drop=True),
+        T("TroopBay", "Troop Bay", 200, "It lands where it is to drop 6 Marines 5 seconds into the battle, then every 10 seconds, up to 3 drops in all.", drop=True),
         T("ArmorPlating", "Armor Plating", 150, "Extra plating on the airframe.", health=1.3),
         T("HeavyAutocannon", "Heavy Autocannon", 150, "Heavier rounds for the chin gun.", damage=1.3),
     ],
@@ -111,7 +111,7 @@ TECHS = {
     # ------------------------------------------------------------------ Covenant
     "Grunt": [
         T("MethaneTanks", "Reinforced Methane Tanks", 100, "Sturdier armor and tanks.", health=1.3),
-        T("Overcharge", "Pistol Overcharge", 120, "Pistols fire faster.", fire=1.25),
+        T("Overcharge", "Pistol Overcharge", 120, "Pistols fire faster.", fire=1.4),
     ],
     "FuelRodGrunt": [
         T("ExtendedRange", "Extended Range", 150, "Longer-range fuel rods.", range=4),
@@ -120,6 +120,8 @@ TECHS = {
     "JackalBeamRifle": [
         T("Gauntlets", "Point-Defense Gauntlets", 100, "Small shields on the arms.", health=1.3),
         T("Overcharge", "Beam Overcharge", 150, "A hotter beam: each shot hits harder.", damage=1.25),
+        # A cheap answer to aircraft for the Covenant (the owner, D149): 4 m more range and half again the damage, against air only.
+        T("AimForTheirWings", "Aim for Their Wings", 150, "Snipers trained to bring down aircraft.", airrange=4, air=1.5),
     ],
     "JackalShield": [
         T("StrongerShields", "Stronger Shields", 100, "Tougher Jackals behind tougher shields.", health=1.3),
@@ -146,7 +148,7 @@ TECHS = {
         T("FuelRodUpgrade", "Fuel Rod Upgrade", 200, "Heavier bombs and cannons.", damage=1.3),
     ],
     "CovenantPhantom": [
-        T("GravityLift", "Gravity Lift", 200, "It drops 7 Grunts 5 seconds into the battle, then lands behind enemy lines for more, up to 3 drops in all.", drop=True),
+        T("GravityLift", "Gravity Lift", 200, "It drops 7 Grunts from the air 5 seconds into the battle, then every 10 seconds, up to 3 drops in all.", drop=True),
         T("ArmorPlating", "Armor Plating", 150, "Extra plating on the hull.", health=1.3),
         T("HeavyTurrets", "Heavy Plasma Turrets", 150, "Hotter plasma for the turrets.", damage=1.3),
     ],
@@ -169,7 +171,7 @@ TECHS = {
 # and costs about what they cost. gen_roster.py adds them after the sub-factions' own.
 THIRD_TECHS = {
     # UNSC
-    "Marine": T("ArmorPiercing", "Armor-Piercing Rounds", 120, "Heavier rounds for the MA5.", damage=1.25),
+    "Marine": T("ArmorPiercing", "Armor-Piercing Rounds", 120, "Heavier rounds for the MA5.", damage=1.4),
     "Warthog": T("HeavyRounds", "Heavy Rounds", 150, "Harder-hitting machine gun ammunition.", damage=1.3),
     "GaussWarthog": T("LongRails", "Long Rails", 200, "Longer rails reach further.", range=4),
     "Hornet": T("Afterburners", "Afterburners", 120, "Gets over the target faster.", speed=1.25),
@@ -178,7 +180,7 @@ THIRD_TECHS = {
     "Mantis": T("TargetingArray", "Targeting Array", 250, "Everything reaches further.", range=4),
     "Elephant": T("Autoloaders", "Autoloaders", 300, "Every gun fires faster.", fire=1.2),
     # Covenant
-    "Grunt": T("HotPlasma", "Hot Plasma", 100, "Hotter pistol bolts.", damage=1.25),
+    "Grunt": T("HotPlasma", "Hot Plasma", 100, "Hotter pistol bolts.", damage=1.4),
     "FuelRodGrunt": T("Harness", "Reinforced Harness", 100, "Armor around the gun and tanks.", health=1.3),
     "JackalBeamRifle": T("MarksmanOptics", "Marksman Optics", 120, "Jackal eyes and a better scope reach further.", range=4),
     "JackalShield": T("HotPlasma", "Hot Plasma", 120, "Hotter pistol bolts.", damage=1.25),
@@ -232,7 +234,8 @@ THIRD_TECHS = {
     "InfestedWraith": T("LongArc", "Long Arc", 200, "The mortar reaches further.", range=4),
     "InfestedBanshee": T("HotEngines", "Overburnt Engines", 120, "Barely flying, but faster.", speed=1.25),
     # Its third is Swarm Brood (the owner, 2026-11-08; D113), in place of Barbed Lash (a harder lash on a body that fights badly).
-    "Spawner": T("SwarmBrood", "Swarm Brood", 200, "It hatches a Swarm Form 5 seconds into each battle.", drop=True),
+    # 200 -> 300 (the owner, D143: "needs to cost a bit more").
+    "Spawner": T("SwarmBrood", "Swarm Brood", 300, "It hatches a Swarm Form 5 seconds into each battle.", drop=True),
 }
 
 # Fourth techs that change how a unit plays (the owner, 2026-11-08; D114). gen_roster.py adds them last, and such a unit gets no Long Range tech.

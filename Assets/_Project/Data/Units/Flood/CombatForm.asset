@@ -19,19 +19,21 @@ MonoBehaviour:
   squadSize: 6
   cost: 200
   baseDamage: 6.6667
-  maxHealth: 260
+  maxHealth: 280
   armorType: 0
   maxShield: 0
   shieldRegenPerSecond: 0
-  moveSpeed: 2.4
+  moveSpeed: 3
   collisionRadius: 0.6
   turnTime180: 0.3
   isAir: 0
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 0
   weapons:
   - weaponName: Claw Swipe
-    damagePerShot: 50
+    damagePerShot: 60
     fireInterval: 0.8
     range: 1.5
     minRange: 0
@@ -40,30 +42,6 @@ MonoBehaviour:
     damageType: 4
     isAntiArmor: 1
     canBeBlocked: 0
-    hasOwnTargetFilter: 0
-    targetFilter: 0
-    airDamageMultiplier: 1
-    coneDegrees: 0
-    lobbed: 0
-    beamSeconds: 0
-    beamChargeSeconds: 0
-    beamRestSeconds: 0
-    beamSweepSpeed: 0
-    seedSeconds: 0
-    seedDamageSharePerSecond: 0
-    seedSlowShare: 0
-    hitSlowSeconds: 0
-    hitSlowShare: 0
-  - weaponName: Scavenged Rifle
-    damagePerShot: 6
-    fireInterval: 0.4
-    range: 10
-    minRange: 0
-    projectileSpeed: 0
-    splashRadius: 0
-    damageType: 0
-    isAntiArmor: 0
-    canBeBlocked: 1
     hasOwnTargetFilter: 0
     targetFilter: 0
     airDamageMultiplier: 1
@@ -95,6 +73,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0
@@ -110,7 +89,7 @@ MonoBehaviour:
   auraHealPerSecondShare: 0
   lifestealShare: 0
   seedForms: []
-  leapRange: 5
+  leapRange: 10
   leapSpeed: 12
   leapCooldownSeconds: 4
   techUpgrades:

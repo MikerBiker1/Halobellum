@@ -28,10 +28,12 @@ MonoBehaviour:
   turnTime180: 2
   isAir: 0
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 0
   weapons:
   - weaponName: Plasma Mortar
-    damagePerShot: 80
+    damagePerShot: 98
     fireInterval: 3.5
     range: 38
     minRange: 10
@@ -71,6 +73,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0

@@ -38,6 +38,8 @@ namespace Halobellum.Tests
                 new SpellStats { Effect = SpellEffect.Buff, ShieldBonusShare = 0.5f, Radius = 8f },
                 new SpellStats { Effect = SpellEffect.Disrupt, ShieldDamage = 100f, TechDisableSeconds = 10f, SlowShare = 0.4f, SlowSeconds = 10f, Radius = 10f },
                 new SpellStats { Effect = SpellEffect.Smoke, AreaDepth = 8f, AreaWidth = 40f, DurationSeconds = 15f, RangeMultiplier = 0.5f },
+                new SpellStats { Effect = SpellEffect.Oil, AreaDepth = 8f, AreaWidth = 45f, DurationSeconds = 15f, SlowShare = 0.4f, FireDamageMultiplier = 1.5f },
+                new SpellStats { Effect = SpellEffect.Oil, AreaDepth = 8f, AreaWidth = 45f, DurationSeconds = 0f, SlowShare = 0.4f, FireDamageMultiplier = 1.5f },
             };
             foreach (SpellStats spell in spells)
             {
@@ -46,6 +48,8 @@ namespace Halobellum.Tests
                 StringAssert.IsMatch("\\d\u00A0[ms]\\b", text);
             }
             StringAssert.Contains("8\u00A0x\u00A040\u00A0m line", spells[4].EffectsText());
+            StringAssert.Contains("line for 15\u00A0s", spells[5].EffectsText());
+            StringAssert.Contains("line for the whole round", spells[6].EffectsText());
             Assert.AreEqual("+2\u00A0m range for all ranged units", new CardStats { Type = CardType.Buff, AllDamageMultiplier = 1f, AllHealthMultiplier = 1f, AllRangeBonus = 2f }.EffectsText());
         }
 

@@ -165,6 +165,7 @@ namespace Halobellum.Presentation
             {
                 BattleEvents events = _shown.Events;
                 events.WeaponFired -= OnWeaponFired;
+                events.ChargedShotFired -= OnWeaponFired;
                 events.WeaponWindingUp -= OnWeaponWindingUp;
                 events.ShotLanded -= OnShotLanded;
                 events.UnitDied -= OnUnitDied;
@@ -180,6 +181,7 @@ namespace Halobellum.Presentation
             {
                 BattleEvents events = _shown.Events;
                 events.WeaponFired += OnWeaponFired;
+                events.ChargedShotFired += OnWeaponFired; // The Jackal's charged bolt sounds as its pistol does (D151).
                 events.WeaponWindingUp += OnWeaponWindingUp;
                 events.ShotLanded += OnShotLanded;
                 events.UnitDied += OnUnitDied;

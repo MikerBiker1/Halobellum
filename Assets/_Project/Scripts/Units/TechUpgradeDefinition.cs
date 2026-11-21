@@ -31,6 +31,7 @@ namespace Halobellum.Units
         [Header("Bonuses (0 = no change)")]
         [Tooltip("Metres added to every weapon's range.")]
         public float rangeBonus;
+        public float airRangeBonus;
         [Tooltip("Energy shield points added.")]
         public float shieldBonus;
         public float shieldRegenBonus;
@@ -64,6 +65,7 @@ namespace Halobellum.Units
                 MoveSpeedMultiplier = moveSpeedMultiplier,
                 AirDamageMultiplier = airDamageMultiplier,
                 RangeBonus = rangeBonus,
+                AirRangeBonus = airRangeBonus,
                 ShieldBonus = shieldBonus,
                 ShieldRegenBonus = shieldRegenBonus,
                 SplashRadiusBonus = splashRadiusBonus,

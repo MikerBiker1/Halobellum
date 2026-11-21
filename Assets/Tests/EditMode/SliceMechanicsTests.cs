@@ -122,7 +122,7 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void ALandingCarrier_LandsBehindTheEnemy_LetsItsSquadOutFromUnderIt_ThreeTimes_AndGoesBackUp()
+        public void ALandingCarrier_LandsWhereItIs_LetsItsSquadOutFromUnderIt_ThreeTimes_AndGoesBackUp()
         {
             var sim = new BattleSimulation(TestRules.Default(), 1);
             SimUnit carrier = sim.AddUnit(LandingCarrier(), Team.A, new Vec2(0f, -40f));
@@ -139,7 +139,7 @@ namespace Halobellum.Tests
                 if (drops == 1)
                 {
                     firstDrop = c.Position;
-                    Assert.Greater(c.Position.Y, 20f, "Behind the enemy.");
+                    Assert.Less(c.Position.Y, 20f + 8f, "Never sent to land behind the enemy (D143).");
                     Assert.Less(Vec2.Distance(squad.Members[0].Position, c.Position), 16f);
                 }
                 Vec2 middle = Vec2.Zero;
@@ -180,8 +180,11 @@ namespace Halobellum.Tests
             groundOnly.HasOwnTargetFilter = true;
             groundOnly.TargetFilter = TargetFilter.Ground;
             var sim = new BattleSimulation(TestRules.Default(), 1);
-            SimUnit carrier = sim.AddUnit(LandingCarrier(), Team.A, new Vec2(0f, -10f));
-            sim.AddUnit(TestUnits.Unit(health: 100000f, speed: 0f, filter: TargetFilter.Ground, weapon: groundOnly), Team.B, new Vec2(0f, 40f));
+            UnitStats lander = LandingCarrier();
+            lander.MoveSpeed = 0f; // It lands where it is (D143): here, in the shooter's reach.
+            lander.ReinforcementLandSeconds = 3f; // Long enough on the ground for the shooter to pick it over the Marines it lets out behind it.
+            SimUnit carrier = sim.AddUnit(lander, Team.A, new Vec2(0f, -10f));
+            sim.AddUnit(TestUnits.Unit(health: 100000f, speed: 0f, filter: TargetFilter.Ground, weapon: groundOnly), Team.B, new Vec2(0f, -2f));
             while (carrier.DropPhase == DropRunPhase.Flying && sim.ElapsedSeconds < 30f && !sim.IsFinished) sim.Step();
             Assert.AreEqual(100000f, carrier.Health, "Not while it flies.");
             while (carrier.DropsMade == 0 && !sim.IsFinished) sim.Step();
@@ -250,7 +253,97 @@ namespace Halobellum.Tests
             UnitTypeResult marines = result.TeamA.UnitTypes.Single(t => t.UnitName == "Dropped Marine");
             Assert.AreEqual(4, marines.Deployed);
             Assert.AreEqual(4, marines.Survivors, "Dropped units still alive at the end deal base damage too.");
+            Assert.AreEqual(4f, marines.SurvivorBaseDamage, 1e-3f, "An air carrier's squad is carried, not summoned: it hits the base.");
             Assert.AreEqual(5, result.TeamA.Survivors);
+        }
+
+        // ------------------------------------------------------------------ an air carrier that drops more than once (the Covenant Phantom, the owner 2026-11-18)
+
+        /// <summary>The Covenant Phantom's drop numbers with its Gravity Lift: 7 bodies at 5 s, then every 10 s, 3 drops, never landing; on a body nothing can kill.</summary>
+        private static UnitStats AirCarrierThreeDrops(float speed)
+        {
+            UnitStats phantom = TestUnits.Unit(name: "Air Carrier", health: 100000f, speed: speed, air: true, radius: 2.5f, weapon: Harmless());
+            phantom.Reinforcement = TestUnits.Unit(name: "Dropped Grunt", health: 100000f, speed: 0f, weapon: Harmless(), squadSize: 7);
+            phantom.ReinforcementDelaySeconds = 10f;
+            phantom.ReinforcementDrops = 3;
+            phantom.ReinforcementLandSeconds = 0f;
+            phantom.ReinforcementFirstDropSeconds = 5f;
+            return phantom;
+        }
+
+        private static Vec2 Middle(SimSquad squad)
+        {
+            Vec2 middle = Vec2.Zero;
+            foreach (SimUnit member in squad.Members) middle += member.Position;
+            return middle * (1f / squad.Members.Count);
+        }
+
+        [Test]
+        public void AnAirCarrier_WithThreeDrops_DropsAtFiveFifteenAndTwentyFive_WithoutComingDown()
+        {
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            SimUnit carrier = sim.AddUnit(AirCarrierThreeDrops(speed: 0f), Team.A, new Vec2(10f, -20f));
+            sim.AddUnit(Dummy(), Team.B, new Vec2(0f, 60f));
+            var times = new List<float>();
+            sim.Events.ReinforcementDropped += (c, squadId) =>
+            {
+                times.Add(sim.ElapsedSeconds);
+                Assert.IsTrue(c.IsAir, "It drops from the air.");
+                Assert.AreEqual(7, sim.SquadById(squadId).Members.Count);
+            };
+            while (sim.ElapsedSeconds < 40f && !sim.IsFinished)
+            {
+                sim.Step();
+                Assert.AreEqual(1f, carrier.Altitude, "It never comes down.");
+                Assert.AreEqual(DropRunPhase.Flying, carrier.DropPhase);
+            }
+            Assert.AreEqual(3, times.Count, "Three drops, then it is spent.");
+            Assert.AreEqual(5f, times[0], 0.1f);
+            Assert.AreEqual(15f, times[1], 0.1f);
+            Assert.AreEqual(25f, times[2], 0.1f);
+            Assert.AreEqual(3, carrier.DropsMade);
+            Assert.AreEqual(1 + 21 + 1, sim.Units.Count);
+        }
+
+        [Test]
+        public void AnAirCarrier_DropsUnderItself_AndIsNeverSentBehindTheEnemy()
+        {
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            SimUnit carrier = sim.AddUnit(AirCarrierThreeDrops(speed: 6f), Team.A, new Vec2(0f, -40f));
+            sim.AddUnit(Dummy(), Team.B, new Vec2(0f, 20f));
+            int drops = 0;
+            sim.Events.ReinforcementDropped += (c, squadId) =>
+            {
+                drops++;
+                Assert.LessOrEqual(Vec2.Distance(Middle(sim.SquadById(squadId)), c.Position), 1f, "Straight under it, wherever it is.");
+            };
+            float furthest = float.MinValue;
+            while (sim.ElapsedSeconds < 40f && !sim.IsFinished)
+            {
+                sim.Step();
+                furthest = System.Math.Max(furthest, carrier.Position.Y);
+            }
+            Assert.AreEqual(3, drops);
+            // It closes on the dummy like any aircraft; a carrier that lands would fly on to 8 m behind the enemy's rearmost unit (about y = 28.5).
+            Assert.LessOrEqual(furthest, 22f, "It is never sent behind the enemy's lines.");
+        }
+
+        [Test]
+        public void AnAirCarrier_UnderAnEmp_DropsWhenItIsOver_AndTheNextDropWaitsTheDelayFromThen()
+        {
+            UnitStats stats = AirCarrierThreeDrops(speed: 0f);
+            stats.WithoutTechs = stats.Clone();
+            stats.WithoutTechs.Reinforcement = null;
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            SimUnit carrier = sim.AddUnit(stats, Team.A, new Vec2(10f, -20f));
+            sim.AddUnit(Dummy(), Team.B, new Vec2(0f, 60f));
+            carrier.TechsDisabledUntil = 7f;
+            var times = new List<float>();
+            sim.Events.ReinforcementDropped += (c, squadId) => times.Add(sim.ElapsedSeconds);
+            while (sim.ElapsedSeconds < 20f && !sim.IsFinished) sim.Step();
+            Assert.AreEqual(2, times.Count);
+            Assert.AreEqual(7f, times[0], 0.1f, "The drop due at 5 s waits for the EMP to end.");
+            Assert.AreEqual(17f, times[1], 0.1f, "The next one is the delay after the real drop.");
         }
 
         [Test]

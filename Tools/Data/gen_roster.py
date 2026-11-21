@@ -35,10 +35,12 @@ ROLE_TEXT = {
 
 
 def W(name, dmg, interval, rng, type, proj=0, splash=0, minr=0, aa=False, block=False, own=None, air=1, cone=0,
-      lob=False, beam=0, charge=0, rest=0, sweep=0, seed=0, seedshare=0, seedslow=0, slow=0, slowshare=0, windup=0, stagger=0):
+      lob=False, beam=0, charge=0, rest=0, sweep=0, seed=0, seedshare=0, seedslow=0, slow=0, slowshare=0, windup=0, stagger=0, sbreak=None,
+      pierce=False, mag=None, ram=0):
     return dict(name=name, dmg=dmg, interval=interval, range=rng, minr=minr, proj=proj, splash=splash, type=type,
                 aa=aa, block=block, own=own, air=air, cone=cone, lob=lob, beam=beam, charge=charge, rest=rest, sweep=sweep,
-                seed=seed, seedshare=seedshare, seedslow=seedslow, slow=slow, slowshare=slowshare, windup=windup, stagger=stagger)
+                seed=seed, seedshare=seedshare, seedslow=seedslow, slow=slow, slowshare=slowshare, windup=windup, stagger=stagger, sbreak=sbreak,
+                pierce=pierce, mag=mag, ram=ram)
 
 
 # Seconds every Spartan Laser charges before its shot goes (the owner, 2026-11-05: the laser fires 2.5 s into its sound).
@@ -46,133 +48,162 @@ SPARTAN_LASER_WINDUP = 2.5
 
 
 # The air units that can deploy in the flank zones (D61): UNSC only. With the Hornet too, Noble and Armored Division reached 70%.
+# Every Flanker goes for towers (UnitStats.GoesForTowers): it heads for the nearest enemy tower, shooting what it passes (the owner, D138);
+# U(towers=False) keeps one fighting instead: the Spartan CQB (the owner, D147: "CQB should definitely not just run to the towers though, they should fight").
 FLANKERS = {"Pelican", "Sparrowhawk", "Longsword", "Vulture", "CondorGunship"}
 
 
 def U(id, name, faction, role, tier, unlock, squad, cost, hp, armor, speed, radius, turn, filter, weapons,
       shield=0, regen=0, airu=False, arc=None, drop=None, note="", forms=1, flood=False, infects=False, immune=False,
       selfd=False, seek=False, burst=None, spawn=None, aura=None, leap=None, lifesteal=0, basedmg=None, tint=None, scale=1, sub=None, folder=None, baked=None, seedforms=None, spawn2=None,
-      charges=False):
+      charges=False, phase=False, towers=None, gap=0):
     return dict(id=id, name=name, faction=faction, role=role, tier=tier, unlock=unlock, squad=squad, cost=cost,
                 hp=hp, armor=armor, speed=speed, radius=radius, turn=turn, filter=filter, weapons=weapons,
                 shield=shield, regen=regen, air=airu, arc=arc, drop=drop, note=note, forms=forms, flood=flood, infects=infects,
-                immune=immune, selfd=selfd, seek=seek, burst=burst, spawn=spawn, aura=aura, leap=leap, lifesteal=lifesteal, seedforms=seedforms, spawn2=spawn2, charges=charges,
+                immune=immune, selfd=selfd, seek=seek, burst=burst, spawn=spawn, aura=aura, leap=leap, lifesteal=lifesteal, seedforms=seedforms, spawn2=spawn2, charges=charges, phase=phase,
+                towers=role == "Flanker" if towers is None else towers, gap=gap,
                 basedmg=basedmg, tint=tint, scale=scale, sub=sub, folder=folder or faction, baked=baked)
 
 
+# The unit balance pass of D138 (the owner, 2026-11-12) changed some 45 units here and in the sub_*.py modules and techs.py; DECISIONS.md D138 lists them.
 UNITS = [
     # ------------------------------------------------------------------ UNSC (Section 8.1)
-    U("Marine", "Marine", "UNSC", "Chaff", 1, 0, 18, 100, 60, "U", 3, 0.5, 0.25, "B",
-      [W("MA5 Assault Rifle", 5, 0.5, 12, "Ballistic", block=True)]),
-    U("FlamethrowerTrooper", "Flamethrower Trooper", "UNSC", "ChaffClear", 1, 0, 6, 150, 90, "U", 3.5, 0.5, 0.25, "G",
-      [W("M7057 Flamethrower", 3, 0.1, 11, "Fire", cone=15)]),
-    U("Warthog", "Warthog", "UNSC", "Flanker", 1, 0, 2, 200, 360, "L", 8, 1.2, 1, "B",
+    U("Marine", "Marine", "UNSC", "Chaff", 1, 0, 18, 100, 50, "U", 3, 0.5, 0.25, "B",
+      [W("MA5 Assault Rifle", 4, 0.5, 12, "Ballistic", block=True)]),
+    U("FlamethrowerTrooper", "Flamethrower Trooper", "UNSC", "ChaffClear", 1, 0, 6, 150, 95, "U", 3.5, 0.5, 0.25, "G",
+      [W("M7057 Flamethrower", 3.5, 0.1, 11, "Fire", cone=15)]),
+    U("Warthog", "Warthog", "UNSC", "Flanker", 1, 0, 2, 200, 380, "L", 8, 1.2, 1, "B",
       [W("M41 Machine Gun", 8, 0.2, 11, "Ballistic", block=True)]),
     U("GaussWarthog", "Gauss Warthog", "UNSC", "SingleTargetDps", 2, 50, 1, 250, 300, "L", 7.5, 1.2, 1, "G",
       [W("M68 Gauss Cannon", 220, 2.5, 22, "Ballistic", proj=150, aa=True)]),
     U("Scorpion", "Scorpion", "UNSC", "Tank", 2, 50, 1, 300, 1200, "H", 2.5, 2, 2, "G",
       [W("M512 Cannon", 100, 2.5, 16, "Explosive", proj=35, splash=2.5),
        W("Coaxial Machine Gun", 6, 0.25, 12, "Ballistic", block=True, own="B")]),
-    U("Wolverine", "Wolverine", "UNSC", "AntiAir", 2, 50, 1, 300, 500, "L", 4, 1.4, 1.5, "B",
-      [W("Rocket Volley", 30, 1.0, 24, "Explosive", proj=45, splash=1.5, air=3)]),
-    U("Hornet", "Hornet", "UNSC", "Aerial", 2, 50, 2, 300, 400, "L", 9, 1.5, 1, "B",
-      [W("Rockets", 22, 1.0, 12, "Explosive", proj=40),
-       W("Bombs", 45, 2.0, 8, "Explosive", proj=20, splash=3, own="G")], airu=True),
+    U("Wolverine", "Wolverine", "UNSC", "AntiAir", 2, 50, 1, 300, 480, "L", 4, 1.4, 1.5, "B",
+      [W("Rocket Volley", 29, 1.0, 24, "Explosive", proj=45, splash=1.5, air=3)]),
+    U("Hornet", "Hornet", "UNSC", "Aerial", 2, 50, 2, 300, 505, "L", 9, 1.5, 1, "B",
+      # Its bombs gone, its rockets a 1 m splash (the owner, D155; damage to be tuned in the next tournament phase).
+      [W("Rockets", 24.5, 1.0, 12, "Explosive", proj=40, splash=1)], airu=True),
     U("ArcherMissilePod", "Archer Missile Pod", "UNSC", "Artillery", 2, 50, 2, 300, 350, "L", 0, 1.4, 1.5, "G",
-      [W("Archer Missile Barrage", 55, 4.0, 42, "Explosive", proj=28, splash=3.5, minr=8, lob=True)]),
-    U("Pelican", "Pelican", "UNSC", "Aerial", 2, 50, 1, 300, 1200, "L", 12, 2.5, 2, "B",
-      [W("M370 Autocannon", 10, 0.3, 14, "Ballistic")], airu=True, drop=("Marine", 6, 10, True, 3, 1.5, 5),
-      note="With its Troop Bay tech it lands and drops 6 Marines 5 seconds into the battle wherever it is, then lands behind enemy lines to drop more, up to 3 drops in all (D60)."),
+      [W("Archer Missile Barrage", 58, 4.0, 42, "Explosive", proj=28, splash=3.5, minr=8, lob=True)]),
+    # Autocannon 10 -> 25 with a 1 m splash (the owner, D142: "at least 2.5x the damage it's doing right now and 1m splash").
+    # It never goes behind enemy lines (the owner, D143: "more damaging than good"), but still comes down to let its Marines out ("this is no gravity field"):
+    # it lands where it is, 1.5 s down and 1.5 s up, with the squads out at 5, 15 and 25 s.
+    # Health 1550 -> 1400 (the owner, D155).
+    U("Pelican", "Pelican", "UNSC", "Aerial", 2, 50, 1, 300, 1400, "L", 12, 2.5, 2, "B",
+      [W("M370 Autocannon", 25, 0.3, 14, "Ballistic", splash=1)], airu=True, drop=("Marine", 6, 10, True, 3, 1.5, 5),
+      note="With its Troop Bay tech it lands where it is and drops 6 Marines 5 seconds into the battle, then every 10 seconds, up to 3 drops in all; it never flies behind enemy lines (D143)."),
     U("Spartan", "Spartan", "UNSC", "SingleTargetDps", 3, 250, 1, 500, 1250, "U", 3.5, 0.6, 0.5, "B",
-      [W("Spartan Laser", 450, 3.5, 24, "Energy", aa=True)], shield=400, regen=80, immune=True, baked="Spartan",
+      [W("Spartan Laser", 450, 4.2, 24, "Energy", aa=True)], shield=400, regen=80, immune=True, baked="Spartan",
       note="Its laser winds up for 2.5 s before each shot; it fires every 3.5 s (was 4) to make up for the first shot coming later."),
-    U("Mantis", "Mantis", "UNSC", "Tank", 3, 250, 1, 500, 2500, "H", 3, 2, 2, "B",
-      [W("Chaingun", 8, 0.2, 14, "Ballistic", block=True),
+    U("Mantis", "Mantis", "UNSC", "Tank", 3, 250, 1, 500, 3360, "H", 3, 2, 2, "B",
+      [W("Chaingun", 9, 0.2, 14, "Ballistic", block=True),
        W("Rockets", 60, 2.5, 18, "Explosive", proj=35, splash=2, own="G")]),
-    U("Elephant", "Elephant", "UNSC", "Titan", 4, 350, 1, 800, 8000, "H", 1.5, 5, 3, "B",
-      [W("Main Cannon", 300, 3.0, 20, "Explosive", proj=40, splash=2, aa=True, own="G"),
-       W("Turret (left)", 8, 0.2, 14, "Ballistic", block=True),
-       W("Turret (right)", 8, 0.2, 14, "Ballistic", block=True)]),
+    U("Elephant", "Elephant", "UNSC", "Titan", 4, 150, 1, 800, 8240, "H", 1.5, 5, 3, "B",
+      [W("Main Cannon", 310, 3.0, 20, "Explosive", proj=40, splash=2, aa=True, own="G"),
+       W("Turret (left)", 8.5, 0.2, 14, "Ballistic", block=True),
+       W("Turret (right)", 8.5, 0.2, 14, "Ballistic", block=True)]),
 
     # ------------------------------------------------------------------ Covenant (Section 8.2)
     U("Grunt", "Grunt", "Covenant", "Chaff", 1, 0, 20, 100, 40, "U", 3, 0.45, 0.25, "B",
-      [W("Plasma Pistol", 5, 0.5, 10, "Energy")]),
+      [W("Plasma Pistol", 5, 0.5, 10, "Energy")]),  # 4.5 -> 5 (the owner, D155); its shots green, as every plasma pistol's.
     U("FuelRodGrunt", "Fuel Rod Grunt", "Covenant", "ChaffClear", 1, 0, 4, 150, 80, "U", 3, 0.5, 0.25, "G",
-      [W("Fuel Rod Gun", 32, 2.0, 16, "Explosive", proj=25, splash=3)]),
+      [W("Fuel Rod Gun", 24.5, 2.0, 14, "Explosive", proj=25, splash=3)]),
     # A sniper since 2026-11-05 (the owner): fewer to a squad, far more range, slow hard shots that land at once. Was Jackal (Plasma Rifle): 8 per squad, 8 damage every 0.3 s, 12 m.
     U("JackalBeamRifle", "Jackal (Beam Rifle)", "Covenant", "SingleTargetDps", 1, 0, 4, 175, 70, "U", 3.2, 0.5, 0.25, "B",
-      [W("Beam Rifle", 40, 3.0, 24, "Energy")], baked="Jackal",
+      # A shot that kills goes on through to the next enemy on its line, within its range (the owner, D155).
+      [W("Beam Rifle", 40, 3.0, 24, "Energy", pierce=True)], baked="Jackal",
       note="Snipers: few to a squad, they pick targets off from far away with slow, hard shots, and have little to stop a rush."),
-    U("JackalShield", "Jackal (Shield)", "Covenant", "Tank", 1, 0, 6, 150, 70, "U", 3, 0.6, 0.25, "B",
-      [W("Plasma Pistol", 6, 0.6, 10, "Energy")],
+    # The owner, D151: green shots, and at a target with shield it charges its pistol 1 s and fires a big, slow bolt (12 m/s) that strips 100 shield.
+    U("JackalShield", "Jackal (Shield)", "Covenant", "Tank", 1, 0, 6, 150, 80, "U", 3, 0.6, 0.25, "B",
+      [W("Plasma Pistol", 6, 0.6, 10, "Energy", sbreak=(100, 1, 12))],
       arc=dict(deg=120, front=0.5, rear=1.0, block=0.8, types=["Ballistic"]), baked="JackalShield"),
     U("Ghost", "Ghost", "Covenant", "Flanker", 1, 0, 2, 200, 250, "L", 9, 1.2, 0.8, "B",
       [W("Plasma Bolts", 9, 0.25, 10, "Energy")]),
-    U("Elite", "Elite", "Covenant", "SingleTargetDps", 2, 50, 3, 300, 200, "U", 3.5, 0.6, 0.4, "B",
-      [W("Plasma Rifle", 24, 0.5, 12, "Energy")], shield=200, regen=50, baked="Elite"),
+    # The owner, D151: the three Elites stand 1.5 m apart so a blast catches fewer of them (gap=), shield 200 -> 250, range 12 -> 14.
+    U("Elite", "Elite", "Covenant", "SingleTargetDps", 2, 50, 3, 300, 230, "U", 3.5, 0.6, 0.4, "B",
+      [W("Plasma Rifle", 26, 0.5, 14, "Energy")], shield=300, regen=50, baked="Elite", gap=1.5),  # Shield 250 -> 300 (the owner, D155).
     U("Wraith", "Wraith", "Covenant", "Artillery", 2, 50, 1, 300, 900, "H", 2, 2, 2, "G",
-      [W("Plasma Mortar", 80, 3.5, 38, "Explosive", proj=20, splash=4, minr=10, lob=True)]),
-    U("Vampire", "Vampire", "Covenant", "AntiAir", 2, 50, 1, 300, 500, "L", 7, 1.8, 1, "B",
-      [W("Needle Cannons", 12, 0.4, 18, "Energy", air=3)], airu=True),
-    U("Banshee", "Banshee", "Covenant", "Aerial", 2, 50, 2, 300, 400, "L", 10, 1.4, 0.8, "B",
-      [W("Plasma Cannons", 9, 0.3, 10, "Energy"),
-       W("Fuel Rod Bomb", 50, 2.5, 8, "Explosive", proj=30, splash=3, own="G")], airu=True),
+      [W("Plasma Mortar", 98, 3.5, 38, "Explosive", proj=20, splash=4, minr=10, lob=True)]),
+    # Health 570 -> 700: it lost to the Pelican at the same price (the owner, D149). Its needle cannons do 16 explosive damage (13 energy before, D150),
+    # three times that against air, with a 0.5 m splash: the needles explode (the owner, D150). D149's x6 and then x5 against air are gone.
+    # Health 700 -> 800 (the owner, D155).
+    U("Vampire", "Vampire", "Covenant", "AntiAir", 2, 50, 1, 300, 800, "L", 7, 1.8, 1, "B",
+      [W("Needle Cannons", 16, 0.4, 18, "Explosive", splash=0.5, air=3)], airu=True),
+    U("Banshee", "Banshee", "Covenant", "Aerial", 2, 50, 2, 300, 440, "L", 10, 1.4, 0.8, "B",
+      [W("Plasma Cannons", 10.25, 0.3, 10, "Energy"),
+       W("Fuel Rod Bomb", 57, 2.5, 8, "Explosive", proj=30, splash=3, own="G")], airu=True),
     # The Covenant's dropship (the owner, 2026-11-05): the Pelican's mirror, with Grunts in its bay. Its weapon's name is what its sound goes by.
-    U("CovenantPhantom", "Covenant Phantom", "Covenant", "Aerial", 2, 50, 1, 300, 800, "L", 10, 3, 2, "B",
-      [W("Plasma Turrets", 12, 0.4, 14, "Energy")], airu=True, drop=("Grunt", 7, 10, True, 3, 1.5, 5),
-      note="With its Gravity Lift tech it lands and drops 7 Grunts 5 seconds into the battle wherever it is, then lands behind enemy lines to drop more, up to 3 drops in all (as the Pelican, D60)."),
+    # It drops from the air like the Infected Phantom and never lands (the owner, D142): land 1.5 -> 0, still 3 drops at 5, 15 and 25 s.
+    # As the Pelican, but energy (the owner, D151): health 800 -> 1550, its turrets 12 every 0.4 s -> 16 every 0.3 s with a 1 m splash. The Pelican's
+    # 25 in energy beat 60 of 68 units and every Pelican (energy does more to armor than ballistic); at 16 it beats 52 (the Pelican 53) and edges the Pelican.
+    # The owner then lowered it by 1 (D152): 16 -> 15.
+    U("CovenantPhantom", "Covenant Phantom", "Covenant", "Aerial", 2, 50, 1, 300, 1550, "L", 10, 3, 2, "B",
+      [W("Plasma Turrets", 15, 0.3, 14, "Energy", splash=1)], airu=True, drop=("Grunt", 7, 10, True, 3, 0, 5),
+      note="With its Gravity Lift tech it drops 7 Grunts from the air 5 seconds into the battle, then every 10 seconds, up to 3 drops in all, wherever it is; it never lands (D142)."),
     # The owner, D87: the cannon holds fire at what comes within 5 m; the Hunter charges at it along the ground and bashes it with its shield.
-    U("HunterPair", "Hunter Pair", "Covenant", "Tank", 3, 225, 2, 450, 1500, "H", 2.2, 1.2, 1.5, "G",
-      [W("Assault Cannon", 60, 2.0, 16, "Explosive", proj=30, splash=2.5, minr=5),
+    # The cannon reaches aircraft too, the bash stays on the ground (the owner, D148: "make hunters and the captain be able to target air units").
+    U("HunterPair", "Hunter Pair", "Covenant", "Tank", 3, 225, 2, 450, 1440, "H", 2.2, 1.2, 1.5, "B",
+      [W("Assault Cannon", 57, 2.0, 16, "Explosive", proj=30, splash=2.5, minr=5),
        W("Shield Bash", 100, 1.5, 2, "Melee", splash=1.5, own="G")],
-      arc=dict(deg=240, front=0.7, rear=1.5, block=0, types=[]), leap=(5, 9, 3), charges=True, baked="Hunter"),
+      # No weak back any more (the owner, D155): rear x1.5 -> x1.
+      arc=dict(deg=240, front=0.7, rear=1.0, block=0, types=[]), leap=(5, 9, 3), charges=True, baked="Hunter"),
     U("Zealot", "Zealot", "Covenant", "SingleTargetDps", 3, 200, 1, 400, 1400, "U", 6, 0.6, 0.3, "G",
       [W("Energy Sword", 180, 0.75, 1.5, "Melee", aa=True, splash=2)], shield=600, regen=120, leap=(6, 14, 2.5), baked="Zealot",
       note="Leaps onto its enemy, and its energy sword cuts everything around its target."),
-    U("Scarab", "Scarab", "Covenant", "Titan", 4, 350, 1, 800, 8500, "H", 1.5, 5, 3, "B",
-      [W("Focus Beam", 30, 0.1, 24, "Energy", splash=2, aa=True, own="G", beam=3, charge=2, rest=3, sweep=2),
-       W("Plasma Turret (left)", 10, 0.25, 16, "Energy"),
-       W("Plasma Turret (right)", 10, 0.25, 16, "Energy")]),
+    U("Scarab", "Scarab", "Covenant", "Titan", 4, 150, 1, 800, 9050, "H", 1.5, 5, 3, "B",
+      [W("Focus Beam", 32, 0.1, 24, "Energy", splash=2, aa=True, own="G", beam=3, charge=2, rest=3, sweep=2),
+       W("Plasma Turret (left)", 11, 0.25, 16, "Energy"),
+       W("Plasma Turret (right)", 11, 0.25, 16, "Energy")]),
     # ------------------------------------------------------------------ Flood (M8, decision D38). Speeds are final, not halved.
     # One Infection Forms body is a pack of 5 forms: health and damage below are for the whole pack.
-    U("InfectionForms", "Infection Forms", "Flood", "Chaff", 1, 0, 10, 100, 228, "U", 5, 0.8, 0.2, "G",
-      [W("Infectious Bite", 36, 0.5, 1, "Melee")], forms=6, flood=True, infects=True, leap=(6, 14, 2.5)),
-    U("CarrierForm", "Carrier Form", "Flood", "ChaffClear", 1, 0, 4, 150, 170, "U", 2, 0.8, 0.4, "G",
-      [W("Burst", 0, 1, 1.5, "Explosive")], flood=True, selfd=True,
-      burst=dict(dmg=110, radius=4.5, type="Explosive", aa=False, spawns=[("InfectionForms", 2)])),
+    U("InfectionForms", "Infection Forms", "Flood", "Chaff", 1, 0, 10, 100, 290, "U", 5, 0.8, 0.2, "G",
+      [W("Infectious Bite", 37, 0.5, 1, "Melee")], forms=6, flood=True, infects=True, leap=(6, 14, 2.5)),
+    U("CarrierForm", "Carrier Form", "Flood", "ChaffClear", 1, 0, 4, 150, 255, "U", 2, 0.8, 0.4, "G",
+      [W("Burst", 0, 1, 1.5, "Explosive")], flood=True, selfd=True, phase=True,  # D146: walks through its own Infection Forms.
+      burst=dict(dmg=158, radius=4.5, type="Explosive", aa=False, spawns=[("InfectionForms", 2)])),
     # D108 (the owner, 2026-11-07): it leaps, as the Infested Elite on its model does.
-    U("CombatForm", "Combat Form", "Flood", "SingleTargetDps", 2, 50, 6, 200, 260, "U", 2.4, 0.6, 0.3, "G",
-      [W("Claw Swipe", 50, 0.8, 1.5, "Melee", aa=True),
-       W("Scavenged Rifle", 6, 0.4, 10, "Ballistic", block=True)], flood=True, leap=(5, 12, 4)),
+    # Claws only, and faster (the owner, D153): its Scavenged Rifle (6.5 every 0.4 s, 10 m) gone, speed 2.4 -> 3.
+    U("CombatForm", "Combat Form", "Flood", "SingleTargetDps", 2, 50, 6, 200, 280, "U", 3, 0.6, 0.3, "G",
+      [W("Claw Swipe", 60, 0.8, 1.5, "Melee", aa=True)], flood=True, leap=(10, 12, 4)),
     U("StalkerForm", "Stalker Form", "Flood", "Flanker", 2, 50, 3, 250, 450, "L", 5, 0.9, 0.3, "G",
       [W("Talons", 28, 0.4, 1.5, "Melee")], flood=True),
     # D107 (the owner, 2026-11-07): it shoots air too; at a flyer its shards fly straight, not lobbed, for a quarter of their damage:
     # at full damage every aircraft lost to it, and air is artillery's counter (Section 7).
     U("PureFormRanged", "Pure Form Ranged", "Flood", "Artillery", 2, 50, 2, 250, 400, "L", 1, 1.1, 1, "B",
-      [W("Bone Shards", 48, 3, 34, "Explosive", proj=22, splash=3, minr=8, lob=True, air=0.25)], flood=True),
+      [W("Bone Shards", 45, 3, 34, "Explosive", proj=22, splash=3, minr=8, lob=True, air=0.25)], flood=True),
     # D76 (the owner, 2026-11-06): its spat bone hits air only, from 14 m; on the ground it must close in and bite. Its weapons split air from
     # ground, so it uses one at a time, and the long one's reach means air comes first.
-    U("SwarmForm", "Swarm Form", "Flood", "AntiAir", 2, 50, 4, 250, 200, "U", 3.5, 1, 0.3, "B",
-      [W("Spat Bone", 12, 0.4, 14, "Ballistic", air=3, own="A"), W("Bone Barbs", 12, 0.4, 1.5, "Melee", own="G")], airu=True, forms=5, flood=True),
-    U("PureFormTank", "Pure Form Tank", "Flood", "Tank", 3, 200, 1, 400, 3200, "H", 1.6, 2, 1.5, "G",
+    U("SwarmForm", "Swarm Form", "Flood", "AntiAir", 2, 50, 4, 250, 275, "U", 3.5, 1, 0.3, "B",
+      [W("Spat Bone", 13, 0.4, 14, "Ballistic", air=3, own="A"), W("Bone Barbs", 12.5, 0.4, 1.5, "Melee", own="G")], airu=True, forms=5, flood=True),
+    U("PureFormTank", "Pure Form Tank", "Flood", "Tank", 3, 200, 1, 400, 3400, "H", 1.6, 2, 1.5, "G",
       [W("Slam", 200, 2, 3, "Melee", splash=4)], flood=True),
     # D76 (the owner, 2026-11-06): it shoots air too, and a seed only raises what a Flood roster has its own version of, as that version.
-    U("Seeder", "Seeder", "Flood", "SingleTargetDps", 3, 200, 2, 475, 800, "L", 1.5, 1.6, 1, "B",
-      [W("Seed Spore", 45, 2.5, 24, "Energy", proj=30, seed=8, seedshare=0.04, seedslow=0.4)], airu=True, flood=True,
+    U("Seeder", "Seeder", "Flood", "SingleTargetDps", 3, 200, 2, 475, 900, "L", 1.5, 1.6, 1, "B",
+      # Its rot eats any unit a seed takes, not only hosts and aircraft, and the spore has a 0.5 m splash that seeds too (the owner, D155);
+      # then the rot 4% -> 2.5% of the host's health a second, as Flood reached 64% (the owner, D156).
+      [W("Seed Spore", 43, 2.5, 24, "Energy", proj=30, splash=0.5, seed=8, seedshare=0.025, seedslow=0.4)], airu=True, flood=True,
       seedforms=[("Marine", "InfestedMarine"), ("Warthog", "InfestedWarthog"), ("Scorpion", "InfestedScorpion"), ("Hornet", "InfestedHornet"),
                  ("Elite", "InfestedElite"), ("Ghost", "InfestedGhost"), ("Banshee", "InfestedBanshee"),
                  ("Wraith", "InfestedWraith"), ("Pelican", "InfectedPelican"), ("Covenant Phantom", "InfectedPhantom")]),
-    U("InfectedPelican", "Infected Pelican", "Flood", "Aerial", 3, 200, 1, 400, 1350, "L", 6, 2.5, 1, "G",
+    U("InfectedPelican", "Infected Pelican", "Flood", "Aerial", 3, 200, 1, 400, 1500, "L", 6, 2.5, 1, "G",
       [W("Crash Dive", 0, 1, 1, "Explosive", own="G")], airu=True, flood=True, selfd=True, seek=True, leap=(22, 16, 0),
       # Health 900 -> 1350 so it reaches the enemy before it is shot down, and its blast 900 -> 1200 (the owner, after playing it, D134).
       burst=dict(dmg=1200, radius=3.5, type="Explosive", aa=False, spawns=[("InfectionForms", 5), ("CombatForm", 5)])),
-    U("InfectedPhantom", "Infected Phantom", "Flood", "Aerial", 3, 200, 1, 400, 1250, "L", 2.5, 3, 1.5, "B",
-      [W("Plasma Turrets", 12, 0.3, 14, "Energy")], airu=True, flood=True, drop=("CombatForm", 5, 8),
+    U("InfectedPhantom", "Infected Phantom", "Flood", "Aerial", 3, 200, 1, 400, 1400, "L", 2.5, 3, 1.5, "B",
+      [W("Plasma Turrets", 12.5, 0.3, 14, "Energy")], airu=True, flood=True, drop=("CombatForm", 5, 8),
       burst=dict(dmg=0, radius=0, type="Explosive", aa=False, spawns=[("InfectionForms", 1)])),
-    U("Abomination", "Flood Abomination", "Flood", "Titan", 4, 350, 1, 800, 10000, "H", 1.25, 5, 3, "B",
-      [W("Tendril Slam", 400, 2.5, 7, "Melee", splash=5, own="G"),
-       W("Tendril Whip", 50, 0.8, 10, "Melee")], flood=True, spawn=("InfectionForms", 2, 14), aura=(14, 1.2, 0.01), baked="Abomination"),
+    U("Abomination", "Flood Abomination", "Flood", "Titan", 4, 150, 1, 800, 10570, "H", 1.25, 5, 3, "B",
+      [W("Tendril Slam", 381, 2.5, 7, "Melee", splash=5, own="G"),
+       W("Tendril Whip", 53, 0.8, 10, "Melee")], flood=True, spawn=("InfectionForms", 2, 14), aura=(14, 1.2, 0.01), baked="Abomination"),
 ]
+
+# Base Flood units that belong to one sub-faction only (the owner, D157): the Infected Pelican to UNSC-based, the Infected Phantom to
+# Covenant-based. Their asset files stay in Data/Units/Flood.
+FLOOD_EXCLUSIVES = {"InfectedPelican": "UNSC-based", "InfectedPhantom": "Covenant-based"}
+for _unit in UNITS:
+    if _unit["id"] in FLOOD_EXCLUSIVES:
+        _unit["sub"] = FLOOD_EXCLUSIVES[_unit["id"]]
 
 # The sub-factions' exclusive units and their techs. Their speeds are final, not halved (see D36 below).
 for _module in SUBFACTIONS:
@@ -284,7 +315,7 @@ def unit_yaml(u):
              f"  baseDamage: {fmt(base_damage(u))}", f"  maxHealth: {fmt(u['hp'])}", f"  armorType: {ARMOR[u['armor']]}",
              f"  maxShield: {fmt(u['shield'])}", f"  shieldRegenPerSecond: {fmt(u['regen'])}",
              f"  moveSpeed: {fmt(u['speed'])}", f"  collisionRadius: {fmt(u['radius'])}", f"  turnTime180: {fmt(u['turn'])}",
-             f"  isAir: {fmt(u['air'])}", f"  canFlank: {fmt(u['id'] in FLANKERS)}", f"  targetFilter: {FILTER[u['filter']]}", "  weapons:"]
+             f"  isAir: {fmt(u['air'])}", f"  canFlank: {fmt(u['id'] in FLANKERS)}", f"  goesForTowers: {fmt(u['towers'])}", f"  squadGap: {fmt(u['gap'])}", f"  targetFilter: {FILTER[u['filter']]}", "  weapons:"]
     for w in u["weapons"]:
         lines += [f"  - weaponName: {yaml_str(w['name'])}", f"    damagePerShot: {fmt(w['dmg'])}",
                   f"    fireInterval: {fmt(w['interval'])}", f"    range: {fmt(w['range'])}", f"    minRange: {fmt(w['minr'])}",
@@ -300,6 +331,14 @@ def unit_yaml(u):
             lines += [f"    windUpSeconds: {fmt(w['windup'])}"]  # Only where there is one, so the other assets stay as they were.
         if w.get("stagger"):
             lines += [f"    staggerSeconds: {fmt(w['stagger'])}"]
+        if w.get("ram"):  # A ram (D160): seconds of driving before it rams again.
+            lines += [f"    ramRechargeSeconds: {fmt(w['ram'])}"]
+        if w.get("mag"):  # A magazine (D157): shots, then the reload's seconds.
+            lines += [f"    magazineSize: {fmt(w['mag'][0])}", f"    magazineReloadSeconds: {fmt(w['mag'][1])}"]
+        if w.get("pierce"):  # A shot that kills goes on through to the next enemy on its line (the Jackal's beam rifle, D155).
+            lines += ["    piercesKills: 1"]
+        if w.get("sbreak"):  # The charged shot (D151): shield points it strips, seconds it charges, how fast the bolt flies.
+            lines += [f"    shieldBreak: {fmt(w['sbreak'][0])}", f"    shieldBreakChargeSeconds: {fmt(w['sbreak'][1])}", f"    shieldBreakProjectileSpeed: {fmt(w['sbreak'][2])}"]
     arc = u["arc"]
     hexes = "".join(struct.pack("<i", DTYPE[t]).hex() for t in (arc["types"] if arc else []))
     lines += [f"  hasDefenseArc: {fmt(arc is not None)}", "  defenseArc:",
@@ -321,7 +360,7 @@ def unit_yaml(u):
                   "  reinforcementNeedsUpgrade: 0"]
     b = u["burst"]
     lines += [f"  formsPerBody: {u['forms']}", f"  isFlood: {fmt(u['flood'])}", f"  infects: {fmt(u['infects'])}",
-              f"  immuneToInfection: {fmt(u['immune'])}", f"  selfDestructs: {fmt(u['selfd'])}", f"  seeksDensestCluster: {fmt(u['seek'])}",
+              f"  immuneToInfection: {fmt(u['immune'])}", f"  selfDestructs: {fmt(u['selfd'])}", f"  seeksDensestCluster: {fmt(u['seek'])}", f"  passesThroughOwnChaff: {fmt(u.get('phase', False))}",
               f"  deathBurstDamage: {fmt(b['dmg'] if b else 0)}", f"  deathBurstRadius: {fmt(b['radius'] if b else 0)}",
               f"  deathBurstDamageType: {DTYPE[b['type'] if b else 'Ballistic']}", f"  deathBurstAntiArmor: {fmt(bool(b and b['aa']))}"]
     if b and b["spawns"]:
@@ -382,7 +421,7 @@ def tech_yaml(u, t):
         f"  techName: {yaml_str(t['name'])}", f"  description: {yaml_str(t['desc'])}", f"  cost: {t['cost']}",
         f"  healthMultiplier: {fmt(fx.get('health', 1))}", f"  damageMultiplier: {fmt(fx.get('damage', 1))}",
         f"  fireRateMultiplier: {fmt(fx.get('fire', 1))}", f"  moveSpeedMultiplier: {fmt(fx.get('speed', 1))}",
-        f"  airDamageMultiplier: {fmt(fx.get('air', 1))}", f"  rangeBonus: {fmt(fx.get('range', 0))}",
+        f"  airDamageMultiplier: {fmt(fx.get('air', 1))}", f"  rangeBonus: {fmt(fx.get('range', 0))}", f"  airRangeBonus: {fmt(fx.get('airrange', 0))}",
         f"  shieldBonus: {fmt(fx.get('shield', 0))}", f"  shieldRegenBonus: {fmt(fx.get('regen', 0))}",
         f"  splashRadiusBonus: {fmt(fx.get('splash', 0))}", f"  coneDegreesBonus: {fmt(fx.get('cone', 0))}",
         f"  addsAirTargeting: {fmt(bool(fx.get('aa', False)))}", f"  unlocksReinforcement: {fmt(bool(fx.get('drop', False)))}",
@@ -441,6 +480,9 @@ def subfaction_yaml(faction):
     for m in modules:
         text += f"  - subFactionName: {yaml_str(m.NAME)}\n    description: {yaml_str(m.DESCRIPTION)}\n    exclusiveUnits:\n"
         text += "".join(f"    - {{fileID: 11400000, guid: {guid('unit-' + u['id'])}, type: 2}}\n" for u in UNITS if u["sub"] == m.NAME)
+        costs = getattr(m, "COSTS", {})  # Base roster units at the sub-faction's own price (D158).
+        by_id = {u["id"]: u for u in UNITS}
+        text += "    unitCosts:\n" + "".join(f"    - unitName: {yaml_str(by_id[i]['name'])}\n      cost: {c}\n" for i, c in costs.items()) if costs else "    unitCosts: []\n"
     return text
 
 

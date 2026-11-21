@@ -45,6 +45,19 @@ namespace Halobellum.Economy
         /// its price's worth of enemies to fill it). The same at every level (Bible Section 5).
         /// </summary>
         public float XpBarPerSquadCost = 2f;
+        /// <summary>
+        /// The share of a kill's XP that a body made in the battle is worth (dropped by a carrier, released by a burst or a spawner, risen
+        /// from a corpse, dropped by a spell): 1 = as much as a bought body of its type (the game as it is). Not in the game's rules asset;
+        /// the tournament's trial sets it, to measure what those free bodies feed the other side (D138).
+        /// </summary>
+        public float BattleBodyXpShare = 1f;
+        /// <summary>
+        /// The share of a kill's XP that goes to the squad that dealt the killing blow; the rest is split among every squad that damaged
+        /// the body, by the damage each dealt to it, the killer's own included (the owner, xp_split: Spartans deal 90%, a Scorpion
+        /// finishes it -> the Scorpion gets 55%, the Spartans 45%). 1 = all to the killer (the rule before). Not in the game's rules
+        /// asset; a tournament trial can set it (rules|KillXpShare=1).
+        /// </summary>
+        public float KillXpShare = 0.5f;
         /// <summary>Level-up price as a share of the squad's base price (Bible: half).</summary>
         public float LevelUpCostShare = 0.5f;
 
@@ -88,7 +101,7 @@ namespace Halobellum.Economy
         /// </summary>
         public float[] TowerXpByLevel = { 150f, 275f, 450f, 800f, 1200f };
         public int ExtraSlotCost = 50;
-        /// <summary>The spell the Command Center sells; its price is its Cost. It is used once.</summary>
+        /// <summary>The spell the Command Center sells; its price is its Cost. Bought once, it stays in the player's spells and recharges CooldownRounds rounds after each use.</summary>
         public SpellStats OilZone;
         public int RapidResupplyCredits = 200;
         public int RapidResupplyPenalty = 300;

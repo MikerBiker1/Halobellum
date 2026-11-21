@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 1
   cost: 300
   baseDamage: 60
-  maxHealth: 800
+  maxHealth: 1550
   armorType: 1
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -28,15 +28,17 @@ MonoBehaviour:
   turnTime180: 2
   isAir: 1
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 2
   weapons:
   - weaponName: Plasma Turrets
-    damagePerShot: 12
-    fireInterval: 0.4
+    damagePerShot: 15
+    fireInterval: 0.3
     range: 14
     minRange: 0
     projectileSpeed: 0
-    splashRadius: 0
+    splashRadius: 1
     damageType: 2
     isAntiArmor: 0
     canBeBlocked: 0
@@ -66,7 +68,7 @@ MonoBehaviour:
   reinforcementDelaySeconds: 10
   reinforcementNeedsUpgrade: 1
   reinforcementDrops: 3
-  reinforcementLandSeconds: 1.5
+  reinforcementLandSeconds: 0
   reinforcementFirstDropSeconds: 5
   formsPerBody: 1
   isFlood: 0
@@ -74,6 +76,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0
@@ -104,4 +107,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air
-  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Vampire (100%). With its Gravity Lift tech it lands and drops 7 Grunts 5 seconds into the battle wherever it is, then lands behind enemy lines to drop more, up to 3 drops in all (as the Pelican, D60). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Vampire (100%), Swarm Form (100%). With its Gravity Lift tech it drops 7 Grunts from the air 5 seconds into the battle, then every 10 seconds, up to 3 drops in all, wherever it is; it never lands (D142). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

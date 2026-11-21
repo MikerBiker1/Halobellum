@@ -17,7 +17,8 @@
 // (SkirmishFaction), the seed picks one land for the whole field, and each unit keeps the looks of its real faction.
 // The HUD (Scripts/UI/MatchHud) and DeploymentInput call the public methods here; tests do too.
 // With -replayLog it adds a MatchReplay, which plays a battle log again through these same methods (D106).
-// Depends on: BattleController, SquadSelection, UnitViewManager,
+// It adds a TopSquadGlow, which glows under each side's squad with the most damage this battle.
+// Depends on: BattleController, SquadSelection, UnitViewManager, TopSquadGlow,
 //             Halobellum.Economy (Match, RuleBasedAi, DeploymentGrid),
 //             Halobellum.Units (MatchRulesDefinition, FactionDefinition, UnitDefinition), UnityEngine.
 
@@ -99,6 +100,7 @@ namespace Halobellum.Presentation
             _views.LevelUpReady = ShowsLevelUpArrow;
             _spellView = GetComponent<SpellView>();
             if (_spellView == null) _spellView = gameObject.AddComponent<SpellView>();
+            if (GetComponent<TopSquadGlow>() == null) gameObject.AddComponent<TopSquadGlow>();
             _battle.BattleFinished += OnBattleFinished;
             MatchSetup setup = GameFlow.TakeMatchSetup();
             string[] args = Environment.GetCommandLineArgs();
@@ -194,7 +196,7 @@ namespace Halobellum.Presentation
             bool skirmish = Match.Rules.Mode == MatchMode.UnlockSkirmish; // Both sides are the same made-up faction there, so its names say nothing.
             _logFile = new BattleLogFile(folder, BattleLogFile.FileName(now, Match.Rules.Mode.ToString(), skirmish ? null : Match.Player.SubFaction?.Name, skirmish ? null : Match.Enemy.SubFaction?.Name));
             _log = new MatchLog(_logFile.Write);
-            _log.Started(Match, Difficulty.ToString(), now, cardChosen, Application.version);
+            _log.Started(Match, Difficulty.ToString(), now, cardChosen, Application.version, UnitStatsMods.LogLabel);
         }
 
         private void CloseBattleLog()
@@ -551,7 +553,10 @@ namespace Halobellum.Presentation
             var panel = new TowerPanel { Title = Match.TowerName(kind), Side = own ? "Your tower" : "Enemy tower, as last seen" };
             panel.Lines.Add($"Level {level} of {rules.TowerMaxLevel}    Health {stats.MaxHealth:0}");
             panel.Lines.Add($"If it falls, {(own ? "your" : "their")} whole army loses {(1f - rules.ShockwaveSpeedMultiplier) * 100f:0}% speed, {(1f - rules.ShockwaveDamageMultiplier) * 100f:0}% damage and {(1f - rules.ShockwaveFireRateMultiplier) * 100f:0}% rate of fire, and takes {(rules.ShockwaveDamageTakenMultiplier - 1f) * 100f:0}% more damage, for {stats.Shockwave.Seconds:0} s. Two falling add up their time, not their severity.");
-            panel.Lines.Add($"Whoever destroys it earns {rules.TowerXpByLevel[level - 1]:0} XP.");
+            float killShare = Math.Max(0f, Math.Min(1f, rules.KillXpShare)); // As Match.SplitKillXp clamps it (xp_split).
+            panel.Lines.Add(killShare >= 1f
+                ? $"Whoever destroys it earns {rules.TowerXpByLevel[level - 1]:0} XP."
+                : $"Destroying it earns {rules.TowerXpByLevel[level - 1]:0} XP: {killShare * 100f:0}% to the squad that lands the last hit, the rest shared by the squads that damaged it, by the damage each dealt.");
             if (!own) return panel;
 
             bool deploying = Match.Phase == MatchPhase.Deployment;
@@ -576,10 +581,17 @@ namespace Halobellum.Presentation
                 });
                 if (rules.OilZone != null)
                 {
+                    // Bought once a match, then kept in the player's spells and recharging after each use.
+                    OwnedSpell oil = owner.Spells.Find(s => s.Stats == rules.OilZone);
+                    string oilLasts = rules.OilZone.DurationSeconds > 0f ? $"{rules.OilZone.DurationSeconds:0} s" : "the whole round";
+                    int oilRecharge = rules.OilZone.CooldownRounds;
+                    string oilNote = oil == null
+                        ? $"{rules.OilZone.AreaDepth:0} x {rules.OilZone.AreaWidth:0} m for {oilLasts}; kept in your spells, {oilRecharge} round{(oilRecharge == 1 ? "" : "s")} to recharge"
+                        : oil.IsReady(Match.Round) ? "In your spells: ready" : $"In your spells: recharging, {oil.RoundsLeft(Match.Round)} round(s)";
                     panel.Buttons.Add(new TowerButton
                     {
-                        Label = $"Oil zone ({rules.OilZone.Cost})", Note = owner.BoughtOilZone ? "Bought this round" : $"{rules.OilZone.AreaDepth:0} x {rules.OilZone.AreaWidth:0} m, one use: it goes in your spells",
-                        Enabled = deploying && !owner.BoughtOilZone && credits >= rules.OilZone.Cost, OnPress = () => BuyOilZone(),
+                        Label = oil == null ? $"Oil zone ({rules.OilZone.Cost})" : "Oil zone (owned)", Note = oilNote,
+                        Enabled = deploying && oil == null && credits >= rules.OilZone.Cost, OnPress = () => BuyOilZone(),
                     });
                 }
                 panel.Buttons.Add(new TowerButton
@@ -650,6 +662,24 @@ namespace Halobellum.Presentation
             return null;
         }
 
+        /// <summary>The preview squad showing this placed squad of the player's (deployment and the card screen), or -1.</summary>
+        public int PreviewSquadOfPlaced(int placedSquadId)
+        {
+            BattleSimulation sim = _battle != null ? _battle.Simulation : null;
+            if (Match == null || sim == null || placedSquadId < 0 || sim == Match.CurrentBattle) return -1;
+            for (int i = 0; i < _previewOrder.Count && i < sim.Squads.Count; i++) if (_previewOrder[i].Id == placedSquadId) return sim.Squads[i].Id;
+            return -1;
+        }
+
+        /// <summary>The preview squad showing this ghost of the enemy's last-battle army (D25), or -1.</summary>
+        public int PreviewSquadOfGhost(SeenSquad ghost)
+        {
+            BattleSimulation sim = _battle != null ? _battle.Simulation : null;
+            if (Match == null || sim == null || ghost == null || sim == Match.CurrentBattle) return -1;
+            int j = _ghostOrder.IndexOf(ghost), index = _previewOrder.Count + j;
+            return j >= 0 && index < sim.Squads.Count ? sim.Squads[index].Id : -1;
+        }
+
         /// <summary>Decision D26: the player's squads that are ready to level up show an arrow (deployment and result).</summary>
         private bool ShowsLevelUpArrow(int simSquadId)
         {
@@ -697,7 +727,7 @@ namespace Halobellum.Presentation
                 bool fullNow = view.Xp >= view.XpNeeded - 1e-3f;
                 view.Note = Match.CanLevelUp(squad) ? "XP bar full: ready to level up."
                     : fullNow ? "XP bar full: it can level up after the battle."
-                    : "Earns XP from kills.";
+                    : "Earns XP from kills and damage.";
             }
             else view.Note = "Maximum level.";
 
@@ -916,6 +946,26 @@ namespace Halobellum.Presentation
             if (!_views.SquadTop(sim.Squads[index].Id, out Vector3 world)) return false;
             screen = camera.WorldToScreenPoint(world);
             return screen.z > 0f;
+        }
+
+        /// <summary>
+        /// D145: during deployment, each shown squad's techs and the screen point just above it (pixels, origin bottom-left): the player's squads
+        /// with the techs owned for their type now, the enemy's ghosts with the techs seen at the last battle start (never its current ones).
+        /// </summary>
+        public void SquadTechs(List<(Vector3 screen, IReadOnlyList<TechUpgrade> techs)> into)
+        {
+            into.Clear();
+            BattleSimulation sim = _battle.Simulation;
+            Camera camera = Camera.main;
+            if (Match == null || Match.Phase != MatchPhase.Deployment || sim == null || camera == null) return;
+            for (int i = 0; i < sim.Squads.Count; i++)
+            {
+                int ghost = i - _previewOrder.Count;
+                IReadOnlyList<TechUpgrade> techs = ghost < 0 ? Match.Player.TechsFor(_previewOrder[i].Type) : ghost < _ghostOrder.Count ? _ghostOrder[ghost].Techs : null;
+                if (techs == null || techs.Count == 0 || !_views.SquadTop(sim.Squads[i].Id, out Vector3 world)) continue;
+                Vector3 screen = camera.WorldToScreenPoint(world);
+                if (screen.z > 0f) into.Add((screen, techs));
+            }
         }
 
         // ------------------------------------------------------------------ battle and result

@@ -5,6 +5,8 @@
 //     change), so one class covers armor plating, range, rate of fire, special weapons and anti-air.
 //   - UnitUpgrades.Apply: a copy of a unit's base stats with its squad level and owned techs applied.
 //     Level L multiplies base health and weapon damage by L (the Section 5 table: 1x, 2x ... 5x).
+//     What the squad brings mid-battle (drops, releases, death-burst spawns, seed forms) fights at the
+//     squad's level too, without its techs or item (the owner, 2026-11-18).
 // The copy keeps the unit's name, so visuals and results still group it with its unit type.
 // Depends on: UnitStats, WeaponStats.
 
@@ -35,6 +37,8 @@ namespace Halobellum.Core
         public float ConeDegreesBonus;
         /// <summary>Extra damage multiplier against air units (anti-air upgrades).</summary>
         public float AirDamageMultiplier = 1f;
+        /// <summary>Metres added to the range of weapons that can shoot air, against air units only (D149).</summary>
+        public float AirRangeBonus;
         /// <summary>Lets the unit's weapons shoot air units too (anti-air upgrades).</summary>
         public bool AddsAirTargeting;
         /// <summary>Switches on the unit's mid-battle drop (the Pelican's troop bay, the Spawner's Swarm Brood).</summary>
@@ -58,6 +62,7 @@ namespace Halobellum.Core
             if (ShieldBonus != 0f) parts.Add($"+{ShieldBonus:0} shield");
             if (SplashRadiusBonus != 0f) parts.Add($"+{SplashRadiusBonus:0.#}\u00A0m splash");
             if (ConeDegreesBonus != 0f) parts.Add($"+{ConeDegreesBonus:0} degree cone");
+            if (AirRangeBonus != 0f) parts.Add($"+{AirRangeBonus:0.#} m range vs air");
             if (AirDamageMultiplier != 1f) parts.Add(Percent(AirDamageMultiplier) + " damage vs air");
             if (AddsAirTargeting) parts.Add("can shoot air");
             if (UnlocksReinforcement) parts.Add("brings a squad mid-battle");
@@ -78,6 +83,7 @@ namespace Halobellum.Core
             string label = $"{unitName} tech '{Name}'";
             if (string.IsNullOrEmpty(Name)) problems.Add($"{unitName}: a tech upgrade has no name.");
             if (Cost < 0) problems.Add($"{label}: cost cannot be negative.");
+            if (AirRangeBonus < 0f) problems.Add($"{label}: range against air cannot be negative.");
             if (ExtraShotsPerAttack < 0) problems.Add($"{label}: extra shots cannot be negative.");
             if (ExtraShotsPerAttack > 0 && BurstGapSeconds <= 0f) problems.Add($"{label}: extra shots need a gap above 0.");
             if (HealthMultiplier <= 0f || DamageMultiplier <= 0f || FireRateMultiplier <= 0f || MoveSpeedMultiplier <= 0f || AirDamageMultiplier <= 0f || ReloadTimeMultiplier <= 0f)
@@ -114,10 +120,12 @@ namespace Halobellum.Core
 
             UnitStats stats = ApplyLevelAndTechs(baseStats, level, techs);
             ApplyItemAndBuffs(stats, item, buffs);
+            LevelAndBuffWhatItBrings(stats, level, buffs, 0);
             if (hasTechs)
             {
                 UnitStats withoutTechs = ApplyLevelAndTechs(baseStats, level, null);
                 ApplyItemAndBuffs(withoutTechs, item, buffs);
+                LevelAndBuffWhatItBrings(withoutTechs, level, buffs, 0); // an EMP swaps a body to these, and the sim then reads what it brings from them
                 stats.WithoutTechs = withoutTechs;
             }
             return stats;
@@ -147,25 +155,53 @@ namespace Halobellum.Core
                     if (weapon.Range > MeleeRange) weapon.Range += buffs.RangeBonus;
                 }
                 if (stats.DeathBurst != null) stats.DeathBurst.Damage *= buffs.DamageMultiplier;
-                if (!buffs.IsNeutral) BuffWhatItBrings(stats, buffs);
             }
         }
 
-        /// <summary>What a unit drops, releases or leaves behind fights in the same army, so it has the army's bonuses too.</summary>
-        private static void BuffWhatItBrings(UnitStats stats, ArmyBuffs buffs)
+        /// <summary>
+        /// What a unit drops, releases, leaves behind or raises with a seed fights at its squad's level, like a bought squad at that level, and in the
+        /// same army, so with the army's bonuses too; never with the creator's techs or item. Seed forms take the level only (the owner, 2026-11-18).
+        /// A body that infection takes over is the victim's own and is not made here. Every brought unit becomes a new copy: Clone shares SpawnedUnit,
+        /// AlternateSpawnedUnit, SeedForms and the DeathBurst.Spawns array with the base stats, so nothing is ever changed in place.
+        /// </summary>
+        private static void LevelAndBuffWhatItBrings(UnitStats stats, int level, ArmyBuffs buffs, int depth)
         {
-            if (stats.Reinforcement != null) stats.Reinforcement = Apply(stats.Reinforcement, 1, null, null, buffs);
-            if (stats.LockedReinforcement != null) stats.LockedReinforcement = Apply(stats.LockedReinforcement, 1, null, null, buffs);
-            if (stats.SpawnedUnit != null) stats.SpawnedUnit = Apply(stats.SpawnedUnit, 1, null, null, buffs);
-            if (stats.AlternateSpawnedUnit != null) stats.AlternateSpawnedUnit = Apply(stats.AlternateSpawnedUnit, 1, null, null, buffs);
-            if (stats.DeathBurst == null || stats.DeathBurst.Spawns.Length == 0) return;
-            var spawns = new SpawnEntry[stats.DeathBurst.Spawns.Length];
-            for (int i = 0; i < spawns.Length; i++)
+            bool buffed = buffs != null && !buffs.IsNeutral;
+            if ((level <= 1 && !buffed) || depth > 3) return; // depth: a guard against hand-built stats that bring themselves
+            ArmyBuffs b = buffed ? buffs : null;
+            if (stats.Reinforcement != null) stats.Reinforcement = Bring(stats.Reinforcement, level, b, depth);
+            if (stats.LockedReinforcement != null) stats.LockedReinforcement = Bring(stats.LockedReinforcement, level, b, depth);
+            if (stats.SpawnedUnit != null) stats.SpawnedUnit = Bring(stats.SpawnedUnit, level, b, depth);
+            if (stats.AlternateSpawnedUnit != null) stats.AlternateSpawnedUnit = Bring(stats.AlternateSpawnedUnit, level, b, depth);
+            if (stats.DeathBurst != null && stats.DeathBurst.Spawns != null && stats.DeathBurst.Spawns.Length > 0)
             {
-                SpawnEntry spawn = stats.DeathBurst.Spawns[i];
-                spawns[i] = new SpawnEntry { Unit = Apply(spawn.Unit, 1, null, null, buffs), Bodies = spawn.Bodies };
+                var spawns = new SpawnEntry[stats.DeathBurst.Spawns.Length]; // a new array: DeathBurstStats.Clone shares the old one
+                for (int i = 0; i < spawns.Length; i++)
+                {
+                    SpawnEntry spawn = stats.DeathBurst.Spawns[i];
+                    spawns[i] = spawn?.Unit == null ? spawn : new SpawnEntry { Unit = Bring(spawn.Unit, level, b, depth), Bodies = spawn.Bodies };
+                }
+                stats.DeathBurst.Spawns = spawns; // stats.DeathBurst is already this copy's own clone (ApplyLevelAndTechs -> Clone)
             }
-            stats.DeathBurst.Spawns = spawns;
+            if (stats.SeedForms != null && level > 1)
+            {
+                var forms = new SeedForm[stats.SeedForms.Length]; // a new array: Clone shares SeedForms
+                for (int i = 0; i < forms.Length; i++)
+                {
+                    SeedForm form = stats.SeedForms[i];
+                    forms[i] = form?.Becomes == null ? form : new SeedForm { From = form.From, Becomes = Bring(form.Becomes, level, null, depth) };
+                }
+                stats.SeedForms = forms;
+            }
+        }
+
+        /// <summary>A copy of a brought unit at this level with these buffs (null = none), and what it brings in turn (an Infected Phantom's own death spawn).</summary>
+        private static UnitStats Bring(UnitStats unit, int level, ArmyBuffs buffs, int depth)
+        {
+            UnitStats brought = ApplyLevelAndTechs(unit, level, null); // clone, Level = level, health, damage and burst x level
+            ApplyItemAndBuffs(brought, null, buffs);                    // the buffs only; null does nothing
+            LevelAndBuffWhatItBrings(brought, level, buffs, depth + 1);
+            return brought;
         }
 
         /// <summary>Weapons reaching this far or less count as melee, not ranged.</summary>
@@ -203,11 +239,13 @@ namespace Halobellum.Core
                 {
                     weapon.DamagePerShot *= tech.DamageMultiplier;
                     weapon.FireInterval /= tech.FireRateMultiplier;
+                    weapon.MagazineReloadSeconds /= tech.FireRateMultiplier; // A faster gun reloads faster too (D157).
                     // A range tech is for guns: a claw or a ram keeps its reach (the flat 8 m range tech, D114).
                     if (!KeepsReach(stats, weapon) && weapon.DamageType != DamageType.Melee) weapon.Range += tech.RangeBonus;
                     if (weapon.SplashRadius > 0f) weapon.SplashRadius += tech.SplashRadiusBonus;
                     if (weapon.ConeDegrees > 0f) weapon.ConeDegrees = Math.Min(360f, weapon.ConeDegrees + tech.ConeDegreesBonus);
                     weapon.AirDamageMultiplier *= tech.AirDamageMultiplier;
+                    if (weapon.DamageType != DamageType.Melee && weapon.CanTarget(stats, targetIsAir: true)) weapon.AirRangeBonus += tech.AirRangeBonus;
                     if (tech.AddsAirTargeting && !weapon.CanTarget(stats, targetIsAir: true))
                     {
                         weapon.HasOwnTargetFilter = true;
@@ -221,6 +259,7 @@ namespace Halobellum.Core
                     main.ShotsPerAttack += tech.ExtraShotsPerAttack;
                     if (tech.ExtraShotsPerAttack > 0) main.BurstGapSeconds = tech.BurstGapSeconds;
                     main.FireInterval *= tech.ReloadTimeMultiplier;
+                    main.MagazineReloadSeconds *= tech.ReloadTimeMultiplier;
                 }
                 if (tech.UnlocksReinforcement && stats.LockedReinforcement != null) stats.Reinforcement = stats.LockedReinforcement;
             }

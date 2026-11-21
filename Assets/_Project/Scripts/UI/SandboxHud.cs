@@ -45,11 +45,13 @@ namespace Halobellum.UI
         private Vector2 _scroll;
         private readonly HudLine _seedLine = new HudLine(), _aliveLine = new HudLine(), _blueLine = new HudLine(), _redLine = new HudLine();
         private SquadStatsWindow _statsWindow;
+        private SquadSelection _selection;
 
         private void Awake()
         {
             useGUILayout = false; // Nothing here uses GUILayout. With the layout pass on, Unity makes new layout groups for this script every frame, which is garbage at every frame rate.
             _statsWindow = FindAnyObjectByType<SquadStatsWindow>();
+            _selection = FindAnyObjectByType<SquadSelection>();
             var battleHud = FindAnyObjectByType<BattleHud>();
             if (battleHud != null) battleHud.ResultLineTop = ResultLineTop;
             if (Array.IndexOf(Environment.GetCommandLineArgs(), PressTowersArgument) >= 0) MenuStyle.PressedByTest = TowersKey;
@@ -235,8 +237,9 @@ namespace Halobellum.UI
                 UnitStats stats = unit.Stats;
                 var row = new Rect(0f, y, content.width, rowHeight - 4f);
                 bool placing = sandbox.PlacingType == stats;
+                bool shown = _statsWindow != null && _statsWindow.ShopUnit == stats;
                 HudTheme.RowBox(row);
-                if (placing) HudTheme.RowBox(row);
+                if (placing || shown) HudTheme.RowBox(row);
                 CardScreens.DrawUnitPicture(new Rect(row.x + 3f, row.y + 2f, 42f, 42f), stats, (unit.BaseFaction ?? unit.Faction), UnitIcons.FactionColor((unit.BaseFaction ?? unit.Faction)));
                 GUI.Label(new Rect(row.x + 50f, row.y, row.width - 150f, 27f), stats.Name, _text);
                 GUI.Label(new Rect(row.x + 50f, row.y + 24f, row.width - 150f, 20f), $"{RoleName(stats.Role)}, {Bodies(stats.FormsInSquad)}, {stats.Cost}", _small);
@@ -245,9 +248,29 @@ namespace Halobellum.UI
                     if (placing) sandbox.CancelPlacement();
                     else sandbox.BeginPlacing(stats);
                 }
+                // The rest of the row, its icon and name, opens the unit's stats window, as a shop row does in a match (the owner, D143). After Place, which keeps its click.
+                if (MenuStyle.Button(new Rect(row.x, row.y, row.width - 98f, row.height), "", GUIStyle.none, UnitRowKey(stats)) && Event.current.button == 0) ShowUnitStats(stats);
                 y += rowHeight;
             }
             GUI.EndScrollView();
+        }
+
+        /// <summary>For a test tool: one pass of this screen's OnGUI, inside an IMGUI pass the test opened (a batch run calls no OnGUI).</summary>
+        public void DrawForTest() => OnGUI();
+
+        /// <summary>The key of a unit row's stats button, for a test tool (MenuStyle.PressedByTest).</summary>
+        public static string UnitRowKey(UnitStats unit) => "Sandbox unit/" + unit.Name;
+
+        /// <summary>Opens the unit's stats window as a level 1 squad, as a click on a shop row does in a match; a second click closes it.</summary>
+        private void ShowUnitStats(UnitStats unit)
+        {
+            if (_statsWindow == null) return;
+            if (_selection != null)
+            {
+                _selection.Select(-1);
+                _selection.ClearTower();
+            }
+            _statsWindow.ShopUnit = _statsWindow.ShopUnit == unit ? null : unit;
         }
 
         private void SetSide(Team team)

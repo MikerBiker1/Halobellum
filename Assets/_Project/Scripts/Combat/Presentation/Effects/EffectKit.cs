@@ -424,6 +424,12 @@ namespace Halobellum.Presentation
         }
 
         /// <summary>A long hot streak (bullets, gauss, needles). The faster it flies, the longer it looks.</summary>
+        /// <summary>
+        /// How long a streak flying at this speed is drawn, in metres. The renderer draws it wholly behind its position, from the position back
+        /// this far (measured in Unity, D155), so a shot's streak must start this far ahead of the muzzle for its tail to leave from the gun.
+        /// </summary>
+        public static float StreakLength(float speed, float width) => width + speed * StreakStretch;
+
         public void Streak(EffectPriority priority, Vector3 position, Vector3 velocity, float width, Color color, float life)
         {
             var emit = new ParticleSystem.EmitParams { position = position, velocity = velocity, startSize = width, startColor = color, startLifetime = life };

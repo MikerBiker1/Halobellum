@@ -71,6 +71,8 @@ namespace Halobellum.Economy
         public string GameVersion;
         /// <summary>The card filter the match was set up with, as logged (empty in logs from before 0.381.1: all cards).</summary>
         public string CardFilterName;
+        /// <summary>"modded:N" if the logged game played with the player's own unit stats files (mod_json), otherwise null. A replay plays the defaults.</summary>
+        public string UnitStats;
         public readonly List<ReplayLine> Lines = new List<ReplayLine>();
 
         /// <summary>What drifted from the log, line by line. Empty if the replay matched it all.</summary>
@@ -110,6 +112,7 @@ namespace Halobellum.Economy
                     replay.DraftChosen = LogJson.Int(json, "draft_chosen");
                     replay.GameVersion = LogJson.Text(json, "version");
                     replay.CardFilterName = LogJson.Text(json, "cards");
+                    replay.UnitStats = LogJson.Text(json, "unit_stats");
                 }
                 replay.Lines.Add(line);
             }

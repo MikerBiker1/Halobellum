@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 2
   cost: 450
   baseDamage: 45
-  maxHealth: 1500
+  maxHealth: 1440
   armorType: 2
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -28,10 +28,12 @@ MonoBehaviour:
   turnTime180: 1.5
   isAir: 0
   canFlank: 0
-  targetFilter: 0
+  goesForTowers: 0
+  squadGap: 0
+  targetFilter: 2
   weapons:
   - weaponName: Assault Cannon
-    damagePerShot: 60
+    damagePerShot: 57
     fireInterval: 2
     range: 16
     minRange: 5
@@ -82,7 +84,7 @@ MonoBehaviour:
   defenseArc:
     arcDegrees: 240
     frontDamageMultiplier: 0.7
-    rearDamageMultiplier: 1.5
+    rearDamageMultiplier: 1
     blockChance: 0
     blockedDamageTypes: 
   reinforcementUnit: {fileID: 0}
@@ -95,6 +97,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa8096adb8964c8e91564983d4a11372, type: 3}
+  m_Name: UnitStatsSources
+  m_EditorClassIdentifier: Halobellum.Units::Halobellum.Units.UnitStatsSources
+  factions:
+  - {fileID: 11400000, guid: 988900441e10967359ab5caa9a1dbb86, type: 2}
+  - {fileID: 11400000, guid: dbbb56bd6538040231b35b6b35bda6ec, type: 2}
+  - {fileID: 11400000, guid: 974f0fba69c5aef174372f1acc5f6732, type: 2}
+  combatRules: {fileID: 11400000, guid: 801f0d1a83f9f6aa5be21fcd91a4c35d, type: 2}

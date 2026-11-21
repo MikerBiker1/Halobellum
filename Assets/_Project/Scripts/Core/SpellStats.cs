@@ -18,7 +18,8 @@
 //   - Smoke: units inside have their weapon range multiplied by RangeMultiplier, for the rest of the
 //     battle (or only DurationSeconds, if above 0).
 //   - Oil: ground units inside, of both sides, are slowed by SlowShare and take FireDamageMultiplier
-//     from fire, for DurationSeconds (bought from the Command Center, D55).
+//     from fire, for the rest of the battle (or only DurationSeconds, if above 0). Bought once from
+//     the Command Center and kept in the player's spells, recharging like any spell (D55).
 // Offensive spells can be placed anywhere on the field (red outline) and can hurt the caster's own
 // units too (decision D33); defensive spells and buffs go only in the caster's own deployment zone
 // (blue outline) and only help the caster. An area is a circle (Radius), or a line when AreaWidth is
@@ -192,7 +193,8 @@ namespace Halobellum.Core
                     string lasts = DurationSeconds > 0f ? $"for {DurationSeconds:0}\u00A0s" : "for the whole round";
                     return $"Smoke in a {AreaDepth:0}\u00A0x\u00A0{AreaWidth:0}\u00A0m line {lasts}: units inside have {(1f - RangeMultiplier) * 100f:0}% less range";
                 case SpellEffect.Oil:
-                    return $"Oil in a {AreaDepth:0}\u00A0x\u00A0{AreaWidth:0}\u00A0m line for {DurationSeconds:0}\u00A0s: ground units inside are {SlowShare * 100f:0}% slower and take {(FireDamageMultiplier - 1f) * 100f:0}% more fire damage";
+                    string oilLasts = DurationSeconds > 0f ? $"for {DurationSeconds:0}\u00A0s" : "for the whole round";
+                    return $"Oil in a {AreaDepth:0}\u00A0x\u00A0{AreaWidth:0}\u00A0m line {oilLasts}: ground units inside are {SlowShare * 100f:0}% slower and take {(FireDamageMultiplier - 1f) * 100f:0}% more fire damage";
                 default:
                     return $"{DropSquads}\u00A0x {DropUnit?.Name ?? "?"} {(DropSquads == 1 ? "squad lands" : "squads land")} for this battle";
             }
@@ -237,7 +239,7 @@ namespace Halobellum.Core
                     break;
                 case SpellEffect.Oil:
                     if (AreaWidth <= 0f || AreaDepth <= 0f) problems.Add($"{label}: oil needs an area.");
-                    if (DurationSeconds <= 0f) problems.Add($"{label}: oil needs a duration.");
+                    if (DurationSeconds < 0f) problems.Add($"{label}: oil duration cannot be negative.");
                     break;
             }
             return problems;

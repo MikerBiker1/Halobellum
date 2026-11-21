@@ -27,13 +27,16 @@ namespace Halobellum.Economy
 
         /// <summary>
         /// The first line, once the player has chosen a starting card: enough to know which game this was, and the cards that were on offer. The game's
-        /// version and the card filter say which game played it and how it was set up, for a replay (D106).
+        /// version and the card filter say which game played it and how it was set up, for a replay (D106). unitStats ("modded:N") is there only
+        /// when the player's own unit stats files changed the units (mod_json), so a replay, which always plays the defaults, can say so.
         /// </summary>
-        public void Started(Match match, string difficulty, DateTime localTime, int cardChosen, string gameVersion = null)
+        public void Started(Match match, string difficulty, DateTime localTime, int cardChosen, string gameVersion = null, string unitStats = null)
         {
             var line = new Line("match_start")
                 .Number("format", FormatVersion)
-                .Text("version", gameVersion)
+                .Text("version", gameVersion);
+            if (!string.IsNullOrEmpty(unitStats)) line.Text("unit_stats", unitStats);
+            line
                 .Text("time", localTime.ToString("yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture))
                 .Number("seed", match.Seed)
                 .Text("mode", match.Rules.Mode.ToString())

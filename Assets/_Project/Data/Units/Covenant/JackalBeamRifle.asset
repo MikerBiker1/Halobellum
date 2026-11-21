@@ -28,6 +28,8 @@ MonoBehaviour:
   turnTime180: 0.25
   isAir: 0
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 2
   weapons:
   - weaponName: Beam Rifle
@@ -54,6 +56,7 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
+    piercesKills: 1
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -71,6 +74,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0
@@ -92,6 +96,7 @@ MonoBehaviour:
   techUpgrades:
   - {fileID: 11400000, guid: fd950abb020e37f409a23522894d5147, type: 2}
   - {fileID: 11400000, guid: 733fca66d70b9ba41043efdb9a1295eb, type: 2}
+  - {fileID: 11400000, guid: bdea30b5e28996559fab6d6d08072477, type: 2}
   - {fileID: 11400000, guid: 9d16a59ee3421606efe9bea4e50660c7, type: 2}
   prefab: {fileID: 3760541862654182237, guid: 5eed2f1c115c1fc4f8bb9dcd850d8f8c, type: 3}
   keepsOwnMaterials: 0

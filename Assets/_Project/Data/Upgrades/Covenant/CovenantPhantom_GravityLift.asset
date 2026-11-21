@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CovenantPhantom_GravityLift
   m_EditorClassIdentifier: 
   techName: Gravity Lift
-  description: 'It drops 7 Grunts 5 seconds into the battle, then lands behind enemy lines for more, up to 3 drops in all.'
+  description: 'It drops 7 Grunts from the air 5 seconds into the battle, then every 10 seconds, up to 3 drops in all.'
   cost: 200
   healthMultiplier: 1
   damageMultiplier: 1
@@ -21,6 +21,7 @@ MonoBehaviour:
   moveSpeedMultiplier: 1
   airDamageMultiplier: 1
   rangeBonus: 0
+  airRangeBonus: 0
   shieldBonus: 0
   shieldRegenBonus: 0
   splashRadiusBonus: 0

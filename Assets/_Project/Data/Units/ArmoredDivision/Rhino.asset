@@ -28,12 +28,14 @@ MonoBehaviour:
   turnTime180: 2.5
   isAir: 0
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 0
   weapons:
   - weaponName: Heavy Cannon
-    damagePerShot: 140
-    fireInterval: 5
-    range: 50
+    damagePerShot: 143
+    fireInterval: 4
+    range: 46
     minRange: 12
     projectileSpeed: 22
     splashRadius: 4.5
@@ -71,6 +73,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0
@@ -101,4 +104,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: 'Slow, grouped units'
   weakAgainst: 'Flankers, air'
-  notes: 'Best counters (headless runner, equal cost): Infested Banshee (100%), Condor Gunship (100%). The longest gun in the game. Slow to turn and move, lobbed so it can miss, helpless up close. First-pass M10 values, Armored Division (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Gremlin (100%), Juggernaut (100%). The longest gun in the game. Slow to turn and move, lobbed so it can miss, helpless up close. First-pass M10 values, Armored Division (Docs/M10/subfactions.md).'

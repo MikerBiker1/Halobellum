@@ -64,7 +64,7 @@ Assets/
 
 ## 4. Architecture rules (non-negotiable)
 
-1. **Data-driven units.** All unit stats live in ScriptableObjects (`UnitDefinition`). No stat is ever hardcoded in a script. Adding a unit means adding a data asset and a prefab, not writing new logic, unless it needs a new ability.
+1. **Data-driven units.** All unit stats live in ScriptableObjects (`UnitDefinition`). No stat is ever hardcoded in a script. Adding a unit means adding a data asset and a prefab, not writing new logic, unless it needs a new ability. The assets hold the default values. In a game build, players may change unit numbers in `UnitStats/` beside the game (one JSON file per faction and sub-faction, 11 in all). The game reads them at every launch; on any error it uses the defaults for every unit, lists the errors in the main menu and never changes the files (D142). The editor, tests, tournament and replays always use the assets.
 2. **Simulation separate from presentation.** Combat logic runs in plain C# classes that do not depend on GameObjects, models, or animation. Visuals subscribe to simulation events (unit moved, attacked, died). This allows fast automated testing and lets art be swapped freely.
 3. **Deterministic simulation.** The simulation uses a seeded random number generator and a fixed timestep (30 ticks per second). The same inputs and seed should produce the same outcome, including random rolls such as shield block chances. This is preferred but not absolute: authentic Mechabellum-style movement and collision take priority over strict determinism (see Section 6). Still test seeded repeatability on the same machine, because it is cheap and makes balance results and bug reports reproducible.
 4. **Headless battle runner.** Build an editor tool that runs N simulated battles between two armies with no graphics and outputs win rates to a CSV. Agents use it to test balance without the human. It runs the exact same simulation code as the game, so the same armies and seed give the same result in both.
@@ -93,13 +93,13 @@ A match is a series of rounds against an AI opponent. Each round has these phase
 | Income per round | 200 (round 1, paid by the starting credits), plus 200 per round after the first: 400 after round 1, 600 after round 2 ... |
 | Income cap | Income per round is capped at 1600. Banked credits have no limit. |
 | Base health | 2000 each |
-| Base damage | Every surviving unit deals damage to the enemy base. Per-unit damage is a data field (`BaseDamage`); default is (squad cost ÷ squad size) ÷ 5. |
+| Base damage | Every surviving unit deals damage to the enemy base, except summoned bodies (see below, D142). Per-unit damage is a data field (`BaseDamage`); default is (squad cost ÷ squad size) ÷ 5. |
 | Win condition | Reduce the enemy base to 0 or below. If both fall in the same round, the base with the lower (more negative) health loses; an exact tie is a tied round: the damage is undone, income is paid and the match goes on to the next round. |
 | New squads per round | 2 |
 | Unit unlocks per round | 1 |
 | Unit sale refund | 100% before the battle of the round it was bought, 50% afterward. Free draft squads always sell for 50% of their cost. |
 
-**How a round ends and how base damage works.** A battle ends when one side has no units left, or when 90 seconds pass, and once the shots in the air have landed (D67): nobody acts meanwhile, those shots still count, and if they leave nobody on either side the round is a draw. Either way, the result is resolved the same way: every unit still alive on each side deals its `BaseDamage` to the opposing base, and both sides take damage at the same time. There is no separate “round winner” penalty. A side that was wiped out simply has no survivors, so it deals nothing. Example: at 90 seconds the player has 1 Scorpion alive (300 ÷ 1 ÷ 5 = 60 damage) and the AI has 2 Ghosts alive (200 ÷ 2 ÷ 5 = 20 each, 40 total). The AI base takes 60 and the player base takes 40. Only units alive at the moment the battle ends count, and temporary units from the round (infected units, reinforcements) are included if still alive.
+**How a round ends and how base damage works.** A battle ends when one side has no units left, or when 90 seconds pass, and once the shots in the air have landed (D67): nobody acts meanwhile, those shots still count, and if they leave nobody on either side the round is a draw. Either way, the result is resolved the same way: every unit still alive on each side deals its `BaseDamage` to the opposing base, and both sides take damage at the same time. There is no separate “round winner” penalty. A side that was wiped out simply has no survivors, so it deals nothing. Example: at 90 seconds the player has 1 Scorpion alive (300 ÷ 1 ÷ 5 = 60 damage) and the AI has 2 Ghosts alive (200 ÷ 2 ÷ 5 = 20 each, 40 total). The AI base takes 60 and the player base takes 40. Only units alive at the moment the battle ends count. Of the bodies made during the battle, only the troops a bought air transport drops (the Pelican's Marines, the Phantom's Grunts, a bought Infected Phantom's Combat Forms) count. Summoned bodies deal no base damage: a Spawner's brood, death bursts, seed forms, infection rises, spell squads, and anything a summoned carrier drops (D142; before, a Spawner that could not hit an aircraft kept releasing bodies that all hit the base).
 
 **Starting draft.** Before round 1, the player picks one of 5 draft cards. This is the most important decision of the game.
 
@@ -117,13 +117,13 @@ A match is a series of rounds against an AI opponent. Each round has these phase
 | Tier 1 | Free |
 | Tier 2 | 50 |
 | Tier 3 | Half the unit’s deployment price, so 200 to 250 (listed per unit in Section 8) |
-| Tier 4 (Titan) | 350 (Titans deploy for 800) |
+| Tier 4 (Titan) | 150 (D141; 350 until D140, when at 350 the AI could only afford them late); Titans deploy for 800 |
 
 A unit can be unlocked and bought in the same round. Buying a squad is limited to 2 new squads per round, regardless of type.
 
 **Deployment price bands (per squad).** Tier 1 costs 100 to 200, Tier 2 costs 250 to 300, Tier 3 costs 400 to 500, and Titans cost 800. Balance is done through price, so every unit stays inside its tier’s band. One exception, the owner’s choice: the Spartan CQB costs 300 (unlock 150) since its shotgun can no longer reach aircraft (D133).
 
-**Squads.** Buying a unit deploys a *squad*: a fixed number of bodies (for example 18 Marines, 1 Scorpion). Squad size and cost are data, and cost is per squad. Units that spawn other units (for example the Pelican) do not necessarily spawn full squads; the spawn count is part of the ability data.
+**Squads.** Buying a unit deploys a *squad*: a fixed number of bodies (for example 18 Marines, 1 Scorpion). Squad size and cost are data, and cost is per squad. Units that spawn other units (for example the Pelican) do not necessarily spawn full squads; the spawn count is part of the ability data. What a squad brings in the battle (drops, releases, death bursts, seed forms) has the squad's level, without its techs or item (D142). Infection rises keep the victim's body, and spell squads are level 1.
 
 **Placement.** Free placement within the player’s half, on a grid with snap-to-cell for readability. Only squads **bought this round** can be moved or rotated. Squads bought in earlier rounds stay where they were placed and keep their rotation. All units face the enemy team during battle, and a squad can be set to one of two orientations during deployment: the default, or turned 90 degrees. Orientation cannot change once the squad has been in combat. This matters for wide formations: an 18-Marine squad is much wider than it is deep until it is turned 90 degrees. Units cannot overlap. Air units ignore ground footprints.
 
@@ -133,7 +133,7 @@ A unit can be unlocked and bought in the same round. Buying a squad is limited t
 - Anything temporary is discarded: units infected during the battle, units spawned by abilities, spell effects.
 - Units destroyed during the battle are remade, so each round starts from the same state as the previous round started, plus whatever the player bought.
 
-**Squad leveling.** Squads earn XP from kills, also the kills of the bodies they drop, release or raise in the battle (D136). The XP bar is visible when a squad is selected, and fills during the battle as the squad kills. When it is full, the player may pay **half of the squad’s base deployment price** to level it up. The XP needed to fill the bar is the same at every level. Level multipliers apply to base health and damage, and the total equals the level number:
+**Squad leveling.** Squads earn XP from kills and the damage that led to them (D142): half of a body's XP goes to the squad that kills it, the other half is split among every squad that damaged it, by the damage each dealt, the killer included. If a Spartan does 90% of the damage and a Scorpion finishes the body, the Scorpion gets 55% and the Spartan 45%. Shield damage counts, overkill does not, and spells earn none. The kills and damage of the bodies a squad drops, releases or raises count for that squad (D136). The XP bar is visible when a squad is selected, and fills during the battle as the squad earns XP. When it is full, the player may pay **half of the squad’s base deployment price** to level it up. The XP needed to fill the bar is the same at every level. Level multipliers apply to base health and damage, and the total equals the level number:
 
 | Level | Total multiplier | Step increase |
 | --- | --- | --- |
@@ -152,9 +152,9 @@ A unit can be unlocked and bought in the same round. Buying a squad is limited t
 **Towers (D55).** Each side has two towers in the middle of its zone, the Command Center on its own left and the Research Center on its own right. They make two lanes to defend. Both are rebuilt for every battle, and levels last for the match. A tower is a ground target like any other, but isn't part of the army: it doesn't keep a battle going, deals no base damage and gives no XP.
 
 - **Level:** 1 to 5, 100 credits each. A level 1 tower has 150 health, and each level doubles it. Towers have heavy armor (D119).
-- **XP:** the squad that destroys it earns the XP of a level 1 squad of the tier of the tower's level (150, 275, 450, 800), and for level 5, of a level 2 Titan (1,200).
+- **XP:** it is worth the XP of a level 1 squad of the tier of the tower's level (150, 275, 450, 800), and for level 5, of a level 2 Titan (1,200). Half goes to the squad that destroys it, half to the squads that damaged it, by their damage, as for units (D142).
 - **Shockwave:** its fall weakens its side's whole army, by 40% in speed, damage and rate of fire, and makes it take 40% more damage. It lasts 10, 8, 6, 4 or 2 seconds by the tower's level. A second fall adds its time, not its severity.
-- **Command Center sells,** each once a round: an extra squad slot for the round (50), a one-use Oil Zone of 8 x 45 m (150), Rapid Resupply (free: +200 now, 300 less next round), Elite Recruitment (100: squads bought this round are level 2, at half their price more).
+- **Command Center sells,** each once a round: an extra squad slot for the round (50), the Oil Zone of 8 x 45 m (150, bought once: it stays in your spells for the match, lasts the whole round and recharges 2 rounds after each use, so cast in round 1 it is ready again in round 4; D142), Rapid Resupply (free: +200 now, 300 less next round), Elite Recruitment (100: squads bought this round are level 2, at half their price more).
 - **Research Center sells** lasting bonuses for the whole army: +15% health (100), another +15% (300); +12% damage (100), another +12% (300).
 
 ## 6. Combat system
@@ -196,7 +196,7 @@ Every faction must have at least one unit that fills each role below. Anti-armor
 | Chaff clear | Splash damage vs groups | Chaff | Tanks, flankers |
 | Single-target DPS | High damage to one target, including anti-armor | Tanks, heavy units | Chaff swarms, flankers |
 | Tank | High health frontline | Chaff clear | Single-target DPS |
-| Flanker | Fast, hits the backline | Artillery, DPS | Chaff clear, tanks |
+| Flanker | Fast; goes for the enemy's towers, shooting what it passes, so a fallen tower's shockwave weakens the whole enemy army (D138) | Artillery, DPS | Chaff clear, tanks |
 | Artillery | Long-range splash | Slow, grouped units | Flankers, air |
 | Anti-air | Stronger against air but can still hit ground targets; some units gain anti-air upgrades | Aerial | Ground units |
 | Aerial | Air units, bombers, and transports | Ground armies without anti-air | Anti-air |
@@ -214,18 +214,18 @@ Numbers below are first-pass values for the first playable slice. Costs are per 
 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Marine | Chaff | 1 | 0 | 18 | 100 | 60 | Ballistic rifles, range 12 |
-| Flamethrower Trooper | Chaff clear | 1 | 0 | 6 | 150 | 90 | Fire, short range, splash cone |
-| Warthog | Flanker | 1 | 0 | 2 | 200 | 360 | Fast; light armor; machine gun |
+| Marine | Chaff | 1 | 0 | 18 | 100 | 50 | Ballistic rifles, range 12 |
+| Flamethrower Trooper | Chaff clear | 1 | 0 | 6 | 150 | 95 | Fire, short range, splash cone |
+| Warthog | Flanker | 1 | 0 | 2 | 200 | 380 | Fast; light armor; machine gun |
 | Gauss Warthog | Single-target DPS | 2 | 50 | 1 | 250 | 300 | Fast; light armor; anti-armor gauss cannon |
 | Scorpion | Tank | 2 | 50 | 1 | 300 | 1200 | Heavy armor; cannon (explosive) plus coax |
-| Wolverine | Anti-air | 2 | 50 | 1 | 300 | 500 | Rocket volleys, bonus damage against air, can still hit ground |
-| Hornet | Aerial | 2 | 50 | 2 | 300 | 400 | Air, rockets, bombs ground |
+| Wolverine | Anti-air | 2 | 50 | 1 | 300 | 480 | Rocket volleys, bonus damage against air, can still hit ground |
+| Hornet | Aerial | 2 | 50 | 2 | 300 | 505 | Air, rockets, bombs ground |
 | Archer Missile Pod | Artillery | 2 | 50 | 2 | 300 | 350 | Long-range explosive barrage; lobbed; cannot move |
-| Pelican | Aerial | 2 | 50 | 1 | 300 | 1200 | Chin-mounted M370 autocannon (ballistic, hits air and ground); with its Troop Bay it lands wherever it is and drops 6 Marines 5 seconds into the battle (about 11.5 seconds if it comes late to a flank zone), then lands behind enemy lines for more, up to 3 drops in all, at least 10 seconds apart |
+| Pelican | Aerial | 2 | 50 | 1 | 300 | 1550 | Chin-mounted M370 autocannon (ballistic, 25 a shot with a 1 m splash, hits air and ground; 10 with no splash until D142); with its Troop Bay it lands wherever it is and drops 6 Marines 5 seconds into the battle (about 11.5 seconds if it comes late to a flank zone), then lands behind enemy lines for more, up to 3 drops in all, at least 10 seconds apart |
 | Spartan | Single-target DPS | 3 | 250 | 1 | 500 | 1250 | Energy shield, Spartan Laser that winds up for 2.5 s before each shot |
-| Mantis | Tank | 3 | 250 | 1 | 500 | 2500 | Heavy armor; chaingun and rockets |
-| Elephant | Titan | 4 | 350 | 1 | 800 | 8000 | Mobile fortress; turrets for chaff, cannon for armor |
+| Mantis | Tank | 3 | 250 | 1 | 500 | 3360 | Heavy armor; chaingun and rockets |
+| Elephant | Titan | 4 | 150 | 1 | 800 | 8240 | Mobile fortress; turrets for chaff, cannon for armor |
 
 ODSTs are not a unit. They appear as a UNSC spell card (Section 10).
 
@@ -236,16 +236,16 @@ ODSTs are not a unit. They appear as a UNSC spell card (Section 10).
 | Grunt | Chaff | 1 | 0 | 20 | 100 | 40 | Weak plasma pistols |
 | Fuel Rod Grunt | Chaff clear | 1 | 0 | 4 | 150 | 80 | Explosive splash at range |
 | Jackal (Beam Rifle) | Single-target DPS | 1 | 0 | 4 | 175 | 70 | Snipers: a beam rifle, slow hard shots at 24 m, no shield |
-| Jackal (Shield) | Tank | 1 | 0 | 6 | 150 | 70 | Frontal energy shield: 120 degree arc, blocks 80% of incoming ballistic projectiles. Strong against light chaff |
+| Jackal (Shield) | Tank | 1 | 0 | 6 | 150 | 80 | Frontal energy shield: 120 degree arc, blocks 80% of incoming ballistic projectiles. Strong against light chaff |
 | Ghost | Flanker | 1 | 0 | 2 | 200 | 250 | Fast, light armor |
-| Elite | Single-target DPS | 2 | 50 | 3 | 300 | 200 | Regenerating shield, Unarmored body (can be infected once its shield is down) |
+| Elite | Single-target DPS | 2 | 50 | 3 | 300 | 230 | Regenerating shield, Unarmored body (can be infected once its shield is down) |
 | Wraith | Artillery | 2 | 50 | 1 | 300 | 900 | Lobbed mortar; heavy armor; slow |
-| Vampire | Anti-air | 2 | 50 | 1 | 300 | 500 | Plasma, bonus damage against air, can still hit ground |
-| Banshee | Aerial | 2 | 50 | 2 | 300 | 400 | Fast bombing runs |
-| Covenant Phantom | Aerial | 2 | 50 | 1 | 300 | 800 | Plasma turrets (hit air and ground); with its Gravity Lift it drops 7 Grunts 5 seconds into the battle, then lands behind enemy lines for more, up to 3 drops, as the Pelican does |
-| Hunter pair | Tank | 3 | 225 | 2 | 450 | 1500 | Heavy armor; 240 degree front defense arc, extremely resistant inside it, weak from behind |
+| Vampire | Anti-air | 2 | 50 | 1 | 300 | 570 | Plasma, bonus damage against air, can still hit ground |
+| Banshee | Aerial | 2 | 50 | 2 | 300 | 440 | Fast bombing runs |
+| Covenant Phantom | Aerial | 2 | 50 | 1 | 300 | 800 | Plasma turrets (hit air and ground); with its Gravity Lift it drops 7 Grunts from the air under itself 5 seconds into the battle, then every 10 seconds, up to 3 drops; it never lands, like the Infected Phantom (D142) |
+| Hunter pair | Tank | 3 | 225 | 2 | 450 | 1440 | Heavy armor; 240 degree front defense arc, extremely resistant inside it, weak from behind |
 | Zealot | Single-target DPS | 3 | 200 | 1 | 400 | 1400 | Energy sword that cleaves, leaps at its enemy, fast, strong shield, Unarmored body |
-| Scarab | Titan | 4 | 350 | 1 | 800 | 8500 | Walking fortress; plasma turrets plus a charged main beam |
+| Scarab | Titan | 4 | 150 | 1 | 800 | 9050 | Walking fortress; plasma turrets plus a charged main beam |
 
 The Covenant has no dedicated anti-armor unit. Elites, Zealots, and Wraith splash fill that job for the slice, and a dedicated unit may be added in the balance pass if win rates demand it. The Engineer is not in the slice.
 
@@ -255,17 +255,17 @@ The Flood win by spreading. They have a roster of their own, plus temporary infe
 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Infection Forms | Chaff | 1 | 0 | 60 forms in 10 packs | 100 | 228 per pack | Fast; the only unit that infects |
-| Carrier Form | Chaff clear | 1 | 0 | 4 | 150 | 170 | Explodes on reaching an enemy or when killed, releases 12 Infection Forms |
-| Combat Form | Single-target DPS | 2 | 50 | 6 | 200 | 260 | Anti-armor claws, scavenged rifle |
+| Infection Forms | Chaff | 1 | 0 | 60 forms in 10 packs | 100 | 290 per pack | Fast; the only unit that infects |
+| Carrier Form | Chaff clear | 1 | 0 | 4 | 150 | 255 | Explodes on reaching an enemy or when killed, releases 12 Infection Forms |
+| Combat Form | Single-target DPS | 2 | 50 | 6 | 200 | 280 | Anti-armor claws, scavenged rifle; leaps up to 10 m |
 | Stalker Form | Flanker | 2 | 50 | 3 | 250 | 450 | Very fast pure form |
 | Pure Form Ranged | Artillery | 2 | 50 | 2 | 250 | 400 | Lobs bone shards |
-| Swarm Form | Anti-air | 2 | 50 | 20 forms in 4 packs | 250 | 200 per pack | Flying packs, bonus damage against air from range; they bite ground units in melee, going for air first |
-| Pure Form Tank | Tank | 3 | 200 | 1 | 400 | 3200 | Heavy armor, splash slam |
-| Seeder | Single-target DPS | 3 | 200 | 2 | 475 | 800 | Flies; seeds enemies on the ground and in the air from range; a unit that dies seeded rises as the Flood's own version of it if a Flood roster has one (an Infested Banshee from a Banshee), otherwise it stays dead |
-| Infected Pelican | Aerial | 3 | 200 | 1 | 400 | 1350 | One-shot crash dive (1,200 damage within 3.5 m) |
-| Infected Phantom | Aerial | 3 | 200 | 1 | 400 | 1250 | Drops 5 Combat Forms after 8 seconds |
-| Flood Abomination | Titan | 4 | 350 | 1 | 800 | 10000 | Very tall and large; aura for nearby Flood, keeps releasing Infection Forms |
+| Swarm Form | Anti-air | 2 | 50 | 20 forms in 4 packs | 250 | 275 per pack | Flying packs, bonus damage against air from range; they bite ground units in melee, going for air first |
+| Pure Form Tank | Tank | 3 | 200 | 1 | 400 | 3400 | Heavy armor, splash slam |
+| Seeder | Single-target DPS | 3 | 200 | 2 | 475 | 900 | Flies; seeds enemies on the ground and in the air from range; a unit that dies seeded rises as the Flood's own version of it if a Flood roster has one (an Infested Banshee from a Banshee), otherwise it stays dead |
+| Infected Pelican | Aerial | 3 | 200 | 1 | 400 | 1500 | One-shot crash dive (1,200 damage within 3.5 m) |
+| Infected Phantom | Aerial | 3 | 200 | 1 | 400 | 1400 | Drops 5 Combat Forms after 8 seconds |
+| Flood Abomination | Titan | 4 | 150 | 1 | 800 | 10570 | Very tall and large; aura for nearby Flood, keeps releasing Infection Forms |
 
 **Packs.** One Infection Forms body is a pack of 6 tiny forms that move and act as one. A pack shows and deals less as its forms die. A single shot hurts one form; an area hit (splash, cone, beam, spell) hurts every form in the pack. A pack pounces on a target within 6 metres and jumps over anything that holds it up, flying over bodies; it cannot attack in the air (D39).
 
@@ -275,7 +275,7 @@ The Flood win by spreading. They have a roster of their own, plus temporary infe
 - **Only Infection Forms can infect.** Combat Forms, Carrier Forms, and Pure Forms do not. The Seeder and the Flood's infecting spells are the exceptions.
 - Only **Unarmored** units can be infected, and only when they die within melee range of an Infection Form.
 - Vehicles, Heavy and Light Armor, Spartans, and Hunters cannot be infected by Infection Forms. A unit with an Unarmored body and an energy shield, such as an Elite, can be infected only after its shield is depleted.
-- A killed unit rises as an infected unit after 2 seconds. Its stats come from its original definition scaled to 60% health. It becomes a dumb melee charger: moves to the nearest enemy, no special abilities. It keeps its base damage and cannot be infected again.
+- A killed unit rises as an infected unit after 2 seconds. Its stats come from its original definition scaled to 60% health. It becomes a dumb melee charger: moves to the nearest enemy, no special abilities. It deals no base damage at the round's end (D142) and cannot be infected again.
 - Infected units exist only for that round and are discarded at round end.
 - **Seeder:** it flies, so only what can reach air can hit it, and its Seed Spore hits ground units only (D66). A hit plants a seed for 8 seconds. The host loses health and is slowed, and if it dies seeded it rises as an infected unit, whatever its armor. A shield that is up stops the seed. Titans and Flood cannot be seeded. It takes the closest enemy in range that it can seed; with none in range it shoots the closest enemy like any other unit, Titans, raised shields, Flood and seeded hosts included, doing its damage without a seed (D127; before, it stood by them without firing). The seed slows any host, but only eats a host the Flood can convert, or an aircraft; a Spartan or a Hunter is only slowed (D127).
 - **Infected Pelican:** a one-shot Tier 3 unit that crashes into the densest enemy cluster, dealing heavy splash damage and spawning 30 Infection Forms and 5 Combat Forms on impact. If it is shot down, it does the same where it falls.
@@ -327,7 +327,7 @@ Cards are data. Design the data so cards attach without refactoring. Built in Mi
 The AI plays the same game under the same rules, including the income cap, unlock limit, squad limit, and starting draft.
 
 1. **Version 1: rule-based.** Each round, spend the budget by picking a strategy from a small set (swarm, armor push, air raid, balanced). Choose strategies using the player’s previous army composition when possible, and counter the player’s most expensive role.
-2. **Placement:** tanks and chaff in front, ranged units behind, flankers on the sides.
+2. **Placement:** tanks and chaff in front, ranged units behind, flankers on the sides. Hard and Insane guard a tower that fell to the enemy's flank: from the flank zones (D61), or to units that go for towers (D138).
 3. **Difficulty:** Easy makes poorer counters and wastes budget; Normal counters sensibly; Hard counters well and adapts each round.
 4. The AI must never cheat on information or income. Difficulty is about decision quality only.
 
@@ -346,7 +346,7 @@ The AI plays the same game under the same rules, including the income cap, unloc
 - Deployment screen: credit counter and expected income, unit shop, unlock button (one per round), squads bought this round (x of 2), squad rotation control, spell placement with blue (defensive) and red (offensive) outlines, “Ready” button. No timer.
 - Card selection screen (from round 2): 3 cards of the current kind (spells or reinforcements), their prices, and a Skip button showing the bonus (50 for spells, 100 for reinforcements).
 - Stats window (bottom left): appears whenever a squad is selected and shows all of its stats: squad size, cost, tier, role, health, armor type, shield, move speed, collision size, target filter, and for each weapon its damage, rate of fire, range, splash radius, and damage type. It also shows level, XP bar, level-up button with its price, and tech upgrades.
-- Battle screen: both base health bars, speed control, a small live army-value comparison.
+- Battle screen: both base health bars, speed control, a small live army-value comparison. A blue glow under the player's squad with the most damage this battle, a red one under the enemy's; both stay through the result and the next deployment and clear when the next battle starts (D142). No glow in the Sandbox.
 - Result screen: base damage dealt by each side, top damage dealers, and the most effective counters.
 - Tooltips on every unit show role, strong against, and weak against, taken from the data.
 
@@ -585,6 +585,11 @@ Complete in order. A milestone is done only when every criterion passes and the 
 | 2026-11-12 | The Spartan Grenadier walks with its rocket launcher on the shoulder, like the Spartan | Per the project owner (D135) |
 | 2026-11-12 | The XP bar fills during the battle; kills by the bodies a squad drops, releases or raises earn XP for that squad; a battle ends only once what a blast killed is dead | Per the project owner (D136) |
 | 2026-11-12 | Balance goes by unit: a unit intent sheet the owner decides (what each unit is for and how strong it should be for its price), and the army slot test, which measures what each unit adds to the armies the AI really builds | Per the project owner (D137) |
+| 2026-11-12 | The unit balance pass: 40 units retuned by type and price, chaff damage moved into its techs, flankers go for the enemy's towers and Hard and Insane guard a raided tower; every sub-faction 48% to 52% under Insane | Per the project owner (D138) |
+| 2026-11-13 | The second balance pass: units of a type and price brought to about the same win rate (measured by taking each out of its roster), the Elephant's, Scarab's and Abomination's unlock down to 150, 50 and 250, then exclusive units alone bring every sub-faction but Lekgolo (53.5%) to 48% to 51% under Insane | Per the project owner (D140) |
+| 2026-11-15 | The balance remade to the owner's vision: the three factions' base units balanced first, in tournaments without exclusive units (UNSC, Covenant and Flood 50% each; every Titan unlocks for 150), then exclusive units tuned so every sub-faction has a matchup it clearly wins (56% or more). A big spread between sub-factions is allowed | Per the project owner (D141) |
+| 2026-11-18 | The playtest batch: the Covenant Phantom drops its Grunts from the air and never lands; the Pelican's autocannon 10 -> 25 with a 1 m splash; the Condor's five light lasers 19.5 -> 60; the Skitterer's range 7 -> 12 m; the Spartan Heavy Weapons' chaingun 15 -> 13; the Goliath melee only, its Fuel Rod Cannon gone, a Hunter-like charge and a 240 slam (was 120); summoned bodies deal no base damage and take their squad's level; half of a kill's XP goes to the squads that damaged the body, by their damage; the Oil Zone is bought once, lasts the whole round and recharges in 2 rounds; a blue and a red glow under each side's most damaging squad; unit stats players can change in JSON files; stats on hover on the draft and reinforcement cards. No tournament yet | Per the project owner (D142) |
+| 2026-11-19 | The Pelican lands where it is to drop its Marines, never behind enemy lines; Sandbox unit icons open their stats; the Spawner releases 3 Combat Forms (was 5); Swarm Brood 200 -> 300 | Per the project owner (D143) |
 
 ## 18. Assumptions to confirm
 

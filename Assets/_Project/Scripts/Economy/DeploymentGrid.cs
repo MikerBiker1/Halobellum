@@ -24,7 +24,7 @@ namespace Halobellum.Economy
         {
             int columns = SquadFormation.Columns(stats.SquadSize);
             int rows = (int)MathF.Ceiling(stats.SquadSize / (float)columns);
-            float spacing = stats.CollisionRadius * 2f + rules.FormationGap;
+            float spacing = stats.CollisionRadius * 2f + SquadFormation.GapFor(stats, rules.FormationGap);
             float widthMetres = (columns - 1) * spacing + stats.CollisionRadius * 2f;
             float depthMetres = (rows - 1) * spacing + stats.CollisionRadius * 2f;
             width = Math.Max(1, (int)MathF.Ceiling(widthMetres / rules.SquareSize - 1e-3f));

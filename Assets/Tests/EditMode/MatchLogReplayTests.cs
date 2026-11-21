@@ -152,6 +152,10 @@ namespace Halobellum.Tests
             MatchLogReplay older = MatchLogReplay.Read(new[] { start + "}" });
             Assert.AreEqual(CardFilter.AllCards, older.Setup.Cards, "A log from before the filter was written.");
             Assert.IsNull(older.GameVersion);
+            Assert.IsNull(older.UnitStats, "Played with the game's own unit stats (mod_json).");
+
+            MatchLogReplay modded = MatchLogReplay.Read(new[] { start + ",\"version\":\"0.399.0\",\"unit_stats\":\"modded:3\"}" });
+            Assert.AreEqual("modded:3", modded.UnitStats, "A game played with the player's unit stats files says so (mod_json).");
         }
 
         [Test]

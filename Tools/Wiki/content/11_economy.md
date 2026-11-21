@@ -20,7 +20,7 @@ You start round 1 with **200 credits**. After every round that doesn't end the m
 - A unit type must be **unlocked once** before you can buy it. It stays unlocked for the match.
 - **At most 1 unlock per round**, even for free tier 1 units.
 - You can only unlock units in your roster: your faction's base roster plus your sub-faction's exclusives.
-- Unlock prices: tier 1 **free**, tier 2 **50**, tier 3 about **half the squad's price** (200 to 250), Titans **350**. Each unit page shows its exact price.
+- Unlock prices: tier 1 **free**, tier 2 **50**, tier 3 about **half the squad's price** (150 to 250), Titans **150**. Each unit page shows its exact price.
 - You can unlock and buy a unit in the same round.
 - Reinforcement cards unlock their unit for free and ignore the 1-unlock limit.
 
@@ -57,13 +57,13 @@ Both sides have two towers in their zone (see [Towers](#/page/towers)). Their sh
 
 ### Command Center
 
-Each purchase can be made once per round.
+Each purchase can be made once per round; the Oil Zone, once per match.
 
 | Purchase | Cost | Effect |
 | --- | --: | --- |
 | Level up the tower | 100 | +1 level (max 5): double health, shorter shockwave |
 | Extra squad slot | 50 | One more squad can be bought this round |
-| Oil Zone | 150 | A one-use offensive spell: a line that slows ground units and makes fire hurt more |
+| Oil Zone | 150 | Bought once: an offensive spell kept for the match, a line that slows ground units and makes fire hurt more for the whole battle; recharges for 2 rounds after each use |
 | Rapid Resupply | free | **+200 credits now, 300 less income next round** |
 | Elite Recruitment | 100 | Squads **bought** this round start at **level 2**, for half their base price more (1.5× the price for 2× health and damage) |
 

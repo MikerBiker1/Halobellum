@@ -6,6 +6,15 @@ SCRIPT_GUID = "18f573ec65622716199bfdc1300f78c5"
 src = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "Docs", "M4_counter_web_matrix.csv")
 rows = list(csv.reader(open(src, encoding="utf-8")))
 cols = rows[0][1:]
+# margin.csv beside the matrix (D154): by how much the row unit wins, -1 to 1 (the share of its army left less the column unit's).
+margin_src = os.path.join(os.path.dirname(os.path.abspath(src)), "margin.csv")
+margins = {}
+if os.path.exists(margin_src):
+    mrows = list(csv.reader(open(margin_src, encoding="utf-8")))
+    for r in mrows[1:]:
+        for j, v in enumerate(r[1:]):
+            if v != "":
+                margins[(r[0], mrows[0][1:][j])] = float(v)
 
 
 def q(s):
@@ -24,6 +33,8 @@ for r in rows[1:]:
         if v == "":
             continue
         lines += [f"  - attacker: {q(r[0])}", f"    defender: {q(cols[j])}", f"    winRate: {float(v):g}"]
+        m = margins.get((r[0], cols[j]))
+        lines += [f"    margin: {m:g}", "    hasMargin: 1"] if m is not None else ["    margin: 0", "    hasMargin: 0"]
 out = os.path.join(ROOT, "Assets", "_Project", "Data", "AI", "MatchupTable.asset")
 open(out, "w", encoding="utf-8", newline="\n").write("\n".join(lines) + "\n")
 meta = out + ".meta"

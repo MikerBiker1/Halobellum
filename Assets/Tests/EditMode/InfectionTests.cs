@@ -288,7 +288,7 @@ namespace Halobellum.Tests
             Assert.IsTrue(tank.IsSeeded);
             float hit = tank.Health;
             RunSeconds(sim, 1f);
-            Assert.AreEqual(hit, tank.Health, 1e-3f, "A host the Flood can't convert isn't eaten by the seed (the owner, 2026-11-10).");
+            Assert.Less(tank.Health, hit - 1f, "Its rot eats any unit the seed takes (the owner, D155; until then only hosts the Flood converts and aircraft).");
             Assert.Less(tank.SpeedMultiplier, 1f, "It is still slowed.");
             tank.Health = 0f;
             RunSeconds(sim, 2.5f);
@@ -310,6 +310,23 @@ namespace Halobellum.Tests
             float hit = jet.Health;
             RunSeconds(sim, 1f);
             Assert.Less(jet.Health, hit - 5f, "10% of its health a second.");
+        }
+
+        [Test]
+        public void ASeedsBites_CountForThePlantersSquad_OnTheHostsDamageRecord()
+        {
+            // For the kill XP split (xp_split): what a seed eats counts for the squad of the Seeder that planted it.
+            var sim = NewSim();
+            SimUnit seeder = sim.AddUnit(TestUnits.Unit(health: 100000f, speed: 0f, weapon: SeedDart()), Team.A, Vec2.Zero, squadId: 7);
+            SimUnit jet = sim.AddUnit(TestUnits.Unit("Jet", health: 100f, armor: ArmorType.Light, speed: 0f, air: true,
+                weapon: TestUnits.Weapon(damage: 0f, range: 0.1f)), Team.B, new Vec2(0f, 20f));
+            Bystander(sim);
+            RunSeconds(sim, 1f);
+            Assert.IsTrue(jet.IsSeeded);
+            Assert.Greater(seeder.SeedDamageDealt, 5f, "The seed ate some of it.");
+            Assert.AreEqual(1, jet.SquadDamageCount, "Only the Seeder's squad damaged it.");
+            Assert.AreEqual(seeder.CreditSquadId, jet.SquadDamageSquadId(0));
+            Assert.AreEqual(seeder.DamageDealt + seeder.SeedDamageDealt, jet.SquadDamageAmount(0), 1e-3f, "Its dart and its seed's bites.");
         }
 
         [Test]

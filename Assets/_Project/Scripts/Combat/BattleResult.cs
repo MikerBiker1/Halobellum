@@ -2,6 +2,8 @@
 // The outcome of one simulated battle: how long it lasted, whether it hit the time limit, and per
 // team and per unit type how many bodies survived, damage dealt, kills, and the base damage the
 // survivors would deal (Bible Section 5). Used by the headless runner and, later, the result screen.
+// Survivors counts every living body; base damage comes only from survivors that were not summoned
+// in the battle (SimUnit.Origin: brood, death bursts, risen and seeded bodies, spell squads).
 // Outcome rule: the side whose survivors deal more base damage wins the battle; equal is a draw.
 // A side that wiped the other out always wins (the wiped side deals 0).
 // Depends on: Halobellum.Core (Team).
@@ -38,8 +40,13 @@ namespace Halobellum.Combat
         public int Survivors;
         public float DamageDealt;
         public int Kills;
-        /// <summary>Total base damage the surviving bodies deal to the enemy base.</summary>
+        /// <summary>Total base damage the surviving bodies deal to the enemy base. Bodies summoned in the battle deal none (Survivors still counts them).</summary>
         public float SurvivorBaseDamage;
+        /// <summary>
+        /// How much of the army placed before the battle is left at its end, from 0 to 1: each placed body's health and shield left, weighted by
+        /// its share of its squad's cost (D154). Summoned and carried bodies, and towers, are left out. The counter web's margin reads it.
+        /// </summary>
+        public float HealthLeftShare;
         /// <summary>Per unit type, in the order the types were first added.</summary>
         public List<UnitTypeResult> UnitTypes = new List<UnitTypeResult>();
         /// <summary>This side's spells in the battle: damage and kills (Deployed and Survivors stay 0).</summary>

@@ -12,11 +12,15 @@
 // Levels: with --levels real (the default) every squad fights at the level its unit had in that army, a slot at the average level its unit
 // reached in that sub-faction's armies, and a level costs what it costs in a match (half the price each, LevelUpCostShare), so a unit that
 // lives and levels up is worth what that brings. With --levels one every squad is level 1: the worth of the unit's price alone.
-// Battles only: no towers, techs, cards, items or spells; squads stand on the real deployment grid where Hard puts them by role
-// (chaff and tanks in front, artillery at the back), and units that can flank go to the flank zones, left and right in turn, arriving on
-// time as they do after their first battle. Draws count half.
+// Towers and techs: with --towers yes (the default) each side has its two towers at the levels they had at the end of that match; they
+// don't shoot, but a tower that falls slows and weakens its whole army for a while (its shockwave), which is what flankers and the
+// flank-zone aircraft go for. With --techs real (the default) each side has the techs it had bought for its units; a slot of a unit the
+// army had techs for gets them too. --towers no and --techs none leave them out.
+// No cards, items or spells. Squads stand on the real deployment grid where Hard puts them by role (chaff and tanks in front,
+// artillery at the back), and units that can flank go to the flank zones, left and right in turn, arriving on time as they do after
+// their first battle. Draws count half.
 // Usage: dotnet Tournament.dll <game_data.json> - <out.txt> --slot <results.jsonl> [--pairs 210] [--budget 4000] [--slot-share 0.2]
-//        [--levels real|one] [--only "Sub A,Sub B"] [--trial trial.txt] [--threads 8]
+//        [--levels real|one] [--towers yes|no] [--techs real|none] [--only "Sub A,Sub B"] [--trial trial.txt] [--threads 8]
 // It writes the report to out.txt and one line per unit to out.csv next to it.
 using System;
 using System.Collections.Generic;
@@ -46,14 +50,22 @@ static class SlotTest
     {
         public string Sub, Enemy;
         public List<Entry> Own, Foe;
+        /// <summary>Each side's tower levels (Command Center, Research Center) and the techs it owned.</summary>
+        public int[] OwnTowers, FoeTowers;
+        public List<(UnitStats type, TechUpgrade tech)> OwnTechs, FoeTechs;
     }
 
     static double _levelShare;
+    static MatchRules _matchRules;
+    static bool _towers, _techs;
 
     public static int Run(string sourcePath, string outPath, List<FactionInfo> factions, MatchRules matchRules, CombatRules combat, int threads,
-        int pairsPerSub, int budget, float slotShare, bool realLevels, HashSet<string> only)
+        int pairsPerSub, int budget, float slotShare, bool realLevels, bool withTowers, bool withTechs, HashSet<string> only)
     {
         _levelShare = matchRules.LevelUpCostShare;
+        _matchRules = matchRules;
+        _towers = withTowers && matchRules.HasTowers;
+        _techs = withTechs;
         var rosters = new Dictionary<string, List<UnitStats>>();
         foreach (FactionInfo faction in factions)
             foreach (SubFactionInfo sub in faction.SubFactions)
@@ -73,8 +85,11 @@ static class SlotTest
             var armyA = ArmyOf(sideOfA, rosters[a], realLevels);
             var armyB = ArmyOf(sideOfB, rosters[b], realLevels);
             if (armyA.Count == 0 || armyB.Count == 0) continue;
-            all.Add(new Pair { Sub = a, Enemy = b, Own = armyA, Foe = armyB });
-            all.Add(new Pair { Sub = b, Enemy = a, Own = armyB, Foe = armyA });
+            int[] towersA = TowersOf(sideOfA), towersB = TowersOf(sideOfB);
+            var techsA = TechsOf(sideOfA, rosters[a]);
+            var techsB = TechsOf(sideOfB, rosters[b]);
+            all.Add(new Pair { Sub = a, Enemy = b, Own = armyA, Foe = armyB, OwnTowers = towersA, FoeTowers = towersB, OwnTechs = techsA, FoeTechs = techsB });
+            all.Add(new Pair { Sub = b, Enemy = a, Own = armyB, Foe = armyA, OwnTowers = towersB, FoeTowers = towersA, OwnTechs = techsB, FoeTechs = techsA });
         }
 
         var subs = rosters.Keys.Where(s => only == null || only.Contains(s)).OrderBy(s => s, StringComparer.Ordinal).ToList();
@@ -100,7 +115,7 @@ static class SlotTest
         var slotSquads = subs.ToDictionary(s => s, s => new int[chosen[s].Count][]);
         long overflow = 0, battles = 0;
         double gapTotal = 0;
-        string levels = realLevels ? "at the levels they reached" : "all at level 1";
+        string levels = (realLevels ? "at the levels they reached" : "all at level 1") + (_towers ? ", with towers" : ", no towers") + (_techs ? ", with their techs" : ", no techs");
         Console.WriteLine($"Army slot test: {subs.Count} sub-factions, {jobs.Count} army pairs, budget {budget}, slot {slot}, squads {levels}, on {threads} threads.");
         var clock = System.Diagnostics.Stopwatch.StartNew();
         int finished = 0;
@@ -117,14 +132,14 @@ static class SlotTest
             int over = 0;
             double gaps = 0;
 
-            (result[0], margin[0]) = Fight(Scale(pair.Own, ownCost + slot), pair.Foe, combat, seed, ref over, ref gaps);
+            (result[0], margin[0]) = Fight(Scale(pair.Own, ownCost + slot), pair, combat, seed, ref over, ref gaps);
             for (int u = 0; u < roster.Count; u++)
             {
                 var added = new Entry { Type = roster[u], Level = slotLevel[job.sub][u] };
                 added.Squads = Math.Max(1, (int)Math.Round(slot / added.SquadCost));
                 squads[u] = added.Squads;
                 var withSlot = new List<Entry>(own) { added };
-                (result[u + 1], margin[u + 1]) = Fight(withSlot, pair.Foe, combat, seed, ref over, ref gaps);
+                (result[u + 1], margin[u + 1]) = Fight(withSlot, pair, combat, seed, ref over, ref gaps);
             }
             scores[job.sub][job.pair] = result;
             margins[job.sub][job.pair] = margin;
@@ -205,6 +220,30 @@ static class SlotTest
         return squads > 0 ? levels / squads : (double?)null;
     }
 
+    /// <summary>A side's tower levels at the end of the match, in the order it lists them (Command Center, Research Center).</summary>
+    static int[] TowersOf(JsonElement side)
+    {
+        if (!side.TryGetProperty("towers", out JsonElement towers)) return Array.Empty<int>();
+        return towers.EnumerateArray().Select(t => Math.Max(1, t[0].GetInt32())).ToArray();
+    }
+
+    /// <summary>The techs a side owned ("Unit: Tech"), for units its roster can buy.</summary>
+    static List<(UnitStats type, TechUpgrade tech)> TechsOf(JsonElement side, List<UnitStats> roster)
+    {
+        var techs = new List<(UnitStats type, TechUpgrade tech)>();
+        if (!side.TryGetProperty("techs", out JsonElement list)) return techs;
+        foreach (JsonElement item in list.EnumerateArray())
+        {
+            string text = item.GetString();
+            int colon = text.IndexOf(": ", StringComparison.Ordinal);
+            if (colon < 0) continue;
+            UnitStats type = roster.Find(u => u.Name == text.Substring(0, colon));
+            TechUpgrade tech = type?.TechUpgrades?.FirstOrDefault(t => t != null && t.Name == text.Substring(colon + 2));
+            if (tech != null) techs.Add((type, tech));
+        }
+        return techs;
+    }
+
     static List<Entry> ArmyOf(JsonElement side, List<UnitStats> roster, bool realLevels)
     {
         var army = new List<Entry>();
@@ -249,14 +288,19 @@ static class SlotTest
     /// One battle: this army against the enemy's mix grown to exactly its credits. The score is 1 a win, 0.5 a draw, 0 a loss; the margin is
     /// the survivors' base damage minus the enemy's, over the base damage this army started with.
     /// </summary>
-    static (double score, double margin) Fight(List<Entry> army, List<Entry> enemyMix, CombatRules rules, int seed, ref int overflow, ref double gaps)
+    static (double score, double margin) Fight(List<Entry> army, Pair pair, CombatRules rules, int seed, ref int overflow, ref double gaps)
     {
         double cost = CostOf(army);
-        var enemy = Scale(enemyMix, cost);
+        var enemy = Scale(pair.Foe, cost);
         gaps += Math.Abs(CostOf(enemy) - cost);
-        PlayerState a = Deploy(Team.A, army, rules, ref overflow);
-        PlayerState b = Deploy(Team.B, enemy, rules, ref overflow);
-        BattleResult result = DeploymentGrid.CreateBattle(rules, a, b, seed).Run();
+        PlayerState a = Deploy(Team.A, army, pair.OwnTowers, pair.OwnTechs, rules, ref overflow);
+        PlayerState b = Deploy(Team.B, enemy, pair.FoeTowers, pair.FoeTechs, rules, ref overflow);
+        BattleSimulation battle = DeploymentGrid.CreateBattle(rules, a, b, seed);
+        // Towers after the squads, as Match.BuildBattle adds them.
+        foreach (PlayerState side in new[] { a, b })
+            foreach (PlacedTower tower in side.Towers)
+                battle.AddUnit(TowerBuilder.MakeStats(_matchRules, tower.Kind, tower.Level), side.Team, DeploymentGrid.TowerCentre(tower, side.Team, rules));
+        BattleResult result = battle.Run();
         double score = result.Outcome == BattleOutcome.TeamAWins ? 1.0 : result.Outcome == BattleOutcome.TeamBWins ? 0.0 : 0.5;
         double start = a.Squads.Sum(s => a.EffectiveStats(s).BaseDamage * s.Type.SquadSize);
         return (score, (result.TeamA.SurvivorBaseDamage - result.TeamB.SurvivorBaseDamage) / Math.Max(1.0, start));
@@ -282,9 +326,15 @@ static class SlotTest
     /// Squads where Hard puts them (RuleBasedAi.FindSpotFor: by role, and in the flank zones for units that can flank, without lanes),
     /// at whole levels that average out to the entry's level.
     /// </summary>
-    static PlayerState Deploy(Team team, List<Entry> army, CombatRules rules, ref int overflow)
+    static PlayerState Deploy(Team team, List<Entry> army, int[] towerLevels, List<(UnitStats type, TechUpgrade tech)> techs, CombatRules rules, ref int overflow)
     {
         var player = new PlayerState(team);
+        if (_techs) foreach (var (type, tech) in techs) player.AddTech(type, tech);
+        if (_towers)
+        {
+            TowerBuilder.AddTo(player, _matchRules, rules);
+            for (int i = 0; i < player.Towers.Count && i < towerLevels.Length; i++) player.Towers[i].Level = Math.Min(_matchRules.TowerMaxLevel, towerLevels[i]);
+        }
         var sameKind = new Dictionary<UnitRole, int>();
         int id = 0, flanks = 0, depth = rules.DeploymentDepthSquares, arenaWidth = rules.ArenaWidthSquares;
         foreach (Entry entry in army.OrderBy(e => RoleOrder(e.Type.Role)).ThenBy(e => e.Type.Name, StringComparer.Ordinal).ThenBy(e => e.Level))

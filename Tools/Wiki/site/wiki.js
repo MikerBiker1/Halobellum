@@ -399,6 +399,7 @@
     if (w.seed) tags.push(`<span class="chip good">Seeds for ${num(w.seed.seconds)} s: −${num(w.seed.damageShare * 100)}% health/s, ${pct(w.seed.slow)} slower</span>`);
     if (w.hitSlow) tags.push(`<span class="chip">Slows ${pct(w.hitSlow.slow)} for ${num(w.hitSlow.seconds)} s</span>`);
     if (w.windUp) tags.push(`<span class="chip">Wind-up ${num(w.windUp)} s</span>`);
+    if (w.magazine) tags.push(`<span class="chip">Magazine ${w.magazine.shots}, ${num(w.magazine.reload)} s reload</span>`);
     return `<div class="weapon"><div class="weapon-head"><h3>${esc(w.name)}</h3>${i === 0 ? '<span class="main-tag">Main weapon</span>' : ""}</div>
       <div class="weapon-stats"><div><small>Damage</small><b>${num(w.damage)}</b></div><div><small>Every</small><b>${num(w.interval, 3)} s</b></div><div><small>DPS / body</small><b>${num(w.dps)}</b></div><div><small>Range</small><b>${num(w.range)} m</b></div><div><small>Projectile</small><b>${w.projectileSpeed ? num(w.projectileSpeed) + " m/s" : "Instant"}</b></div></div>
       <div class="chips" style="margin-top:10px">${tags.join("")}</div></div>`;

@@ -37,18 +37,23 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 9632cde31b594755fb790af06ea396f3, type: 2}
     - {fileID: 11400000, guid: 62ca927056fbfddd24672c8fc9053324, type: 2}
     - {fileID: 11400000, guid: 1c66024e41737ce62090f0849764b2cd, type: 2}
+    unitCosts: []
   - subFactionName: Lekgolo Colony
     description: 'Worm colonies in armor: a tough front line that heals itself, and scuttling Skitterers.'
     exclusiveUnits:
     - {fileID: 11400000, guid: 313886d58ce2a8b6401c2f0bcdb20b14, type: 2}
     - {fileID: 11400000, guid: d89c0d6831282aca1768c93e6668d9d1, type: 2}
     - {fileID: 11400000, guid: da44bff4a932fb55e659036654835d85, type: 2}
+    unitCosts:
+    - unitName: Hunter Pair
+      cost: 400
   - subFactionName: Unggoy Rebellion
     description: 'Grunts, and more Grunts: huge cheap squads, burning methane, a hero''s mech.'
     exclusiveUnits:
     - {fileID: 11400000, guid: 88cf3a21fce74313a25256411c468a76, type: 2}
     - {fileID: 11400000, guid: dc661dd6ecc068e2e4802385ce1677c5, type: 2}
     - {fileID: 11400000, guid: 9aff8788cc26a5f635ed812d437c95c9, type: 2}
+    unitCosts: []
   spells:
   - {fileID: 11400000, guid: 24a845a0a64ea7ba8aa2e5b11b160884, type: 2}
   - {fileID: 11400000, guid: 17439d7a16746d79c5dc9837fcf3127a, type: 2}

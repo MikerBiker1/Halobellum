@@ -143,7 +143,7 @@ namespace Halobellum.Tests
             UnitStats spawner = UnityEditor.AssetDatabase.LoadAssetAtPath<Halobellum.Units.UnitDefinition>("Assets/_Project/Data/Units/FloodCovenant/Spawner.asset").ToStats();
             Assert.AreEqual("Infection Forms", spawner.SpawnedUnit.Name);
             Assert.AreEqual("Combat Form", spawner.AlternateSpawnedUnit.Name, "Not Infested Elites with Covenant guns (D116).");
-            Assert.AreEqual(5, spawner.AlternateSpawnedUnit.SquadSize, "Five a lot since D125 (two before).");
+            Assert.AreEqual(3, spawner.AlternateSpawnedUnit.SquadSize, "Three a lot since D143 (five since D125, two before).");
             var sim = new BattleSimulation(HeadlessRunnerTool.LoadRules(), 1);
             spawner.MoveSpeed = 0f;
             sim.AddUnit(spawner, Team.A, new Vec2(0f, -30f));
@@ -154,7 +154,7 @@ namespace Halobellum.Tests
             Assert.IsTrue(sim.Units.Any(x => x.Team == Team.A && x.Stats.Name == "Infection Forms"), "Infection Forms first.");
             Assert.IsFalse(sim.Units.Any(x => x.Stats.Name == "Combat Form"));
             Steps(sim, spawner.SpawnIntervalSeconds);
-            Assert.AreEqual(5, sim.Units.Count(x => x.Team == Team.A && x.Stats.Name == "Combat Form"), "Then five Combat Forms (D125).");
+            Assert.AreEqual(3, sim.Units.Count(x => x.Team == Team.A && x.Stats.Name == "Combat Form"), "Then three Combat Forms (D143).");
         }
 
         [Test]
@@ -164,6 +164,7 @@ namespace Halobellum.Tests
             UnitStats spawner = UnityEditor.AssetDatabase.LoadAssetAtPath<Halobellum.Units.UnitDefinition>("Assets/_Project/Data/Units/FloodCovenant/Spawner.asset").ToStats();
             TechUpgrade brood = spawner.TechUpgrades.Single(t => t.UnlocksReinforcement);
             Assert.AreEqual("Swarm Brood", brood.Name);
+            Assert.AreEqual(300, brood.Cost, "200 -> 300 (D143).");
             Assert.IsFalse(spawner.HasReinforcement, "Nothing without the tech.");
             Assert.AreEqual("Swarm Form", spawner.LockedReinforcement.Name);
             Assert.AreEqual(1, spawner.LockedReinforcement.SquadSize, "One stack, not a squad of four.");

@@ -38,7 +38,7 @@ namespace Halobellum.Tests
             Assert.AreEqual(8, cards.Count(c => c.Type == CardType.Item), "The 8 items.");
             Assert.AreEqual(2, cards.Count(c => c.Type == CardType.Economy), "Supply Enhancement and Super Supply.");
             Assert.AreEqual(2, cards.Single(c => c.Type == CardType.Training).MaxOwnedCopies, "Intensive Training can be taken twice.");
-            Assert.AreEqual(2f, cards.Single(c => c.Name == "Laser Sights").Item.RangeBonus, 1e-3f);
+            Assert.AreEqual(4f, cards.Single(c => c.Name == "Laser Sights").Item.RangeBonus, 1e-3f); // 2 -> 4 m (the owner, D144)
             Assert.AreEqual(4, cards.Count(c => c.Type == CardType.Buff));
             foreach (CardDefinition definition in Faction(asset).cards)
                 Assert.IsNotNull(definition.icon, $"{definition.name} has an icon.");

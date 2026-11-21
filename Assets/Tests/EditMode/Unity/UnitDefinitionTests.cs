@@ -125,5 +125,26 @@ namespace Halobellum.Tests
             first.Weapons[0].DamagePerShot = 1f;
             Assert.AreEqual(80f, _definition.ToStats().Weapons[0].DamagePerShot);
         }
+
+        [Test]
+        public void ToStats_AppliesTheUnitStatsFilesOnlyWhileInForce()
+        {
+            Assert.IsNull(UnitStatOverrides.Active, "Only a built game's launch puts them in force (mod_json).");
+            var overrides = new UnitStatOverrides();
+            var errors = new List<string>();
+            var defaults = new Dictionary<string, UnitStats> { ["Test Trooper"] = _definition.ToStats() };
+            overrides.Read("UNSC.json", "{\"units\":[{\"name\":\"Test Trooper\",\"cost\":300}]}", defaults, "", errors, new List<string>(), new Dictionary<string, string>());
+            CollectionAssert.IsEmpty(errors);
+            try
+            {
+                UnitStatOverrides.Active = overrides;
+                Assert.AreEqual(300, _definition.ToStats().Cost);
+            }
+            finally
+            {
+                UnitStatOverrides.Active = null;
+            }
+            Assert.AreEqual(250, _definition.ToStats().Cost);
+        }
     }
 }

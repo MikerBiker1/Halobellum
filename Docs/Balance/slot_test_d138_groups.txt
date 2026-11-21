@@ -1,0 +1,103 @@
+
+== Chaff, 100: middle of the base units +7.1, spread 17.4
+  *Infested Marine           +18.4  (+11.2 from the middle)  
+   Marine                    +17.2  (+10.0 from the middle)  Aero +22, Arm +14, Nob +16
+  *Cannon Fodder              +7.7  (+0.6 from the middle)  
+   Grunt                      +3.3  (-3.9 from the middle)  Ban +5, Lek +6, Ung -2
+   Infection Forms            +1.0  (-6.2 from the middle)  Cov -4, UNSCf +6
+
+== Anti-chaff, 150: middle of the base units -5.7, spread 27.4
+  *Brute Grenadier            +8.8  (+14.5 from the middle)  
+   Fuel Rod Grunt             +7.1  (+12.7 from the middle)  Ban +5, Lek +10, Ung +7
+   Flamethrower Trooper       -5.6  (+0.1 from the middle)  Aero -1, Arm -9, Nob -6
+   Carrier Form              -18.5  (-12.8 from the middle)  Cov -15, UNSCf -22
+
+== Single-target, 175-250: middle of the base units -6.8, spread 28.0
+  *Heavy Grunts               +4.4  (+11.2 from the middle)  
+   Gauss Warthog              +2.8  (+9.6 from the middle)  Aero -0, Arm +1, Nob +7
+   Jackal (Beam Rifle)        +0.2  (+7.0 from the middle)  Ban +1, Lek +4, Ung -4
+   Combat Form               -23.5  (-16.7 from the middle)  Cov -25, UNSCf -22
+  *Infested Elite            -23.6  (-16.8 from the middle)  
+
+== Single-target, 300: middle of the base units -11.1, spread 13.1
+  *Cobra                      +2.0  (+13.1 from the middle)  
+   Elite                     -11.1  (+0.0 from the middle)  Ban -12, Lek -4, Ung -17
+
+== Single-target, 400-500: middle of the base units -2.7, spread 19.0
+   Spartan                    +8.7  (+11.4 from the middle)  Aero +8, Arm +7, Nob +11
+  *Hunter Captain             +6.8  (+9.5 from the middle)  
+  *Spartan Sniper             +1.5  (+4.1 from the middle)  
+  *Spartan Fireteam           -0.4  (+2.3 from the middle)  
+   Zealot                     -6.5  (-3.8 from the middle)  Ban -3, Lek -4, Ung -13
+   Seeder                    -10.3  (-7.6 from the middle)  Cov -11, UNSCf -9
+
+== Anti-chaff, 400: middle of the base units -7.9, spread 0.0
+  *Spartan Grenadier          -7.9  (+0.0 from the middle)  
+
+== Tank, 150: middle of the base units -15.2, spread 0.0
+   Jackal (Shield)           -15.2  (+0.0 from the middle)  Ban -16, Lek -14, Ung -16
+
+== Tank, 275-300: middle of the base units -2.3, spread 9.5
+   Scorpion                   -2.3  (+0.0 from the middle)  Aero -4, Arm -5, Nob +2
+  *Marauder                   -5.7  (-3.3 from the middle)  
+  *Infested Scorpion         -11.9  (-9.5 from the middle)  
+
+== Tank, 400-500: middle of the base units -5.4, spread 17.4
+  *Grunt Goblin               +5.4  (+10.8 from the middle)  
+  *Spartan Heavy Weapons      +4.3  (+9.7 from the middle)  
+   Hunter Pair                +4.1  (+9.5 from the middle)  Ban +1, Lek +5, Ung +6
+  *Grizzly                    +2.9  (+8.3 from the middle)  
+  *Spawner                    +2.4  (+7.8 from the middle)  
+  *Goliath                    -4.5  (+0.9 from the middle)  
+   Pure Form Tank             -8.2  (-2.8 from the middle)  Cov -2, UNSCf -14
+   Mantis                    -12.0  (-6.6 from the middle)  Aero -7, Arm -19, Nob -11
+
+== Artillery, 250-400: middle of the base units -11.2, spread 13.8
+  *Rhino                      -3.4  (+7.9 from the middle)  
+   Pure Form Ranged           -9.5  (+1.8 from the middle)  Cov -9, UNSCf -10
+   Archer Missile Pod        -11.2  (+0.1 from the middle)  Aero -8, Arm -18, Nob -7
+   Wraith                    -13.1  (-1.8 from the middle)  Ban -13, Lek -13, Ung -13
+  *Infested Wraith           -17.2  (-5.9 from the middle)  
+
+== Anti-air, 250-300: middle of the base units -11.0, spread 16.8
+   Wolverine                  -1.8  (+9.2 from the middle)  Aero +2, Arm -5, Nob -3
+   Swarm Form                -12.5  (-1.5 from the middle)  Cov -12, UNSCf -13
+  *Reaver                    -16.1  (-5.1 from the middle)  
+   Vampire                   -18.6  (-7.6 from the middle)  Ban -19, Lek -17, Ung -20
+
+== Aircraft, 250-300: middle of the base units -17.6, spread 19.0
+  *Sparrowhawk                -1.3  (+16.3 from the middle)  
+  *Longsword                  -6.7  (+10.9 from the middle)  
+  *Infested Banshee          -12.0  (+5.6 from the middle)  
+   Hornet                    -15.0  (+2.6 from the middle)  Aero -17, Arm -15, Nob -12
+  *Infested Hornet           -16.1  (+1.5 from the middle)  
+   Banshee                   -20.3  (-2.6 from the middle)  Ban -24, Lek -18, Ung -19
+
+== Aircraft, 400-500: middle of the base units -22.0, spread 15.1
+  *Vulture                    -8.9  (+13.1 from the middle)  
+  *Condor Gunship            -10.9  (+11.2 from the middle)  
+   Infected Phantom          -20.1  (+2.0 from the middle)  Cov -20, UNSCf -20
+   Infected Pelican          -24.0  (-2.0 from the middle)  Cov -24, UNSCf -24
+
+== Titans, 800: middle of the base units -2.6, spread 7.5
+   Flood Abomination          +1.0  (+3.6 from the middle)  Cov +1, UNSCf +1
+   Elephant                   -2.4  (+0.2 from the middle)  Aero +1, Arm -6, Nob -2
+   Scarab                     -6.4  (-3.8 from the middle)  Ban -6, Lek -3, Ung -10
+
+== Flankers (wait for the tower change): middle of the base units +7.1, spread 30.6
+  *Infested Ghost            +27.1  (+20.0 from the middle)  
+  *Chopper                   +26.8  (+19.6 from the middle)  
+  *Gremlin                   +24.3  (+17.2 from the middle)  
+   Ghost                     +20.5  (+13.4 from the middle)  Ban +21, Lek +12, Ung +29
+  *Skitterer                 +17.6  (+10.5 from the middle)  
+  *Spartan CQB               +17.1  (+9.9 from the middle)  
+  *Infested Warthog           +9.8  (+2.6 from the middle)  
+   Warthog                    +4.2  (-2.9 from the middle)  Aero -9, Arm +5, Nob +17
+  *Juggernaut                 +2.5  (-4.6 from the middle)  
+   Stalker Form               -3.5  (-10.6 from the middle)  Cov -6, UNSCf -1
+
+== Transports (wait for the beacon): middle of the base units -19.2, spread 8.2
+   Pelican                   -15.1  (+4.1 from the middle)  Aero -25, Arm -13, Nob -8
+   Covenant Phantom          -23.2  (-4.1 from the middle)  Ban -26, Lek -21, Ung -22
+
+* = a sub-faction's exclusive unit (may sit a little above the base units).

@@ -23,6 +23,9 @@ namespace Halobellum.Units
             public string attacker;
             public string defender;
             [Range(0f, 1f)] public float winRate;
+            [Tooltip("By how much the attacker wins, -1 to 1: the share of its army left less the defender's (D154).")]
+            [Range(-1f, 1f)] public float margin;
+            public bool hasMargin;
         }
 
         [Tooltip("When and how the table was measured.")]
@@ -34,7 +37,9 @@ namespace Halobellum.Units
             var table = new MatchupTable();
             foreach (Entry entry in entries)
             {
-                if (entry != null && !string.IsNullOrEmpty(entry.attacker)) table.Set(entry.attacker, entry.defender, entry.winRate);
+                if (entry == null || string.IsNullOrEmpty(entry.attacker)) continue;
+                table.Set(entry.attacker, entry.defender, entry.winRate);
+                if (entry.hasMargin) table.SetMargin(entry.attacker, entry.defender, entry.margin);
             }
             return table;
         }

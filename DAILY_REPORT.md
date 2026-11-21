@@ -2,6 +2,176 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## 2026-11-20: balancing to 48-52% (D163)
+
+- Seven tournament rounds while the owner was out. Changed: Spartan Sniper 76, Heavy Weapons chaingun 14, Fireteam rifle 33, Infested Marine 125, Infested Warthog ram 50, Grunt Goblin 13.5, Marauder 1600 health and 104 cannon, Brute Grenadier 158 health and 35, Chopper 315 health and 66 blades, Condor autocannons 22.
+- Six seeds pooled: every sub-faction 49.1% to 51.2%; factions 49.6% to 50.5%. The verification seeds alone: 47.9% to 52.1%.
+
+## 2026-11-20: cheaper Grenadier, tougher Chopper (D162)
+
+- **Spartan Grenadier** 350 credits; **Chopper** 300 health. Two runs averaged: Banished 44.9% -> 46.6%, Noble 46.3% -> 44.1%, UNSC-based 54.7%, Unggoy Rebellion 53.6%.
+
+## 2026-11-20: every sub-faction 48-52% (D161)
+
+- **Rhino** fires every 4 s, **Gremlin** 360 health, **Condor** 1200 health.
+- **Tournament:** every sub-faction 48% to 52% (Flood 51%, Covenant 50%, UNSC 49%). Two more runs on new matches, averaged: Banished 44.9%, Noble 46.3%, Unggoy Rebellion 54.1%, UNSC-based 53.9%, the rest 48.6% to 51.6%; not confirmed yet.
+
+## 2026-11-20: Warthog ram, Heavy Weapons armor (D160)
+
+- **Infested Warthog** rams for 60, but once: it needs 0.5 s of driving to build up speed for the next, so a squad takes one ram. **Spartan Heavy Weapons** light armor under its shield. **Infested Marine** 130.
+- **Tournament:** every sub-faction 46% to 53% (Flood 52%, Covenant 52%, UNSC 46%): all inside the band.
+
+## 2026-11-20: UNSC touches (D159)
+
+- **Spartan Sniper** 72 damage, 2.4 s reload; **Spartan Grenadier** 65; **Gremlin** 14 m; **Grizzly** cannons every 2 s.
+- **Tournament:** Flood 55%, Covenant 50%, UNSC 46%; every sub-faction 47% to 52% except UNSC-based at 56%.
+
+## 2026-11-20: sniper and grenadier reloads, Lekgolo's Hunter Pair price (D158)
+
+- **Spartan Sniper** 70 damage, 2.5 s reload, every shot heard; **Spartan Grenadier** 2 s reload; **Infested Wraith** 90; **Brute Grenadier** 14 m; **Skitterer** 80 a body; **Reaver** heavy armor.
+- **Hunter Pair** 400 credits for the Lekgolo Colony only (a sub-faction can now have its own price for a base unit).
+- **Tournament:** Flood 54%, Covenant 52%, UNSC 44%; every sub-faction 44% to 55%.
+
+## 2026-11-20: magazines, Flood carriers to sub-factions (D157)
+
+- **Magazines:** the Spartan Sniper fires 2 a second, 4 rounds then a 2 s reload, at half damage; the Spartan Grenadier 2 a second, 2 rockets then 1.2 s.
+- **Infested Elite** 3 m/s and fires twice as fast; **Infested Warthog** no Infection Form; **Infested Scorpion** 1500; **Infested Wraith** 95; **Marauder** 1500; **Spartan CQB** 150.
+- **Infected Pelican** UNSC-based only, **Infected Phantom** Covenant-based only. **Cannon Fodder** 1 m apart. **Grunt Goblin** needles only, 14 damage, 1 m splash, 16 m. Vampire and Goblin twice as loud.
+- **Tournament:** Flood 58%, UNSC 52%, Covenant 41% (Banished 39%, Lekgolo 43%).
+
+## 2026-11-20: Seeder rot 2.5% (D156)
+
+- **Seeder** rot 2.5% of health a second (was 4%). **Tournament:** UNSC 51%, Flood 51%, Covenant 48%; Aerospace Command 60% and UNSC-based 58% high, Covenant-based 43%, Noble and Unggoy Rebellion 44% low.
+
+## 2026-11-20: Covenant, Flood and air pass (D155)
+
+- **Grunts** 5 and **Cannon Fodder** 3.5 damage with green shots; **Heavy Grunts** 11; **Elite** 300 shield; **Vampire** 800 health and 50% louder.
+- **Hunters** no weak back; **Hunter Captain** laser 2 s; **Spartan Sniper** every 2.5 s; **beam rifle Jackal** shots go through a kill.
+- **Seeder** rot on any unit, 0.5 m splash that seeds; **Infested Banshee** 400; **Pelican** 1400; **Hornets** rockets only, 1 m splash.
+- **Tracers** now leave from the gun: a streak was drawn wholly behind its start (the Sparrowhawk's bullets seemed to come from above its guns).
+- **Tournament:** Flood 64% (UNSC-based 68%), Covenant 45%, UNSC 44% (Noble 38%). The Seeder's rot is the big change.
+
+## 2026-11-20: counter margins (D154)
+
+- The counter web now also measures **by how much** each unit wins (the share of its army left less the other's), and Insane can read it, so two 100% counters are told apart.
+- Against today's Insane it won 51.0% of 3600 matches and bought much the same, so it is **off by default**, kept to try again (for example with more weight on the margin).
+
+## 2026-11-20: Flood and Aerospace pass (D153)
+
+- **Infested Warthog** ram 34.5, **Infested Scorpion** 300 credits, **Infested Wraith** 80 damage, **Combat Form** claws only at 3 m/s.
+- **Rhino** range 46. **Vulture** chin gun 22 m. **Longsword** 1000 health. **Condor** cannons explosive with a 0.5 m splash.
+- **Sparrowhawk** two miniguns firing together, 15 a second each, not anti-armor: 3.5 damage each, as 2 to 3 beat fewer units than the autocannon did.
+- **Tournament:** Aerospace Command 42% -> 61%, Covenant 49% -> 42% (Unggoy Rebellion 40%), UNSC 58%, Flood 51%.
+
+## 2026-11-20: Covenant Phantom 15 damage (D152)
+
+- **Covenant Phantom** Plasma Turrets 16 -> 15 (the owner). In the counter web it now beats 50 of 68 units (52 at 16; the Pelican 54) and loses to the Pelican one on one. No tournament run since.
+
+## 2026-11-20: Covenant pass (D151)
+
+- **Heavy Grunts** 10 damage, no shield, 150 health. **Grunt Goblin** fires the Vampire's needles (explosive, 0.5 m splash, its sound), damage per credit about the same (1059). **Reaver** 900 health. **Goliath** no weak back.
+- **Elites** stand 1.5 m apart, 250 shield, 14 m range. **Shield Jackals** shoot green and, at a shielded target, charge 1 s and fire a slow bolt that strips 100 shield.
+- **Covenant Phantom** 1550 health, 16 every 0.3 s with a 1 m splash (the Pelican's 25 in energy beat every Pelican).
+- **Tournament:** Covenant 34% -> 49%, UNSC 50%, Flood 51%; Aerospace Command 42%, Covenant-based 43%.
+
+## 2026-11-20: explosive Vampire, ballistic needles (D150)
+
+- **Vampire:** 16 explosive damage, x3 against air (D149's x5 is gone), 0.5 m splash, 700 health; your NeedlerRifle sound; needles drawn 25% faster. Beats a Pelican (85 health left); the level 1 Condor beats it (410 left).
+- **Heavy Grunts' Needle Rifle:** ballistic instead of energy.
+- **Tournament:** Covenant 34%; Unggoy Rebellion 41% -> 34%, Banished 39% -> 41%, Lekgolo 37% -> 41%.
+
+## 2026-11-19: Aim for Their Wings, and a tougher Vampire (D149)
+
+- **Jackal sniper:** new tech Aim for Their Wings (150): +4 m range and +50% damage against aircraft. The AI buys it first once aircraft are seen.
+- **Vampire:** 700 health, x5 damage against air (x6 tied the Condor; x5 lets the level 1 Condor win, and the Vampire still beats a Pelican alone).
+- **Tournament:** Covenant 34%, about as before.
+
+## 2026-11-19: Hunters shoot aircraft (D148)
+
+- **Hunter Pair and Hunter Captain** reach aircraft with the cannon and the laser; the bash stays a ground blow. The AI's counter table re-measured.
+- **Tournament:** Covenant 25% -> 34% (Lekgolo 38%, Banished 38%, Unggoy 40%); Armored Division 70% -> 64%.
+
+## 2026-11-19: the Spartan CQB fights (D147)
+
+- **Spartan CQB:** no longer runs to the towers; it fights the closest enemy. Noble 61% -> 62% (the AI rarely fields it); its damage when fielded x3.
+- **Your games:** the Heavy Weapons carried both (one with an Absorption Module beat Banished's round 2 army alone); Brute Grenadiers did 0 damage all game against Spartans.
+- **Found:** the tournament now has Covenant at 25% and Armored Division at 70%, from the unmeasured changes since D141. Not changed.
+
+## 2026-11-19: the Carrier Form through its own Infection Forms (D146)
+
+- **Carrier Form:** walks through its own Infection Forms, which held it back from Scarabs and Goblins (you saw it in the Sandbox). Not balance-tested.
+- **Tech icons:** 6 px above the squads (was 30).
+- **New diagnostics:** `Tournament --duel` and `HB_REPLAY_WATCH` (Docs/battle_log.md).
+
+## 2026-11-19: Insane stops feeding what fails, and tech icons over squads (D145, no tournament)
+
+- **Insane:** reads your levels and techs against its counter table, and won't pile a failing type past 30% of its army. It beats the old Insane 52.8% over 2,880 matches, 2-9 points better with every sub-faction.
+- **Replays:** `Tools/Balance/Tournament --replay <log>` plays one of your logs again headless (exactly, under the old Insane) and prints the AI's army each round; `--old-insane` for the AI before D145.
+- **Tech icons** over each squad during deployment (yours now, the enemy's from the last battle); hover for the name.
+- Relevant tests pass. Nothing committed or pushed.
+
+## 2026-11-19: Laser Sights and the AI's Glassing Beam (D144, no tournament)
+
+- **Laser Sights:** +4 m range (was +2).
+- **Glassing Beam:** the AI leads it. It forecasts where both armies will have walked by each tick of the beam and picks the line (centre and direction) that burns the most enemy value minus its own troops. The forecast matches the battle to within 3 m in a test.
+- **Your last two games, read:** the AI counters with a table measured at level 1, no techs, equal credits. Your Level 5 Spartan Grenadier with three techs flipped "Goblins beat Grenadiers", and Wolverines with Long-Range Rockets flipped "Pelicans beat Wolverines"; it kept feeding both. No change made; your call.
+- Relevant tests pass. Nothing committed or pushed.
+
+## 2026-11-19: your changes after the tournaments (D143, no tournament)
+
+- **Pelican:** with Troop Bay it comes down where it is to let its Marines out (5 s, then every 10 s, 3 drops) and never flies behind enemy lines.
+- **Sandbox:** clicking a unit's icon or name in the list opens its stats window; a second click closes it.
+- **Spawner:** 3 Combat Forms a release (was 5). At equal credits it now loses to the Zealot and the Heavy Grunts.
+- **Swarm Brood:** 200 -> 300 credits.
+- The AI's counter table is rebuilt for the Spawner. Relevant tests pass (89 sim, 45 Unity). Nothing committed or pushed.
+
+## 2026-11-19: the art merged, and the tournaments after D142 (no changes made)
+
+- **Art:** the Scarab session's branch (D139) is merged. The Goliath now uses its new body (walk, charge, slam, idle, fall), and both Jackals and the Goliath have new icons. 125 Goliath, model, icon and roster tests pass.
+- **Base units only (8 seeds, Insane vs Insane, 2000 health):** UNSC 24.0%, Covenant 54.2%, Flood 71.8% (D141 ended at 50 / 50 / 50).
+- **With exclusives (8 seeds):** Covenant-based 78.8, UNSC-based 76.1, Unggoy 52.2, Banished 49.9, Lekgolo 45.7, Aerospace 36.5, Armored 32.4, Noble 28.3.
+- **Why (each change switched off in turn, 2 seeds):**
+  - **The Pelican:** the AI now puts 21-26% of the UNSC's credits into it and always buys Troop Bay, so the Pelican spends the battle flying behind the lines to land. The AI's counter table measures it with no tech, as a gunship that beats most units. Without the Pelican the UNSC goes from 24 to 56%.
+  - **Summoned units at their squad's level:** worth about 15 points to the Flood (72 -> 57% when switched off), through the Infected Phantom's Combat Forms, the Carrier Form's Infection Forms and the Seeder's seed forms.
+  - The XP split and summoned units dealing no base damage move things by 1 to 4 points.
+- Nothing adjusted: you'll playtest first.
+
+## 2026-11-18: your playtest batch (D142), not committed
+- **What you asked:** thirteen changes after your play test, then relevant tests only; no push and no tournament until you say so. Nothing is committed or pushed, and no tournament was run.
+- **Units:** the Covenant Phantom no longer lands: it drops its 7 Grunts from the air under it 3 times (5 s in, then every 10 s) and never goes behind enemy lines. Pelican autocannon 10 → 25 with a 1 m splash; Condor lasers 19.5 → 60 each; Skitterer range 7 → 12 m; Heavy Weapons chaingun 15 → 13 (65 at level 5); Goliath melee only, slam 120 → 240, and it charges like the Hunters.
+- **Summoned bodies:** they deal no base damage at the round's end (a Spawner alive at time-out: about 520 → 80), and fight at the level of the squad that made them. Troops a bought transport drops still count.
+- **XP:** half a kill's XP goes to the killer, half to every squad that damaged the body, by damage (your example gives 55% and 45%). Total XP is unchanged.
+- **Oil Zone:** lasts the whole round, bought once, stays in your spells and recharges 2 rounds after use. The AI buys it once.
+- **New:** a blue glow under your top-damage squad, red under the enemy's, kept until the next battle starts; 11 unit stats JSON files in the game folder's `UnitStats`, read at every launch, with a menu panel listing any mistakes; stats on hover on the draft and reinforcement cards, and an "i" corner that pins them on the Unlock Skirmish bar and page.
+- **Art:** the Jackal icons and a new animated Goliath went to the Scarab session (`m13/art`); not merged yet.
+- **Watch out:** the Pelican now beats the Wolverine and the Vampire, so its answers are mostly Titans and a few exclusives. Win rates will move (Pelican, Condor, summon rules, XP split, oil). A level-1 Infection Forms and Carrier Forms draft deals nothing against Fuel Rod Grunts. The counter web was refreshed for the five changed units only.
+- **Not checked:** the Phantom's drops, the glow and real mouse hover on the icons haven't been seen in a play test.
+- **Your calls:** `MORNING_DECISIONS.md` 205–219. Every number is in `DECISIONS.md` D142.
+
+## The balance remade to your vision (D141), not committed
+- **What you asked:** balance the three factions with their base units only, in tournaments without exclusive units; then bring the exclusive units back, where a big spread is fine as long as every sub-faction has a matchup it is good at. Nothing is committed or pushed.
+- **Phase 1, base units only:** one sub-faction plays for each faction, every exclusive taken out. From Covenant 68%, UNSC 49%, Flood 34% to **50.0% each** over eight seeds. 14 base units changed, most by a few percent; every Titan now unlocks for 150.
+- **Phase 2, with exclusives:** every sub-faction has a matchup of 56% or more (Banished at 56% against Aerospace is the weakest best). UNSC-based Flood is 61.5% overall, Lekgolo 45.2%. 11 exclusive units changed, mostly up: the Reaver and the Chopper cheaper (the AI hardly bought them), part of D140's cuts to Lekgolo's three exclusives undone.
+- **Every unit:** with exclusives in, all 14 type-and-price groups are within 10 points of each other (average 5.7). 19 of 30 exclusives are at or above the base units of their group, and none is more than 4 points below. The strongest are the Flood flankers: the Infested Warthog and Infested Ghost sit about 8 points above the base flankers.
+- **Watch out:** the Covenant sub-factions win only 23–43% against the Flood with exclusives, mostly because the AI buys the wrong units there (item 200). A tiny stat change can flip the AI's counter table, so every round now lists the flips before it runs.
+- **Your calls:** `MORNING_DECISIONS.md` 198–204. Every number is in `DECISIONS.md` D141 and `Docs/Balance/d141_unit_review.md`.
+
+## The second balance pass (D140), not committed
+- **What you asked:** units of the same type and price adding the same win rate first, then exclusive units only to bring each sub-faction near 50%.
+- **The measure:** ban impact, how much a sub-faction's win rate drops when one unit is taken out of its roster, replayed match by match against the same seed. Edge proved blind to a unit's stats.
+- **Phase 1:** 11 of 13 groups within 10 points, average spread 7.2 (8.5 before the last round). Re-testing every unit on one roster overnight found the Spawner, Infested Ghost, Flamethrower Trooper and Infested Marine well above their groups; they are now within their margins. The Titans are 3 points apart: their 350 unlock was the trap, not their stats, so it is now 150 for the Elephant, 50 for the Scarab and 250 for the Abomination.
+- **Phase 2:** Insane against Insane over eight seeds: UNSC-based 50.5, Banished 50.4, Unggoy 50.3, Noble 49.8, Aerospace 48.9, Covenant-based 48.5, Armored 48.1. Lekgolo is at 53.5: its exclusives are only 7% of its spending and can't bring it lower; your call in item 196.
+- **Watch out:** small changes can flip what the AI buys. A 9% Flamethrower damage cut once dropped Aerospace to 43%, because neither side bought it against the other any more. I reverted it.
+- **Found:** bodies made in a battle (Flood spawns, dropped Marines) give the enemy full XP. A measuring switch is in, off; your call in `MORNING_DECISIONS.md` 195.
+- **About 60 units changed**, most by a few percent; `DECISIONS.md` D140 lists every number. Nothing is committed or pushed.
+## The big balance pass (D138), not committed
+- **Result:** Insane against Insane on four seeds, every sub-faction 48% to 52%: Aerospace Command 52, Unggoy Rebellion 52, Covenant-based Flood 50, UNSC-based Flood 50, Armored Division 49, Noble 49, Banished 49, Lekgolo Colony 48.
+- **Your answers, done:** chaff damage moved into its techs (Marine and Grunt); the Fuel Rod Grunt down a little and the Flamethrower Trooper up; the Spartan fires slower and the Condor faster; the Combat Form leaps 10 m; the Titans within a few points of each other; exclusive units a little above base units.
+- **Flankers go for towers:** they walk to the nearest enemy tower, shooting what they pass, then attack it. Their edge went up for every one, as you expected, and their damage stayed low. The AI never defended against it, so Hard and Insane now guard a tower that ground raiders took, as they already did against flank-zone aircraft.
+- **40 units changed** in all; `DECISIONS.md` D138 lists every number. Tests and docs updated; nothing is committed or pushed, as you asked.
+- **Left for you:** the transports' beacon (a task of its own), the Zealot's placement by the AI, and the Combat Form and Infested Elite, which still lose more than they win when bought.
+- **Defender, tried again on this balance:** 48.6% against Typical in Faction mode (41.6% before), 36.5% against Typical and 41.8% against TowerRush in Unlock Skirmish. Insane keeps Typical and TowerRush; details in `Docs/Balance/insane_playstyles_d128.md`.
+
 ## Balance by unit: the intent sheet and the army slot test (D137)
 - **Intent sheet** (`Docs/Balance/unit_intent.md`): all 69 units, each with its job, what it should beat and lose to, its target for its price, and what it measures now. Your words from today are in it. Its 11 questions are also items 178–188 of `MORNING_DECISIONS.md`.
 - **Army slot test** (`Docs/Balance/unit_balance.md`): what a slot of a unit adds to the armies the AI really builds, at equal credits and at the levels units reach. All eight sub-factions in about 2.5 minutes on 8 threads, one in 20 seconds. Two runs on different armies agree at r = 0.93.

@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 1
   cost: 400
   baseDamage: 80
-  maxHealth: 2300
+  maxHealth: 2780
   armorType: 2
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -28,6 +28,8 @@ MonoBehaviour:
   turnTime180: 1
   isAir: 0
   canFlank: 0
+  goesForTowers: 1
+  squadGap: 0
   targetFilter: 0
   weapons:
   - weaponName: Crushing Charge
@@ -71,6 +73,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0

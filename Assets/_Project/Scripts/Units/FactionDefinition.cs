@@ -24,6 +24,15 @@ namespace Halobellum.Units
             [TextArea] public string description;
             [Tooltip("Units only this sub-faction can use, on top of the base roster.")]
             public List<UnitDefinition> exclusiveUnits = new List<UnitDefinition>();
+            [Tooltip("Base roster units this sub-faction buys at its own price (D158).")]
+            public List<UnitCostEntry> unitCosts = new List<UnitCostEntry>();
+        }
+
+        [Serializable]
+        public sealed class UnitCostEntry
+        {
+            public string unitName;
+            public int cost;
         }
 
         public string factionName;
@@ -56,6 +65,9 @@ namespace Halobellum.Units
                 {
                     if (unit != null) sub.ExclusiveUnits.Add(StatsFor(unit, statsCache));
                 }
+                if (entry.unitCosts != null)
+                    foreach (UnitCostEntry price in entry.unitCosts)
+                        if (price != null && !string.IsNullOrEmpty(price.unitName)) sub.UnitCosts.Add(new UnitCost { Unit = price.unitName, Cost = price.cost });
                 info.SubFactions.Add(sub);
             }
             foreach (SpellDefinition spell in spells)

@@ -346,7 +346,7 @@ namespace Halobellum.Combat
         {
             int columns = SquadFormation.Columns(stats.SquadSize);
             int rows = (int)MathF.Ceiling(stats.SquadSize / (float)columns);
-            float spacing = stats.CollisionRadius * 2f + formationGap;
+            float spacing = stats.CollisionRadius * 2f + SquadFormation.GapFor(stats, formationGap);
             width = (columns - 1) * spacing + stats.CollisionRadius * 2f;
             depth = (rows - 1) * spacing + stats.CollisionRadius * 2f;
         }
@@ -355,7 +355,7 @@ namespace Halobellum.Combat
             Vec2 centreInTeamAFrame, RunnerSettings settings, SimRandom random, bool rotated90 = false)
         {
             Vec2 centre = team == Team.A ? centreInTeamAFrame : -centreInTeamAFrame;
-            List<Vec2> offsets = SquadFormation.Offsets(stats.SquadSize, stats.CollisionRadius, rules.FormationGap, rotated90);
+            List<Vec2> offsets = SquadFormation.Offsets(stats, rules.FormationGap, rotated90);
             int squadId = simulation.NewSquadId();
             foreach (Vec2 offset in offsets)
             {

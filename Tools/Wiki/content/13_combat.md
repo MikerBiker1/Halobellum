@@ -91,8 +91,24 @@ A hit's damage is also multiplied by:
 ## Defense arcs and blocking
 
 - A few units have a **defense arc** centred on their facing. A hit from **inside** the arc uses the front multiplier, and a **blockable** projectile of a listed damage type may be **blocked completely**. A hit from **outside** uses the rear multiplier.
-- In the current data: the shield Jackal has a **120°** arc (front ×0.5, rear ×1, blocks **80% of blockable ballistic** shots); the Hunter-type units have **240°** arcs (front ×0.7, rear ×1.5, no blocking).
+- In the current data: the shield Jackal has a **120°** arc (front ×0.5, rear ×1, blocks **80% of blockable ballistic** shots); the Hunter Pair, the Hunter Captain and the Goliath have **240°** arcs (front ×0.7, rear ×1, no blocking): a tougher front, and no weak back.
 - Only the projectile's own target can block it, and **a blocked projectile loses its splash too**. Splash, cones, beams and death bursts are never blocked, but still take the front or rear multiplier.
+
+## Charged shots
+
+Every plasma pistol shoots green (the Grunts', the Cannon Fodder's and the shield Jackal's). At a target that still has **shield**, it charges for **1 s** (a green glow at its tip), then fires a big, slow bolt (**12 m/s**). The bolt strips **100 shield points** and does nothing to health. At a target with no shield, it fires as usual.
+
+## Rams
+
+The Infested Warthog's ram hits once, then again only after the Warthog has driven for **0.5 s** to build up speed. Against a squad it rams the first body and stands among the rest without the speed for another; its machine gun keeps firing.
+
+## Shots that go through
+
+The beam rifle Jackal's shot goes on through a kill: if it kills its target, it hits the nearest enemy behind it on the same line from the Jackal, within the rifle's range, and goes on again if that one dies too. A shot that doesn't kill stops where it hits.
+
+## Squad spacing
+
+Squadmates stand a small gap apart. The **Elites** stand **1.5 m** apart, in formation and while they walk, so one blast catches fewer of them.
 
 ## Hit slow
 
@@ -101,13 +117,14 @@ Some weapons slow what they hit directly for a few seconds. A new hit restarts t
 ## Leaps, charges and dives
 
 - **Leap:** a unit with a leap pounces on a target within its leap range and lands against it, then waits out its cooldown. It also jumps over whatever holds it up after being stuck at under half speed for 0.3 s. It can't attack in the air, but it can be shot there.
-- **Charge** (the Hunter-type units): a run along the ground at a target within reach of their close-in weapon. They use one weapon at a time: with a ground enemy close, they stop shooting and close in to bash.
+- **Charge** (the Hunter-type units and the Goliath): a run along the ground at a target within reach of their close-in weapon. They use one weapon at a time: with a ground enemy close, they stop shooting and close in to bash. The Goliath has only its fists, so it charges at whatever comes within its charge and walks to anything further.
 - **Dive** (the Flood's crashing aircraft): it falls out of the sky at a target and dies where it lands, setting off its death burst.
 
 ## Air units
 
 - Air units can only be hit by weapons that can target air. Some anti-air weapons deal bonus damage to air, such as 3×.
-- **Landing carriers** (the Pelican and the Covenant Phantom, with their drop tech) count as **ground** units while they're down, so ground-only weapons can hit them then.
+- The **Pelican** (with its drop tech) is the only **landing carrier**: it comes down where it is to let its Marines out, and counts as a **ground** unit while it's down, so ground-only weapons can hit it then.
+- **Air carriers** (the Covenant Phantom and the Infected Phantom) never come down: they drop their squads from the air, so only anti-air can ever hit them.
 
 {{air-units}}
 
@@ -119,9 +136,10 @@ Some weapons slow what they hit directly for a few seconds. A new hit restarts t
 
 ## Mid-battle drops
 
-- Some units carry a squad that comes out during the battle, either always or only once its tech is bought. A dropped squad exists only for that battle, fights with your army's bonuses, earns no experience, and counts for base damage if it survives.
-- **Landing carriers** (with their drop tech) drop their first squad **5 s** into the battle wherever they are. For later drops they fly to 8 m behind the enemy's rearmost ground unit, take 1.5 s to come down, let the squad out, and go back up: up to **3 drops**, at least **10 s** apart. An EMP that switches off their techs keeps them waiting on the ground.
-- Other carriers simply drop their squad under themselves after a set delay.
+- Some units carry a squad that comes out during the battle, either always or only once its tech is bought. A dropped squad exists only for that battle, fights at its carrier's **level** and with your army's bonuses (not the carrier's techs or item), and its kills and damage earn XP for the carrier's squad.
+- **Base damage:** a squad that a bought **air** transport drops counts for base damage if it survives. **Summoned** bodies deal none: what a ground unit lets out (a Spawner's brood), death-burst forms, risen and seeded bodies, spell squads, and anything a summoned carrier drops.
+- **The Pelican** (with its Troop Bay) comes down **where it is**, taking 1.5 s, lets 6 Marines out from under it, and goes back up: the squads are out **5 s** in, then every **10 s**, up to **3 drops**. It never flies behind enemy lines to land (it did until D143). An EMP that switches off its techs keeps it waiting on the ground.
+- **Air carriers** drop their squad **straight under themselves**, from the air, wherever they are fighting, and never land. The Covenant Phantom (with its Gravity Lift) drops 7 Grunts **5 s** in, then every **10 s**, up to **3 drops**. The Infected Phantom drops its Combat Forms once, after a set delay. An EMP over one makes the next drop wait until it ends.
 
 ## Shockwave
 

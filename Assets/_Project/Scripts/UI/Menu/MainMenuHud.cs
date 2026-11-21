@@ -6,9 +6,13 @@
 // Its version is in small print in the lower left (D100). It fades in from black and fades out before a scene change. Esc steps back: the card list, then Play's page, and it closes Settings. It scales to any window (HudScale.ApplyFit).
 // Difficulty and base health are remembered (GameSettings). The card filter starts at All cards each time this screen loads, and no mode is chosen.
 // The buttons call plain public methods, which a batch run's tests can call too, since a batch run draws no IMGUI.
-// Depends on: Disclaimer, GameFlow, GameSettings, MenuStyle, SettingsScreen, Halobellum.Economy, Unity Input System.
+// After the disclaimer, when the unit stats files next to the game have mistakes (UnitStatsMods, mod_json), a panel lists them before the menu shows,
+// once a launch; while changed stats are in force, or the files have mistakes, a line above the version says so.
+// Depends on: Disclaimer, GameFlow, GameSettings, MenuStyle, SettingsScreen, UnitStatsMods, Halobellum.Economy, Unity Input System.
 
 using System;
+using System.Collections.Generic;
+using System.Text;
 using Halobellum.Economy;
 using Halobellum.Presentation;
 using UnityEngine;
@@ -119,6 +123,11 @@ namespace Halobellum.UI
         public bool HandleEscape()
         {
             if (_leaving != null) return false;
+            if (StatsErrorsPending)
+            {
+                DismissStatsErrors();
+                return true;
+            }
             if (_showSettings)
             {
                 CloseSettings();
@@ -233,6 +242,12 @@ namespace Halobellum.UI
                 if (Disclaimer.Draw(width, height)) PastDisclaimer();
                 return;
             }
+            if (StatsErrorsPending)
+            {
+                DrawStatsErrors(width, height);
+                DrawFade(width, height);
+                return;
+            }
             if (_showSettings)
             {
                 MenuStyle.Fill(new Rect(0f, 0f, width, height), new Color(0f, 0f, 0f, 0.35f));
@@ -263,6 +278,70 @@ namespace Halobellum.UI
 
             // The game's version, small, in the lower left (the owner, D100): Unity's Player Settings version.
             GUI.Label(new Rect(16f, height - 30f, 300f, 22f), VersionLabel, MenuStyle.Small);
+            string statsLine = StatsLine(UnitStatsMods.Status.State, UnitStatsMods.Status.ChangeCount);
+            if (statsLine != null) GUI.Label(new Rect(16f, height - 52f, 600f, 22f), statsLine, MenuStyle.Small);
+        }
+
+        // ------------------------------------------------------------------ the unit stats files (mod_json)
+
+        /// <summary>The most mistakes the panel lists; Player.log has them all.</summary>
+        public const int StatsErrorsShown = 8;
+
+        private static bool _statsErrorsDismissed;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatsErrors() => _statsErrorsDismissed = false;
+
+        /// <summary>True while the panel about mistakes in the unit stats files shows (once a launch, until OK or Esc).</summary>
+        public static bool StatsErrorsPending => UnitStatsMods.Status.State == UnitStatsState.Errors && !_statsErrorsDismissed;
+
+        /// <summary>Closes the panel about the unit stats files.</summary>
+        public void DismissStatsErrors() => _statsErrorsDismissed = true;
+
+        /// <summary>What the menu says above its version about the unit stats files, or null when the game plays its own values as shipped.</summary>
+        public static string StatsLine(UnitStatsState state, int changes)
+        {
+            if (state == UnitStatsState.Modded) return $"Unit stats: modded ({changes} {(changes == 1 ? "change" : "changes")})";
+            if (state == UnitStatsState.Errors) return "Unit stats: defaults (files have mistakes)";
+            return null;
+        }
+
+        /// <summary>The panel's list: the mistakes, at most StatsErrorsShown of them, then how many more.</summary>
+        public static string StatsErrorsText(IReadOnlyList<string> errors)
+        {
+            var text = new StringBuilder();
+            int shown = Mathf.Min(StatsErrorsShown, errors.Count);
+            for (int i = 0; i < shown; i++) text.Append("• ").Append(errors[i]).Append('\n');
+            if (errors.Count > shown) text.Append($"...and {errors.Count - shown} more (see Player.log)\n");
+            return text.ToString().TrimEnd('\n');
+        }
+
+        private void DrawStatsErrors(float width, float height)
+        {
+            MenuStyle.Fill(new Rect(0f, 0f, width, height), new Color(0f, 0f, 0f, 0.6f));
+            UnitStatsLoadResult status = UnitStatsMods.Status;
+            float panelWidth = Mathf.Min(1000f, width - 80f), inner = panelWidth - 64f;
+            string list = StatsErrorsText(status.Errors);
+            const string after = "The game is using its own values for every unit. Your files were not changed.";
+            float listHeight = MenuStyle.Body.CalcHeight(new GUIContent(list), inner);
+            float afterHeight = MenuStyle.Body.CalcHeight(new GUIContent(after), inner);
+            float panelHeight = Mathf.Min(height - 40f, 32f + 44f + 12f + listHeight + 18f + afterHeight + 24f + StartHeight + 32f);
+            var panel = new Rect((width - panelWidth) * 0.5f, (height - panelHeight) * 0.5f, panelWidth, panelHeight);
+            MenuStyle.Panel(panel);
+
+            float x = panel.x + 32f, y = panel.y + 32f;
+            GUI.Label(new Rect(x, y, inner, 44f), "Unit stats files have mistakes", MenuStyle.Heading);
+            y += 44f + 12f;
+            GUI.Label(new Rect(x, y, inner, listHeight), list, MenuStyle.Body);
+            y += listHeight + 18f;
+            GUI.Label(new Rect(x, y, inner, afterHeight), after, MenuStyle.Body);
+
+            float buttonsY = panel.yMax - 32f - StartHeight;
+            GUI.enabled = _leaving == null;
+            if (!string.IsNullOrEmpty(status.Folder) && MenuStyle.SmallFramedButton(new Rect(x, buttonsY, 220f, StartHeight), "Open folder", false))
+                Application.OpenURL("file:///" + status.Folder.Replace('\\', '/'));
+            if (MenuStyle.SmallFramedButton(new Rect(panel.xMax - 32f - 160f, buttonsY, 160f, StartHeight), "OK", true, "Unit stats OK")) DismissStatsErrors();
+            GUI.enabled = true;
         }
 
         /// <summary>What the lower left of the menu says: the version set in Unity's Player Settings.</summary>

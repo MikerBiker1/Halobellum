@@ -11,7 +11,9 @@
 // The unit's picture (UnitIcons) is at the top. Placeholder UI drawn with Unity's immediate-mode GUI.
 // It also shows a unit clicked in the shop (ShopUnit): a level 1 squad of that type, with its techs locked. In Unlock Skirmish it shows a unit
 // hovered in the bar or on the unlock page the same way (ShowHover, and MatchHud draws it with DrawHover, over its own dim), wherever that says;
-// while it does, nothing of a selected squad shows, and there is no x to press.
+// while it does, nothing of a selected squad shows, and there is no x to press. A squad hovered on a starting draft card or a reinforcement card
+// shows the same way, in every mode; the draft has no battle on the field yet, and a hovered unit needs none. The "i" corner of a bar or page cell
+// pins its unit as ShopUnit, as a click on a shop row does; while the unlock page is open MatchHud draws that one too (DrawShopUnitFromHud), over its dim.
 // Depends on: Halobellum.Presentation (BattleController, SquadSelection, ISquadProgression, UiHitAreas), Halobellum.Core, UnitIcons.
 
 using System.Collections.Generic;
@@ -64,7 +66,10 @@ namespace Halobellum.UI
         /// <summary>The right edge of the column this window stands in at the left of the screen.</summary>
         public const float ColumnRight = ScreenLeft + DefaultWidth;
 
-        /// <summary>The unit hovered in the bar or on the unlock page, or null. It lasts while something keeps showing it.</summary>
+        /// <summary>How wide the window is (the scene's setting), in HUD units.</summary>
+        public float WindowWidth => windowWidth;
+
+        /// <summary>The unit hovered in the bar, on the unlock page, or on a draft or reinforcement card, or null. It lasts while something keeps showing it.</summary>
         public UnitStats HoverUnit => _hoverFrame >= Time.frameCount - 1 ? _hoverUnit : null;
 
         /// <summary>
@@ -144,15 +149,32 @@ namespace Halobellum.UI
             if (_selection.SelectedSquadId >= 0 || _selection.SelectedTower != null) ShopUnit = null;
             if (HoverUnit != null) return; // MatchHud draws that, and a hovered unit must not get the selected squad's XP, techs and level-up buttons.
             if (_selection.SelectedSquadId < 0 && ShopUnit == null) return;
+            if (_selection.SelectedSquadId < 0 && _shopDrawnByHudFrame >= Time.frameCount - 1) return; // MatchHud draws it over the unlock page.
             DrawWindow(ShopUnit, null);
         }
 
-        /// <summary>The window of the unit ShowHover was told of, if any, from inside another script's OnGUI, on a Repaint. It has nothing there to click.</summary>
+        /// <summary>
+        /// The window of the unit ShowHover was told of, if any, from inside another script's OnGUI, on a Repaint. It has nothing there to click.
+        /// A hovered unit is shown as a new squad, so it needs no battle on the field: the starting draft has none yet.
+        /// </summary>
         public void DrawHover()
         {
             UnitStats hover = HoverUnit;
-            if (hover == null || battle == null || battle.Simulation == null || _selection == null) return;
+            if (hover == null || battle == null || _selection == null) return;
             DrawWindow(hover, hover);
+        }
+
+        private int _shopDrawnByHudFrame = -10;
+
+        /// <summary>
+        /// The pinned unit's window (ShopUnit), drawn from inside MatchHud's OnGUI while the unlock page is open, so that it is over the page's dim. Call it for
+        /// every event, so that its x works. While MatchHud does, this script's own OnGUI leaves it alone.
+        /// </summary>
+        public void DrawShopUnitFromHud()
+        {
+            if (ShopUnit == null || HoverUnit != null || battle == null || _selection == null || _selection.SelectedSquadId >= 0) return;
+            _shopDrawnByHudFrame = Time.frameCount;
+            DrawWindow(ShopUnit, null);
         }
 
         /// <param name="notFielded">A unit to show as a new squad, or null for the selected squad.</param>
@@ -347,7 +369,7 @@ namespace Halobellum.UI
         {
             if (s.FormsPerBody > 1) b.AppendLine("Area damage hits every form in a pack");
             if (s.Infects) b.AppendLine("Infects: Unarmored enemies killed near it rise as Flood");
-            if (s.LeapRange > 0f) b.AppendLine($"Leaps at enemies within {s.LeapRange:0} m, and over anything in its way");
+            if (s.LeapRange > 0f) b.AppendLine(s.LeapCharges ? $"Charges at enemies within {s.LeapRange:0} m, along the ground" : $"Leaps at enemies within {s.LeapRange:0} m, and over anything in its way");
             if (s.SelfDestructs) b.AppendLine("Explodes when it reaches an enemy");
             if (s.SeeksDensestCluster) b.AppendLine("Dives at the thickest group of enemies");
             if (s.DeathBurst != null)
@@ -380,11 +402,15 @@ namespace Halobellum.UI
             b.AppendLine($"Targets: {s.TargetFilter}{(s.IsAir ? "    (air unit)" : "")}");
             AppendFloodLines(b, s);
             if (s.CanFlank) b.AppendLine("Can deploy in the flank zones beside the enemy's area: late the first time");
+            if (s.GoesForTowers) b.AppendLine("Goes for the nearest enemy tower, shooting what it passes, then attacks it");
+            if (s.SquadGap > 0f) b.AppendLine($"Squadmates stand {s.SquadGap:0.#} m apart, so one blast catches fewer of them");
             UnitStats drop = s.Reinforcement ?? s.LockedReinforcement;
             if (drop != null && s.ReinforcementLandSeconds > 0f)
-                b.AppendLine(s.ReinforcementFirstDropSeconds > 0f
-                    ? $"{(s.Reinforcement == null ? "With its tech: drops" : "Drops")} {drop.SquadSize} {drop.Name}s {s.ReinforcementFirstDropSeconds:0.#} s in, then behind enemy lines, up to {s.ReinforcementDrops} times"
-                    : $"{(s.Reinforcement == null ? "With its tech: lands" : "Lands")} behind enemy lines to drop {drop.SquadSize} {drop.Name}s, up to {s.ReinforcementDrops} times");
+                b.AppendLine($"{(s.Reinforcement == null ? "With its tech: lands" : "Lands")} where it is to drop {drop.SquadSize} {drop.Name}{(drop.SquadSize == 1 ? "" : "s")} "
+                    + $"{(s.ReinforcementFirstDropSeconds > 0f ? s.ReinforcementFirstDropSeconds : s.ReinforcementDelaySeconds):0.#} s in, then every {s.ReinforcementDelaySeconds:0.#} s, up to {s.ReinforcementDrops} times");
+            else if (drop != null && (s.ReinforcementDrops > 1 || s.ReinforcementFirstDropSeconds > 0f))
+                b.AppendLine($"{(s.Reinforcement == null ? "With its tech: drops" : "Drops")} {drop.SquadSize} {drop.Name}{(drop.SquadSize == 1 ? "" : "s")} from the air "
+                    + $"{(s.ReinforcementFirstDropSeconds > 0f ? s.ReinforcementFirstDropSeconds : s.ReinforcementDelaySeconds):0.#} s in, then every {s.ReinforcementDelaySeconds:0.#} s, up to {s.ReinforcementDrops} times");
             else if (drop != null)
                 b.AppendLine($"{(s.Reinforcement == null ? "With its tech: brings" : "Brings")} {drop.SquadSize} {drop.Name}{(drop.SquadSize == 1 ? "" : "s")} {s.ReinforcementDelaySeconds:0.#} s into each battle");
             foreach ((WeaponStats w, int count, bool isMain) in GroupWeapons(s))
@@ -403,8 +429,11 @@ namespace Halobellum.UI
                     b.AppendLine($"  Damage {w.DamagePerShot:0.#} {w.DamageType}{(w.IsAntiArmor ? ", anti-armor" : "")}    Rate {w.ShotsPerSecond:0.##}/s");
                 }
                 if (w.ShotsPerAttack > 1) b.AppendLine($"  Fires {w.ShotsPerAttack} shots {w.BurstGapSeconds:0.##} s apart each attack");
+                if (w.IsRam) b.AppendLine($"  Rams once, then again only after {w.RamRechargeSeconds:0.#} s of driving to build up speed");
+                if (w.HasMagazine) b.AppendLine($"  Magazine: {w.MagazineSize} shots {w.FireInterval:0.##} s apart, then a {w.MagazineReloadSeconds:0.#} s reload (rate over time above)");
                 if (count > 1) b.AppendLine("  Each aims and fires on its own, one after another");
                 if (w.HasWindUp) b.AppendLine($"  Winds up {w.WindUpSeconds:0.#} s before each shot (the first at a new target comes that much later)");
+                if (w.HasShieldBreak) b.AppendLine($"  At a target with shield: charges {w.ShieldBreakChargeSeconds:0.#} s, then a slow bolt strips {w.ShieldBreak:0} shield (no health damage)");
                 if (w.Lobbed) b.AppendLine("  Lobbed: aims ahead of its target, can miss");
                 if (w.SeedSeconds > 0f) b.AppendLine($"  Seeds its target for {w.SeedSeconds:0.#} s: a host that dies rises as Flood");
                 if (w.HitSlowSeconds > 0f) b.AppendLine($"  A hit slows its target {w.HitSlowShare * 100f:0}% for {w.HitSlowSeconds:0.#} s (not Titans)");

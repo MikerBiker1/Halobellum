@@ -15,11 +15,11 @@ MonoBehaviour:
   unitName: Flood Abomination
   role: 8
   tier: 4
-  unlockCost: 350
+  unlockCost: 150
   squadSize: 1
   cost: 800
   baseDamage: 160
-  maxHealth: 10000
+  maxHealth: 10570
   armorType: 2
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -28,10 +28,12 @@ MonoBehaviour:
   turnTime180: 3
   isAir: 0
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 2
   weapons:
   - weaponName: Tendril Slam
-    damagePerShot: 400
+    damagePerShot: 381
     fireInterval: 2.5
     range: 7
     minRange: 0
@@ -55,7 +57,7 @@ MonoBehaviour:
     hitSlowSeconds: 0
     hitSlowShare: 0
   - weaponName: Tendril Whip
-    damagePerShot: 50
+    damagePerShot: 53
     fireInterval: 0.8
     range: 10
     minRange: 0
@@ -95,6 +97,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0

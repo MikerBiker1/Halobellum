@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 1
   cost: 400
   baseDamage: 80
-  maxHealth: 650
+  maxHealth: 1080
   armorType: 2
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -28,10 +28,12 @@ MonoBehaviour:
   turnTime180: 1.5
   isAir: 1
   canFlank: 1
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 2
   weapons:
   - weaponName: Missile Barrage
-    damagePerShot: 44
+    damagePerShot: 69
     fireInterval: 3
     range: 22
     minRange: 0
@@ -57,7 +59,7 @@ MonoBehaviour:
   - weaponName: Chin Gun
     damagePerShot: 10
     fireInterval: 0.2
-    range: 14
+    range: 22
     minRange: 0
     projectileSpeed: 0
     splashRadius: 0
@@ -95,6 +97,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0

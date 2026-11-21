@@ -12,7 +12,14 @@
 //   - Placement: squads a reinforcement card brings go where their role belongs, as the draft squads do. New squads spread out from its own
 //     clusters and from where the opponent's spells landed last battle, face the threat they counter (and air, if they shoot it), and the whole
 //     layout shifts by an offset drawn each match, so it never places the same way twice.
-// Spells aim as Hard's do, at the densest crowd: the owner found that killing the chaff that screens an army is worth it.
+//   - D145 (the owner's games: Goblins fed into level 5 Spartan Grenadiers with three techs, 13 Pelicans into Wolverines with Long-Range Rockets):
+//     the matchup table is measured at level 1, with no techs, at equal credits, so Insane moves its shares by how much stronger for their worth
+//     the opponent's revealed squads are (levels, techs, item; StrengthEdge), and its own; and while a type isn't working (farmed, or the battle
+//     lost), a type that already fills more than 30% of its army is wanted much less (concentration). Measured against the Insane before it:
+//     52.8% over 2,880 matches. Two more habits tried then (a type that lived but did little counted as farmed; farmed types remembered across
+//     rounds) did nothing alone and took from these together, so they were left out.
+// Spells aim as Hard's do, at the densest crowd: the owner found that killing the chaff that screens an army is worth it. A sweeping beam
+// is led to where the squads will be when it fires (SweepAim, D144).
 // Playstyles (D128): Insane plays Typical (all of the above) in Faction mode and TowerRush in Unlock Skirmish; Synergy and Defender exist for the tournament.
 // Depends on: AiView (LastBattle, LastKills), BattleStats, MatchupTable, DeploymentGrid, Halobellum.Core.
 
@@ -22,6 +29,24 @@ using Halobellum.Core;
 
 namespace Halobellum.Economy
 {
+    /// <summary>D145's habits of the Insane AI, to switch one by one in the tournament.</summary>
+    [Flags]
+    public enum InsaneReads
+    {
+        None = 0,
+        /// <summary>Levels and techs move the matchup table's shares.</summary>
+        Edges = 1,
+        /// <summary>No piling a failing type past 30% of the army.</summary>
+        Concentration = 2,
+        /// <summary>
+        /// The table's margins as well as its rates (D154): a counter that wins with its army nearly whole beats one that wins by its last body.
+        /// Off by default: against the Insane without it, it won 51.0% of 3600 matches (2000 health), no clear gain, and bought much the same.
+        /// The tournament's --d145 Edges,Concentration,Margins turns it on to measure it again.
+        /// </summary>
+        Margins = 4,
+        All = Edges | Concentration,
+    }
+
     public sealed partial class RuleBasedAi
     {
         /// <summary>How much less Insane wants a unit type that was fully farmed last battle, on the score's scale.</summary>
@@ -37,6 +62,36 @@ namespace Halobellum.Economy
         private const float InsaneCarryShare = 0.15f;
         /// <summary>The round from which an economy card is worth nothing (its income would not pay back).</summary>
         private const int InsaneLastEconomyRound = 8;
+
+        /// <summary>
+        /// How many logits of the matchup table's win share one unit of strength edge is worth (D145). The table is measured at level 1,
+        /// with no techs, at equal credits, where a small edge already decides the fight: its cells are mostly 0 or 1. A squad twice as
+        /// strong for its worth (an edge of ln 2) moves an even matchup to about 89%.
+        /// </summary>
+        private const float InsaneEdgeLogits = 3f;
+        /// <summary>The table's shares are read inside these bounds before an edge moves them, so that a measured 1.00 can still be overturned.</summary>
+        private const float InsaneRateFloor = 0.1f;
+        /// <summary>
+        /// Concentration (D145): above this share of its army's worth in one type, a type that was farmed (or any, after a lost battle) is wanted
+        /// InsaneConcentrationPenalty less per whole share above it. The owner's game: 13 Pelicans, three quarters of the army, fed while losing.
+        /// </summary>
+        private const float InsaneConcentrationShare = 0.3f;
+        private const float InsaneConcentrationPenalty = 14f;
+
+        /// <summary>
+        /// Insane reads the opponent's levels and techs (and its own) when it weighs a counter, and won't pile a failing type into an army it
+        /// already fills (D145). On by default; the tournament switches it off on one side to measure it against the Insane before it.
+        /// </summary>
+        public bool ReadsUpgrades
+        {
+            get => Reads != InsaneReads.None && IsInsane;
+            set => Reads = value ? InsaneReads.All : InsaneReads.None;
+        }
+        /// <summary>Which of D145's habits this Insane has (both by default; the tournament's --d145 picks one, to measure it).</summary>
+        public InsaneReads Reads { get; set; } = InsaneReads.All;
+        private bool Uses(InsaneReads part) => IsInsane && (Reads & part) != 0;
+        private readonly Dictionary<UnitStats, float> _threatEdges = new Dictionary<UnitStats, float>();
+        private bool _lostLastBattle;
 
         private readonly Dictionary<UnitStats, float> _farmed = new Dictionary<UnitStats, float>();
         private readonly Dictionary<UnitStats, float> _damageShare = new Dictionary<UnitStats, float>();
@@ -61,6 +116,7 @@ namespace Halobellum.Economy
         /// <summary>Insane: what the last battle says about its own units, the opponent's and the opponent's spells.</summary>
         private void ReadLastBattle(AiView view)
         {
+            _lostLastBattle = view.Round > 1 && view.LastBaseDamageTaken > view.LastBaseDamageDealt;
             _farmed.Clear();
             _damageShare.Clear();
             _carries.Clear();
@@ -147,6 +203,55 @@ namespace Halobellum.Economy
             if (enemyAir > 0f) _airUncovered = Math.Max(0f, Math.Min(1f, (1.2f * enemyAir - ownAntiAir) / enemyAir));
         }
 
+        /// <summary>
+        /// D145: how much stronger for its worth a squad is than the level 1, techless squad the matchup table measured, as a log of its
+        /// strength (health times damage, at equal credits). Level L multiplies health and damage by L for 1 + (L - 1) / 2 times the cost;
+        /// a tech or an item adds its health, damage, rate of fire and the like; range counts double, as it fires first and outranges.
+        /// 0 for a level 1 squad with no techs or item.
+        /// </summary>
+        public static float StrengthEdge(UnitStats type, int level, IReadOnlyList<TechUpgrade> techs, ItemStats item)
+        {
+            level = Math.Max(1, level);
+            float edge = 2f * MathF.Log(level / (1f + (level - 1) * 0.5f));
+            float range = 6f, health = Math.Max(50f, type.MaxHealth);
+            foreach (WeaponStats weapon in type.Weapons) if (weapon != null) range = Math.Max(range, weapon.Range);
+            if (techs != null)
+            {
+                foreach (TechUpgrade tech in techs)
+                {
+                    if (tech == null) continue;
+                    edge += Ln(tech.HealthMultiplier) + Ln(tech.DamageMultiplier) + Ln(tech.FireRateMultiplier) + 2f * Ln(1f + tech.RangeBonus / range)
+                            + 0.5f * Ln(tech.MoveSpeedMultiplier) + Ln(1f + tech.ShieldBonus / health) + Ln(1f + 0.6f * tech.ExtraShotsPerAttack)
+                            - 0.5f * Ln(tech.ReloadTimeMultiplier) + Ln(1f + 0.15f * tech.SplashRadiusBonus);
+                }
+            }
+            if (item != null) edge += Ln(item.HealthMultiplier) + Ln(item.DamageMultiplier) + 2f * Ln(1f + item.RangeBonus / range) + 0.5f * Ln(item.MoveSpeedMultiplier);
+            return edge;
+        }
+
+        private static float Ln(float x) => x > 0f ? MathF.Log(x) : 0f;
+
+        /// <summary>The table's share for unit against enemy: Insane reads the margin in too (D154), so two sure wins are told apart; Hard, the rate.</summary>
+        private float? TableRate(UnitStats unit, UnitStats enemy) => Uses(InsaneReads.Margins) ? _matchups.Score(unit, enemy) : _matchups.WinRate(unit, enemy);
+
+        /// <summary>How much a unit helps against anything: its average share in the table, margins read in for Insane (D154).</summary>
+        private float TableStrength(UnitStats unit) => Uses(InsaneReads.Margins) ? _matchups.OverallScore(unit) : _matchups.OverallStrength(unit);
+
+        /// <summary>
+        /// The table's share for this unit (with this strength edge) against an enemy type, moved by how much stronger for their worth that
+        /// type's revealed squads are (D145). Without an edge on either side it is the table's share unchanged.
+        /// </summary>
+        private float? UpgradedRate(UnitStats unit, float ownEdge, UnitStats enemy)
+        {
+            float? rate = TableRate(unit, enemy);
+            if (!rate.HasValue || !Uses(InsaneReads.Edges)) return rate;
+            float enemyEdge = _threatEdges.TryGetValue(enemy, out float e) ? e : 0f;
+            if (Math.Abs(ownEdge - enemyEdge) < 1e-4f) return rate;
+            float clamped = Math.Max(InsaneRateFloor, Math.Min(1f - InsaneRateFloor, rate.Value));
+            float logit = MathF.Log(clamped / (1f - clamped)) + InsaneEdgeLogits * (ownEdge - enemyEdge);
+            return 1f / (1f + MathF.Exp(-logit));
+        }
+
         private static void Add(Dictionary<UnitStats, float> sums, UnitStats type, float amount)
         {
             sums.TryGetValue(type, out float sum);
@@ -161,6 +266,18 @@ namespace Halobellum.Economy
         private float InsaneAdjustment(UnitStats unit)
         {
             float adjust = -InsaneFarmedPenalty * FarmedShare(unit);
+            if (Uses(InsaneReads.Concentration) && _self != null && (_lostLastBattle || FarmedShare(unit) >= 0.3f))
+            {
+                // Concentration (D145): no piling more of one type into an army it already fills, while it isn't working.
+                float total = 0f, mine = 0f;
+                foreach (PlacedSquad squad in _self.Squads)
+                {
+                    float worth = squad.Type.Cost * Math.Max(1, squad.Level);
+                    total += worth;
+                    if (squad.Type == unit) mine += worth;
+                }
+                if (total > 0f && mine / total > InsaneConcentrationShare) adjust -= InsaneConcentrationPenalty * (mine / total - InsaneConcentrationShare);
+            }
             if (_airUncovered > 0f) adjust += InsaneAirAnswerBonus * _airUncovered * ShareThatHitsAir(unit);
             if (Playstyle == InsanePlaystyle.Synergy && _synergyPair.Contains(unit)) adjust += SynergyBonus;
             return adjust;
@@ -313,7 +430,7 @@ namespace Halobellum.Economy
             float? bestX = null;
             foreach (SeenSquad squad in seen)
             {
-                float? rate = _matchups.WinRate(type, squad.Type);
+                float? rate = TableRate(type, squad.Type);
                 if (!rate.HasValue || rate.Value <= 0.55f) continue;
                 float score = (rate.Value - 0.5f) * squad.Value * ThreatWeight(squad.Type);
                 if (score > bestScore)
@@ -396,12 +513,12 @@ namespace Halobellum.Economy
                         int count = 0;
                         foreach (UnitStats other in self.Roster)
                         {
-                            float? ra = _matchups.WinRate(a, other), rb = _matchups.WinRate(b, other);
+                            float? ra = TableRate(a, other), rb = TableRate(b, other);
                             if (!ra.HasValue && !rb.HasValue) continue;
                             covered += Math.Max(ra ?? 0f, rb ?? 0f);
                             count++;
                         }
-                        score = (count > 0 ? covered / count : 0f) + 0.25f * (_matchups.OverallStrength(a) + _matchups.OverallStrength(b));
+                        score = (count > 0 ? covered / count : 0f) + 0.25f * (TableStrength(a) + TableStrength(b));
                     }
                     else score = 0.1f * (a.Tier + b.Tier) + (a.Cost + b.Cost) / 1000f;
                     pairs.Add((a, b, score));

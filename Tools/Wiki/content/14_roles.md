@@ -16,7 +16,7 @@ Every faction has at least one unit in each role. Anti-armor weapons count as Si
 | **Chaff Clear** | Splash damage against groups | Chaff | Tanks, Flankers |
 | **Single Target DPS** | Heavy damage on one target, anti-armor included | Tanks, heavy units | Chaff swarms, Flankers |
 | **Tank** | A tough front line | Chaff Clear | Single Target DPS |
-| **Flanker** | Fast, goes for the back line | Artillery, DPS | Chaff Clear, Tanks |
+| **Flanker** | Fast; goes for the enemy's nearest tower, shooting what it passes, then attacks it (the Spartan CQB fights instead) | Artillery, DPS | Chaff Clear, Tanks |
 | **Artillery** | Long-range splash | Slow, bunched-up units | Flankers, air |
 | **Anti-Air** | Strong against air, can still hit ground | Aerial | Ground units |
 | **Aerial** | Fliers, bombers and transports | Ground armies without anti-air | Anti-Air |

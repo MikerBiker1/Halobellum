@@ -138,10 +138,11 @@ ONE WEAPON'S OR UNIT'S OWN (no generated sound: until a file is in, the weapon's
   sfx_fire_beamrifle               The Beam Rifle (Jackal).
   sfx_fire_plasmaturret            The Phantoms' and the Scarab's plasma turrets (the same file as sfx_fire_plasmaheavy, in a voice group of its own).
   sfx_fire_ghost                   The Ghost's plasma bolts, and the Infested Ghost's. Played once per shot, overlapping.
+  sfx_fire_vampire                 The Vampire's needle cannons (D150). Played once per shot, overlapping.
   sfx_fire_banshee                 The Banshee's plasma cannons, and the Infested Banshee's.
   sfx_fire_banshee_bomb            The Banshee's fuel rod bomb, fired.
   sfx_explosion_banshee            The Banshee's fuel rod bomb, landing.
-  sfx_fire_fuelrod                 Fuel rod guns: Fuel Rod Grunt, Grunt Goblin, Goliath.
+  sfx_fire_fuelrod                 Fuel rod guns: Fuel Rod Grunt, Grunt Goblin.
   sfx_fire_hunter                  The Hunters' assault cannon.
   sfx_explosion_fuelrod            A fuel rod or a Hunter's shot landing.
   sfx_fire_mortar                  The Wraith's mortar, and the Infested Wraith's.

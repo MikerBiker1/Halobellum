@@ -1,5 +1,6 @@
 // RoundEnding.cs
-// The end of a round, once the fight is over and the last shot has landed: a node of light leaves every surviving unit and flies to the enemy's base health, slowly at first and
+// The end of a round, once the fight is over and the last shot has landed: a node of light leaves every surviving unit that was not summoned in the battle (SimUnit.HitsEnemyBase)
+// and flies to the enemy's base health, slowly at first and
 // then fast. Each one that arrives takes its unit's damage off that health, with a hit and a fading number that grow with the unit. They arrive smallest first: the small units as
 // a run of hits, a short pause, the bigger units, then each Titan on its own after a longer pause. A second after the last hit, the round's window opens.
 // This only shows what the battle already decided. MatchController runs it and MatchHud draws it. Plain C#, so that it can be tested without a scene.
@@ -85,7 +86,7 @@ namespace Halobellum.Presentation
             for (int i = 0; i < units.Count; i++)
             {
                 SimUnit unit = units[i];
-                if (!unit.IsAlive || unit.Stats.IsTower || unit.Stats.BaseDamage <= 0f) continue; // The same survivors that the round's result counts.
+                if (!unit.HitsEnemyBase) continue; // The same survivors that the round's result counts: none summoned in the battle.
                 float size = SizeOf(unit.Stats.BaseDamage);
                 _nodes.Add(new Node
                 {

@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 6
   cost: 150
   baseDamage: 5
-  maxHealth: 90
+  maxHealth: 95
   armorType: 0
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -28,10 +28,12 @@ MonoBehaviour:
   turnTime180: 0.25
   isAir: 0
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 0
   weapons:
   - weaponName: M7057 Flamethrower
-    damagePerShot: 3
+    damagePerShot: 3.5
     fireInterval: 0.1
     range: 11
     minRange: 0
@@ -71,6 +73,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0

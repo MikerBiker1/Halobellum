@@ -1,6 +1,6 @@
 // TowerTests.cs
 // The towers (D55): in a battle they are shot like any ground target, but aren't part of the army; a fall weakens the whole side,
-// and a second fall adds time, not severity. In a match they are rebuilt for each battle, block squads, and sell what the owner asked for.
+// and a second fall adds time, not severity. Units that go for towers (D138) walk past other enemies to reach one. In a match they are rebuilt for each battle, block squads, and sell what the owner asked for.
 // Depends on: Halobellum.Combat, Halobellum.Economy, Halobellum.Core, TestMatch, TestRules, TestUnits, NUnit.
 
 using System.Linq;
@@ -17,7 +17,7 @@ namespace Halobellum.Tests
         {
             MatchRules rules = TestMatch.Rules();
             rules.TowerBaseHealth = 100f;
-            rules.OilZone = new SpellStats { Name = "Oil Zone", Offensive = true, Effect = SpellEffect.Oil, Cost = 150, AreaWidth = 15f, AreaDepth = 4f, DurationSeconds = 15f, SlowShare = 0.4f, FireDamageMultiplier = 1.5f };
+            rules.OilZone = new SpellStats { Name = "Oil Zone", Offensive = true, Effect = SpellEffect.Oil, Cost = 150, AreaWidth = 15f, AreaDepth = 4f, DurationSeconds = 0f, SlowShare = 0.4f, FireDamageMultiplier = 1.5f, CooldownRounds = 2 };
             return rules;
         }
 
@@ -395,16 +395,90 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void TheOilZone_IsOneUse()
+        public void TheOilZone_IsBoughtOnce_StaysInYourSpells_AndRechargesFor2Rounds()
         {
             Match match = Started(out _);
             match.Player.Credits = 1000;
             Assert.IsTrue(match.BuyOilZone(Team.A).Ok);
-            Assert.IsFalse(match.BuyOilZone(Team.A).Ok, "Once a round.");
+            Assert.AreEqual(850, match.Player.Credits);
+            Assert.IsFalse(match.BuyOilZone(Team.A).Ok, "Once a match.");
+            Assert.AreEqual(850, match.Player.Credits);
+            OwnedSpell oil = match.Player.Spells.Single();
+            Assert.IsTrue(match.PlaceSpell(Team.A, oil.Id, new Vec2(0f, 40f)).Ok, "Usable the round it is bought.");
+
+            BattleSimulation battle = match.StartBattle();
+            Assert.AreEqual(1, battle.Spells.Count(s => s.Stats == match.Rules.OilZone));
+            Assert.AreSame(oil, match.Player.Spells.Single(), "Kept after use.");
+            battle.Run();
+            match.FinishBattle();
+            match.ContinueAfterResult();
+            Assert.AreEqual(MatchPhase.Deployment, match.Phase);
+
+            Assert.AreEqual(2, match.Round);
+            Assert.IsFalse(oil.IsReady(match.Round));
+            Assert.AreEqual(2, oil.RoundsLeft(match.Round));
+            Assert.IsFalse(match.PlaceSpell(Team.A, oil.Id, new Vec2(0f, 40f)).Ok, "Recharging.");
+            int credits = match.Player.Credits;
+            Assert.IsFalse(match.BuyOilZone(Team.A).Ok, "Still owned: not sold again.");
+            Assert.AreEqual(credits, match.Player.Credits);
+
+            PlayOilRound(match);
+            Assert.AreEqual(3, match.Round);
+            Assert.AreEqual(1, oil.RoundsLeft(match.Round));
+
+            PlayOilRound(match);
+            Assert.AreEqual(4, match.Round);
+            Assert.IsTrue(oil.IsReady(match.Round));
+            Assert.IsTrue(match.PlaceSpell(Team.A, oil.Id, new Vec2(0f, 40f)).Ok, "Ready again 3 rounds after use.");
+        }
+
+        private static void PlayOilRound(Match match)
+        {
+            match.StartBattle().Run();
+            match.FinishBattle();
+            match.ContinueAfterResult();
+            Assert.AreEqual(MatchPhase.Deployment, match.Phase);
+        }
+
+        [Test]
+        public void TheOilZone_LastsTheWholeBattle_InAMatch()
+        {
+            Match match = Started(out _);
+            match.Player.Credits = 1000;
+            Assert.IsTrue(match.BuyOilZone(Team.A).Ok);
             OwnedSpell oil = match.Player.Spells.Single();
             Assert.IsTrue(match.PlaceSpell(Team.A, oil.Id, new Vec2(0f, 40f)).Ok);
-            match.StartBattle();
-            Assert.AreEqual(0, match.Player.Spells.Count, "Gone once used.");
+            BattleSimulation battle = match.StartBattle();
+            SimSpell cast = battle.Spells.Single(s => s.Stats == match.Rules.OilZone);
+            for (int i = 0; i < (int)(120f / battle.TickSeconds) && !battle.IsFinished; i++) battle.Step();
+            Assert.IsFalse(cast.IsOverAt(battle.ElapsedSeconds), "Still there after 2 minutes, or when the battle ends.");
+        }
+
+        [Test]
+        public void BuyingOil_CanBeUndone()
+        {
+            Match match = Started(out _);
+            int before = match.Player.Credits;
+            Assert.GreaterOrEqual(before, 150, "The test needs credits for the oil without changing them (Undo goes back to the round's start).");
+            Assert.IsTrue(match.BuyOilZone(Team.A).Ok);
+            match.RecordPlayerAction();
+            Assert.IsTrue(match.Undo().Ok);
+            Assert.IsEmpty(match.Player.Spells);
+            Assert.AreEqual(before, match.Player.Credits);
+            Assert.IsTrue(match.BuyOilZone(Team.A).Ok, "Can be bought again once undone.");
+        }
+
+        [Test]
+        public void HardAi_KeepsOneOil_AndCastsItWhenReady()
+        {
+            Match match = Started(out _, new RuleBasedAi(AiDifficulty.Hard, 5));
+            match.Enemy.Credits = 2000;
+            Assert.IsTrue(match.BuyOilZone(Team.B).Ok);
+            match.EnemyAi.Deploy(new AiView(match, Team.B));
+            OwnedSpell oil = match.Enemy.Spells.Single(s => s.Stats == match.Rules.OilZone);
+            Assert.IsTrue(oil.IsPlaced, "Placed on the army it saw, the round it is bought.");
+            match.EnemyAi.Deploy(new AiView(match, Team.B));
+            Assert.AreEqual(1, match.Enemy.Spells.Count(s => s.Stats == match.Rules.OilZone), "Never a second one.");
         }
 
         [Test]
@@ -450,6 +524,45 @@ namespace Halobellum.Tests
             Assert.IsTrue(ai.ChooseSpot(view, infantry, out int column, out _));
             // The battlefield's right is Team B's own left: its low columns.
             Assert.Less(column, match.CombatRules.ArenaWidthSquares / 2, "Up the empty side.");
+        }
+
+        /// <summary>A runner that goes for towers (D138) or not, a closer enemy beside its road, the tower behind it, and one more enemy far off.</summary>
+        private static (BattleSimulation sim, SimUnit runner, SimUnit beside, SimUnit tower) TowerRoad(bool goesForTowers, bool withTower = true)
+        {
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            // A main gun, which fires only where the unit faces, and a turret that fires to the side as it passes (a Chopper's autocannons).
+            UnitStats stats = TestUnits.Unit(health: 100000f, speed: 4f, weapon: TestUnits.Weapon(damage: 5f, range: 4f, interval: 0.5f));
+            stats.Weapons = new[] { stats.Weapons[0], TestUnits.Weapon(damage: 1f, range: 4f, interval: 0.25f) };
+            stats.GoesForTowers = goesForTowers;
+            SimUnit runner = sim.AddUnit(stats, Team.A, new Vec2(0f, 0f));
+            SimUnit beside = sim.AddUnit(TestUnits.Unit(health: 100000f, speed: 0f), Team.B, new Vec2(2f, 8f));
+            SimUnit tower = withTower ? sim.AddUnit(Tower(health: 100000f), Team.B, new Vec2(0f, 30f)) : null;
+            sim.AddUnit(TestUnits.Unit(health: 100000f, speed: 0f), Team.B, new Vec2(0f, 80f));
+            return (sim, runner, beside, tower);
+        }
+
+        [Test]
+        public void AUnitThatGoesForTowers_WalksPastACloserEnemy_ShootingIt_AndAttacksTheTower()
+        {
+            var (sim, runner, beside, tower) = TowerRoad(goesForTowers: true);
+            RunSeconds(sim, 14f);
+            Assert.Less(beside.Health, 100000f, "It shot the enemy it passed.");
+            Assert.Greater(runner.Position.Y, 20f, "It didn't stop for that enemy.");
+            Assert.Less(tower.Health, 100000f, "It reached the tower and shot it.");
+        }
+
+        [Test]
+        public void AUnitThatDoesnt_StopsAtTheCloserEnemy_AndOneWithNoTowerLeft_FightsAsUsual()
+        {
+            var (sim, runner, beside, tower) = TowerRoad(goesForTowers: false);
+            RunSeconds(sim, 14f);
+            Assert.Less(runner.Position.Y, 12f, "It stays on the closest enemy.");
+            Assert.AreEqual(100000f, tower.Health, "The tower is untouched.");
+
+            var (noTower, alone, besideAlone, _) = TowerRoad(goesForTowers: true, withTower: false);
+            RunSeconds(noTower, 14f);
+            Assert.Less(alone.Position.Y, 12f, "With no tower to go for, it fights the closest enemy.");
+            Assert.Less(besideAlone.Health, 100000f);
         }
     }
 }

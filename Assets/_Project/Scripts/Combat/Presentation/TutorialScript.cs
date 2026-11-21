@@ -113,8 +113,9 @@ namespace Halobellum.Presentation
                 {
                     Title = "What the Command Center does",
                     Text = "If it falls in a battle, your whole army is weakened for a while: level it up for more health and a shorter shockwave " +
-                           "debuff. It sells, once a round: an extra squad slot, an oil zone (a spell you place once), Rapid Resupply " +
-                           "(credits now, fewer next round) and Elite Recruitment (this round's new squads start at level 2).",
+                           "debuff. It sells, once a round: an extra squad slot, Rapid Resupply (credits now, fewer next round) and Elite " +
+                           "Recruitment (this round's new squads start at level 2); and an oil zone, a spell you buy once and keep, which " +
+                           "lasts the whole battle and recharges for 2 rounds after use.",
                     Target = "area:tower",
                 },
                 new TutorialStep
@@ -172,12 +173,15 @@ namespace Halobellum.Presentation
                     Text = "Your spells are on the left. Press one, then click the field: it is cast when the battle starts. " +
                            "Offensive spells go anywhere, defensive ones on your side. Each recharges for a few rounds.",
                     Target = "area:spells", Doing = "Press the spell, then click the enemy's side of the field.",
-                    Done = () => t.Did("PlaceSpellAt") || t.Did("PlaceLineTowards") || Me().Spells.Count == 0,
+                    // Done once a spell is placed, or when none can be placed (no spells, or only recharging ones such
+                    // as an Oil Zone cast in round 1): otherwise Ready would stay locked on this step.
+                    Done = () => t.Did("PlaceSpellAt") || t.Did("PlaceLineTowards") ||
+                                 !Me().Spells.Exists(s => s.IsReady(M().Round) && !s.IsPlaced),
                 },
                 new TutorialStep
                 {
                     Title = "Levels",
-                    Text = "Kills give a squad experience. When its bar is full it can level up, for half its price: more health and damage. " +
+                    Text = "Kills, and the damage that leads to them, give a squad experience. When its bar is full it can level up, for half its price: more health and damage. " +
                            "An arrow over a squad shows it is ready. Level all levels every ready squad of a type at once.",
                     Target = "area:stats",
                 },

@@ -41,8 +41,9 @@ Round 1, deployment:
 8. **Placing**: *move a squad* (M, or the Move button; R turns it; Del or Sell sells it, for its full price before it has fought).
    Then *press Undo* (or Ctrl+Z): every action of this round can be undone, back to the round's card.
 9. **The Command Center**: *open it* (its button above it on the field). If it falls in battle, your whole army is weakened for a
-   while. It sells: Level up (more health, a longer shockwave), Extra slot (one more squad this round), Oil zone (a one-use spell),
-   Rapid Resupply (credits now, fewer next round), Elite Recruitment (new squads start at level 2).
+   while. It sells: Level up (more health, a longer shockwave), Extra slot (one more squad this round), Oil zone (a spell bought
+   once: it stays in your spells, lasts the whole round and recharges for 2 rounds after each use; D142), Rapid Resupply
+   (credits now, fewer next round), Elite Recruitment (new squads start at level 2).
 10. **The Research Center**: *open it*. Health or damage for your whole army for the rest of the game, 2 steps (D81 wording).
 11. **Ready**: *press Ready*.
 
@@ -55,7 +56,8 @@ Round 2:
 14. **Cards**: from round 2 each round starts with 3 cards: spells, items, economy, buffs, training; from round 4 reinforcements
     every other round. Skipping pays a bonus. *Take the spell.*
 15. **Spells**: the spell bar on the left. *Place it on the field*; offensive spells go anywhere, defensive ones on your side.
-16. **Levels**: kills give XP; a full bar lets a squad level up for half its price; Level all does every ready squad of a type.
+    The step moves on by itself when no spell can be placed (none owned, or only a recharging Oil Zone; D142).
+16. **Levels**: kills, and the damage that leads to them, give XP (D142); a full bar lets a squad level up for half its price; Level all does every ready squad of a type.
     *Level up a squad.* Techs, in the stats window, upgrade every squad of a type. *Ready.*
 
 Round 3:

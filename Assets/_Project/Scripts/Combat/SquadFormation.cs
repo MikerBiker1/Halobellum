@@ -33,6 +33,11 @@ namespace Halobellum.Combat
         /// Offsets from the squad centre for each body. X is across the battlefield, Y is toward the
         /// enemy for Team A. Bodies are spaced by their diameter plus the gap.
         /// </summary>
+        public static List<Vec2> Offsets(UnitStats stats, float ruleGap, bool rotated90) => Offsets(stats.SquadSize, stats.CollisionRadius, GapFor(stats, ruleGap), rotated90);
+
+        /// <summary>The gap between this type's squadmates: its own SquadGap if it has one (D151), otherwise the rules' formation gap.</summary>
+        public static float GapFor(UnitStats stats, float ruleGap) => stats != null && stats.SquadGap > 0f ? stats.SquadGap : ruleGap;
+
         public static List<Vec2> Offsets(int squadSize, float bodyRadius, float gap, bool rotated90)
         {
             var offsets = new List<Vec2>(squadSize);

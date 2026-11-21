@@ -17,7 +17,8 @@
 //   - Every battle is built fresh from both deployments, so each round starts like the last one
 //     started, plus whatever was bought (round reset). Squads keep their level and XP.
 //   - Leveling (Section 5): squads earn XP from kills (the victim's worth per body), also those of the bodies they drop,
-//     release or raise (D136), and the bar fills during the battle (XpSoFar); when the bar
+//     release or raise (D136), split: half to the killer, half to every squad that damaged the victim by the
+//     damage each dealt (KillXpShare, xp_split), and the bar fills during the battle (XpSoFar); when the bar
 //     (XpBarPerSquadCost x the squad's price, the same at every level) is full, LevelUp costs half
 //     the base price and raises the level (health and damage x level, up to 5). LevelUpAll does that for
 //     every ready squad of a unit type at once, all or nothing.
@@ -34,15 +35,17 @@
 //     the whole army or add a deployment slot. Intensive Training fills a squad's XP bar (UseTraining).
 //     Reinforcement squads are placed like squads bought this round, unlock their unit, start with
 //     0 XP and don't count toward the squads per round or the unlock limit.
-//   - Result: every surviving body deals its BaseDamage to the enemy base, both at once. A base at
+//   - Result: every surviving body that was not summoned in the battle (brood, death bursts, risen and
+//     seeded bodies, spell squads) deals its BaseDamage to the enemy base, both at once. A base at
 //     0 or below loses; if both fall, the lower one loses. An exact tie is a tied round: the damage
 //     is undone, income is paid and the match goes on to the next round.
 //   - Towers (D55): each side has a Command Center on its left and a Research Center on its right, in the
 //     middle of its zone. Both are built afresh for every battle; a fallen tower only costs its side the
 //     shockwave. LevelUpTower doubles its health and shortens its shockwave. The Command Center sells, each
-//     once a round: an extra squad slot (BuyExtraSlot), a one-use oil spell (BuyOilZone), credits now
-//     against less income next round (RapidResupply) and squads bought at level 2 for the rest of the
-//     round (BuyEliteRecruitment). The Research Center sells lasting health and damage for the army (BuyResearch).
+//     once a round: an extra squad slot (BuyExtraSlot), credits now against less income next round
+//     (RapidResupply) and squads bought at level 2 for the rest of the round (BuyEliteRecruitment);
+//     and, once a match, an oil spell kept in the player's spells and recharging after each use
+//     (BuyOilZone). The Research Center sells lasting health and damage for the army (BuyResearch).
 // The AI only sees the match through an AiView: its own state, public information, and each army as
 // it was revealed when the last battle started (SeenArmy), never the opponent's current deployment.
 // The player gets the same: BuildPreview shows the enemy's last-battle army as ghosts (D25).
@@ -389,6 +392,9 @@ namespace Halobellum.Economy
         /// (SimUnit.CreditSquadId), so a Carrier Form earns what its Infection Forms kill and a Seeder what its seeded hosts do
         /// (the owner, D136); bodies a spell brought earn nothing. A unit that dies in a blast it deals itself (the Infected
         /// Pelican's dive) still earns for its squad, which comes back next round.
+        /// The worth is split (the owner, xp_split): KillXpShare of it to the killer's squad, the rest among every squad that
+        /// damaged the body, by the damage each dealt to it (SimUnit.AddSquadDamage; the killer's own included, spells left out).
+        /// A kill that gives no XP (by a spell, a self-kill, by a body a spell brought) still gives none, so the total is unchanged.
         /// </summary>
         private float[] XpEarnedIn(BattleSimulation battle, List<PlacedSquad> placed)
         {
@@ -401,14 +407,52 @@ namespace Halobellum.Economy
                 SimUnit killer = battle.Units[victim.KilledById];
                 if (!bySimSquad.TryGetValue(killer.CreditSquadId, out int index)) continue;
                 UnitStats v = victim.Stats;
+                float worth;
                 if (v.IsTower)
                 {
-                    earned[index] += Rules.TowerXpByLevel[Get(victim.Team).FindTower(v.Shockwave.Kind).Level - 1];
-                    continue;
+                    worth = Rules.TowerXpByLevel[Get(victim.Team).FindTower(v.Shockwave.Kind).Level - 1];
                 }
-                earned[index] += v.Cost / (float)Math.Max(1, v.SquadSize) * (1f + 0.5f * (v.Level - 1));
+                else
+                {
+                    worth = v.Cost / (float)Math.Max(1, v.SquadSize) * (1f + 0.5f * (v.Level - 1));
+                    // A body made in the battle (its deeds count for another squad, or none) is worth BattleBodyXpShare of that (D138).
+                    if (victim.SquadId < 0 || victim.SquadId != victim.CreditSquadId) worth *= Rules.BattleBodyXpShare;
+                }
+                _xpDamagers.Clear();
+                _xpDamage.Clear();
+                for (int i = 0; i < victim.SquadDamageCount; i++)
+                {
+                    if (!bySimSquad.TryGetValue(victim.SquadDamageSquadId(i), out int damager)) continue;
+                    _xpDamagers.Add(damager);
+                    _xpDamage.Add(victim.SquadDamageAmount(i));
+                }
+                SplitKillXp(worth, Rules.KillXpShare, index, _xpDamagers, _xpDamage, earned);
             }
             return earned;
+        }
+
+        // Scratch lists for XpEarnedIn (one victim at a time).
+        private readonly List<int> _xpDamagers = new List<int>();
+        private readonly List<float> _xpDamage = new List<float>();
+
+        /// <summary>
+        /// Adds one kill's XP to earned (the owner, xp_split): killShare of worth to the killer's placed squad, the rest split among the
+        /// squads that damaged the body, by the damage each dealt (damagerIndex[i] dealt damage[i]; the killer may be among them).
+        /// Spell damage is not on the record, so the squads share the whole rest. With no damage on record, all of it goes to the killer.
+        /// </summary>
+        public static void SplitKillXp(float worth, float killShare, int killerIndex, IReadOnlyList<int> damagerIndex, IReadOnlyList<float> damage, float[] earned)
+        {
+            float total = 0f;
+            for (int i = 0; i < damage.Count; i++) total += damage[i];
+            if (!(total > 0f))
+            {
+                earned[killerIndex] += worth;
+                return;
+            }
+            float share = Math.Max(0f, Math.Min(1f, killShare));
+            float rest = worth * (1f - share);
+            earned[killerIndex] += worth - rest;
+            for (int i = 0; i < damage.Count; i++) earned[damagerIndex[i]] += rest * damage[i] / total;
         }
 
         /// <summary>
@@ -518,12 +562,11 @@ namespace Halobellum.Economy
             PlayerState player = Get(team);
             SpellStats oil = Rules.OilZone;
             if (oil == null) return ActionResult.Fail("There is no oil to buy.");
-            if (player.BoughtOilZone) return ActionResult.Fail("You already bought oil this round.");
+            if (player.OwnsSpell(oil)) return ActionResult.Fail($"{oil.Name} is already in your spells.");
             if (player.Credits < oil.Cost) return ActionResult.Fail($"Not enough credits ({oil.Cost} needed).");
             player.Credits -= oil.Cost;
-            player.BoughtOilZone = true;
-            player.Spells.Add(new OwnedSpell { Id = _nextSpellId++, Stats = oil, ReadyRound = Round, SingleUse = true });
-            return ActionResult.Success($"{oil.Name} added to your spells.");
+            player.Spells.Add(new OwnedSpell { Id = _nextSpellId++, Stats = oil, ReadyRound = Round });
+            return ActionResult.Success($"{oil.Name} added to your spells for the rest of the match.");
         }
 
         public ActionResult RapidResupply(Team team)
@@ -630,7 +673,6 @@ namespace Halobellum.Economy
                 spell.IsPlaced = false;
                 spell.ReadyRound = Round + spell.Stats.CooldownRounds + 1;
             }
-            player.Spells.RemoveAll(spell => spell.SingleUse && spell.ReadyRound > Round);
         }
 
         /// <summary>Copies an army as both sides see it when the battle starts.</summary>
@@ -780,7 +822,7 @@ namespace Halobellum.Economy
             {
                 player.SquadsBoughtThisRound = 0;
                 player.UnlocksThisRound = 0;
-                player.BoughtExtraSlot = player.BoughtOilZone = player.UsedRapidResupply = player.EliteRecruitment = false;
+                player.BoughtExtraSlot = player.UsedRapidResupply = player.EliteRecruitment = false;
                 player.Offer = CardDeck.HasOffer(Rules, round) ? CardDeck.Draw(player, Rules, round, _random) : null;
             }
             Phase = MatchPhase.Deployment;

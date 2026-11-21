@@ -36,6 +36,7 @@
 //   - Normal with savings piled up unlocks more readily and buys an extra squad slot, or it ends matches with thousands unspent;
 //   - squads a reinforcement card just brought go where their role belongs, like the starting squads;
 //   - a spell only aims at a spot it can be placed on, so a squad in a flank zone doesn't waste the cast.
+// A sweeping beam (the Glassing Beam) is aimed where the squads will be when it fires, not where they stand (SweepAim, D144; not Easy).
 // Depends on: AiView, IMatchAi, DeploymentGrid, MatchupTable, Halobellum.Combat (CounterWeb role counters),
 //             Halobellum.Core (UnitStats, UnitRole, SimRandom).
 
@@ -149,7 +150,11 @@ namespace Halobellum.Economy
             value += 0.25f * (tech.MoveSpeedMultiplier - 1f);
             value += reach * (0.05f + 0.15f * _boardCrowd) * tech.SplashRadiusBonus;
             value += reach * tech.ConeDegreesBonus / 90f;
-            value += _boardAir * ShareThatHitsAir(type) * (tech.AirDamageMultiplier - 1f);
+            // A tech made against aircraft (Aim for Their Wings, D149) comes first once any aircraft is seen, whatever share of the army flies
+            // (the owner: "the AI should use it as covenant if there are air units").
+            float air = tech.AirRangeBonus > 0f && _boardAir > 0f ? 1f : _boardAir;
+            value += air * ShareThatHitsAir(type) * (tech.AirDamageMultiplier - 1f);
+            value += 0.5f * air * ShareThatHitsAir(type) * tech.AirRangeBonus / range; // Range against air only, weighed like a range tech.
             if (tech.AddsAirTargeting) value += _boardAir * (1f - ShareThatHitsAir(type));
             if (tech.ExtraShotsPerAttack > 0 || tech.ReloadTimeMultiplier != 1f) value += reach * ((1f + tech.ExtraShotsPerAttack) / tech.ReloadTimeMultiplier - 1f); // Its main gun's damage per second.
             return 100f * value / System.Math.Max(1, tech.Cost);
@@ -183,9 +188,10 @@ namespace Halobellum.Economy
         {
             if (_threats == null) return 0f;
             float sum = 0f, weightTotal = 0f;
+            float ownEdge = Uses(InsaneReads.Edges) ? StrengthEdge(unit, 1, _self?.TechsFor(unit), null) : 0f; // A new squad: level 1, with the techs it owns for its type.
             foreach (var threat in _threats)
             {
-                float? rate = _matchups.WinRate(unit, threat.Key);
+                float? rate = UpgradedRate(unit, ownEdge, threat.Key);
                 if (!rate.HasValue) continue;
                 sum += threat.Value * (rate.Value - 0.5f);
                 weightTotal += threat.Value;
@@ -199,17 +205,30 @@ namespace Halobellum.Economy
         private void UpdateThreats(AiView view, IReadOnlyList<SeenSquad> seen)
         {
             _threats = new Dictionary<UnitStats, float>();
+            _threatEdges.Clear();
             foreach (SeenSquad squad in seen)
             {
                 _threats.TryGetValue(squad.Type, out float value);
                 _threats[squad.Type] = value + squad.Value * ThreatWeight(squad.Type);
+                // Insane (D145): how much its levels and techs make each squad stronger than the table's, by worth.
+                if (Uses(InsaneReads.Edges))
+                {
+                    _threatEdges.TryGetValue(squad.Type, out float edge);
+                    _threatEdges[squad.Type] = edge + squad.Value * StrengthEdge(squad.Type, squad.Level, squad.Techs, squad.Item);
+                }
+            }
+            if (Uses(InsaneReads.Edges))
+            {
+                var worth = new Dictionary<UnitStats, float>();
+                foreach (SeenSquad squad in seen) { worth.TryGetValue(squad.Type, out float w); worth[squad.Type] = w + squad.Value; }
+                foreach (UnitStats type in new List<UnitStats>(_threatEdges.Keys)) _threatEdges[type] = worth[type] > 0f ? _threatEdges[type] / worth[type] : 0f;
             }
             foreach (UnitStats type in new List<UnitStats>(_threats.Keys))
             {
                 float covered = 0f;
                 foreach (PlacedSquad own in view.Self.Squads)
                 {
-                    float? rate = _matchups.WinRate(own.Type, type);
+                    float? rate = UpgradedRate(own.Type, Uses(InsaneReads.Edges) ? StrengthEdge(own.Type, own.Level, view.Self.TechsFor(own.Type), own.Item) : 0f, type);
                     if (rate.HasValue) covered += own.Type.Cost * own.Level * System.Math.Max(0f, 2f * (rate.Value - 0.5f));
                 }
                 float threat = _threats[type];
@@ -284,7 +303,7 @@ namespace Halobellum.Economy
                 {
                     ReinforcementCard card = offer.Reinforcements[i];
                     value = card.TotalWorth - price; // Free worth gained.
-                    if (UsesMatchups) value *= 1f + MatchupAdvantage(card.Type, view.SeenOpponentArmy) + 0.5f * (_matchups.OverallStrength(card.Type) - 0.5f);
+                    if (UsesMatchups) value *= 1f + MatchupAdvantage(card.Type, view.SeenOpponentArmy) + 0.5f * (TableStrength(card.Type) - 0.5f);
                 }
                 else
                 {
@@ -348,6 +367,13 @@ namespace Halobellum.Economy
             {
                 if (!spell.IsReady(view.Round) || spell.IsPlaced) continue;
                 if (Difficulty == AiDifficulty.Easy && _random.NextFloat() < 0.5f) continue;
+                if (spell.Stats.Sweeps && Difficulty != AiDifficulty.Easy)
+                {
+                    // A sweeping beam fires seconds into the battle: aim where the squads will be by then (SweepAim, D144).
+                    if (SweepAim.Aim(spell.Stats, SquadsForAim(view), c => view.Rules.Mode != MatchMode.UnlockSkirmish ? DeploymentGrid.InArena(c, view.CombatRules) : view.CanPlaceSpell(spell, c), out Vec2 centre, out float angle)
+                        && view.PlaceSpell(spell, centre, angle).Ok) placed.Add(spell.Stats.Name);
+                    continue;
+                }
                 Vec2? target = null;
                 if (spell.Stats.Effect == SpellEffect.Buff)
                 {
@@ -370,6 +396,18 @@ namespace Halobellum.Economy
                 }
                 if (target.HasValue && view.PlaceSpell(spell, target.Value).Ok) placed.Add(spell.Stats.Name);
             }
+        }
+
+        /// <summary>Both armies as this AI sees them before the battle: its own squads and the opponent's last seen army.</summary>
+        private static List<SweepAim.Squad> SquadsForAim(AiView view)
+        {
+            var forward = view.Team == Team.A ? new Vec2(0f, 1f) : new Vec2(0f, -1f);
+            var squads = new List<SweepAim.Squad>();
+            foreach (PlacedSquad squad in view.Self.Squads)
+                squads.Add(new SweepAim.Squad { Position = view.WorldCentre(squad), Type = squad.Type, Value = squad.Type.Cost + squad.Type.Cost * (squad.Level - 1) / 2, Forward = forward });
+            foreach (SeenSquad squad in view.SeenOpponentArmy)
+                squads.Add(new SweepAim.Squad { Position = view.WorldCentre(squad), Type = squad.Type, Value = squad.Value, Enemy = true, Forward = -1f * forward });
+            return squads;
         }
 
         /// <summary>In Unlock Skirmish a spell only aims where it can be placed. Faction mode still loses the cast on a squad in a flank zone, to keep the results it was measured with.</summary>
@@ -631,7 +669,7 @@ namespace Halobellum.Economy
 
         /// <summary>
         /// Credits left after the squads go to the towers. Easy doesn't care about them. Normal and Hard level the tower that falls the
-        /// most, then research health and damage; Hard needs less to spare, and buys oil against an army it has seen. Rapid Resupply comes earlier in the round, from Hard only (TakeRapidResupply).
+        /// most, then research health and damage; Hard needs less to spare, and buys oil once, against an army it has seen (it then stays in its spells and PlaceSpells casts it whenever it is ready). Rapid Resupply comes earlier in the round, from Hard only (TakeRapidResupply).
         /// </summary>
         private void SpendOnTowers(AiView view, IReadOnlyList<SeenSquad> seen, List<string> upgrades)
         {
@@ -654,7 +692,7 @@ namespace Halobellum.Economy
             if (steps < rules.ResearchCosts.Length && self.Credits >= rules.ResearchCosts[steps] + researchSpare && view.BuyResearch(health).Ok)
                 upgrades.Add(health ? "health research" : "damage research");
 
-            if (Difficulty >= AiDifficulty.Hard && seen.Count >= 3 && self.Credits >= HardOilCredits && view.BuyOilZone().Ok) upgrades.Add("oil");
+            if (Difficulty >= AiDifficulty.Hard && seen.Count >= 3 && self.Credits >= HardOilCredits && !self.OwnsSpell(rules.OilZone) && view.BuyOilZone().Ok) upgrades.Add("oil");
         }
 
         /// <summary>
@@ -754,7 +792,7 @@ namespace Halobellum.Economy
                         {
                             // Measured counters dominate; the strategy only nudges.
                             score = 0.5f * StrategyWeights[(int)Strategy][(int)unit.Role] + 0.4f * unit.Tier
-                                    + 8f * MatchupAdvantage(unit, seen) + 4f * (_matchups.OverallStrength(unit) - 0.5f)
+                                    + 8f * MatchupAdvantage(unit, seen) + 4f * (TableStrength(unit) - 0.5f)
                                     + exclusive + _random.Range(-0.1f, 0.1f);
                             break;
                         }
@@ -907,7 +945,10 @@ namespace Halobellum.Economy
         private readonly List<TowerKind> _flanked = new List<TowerKind>();
         private readonly Dictionary<TowerKind, int> _towerFallsNoted = new Dictionary<TowerKind, int>();
 
-        /// <summary>A tower of ours fell in the last battle, on the side where we saw the enemy in a flank zone: from now on that tower is guarded.</summary>
+        /// <summary>
+        /// A tower of ours fell in the last battle, on the side where we saw the enemy in a flank zone, or a squad that goes for towers (D138):
+        /// from now on that tower is guarded.
+        /// </summary>
         private void NoteFlanking(AiView view, IReadOnlyList<SeenSquad> seen)
         {
             foreach (PlacedTower tower in view.Self.Towers)
@@ -919,7 +960,7 @@ namespace Halobellum.Economy
                 foreach (SeenSquad squad in seen)
                 {
                     DeploymentGrid.Footprint(squad.Type, squad.Rotated90, view.CombatRules, out int width, out int depth);
-                    if (!DeploymentGrid.IsInFlankZone(squad.Column, squad.Row, width, depth, view.CombatRules)) continue;
+                    if (!DeploymentGrid.IsInFlankZone(squad.Column, squad.Row, width, depth, view.CombatRules) && !squad.Type.GoesForTowers) continue;
                     if (view.WorldCentre(squad).X * towerX <= 0f) continue;
                     _flanked.Add(tower.Kind);
                     break;

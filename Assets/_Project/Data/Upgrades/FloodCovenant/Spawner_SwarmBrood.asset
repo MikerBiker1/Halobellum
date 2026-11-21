@@ -14,13 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   techName: Swarm Brood
   description: It hatches a Swarm Form 5 seconds into each battle.
-  cost: 200
+  cost: 300
   healthMultiplier: 1
   damageMultiplier: 1
   fireRateMultiplier: 1
   moveSpeedMultiplier: 1
   airDamageMultiplier: 1
   rangeBonus: 0
+  airRangeBonus: 0
   shieldBonus: 0
   shieldRegenBonus: 0
   splashRadiusBonus: 0

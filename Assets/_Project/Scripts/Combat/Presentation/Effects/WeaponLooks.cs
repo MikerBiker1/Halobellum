@@ -52,6 +52,8 @@ namespace Halobellum.Presentation
         public bool Ball;
         /// <summary>Leaves a smoke trail.</summary>
         public bool SmokeTrail;
+        /// <summary>One of a pair of guns, each always firing from its own muzzle: weapon 0 the model's first, weapon 1 its second (the Sparrowhawk's two miniguns, D153).</summary>
+        public bool OwnMuzzle;
     }
 
     public static class WeaponLooks
@@ -63,6 +65,10 @@ namespace Halobellum.Presentation
         public static readonly Color FuelRodGreen = new Color(0.3f, 1f, 0.38f);
         public static readonly Color MortarBlue = new Color(0.4f, 0.55f, 1f);
         public static readonly Color NeedlePink = new Color(1f, 0.3f, 0.78f);
+        /// <summary>Every plasma pistol's shots: the Jackal's and its charged bolt (the owner, D151), the Grunts' (D155).</summary>
+        public static readonly Color PistolGreen = new Color(0.35f, 1f, 0.3f);
+        /// <summary>How fast a needle is drawn flying, m/s; the Vampire's 25% faster (D150).</summary>
+        public const float NeedleSpeed = 75f, VampireNeedleSpeed = NeedleSpeed * 1.25f;
         public static readonly Color BeamRiflePink = new Color(0.95f, 0.42f, 1f);
         public static readonly Color LaserRed = new Color(1f, 0.1f, 0.12f);
         /// <summary>The Hunter Captain's siphon laser (the owner, D91).</summary>
@@ -85,6 +91,12 @@ namespace Halobellum.Presentation
             bool flood = (shooter != null && shooter.IsFlood) || (shooter != null && shooter.InfectedFrom != null) || faction == BattleFactions.Flood;
             WeaponLook look = Base(kind, name, flood);
             look.Kind = kind;
+            if ((weapon.HasShieldBreak || name.Contains("plasma pistol")) && !flood)
+            {
+                // Plasma pistols shoot green: the Jackal's with its charged bolt (the owner, D151), the Grunts' and the Cannon Fodder's (D155).
+                look.Shot = PistolGreen;
+                look.Flash = PistolGreen;
+            }
             if (mirror && team == Team.B)
             {
                 look.Shot = Mirrored(look.Shot);
@@ -103,6 +115,9 @@ namespace Halobellum.Presentation
             switch (kind)
             {
                 case WeaponFeelKind.HeavyBullet:
+                    // Miniguns (the Sparrowhawk's, the owner, D153): a stream of thin, fast tracers and small flickering flashes, both guns at once.
+                    if (name.Contains("minigun"))
+                        return new WeaponLook { Shot = tracer, Flash = tracer, FlashSize = 1.1f, ShotWidth = 0.12f, DrawnSpeed = 180f, Impact = ImpactStyle.Bullet, OwnMuzzle = true };
                     if (name.Contains("shotgun"))
                         return new WeaponLook { Shot = tracer, Flash = tracer, FlashSize = 2.6f, ShotWidth = 0.34f, DrawnSpeed = 90f, Impact = ImpactStyle.Bullet, HeavyMuzzle = true };
                     return new WeaponLook { Shot = tracer, Flash = tracer, FlashSize = 1.7f, ShotWidth = 0.2f, DrawnSpeed = 130f, Impact = ImpactStyle.Bullet };
@@ -136,7 +151,8 @@ namespace Halobellum.Presentation
                     Color heavy = flood ? FloodPlasma : name.Contains("mortar") ? MortarBlue : name.Contains("plasma") ? plasma : FuelRodGreen;
                     return new WeaponLook { Shot = heavy, Flash = heavy, FlashSize = 2.8f, ShotWidth = name.Contains("mortar") ? 2.6f : 1.7f, Impact = ImpactStyle.Plasma, Blast = BlastStyle.Plasma, Ball = true };
                 case WeaponFeelKind.Needle:
-                    return new WeaponLook { Shot = NeedlePink, Flash = NeedlePink, FlashSize = 1.4f, ShotWidth = 0.3f, DrawnSpeed = 75f, Impact = ImpactStyle.Needle };
+                    // The Vampire's needle cannons fly a quarter faster than other needles (the owner, D150).
+                    return new WeaponLook { Shot = NeedlePink, Flash = NeedlePink, FlashSize = 1.4f, ShotWidth = 0.3f, DrawnSpeed = name.Contains("needle cannon") ? VampireNeedleSpeed : NeedleSpeed, Impact = ImpactStyle.Needle };
                 case WeaponFeelKind.Laser:
                     if (name.Contains("siphon"))
                         return new WeaponLook { Shot = SiphonGreen, Flash = SiphonGreen, FlashSize = 2.4f, ShotWidth = 0.32f, Impact = ImpactStyle.Laser };

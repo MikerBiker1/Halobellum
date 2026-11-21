@@ -201,8 +201,15 @@ class Builder:
             out["windUp"] = r2(w["windUpSeconds"])
         if w.get("staggerSeconds", 0):
             out["stagger"] = r2(w["staggerSeconds"])
-        # Damage per second of one body: a beam hits every interval while it fires, then charges and rests.
+        if w.get("magazineSize", 0):
+            out["magazine"] = {"shots": int(w["magazineSize"]), "reload": r2(w.get("magazineReloadSeconds", 0))}
+        # Damage per second of one body: a beam hits every interval while it fires, then charges and rests; a magazine fires its shots,
+        # then reloads (D157).
         dps = out["damage"] / out["interval"] if out["interval"] else 0
+        if "magazine" in out:
+            m = out["magazine"]
+            cycle = (m["shots"] - 1) * out["interval"] + m["reload"]
+            dps = out["damage"] * m["shots"] / cycle if cycle else dps
         if "beam" in out:
             b = out["beam"]
             cycle = b["seconds"] + b["charge"] + b["rest"]

@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 3
   cost: 500
   baseDamage: 33.3333
-  maxHealth: 500
+  maxHealth: 560
   armorType: 0
   maxShield: 140
   shieldRegenPerSecond: 40
@@ -28,10 +28,12 @@ MonoBehaviour:
   turnTime180: 0.5
   isAir: 0
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 2
   weapons:
   - weaponName: BR85 Battle Rifle
-    damagePerShot: 22
+    damagePerShot: 33
     fireInterval: 0.6
     range: 16
     minRange: 0
@@ -55,7 +57,7 @@ MonoBehaviour:
     hitSlowSeconds: 0
     hitSlowShare: 0
   - weaponName: M41 Rocket Launcher
-    damagePerShot: 110
+    damagePerShot: 129
     fireInterval: 5
     range: 18
     minRange: 0
@@ -95,6 +97,7 @@ MonoBehaviour:
   immuneToInfection: 1
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0
@@ -125,4 +128,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: 'Tanks, heavy units'
   weakAgainst: 'Chaff swarms, flankers'
-  notes: 'Best counters (headless runner, equal cost): Marine (100%), Grunt (100%). Three Spartans: an all-round squad with rifles and a rocket each. No single strength, no single weakness. First-pass M10 values, Noble (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Grunt (100%), Infection Forms (100%). Three Spartans: an all-round squad with rifles and a rocket each. No single strength, no single weakness. First-pass M10 values, Noble (Docs/M10/subfactions.md).'

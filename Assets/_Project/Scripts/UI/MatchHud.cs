@@ -1,7 +1,8 @@
 // MatchHud.cs
 // The match screens (Bible Section 13), one per phase:
 //   Draft: the starting draft cards (faction, sub-faction, 2 free squads) to choose from. Up to 5 cards fit (CardLayout); each is
-//     drawn by CardScreens. The AI's difficulty and the Sandbox are chosen in the Play menu, before this.
+//     drawn by CardScreens. The AI's difficulty and the Sandbox are chosen in the Play menu, before this. Hovering a squad on a card shows
+//     its stats window (SquadStatsWindow) beside the card, as a level 1 squad with its techs locked; so does hovering a reinforcement card.
 //   Deployment: credits and next income, squads bought (x of 2), unlocks (x of 1), both bases, the
 //     unit shop (Buy / Unlock), actions for the selected squad (Move, Turn, Sell) and Ready. No timer.
 //   Cards (from round 2, Milestone 7): 3 cards with their prices (spells, items, economy, buffs,
@@ -17,6 +18,8 @@
 //     In Unlock Skirmish a bar at the bottom right takes the shop's place: an icon and price for each unlocked unit (click to buy, hover
 //     for its stats), and an "Unlock units" button that opens a page of every unit by tier and price, over a dimmed field. Esc, a
 //     right-click, its x or a successful unlock closes the page. Its state is in plain methods, so that batch tests can use them.
+//     Each cell of the bar and the page has a small "i" in its top right corner: a click there pins the unit's stats window, as a click
+//     on a shop row does in faction mode, and a second click closes it; a click on the rest of the cell still buys or unlocks.
 //   Battle: both base health bars and a live army-value comparison (speed controls are in BattleHud), and how long
 //     a fallen tower's shockwave still weakens each army, over a bar that runs down smoothly with the time left (D122).
 //   Result: base damage dealt by each side, income, survivors, top damage dealers, what killed what.
@@ -51,7 +54,7 @@ namespace Halobellum.UI
         [SerializeField] private Color playerColor = new Color(0.35f, 0.55f, 1f);
         [SerializeField] private Color enemyColor = new Color(1f, 0.4f, 0.32f);
 
-        private GUIStyle _title, _big, _text, _small, _smallCentered, _button, _bigButton, _centered, _header, _barLabel, _wrap, _wrapDim, _shopLine, _cellLine, _bannerWord, _bannerLine, _hitSmall, _hitMedium, _hitBig;
+        private GUIStyle _title, _big, _text, _small, _smallCentered, _button, _bigButton, _centered, _header, _barLabel, _wrap, _wrapDim, _shopLine, _cellLine, _bannerWord, _bannerLine, _hitSmall, _hitMedium, _hitBig, _infoButton;
         private float _scale;
         private Vector2 _shopScroll;
         private readonly List<UnitStats> _shopRows = new List<UnitStats>();
@@ -162,10 +165,13 @@ namespace Halobellum.UI
             CardRow row = CardLayout.Arrange(count, width, bar.yMax + 14f, height - 14f);
             DraftRowText text = count > 0 ? CardScreens.MeasureDraftRow(m.PlayerDraft, row.CardAt(0)) : default;
             if (count > 0) TutorialHud.Mark("area:draft", row.CardAt(0));
+            CardScreens.ClearHoveredUnit();
             for (int i = 0; i < count; i++)
             {
                 if (CardScreens.DrawDraftCard(row.CardAt(i), m.PlayerDraft[i], text, m.Rules.StartingBaseHealth(m.PlayerDraft[i].Value))) match.ChooseDraft(i);
             }
+            ShowCardHover(width);
+            DrawHoveredUnit();
         }
 
         // ------------------------------------------------------------------ deployment
@@ -210,12 +216,14 @@ namespace Halobellum.UI
             if (_unlockPageOpen)
             {
                 DrawUnlockPage(width, height);
+                if (StatsWindow != null) StatsWindow.DrawShopUnitFromHud(); // A unit pinned with its "i", over the page's dim.
                 DrawHoveredUnit();
                 ItemHud.DrawDragged(match.IconFor);
                 return;
             }
 
             DrawSquadItemSlots();
+            DrawSquadTechIcons(height);
             if (skirmish) DrawUnitBar(width, height);
             else DrawShop(width, height);
             DrawInventory(DrawSpellBar());
@@ -234,6 +242,23 @@ namespace Halobellum.UI
         private void DrawHoveredUnit()
         {
             if (Event.current.type == EventType.Repaint && StatsWindow != null) StatsWindow.DrawHover();
+        }
+
+        /// <summary>
+        /// Where the stats window of a unit hovered on a card goes (its right edge), in HUD units: beside the card, on the side with more room, and on the screen.
+        /// A card whose centre is the screen's centre counts as on the left, and the window goes right of it.
+        /// </summary>
+        public static float CardHoverRight(Rect card, float width, float windowWidth) =>
+            card.center.x <= width * 0.5f ? Mathf.Min(card.xMax + BarGap + windowWidth, width - 10f) : Mathf.Max(card.x - BarGap, windowWidth + 10f);
+
+        /// <summary>Tells the stats window of the unit hovered on a draft or reinforcement card, if any (on Repaint): beside the card, its bottom at the card's.</summary>
+        private void ShowCardHover(float width)
+        {
+            UnitStats unit = CardScreens.HoveredUnit;
+            if (unit == null || Event.current.type != EventType.Repaint || StatsWindow == null) return;
+            Rect card = CardScreens.HoveredUnitCard;
+            float right = CardHoverRight(card, width, StatsWindow.WindowWidth);
+            StatsWindow.ShowHover(unit, right, card.yMax, right);
         }
 
         // ------------------------------------------------------------------ cards (Milestone 7)
@@ -277,6 +302,7 @@ namespace Halobellum.UI
             CardRow row = CardLayout.Arrange(offer.Count, width, bar.yMax + 14f, bottom);
             if (offer.Count > 0) TutorialHud.Mark("area:cards", Rect.MinMaxRect(row.CardAt(0).xMin, row.CardAt(0).yMin, row.CardAt(offer.Count - 1).xMax, row.CardAt(0).yMax));
             for (int i = 0; i < offer.Count; i++) TutorialHud.Mark("area:card" + i, row.CardAt(i));
+            CardScreens.ClearHoveredUnit();
             for (int i = 0; i < offer.Count; i++)
             {
                 Rect card = row.CardAt(i);
@@ -287,6 +313,8 @@ namespace Halobellum.UI
                     : CardScreens.DrawReinforcementCard(card, offer.Reinforcements[i], faction, m.Player.Unlocked.Contains(offer.Reinforcements[i].Type), price, canAfford);
                 if (taken) match.ChooseCard(i);
             }
+            ShowCardHover(width);
+            DrawHoveredUnit();
         }
 
         /// <summary>True while the player has put the cards aside to look at the board. A new card screen always starts with its cards showing.</summary>
@@ -350,6 +378,32 @@ namespace Halobellum.UI
         private void DrawSquadItemSlots()
         {
             ItemHud.DrawSquadSlots(match.Match.Player.Squads, match.PlacingItem, _scale, match.SquadOnScreen, match.IconFor, squad => match.PlaceItemOn(squad), match.CancelItemPlacement);
+        }
+
+        private readonly List<(Vector3 screen, IReadOnlyList<TechUpgrade> techs)> _techRows = new List<(Vector3, IReadOnlyList<TechUpgrade>)>();
+        private readonly List<(Rect rect, TechUpgrade tech)> _techIconsDrawn = new List<(Rect, TechUpgrade)>();
+        /// <summary>How big a tech icon over a squad is, and how far above the squad's top its row sits, in HUD units (close over the squad: the owner, D145).</summary>
+        public const float SquadTechIconSize = 20f, SquadTechIconLift = 6f;
+
+        /// <summary>
+        /// D145: a row of small tech icons over each squad during deployment, gone once the battle starts: the player's squads with their techs,
+        /// the enemy's ghosts with the techs they had at the last battle start. Hovering one names the tech.
+        /// </summary>
+        private void DrawSquadTechIcons(float height)
+        {
+            match.SquadTechs(_techRows);
+            _techIconsDrawn.Clear();
+            foreach (var (screen, techs) in _techRows)
+                TechIcons.DrawRow(screen.x / _scale, height - screen.y / _scale - SquadTechIconLift, techs, SquadTechIconSize, _techIconsDrawn);
+            foreach (var (rect, tech) in _techIconsDrawn)
+            {
+                if (!rect.Contains(Event.current.mousePosition)) continue;
+                string text = $"{tech.Name}: {tech.EffectsText()}";
+                var label = new Rect(rect.xMax + 6f, rect.y - 4f, Mathf.Min(420f, 24f + text.Length * 8f), 28f);
+                Panel(label);
+                GUI.Label(label, text, _smallCentered);
+                break;
+            }
         }
 
         private bool _confirmTraining;
@@ -613,6 +667,27 @@ namespace Halobellum.UI
         /// <summary>The test tool's key of a unit's cell in the bar, and on the page.</summary>
         public static string BarCellKey(UnitStats unit) => "Unit bar/" + unit.Name;
         public static string PageCellKey(UnitStats unit) => "Unlock page/" + unit.Name;
+        /// <summary>The test tool's key of the "i" corner of a unit's cell, in the bar and on the page.</summary>
+        public static string BarInfoKey(UnitStats unit) => "Unit bar/i/" + unit.Name;
+        public static string PageInfoKey(UnitStats unit) => "Unlock page/i/" + unit.Name;
+
+        /// <summary>The "i" corner of a cell, in the cell's top right, that pins the unit's stats window.</summary>
+        public static Rect InfoCorner(Rect cell) => new Rect(cell.xMax - InfoSize - 2f, cell.y + 2f, InfoSize, InfoSize);
+        private const float InfoSize = 20f;
+
+        /// <summary>
+        /// The "i" corner: drawn before the cell's own button, so that a press on it is its own and doesn't buy or unlock. A click pins the unit's stats window
+        /// (ShowShopUnit), as a click on a shop row does in faction mode; a second click closes it.
+        /// </summary>
+        private void DrawInfoCorner(Rect cell, UnitStats unit, string key)
+        {
+            Rect corner = InfoCorner(cell);
+            if (MenuStyle.Button(corner, "i", _infoButton, key) && Event.current.button == 0) ShowShopUnit(unit);
+            UiAudio.Watch(corner);
+        }
+
+        /// <summary>For a test tool: the unit whose stats window is pinned, or null.</summary>
+        public UnitStats PinnedUnit => StatsWindow != null ? StatsWindow.ShopUnit : null;
 
         /// <summary>For the test tool, in place of the mouse: the unit whose cell counts as hovered.</summary>
         public UnitStats DemoHover { get; set; }
@@ -806,6 +881,7 @@ namespace Halobellum.UI
                 int price = m.SquadPrice(Team.A, unit);
                 bool canBuy = player.Credits >= price && player.SquadsBoughtThisRound < m.SquadsPerRound(Team.A);
                 DrawUnitCell(cell, unit, price, null, default, canBuy, hovered);
+                DrawInfoCorner(cell, unit, BarInfoKey(unit));
                 if (MenuStyle.Button(cell, "", GUIStyle.none, BarCellKey(unit)) && Event.current.button == 0) match.Buy(unit);
                 if (hovered && Event.current.type == EventType.Repaint && StatsWindow != null) StatsWindow.ShowHover(unit, panel.xMax, panel.y - BarGap, panel.x - BarGap);
             }
@@ -859,6 +935,7 @@ namespace Halobellum.UI
                 bool canUnlock = player.Credits >= unit.UnlockCost && player.UnlocksThisRound < m.Rules.UnlocksPerRound;
                 string status = unlocked ? "Unlocked" : unit.UnlockCost > 0 ? $"Unlock {unit.UnlockCost}" : "Unlock (free)";
                 DrawUnitCell(cell, unit, m.SquadPrice(Team.A, unit), status, unlocked ? HudTheme.Accent : canUnlock ? HudTheme.Text : HudTheme.DimText, unlocked || canUnlock, hovered);
+                DrawInfoCorner(cell, unit, PageInfoKey(unit));
                 if (MenuStyle.Button(cell, "", GUIStyle.none, PageCellKey(unit)) && Event.current.button == 0) UnlockFromPage(unit);
                 if (hovered && Event.current.type == EventType.Repaint && StatsWindow != null) StatsWindow.ShowHover(unit, SquadStatsWindow.ColumnRight, height - 10f, SquadStatsWindow.ColumnRight);
 
@@ -1336,6 +1413,8 @@ namespace Halobellum.UI
             _barLabel = new GUIStyle(_text) { fontSize = HudTheme.Size(15), fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.white } };
             _button = new GUIStyle(GUI.skin.button) { fontSize = HudTheme.Size(15) };
             _bigButton = new GUIStyle(GUI.skin.button) { fontSize = HudTheme.Size(19), fontStyle = FontStyle.Bold };
+            _infoButton = new GUIStyle(GUI.skin.button) { fontSize = HudTheme.Size(14), fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleCenter, padding = new RectOffset(0, 0, 0, 0), wordWrap = false, clipping = TextClipping.Overflow };
+            HudTheme.Fit(_infoButton);
             _smallCentered = new GUIStyle(_small) { alignment = TextAnchor.MiddleCenter };
             _shopLine = new GUIStyle(_small) { wordWrap = false };
             _cellLine = new GUIStyle(_small) { wordWrap = false };

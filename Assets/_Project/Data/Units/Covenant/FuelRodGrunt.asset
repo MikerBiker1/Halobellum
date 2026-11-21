@@ -28,12 +28,14 @@ MonoBehaviour:
   turnTime180: 0.25
   isAir: 0
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 0
   weapons:
   - weaponName: Fuel Rod Gun
-    damagePerShot: 32
+    damagePerShot: 24.5
     fireInterval: 2
-    range: 16
+    range: 14
     minRange: 0
     projectileSpeed: 25
     splashRadius: 3
@@ -71,6 +73,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0

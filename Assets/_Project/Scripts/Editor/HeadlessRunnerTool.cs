@@ -154,7 +154,9 @@ namespace Halobellum.EditorTools
                 {
                     if (attacker == defender) continue;
                     float rate = result.WinRate(attacker, defender);
-                    if (rate >= 0f) asset.entries.Add(new MatchupTableDefinition.Entry { attacker = attacker.Name, defender = defender.Name, winRate = rate });
+                    float margin = result.Margin(attacker, defender);
+                    if (rate >= 0f) asset.entries.Add(new MatchupTableDefinition.Entry { attacker = attacker.Name, defender = defender.Name, winRate = rate,
+                        margin = float.IsNaN(margin) ? 0f : margin, hasMargin = !float.IsNaN(margin) });
                 }
             }
             EditorUtility.SetDirty(asset);

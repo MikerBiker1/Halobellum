@@ -211,7 +211,7 @@ for faction, spells in SPELLS.items():
 # ------------------------------------------------------------------ the other cards, shared by both factions
 # Types: 1 Item, 2 Economy, 3 Buff, 4 Training. Items can be taken again and again (99 copies).
 CARDS = [
-    dict(file="LaserSights", icon="Item_LaserSights", name="Laser Sights", type=1, cost=50, max=99, desc="Sights that let a squad hit from further away.", range=2),
+    dict(file="LaserSights", icon="Item_LaserSights", name="Laser Sights", type=1, cost=50, max=99, desc="Sights that let a squad hit from further away.", range=4),
     dict(file="AbsorptionModule", icon="Item_AbsorptionModule", name="Absorption Module", type=1, cost=100, max=99, desc="Turns the damage a squad deals into health.", hp=1.3, steal=0.9),
     dict(file="AmplifyingCore", icon="Item_AmplifyingCore", name="Amplifying Core", type=1, cost=100, max=99, desc="More power to everything the squad does.", dmg=1.5, hp=1.5),
     dict(file="DeploymentModule", icon="Item_DeploymentModule", name="Deployment Module", type=1, cost=0, max=99, desc="The squad can be moved freely in every deployment phase.", free=1),

@@ -28,10 +28,12 @@ MonoBehaviour:
   turnTime180: 1.5
   isAir: 0
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 0
   weapons:
   - weaponName: Archer Missile Barrage
-    damagePerShot: 55
+    damagePerShot: 58
     fireInterval: 4
     range: 42
     minRange: 8
@@ -71,6 +73,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0
@@ -100,4 +103,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: 'Slow, grouped units'
   weakAgainst: 'Flankers, air'
-  notes: 'Best counters (headless runner, equal cost): Infested Banshee (100%), Condor Gunship (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Gremlin (100%), Juggernaut (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

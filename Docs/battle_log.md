@@ -14,7 +14,7 @@ Each line is one JSON object, and its `type` says what it is.
 
 | `type` | When | What it holds |
 |---|---|---|
-| `match_start` | A starting card was chosen | Format version, the game's version (`version`), time, match seed, mode, AI difficulty, the base health rule, the card filter (`cards`), the draft cards offered and the one chosen, and both sides |
+| `match_start` | A starting card was chosen | Format version, the game's version (`version`), time, match seed, mode, AI difficulty, the base health rule, the card filter (`cards`), the draft cards offered and the one chosen, and both sides. `unit_stats` is there only when the game was played with changed stats from its `UnitStats` folder (D142): `"modded:N"`, N being how many values were changed |
 | `cards_offered` | A card screen opens | Round, kind, credits, the skip bonus, each card's name and price |
 | `action` | You did or tried something | Round, what, its detail, whether it worked, credits after it, and the game's reason if it was refused |
 | `battle_start` | You pressed Ready | Round, the battle's seed, and both sides as they went in, with the AI's real army |
@@ -38,6 +38,7 @@ Each line is one JSON object, and its `type` says what it is.
 - **The numbers move.** A log says what happened under that day's balance. It has the unit names and not their stats, so a log from before a balance change describes a different game. `match_start` has the time, and `DECISIONS.md` has what changed when.
 - **The format can change.** `match_start` has a `format` number, now 1, which goes up if a line changes meaning.
 - **A replay can drift.** A log replays exactly under the balance it was played with (D106, below). After a balance change the AI may buy otherwise and battles end otherwise; the replay says where.
+- **Modded games.** A log with `"unit_stats":"modded:N"` was played with stats from the `UnitStats` files, which the log does not hold. A replay always uses the default stats and says so, so it drifts.
 
 ## Replaying a log (D106)
 
@@ -53,3 +54,16 @@ Start the game with the log's path, and it plays that game again in the Match sc
 | `-replayShots <folder>` | Also saves pictures (each card screen, each deployment, each battle at 2 and 10 s, each result) and `replay.txt`, then quits |
 
 At every battle start both armies are compared with the log's (each squad's id, unit, place, turn and level, and the credits), and each battle's outcome and both bases after it. Whatever differs is shown at the end and written to `replay.txt`, and the replay carries on regardless. Only actions that worked are done again: a refused one changed nothing. A replay writes no battle log of its own, and is silent like every test tool (add `-audioOn` to hear it). The replay uses the log's card filter and says which version of the game played the log; logs from before 0.381.1 hold neither, so they replay with all cards.
+
+
+### Headless, to test an AI change (D145)
+
+The tournament tool replays a log without pictures, on exported game data, and prints the AI's army at each battle start next to the logged one, and each battle's base damage. Your actions are done again as logged and the AI decides anew, so it shows what a changed AI would have bought against you. Under the AI that played it, it reproduces the game exactly. `--old-insane` plays the Insane from before D145.
+
+    dotnet Tools/Balance/Tournament/bin/Release/net10.0/Tournament.dll game_data.json matrix.csv unused --replay "<log>.jsonl" [--old-insane]
+
+`HB_REPLAY_DECISION=1` also prints each round's decision line; `HB_REPLAY_WATCH="Carrier Form"` reports, each battle, what your bodies of that type attacked, how many were killed first, and any that stood within reach of an enemy for a second without attacking (D146); `HB_REPLAY_FACTIONS` changes the faction order (the Match scene's, UNSC,Covenant,Flood, by default).
+
+### A duel, to watch one unit (D146)
+
+`--duel "Infection Forms:10+Carrier Form:4,Scarab:1"` (instead of `--replay`) fights those bodies on the exported data, 30 m apart, and prints each second what the last type on the first side does (state, target, distance to its edge), each attack, death and burst hit.

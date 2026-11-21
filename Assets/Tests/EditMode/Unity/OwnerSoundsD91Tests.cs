@@ -59,6 +59,7 @@ namespace Halobellum.Tests
         {
             Assert.AreSame(AudioCatalog.HunterCharge, BattleAudio.LeapCue(Unit("Covenant/HunterPair")));
             Assert.AreSame(AudioCatalog.HunterCharge, BattleAudio.LeapCue(Unit("LekgoloColony/HunterCaptain")));
+            Assert.AreSame(AudioCatalog.HunterCharge, BattleAudio.LeapCue(Unit("LekgoloColony/Goliath")), "It charges as the Hunters do (D142).");
             Assert.AreSame(AudioCatalog.FloodLeap, BattleAudio.LeapCue(Unit("Flood/StalkerForm")));
             Assert.IsNull(BattleAudio.LeapCue(Unit("Covenant/Zealot")), "A Zealot leaps without a sound of its own.");
         }

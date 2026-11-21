@@ -45,13 +45,15 @@ Free draft squads can be moved, turned or sold in round 1, and they don't use up
 - The simulation runs at **30 ticks per second** from a fixed seed, so the same armies and seed always play out the same way.
 - Controls: **Pause, 1×, 2×, 4×** (Space pauses, keys 1, 2 and 3 pick the speed). Esc opens the pause menu.
 - A battle ends when **one side has no units left** or after **90 seconds**. Towers don't count as units. A body that is about to rise as Flood does.
+- **Top squad glow:** a **blue** glow under the bodies of your squad that has dealt the most damage this battle, and a **red** one under the enemy's. What a squad drops, releases or raises counts for it, but only its own bodies glow. A wiped-out leader stays the leader until another squad passes it. The glows stay through the result, the cards and the next deployment, and reset when the next battle starts. (In autoplay and replays the left-hand side, team A, is blue. There is no glow in the Sandbox.)
 - Shots already in the air still land, for up to 10 more seconds. If they leave nobody alive on either side, the round is a draw: no base is hit, and income is still paid.
 
 ## The result
 
-- **A time-out isn't special.** Whether the battle ended in a wipe or at 90 seconds, every body still alive deals its **base damage** to the enemy base. There's no extra base damage for losing, but the kills you gave up become the enemy's experience.
+- **A time-out isn't special.** Whether the battle ended in a wipe or at 90 seconds, every body still alive deals its **base damage** to the enemy base (summoned bodies excepted, below). There's no extra base damage for losing, but the kills you gave up become the enemy's experience.
 - Base damage is set per unit. The usual value is **(squad cost ÷ squad size) ÷ 5** per body: a 300-credit single tank deals 60, and each body of an 18-strong 100-credit squad deals about 1.1. Every unit page shows its value.
-- Temporary bodies (dropped troops, released Flood forms, risen infected units, spell squads) count too if they're alive at the end.
+- **Summoned bodies deal no base damage.** Released Flood forms (a Spawner's brood, every death burst), risen infected and seeded units, spell squads, and anything a summoned carrier drops still fight and keep the battle going, but deal 0 at the end. A Spawner alive at a time-out deals only its own base damage.
+- Troops a bought **air transport** drops (the Pelican's Marines, the Covenant Phantom's Grunts, a bought Infected Phantom's Combat Forms) do count if they're alive at the end.
 - Each survivor sends a node of light to the enemy base: small ones first, then bigger ones, then each Titan alone.
 - The **round result window** shows both sides' base damage, kills, next round's income, and which squads can level up. Its ribbon is green if you dealt more base damage than you took **that round**, red if less, and grey if equal.
 - When a base falls, the ribbon reads **Victory** or **Defeat**, with buttons for **Battle stats**, the battle logs, a new match and the main menu.

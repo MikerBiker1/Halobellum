@@ -4,6 +4,7 @@
 // never touches Unity objects. No numbers live here: every value comes from data (Bible Section 4).
 // Depends on: CombatEnums.
 
+using System;
 using System.Collections.Generic;
 
 namespace Halobellum.Core
@@ -46,6 +47,8 @@ namespace Halobellum.Core
         public TargetFilter TargetFilter;
         /// <summary>Damage multiplier against air units ("bonus damage against air"). 1 means no bonus.</summary>
         public float AirDamageMultiplier = 1f;
+        /// <summary>Metres added to the range against air units only (the Jackal sniper's Aim for Their Wings, D149). 0 means none.</summary>
+        public float AirRangeBonus;
         /// <summary>
         /// Cone splash (flamethrowers): if above 0, each shot also hits every legal enemy inside a cone
         /// this many degrees wide, from the shooter out to the weapon's range, centred on the target.
@@ -99,6 +102,23 @@ namespace Halobellum.Core
         public float WindUpSeconds;
 
         /// <summary>
+        /// The charged shot (the Jackal's plasma pistol, the owner, D151): at a target that still has shield, the weapon charges for
+        /// ShieldBreakChargeSeconds (as a wind-up), then fires one big, slow bolt (ShieldBreakProjectileSpeed m/s) that strips this many
+        /// shield points and does nothing else. At a target with no shield it fires as usual. 0 = none.
+        /// </summary>
+        public float ShieldBreak;
+        public float ShieldBreakChargeSeconds;
+        public float ShieldBreakProjectileSpeed;
+        /// <summary>Marks the charged bolt's own stats, which the battle makes from the weapon's (SimWeapon.ChargedShot); never set on a weapon in data.</summary>
+        public bool IsChargedShot;
+        public bool HasShieldBreak => ShieldBreak > 0f;
+        /// <summary>
+        /// A shot that kills its target goes on through to the next enemy on the same line from the shooter, within the weapon's range, and on
+        /// again while it kills (the Jackal's beam rifle, the owner, D155). Instant weapons only.
+        /// </summary>
+        public bool PiercesKills;
+
+        /// <summary>
         /// Shots in each attack (the Grizzly's Double Shot tech, D114): the first goes as any shot does, the rest follow BurstGapSeconds apart at the
         /// same target, and the reload (FireInterval) counts from the first. 1 = a single shot.
         /// </summary>
@@ -111,7 +131,24 @@ namespace Halobellum.Core
         /// </summary>
         public float StaggerSeconds;
 
-        public float ShotsPerSecond => FireInterval > 0f ? 1f / FireInterval : 0f;
+        /// <summary>
+        /// A magazine (the owner, D157): this many shots FireInterval apart, then MagazineReloadSeconds from the last before the next. Each shot
+        /// aims on its own, so the magazine carries on at a new target. 0 = no magazine. A weapon idle for a whole reload has a full magazine again.
+        /// </summary>
+        public int MagazineSize;
+        public float MagazineReloadSeconds;
+        /// <summary>
+        /// A ram (the Infested Warthog's, the owner, D160): it hits once, then only again after the unit has driven this many seconds, building up
+        /// speed. Against a squad it rams the first body, then stands among the rest without the speed for another. 0 = an ordinary weapon.
+        /// </summary>
+        public float RamRechargeSeconds;
+        public bool IsRam => RamRechargeSeconds > 0f;
+        public bool HasMagazine => MagazineSize > 0;
+
+        /// <summary>Shots a second over time, a magazine's reload counted in.</summary>
+        public float ShotsPerSecond => HasMagazine
+            ? MagazineSize / Math.Max(1e-3f, (MagazineSize - 1) * FireInterval + MagazineReloadSeconds)
+            : FireInterval > 0f ? 1f / FireInterval : 0f;
         public bool IsInstant => ProjectileSpeed <= 0f;
         public bool IsCone => ConeDegrees > 0f;
         public bool IsBeam => BeamSeconds > 0f;
@@ -253,9 +290,9 @@ namespace Halobellum.Core
         public DefenseArcStats DefenseArc;
 
         /// <summary>
-        /// Optional mid-battle drop (Pelican): a squad of this unit type (its SquadSize is the number of
-        /// bodies dropped) appears under this unit once it has been alive this many seconds. Null = none.
-        /// Dropped units only exist for that battle.
+        /// Optional mid-battle drop (Pelican, Phantoms): a squad of this unit type (its SquadSize is the number of
+        /// bodies dropped) appears under this unit ReinforcementDelaySeconds into the battle (or at ReinforcementFirstDropSeconds when that is set),
+        /// then the delay after each drop, ReinforcementDrops times. Null = none. Dropped units only exist for that battle.
         /// </summary>
         public UnitStats Reinforcement;
         public float ReinforcementDelaySeconds;
@@ -263,16 +300,28 @@ namespace Halobellum.Core
         public UnitStats LockedReinforcement;
         /// <summary>It can deploy in the flank zones beside the enemy's area (D61).</summary>
         public bool CanFlank;
-        /// <summary>How many times it drops its squad in a battle, ReinforcementDelaySeconds apart at least.</summary>
+        /// <summary>
+        /// It heads for the nearest enemy tower that still stands and shoots what it passes without stopping for it, then attacks the tower;
+        /// with no tower left it fights like any unit (the owner, 2026-11-12, for flankers: a fallen tower's shockwave is their job; D138).
+        /// </summary>
+        public bool GoesForTowers;
+        /// <summary>
+        /// Metres between its squadmates, edge to edge, in formation and while they walk; 0 keeps the rules' FormationGap. The Elites stand 1.5 m
+        /// apart so one blast catches fewer of them (the owner, D151).
+        /// </summary>
+        public float SquadGap;
+        /// <summary>How many times it drops its squad in a battle, ReinforcementDelaySeconds apart at least (counted from the last drop).</summary>
         public int ReinforcementDrops = 1;
         /// <summary>
-        /// Above 0, it doesn't drop from the air where it is: it flies behind the enemy's lines (unless ReinforcementFirstDropSeconds has it start down sooner), takes this many seconds to come down, lets its squad out
-        /// behind it, and takes as long to go back up (the Pelican, D60). On the ground, weapons that can't hit air can hit it. Once its drops are made, it fights.
+        /// Above 0, it doesn't drop from the air: it comes down where it is, taking this many seconds, lets its squad out from under it, and takes as long to go back up
+        /// (the Pelican, D60; it flew behind the enemy's lines to land until D143). On the ground, weapons that can't hit air can hit it. Once its drops are made, it fights.
+        /// 0 = it drops from the air straight under itself, wherever it is, and never comes down; it moves and fights like any unit (the Infected and Covenant Phantoms).
         /// </summary>
         public float ReinforcementLandSeconds;
         /// <summary>
-        /// Above 0, a landing carrier's first squad is out this many seconds after it comes onto the field, wherever it has got to: it starts down in time, without
-        /// reaching the enemy's lines (the Pelican: 5). If it comes on later than that, it starts down as it arrives. 0 = the first drop is like the others.
+        /// Above 0, the first squad is out this many seconds after the carrier comes onto the field, wherever it has got to; a landing carrier starts down in time, without
+        /// reaching the enemy's lines (the Pelican and the Covenant Phantom: 5). If it comes on later than that, it drops (or starts down) as it arrives. 0 = the first drop is
+        /// like the others, at ReinforcementDelaySeconds.
         /// </summary>
         public float ReinforcementFirstDropSeconds;
 
@@ -298,6 +347,11 @@ namespace Halobellum.Core
         public bool SelfDestructs;
         /// <summary>The unit heads for the thickest group of enemies instead of the closest one (Infected Pelican).</summary>
         public bool SeeksDensestCluster;
+        /// <summary>
+        /// The unit walks through its own side's chaff instead of pushing against it (Carrier Form, D146: the owner saw Carrier Forms held back by
+        /// their own Infection Forms crowding a Scarab or a Goblin, never reaching it to burst; the forms are hard to see, so no one sees it pass).
+        /// </summary>
+        public bool PassesThroughOwnChaff;
         /// <summary>Released again and again during the battle (Abomination); SquadSize is the bodies each time. Null = none.</summary>
         public UnitStats SpawnedUnit;
         public float SpawnIntervalSeconds;
@@ -331,6 +385,14 @@ namespace Halobellum.Core
         public TechUpgrade[] TechUpgrades = new TechUpgrade[0];
         /// <summary>Squad level these stats were made for (1 = base stats; see UnitUpgrades.Apply).</summary>
         public int Level = 1;
+
+        /// <summary>A copy of this unit at another price (a sub-faction's own price, D158). Its weapons and the rest are shared, as nothing changes them.</summary>
+        public UnitStats CopyAtCost(int cost)
+        {
+            var copy = (UnitStats)MemberwiseClone();
+            copy.Cost = cost;
+            return copy;
+        }
 
         public bool HasShield => MaxShield > 0f;
         /// <summary>Turning speed in degrees per second, or infinity for units that turn instantly.</summary>
@@ -377,6 +439,10 @@ namespace Halobellum.Core
                     if (w.HitSlowSeconds < 0f || w.HitSlowShare < 0f || w.HitSlowShare > 1f) problems.Add($"{wl}: hit slow values are out of range.");
                     if (w.BeamSeconds < 0f || w.BeamChargeSeconds < 0f || w.BeamRestSeconds < 0f || w.BeamSweepSpeed < 0f) problems.Add($"{wl}: beam values cannot be negative.");
                     if (w.WindUpSeconds < 0f) problems.Add($"{wl}: wind-up cannot be negative.");
+                    if (w.MagazineSize < 0 || (w.HasMagazine && w.MagazineReloadSeconds <= 0f)) problems.Add($"{wl}: a magazine needs a size above 0 and a reload above 0.");
+                    if (w.RamRechargeSeconds < 0f) problems.Add($"{wl}: a ram's recharge cannot be negative.");
+                    if (w.ShieldBreak < 0f || w.ShieldBreakChargeSeconds < 0f || w.ShieldBreakProjectileSpeed < 0f) problems.Add($"{wl}: charged shot values cannot be negative.");
+                    if (w.HasShieldBreak && (w.HasWindUp || w.IsBeam)) problems.Add($"{wl}: a charged shot cannot go with a wind-up or a beam.");
                     if (w.HasWindUp && w.IsBeam) problems.Add($"{wl}: a beam charges by its own values and cannot have a wind-up.");
                 }
             }

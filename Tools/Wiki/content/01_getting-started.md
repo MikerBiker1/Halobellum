@@ -15,11 +15,11 @@ The game is about **counterplay**. Read the enemy's army, buy what beats it, and
 ## How a match is won
 
 - Each side has a **base** with **2,000 health** (your starting card moves this up or down a little).
-- After every battle, **every body still alive on both sides** hits the enemy base for its **base damage**. Both bases are hit at the same moment.
+- After every battle, **every body still alive on both sides** hits the enemy base for its **base damage**. Both bases are hit at the same moment. Bodies summoned during the battle (released, risen or brought by a spell) deal none.
 - A base at 0 or below loses. If both fall in the same round, the side further below zero loses. An exact tie undoes that round's damage and the match goes on.
 - There is no round limit: the match ends when a base falls.
 
-> **Tip:** The base damage comes from how many of your bodies survive and how much each is worth: a wiped-out army deals nothing, and a few expensive survivors can deal a lot. Losing also costs you in experience. Every body the enemy kills feeds XP to the squads that killed it, so a one-sided battle levels up their army while yours falls behind (see [Levels and experience](#/page/levels)).
+> **Tip:** The base damage comes from how many of your bodies survive and how much each is worth: a wiped-out army deals nothing, and a few expensive survivors can deal a lot. Losing also costs you in experience. Every body the enemy kills feeds XP to the squad that finished it and the squads that damaged it, so a one-sided battle levels up their army while yours falls behind (see [Levels and experience](#/page/levels)).
 
 ## A match at a glance
 

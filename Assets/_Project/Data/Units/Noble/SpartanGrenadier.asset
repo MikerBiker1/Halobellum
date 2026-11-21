@@ -17,9 +17,9 @@ MonoBehaviour:
   tier: 3
   unlockCost: 200
   squadSize: 1
-  cost: 400
-  baseDamage: 80
-  maxHealth: 1000
+  cost: 350
+  baseDamage: 70
+  maxHealth: 980
   armorType: 0
   maxShield: 300
   shieldRegenPerSecond: 60
@@ -28,11 +28,13 @@ MonoBehaviour:
   turnTime180: 0.5
   isAir: 0
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 0
   weapons:
   - weaponName: M41 Rocket Launcher
-    damagePerShot: 62
-    fireInterval: 1.5
+    damagePerShot: 65
+    fireInterval: 0.5
     range: 19
     minRange: 3
     projectileSpeed: 22
@@ -54,6 +56,8 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
+    magazineSize: 2
+    magazineReloadSeconds: 2
   hasDefenseArc: 0
   defenseArc:
     arcDegrees: 0
@@ -71,6 +75,7 @@ MonoBehaviour:
   immuneToInfection: 1
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0

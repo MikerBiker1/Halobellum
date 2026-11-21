@@ -45,6 +45,19 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void ASummonedSurvivor_SendsNoNode()
+        {
+            BattleSimulation sim = Battle((Team.A, 10f, true), (Team.A, 5f, true));
+            sim.Units[1].Origin = BodyOrigin.Summoned;
+            RoundEnding ending = Ending(sim);
+            Assert.AreEqual(1, ending.Nodes.Count, "A body summoned in the battle deals no base damage, as the round's result counts it.");
+            Assert.AreEqual(10f, ending.Nodes[0].Damage, 1e-3f);
+            for (int i = 0; i < 1000 && !ending.IsDone; i++) ending.Tick(0.02f);
+            Assert.IsTrue(ending.IsDone);
+            Assert.AreEqual(10, ending.HitsTaken(Team.B));
+        }
+
+        [Test]
         public void TheBaseGoesDownHitByHit_WithANumberForEach()
         {
             RoundEnding ending = Ending(Battle((Team.A, 10f, true), (Team.A, 25f, true), (Team.A, 1.1111f, true)));

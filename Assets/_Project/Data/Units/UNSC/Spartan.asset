@@ -28,11 +28,13 @@ MonoBehaviour:
   turnTime180: 0.5
   isAir: 0
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 2
   weapons:
   - weaponName: Spartan Laser
     damagePerShot: 450
-    fireInterval: 3.5
+    fireInterval: 4.2
     range: 24
     minRange: 0
     projectileSpeed: 0
@@ -72,6 +74,7 @@ MonoBehaviour:
   immuneToInfection: 1
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0

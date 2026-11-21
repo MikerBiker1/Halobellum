@@ -4,6 +4,7 @@
 // MatchHud lays the cards out (CardLayout) and handles what a click does. The text shrinks to fit its place on a narrow
 // card, down to a size still legible: Fit counts anything that still didn't fit, or only just did at that smallest size,
 // and the demo (CardScreensDemo) reports both. The cards of a draft row share one size of text and one height for it (MeasureDraftRow).
+// Hovering a squad on a draft card, or a reinforcement card's unit, records it (HoveredUnit), for MatchHud to show its stats window beside the card.
 // Drawn with Unity's immediate-mode GUI. These screens aren't on during a battle, so they may allocate a little.
 // Depends on: CardArt, UnitIcons, HudTheme, Halobellum.Core, Halobellum.Economy, UnityEngine.
 
@@ -41,6 +42,25 @@ namespace Halobellum.UI
         public static string LastTextAtTheFloor;
         /// <summary>Where the demo pretends the mouse is (HUD units), to take a picture of a hovered card. Null in the game.</summary>
         public static Vector2? DemoMouse;
+
+        /// <summary>The unit of the squad hovered on a draft card, or of the reinforcement card hovered, since ClearHoveredUnit; null if none.</summary>
+        public static UnitStats HoveredUnit { get; private set; }
+        /// <summary>The card that HoveredUnit is on, in HUD units.</summary>
+        public static Rect HoveredUnitCard { get; private set; }
+
+        /// <summary>MatchHud calls this before it draws a row of cards.</summary>
+        public static void ClearHoveredUnit()
+        {
+            HoveredUnit = null;
+            HoveredUnitCard = default;
+        }
+
+        private static void NoteHovered(Rect area, UnitStats unit, Rect card)
+        {
+            if (unit == null || !Hovered(area)) return;
+            HoveredUnit = unit;
+            HoveredUnitCard = card;
+        }
 
         private const float ButtonHeight = 42f;
         /// <summary>A draft card's squads go side by side with their text from this width of contents up.</summary>
@@ -149,13 +169,13 @@ namespace Halobellum.UI
             Fit(new Rect(area.x, y, area.width, 22f), $"Free squads worth {draft.Value}, base health {baseHealth}", _line, 15, 12, TextAnchor.MiddleCenter, HudTheme.DimText);
             y += 24f;
 
-            DrawSquads(new Rect(area.x, y, area.width, bottom - y), draft, faction, accent);
+            DrawSquads(new Rect(area.x, y, area.width, bottom - y), draft, faction, accent, card);
 
             return Button(new Rect(area.x, area.yMax - ButtonHeight, area.width, ButtonHeight), "Choose", true);
         }
 
         /// <summary>The squads of a draft card, one above the other.</summary>
-        private static void DrawSquads(Rect area, DraftCard draft, string faction, Color accent)
+        private static void DrawSquads(Rect area, DraftCard draft, string faction, Color accent, Rect card)
         {
             List<UnitStats> squads = draft.Squads;
             int count = squads.Count;
@@ -164,13 +184,14 @@ namespace Halobellum.UI
             float height = (area.height - (count - 1) * gap) / count;
             for (int i = 0; i < count; i++)
             {
-                DrawSquadCell(new Rect(area.x, area.y + i * (height + gap), area.width, height), squads[i], draft.SubFaction.ExclusiveUnits.Contains(squads[i]), faction, accent);
+                DrawSquadCell(new Rect(area.x, area.y + i * (height + gap), area.width, height), squads[i], draft.SubFaction.ExclusiveUnits.Contains(squads[i]), faction, accent, card);
             }
         }
 
-        /// <summary>One squad: on a wide card its picture beside its text, on a narrow one above it.</summary>
-        private static void DrawSquadCell(Rect cell, UnitStats unit, bool exclusive, string faction, Color accent)
+        /// <summary>One squad: on a wide card its picture beside its text, on a narrow one above it. Hovering any of it shows its stats (HoveredUnit).</summary>
+        private static void DrawSquadCell(Rect cell, UnitStats unit, bool exclusive, string faction, Color accent, Rect card)
         {
+            NoteHovered(cell, unit, card);
             string numbers = (exclusive ? "Exclusive, " : "") + $"{RoleName(unit.Role)}\n{Bodies(unit.FormsInSquad)}, worth {unit.Cost}";
             if (cell.width >= WideEnoughForSideBySide)
             {
@@ -253,6 +274,7 @@ namespace Halobellum.UI
 
             // The big picture takes what the text leaves.
             float bottom = area.yMax - ButtonHeight - 6f;
+            NoteHovered(Rect.MinMaxRect(card.x, card.y, card.xMax, bottom), unit, card); // The whole card above its Take button shows the unit's stats.
             float room = bottom - y;
             float text = PairHeight(squads, 18, numbers, 15, area.width);
             float size = Mathf.Clamp(room - text - 12f, room * 0.3f, Mathf.Min(area.width, room * 0.7f));

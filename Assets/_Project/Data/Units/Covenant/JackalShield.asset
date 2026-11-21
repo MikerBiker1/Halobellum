@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 6
   cost: 150
   baseDamage: 5
-  maxHealth: 70
+  maxHealth: 80
   armorType: 0
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -28,6 +28,8 @@ MonoBehaviour:
   turnTime180: 0.25
   isAir: 0
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 2
   weapons:
   - weaponName: Plasma Pistol
@@ -54,6 +56,9 @@ MonoBehaviour:
     seedSlowShare: 0
     hitSlowSeconds: 0
     hitSlowShare: 0
+    shieldBreak: 100
+    shieldBreakChargeSeconds: 1
+    shieldBreakProjectileSpeed: 12
   hasDefenseArc: 1
   defenseArc:
     arcDegrees: 120
@@ -71,6 +76,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0

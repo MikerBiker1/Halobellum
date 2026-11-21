@@ -48,13 +48,24 @@ namespace Halobellum.Combat
         public SimUnit WindUpTarget;
         /// <summary>Seconds of wind-up left, counted down at the unit's rate of fire (a shockwave stretches it).</summary>
         public float WindUpLeft;
+        /// <summary>Shots fired from the current magazine (D157).</summary>
+        public int MagazineShots;
+        /// <summary>A ram that has hit and needs speed again (D160), and the seconds driven since.</summary>
+        public bool RamSpent;
+        public float RamRolledSeconds;
+        /// <summary>Seconds the current wind-up takes in all: the weapon's wind-up, or its charged shot's charge (D151).</summary>
+        public float WindUpTotal;
+        /// <summary>True while the wind-up is a charged shot's (D151): the shot that ends it is ChargedShot.</summary>
+        public bool ChargingShot;
+        /// <summary>The charged bolt's stats, made from the weapon's if it has a charged shot (D151); null otherwise.</summary>
+        public readonly WeaponStats ChargedShot;
         /// <summary>How far the wind-up has come, 0 to 1.</summary>
         /// <summary>Shots of the current attack still to come (Double Shot), and the seconds until the next of them.</summary>
         public int BurstShotsLeft;
         public float BurstGapLeft;
         /// <summary>Seconds since it last could fire; a weapon with a stagger waits it out again after a whole reload idle.</summary>
         public float IdleSeconds = float.MaxValue;
-        public float WindUpShare => !WindingUp || Stats.WindUpSeconds <= 0f ? 0f : System.Math.Min(1f, System.Math.Max(0f, 1f - WindUpLeft / Stats.WindUpSeconds));
+        public float WindUpShare => !WindingUp || WindUpTotal <= 0f ? 0f : System.Math.Min(1f, System.Math.Max(0f, 1f - WindUpLeft / WindUpTotal));
 
         /// <summary>Stops a wind-up without firing (an EMP, or the unit died).</summary>
         public void CancelWindUp()
@@ -62,11 +73,21 @@ namespace Halobellum.Combat
             WindingUp = false;
             WindUpTarget = null;
             WindUpLeft = 0f;
+            ChargingShot = false;
         }
 
         public SimWeapon(WeaponStats stats)
         {
             Stats = stats;
+            if (stats.HasShieldBreak)
+            {
+                ChargedShot = stats.Clone();
+                ChargedShot.IsChargedShot = true;
+                ChargedShot.DamagePerShot = 0f;
+                ChargedShot.SplashRadius = 0f;
+                ChargedShot.ConeDegrees = 0f;
+                ChargedShot.ProjectileSpeed = stats.ShieldBreakProjectileSpeed > 0f ? stats.ShieldBreakProjectileSpeed : 10f;
+            }
         }
     }
 
@@ -76,6 +97,17 @@ namespace Halobellum.Combat
         Flying,
         Descending,
         Ascending,
+    }
+
+    /// <summary>Where a body came from. Only the round's base damage reads it: a summoned body fights like any other but deals none.</summary>
+    public enum BodyOrigin
+    {
+        /// <summary>Placed before the battle: bought, reinforcement-card and flank squads, towers.</summary>
+        Deployed = 0,
+        /// <summary>A squad that a deployed (or carried) air carrier brought in: Pelican Marines, Covenant Phantom Grunts, a bought Infected Phantom's Combat Forms.</summary>
+        Carried = 1,
+        /// <summary>Made in the battle by a unit, a body or a spell: brood, death bursts, risen and seeded bodies, spell squads, and anything a summoned carrier drops. Deals no base damage.</summary>
+        Summoned = 2,
     }
 
     public sealed class SimUnit
@@ -206,20 +238,16 @@ namespace Halobellum.Combat
         public bool TouchedOtherSquad;
         /// <summary>True once the unit has entered the enemy's deployment zone: it then notices enemies at any distance.</summary>
         public bool UnlimitedAcquisition;
-        /// <summary>True once this unit's mid-battle reinforcement (if it has one) has been dropped.</summary>
-        public bool ReinforcementDropped;
-        /// <summary>A carrier that lands to drop (D60): how many drops it has made, what it is doing, and where it is going.</summary>
+        /// <summary>A carrier (D60): how many drops it has made; for one that lands, also whether it is coming down or going up.</summary>
         public int DropsMade;
         /// <summary>True until a squad that arrives late is on the field (D61): it can't act, be seen or be hit, but it does keep the battle going.</summary>
         public bool NotArrived;
         public DropRunPhase DropPhase;
         public float NextDropAt;
-        public Vec2 DropSpot;
-        public float DropSpotCheckAt;
         /// <summary>How high it flies: 1 at its full height, 0 on the ground. Only a carrier that lands ever comes down.</summary>
         public float Altitude = 1f;
 
-        // Battle statistics for results and later features (XP from kills, result screen).
+        // Battle statistics for results and later features (XP from kills and damage, result screen).
         public float DamageDealt;
         public int Kills;
         /// <summary>Id of the unit that dealt the killing blow, or -1.</summary>
@@ -236,6 +264,46 @@ namespace Halobellum.Combat
         public int CreditSquadId;
         /// <summary>The spell its deeds count for (squads that drop with a spell), or null.</summary>
         public SimSpell CreditSpell;
+
+        // What each squad dealt to this body (shield and health, never past what it had), by the squad its hits count for
+        // (CreditSquadId), in the order they first hit it. For splitting a kill's XP (the owner, xp_split); nothing in the
+        // battle reads it. Spells are not on it. Lazy arrays with a linear scan: a body is hit by only a few squads.
+        private int[] _damageSquadIds;
+        private float[] _damageAmounts;
+        /// <summary>How many squads have damaged this body (see SquadDamageSquadId and SquadDamageAmount).</summary>
+        public int SquadDamageCount { get; private set; }
+        /// <summary>The credit squad of the i-th squad that damaged this body, in first-hit order.</summary>
+        public int SquadDamageSquadId(int i) => _damageSquadIds[i];
+        /// <summary>What the i-th squad that damaged this body dealt to it.</summary>
+        public float SquadDamageAmount(int i) => _damageAmounts[i];
+        /// <summary>Records damage dealt to this body by the squad its hits count for; nothing for no squad (-1) or no damage.</summary>
+        public void AddSquadDamage(int creditSquadId, float amount)
+        {
+            if (creditSquadId < 0 || !(amount > 0f)) return;
+            for (int i = 0; i < SquadDamageCount; i++)
+            {
+                if (_damageSquadIds[i] == creditSquadId)
+                {
+                    _damageAmounts[i] += amount;
+                    return;
+                }
+            }
+            if (_damageSquadIds == null)
+            {
+                _damageSquadIds = new int[4];
+                _damageAmounts = new float[4];
+            }
+            else if (SquadDamageCount == _damageSquadIds.Length)
+            {
+                System.Array.Resize(ref _damageSquadIds, SquadDamageCount * 2);
+                System.Array.Resize(ref _damageAmounts, SquadDamageCount * 2);
+            }
+            _damageSquadIds[SquadDamageCount] = creditSquadId;
+            _damageAmounts[SquadDamageCount] = amount;
+            SquadDamageCount++;
+        }
+        /// <summary>Where this body came from (Deployed unless the battle made it). Nothing in the battle's ticks reads it.</summary>
+        public BodyOrigin Origin;
 
         public SimUnit(int id, Team team, int squadId, UnitStats stats, Vec2 position, Vec2 facing)
         {
@@ -263,6 +331,8 @@ namespace Halobellum.Combat
         public bool IsAir => Stats.IsAir && Altitude > LandedAltitude;
         private const float LandedAltitude = 0.2f;
         public float Radius => Stats.CollisionRadius;
+        /// <summary>Whether this body hits the enemy base at the round's end: alive, not a tower, not summoned in the battle, with base damage.</summary>
+        public bool HitsEnemyBase => IsAlive && !Stats.IsTower && Origin != BodyOrigin.Summoned && Stats.BaseDamage > 0f;
 
         public override string ToString() => $"{Stats.Name}#{Id} ({Team}) {State} hp={Health:0.#} at {Position}";
     }

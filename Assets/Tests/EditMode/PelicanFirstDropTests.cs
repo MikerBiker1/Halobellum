@@ -1,6 +1,7 @@
 // PelicanFirstDropTests.cs
-// Tests a landing carrier's first drop on its own clock (ReinforcementFirstDropSeconds, the Pelican): the squad is out at 5 s wherever the carrier is,
-// a late flank arrival starts down as it arrives, the squad always stands on the field in formation, later drops still wait and fly, at 0 nothing changes, and an EMP holds the squad back.
+// Tests a landing carrier's drops (the Pelican): it comes down where it is, never flying behind the enemy's lines (D143); the first squad is out at
+// ReinforcementFirstDropSeconds (5 s) wherever the carrier is, the next ones on the delay after it (15 and 25 s), a late flank arrival starts down as it arrives,
+// the squad always stands on the field in formation, with the first-drop time at 0 the first squad is out at the delay, and an EMP holds the squad back.
 // Depends on: Halobellum.Combat, Halobellum.Core, NUnit, TestUnits, TestRules.
 
 using System.Collections.Generic;
@@ -73,7 +74,7 @@ namespace Halobellum.Tests
             var sim = new BattleSimulation(TestRules.Default(), 1);
             SimUnit carrier = sim.AddUnit(withBay, Team.A, new Vec2(0f, 8.5f));
             sim.AddUnit(Dummy(), Team.B, new Vec2(0f, 0f));
-            carrier.TechsDisabledUntil = 13f; // It touches down at 11.5 s, with the EMP still on.
+            carrier.TechsDisabledUntil = 13f; // It touches down at 10 s, with the EMP still on.
             List<float> drops = DropTimes(sim, 14f);
             Assert.AreEqual(1, drops.Count, "It comes out once the EMP is over.");
             Assert.AreEqual(13f, drops[0], OneOrTwoTicks);
@@ -99,7 +100,7 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void TheCarrier_FliesTowardsTheEnemy_UntilItHasToStartDown()
+        public void TheCarrier_StartsDown_InTimeForTheSquadToBeOutAtFiveSeconds()
         {
             var sim = new BattleSimulation(TestRules.Default(), 1);
             SimUnit carrier = sim.AddUnit(Pelican(), Team.A, new Vec2(0f, -40f));
@@ -108,8 +109,11 @@ namespace Halobellum.Tests
             Assert.AreEqual(DropRunPhase.Flying, carrier.DropPhase, "Still in the air at 3.4 s.");
             while (sim.ElapsedSeconds < 3.6f) sim.Step();
             Assert.AreEqual(DropRunPhase.Descending, carrier.DropPhase, "On its way down by 3.6 s.");
-            Assert.Greater(carrier.Position.Y, -40f + 15f, "It covered most of the 21 m on the way.");
-            Assert.Less(carrier.Position.Y, -40f + 22f);
+            Vec2 at = carrier.Position;
+            Vec2 droppedAt = Vec2.Zero;
+            sim.Events.ReinforcementDropped += (c, squadId) => droppedAt = c.Position; // After that its own Marines can nudge it on the ground.
+            while (carrier.DropsMade == 0) sim.Step();
+            Assert.AreEqual(0f, Vec2.Distance(at, droppedAt), 0.05f, "It comes down where it is.");
         }
 
         [Test]
@@ -199,48 +203,40 @@ namespace Halobellum.Tests
         // ------------------------------------------------------------------ the other drops
 
         [Test]
-        public void LaterDrops_StillWaitTheirDelay_AndFlyBehindTheEnemy()
+        public void LaterDrops_ComeOnTheDelay_WhereTheCarrierIs_NeverBehindTheEnemy()
         {
             var sim = new BattleSimulation(TestRules.Default(), 1);
             SimUnit carrier = sim.AddUnit(Pelican(), Team.A, new Vec2(0f, -40f));
-            sim.AddUnit(Dummy(), Team.B, new Vec2(0f, 20f));
+            SimUnit enemy = sim.AddUnit(Dummy(), Team.B, new Vec2(0f, 20f));
             var times = new List<float>();
-            var distances = new List<float>();
+            var where = new List<Vec2>();
             sim.Events.ReinforcementDropped += (c, squadId) =>
             {
                 times.Add(sim.ElapsedSeconds);
-                distances.Add(Vec2.Distance(c.Position, c.DropSpot));
+                where.Add(c.Position);
             };
-            while (sim.ElapsedSeconds < 60f && !sim.IsFinished) sim.Step();
+            float deepest = float.MinValue;
+            while (sim.ElapsedSeconds < 40f && !sim.IsFinished)
+            {
+                sim.Step();
+                deepest = System.Math.Max(deepest, carrier.Position.Y);
+            }
             Assert.AreEqual(3, times.Count);
             Assert.AreEqual(5f, times[0], OneOrTwoTicks);
-            Assert.Greater(distances[0], 20f, "The first drop did not need the landing spot.");
-            Assert.GreaterOrEqual(times[1], times[0] + 10f);
-            Assert.GreaterOrEqual(times[2], times[1] + 10f);
-            Assert.Less(distances[1], 8f, "The second did.");
-            Assert.Less(distances[2], 8f, "So did the third.");
+            Assert.AreEqual(15f, times[1], OneOrTwoTicks, "10 s after the first, as the Covenant Phantom's.");
+            Assert.AreEqual(25f, times[2], OneOrTwoTicks);
+            Assert.Less(deepest, enemy.Position.Y + enemy.Radius + 8f, "It never flew to the old landing spot, 8 m behind the enemy.");
         }
 
         [Test]
-        public void WithTheFieldAtZero_TheFirstDropWaitsForTheDelayAtTheLandingSpot()
+        public void WithTheFirstDropAtZero_TheFirstSquadIsOutAtTheDelay_WhereTheCarrierIs()
         {
-            var nearby = new BattleSimulation(TestRules.Default(), 1);
-            nearby.AddUnit(Pelican(firstDrop: 0f), Team.A, new Vec2(0f, 8.5f));
-            nearby.AddUnit(Dummy(), Team.B, new Vec2(0f, 0f));
-            List<float> onTheSpot = DropTimes(nearby, 12.5f);
-            Assert.AreEqual(1, onTheSpot.Count);
-            Assert.AreEqual(11.5f, onTheSpot[0], OneOrTwoTicks, "The 10 s delay, then 1.5 s coming down.");
-
-            var far = new BattleSimulation(TestRules.Default(), 1);
-            SimUnit carrier = far.AddUnit(Pelican(firstDrop: 0f), Team.A, new Vec2(0f, -70f));
-            far.AddUnit(Dummy(), Team.B, new Vec2(0f, 60f));
-            float distanceAtDrop = float.MaxValue;
-            far.Events.ReinforcementDropped += (c, squadId) => distanceAtDrop = Vec2.Distance(c.Position, c.DropSpot);
-            List<float> afterFlying = DropTimes(far, 30f);
-            Assert.AreEqual(1, afterFlying.Count);
-            Assert.Greater(afterFlying[0], 20f, "130 m at 6 m/s, however long the delay.");
-            Assert.Less(distanceAtDrop, 8f);
-            Assert.Greater(carrier.Position.Y, 60f, "Behind the enemy.");
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            sim.AddUnit(Pelican(firstDrop: 0f), Team.A, new Vec2(0f, -70f));
+            sim.AddUnit(Dummy(), Team.B, new Vec2(0f, 60f));
+            List<float> drops = DropTimes(sim, 11f);
+            Assert.AreEqual(1, drops.Count);
+            Assert.AreEqual(10f, drops[0], OneOrTwoTicks, "Down in time for the 10 s delay, wherever it is.");
         }
 
         [Test]

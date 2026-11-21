@@ -38,11 +38,11 @@ What already existed and got new uses: leaps (Spartan CQB until D130, Juggernaut
 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Armor | Shield | Speed | Weapons | Wins, average | Best counters |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Spartan Sniper | Single-target DPS | 3 | 200 | 1 | 400 | 650 | Unarmored | 200 | 1.75 | SRS99 Sniper Rifle (200 per 3 s, Ballistic, anti-armor, 42 m) | 35 of 68, 52% | Marine 100%, Warthog 100% |
-| Spartan Heavy Weapons | Tank | 3 | 200 | 1 | 400 | 2400 | Unarmored | 250 | 1.3 | M247H Chaingun (18 per 0.12 s, Ballistic, 20 m) | 48 of 68, 70% | Combat Form 100%, Hunter Captain 100% |
-| Spartan Grenadier | Chaff clear | 3 | 200 | 1 | 400 | 1000 | Unarmored | 300 | 1.75 | M41 Rocket Launcher (62 per 1.5 s, Explosive, 19 m, splash 3.2 m) | 23 of 68, 34% | Scorpion 100%, Hunter Pair 100% |
-| Spartan CQB | Flanker | 3 | 150 | 1 | 300 | 1200 | Unarmored | 600 | 3.5 | M45 Shotgun (120 per 0.8 s, Ballistic, 6 m, cone 25 deg) | 31 of 68, 46% | Scorpion 100%, Jackal (Shield) 100% |
-| Spartan Fireteam | Single-target DPS | 3 | 250 | 3 | 500 | 500 | Unarmored | 140 | 1.75 | BR85 Battle Rifle (22 per 0.6 s, Ballistic, 16 m); M41 Rocket Launcher (110 per 5 s, Explosive, anti-armor, 18 m) | 26 of 68, 38% | Marine 100%, Grunt 100% |
+| Spartan Sniper | Single-target DPS | 3 | 200 | 1 | 400 | 650 | Unarmored | 200 | 1.75 | SRS99 Sniper Rifle (154 per 3 s, Ballistic, anti-armor, 42 m) | 25 of 68, 37% | Marine 100%, Warthog 100% |
+| Spartan Heavy Weapons | Tank | 3 | 200 | 1 | 400 | 1930 | Unarmored | 250 | 1.3 | M247H Chaingun (13 per 0.12 s, Ballistic, 20 m) | 32 of 68, 47% | Combat Form 100%, Cobra 100% |
+| Spartan Grenadier | Chaff clear | 3 | 200 | 1 | 400 | 980 | Unarmored | 300 | 1.75 | M41 Rocket Launcher (61 per 1.5 s, Explosive, 19 m, splash 3.2 m) | 20 of 68, 31% | Scorpion 100%, Mantis 100% |
+| Spartan CQB | Flanker | 3 | 150 | 1 | 300 | 1160 | Unarmored | 600 | 3.5 | M45 Shotgun (120 per 0.8 s, Ballistic, 6 m, cone 25 deg) | 26 of 68, 39% | Flamethrower Trooper 100%, Scorpion 100% |
+| Spartan Fireteam | Single-target DPS | 3 | 250 | 3 | 500 | 560 | Unarmored | 140 | 1.75 | BR85 Battle Rifle (31 per 0.6 s, Ballistic, 16 m); M41 Rocket Launcher (129 per 5 s, Explosive, anti-armor, 18 m) | 34 of 68, 52% | Grunt 100%, Infection Forms 100% |
 
 - **Spartan Sniper.** Kills one armored target at a time from very far away; has no answer to a crowd or to anything that reaches it.
 - **Spartan Heavy Weapons.** A walking wall with a chaingun: mows down infantry, does little to armor. Its Unarmored body makes it weak to anti-infantry weapons once the shield is down.
@@ -54,10 +54,10 @@ What already existed and got new uses: leaps (Spartan CQB until D130, Juggernaut
 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Armor | Shield | Speed | Weapons | Wins, average | Best counters |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Gremlin | Flanker | 1 | 0 | 2 | 200 | 240 | Light | 0 | 4.5 | EMP Railgun (38 per 1 s, Energy, anti-armor, 13 m, slows 40% for 2 s) | 26 of 68, 38% | Flamethrower Trooper 100%, Fuel Rod Grunt 100% |
-| Cobra | Single-target DPS | 2 | 50 | 1 | 300 | 650 | Heavy | 0 | 1.75 | M66 Railgun (175 per 2.2 s, Ballistic, anti-armor, 26 m) | 24 of 68, 35% | Marine 100%, Grunt 100% |
-| Rhino | Artillery | 3 | 200 | 1 | 400 | 1000 | Heavy | 0 | 1 | Heavy Cannon (140 per 5 s, Explosive, 50 m, splash 4.5 m, lobbed) | 28 of 68, 43% | Hornet 100%, Pelican 100% |
-| Grizzly | Tank | 3 | 250 | 1 | 500 | 2400 | Heavy | 0 | 1.35 | Twin Cannons (110 per 2.5 s, Explosive, 17 m, splash 2.5 m); Coaxial Machine Gun (8 per 0.2 s, Ballistic, 13 m) | 44 of 68, 64% | Gauss Warthog 100%, Spartan 100% |
+| Gremlin | Flanker | 1 | 0 | 2 | 200 | 340 | Light | 0 | 4.5 | EMP Railgun (38 per 1 s, Energy, anti-armor, 13 m, slows 40% for 2 s) | 34 of 68, 50% | Flamethrower Trooper 100%, Fuel Rod Grunt 100% |
+| Cobra | Single-target DPS | 2 | 50 | 1 | 300 | 650 | Heavy | 0 | 1.75 | M66 Railgun (198 per 2.2 s, Ballistic, anti-armor, 26 m) | 27 of 68, 41% | Marine 100%, Grunt 100% |
+| Rhino | Artillery | 3 | 200 | 1 | 400 | 1000 | Heavy | 0 | 1 | Heavy Cannon (143 per 5 s, Explosive, 50 m, splash 4.5 m, lobbed) | 27 of 68, 40% | Hornet 100%, Pelican 100% |
+| Grizzly | Tank | 3 | 250 | 1 | 500 | 3200 | Heavy | 0 | 1.35 | Twin Cannons (110 per 2.5 s, Explosive, 17 m, splash 2.5 m); Coaxial Machine Gun (8 per 0.2 s, Ballistic, 13 m) | 45 of 68, 68% | Spartan 100%, Zealot 100% |
 
 - **Gremlin.** Fast scout whose EMP slows what it hits (Titans shrug it off). Good against vehicles, poor against infantry.
 - **Cobra.** Six-wheeled tank hunter: its twin light railguns punch through heavy armor from far off. Outranges tanks; a swarm or a flanker gets under its guns.
@@ -68,10 +68,10 @@ What already existed and got new uses: leaps (Spartan CQB until D130, Juggernaut
 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Armor | Shield | Speed | Weapons | Wins, average | Best counters |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Sparrowhawk | Aerial | 2 | 50 | 1 | 250 | 480 | Light | 0 | 4 | Heavy Autocannon (13 per 0.3 s, Ballistic, anti-armor, 14 m) | 33 of 68, 49% | Wolverine 100%, Vampire 100% |
-| Longsword | Aerial | 2 | 50 | 1 | 300 | 600 | Light | 0 | 5 | Carpet Bombs (135 per 2.5 s, Explosive, 5 m, splash 5 m) | 35 of 68, 51% | Wolverine 100%, Vampire 100% |
-| Vulture | Aerial | 3 | 200 | 1 | 400 | 650 | Heavy | 0 | 2.5 | Missile Barrage (44 per 3 s, Explosive, 22 m, splash 3 m); Chin Gun (10 per 0.2 s, Ballistic, 14 m) | 31 of 68, 46% | Wolverine 100%, Vampire 100% |
-| Condor Gunship | Aerial | 3 | 250 | 1 | 500 | 1150 | Light | 0 | 3.25 | Twin Autocannons (20 per 0.25 s, Ballistic, 16 m); Light Spartan Laser (nose) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (front right) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (front left) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (rear right) (20 per 4 s, Energy, anti-armor, 20 m); Light Spartan Laser (rear left) (20 per 4 s, Energy, anti-armor, 20 m) | 35 of 68, 52% | Wolverine 100%, Vampire 100% |
+| Sparrowhawk | Aerial | 2 | 50 | 1 | 250 | 600 | Light | 0 | 4 | Heavy Autocannon (18 per 0.3 s, Ballistic, anti-armor, 14 m) | 36 of 68, 54% | Wolverine 100%, Swarm Form 100% |
+| Longsword | Aerial | 2 | 50 | 1 | 300 | 830 | Light | 0 | 5 | Carpet Bombs (180 per 2.5 s, Explosive, 5 m, splash 5 m) | 41 of 68, 60% | Vampire 100%, Swarm Form 100% |
+| Vulture | Aerial | 3 | 200 | 1 | 400 | 1080 | Heavy | 0 | 2.5 | Missile Barrage (69 per 3 s, Explosive, 22 m, splash 3 m); Chin Gun (10 per 0.2 s, Ballistic, 14 m) | 45 of 68, 66% | Wolverine 100%, Vampire 100% |
+| Condor Gunship | Aerial | 3 | 250 | 1 | 500 | 1130 | Light | 0 | 3.25 | Twin Autocannons (24 per 0.2 s, Ballistic, 16 m); Light Spartan Laser (nose) (60 per 3.5 s, Energy, anti-armor, 20 m); Light Spartan Laser (front right) (60 per 3.5 s, Energy, anti-armor, 20 m); Light Spartan Laser (front left) (60 per 3.5 s, Energy, anti-armor, 20 m); Light Spartan Laser (rear right) (60 per 3.5 s, Energy, anti-armor, 20 m); Light Spartan Laser (rear left) (60 per 3.5 s, Energy, anti-armor, 20 m) | 44 of 68, 65% | Wolverine 100%, Swarm Form 100% |
 
 - **Sparrowhawk.** Gunship that hunts vehicles. Its gun is poor against infantry.
 - **Longsword.** Heavy bomber. It has to fly over its target, and cannot fight other aircraft at all.
@@ -82,10 +82,10 @@ What already existed and got new uses: leaps (Spartan CQB until D130, Juggernaut
 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Armor | Shield | Speed | Weapons | Wins, average | Best counters |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Chopper | Flanker | 1 | 0 | 2 | 200 | 300 | Light | 0 | 5.5 | Ramming Blades (60 per 1 s, Melee, 1.5 m, splash 1.5 m); Chopper Autocannons (10 per 0.25 s, Ballistic, 9 m) | 22 of 68, 33% | Flamethrower Trooper 100%, Scorpion 100% |
-| Brute Grenadier | Chaff clear | 1 | 0 | 4 | 150 | 150 | Unarmored | 0 | 1.5 | Spike Grenade Launcher (31 per 2 s, Explosive, 13 m, splash 2.8 m, lobbed); Brute Shot Blade (35 per 1.5 s, Melee, 2 m) | 25 of 68, 38% | Scorpion 100%, Mantis 100% |
-| Marauder | Tank | 2 | 50 | 1 | 300 | 1250 | Heavy | 0 | 1.5 | Plasma Cannon (80 per 2.2 s, Energy, 15 m, splash 2 m); Spike Turret (8 per 0.3 s, Ballistic, 12 m) | 31 of 68, 46% | Gauss Warthog 100%, Spartan 100% |
-| Reaver | Anti-air | 2 | 50 | 1 | 300 | 700 | Light | 0 | 3 | Spike Rockets (24 per 0.5 s, Explosive, 20 m, x3 vs air) | 14 of 68, 21% | Marine 100%, Flamethrower Trooper 100% |
+| Chopper | Flanker | 1 | 0 | 2 | 175 | 250 | Light | 0 | 5.5 | Ramming Blades (60 per 1 s, Melee, 1.5 m, splash 1.5 m); Chopper Autocannons (10 per 0.25 s, Ballistic, 9 m) | 18 of 68, 27% | Flamethrower Trooper 100%, Scorpion 100% |
+| Brute Grenadier | Chaff clear | 1 | 0 | 4 | 150 | 150 | Unarmored | 0 | 1.5 | Spike Grenade Launcher (32 per 2 s, Explosive, 13 m, splash 2.8 m, lobbed); Brute Shot Blade (35 per 1.5 s, Melee, 2 m) | 24 of 68, 37% | Scorpion 100%, Mantis 100% |
+| Marauder | Tank | 2 | 50 | 1 | 300 | 1350 | Heavy | 0 | 1.5 | Plasma Cannon (88 per 2.2 s, Energy, 15 m, splash 2 m); Spike Turret (8 per 0.3 s, Ballistic, 12 m) | 34 of 68, 48% | Gauss Warthog 100%, Spartan 100% |
+| Reaver | Anti-air | 2 | 50 | 1 | 250 | 700 | Light | 0 | 3 | Spike Rockets (25 per 0.5 s, Explosive, 20 m, x3 vs air) | 18 of 68, 29% | Marine 100%, Flamethrower Trooper 100% |
 
 - **Chopper.** It rams: its main weapon is its front wheel, so it drives straight into the enemy, guns firing on the way.
 - **Brute Grenadier.** Tough infantry with lobbed grenades. Shorter range than a Fuel Rod Grunt, can miss what moves, but takes much more killing.
@@ -96,21 +96,21 @@ What already existed and got new uses: leaps (Spartan CQB until D130, Juggernaut
 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Armor | Shield | Speed | Weapons | Wins, average | Best counters |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Skitterer | Flanker | 1 | 0 | 6 | 125 | 100 | Light | 0 | 4.5 | Spitter Plasma (7 per 0.25 s, Energy, 7 m) | 32 of 68, 48% | Flamethrower Trooper 100%, Scorpion 100% |
-| Goliath | Tank | 3 | 250 | 1 | 500 | 2200 | Heavy | 0 | 1.1 | Fist Slam (120 per 2 s, Melee, 3 m, splash 3.5 m); Fuel Rod Cannon (55 per 2.5 s, Explosive, 14 m, splash 2 m) | 35 of 68, 51% | Gauss Warthog 100%, Spartan 100% |
-| Hunter Captain | Single-target DPS | 3 | 225 | 1 | 450 | 2000 | Heavy | 0 | 1.25 | Siphon Laser (19.5 per 0.1 s, Energy, anti-armor, 15 m, splash 0.3 m, beam); Shield Bash (120 per 1.5 s, Melee, 2.2 m, splash 1.5 m) | 42 of 68, 61% | Marine 100%, Grunt 100% |
+| Skitterer | Flanker | 1 | 0 | 6 | 150 | 60 | Light | 0 | 4.5 | Spitter Plasma (7 per 0.25 s, Energy, 12 m) | 34 of 68, 50% | Scorpion 100%, Mantis 100% |
+| Goliath | Tank | 3 | 250 | 1 | 500 | 2400 | Heavy | 0 | 1.1 | Fist Slam (240 per 2 s, Melee, 3 m, splash 3.5 m) | 34 of 68, 50% | Gauss Warthog 100%, Spartan 100% |
+| Hunter Captain | Single-target DPS | 3 | 225 | 1 | 450 | 2000 | Heavy | 0 | 1.25 | Siphon Laser (15.5 per 0.1 s, Energy, anti-armor, 15 m, splash 0.3 m, beam); Shield Bash (90 per 1.5 s, Melee, 2.2 m, splash 1.5 m) | 33 of 68, 50% | Marine 100%, Grunt 100% |
 
 - **Skitterer.** Spider-like machines worked by a few worms: a fast, light swarm of a flanker.
-- **Goliath.** Two colonies in one suit. Its old job as a building-killer shows as 2.5 times the base damage if it survives a battle.
+- **Goliath.** Two colonies in one suit, fighting with its fists: it charges at what comes near, as the Hunters do. Its old job as a building-killer shows as 2.5 times the base damage if it survives a battle.
 - **Hunter Captain.** Its siphon laser gives it back 30% of the damage it deals, and friends within 12 m heal 1% per second.
 
 ### Unggoy Rebellion
 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Armor | Shield | Speed | Weapons | Wins, average | Best counters |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Cannon Fodder | Chaff | 1 | 0 | 30 | 100 | 20 | Unarmored | 0 | 1.75 | Plasma Pistol (3 per 0.5 s, Energy, 9 m) | 35 of 68, 52% | Flamethrower Trooper 100%, Fuel Rod Grunt 100% |
-| Heavy Grunts | Single-target DPS | 1 | 0 | 8 | 200 | 100 | Unarmored | 30 | 1.5 | Needle Rifle (8 per 0.25 s, Energy, 12 m) | 42 of 68, 62% | Marine 100%, Infection Forms 100% |
-| Grunt Goblin | Tank | 3 | 200 | 1 | 400 | 1750 | Heavy | 0 | 2 | Goblin Plasma Cannons (10 per 0.2 s, Energy, 14 m); Goblin Fuel Rod (60 per 3 s, Explosive, 16 m, splash 2.5 m) | 51 of 68, 75% | Gauss Warthog 100%, Spartan 100% |
+| Cannon Fodder | Chaff | 1 | 0 | 30 | 100 | 45 | Unarmored | 0 | 1.75 | Plasma Pistol (3 per 0.5 s, Energy, 9 m) | 39 of 68, 57% | Flamethrower Trooper 100%, Fuel Rod Grunt 100% |
+| Heavy Grunts | Single-target DPS | 1 | 0 | 8 | 200 | 110 | Unarmored | 30 | 1.5 | Needle Rifle (9.5 per 0.25 s, Energy, 12 m) | 42 of 68, 62% | Infection Forms 100%, Infested Marine 100% |
+| Grunt Goblin | Tank | 3 | 200 | 1 | 400 | 2400 | Heavy | 0 | 2 | Goblin Plasma Cannons (10 per 0.2 s, Energy, 14 m); Goblin Fuel Rod (60 per 3 s, Explosive, 16 m, splash 2.5 m) | 54 of 68, 80% | Spartan 100%, Zealot 100% |
 
 - **Cannon Fodder.** The largest squad in the game: 30 Grunts who barely fight. They are there to be shot instead of something else.
 - **Heavy Grunts.** Grunts in heavy armor with a small shield, at the top of the Tier 1 price band.
@@ -120,11 +120,11 @@ What already existed and got new uses: leaps (Spartan CQB until D130, Juggernaut
 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Armor | Shield | Speed | Weapons | Wins, average | Best counters |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Infested Marine | Chaff | 1 | 0 | 12 | 100 | 140 | Unarmored | 0 | 3 | Scythe Limb (18 per 0.8 s, Melee, 1.5 m); Scavenged Rifle (4 per 0.5 s, Ballistic, 10 m) | 48 of 68, 72% | Flamethrower Trooper 100%, Carrier Form 100% |
-| Infested Warthog | Flanker | 1 | 0 | 2 | 200 | 320 | Light | 0 | 5 | Ramming Mass (50 per 1 s, Melee, 1.5 m, splash 1.5 m); Scavenged Machine Gun (7 per 0.2 s, Ballistic, 10 m) | 29 of 68, 45% | Flamethrower Trooper 100%, Scorpion 100% |
-| Infested Scorpion | Tank | 2 | 50 | 1 | 275 | 1350 | Heavy | 0 | 1.4 | Scavenged Cannon (72 per 3 s, Explosive, 14 m, splash 2.5 m); Tentacle Whip (30 per 1 s, Melee, 4 m) | 27 of 68, 40% | Gauss Warthog 100%, Spartan 100% |
-| Infested Hornet | Aerial | 2 | 50 | 2 | 275 | 360 | Light | 0 | 4 | Scavenged Rockets (15 per 1 s, Explosive, 12 m); Spore Bombs (29 per 2 s, Explosive, 8 m, splash 3 m) | 35 of 68, 52% | Wolverine 100%, Swarm Form 100% |
-| Juggernaut | Flanker | 3 | 200 | 1 | 400 | 2300 | Heavy | 0 | 3.25 | Crushing Charge (130 per 1.2 s, Melee, 2.5 m, splash 2.5 m) | 33 of 68, 48% | Scorpion 100%, Pure Form Tank 100% |
+| Infested Marine | Chaff | 1 | 0 | 12 | 100 | 140 | Unarmored | 0 | 3 | Scythe Limb (17 per 0.8 s, Melee, 1.5 m); Scavenged Rifle (4 per 0.5 s, Ballistic, 10 m) | 46 of 68, 68% | Flamethrower Trooper 100%, Carrier Form 100% |
+| Infested Warthog | Flanker | 1 | 0 | 2 | 200 | 180 | Light | 0 | 5 | Ramming Mass (46 per 1 s, Melee, 1.5 m, splash 1.5 m); Scavenged Machine Gun (7 per 0.2 s, Ballistic, 10 m) | 19 of 68, 28% | Flamethrower Trooper 100%, Scorpion 100% |
+| Infested Scorpion | Tank | 2 | 50 | 1 | 275 | 1820 | Heavy | 0 | 1.4 | Scavenged Cannon (72 per 3 s, Explosive, 14 m, splash 2.5 m); Tentacle Whip (30 per 1 s, Melee, 4 m) | 32 of 68, 49% | Spartan 100%, Zealot 100% |
+| Infested Hornet | Aerial | 2 | 50 | 2 | 275 | 400 | Light | 0 | 4 | Scavenged Rockets (16 per 1 s, Explosive, 12 m); Spore Bombs (33 per 2 s, Explosive, 8 m, splash 3 m) | 36 of 68, 53% | Wolverine 100%, Swarm Form 100% |
+| Juggernaut | Flanker | 3 | 200 | 1 | 400 | 2780 | Heavy | 0 | 3.25 | Crushing Charge (130 per 1.2 s, Melee, 2.5 m, splash 2.5 m) | 37 of 68, 55% | Scorpion 100%, Grizzly 100% |
 
 - **Infested Marine.** Fewer bodies than a Marine squad, each much tougher: it leaps in with a scythe limb. Cannot infect, as only Infection Forms do.
 - **Infested Warthog.** Drives straight into the enemy, its gun still firing.
@@ -136,17 +136,17 @@ What already existed and got new uses: leaps (Spartan CQB until D130, Juggernaut
 
 | Unit | Role | Tier | Unlock | Squad | Cost | Health | Armor | Shield | Speed | Weapons | Wins, average | Best counters |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Infested Ghost | Flanker | 1 | 0 | 2 | 200 | 330 | Light | 0 | 5.5 | Hull Ram (45 per 1 s, Melee, 1.5 m, splash 1.5 m); Scavenged Plasma Bolts (8 per 0.25 s, Energy, 9 m) | 38 of 68, 56% | Flamethrower Trooper 100%, Scorpion 100% |
-| Infested Elite | Single-target DPS | 2 | 50 | 3 | 250 | 500 | Unarmored | 0 | 2 | Scythe Claw (46 per 0.7 s, Melee, anti-armor, 1.5 m); Scavenged Plasma Rifle (10 per 0.5 s, Energy, 11 m) | 45 of 68, 66% | Marine 100%, Grunt 100% |
-| Infested Wraith | Artillery | 2 | 50 | 1 | 250 | 1000 | Heavy | 0 | 1 | Scavenged Mortar (70 per 3.5 s, Explosive, 34 m, splash 4 m, lobbed) | 37 of 68, 54% | Hornet 100%, Banshee 100% |
-| Infested Banshee | Aerial | 2 | 50 | 2 | 250 | 360 | Light | 0 | 4.5 | Scavenged Plasma Cannons (8 per 0.3 s, Energy, 10 m); Spore Bomb (45 per 2.5 s, Explosive, 8 m, splash 3 m) | 50 of 68, 74% | Wolverine 100%, Swarm Form 100% |
-| Spawner | Tank | 3 | 200 | 1 | 400 | 3600 | Light | 0 | 0.9 | Spore Lash (55 per 1.2 s, Melee, 3 m, splash 2 m) | 61 of 68, 89% | Zealot 20%, Gauss Warthog 0% |
+| Infested Ghost | Flanker | 1 | 0 | 2 | 200 | 150 | Light | 0 | 5.5 | Hull Ram (37 per 1 s, Melee, 1.5 m, splash 1.5 m); Scavenged Plasma Bolts (7 per 0.25 s, Energy, 9 m) | 18 of 68, 26% | Flamethrower Trooper 100%, Scorpion 100% |
+| Infested Elite | Single-target DPS | 2 | 50 | 3 | 250 | 600 | Unarmored | 0 | 2 | Scythe Claw (60 per 0.7 s, Melee, anti-armor, 1.5 m); Scavenged Plasma Rifle (11 per 0.5 s, Energy, 11 m) | 49 of 68, 72% | Marine 100%, Grunt 100% |
+| Infested Wraith | Artillery | 2 | 50 | 1 | 250 | 1000 | Heavy | 0 | 1 | Scavenged Mortar (70 per 3.5 s, Explosive, 34 m, splash 4 m, lobbed) | 33 of 68, 50% | Hornet 100%, Pelican 100% |
+| Infested Banshee | Aerial | 2 | 50 | 2 | 250 | 340 | Light | 0 | 4.5 | Scavenged Plasma Cannons (7 per 0.3 s, Energy, 10 m); Spore Bomb (37 per 2.5 s, Explosive, 8 m, splash 3 m) | 40 of 68, 59% | Wolverine 100%, Swarm Form 100% |
+| Spawner | Tank | 3 | 200 | 1 | 400 | 2700 | Light | 0 | 0.9 | Spore Lash (55 per 1.2 s, Melee, 3 m, splash 2 m) | 51 of 68, 75% | Heavy Grunts 100%, Zealot 90% |
 
 - **Infested Ghost.** Faster and lighter than the Infested Warthog.
 - **Infested Elite.** The classic combat form: no shield, more health, and a claw that opens armor.
 - **Infested Wraith.** A little tougher and shorter-ranged than the real thing.
 - **Infested Banshee.** Barely flying, still bombing.
-- **Spawner.** A mobile birthing form: it fights badly, and keeps releasing three Infection Forms and five Combat Forms in turn, one lot every 4 seconds; the Combat Forms draw the enemy's fire. Kill it first (D79, D116). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114).
+- **Spawner.** A mobile birthing form: it fights badly, and keeps releasing three Infection Forms and three Combat Forms in turn, one lot every 4 seconds; the Combat Forms draw the enemy's fire. Kill it first (D79, D116). With its Swarm Brood tech it also hatches a Swarm Form 5 seconds into each battle (D113, D114).
 
 <!-- end tables -->
 

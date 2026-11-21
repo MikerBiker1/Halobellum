@@ -16,5 +16,7 @@
     <Compile Include="../../../Assets/_Project/Scripts/Economy/**/*.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="SlotTest.cs" />
+    <Compile Include="LogReplay.cs" />
+    <Compile Include="Duel.cs" />
   </ItemGroup>
 </Project>

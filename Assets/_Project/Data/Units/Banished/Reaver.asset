@@ -17,10 +17,10 @@ MonoBehaviour:
   tier: 2
   unlockCost: 50
   squadSize: 1
-  cost: 300
-  baseDamage: 60
-  maxHealth: 700
-  armorType: 1
+  cost: 250
+  baseDamage: 50
+  maxHealth: 900
+  armorType: 2
   maxShield: 0
   shieldRegenPerSecond: 0
   moveSpeed: 3
@@ -28,10 +28,12 @@ MonoBehaviour:
   turnTime180: 1.2
   isAir: 0
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 2
   weapons:
   - weaponName: Spike Rockets
-    damagePerShot: 24
+    damagePerShot: 25
     fireInterval: 0.5
     range: 20
     minRange: 0
@@ -71,6 +73,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0
@@ -100,4 +103,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Aerial
   weakAgainst: Ground units
-  notes: 'Best counters (headless runner, equal cost): Marine (100%), Spartan Grenadier (100%). Ground anti-air walker, weak against vehicles. First-pass M10 values, Banished (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Marine (100%), Pure Form Tank (100%). Ground anti-air walker, weak against vehicles. First-pass M10 values, Banished (Docs/M10/subfactions.md).'

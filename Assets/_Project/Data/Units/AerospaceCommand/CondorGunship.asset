@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 1
   cost: 500
   baseDamage: 100
-  maxHealth: 1150
+  maxHealth: 1200
   armorType: 1
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -28,16 +28,18 @@ MonoBehaviour:
   turnTime180: 1.5
   isAir: 1
   canFlank: 1
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 2
   weapons:
   - weaponName: Twin Autocannons
-    damagePerShot: 20
-    fireInterval: 0.25
+    damagePerShot: 22
+    fireInterval: 0.2
     range: 16
     minRange: 0
     projectileSpeed: 0
-    splashRadius: 0
-    damageType: 0
+    splashRadius: 0.5
+    damageType: 1
     isAntiArmor: 0
     canBeBlocked: 0
     hasOwnTargetFilter: 0
@@ -55,8 +57,8 @@ MonoBehaviour:
     hitSlowSeconds: 0
     hitSlowShare: 0
   - weaponName: Light Spartan Laser (nose)
-    damagePerShot: 20
-    fireInterval: 4
+    damagePerShot: 60
+    fireInterval: 3.5
     range: 20
     minRange: 0
     projectileSpeed: 0
@@ -80,8 +82,8 @@ MonoBehaviour:
     hitSlowShare: 0
     windUpSeconds: 2.5
   - weaponName: Light Spartan Laser (front right)
-    damagePerShot: 20
-    fireInterval: 4
+    damagePerShot: 60
+    fireInterval: 3.5
     range: 20
     minRange: 0
     projectileSpeed: 0
@@ -106,8 +108,8 @@ MonoBehaviour:
     windUpSeconds: 2.5
     staggerSeconds: 0.8
   - weaponName: Light Spartan Laser (front left)
-    damagePerShot: 20
-    fireInterval: 4
+    damagePerShot: 60
+    fireInterval: 3.5
     range: 20
     minRange: 0
     projectileSpeed: 0
@@ -132,8 +134,8 @@ MonoBehaviour:
     windUpSeconds: 2.5
     staggerSeconds: 1.6
   - weaponName: Light Spartan Laser (rear right)
-    damagePerShot: 20
-    fireInterval: 4
+    damagePerShot: 60
+    fireInterval: 3.5
     range: 20
     minRange: 0
     projectileSpeed: 0
@@ -158,8 +160,8 @@ MonoBehaviour:
     windUpSeconds: 2.5
     staggerSeconds: 2.4
   - weaponName: Light Spartan Laser (rear left)
-    damagePerShot: 20
-    fireInterval: 4
+    damagePerShot: 60
+    fireInterval: 3.5
     range: 20
     minRange: 0
     projectileSpeed: 0
@@ -200,6 +202,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0
@@ -230,4 +233,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Ground armies without anti-air
   weakAgainst: Anti-air
-  notes: 'Best counters (headless runner, equal cost): Wolverine (100%), Vampire (100%). A gunship: twin autocannons under its belly and five light Spartan Lasers on turrets of their own, each finding its own target. First-pass M10 values, Aerospace Command (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Vampire (100%), Reaver (100%). A gunship: twin autocannons under its belly and five light Spartan Lasers on turrets of their own, each finding its own target. First-pass M10 values, Aerospace Command (Docs/M10/subfactions.md).'

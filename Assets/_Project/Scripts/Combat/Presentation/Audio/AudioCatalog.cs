@@ -182,6 +182,10 @@ namespace Halobellum.Presentation
         public static readonly SfxCue FireM60 = OwnerCue("sfx_fire_m60", SfxGroup.HeavyArms, 0.6f, 0.04f, 2, -16.5f, hold: 0.1f);
         /// <summary>The Ghost's bolt, played for every shot (D117), as the SMG: looped, its file gave one bolt a second to a Ghost firing four.</summary>
         public static readonly SfxCue FireGhost = OwnerCue("sfx_fire_ghost", SfxGroup.Plasma, 0.6f, 0.05f, 2, -18f, hold: 0.12f);
+        /// <summary>The Vampire's needle cannons (the owner's NeedlerRifle file, D150), played for every shot, as the Ghost's: it fires every 0.4 s.</summary>
+        public static readonly SfxCue FireVampire = OwnerCue("sfx_fire_vampire", SfxGroup.Needles, 1.8f, 0.06f, 2, -18f, hold: 0.12f); // 0.6 -> 0.9 (the owner, D155), then twice that (D157).
+        /// <summary>The Grunt Goblin's needle cannons: the Vampire's sound, 0.6 until D157, then twice that (the owner).</summary>
+        public static readonly SfxCue FireGoblinNeedles = OwnerCue("sfx_fire_vampire", SfxGroup.Needles, 1.2f, 0.06f, 2, -18f, hold: 0.12f);
         public static readonly SfxCue FireBanshee = OwnerCue("sfx_fire_banshee", SfxGroup.Plasma, 0.6f, 0.06f, 2, -18.5f);
         public static readonly SfxCue FireBansheeBomb = OwnerCue("sfx_fire_banshee_bomb", SfxGroup.Rockets, 0.85f, 0.05f, 4, -13f);
         public static readonly SfxCue ExplosionBanshee = OwnerCue("sfx_explosion_banshee", SfxGroup.Explosions, 0.8f, 0.06f, 3, -13.5f);
@@ -192,7 +196,8 @@ namespace Halobellum.Presentation
         public static readonly SfxCue FlightMortar = OwnerCue("sfx_flight_mortar", SfxGroup.Loops, 0.5f, 0f, 0, -20f, true);
         public static readonly SfxCue FireBruteShot = OwnerCue("sfx_fire_bruteshot", SfxGroup.Rockets, 0.8f, 0.05f, 4, -14f);
         public static readonly SfxCue FireShotgun = OwnerCue("sfx_fire_shotgun", SfxGroup.HeavyArms, 0.75f, 0.05f, 3, -14f);
-        public static readonly SfxCue FireSniper = OwnerCue("sfx_fire_sniper", SfxGroup.BigGuns, 0.85f, 0.03f, 5, -13f);
+        // About 3 s, mostly echo: a shot frees its big gun voice after 0.3 s and its echo rings on, so every shot of its magazine, 2 a second, is heard (the owner, D158).
+        public static readonly SfxCue FireSniper = OwnerCue("sfx_fire_sniper", SfxGroup.BigGuns, 0.85f, 0.03f, 5, -13f, hold: 0.3f);
         /// <summary>The Spartan Laser's charge with its shot about 2.5 s in: played as its wind-up starts (WindUpFor). No pitch spread, which would move the shot.</summary>
         /// <summary>Where the shot is in the owner's Spartan Laser file: its loudest moment, measured (the wind-up is 2.5 s).</summary>
         public const float SpartanLaserShotSeconds = 2.42f;
@@ -475,6 +480,8 @@ namespace Halobellum.Presentation
             if (n.Contains("plasma turret")) return FirePlasmaTurret; // "Plasma Turrets" (the Phantoms), "Plasma Turret (left)" (the Scarab).
             if (n.Contains("autocannon")) return FireAutocannon;
             if (n.Contains("plasma bolts")) return FireGhost;
+            if (n.Contains("goblin needle")) return FireGoblinNeedles; // The Vampire's sound, kept at its old volume (D155).
+            if (n.Contains("needle cannon")) return FireVampire;
             if (unit.Contains("banshee") && n.Contains("plasma cannons")) return FireBanshee;
             if (n == "fuel rod bomb") return FireBansheeBomb;
             if (n.Contains("fuel rod")) return FireFuelRod;

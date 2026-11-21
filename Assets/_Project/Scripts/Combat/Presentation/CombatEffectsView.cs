@@ -117,6 +117,8 @@ namespace Halobellum.Presentation
             if (_shown != null)
             {
                 _shown.Events.WeaponFired -= OnWeaponFired;
+                _shown.Events.ChargedShotFired -= OnChargedShotFired;
+                _shown.Events.ShotPierced -= OnShotPierced;
                 _shown.Events.AttackBlocked -= OnAttackBlocked;
                 _shown.Events.Ticked -= OnTicked;
                 _shown.Events.UnitDamaged -= OnUnitDamaged;
@@ -134,6 +136,8 @@ namespace Halobellum.Presentation
             if (_shown != null)
             {
                 _shown.Events.WeaponFired -= OnWeaponFired;
+                _shown.Events.ChargedShotFired -= OnChargedShotFired;
+                _shown.Events.ShotPierced -= OnShotPierced;
                 _shown.Events.AttackBlocked -= OnAttackBlocked;
                 _shown.Events.Ticked -= OnTicked;
                 _shown.Events.UnitDamaged -= OnUnitDamaged;
@@ -155,6 +159,8 @@ namespace Halobellum.Presentation
             _mirror = BothSidesLookAlike(simulation);
             if (_shown == null) return;
             _shown.Events.WeaponFired += OnWeaponFired;
+            _shown.Events.ChargedShotFired += OnChargedShotFired;
+            _shown.Events.ShotPierced += OnShotPierced;
             _shown.Events.AttackBlocked += OnAttackBlocked;
             _shown.Events.Ticked += OnTicked;
             _shown.Events.UnitDamaged += OnUnitDamaged;
@@ -193,6 +199,7 @@ namespace Halobellum.Presentation
 
             // This counts shots in the same order as the simulation does, so a shot's muzzle flash is at the muzzle it leaves from.
             int shotNumber = weapon.IsInstant ? _instantShots++ : _projectileShots++;
+            if (look.OwnMuzzle && weapon.IsInstant) shotNumber = weaponIndex; // Each of the pair from its own gun pod (D153).
             Vector3 from = _units.TryMuzzle(attacker, weaponIndex, shotNumber, out Vector3 muzzle) ? muzzle : ShotPoint(attacker);
             Vector3 to = _units.AimPoint(target, shotHeight);
             // Shots land all over a big body, not on one spot.
@@ -202,6 +209,29 @@ namespace Halobellum.Presentation
             Vector3 line = to - from;
             if (line.sqrMagnitude >= 1e-4f) DrawFiring(weapon, look, target, from, to, line.normalized);
             _cost.Stop();
+        }
+
+        /// <summary>The Jackal's charged bolt leaving (D151): a big green flash at the pistol; the bolt itself is drawn in flight.</summary>
+        private void OnChargedShotFired(SimUnit attacker, int weaponIndex, SimUnit target)
+        {
+            WeaponLook look = LookOf(attacker, weaponIndex);
+            Vector3 from = _units.TryMuzzle(attacker, weaponIndex, 0, out Vector3 muzzle) ? muzzle : ShotPoint(attacker);
+            Vector3 to = _units.AimPoint(target, shotHeight);
+            Vector3 line = to - from;
+            WeaponLook big = look;
+            big.FlashSize = look.FlashSize * 2f;
+            _recipes.Muzzle(from, line.sqrMagnitude >= 1e-4f ? line.normalized : Vector3.forward, big);
+        }
+
+        /// <summary>A shot that killed going on through (D155): the same shot drawn on from the body it passed to the next it hits, with no muzzle flash.</summary>
+        private void OnShotPierced(SimUnit attacker, int weaponIndex, SimUnit passed, SimUnit hit)
+        {
+            WeaponStats weapon = attacker.Weapons[weaponIndex].Stats;
+            WeaponLook look = LookOf(attacker, weaponIndex);
+            look.FlashSize = 0f;
+            Vector3 from = _units.AimPoint(passed, shotHeight), to = _units.AimPoint(hit, shotHeight);
+            Vector3 line = to - from;
+            if (line.sqrMagnitude >= 1e-4f) DrawFiring(weapon, look, hit, from, to, line.normalized);
         }
 
         private void DrawFiring(WeaponStats weapon, in WeaponLook look, SimUnit target, Vector3 from, Vector3 to, Vector3 direction)
@@ -357,6 +387,9 @@ namespace Halobellum.Presentation
             return track.Serial == serial;
         }
 
+        /// <summary>How big the Jackal's charged bolt is drawn, in metres (D151); a pistol shot is 0.55 wide.</summary>
+        public const float ChargedBoltSize = 0.9f;
+
         private void DrawShot(in ShotInFlight shot)
         {
             WeaponLook look = LookOf(shot.Attacker, shot.WeaponIndex);
@@ -374,6 +407,15 @@ namespace Halobellum.Presentation
             }
 
             float read = _kit.ReadScale;
+            if (shot.Charged)
+            {
+                // The Jackal's charged bolt (D151): a big green ball with a white heart, slower than any pistol shot.
+                float size = ChargedBoltSize * Mathf.Max(1f, read * 0.8f);
+                float pulse = 1f + 0.15f * Mathf.Sin(_kit.BattleTime * 30f + shot.Serial);
+                _kit.HeadGlow(world, size * 2.3f * pulse, new Color(look.Shot.r, look.Shot.g, look.Shot.b, 0.7f));
+                _kit.HeadGlow(world, size * 0.9f, Color.Lerp(look.Shot, Color.white, 0.6f));
+                return;
+            }
             switch (look.Kind)
             {
                 case WeaponFeelKind.Gauss:
@@ -488,6 +530,14 @@ namespace Halobellum.Presentation
             else if (shot.ArcLength > 0f) at.y = 0.3f; // Lobbed: it comes down on the ground, hit or miss.
             else if (shot.AimedAt != null) at.y = Mathf.Min(at.y, _units.AimPoint(shot.AimedAt, shotHeight).y);
 
+            if (shot.Charged)
+            {
+                // The bolt bursts on the shield it strips (D151).
+                SimUnit hit = shot.AimedAt;
+                _recipes.Impact(at, known ? (at - track.Previous).normalized : Vector3.down, ImpactStyle.Plasma, hit != null ? hit.Stats.ArmorType : ArmorType.Unarmored, true, look.Shot);
+                _recipes.Blast(at, 1f, BlastStyle.Plasma, look.Shot, EffectPriority.Medium);
+                return;
+            }
             if (weapon.SplashRadius > 0f)
             {
                 _recipes.Blast(at, weapon.SplashRadius, look.Blast, look.Shot, EffectPriority.Big);

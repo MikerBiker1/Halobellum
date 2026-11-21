@@ -15,11 +15,11 @@ MonoBehaviour:
   unitName: Elephant
   role: 8
   tier: 4
-  unlockCost: 350
+  unlockCost: 150
   squadSize: 1
   cost: 800
   baseDamage: 160
-  maxHealth: 8000
+  maxHealth: 8240
   armorType: 2
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -28,10 +28,12 @@ MonoBehaviour:
   turnTime180: 3
   isAir: 0
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 2
   weapons:
   - weaponName: Main Cannon
-    damagePerShot: 300
+    damagePerShot: 310
     fireInterval: 3
     range: 20
     minRange: 0
@@ -55,7 +57,7 @@ MonoBehaviour:
     hitSlowSeconds: 0
     hitSlowShare: 0
   - weaponName: Turret (left)
-    damagePerShot: 8
+    damagePerShot: 8.5
     fireInterval: 0.2
     range: 14
     minRange: 0
@@ -79,7 +81,7 @@ MonoBehaviour:
     hitSlowSeconds: 0
     hitSlowShare: 0
   - weaponName: Turret (right)
-    damagePerShot: 8
+    damagePerShot: 8.5
     fireInterval: 0.2
     range: 14
     minRange: 0
@@ -119,6 +121,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0
@@ -149,4 +152,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Most things in a straight fight
   weakAgainst: 'Single-target DPS, large chaff swarms'
-  notes: 'Best counters (headless runner, equal cost): Combat Form (100%), Hunter Captain (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'
+  notes: 'Best counters (headless runner, equal cost): Combat Form (100%), Spartan Sniper (100%). First-pass M4 values (DECISIONS D21); Section 8 numbers are from the Bible.'

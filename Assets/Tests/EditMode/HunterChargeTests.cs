@@ -38,6 +38,20 @@ namespace Halobellum.Tests
             return unit;
         }
 
+        // The Goliath (D142): melee only, its fist slam 240 every 2 s reaching 3 m from its centre, and a charge like the Hunters' that reaches
+        // 6 m from its centre (its body is 2.4 m across the middle). Its health is a fixture.
+        private static UnitStats Goliath()
+        {
+            WeaponStats fist = TestUnits.Weapon(damage: 240f, range: 3f, interval: 2f, type: DamageType.Melee, splash: 3.5f);
+            fist.Name = "Fist Slam";
+            UnitStats unit = TestUnits.Unit("Goliath", health: 5000f, speed: 1.1f, radius: 2.4f, filter: TargetFilter.Ground, weapon: fist);
+            unit.LeapRange = 6f;
+            unit.LeapSpeed = 9f;
+            unit.LeapCooldownSeconds = 3f;
+            unit.LeapCharges = true;
+            return unit;
+        }
+
         private static SimUnit Enemy(BattleSimulation sim, Vec2 position)
         {
             return sim.AddUnit(TestUnits.Unit("Enemy", health: 1000f, speed: 0f, radius: 0.5f, filter: TargetFilter.Air,
@@ -110,6 +124,50 @@ namespace Halobellum.Tests
             UnitStats stats = UnitUpgrades.Apply(Hunter(), 1, new[] { tech });
             Assert.AreEqual(20f, stats.Weapons[0].Range, 0.001f);
             Assert.AreEqual(2f, stats.Weapons[1].Range, 0.001f, "Its bash still reaches as far as its arm.");
+        }
+
+        [Test]
+        public void AMeleeOnlyCharger_DoesNotSwitchWeapons()
+        {
+            Assert.IsFalse(Goliath().SwitchesWeapons, "One weapon: nothing to switch between.");
+        }
+
+        [Test]
+        public void AMeleeOnlyCharger_ChargesAtAnEnemyWithinItsCharge_AndSlams()
+        {
+            var sim = NewSim();
+            SimUnit goliath = sim.AddUnit(Goliath(), Team.A, Vec2.Zero);
+            SimUnit enemy = Enemy(sim, new Vec2(0f, 5.5f)); // 5 m from its centre to the enemy's edge: inside the 6 m charge, outside the 3 m fist.
+            sim.Step();
+            Assert.IsTrue(goliath.IsLeaping, "It charges at once.");
+            Assert.AreEqual(0, goliath.MainWeaponIndex);
+            Assert.Greater(goliath.Position.Y, 0.25f, "At 9 m/s, far faster than its 1.1 m/s walk.");
+            RunSeconds(sim, 1f);
+            Assert.IsFalse(goliath.IsLeaping, "It has reached it.");
+            Assert.IsTrue(Targeting.IsInRange(goliath, goliath.Weapons[0].Stats, enemy), "Right against its target.");
+            Assert.AreEqual(760f, enemy.Health, 0.01f, "One slam.");
+        }
+
+        [Test]
+        public void AMeleeOnlyCharger_ReachCountsFromItsCentre()
+        {
+            var sim = NewSim();
+            SimUnit goliath = sim.AddUnit(Goliath(), Team.A, Vec2.Zero);
+            Enemy(sim, new Vec2(0f, 7f)); // 6.5 m from its centre to the enemy's edge: beyond the 6 m charge, though only 4.1 m beyond its body.
+            sim.Step();
+            Assert.IsFalse(goliath.IsLeaping);
+        }
+
+        [Test]
+        public void AMeleeOnlyCharger_BeyondItsCharge_WalksAndDoesNotShoot()
+        {
+            var sim = NewSim();
+            SimUnit goliath = sim.AddUnit(Goliath(), Team.A, Vec2.Zero);
+            SimUnit enemy = Enemy(sim, new Vec2(0f, 15f));
+            RunSeconds(sim, 1f);
+            Assert.IsFalse(goliath.IsLeaping);
+            Assert.AreEqual(1000f, enemy.Health, 0.01f, "Nothing reaches that far.");
+            Assert.That(goliath.Position.Y, Is.InRange(0.5f, 1.5f), "It walks at 1.1 m/s.");
         }
     }
 }

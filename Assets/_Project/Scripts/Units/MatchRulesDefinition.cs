@@ -96,9 +96,12 @@ namespace Halobellum.Units
         public float oilZoneLength = 45f;
         [Tooltip("Metres across the line.")]
         public float oilZoneWidth = 8f;
-        public float oilZoneSeconds = 15f;
+        [Tooltip("0 = the whole round.")]
+        public float oilZoneSeconds = 0f;
         [Range(0f, 1f)] public float oilZoneSlowShare = 0.4f;
         public float oilZoneFireDamageMultiplier = 1.5f;
+        [Tooltip("Rounds it recharges after use (usable again this many rounds + 1 later).")]
+        public int oilZoneCooldownRounds = 2;
 
         [Header("Research Center")]
         public float researchHealthShare = 0.15f;
@@ -156,7 +159,7 @@ namespace Halobellum.Units
                 OilZone = new SpellStats
                 {
                     Name = "Oil Zone",
-                    Description = "Click one end, aim the other. Oil slows everything on the ground that crosses it, and fire burns it worse.",
+                    Description = "Bought once, it stays in your spells and recharges after use. Click one end, aim the other. Oil slows everything on the ground that crosses it, and fire burns it worse.",
                     Offensive = true,
                     Effect = SpellEffect.Oil,
                     Cost = oilZoneCost,
@@ -165,6 +168,7 @@ namespace Halobellum.Units
                     DurationSeconds = oilZoneSeconds,
                     SlowShare = oilZoneSlowShare,
                     FireDamageMultiplier = oilZoneFireDamageMultiplier,
+                    CooldownRounds = oilZoneCooldownRounds,
                 },
             };
         }

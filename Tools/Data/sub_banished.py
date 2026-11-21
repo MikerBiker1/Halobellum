@@ -10,21 +10,26 @@ ORDER = 4
 
 def units(U, W):
     return [
-        U("Chopper", "Chopper", FACTION, "Flanker", 1, 0, 2, 200, 300, "L", 5.5, 1.3, 0.8, "G",
-          [W("Ramming Blades", 60, 1.0, 1.5, "Melee", splash=1.5),
+        # Health 250 -> 300: it died before it reached the towers (the owner, D162); 315 (D163).
+        U("Chopper", "Chopper", FACTION, "Flanker", 1, 0, 2, 175, 315, "L", 5.5, 1.3, 0.8, "G",
+          [W("Ramming Blades", 66, 1.0, 1.5, "Melee", splash=1.5),  # 60 -> 66 (D163).
            W("Chopper Autocannons", 10, 0.25, 9, "Ballistic", block=True, own="B")],
           note="It rams: its main weapon is its front wheel, so it drives straight into the enemy, guns firing on the way."),
-        U("BruteGrenadier", "Brute Grenadier", FACTION, "ChaffClear", 1, 0, 4, 150, 150, "U", 1.5, 0.6, 0.3, "G",
-          [W("Spike Grenade Launcher", 31, 2.0, 13, "Explosive", proj=18, splash=2.8, minr=2, lob=True),
+        # Health 150 -> 158 a body (D163).
+        U("BruteGrenadier", "Brute Grenadier", FACTION, "ChaffClear", 1, 0, 4, 150, 158, "U", 1.5, 0.6, 0.3, "G",
+          [W("Spike Grenade Launcher", 35, 2.0, 14, "Explosive", proj=18, splash=2.8, minr=2, lob=True),  # Range 13 -> 14 (the owner, D158); 32 -> 35 damage (D163).
            # The owner, 2026-11-07: too close for its grenades, it swings the Brute Shot's blade (its launcher holds fire meanwhile).
            W("Brute Shot Blade", 35, 1.5, 2, "Melee")], baked="BruteGrenadier",
           note="Tough infantry with lobbed grenades. Shorter range than a Fuel Rod Grunt, can miss what moves, but takes much more killing."),
-        U("Marauder", "Marauder", FACTION, "Tank", 2, 50, 1, 300, 1250, "H", 1.5, 1.8, 1.8, "G",
-          [W("Plasma Cannon", 80, 2.2, 15, "Energy", proj=30, splash=2),
+        # Health 1350 -> 1500 (the owner, D157), 1600 (D163).
+        U("Marauder", "Marauder", FACTION, "Tank", 2, 50, 1, 300, 1600, "H", 1.5, 1.8, 1.8, "G",
+          [W("Plasma Cannon", 104, 2.2, 15, "Energy", proj=30, splash=2),  # 88 -> 104 (D163).
            W("Spike Turret", 8, 0.3, 12, "Ballistic", block=True, own="B")],
           note="The Banished battle tank. A plasma main gun, so a little better than a Scorpion against shields."),
-        U("Reaver", "Reaver", FACTION, "AntiAir", 2, 50, 1, 300, 700, "L", 3, 1.4, 1.2, "B",
-          [W("Spike Rockets", 24, 0.5, 20, "Explosive", proj=45, air=3)],
+        # Health 700 -> 900 (the owner, D151).
+        # Heavy armor (the owner, D158; light until then).
+        U("Reaver", "Reaver", FACTION, "AntiAir", 2, 50, 1, 250, 900, "H", 3, 1.4, 1.2, "B",
+          [W("Spike Rockets", 25, 0.5, 20, "Explosive", proj=45, air=3)],
           note="Ground anti-air walker, weak against vehicles."),
     ]
 

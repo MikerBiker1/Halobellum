@@ -17,9 +17,9 @@ MonoBehaviour:
   tier: 2
   unlockCost: 50
   squadSize: 1
-  cost: 275
-  baseDamage: 55
-  maxHealth: 1350
+  cost: 300
+  baseDamage: 60
+  maxHealth: 1500
   armorType: 2
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -28,6 +28,8 @@ MonoBehaviour:
   turnTime180: 2
   isAir: 0
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 0
   weapons:
   - weaponName: Scavenged Cannon
@@ -95,6 +97,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 1

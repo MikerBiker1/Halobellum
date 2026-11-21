@@ -10,17 +10,20 @@ ORDER = 2
 
 def units(U, W):
     return [
-        U("Gremlin", "Gremlin", FACTION, "Flanker", 1, 0, 2, 200, 240, "L", 4.5, 1.1, 0.9, "B",
-          [W("EMP Railgun", 38, 1.0, 13, "Energy", aa=True, slow=2, slowshare=0.4)],
+        # Health 340 -> 360 (the owner, D161).
+        U("Gremlin", "Gremlin", FACTION, "Flanker", 1, 0, 2, 200, 360, "L", 4.5, 1.1, 0.9, "B",
+          [W("EMP Railgun", 38, 1.0, 14, "Energy", aa=True, slow=2, slowshare=0.4)],  # Range 13 -> 14 (the owner, D159).
           note="Fast scout whose EMP slows what it hits (Titans shrug it off). Good against vehicles, poor against infantry."),
         U("Cobra", "Cobra", FACTION, "SingleTargetDps", 2, 50, 1, 300, 650, "H", 1.75, 1.5, 1.5, "G",
-          [W("M66 Railgun", 175, 2.2, 26, "Ballistic", aa=True)],
+          [W("M66 Railgun", 198, 2.2, 26, "Ballistic", aa=True)],
           note="Six-wheeled tank hunter: its twin light railguns punch through heavy armor from far off. Outranges tanks; a swarm or a flanker gets under its guns."),
         U("Rhino", "Rhino", FACTION, "Artillery", 3, 200, 1, 400, 1000, "H", 1, 1.8, 2.5, "G",
-          [W("Heavy Cannon", 140, 5, 50, "Explosive", proj=22, splash=4.5, minr=12, lob=True)],
+          # Range 50 -> 46 (the owner, D153).
+          # A shell every 5 -> 4 s, 0.25 a second (the owner, D161).
+          [W("Heavy Cannon", 143, 4, 46, "Explosive", proj=22, splash=4.5, minr=12, lob=True)],
           note="The longest gun in the game. Slow to turn and move, lobbed so it can miss, helpless up close."),
-        U("Grizzly", "Grizzly", FACTION, "Tank", 3, 250, 1, 500, 2400, "H", 1.35, 2.2, 2.2, "G",
-          [W("Twin Cannons", 110, 2.5, 17, "Explosive", proj=35, splash=2.5),
+        U("Grizzly", "Grizzly", FACTION, "Tank", 3, 250, 1, 500, 3200, "H", 1.35, 2.2, 2.2, "G",
+          [W("Twin Cannons", 110, 2.0, 17, "Explosive", proj=35, splash=2.5),  # Every 2.5 -> 2 s, 0.5 a second (the owner, D159).
            W("Coaxial Machine Gun", 8, 0.2, 13, "Ballistic", block=True, own="B")],
           note="The upgraded Scorpion: twin barrels and more armor, at a Tier 3 price."),
     ]

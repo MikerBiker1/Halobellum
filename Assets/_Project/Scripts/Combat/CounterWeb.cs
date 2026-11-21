@@ -43,6 +43,13 @@ namespace Halobellum.Combat
         public int Draws;
         public float WinRateA => Battles > 0 ? WinsA / (float)Battles : 0f;
         public float WinRateB => Battles > 0 ? WinsB / (float)Battles : 0f;
+        /// <summary>
+        /// By how much A wins, from -1 to 1 (D154): over the battles, the share of A's army left at the end less the share of B's. A win rate of 1
+        /// says only that A always wins; this says whether it wins with its army nearly whole or with its last body.
+        /// </summary>
+        public float MarginSum;
+        public float MarginA => Battles > 0 ? MarginSum / Battles : 0f;
+        public float MarginB => -MarginA;
         public int CostA => SquadsA * A.Cost;
         public int CostB => SquadsB * B.Cost;
     }
@@ -65,6 +72,17 @@ namespace Halobellum.Combat
         public List<CounterWebLine> Lines = new List<CounterWebLine>();
         public float Threshold;
         public bool AllPass => Lines.TrueForAll(l => l.Passes);
+
+        /// <summary>By how much attacker beat defender (-1 to 1, CounterMatchup.MarginA), or NaN if they never met.</summary>
+        public float Margin(UnitStats attacker, UnitStats defender)
+        {
+            foreach (CounterMatchup m in Matchups)
+            {
+                if (m.A == attacker && m.B == defender) return m.MarginA;
+                if (m.B == attacker && m.A == defender) return m.MarginB;
+            }
+            return float.NaN;
+        }
 
         /// <summary>How often attacker beat defender (0 to 1), or -1 if they never met.</summary>
         public float WinRate(UnitStats attacker, UnitStats defender)
@@ -161,6 +179,11 @@ namespace Halobellum.Combat
                 if (stalemate || (!firstWon && !secondWon)) matchup.Draws++;
                 else if (firstWon != swapped) matchup.WinsA++;
                 else matchup.WinsB++;
+                if (!stalemate)
+                {
+                    float firstMargin = result.TeamA.HealthLeftShare - result.TeamB.HealthLeftShare;
+                    matchup.MarginSum += swapped ? -firstMargin : firstMargin;
+                }
             }
             return matchup;
         }

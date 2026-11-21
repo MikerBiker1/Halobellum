@@ -19,19 +19,21 @@ MonoBehaviour:
   squadSize: 3
   cost: 250
   baseDamage: 16.6667
-  maxHealth: 500
+  maxHealth: 600
   armorType: 0
   maxShield: 0
   shieldRegenPerSecond: 0
-  moveSpeed: 2
+  moveSpeed: 3
   collisionRadius: 0.6
   turnTime180: 0.35
   isAir: 0
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 0
   weapons:
   - weaponName: Scythe Claw
-    damagePerShot: 46
+    damagePerShot: 60
     fireInterval: 0.7
     range: 1.5
     minRange: 0
@@ -55,8 +57,8 @@ MonoBehaviour:
     hitSlowSeconds: 0
     hitSlowShare: 0
   - weaponName: Scavenged Plasma Rifle
-    damagePerShot: 10
-    fireInterval: 0.5
+    damagePerShot: 11
+    fireInterval: 0.25
     range: 11
     minRange: 0
     projectileSpeed: 0
@@ -95,6 +97,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0

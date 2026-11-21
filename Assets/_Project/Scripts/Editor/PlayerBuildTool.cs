@@ -7,9 +7,15 @@
 // (see MatchAutoplay). A normal build starts in the main menu; the test tools skip it (see GameFlow).
 // With -testBuild its product name is "Halobellum Test". Unity keeps PlayerPrefs, and the window it remembers, under the product's name, so that nothing a run of that
 // build does can reach the player's own settings and window. Only the build differs: the project's name goes back afterward.
-// Depends on: BattleSceneBuilder (scene path), UnityEditor.
+// A normal build also writes the unit stats files (mod_json) into UnitStats next to the exe, over any there, with this version's values, so every
+// version ships its own; a failure there only warns, as the game writes missing files itself at launch.
+// Depends on: BattleSceneBuilder (scene path), UnitStatsSources, UnitStatsMods (folder name), Halobellum.Economy (UnitStatsFolder), UnityEditor.
 
 using System;
+using System.IO;
+using Halobellum.Economy;
+using Halobellum.Presentation;
+using Halobellum.Units;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
@@ -47,13 +53,36 @@ namespace Halobellum.EditorTools
                     PlayerSettings.productName = product;
                 }
                 Debug.Log($"Build {report.summary.result}: {report.summary.outputPath}, {report.summary.totalSize / (1024 * 1024)} MB, {report.summary.totalErrors} errors.");
-                if (report.summary.result == BuildResult.Succeeded) exitCode = 0;
+                if (report.summary.result == BuildResult.Succeeded)
+                {
+                    exitCode = 0;
+                    if (Array.IndexOf(args, "-battleScene") < 0) WriteUnitStats(args[index + 1]);
+                }
             }
             catch (Exception e)
             {
                 Debug.LogError("Player build failed: " + e);
             }
             EditorApplication.Exit(exitCode);
+        }
+
+        /// <summary>Writes every unit stats file next to the built exe, over what is there. Returns how many it wrote (0 if it failed).</summary>
+        public static int WriteUnitStats(string exePath)
+        {
+            try
+            {
+                var sources = AssetDatabase.LoadAssetAtPath<UnitStatsSources>(UnitStatsSources.AssetPath);
+                if (sources == null) throw new InvalidOperationException("Missing " + UnitStatsSources.AssetPath);
+                string folder = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(exePath)) ?? ".", UnitStatsMods.FolderName);
+                int written = UnitStatsFolder.WriteAll(folder, sources.DefaultGroups(), PlayerSettings.bundleVersion, overwrite: true);
+                Debug.Log($"Unit stats written: {written} files to {folder}.");
+                return written;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("The unit stats files were not written (the game writes missing ones at launch): " + e);
+                return 0;
+            }
         }
     }
 }

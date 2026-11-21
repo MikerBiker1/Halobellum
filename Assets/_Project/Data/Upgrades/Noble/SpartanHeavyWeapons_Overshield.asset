@@ -21,6 +21,7 @@ MonoBehaviour:
   moveSpeedMultiplier: 1
   airDamageMultiplier: 1
   rangeBonus: 0
+  airRangeBonus: 0
   shieldBonus: 300
   shieldRegenBonus: 0
   splashRadiusBonus: 0

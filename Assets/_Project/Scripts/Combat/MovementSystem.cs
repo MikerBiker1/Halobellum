@@ -109,7 +109,12 @@ namespace Halobellum.Combat
         }
 
         /// <summary>True if two bodies can touch: both on the ground or both in the air, and neither on a leap.</summary>
-        private static bool CanTouch(SimUnit a, SimUnit b) => a.IsAir == b.IsAir && !a.IsLeaping && !b.IsLeaping && !a.NotArrived && !b.NotArrived;
+        private static bool CanTouch(SimUnit a, SimUnit b) => a.IsAir == b.IsAir && !a.IsLeaping && !b.IsLeaping && !a.NotArrived && !b.NotArrived
+                                                              && !PassesThrough(a, b) && !PassesThrough(b, a);
+
+        /// <summary>A unit that walks through its own side's chaff (the Carrier Form through the Infection Forms, D146).</summary>
+        private static bool PassesThrough(SimUnit unit, SimUnit other) =>
+            unit.Stats.PassesThroughOwnChaff && unit.Team == other.Team && other.Stats.Role == UnitRole.Chaff;
 
         private Vec2 SteeringVelocity(SimUnit unit, float dt, out Vec2 facing)
         {
@@ -125,7 +130,9 @@ namespace Halobellum.Combat
 
             float lookahead = speed * _rules.AvoidanceLookaheadSeconds;
             float padding = _rules.SeparationPadding;
-            _grid.Query(unit.Position, unit.Radius + _grid.MaxRadius + Math.Max(lookahead, padding), _neighbors);
+            // Squadmates of a type with its own gap keep that far apart as they walk (the Elites, D151).
+            float squadPadding = Math.Max(padding, unit.Stats.SquadGap);
+            _grid.Query(unit.Position, unit.Radius + _grid.MaxRadius + Math.Max(lookahead, squadPadding), _neighbors);
 
             Vec2 separation = Vec2.Zero;
             Vec2 avoidance = Vec2.Zero;
@@ -135,7 +142,7 @@ namespace Halobellum.Combat
 
                 Vec2 offset = unit.Position - other.Position;
                 float gap = offset.Length;
-                float minDistance = unit.Radius + other.Radius + padding;
+                float minDistance = unit.Radius + other.Radius + (unit.SquadId >= 0 && unit.SquadId == other.SquadId ? squadPadding : padding);
 
                 // A walking unit that is making way for us steps aside on its own: we hold our line.
                 bool givesWay = other.State == UnitState.Move && MakesWayFor(other, unit);

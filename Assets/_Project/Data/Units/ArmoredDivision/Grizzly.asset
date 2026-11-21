@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 1
   cost: 500
   baseDamage: 100
-  maxHealth: 2400
+  maxHealth: 3200
   armorType: 2
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -28,11 +28,13 @@ MonoBehaviour:
   turnTime180: 2.2
   isAir: 0
   canFlank: 0
+  goesForTowers: 0
+  squadGap: 0
   targetFilter: 0
   weapons:
   - weaponName: Twin Cannons
     damagePerShot: 110
-    fireInterval: 2.5
+    fireInterval: 2
     range: 17
     minRange: 0
     projectileSpeed: 35
@@ -95,6 +97,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0
@@ -125,4 +128,4 @@ MonoBehaviour:
   bakedScale: 1
   strongAgainst: Chaff clear
   weakAgainst: Single-target DPS
-  notes: 'Best counters (headless runner, equal cost): Gauss Warthog (100%), Spartan (100%). The upgraded Scorpion: twin barrels and more armor, at a Tier 3 price. First-pass M10 values, Armored Division (Docs/M10/subfactions.md).'
+  notes: 'Best counters (headless runner, equal cost): Spartan (100%), Zealot (100%). The upgraded Scorpion: twin barrels and more armor, at a Tier 3 price. First-pass M10 values, Armored Division (Docs/M10/subfactions.md).'

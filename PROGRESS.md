@@ -199,7 +199,16 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] The Spartan Grenadier carries its rocket launcher on the shoulder, like the Spartan (D135)
 - [x] XP: the bar fills during the battle; created units earn XP for their maker (D136)
 - [x] Balance by unit: the unit intent sheet and the army slot test (D137)
-- [ ] The unit-by-unit balance pass, after the owner's answers to the intent sheet (D137)
+- [x] The unit balance pass: 40 units by type and price, flankers go for towers, the AI guards a raided tower (D138; not committed until the owner's review)
+- [x] The second balance pass: ban impact by type and price (11 of 13 groups within 10 points), Titans' unlock cost, exclusives bring every sub-faction to 48–51% but Lekgolo (53.5%) (D140; not committed until the owner's review)
+- [x] The balance remade to the owner's vision: base factions 50% each without exclusive units, every Titan unlocks for 150; then every sub-faction has a matchup of 56% or more with its exclusives (D141; not committed until the owner's review)
+- [x] The owner's playtest batch: the Covenant Phantom drops from the air and never lands; Pelican 10 → 25 with a 1 m splash, Condor lasers 19.5 → 60, Skitterer 12 m, Heavy Weapons 15 → 13, Goliath melee only with a charge; summoned bodies deal no base damage and fight at their maker's level; kill XP half to the killer, half by damage; the Oil Zone lasts the round and stays in your spells (2 rounds to recharge); a blue and red glow under each side's top squad; moddable unit stats JSON files; stats on the Unlock Skirmish and card icons (D142; not committed until the owner's review, no tournament)
+- [x] After the D142 tournaments: the Pelican lands where it is to drop its Marines, never behind enemy lines; Sandbox unit icons open their stats; the Spawner releases 3 Combat Forms (was 5); Swarm Brood 200 -> 300 (D143; not committed, no tournament)
+- [ ] The Scarab session's new Goliath body and Jackal icons (`m13/art`, D139): merge when the owner says so (D142)
+- [ ] A balance tournament after D142, when the owner asks
+- [ ] XP for bodies made in a battle: the owner decides (D140, `BattleBodyXpShare`)
+- [ ] Transports: the owner's beacon, placed by the player and movable each round (D138)
+- [ ] The AI places the Zealot further back (the owner, D138)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
 - [ ] The owner's play test of M10
 

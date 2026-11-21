@@ -28,6 +28,8 @@ MonoBehaviour:
   turnTime180: 0.8
   isAir: 0
   canFlank: 0
+  goesForTowers: 1
+  squadGap: 0
   targetFilter: 2
   weapons:
   - weaponName: Plasma Bolts
@@ -71,6 +73,7 @@ MonoBehaviour:
   immuneToInfection: 0
   selfDestructs: 0
   seeksDensestCluster: 0
+  passesThroughOwnChaff: 0
   deathBurstDamage: 0
   deathBurstRadius: 0
   deathBurstDamageType: 0
