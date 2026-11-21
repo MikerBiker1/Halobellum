@@ -186,6 +186,12 @@ namespace Halobellum.Presentation
         public static readonly SfxCue FireVampire = OwnerCue("sfx_fire_vampire", SfxGroup.Needles, 1.8f, 0.06f, 2, -18f, hold: 0.12f); // 0.6 -> 0.9 (the owner, D155), then twice that (D157).
         /// <summary>The Grunt Goblin's needle cannons: the Vampire's sound, 0.6 until D157, then twice that (the owner).</summary>
         public static readonly SfxCue FireGoblinNeedles = OwnerCue("sfx_fire_vampire", SfxGroup.Needles, 1.2f, 0.06f, 2, -18f, hold: 0.12f);
+        /// <summary>Every plasma pistol (the Grunt's, the Cannon Fodder's, the Jackal (Shield)'s; the owner's file, D167), played for every shot, as the Ghost's.</summary>
+        public static readonly SfxCue FirePlasmaPistol = OwnerCue("sfx_fire_plasmapistol", SfxGroup.Plasma, 0.55f, 0.06f, 2, -18f, hold: 0.12f);
+        /// <summary>The Jackal (Shield) charging its pistol at a shielded target (D151): a rise, then a hum held for as long as the file lasts, so BattleAudio cuts it as the bolt fires.</summary>
+        public static readonly SfxCue PistolCharge = OwnerCue("sfx_pistol_charge", SfxGroup.Ready, 0.7f, 0.03f, 3, -16f);
+        /// <summary>The Jackal (Shield)'s charged bolt (D151), the owner's file (D167).</summary>
+        public static readonly SfxCue FirePistolCharged = OwnerCue("sfx_fire_pistol_charged", SfxGroup.HeavyPlasma, 0.85f, 0.04f, 4, -15f);
         public static readonly SfxCue FireBanshee = OwnerCue("sfx_fire_banshee", SfxGroup.Plasma, 0.6f, 0.06f, 2, -18.5f);
         public static readonly SfxCue FireBansheeBomb = OwnerCue("sfx_fire_banshee_bomb", SfxGroup.Rockets, 0.85f, 0.05f, 4, -13f);
         public static readonly SfxCue ExplosionBanshee = OwnerCue("sfx_explosion_banshee", SfxGroup.Explosions, 0.8f, 0.06f, 3, -13.5f);
@@ -480,6 +486,7 @@ namespace Halobellum.Presentation
             if (n.Contains("plasma turret")) return FirePlasmaTurret; // "Plasma Turrets" (the Phantoms), "Plasma Turret (left)" (the Scarab).
             if (n.Contains("autocannon")) return FireAutocannon;
             if (n.Contains("plasma bolts")) return FireGhost;
+            if (n.Contains("plasma pistol")) return FirePlasmaPistol;
             if (n.Contains("goblin needle")) return FireGoblinNeedles; // The Vampire's sound, kept at its old volume (D155).
             if (n.Contains("needle cannon")) return FireVampire;
             if (unit.Contains("banshee") && n.Contains("plasma cannons")) return FireBanshee;

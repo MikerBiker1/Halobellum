@@ -67,6 +67,8 @@ A weapon with a sound of its own uses it; the others use their kind's sound.
 | [x] | `sfx_fire_sword`, `sfx_sword_ready` | Zealots: the sword, and readying it as a battle starts. | `sword_impact_character`, `sword_ready` |
 | [x] | `sfx_fire_needle` | Needle weapons. | `fire[needlefire11]` |
 | [x] | `sfx_fire_vampire` | The Vampire's needle cannons, once per shot (D150). | `NeedlerRifle` |
+| [x] | `sfx_fire_plasmapistol` | Every plasma pistol, once per shot (D167). | `fire[plaspistol]` |
+| [x] | `sfx_pistol_charge`, `sfx_fire_pistol_charged` | The Jackal (Shield)'s charged plasma pistol: the charge, then the bolt (D167). | `startcharge[newchrg_in]`, `chargefire[chargefire]` |
 | [x] | `sfx_fire_rocket` | Rockets and missiles. | `fire[rocket16]` |
 | [x] | `sfx_fire_cannon` | Tank cannons. | `scorpion_cannon_fire` |
 | [x] | `sfx_fire_gauss` | Gauss Warthog, Cobra, Gremlin (my guess for this file). | `fire[grifle03]` |

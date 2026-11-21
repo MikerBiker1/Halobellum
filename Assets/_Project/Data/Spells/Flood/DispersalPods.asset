@@ -31,6 +31,8 @@ MonoBehaviour:
   ticks: 1
   tickInterval: 0
   targets: 0
+  strikeRadius: 0
+  strikesPerTick: 1
   shieldBonusShare: 0
   damageMultiplier: 1
   dropUnit: {fileID: 11400000, guid: 6b41beaaf1cf621860b58e52a70f04fb, type: 2}

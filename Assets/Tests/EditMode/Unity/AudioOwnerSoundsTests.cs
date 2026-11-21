@@ -72,11 +72,24 @@ namespace Halobellum.Tests
         [TestCase("Noble/SpartanSniper", "SRS99 Sniper Rifle", "sfx_fire_sniper")]
         [TestCase("Noble/SpartanFireteam", "BR85 Battle Rifle", "sfx_fire_br85")]
         [TestCase("Covenant/Zealot", "Energy Sword", "sfx_fire_sword")]
-        [TestCase("Covenant/Grunt", "Plasma Pistol", "sfx_fire_plasma")]
+        [TestCase("Covenant/Grunt", "Plasma Pistol", "sfx_fire_plasmapistol")] // Its own since D167.
+        [TestCase("Covenant/JackalShield", "Plasma Pistol", "sfx_fire_plasmapistol")]
+        [TestCase("UnggoyRebellion/CannonFodder", "Plasma Pistol", "sfx_fire_plasmapistol")]
         [TestCase("UNSC/Scorpion", "M512 Cannon", "sfx_fire_cannon")]
         public void EachWeapon_HasItsOwnSound_OrItsKinds(string path, string weaponName, string slot)
         {
             Assert.AreEqual(slot, Fire(path, weaponName, path.StartsWith("Covenant") || path.StartsWith("Unggoy") ? BattleFactions.Covenant : BattleFactions.Unsc).Slot);
+        }
+
+        [Test]
+        public void TheJackalsChargedPistol_HasItsChargeAndItsBolt_TheChargeHeardUntilTheBoltFires()
+        {
+            // The owner's files (D167): the charge's hum is longer than the 1 s charge, so it is faded as the bolt fires, at any battle speed.
+            Assert.IsTrue(AudioCatalog.PistolCharge.HasSound);
+            Assert.IsTrue(AudioCatalog.FirePistolCharged.HasSound);
+            Assert.AreEqual(1f, BattleAudio.ChargeHeardSeconds(1f, 1f), 1e-4f);
+            Assert.AreEqual(0.5f, BattleAudio.ChargeHeardSeconds(1f, 2f), 1e-4f);
+            Assert.AreEqual(0.25f, BattleAudio.ChargeHeardSeconds(1f, 4f), 1e-4f);
         }
 
         [Test]

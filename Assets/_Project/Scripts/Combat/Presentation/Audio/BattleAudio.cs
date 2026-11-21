@@ -165,7 +165,7 @@ namespace Halobellum.Presentation
             {
                 BattleEvents events = _shown.Events;
                 events.WeaponFired -= OnWeaponFired;
-                events.ChargedShotFired -= OnWeaponFired;
+                events.ChargedShotFired -= OnChargedShotFired;
                 events.WeaponWindingUp -= OnWeaponWindingUp;
                 events.ShotLanded -= OnShotLanded;
                 events.UnitDied -= OnUnitDied;
@@ -181,7 +181,7 @@ namespace Halobellum.Presentation
             {
                 BattleEvents events = _shown.Events;
                 events.WeaponFired += OnWeaponFired;
-                events.ChargedShotFired += OnWeaponFired; // The Jackal's charged bolt sounds as its pistol does (D151).
+                events.ChargedShotFired += OnChargedShotFired; // The Jackal's charged bolt (D151): its own sound since D167.
                 events.WeaponWindingUp += OnWeaponWindingUp;
                 events.ShotLanded += OnShotLanded;
                 events.UnitDied += OnUnitDied;
@@ -272,9 +272,23 @@ namespace Halobellum.Presentation
             return down;
         }
 
+        /// <summary>The Jackal's charged bolt (D151): the owner's charged shot (D167), or its pistol's sound until that file is in.</summary>
+        private void OnChargedShotFired(SimUnit attacker, int weaponIndex, SimUnit target)
+        {
+            if (AudioCatalog.FirePistolCharged.HasSound) GameAudio.Sfx(AudioCatalog.FirePistolCharged, Place(attacker));
+            else OnWeaponFired(attacker, weaponIndex, target);
+        }
+
         /// <summary>A weapon starts its wind-up: its own sound, if it has one, carries the shot at the end of it.</summary>
         private void OnWeaponWindingUp(SimUnit attacker, int weaponIndex, SimUnit target, float seconds)
         {
+            if (attacker.Weapons[weaponIndex].ChargingShot)
+            {
+                // The Jackal charging its pistol (D151): the owner's charge (D167), heard until the bolt fires, then faded.
+                if (AudioCatalog.PistolCharge.HasSound)
+                    GameAudio.SfxShaped(AudioCatalog.PistolCharge, Place(attacker), 0f, ChargeHeardSeconds(seconds, _battle.Speed), 0.06f);
+                return;
+            }
             WeaponStats weapon = attacker.Weapons[weaponIndex].Stats;
             if (!_windUps.TryGetValue(weapon, out SfxCue cue))
             {
@@ -287,6 +301,9 @@ namespace Halobellum.Presentation
             if (skip > 0.02f) GameAudio.SfxShaped(cue, Place(attacker), skip, 99f, 0.05f);
             else GameAudio.Sfx(cue, Place(attacker));
         }
+
+        /// <summary>How long the pistol's charge is heard: the charge's battle seconds in real time at this battle speed, so it fades as the bolt fires.</summary>
+        public static float ChargeHeardSeconds(float chargeSeconds, float speed) => Mathf.Max(0.05f, chargeSeconds / Mathf.Max(0.05f, speed));
 
         /// <summary>How far into the Spartan Laser's file to start, so that its shot lands with a wind-up of these battle seconds at this battle speed.</summary>
         public static float WindUpSkip(float windUpSeconds, float speed) =>

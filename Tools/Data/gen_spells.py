@@ -117,7 +117,7 @@ EMP = dict(file="ElectromagneticPulse", name="Electromagnetic Pulse", desc="Frie
 SPELLS = {
     "UNSC": [
         dict(file="MacStrike", name="MAC Strike", desc="A precision round from a frigate's Magnetic Accelerator Cannon in orbit.",
-             off=1, eff=0, cost=150, cd=1, max=2, radius=4, delay=1, dmg=800, dtype=1, aa=1, ticks=1, interval=0, targets=0),
+             off=1, eff=0, cost=150, cd=1, max=2, radius=4, delay=1, dmg=4000, dtype=1, aa=1, ticks=1, interval=0, targets=0),  # 800 -> 4000: a precise strike must hurt a tank (the owner, D167).
         dict(file="MissileBarrage", name="Archer Missile Barrage", desc="A frigate's Archer pods saturate a wide area: missiles land at random spots across it, wave after wave.",
              off=1, eff=0, cost=150, cd=2, max=2, radius=20, delay=1, dmg=65, dtype=1, aa=0, ticks=6, interval=0.5, targets=2, strike=4.5, strikes=6),  # D83
         dict(file="HavokNuke", name="HAVOK Nuke", desc="A tactical nuclear warhead. Devastating, slow to recharge. Mind your own troops.",
@@ -132,7 +132,7 @@ SPELLS = {
     ],
     "Covenant": [
         dict(file="PlasmaBombardment", name="Plasma Bombardment", desc="A precise plasma shot from a cruiser in orbit.",
-             off=1, eff=0, cost=150, cd=1, max=2, radius=5, delay=1, dmg=450, dtype=2, aa=0, ticks=1, interval=0, targets=0),
+             off=1, eff=0, cost=150, cd=1, max=2, radius=5, delay=1, dmg=2250, dtype=2, aa=0, ticks=1, interval=0, targets=0),  # 450 -> 2250 (the owner, D167).
         dict(file="PlasmaStorm", name="Plasma Storm", desc="A storm of plasma bolts over a wide area: they strike at random spots across it.",
              off=1, eff=0, cost=150, cd=2, max=2, radius=20, delay=1, dmg=55, dtype=2, aa=0, ticks=8, interval=0.5, targets=2, strike=4, strikes=5),  # D83
         dict(file="GlassingBeam", name="Glassing Beam", desc="Click where the beam starts, aim where it ends: a supercarrier's beam sweeps 30 m of ground into glass. Devastating, slow to recharge. Mind your own troops.",
@@ -147,7 +147,7 @@ SPELLS = {
     ],
     "Flood": [
         dict(file="SporeBurst", name="Spore Burst", desc="A pod bursts over the area. Unarmored units it kills rise as Flood.",
-             off=1, eff=0, cost=150, cd=1, max=2, radius=5, delay=1, dmg=350, dtype=1, aa=0, ticks=1, interval=0, targets=0, infects=1),
+             off=1, eff=0, cost=150, cd=1, max=2, radius=5, delay=1, dmg=1750, dtype=1, aa=0, ticks=1, interval=0, targets=0, infects=1),  # 350 -> 1750, as the other precise strikes (D167).
         dict(file="BlightRain", name="Blight Rain", desc="Spores rain over a wide area, bursting at random spots across it. Unarmored units it kills rise as Flood.",
              off=1, eff=0, cost=150, cd=2, max=2, radius=20, delay=1, dmg=55, dtype=1, aa=0, ticks=8, interval=0.5, targets=2, infects=1, strike=4, strikes=5),  # D83
         dict(file="GravemindsWrath", name="Gravemind's Wrath", desc="The Gravemind turns its whole will on one spot. Unarmored units it kills rise as Flood. Mind your own forms.",

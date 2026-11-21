@@ -24,13 +24,15 @@ MonoBehaviour:
   minRound: 0
   areaWidth: 0
   areaDepth: 0
-  damagePerTick: 350
+  damagePerTick: 1750
   damageType: 1
   isAntiArmor: 0
   infectsKills: 1
   ticks: 1
   tickInterval: 0
   targets: 0
+  strikeRadius: 0
+  strikesPerTick: 1
   shieldBonusShare: 0
   damageMultiplier: 1
   dropUnit: {fileID: 0}
