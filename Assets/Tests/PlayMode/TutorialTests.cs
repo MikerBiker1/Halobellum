@@ -41,12 +41,16 @@ namespace Halobellum.Tests
             Assert.AreEqual(title, T.Current?.Title, $"At step {T.Index + 1}.");
         }
 
-        private IEnumerator Fight()
+        private IEnumerator Fight(System.Action eachFrame = null)
         {
             _battle.Speed = 16f;
             _match.Ready();
             float deadline = Time.realtimeSinceStartup + 120f;
-            while (_match.Match.Phase == MatchPhase.Battle && Time.realtimeSinceStartup < deadline) yield return null;
+            while (_match.Match.Phase == MatchPhase.Battle && Time.realtimeSinceStartup < deadline)
+            {
+                yield return null;
+                eachFrame?.Invoke();
+            }
             Assert.AreNotEqual(MatchPhase.Battle, _match.Match.Phase, "The battle did not finish in time.");
             yield return null;
         }
@@ -158,14 +162,12 @@ namespace Halobellum.Tests
             for (int round = 0; round < 12 && m.Phase != MatchPhase.MatchOver; round++)
             {
                 if (m.Phase == MatchPhase.Cards) _match.SkipCards();
-                yield return null;
-                if (T.Current?.Title == "Flankers") flankersText ??= T.Current.Text;
                 BuyWhatTheBudgetAllows();
-                yield return Fight();
+                yield return Fight(() => { if (T.Current?.Title == "Flankers") flankersText ??= T.Current.Text; });
                 if (m.Phase == MatchPhase.Result) _match.Continue();
                 yield return null;
             }
-            // The owner, 2026-11-21: once a flanker has fought (the enemy's Ghost from round 3, or the player's own), a step says they go for towers.
+            // The owner, 2026-11-21: as a battle with a flanker in it starts (the enemy's Ghost from round 3, or the player's own), a step says they go for towers.
             Assert.IsNotNull(flankersText, "The Flankers step came during the match.");
             StringAssert.Contains("go for", flankersText);
             StringAssert.Contains("towers", flankersText);

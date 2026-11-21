@@ -8,6 +8,9 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.413.10 · 2026-11-21
+- **Tutorial:** the Flankers step now comes as the battle starts, the first battle with a flanker in it (the enemy's Ghost or your own Warthog), instead of at the next deployment. (D170)
+
 ## 0.413.9 · 2026-11-21
 - **Tutorial: a Flankers step.** Once a flanker has fought (the enemy's Ghost, or your own Warthog bought earlier), the next deployment explains that flankers drive for the nearest tower, firing at what they pass, that a fallen tower weakens its side, and that a flanker beside your strongest side also draws fire. (D169)
 

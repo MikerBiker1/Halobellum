@@ -20,16 +20,16 @@ namespace Halobellum.Presentation
             bool Unlocked(string name) => Me().Roster.Exists(u => u.Name == name && Me().Unlocked.Contains(u));
             bool TowerOpen(TowerKind kind) => match.Selection != null && match.Selection.SelectedTower is (Team team, TowerKind k) && team == Team.A && k == kind;
             string shop = TutorialSetup.ShopUnit, exclusive = TutorialSetup.ExclusiveUnit;
-            // A flanker that has fought (the enemy's Ghost from round 3, or the player's own Warthog): once one has, the Flankers step explains them (the owner, 2026-11-21).
-            PlacedSquad FoughtFlanker(PlayerState p) => p.Squads.Find(s => s.Type.GoesForTowers && s.RoundBought < M().Round);
-            bool FlankerToExplain() => Phase(MatchPhase.Deployment) && (FoughtFlanker(M().Enemy) != null || FoughtFlanker(Me()) != null);
+            // A flanker in the battle (the enemy's Ghost from round 3, or the player's own Warthog): as the first such battle starts, the Flankers step explains them (the owner, 2026-11-21).
+            PlacedSquad Flanker(PlayerState p) => p.Squads.Find(s => s.Type.GoesForTowers);
+            bool FlankerToExplain() => Phase(MatchPhase.Battle) && (Flanker(M().Enemy) != null || Flanker(Me()) != null);
             var flankers = new TutorialStep
             {
                 Title = "Flankers",
                 Target = "key:Ready", Doing = "Win the match.", ReadyAllowed = true,
                 Done = () => Phase(MatchPhase.MatchOver),
             };
-            flankers.Started = () => flankers.Text = FlankersText(FoughtFlanker(M().Enemy)?.Type.Name, FoughtFlanker(Me())?.Type.Name);
+            flankers.Started = () => flankers.Text = FlankersText(Flanker(M().Enemy)?.Type.Name, Flanker(Me())?.Type.Name);
 
             return new List<TutorialStep>
             {
