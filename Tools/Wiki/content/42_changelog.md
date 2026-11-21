@@ -8,6 +8,9 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.413.14 · 2026-11-21
+- **The Banshee's death 25% quieter** (and the Infested Banshee's, which uses the same sound). (D174)
+
 ## 0.413.13 · 2026-11-21
 - **The Vampire's needle cannons twice as loud.** Its sound file is very quiet, and the last raise had hit the game's full volume, so the file itself now goes in twice as loud. (D173)
 

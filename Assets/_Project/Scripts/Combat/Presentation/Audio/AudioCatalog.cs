@@ -222,7 +222,7 @@ namespace Halobellum.Presentation
         /// <summary>The owner's turret explosion (D120): every machine whose death had a generated sound, on the ground (sfx_death_vehicle) or in the air (sfx_death_air); also the Ghost's blast at the end of its drift.</summary>
         public static readonly SfxCue ExplosionTurret = OwnerCue("sfx_explosion_turret", SfxGroup.BigDeaths, 0.95f, 0.05f, 8, -11.5f);
         /// <summary>The Banshee's and the Infested Banshee's fall and crash in one file (the owner, D120): falling for its first BansheeFallInFile seconds, then the blast.</summary>
-        public static readonly SfxCue DeathBanshee = OwnerCue("sfx_death_banshee", SfxGroup.BigDeaths, 0.95f, 0.05f, 8, -11.3f);
+        public static readonly SfxCue DeathBanshee = OwnerCue("sfx_death_banshee", SfxGroup.BigDeaths, 0.7125f, 0.05f, 8, -11.3f); // 0.95 -> 25% quieter (the owner, D174).
         /// <summary>Seconds of falling at the start of the Banshee's death file, before its blast: as long as a dead aircraft takes to fall (UnitViewManager.AirFallSeconds).</summary>
         public const float BansheeFallInFile = 1.3f;
         /// <summary>A Ghost knocked out, heard as it starts its drift (the owner's ghost_initial_destroyed, D120); its blast comes after (ExplosionTurret).</summary>
