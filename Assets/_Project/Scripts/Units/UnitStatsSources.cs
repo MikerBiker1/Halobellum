@@ -1,6 +1,7 @@
 // UnitStatsSources.cs
-// Where the unit stats files come from (mod_json): the three factions and the combat rules, in Resources/UnitStatsSources.asset, so a built game
-// can find every unit at launch before any scene has loaded. It makes one file per faction's base roster and one per sub-faction
+// Where the unit stats files come from (mod_json): the three factions and the combat rules, in Data/UnitStatsSources.asset, held by the Boot
+// scene (BootLoader), which reads the files before the main menu opens. Not in Resources: it reaches every unit's art, which would then all go
+// into the build's one resources file (over GitHub's 100 MB a file, 0.413.4); held by a scene, the art goes into that scene's own file. It makes one file per faction's base roster and one per sub-faction
 // (UNSC.json, UNSC_Noble.json, ... Flood_Covenantbased.json: the names with everything but letters and digits taken out). A roster unit goes in
 // its roster's file. A unit only reached through a spell's drop, a release, a death spawn, a drop or a seed form (the ODST, the Infection Forms)
 // goes in the base file of the faction that reaches it first. Every unit is written once, from its own asset (ToStats at the top level).
@@ -18,9 +19,7 @@ namespace Halobellum.Units
     [CreateAssetMenu(menuName = "Halobellum/Unit Stats Sources", fileName = "UnitStatsSources")]
     public sealed class UnitStatsSources : ScriptableObject
     {
-        /// <summary>Its place under Resources, for Resources.Load.</summary>
-        public const string ResourcePath = "UnitStatsSources";
-        public const string AssetPath = "Assets/_Project/Resources/UnitStatsSources.asset";
+        public const string AssetPath = "Assets/_Project/Data/UnitStatsSources.asset";
 
         public List<FactionDefinition> factions = new List<FactionDefinition>();
         [Tooltip("For the check that a modded squad still fits the deployment zone.")]

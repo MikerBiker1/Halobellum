@@ -33,7 +33,7 @@ namespace Halobellum.Tests
         public void TheMantis_IsAnAnimatedBody_FiringTwelveRoundsAClip_FromBothArms()
         {
             var unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/UNSC/Mantis.asset");
-            var body = Resources.Load<BakedBodyDefinition>("BakedBodies/Mantis");
+            var body = TestBodies.Load("Mantis");
             Assert.IsNotNull(body);
             Assert.AreSame(body, unit.bakedBody, "Its data points at the body.");
             Assert.IsTrue(body.IsReady, "Run Halobellum > Art > Bake Animated Bodies.");

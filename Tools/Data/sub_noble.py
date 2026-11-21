@@ -7,7 +7,7 @@ FACTION = "UNSC"
 FOLDER = "Noble"
 DESCRIPTION = "Spartan specialists. Every unit is Tier 3 and expensive to unlock."
 ORDER = 1
-# They share the Spartan's model, each in its own armour colour and with a placeholder weapon (Resources/BakedBodies).
+# They share the Spartan's model, each in its own armour colour and with a placeholder weapon (Art/BakedBodies).
 
 
 def units(U, W):

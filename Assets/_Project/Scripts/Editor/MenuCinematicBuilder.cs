@@ -40,7 +40,7 @@ namespace Halobellum.EditorTools
     {
         private const string ArtFolder = "Assets/_Project/Art/MenuCinematic";
         private const string UnitFolder = "Assets/_Project/Prefabs/Units/";
-        private const string BodyFolder = "Assets/_Project/Resources/BakedBodies/";
+        private const string BodyFolder = "Assets/_Project/Art/BakedBodies/";
 
         // The Scarab's walk, once each loop of shots, along flat ground through the middle of the field, toward the human line.
         private static readonly Vector2 WalkerFrom = new Vector2(130f, 110f), WalkerTo = new Vector2(35f, 22f);

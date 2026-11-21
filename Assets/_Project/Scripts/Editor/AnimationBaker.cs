@@ -1,6 +1,6 @@
 // AnimationBaker.cs
 // Turns a rigged model and its clips into what BakedCrowd.shader draws (M9, decisions D41 and D42), for every
-// Baked Body asset in Resources/BakedBodies:
+// Baked Body asset in Art/BakedBodies:
 //   - a mesh that names two bones per vertex, with finger bones merged into the hands (too small to see at
 //     game distance) and, if it has one, a prepared weapon merged into the right hand, and a shield on the left in a second, see-through sub-mesh;
 //     a body whose gun is part of its own model (the Flamethrower Trooper) shoots from its furthest-forward point instead (muzzleAtFront),
@@ -30,7 +30,7 @@ namespace Halobellum.EditorTools
 {
     public static class AnimationBaker
     {
-        public const string BodiesFolder = "Assets/_Project/Resources/BakedBodies";
+        public const string BodiesFolder = "Assets/_Project/Art/BakedBodies";
         public const string ModelsFolder = "Assets/_Project/Art/Imported/Models";
         private const string ShaderName = "Halobellum/BakedCrowd";
         private static readonly string[] FingerNames = { "Thumb", "Index", "Middle", "Ring", "Pinky" };

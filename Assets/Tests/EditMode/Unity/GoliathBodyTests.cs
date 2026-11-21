@@ -19,7 +19,7 @@ namespace Halobellum.Tests
         private static (UnitDefinition Unit, BakedBodyDefinition Body) Load()
         {
             var unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/LekgoloColony/Goliath.asset");
-            var body = Resources.Load<BakedBodyDefinition>("BakedBodies/Goliath");
+            var body = TestBodies.Load("Goliath");
             Assert.IsNotNull(body);
             Assert.AreSame(body, unit.bakedBody, "Its data points at the body.");
             Assert.IsTrue(body.IsReady, "Run Halobellum > Art > Bake Animated Bodies.");

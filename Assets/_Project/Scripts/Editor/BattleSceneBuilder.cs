@@ -27,6 +27,8 @@ namespace Halobellum.EditorTools
 {
     public static class BattleSceneBuilder
     {
+        /// <summary>The first scene of a build: it reads the unit stats files, then opens the main menu (BootLoader, 0.413.4).</summary>
+        public const string BootScenePath = "Assets/_Project/Scenes/Boot.unity";
         public const string MainMenuScenePath = "Assets/_Project/Scenes/MainMenu.unity";
         /// <summary>The main menu from before the cinematic one (D94), kept for the player who prefers it (Settings > Menu background).</summary>
         public const string ClassicMenuScenePath = "Assets/_Project/Scenes/MainMenuClassic.unity";
@@ -74,6 +76,39 @@ namespace Halobellum.EditorTools
             }
             catch (Exception e) { Debug.LogError("Building the scenes failed: " + e); exitCode = 1; }
             EditorApplication.Exit(exitCode);
+        }
+
+        [MenuItem("Halobellum/Scenes/Rebuild Boot Scene")]
+        public static void BuildBootFromMenu()
+        {
+            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            BuildBoot();
+            Debug.Log("Boot scene rebuilt at " + BootScenePath + ".");
+        }
+
+        /// <summary>Command line: rebuilds only the Boot scene and puts it first in the build settings.</summary>
+        public static void BuildBootFromCommandLine()
+        {
+            int exitCode = 0;
+            try
+            {
+                BuildBoot();
+            }
+            catch (Exception e) { Debug.LogError("Building the Boot scene failed: " + e); exitCode = 1; }
+            EditorApplication.Exit(exitCode);
+        }
+
+        /// <summary>Builds Boot.unity: one object with the BootLoader, holding the unit stats sources.</summary>
+        public static void BuildBoot()
+        {
+            var sources = AssetDatabase.LoadAssetAtPath<UnitStatsSources>(UnitStatsSources.AssetPath);
+            if (sources == null) throw new InvalidOperationException("Missing " + UnitStatsSources.AssetPath);
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            var boot = new GameObject("Boot");
+            boot.AddComponent<BootLoader>().unitStatsSources = sources;
+            EditorSceneManager.SaveScene(scene, BootScenePath);
+            UpdateBuildSettings();
+            Debug.Log("Built " + BootScenePath);
         }
 
         /// <summary>Command line: rebuilds only the Sandbox scene.</summary>
@@ -213,9 +248,9 @@ namespace Halobellum.EditorTools
         }
 
         /// <summary>The game's scenes in build order: the main menu first (a built game starts there; MainMenuSceneBuilder makes it).</summary>
-        public static readonly string[] GameScenes = { MainMenuScenePath, ClassicMenuScenePath, MatchScenePath, SandboxScenePath, ScenePath };
+        public static readonly string[] GameScenes = { BootScenePath, MainMenuScenePath, ClassicMenuScenePath, MatchScenePath, SandboxScenePath, ScenePath };
 
-        /// <summary>The main menu first, then the Match, the Sandbox and the Battle test scene.</summary>
+        /// <summary>The Boot scene first, then the main menus, the Match, the Sandbox and the Battle test scene.</summary>
         public static void UpdateBuildSettings()
         {
             var ordered = new List<EditorBuildSettingsScene>();

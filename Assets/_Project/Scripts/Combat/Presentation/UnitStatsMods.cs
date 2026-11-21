@@ -1,5 +1,5 @@
 // UnitStatsMods.cs
-// The unit stats files a player may edit (mod_json), read at every launch of a built game, before the first scene: the UnitStats folder next to
+// The unit stats files a player may edit (mod_json), read at every launch of a built game by the Boot scene (BootLoader), before the main menu: the UnitStats folder next to
 // Halobellum.exe (or the folder given with -unitStats <folder>). A missing file is written from the defaults; a file that is there is never
 // written to. With every file right, the changed values are put in force (UnitStatOverrides.Active), so every unit made from then on has them.
 // With any mistake, the game uses its own values for every unit and the main menu says what is wrong (MainMenuHud). Every mistake and notice also
@@ -36,11 +36,11 @@ namespace Halobellum.Presentation
             Status = new UnitStatsLoadResult();
         }
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void LoadAtLaunch()
+        /// <summary>The Boot scene's call: reads the folder for this launch, if any, from the sources it holds.</summary>
+        public static void LoadAtLaunch(UnitStatsSources sources)
         {
             string folder = FolderFor(Application.isEditor, Environment.GetCommandLineArgs(), Application.dataPath);
-            if (folder != null) Load(folder);
+            if (folder != null) Load(folder, sources);
         }
 
         /// <summary>The folder to read, or null to use the assets: never in the editor; in a test tool's run only with -unitStats.</summary>
@@ -54,14 +54,13 @@ namespace Halobellum.Presentation
         }
 
         /// <summary>Reads the folder, puts the result in force and remembers it for the menu.</summary>
-        public static UnitStatsLoadResult Load(string folder)
+        public static UnitStatsLoadResult Load(string folder, UnitStatsSources sources)
         {
             UnitStatsLoadResult result;
-            var sources = Resources.Load<UnitStatsSources>(UnitStatsSources.ResourcePath);
             if (sources == null)
             {
                 result = new UnitStatsLoadResult { Folder = folder };
-                result.Notices.Add($"Resources/{UnitStatsSources.ResourcePath} is missing, so the unit stats files are not read.");
+                result.Notices.Add("The Boot scene holds no unit stats sources, so the unit stats files are not read.");
             }
             else
             {
@@ -75,8 +74,6 @@ namespace Halobellum.Presentation
                     result = new UnitStatsLoadResult { Folder = folder, State = UnitStatsState.Errors };
                     result.Errors.Add("The unit stats could not be read: " + e.Message);
                 }
-                sources = null;
-                Resources.UnloadUnusedAssets(); // The sources pull every faction's units, prefabs and art into memory; the menu doesn't need them.
             }
             UnitStatOverrides.Active = result.State == UnitStatsState.Modded ? result.Overrides : null;
             Status = result;

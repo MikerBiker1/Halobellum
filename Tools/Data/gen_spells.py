@@ -168,7 +168,7 @@ unit_folder = os.path.join(ROOT, "Data", "Units", "SpellUnits")
 os.makedirs(unit_folder, exist_ok=True)
 folder_meta(unit_folder)
 odst_path = os.path.join(unit_folder, "ODST.asset")
-odst_body = os.path.join(ROOT, "Resources", "BakedBodies", "ODST.asset.meta")
+odst_body = os.path.join(ROOT, "Art", "BakedBodies", "ODST.asset.meta")
 odst_baked = "{fileID: 11400000, guid: " + re.search(r"^guid: (\w+)", open(odst_body, encoding="utf-8").read(), re.M).group(1) + ", type: 2}"
 open(odst_path, "w", encoding="utf-8", newline="\n").write(HEADER.format(script=UNIT_SCRIPT, name="ODST") + ODST.replace("{BAKED}", odst_baked))
 meta(odst_path, guid("unit-ODST"))

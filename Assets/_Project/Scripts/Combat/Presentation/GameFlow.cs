@@ -20,6 +20,8 @@ namespace Halobellum.Presentation
 {
     public static class GameFlow
     {
+        /// <summary>The scene a build starts in: it reads the unit stats files, then opens the main menu (BootLoader).</summary>
+        public const string BootScene = "Boot";
         public const string MainMenuScene = "MainMenu";
         public const string ClassicMainMenuScene = "MainMenuClassic";
         public const string MatchScene = "Match";
@@ -146,6 +148,7 @@ namespace Halobellum.Presentation
         private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             GamePause.Resume();
+            if (scene.name == BootScene) return; // It hands over to the main menu, which is still the first scene for what follows.
             if (scene.name == SandboxScene && _lastScene != null) SandboxCameFrom = _lastScene;
             bool firstScene = _lastScene == null;
             _lastScene = scene.name;

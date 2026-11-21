@@ -768,8 +768,8 @@ namespace Halobellum.Tests
             _sandbox.AddSquad(Team.B, Unit("Marine"));
             yield return null;
             var views = _battle.GetComponent<UnitViewManager>();
-            BakedBodyDefinition spawnerBody = Resources.Load<BakedBodyDefinition>("BakedBodies/Spawner");
-            BakedBodyDefinition stalkerBody = Resources.Load<BakedBodyDefinition>("BakedBodies/StalkerForm");
+            BakedBodyDefinition spawnerBody = _battle.BakedBodyFor(Unit("Spawner"));
+            BakedBodyDefinition stalkerBody = _battle.BakedBodyFor(Unit("Stalker Form"));
             _battle.Speed = 2f;
             _sandbox.Run();
             int births = 0, blows = 0;

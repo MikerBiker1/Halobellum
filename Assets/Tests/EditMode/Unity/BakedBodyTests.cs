@@ -13,7 +13,7 @@ namespace Halobellum.Tests
 {
     public class BakedBodyTests
     {
-        private static BakedBodyDefinition Marine() => Resources.Load<BakedBodyDefinition>("BakedBodies/Marine");
+        private static BakedBodyDefinition Marine() => TestBodies.Load("Marine");
 
         [Test]
         public void Marine_UsesTheClipsTheOwnerChose()
@@ -70,7 +70,7 @@ namespace Halobellum.Tests
         [TestCase("FuelRodGrunt", "Weapon_FuelRod")]
         public void Grunts_ShareABody_EachWithItsOwnWeapon(string name, string weapon)
         {
-            BakedBodyDefinition body = Resources.Load<BakedBodyDefinition>("BakedBodies/" + name);
+            BakedBodyDefinition body = TestBodies.Load("" + name);
             Assert.IsTrue(body.IsReady, "Run Halobellum > Art > Bake Animated Bodies.");
             Assert.AreEqual(weapon, body.weaponName);
             Assert.AreEqual("Grunt", body.modelFolder);
@@ -93,7 +93,7 @@ namespace Halobellum.Tests
         [TestCase("Noble/SpartanSniper", "SpartanSniper", "Weapon_SniperRifle", 2.3f)] // The owner's sniper rifle (D86), in place of the assault rifle.
         public void TheThirdBatch_IsBaked_AndItsUnitsUseIt(string unit, string name, string weapon, float height)
         {
-            BakedBodyDefinition body = Resources.Load<BakedBodyDefinition>("BakedBodies/" + name);
+            BakedBodyDefinition body = TestBodies.Load("" + name);
             Assert.IsTrue(body.IsReady, "Run Halobellum > Art > Bake Animated Bodies.");
             Assert.AreSame(body, UnityEditor.AssetDatabase.LoadAssetAtPath<UnitDefinition>($"Assets/_Project/Data/Units/{unit}.asset").bakedBody);
             Assert.AreEqual(weapon, body.weaponName);
@@ -108,8 +108,8 @@ namespace Halobellum.Tests
         [Test]
         public void TheShieldJackalHoldsAPlasmaPistol_AndTheOtherALongBeamRifle()
         {
-            BakedBodyDefinition rifle = Resources.Load<BakedBodyDefinition>("BakedBodies/Jackal");
-            BakedBodyDefinition shield = Resources.Load<BakedBodyDefinition>("BakedBodies/JackalShield");
+            BakedBodyDefinition rifle = TestBodies.Load("Jackal");
+            BakedBodyDefinition shield = TestBodies.Load("JackalShield");
             Assert.AreEqual("Weapon_PlasmaPistol", shield.weaponName);
             Assert.AreEqual("Weapon_BeamRifle", rifle.weaponName);
             Assert.GreaterOrEqual(rifle.weaponLength, 1.2f, "A sniper rifle, longer than the pistol.");
@@ -120,7 +120,7 @@ namespace Halobellum.Tests
         [Test]
         public void FlamethrowerTrooper_ShootsFromTheFrontOfTheGunInItsModel()
         {
-            BakedBodyDefinition body = Resources.Load<BakedBodyDefinition>("BakedBodies/FlamethrowerTrooper");
+            BakedBodyDefinition body = TestBodies.Load("FlamethrowerTrooper");
             Assert.IsTrue(body.IsReady, "Run Halobellum > Art > Bake Animated Bodies.");
             Assert.IsTrue(body.muzzleAtFront);
             Assert.IsTrue(string.IsNullOrEmpty(body.weaponName), "The gun is part of the model.");
@@ -133,8 +133,8 @@ namespace Halobellum.Tests
         [Test]
         public void TheJackalsShareAModel_AndOnlyTheShieldedOneHasAShield()
         {
-            BakedBodyDefinition rifle = Resources.Load<BakedBodyDefinition>("BakedBodies/Jackal");
-            BakedBodyDefinition shield = Resources.Load<BakedBodyDefinition>("BakedBodies/JackalShield");
+            BakedBodyDefinition rifle = TestBodies.Load("Jackal");
+            BakedBodyDefinition shield = TestBodies.Load("JackalShield");
             Assert.AreEqual("Jackal", rifle.modelFolder);
             Assert.AreEqual("Jackal", shield.modelFolder);
             Assert.AreEqual(1, rifle.mesh.subMeshCount);
@@ -173,7 +173,7 @@ namespace Halobellum.Tests
             var marineUnit = UnityEditor.AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/UNSC/Marine.asset");
             Assert.AreSame(Marine(), marineUnit.bakedBody);
             var trooper = UnityEditor.AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/UNSC/FlamethrowerTrooper.asset");
-            Assert.AreSame(Resources.Load<BakedBodyDefinition>("BakedBodies/FlamethrowerTrooper"), trooper.bakedBody);
+            Assert.AreSame(TestBodies.Load("FlamethrowerTrooper"), trooper.bakedBody);
         }
     }
 }

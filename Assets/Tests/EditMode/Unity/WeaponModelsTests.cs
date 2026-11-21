@@ -39,7 +39,7 @@ namespace Halobellum.Tests
         [Test]
         public void TheZealot_DrawsItsBladesAsLight()
         {
-            BakedBodyDefinition zealot = Resources.Load<BakedBodyDefinition>("BakedBodies/Zealot");
+            BakedBodyDefinition zealot = TestBodies.Load("Zealot");
             Assert.IsTrue(zealot.IsReady, "Run Halobellum > Art > Bake Animated Bodies.");
             Assert.AreEqual("Weapon_EnergySword", zealot.weaponName);
             Assert.IsTrue(zealot.weaponGlows);
@@ -55,13 +55,13 @@ namespace Halobellum.Tests
         {
             Assert.Less(WeaponMesh("Weapon_AssaultRifle").triangles.Length / 3, 1000);
             foreach (string body in new[] { "Marine", "InfestedMarine" })
-                Assert.AreEqual("Weapon_AssaultRifle", Resources.Load<BakedBodyDefinition>("BakedBodies/" + body).weaponName, body);
+                Assert.AreEqual("Weapon_AssaultRifle", TestBodies.Load("" + body).weaponName, body);
         }
 
         [Test]
         public void TheHeavy_CarriesTheWholeMachineGun_AndNoRockets()
         {
-            BakedBodyDefinition heavy = Resources.Load<BakedBodyDefinition>("BakedBodies/SpartanHeavyWeapons");
+            BakedBodyDefinition heavy = TestBodies.Load("SpartanHeavyWeapons");
             Assert.AreEqual("Weapon_Chaingun", heavy.weaponName);
             Assert.Greater(WeaponMesh("Weapon_Chaingun").triangles.Length / 3, 10000, "Whole, as the owner asked: shield, mount and all (D132).");
             var unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>("Assets/_Project/Data/Units/Noble/SpartanHeavyWeapons.asset");
@@ -71,7 +71,7 @@ namespace Halobellum.Tests
         [Test]
         public void TheFireteam_CarriesTheBattleRifle()
         {
-            BakedBodyDefinition fireteam = Resources.Load<BakedBodyDefinition>("BakedBodies/SpartanFireteam");
+            BakedBodyDefinition fireteam = TestBodies.Load("SpartanFireteam");
             Assert.AreEqual("Weapon_BattleRifle", fireteam.weaponName);
             Assert.IsTrue(fireteam.hasMuzzle);
             Assert.Greater(fireteam.muzzle.z, 0.5f, "Its shots leave the barrel, out in front.");

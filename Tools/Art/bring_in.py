@@ -86,7 +86,7 @@ def back():
     # Of the models' files, only Unity's import settings and the materials it made come back.
     copy_changed(os.path.join(BATCH, models), os.path.join(PROJECT, models), lambda f: f.endswith((".meta", ".mat")))
     copy_changed(os.path.join(BATCH, "Prefabs", "Units"), os.path.join(PROJECT, "Prefabs", "Units"), lambda f: True)
-    copy_changed(os.path.join(BATCH, "Resources", "BakedBodies"), os.path.join(PROJECT, "Resources", "BakedBodies"), lambda f: True)
+    copy_changed(os.path.join(BATCH, "Art", "BakedBodies"), os.path.join(PROJECT, "Art", "BakedBodies"), lambda f: True)
     # Unit assets: only the fields the builder sets, so that the files don't change otherwise.
     fields = ("prefab", "keepsOwnMaterials", "bakedBody")
     units = os.path.join("Data", "Units")

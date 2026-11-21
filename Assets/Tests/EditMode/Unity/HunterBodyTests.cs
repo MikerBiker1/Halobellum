@@ -29,7 +29,7 @@ namespace Halobellum.Tests
             Assert.LessOrEqual(stats.Weapons[1].Range, UnitUpgrades.MeleeRange);
             Assert.IsFalse(stats.Weapons[1].CanTarget(stats, targetIsAir: true), "A bash only reaches the ground.");
 
-            BakedBodyDefinition body = Resources.Load<BakedBodyDefinition>("BakedBodies/" + bodyName);
+            BakedBodyDefinition body = TestBodies.Load("" + bodyName);
             Assert.AreSame(body, definition.bakedBody);
             Assert.IsTrue(body.IsReady, "Run Halobellum > Art > Bake Animated Bodies.");
             foreach (BakedAnimation role in new[] { BakedAnimation.Still, BakedAnimation.Moving, BakedAnimation.Shooting, BakedAnimation.Dead, BakedAnimation.Melee, BakedAnimation.Charge })
@@ -51,7 +51,7 @@ namespace Halobellum.Tests
             Assert.AreEqual(DamageType.Melee, stats.Weapons[1].DamageType);
             Assert.LessOrEqual(stats.Weapons[1].Range, stats.Weapons[0].MinRange, "The blade covers what the grenades cannot.");
 
-            BakedBodyDefinition body = Resources.Load<BakedBodyDefinition>("BakedBodies/BruteGrenadier");
+            BakedBodyDefinition body = TestBodies.Load("BruteGrenadier");
             Assert.IsTrue(body.IsReady, "Run Halobellum > Art > Bake Animated Bodies.");
             Assert.AreEqual("Heavy_Hammer_Swing", body.meleeClip);
             Assert.IsNotNull(body.Clip(BakedAnimation.Melee), "It swings while it cuts.");

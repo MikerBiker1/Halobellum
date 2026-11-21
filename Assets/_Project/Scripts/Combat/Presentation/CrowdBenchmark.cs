@@ -93,7 +93,12 @@ namespace Halobellum.Presentation
             yield return Measure("Skinned", SpawnSkinned, null);
             yield return Measure("BakedViews", SpawnBakedViews, null);
             yield return Measure("BakedDirect", _ => { }, DrawBakedDirect);
-            var marine = Resources.Load<BakedBodyDefinition>("BakedBodies/Marine");
+            // The bodies left Resources (0.413.4), so a built benchmark measures without the real Marine; in the editor it still finds it.
+#if UNITY_EDITOR
+            var marine = UnityEditor.AssetDatabase.LoadAssetAtPath<BakedBodyDefinition>("Assets/_Project/Art/BakedBodies/Marine.asset");
+#else
+            BakedBodyDefinition marine = null;
+#endif
             if (marine != null && marine.IsReady)
             {
                 _report.AppendLine($"Real Marine: {marine.mesh.triangles.Length / 3} triangles");

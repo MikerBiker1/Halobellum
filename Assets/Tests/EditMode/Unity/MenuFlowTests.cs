@@ -526,12 +526,15 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void TheBuild_StartsInTheMainMenu_WithEveryScene()
+        public void TheBuild_StartsInTheBootScene_ThenTheMainMenu_WithEveryScene()
         {
             string[] enabled = EditorBuildSettings.scenes.Where(s => s.enabled).Select(s => s.path).ToArray();
-            Assert.AreEqual(BattleSceneBuilder.MainMenuScenePath, enabled[0], "The first scene of the build.");
+            Assert.AreEqual(BattleSceneBuilder.BootScenePath, enabled[0], "The first scene of the build (0.413.4).");
+            Assert.AreEqual(BattleSceneBuilder.MainMenuScenePath, enabled[1], "The scene the Boot scene opens.");
             StringAssert.EndsWith("/MainMenu.unity", BattleSceneBuilder.MainMenuScenePath);
-            Assert.AreEqual(BattleSceneBuilder.MainMenuScenePath, BattleSceneBuilder.GameScenes[0], "The first scene of a command-line build.");
+            StringAssert.EndsWith("/" + GameFlow.BootScene + ".unity", BattleSceneBuilder.BootScenePath);
+            Assert.AreEqual(BattleSceneBuilder.BootScenePath, BattleSceneBuilder.GameScenes[0], "The first scene of a command-line build.");
+            Assert.AreEqual(BattleSceneBuilder.MainMenuScenePath, BattleSceneBuilder.GameScenes[1]);
             foreach (string path in BattleSceneBuilder.GameScenes)
             {
                 CollectionAssert.Contains(enabled, path);

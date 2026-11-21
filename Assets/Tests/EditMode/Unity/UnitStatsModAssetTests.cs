@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using Halobellum.Core;
 using Halobellum.Economy;
+using Halobellum.EditorTools;
 using Halobellum.Presentation;
 using Halobellum.UI;
 using Halobellum.Units;
@@ -31,8 +32,25 @@ namespace Halobellum.Tests
         {
             var sources = AssetDatabase.LoadAssetAtPath<UnitStatsSources>(UnitStatsSources.AssetPath);
             Assert.IsNotNull(sources, UnitStatsSources.AssetPath);
-            Assert.AreSame(sources, Resources.Load<UnitStatsSources>(UnitStatsSources.ResourcePath), "A built game finds it in Resources.");
             return sources;
+        }
+
+        [Test]
+        public void TheBootScene_HoldsTheSources_AndNothingInResourcesReachesAUnit()
+        {
+            // The Boot scene hands them to the mod loader; held there instead of Resources, every unit's art goes into that scene's own build
+            // file, and the build's resources file stays under GitHub's 100 MB a file (0.413.4).
+            string sourcesGuid = AssetDatabase.AssetPathToGUID(UnitStatsSources.AssetPath);
+            StringAssert.Contains("guid: " + sourcesGuid, System.IO.File.ReadAllText(BattleSceneBuilder.BootScenePath), "The Boot scene holds the sources.");
+            StringAssert.DoesNotContain("/Resources/", UnitStatsSources.AssetPath);
+            StringAssert.DoesNotContain("/Resources/", TestBodies.Folder);
+            var resources = AssetDatabase.FindAssets("", new[] { "Assets/_Project/Resources" }).Select(AssetDatabase.GUIDToAssetPath).ToArray();
+            foreach (string dependency in AssetDatabase.GetDependencies(resources, true))
+            {
+                Type type = AssetDatabase.GetMainAssetTypeAtPath(dependency);
+                Assert.IsFalse(type == typeof(UnitDefinition) || type == typeof(FactionDefinition) || type == typeof(BakedBodyDefinition) || type == typeof(UnitStatsSources),
+                    $"{dependency} is reached from Resources, so it and its art would go into the build's resources file.");
+            }
         }
 
         private static UnitDefinition Unit(string path) => AssetDatabase.LoadAssetAtPath<UnitDefinition>($"Assets/_Project/Data/Units/{path}.asset");

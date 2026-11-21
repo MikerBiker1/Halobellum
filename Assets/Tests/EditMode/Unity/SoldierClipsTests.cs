@@ -20,7 +20,7 @@ namespace Halobellum.Tests
         private static (UnitStats Stats, BakedBodyDefinition Body) Load(string unit, string body)
         {
             var definition = AssetDatabase.LoadAssetAtPath<UnitDefinition>($"Assets/_Project/Data/Units/{unit}.asset");
-            var baked = Resources.Load<BakedBodyDefinition>("BakedBodies/" + body);
+            var baked = TestBodies.Load("" + body);
             Assert.IsNotNull(baked, body);
             Assert.AreSame(baked, definition.bakedBody, "Its data points at the body.");
             Assert.IsTrue(baked.IsReady, "Run Halobellum > Art > Bake Animated Bodies.");
@@ -74,7 +74,7 @@ namespace Halobellum.Tests
         [Test]
         public void TheSpartans_WalkWithTheirWeaponsAsTheOwnerAsked()
         {
-            BakedBodyDefinition Body(string n) => Resources.Load<BakedBodyDefinition>("BakedBodies/" + n);
+            BakedBodyDefinition Body(string n) => TestBodies.Load("" + n);
             Assert.AreNotEqual(Body("Spartan").movingClip, Body("SpartanHeavyWeapons").movingClip, "The Heavy carries its gun low, like a minigun (D132).");
             Assert.AreEqual(Body("SpartanFireteam").movingClip, Body("SpartanSniper").movingClip, "Held low in front, aimed at nothing.");
             Assert.AreEqual(Body("Spartan").movingClip, Body("SpartanGrenadier").movingClip, "The rocket launcher on the shoulder, like the Spartan's laser (D135).");
@@ -88,7 +88,7 @@ namespace Halobellum.Tests
         [Test]
         public void TheElite_HoldsItsRifleInTheRightHand_AndRaisesItArmOutToFire()
         {
-            BakedBodyDefinition elite = Resources.Load<BakedBodyDefinition>("BakedBodies/Elite");
+            BakedBodyDefinition elite = TestBodies.Load("Elite");
             Assert.IsTrue(elite.weaponAlongForearm, "In the right hand, along the forearm.");
             Assert.IsFalse(elite.weaponInForwardHand);
             Assert.Greater(elite.muzzle.y, 1.8f, "At the height of its shoulder when firing.");

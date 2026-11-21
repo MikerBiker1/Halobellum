@@ -299,8 +299,8 @@ def existing_baked(path):
 
 
 def baked_ref(u):
-    """A reference to a baked body in Resources/BakedBodies, by its name."""
-    meta = os.path.join(ROOT, "Assets", "_Project", "Resources", "BakedBodies", u["baked"] + ".asset.meta")
+    """A reference to a baked body in Art/BakedBodies, by its name."""
+    meta = os.path.join(ROOT, "Assets", "_Project", "Art", "BakedBodies", u["baked"] + ".asset.meta")
     return "{fileID: 11400000, guid: " + re.search(r"^guid: (\w+)", open(meta, encoding="utf-8").read(), re.M).group(1) + ", type: 2}"
 
 

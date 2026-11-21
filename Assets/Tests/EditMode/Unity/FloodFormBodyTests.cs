@@ -24,7 +24,7 @@ namespace Halobellum.Tests
         private static (UnitDefinition Unit, BakedBodyDefinition Body) Load(string unit, string body)
         {
             var definition = AssetDatabase.LoadAssetAtPath<UnitDefinition>($"Assets/_Project/Data/Units/{unit}.asset");
-            var baked = Resources.Load<BakedBodyDefinition>("BakedBodies/" + body);
+            var baked = TestBodies.Load("" + body);
             Assert.IsNotNull(baked, body);
             Assert.AreSame(baked, definition.bakedBody, "Its data points at the body.");
             Assert.IsTrue(baked.IsReady, "Run Halobellum > Art > Bake Animated Bodies.");
@@ -106,8 +106,8 @@ namespace Halobellum.Tests
         [Test]
         public void TheInfestedElite_HoldsItsPlasmaRifle_TheCombatFormItsClaw()
         {
-            var elite = Resources.Load<BakedBodyDefinition>("BakedBodies/InfestedElite");
-            var form = Resources.Load<BakedBodyDefinition>("BakedBodies/CombatForm");
+            var elite = TestBodies.Load("InfestedElite");
+            var form = TestBodies.Load("CombatForm");
             Assert.AreEqual("Weapon_PlasmaRifle", elite.weaponName);
             Assert.IsTrue(elite.weaponAlongForearm, "Held in the right hand along the forearm.");
             Assert.Greater(elite.mesh.vertexCount, form.mesh.vertexCount, "The rifle is merged into its mesh.");
@@ -169,7 +169,7 @@ namespace Halobellum.Tests
         {
             // creature_rig.py's convention: Root, still, over Body, which sways; the baker measures drift by Root, so the sway stays.
             // (The mesh is called Body too, a child of the model's own root.)
-            var baked = Resources.Load<BakedBodyDefinition>("BakedBodies/" + body);
+            var baked = TestBodies.Load("" + body);
             Assert.IsTrue(baked.sourceModel.GetComponentsInChildren<Transform>().Any(t => t.name == "Body" && t.parent != null && t.parent.name == "Root"));
         }
     }

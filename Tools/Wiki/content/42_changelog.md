@@ -8,6 +8,9 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.413.4 · 2026-11-21
+- **No change to the game.** The game's files are arranged so that none is over 100 MB, so the build fits on GitHub again: the game now starts in a small Boot scene that reads the unit stats files and opens the main menu, and the units' art is stored with that scene instead of in the one big resources file (105 MB → 71 MB). (D164)
+
 ## 0.413.3 · 2026-11-21
 - **Balance to 48–52%,** seven rounds of Insane against Insane tournaments: Spartan Sniper 72 → 76 damage; Spartan Heavy Weapons chaingun 13 → 14; Spartan Fireteam battle rifle 31 → 33; Infested Marine 130 → 125 health; Infested Warthog ram 60 → 50; Grunt Goblin needles 14 → 13.5; Marauder 1,600 health (was 1,500) and cannon 104 (88); Brute Grenadier 158 health (150) and 35 damage (32); Chopper 315 health (300) and blades 66 (60); Condor Gunship autocannons 24 → 22. Over six seeds (21,600 matches) every sub-faction wins 49.1% to 51.2% and every faction 49.6% to 50.5%. (D163)
 
