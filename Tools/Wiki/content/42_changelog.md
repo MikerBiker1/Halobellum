@@ -8,6 +8,9 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.413.8 · 2026-11-21
+- **Plasma Bombardment 2,500** (was 2,250): a break point that kills some units outright. Insane against Insane with the stronger strikes, every faction still wins 49% to 50% and every sub-faction 48% to 53%; the AI now drafts each strike in over half its matches (30–41% before). (D168)
+
 ## 0.413.7 · 2026-11-21
 - **New plasma pistol sounds:** every plasma pistol (Grunt, Cannon Fodder, Jackal (Shield)) has its own shot, and the Jackal's charged shot has its own charge-up, heard until the bolt fires, and its own bolt. (D167)
 - **Precise strikes hit 5x harder,** so they can badly hurt a tank: MAC Strike 4,000 (was 800), Plasma Bombardment 2,250 (450), Spore Burst 1,750 (350). The wide and slow spells are unchanged. (D167)

@@ -132,7 +132,7 @@ SPELLS = {
     ],
     "Covenant": [
         dict(file="PlasmaBombardment", name="Plasma Bombardment", desc="A precise plasma shot from a cruiser in orbit.",
-             off=1, eff=0, cost=150, cd=1, max=2, radius=5, delay=1, dmg=2250, dtype=2, aa=0, ticks=1, interval=0, targets=0),  # 450 -> 2250 (the owner, D167).
+             off=1, eff=0, cost=150, cd=1, max=2, radius=5, delay=1, dmg=2500, dtype=2, aa=0, ticks=1, interval=0, targets=0),  # 450 -> 2250 (the owner, D167), 2500: a break point for killing some units outright (D168).
         dict(file="PlasmaStorm", name="Plasma Storm", desc="A storm of plasma bolts over a wide area: they strike at random spots across it.",
              off=1, eff=0, cost=150, cd=2, max=2, radius=20, delay=1, dmg=55, dtype=2, aa=0, ticks=8, interval=0.5, targets=2, strike=4, strikes=5),  # D83
         dict(file="GlassingBeam", name="Glassing Beam", desc="Click where the beam starts, aim where it ends: a supercarrier's beam sweeps 30 m of ground into glass. Devastating, slow to recharge. Mind your own troops.",

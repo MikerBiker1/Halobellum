@@ -24,7 +24,7 @@ MonoBehaviour:
   minRound: 0
   areaWidth: 0
   areaDepth: 0
-  damagePerTick: 2250
+  damagePerTick: 2500
   damageType: 2
   isAntiArmor: 0
   infectsKills: 0
