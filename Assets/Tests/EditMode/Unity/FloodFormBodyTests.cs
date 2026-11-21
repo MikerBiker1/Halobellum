@@ -82,8 +82,8 @@ namespace Halobellum.Tests
             Assert.IsTrue(rig.Any(t => t.name == "Belly_0") && rig.Any(t => t.name == "Belly_1"), "Its belly has bones to heave with.");
         }
 
-        [TestCase("Flood/CombatForm", "CombatForm", 2.4f)]
-        [TestCase("FloodCovenant/InfestedElite", "InfestedElite", 2.0f)]
+        [TestCase("Flood/CombatForm", "CombatForm", 3f)]
+        [TestCase("FloodCovenant/InfestedElite", "InfestedElite", 3f)]
         public void TheCombatFormsModel_WalksSwipesAndShoots_ForBothUnits(string unitPath, string bodyName, float speed)
         {
             (UnitDefinition unit, BakedBodyDefinition body) = Load(unitPath, bodyName);
@@ -95,7 +95,9 @@ namespace Halobellum.Tests
             // Two blows to the swipe: as long as two strikes of the claw, give or take the pace the game keeps (the Elite's claw is a little faster).
             float swipe = Seconds(body, BakedAnimation.Melee);
             Assert.AreEqual(2, Mathf.RoundToInt(swipe / stats.Weapons[0].FireInterval));
-            Assert.AreEqual(3f * stats.Weapons[1].FireInterval, Seconds(body, BakedAnimation.Shooting), 0.04f, "Three shots of its gun to a clip.");
+            // The Combat Form has only its claw since D153; the Infested Elite still fires its plasma rifle.
+            if (stats.Weapons.Length > 1)
+                Assert.AreEqual(3f * stats.Weapons[1].FireInterval, Seconds(body, BakedAnimation.Shooting), 0.04f, "Three shots of its gun to a clip.");
             Assert.That(body.shotMoment, Is.InRange(0f, 0.5f));
             Assert.IsTrue(body.cutout, "The fronds on its stalks are see-through.");
             Assert.IsTrue(body.hasMuzzle);
@@ -113,7 +115,7 @@ namespace Halobellum.Tests
             Assert.Greater(elite.mesh.vertexCount, form.mesh.vertexCount, "The rifle is merged into its mesh.");
             Assert.IsEmpty(form.weaponName);
             Assert.AreEqual("Muzzle", form.muzzleBone, "The Combat Form shoots from its claw.");
-            Assert.AreNotEqual(elite.movingClip, form.movingClip, "The Elite walks slower, its rifle carried forward.");
+            Assert.AreNotEqual(elite.movingClip, form.movingClip, "The Elite walks with its rifle carried forward.");
         }
 
         [Test]

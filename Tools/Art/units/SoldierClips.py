@@ -505,10 +505,10 @@ if UNIT == "Spartan":
             return p
         return description
 
-    make("Laser_Fire", round(3.5 * FPS), firing(3.5, size=1.0))          # The Spartan Laser, one every 3.5 s.
+    make("Laser_Fire", round(4.2 * FPS), firing(4.2, size=1.0))          # The Spartan Laser, one every 4.2 s.
     make("Rifle_Fire", round(0.6 * FPS), firing(0.6, size=0.6))          # The Fireteam's battle rifle, 0.6 s.
-    make("Rocket_Fire", round(1.5 * FPS), firing(1.5, size=1.0))         # The Grenadier's rockets, 1.5 s, shouldered like the laser.
-    make("Sniper_Fire", round(3.0 * FPS), firing(3.0, size=0.9))         # The sniper rifle, 3 s.
+    make("Rocket_Fire", round(0.5 * FPS), firing(0.5, size=1.0))         # The Grenadier's rockets, 0.5 s apart in a magazine (D157), shouldered like the laser.
+    make("Sniper_Fire", round(0.5 * FPS), firing(0.5, size=0.9))         # The sniper rifle, 0.5 s apart in a magazine (D157).
 
     GRIPS.update({c: GRIP_AIM for c in ("Laser_Fire", "Rifle_Fire", "Rocket_Fire", "Sniper_Fire")})
 

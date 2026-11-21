@@ -21,6 +21,7 @@ MonoBehaviour:
   deathClip: Armature|Dead
   stillClip: Armature|Carry_Stand
   stillMoves: 0
+  stillLoops: 0
   meleeClip: 
   meleeBlendShare: 0
   chargeClip: 
@@ -52,17 +53,17 @@ MonoBehaviour:
     loops: 1
   - role: 2
     firstRow: 28
-    frames: 105
+    frames: 126
     loops: 1
   - role: 3
-    firstRow: 133
+    firstRow: 154
     frames: 89
     loops: 0
   - role: 0
-    firstRow: 222
+    firstRow: 243
     frames: 1
     loops: 0
-  muzzle: {x: 0.10954113, y: 2.0542116, z: 0.8887137}
+  muzzle: {x: 0.11028345, y: 2.053772, z: 0.8888456}
   hasMuzzle: 1
   secondMuzzle: {x: 0, y: 0, z: 0}
   hasSecondMuzzle: 0

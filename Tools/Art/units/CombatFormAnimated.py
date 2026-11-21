@@ -75,9 +75,9 @@ CROUCH = 0.08  # Hunched a little lower than its model.
 CONTACT = {"Right": Vector((-0.45, -0.1, 0.02)), "Left": Vector((-0.04, -0.1, 0.02))}
 CYCLE = 0.8  # Seconds per stride.
 DUTY = 0.5  # Each foot down half the stride: a lurching run.
-SPEEDS = {"Walk": 2.4, "WalkElite": 2.0}  # The Combat Form's move speed and the Infested Elite's.
+SPEEDS = {"Walk": 3.0, "WalkElite": 3.0}  # The Combat Form's move speed and the Infested Elite's (both 3 m/s since D153 and D157).
 CLAW_SECONDS = 0.8  # The Claw Swipe's interval; the Elite's Scythe Claw (0.7 s) plays the same clip a little faster, as the game keeps time.
-GUN_SECONDS = {"Fire": 0.4, "FireElite": 0.5}  # The Scavenged Rifle's interval and the plasma rifle's: three shots to a clip.
+GUN_SECONDS = {"Fire": 0.4, "FireElite": 0.25}  # The Scavenged Rifle's interval (the Combat Form has had no gun since D153) and the plasma rifle's (D157): three shots to a clip.
 
 
 def add(pose, bone, x=0.0, y=0.0, z=0.0):

@@ -8,6 +8,9 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.413.5 · 2026-11-21
+- **Animations fit the units' new speeds and fire rates:** the Combat Form and the Infested Elite walk with longer strides for 3 m/s, so their feet no longer slide; the Infested Elite's firing keeps up with its faster rifle; the Spartan's laser shot lasts its 4.2 s, and the Spartan Grenadier and Spartan Sniper kick on every shot of their magazines. (D165)
+
 ## 0.413.4 · 2026-11-21
 - **No change to the game.** The game's files are arranged so that none is over 100 MB, so the build fits on GitHub again: the game now starts in a small Boot scene that reads the unit stats files and opens the main menu, and the units' art is stored with that scene instead of in the one big resources file (105 MB → 71 MB). (D164)
 

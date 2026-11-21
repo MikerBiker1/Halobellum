@@ -20,6 +20,8 @@ MonoBehaviour:
   shootingClip: Rig|FireElite
   deathClip: Rig|Dead
   stillClip: Rig|Idle
+  stillMoves: 0
+  stillLoops: 0
   meleeClip: Rig|Swipe
   meleeBlendShare: 0
   chargeClip: 
@@ -27,12 +29,14 @@ MonoBehaviour:
   weaponLength: 0.85
   weaponInForwardHand: 0
   weaponAlongForearm: 1
+  weaponGlows: 0
   muzzleInRightHand: 0
   muzzleAtFront: 0
   shieldName: 
   shieldDiameter: 1.1
   shieldOffset: {x: 0, y: 0, z: 0}
   muzzleBone: 
+  secondMuzzleBone: 
   cutout: 1
   transitionSeconds: 0.2
   corpseSeconds: 14
@@ -49,20 +53,22 @@ MonoBehaviour:
     loops: 1
   - role: 2
     firstRow: 24
-    frames: 45
+    frames: 22
     loops: 1
   - role: 3
-    firstRow: 69
+    firstRow: 46
     frames: 48
     loops: 0
   - role: 4
-    firstRow: 117
+    firstRow: 94
     frames: 48
     loops: 1
   - role: 0
-    firstRow: 165
+    firstRow: 142
     frames: 1
     loops: 0
-  muzzle: {x: 0.51358044, y: 1.6209896, z: 1.2815105}
+  muzzle: {x: 0.51338154, y: 1.6168947, z: 1.2817032}
   hasMuzzle: 1
+  secondMuzzle: {x: 0, y: 0, z: 0}
+  hasSecondMuzzle: 0
   bodyHeight: 2.6000001
