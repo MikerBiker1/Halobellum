@@ -57,6 +57,16 @@ namespace Halobellum.UI
                 string name = $"{index + 1:00} {Clean(t.Current.Title)}.png";
                 ScreenCapture.CaptureScreenshot(Path.Combine(_folder, name));
                 shots++;
+                if (t.Current.Title == "Flankers" || t.Current.Title == "Battle stats")
+                {
+                    // The long step and the one over a full window, hidden too: only the Show tutorial button stays.
+                    yield return new WaitForSecondsRealtime(0.3f);
+                    t.Hidden = true;
+                    yield return new WaitForSecondsRealtime(0.5f);
+                    ScreenCapture.CaptureScreenshot(Path.Combine(_folder, $"{index + 1:00} {Clean(t.Current.Title)} hidden.png"));
+                    yield return new WaitForSecondsRealtime(0.3f);
+                    t.Hidden = false;
+                }
                 yield return new WaitForSecondsRealtime(0.3f);
                 yield return Do(t);
                 deadline = Time.realtimeSinceStartup + 150f;
@@ -68,6 +78,8 @@ namespace Halobellum.UI
         }
 
         private static string Clean(string title) => new string(title.Where(c => char.IsLetterOrDigit(c) || c == ' ').ToArray());
+
+        private bool _flankersShot;
 
         private IEnumerator Do(TutorialDirector t)
         {
@@ -117,7 +129,8 @@ namespace Halobellum.UI
                     break;
                 case "Next battle":
                 case "Finish them":
-                    while (m.Phase != MatchPhase.MatchOver && t.Current != null && (t.Current.Title == "Next battle" || t.Current.Title == "Finish them"))
+                case "Flankers":
+                    while (m.Phase != MatchPhase.MatchOver && t.Current != null && (t.Current.Title == "Next battle" || t.Current.Title == "Finish them" || t.Current.Title == "Flankers"))
                     {
                         if (m.Phase == MatchPhase.Cards) _match.SkipCards();
                         if (m.Phase == MatchPhase.Deployment)
@@ -126,7 +139,12 @@ namespace Halobellum.UI
                             _battle.Speed = 16f;
                             _match.Ready();
                         }
-                        while (m.Phase == MatchPhase.Battle) yield return null;
+                        while (m.Phase == MatchPhase.Battle)
+                        {
+                            // The Flankers step comes as a battle starts: back to the main loop once, for its pictures, at 1x.
+                            if (t.Current?.Title == "Flankers" && !_flankersShot) { _flankersShot = true; _battle.Speed = 1f; yield break; }
+                            yield return null;
+                        }
                         if (m.Phase == MatchPhase.Result) { yield return new WaitForSecondsRealtime(0.2f); _match.Continue(); }
                         yield return null;
                         if (t.Current?.Title == "Next battle" && m.Round >= 3) break;

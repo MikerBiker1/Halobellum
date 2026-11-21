@@ -83,7 +83,11 @@ namespace Halobellum.Tests
             Assert.IsTrue(_match.ChooseDraft(0).Ok);
             yield return Step("The camera");
             Assert.AreEqual("Banished", m.Enemy.SubFaction.Name);
+            T.Hidden = true; // The panel's Hide button (the owner, 2026-11-21).
+            Assert.IsTrue(T.Hidden);
             T.Next();
+            Assert.IsFalse(T.Hidden, "The next step shows the panel again.");
+
             yield return Step("The top bar");
             _match.Ready();
             Assert.AreEqual(MatchPhase.Deployment, m.Phase, "Ready is locked during the lessons.");

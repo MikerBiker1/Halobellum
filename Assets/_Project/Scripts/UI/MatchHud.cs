@@ -132,6 +132,12 @@ namespace Halobellum.UI
             _scale = HudScale.Apply();
             _panelsDrawn.Clear();
             TutorialHud.Active = match.Tutorial != null;
+            if (match.Tutorial != null && TutorialHud.TakesClick(Event.current))
+            {
+                // A click on the tutorial's panel is its own, whatever is drawn under it (the Battle stats window used them all).
+                TutorialHud.Draw(match, _scale, _header, _text, _small, _button);
+                return;
+            }
 
             switch (match.Match.Phase)
             {

@@ -137,6 +137,8 @@ namespace Halobellum.Presentation
         public int Count => _steps.Count;
         public TutorialStep Current => Index < _steps.Count ? _steps[Index] : null;
         public bool Finished => Index >= _steps.Count;
+        /// <summary>The player hid the panel (its Hide button): only a Show button stays. The next step shows it again, so no step is missed (the owner, 2026-11-21).</summary>
+        public bool Hidden { get; set; }
         /// <summary>True if the battle may start now.</summary>
         public bool ReadyAllowed => Finished || (Current?.ReadyAllowed ?? true);
 
@@ -179,6 +181,7 @@ namespace Halobellum.Presentation
         private void Advance()
         {
             Index++;
+            Hidden = false;
             _done.Clear();
             _signals.Clear();
             Current?.Started?.Invoke();

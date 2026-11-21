@@ -3,7 +3,9 @@
 // The HUD marks where the things a step can point at are drawn (Mark: a button by its key, an area by its name), in screen space,
 // on every repaint while the tutorial runs; the outline goes round the current step's target and pulses. "squad" outlines the
 // player's squads on the field. The panel sits at the top centre, or at the bottom when the target is up there; it says the step,
-// what to do, and has Next (for a step that only explains) and Skip tutorial.
+// what to do, and has Next (for a step that only explains), Skip tutorial, and Hide, which leaves only a Show tutorial button (the owner,
+// 2026-11-21: the Flankers step is long). MatchHud lets the panel take a click before the rest of the HUD (TakesClick): the Battle stats
+// window under it took them all.
 // Depends on: Halobellum.Presentation (MatchController, TutorialDirector, TutorialStep, UiHitAreas), HudScale, HudTheme, UnityEngine.
 
 using System.Collections.Generic;
@@ -15,12 +17,21 @@ namespace Halobellum.UI
 {
     public static class TutorialHud
     {
-        public const string NextLabel = "Next", SkipLabel = "Skip tutorial";
+        public const string NextLabel = "Next", SkipLabel = "Skip tutorial", HideLabel = "Hide", ShowLabel = "Show tutorial";
         private const float PanelWidth = 640f;
         private static readonly Dictionary<string, (Rect rect, int frame)> Marks = new Dictionary<string, (Rect, int)>();
 
         /// <summary>True while a tutorial runs: the HUD only marks then.</summary>
         public static bool Active { get; set; }
+
+        /// <summary>Where the panel (or, hidden, its Show button) was last drawn, in the HUD's scaled space; empty with none.</summary>
+        public static Rect LastPanel { get; private set; }
+
+        /// <summary>
+        /// True for a mouse event over the panel: MatchHud then draws only the tutorial for it, so its buttons get the click before anything
+        /// drawn under it (the Battle stats window's map and tabs used every click).
+        /// </summary>
+        public static bool TakesClick(Event e) => Active && e != null && e.isMouse && LastPanel.width > 0f && LastPanel.Contains(e.mousePosition);
 
         /// <summary>Where something a step can point at is drawn: "key:..." or "area:...", with a rect in the current GUI space.</summary>
         public static void Mark(string target, Rect rect)
@@ -68,7 +79,11 @@ namespace Halobellum.UI
         {
             TutorialDirector tutorial = match.Tutorial;
             TutorialStep step = tutorial?.Current;
-            if (step == null) return;
+            if (step == null)
+            {
+                LastPanel = default;
+                return;
+            }
             float width = HudScale.ScaledWidth(scale), height = HudScale.ScaledHeight(scale);
 
             bool found = TryFind(match, step.Target, out Rect target);
@@ -79,6 +94,16 @@ namespace Halobellum.UI
                 float pulse = 0.55f + 0.45f * Mathf.Sin(Time.unscaledTime * 5f);
                 Outline(new Rect(target.x - 6f, target.y - 6f, target.width + 12f, target.height + 12f), new Color(1f, 0.82f, 0.25f, pulse), 3f);
                 GUI.matrix = old;
+            }
+
+            if (tutorial.Hidden)
+            {
+                // Only the button that brings the panel back, where the panel would be; the outline above still shows what to do.
+                var show = new Rect((width - 200f) * 0.5f, 104f, 200f, 40f);
+                LastPanel = show;
+                UiHitAreas.Add(HudScale.ToScreen(show, scale));
+                if (MenuStyle.Button(show, ShowLabel, button)) tutorial.Hidden = false;
+                return;
             }
 
             string doing = step.Done != null && !string.IsNullOrEmpty(step.Doing) ? step.Doing : null;
@@ -105,12 +130,13 @@ namespace Halobellum.UI
             float inner = panel.width - 32f;
             float textHeight = text.CalcHeight(new GUIContent(step.Text), inner);
             UiHitAreas.Add(HudScale.ToScreen(panel, scale));
+            LastPanel = panel;
 
             HudTheme.PanelBox(panel);
             float y = panel.y + 10f;
-            GUI.Label(new Rect(panel.x + 16f, y, inner, 22f), $"Tutorial - step {tutorial.Index + 1} of {tutorial.Count}", small);
+            GUI.Label(new Rect(panel.x + 16f, y, inner - 110f, 22f), $"Tutorial - step {tutorial.Index + 1} of {tutorial.Count}", small);
             y += 24f;
-            GUI.Label(new Rect(panel.x + 16f, y, inner, 32f), step.Title, title);
+            GUI.Label(new Rect(panel.x + 16f, y, inner - 110f, 32f), step.Title, title);
             y += 36f;
             GUI.Label(new Rect(panel.x + 16f, y, inner, textHeight), step.Text, text);
             y += textHeight + 4f;
@@ -121,6 +147,8 @@ namespace Halobellum.UI
                 GUI.Label(new Rect(panel.x + 16f, y, inner, text.CalcHeight(new GUIContent(doing), inner)), doing, text);
                 GUI.color = old;
             }
+            var hide = new Rect(panel.xMax - 16f - 100f, panel.y + 10f, 100f, 32f);
+            if (MenuStyle.Button(hide, HideLabel, button)) tutorial.Hidden = true;
             var skip = new Rect(panel.x + 16f, panel.yMax - 46f, 170f, 36f);
             if (MenuStyle.Button(skip, SkipLabel, button)) tutorial.Skip();
             if (step.Done == null)
