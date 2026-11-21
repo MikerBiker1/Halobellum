@@ -3,7 +3,7 @@
 // The HUD marks where the things a step can point at are drawn (Mark: a button by its key, an area by its name), in screen space,
 // on every repaint while the tutorial runs; the outline goes round the current step's target and pulses. "squad" outlines the
 // player's squads on the field. The panel sits at the top centre, or at the bottom when the target is up there; it says the step,
-// what to do, and has Next (for a step that only explains), Skip tutorial, and Hide, which leaves only a Show tutorial button (the owner,
+// what to do, and has Next (for a step that only explains), End tutorial, and Hide, which leaves only a Show tutorial button (the owner,
 // 2026-11-21: the Flankers step is long). MatchHud lets the panel take a click before the rest of the HUD (TakesClick): the Battle stats
 // window under it took them all.
 // Depends on: Halobellum.Presentation (MatchController, TutorialDirector, TutorialStep, UiHitAreas), HudScale, HudTheme, UnityEngine.
@@ -17,7 +17,7 @@ namespace Halobellum.UI
 {
     public static class TutorialHud
     {
-        public const string NextLabel = "Next", SkipLabel = "Skip tutorial", HideLabel = "Hide", ShowLabel = "Show tutorial";
+        public const string NextLabel = "Next", SkipLabel = "End tutorial", HideLabel = "Hide", ShowLabel = "Show tutorial";
         private const float PanelWidth = 640f;
         private static readonly Dictionary<string, (Rect rect, int frame)> Marks = new Dictionary<string, (Rect, int)>();
 

@@ -27,7 +27,7 @@ A fixed match: you play **UNSC Noble**, starting with two Marine squads, against
 
 It has **30 steps**: the starting card, the camera, the top bar, unlocking and buying, squad and shop stats, moving and Undo, both towers and what they sell, the battle and its speeds, the result, cards, spells, levels, techs, items, flank zones, exclusive units, finishing the match, and Battle stats.
 
-Each step shows a panel and a pulsing outline on what it points at. It moves on when you've done the action, or when you press Next. **Ready stays greyed** until a step allows the battle. **Skip tutorial** returns to the menu. If you follow along, you win in about round 5.
+Each step shows a panel and a pulsing outline on what it points at. It moves on when you've done the action, or when you press Next. **Ready stays greyed** until a step allows the battle. **End tutorial** returns to the menu. If you follow along, you win in about round 5.
 
 ## The Sandbox
 

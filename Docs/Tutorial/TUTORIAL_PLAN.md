@@ -21,7 +21,7 @@ loop of the game, every way to see stats, and the two towers. About 10 to 15 min
     a step that only explains;
   - what is locked meanwhile, kept to a minimum: Ready is locked until the round's steps are done, so the battle doesn't start in
     the middle of a lesson. Nothing else is blocked; a player who does something else just sees the step wait.
-- **Leaving**: a "Skip tutorial" button in the panel, and Esc's pause menu, go back to the main menu. The tutorial never saves
+- **Leaving**: an "End tutorial" button in the panel (named Skip tutorial until 0.413.12), and Esc's pause menu, go back to the main menu. The tutorial never saves
   anything, and never changes the player's settings.
 
 ## The lessons

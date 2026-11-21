@@ -8,6 +8,9 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.413.12 · 2026-11-21
+- **Tutorial:** the Skip tutorial button is now End tutorial. (D172)
+
 ## 0.413.11 · 2026-11-21
 - **Tutorial: a Hide button** on the panel; hidden, only a Show tutorial button stays, and the next step shows the panel again. (D171)
 - **Fix:** the tutorial's buttons work over the Battle stats window (its map and tabs took the clicks, so Finish did nothing). (D171)
