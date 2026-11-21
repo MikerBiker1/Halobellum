@@ -8,6 +8,9 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.413.9 · 2026-11-21
+- **Tutorial: a Flankers step.** Once a flanker has fought (the enemy's Ghost, or your own Warthog bought earlier), the next deployment explains that flankers drive for the nearest tower, firing at what they pass, that a fallen tower weakens its side, and that a flanker beside your strongest side also draws fire. (D169)
+
 ## 0.413.8 · 2026-11-21
 - **Plasma Bombardment 2,500** (was 2,250): a break point that kills some units outright. Insane against Insane with the stronger strikes, every faction still wins 49% to 50% and every sub-faction 48% to 53%; the AI now drafts each strike in over half its matches (30–41% before). (D168)
 

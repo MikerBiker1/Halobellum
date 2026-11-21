@@ -154,14 +154,21 @@ namespace Halobellum.Tests
             Assert.IsTrue(_match.Unlock(spartan).Ok, "The step gives the credits to unlock it...");
             Assert.IsTrue(_match.Buy(spartan).Ok, "...and to buy it.");
             yield return Step("Finish them");
+            string flankersText = null;
             for (int round = 0; round < 12 && m.Phase != MatchPhase.MatchOver; round++)
             {
                 if (m.Phase == MatchPhase.Cards) _match.SkipCards();
+                yield return null;
+                if (T.Current?.Title == "Flankers") flankersText ??= T.Current.Text;
                 BuyWhatTheBudgetAllows();
                 yield return Fight();
                 if (m.Phase == MatchPhase.Result) _match.Continue();
                 yield return null;
             }
+            // The owner, 2026-11-21: once a flanker has fought (the enemy's Ghost from round 3, or the player's own), a step says they go for towers.
+            Assert.IsNotNull(flankersText, "The Flankers step came during the match.");
+            StringAssert.Contains("go for", flankersText);
+            StringAssert.Contains("towers", flankersText);
             Assert.AreEqual(MatchPhase.MatchOver, m.Phase, "The match ends.");
             Assert.LessOrEqual(m.Enemy.BaseHealth, 0, $"A player who follows along wins (round {m.Round}, our base {m.Player.BaseHealth}).");
 

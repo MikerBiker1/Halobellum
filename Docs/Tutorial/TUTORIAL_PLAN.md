@@ -67,6 +67,9 @@ Round 3:
 
 Round 4 and the end:
 19. **Finish them**: *Ready* until the enemy base falls.
+    **Flankers** (the owner, 2026-11-21): once a flanker has fought (the enemy's Ghost, bought in round 3, or the player's own Warthog bought earlier),
+    at the next deployment a step names it and explains that flankers drive for the nearest tower, firing at what they pass, and that a fallen
+    tower weakens its side; beside your strongest side a flanker also draws fire. Then *Ready* until the enemy base falls, as before.
 20. **Battle stats**: on the match-over screen, *open Battle stats*: every battle's field from above, and each squad's damage dealt,
     taken and stopped. Then the Main Menu button. The end: what's next (Faction mode, Unlock Skirmish, the Sandbox).
 

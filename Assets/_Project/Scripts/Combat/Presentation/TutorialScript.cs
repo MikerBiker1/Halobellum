@@ -20,6 +20,16 @@ namespace Halobellum.Presentation
             bool Unlocked(string name) => Me().Roster.Exists(u => u.Name == name && Me().Unlocked.Contains(u));
             bool TowerOpen(TowerKind kind) => match.Selection != null && match.Selection.SelectedTower is (Team team, TowerKind k) && team == Team.A && k == kind;
             string shop = TutorialSetup.ShopUnit, exclusive = TutorialSetup.ExclusiveUnit;
+            // A flanker that has fought (the enemy's Ghost from round 3, or the player's own Warthog): once one has, the Flankers step explains them (the owner, 2026-11-21).
+            PlacedSquad FoughtFlanker(PlayerState p) => p.Squads.Find(s => s.Type.GoesForTowers && s.RoundBought < M().Round);
+            bool FlankerToExplain() => Phase(MatchPhase.Deployment) && (FoughtFlanker(M().Enemy) != null || FoughtFlanker(Me()) != null);
+            var flankers = new TutorialStep
+            {
+                Title = "Flankers",
+                Target = "key:Ready", Doing = "Win the match.", ReadyAllowed = true,
+                Done = () => Phase(MatchPhase.MatchOver),
+            };
+            flankers.Started = () => flankers.Text = FlankersText(FoughtFlanker(M().Enemy)?.Type.Name, FoughtFlanker(Me())?.Type.Name);
 
             return new List<TutorialStep>
             {
@@ -235,8 +245,9 @@ namespace Halobellum.Presentation
                     Title = "Finish them",
                     Text = "Keep buying, levelling and placing, and press Ready until the enemy base falls.",
                     Target = "key:Ready", Doing = "Win the match.", ReadyAllowed = true,
-                    Done = () => Phase(MatchPhase.MatchOver),
+                    Done = () => Phase(MatchPhase.MatchOver) || FlankerToExplain(),
                 },
+                flankers, // Done at once if the match ended before any flanker fought.
 
                 // ---------------------------------------------------------------- the end
                 new TutorialStep
@@ -255,6 +266,23 @@ namespace Halobellum.Presentation
                     ReadyAllowed = true,
                 },
             };
+        }
+
+        /// <summary>
+        /// The Flankers step's text: about the enemy's flanker if it has one that fought (the tutorial's Ghost), otherwise about the player's own
+        /// (a Warthog bought earlier). Both end with the rest of the match.
+        /// </summary>
+        public static string FlankersText(string enemyFlanker, string ownFlanker)
+        {
+            const string what = "Flankers don't stop to fight the army in front of them: they drive for the nearest tower they can hit, " +
+                                "firing at what they pass, then turn on it. A tower that falls weakens its whole side for a while.";
+            string lesson = enemyFlanker != null
+                ? $"The enemy has bought a {enemyFlanker}: a flanker squad, and it will go for your towers. {what} " +
+                  "Keep a squad that beats it near your towers, or level them up. Your own flankers do the same to the enemy, and placed beside your " +
+                  "strongest side they also draw fire away from it."
+                : $"Your {ownFlanker ?? "flanker"} is a flanker squad: it will go for the enemy's towers. {what} " +
+                  "Placed beside your strongest side, a flanker also draws fire away from it. The enemy's flankers will do the same to your towers.";
+            return lesson + "\nKeep buying, levelling and placing, and press Ready until the enemy base falls.";
         }
 
         /// <summary>Tops the player's credits up to what the exclusive unit costs to unlock (if it isn't yet) and buy.</summary>
