@@ -183,7 +183,7 @@ namespace Halobellum.Presentation
         /// <summary>The Ghost's bolt, played for every shot (D117), as the SMG: looped, its file gave one bolt a second to a Ghost firing four.</summary>
         public static readonly SfxCue FireGhost = OwnerCue("sfx_fire_ghost", SfxGroup.Plasma, 0.6f, 0.05f, 2, -18f, hold: 0.12f);
         /// <summary>The Vampire's needle cannons (the owner's NeedlerRifle file, D150), played for every shot, as the Ghost's: it fires every 0.4 s.</summary>
-        public static readonly SfxCue FireVampire = OwnerCue("sfx_fire_vampire", SfxGroup.Needles, 1.8f, 0.06f, 2, -18f, hold: 0.12f); // 0.6 -> 0.9 (the owner, D155), then twice that (D157).
+        public static readonly SfxCue FireVampire = OwnerCue("sfx_fire_vampire", SfxGroup.Needles, 1.8f, 0.06f, 2, -18f, hold: 0.12f); // 0.6 -> 0.9 (the owner, D155), then twice that (D157); that met full volume, so the file itself is now 2x louder (bring_in_sfx GAINS, D173).
         /// <summary>The Grunt Goblin's needle cannons: the Vampire's sound, 0.6 until D157, then twice that (the owner).</summary>
         public static readonly SfxCue FireGoblinNeedles = OwnerCue("sfx_fire_vampire", SfxGroup.Needles, 1.2f, 0.06f, 2, -18f, hold: 0.12f);
         /// <summary>Every plasma pistol (the Grunt's, the Cannon Fodder's, the Jackal (Shield)'s; the owner's file, D167), played for every shot, as the Ghost's.</summary>

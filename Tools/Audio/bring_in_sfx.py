@@ -8,6 +8,7 @@
 
 import os
 import shutil
+import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -119,6 +120,23 @@ SLOTS = [
     ("ghost_initial_destroyed.mp3", "sfx_death_ghost_start", "a Ghost knocked out, as it starts drifting away; it blows up 2.1 s later"),
 ]
 
+# Slots whose file is too quiet for the game's levelling (it raises a file at most 1.5x, and a voice can't go over full volume): they go
+# in as a .wav made that many times louder, by Blender's audio module (HB_BLENDER, or Blender 5.2's usual place).
+GAINS = {
+    "sfx_fire_vampire": 2.0,  # NeedlerRifle.mp3's loudest 50 ms is -37.5 dB (the Ghost's file -13.3): still too low at full volume (the owner, D173).
+}
+BLENDER = os.environ.get("HB_BLENDER") or "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe"
+BOOST = ("import aud, sys; a = sys.argv[sys.argv.index('--') + 1:]; s = aud.Sound(a[0]).volume(float(a[2])); "
+         "s.write(a[1], rate=int(s.specs[0]), channels=aud.CHANNELS_MONO if s.specs[1] == 1 else aud.CHANNELS_STEREO, "
+         "format=aud.FORMAT_S16, container=aud.CONTAINER_WAV)")
+
+
+def boosted(path, target, gain):
+    """Writes path, gain times louder, to target (a .wav)."""
+    subprocess.run([BLENDER, "--background", "--factory-startup", "--python-expr", BOOST, "--", path, target, str(gain)],
+                   check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
 # Files not used yet, and why.
 UNUSED = [
     ("plasma_grenade_plasmagrenexpl_plasmagx1.wav", "no use for it yet, as the owner said"),
@@ -144,7 +162,7 @@ def main():
         if not os.path.exists(path):
             missing.append(name)
             continue
-        ext = os.path.splitext(name)[1].lower()
+        ext = ".wav" if slot in GAINS else os.path.splitext(name)[1].lower()
         target = os.path.join(OVERRIDE, slot + ext)
         for other in (".wav", ".mp3", ".ogg", ".aif"):
             stale = os.path.join(OVERRIDE, slot + other)
@@ -152,8 +170,12 @@ def main():
                 os.remove(stale)
                 if os.path.exists(stale + ".meta"):
                     os.remove(stale + ".meta")
-        shutil.copyfile(path, target)
-        lines.append(f"{name} -> {slot}{ext}: {what}")
+        if slot in GAINS:
+            boosted(path, target, GAINS[slot])
+            lines.append(f"{name} -> {slot}{ext}, {GAINS[slot]:g}x louder: {what}")
+        else:
+            shutil.copyfile(path, target)
+            lines.append(f"{name} -> {slot}{ext}: {what}")
     lines.append("")
     lines.append("Not used:")
     for name, why in UNUSED:

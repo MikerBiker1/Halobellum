@@ -11,7 +11,7 @@ banshee_fire[plasmarifle1].wav -> sfx_fire_banshee.wav: the Banshee's plasma can
 banshee_cannon_fire[banshee_cannon__fire].wav -> sfx_fire_banshee_bomb.wav: the Banshee's fuel rod bomb, fired
 banshee_cannon_expl[banshee_cannon_explo2].wav -> sfx_explosion_banshee.wav: the Banshee's fuel rod bomb, landing
 fire[needlefire11].wav -> sfx_fire_needle.wav: needle weapons
-NeedlerRifle.mp3 -> sfx_fire_vampire.mp3: the Vampire's needle cannons, once per shot, overlapping (D150)
+NeedlerRifle.mp3 -> sfx_fire_vampire.wav, 2x louder: the Vampire's needle cannons, once per shot, overlapping (D150)
 fire[plaspistol].wav -> sfx_fire_plasmapistol.wav: every plasma pistol (Grunt, Cannon Fodder, Jackal (Shield)), once per shot, overlapping (D167)
 startcharge[newchrg_in].wav -> sfx_pistol_charge.wav: the Jackal (Shield)'s plasma pistol charging its bolt, cut as the bolt fires (D167)
 chargefire[chargefire].wav -> sfx_fire_pistol_charged.wav: the Jackal (Shield)'s charged plasma pistol bolt (D167)
