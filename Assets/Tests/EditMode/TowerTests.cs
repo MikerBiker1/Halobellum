@@ -311,7 +311,7 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void ResearchCenter_SellsDeploymentModules_For50_AsManyAsWanted()
+        public void ResearchCenter_SellsDeploymentModules_For50_OneARound()
         {
             var module = new CardStats { Name = "Deployment Module", Type = CardType.Item, Cost = 0, MaxOwnedCopies = 99, Item = new ItemStats { Name = "Deployment Module", FreeDeployment = true } };
             var factions = TestMatch.StandardFactions(out _, out _, out _, out _);
@@ -320,11 +320,15 @@ namespace Halobellum.Tests
             match.ChooseDraft(0);
             match.Player.Credits = 120;
             Assert.IsTrue(match.BuyDeploymentModule(Team.A).Ok);
-            Assert.IsTrue(match.BuyDeploymentModule(Team.A).Ok, "Again in the same round.");
-            Assert.AreEqual(20, match.Player.Credits);
-            Assert.AreEqual(2, match.Player.Inventory.Count(i => i == module.Item), "The faction's own item, so it shows its icon.");
-            Assert.IsFalse(match.BuyDeploymentModule(Team.A).Ok, "Not enough credits.");
+            Assert.IsFalse(match.BuyDeploymentModule(Team.A).Ok, "One a deployment phase (D176).");
+            Assert.AreEqual(70, match.Player.Credits);
+            Assert.AreEqual(1, match.Player.Inventory.Count(i => i == module.Item), "The faction's own item, so it shows its icon.");
             Assert.IsTrue(match.PlaceItem(Team.A, module.Item, match.Player.Squads[0].Id).Ok);
+            match.StartBattle().Run();
+            match.FinishBattle();
+            match.ContinueAfterResult();
+            match.Player.Credits = 120;
+            Assert.IsTrue(match.BuyDeploymentModule(Team.A).Ok, "Again in the next round.");
         }
 
         [Test]

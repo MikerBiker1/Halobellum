@@ -74,7 +74,7 @@ Each purchase can be made once per round; the Oil Zone, once per match.
 | Level up the tower | 100 | As above |
 | Health research, step 1 / step 2 | 100 / 300 | Whole army **+15%** health, then **+30%** in all |
 | Damage research, step 1 / step 2 | 100 / 300 | Whole army **+12%** damage, then **+24%** in all |
-| Deployment Module | 50 | The item goes to your Inventory: the squad carrying it can move in every deployment phase. Buy as many as you like |
+| Deployment Module | 50 | The item goes to your Inventory: the squad carrying it can move in every deployment phase. One a round |
 
 Research is open to every faction and to the AI. It lasts for the match and also reaches what your units drop, release or spawn, and their death bursts.
 

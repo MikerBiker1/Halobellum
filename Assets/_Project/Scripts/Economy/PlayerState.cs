@@ -93,6 +93,8 @@ namespace Halobellum.Economy
         public readonly List<PlacedTower> Towers = new List<PlacedTower>();
         /// <summary>This round's Command Center purchases: each once a round (D55). The oil is bought once a match and kept in Spells.</summary>
         public bool BoughtExtraSlot, UsedRapidResupply, EliteRecruitment;
+        /// <summary>A Deployment Module bought at the Research Center this round: one a deployment phase (the owner, D176).</summary>
+        public bool BoughtDeploymentModule;
         /// <summary>Credits Rapid Resupply takes from the next round's income.</summary>
         public int IncomePenalty;
         /// <summary>Research Center steps bought.</summary>
@@ -192,7 +194,7 @@ namespace Halobellum.Economy
         public sealed class Snapshot
         {
             internal int Credits, SquadsBoughtThisRound, UnlocksThisRound, BonusIncome, ExtraSquadsPerRound, IncomePenalty, ResearchHealthSteps, ResearchDamageSteps;
-            internal bool BoughtExtraSlot, UsedRapidResupply, EliteRecruitment;
+            internal bool BoughtExtraSlot, UsedRapidResupply, EliteRecruitment, BoughtDeploymentModule;
             internal ArmyBuffs Buffs;
             internal CardOffer Offer;
             internal List<UnitStats> Unlocked;
@@ -211,7 +213,7 @@ namespace Halobellum.Economy
             {
                 Credits = Credits, SquadsBoughtThisRound = SquadsBoughtThisRound, UnlocksThisRound = UnlocksThisRound, BonusIncome = BonusIncome,
                 ExtraSquadsPerRound = ExtraSquadsPerRound, IncomePenalty = IncomePenalty, ResearchHealthSteps = ResearchHealthSteps, ResearchDamageSteps = ResearchDamageSteps,
-                BoughtExtraSlot = BoughtExtraSlot, UsedRapidResupply = UsedRapidResupply, EliteRecruitment = EliteRecruitment,
+                BoughtExtraSlot = BoughtExtraSlot, UsedRapidResupply = UsedRapidResupply, EliteRecruitment = EliteRecruitment, BoughtDeploymentModule = BoughtDeploymentModule,
                 Buffs = Buffs, Offer = Offer, Unlocked = new List<UnitStats>(Unlocked),
                 Squads = new List<(PlacedSquad, PlacedSquad)>(), Spells = new List<(OwnedSpell, OwnedSpell)>(),
                 Trainings = new List<(OwnedTraining, int)>(), Towers = new List<(PlacedTower, int, int)>(),
@@ -229,7 +231,7 @@ namespace Halobellum.Economy
         {
             Credits = s.Credits; SquadsBoughtThisRound = s.SquadsBoughtThisRound; UnlocksThisRound = s.UnlocksThisRound; BonusIncome = s.BonusIncome;
             ExtraSquadsPerRound = s.ExtraSquadsPerRound; IncomePenalty = s.IncomePenalty; ResearchHealthSteps = s.ResearchHealthSteps; ResearchDamageSteps = s.ResearchDamageSteps;
-            BoughtExtraSlot = s.BoughtExtraSlot; UsedRapidResupply = s.UsedRapidResupply; EliteRecruitment = s.EliteRecruitment;
+            BoughtExtraSlot = s.BoughtExtraSlot; UsedRapidResupply = s.UsedRapidResupply; EliteRecruitment = s.EliteRecruitment; BoughtDeploymentModule = s.BoughtDeploymentModule;
             Offer = s.Offer;
             SetBuffs(s.Buffs);
             Unlocked.Clear();

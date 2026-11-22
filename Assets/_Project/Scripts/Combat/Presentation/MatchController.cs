@@ -617,8 +617,9 @@ namespace Halobellum.Presentation
                 panel.Buttons.Add(new TowerButton
                 {
                     Label = $"{module.Name} ({rules.DeploymentModuleCost})",
-                    Note = "An item: its squad can move in every deployment phase" + (owned > 0 ? $" ({owned} in your inventory)" : ""),
-                    Enabled = deploying && credits >= rules.DeploymentModuleCost, OnPress = () => BuyDeploymentModule(),
+                    Note = (owner.BoughtDeploymentModule ? "Bought this round" : "An item: its squad can move in every deployment phase; one a round")
+                        + (owned > 0 ? $" ({owned} in your inventory)" : ""),
+                    Enabled = deploying && !owner.BoughtDeploymentModule && credits >= rules.DeploymentModuleCost, OnPress = () => BuyDeploymentModule(),
                 });
             }
             return panel;

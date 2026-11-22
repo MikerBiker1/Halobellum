@@ -8,6 +8,9 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.414.2 · 2026-11-22
+- **Deployment Module:** the Research Center sells one a round (it was as many as you liked), and the tutorial's Research Center step now mentions it. (D176)
+
 ## 0.414.1 · 2026-11-22
 - **Energy Barrier tournament:** Insane against Insane, 7,200 matches at 2000 health: every sub-faction wins 48.7% to 51.1% and every faction 49.7% to 50.3%. The AI takes the card in about a third of its games, and a side with it wins about as often as one without, so 200 credits is a fair price. Nothing changed. (D175)
 

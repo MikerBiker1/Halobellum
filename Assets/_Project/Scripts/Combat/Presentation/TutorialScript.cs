@@ -139,7 +139,8 @@ namespace Halobellum.Presentation
                 {
                     Title = "What the Research Center does",
                     Text = "Research gives your whole army more health or more damage for the rest of the game. Only 2 upgrade steps are possible. " +
-                           "When it falls, it weakens your army as the Command Center does.",
+                           "It also sells a Deployment Module for 50 credits, once a round: put it on a squad and that squad can be moved in every " +
+                           "deployment phase. When it falls, it weakens your army as the Command Center does.",
                     Target = "area:tower",
                 },
                 new TutorialStep

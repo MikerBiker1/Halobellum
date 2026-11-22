@@ -626,15 +626,17 @@ namespace Halobellum.Economy
             return card?.Item;
         }
 
-        /// <summary>The Research Center sells Deployment Modules (the owner, D175): one goes to the Inventory, as many as the player likes.</summary>
+        /// <summary>The Research Center sells Deployment Modules (the owner, D175): one goes to the Inventory, one a deployment phase (D176).</summary>
         public ActionResult BuyDeploymentModule(Team team)
         {
             if (!CanBuyFromTower(out ActionResult failed)) return failed;
             PlayerState player = Get(team);
             ItemStats module = DeploymentModuleOf(player);
             if (module == null) return ActionResult.Fail("There is no Deployment Module to buy.");
+            if (player.BoughtDeploymentModule) return ActionResult.Fail("You already bought a Deployment Module this round.");
             if (player.Credits < Rules.DeploymentModuleCost) return ActionResult.Fail($"Not enough credits ({Rules.DeploymentModuleCost} needed).");
             player.Credits -= Rules.DeploymentModuleCost;
+            player.BoughtDeploymentModule = true;
             player.Inventory.Add(module);
             return ActionResult.Success($"{module.Name} added to your inventory.");
         }
@@ -843,7 +845,7 @@ namespace Halobellum.Economy
             {
                 player.SquadsBoughtThisRound = 0;
                 player.UnlocksThisRound = 0;
-                player.BoughtExtraSlot = player.UsedRapidResupply = player.EliteRecruitment = false;
+                player.BoughtExtraSlot = player.UsedRapidResupply = player.EliteRecruitment = player.BoughtDeploymentModule = false;
                 player.Offer = CardDeck.HasOffer(Rules, round) ? CardDeck.Draw(player, Rules, round, _random) : null;
             }
             Phase = MatchPhase.Deployment;
