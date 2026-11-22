@@ -54,10 +54,17 @@ namespace Halobellum.Economy
         /// <summary>
         /// The share of a kill's XP that goes to the squad that dealt the killing blow; the rest is split among every squad that damaged
         /// the body, by the damage each dealt to it, the killer's own included (the owner, xp_split: Spartans deal 90%, a Scorpion
-        /// finishes it -> the Scorpion gets 55%, the Spartans 45%). 1 = all to the killer (the rule before). Not in the game's rules
-        /// asset; a tournament trial can set it (rules|KillXpShare=1).
+        /// finishes it -> the Scorpion gets 55%, the Spartans 45%). 1 = all to the killer (the rule before). 0.25 since D177 (the owner:
+        /// 25% on the kill, 75% as damage lands; it was 0.5). Not in the game's rules asset; a tournament trial can set it (rules|KillXpShare=1).
         /// </summary>
-        public float KillXpShare = 0.5f;
+        public float KillXpShare = 0.25f;
+        /// <summary>
+        /// The rest of a body's worth (1 - KillXpShare) is paid as damage lands, whether or not the body dies (the owner, D177): each point
+        /// of damage a squad deals pays rest / the body's pool (health + shield + Energy Barrier), so a body that heals and is hurt again
+        /// pays again. A body killed from full without healing pays as before. False: the rest is paid only on a kill (xp_split).
+        /// Not in the game's rules asset; a tournament trial can set it (rules|DamageXpAsItLands=false).
+        /// </summary>
+        public bool DamageXpAsItLands = true;
         /// <summary>Level-up price as a share of the squad's base price (Bible: half).</summary>
         public float LevelUpCostShare = 0.5f;
 

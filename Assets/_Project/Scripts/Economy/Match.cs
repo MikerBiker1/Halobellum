@@ -402,11 +402,12 @@ namespace Halobellum.Economy
             var bySimSquad = new Dictionary<int, int>();
             for (int i = 0; i < battle.Squads.Count && i < placed.Count; i++) bySimSquad[battle.Squads[i].Id] = i;
             var earned = new float[placed.Count];
+            bool asItLands = Rules.DamageXpAsItLands;
             foreach (SimUnit victim in battle.Units)
             {
-                if (victim.IsAlive || victim.KilledById < 0) continue;
-                SimUnit killer = battle.Units[victim.KilledById];
-                if (!bySimSquad.TryGetValue(killer.CreditSquadId, out int index)) continue;
+                int index = -1;
+                bool killed = !victim.IsAlive && victim.KilledById >= 0 && bySimSquad.TryGetValue(battle.Units[victim.KilledById].CreditSquadId, out index);
+                if (!killed && (!asItLands || victim.SquadDamageCount == 0)) continue;
                 UnitStats v = victim.Stats;
                 float worth;
                 if (v.IsTower)
@@ -427,9 +428,42 @@ namespace Halobellum.Economy
                     _xpDamagers.Add(damager);
                     _xpDamage.Add(victim.SquadDamageAmount(i));
                 }
-                SplitKillXp(worth, Rules.KillXpShare, index, _xpDamagers, _xpDamage, earned);
+                if (!asItLands)
+                {
+                    SplitKillXp(worth, Rules.KillXpShare, index, _xpDamagers, _xpDamage, earned);
+                    continue;
+                }
+                float pool = v.MaxHealth + v.MaxShield + v.Barrier;
+                PayDamageXp(worth, Rules.KillXpShare, killed ? index : -1, pool, _xpDamagers, _xpDamage, earned);
             }
             return earned;
+        }
+
+        /// <summary>
+        /// One body's XP when the damage half is paid as damage lands (D177): killShare of worth to the killer's squad (killerIndex; -1 for
+        /// no kill), and the rest at rest / pool for every point each squad dealt (damagerIndex[i] dealt damage[i]), so damage past the pool,
+        /// after healing, pays again. A killed body pays at least the whole rest among its damagers, as on a kill before (spell damage is
+        /// not on the record); a kill with no damage on record gives it all to the killer.
+        /// </summary>
+        public static void PayDamageXp(float worth, float killShare, int killerIndex, float pool, IReadOnlyList<int> damagerIndex, IReadOnlyList<float> damage, float[] earned)
+        {
+            float total = 0f;
+            for (int i = 0; i < damage.Count; i++) total += damage[i];
+            float share = Math.Max(0f, Math.Min(1f, killShare));
+            float rest = worth * (1f - share);
+            if (killerIndex >= 0)
+            {
+                earned[killerIndex] += worth - rest;
+                if (!(total > 0f))
+                {
+                    earned[killerIndex] += rest;
+                    return;
+                }
+            }
+            if (!(total > 0f) || !(pool > 0f)) return;
+            float paid = rest * total / pool;
+            if (killerIndex >= 0) paid = Math.Max(paid, rest);
+            for (int i = 0; i < damage.Count; i++) earned[damagerIndex[i]] += paid * damage[i] / total;
         }
 
         // Scratch lists for XpEarnedIn (one victim at a time).

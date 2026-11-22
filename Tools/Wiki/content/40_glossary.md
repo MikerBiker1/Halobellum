@@ -18,7 +18,7 @@ blurb: Every game term in one place.
 | **Exclusive unit** | A unit only one sub-faction can field. |
 | **Faction / sub-faction** | UNSC, Covenant or Flood. Each sub-faction adds exclusive units to its faction's base roster. |
 | **Starting card / draft** | The card chosen before round 1: faction, sub-faction, 2 free squads and base health. |
-| **Level / XP bar** | Squads earn XP from kills: half to the squad that lands the killing blow, half shared by the squads that damaged the body, by damage. A full bar (2× the base price) lets you pay half the base price for +1 level, up to 5. |
+| **Level / XP bar** | Squads earn XP from damage and kills: 75% of a body's worth as the damage lands, even if it survives, and 25% to the squad that lands the killing blow. A full bar (2× the base price) lets you pay half the base price for +1 level, up to 5. |
 | **Level all** | Level every ready squad of a type at once. |
 | **Tech** | An upgrade for one unit type, bought once for the match. Up to 4 per unit. |
 

@@ -52,6 +52,7 @@ namespace Halobellum.Tests
         {
             Match match = TestMatch.Started(out UnitStats infantry, out _, out UnitStats tank, out _);
             chaff = infantry;
+            match.Rules.DamageXpAsItLands = false; // These tests count kill XP (xp_split); the damage XP paid as it lands (D177) has its own.
             match.Player.Squads.Clear();
             match.Enemy.Squads.Clear();
             match.Player.Unlocked.Add(tank);
@@ -211,10 +212,11 @@ namespace Halobellum.Tests
         /// squad 501, which killed it, and body Y took 50 from squad 500 but died to no squad (a spell or a self-kill). Every other enemy
         /// body (and tower) dies to nobody.
         /// </summary>
-        private static RoundSummary SplitRound(float killXpShare, out UnitStats chaff)
+        private static RoundSummary SplitRound(float killXpShare, out UnitStats chaff, bool asItLands = false)
         {
             Match match = KillingRound(out PlacedSquad first, out chaff);
             match.Rules.KillXpShare = killXpShare;
+            match.Rules.DamageXpAsItLands = asItLands;
             match.Player.Squads.Add(new PlacedSquad { Id = 501, Type = first.Type, Column = 30, Row = 0, RoundBought = 1 });
             BattleSimulation battle = match.StartBattle();
             SimSquad squad500 = battle.Squads[0], squad501 = battle.Squads[1], enemy = battle.Squads[2];
@@ -267,6 +269,55 @@ namespace Halobellum.Tests
             summary.XpGained.TryGetValue(500, out float a);
             summary.XpGained.TryGetValue(501, out float b);
             Assert.AreEqual(killed * chaff.Cost / (float)chaff.SquadSize, a + b, 1e-2f);
+        }
+
+        // ------------------------------------------------------------------ damage XP as it lands (D177)
+
+        [Test]
+        public void DamageXp_ASurvivorPays_ForTheDamageItTook()
+        {
+            var earned = new float[1];
+            Match.PayDamageXp(100f, 0.5f, -1, 200f, new List<int> { 0 }, new List<float> { 100f }, earned);
+            Assert.AreEqual(25f, earned[0], 1e-3f, "Half its pool in damage: half the damage half.");
+        }
+
+        [Test]
+        public void DamageXp_HealingAndBeingHurtAgain_PaysAgain()
+        {
+            var earned = new float[1];
+            Match.PayDamageXp(100f, 0.5f, -1, 200f, new List<int> { 0 }, new List<float> { 600f }, earned);
+            Assert.AreEqual(150f, earned[0], 1e-3f, "Three pools of damage, healed in between: the damage half three times.");
+        }
+
+        [Test]
+        public void DamageXp_AKillFromFull_PaysAsBefore()
+        {
+            var before = new float[2];
+            var now = new float[2];
+            Match.SplitKillXp(100f, 0.5f, 1, new List<int> { 0, 1 }, new List<float> { 90f, 10f }, before);
+            Match.PayDamageXp(100f, 0.5f, 1, 100f, new List<int> { 0, 1 }, new List<float> { 90f, 10f }, now);
+            Assert.AreEqual(before[0], now[0], 1e-3f);
+            Assert.AreEqual(before[1], now[1], 1e-3f);
+        }
+
+        [Test]
+        public void DamageXp_AKillASpellHelped_StillPaysTheWholeRest()
+        {
+            var earned = new float[2];
+            Match.PayDamageXp(100f, 0.5f, 1, 100f, new List<int> { 0 }, new List<float> { 40f }, earned);
+            Assert.AreEqual(50f, earned[1], 1e-3f, "The killer: its half.");
+            Assert.AreEqual(50f, earned[0], 1e-3f, "The only squad on the record: the whole other half, as on a kill before.");
+        }
+
+        [Test]
+        public void DamageXp_InAMatch_ABodyNoSquadKilled_StillPaysForItsDamage()
+        {
+            RoundSummary summary = SplitRound(0.5f, out UnitStats chaff, asItLands: true);
+            float worth = chaff.Cost / (float)chaff.SquadSize;
+            float pool = chaff.MaxHealth + chaff.MaxShield;
+            float xRest = 0.5f * worth * System.Math.Max(1f, 100f / pool);
+            Assert.AreEqual(0.5f * worth + 0.1f * xRest, summary.XpGained[501], 1e-3f);
+            Assert.AreEqual(0.9f * xRest + 0.5f * worth * 50f / pool, summary.XpGained[500], 1e-3f, "Body Y's 50 damage pays, though no squad killed it.");
         }
 
         [Test]

@@ -192,7 +192,7 @@ namespace Halobellum.Presentation
                 new TutorialStep
                 {
                     Title = "Levels",
-                    Text = "Kills, and the damage that leads to them, give a squad experience. When its bar is full it can level up, for half its price: more health and damage. " +
+                    Text = "Damage and kills give a squad experience: most of it as its damage lands, even on enemies that survive, the rest for the kill. When its bar is full it can level up, for half its price: more health and damage. " +
                            "An arrow over a squad shows it is ready. Level all levels every ready squad of a type at once.",
                     Target = "area:stats",
                 },

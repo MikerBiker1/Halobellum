@@ -17,7 +17,7 @@ Each side has a **Command Center** on its left and a **Research Center** on its 
 
 ## Health and levels
 
-A tower's health doubles with every level, and its shockwave gets shorter. A level-up costs **100 credits**, from either tower's panel, up to level 5. The **XP** column is what destroying it is worth: **50%** to the squad that lands the last hit, and the rest shared by the squads that damaged it, by the damage each dealt.
+A tower's health doubles with every level, and its shockwave gets shorter. A level-up costs **100 credits**, from either tower's panel, up to level 5. The **XP** column is what it is worth: **25%** to the squad that lands the last hit, and the rest to the squads that damage it, as the damage lands, even if it stands.
 
 {{tower-levels}}
 
