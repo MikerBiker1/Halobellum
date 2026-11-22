@@ -532,6 +532,7 @@ namespace Halobellum.Presentation
         public ActionResult BuyOilZone() => Report(Match.BuyOilZone(Team.A));
         public ActionResult RapidResupply() => Report(Match.RapidResupply(Team.A));
         public ActionResult BuyEliteRecruitment() => Report(Match.BuyEliteRecruitment(Team.A));
+        public ActionResult BuyDeploymentModule() => Report(Match.BuyDeploymentModule(Team.A));
 
         public ActionResult BuyResearch(bool health)
         {
@@ -609,6 +610,17 @@ namespace Halobellum.Presentation
 
             AddResearch(panel, "Health", rules.ResearchHealthShare, owner.ResearchHealthSteps, true, deploying, credits);
             AddResearch(panel, "Damage", rules.ResearchDamageShare, owner.ResearchDamageSteps, false, deploying, credits);
+            ItemStats module = Match.DeploymentModuleOf(owner);
+            if (module != null)
+            {
+                int owned = owner.Inventory.FindAll(i => i == module).Count;
+                panel.Buttons.Add(new TowerButton
+                {
+                    Label = $"{module.Name} ({rules.DeploymentModuleCost})",
+                    Note = "An item: its squad can move in every deployment phase" + (owned > 0 ? $" ({owned} in your inventory)" : ""),
+                    Enabled = deploying && credits >= rules.DeploymentModuleCost, OnPress = () => BuyDeploymentModule(),
+                });
+            }
             return panel;
         }
 

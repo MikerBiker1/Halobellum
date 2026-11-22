@@ -275,6 +275,8 @@ namespace Halobellum.Core
         public float MaxShield;
         /// <summary>Shield points regained per second once the unit has gone long enough without damage.</summary>
         public float ShieldRegenPerSecond;
+        /// <summary>An energy barrier on each body, from its squad's item (Energy Barrier, D175): it takes every hit whole, before the shield, and never comes back.</summary>
+        public float Barrier;
 
         /// <summary>Metres per second.</summary>
         public float MoveSpeed;

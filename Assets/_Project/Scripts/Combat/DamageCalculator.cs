@@ -8,6 +8,8 @@
 // shield did not soak up carries over to health using the armor multiplier.
 // A weapon with the anti-armor tag uses the anti-armor row/value instead of its damage type's
 // (decision D1), both against armor and against shields.
+// An Energy Barrier (an item, D175) is a layer before the shield that takes each hit whole: what a hit
+// that breaks it has left is lost (ApplyBarrierHit).
 // Depends on: Halobellum.Core (DamageTable, WeaponStats, ArmorType).
 
 using System;
@@ -69,6 +71,19 @@ namespace Halobellum.Combat
             float healthDamage = Math.Min(health, Math.Max(0f, baseDamage * ArmorMultiplier(table, weapon, armor)));
             health -= healthDamage;
             return removed + healthDamage;
+        }
+
+        /// <summary>
+        /// One hit on an Energy Barrier (D175): it counts as an energy shield, but takes the whole hit, so nothing of a hit that breaks
+        /// it reaches the shield or health. Returns the barrier points removed.
+        /// </summary>
+        public static float ApplyBarrierHit(DamageTable table, WeaponStats weapon, float directionalMultiplier, ref float barrier)
+        {
+            float barrierDamage = weapon.DamagePerShot * directionalMultiplier * ShieldMultiplier(table, weapon);
+            if (barrierDamage <= 0f || barrier <= 0f) return 0f;
+            float removed = Math.Min(barrier, barrierDamage);
+            barrier -= removed;
+            return removed;
         }
     }
 }

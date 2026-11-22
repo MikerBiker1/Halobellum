@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e60f424de7e158173404479ece2d51b5, type: 3}
+  m_Name: EnergyBarrier
+  m_EditorClassIdentifier:
+  cardName: Energy Barrier
+  description: 'An energy shield over every body of the squad, as strong as its level 1 health. It takes each hit whole: a big hit that breaks it does not reach the health.'
+  type: 1
+  icon: {fileID: 2800000, guid: 5da468c25a889e357d337d4be427faf9, type: 3}
+  cost: 200
+  maxOwnedCopies: 99
+  minRound: 0
+  healthMultiplier: 1
+  damageMultiplier: 1
+  moveSpeedMultiplier: 1
+  rangeBonus: 0
+  lifestealShare: 0
+  healPerSecondShare: 0
+  freeDeployment: 0
+  barrierShare: 1
+  bonusIncome: 0
+  allDamageMultiplier: 1
+  allHealthMultiplier: 1
+  allRangeBonus: 0
+  extraSquadsPerRound: 0
+  cooldownRounds: 0

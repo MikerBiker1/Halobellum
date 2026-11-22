@@ -311,6 +311,23 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void ResearchCenter_SellsDeploymentModules_For50_AsManyAsWanted()
+        {
+            var module = new CardStats { Name = "Deployment Module", Type = CardType.Item, Cost = 0, MaxOwnedCopies = 99, Item = new ItemStats { Name = "Deployment Module", FreeDeployment = true } };
+            var factions = TestMatch.StandardFactions(out _, out _, out _, out _);
+            foreach (FactionInfo faction in factions) faction.Cards.Add(module);
+            var match = new Match(RulesWithTowers(), TestRules.Default(), factions, 1, new DoNothingAi());
+            match.ChooseDraft(0);
+            match.Player.Credits = 120;
+            Assert.IsTrue(match.BuyDeploymentModule(Team.A).Ok);
+            Assert.IsTrue(match.BuyDeploymentModule(Team.A).Ok, "Again in the same round.");
+            Assert.AreEqual(20, match.Player.Credits);
+            Assert.AreEqual(2, match.Player.Inventory.Count(i => i == module.Item), "The faction's own item, so it shows its icon.");
+            Assert.IsFalse(match.BuyDeploymentModule(Team.A).Ok, "Not enough credits.");
+            Assert.IsTrue(match.PlaceItem(Team.A, module.Item, match.Player.Squads[0].Id).Ok);
+        }
+
+        [Test]
         public void Research_AddsUp_AtItsTwoPrices_AndReachesTheArmy()
         {
             Match match = Started(out UnitStats infantry);

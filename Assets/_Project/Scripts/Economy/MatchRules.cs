@@ -110,6 +110,8 @@ namespace Halobellum.Economy
         public float ResearchDamageShare = 0.12f;
         /// <summary>The price of each research step, for health and for damage alike; there are as many steps as these.</summary>
         public int[] ResearchCosts = { 100, 300 };
+        /// <summary>The Research Center's Deployment Module (D175): the faction's Deployment Module item, put in the Inventory for this many credits.</summary>
+        public int DeploymentModuleCost = 50;
 
         // The match's mode (MatchSetup). The defaults keep Faction mode as it has always played.
         /// <summary>Faction mode, or Unlock Skirmish (no factions: any unit can be unlocked).</summary>

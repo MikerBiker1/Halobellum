@@ -733,8 +733,11 @@ namespace Halobellum.Combat
             {
                 if (!unit.IsAlive || !spell.Covers(unit)) continue;
                 foreach (SimWeapon weapon in unit.Weapons) if (weapon.WindingUp) weapon.CancelWindUp(); // An EMP breaks a charge: it starts again from nothing.
-                float removed = Math.Min(unit.Shield, stats.ShieldDamage);
+                float fromBarrier = Math.Min(unit.Barrier, stats.ShieldDamage); // An Energy Barrier is energy too (D175): drained first.
+                unit.Barrier -= fromBarrier;
+                float removed = Math.Min(unit.Shield, stats.ShieldDamage - fromBarrier);
                 unit.Shield -= removed;
+                removed += fromBarrier;
                 unit.DamageTaken += removed;
                 spell.DamageDealt += removed;
                 if (stats.TechDisableSeconds > 0f) unit.TechsDisabledUntil = Math.Max(unit.TechsDisabledUntil, now + stats.TechDisableSeconds);
@@ -786,7 +789,7 @@ namespace Halobellum.Combat
                 float multiplier = (victim.IsAir ? weapon.AirDamageMultiplier : 1f) * victim.FormsAlive * victim.ShockwaveDamageTaken;
                 if (weapon.DamageType == DamageType.Fire) multiplier *= victim.FireDamageTaken;
                 float pool = PoolOf(victim);
-                float dealt = DamageCalculator.ApplyHit(_rules.DamageTable, weapon, victim.Stats.ArmorType, multiplier, ref victim.Shield, ref victim.Health);
+                float dealt = Hit(victim, weapon, multiplier);
                 CountTaken(victim, weapon.DamagePerShot * multiplier, pool, dealt);
                 victim.SecondsSinceDamaged = 0f;
                 spell.DamageDealt += dealt;
@@ -1420,7 +1423,7 @@ namespace Halobellum.Combat
                             weapon.Cooldown = Math.Max(weapon.Cooldown, weapon.Stats.StaggerSeconds + (weapon.Stats.HasWindUp ? weapon.Stats.WindUpSeconds : 0f));
                         }
                         weapon.IdleSeconds = 0f;
-                        if (weapon.ChargedShot != null && target.Shield > 0f)
+                        if (weapon.ChargedShot != null && target.Shield + target.Barrier > 0f)
                         {
                             // A target with shield: charge the bolt that strips it (the Jackal's plasma pistol, D151). As a wind-up, it starts
                             // once the rest of the reload is no longer than the charge.
@@ -1808,7 +1811,14 @@ namespace Halobellum.Combat
         }
 
         /// <summary>What a body has left to lose.</summary>
-        private static float PoolOf(SimUnit unit) => unit.Shield + Math.Max(0f, unit.Health);
+        private static float PoolOf(SimUnit unit) => unit.Barrier + unit.Shield + Math.Max(0f, unit.Health);
+
+        /// <summary>One hit on a body: on its Energy Barrier while it has one, which takes the hit whole (D175), else on its shield and health.</summary>
+        private float Hit(SimUnit target, WeaponStats weapon, float multiplier)
+        {
+            if (target.Barrier > 0f) return DamageCalculator.ApplyBarrierHit(_rules.DamageTable, weapon, multiplier, ref target.Barrier);
+            return DamageCalculator.ApplyHit(_rules.DamageTable, weapon, target.Stats.ArmorType, multiplier, ref target.Shield, ref target.Health);
+        }
 
         /// <summary>Counts a hit for the statistics: what it took, and what the body's defenses stopped of what it would have done (never past what the body had).</summary>
         private static void CountTaken(SimUnit target, float nominal, float pool, float dealt)
@@ -1824,8 +1834,7 @@ namespace Halobellum.Combat
             if (areaHit) multiplier *= target.FormsAlive;
             if (weapon.DamageType == DamageType.Fire) multiplier *= target.FireDamageTaken;
             float pool = PoolOf(target);
-            float dealt = DamageCalculator.ApplyHit(_rules.DamageTable, weapon, target.Stats.ArmorType, multiplier,
-                ref target.Shield, ref target.Health);
+            float dealt = Hit(target, weapon, multiplier);
             CountTaken(target, weapon.DamagePerShot * NominalMultiplier(target, attacker, weapon, areaHit), pool, dealt);
             target.SecondsSinceDamaged = 0f;
             attacker.DamageDealt += dealt;
@@ -1845,9 +1854,12 @@ namespace Halobellum.Combat
         /// <summary>The charged bolt landing (D151): it takes up to this many shield points off the target, and nothing from its health.</summary>
         private void StripShield(SimUnit target, SimUnit attacker, float amount)
         {
-            float stripped = Math.Min(Math.Max(0f, target.Shield), amount);
-            if (stripped <= 0f) return;
+            float fromBarrier = Math.Min(Math.Max(0f, target.Barrier), amount); // an Energy Barrier first (D175)
+            target.Barrier -= fromBarrier;
+            float stripped = Math.Min(Math.Max(0f, target.Shield), amount - fromBarrier);
             target.Shield -= stripped;
+            stripped += fromBarrier;
+            if (stripped <= 0f) return;
             target.DamageTaken += stripped;
             target.SecondsSinceDamaged = 0f;
             attacker.DamageDealt += stripped;

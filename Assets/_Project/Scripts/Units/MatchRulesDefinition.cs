@@ -108,6 +108,8 @@ namespace Halobellum.Units
         public float researchDamageShare = 0.12f;
         [Tooltip("The price of each research step, for health and for damage alike. There are as many steps as these.")]
         public int[] researchCosts = { 100, 300 };
+        [Tooltip("A Deployment Module item for the Inventory, as many as the player likes.")]
+        public int deploymentModuleCost = 50;
 
         public MatchRules ToRules()
         {
@@ -156,6 +158,7 @@ namespace Halobellum.Units
                 ResearchHealthShare = researchHealthShare,
                 ResearchDamageShare = researchDamageShare,
                 ResearchCosts = researchCosts,
+                DeploymentModuleCost = deploymentModuleCost,
                 OilZone = new SpellStats
                 {
                     Name = "Oil Zone",

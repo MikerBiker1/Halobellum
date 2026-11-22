@@ -273,6 +273,7 @@ namespace Halobellum.Presentation
             public ActionResult RapidResupply() => _c.RapidResupply();
             public ActionResult BuyEliteRecruitment() => _c.BuyEliteRecruitment();
             public ActionResult BuyResearch(bool health) => _c.BuyResearch(health);
+            public ActionResult BuyDeploymentModule() => _c.BuyDeploymentModule();
 
             public ActionResult PlaceSpell(OwnedSpell spell, Vec2 position, float angleDegrees)
             {

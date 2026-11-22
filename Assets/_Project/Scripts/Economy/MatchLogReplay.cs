@@ -40,6 +40,7 @@ namespace Halobellum.Economy
         ActionResult RapidResupply();
         ActionResult BuyEliteRecruitment();
         ActionResult BuyResearch(bool health);
+        ActionResult BuyDeploymentModule();
         ActionResult PlaceSpell(OwnedSpell spell, Vec2 position, float angleDegrees);
         ActionResult UnplaceSpell(OwnedSpell spell);
         ActionResult PlaceItem(ItemStats item, PlacedSquad squad);
@@ -169,6 +170,7 @@ namespace Halobellum.Economy
                 case "RapidResupply": return hands.RapidResupply();
                 case "BuyEliteRecruitment": return hands.BuyEliteRecruitment();
                 case "BuyResearch": return hands.BuyResearch(detail == "health");
+                case "BuyDeploymentModule": return hands.BuyDeploymentModule();
                 case "ChooseCard":
                 {
                     CardOffer offer = player.Offer;
@@ -363,6 +365,7 @@ namespace Halobellum.Economy
         public ActionResult RapidResupply() => Done(Match.RapidResupply(Team.A));
         public ActionResult BuyEliteRecruitment() => Done(Match.BuyEliteRecruitment(Team.A));
         public ActionResult BuyResearch(bool health) => Done(Match.BuyResearch(Team.A, health));
+        public ActionResult BuyDeploymentModule() => Done(Match.BuyDeploymentModule(Team.A));
         public ActionResult PlaceSpell(OwnedSpell spell, Vec2 position, float angleDegrees) => Done(Match.PlaceSpell(Team.A, spell.Id, position, angleDegrees));
         public ActionResult UnplaceSpell(OwnedSpell spell) => Done(Match.UnplaceSpell(Team.A, spell.Id));
         public ActionResult PlaceItem(ItemStats item, PlacedSquad squad) => Done(Match.PlaceItem(Team.A, item, squad.Id));

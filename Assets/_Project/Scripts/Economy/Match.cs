@@ -45,7 +45,8 @@
 //     once a round: an extra squad slot (BuyExtraSlot), credits now against less income next round
 //     (RapidResupply) and squads bought at level 2 for the rest of the round (BuyEliteRecruitment);
 //     and, once a match, an oil spell kept in the player's spells and recharging after each use
-//     (BuyOilZone). The Research Center sells lasting health and damage for the army (BuyResearch).
+//     (BuyOilZone). The Research Center sells lasting health and damage for the army (BuyResearch)
+//     and Deployment Modules for the Inventory (BuyDeploymentModule, D175).
 // The AI only sees the match through an AiView: its own state, public information, and each army as
 // it was revealed when the last battle started (SeenArmy), never the opponent's current deployment.
 // The player gets the same: BuildPreview shows the enemy's last-battle army as ghosts (D25).
@@ -616,6 +617,26 @@ namespace Halobellum.Economy
             }
             player.SetBuffs(buffs);
             return ActionResult.Success($"Your whole army: +{share * (steps + 1) * 100f:0}% {(health ? "health" : "damage")} in all.");
+        }
+
+        /// <summary>The faction's Deployment Module item (the one its card gives), or null.</summary>
+        public static ItemStats DeploymentModuleOf(PlayerState player)
+        {
+            CardStats card = player.Faction?.Cards?.Find(c => c != null && c.Type == CardType.Item && c.Item != null && c.Item.FreeDeployment);
+            return card?.Item;
+        }
+
+        /// <summary>The Research Center sells Deployment Modules (the owner, D175): one goes to the Inventory, as many as the player likes.</summary>
+        public ActionResult BuyDeploymentModule(Team team)
+        {
+            if (!CanBuyFromTower(out ActionResult failed)) return failed;
+            PlayerState player = Get(team);
+            ItemStats module = DeploymentModuleOf(player);
+            if (module == null) return ActionResult.Fail("There is no Deployment Module to buy.");
+            if (player.Credits < Rules.DeploymentModuleCost) return ActionResult.Fail($"Not enough credits ({Rules.DeploymentModuleCost} needed).");
+            player.Credits -= Rules.DeploymentModuleCost;
+            player.Inventory.Add(module);
+            return ActionResult.Success($"{module.Name} added to your inventory.");
         }
 
         // ------------------------------------------------------------------ battle and result

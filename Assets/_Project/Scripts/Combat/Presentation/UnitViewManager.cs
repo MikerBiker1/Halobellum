@@ -1056,8 +1056,9 @@ namespace Halobellum.Presentation
                 }
 
                 float fraction = Mathf.Clamp01(unit.Health / unit.Stats.MaxHealth);
-                view.ShieldPeak = Mathf.Max(view.ShieldPeak, Mathf.Max(unit.Stats.MaxShield, unit.Shield));
-                float shieldFraction = view.ShieldPeak > 0f ? Mathf.Clamp01(unit.Shield / view.ShieldPeak) : 0f;
+                float energy = unit.Shield + unit.Barrier; // an Energy Barrier shows in the shield bar (D175)
+                view.ShieldPeak = Mathf.Max(view.ShieldPeak, Mathf.Max(unit.Stats.MaxShield + unit.Stats.Barrier, energy));
+                float shieldFraction = view.ShieldPeak > 0f ? Mathf.Clamp01(energy / view.ShieldPeak) : 0f;
                 bool hasShieldBar = view.ShieldPeak > 0f;
                 // A pack's health shows in how many forms are left, so it only has a bar when selected.
                 bool showBar = (fraction < 0.999f && view.Forms == null) || (selected >= 0 && unit.SquadId == selected) || (hasShieldBar && shieldFraction < 0.999f);

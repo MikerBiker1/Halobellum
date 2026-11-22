@@ -340,7 +340,8 @@ namespace Halobellum.Economy
                 case CardType.Item:
                     ItemStats item = card.Item;
                     return bestSquad * (item.DamageMultiplier - 1f + item.HealthMultiplier - 1f + 0.5f * (item.MoveSpeedMultiplier - 1f)
-                                        + 0.02f * item.RangeBonus + 0.4f * item.LifestealShare + 8f * item.HealPerSecondShare);
+                                        + 0.02f * item.RangeBonus + 0.4f * item.LifestealShare + 8f * item.HealPerSecondShare
+                                        + 0.8f * item.BarrierShare); // a barrier: its level 1 health once, a little less than health (lost overflow, no healing)
                 default:
                     return army * (card.AllDamageMultiplier - 1f + card.AllHealthMultiplier - 1f + 0.03f * card.AllRangeBonus)
                            + card.BonusIncome * 3f + card.ExtraSquadsPerRound * 150f;

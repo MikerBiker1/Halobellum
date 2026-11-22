@@ -260,7 +260,7 @@ namespace Halobellum.Presentation
                     // A railgun the simulation hits with at once has no projectile to land later, so its impact comes with the line.
                     if (weapon.IsInstant)
                     {
-                        _recipes.Impact(to, direction, look.Impact, target.Stats.ArmorType, target.Shield > 0f, look.Shot);
+                        _recipes.Impact(to, direction, look.Impact, target.Stats.ArmorType, target.Shield + target.Barrier > 0f, look.Shot);
                         if (weapon.SplashRadius > 0f) _recipes.Blast(to, weapon.SplashRadius, look.Blast, look.Shot, EffectPriority.Big);
                     }
                     return;
@@ -271,7 +271,7 @@ namespace Halobellum.Presentation
 
             float flight = _recipes.InstantShot(from, to, look);
             if (look.Impact != ImpactStyle.None)
-                _recipes.ImpactAfter(flight, to, direction, look.Impact, target.Stats.ArmorType, target.Shield > 0f, look.Shot);
+                _recipes.ImpactAfter(flight, to, direction, look.Impact, target.Stats.ArmorType, target.Shield + target.Barrier > 0f, look.Shot);
             if (weapon.SplashRadius > 0f)
                 _recipes.BlastAfter(flight, to, weapon.SplashRadius, look.Blast, look.Shot, EffectPriority.Big);
         }
@@ -284,7 +284,7 @@ namespace Halobellum.Presentation
         /// <summary>A hit that reached the body. With no attacker it is a spell or a slow burn, which draw no blood.</summary>
         private void OnUnitDamaged(SimUnit target, SimUnit attacker, float amount)
         {
-            if (attacker == null || amount <= 0f || target.Shield > 0f) return;
+            if (attacker == null || amount <= 0f || target.Shield + target.Barrier > 0f) return;
             BloodKind blood = BloodLooks.For(target.Stats);
             if (blood == BloodKind.None) return;
             float share = amount / Mathf.Max(1f, target.Stats.MaxHealth);
@@ -546,7 +546,7 @@ namespace Halobellum.Presentation
             }
             SimUnit target = shot.AimedAt;
             Vector3 direction = known ? (at - track.Previous).normalized : Vector3.down;
-            _recipes.Impact(at, direction, look.Impact, target != null ? target.Stats.ArmorType : ArmorType.Unarmored, target != null && target.Shield > 0f, look.Shot);
+            _recipes.Impact(at, direction, look.Impact, target != null ? target.Stats.ArmorType : ArmorType.Unarmored, target != null && target.Shield + target.Barrier > 0f, look.Shot);
         }
 
         /// <summary>Where a shot is at this tick, with its arc if it is lobbed.</summary>

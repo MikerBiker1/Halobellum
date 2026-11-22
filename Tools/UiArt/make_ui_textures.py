@@ -831,6 +831,17 @@ def icon_firepower(d, s):
     d.rectangle([m - 92, 296, m + 92, 340], fill=WHITE)
 
 
+def icon_barrier(d, s):
+    # A dome of energy over three bodies: a shield for the whole squad (D175).
+    m = s / 2
+    d.pieslice([40, 60, s - 40, s + 140], 180, 360, fill=WHITE)
+    d.pieslice([80, 100, s - 80, s + 100], 180, 360, fill=CLEAR)
+    d.rectangle([28, s - 60, s - 28, s - 34], fill=WHITE)
+    for x in (m - 90, m, m + 90):
+        d.ellipse([x - 26, s - 200, x + 26, s - 148], fill=WHITE)
+        d.rounded_rectangle([x - 30, s - 140, x + 30, s - 70], radius=14, fill=WHITE)
+
+
 def icon_supply(d, s):
     # A crate.
     d.rectangle([60, 110, s - 60, s - 60], fill=WHITE)
@@ -888,7 +899,7 @@ def icon_training(d, s):
 ICONS = {
     "Item_LaserSights": icon_laser, "Item_AbsorptionModule": icon_absorb, "Item_AmplifyingCore": icon_core,
     "Item_DeploymentModule": icon_deploy, "Item_HasteStims": icon_haste, "Item_HeavyArmor": icon_armor,
-    "Item_RepairKit": icon_repair, "Item_ImprovedFirepower": icon_firepower,
+    "Item_RepairKit": icon_repair, "Item_ImprovedFirepower": icon_firepower, "Item_EnergyBarrier": icon_barrier,
     "Card_SupplyEnhancement": icon_supply, "Card_SuperSupply": icon_super_supply, "Card_AdvancedOffense": icon_offense,
     "Card_AdvancedDefense": icon_defense, "Card_AdvancedTargeting": icon_targeting, "Card_DeploymentSlot": icon_slot,
     "Card_IntensiveTraining": icon_training,

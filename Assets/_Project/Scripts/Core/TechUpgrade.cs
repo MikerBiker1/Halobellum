@@ -119,22 +119,24 @@ namespace Halobellum.Core
             if (level == 1 && !hasTechs && item == null && (buffs == null || buffs.IsNeutral)) return baseStats;
 
             UnitStats stats = ApplyLevelAndTechs(baseStats, level, techs);
-            ApplyItemAndBuffs(stats, item, buffs);
+            ApplyItemAndBuffs(stats, item, buffs, baseStats.MaxHealth);
             LevelAndBuffWhatItBrings(stats, level, buffs, 0);
             if (hasTechs)
             {
                 UnitStats withoutTechs = ApplyLevelAndTechs(baseStats, level, null);
-                ApplyItemAndBuffs(withoutTechs, item, buffs);
+                ApplyItemAndBuffs(withoutTechs, item, buffs, baseStats.MaxHealth);
                 LevelAndBuffWhatItBrings(withoutTechs, level, buffs, 0); // an EMP swaps a body to these, and the sim then reads what it brings from them
                 stats.WithoutTechs = withoutTechs;
             }
             return stats;
         }
 
-        private static void ApplyItemAndBuffs(UnitStats stats, ItemStats item, ArmyBuffs buffs)
+        /// <param name="levelOneHealth">The unit's health at level 1, before items and buffs: an Energy Barrier is that strong (the owner, D175).</param>
+        private static void ApplyItemAndBuffs(UnitStats stats, ItemStats item, ArmyBuffs buffs, float levelOneHealth)
         {
             if (item != null)
             {
+                stats.Barrier = item.BarrierShare * levelOneHealth;
                 stats.MaxHealth *= item.HealthMultiplier;
                 stats.MoveSpeed *= item.MoveSpeedMultiplier;
                 stats.LifestealShare = Math.Max(stats.LifestealShare, item.LifestealShare);
@@ -199,7 +201,7 @@ namespace Halobellum.Core
         private static UnitStats Bring(UnitStats unit, int level, ArmyBuffs buffs, int depth)
         {
             UnitStats brought = ApplyLevelAndTechs(unit, level, null); // clone, Level = level, health, damage and burst x level
-            ApplyItemAndBuffs(brought, null, buffs);                    // the buffs only; null does nothing
+            ApplyItemAndBuffs(brought, null, buffs, 0f);                // the buffs only; null does nothing
             LevelAndBuffWhatItBrings(brought, level, buffs, depth + 1);
             return brought;
         }

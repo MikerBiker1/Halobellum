@@ -41,6 +41,8 @@ namespace Halobellum.Units
         public float healPerSecondShare;
         [Tooltip("The squad can be moved during every deployment phase.")]
         public bool freeDeployment;
+        [Tooltip("Each body gets an energy barrier of this share of its level 1 health, taking each hit whole (Energy Barrier).")]
+        public float barrierShare;
 
         [Header("Economy and buffs (for the whole army)")]
         [Tooltip("Extra credits every round.")]
@@ -87,6 +89,7 @@ namespace Halobellum.Units
                     LifestealShare = lifestealShare,
                     HealPerSecondShare = healPerSecondShare,
                     FreeDeployment = freeDeployment,
+                    BarrierShare = barrierShare,
                 };
             }
             return card;

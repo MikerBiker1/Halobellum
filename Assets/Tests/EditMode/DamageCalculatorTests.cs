@@ -93,6 +93,22 @@ namespace Halobellum.Tests
         }
 
         [Test]
+        public void EnergyBarrier_TakesTheWholeHit_EvenWhenTheHitIsBiggerThanIt()
+        {
+            // The owner's example (D175): 250 barrier on 250 health, a 1,000 damage shot takes the barrier only.
+            var weapon = TestUnits.Weapon(damage: 1000f, type: DamageType.Explosive);
+            float barrier = 250f;
+            float removed = DamageCalculator.ApplyBarrierHit(_table, weapon, 1f, ref barrier);
+            Assert.AreEqual(250f, removed, 1e-4f);
+            Assert.AreEqual(0f, barrier, 1e-4f);
+
+            barrier = 250f;
+            var small = TestUnits.Weapon(damage: 40f, type: DamageType.Ballistic);
+            DamageCalculator.ApplyBarrierHit(_table, small, 1f, ref barrier);
+            Assert.AreEqual(250f - 40f * DamageCalculator.ShieldMultiplier(_table, small), barrier, 1e-4f, "It counts as an energy shield.");
+        }
+
+        [Test]
         public void ApplyHit_NoShield_UsesArmorMultiplier()
         {
             float shield = 0f, health = 100f;

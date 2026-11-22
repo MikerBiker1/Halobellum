@@ -8,6 +8,10 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.414.0 · 2026-11-21
+- **The Research Center sells the Deployment Module** for 50 credits, as many as you like; it goes to your Inventory. (D175)
+- **New item card, Energy Barrier** (200): every body of the squad gets an energy shield as strong as its level 1 health, so a level 2 Marauder gets 1,500 barrier on 3,000 health. It takes each hit whole: a 1,000 damage shot on 250 barrier takes the barrier and leaves the health alone. It takes hits before the unit's own shield, does not come back during the battle, and EMPs and the charged plasma pistol drain it like a shield. (D175)
+
 ## 0.413.14 · 2026-11-21
 - **The Banshee's death 25% quieter** (and the Infested Banshee's, which uses the same sound). (D174)
 

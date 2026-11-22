@@ -219,6 +219,7 @@ CARDS = [
     dict(file="HeavyArmor", icon="Item_HeavyArmor", name="Heavy Armor", type=1, cost=50, max=99, desc="Extra plating for the whole squad.", hp=1.7),
     dict(file="RepairKit", icon="Item_RepairKit", name="Healing Stims / Repair Kit", type=1, cost=50, max=99, desc="Repairs damage continuously.", heal=0.045),
     dict(file="ImprovedFirepower", icon="Item_ImprovedFirepower", name="Improved Firepower System", type=1, cost=50, max=99, desc="Upgraded weapons systems.", dmg=1.7),
+    dict(file="EnergyBarrier", icon="Item_EnergyBarrier", name="Energy Barrier", type=1, cost=200, max=99, desc="An energy shield over every body of the squad, as strong as its level 1 health. It takes each hit whole: a big hit that breaks it does not reach the health.", barrier=1),  # D175
     dict(file="SupplyEnhancement", icon="Card_SupplyEnhancement", name="Supply Enhancement", type=2, cost=100, max=1, desc="Better supply lines.", income=50),
     dict(file="SuperSupplyEnhancement", icon="Card_SuperSupply", name="Super Supply Enhancement", type=2, cost=250, max=1, min_round=7, desc="A much bigger share of the fleet's supplies.", income=150),
     dict(file="AdvancedOffensiveTactics", icon="Card_AdvancedOffense", name="Advanced Offensive Tactics", type=3, cost=350, max=1, min_round=7, desc="Hit harder, everywhere.", alldmg=1.3),
@@ -239,7 +240,7 @@ for c in CARDS:
             f"  cost: {c['cost']}\n  maxOwnedCopies: {c['max']}\n  minRound: {c.get('min_round', 0)}\n"
             f"  healthMultiplier: {c.get('hp', 1)}\n  damageMultiplier: {c.get('dmg', 1)}\n  moveSpeedMultiplier: {c.get('speed', 1)}\n"
             f"  rangeBonus: {c.get('range', 0)}\n  lifestealShare: {c.get('steal', 0)}\n  healPerSecondShare: {c.get('heal', 0)}\n"
-            f"  freeDeployment: {c.get('free', 0)}\n  bonusIncome: {c.get('income', 0)}\n"
+            f"  freeDeployment: {c.get('free', 0)}\n  barrierShare: {c.get('barrier', 0)}\n  bonusIncome: {c.get('income', 0)}\n"
             f"  allDamageMultiplier: {c.get('alldmg', 1)}\n  allHealthMultiplier: {c.get('allhp', 1)}\n  allRangeBonus: {c.get('allrange', 0)}\n"
             f"  extraSquadsPerRound: {c.get('slots', 0)}\n  cooldownRounds: {c.get('cooldown', 0)}\n")
     path = os.path.join(cards_root, c["file"] + ".asset")

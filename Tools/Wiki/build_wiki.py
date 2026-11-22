@@ -341,6 +341,8 @@ class Builder:
                 effects.append({"label": "Healing", "text": "%g%% health/s" % r2(d["healPerSecondShare"] * 100), "good": True})
             if d.get("freeDeployment"):
                 effects.append({"label": "Deployment", "text": "Move it every round", "good": True})
+            if d.get("barrierShare", 0):
+                effects.append({"label": "Energy barrier", "text": "%g%% of level 1 health, takes each hit whole" % r2(d["barrierShare"] * 100), "good": True})
         bonus("bonusIncome", "Income", "%+g credits/round")
         mult("allDamageMultiplier", "Army damage")
         mult("allHealthMultiplier", "Army health")

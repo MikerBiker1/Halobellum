@@ -40,6 +40,11 @@ namespace Halobellum.Core
         public float HealPerSecondShare;
         /// <summary>The squad can be moved during every deployment phase (Deployment Module).</summary>
         public bool FreeDeployment;
+        /// <summary>
+        /// Each body gets an energy barrier of this share of its level 1 health (Energy Barrier, D175): it takes every hit before the shield and
+        /// health, and takes it whole, so what a hit has left once the barrier breaks is lost. It does not come back during the battle.
+        /// </summary>
+        public float BarrierShare;
 
         public string EffectsText()
         {
@@ -51,6 +56,8 @@ namespace Halobellum.Core
             if (LifestealShare > 0f) parts.Add($"{LifestealShare * 100f:0}% of damage dealt heals it");
             if (HealPerSecondShare > 0f) parts.Add($"recovers {HealPerSecondShare * 100f:0.#}% health per second");
             if (FreeDeployment) parts.Add("can move in every deployment phase");
+            if (BarrierShare > 0f) parts.Add((BarrierShare == 1f ? "an energy barrier as strong as its level 1 health" : $"an energy barrier of {BarrierShare * 100f:0}% of its level 1 health")
+                + " on every body, taking each hit whole");
             return string.Join(", ", parts);
         }
 

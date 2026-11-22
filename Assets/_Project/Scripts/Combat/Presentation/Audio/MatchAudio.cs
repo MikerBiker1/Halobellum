@@ -131,6 +131,7 @@ namespace Halobellum.Presentation
                 case nameof(MatchController.BuyOilZone):
                 case nameof(MatchController.RapidResupply):
                 case nameof(MatchController.BuyEliteRecruitment):
+                case nameof(MatchController.BuyDeploymentModule):
                 case nameof(MatchController.BuyTech): GameAudio.Ui(UiSound.Unlock); break;
                 case nameof(MatchController.LevelUp):
                 case nameof(MatchController.LevelUpTower):

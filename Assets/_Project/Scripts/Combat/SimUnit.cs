@@ -220,6 +220,8 @@ namespace Halobellum.Combat
 
         public float Health;
         public float Shield;
+        /// <summary>What is left of its Energy Barrier (D175): it takes each hit whole, before the shield, and never comes back.</summary>
+        public float Barrier;
         public float SecondsSinceDamaged;
 
         public UnitState State;
@@ -317,6 +319,7 @@ namespace Halobellum.Combat
             Facing = facing.LengthSquared > 0f ? facing.Normalized : Vec2.Up;
             Health = stats.MaxHealth;
             Shield = stats.MaxShield;
+            Barrier = stats.Barrier;
             SecondsSinceDamaged = 0f;
             State = UnitState.Idle;
             MoveGoal = position;

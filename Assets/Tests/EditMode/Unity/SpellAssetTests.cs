@@ -35,7 +35,11 @@ namespace Halobellum.Tests
         {
             List<CardStats> cards = Cards(asset);
             foreach (CardStats card in cards) CollectionAssert.IsEmpty(card.Validate(), card.Name);
-            Assert.AreEqual(8, cards.Count(c => c.Type == CardType.Item), "The 8 items.");
+            Assert.AreEqual(9, cards.Count(c => c.Type == CardType.Item), "The 9 items.");
+            CardStats barrier = cards.Single(c => c.Name == "Energy Barrier"); // the owner, D175
+            Assert.AreEqual(200, barrier.Cost);
+            Assert.AreEqual(1f, barrier.Item.BarrierShare, 1e-3f);
+            Assert.IsTrue(cards.Single(c => c.Name == "Deployment Module").Item.FreeDeployment, "The Research Center sells the faction's own Deployment Module.");
             Assert.AreEqual(2, cards.Count(c => c.Type == CardType.Economy), "Supply Enhancement and Super Supply.");
             Assert.AreEqual(2, cards.Single(c => c.Type == CardType.Training).MaxOwnedCopies, "Intensive Training can be taken twice.");
             Assert.AreEqual(4f, cards.Single(c => c.Name == "Laser Sights").Item.RangeBonus, 1e-3f); // 2 -> 4 m (the owner, D144)

@@ -5,7 +5,7 @@
 // rules (offensive anywhere, defensive only on your own side), spells cast when the battle starts and
 // hidden from the opponent, reinforcement budget and pricing (the Bible's examples), reinforcement
 // squads (unlock, outside the squad limit, 0 XP, movable, refunds), spell kills in the round summary,
-// items (inventory, one per squad, whole squad, Deployment Module), economy and buff cards, Intensive
+// items (inventory, one per squad, whole squad, Deployment Module, Energy Barrier), economy and buff cards, Intensive
 // Training, and the AI taking cards and using them in full matches.
 // Depends on: Halobellum.Economy, Halobellum.Combat, Halobellum.Core, NUnit.
 
@@ -410,6 +410,36 @@ namespace Halobellum.Tests
             Give(match, _heavyArmorCard);
             Assert.IsFalse(match.PlaceItem(Team.A, armor, squad.Id).Ok, "One item per squad.");
             Assert.IsTrue(match.PlaceItem(Team.A, armor, match.Player.Squads[1].Id).Ok, "Another squad can take it.");
+        }
+
+        [Test]
+        public void EnergyBarrier_IsTheSquadsLevelOneHealth_OnEveryBody_AndTakesABigHitWhole()
+        {
+            var barrierCard = new CardStats { Name = "Energy Barrier", Type = CardType.Item, Cost = 200, MaxOwnedCopies = 99, Item = new ItemStats { Name = "Energy Barrier", BarrierShare = 1f } };
+            Match match = NewMatch();
+            PlacedSquad squad = match.Player.Squads[0];
+            squad.Level = 2;
+            match.Player.Credits = 1000;
+            Give(match, barrierCard);
+            Assert.AreEqual(800, match.Player.Credits);
+            Assert.IsTrue(match.PlaceItem(Team.A, barrierCard.Item, squad.Id).Ok);
+            UnitStats stats = match.Player.EffectiveStats(squad);
+            Assert.AreEqual(squad.Type.MaxHealth, stats.Barrier, 1e-3f, "Its level 1 health, as a level 2 Marauder gets 1,500 for 3,000 health.");
+            Assert.Greater(stats.MaxHealth, stats.Barrier);
+
+            BattleSimulation battle = match.BuildBattle(includeEnemy: false);
+            SimSquad simSquad = battle.Squads[match.Player.Squads.IndexOf(squad)];
+            Assert.IsTrue(simSquad.Members.All(u => System.Math.Abs(u.Barrier - squad.Type.MaxHealth) < 1e-3f), "Every body of the squad.");
+
+            // In a battle: a shot far bigger than the barrier breaks it and leaves the health whole.
+            var sim = new BattleSimulation(TestRules.Default(), 1);
+            UnitStats guarded = TestUnits.Unit(health: 250f, speed: 0f, weapon: TestUnits.Weapon(damage: 1f, range: 1f));
+            guarded.Barrier = 250f;
+            SimUnit target = sim.AddUnit(guarded, Team.B, new Vec2(0f, 5f));
+            sim.AddUnit(TestUnits.Unit(health: 100f, speed: 0f, weapon: TestUnits.Weapon(damage: 1000f, range: 30f, type: DamageType.Explosive, interval: 5f)), Team.A, Vec2.Zero);
+            for (int i = 0; i < 2000 && target.Barrier > 0f; i++) sim.Step();
+            Assert.AreEqual(0f, target.Barrier, 1e-4f, "The first shot breaks it.");
+            Assert.AreEqual(250f, target.Health, 1e-4f, "And nothing of it reaches the health.");
         }
 
         [Test]

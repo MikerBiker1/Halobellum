@@ -26,6 +26,7 @@ MonoBehaviour:
   lifestealShare: 0
   healPerSecondShare: 0
   freeDeployment: 0
+  barrierShare: 0
   bonusIncome: 50
   allDamageMultiplier: 1
   allHealthMultiplier: 1
