@@ -457,6 +457,21 @@ namespace Halobellum.Tests
         // ------------------------------------------------------------------ the Sandbox's unit list (D143)
 
         [UnityTest]
+        public IEnumerator EveryRowOfTheSandboxList_FitsItsRoleBodiesAndPrice_OnOneLine()
+        {
+            // Wrapped, "Single-target DPS, 4 bodies, 150" took two lines in a box of one and was hidden (the owner, 0.415.1).
+            yield return SceneManager.LoadSceneAsync("Sandbox", LoadSceneMode.Single);
+            yield return null;
+            var hud = Object.FindAnyObjectByType<SandboxHud>();
+            Assert.IsNotNull(hud, "The Sandbox scene has no SandboxHud.");
+            yield return null;
+            CardScreens.TextThatDidNotFit = 0;
+            CardScreens.LastTextThatDidNotFit = null;
+            InGui(new Event { type = EventType.Repaint, mousePosition = Away }, () => hud.DrawForTest(), 0);
+            Assert.AreEqual(0, CardScreens.TextThatDidNotFit, "Did not fit: " + CardScreens.LastTextThatDidNotFit);
+        }
+
+        [UnityTest]
         public IEnumerator ClickingAUnitInTheSandboxList_OpensItsStatsWindow_AndASecondClickClosesIt()
         {
             yield return SceneManager.LoadSceneAsync("Sandbox", LoadSceneMode.Single);

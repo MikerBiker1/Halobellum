@@ -40,7 +40,7 @@ namespace Halobellum.UI
         /// <summary>Under the bar and its message line, level with the unit list.</summary>
         private const float BelowTheMessage = 204f;
 
-        private GUIStyle _text, _small, _smallCentered, _button, _mapButton, _bigButton, _header, _wrapDim;
+        private GUIStyle _text, _small, _smallCentered, _button, _mapButton, _bigButton, _header, _wrapDim, _rowLine;
         private float _scale;
         private Vector2 _scroll;
         private readonly HudLine _seedLine = new HudLine(), _aliveLine = new HudLine(), _blueLine = new HudLine(), _redLine = new HudLine();
@@ -242,7 +242,8 @@ namespace Halobellum.UI
                 if (placing || shown) HudTheme.RowBox(row);
                 CardScreens.DrawUnitPicture(new Rect(row.x + 3f, row.y + 2f, 42f, 42f), stats, (unit.BaseFaction ?? unit.Faction), UnitIcons.FactionColor((unit.BaseFaction ?? unit.Faction)));
                 GUI.Label(new Rect(row.x + 50f, row.y, row.width - 150f, 27f), stats.Name, _text);
-                GUI.Label(new Rect(row.x + 50f, row.y + 24f, row.width - 150f, 20f), $"{RoleName(stats.Role)}, {Bodies(stats.FormsInSquad)}, {stats.Cost}", _small);
+                // One line, shrunk until it fits: wrapped, a long role ("Single-target DPS") hid it in its box (the owner, 0.415.1).
+                CardScreens.Fit(new Rect(row.x + 50f, row.y + 24f, row.width - 146f, 22f), $"{RoleName(stats.Role)}, {Bodies(stats.FormsInSquad)}, {stats.Cost}", _rowLine, 15, 11, TextAnchor.MiddleLeft, HudTheme.DimText);
                 if (GUI.Button(new Rect(row.xMax - 92f, row.y + 7f, 86f, 32f), placing ? "Placing" : "Place", _button))
                 {
                     if (placing) sandbox.CancelPlacement();
@@ -324,6 +325,7 @@ namespace Halobellum.UI
             _mapButton = new GUIStyle(GUI.skin.button) { fontSize = HudTheme.Size(13) };
             _bigButton = new GUIStyle(GUI.skin.button) { fontSize = HudTheme.Size(19), fontStyle = FontStyle.Bold };
             _wrapDim = new GUIStyle(_small) { wordWrap = true, alignment = TextAnchor.UpperLeft };
+            _rowLine = new GUIStyle(_small) { wordWrap = false };
             HudTheme.Fit(_text, _small, _smallCentered, _header, _button, _bigButton, _wrapDim);
         }
     }

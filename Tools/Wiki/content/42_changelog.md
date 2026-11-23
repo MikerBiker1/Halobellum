@@ -8,6 +8,9 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.415.1 · 2026-11-22
+- **Sandbox unit list:** each row's role, bodies and price stay on one line, shrinking to fit, instead of wrapping out of sight ("Single-target DPS, 4 bodies, 150").
+
 ## 0.415.0 · 2026-11-22
 - **XP paid as damage lands:** 75% of a body's worth goes to the squads that damage it, as the damage lands, even if it survives; 25% goes to the squad that kills it (was half on the kill and half only when it died). A body that heals and is hurt again pays again, so healing and regeneration feed the enemy XP. A body killed from full health gives out the same XP as before. Insane against Insane at 2000 health (7,200 matches): every sub-faction 48.9% to 50.7%, every faction 50.0%. (D177)
 
