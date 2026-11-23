@@ -22,8 +22,8 @@
 //   7. Units at 0 health die. Deaths are applied at the end of the tick, so units that shoot in
 //      the same tick are treated fairly regardless of list order.
 //   8. The battle ends when a side has no units left or the time limit is reached. Each surviving
-//      body deals its base damage, except bodies summoned in the battle (SimUnit.Origin): brood,
-//      death bursts, risen and seeded bodies, spell squads, and what a summoned carrier drops.
+//      body deals its base damage, except bodies that came in during the battle (SimUnit.Origin): brood,
+//      death bursts, risen and seeded bodies, spell squads, and what any carrier drops (D178).
 // A tower (D55) is a ground target like any other, the closest enemy being the closest enemy, but it
 // doesn't count as a unit left. When it falls, its side's whole army suffers its shockwave: a second
 // tower adds to how long that lasts, not to how bad it is.
@@ -344,7 +344,7 @@ namespace Halobellum.Combat
         }
 
         /// <summary>
-        /// A carrier's squad, on the spot. What an air carrier brings in (Pelican, Covenant Phantom, a bought Infected Phantom) is Carried and keeps its base damage;
+        /// A carrier's squad, on the spot. What an air carrier brings in (Pelican, Covenant Phantom, a bought Infected Phantom) is Carried (no base damage since D178, but told apart from brood);
         /// what a ground "carrier" hatches (the Spawner's Swarm Form) is brood, and anything a summoned carrier drops (an Infected Phantom raised by a seed) is Summoned too.
         /// Stats.IsAir, not SimUnit.IsAir: a landing carrier drops while it is down.
         /// </summary>

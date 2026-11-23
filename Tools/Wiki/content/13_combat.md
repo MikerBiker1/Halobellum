@@ -137,7 +137,7 @@ Some weapons slow what they hit directly for a few seconds. A new hit restarts t
 ## Mid-battle drops
 
 - Some units carry a squad that comes out during the battle, either always or only once its tech is bought. A dropped squad exists only for that battle, fights at its carrier's **level** and with your army's bonuses (not the carrier's techs or item), and its kills and damage earn XP for the carrier's squad.
-- **Base damage:** a squad that a bought **air** transport drops counts for base damage if it survives. **Summoned** bodies deal none: what a ground unit lets out (a Spawner's brood), death-burst forms, risen and seeded bodies, spell squads, and anything a summoned carrier drops.
+- **Base damage:** only squads placed before the battle hit the enemy base. A squad that a transport drops (the Pelican's Marines, the Phantoms' troops) deals none, and neither do **summoned** bodies: what a ground unit lets out (a Spawner's brood), death-burst forms, risen and seeded bodies, and spell squads.
 - **The Pelican** (with its Troop Bay) comes down **where it is**, taking 1.5 s, lets 6 Marines out from under it, and goes back up: the squads are out **5 s** in, then every **10 s**, up to **3 drops**. It never flies behind enemy lines to land (it did until D143). An EMP that switches off its techs keeps it waiting on the ground.
 - **Air carriers** drop their squad **straight under themselves**, from the air, wherever they are fighting, and never land. The Covenant Phantom (with its Gravity Lift) drops 7 Grunts **5 s** in, then every **10 s**, up to **3 drops**. The Infected Phantom drops its Combat Forms once, after a set delay. An EMP over one makes the next drop wait until it ends.
 

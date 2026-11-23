@@ -52,8 +52,8 @@ Free draft squads can be moved, turned or sold in round 1, and they don't use up
 
 - **A time-out isn't special.** Whether the battle ended in a wipe or at 90 seconds, every body still alive deals its **base damage** to the enemy base (summoned bodies excepted, below). There's no extra base damage for losing, but the kills you gave up become the enemy's experience.
 - Base damage is set per unit. The usual value is **(squad cost ÷ squad size) ÷ 5** per body: a 300-credit single tank deals 60, and each body of an 18-strong 100-credit squad deals about 1.1. Every unit page shows its value.
-- **Summoned bodies deal no base damage.** Released Flood forms (a Spawner's brood, every death burst), risen infected and seeded units, spell squads, and anything a summoned carrier drops still fight and keep the battle going, but deal 0 at the end. A Spawner alive at a time-out deals only its own base damage.
-- Troops a bought **air transport** drops (the Pelican's Marines, the Covenant Phantom's Grunts, a bought Infected Phantom's Combat Forms) do count if they're alive at the end.
+- **Bodies that came in during the battle deal no base damage.** Released Flood forms (a Spawner's brood, every death burst), risen infected and seeded units, spell squads, and every squad a transport drops (the Pelican's Marines, the Phantoms' troops) still fight and keep the battle going, but deal 0 at the end. A Spawner alive at a time-out deals only its own base damage.
+- A transport that is alive at the end (a Pelican, a Phantom) still deals its own base damage; only the troops it dropped don't.
 - Each survivor sends a node of light to the enemy base: small ones first, then bigger ones, then each Titan alone.
 - The **round result window** shows both sides' base damage, kills, next round's income, and which squads can level up. Its ribbon is green if you dealt more base damage than you took **that round**, red if less, and grey if equal.
 - When a base falls, the ribbon reads **Victory** or **Defeat**, with buttons for **Battle stats**, the battle logs, a new match and the main menu.

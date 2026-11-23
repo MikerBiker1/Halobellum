@@ -58,7 +58,7 @@ blurb: Every game term in one place.
 | **Hit slow** | A direct hit that slows the target briefly (not Titans). |
 | **Leap / charge / dive** | A pounce on a target or over obstacles / a ground charge into melee / an aircraft's suicide fall. |
 | **Drop / carrier** | A unit that brings a temporary squad during the battle, at its own level. The Pelican comes down where it is to drop and counts as ground while it's down; air carriers (the Phantoms) drop from the air under themselves. |
-| **Summoned body** | A body made during the battle: released or spawned forms, risen and seeded bodies, spell squads. It fights and keeps the battle going but deals no base damage. Troops a bought air transport drops are not summoned. |
+| **Summoned body** | A body made during the battle: released or spawned forms, risen and seeded bodies, spell squads. It fights and keeps the battle going but deals no base damage. Troops a transport drops are not summoned, but they deal no base damage either. |
 | **Death burst** | An explosion and/or released units when a unit dies. |
 | **Spawner** | A unit that keeps releasing units during the battle. |
 | **Aura** | Speed and/or healing for friends close by. |

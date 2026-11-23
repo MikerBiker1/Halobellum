@@ -99,12 +99,12 @@ namespace Halobellum.Combat
         Ascending,
     }
 
-    /// <summary>Where a body came from. Only the round's base damage reads it: a summoned body fights like any other but deals none.</summary>
+    /// <summary>Where a body came from. The round's base damage reads it: only a deployed body deals any (carried troops neither since D178).</summary>
     public enum BodyOrigin
     {
         /// <summary>Placed before the battle: bought, reinforcement-card and flank squads, towers.</summary>
         Deployed = 0,
-        /// <summary>A squad that a deployed (or carried) air carrier brought in: Pelican Marines, Covenant Phantom Grunts, a bought Infected Phantom's Combat Forms.</summary>
+        /// <summary>A squad that a deployed (or carried) air carrier brought in: Pelican Marines, Covenant Phantom Grunts, a bought Infected Phantom's Combat Forms. Deals no base damage (the owner, D178); left out of the army's worth like a summoned body.</summary>
         Carried = 1,
         /// <summary>Made in the battle by a unit, a body or a spell: brood, death bursts, risen and seeded bodies, spell squads, and anything a summoned carrier drops. Deals no base damage.</summary>
         Summoned = 2,
@@ -334,8 +334,8 @@ namespace Halobellum.Combat
         public bool IsAir => Stats.IsAir && Altitude > LandedAltitude;
         private const float LandedAltitude = 0.2f;
         public float Radius => Stats.CollisionRadius;
-        /// <summary>Whether this body hits the enemy base at the round's end: alive, not a tower, not summoned in the battle, with base damage.</summary>
-        public bool HitsEnemyBase => IsAlive && !Stats.IsTower && Origin != BodyOrigin.Summoned && Stats.BaseDamage > 0f;
+        /// <summary>Whether this body hits the enemy base at the round's end: alive, not a tower, placed before the battle (not carried in or summoned), with base damage.</summary>
+        public bool HitsEnemyBase => IsAlive && !Stats.IsTower && Origin == BodyOrigin.Deployed && Stats.BaseDamage > 0f; // Carried troops neither (the owner, D178).
 
         public override string ToString() => $"{Stats.Name}#{Id} ({Team}) {State} hp={Health:0.#} at {Position}";
     }

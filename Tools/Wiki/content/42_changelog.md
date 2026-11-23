@@ -8,6 +8,9 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.415.2 · 2026-11-23
+- **Transport troops deal no base damage:** the Marines a Pelican drops, the Covenant Phantom's Grunts and an Infected Phantom's Combat Forms no longer hit the enemy base at the round's end, like summoned bodies. The transport itself still does. (D178)
+
 ## 0.415.1 · 2026-11-22
 - **Sandbox unit list:** each row's role, bodies and price stay on one line, shrinking to fit, instead of wrapping out of sight ("Single-target DPS, 4 bodies, 150").
 

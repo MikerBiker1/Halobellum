@@ -1,6 +1,6 @@
 // SummonedBaseDamageTests.cs
 // Bodies made during a battle (a spawner's brood, a death burst, risen and seeded bodies, spell squads, and anything a summoned carrier drops)
-// fight like any other but deal no base damage at the round's end. Bought bodies and the squads a bought air carrier brings in still count.
+// fight like any other but deal no base damage at the round's end. Bought bodies count; the squads a bought air carrier brings in don't either (the owner, D178).
 // The owner's case: a Spawner whose brood can't hit an air unit keeps releasing to the time limit; only the Spawner itself hits the base.
 // Depends on: Halobellum.Combat, Halobellum.Core, NUnit, TestUnits, TestRules.
 
@@ -122,9 +122,10 @@ namespace Halobellum.Tests
             Assert.AreEqual(4, hatched.Count);
             Assert.IsTrue(carried.All(u => u.Origin == BodyOrigin.Carried), "A bought air carrier's troops came with it (Pelican, Phantom).");
             Assert.IsTrue(hatched.All(u => u.Origin == BodyOrigin.Summoned), "A ground unit's hatch is brood (the Spawner's Swarm Form).");
-            Assert.AreEqual(4f, result.TeamA.UnitTypes.Single(t => t.UnitName == "Carried Marine").SurvivorBaseDamage, 1e-3f);
+            Assert.IsTrue(carried.All(u => u.IsAlive && !u.HitsEnemyBase), "Carried troops deal no base damage (the owner, D178: Pelican Marines).");
+            Assert.AreEqual(0f, result.TeamA.UnitTypes.Single(t => t.UnitName == "Carried Marine").SurvivorBaseDamage, 1e-3f);
             Assert.AreEqual(0f, result.TeamA.UnitTypes.Single(t => t.UnitName == "Hatchling").SurvivorBaseDamage, 1e-3f);
-            Assert.AreEqual(1f + 1f + 4f, result.TeamA.SurvivorBaseDamage, 1e-3f, "Both carriers and the 4 carried bodies.");
+            Assert.AreEqual(1f + 1f, result.TeamA.SurvivorBaseDamage, 1e-3f, "Only the two carriers, which were bought.");
             Assert.AreEqual(10, result.TeamA.Survivors);
         }
 

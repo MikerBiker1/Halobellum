@@ -15,7 +15,7 @@ The game is about **counterplay**. Read the enemy's army, buy what beats it, and
 ## How a match is won
 
 - Each side has a **base** with **2,000 health** (your starting card moves this up or down a little).
-- After every battle, **every body still alive on both sides** hits the enemy base for its **base damage**. Both bases are hit at the same moment. Bodies summoned during the battle (released, risen or brought by a spell) deal none.
+- After every battle, **every body still alive on both sides** hits the enemy base for its **base damage**. Both bases are hit at the same moment. Bodies that came in during the battle (released, risen, brought by a spell or dropped by a transport such as the Pelican) deal none.
 - A base at 0 or below loses. If both fall in the same round, the side further below zero loses. An exact tie undoes that round's damage and the match goes on.
 - There is no round limit: the match ends when a base falls.
 

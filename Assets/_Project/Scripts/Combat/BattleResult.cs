@@ -40,7 +40,7 @@ namespace Halobellum.Combat
         public int Survivors;
         public float DamageDealt;
         public int Kills;
-        /// <summary>Total base damage the surviving bodies deal to the enemy base. Bodies summoned in the battle deal none (Survivors still counts them).</summary>
+        /// <summary>Total base damage the surviving bodies deal to the enemy base. Bodies carried in or summoned in the battle deal none (Survivors still counts them; D178).</summary>
         public float SurvivorBaseDamage;
         /// <summary>
         /// How much of the army placed before the battle is left at its end, from 0 to 1: each placed body's health and shield left, weighted by
