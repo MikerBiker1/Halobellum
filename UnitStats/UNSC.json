@@ -1,6 +1,6 @@
 {
   "_help": "Halobellum unit stats: UNSC base roster. Change numbers, then restart the game. If anything is wrong, the main menu says which file, line and field, and the game uses its own values for every unit; it never changes this file. Delete this file to get this version's values back. A new version of the game writes its own values over these files, so keep a copy of your changes.",
-  "gameVersion": "0.415.2",
+  "gameVersion": "0.416.0",
   "units": [
     {
       "name": "Marine",
@@ -747,7 +747,7 @@
       "squadSize": 1,
       "tier": 2,
       "baseDamage": 60,
-      "maxHealth": 1400,
+      "maxHealth": 900,
       "armorType": "Light",
       "maxShield": 0,
       "shieldRegenPerSecond": 0,
@@ -765,7 +765,7 @@
       "weapons": [
         {
           "name": "M370 Autocannon",
-          "damagePerShot": 25,
+          "damagePerShot": 32,
           "fireInterval": 0.3,
           "range": 14,
           "minRange": 0,

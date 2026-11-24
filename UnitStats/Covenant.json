@@ -1,6 +1,6 @@
 {
   "_help": "Halobellum unit stats: Covenant base roster. Change numbers, then restart the game. If anything is wrong, the main menu says which file, line and field, and the game uses its own values for every unit; it never changes this file. Delete this file to get this version's values back. A new version of the game writes its own values over these files, so keep a copy of your changes.",
-  "gameVersion": "0.415.2",
+  "gameVersion": "0.416.0",
   "units": [
     {
       "name": "Grunt",
@@ -887,7 +887,7 @@
       "squadSize": 1,
       "tier": 2,
       "baseDamage": 60,
-      "maxHealth": 1550,
+      "maxHealth": 1000,
       "armorType": "Light",
       "maxShield": 0,
       "shieldRegenPerSecond": 0,
@@ -905,7 +905,7 @@
       "weapons": [
         {
           "name": "Plasma Turrets",
-          "damagePerShot": 15,
+          "damagePerShot": 20,
           "fireInterval": 0.3,
           "range": 14,
           "minRange": 0,

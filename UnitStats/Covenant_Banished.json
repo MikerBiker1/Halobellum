@@ -1,6 +1,6 @@
 {
   "_help": "Halobellum unit stats: Covenant, Banished exclusives. Change numbers, then restart the game. If anything is wrong, the main menu says which file, line and field, and the game uses its own values for every unit; it never changes this file. Delete this file to get this version's values back. A new version of the game writes its own values over these files, so keep a copy of your changes.",
-  "gameVersion": "0.415.2",
+  "gameVersion": "0.416.0",
   "units": [
     {
       "name": "Chopper",
@@ -118,7 +118,7 @@
       "weapons": [
         {
           "name": "Spike Grenade Launcher",
-          "damagePerShot": 35,
+          "damagePerShot": 32,
           "fireInterval": 2,
           "range": 14,
           "minRange": 2,
