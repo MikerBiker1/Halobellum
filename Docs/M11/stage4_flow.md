@@ -26,7 +26,7 @@ The main page has a new item, **LAN Game**, between Play and Settings. Its page 
 | `LanLobby.cs` | `LanLobby`, `LanLobbyState`, `LanLobbyOptions`: hosting, browsing, joining, refusals, Cancel, and handing the connection to the match (`TakeChannel`) |
 | `LanBufferedChannel.cs` | a channel with messages put back in front: the guest's lobby reads the host's MatchStart in the menu, then hands the session over with that message put back for `LanGuestStart` |
 | `LanIdentity.cs` | the code fingerprint (build ids of Core, Combat, Economy and Net), the content text of the unit stats files (`modded=no`, or `modded=yes;Marine=...;...` so a refusal names the units), and the name rules |
-| `LanDemoArgs.cs` | `-lanDemo`, `-lanDemoSeed`, `-lanDemoAddress`, `-windowSlot` and the window slot rectangles |
+| `LanDemoArgs.cs` | `-lanDemo`, `-lanDemoSeed`, `-lanDemoAddress`, `-lanDemoNetwork`, `-windowSlot` and the window slot rectangles |
 
 States: `Idle`; host: `HostWaiting`, `HostReady`, `HostFailed` (the port is in use; it tries again every 2 s); join: `Browsing`, `JoinConnecting`, `JoinWaiting`, `JoinFailed`, `GuestStarting`; then `Started` once the connection is handed over. Call `Update()` every frame.
 
@@ -82,6 +82,7 @@ GameFlow.TakeLanMatch();          // the Match scene takes it once
 
 - `-lanDemo host`: the menu opens the LAN page, hosts with the default settings (Faction mode), and starts as soon as a guest joins.
 - `-lanDemo join`: the menu joins 127.0.0.1, or `-lanDemoAddress A`. If the host is not there yet, it tries again every 2 s. It does not listen for announcements.
+- `-lanDemoNetwork`: a demo host normally listens on 127.0.0.1 only, so Windows Firewall does not ask; with this flag it listens on every network card, for a demo across two PCs.
 - In both, the Insane AI plays this side. It picks the starting card through the coordinator. It takes its card and deploys on the Match for its own team (as `AiSeat` in `LockstepTestKit`), then presses Ready. Battles run at 4x, the fastest speed a player can pick. The game quits 3 s after the match ends, or after a final state.
 - `-lanDemoSeed N`: the host's seed.
 - `-windowSlot 0|1`: a window half the screen wide. Slot 0 is on the left and slot 1 on the right. The height is the screen height less 120 px. Only in a built game.

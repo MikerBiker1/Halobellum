@@ -367,6 +367,8 @@ namespace Halobellum.Tests.Net
             Assert.AreEqual(1, join.WindowSlot);
             Assert.AreEqual(-1, LanDemoArgs.Parse(new[] { "-windowSlot", "2" }).WindowSlot);
             Assert.AreEqual(LanDemoRole.None, LanDemoArgs.Parse(new[] { "-lanDemo" }).Role);
+            Assert.IsFalse(host.ListenOnNetwork, "a demo host listens on 127.0.0.1 only by default (no firewall prompt)");
+            Assert.IsTrue(LanDemoArgs.Parse(new[] { "-lanDemo", "host", "-lanDemoNetwork" }).ListenOnNetwork);
 
             LanDemoArgs.SlotRect(0, 1920, 1080, out int x0, out int y0, out int w0, out int h0);
             LanDemoArgs.SlotRect(1, 1920, 1080, out int x1, out int y1, out int w1, out int h1);

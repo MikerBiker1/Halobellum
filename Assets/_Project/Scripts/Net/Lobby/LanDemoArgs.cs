@@ -21,6 +21,8 @@ namespace Halobellum.Net
         public const string SeedFlag = "-lanDemoSeed";
         public const string AddressFlag = "-lanDemoAddress";
         public const string WindowSlotFlag = "-windowSlot";
+        /// <summary>A demo host listens on 127.0.0.1 only (no Windows Firewall prompt) unless this flag is given, for a demo across two PCs.</summary>
+        public const string NetworkFlag = "-lanDemoNetwork";
         public const string DefaultAddress = "127.0.0.1";
 
         public LanDemoRole Role = LanDemoRole.None;
@@ -30,6 +32,9 @@ namespace Halobellum.Net
         public string Address = DefaultAddress;
         /// <summary>0 (left half) or 1 (right half), or -1 for the window as usual.</summary>
         public int WindowSlot = -1;
+
+        /// <summary>-lanDemoNetwork: listen on every network card instead of 127.0.0.1 only.</summary>
+        public bool ListenOnNetwork;
 
         public bool IsDemo => Role != LanDemoRole.None;
 
@@ -44,6 +49,7 @@ namespace Halobellum.Net
             if (int.TryParse(Value(args, SeedFlag), NumberStyles.Integer, CultureInfo.InvariantCulture, out int seed)) result.Seed = seed;
             string address = Value(args, AddressFlag);
             if (!string.IsNullOrWhiteSpace(address) && !address.StartsWith("-")) result.Address = address.Trim();
+            foreach (string arg in args) if (string.Equals(arg, NetworkFlag, StringComparison.OrdinalIgnoreCase)) result.ListenOnNetwork = true;
             if (int.TryParse(Value(args, WindowSlotFlag), NumberStyles.Integer, CultureInfo.InvariantCulture, out int slot) && (slot == 0 || slot == 1)) result.WindowSlot = slot;
             return result;
         }

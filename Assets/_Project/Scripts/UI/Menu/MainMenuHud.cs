@@ -139,7 +139,13 @@ namespace Halobellum.UI
             _lanName = GameSettings.LanPlayerName;
             _lanAddress = GameSettings.LanAddress;
             // A test run joins 127.0.0.1 and lists no games, so a second copy on the PC does not listen on the network.
-            if (_lobby == null) _lobby = new LanLobby(LobbyOptions ?? new LanLobbyOptions { Log = LanGameIdentity.Log, Browse = _demo.Role != LanDemoRole.Join });
+            // A test run also listens on 127.0.0.1 only, so Windows Firewall does not ask (unless -lanDemoNetwork, for two PCs).
+            if (_lobby == null) _lobby = new LanLobby(LobbyOptions ?? new LanLobbyOptions
+            {
+                Log = LanGameIdentity.Log,
+                Browse = _demo.Role != LanDemoRole.Join,
+                BindAddress = _demo.IsDemo && !_demo.ListenOnNetwork ? System.Net.IPAddress.Loopback : null,
+            });
         }
 
         /// <summary>Shows the host panel: the name and the match's settings, and Host. Nothing is hosted yet, so the name can still change.</summary>
