@@ -100,6 +100,14 @@ namespace Halobellum.Economy
         /// <summary>Research Center steps bought.</summary>
         public int ResearchHealthSteps, ResearchDamageSteps;
 
+        /// <summary>
+        /// In a two-humans match (M11): the id this side's next squad gets. Each side counts on its own, so the ids do not depend on the
+        /// order in which the two machines apply the two sides' actions. Undo puts it back. Unused in a match against the AI (0).
+        /// </summary>
+        public int NextSquadId { get; internal set; }
+        /// <summary>The same for this side's next spell (two-humans match only).</summary>
+        public int NextSpellId { get; internal set; }
+
         public PlacedTower FindTower(TowerKind kind) => Towers.Find(t => t.Kind == kind);
 
         /// <summary>How many times the player took this card.</summary>
@@ -194,6 +202,7 @@ namespace Halobellum.Economy
         public sealed class Snapshot
         {
             internal int Credits, SquadsBoughtThisRound, UnlocksThisRound, BonusIncome, ExtraSquadsPerRound, IncomePenalty, ResearchHealthSteps, ResearchDamageSteps;
+            internal int NextSquadId, NextSpellId;
             internal bool BoughtExtraSlot, UsedRapidResupply, EliteRecruitment, BoughtDeploymentModule;
             internal ArmyBuffs Buffs;
             internal CardOffer Offer;
@@ -214,6 +223,7 @@ namespace Halobellum.Economy
                 Credits = Credits, SquadsBoughtThisRound = SquadsBoughtThisRound, UnlocksThisRound = UnlocksThisRound, BonusIncome = BonusIncome,
                 ExtraSquadsPerRound = ExtraSquadsPerRound, IncomePenalty = IncomePenalty, ResearchHealthSteps = ResearchHealthSteps, ResearchDamageSteps = ResearchDamageSteps,
                 BoughtExtraSlot = BoughtExtraSlot, UsedRapidResupply = UsedRapidResupply, EliteRecruitment = EliteRecruitment, BoughtDeploymentModule = BoughtDeploymentModule,
+                NextSquadId = NextSquadId, NextSpellId = NextSpellId,
                 Buffs = Buffs, Offer = Offer, Unlocked = new List<UnitStats>(Unlocked),
                 Squads = new List<(PlacedSquad, PlacedSquad)>(), Spells = new List<(OwnedSpell, OwnedSpell)>(),
                 Trainings = new List<(OwnedTraining, int)>(), Towers = new List<(PlacedTower, int, int)>(),
@@ -232,6 +242,7 @@ namespace Halobellum.Economy
             Credits = s.Credits; SquadsBoughtThisRound = s.SquadsBoughtThisRound; UnlocksThisRound = s.UnlocksThisRound; BonusIncome = s.BonusIncome;
             ExtraSquadsPerRound = s.ExtraSquadsPerRound; IncomePenalty = s.IncomePenalty; ResearchHealthSteps = s.ResearchHealthSteps; ResearchDamageSteps = s.ResearchDamageSteps;
             BoughtExtraSlot = s.BoughtExtraSlot; UsedRapidResupply = s.UsedRapidResupply; EliteRecruitment = s.EliteRecruitment; BoughtDeploymentModule = s.BoughtDeploymentModule;
+            NextSquadId = s.NextSquadId; NextSpellId = s.NextSpellId;
             Offer = s.Offer;
             SetBuffs(s.Buffs);
             Unlocked.Clear();

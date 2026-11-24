@@ -108,9 +108,10 @@ namespace Halobellum.Economy
         /// <summary>A squad as actions name it: its unit and id, as in "Scorpion #19".</summary>
         public static string SquadLabel(PlacedSquad squad) => squad == null ? null : $"{squad.Type.Name} #{squad.Id}";
 
-        public static string MoveDetail(PlacedSquad squad, int column, int row, bool turned) => $"{SquadLabel(squad)} to column {column}, row {row}, turned {turned}";
+        // Invariant: flank-zone columns and rows are negative, and some languages write another minus sign (the replay reads the plain one).
+        public static string MoveDetail(PlacedSquad squad, int column, int row, bool turned) => FormattableString.Invariant($"{SquadLabel(squad)} to column {column}, row {row}, turned {turned}");
 
-        public static string TurnDetail(PlacedSquad squad, bool turned) => $"{SquadLabel(squad)} turned to {turned}";
+        public static string TurnDetail(PlacedSquad squad, bool turned) => FormattableString.Invariant($"{SquadLabel(squad)} turned to {turned}");
 
         public static string TechDetail(UnitStats type, TechUpgrade tech) => $"{type?.Name}: {tech?.Name}";
 

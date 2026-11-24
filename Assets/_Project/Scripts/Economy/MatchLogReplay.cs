@@ -6,6 +6,7 @@
 // Read reads the lines. Apply does one action through an IReplayHands: MatchHands works on a Match directly (PlayHeadless, the tests), and the
 // Match scene's hands go through its MatchController, as the player's clicks did (Presentation's MatchReplay, with pictures).
 // Only what the player did is replayed; refused actions changed nothing and are skipped. Docs/battle_log.md says how to start one.
+// The hands say which side they act for (Team A, the player, in every battle log; M11 lets them act for Team B too).
 // Depends on: Match, MatchLog (the format), PlayerState, Halobellum.Core, Halobellum.Combat.
 
 using System;
@@ -23,6 +24,8 @@ namespace Halobellum.Economy
     public interface IReplayHands
     {
         Match Match { get; }
+        /// <summary>The side whose actions these hands do: Team A (the player) for a battle log.</summary>
+        Team Team { get; }
         ActionResult ChooseDraft(int index);
         ActionResult ChooseCard(int index);
         ActionResult SkipCards();
@@ -135,7 +138,7 @@ namespace Halobellum.Economy
         public static ActionResult Apply(IReplayHands hands, ReplayLine line)
         {
             Match match = hands.Match;
-            PlayerState player = match.Player;
+            PlayerState player = match.Get(hands.Team);
             string detail = line.Detail ?? "";
             switch (line.Action)
             {
@@ -335,42 +338,48 @@ namespace Halobellum.Economy
         }
     }
 
-    /// <summary>The player's actions done on the Match itself, each recorded for Undo as the Match scene records them.</summary>
+    /// <summary>One side's actions done on the Match itself (Team A, the player, unless told otherwise), each recorded for Undo as the Match scene records them.</summary>
     public sealed class MatchHands : IReplayHands
     {
-        public MatchHands(Match match) => Match = match;
+        public MatchHands(Match match, Team team = Team.A)
+        {
+            Match = match;
+            Team = team;
+        }
 
         public Match Match { get; }
+        public Team Team { get; }
 
         private ActionResult Done(ActionResult result)
         {
-            if (result.Ok) Match.RecordPlayerAction();
+            if (result.Ok) Match.RecordAction(Team);
             return result;
         }
 
-        public ActionResult ChooseDraft(int index) => Match.ChooseDraft(index);
-        public ActionResult ChooseCard(int index) => Match.ChooseCard(Team.A, index);
-        public ActionResult SkipCards() => Match.SkipCards(Team.A);
-        public ActionResult Unlock(UnitStats type) => Done(Match.Unlock(Team.A, type));
-        public ActionResult Buy(UnitStats type) => Done(Match.Buy(Team.A, type));
-        public ActionResult Move(PlacedSquad squad, int column, int row, bool turned) => Done(Match.Move(Team.A, squad.Id, column, row, turned));
-        public ActionResult Turn(PlacedSquad squad) => Done(Match.Move(Team.A, squad.Id, squad.Column, squad.Row, !squad.Rotated90));
-        public ActionResult Sell(PlacedSquad squad) => Done(Match.Sell(Team.A, squad.Id));
-        public ActionResult LevelUp(PlacedSquad squad) => Done(Match.LevelUp(Team.A, squad.Id));
-        public ActionResult LevelUpAll(UnitStats type) => Done(Match.LevelUpAll(Team.A, type));
-        public ActionResult BuyTech(UnitStats type, TechUpgrade tech) => Done(Match.BuyTech(Team.A, type, tech));
-        public ActionResult LevelUpTower(TowerKind kind) => Done(Match.LevelUpTower(Team.A, kind));
-        public ActionResult BuyExtraSlot() => Done(Match.BuyExtraSlot(Team.A));
-        public ActionResult BuyOilZone() => Done(Match.BuyOilZone(Team.A));
-        public ActionResult RapidResupply() => Done(Match.RapidResupply(Team.A));
-        public ActionResult BuyEliteRecruitment() => Done(Match.BuyEliteRecruitment(Team.A));
-        public ActionResult BuyResearch(bool health) => Done(Match.BuyResearch(Team.A, health));
-        public ActionResult BuyDeploymentModule() => Done(Match.BuyDeploymentModule(Team.A));
-        public ActionResult PlaceSpell(OwnedSpell spell, Vec2 position, float angleDegrees) => Done(Match.PlaceSpell(Team.A, spell.Id, position, angleDegrees));
-        public ActionResult UnplaceSpell(OwnedSpell spell) => Done(Match.UnplaceSpell(Team.A, spell.Id));
-        public ActionResult PlaceItem(ItemStats item, PlacedSquad squad) => Done(Match.PlaceItem(Team.A, item, squad.Id));
-        public ActionResult UseTraining(PlacedSquad squad) => Done(Match.UseTraining(Team.A, squad.Id));
-        public ActionResult Undo() => Match.Undo();
+        // Against the AI, ChooseDraft(Team.A, index) is ChooseDraft(index), so a battle log's replay is unchanged.
+        public ActionResult ChooseDraft(int index) => Match.ChooseDraft(Team, index);
+        public ActionResult ChooseCard(int index) => Match.ChooseCard(Team, index);
+        public ActionResult SkipCards() => Match.SkipCards(Team);
+        public ActionResult Unlock(UnitStats type) => Done(Match.Unlock(Team, type));
+        public ActionResult Buy(UnitStats type) => Done(Match.Buy(Team, type));
+        public ActionResult Move(PlacedSquad squad, int column, int row, bool turned) => Done(Match.Move(Team, squad.Id, column, row, turned));
+        public ActionResult Turn(PlacedSquad squad) => Done(Match.Move(Team, squad.Id, squad.Column, squad.Row, !squad.Rotated90));
+        public ActionResult Sell(PlacedSquad squad) => Done(Match.Sell(Team, squad.Id));
+        public ActionResult LevelUp(PlacedSquad squad) => Done(Match.LevelUp(Team, squad.Id));
+        public ActionResult LevelUpAll(UnitStats type) => Done(Match.LevelUpAll(Team, type));
+        public ActionResult BuyTech(UnitStats type, TechUpgrade tech) => Done(Match.BuyTech(Team, type, tech));
+        public ActionResult LevelUpTower(TowerKind kind) => Done(Match.LevelUpTower(Team, kind));
+        public ActionResult BuyExtraSlot() => Done(Match.BuyExtraSlot(Team));
+        public ActionResult BuyOilZone() => Done(Match.BuyOilZone(Team));
+        public ActionResult RapidResupply() => Done(Match.RapidResupply(Team));
+        public ActionResult BuyEliteRecruitment() => Done(Match.BuyEliteRecruitment(Team));
+        public ActionResult BuyResearch(bool health) => Done(Match.BuyResearch(Team, health));
+        public ActionResult BuyDeploymentModule() => Done(Match.BuyDeploymentModule(Team));
+        public ActionResult PlaceSpell(OwnedSpell spell, Vec2 position, float angleDegrees) => Done(Match.PlaceSpell(Team, spell.Id, position, angleDegrees));
+        public ActionResult UnplaceSpell(OwnedSpell spell) => Done(Match.UnplaceSpell(Team, spell.Id));
+        public ActionResult PlaceItem(ItemStats item, PlacedSquad squad) => Done(Match.PlaceItem(Team, item, squad.Id));
+        public ActionResult UseTraining(PlacedSquad squad) => Done(Match.UseTraining(Team, squad.Id));
+        public ActionResult Undo() => Match.Undo(Team);
     }
 
     /// <summary>Just enough JSON to read the battle log's lines back: objects, arrays, strings, numbers, true, false and null.</summary>

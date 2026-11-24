@@ -61,8 +61,8 @@ Each stage ends with its tests passing. Engine-free code is tested with `dotnet 
 
 ## Status
 
-- [ ] Stage 1: two-humans Match
-- [ ] Stage 2: network layer
+- [x] Stage 1: two-humans Match (`stage1_api.md`)
+- [x] Stage 2: network layer (`net_transport.md`, `lockstep.md`)
 - [ ] Stage 3: each player at the bottom
 - [ ] Stage 4: menu and match flow
 - [ ] Stage 5: end to end

@@ -5,6 +5,7 @@
         "Halobellum.Core",
         "Halobellum.Combat",
         "Halobellum.Economy",
+        "Halobellum.Net",
         "Halobellum.Presentation",
         "Halobellum.Units",
         "Unity.InputSystem",

@@ -239,6 +239,7 @@ namespace Halobellum.Presentation
             public ControllerHands(MatchController controller) => _c = controller;
 
             public Match Match => _c.Match;
+            public Team Team => Team.A; // The battle log is the player's (Team A).
             public ActionResult ChooseDraft(int index) => _c.ChooseDraft(index);
             public ActionResult ChooseCard(int index) => _c.ChooseCard(index);
             public ActionResult SkipCards() => _c.SkipCards();

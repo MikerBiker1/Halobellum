@@ -20,6 +20,9 @@ namespace Halobellum.Core
             if (_state == 0) _state = 1;
         }
 
+        /// <summary>The generator's current state, for a hash that checks two machines are in step (M11). Reading it changes nothing.</summary>
+        public ulong State => _state;
+
         /// <summary>Next raw 64-bit value (xorshift64*).</summary>
         public ulong NextULong()
         {

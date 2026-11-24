@@ -7,6 +7,7 @@
         "Halobellum.Core",
         "Halobellum.Combat",
         "Halobellum.Economy",
+        "Halobellum.Net",
         "Halobellum.Units",
         "Halobellum.Presentation",
         "Halobellum.UI"

@@ -1,9 +1,11 @@
 <!--
   SimTests.csproj
-  Developer-only harness: compiles the plain C# code (Scripts/Core, Combat and Economy) and the
-  EditMode tests that do not need Unity, then runs them with the .NET SDK in a few seconds.
-  Unity's Test Runner remains the official test run. Tests under Assets/Tests/EditMode/Unity need
-  the Unity engine and are excluded here.
+  Developer-only harness: compiles the plain C# code (Scripts/Core, Combat, Economy and Net, the LAN layer
+  of Milestone 11) and the EditMode tests that do not need Unity, then runs them with the .NET SDK in
+  about half a minute. Unity's Test Runner remains the official test run. Tests under
+  Assets/Tests/EditMode/Unity need the Unity engine and are excluded here.
+  The Net tests use real sockets on the loopback address (127.0.0.1) with ports the system picks, so no
+  firewall prompt appears.
   Run: dotnet test Tools/SimTests
 -->
 <Project Sdk="Microsoft.NET.Sdk">
@@ -19,6 +21,7 @@
     <Compile Include="../../Assets/_Project/Scripts/Core/**/*.cs" />
     <Compile Include="../../Assets/_Project/Scripts/Combat/**/*.cs" Exclude="../../Assets/_Project/Scripts/Combat/Presentation/**/*.cs" />
     <Compile Include="../../Assets/_Project/Scripts/Economy/**/*.cs" />
+    <Compile Include="../../Assets/_Project/Scripts/Net/**/*.cs" />
     <Compile Include="../../Assets/Tests/EditMode/**/*.cs" Exclude="../../Assets/Tests/EditMode/Unity/**/*.cs" />
   </ItemGroup>
   <ItemGroup>

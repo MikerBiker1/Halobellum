@@ -50,7 +50,12 @@
 // The AI only sees the match through an AiView: its own state, public information, and each army as
 // it was revealed when the last battle started (SeenArmy), never the opponent's current deployment.
 // The player gets the same: BuildPreview shows the enemy's last-battle army as ghosts (D25).
-// Depends on: MatchRules, PlayerState, DeploymentGrid, StartingDraft, TowerBuilder, RoundSummary, IMatchAi, AiView,
+// Two humans (Milestone 11, a LAN game): a Match built with MatchSeats.TwoHumans has no AI. Each side picks its own starting card
+// (ChooseDraft(team, index); round 1 begins when both have), takes or skips its own card offer while the other side may already deploy
+// (InCards), has its own undo history and its own squad and spell id counters (kept in PlayerState, so Undo puts them back). Every action
+// that works is recorded as a MatchCommand (TakeCommands), which MatchCommands.Apply does again on the other machine. None of this changes
+// a match against the AI.
+// Depends on: MatchRules, PlayerState, DeploymentGrid, StartingDraft, TowerBuilder, RoundSummary, IMatchAi, AiView, MatchCommand, RoundOutcome,
 //             Halobellum.Combat (HeadlessBattleRunner, BattleSimulation), Halobellum.Core.
 
 using System;
@@ -69,6 +74,15 @@ namespace Halobellum.Economy
         MatchOver = 4,
         /// <summary>Start of a round from round 2: the player takes a card or skips (Milestone 7).</summary>
         Cards = 5,
+    }
+
+    /// <summary>Who plays the two sides of a match.</summary>
+    public enum MatchSeats
+    {
+        /// <summary>The player is Team A, an AI (IMatchAi) plays Team B: every match before Milestone 11.</summary>
+        HumanVsAi = 0,
+        /// <summary>Two people, one on each side (a LAN game, Milestone 11): no AI, and each side decides for itself.</summary>
+        TwoHumans = 1,
     }
 
     /// <summary>Whether an action worked, and if not, why (shown to the player).</summary>
@@ -95,15 +109,40 @@ namespace Halobellum.Economy
         private string _seenFactionA, _seenFactionB;
         private int _nextSquadId = 1;
         private int _nextSpellId = 1;
-        // Undo in deployment (the owner, 2026-11-06): the player's state before each action this round, and as it is now.
-        private readonly Stack<PlayerState.Snapshot> _undo = new Stack<PlayerState.Snapshot>();
-        private PlayerState.Snapshot _undoNow;
-        private int _undoRound = -1;
+        // Undo in deployment (the owner, 2026-11-06): each side's state before each action this round, and as it is now ([0] Team A, [1] Team B).
+        // Against the AI only Team A's is used.
+        private readonly Stack<PlayerState.Snapshot>[] _undo = { new Stack<PlayerState.Snapshot>(), new Stack<PlayerState.Snapshot>() };
+        private readonly PlayerState.Snapshot[] _undoNow = new PlayerState.Snapshot[2];
+        private readonly int[] _undoRound = { -1, -1 };
         private int _battleCount;
         private int _baseHealthBeforeA, _baseHealthBeforeB;
         private ArmyBuffs _seenBuffsA = new ArmyBuffs(), _seenBuffsB = new ArmyBuffs();
         private readonly Dictionary<(TowerKind, int), UnitStats> _towerStats = new Dictionary<(TowerKind, int), UnitStats>();
+        // Tower levels as the other side saw them when the last battle started: Team B's towers (as Team A saw them), and Team A's.
         private readonly Dictionary<TowerKind, int> _seenEnemyTowerLevels = new Dictionary<TowerKind, int>();
+        private readonly Dictionary<TowerKind, int> _seenPlayerTowerLevels = new Dictionary<TowerKind, int>();
+        // Two humans (M11): each side's starting card (-1 until picked), its commands not yet taken, and its command counter.
+        private readonly MatchSeats _seats;
+        private readonly int[] _draftPick = { -1, -1 };
+        private readonly List<MatchCommand>[] _commands = { new List<MatchCommand>(), new List<MatchCommand>() };
+        private readonly int[] _commandSeq = new int[2];
+
+        /// <summary>In a two-humans match, Team B's first squad and spell id: far above Team A's, so the two never meet (Team A counts from 1).</summary>
+        public const int TeamBFirstId = 1000001;
+
+        /// <summary>
+        /// A match between two people (seats = TwoHumans, Milestone 11): no AI plays either side. Both machines build it from the same
+        /// rules, factions and seed, and stay the same by doing the same MatchCommands. MatchSeats.HumanVsAi gives a match against the
+        /// do-nothing AI, as the other constructor does with no AI.
+        /// </summary>
+        public Match(MatchRules rules, CombatRules combatRules, IReadOnlyList<FactionInfo> factions, int seed, MatchSeats seats)
+            : this(rules, combatRules, factions, seed, (IMatchAi)null)
+        {
+            _seats = seats;
+            if (seats != MatchSeats.TwoHumans) return;
+            Player.NextSquadId = Player.NextSpellId = 1;
+            Enemy.NextSquadId = Enemy.NextSpellId = TeamBFirstId;
+        }
 
         public Match(MatchRules rules, CombatRules combatRules, IReadOnlyList<FactionInfo> factions, int seed, IMatchAi enemyAi)
         {
@@ -143,13 +182,19 @@ namespace Halobellum.Economy
 
         public PlayerState Get(Team team) => team == Team.A ? Player : Enemy;
 
+        /// <summary>Who plays the two sides.</summary>
+        public MatchSeats Seats => _seats;
+
+        /// <summary>True in a match between two people (a LAN game): no AI, each side decides for itself.</summary>
+        public bool IsTwoHumans => _seats == MatchSeats.TwoHumans;
+
         /// <summary>The AI playing Team B.</summary>
         public IMatchAi EnemyAi => _enemyAi;
 
-        /// <summary>Replaces the AI (e.g. after the player picks a difficulty). Only before the draft is chosen.</summary>
+        /// <summary>Replaces the AI (e.g. after the player picks a difficulty). Only before the draft is chosen, and never in a two-humans match.</summary>
         public bool SetEnemyAi(IMatchAi ai)
         {
-            if (Phase != MatchPhase.Draft || ai == null) return false;
+            if (Phase != MatchPhase.Draft || ai == null || IsTwoHumans) return false;
             _enemyAi = ai;
             return true;
         }
@@ -177,15 +222,50 @@ namespace Halobellum.Economy
 
         // ------------------------------------------------------------------ draft
 
-        /// <summary>The player picks a draft card; the AI then picks its own and round 1 begins.</summary>
+        /// <summary>
+        /// The player picks a draft card; the AI then picks its own and round 1 begins. In a two-humans match this fails: it would not know
+        /// whose card it is (the guest plays Team B), so the caller must say, with ChooseDraft(team, index).
+        /// </summary>
         public ActionResult ChooseDraft(int cardIndex)
         {
+            if (IsTwoHumans) return ActionResult.Fail(TwoHumansNeedsTeam);
             if (Phase != MatchPhase.Draft) return ActionResult.Fail("The draft is over.");
             if (cardIndex < 0 || cardIndex >= PlayerDraft.Count) return ActionResult.Fail("No such card.");
 
             // The AI chooses before the player's card is applied, so that it can't know that card.
             int enemyChoice = EnemyDraft.Count > 0 ? Math.Clamp(_enemyAi.ChooseDraftCard(new AiView(this, Team.B), EnemyDraft), 0, EnemyDraft.Count - 1) : -1;
-            ApplyDraftCard(Player, PlayerDraft[cardIndex]);
+            BeginAfterDraft(cardIndex, enemyChoice);
+            return ActionResult.Success();
+        }
+
+        /// <summary>
+        /// One side picks its starting card. In a two-humans match the pick waits for the other side's; once both are in, Team A's card
+        /// is applied, then Team B's (as against the AI), both see each other's starting squads and round 1 begins. Against the AI,
+        /// Team A's pick is ChooseDraft(index) and Team B's is the AI's.
+        /// </summary>
+        public ActionResult ChooseDraft(Team team, int cardIndex)
+        {
+            if (!IsTwoHumans) return team == Team.A ? ChooseDraft(cardIndex) : ActionResult.Fail("The AI picks Team B's starting card.");            if (Phase != MatchPhase.Draft) return ActionResult.Fail("The draft is over.");
+            List<DraftCard> cards = team == Team.A ? PlayerDraft : EnemyDraft;
+            if (cardIndex < 0 || cardIndex >= cards.Count) return ActionResult.Fail("No such card.");
+            if (_draftPick[Side(team)] >= 0) return ActionResult.Fail("Your starting card is already chosen.");
+
+            _draftPick[Side(team)] = cardIndex;
+            Record(team, new MatchCommand { Action = MatchCommand.ChooseDraftAction, Index = cardIndex }, undoable: false);
+            if (_draftPick[0] >= 0 && _draftPick[1] >= 0) BeginAfterDraft(_draftPick[0], _draftPick[1]);
+            return ActionResult.Success();
+        }
+
+        /// <summary>True once this side has picked its starting card (in a two-humans match), or once the draft is over.</summary>
+        public bool HasChosenDraft(Team team) => Phase != MatchPhase.Draft || _draftPick[Side(team)] >= 0;
+
+        /// <summary>The starting card a side picked in a two-humans match, or -1.</summary>
+        internal int DraftPick(Team team) => _draftPick[Side(team)];
+
+        /// <summary>Applies both starting cards (Team A's first; -1 for none), reveals both armies and begins round 1.</summary>
+        private void BeginAfterDraft(int playerChoice, int enemyChoice)
+        {
+            ApplyDraftCard(Player, PlayerDraft[playerChoice]);
             if (enemyChoice >= 0) ApplyDraftCard(Enemy, EnemyDraft[enemyChoice]);
 
             // Both sides see each other's starting squads, as they stand in the middle of the zone before anyone deploys (D58).
@@ -195,8 +275,91 @@ namespace Halobellum.Economy
             _seenFactionB = Enemy.Faction?.Name;
 
             BeginRound(1);
-            return ActionResult.Success();
         }
+
+        private static int Side(Team team) => team == Team.A ? 0 : 1;
+
+        /// <summary>The next squad id for this side: its own counter in a two-humans match, otherwise the one counter both sides share.</summary>
+        private int NewSquadId(PlayerState player) => IsTwoHumans ? player.NextSquadId++ : _nextSquadId++;
+
+        /// <summary>The next spell id for this side, the same way.</summary>
+        private int NewSpellId(PlayerState player) => IsTwoHumans ? player.NextSpellId++ : _nextSpellId++;
+
+        /// <summary>The shared id counters (used against the AI), for the state hash.</summary>
+        internal int SharedNextSquadId => _nextSquadId;
+        internal int SharedNextSpellId => _nextSpellId;
+        internal int BattleCount => _battleCount;
+        internal ArmyBuffs SeenBuffs(Team team) => team == Team.A ? _seenBuffsA : _seenBuffsB;
+        internal ulong RandomState => _random.State;
+
+        /// <summary>
+        /// In a two-humans match, true while this side's card offer waits for it (take or skip it first: until then its deployment
+        /// actions are refused). The other side can deploy meanwhile. Against the AI it is the Cards phase for Team A.
+        /// </summary>
+        public bool InCards(Team team) => IsTwoHumans ? Phase == MatchPhase.Deployment && Get(team).Offer != null : team == Team.A && Phase == MatchPhase.Cards;
+
+        /// <summary>In a two-humans match, refuses a deployment action while the side's card offer waits. Never refuses against the AI.</summary>
+        private bool WaitsForCard(Team team, out ActionResult failed)
+        {
+            bool waits = IsTwoHumans && Get(team).Offer != null;
+            failed = waits ? ActionResult.Fail("Take or skip your card first.") : default;
+            return waits;
+        }
+
+        // ------------------------------------------------------------------ commands (two humans, M11)
+
+        /// <summary>
+        /// In a two-humans match: notes an action that worked as a command for the other machine (unless it is being applied from there),
+        /// and, for a deployment action, makes the state before it a step Undo can go back to. The undo history therefore follows from the
+        /// commands alone, the same on both machines; RecordAction does nothing in this mode.
+        /// </summary>
+        private void Record(Team team, MatchCommand command, bool undoable = true)
+        {
+            if (!IsTwoHumans) return;
+            command.Team = team;
+            command.Round = Round;
+            if (!ApplyingRemote)
+            {
+                command.Seq = ++_commandSeq[Side(team)];
+                _commands[Side(team)].Add(command);
+            }
+            if (undoable) PushUndo(team);
+        }
+
+        /// <summary>True while MatchCommands.Apply does another machine's command: it is not recorded again.</summary>
+        internal bool ApplyingRemote;
+
+        /// <summary>What the members that do not name a team say in a two-humans match, where they would not know whose side to act on.</summary>
+        private const string TwoHumansNeedsTeam = "In a two-humans match, say which team acts (use the overload that takes a Team).";
+
+        /// <summary>
+        /// MatchCommands.Apply: checks that a command from the other machine is that side's next one (its Seq is one more than the last)
+        /// and, if so, counts it. The other side's counter is not used for anything else on this machine, since its commands are never
+        /// recorded here. `expected` is the Seq that was due.
+        /// </summary>
+        internal bool TakeRemoteSeq(Team team, int seq, out int expected)
+        {
+            int side = Side(team);
+            expected = _commandSeq[side] + 1;
+            if (seq != expected) return false;
+            _commandSeq[side] = seq;
+            return true;
+        }
+
+        /// <summary>
+        /// The commands this side has done on this machine since the last call (two-humans match only; empty against the AI), in order,
+        /// and forgets them. Send them to the other machine, which does them with MatchCommands.Apply. Commands applied from the other
+        /// machine are not in it.
+        /// </summary>
+        public List<MatchCommand> TakeCommands(Team team)
+        {
+            var taken = new List<MatchCommand>(_commands[Side(team)]);
+            _commands[Side(team)].Clear();
+            return taken;
+        }
+
+        /// <summary>How many of this side's commands wait to be taken.</summary>
+        public int PendingCommands(Team team) => _commands[Side(team)].Count;
 
         private void ApplyDraftCard(PlayerState player, DraftCard card)
         {
@@ -209,7 +372,7 @@ namespace Halobellum.Economy
                 if (!DeploymentGrid.FindFreeSpot(player, type, false, CombatRules, out int column, out int row)) continue;
                 player.Squads.Add(new PlacedSquad
                 {
-                    Id = _nextSquadId++, Type = type, Column = column, Row = row,
+                    Id = NewSquadId(player), Type = type, Column = column, Row = row,
                     RoundBought = 1, PricePaid = 0, FromDraft = true,
                 });
             }
@@ -219,6 +382,7 @@ namespace Halobellum.Economy
 
         public ActionResult Unlock(Team team, UnitStats type)
         {
+            if (WaitsForCard(team, out ActionResult card)) return card;
             PlayerState player = Get(team);
             if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Units can only be unlocked during deployment.");
             if (!player.Roster.Contains(type)) return ActionResult.Fail(Rules.Mode == MatchMode.UnlockSkirmish ? $"{type.Name} cannot be unlocked here." : $"{type.Name} is not in your faction's roster.");
@@ -229,12 +393,14 @@ namespace Halobellum.Economy
             player.Credits -= type.UnlockCost;
             player.Unlocked.Add(type);
             player.UnlocksThisRound++;
+            if (IsTwoHumans) Record(team, new MatchCommand { Action = MatchCommand.UnlockAction, Unit = type.Name });
             return ActionResult.Success($"{type.Name} unlocked.");
         }
 
         /// <summary>Buys a squad and places it at the free spot nearest the middle of the zone.</summary>
         public ActionResult Buy(Team team, UnitStats type)
         {
+            if (WaitsForCard(team, out ActionResult card)) return card;
             if (!DeploymentGrid.FindFreeSpot(Get(team), type, false, CombatRules, out int column, out int row))
                 return ActionResult.Fail("Your deployment zone is full.");
             return Buy(team, type, column, row, false);
@@ -242,6 +408,7 @@ namespace Halobellum.Economy
 
         public ActionResult Buy(Team team, UnitStats type, int column, int row, bool rotated90)
         {
+            if (WaitsForCard(team, out ActionResult card)) return card;
             PlayerState player = Get(team);
             if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Squads can only be bought during deployment.");
             if (!player.Unlocked.Contains(type)) return ActionResult.Fail($"Unlock {type.Name} first.");
@@ -254,9 +421,10 @@ namespace Halobellum.Economy
             player.SquadsBoughtThisRound++;
             player.Squads.Add(new PlacedSquad
             {
-                Id = _nextSquadId++, Type = type, Column = column, Row = row, Rotated90 = rotated90,
+                Id = NewSquadId(player), Type = type, Column = column, Row = row, Rotated90 = rotated90,
                 RoundBought = Round, PricePaid = price, Level = player.EliteRecruitment ? 2 : 1,
             });
+            if (IsTwoHumans) Record(team, new MatchCommand { Action = MatchCommand.BuyAction, Unit = type.Name, Column = column, Row = row, Turned = rotated90 });
             return ActionResult.Success($"{type.Name} bought.");
         }
 
@@ -268,6 +436,7 @@ namespace Halobellum.Economy
 
         public ActionResult Move(Team team, int squadId, int column, int row, bool rotated90)
         {
+            if (WaitsForCard(team, out ActionResult card)) return card;
             PlayerState player = Get(team);
             PlacedSquad squad = player.FindSquad(squadId);
             if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Squads can only be moved during deployment.");
@@ -278,6 +447,7 @@ namespace Halobellum.Economy
             squad.Column = column;
             squad.Row = row;
             squad.Rotated90 = rotated90;
+            if (IsTwoHumans) Record(team, new MatchCommand { Action = MatchCommand.MoveAction, SquadId = squadId, Column = column, Row = row, Turned = rotated90 });
             return ActionResult.Success();
         }
 
@@ -309,6 +479,7 @@ namespace Halobellum.Economy
 
         public ActionResult LevelUp(Team team, int squadId)
         {
+            if (WaitsForCard(team, out ActionResult card)) return card;
             PlayerState player = Get(team);
             PlacedSquad squad = player.FindSquad(squadId);
             if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Squads can only be leveled up during deployment.");
@@ -322,6 +493,7 @@ namespace Halobellum.Economy
             squad.Level++;
             squad.Xp = 0f;
             squad.LevelUpSpent += cost;
+            if (IsTwoHumans) Record(team, new MatchCommand { Action = MatchCommand.LevelUpAction, SquadId = squadId });
             return ActionResult.Success($"{squad.Type.Name} is now level {squad.Level}.");
         }
 
@@ -343,6 +515,7 @@ namespace Halobellum.Economy
         /// <summary>Levels up every ready squad of this type, or none if the credits don't cover them all. Squads whose XP bar isn't full or at the maximum level are left out.</summary>
         public ActionResult LevelUpAll(Team team, UnitStats type)
         {
+            if (WaitsForCard(team, out ActionResult card)) return card;
             PlayerState player = Get(team);
             if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Squads can only be leveled up during deployment.");
             int count = SquadsReadyToLevel(team, type, out int totalPrice);
@@ -358,12 +531,14 @@ namespace Halobellum.Economy
                 squad.Xp = 0f;
                 squad.LevelUpSpent += cost;
             }
+            if (IsTwoHumans) Record(team, new MatchCommand { Action = MatchCommand.LevelUpAllAction, Unit = type.Name });
             return ActionResult.Success($"{count} x {type.Name} leveled up for {totalPrice}.");
         }
 
         /// <summary>Buys one of a unit type's tech upgrades; it applies to every squad of that type for the rest of the match.</summary>
         public ActionResult BuyTech(Team team, UnitStats type, TechUpgrade tech)
         {
+            if (WaitsForCard(team, out ActionResult card)) return card;
             PlayerState player = Get(team);
             if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Techs can only be bought during deployment.");
             if (type == null || tech == null || type.TechUpgrades == null || Array.IndexOf(type.TechUpgrades, tech) < 0)
@@ -374,6 +549,7 @@ namespace Halobellum.Economy
 
             player.Credits -= tech.Cost;
             player.AddTech(type, tech);
+            if (IsTwoHumans) Record(team, new MatchCommand { Action = MatchCommand.BuyTechAction, Unit = type.Name, Tech = tech.Name });
             return ActionResult.Success($"{tech.Name} researched for every {type.Name}.");
         }
 
@@ -503,26 +679,32 @@ namespace Halobellum.Economy
             return Math.Min(XpNeeded(squad), squad.Xp + XpEarnedIn(CurrentBattle, placed)[index]);
         }
 
-        /// <summary>Gives each placed squad the XP it earned in the finished battle (XpEarnedIn).</summary>
-        private void AwardXp(BattleSimulation battle, RoundSummary summary)
+        /// <summary>Gives each placed squad the XP the outcome says it earned in the battle (OutcomeOfCurrentBattle: XpEarnedIn), found by its id.</summary>
+        private void AwardXp(RoundOutcome outcome, RoundSummary summary)
         {
+            var earnedById = new Dictionary<int, float>();
+            foreach (SquadXp entry in outcome.Xp) earnedById[entry.SquadId] = entry.Xp;
             List<PlacedSquad> placed = PlacedInBattleOrder();
-            float[] earned = XpEarnedIn(battle, placed);
             for (int i = 0; i < placed.Count; i++)
             {
                 PlacedSquad squad = placed[i];
-                if (earned[i] <= 0f) continue;
-                summary.XpGained[squad.Id] = earned[i];
-                if (squad.Level < UnitUpgrades.MaxLevel) squad.Xp = Math.Min(XpNeeded(squad), squad.Xp + earned[i]);
+                if (!earnedById.TryGetValue(squad.Id, out float earned) || earned <= 0f) continue;
+                summary.XpGained[squad.Id] = earned;
+                if (squad.Level < UnitUpgrades.MaxLevel) squad.Xp = Math.Min(XpNeeded(squad), squad.Xp + earned);
             }
             foreach (PlacedSquad squad in Player.Squads)
             {
                 if (CanLevelUp(squad)) summary.PlayerSquadsReadyToLevel.Add(squad.Type.Name);
             }
+            foreach (PlacedSquad squad in Enemy.Squads)
+            {
+                if (CanLevelUp(squad)) summary.EnemySquadsReadyToLevel.Add(squad.Type.Name);
+            }
         }
 
         public ActionResult Sell(Team team, int squadId)
         {
+            if (WaitsForCard(team, out ActionResult card)) return card;
             PlayerState player = Get(team);
             PlacedSquad squad = player.FindSquad(squadId);
             if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Squads can only be sold during deployment.");
@@ -533,6 +715,7 @@ namespace Halobellum.Economy
             player.Credits += refund;
             if (squad.Item != null) player.Inventory.Add(squad.Item); // The item is not lost with the squad.
             player.Squads.Remove(squad);
+            if (IsTwoHumans) Record(team, new MatchCommand { Action = MatchCommand.SellAction, SquadId = squadId });
             return ActionResult.Success($"{squad.Type.Name} sold for {refund}.");
         }
 
@@ -552,84 +735,98 @@ namespace Halobellum.Economy
         /// <summary>A tower's level as this team last saw the other side's (the player's own are always known).</summary>
         public int SeenEnemyTowerLevel(TowerKind kind) => _seenEnemyTowerLevels.TryGetValue(kind, out int level) ? level : 1;
 
+        /// <summary>The level of the other side's tower as `viewer` saw it when the last battle started (1 before the first). Viewer A is SeenEnemyTowerLevel.</summary>
+        public int SeenTowerLevel(Team viewer, TowerKind kind)
+        {
+            if (viewer == Team.A) return SeenEnemyTowerLevel(kind);
+            return _seenPlayerTowerLevels.TryGetValue(kind, out int level) ? level : 1;
+        }
+
         /// <summary>Adds a side's towers after its squads, so that squad and unit numbering stay as they were.</summary>
         private void PlaceTowers(BattleSimulation battle, PlayerState player, bool seenOnly)
         {
             foreach (PlacedTower tower in player.Towers)
             {
-                int level = seenOnly ? SeenEnemyTowerLevel(tower.Kind) : tower.Level;
+                int level = seenOnly ? SeenTowerLevel(player.Team.Opponent(), tower.Kind) : tower.Level;
                 battle.AddUnit(TowerStats(tower.Kind, level), player.Team, DeploymentGrid.TowerCentre(tower, player.Team, CombatRules));
             }
         }
 
-        private bool CanBuyFromTower(out ActionResult failed)
+        private bool CanBuyFromTower(Team team, out ActionResult failed)
         {
+            if (WaitsForCard(team, out failed)) return false;
             failed = ActionResult.Fail("Towers only sell during deployment.");
             return Phase == MatchPhase.Deployment && Rules.HasTowers;
         }
 
         public ActionResult LevelUpTower(Team team, TowerKind kind)
         {
-            if (!CanBuyFromTower(out ActionResult failed)) return failed;
+            if (!CanBuyFromTower(team, out ActionResult failed)) return failed;
             PlayerState player = Get(team);
             PlacedTower tower = player.FindTower(kind);
+            if (tower == null) return ActionResult.Fail("There is no such tower.");
             if (tower.Level >= Rules.TowerMaxLevel) return ActionResult.Fail($"The {TowerName(kind)} is already at the maximum level.");
             if (player.Credits < Rules.TowerLevelUpCost) return ActionResult.Fail($"Not enough credits ({Rules.TowerLevelUpCost} needed).");
             player.Credits -= Rules.TowerLevelUpCost;
             tower.Level++;
+            if (IsTwoHumans) Record(team, new MatchCommand { Action = MatchCommand.LevelUpTowerAction, Tower = kind });
             return ActionResult.Success($"The {TowerName(kind)} is now level {tower.Level}.");
         }
 
         public ActionResult BuyExtraSlot(Team team)
         {
-            if (!CanBuyFromTower(out ActionResult failed)) return failed;
+            if (!CanBuyFromTower(team, out ActionResult failed)) return failed;
             PlayerState player = Get(team);
             if (player.BoughtExtraSlot) return ActionResult.Fail("You already bought an extra slot this round.");
             if (player.Credits < Rules.ExtraSlotCost) return ActionResult.Fail($"Not enough credits ({Rules.ExtraSlotCost} needed).");
             player.Credits -= Rules.ExtraSlotCost;
             player.BoughtExtraSlot = true;
+            if (IsTwoHumans) Record(team, new MatchCommand { Action = MatchCommand.BuyExtraSlotAction });
             return ActionResult.Success("One more squad can be bought this round.");
         }
 
         public ActionResult BuyOilZone(Team team)
         {
-            if (!CanBuyFromTower(out ActionResult failed)) return failed;
+            if (!CanBuyFromTower(team, out ActionResult failed)) return failed;
             PlayerState player = Get(team);
             SpellStats oil = Rules.OilZone;
             if (oil == null) return ActionResult.Fail("There is no oil to buy.");
             if (player.OwnsSpell(oil)) return ActionResult.Fail($"{oil.Name} is already in your spells.");
             if (player.Credits < oil.Cost) return ActionResult.Fail($"Not enough credits ({oil.Cost} needed).");
             player.Credits -= oil.Cost;
-            player.Spells.Add(new OwnedSpell { Id = _nextSpellId++, Stats = oil, ReadyRound = Round });
+            player.Spells.Add(new OwnedSpell { Id = NewSpellId(player), Stats = oil, ReadyRound = Round });
+            if (IsTwoHumans) Record(team, new MatchCommand { Action = MatchCommand.BuyOilZoneAction });
             return ActionResult.Success($"{oil.Name} added to your spells for the rest of the match.");
         }
 
         public ActionResult RapidResupply(Team team)
         {
-            if (!CanBuyFromTower(out ActionResult failed)) return failed;
+            if (!CanBuyFromTower(team, out ActionResult failed)) return failed;
             PlayerState player = Get(team);
             if (player.UsedRapidResupply) return ActionResult.Fail("You already used Rapid Resupply this round.");
             player.UsedRapidResupply = true;
             player.Credits += Rules.RapidResupplyCredits;
             player.IncomePenalty += Rules.RapidResupplyPenalty;
+            if (IsTwoHumans) Record(team, new MatchCommand { Action = MatchCommand.RapidResupplyAction });
             return ActionResult.Success($"+{Rules.RapidResupplyCredits} credits now, {Rules.RapidResupplyPenalty} less next round.");
         }
 
         public ActionResult BuyEliteRecruitment(Team team)
         {
-            if (!CanBuyFromTower(out ActionResult failed)) return failed;
+            if (!CanBuyFromTower(team, out ActionResult failed)) return failed;
             PlayerState player = Get(team);
             if (player.EliteRecruitment) return ActionResult.Fail("Elite Recruitment is already on this round.");
             if (player.Credits < Rules.EliteRecruitmentCost) return ActionResult.Fail($"Not enough credits ({Rules.EliteRecruitmentCost} needed).");
             player.Credits -= Rules.EliteRecruitmentCost;
             player.EliteRecruitment = true;
+            if (IsTwoHumans) Record(team, new MatchCommand { Action = MatchCommand.BuyEliteRecruitmentAction });
             return ActionResult.Success("Squads bought this round start at level 2, and cost half their price more.");
         }
 
         /// <summary>The next step of army-wide health or damage. The steps add up: two of 15% are 30%, not 32%.</summary>
         public ActionResult BuyResearch(Team team, bool health)
         {
-            if (!CanBuyFromTower(out ActionResult failed)) return failed;
+            if (!CanBuyFromTower(team, out ActionResult failed)) return failed;
             PlayerState player = Get(team);
             int steps = health ? player.ResearchHealthSteps : player.ResearchDamageSteps;
             if (steps >= Rules.ResearchCosts.Length) return ActionResult.Fail("That research is complete.");
@@ -650,6 +847,7 @@ namespace Halobellum.Economy
                 player.ResearchDamageSteps++;
             }
             player.SetBuffs(buffs);
+            if (IsTwoHumans) Record(team, new MatchCommand { Action = MatchCommand.BuyResearchAction, Health = health });
             return ActionResult.Success($"Your whole army: +{share * (steps + 1) * 100f:0}% {(health ? "health" : "damage")} in all.");
         }
 
@@ -663,7 +861,7 @@ namespace Halobellum.Economy
         /// <summary>The Research Center sells Deployment Modules (the owner, D175): one goes to the Inventory, one a deployment phase (D176).</summary>
         public ActionResult BuyDeploymentModule(Team team)
         {
-            if (!CanBuyFromTower(out ActionResult failed)) return failed;
+            if (!CanBuyFromTower(team, out ActionResult failed)) return failed;
             PlayerState player = Get(team);
             ItemStats module = DeploymentModuleOf(player);
             if (module == null) return ActionResult.Fail("There is no Deployment Module to buy.");
@@ -672,15 +870,20 @@ namespace Halobellum.Economy
             player.Credits -= Rules.DeploymentModuleCost;
             player.BoughtDeploymentModule = true;
             player.Inventory.Add(module);
+            if (IsTwoHumans) Record(team, new MatchCommand { Action = MatchCommand.BuyDeploymentModuleAction });
             return ActionResult.Success($"{module.Name} added to your inventory.");
         }
 
         // ------------------------------------------------------------------ battle and result
 
-        /// <summary>The player pressed Ready: builds this round's battle from both deployments.</summary>
+        /// <summary>True if StartBattle may be called now: in deployment, and in a two-humans match with both card offers taken or skipped.</summary>
+        public bool CanStartBattle => Phase == MatchPhase.Deployment && (!IsTwoHumans || (Player.Offer == null && Enemy.Offer == null));
+
+        /// <summary>The player pressed Ready (in a two-humans match: both did, and both sides' commands are in): builds this round's battle from both deployments.</summary>
         public BattleSimulation StartBattle()
         {
             if (Phase != MatchPhase.Deployment) throw new InvalidOperationException("A battle can only start after deployment.");
+            if (!CanStartBattle) throw new InvalidOperationException("Both sides must take or skip their card before the battle.");
             CurrentBattle = BuildBattle(includeEnemy: true);
             DelayFirstFlanks(CurrentBattle);
             CastPlacedSpells(Player, CurrentBattle);
@@ -690,6 +893,7 @@ namespace Halobellum.Economy
             _seenBuffsA = Player.Buffs.Clone();
             _seenBuffsB = Enemy.Buffs.Clone();
             foreach (PlacedTower tower in Enemy.Towers) _seenEnemyTowerLevels[tower.Kind] = tower.Level;
+            foreach (PlacedTower tower in Player.Towers) _seenPlayerTowerLevels[tower.Kind] = tower.Level;
             _seenFactionA = Player.Faction?.Name;
             _seenFactionB = Enemy.Faction?.Name;
             foreach (PlacedSquad squad in Player.Squads) squad.HasFought = true;
@@ -773,6 +977,27 @@ namespace Halobellum.Economy
             return battle;
         }
 
+        /// <summary>
+        /// The deployment preview as `viewer` sees it (two humans, M11): the viewer's current deployment first, then the other side's
+        /// army as the viewer saw it when the last battle started, as ghosts. Simulation squad i is the viewer's squad i, then
+        /// SeenArmy(other side) in order; then the viewer's towers at their levels and the other side's at the levels it saw. Each side
+        /// stands in its own half, as in the battle. Viewer A gets BuildPreview(). The preview is never canonical (no jitter).
+        /// </summary>
+        public BattleSimulation BuildPreview(Team viewer)
+        {
+            if (viewer == Team.A) return BuildPreview();
+            Team other = viewer.Opponent();
+            PlayerState seen = SeenAsDeployment(other);
+            var battle = new BattleSimulation(CombatRules, BattleSeed);
+            var layout = new RunnerSettings { Battles = 1, BaseSeed = BattleSeed, PositionJitter = 0f, FrontLineDistance = 0f, SquadGap = 0f };
+            var layoutRandom = new SimRandom(BattleSeed ^ 0x5EED);
+            ArmyLayout.Place(battle, CombatRules, DeploymentGrid.BuildArmy(Get(viewer), CombatRules), viewer, layout, layoutRandom);
+            if (seen.Squads.Count > 0) ArmyLayout.Place(battle, CombatRules, DeploymentGrid.BuildArmy(seen, CombatRules), other, layout, layoutRandom);
+            PlaceTowers(battle, Get(viewer), false);
+            PlaceTowers(battle, Get(other), true);
+            return battle;
+        }
+
         /// <summary>A side's army as seen at the last battle start, as a deployment (levels and techs included).</summary>
         public PlayerState SeenAsDeployment(Team team)
         {
@@ -799,21 +1024,66 @@ namespace Halobellum.Economy
         {
             if (Phase != MatchPhase.Battle || CurrentBattle == null || !CurrentBattle.IsFinished)
                 throw new InvalidOperationException("Finish the battle first.");
+            return FinishWith(OutcomeOfCurrentBattle());
+        }
 
+        /// <summary>
+        /// Applies a round outcome given from elsewhere instead of this machine's own battle (two humans, M11: the host's result is final).
+        /// The local battle must be over: the summary keeps its result and kills for the screens, but base damage, XP and tower falls are
+        /// the outcome's. Fails (throws) if the outcome is for another round.
+        /// </summary>
+        public RoundSummary FinishBattle(RoundOutcome outcome)
+        {
+            if (outcome == null) throw new ArgumentNullException(nameof(outcome));
+            if (Phase != MatchPhase.Battle || CurrentBattle == null || !CurrentBattle.IsFinished)
+                throw new InvalidOperationException("Finish the battle first.");
+            if (outcome.Round != Round) throw new InvalidOperationException($"That outcome is for round {outcome.Round}, not round {Round}.");
+            return FinishWith(outcome);
+        }
+
+        /// <summary>
+        /// What the finished battle of this round does to the match: base damage by each side, the XP each placed squad earned (in battle
+        /// order, Team A's squads first) and the towers that fell. FinishBattle applies exactly this.
+        /// </summary>
+        public RoundOutcome OutcomeOfCurrentBattle()
+        {
+            if (Phase != MatchPhase.Battle || CurrentBattle == null || !CurrentBattle.IsFinished)
+                throw new InvalidOperationException("Finish the battle first.");
+            BattleResult result = CurrentBattle.Result;
+            var outcome = new RoundOutcome
+            {
+                Round = Round,
+                BaseDamageByA = (int)MathF.Round(result.TeamA.SurvivorBaseDamage),
+                BaseDamageByB = (int)MathF.Round(result.TeamB.SurvivorBaseDamage),
+                Ticks = result.Ticks,
+            };
+            List<PlacedSquad> placed = PlacedInBattleOrder();
+            float[] earned = XpEarnedIn(CurrentBattle, placed);
+            for (int i = 0; i < placed.Count; i++) outcome.Xp.Add(new SquadXp { SquadId = placed[i].Id, Xp = earned[i] });
+            foreach (SimUnit unit in CurrentBattle.Units)
+            {
+                if (unit.Stats.IsTower && !unit.IsAlive) outcome.TowerFalls.Add(new TowerFall { Team = unit.Team, Kind = unit.Stats.Shockwave.Kind });
+            }
+            return outcome;
+        }
+
+        private RoundSummary FinishWith(RoundOutcome outcome)
+        {
             BattleResult result = CurrentBattle.Result;
             var summary = new RoundSummary
             {
                 Round = Round,
                 Battle = result,
-                BaseDamageByA = (int)MathF.Round(result.TeamA.SurvivorBaseDamage),
-                BaseDamageByB = (int)MathF.Round(result.TeamB.SurvivorBaseDamage),
+                BaseDamageByA = outcome.BaseDamageByA,
+                BaseDamageByB = outcome.BaseDamageByB,
                 Kills = RoundSummary.CountKills(CurrentBattle),
             };
-            AwardXp(CurrentBattle, summary);
+            AwardXp(outcome, summary);
             if (_battleHistory.Count > 0) _battleHistory[_battleHistory.Count - 1].Finish(CurrentBattle);
-            foreach (SimUnit unit in CurrentBattle.Units)
+            foreach (TowerFall fall in outcome.TowerFalls)
             {
-                if (unit.Stats.IsTower && !unit.IsAlive) Get(unit.Team).FindTower(unit.Stats.Shockwave.Kind).Falls++;
+                PlacedTower tower = Get(fall.Team).FindTower(fall.Kind);
+                if (tower != null) tower.Falls++;
             }
 
             _baseHealthBeforeA = Player.BaseHealth;
@@ -849,8 +1119,9 @@ namespace Halobellum.Economy
             else
             {
                 summary.IncomeAwarded = NextIncomeFor(Team.A);
+                summary.IncomeAwardedB = NextIncomeFor(Team.B);
                 Player.Credits += summary.IncomeAwarded;
-                Enemy.Credits += NextIncomeFor(Team.B);
+                Enemy.Credits += summary.IncomeAwardedB;
                 Player.IncomePenalty = 0;
                 Enemy.IncomePenalty = 0;
                 Phase = MatchPhase.Result;
@@ -884,6 +1155,16 @@ namespace Halobellum.Economy
             }
             Phase = MatchPhase.Deployment;
 
+            // Two humans: no AI; each side takes or skips its own card (InCards), and its undo history starts once it has.
+            if (IsTwoHumans)
+            {
+                foreach (Team team in new[] { Team.A, Team.B })
+                {
+                    if (Get(team).Offer == null) StartUndo(team);
+                }
+                return;
+            }
+
             // The AI decides on its card at once, then deploys; the player sees the card screen first.
             var enemyView = new AiView(this, Team.B);
             if (Enemy.Offer != null)
@@ -893,45 +1174,74 @@ namespace Halobellum.Economy
             }
             _enemyAi.Deploy(enemyView);
             if (Player.Offer != null) Phase = MatchPhase.Cards;
-            else StartUndo();
+            else StartUndo(Team.A);
         }
 
         // ------------------------------------------------------------------ cards and spells (Milestone 7)
 
         // ------------------------------------------------------------------ undo in deployment (the owner, 2026-11-06)
 
-        /// <summary>Starts this round's undo history from the player's state as it is now (deployment has begun, the card is chosen).</summary>
-        private void StartUndo()
+        /// <summary>Starts this round's undo history from the side's state as it is now (deployment has begun, the card is chosen).</summary>
+        private void StartUndo(Team team)
         {
-            _undo.Clear();
-            _undoNow = Player.TakeSnapshot();
-            _undoRound = Round;
+            int side = Side(team);
+            _undo[side].Clear();
+            _undoNow[side] = Get(team).TakeSnapshot();
+            _undoRound[side] = Round;
+        }
+
+        /// <summary>The state before the side's last action becomes a step Undo can go back to (if its history this round has started).</summary>
+        private void PushUndo(Team team)
+        {
+            int side = Side(team);
+            if (Phase != MatchPhase.Deployment || _undoRound[side] != Round || _undoNow[side] == null) return;
+            _undo[side].Push(_undoNow[side]);
+            _undoNow[side] = Get(team).TakeSnapshot();
         }
 
         /// <summary>
         /// Call after each of the player's deployment actions that worked: the state before it becomes a step Undo can go back to.
-        /// Actions outside deployment, or before this round's history has started, are not recorded.
+        /// Actions outside deployment, or before this round's history has started, are not recorded. (Team A; RecordAction(team).)
         /// </summary>
-        public void RecordPlayerAction()
+        public void RecordPlayerAction() => RecordAction(Team.A);
+
+        /// <summary>
+        /// Call after each of this side's deployment actions that worked (against the AI). In a two-humans match the Match records every
+        /// action itself, so that both machines keep the same history, and this does nothing.
+        /// </summary>
+        public void RecordAction(Team team)
         {
-            if (Phase != MatchPhase.Deployment || _undoRound != Round || _undoNow == null) return;
-            _undo.Push(_undoNow);
-            _undoNow = Player.TakeSnapshot();
+            if (IsTwoHumans) return;
+            PushUndo(team);
         }
 
-        /// <summary>True if the player has a deployment action this round to take back.</summary>
-        public bool CanUndo => Phase == MatchPhase.Deployment && _undoRound == Round && _undo.Count > 0;
+        /// <summary>True if the player has a deployment action this round to take back. (Team A; CanUndoFor(team). Always false in a two-humans match.)</summary>
+        public bool CanUndo => !IsTwoHumans && CanUndoFor(Team.A);
 
-        /// <summary>How many of this round's actions can still be taken back.</summary>
-        public int UndoSteps => CanUndo ? _undo.Count : 0;
+        /// <summary>How many of this round's actions can still be taken back. (Team A; UndoStepsFor(team). Always 0 in a two-humans match.)</summary>
+        public int UndoSteps => IsTwoHumans ? 0 : UndoStepsFor(Team.A);
 
-        /// <summary>Takes back the player's last deployment action this round: credits, squads, places, levels, techs, towers, spells and items as they were.</summary>
-        public ActionResult Undo()
+        /// <summary>True if this side has a deployment action this round to take back.</summary>
+        public bool CanUndoFor(Team team) => Phase == MatchPhase.Deployment && _undoRound[Side(team)] == Round && _undo[Side(team)].Count > 0;
+
+        /// <summary>How many of this side's actions this round can still be taken back.</summary>
+        public int UndoStepsFor(Team team) => CanUndoFor(team) ? _undo[Side(team)].Count : 0;
+
+        /// <summary>
+        /// Takes back the player's last deployment action this round: credits, squads, places, levels, techs, towers, spells and items as
+        /// they were. (Team A.) In a two-humans match this fails, since it would not know whose side to undo: use Undo(team).
+        /// </summary>
+        public ActionResult Undo() => IsTwoHumans ? ActionResult.Fail(TwoHumansNeedsTeam) : Undo(Team.A);
+
+        /// <summary>Takes back this side's last deployment action this round (in a two-humans match also its squad and spell id counters).</summary>
+        public ActionResult Undo(Team team)
         {
             if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Undo works during deployment.");
-            if (!CanUndo) return ActionResult.Fail("Nothing to undo this round.");
-            _undoNow = _undo.Pop();
-            Player.Restore(_undoNow);
+            if (!CanUndoFor(team)) return ActionResult.Fail("Nothing to undo this round.");
+            int side = Side(team);
+            _undoNow[side] = _undo[side].Pop();
+            Get(team).Restore(_undoNow[side]);
+            if (IsTwoHumans) Record(team, new MatchCommand { Action = MatchCommand.UndoAction }, undoable: false);
             return ActionResult.Success("Undone.");
         }
 
@@ -950,6 +1260,7 @@ namespace Halobellum.Economy
                 ? ApplyCard(player, offer.Cards[index])
                 : PlaceReinforcements(player, offer.Reinforcements[index], price);
             ResolveOffer(team);
+            if (IsTwoHumans) Record(team, new MatchCommand { Action = MatchCommand.ChooseCardAction, Index = index }, undoable: false);
             return ActionResult.Success(message);
         }
 
@@ -958,7 +1269,7 @@ namespace Halobellum.Economy
         {
             if (card.Type == CardType.Spell)
             {
-                player.Spells.Add(new OwnedSpell { Id = _nextSpellId++, Stats = card.Spell, ReadyRound = Round });
+                player.Spells.Add(new OwnedSpell { Id = NewSpellId(player), Stats = card.Spell, ReadyRound = Round });
                 return $"{card.Name} added to your spells.";
             }
             player.CardsTaken.Add(card);
@@ -984,14 +1295,17 @@ namespace Halobellum.Economy
         /// <summary>Puts an item from the inventory on a squad that has none; it stays there and affects the whole squad.</summary>
         public ActionResult PlaceItem(Team team, ItemStats item, int squadId)
         {
+            if (WaitsForCard(team, out ActionResult card)) return card;
             PlayerState player = Get(team);
             PlacedSquad squad = player.FindSquad(squadId);
             if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Items are placed during deployment.");
             if (item == null || !player.Inventory.Contains(item)) return ActionResult.Fail("That item is not in your inventory.");
             if (squad == null) return ActionResult.Fail("No such squad.");
             if (squad.Item != null) return ActionResult.Fail($"{squad.Type.Name} already carries {squad.Item.Name}.");
+            int inventoryIndex = player.Inventory.IndexOf(item);
             player.Inventory.Remove(item);
             squad.Item = item;
+            if (IsTwoHumans) Record(team, new MatchCommand { Action = MatchCommand.PlaceItemAction, Item = item.Name, Index = inventoryIndex, SquadId = squadId });
             return ActionResult.Success($"{item.Name} placed on {squad.Type.Name}.");
         }
 
@@ -1001,6 +1315,7 @@ namespace Halobellum.Economy
         /// <summary>Intensive Training: fills the squad's XP bar (it can then be leveled up); recharges like a spell.</summary>
         public ActionResult UseTraining(Team team, int squadId)
         {
+            if (WaitsForCard(team, out ActionResult card)) return card;
             PlayerState player = Get(team);
             PlacedSquad squad = player.FindSquad(squadId);
             if (player.Trainings.Count == 0) return ActionResult.Fail("You don't have Intensive Training.");
@@ -1012,6 +1327,7 @@ namespace Halobellum.Economy
             if (CanLevelUp(squad)) return ActionResult.Fail($"{squad.Type.Name}'s XP bar is already full.");
             squad.Xp = XpNeeded(squad);
             training.ReadyRound = Round + training.Card.CooldownRounds + 1;
+            if (IsTwoHumans) Record(team, new MatchCommand { Action = MatchCommand.UseTrainingAction, SquadId = squadId });
             return ActionResult.Success($"{squad.Type.Name}'s XP bar is full: it can level up.");
         }
 
@@ -1023,16 +1339,22 @@ namespace Halobellum.Economy
             int bonus = player.Offer.SkipBonus;
             player.Credits += bonus;
             ResolveOffer(team);
+            if (IsTwoHumans) Record(team, new MatchCommand { Action = MatchCommand.SkipCardsAction }, undoable: false);
             return ActionResult.Success($"Skipped: +{bonus} credits.");
         }
 
         private void ResolveOffer(Team team)
         {
             Get(team).Offer = null;
+            if (IsTwoHumans)
+            {
+                if (Phase == MatchPhase.Deployment) StartUndo(team); // The card choice is the line for this side.
+                return;
+            }
             if (team == Team.A && Phase == MatchPhase.Cards)
             {
                 Phase = MatchPhase.Deployment;
-                StartUndo(); // The card choice is the line: what came before it can't be undone.
+                StartUndo(Team.A); // The card choice is the line: what came before it can't be undone.
             }
         }
 
@@ -1046,7 +1368,7 @@ namespace Halobellum.Economy
                 if (!DeploymentGrid.FindFreeSpot(player, card.Type, false, CombatRules, out int column, out int row)) break;
                 player.Squads.Add(new PlacedSquad
                 {
-                    Id = _nextSquadId++, Type = card.Type, Column = column, Row = row, RoundBought = Round,
+                    Id = NewSquadId(player), Type = card.Type, Column = column, Row = row, RoundBought = Round,
                     PricePaid = price / card.Squads + (i == 0 ? price % card.Squads : 0),
                     FromCard = true, Level = card.Level, GrantedLevelWorth = card.SquadWorth - card.Type.Cost,
                 });
@@ -1066,6 +1388,7 @@ namespace Halobellum.Economy
         /// <summary>Places (or moves) a spell for this round's battle. Offensive spells anywhere, defensive ones in your own zone.</summary>
         public ActionResult PlaceSpell(Team team, int spellId, Vec2 position, float angleDegrees = 0f)
         {
+            if (WaitsForCard(team, out ActionResult card)) return card;
             OwnedSpell spell = Get(team).FindSpell(spellId);
             if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Spells are placed during deployment.");
             if (spell == null) return ActionResult.Fail("No such spell.");
@@ -1075,16 +1398,19 @@ namespace Halobellum.Economy
             spell.IsPlaced = true;
             spell.Position = position;
             spell.AngleDegrees = angleDegrees;
+            if (IsTwoHumans) Record(team, new MatchCommand { Action = MatchCommand.PlaceSpellAction, SpellId = spellId, X = position.X, Y = position.Y, Angle = angleDegrees });
             return ActionResult.Success($"{spell.Stats.Name} placed.");
         }
 
         /// <summary>Takes a placed spell back (it stays ready).</summary>
         public ActionResult UnplaceSpell(Team team, int spellId)
         {
+            if (WaitsForCard(team, out ActionResult card)) return card;
             OwnedSpell spell = Get(team).FindSpell(spellId);
             if (Phase != MatchPhase.Deployment) return ActionResult.Fail("Spells are placed during deployment.");
             if (spell == null || !spell.IsPlaced) return ActionResult.Fail("That spell is not placed.");
             spell.IsPlaced = false;
+            if (IsTwoHumans) Record(team, new MatchCommand { Action = MatchCommand.UnplaceSpellAction, SpellId = spellId });
             return ActionResult.Success($"{spell.Stats.Name} taken back.");
         }
     }
