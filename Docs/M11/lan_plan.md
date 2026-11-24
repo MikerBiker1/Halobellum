@@ -76,6 +76,6 @@ Found in the review after Stage 4 and left as they are:
 - [x] Stage 1: two-humans Match (`stage1_api.md`)
 - [x] Stage 2: network layer (`net_transport.md`, `lockstep.md`)
 - [x] Stage 3: each player at the bottom (`stage3_view.md`; the guest's terrain is not turned yet)
-- [x] Stage 4: menu and match flow (`stage4_flow.md`; the two-copy `-lanDemo` run waits for Stage 5's test build)
-- [ ] Stage 5: end to end
-- [ ] Stage 6: write-up
+- [x] Stage 4: menu and match flow (`stage4_flow.md`)
+- [x] Stage 5: end to end. Two copies of the test build on one PC (`-lanDemo`, AI on both sides, loopback) played three whole matches, seeds 23, 7 and 41 (13, 10 and 13 rounds). Both logs agreed on every round's state hash, result and base health, and the guest's own battle matched the host's in every round. The two-PC checklist is in `try_it.md`; not yet tried on two real PCs
+- [x] Stage 6: write-up. DECISIONS D182 on the branch; the changelog entry, wiki page and version bump come with the merge to main
