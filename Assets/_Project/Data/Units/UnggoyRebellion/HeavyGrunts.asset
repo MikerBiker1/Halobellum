@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 8
   cost: 200
   baseDamage: 5
-  maxHealth: 150
+  maxHealth: 130
   armorType: 0
   maxShield: 0
   shieldRegenPerSecond: 0

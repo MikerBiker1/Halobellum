@@ -8,6 +8,9 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.416.2 · 2026-11-24
+- **Heavy Grunts health:** each Heavy Grunt has 130 health (was 150). Unggoy Rebellion was the sub-faction furthest from 50%. Insane against Insane at 2000 health over five seeds (18,000 matches): Unggoy Rebellion 50.0% on average (was 51.2%), every sub-faction 49.2% to 50.8%, every faction 49.7% to 50.2%. (D181)
+
 ## 0.416.1 · 2026-11-23
 - **Infested Banshee and Rhino health:** the Infested Banshee has 440 health (was 400) and the Rhino 1100 (was 1000). Insane against Insane at 2000 health over five seeds (18,000 matches): every sub-faction 49.2% to 51.2% on average, every faction 49.5% to 50.5%. (D180)
 
