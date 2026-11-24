@@ -9,7 +9,7 @@
 //            either one hash, or sections "units=1a2b;cards=3c4d;..." so a mismatch can name what differs.
 // LanHello.Mismatch compares two of them and gives null, or a reason in words for the player.
 // Plain C# 9 without the engine.
-// Depends on: NetMessage, LanTimings (LanDefaults).
+// Depends on: NetMessage, LanTimings (LanDefaults, LanLimits).
 
 using System;
 using System.Collections.Generic;
@@ -52,8 +52,16 @@ namespace Halobellum.Net
         /// <summary>
         /// Null when the two games can play together, else the first difference in words, from this game's point of view
         /// ("The other game is version 0.416.1; this one is 0.416.2."). Checked in this order: protocol, version, code, content.
+        /// The text is at most LanLimits.MaxReasonChars long (a version from the other game is cut to MaxNameChars), so it can be
+        /// sent back in a Reject whatever the other game said.
         /// </summary>
         public static string Mismatch(LanHello mine, LanHello theirs)
+        {
+            string reason = Difference(mine, theirs);
+            return reason == null ? null : LanLimits.Clip(reason);
+        }
+
+        private static string Difference(LanHello mine, LanHello theirs)
         {
             if (mine == null || theirs == null) return "The other game did not say what it is.";
             if (mine.Proto != theirs.Proto)
@@ -103,7 +111,7 @@ namespace Halobellum.Net
             return result;
         }
 
-        private static string Show(string s) => string.IsNullOrEmpty(s) ? "(unknown)" : s;
+        private static string Show(string s) => string.IsNullOrEmpty(s) ? "(unknown)" : LanLimits.Clip(s, LanLimits.MaxNameChars);
 
         private static string Short(string s) => string.IsNullOrEmpty(s) ? "(none)" : s.Length <= 8 ? s : s.Substring(0, 8);
     }

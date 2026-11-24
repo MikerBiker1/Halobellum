@@ -6,9 +6,10 @@
 // Leave {refused: true, reason}, closes the channel and stays Refused with the same reason.
 // It reads one message at a time and stops at the MatchStart, so anything the host sends after it (its starting card, say) is
 // left in the channel for the coordinator.
-// Call Poll every frame on the main thread until State is no longer Waiting.
+// Call Poll every frame on the main thread until State is no longer Waiting. One Poll reads at most LanLimits.MaxMessagesPerUpdate
+// messages (the rest wait a frame), and text from the host is cut short (LanLimits.Clip) before it goes into a reason or the log.
 // Plain C# 9 without the engine.
-// Depends on: LanMatchStart (LanMatchStart, LanMatchSettings, LanMatchFactory), LanMatchCoordinator, ILanChannel, LanMessages,
+// Depends on: LanMatchStart (LanMatchStart, LanMatchSettings, LanMatchFactory), LanMatchCoordinator, ILanChannel, LanMessages, LanLimits,
 //             Halobellum.Economy (Match, MatchRules, MatchStateHash), Halobellum.Core (CombatRules).
 
 using System;
@@ -70,8 +71,10 @@ namespace Halobellum.Net
         {
             if (State != LanGuestStartState.Waiting) return;
             bool open = channel.IsOpen; // read before the inbox, so a message that came just before a close is still read
-            while (channel.TryReceive(out NetMessage m))
+            int handled = 0;
+            while (handled < LanLimits.MaxMessagesPerUpdate && channel.TryReceive(out NetMessage m))
             {
+                handled++;
                 if (m.Type == LanMessageTypes.MatchStart)
                 {
                     Begin(m);
@@ -79,13 +82,14 @@ namespace Halobellum.Net
                 }
                 if (m.Type == LanMessageTypes.Leave)
                 {
-                    End(LanGuestStartState.Lost, "The host left before the match started. " + m.GetString(LanFields.Reason, ""));
+                    End(LanGuestStartState.Lost, "The host left before the match started. " + LanLimits.Clip(m.GetString(LanFields.Reason, "")));
                     channel.Close();
                     return;
                 }
-                NetLog.Write(log, "Before the match start, ignored a " + m.Type + " message.");
+                NetLog.Write(log, "Before the match start, ignored a " + LanLimits.Clip(m.Type, LanLimits.MaxNameChars) + " message.");
             }
-            if (!open) End(LanGuestStartState.Lost, Describe(channel.LostReason));
+            // With the frame's share used up, more may wait: the close is noticed in a later Poll, after them.
+            if (!open && handled < LanLimits.MaxMessagesPerUpdate) End(LanGuestStartState.Lost, Describe(channel.LostReason));
         }
 
         private void Begin(NetMessage m)
@@ -133,6 +137,7 @@ namespace Halobellum.Net
 
         private void Refuse(string reason)
         {
+            reason = LanLimits.Clip(reason); // it may hold the host's own text (an exception's message): the Leave must stay small
             channel.Send(new NetMessage(LanMessageTypes.Leave).Set(LanFields.Reason, reason).Set(LanFields.Refused, true));
             channel.Close();
             End(LanGuestStartState.Refused, reason);

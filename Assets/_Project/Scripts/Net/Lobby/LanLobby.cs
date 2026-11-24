@@ -17,9 +17,10 @@
 // Names and texts that come from the network (the other player's name, the games heard, a refusal) are cleaned before they show:
 // one line, and not too long (LanIdentity.CleanName, CleanText).
 // Cancel leaves either side (the other game is told with Leave) and goes back to Idle (Join: back to browsing).
-// Everything runs on the caller's thread: call Update every frame. Close ends everything (leaving the menu).
+// Everything runs on the caller's thread: call Update every frame. One Update reads at most LanLimits.MaxMessagesPerUpdate messages
+// (the rest wait a frame), so a flood from the other game cannot freeze the menu. Close ends everything (leaving the menu).
 // Plain C# 9 without the engine.
-// Depends on: LanHost, LanSession, LanAnnouncer, LanBrowser, LanHello, LanTimings, NetMessage, LanMessages, LanBufferedChannel.
+// Depends on: LanHost, LanSession, LanAnnouncer, LanBrowser, LanHello, LanTimings (LanLimits), NetMessage, LanMessages, LanBufferedChannel.
 
 using System;
 using System.Collections.Generic;
@@ -271,12 +272,15 @@ namespace Halobellum.Net
             if (State != LanLobbyState.HostReady) return;
 
             string left = null;
-            while (session.TryReceive(out NetMessage m))
+            int handled = 0;
+            while (left == null && handled < LanLimits.MaxMessagesPerUpdate && session.TryReceive(out NetMessage m))
             {
-                if (m.Type == LanMessageTypes.Leave) left = m.GetString(LanFields.Reason, "");
-                else NetLog.Write(options.Log, "Before the start, ignored a " + m.Type + " message.");
+                handled++;
+                if (m.Type == LanMessageTypes.Leave) left = LanLimits.Clip(m.GetString(LanFields.Reason, ""));
+                else NetLog.Write(options.Log, "Before the start, ignored a " + LanLimits.Clip(m.Type, LanLimits.MaxNameChars) + " message.");
             }
-            if (left == null && session.State == LanSessionState.Connected) return;
+            // With the frame's share used up, more may wait: a close is noticed in a later Update, after them.
+            if (left == null && (session.State == LanSessionState.Connected || handled >= LanLimits.MaxMessagesPerUpdate)) return;
             string name = session.PeerName.Length > 0 ? LanIdentity.CleanName(session.PeerName) : "The player";
             NetLog.Write(options.Log, "The guest left before the start: " + (left ?? session.Reason));
             CloseConnection(null);
@@ -387,8 +391,10 @@ namespace Halobellum.Net
                 }
             }
             if (State != LanLobbyState.JoinWaiting) return;
-            while (session.TryReceive(out NetMessage m))
+            int handled = 0;
+            while (handled < LanLimits.MaxMessagesPerUpdate && session.TryReceive(out NetMessage m))
             {
+                handled++;
                 if (m.Type == LanMessageTypes.MatchStart)
                 {
                     matchStart = m; // the rest stays in the session, for the coordinator
@@ -402,9 +408,11 @@ namespace Halobellum.Net
                     Fail("The host left." + (reason.Length > 0 && reason != "The other player left." ? " " + reason : ""));
                     return;
                 }
-                NetLog.Write(options.Log, "Before the start, ignored a " + m.Type + " message.");
+                NetLog.Write(options.Log, "Before the start, ignored a " + LanLimits.Clip(m.Type, LanLimits.MaxNameChars) + " message.");
             }
-            if (session.State != LanSessionState.Connected) Fail("The connection to the host ended. " + session.Reason);
+            // With the frame's share used up, more may wait: a close is noticed in a later Update, after them.
+            if (session.State != LanSessionState.Connected && handled < LanLimits.MaxMessagesPerUpdate)
+                Fail("The connection to the host ended. " + LanIdentity.CleanText(session.Reason, TextLength));
         }
 
         /// <summary>The longest text from the network (a refusal, a reason to leave) that shows on the page.</summary>

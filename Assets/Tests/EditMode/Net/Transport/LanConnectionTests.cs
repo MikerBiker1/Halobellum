@@ -1,7 +1,7 @@
 // LanConnectionTests.cs
 // Tests the TCP connection over real loopback sockets: host and guest connect and exchange messages both ways (a burst of small
-// ones and a 1 MB one that the stream splits across many reads), a message sent while still connecting goes out, a second
-// guest is refused with a Reject, a close on the other side is noticed (and the last message before it still arrives),
+// ones and a half-megabyte one that the stream splits across many reads), a message sent while still connecting goes out, a second
+// guest is refused with a Reject ("another player is joining" before Lock, "already has a player" after it), a close on the other side is noticed (and the last message before it still arrives),
 // silence is noticed by the heartbeat, pings keep a quiet connection alive, a frame over the limit closes the connection,
 // Close can be called any number of times, and a Close while still connecting stops the attempt before WaitClosed returns.
 // An accept that fails for a passing reason (a connection reset before it was taken) keeps the host accepting; one that fails for
@@ -41,8 +41,8 @@ namespace Halobellum.Tests.Net
                 for (int i = 0; i < 500; i++) hostSide.Send(new NetMessage("N").Set("i", i));
                 for (int i = 0; i < 500; i++) Assert.AreEqual(i, NetTestKit.Receive(client).GetInt("i", -1));
 
-                // A 1 MB message is split by the stream into many reads and joined again.
-                string big = new string('q', 1024 * 1024) + "é";
+                // A half-megabyte message (the frame limit is 1 MB) is split by the stream into many reads and joined again.
+                string big = new string('q', 512 * 1024) + "é";
                 client.Send(new NetMessage("Big").Set("s", big));
                 Assert.AreEqual(big, NetTestKit.Receive(hostSide).GetString("s"));
 
@@ -121,7 +121,7 @@ namespace Halobellum.Tests.Net
                 LanConnection second = LanClient.Connect("127.0.0.1", host.Port, NetTestKit.Fast());
                 NetMessage reject = NetTestKit.Receive(second);
                 Assert.AreEqual(NetMessageTypes.Reject, reject.Type);
-                Assert.AreEqual(LanHost.BusyReason, reject.GetString("reason"));
+                Assert.AreEqual(LanHost.JoiningReason, reject.GetString("reason"), "The first guest has not finished a handshake (no Lock yet).");
                 Assert.IsTrue(NetTestKit.Until(() => second.State == LanConnectionState.Closed), "The refused guest stayed connected.");
                 Assert.AreEqual(LanCloseReason.RemoteClosed, second.CloseReason);
                 Assert.IsFalse(host.TryAcceptGuest(out _), "The host took the second guest.");
@@ -141,7 +141,9 @@ namespace Halobellum.Tests.Net
                 third.Close();
                 Assert.IsTrue(NetTestKit.Until(() => thirdAtHost.State == LanConnectionState.Closed));
                 LanConnection fourth = LanClient.Connect("127.0.0.1", host.Port, NetTestKit.Fast());
-                Assert.AreEqual(NetMessageTypes.Reject, NetTestKit.Receive(fourth).Type);
+                NetMessage locked = NetTestKit.Receive(fourth);
+                Assert.AreEqual(NetMessageTypes.Reject, locked.Type);
+                Assert.AreEqual(LanHost.BusyReason, locked.GetString("reason"));
             }
             finally { host.Stop(); }
         }

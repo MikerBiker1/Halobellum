@@ -3,18 +3,22 @@
 //   - the reader receives bytes, cuts them into frames (FrameReader) and puts each message into the inbox;
 //   - the writer sends what Send queued, sends a Ping every second and notices 10 seconds of silence (times in LanTimings).
 // The game drains the inbox on its own thread (TryReceive, every frame), so it never touches a socket or waits.
-// Ping and Pong are handled here and never reach the inbox. State goes Connecting -> Connected -> Closed, and once Closed it
+// Ping and Pong are handled here and never reach the inbox (a Ping is answered only when its "ms" is a short whole number). State goes Connecting -> Connected -> Closed, and once Closed it
 // stays so; CloseReason says why (closed here, closed by the other side, silence, an error) and CloseDetail says it in words.
 // Messages already in the inbox can still be read after the connection closed (a Reject arrives just before the close).
 // A Close while still connecting shuts the connecting socket, so the attempt stops at once instead of after the connect timeout.
 // A local Close sends the messages still queued, then waits a moment for the other side to close in turn, so the last
 // message is not cut off (closing a socket with unread data would reset the connection).
+// Limits (LanLimits), so a broken or hostile game cannot make this one hold much memory: what waits to be sent (outbox) and what
+// waits to be read by the game (inbox) are bounded in messages and bytes; past either bound the connection closes with Error and a
+// reason. A message of this game's own that is over the frame limit also closes the connection instead of throwing at the caller.
 // Plain C# 9 without the engine; System.Net.Sockets only.
 // Depends on: Framing, NetMessage, LanTimings (NetLog).
 
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -47,8 +51,12 @@ namespace Halobellum.Net
         private readonly object gate = new object();
         private readonly LanTimings timings;
         private readonly Action<string> log;
-        private readonly ConcurrentQueue<NetMessage> inbox = new ConcurrentQueue<NetMessage>();
+        private readonly ConcurrentQueue<Inbound> inbox = new ConcurrentQueue<Inbound>();
         private readonly ConcurrentQueue<byte[]> outbox = new ConcurrentQueue<byte[]>();
+        private long inboxBytes;                  // payload bytes in the inbox (LanLimits.MaxInboxBytes)
+        private int inboxCount;                   // messages in the inbox (LanLimits.MaxInboxMessages)
+        private long outboxBytes;                 // frame bytes in the outbox (LanLimits.MaxOutboxBytes)
+        private int outboxCount;                  // frames in the outbox (LanLimits.MaxOutboxMessages)
         private readonly AutoResetEvent wake = new AutoResetEvent(false);
         private readonly ManualResetEvent finished = new ManualResetEvent(false);
         private Socket socket;
@@ -93,31 +101,88 @@ namespace Halobellum.Net
         public int RoundTripMs => Volatile.Read(ref roundTripMs);
 
         /// <summary>Messages waiting in the inbox.</summary>
-        public int Pending => inbox.Count;
+        public int Pending => Volatile.Read(ref inboxCount);
 
         /// <summary>
         /// Queues a message to send. Thread-safe. Returns false when the connection is closed (the message is dropped).
-        /// While Connecting the message waits and goes out once connected. Throws FrameException when it is over 4 MB.
+        /// While Connecting the message waits and goes out once connected. Never throws for the message's size: a message over the
+        /// frame limit (1 MB), or one that would take the outbox past its bounds (the other game does not read), closes the
+        /// connection with Error and a reason, and Send says false.
         /// </summary>
         public bool Send(JsonObject message)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
-            byte[] frame = Framing.Encode(message);
+            byte[] frame;
+            try { frame = Framing.Encode(message); }
+            catch (FrameException e)
+            {
+                CloseWith(LanCloseReason.Error, "This game's own message was too long to send. " + e.Message);
+                return false;
+            }
             if (state == LanConnectionState.Closed) return false;
-            outbox.Enqueue(frame);
-            wake.Set();
-            return true;
+            return Queue(frame);
         }
 
         /// <summary>The next received message, if any. Works after the close too, until the inbox is empty.</summary>
-        public bool TryReceive(out NetMessage message) => inbox.TryDequeue(out message);
+        public bool TryReceive(out NetMessage message)
+        {
+            if (inbox.TryDequeue(out Inbound item))
+            {
+                Interlocked.Add(ref inboxBytes, -item.Bytes);
+                Interlocked.Decrement(ref inboxCount);
+                message = item.Message;
+                return true;
+            }
+            message = null;
+            return false;
+        }
 
         /// <summary>Every message waiting in the inbox, oldest first.</summary>
         public List<NetMessage> ReceiveAll()
         {
             var result = new List<NetMessage>();
-            while (inbox.TryDequeue(out NetMessage m)) result.Add(m);
+            while (TryReceive(out NetMessage m)) result.Add(m);
             return result;
+        }
+
+        /// <summary>A received message and its size, as the inbox holds it.</summary>
+        private readonly struct Inbound
+        {
+            public readonly NetMessage Message;
+            public readonly int Bytes;
+
+            public Inbound(NetMessage message, int bytes)
+            {
+                Message = message;
+                Bytes = bytes;
+            }
+        }
+
+        /// <summary>Puts a frame in the outbox; closes the connection (false) when the outbox would go past its bounds.</summary>
+        private bool Queue(byte[] frame)
+        {
+            int count = Interlocked.Increment(ref outboxCount);
+            long bytes = Interlocked.Add(ref outboxBytes, frame.Length);
+            if (count > LanLimits.MaxOutboxMessages || bytes > LanLimits.MaxOutboxBytes)
+            {
+                Interlocked.Decrement(ref outboxCount);
+                Interlocked.Add(ref outboxBytes, -frame.Length);
+                CloseWith(LanCloseReason.Error, "Too much is waiting to be sent to the other game (" + count + " messages, " + bytes
+                    + " bytes): it is not reading. The connection was closed.");
+                return false;
+            }
+            outbox.Enqueue(frame);
+            wake.Set();
+            return true;
+        }
+
+        /// <summary>The next frame to send, if any.</summary>
+        private bool Dequeue(out byte[] frame)
+        {
+            if (!outbox.TryDequeue(out frame)) return false;
+            Interlocked.Decrement(ref outboxCount);
+            Interlocked.Add(ref outboxBytes, -frame.Length);
+            return true;
         }
 
         /// <summary>Closes the connection. Safe to call any number of times and from any thread; it does not wait.</summary>
@@ -238,7 +303,10 @@ namespace Halobellum.Net
                     if (state == LanConnectionState.Closed) continue; // closing here: drop what still comes, wait for their close
                     Interlocked.Exchange(ref lastHeardMs, NetLog.NowMs);
                     frames.Push(buffer, 0, count);
-                    while (frames.TryReadText(out string json)) Handle(NetMessage.Parse(json));
+                    while (frames.TryRead(out byte[] payload))
+                    {
+                        if (!Handle(NetMessage.Parse(Framing.DecodeText(payload)), payload.Length)) return;
+                    }
                 }
             }
             catch (FrameException e) { CloseWith(LanCloseReason.Error, "Bad message from the other game: " + e.Message); }
@@ -253,24 +321,37 @@ namespace Halobellum.Net
             catch (Exception e) { CloseWith(LanCloseReason.Error, "Network error: " + e.Message); }
         }
 
-        private void Handle(NetMessage message)
+        /// <summary>One message from the reader thread. False when the connection closed because of it (the reader stops).</summary>
+        private bool Handle(NetMessage message, int bytes)
         {
             string type = message.Type;
             if (type == NetMessageTypes.Ping)
             {
-                var pong = new NetMessage(NetMessageTypes.Pong);
-                pong.SetRaw("ms", message.Get("ms"));
-                outbox.Enqueue(Framing.Encode(pong));
-                wake.Set();
-                return;
+                // Only a short whole number is answered (this game's own Pings send NowMs); anything else is not echoed back.
+                if (message.Get("ms") is JsonNumber ms && ms.Text.Length <= LanLimits.MaxPingDigits
+                    && long.TryParse(ms.Text, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out long value))
+                    return Queue(Framing.Encode(new NetMessage(NetMessageTypes.Pong).Set("ms", value)));
+                return true;
             }
             if (type == NetMessageTypes.Pong)
             {
                 long sent = message.GetLong("ms", -1);
                 if (sent >= 0) Volatile.Write(ref roundTripMs, (int)Math.Max(0, Math.Min(int.MaxValue, NetLog.NowMs - sent)));
-                return;
+                return true;
             }
-            inbox.Enqueue(message);
+            int waiting = Volatile.Read(ref inboxCount);
+            long held = Interlocked.Read(ref inboxBytes) + bytes;
+            if (waiting >= LanLimits.MaxInboxMessages || held > LanLimits.MaxInboxBytes)
+            {
+                CloseWith(LanCloseReason.Error, "The other game sent more than this one can take at once (" + waiting + " messages, " + held
+                    + " bytes waiting). The connection was closed.");
+                return false;
+            }
+            // Counted before it is queued, so TryReceive on the game's thread never takes the counts below zero.
+            Interlocked.Add(ref inboxBytes, bytes);
+            Interlocked.Increment(ref inboxCount);
+            inbox.Enqueue(new Inbound(message, bytes));
+            return true;
         }
 
         private void WriteLoop()
@@ -295,7 +376,7 @@ namespace Halobellum.Net
                         lastPing = now;
                         SendAll(Framing.Encode(new NetMessage(NetMessageTypes.Ping).Set("ms", now)));
                     }
-                    while (state != LanConnectionState.Closed && outbox.TryDequeue(out byte[] frame)) SendAll(frame);
+                    while (state != LanConnectionState.Closed && Dequeue(out byte[] frame)) SendAll(frame);
                 }
             }
             catch (SocketException e) { CloseWith(LanCloseReason.Error, "Network error while sending: " + e.Message); }
@@ -319,7 +400,7 @@ namespace Halobellum.Net
                 long deadline = NetLog.NowMs + timings.CloseFlushMs;
                 try
                 {
-                    while (NetLog.NowMs < deadline && outbox.TryDequeue(out byte[] frame)) SendAll(frame);
+                    while (NetLog.NowMs < deadline && Dequeue(out byte[] frame)) SendAll(frame);
                 }
                 catch { /* the other side is gone: nothing more to send */ }
             }

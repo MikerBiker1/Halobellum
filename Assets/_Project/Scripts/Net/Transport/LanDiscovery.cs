@@ -4,11 +4,13 @@
 //     address of each IPv4 network card (some networks drop the first) and to any extra address given with AddTarget.
 //     The packet is JSON: {"game":"Halobellum","proto":1,"version":"0.416.2","name":"Mike","port":47810}.
 //   - LanBrowser (on the Join page) listens on port 47811 (shared with other programs, ReuseAddress) and keeps the games
-//     heard in the last 4 seconds, each with the address the packet came from.
+//     heard in the last 4 seconds, each with the address the packet came from. It keeps at most LanLimits.MaxGamesListed games
+//     (a game not heard for StaleMs is dropped first; when the list is still full, a new game waits until a place frees up), and
+//     a name or version longer than LanLimits.MaxNameChars is cut short.
 // Broadcasts do not reach a socket bound to the loopback address, so the tests send a unicast announcement (AddTarget) to a
 // browser bound to 127.0.0.1; the game itself uses the broadcasts. Both close cleanly; ports and addresses are injectable.
 // Plain C# 9 without the engine; System.Net.Sockets only.
-// Depends on: NetJson, LanTimings (LanDefaults, NetLog).
+// Depends on: NetJson, LanTimings (LanDefaults, LanLimits, NetLog).
 
 using System;
 using System.Collections.Generic;
@@ -228,6 +230,15 @@ namespace Halobellum.Net
         /// <summary>A game not heard for this long drops off the list.</summary>
         public int StaleMs = 4000;
 
+        /// <summary>The most games kept at once (LanLimits.MaxGamesListed).</summary>
+        public const int MaxGames = LanLimits.MaxGamesListed;
+
+        /// <summary>Games kept now, stale ones included until the next Games() or the next new game (tests).</summary>
+        public int Count
+        {
+            get { lock (gate) return games.Count; }
+        }
+
         /// <summary>The port actually listened on (after TryStart; useful with port 0).</summary>
         public int Port { get; private set; }
 
@@ -307,8 +318,8 @@ namespace Halobellum.Net
                 if (port <= 0 || port > 65535) return null;
                 return new LanGameInfo
                 {
-                    Name = o.GetString("name", ""),
-                    Version = o.GetString("version", ""),
+                    Name = LanLimits.Clip(o.GetString("name", ""), LanLimits.MaxNameChars),
+                    Version = LanLimits.Clip(o.GetString("version", ""), LanLimits.MaxNameChars),
                     Proto = o.GetInt("proto"),
                     Address = senderAddress ?? "",
                     Port = port,
@@ -334,15 +345,38 @@ namespace Halobellum.Net
                 }
                 catch (ObjectDisposedException) { return; }
                 LanGameInfo game = ParseAnnouncement(buffer, count, (from as IPEndPoint)?.Address.ToString());
-                if (game == null) continue;
-                game.LastHeardMs = clockMs();
-                lock (gate)
-                {
-                    string key = game.Address + ":" + game.Port;
-                    if (!games.ContainsKey(key)) NetLog.Write(log, "Found a game: " + game + ".");
-                    games[key] = game;
-                }
+                if (game != null) Add(game, clockMs());
             }
+        }
+
+        /// <summary>
+        /// Notes a game heard at this time (the receive loop calls it; tests may too). False when the list is full of games heard
+        /// lately (MaxGames): the new one is not kept.
+        /// </summary>
+        public bool Add(LanGameInfo game, long nowMs)
+        {
+            game.LastHeardMs = nowMs;
+            string key = game.Address + ":" + game.Port;
+            lock (gate)
+            {
+                if (!games.ContainsKey(key))
+                {
+                    if (games.Count >= MaxGames) RemoveStale(nowMs);
+                    if (games.Count >= MaxGames) return false; // full of games heard lately: this one waits for a free place
+                    NetLog.Write(log, "Found a game: " + game + ".");
+                }
+                games[key] = game;
+                return true;
+            }
+        }
+
+        /// <summary>Drops the games not heard for StaleMs. Call inside the lock.</summary>
+        private void RemoveStale(long nowMs)
+        {
+            var stale = new List<string>();
+            foreach (KeyValuePair<string, LanGameInfo> pair in games)
+                if (nowMs - pair.Value.LastHeardMs > StaleMs) stale.Add(pair.Key);
+            foreach (string key in stale) games.Remove(key);
         }
     }
 }

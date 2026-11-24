@@ -12,7 +12,11 @@
 //               finishes with it (Match.FinishBattle(RoundOutcome)). If the guest's own battle ended differently, that is noted
 //               (HostResultUsed) and the match goes on with the host's numbers; if the state after it still differs, it is Desync.
 //   Result      ContinueAfterResult here (or on the Match) starts the next round on this machine; the other one may be ahead or
-//               behind: messages for a later round wait in a buffer until this machine gets there.
+//               behind: messages for a later round wait in a buffer until this machine gets there. Only a little later: a message
+//               for a round more than MaxRoundsAhead past this machine's (or for a round already behind it) is a Desync, so the
+//               buffer never holds more than a few rounds.
+// Update handles at most LanLimits.MaxMessagesPerUpdate messages; the rest wait for the next frame. Text from the other game (a
+// message type, a reason) is cut short (LanLimits.Clip) before it goes into a reason, the log or a Desync sent back.
 // Status messages tell the other game where this one is (its battle is over; it left the result for the next round), so the HUD
 // can say what the other player is doing (OpponentStep). They change nothing in the match.
 // The log (when given) gets every command list sent and applied and the round's result text, so a desync between two PCs can be
@@ -27,7 +31,7 @@
 // latest in StartBattle (before this machine plays a battle the other game did not agree to).
 // Everything runs on the caller's thread: call Update every frame.
 // Plain C# 9 without the engine.
-// Depends on: ILanChannel, LanMessages, NetMessage, NetLog, Halobellum.Economy (Match, MatchCommand, MatchCommands, MatchStateHash,
+// Depends on: ILanChannel, LanMessages, NetMessage, NetLog, LanLimits, Halobellum.Economy (Match, MatchCommand, MatchCommands, MatchStateHash,
 //             RoundOutcome, RoundSummary), Halobellum.Combat (BattleSimulation), Halobellum.Core (Team).
 
 using System;
@@ -396,13 +400,25 @@ namespace Halobellum.Net
 
         // ------------------------------------------------------------------ every frame
 
+        /// <summary>
+        /// How many rounds past this machine's a message from the other game may be. The other game is at most one round ahead (it
+        /// cannot press Ready for the round after next before both agreed on the next one); 2 leaves room. Later is a Desync.
+        /// </summary>
+        public const int MaxRoundsAhead = 2;
+
         /// <summary>Reads the other game's messages, applies what can be applied, and notices a closed channel. Call every frame.</summary>
         public void Update()
         {
             if (final.HasValue || leftAfterMatch) return;
             bool open = Channel.IsOpen; // read before the inbox: a message that came just before a close is still read
-            while (!final.HasValue && Channel.TryReceive(out NetMessage message)) Handle(message);
-            if (!final.HasValue && !open && !channelEnded)
+            int handled = 0;
+            while (!final.HasValue && handled < LanLimits.MaxMessagesPerUpdate && Channel.TryReceive(out NetMessage message))
+            {
+                handled++;
+                Handle(message);
+            }
+            // With the frame's share used up, more may wait: the close is noticed in a later Update, after them.
+            if (!final.HasValue && !open && !channelEnded && handled < LanLimits.MaxMessagesPerUpdate)
             {
                 channelEnded = true;
                 OtherSideEnded(LanMatchState.ConnectionLost, Describe(Channel.LostReason));
@@ -423,6 +439,7 @@ namespace Halobellum.Net
                     case LanMessageTypes.Ready:
                     {
                         int round = m.GetInt(LanFields.Round);
+                        if (TooFarAhead(round, "a Ready")) return;
                         if (round < 1 || round <= lastRemoteReadyRound || round < Match.Round) { Protocol("a Ready for round " + round); return; }
                         lastRemoteReadyRound = round;
                         remoteReady[round] = m.GetString(LanFields.Commands, "");
@@ -431,6 +448,7 @@ namespace Halobellum.Net
                     case LanMessageTypes.StateHash:
                     {
                         int round = m.GetInt(LanFields.Round);
+                        if (TooFarAhead(round, "a state hash")) return;
                         if (remoteHashes.ContainsKey(round) || round < Match.Round) { Protocol("a second state hash for round " + round); return; }
                         remoteHashes[round] = m.GetULong(LanFields.Hash);
                         break;
@@ -439,6 +457,7 @@ namespace Halobellum.Net
                     {
                         int round = m.GetInt(LanFields.Round);
                         if (IsHost) { Protocol("a battle result (only the host sends those)"); return; }
+                        if (TooFarAhead(round, "a battle result")) return;
                         if (hostResults.ContainsKey(round) || round < Match.Round) { Protocol("a second result for round " + round); return; }
                         var result = new HostResult
                         {
@@ -451,7 +470,8 @@ namespace Halobellum.Net
                         break;
                     }
                     case LanMessageTypes.Desync:
-                        End(LanMatchState.Desync, "The other game found the match out of sync in round " + m.GetInt(LanFields.Round) + ": " + m.GetString(LanFields.Reason, ""));
+                        End(LanMatchState.Desync, "The other game found the match out of sync in round " + m.GetInt(LanFields.Round) + ": "
+                            + LanLimits.Clip(m.GetString(LanFields.Reason, "")));
                         break;
                     case LanMessageTypes.Status:
                     {
@@ -465,13 +485,13 @@ namespace Halobellum.Net
                     }
                     case LanMessageTypes.Leave:
                     {
-                        string reason = m.GetString(LanFields.Reason, "");
+                        string reason = LanLimits.Clip(m.GetString(LanFields.Reason, ""));
                         if (m.GetBool(LanFields.Refused)) reason = "The other game refused the match: " + reason;
                         OtherSideEnded(LanMatchState.OpponentLeft, reason.Length > 0 ? reason : "The other player left the match.");
                         break;
                     }
                     default:
-                        NetLog.Write(log, "Ignored a " + m.Type + " message.");
+                        NetLog.Write(log, "Ignored a " + LanLimits.Clip(m.Type, LanLimits.MaxNameChars) + " message.");
                         break;
                 }
             }
@@ -479,7 +499,8 @@ namespace Halobellum.Net
             {
                 // Any exception, not only FormatException: the text readers can also throw IndexOutOfRange, ArgumentOutOfRange or
                 // Overflow on cut-off or odd text. Whatever it is, the message is broken and the match cannot go on.
-                Protocol("a broken " + m.Type + " message (" + e.GetType().Name + ": " + e.Message + ")");
+                Protocol("a broken " + LanLimits.Clip(m.Type, LanLimits.MaxNameChars) + " message (" + e.GetType().Name + ": "
+                    + LanLimits.Clip(e.Message, LanLimits.MaxNameChars * 2) + ")");
             }
         }
 
@@ -663,8 +684,17 @@ namespace Halobellum.Net
             pendingReason = reason;
         }
 
+        /// <summary>A message for a round more than MaxRoundsAhead past this machine's: Desync (true). Nothing is buffered for it.</summary>
+        private bool TooFarAhead(int round, string what)
+        {
+            if (round <= Match.Round + MaxRoundsAhead) return false;
+            Protocol(what + " for round " + round + ", more than " + MaxRoundsAhead + " rounds past this game's round " + Match.Round);
+            return true;
+        }
+
         private void Desync(string what)
         {
+            what = LanLimits.Clip(what); // it may hold text from the other game; the Desync sent back must stay small
             string reason = "Round " + Match.Round + ": " + what;
             Channel.Send(new NetMessage(LanMessageTypes.Desync).Set(LanFields.Round, Match.Round).Set(LanFields.Reason, what));
             End(LanMatchState.Desync, reason);

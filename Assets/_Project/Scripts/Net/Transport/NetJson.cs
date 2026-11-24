@@ -4,8 +4,11 @@
 // whole numbers are written as they are, a float with 9 significant digits and a double with 17, which read back to the very same
 // bits on every machine (the lockstep relies on that). Everything is written and read with the invariant culture.
 // The core's StatJson is not used on purpose: the transport compiles on its own, without the rest of the game.
+// The reader refuses text that would cost a lot to hold (LanLimits): more than MaxValues values (a megabyte of "[{},{},...]" would
+// otherwise become hundreds of megabytes of objects), a text longer than MaxChars (so no string in it is longer either), or
+// nesting deeper than MaxDepth.
 // Plain C# 9 without the engine.
-// Depends on: nothing.
+// Depends on: LanTimings (LanLimits).
 
 using System;
 using System.Collections.Generic;
@@ -174,6 +177,12 @@ namespace Halobellum.Net
         /// <summary>How deep objects and arrays may nest when reading; deeper input is refused.</summary>
         public const int MaxDepth = 32;
 
+        /// <summary>The most values (objects, arrays, strings, numbers, true, false, null) one text may hold when reading.</summary>
+        public const int MaxValues = LanLimits.MaxJsonValues;
+
+        /// <summary>The longest text read, in characters (so no string or number in it is longer).</summary>
+        public const int MaxChars = LanLimits.MaxJsonChars;
+
         public static string Write(JsonObject value)
         {
             var sb = new StringBuilder();
@@ -185,6 +194,7 @@ namespace Halobellum.Net
         public static JsonObject ParseObject(string text)
         {
             if (text == null) throw new FormatException("No JSON text.");
+            if (text.Length > MaxChars) throw new FormatException("JSON text of " + text.Length + " characters is over the limit of " + MaxChars + ".");
             var reader = new Reader(text);
             reader.SkipSpace();
             if (reader.Peek() != '{') throw reader.Error("expected '{'");
@@ -257,6 +267,7 @@ namespace Halobellum.Net
         {
             private readonly string text;
             private int pos;
+            private int values; // values read so far (MaxValues)
 
             public Reader(string text) { this.text = text; }
 
@@ -274,6 +285,7 @@ namespace Halobellum.Net
             public object ReadValue(int depth)
             {
                 if (depth > MaxDepth) throw Error("nested too deeply");
+                if (++values > MaxValues) throw Error("more than " + MaxValues + " values");
                 SkipSpace();
                 if (AtEnd) throw Error("unexpected end");
                 char c = text[pos];

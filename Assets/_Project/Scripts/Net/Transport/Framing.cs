@@ -1,9 +1,9 @@
 // Framing.cs
 // How messages travel over the TCP stream: each one is a 4-byte big-endian length followed by that many bytes of UTF-8 JSON.
 // TCP delivers a stream of bytes, not messages, so one read can hold half a message or several; FrameReader collects the bytes
-// and hands out whole messages. A frame longer than MaxFrameBytes (4 MB) is refused at once, before its bytes are collected.
+// and hands out whole messages. A frame longer than MaxFrameBytes (1 MB, LanLimits) is refused at once, before its bytes are collected.
 // Plain C# 9 without the engine.
-// Depends on: NetMessage.
+// Depends on: NetMessage, LanTimings (LanLimits).
 
 using System;
 using System.Text;
@@ -20,7 +20,8 @@ namespace Halobellum.Net
     public static class Framing
     {
         public const int HeaderBytes = 4;
-        public const int MaxFrameBytes = 4 * 1024 * 1024;
+        /// <summary>The longest payload, in bytes (LanLimits.MaxFrameBytes, 1 MB).</summary>
+        public const int MaxFrameBytes = LanLimits.MaxFrameBytes;
 
         private static readonly UTF8Encoding Utf8 = new UTF8Encoding(false, true);
 

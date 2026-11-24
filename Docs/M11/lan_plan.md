@@ -68,6 +68,8 @@ Found in the review after Stage 4 and left as they are:
 - **The other player's status** comes from its messages (its Ready, and a Status message when its battle is over and when it leaves the result). Between its Ready and the agreed hash check it reads "ready", and from the agreed check until its battle is over "in battle"; a game that is slow to start its battle is not told apart.
 - **A guest that leaves while its match is still starting** now tells the host ("The other player left"). No test makes that timing happen.
 - **The host's addresses** are read once when it starts listening. A network card that comes up later shows only after hosting again.
+- **A hostile game on the network** is bounded (`net_transport.md`, "Limits": 1 MB frames, 10 000 JSON values, bounded inboxes and outboxes, 256 messages per frame, short reasons, at most 2 rounds ahead), but not shut out: there is no authentication. Someone on the LAN can still keep the guest slot busy by connecting again and again without a Hello (each try holds it at most `HelloTimeoutMs`, 3 s, and a real guest who comes meanwhile is told "Another player is joining" and must try again; guests are not queued), and can fill the 32 places of the join list with made-up games (typing the host's address still works).
+- **A round of more than about 4100 actions** (some 255 bytes each) would not fit in the 1 MB frame. The connection then closes with a reason on both sides; no real round comes near it (the largest Ready in whole AI matches is about 8.6 KB).
 
 ## Status
 

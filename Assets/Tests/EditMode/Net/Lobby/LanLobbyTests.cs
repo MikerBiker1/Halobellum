@@ -480,5 +480,46 @@ namespace Halobellum.Tests.Net
             buffered.Close();
             Assert.IsFalse(a.IsOpen);
         }
+
+        [Test]
+        public void AGuestThatFloodsTheHost_IsReadAFramesShareAtATime_AndItsLeaveStillCounts()
+        {
+            const int Junk = 1000;
+            int ignored = 0;
+            var options = new LanLobbyOptions
+            {
+                GamePort = 0, DiscoveryPort = 0, BindAddress = IPAddress.Loopback, Broadcast = false, Timings = NetTestKit.Fast(),
+                Log = line => { if (line.Contains("ignored a Junk")) System.Threading.Interlocked.Increment(ref ignored); },
+            };
+            var host = new LanLobby(options);
+            _lobbies.Add(host);
+            host.Host(Hello("Hosty"));
+            LanSession flooder = LanSession.Join("127.0.0.1", host.HostPort, Hello("Floody"), NetTestKit.Fast());
+            try
+            {
+                Assert.IsTrue(NetTestKit.Until(() =>
+                {
+                    host.Update();
+                    flooder.Poll();
+                    return host.CanStart && flooder.State == LanSessionState.Connected;
+                }), host.Status);
+                for (int i = 0; i < Junk; i++) Assert.IsTrue(flooder.Send(new NetMessage("Junk").Set("i", i)));
+                Assert.IsTrue(flooder.Send(new NetMessage(LanMessageTypes.Leave).Set(LanFields.Reason, "bye")));
+
+                int updates = 0;
+                Assert.IsTrue(NetTestKit.Until(() =>
+                {
+                    int before = System.Threading.Volatile.Read(ref ignored);
+                    host.Update();
+                    updates++;
+                    Assert.LessOrEqual(System.Threading.Volatile.Read(ref ignored) - before, LanLimits.MaxMessagesPerUpdate, "One Update read more than its share.");
+                    return host.State == LanLobbyState.HostWaiting;
+                }), "The host never read the guest's Leave: " + host.State + " " + host.Status);
+                Assert.AreEqual(Junk, ignored, "Every message before the Leave was read.");
+                Assert.GreaterOrEqual(updates, Junk / LanLimits.MaxMessagesPerUpdate, "The flood took several frames, not one.");
+                Assert.AreEqual("Floody left.\n" + LanLobby.WaitingText, host.Status);
+            }
+            finally { flooder.Close(); }
+        }
     }
 }

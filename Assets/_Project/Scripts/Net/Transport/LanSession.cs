@@ -10,6 +10,11 @@
 // Every step reads "is the connection closed?" BEFORE it empties the connection's inbox: the reader thread puts a message in
 // the inbox before it marks the close, so a close seen first means every message that came before it is already there. That
 // way the last message before a drop (Leave, a final BattleResult, a Reject) is never left behind.
+// One Poll moves at most LanLimits.MaxMessagesPerUpdate messages from the connection into the session's queue, and only tops it up
+// to that, so a flood from the other game can never keep a caller's "while (TryReceive(...))" loop running: the callers stop after
+// that many in one frame too, and the rest wait for the next. A drop is noticed once every message before it has been moved.
+// Text from the other game (its version, a refusal, a message type) is cut short (LanLimits) before it goes into a reason, a log
+// line or a Reject, so a Reject can never be over the frame limit.
 // Everything runs on the caller's thread: call Poll (TryReceive calls it too) every frame. Nothing here knows about the Match;
 // the lockstep coordinator sits on top and uses Send / TryReceive, through ILanChannel (IsOpen: Connected; LostReason: Reason).
 // Plain C# 9 without the engine.
@@ -128,8 +133,7 @@ namespace Halobellum.Net
         {
             Poll();
             // After the session ended, anything that still reached the connection's inbox is handed on too.
-            if (received.Count == 0 && IsFinished && wasConnected && connection != null)
-                while (connection.TryReceive(out NetMessage late)) received.Enqueue(late);
+            if (received.Count == 0 && IsFinished && wasConnected && connection != null) TopUp();
             if (received.Count > 0)
             {
                 message = received.Dequeue();
@@ -179,7 +183,7 @@ namespace Halobellum.Net
                 {
                     if (m.Type != NetMessageTypes.Hello)
                     {
-                        DropGuest("it sent " + m.Type + " before its Hello", "The host expected a Hello first.");
+                        DropGuest("it sent " + LanLimits.Clip(m.Type, LanLimits.MaxNameChars) + " before its Hello", "The host expected a Hello first.");
                         return;
                     }
                     LanHello theirs = LanHello.FromMessage(m);
@@ -199,13 +203,16 @@ namespace Halobellum.Net
                     host.Lock();
                     State = LanSessionState.Connected;
                     wasConnected = true;
-                    NetLog.Write(log, "Handshake done: " + PeerName + " joined (version " + theirs.Version + ").");
+                    NetLog.Write(log, "Handshake done: " + LanLimits.Clip(PeerName, LanLimits.MaxNameChars) + " joined (version "
+                        + LanLimits.Clip(theirs.Version, LanLimits.MaxNameChars) + ").");
                 }
                 if (State == LanSessionState.Handshaking)
                 {
-                    if (NetLog.NowMs - handshakeStartMs > timings.HandshakeTimeoutMs)
+                    // A real guest sends its Hello the moment it is connected: one that sends nothing must not hold the slot for long.
+                    int helloMs = Math.Min(timings.HelloTimeoutMs, timings.HandshakeTimeoutMs);
+                    if (NetLog.NowMs - handshakeStartMs > helloMs)
                     {
-                        DropGuest("no Hello within " + timings.HandshakeTimeoutMs + " ms", "The host got no Hello in time.");
+                        DropGuest("no Hello within " + helloMs + " ms", "The host got no Hello in time.");
                     }
                     return;
                 }
@@ -235,14 +242,14 @@ namespace Halobellum.Net
                 {
                     if (m.Type == NetMessageTypes.Reject)
                     {
-                        string reason = m.GetString("reason", "The host refused the connection.");
+                        string reason = LanLimits.Clip(m.GetString("reason", "The host refused the connection."));
                         End(LanSessionState.Refused, reason);
                         connection.Close();
                         return;
                     }
                     if (m.Type != NetMessageTypes.Welcome)
                     {
-                        End(LanSessionState.Lost, "The host sent " + m.Type + " instead of an answer to the Hello.");
+                        End(LanSessionState.Lost, "The host sent " + LanLimits.Clip(m.Type, LanLimits.MaxNameChars) + " instead of an answer to the Hello.");
                         connection.Close();
                         return;
                     }
@@ -258,7 +265,8 @@ namespace Halobellum.Net
                     Peer = theirs;
                     State = LanSessionState.Connected;
                     wasConnected = true;
-                    NetLog.Write(log, "Handshake done: joined " + PeerName + " (version " + theirs.Version + ").");
+                    NetLog.Write(log, "Handshake done: joined " + LanLimits.Clip(PeerName, LanLimits.MaxNameChars) + " (version "
+                        + LanLimits.Clip(theirs.Version, LanLimits.MaxNameChars) + ").");
                 }
                 if (State == LanSessionState.Handshaking)
                 {
@@ -276,16 +284,25 @@ namespace Halobellum.Net
             if (State == LanSessionState.Connected) PumpConnected();
         }
 
-        /// <summary>Connected: hands the messages on, then notices a closed connection.</summary>
+        /// <summary>
+        /// Connected: hands the messages on (topping the queue up to MaxMessagesPerUpdate), then notices a closed connection once
+        /// every message before the close has been moved.
+        /// </summary>
         private void PumpConnected()
         {
             bool closed = connection.State == LanConnectionState.Closed; // read before the inbox (see the top of the file)
-            while (connection.TryReceive(out NetMessage m)) received.Enqueue(m);
-            if (closed)
+            TopUp();
+            if (closed && connection.Pending == 0)
             {
                 if (connection.CloseReason == LanCloseReason.LocalClose) End(LanSessionState.Closed, "Closed by this game.");
                 else End(LanSessionState.Lost, connection.CloseDetail);
             }
+        }
+
+        /// <summary>Moves messages from the connection until the session's queue holds MaxMessagesPerUpdate (the rest wait).</summary>
+        private void TopUp()
+        {
+            while (received.Count < LanLimits.MaxMessagesPerUpdate && connection.TryReceive(out NetMessage m)) received.Enqueue(m);
         }
 
         /// <summary>Host: the guest's connection closed during the handshake; wait for the next guest without locking.</summary>
@@ -301,9 +318,11 @@ namespace Halobellum.Net
         /// <summary>Host: refuses the guest in the handshake, then waits for the next one.</summary>
         private void DropGuest(string hereReason, string theirReason)
         {
+            // Either reason can hold the guest's own text (its version, say): cut short, so the Reject always fits in a frame.
+            hereReason = LanLimits.Clip(hereReason);
             LastRefusal = hereReason;
             NetLog.Write(log, "Refused the guest: " + hereReason);
-            connection.Send(new NetMessage(NetMessageTypes.Reject).Set("reason", theirReason ?? hereReason));
+            connection.Send(new NetMessage(NetMessageTypes.Reject).Set("reason", LanLimits.Clip(theirReason ?? hereReason)));
             connection.Close();
             connection = null;
             State = LanSessionState.Waiting;
