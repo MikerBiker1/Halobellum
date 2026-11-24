@@ -87,6 +87,21 @@ namespace Halobellum.Tests
             Assert.AreEqual(LocalSideTexts.RoundLine(s, Team.A), LocalSideTexts.RoundLine(s, Team.B));
         }
 
+        [Test]
+        public void WhenTheHostsResultWasUsed_TheTextsSaySoAndNeverReadTheGuestsOwnBattleAsTheResult()
+        {
+            // M11: the guest's own battle ended with both armies down; the host's result (with base damage) is the one used.
+            RoundSummary s = Summary();
+            s.Battle.TeamA.Survivors = 0;
+            s.Battle.TeamB.Survivors = 0;
+            Assert.AreEqual("Round 3: you hit the enemy base for 45, it hit yours for 120", LocalSideTexts.RoundLine(s, Team.B, hostResult: true));
+            Assert.AreEqual("In this game's battle, survivors: yours 0 of 8, enemy 0 of 10", LocalSideTexts.SurvivorsLine(s, Team.B, hostResult: true));
+            Assert.AreEqual("Top damage dealers (this game's battle)", LocalSideTexts.BattleHeading("Top damage dealers", true));
+            Assert.AreEqual("Top damage dealers", LocalSideTexts.BattleHeading("Top damage dealers", false), "Unchanged otherwise.");
+            StringAssert.Contains("host's result is used", LocalSideTexts.HostResultNote);
+            Assert.AreEqual("Round 3: both armies fell, and neither base was hit", LocalSideTexts.RoundLine(s, Team.B), "Single-player and agreeing rounds: as before.");
+        }
+
         private static Match TwoHumans(int seed = 5) => new Match(LockstepTestKit.Rules(), TestRules.Default(), LockstepTestKit.Factions(), seed, MatchSeats.TwoHumans);
 
         [Test]

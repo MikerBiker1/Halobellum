@@ -3,7 +3,9 @@
 // prompt): a host is found by the join page's list, joined, and starts the match, and the guest builds the same match from the
 // host's MatchStart (put back for it by the lobby) without losing the host's first message after it; a guest whose version or
 // unit stats differ is refused in plain words and the host keeps waiting; a guest who leaves puts the host back to waiting; the
-// host stopping tells the guest; joining where no game hosts says so with the Windows Firewall hint; a port in use is tried again.
+// host stopping tells the guest; joining where no game hosts says so with the Windows Firewall hint; a port in use is tried again;
+// a listener that stops accepting by itself is started again; the host's "join at" line, a typed "address:port", and the join
+// list's hint when nothing is heard.
 // Also the handshake's content text and name, the demo flags and window slots, the log lines of a LAN match and the buffered channel.
 // Depends on: Halobellum.Net (LanLobby, LanIdentity, LanDemoArgs, LanMatchLog, LanBufferedChannel, LanMatchStart, LanGuestStart),
 //             Halobellum.Economy, Halobellum.Core, NUnit, NetTestKit, LockstepTestKit, TestRules.
@@ -320,6 +322,81 @@ namespace Halobellum.Tests.Net
             Assert.AreEqual(LanLobbyState.HostWaiting, host.State, host.Status);
         }
 
+        [Test]
+        public void AListenerThatStopsAcceptingByItself_IsStartedAgain_AndAGuestCanJoin()
+        {
+            long now = 0;
+            int failures = 1;
+            var options = new LanLobbyOptions
+            {
+                GamePort = 0, DiscoveryPort = 0, BindAddress = IPAddress.Loopback, Broadcast = false, Timings = NetTestKit.Fast(),
+                BeforeAccept = () => { if (System.Threading.Interlocked.Decrement(ref failures) >= 0) throw new System.InvalidOperationException("The network card went away."); },
+            };
+            var host = new LanLobby(options, () => now);
+            _lobbies.Add(host);
+            host.Host(Hello("Hosty"));
+            Assert.IsTrue(Pump(() => host.State == LanLobbyState.HostFailed, host), host.State + " " + host.Status);
+            StringAssert.StartsWith("Hosting stopped: The network card went away.", host.Status);
+            Assert.IsTrue(host.IsHosting);
+            Assert.AreEqual("", host.JoinAt);
+
+            now += LanLobby.RetryMs;
+            host.Update();
+            Assert.AreEqual(LanLobbyState.HostWaiting, host.State, host.Status);
+            LanLobby guest = Lobby();
+            guest.Join("127.0.0.1:" + host.HostPort, 0, Hello("Guesty")); // the form people copy: the port is read from it
+            Assert.IsTrue(Pump(() => host.CanStart && guest.State == LanLobbyState.JoinWaiting, host, guest), $"host {host.State} '{host.Status}', guest {guest.State} '{guest.Status}'");
+        }
+
+        [Test]
+        public void TheHostShowsWhereToJoin_AndTheJoinListGivesAHintWhenNothingIsHeard()
+        {
+            Assert.AreEqual("Others can join at 192.168.1.5 (PC-NAME).", LanAddresses.JoinAtText(new[] { "192.168.1.5" }, "PC-NAME"));
+            Assert.AreEqual("Others can join at 192.168.1.5 or 10.0.0.2.", LanAddresses.JoinAtText(new[] { "192.168.1.5", "10.0.0.2" }, ""));
+            Assert.AreEqual("Others can join at PC-NAME.", LanAddresses.JoinAtText(new string[0], "PC-NAME"));
+            Assert.AreEqual("", LanAddresses.JoinAtText(null, null));
+            Assert.IsFalse(LanAddresses.Shown(IPAddress.Loopback));
+            Assert.IsFalse(LanAddresses.Shown(IPAddress.Parse("169.254.3.4")), "Self-assigned: no network behind it.");
+            Assert.IsFalse(LanAddresses.Shown(IPAddress.IPv6Loopback));
+            Assert.IsTrue(LanAddresses.Shown(IPAddress.Parse("192.168.1.5")));
+            foreach (string address in LanAddresses.LocalIPv4()) Assert.IsTrue(LanAddresses.Shown(IPAddress.Parse(address)), address);
+
+            Assert.AreEqual("192.168.1.5", LanAddresses.SplitPort(" 192.168.1.5:47810 ", out int port));
+            Assert.AreEqual(47810, port);
+            Assert.AreEqual("PC-NAME", LanAddresses.SplitPort("PC-NAME", out port));
+            Assert.AreEqual(0, port);
+            Assert.AreEqual("PC-NAME:abc", LanAddresses.SplitPort("PC-NAME:abc", out port), "Not a port: left for the name lookup to refuse.");
+            Assert.AreEqual(0, port);
+            Assert.AreEqual("fe80::1", LanAddresses.SplitPort("fe80::1", out port));
+            Assert.AreEqual(0, port);
+
+            // A host listening on loopback only (a demo, the tests) says so; one on every card lists this PC's addresses, with a port that is not the usual one.
+            Assert.AreEqual("Only this PC can join, at 127.0.0.1:5000.", LanLobby.JoinAtFor(IPAddress.Loopback, 5000));
+            Assert.AreEqual("Only this PC can join, at 127.0.0.1.", LanLobby.JoinAtFor(IPAddress.Loopback, LanDefaults.GamePort));
+            string everyCard = LanLobby.JoinAtFor(null, LanDefaults.GamePort);
+            List<string> mine = LanAddresses.LocalIPv4();
+            if (mine.Count > 0) StringAssert.Contains(mine[0], everyCard);
+            StringAssert.DoesNotContain(":" + LanDefaults.GamePort, everyCard);
+
+            LanLobby host = Lobby();
+            host.Host(Hello("Hosty"));
+            StringAssert.StartsWith("Only this PC can join, at 127.0.0.1:" + host.HostPort, host.JoinAt);
+            host.Cancel();
+            Assert.AreEqual("", host.JoinAt);
+
+            long now = 0;
+            var options = new LanLobbyOptions { GamePort = 0, DiscoveryPort = 0, BindAddress = IPAddress.Loopback, Broadcast = false, Timings = NetTestKit.Fast() };
+            var guest = new LanLobby(options, () => now);
+            _lobbies.Add(guest);
+            guest.Browse(Hello("Guesty"));
+            guest.Update();
+            Assert.AreEqual(LanLobby.LookingText, guest.NoGamesText);
+            now += LanLobby.NoGamesHintMs;
+            guest.Update();
+            Assert.AreEqual(LanLobby.NoGamesHint, guest.NoGamesText, "Nothing heard for a while: this PC's firewall, or type the address.");
+            StringAssert.Contains("Firewall on this PC", guest.NoGamesText);
+        }
+
         // ------------------------------------------------------------------ the handshake's identity
 
         [Test]
@@ -381,7 +458,7 @@ namespace Halobellum.Tests.Net
         [Test]
         public void TheLogLines_HaveTheAgreedShape()
         {
-            Assert.AreEqual("[LAN] round 3 hash 00000000000000ff result 000000000000abcd baseA 1500 baseB 800", LanMatchLog.Round(3, "00000000000000ff", 0xabcd, 1500, 800));
+            Assert.AreEqual("[LAN] round 3 hash 00000000000000ff result 000000000000abcd own 000000000000abce baseA 1500 baseB 800", LanMatchLog.Round(3, "00000000000000ff", 0xabcd, 0xabce, 1500, 800));
             Assert.AreEqual("[LAN] match over winner A", LanMatchLog.MatchOver(Team.A));
             Assert.AreEqual("[LAN] match over winner none", LanMatchLog.MatchOver(null));
             Assert.AreEqual("[LAN] ended OpponentLeft The other player left.", LanMatchLog.Ended(LanMatchState.OpponentLeft, "The other player left.\n"));

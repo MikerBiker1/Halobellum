@@ -127,8 +127,10 @@ namespace Halobellum.Tests
             Assert.IsTrue(_menu.Lobby.IsHosting);
             Assert.IsTrue(_menu.Lobby.Busy, "The name is fixed while hosting.");
             Assert.AreEqual(LanLobby.WaitingText, _menu.LanStatusText);
+            StringAssert.StartsWith("Only this PC can join, at 127.0.0.1:", _menu.HostJoinAtText, "The host panel says where to join (here loopback only).");
 
             _menu.CancelLan();
+            Assert.AreEqual("", _menu.HostJoinAtText);
             Assert.AreEqual(LanLobbyState.Idle, _menu.Lobby.State, "Hosting stopped.");
             Assert.AreEqual(MainMenuHud.LanPanel.Host, _menu.CurrentLanPanel, "The panel stays, with Host again.");
             Assert.IsFalse(_menu.Lobby.Busy);
@@ -169,6 +171,7 @@ namespace Halobellum.Tests
             Assert.AreEqual(MainMenuHud.LanPanel.Join, _menu.CurrentLanPanel);
             Assert.AreEqual(LanLobbyState.Browsing, _menu.Lobby.State);
             Assert.Greater(_menu.Lobby.BrowsePort, 0, "The join panel listens for games.");
+            Assert.AreEqual(LanLobby.LookingText, _menu.NoGamesText, "Looking, at first (the hint comes after LanLobby.NoGamesHintMs).");
             _menu.CancelLan();
             Assert.AreEqual(MainMenuHud.LanPanel.None, _menu.CurrentLanPanel);
             _menu.Back();

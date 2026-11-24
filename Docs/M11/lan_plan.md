@@ -34,7 +34,7 @@ A new engine-free assembly, `Halobellum.Net` (`Assets/_Project/Scripts/Net`), bu
 - **Discovery:** the host broadcasts a small UDP announcement (port 47811) every second: game name, host name, version, TCP port. The Join page lists what it hears; an address can also be typed.
 - **Connection:** one TCP connection (port 47810). Messages are length-prefixed UTF-8 JSON objects. Reading and writing happen on background threads; messages are handed to the game through a queue that the main thread drains every frame.
 - **Heartbeat:** a ping every second; 10 seconds of silence counts as a lost connection.
-- **Messages:** Hello / Welcome / Reject (handshake), MatchStart (seed, setup), DraftPick, Ready (round, commands), StateHash, BattleResult, Leave, Ping / Pong.
+- **Messages:** Hello / Welcome / Reject (handshake), MatchStart (seed, setup), DraftPick, Ready (round, commands), StateHash, BattleResult, Desync, Leave, Status (for the HUD: battle over, result left), Ping / Pong.
 - **Session and lockstep:** `LanSession` runs the connection and handshake; `LanMatchCoordinator` runs one match over any channel (a real socket or an in-memory pair for tests). Neither knows about Unity.
 
 ## Stages
@@ -58,6 +58,16 @@ Each stage ends with its tests passing. Engine-free code is tested with `dotnet 
 - **Windows Firewall** asks the first time the host listens; without permission the guest cannot connect. The Join page says so when a connection times out.
 - **The guest's terrain** is built for a camera in the south. Turning the camera shows the far side's props up close. Stage 3 swaps the factions' halves and turns the map for the guest so both see the same composition; if that turns out costly it can follow later.
 - **Two instances on one PC** share settings (PlayerPrefs); the test build keeps them apart from the owner's own game.
+
+## Known limits
+
+Found in the review after Stage 4 and left as they are:
+
+- **Floating point between two PCs** stays a risk (see Risks). The guest's round line now carries its own battle's result next to the host's (`own`), so the two-log check shows a guest battle that ended differently, and every command list is in Player.log for a replay. There is still no tool that replays a LAN match from two Player.logs; it is done by hand from the logged seed and command lists.
+- **No separate LAN battle log file.** The decisions go to Player.log (each side's command lists, the host's result text), not to a battle log in the Battle Logs folder, so the match-over screen has no "Open battle logs" in a LAN match.
+- **The other player's status** comes from its messages (its Ready, and a Status message when its battle is over and when it leaves the result). Between its Ready and the agreed hash check it reads "ready", and from the agreed check until its battle is over "in battle"; a game that is slow to start its battle is not told apart.
+- **A guest that leaves while its match is still starting** now tells the host ("The other player left"). No test makes that timing happen.
+- **The host's addresses** are read once when it starts listening. A network card that comes up later shows only after hosting again.
 
 ## Status
 

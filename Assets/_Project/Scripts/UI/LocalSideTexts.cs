@@ -2,6 +2,8 @@
 // The words of the result and match-over screens, from the local side's point of view (M11): "you" and "yours" are the side this screen plays
 // (MatchController.LocalTeam: Team A in single-player, Team B for a LAN guest), "the enemy" is the other side. With local = Team A every text is
 // exactly what the screens said before. Plain functions, so that tests can check them without a scene.
+// hostResult (a LAN guest whose own battle ended differently, so the host's result was used): base damage, bases and income are the
+// host's, but the survivors and kills are still this game's own battle, so the texts never mix the two without saying so.
 // Depends on: Halobellum.Economy (Match, RoundSummary), Halobellum.Combat (BattleResult), Halobellum.Core (Team).
 
 using System.Collections.Generic;
@@ -20,8 +22,8 @@ namespace Halobellum.UI
         /// <summary>Both armies fell in this round's battle.</summary>
         public static bool BothFell(RoundSummary s) => s.Battle.TeamA.Survivors == 0 && s.Battle.TeamB.Survivors == 0;
 
-        /// <summary>The line under the round's big word.</summary>
-        public static string RoundLine(RoundSummary s, Team local) => BothFell(s)
+        /// <summary>The line under the round's big word. With hostResult it never reads this game's own battle ("both armies fell").</summary>
+        public static string RoundLine(RoundSummary s, Team local, bool hostResult = false) => !hostResult && BothFell(s)
             ? $"Round {s.Round}: both armies fell, and neither base was hit"
             : $"Round {s.Round}: you hit the enemy base for {s.BaseDamageBy(local)}, it hit yours for {s.BaseDamageBy(local.Opponent())}";
 
@@ -33,11 +35,17 @@ namespace Halobellum.UI
 
         public static string BasesLine(RoundSummary s, Team local) => $"Bases: yours {BaseHealthOf(s, local)}, enemy {BaseHealthOf(s, local.Opponent())}";
 
-        public static string SurvivorsLine(RoundSummary s, Team local)
+        public static string SurvivorsLine(RoundSummary s, Team local, bool hostResult = false)
         {
             TeamResult own = s.Battle.For(local), other = s.Battle.For(local.Opponent());
-            return $"Survivors: yours {own.Survivors} of {own.Deployed}, enemy {other.Survivors} of {other.Deployed}" + (s.Battle.TimedOut ? "  (time limit)" : "");
+            return (hostResult ? "In this game's battle, survivors: yours" : "Survivors: yours") + $" {own.Survivors} of {own.Deployed}, enemy {other.Survivors} of {other.Deployed}" + (s.Battle.TimedOut ? "  (time limit)" : "");
         }
+
+        /// <summary>The note a LAN guest's result window shows when its own battle ended differently and the host's result is used.</summary>
+        public const string HostResultNote = "Your game's battle ended differently; the host's result is used.";
+
+        /// <summary>A heading over this game's own battle's lists (top damage, kills); with hostResult it says they are this game's.</summary>
+        public static string BattleHeading(string heading, bool hostResult) => hostResult ? heading + " (this game's battle)" : heading;
 
         /// <summary>"Your" for the local side, "Enemy" for the other (top damage dealers, what killed what).</summary>
         public static string SideWord(Team team, Team local) => team == local ? "Your" : "Enemy";

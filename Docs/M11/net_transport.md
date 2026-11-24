@@ -14,6 +14,7 @@ Tests: `dotnet test Tools/SimTests` (with everything else; filter `FullyQualifie
 | `LanTimings.cs` | `LanTimings` (times), `LanDefaults` (ports, protocol, game name), `NetLog` (log hook and clock) |
 | `LanConnection.cs` | `LanConnection`, `LanConnectionState`, `LanCloseReason`, `LanClient` |
 | `LanHost.cs` | `LanHost` |
+| `LanAddresses.cs` | `LanAddresses` (this PC's addresses and name for the host page; a typed "address:port") |
 | `LanDiscovery.cs` | `LanAnnouncer`, `LanBrowser`, `LanGameInfo` |
 | `LanHandshake.cs` | `LanHello` (Hello / Welcome contents and the match check) |
 | `LanSession.cs` | `LanSession`, `LanSessionState` |
@@ -23,7 +24,7 @@ Tests: `dotnet test Tools/SimTests` (with everything else; filter `FullyQualifie
 - A message is a UTF-8 JSON object with a string field `"t"`, its type. `new NetMessage("Ready").Set("round", 3)`; read with `m.Type`, `m.GetInt("round")`, `GetString`, `GetBool`, `GetLong`, `GetULong`, `GetFloat`, `GetDouble`, `GetObject`, `GetStringList`, `GetObjectList`, `GetArray`, `Has`.
 - Values: strings, numbers, true/false, null, nested objects, arrays (of strings, objects or anything). Numbers keep their exact text. `Set(key, float)` writes 9 significant digits and `Set(key, double)` 17, so they read back to the same bits on any machine (the lockstep needs exact positions). NaN and infinity are refused. `Set(key, ulong)` writes the exact whole number (a state hash or content fingerprint); read it back with `GetULong`. Without that overload C# would quietly pick `Set(key, float)` for a ulong.
 - On the wire: a 4-byte big-endian length, then the payload. Limit 4 MB (`Framing.MaxFrameBytes`): `Framing.Encode` throws `FrameException` above it, and `FrameReader` refuses a longer frame as soon as its header arrives. `FrameReader.Push(bytes, offset, count)` then `TryRead` / `TryReadText` until false; it copes with half frames and several frames in one read.
-- The transport's own types: `Ping`, `Pong` (heartbeat, never handed to the game), `Hello`, `Welcome`, `Reject` (handshake). The layers above add theirs (MatchStart, DraftPick, Ready, StateHash, BattleResult, Leave).
+- The transport's own types: `Ping`, `Pong` (heartbeat, never handed to the game), `Hello`, `Welcome`, `Reject` (handshake). The layers above add theirs (MatchStart, DraftPick, Ready, StateHash, BattleResult, Desync, Leave, Status).
 
 ## LanConnection
 
@@ -46,6 +47,12 @@ One TCP connection (NoDelay). A reader thread fills an inbox; a writer thread se
 - Anyone else who connects while the guest's connection is open, or after `Lock()`, gets `Reject {reason: "This game already has a player."}` and is disconnected cleanly.
 - When the guest's connection closes before `Lock()` (refused handshake, guest left), the next guest is taken.
 - `Stop()`: idempotent; closes the listener and the guest's connection.
+- An accept that fails for a passing reason (`IsPassingAcceptError`: ConnectionReset, as Windows gives when a guest connects and resets before it is taken, ConnectionAborted, NoBufferSpaceAvailable, TooManyOpenSockets, Interrupted, TryAgain, WouldBlock, NetworkReset) is logged and the host goes on accepting after a back-off (50 ms, doubling up to 1 s). Any other accept failure ends the accept thread for good: `Failed` is true, `FailReason` says why and `IsListening` is false. `LanSession.HostFailed` passes it on, and `LanLobby` turns it into `HostFailed` ("Hosting stopped: ... Trying again...") and listens again after `RetryMs`. A connection that cannot be set up (no thread for it) is dropped and the host keeps accepting.
+- `BeforeAccept` (tests only) runs on the accept thread before each accept and may throw to act out an accept error.
+
+## LanAddresses
+
+This PC's addresses for the host page (`LanLobby.JoinAt`): `LocalIPv4()` (the IPv4 addresses of the cards that are up; loopback and self-assigned 169.254.x.x left out), `ComputerName()` (`Dns.GetHostName`), `JoinAtText(addresses, name)` ("Others can join at 192.168.1.5 (PC-NAME)."), and `SplitPort(typed, out port)`, which reads "192.168.1.5:47810" as the computer and the port (`LanLobby.Join` uses the port when one is typed).
 
 ## Discovery
 

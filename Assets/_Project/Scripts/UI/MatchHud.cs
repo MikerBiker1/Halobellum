@@ -117,7 +117,7 @@ namespace Halobellum.UI
             }
             if (_battleStats.IsOpen) UpdateBattleStats();
             if (!_unlockPageOpen) return;
-            if (match == null || match.Match == null || match.Match.Phase != MatchPhase.Deployment)
+            if (match == null || match.Match == null || match.Match.Phase != MatchPhase.Deployment || match.ActionsLocked) // M11: a LAN Ready closes it.
             {
                 _unlockPageOpen = false;
                 return;
@@ -216,6 +216,7 @@ namespace Halobellum.UI
             Team local = match.LocalTeam;
             float width = HudScale.ScaledWidth(_scale), height = HudScale.ScaledHeight(_scale);
             bool skirmish = m.Rules.Mode == MatchMode.UnlockSkirmish;
+            if (_unlockPageOpen && match.ActionsLocked) CloseUnlockPage(); // M11: a LAN Ready ends the round's choices, the page with them.
             if (_unlockPageOpen) DimTheField(width, height); // First, so that the top bar stays lit.
 
             // Top bar.
@@ -1294,13 +1295,19 @@ namespace Halobellum.UI
             Team? winner = s.RoundWinner;
             Team local = match.LocalTeam;
             string word = LocalSideTexts.RoundWord(winner, local);
-            string line = LocalSideTexts.RoundLine(s, local);
+            bool hostResult = match.Lan != null && match.Lan.HostResultUsedThisRound; // M11 guest: its own battle ended differently.
+            string line = LocalSideTexts.RoundLine(s, local, hostResult);
             DrawOutcome(word, winner == null ? DrawColor : winner == local ? VictoryColor : DefeatColor, line, 550f);
             Rect panel = CenteredPanel(640f, 550f, BannerRoom);
             float y = panel.y + 12f;
             GUI.Label(new Rect(panel.x, y, panel.width, 34f), HudTheme.Title($"Round {s.Round} result"), _centered);
             y += 44f;
-            y = SummaryLines(s, panel, y);
+            if (hostResult)
+            {
+                GUI.Label(new Rect(panel.x + 20f, y, panel.width - 40f, 24f), LocalSideTexts.HostResultNote, _small);
+                y += 26f;
+            }
+            y = SummaryLines(s, panel, y, hostResult);
             string ready = LocalSideTexts.ReadyToLevelLine(s, local);
             if (ready != null) GUI.Label(new Rect(panel.x + 20f, y + 8f, panel.width - 40f, 26f), ready, _text);
 
@@ -1330,7 +1337,7 @@ namespace Halobellum.UI
             float y = panel.y + 12f;
             GUI.Label(new Rect(panel.x, y, panel.width, 40f), HudTheme.Title("Match over"), _title);
             y += 52f;
-            if (s != null) SummaryLines(s, panel, y);
+            if (s != null) SummaryLines(s, panel, y, match.Lan != null && match.Lan.HostResultUsedThisRound);
             var stats = new Rect(panel.x + panel.width * 0.5f - 230f, panel.yMax - 100f, 220f, 34f);
             TutorialHud.Mark("key:Battle stats", stats);
             if (GUI.Button(stats, "Battle stats", _button)) OpenBattleStats();
@@ -1401,24 +1408,25 @@ namespace Halobellum.UI
         }
 
         /// <summary>Base damage, bases, survivors, top damage dealers and what killed what. Returns the next y.</summary>
-        private float SummaryLines(RoundSummary s, Rect panel, float y)
+        /// <summary>The round's numbers. hostResult (M11 guest): the bases are the host's result, the lists this game's own battle; it says so, and one kill line fewer makes room for the note.</summary>
+        private float SummaryLines(RoundSummary s, Rect panel, float y, bool hostResult = false)
         {
             float x = panel.x + 20f, w = panel.width - 40f;
             Team local = match.LocalTeam;
             GUI.Label(new Rect(x, y, w, 26f), LocalSideTexts.BaseDamageLine(s, local), _text); y += 28f;
             GUI.Label(new Rect(x, y, w, 26f), LocalSideTexts.BasesLine(s, local), _text); y += 28f;
-            GUI.Label(new Rect(x, y, w, 26f), LocalSideTexts.SurvivorsLine(s, local), _text);
+            GUI.Label(new Rect(x, y, w, 26f), LocalSideTexts.SurvivorsLine(s, local, hostResult), _text);
             y += 38f;
 
-            GUI.Label(new Rect(x, y, w, 24f), "Top damage dealers", _text); y += 26f;
+            GUI.Label(new Rect(x, y, w, 24f), LocalSideTexts.BattleHeading("Top damage dealers", hostResult), _text); y += 26f;
             foreach (UnitTypeResult t in TopDealers(s.Battle, 4))
             {
                 GUI.Label(new Rect(x + 12f, y, w - 12f, 22f), $"{LocalSideTexts.SideWord(t.Team, local)} {t.UnitName}: {t.DamageDealt:0} damage, {t.Kills} kills", _small);
                 y += 22f;
             }
             y += 10f;
-            GUI.Label(new Rect(x, y, w, 24f), "What killed what", _text); y += 26f;
-            foreach (KillCount k in s.Kills.Take(5))
+            GUI.Label(new Rect(x, y, w, 24f), LocalSideTexts.BattleHeading("What killed what", hostResult), _text); y += 26f;
+            foreach (KillCount k in s.Kills.Take(hostResult ? 4 : 5))
             {
                 GUI.Label(new Rect(x + 12f, y, w - 12f, 22f), $"{LocalSideTexts.SideWord(k.KillerTeam, local)} {k.KillerType} killed {k.Kills} {k.VictimType}", _small);
                 y += 22f;

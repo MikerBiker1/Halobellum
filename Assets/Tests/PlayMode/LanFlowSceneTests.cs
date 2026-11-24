@@ -135,6 +135,14 @@ namespace Halobellum.Tests
             Assert.AreEqual(MatchPhase.Battle, _remote.Match.Phase);
             Assert.IsFalse(lan.Ended);
 
+            // The battle bar's Pause does not stop a LAN match either: the host's result must reach the other game.
+            Assert.IsFalse(battle.PauseAllowed);
+            float speed = battle.Speed;
+            battle.Speed = 0f;
+            Assert.AreEqual(speed, battle.Speed, "A pause is ignored in a LAN match.");
+            Assert.IsFalse(battle.Clock.IsPaused);
+            Assert.AreEqual("Guesty: in battle", lan.OpponentLine);
+
             // The pause menu does not stop a LAN match.
             PauseMenu pause = PauseMenu.Current;
             Assert.IsNotNull(pause);
@@ -158,12 +166,16 @@ namespace Halobellum.Tests
             Assert.AreEqual(lan.Coordinator.LastOutcomeHash, _remote.LastOutcomeHash);
             Assert.AreNotEqual(0UL, lan.Coordinator.LastOutcomeHash);
             Assert.IsFalse(_remote.HostResultUsed, "Both played the same battle.");
+            Assert.IsFalse(lan.HostResultUsedThisRound);
+            Assert.AreEqual(lan.Coordinator.LastOutcomeHash, lan.Coordinator.LastOwnOutcomeHash, "The host's own result is the one used.");
+            Assert.AreEqual("Guesty: battle over", lan.OpponentLine, "The guest's Status said its battle is over.");
             host.Continue();
             _remote.ContinueAfterResult();
             Assert.AreEqual(2, host.Match.Round);
             Assert.AreEqual(MatchPhase.Deployment, host.Match.Phase);
             Assert.AreEqual(LanMatchState.Deployment, lan.Coordinator.State, "Round 2: the host may act again.");
             Assert.IsFalse(host.ActionsLocked);
+            yield return Until(() => lan.OpponentLine == "Guesty: deploying", "the guest's Continue reaches the host");
 
             // The guest leaves: the host's end screen says so.
             _remote.Leave("The other player left the match.");

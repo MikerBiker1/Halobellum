@@ -8,8 +8,8 @@ The main page has a new item, **LAN Game**, between Play and Settings. Its page 
 
 - **Your name** is in both panels. It is kept in PlayerPrefs (`GameSettings.LanPlayerName`). It can't be changed while a connection is open.
 - **Host game** opens the host panel: the name, the mode (Faction or Unlock Skirmish) and, in Unlock Skirmish, the base health and the cards. These are the LAN match's own values. The Play page's saved base health and cards are not touched.
-- **Host** starts hosting: TCP 47810 for the guest and a UDP announcement on 47811 every second. The name is fixed from then on. The panel shows "Waiting for a player...", then "Guesty joined. Press Start to begin." Once a player has joined, the game stops announcing itself, so it no longer shows in join lists. If that player leaves, it announces again. **Start** works once someone has joined. **Cancel** stops hosting, tells a joined player and keeps the panel, with Host again.
-- **Join game** lists the games heard on the network (it refreshes every frame; a game drops off after 4 s of silence). A click on a game joins it. Or type an address (an IPv4 address or a computer name) and press **Join**. The last address is kept. The status line says what happens. When the host presses Start, this game follows by itself.
+- **Host** starts hosting: TCP 47810 for the guest and a UDP announcement on 47811 every second. The name is fixed from then on. The panel shows "Waiting for a player...", then "Guesty joined. Press Start to begin." While it waits, a line under the status says where to join: "Others can join at 192.168.1.5 (PC-NAME)." (`LanLobby.JoinAt`, from `LanAddresses`: the IPv4 addresses of the cards that are up and the computer name; "Only this PC can join, at 127.0.0.1." for a loopback-only host, with the port when it is not 47810). Once a player has joined, the game stops announcing itself, so it no longer shows in join lists. If that player leaves, it announces again. **Start** works once someone has joined. **Cancel** stops hosting, tells a joined player and keeps the panel, with Host again.
+- **Join game** lists the games heard on the network (it refreshes every frame; a game drops off after 4 s of silence). A click on a game joins it. Or type an address (an IPv4 address or a computer name, with or without ":port") and press **Join**. The last address is kept. While nothing is heard the list says "No games found yet. Looking..."; after 5 s (`LanLobby.NoGamesHintMs`) it says "No games heard yet. Windows Firewall on this PC may be blocking the list: allow Halobellum on this PC, or type the address shown on the host's screen." (`LanLobby.NoGamesText`). The status line says what happens. When the host presses Start, this game follows by itself.
 - Refusals are shown in plain words, for example "The host refused: The other game is version 0.416.2; this one is 0.416.1." or "The host refused: Unit stats differ: modded, Marine. Both games need the same unit stats files."
 - If no connection could be made, the status adds: "If the game is hosting there, Windows Firewall on that PC may be blocking it: allow Halobellum there, or check the address." If a connection was made and the host then ended it (it stopped hosting), the hint is not added.
 - **Leave** leaves a host joined and stays on the list. **Close** (nothing joined, or the join failed) closes the panel.
@@ -28,7 +28,7 @@ The main page has a new item, **LAN Game**, between Play and Settings. Its page 
 | `LanIdentity.cs` | the code fingerprint (build ids of Core, Combat, Economy and Net), the content text of the unit stats files (`modded=no`, or `modded=yes;Marine=...;...` so a refusal names the units), and the name rules |
 | `LanDemoArgs.cs` | `-lanDemo`, `-lanDemoSeed`, `-lanDemoAddress`, `-lanDemoNetwork`, `-windowSlot` and the window slot rectangles |
 
-States: `Idle`; host: `HostWaiting`, `HostReady`, `HostFailed` (the port is in use; it tries again every 2 s); join: `Browsing`, `JoinConnecting`, `JoinWaiting`, `JoinFailed`, `GuestStarting`; then `Started` once the connection is handed over. Call `Update()` every frame.
+States: `Idle`; host: `HostWaiting`, `HostReady`, `HostFailed` (the port is in use, or the listener stopped accepting players by itself: "Hosting stopped: ..."; it tries again every 2 s); join: `Browsing`, `JoinConnecting`, `JoinWaiting`, `JoinFailed`, `GuestStarting`; then `Started` once the connection is handed over. Call `Update()` every frame.
 
 The handshake in the menu checks the protocol, the version, the code fingerprint and the unit stats files. The whole content (every unit, card and rule after the setup) is checked again when the match starts (`LanGuestStart`).
 
@@ -56,18 +56,19 @@ GameFlow.TakeLanMatch();          // the Match scene takes it once
 - **Starting card and Ready.** `MatchController.ChooseDraft` and `Ready` go through the coordinator in a LAN match, never to the Match. After Ready, `ActionsLocked` is true until the battle. Every action fails with "You are ready. Waiting for the other player.", and `IsDeploying` is false, so the field takes no clicks.
 - **End of the battle.** When the round ending has played, `MatchController` calls `LanMatch.FinishLocalBattle()` instead of `Match.FinishBattle()`. The host finishes at once. The guest finishes when the host's result is here. The result screen shows when the coordinator raises `BattleFinished` (`MatchController.OnLanRoundFinished`).
 - **Continue** calls `coordinator.ContinueAfterResult()`.
-- No AI plays in a LAN match. Battle speed stays each player's own.
-- **Leaving.** `Leave()` tells the other game and closes the connection. It runs on Main Menu, on quitting, and whenever the scene is unloaded (`OnDestroy`).
+- No AI plays in a LAN match. Battle speed stays each player's own, but there is no Pause: the battle bar has no Pause button and Space does nothing (`BattleController.PauseAllowed` is false, so a speed of 0 is ignored, and one already set goes back to 1x). A pause on the host would hold up the guest's result with no limit.
+- **Leaving.** `Leave()` tells the other game and closes the connection. It runs on Main Menu, on quitting, and whenever the scene is unloaded (`OnDestroy`). A guest whose match is still starting (no coordinator yet) sends Leave itself, so the host sees "The other player left", not a lost connection.
 
 ### What the HUD shows (MatchHud)
 
-- The draft's top bar and the deployment top bar name the other player and what it is doing: "Guesty: picking", "deploying", "ready", "in battle".
-- After this side's starting card, and after Ready, a panel says "Waiting for opponent..." with the other player's line. Ready is greyed out after it was pressed, and the shop and the other controls are hidden until the battle.
+- The draft's top bar and the deployment top bar name the other player and what it is doing: "Guesty: picking", "deploying", "ready", "in battle", "battle over". It comes from the other game's messages (`LanMatchCoordinator.OpponentStep`: its starting card, its Ready, and its Status when its battle is over and when it leaves the result), so it stays right when the two games are a round apart.
+- After this side's starting card, and after Ready, a panel says "Waiting for opponent..." with the other player's line. Ready is greyed out after it was pressed, and the shop and the other controls are hidden until the battle. An unlock page left open when Ready is pressed (Unlock Skirmish) closes.
 - After a battle the guest shows "Waiting for the host's result..." until the result arrives. Its base bars keep the round ending's hits meanwhile, and do not fill back up.
+- When the guest's own battle ended differently (`HostResultUsedThisRound`), its result window says "Your game's battle ended differently; the host's result is used." under the title. The round line then always gives the host's base damage (never "both armies fell"), and the survivors and the two lists say they are "this game's battle".
 - End screens (title, text, Main Menu button):
   - "The other player left"
   - "Connection lost"
-  - "Out of sync", with both state hashes
+  - "Out of sync", with the two state hashes that differed (before the battle, or on the guest after the host's result). For a desync of another kind (a command that failed, a broken message, the other game's own finding) the hash line is left out, since the last compared pair agreed; the text says what went wrong.
   - "The match could not start" (the guest's start was refused or lost, or setting up the match failed with an exception on either side; then the other game is told with Leave and the log says `[LAN] ended StartFailed ...`)
 - Match over has only **Main Menu** in a LAN match: no "New match" and no battle log. It leaves the match first.
 
@@ -87,9 +88,9 @@ GameFlow.TakeLanMatch();          // the Match scene takes it once
 - `-lanDemoSeed N`: the host's seed.
 - `-windowSlot 0|1`: a window half the screen wide. Slot 0 is on the left and slot 1 on the right. The height is the screen height less 120 px. Only in a built game.
 - Every LAN match writes to Player.log:
-  - `[LAN] round <n> hash <state hash before the battle> result <outcome hash> baseA <x> baseB <y>` (one line per round)
+  - `[LAN] round <n> hash <state hash before the battle> result <outcome hash used> own <this game's own outcome hash> baseA <x> baseB <y>` (one line per round). On the guest, `result` is the host's and `own` its own battle's, so a guest battle that ended differently makes the two logs' lines differ.
   - `[LAN] match over winner <A|B>`, or `[LAN] ended <state> <reason>`
-  The coordinator's own lines start with `[LAN]` too, so compare only the `round`, `match over` and `ended` lines.
+  The coordinator's own lines start with `[LAN]` too, so compare only the `round`, `match over` and `ended` lines. Those other lines hold each side's command lists (sent, and the other side's as applied) and the host's result text, for looking into a desync.
 
 ### Two copies on one PC
 
@@ -111,7 +112,9 @@ The `round` lines and the `match over` line must be the same in both logs. The f
 
 ## Tests
 
-- `dotnet test Tools/SimTests --filter "FullyQualifiedName~LanLobbyTests"` (15 tests, over loopback with ports the system picks):
+- `dotnet test Tools/SimTests --filter "FullyQualifiedName~LanLobbyTests"` (17 tests, over loopback with ports the system picks):
+  - a listener that stops accepting by itself is started again, and a guest can then join with a typed "127.0.0.1:port";
+  - the host's "Others can join at" line, the address and port reading, and the join list's hint after 5 s with nothing heard;
   - a host is listed, joined and started, and the guest builds the same match from the put-back MatchStart without losing the host's first card;
   - a guest of another version is refused in plain words and the host keeps waiting;
   - other unit stats name the units;
@@ -127,6 +130,9 @@ The `round` lines and the `match over` line must be the same in both logs. The f
   - the log lines;
   - the buffered channel.
 - `LanMatchCoordinatorTests.AMatchStartTheGuestCannotBuild_IsRefused_InsteadOfWaitingForEver`: an exception while the guest builds the match refuses it, and the host is told.
+- `LanMatchCoordinatorTests`: the other player's step follows its messages across a round apart; a Status that makes no sense is ignored; the log keeps every command list and the result; a state that differs after the host's result keeps the two hashes that differed; the guest's own outcome hash shows on its round line when its battle ended differently.
+- `LanConnectionTests`: an accept that fails for a passing reason keeps the host accepting; one that fails for good says so.
+- EditMode `LocalTeamTests`: the result texts when the host's result was used.
 - EditMode `Tests/EditMode/Unity/LanMenuTests.cs` (8 tests):
   - the LAN page hosts, sees a guest, and Start leaves for the match as Team A with the guest's name and the host's settings;
   - the host's settings follow the mode, and the Play page's saved base health and cards are not touched;

@@ -8,7 +8,9 @@
 //   Battle   MatchController hands the end of the local battle here (FinishLocalBattle): the host finishes at once, the guest when
 //            the host's result has come. The round's result shows once the coordinator says so (BattleFinished).
 // The starting card and Ready go through the coordinator (MatchController.ChooseDraft and Ready ask it), never straight to the
-// Match. No AI plays in a LAN match. Battle speed stays each player's own.
+// Match. No AI plays in a LAN match. Battle speed stays each player's own, but nothing pauses the battle (MatchController sets
+// BattleController.PauseAllowed false): a pause on the host would hold up the other game's result with no limit.
+// The top bar's line about the other player comes from the other game's messages (LanMatchCoordinator.OpponentStep).
 // Every round writes one line to the log, and the end one more (LanMatchLog), so two games' logs can be compared.
 // Leaving the scene, by any way, tells the other game (Leave). A final state (Desync, OpponentLeft, ConnectionLost) shows its
 // screen (MatchHud) with a way back to the menu. So does a start that failed with an exception (FailStart: the other game is told,
@@ -68,23 +70,25 @@ namespace Halobellum.Presentation
         /// <summary>The other player's name, or "Other player".</summary>
         public string OpponentName => Launch != null && !string.IsNullOrEmpty(Launch.OpponentName) ? Launch.OpponentName : "Other player";
 
-        /// <summary>What the other player is doing, as the top bar says it: picking, deploying, ready.</summary>
+        /// <summary>
+        /// What the other player is doing, as the top bar says it: picking, deploying, ready, in battle, battle over. It comes from
+        /// what the other game's messages said (LanMatchCoordinator.OpponentStep), not from this game's phase, so it stays right
+        /// when the two games are a round apart.
+        /// </summary>
         public string OpponentStatus
         {
             get
             {
                 if (Coordinator == null) return Ended ? "gone" : "connecting";
-                switch (Coordinator.State)
+                switch (Coordinator.OpponentStep)
                 {
-                    case LanMatchState.Draft: return Coordinator.OpponentPickedDraft ? "ready" : "picking";
-                    case LanMatchState.Deployment:
-                    case LanMatchState.WaitingForOpponent: return Coordinator.OpponentReady ? "ready" : "deploying";
-                    case LanMatchState.CheckingSync:
-                    case LanMatchState.ReadyToFight: return "ready";
-                    case LanMatchState.Battle:
-                    case LanMatchState.WaitingForHostResult: return "in battle";
-                    case LanMatchState.Result: return "seeing the result";
-                    case LanMatchState.MatchOver: return Coordinator.OpponentGone ? "left" : "match over";
+                    case LanOpponentStep.Picking: return "picking";
+                    case LanOpponentStep.Deploying: return "deploying";
+                    case LanOpponentStep.Ready: return "ready";
+                    case LanOpponentStep.InBattle: return "in battle";
+                    case LanOpponentStep.BattleOver: return "battle over";
+                    case LanOpponentStep.MatchOver: return "match over";
+                    case LanOpponentStep.Left: return "left";
                     default: return "gone";
                 }
             }
@@ -137,17 +141,24 @@ namespace Halobellum.Presentation
             }
         }
 
-        /// <summary>Desync: both games' last state hashes, for the logs; "" otherwise.</summary>
+        /// <summary>
+        /// Desync found by comparing the two games' states: the two hashes that differed, for the logs. "" otherwise, also for a
+        /// desync of another kind (a command that failed, a broken message, the other game's own finding), where the last compared
+        /// hashes are an earlier agreed pair and would only mislead; the end text says what went wrong then.
+        /// </summary>
         public string EndHashes
         {
             get
             {
                 if (Coordinator == null || Coordinator.State != LanMatchState.Desync) return "";
-                return "State hash in this game: " + Show(Coordinator.LocalHash) + ". In the other game: " + Show(Coordinator.RemoteHash) + ".";
+                string here = Coordinator.LocalHash, there = Coordinator.RemoteHash;
+                if (string.IsNullOrEmpty(here) || string.IsNullOrEmpty(there) || here == there) return "";
+                return "State hash in this game: " + here + ". In the other game: " + there + ".";
             }
         }
 
-        private static string Show(string hash) => string.IsNullOrEmpty(hash) ? "none yet" : hash;
+        /// <summary>Guest, on a round's result: this game's own battle ended differently, so the result shown is the host's.</summary>
+        public bool HostResultUsedThisRound => Coordinator != null && Coordinator.HostResultUsedThisRound;
 
         private void Awake() => Current = this;
 
@@ -282,7 +293,7 @@ namespace Halobellum.Presentation
         private void OnRoundFinished(RoundSummary summary)
         {
             Match match = Coordinator.Match;
-            Debug.Log(LanMatchLog.Round(summary.Round, Coordinator.LocalHash, Coordinator.LastOutcomeHash, match.Player.BaseHealth, match.Enemy.BaseHealth));
+            Debug.Log(LanMatchLog.Round(summary.Round, Coordinator.LocalHash, Coordinator.LastOutcomeHash, Coordinator.LastOwnOutcomeHash, match.Player.BaseHealth, match.Enemy.BaseHealth));
             if (match.Phase == MatchPhase.MatchOver) Debug.Log(LanMatchLog.MatchOver(match.Winner));
             _demoWaitUntil = Time.unscaledTime + 1.5f;
             _controller.OnLanRoundFinished(summary);
@@ -291,7 +302,9 @@ namespace Halobellum.Presentation
         /// <summary>Tells the other game this player leaves (a forfeit during the match) and closes the connection. Safe to call more than once.</summary>
         public void Leave(string reason = LeftReason)
         {
-            Coordinator?.Leave(reason);
+            if (Coordinator != null) Coordinator.Leave(reason);
+            else if (StartError.Length == 0 && Launch?.Channel != null && Launch.Channel.IsOpen)
+                Launch.Channel.Send(new NetMessage(LanMessageTypes.Leave).Set(LanFields.Reason, reason ?? "")); // Still starting (guest): the other game is told, not left to find a lost connection.
             Launch?.Channel?.Close();
             if (Coordinator != null && Coordinator.IsFinished && !_endLogged) LogEnd();
         }

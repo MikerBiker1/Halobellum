@@ -1,10 +1,12 @@
 // LanMatchLog.cs
 // The lines every LAN match writes to the game's log, one per round and one at the end, so the logs of the two games can be
 // compared line by line (M11 Stage 4, Stage 5's two-copy check):
-//   [LAN] round <n> hash <state hash before the battle> result <hash of the round's result> baseA <x> baseB <y>
+//   [LAN] round <n> hash <state hash before the battle> result <hash of the round's result> own <hash of this game's own battle
+//         result> baseA <x> baseB <y>
 //   [LAN] match over winner <A|B>
 //   [LAN] ended <state> <reason>
-// Hashes are 16 hex digits (MatchStateHash.Hex). The bases are after the round's result.
+// Hashes are 16 hex digits (MatchStateHash.Hex). The bases are after the round's result. The result is the one used (on the guest
+// the host's); "own" is this game's own battle's, so a guest battle that ended differently makes the two logs' lines differ.
 // Plain C# 9 without the engine.
 // Depends on: LanMatchCoordinator (LanMatchState), Halobellum.Economy (MatchStateHash), Halobellum.Core (Team).
 
@@ -15,9 +17,9 @@ namespace Halobellum.Net
 {
     public static class LanMatchLog
     {
-        public static string Round(int round, string stateHash, ulong outcomeHash, int baseA, int baseB) =>
+        public static string Round(int round, string stateHash, ulong outcomeHash, ulong ownOutcomeHash, int baseA, int baseB) =>
             "[LAN] round " + round + " hash " + (string.IsNullOrEmpty(stateHash) ? "none" : stateHash) + " result " + MatchStateHash.Hex(outcomeHash)
-            + " baseA " + baseA + " baseB " + baseB;
+            + " own " + MatchStateHash.Hex(ownOutcomeHash) + " baseA " + baseA + " baseB " + baseB;
 
         public static string MatchOver(Team? winner) => "[LAN] match over winner " + (winner.HasValue ? winner.Value.ToString() : "none");
 

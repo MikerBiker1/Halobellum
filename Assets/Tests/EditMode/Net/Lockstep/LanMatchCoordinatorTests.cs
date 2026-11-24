@@ -10,7 +10,9 @@
 // state that differs gives Desync on both sides; a local action after the lists are applied gives Desync before the battle;
 // broken command lists, starting cards and battle results (cut-off JSON and the like) give Desync, never an exception; Leave
 // after a final state or MatchOver keeps that state and closes the channel; the host leaving after its last result gives the
-// guest OpponentGone with the host's reason; and the MatchStart message reads back exactly.
+// guest OpponentGone with the host's reason; and the MatchStart message reads back exactly. Also: the other player's step comes
+// from its messages (a round apart too); a Status that makes no sense is ignored; the log keeps every command list and the
+// result; a state that differs after the host's result keeps the two hashes that differed; the guest's own outcome hash.
 // Depends on: Halobellum.Net (LanMatchCoordinator, LanMatchStart, LanGuestStart, LanMemoryChannel, LanSession, LanContent),
 //             Halobellum.Economy, Halobellum.Core, NUnit, LockstepTestKit (AiSeat), NetTestKit, TestRules.
 
@@ -305,6 +307,16 @@ namespace Halobellum.Tests.Net
             Assert.AreEqual(host.Match.Enemy.BaseHealth, guest.Match.Enemy.BaseHealth);
             Assert.AreEqual(LockstepTestKit.HashOf(host.Match), LockstepTestKit.HashOf(guest.Match), "The guest ends with the host's state.");
             Assert.IsFalse(host.HostResultUsed);
+            Assert.IsTrue(guest.HostResultUsedThisRound, "Its result window says so.");
+            Assert.IsFalse(host.HostResultUsedThisRound);
+
+            // The round's log line carries the guest's own result too, so the two logs differ where the battles did.
+            Assert.AreEqual(host.LastOutcomeHash, guest.LastOutcomeHash, "The result used is the host's.");
+            Assert.AreEqual(host.LastOutcomeHash, host.LastOwnOutcomeHash);
+            Assert.AreNotEqual(guest.LastOutcomeHash, guest.LastOwnOutcomeHash, "The guest's own battle ended differently.");
+            Assert.AreNotEqual(
+                LanMatchLog.Round(1, host.LocalHash, host.LastOutcomeHash, host.LastOwnOutcomeHash, host.Match.Player.BaseHealth, host.Match.Enemy.BaseHealth),
+                LanMatchLog.Round(1, guest.LocalHash, guest.LastOutcomeHash, guest.LastOwnOutcomeHash, guest.Match.Player.BaseHealth, guest.Match.Enemy.BaseHealth));
 
             // The match goes on.
             host.ContinueAfterResult();
@@ -313,6 +325,114 @@ namespace Halobellum.Tests.Net
             guest.Update();
             Assert.AreEqual(2, guest.Match.Round);
             Assert.AreEqual(LanMatchState.Deployment, guest.State);
+            Assert.IsFalse(guest.HostResultUsedThisRound, "Only on that round's result.");
+        }
+
+        [Test]
+        public void AStateThatDiffersAfterTheHostsResult_KeepsTheTwoHashesThatDiffered()
+        {
+            LockstepTestKit.StartInMemory(LockstepTestKit.Settings(43), out LanMatchCoordinator host, out LanMatchCoordinator guest, out _, out _);
+            Draft(host, guest);
+            BothReady(host, guest);
+            string agreed = guest.LocalHash;
+            Assert.AreEqual(agreed, guest.RemoteHash);
+            guest.StartBattle().Run();
+            host.StartBattle().Run();
+            guest.Match.Enemy.Credits += 1; // a change that no command made, after the agreed check
+            Assert.IsFalse(guest.FinishBattle());
+            Assert.IsTrue(host.FinishBattle());
+            guest.Update();
+            Assert.AreEqual(LanMatchState.Desync, guest.State);
+            StringAssert.Contains("after the host's result", guest.LastError);
+            Assert.AreNotEqual(guest.LocalHash, guest.RemoteHash, "The pair kept is the one that differed, not the agreed pair.");
+            Assert.AreNotEqual(agreed, guest.LocalHash);
+            StringAssert.Contains(guest.LocalHash, guest.LastError);
+            StringAssert.Contains(guest.RemoteHash, guest.LastError);
+            host.Update();
+            Assert.AreEqual(LanMatchState.Desync, host.State, "The host is told.");
+            Assert.AreEqual(host.LocalHash, host.RemoteHash, "The host's pair is the agreed one, which the end screen leaves out (LanMatch.EndHashes).");
+        }
+
+        // ------------------------------------------------------------------ what the other player is doing
+
+        [Test]
+        public void TheOpponentStep_ComesFromTheOtherGamesMessages_NotFromThisGamesPhase()
+        {
+            LockstepTestKit.StartInMemory(LockstepTestKit.Settings(47), out LanMatchCoordinator host, out LanMatchCoordinator guest, out _, out _);
+            Assert.AreEqual(LanOpponentStep.Picking, host.OpponentStep);
+            Assert.IsTrue(guest.ChooseDraft(0).Ok);
+            host.Update();
+            Assert.AreEqual(LanOpponentStep.Ready, host.OpponentStep, "Its starting card is in.");
+            Assert.IsTrue(host.ChooseDraft(0).Ok);
+            guest.Update();
+            Assert.AreEqual(LanOpponentStep.Deploying, host.OpponentStep);
+            Assert.AreEqual(LanOpponentStep.Deploying, guest.OpponentStep);
+
+            Assert.IsTrue(guest.Ready().Ok);
+            host.Update();
+            Assert.AreEqual(LanOpponentStep.Ready, host.OpponentStep);
+            Assert.IsTrue(host.Ready().Ok);
+            Frames(host, guest);
+            Assert.AreEqual(LanOpponentStep.InBattle, host.OpponentStep);
+            Assert.AreEqual(LanOpponentStep.InBattle, guest.OpponentStep);
+
+            // The host plays its battle fast and leaves the result; the guest still watches its battle.
+            host.StartBattle().Run();
+            guest.StartBattle().Step();
+            Assert.IsTrue(host.FinishBattle());
+            guest.Update();
+            Assert.AreEqual(LanMatchState.Battle, guest.State);
+            Assert.AreEqual(LanOpponentStep.BattleOver, guest.OpponentStep, "The host's battle is over.");
+            Assert.AreEqual(LanOpponentStep.InBattle, host.OpponentStep, "The guest is still in its battle.");
+            if (host.Match.Phase == MatchPhase.MatchOver) Assert.Inconclusive("The match ended in round 1.");
+            host.ContinueAfterResult();
+            guest.Update();
+            Assert.AreEqual(LanMatchState.Deployment, host.State);
+            Assert.AreEqual(LanOpponentStep.InBattle, host.OpponentStep, "Not 'deploying': the guest is still in round 1's battle.");
+            Assert.AreEqual(LanOpponentStep.Deploying, guest.OpponentStep, "The host left round 1's result.");
+
+            guest.Match.CurrentBattle.Run();
+            Assert.IsTrue(guest.FinishBattle(), "The host's result is here already.");
+            host.Update();
+            Assert.AreEqual(LanOpponentStep.BattleOver, host.OpponentStep, "The guest sees round 1's result.");
+            guest.ContinueAfterResult();
+            host.Update();
+            Assert.AreEqual(LanOpponentStep.Deploying, host.OpponentStep);
+        }
+
+        [Test]
+        public void AStatusThatMakesNoSense_IsIgnored_NotADesync()
+        {
+            LanMatchCoordinator host = HostWithRawGuest(53, out LanMemoryChannel rawGuest, out _);
+            rawGuest.Send(new NetMessage(LanMessageTypes.Status).Set(LanFields.Round, 7).Set(LanFields.Step, LanStatusSteps.Continued));
+            rawGuest.Send(new NetMessage(LanMessageTypes.Status).Set(LanFields.Round, 0).Set(LanFields.Step, "odd"));
+            rawGuest.Send(new NetMessage(LanMessageTypes.Status));
+            host.Update();
+            Assert.IsFalse(host.IsFinished, host.LastError);
+            Assert.AreEqual(LanOpponentStep.Picking, host.OpponentStep);
+        }
+
+        [Test]
+        public void TheLog_KeepsEveryCommandList_AndTheResult()
+        {
+            var lines = new List<string>();
+            LanMemoryChannel.CreatePair(out LanMemoryChannel hostEnd, out LanMemoryChannel guestEnd);
+            LanMatchCoordinator host = LanMatchStart.BeginAsHost(hostEnd, LockstepTestKit.Rules(), TestRules.Default(), LockstepTestKit.Factions(), LockstepTestKit.Settings(59), lines.Add);
+            var guestStart = new LanGuestStart(guestEnd, LockstepTestKit.Rules(), TestRules.Default(), LockstepTestKit.Factions());
+            guestStart.Poll();
+            LanMatchCoordinator guest = guestStart.Coordinator;
+            Assert.IsNotNull(guest);
+            Draft(host, guest);
+            Assert.IsTrue(guest.Match.Buy(Team.B, Infantry(guest.Match, Team.B)).Ok);
+            BothReady(host, guest);
+            string log = string.Join("\n", lines);
+            StringAssert.Contains("Starting card 0 sent.\n{", log, "The host's own starting card, as commands.");
+            StringAssert.Contains("The other player's starting card.\n{", log);
+            StringAssert.Contains("Round 1: Ready sent with ", log);
+            StringAssert.Contains("Round 1: the other player's list.\n{", log, "The guest's list, as it was applied.");
+            host.StartBattle().Run();
+            Assert.IsTrue(host.FinishBattle());
+            StringAssert.Contains(").\n{\"round\":1", string.Join("\n", lines), "The result's whole text.");
         }
 
         [Test]

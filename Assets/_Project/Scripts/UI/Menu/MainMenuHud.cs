@@ -608,7 +608,13 @@ namespace Halobellum.UI
         /// <summary>The main page's LAN item.</summary>
         public const string LanGameLabel = "LAN Game";
 
-        private const float LanStatusHeight = 64f, LanGameRowHeight = 36f, LanGameRows = 3;
+        private const float LanStatusHeight = 64f, LanGameRowHeight = 36f, LanGameRows = 3, LanJoinAtHeight = 28f;
+
+        /// <summary>The host panel's line with this PC's addresses, while it waits for a player; "" otherwise.</summary>
+        public string HostJoinAtText => _lobby != null && _lobby.State == LanLobbyState.HostWaiting ? _lobby.JoinAt : "";
+
+        /// <summary>The join list's text while no game is listed (looking, then the firewall and address hint).</summary>
+        public string NoGamesText => _lobby != null ? _lobby.NoGamesText : LanLobby.LookingText;
 
         private static GUIStyle _wrappedSmall, _wrappedFrom;
 
@@ -693,7 +699,7 @@ namespace Halobellum.UI
 
         private void DrawHostPanel(float x, float y, bool enabled)
         {
-            Rect panel = LanPanelRect(x, y, 4f * RowHeight);
+            Rect panel = LanPanelRect(x, y, 4f * RowHeight + LanJoinAtHeight);
             float row = PanelHeading(panel, "HOST A LAN GAME", "The other player joins from the same network.");
             DrawLanName(panel, row);
             bool canChange = _lobby != null && _lobby.State != LanLobbyState.Started; // the settings go with Start
@@ -714,6 +720,8 @@ namespace Halobellum.UI
             row += RowHeight;
             GUI.enabled = was;
             DrawLanStatus(panel, row);
+            string joinAt = HostJoinAtText; // M11: what the other player types when the join list stays empty.
+            if (joinAt.Length > 0) GUI.Label(new Rect(panel.x + PanelMargin, row + LanStatusHeight, panel.width - 2f * PanelMargin, LanJoinAtHeight), joinAt, WrappedSmall);
 
             var cancel = new Rect(panel.x + PanelMargin, panel.yMax - PanelMargin - StartHeight, 200f, StartHeight);
             bool hosting = _lobby != null && _lobby.IsHosting;
@@ -752,8 +760,7 @@ namespace Halobellum.UI
             bool was = GUI.enabled;
             if (games.Count == 0)
             {
-                string none = _lobby != null && _lobby.BrowseError.Length > 0 ? _lobby.BrowseError : "No games found yet. Looking...";
-                GUI.Label(new Rect(list.x, list.y, list.width, gamesHeight), none, WrappedSmall);
+                GUI.Label(new Rect(list.x, list.y, list.width, gamesHeight), NoGamesText, WrappedSmall);
             }
             for (int i = 0; i < games.Count && i < LanGameRows; i++)
             {

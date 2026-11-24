@@ -7,6 +7,9 @@
 //   BattleResult host -> guest:       {round, outcome, hash, state}  RoundOutcome text, its Hash(), MatchStateHash after it
 //   Desync       either:              {round, reason}                this game found the match out of sync; both stop
 //   Leave        either:              {reason, refused}              the player left (or the guest refused the MatchStart)
+//   Status       both:                {round, step}                  only for the HUD: "battleOver" (this game's battle of the round
+//                                                                    is over) or "continued" (it left the round's result); a Status
+//                                                                    that makes no sense is ignored
 // Command lists are MatchCommand.ListToText (one JSON command per line, floats as int bits), so positions go across exactly.
 // Hashes are whole unsigned 64-bit numbers (JsonObject.Set(key, ulong), read with GetULong).
 // Plain C# 9 without the engine.
@@ -23,6 +26,14 @@ namespace Halobellum.Net
         public const string BattleResult = "BattleResult";
         public const string Desync = "Desync";
         public const string Leave = "Leave";
+        public const string Status = "Status";
+    }
+
+    /// <summary>The steps a Status message names.</summary>
+    public static class LanStatusSteps
+    {
+        public const string BattleOver = "battleOver";
+        public const string Continued = "continued";
     }
 
     /// <summary>The field names the LAN match messages use.</summary>
@@ -36,5 +47,6 @@ namespace Halobellum.Net
         public const string State = "state";
         public const string Reason = "reason";
         public const string Refused = "refused";
+        public const string Step = "step";
     }
 }

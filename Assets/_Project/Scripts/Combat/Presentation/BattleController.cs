@@ -42,16 +42,33 @@ namespace Halobellum.Presentation
         /// <summary>True while the shown battle is being run (false for a deployment preview).</summary>
         public bool IsPlaying { get; private set; }
 
-        /// <summary>Battle speed: 0 pauses, 1, 2 or 4 speed it up. Kept from one battle to the next.</summary>
+        /// <summary>Battle speed: 0 pauses, 1, 2 or 4 speed it up. Kept from one battle to the next. A pause is ignored while PauseAllowed is false.</summary>
         public float Speed
         {
             get => Clock?.Speed ?? _speed;
             set
             {
+                if (value <= 0f && !_pauseAllowed) return;
                 _speed = Mathf.Max(0f, value);
                 if (Clock != null) Clock.Speed = _speed;
             }
         }
+
+        /// <summary>
+        /// False in a LAN match (M11): the battle may not be paused there, because the host's battle and round ending must reach
+        /// their end for the other game to get its result. Setting it false ends a pause that is on (back to 1x).
+        /// </summary>
+        public bool PauseAllowed
+        {
+            get => _pauseAllowed;
+            set
+            {
+                _pauseAllowed = value;
+                if (!value && Speed <= 0f) Speed = 1f;
+            }
+        }
+
+        private bool _pauseAllowed = true;
 
         /// <summary>Time spent stepping the simulation this frame, in milliseconds (for the benchmark).</summary>
         public float LastFrameSimulationMilliseconds { get; private set; }

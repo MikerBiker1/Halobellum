@@ -102,6 +102,12 @@ namespace Halobellum.Net
         /// <summary>The connection in use (null while the host waits for a guest).</summary>
         public LanConnection Connection => connection;
 
+        /// <summary>Host: true once its LanHost stopped accepting guests by itself (LanHost.Failed); no new guest can come.</summary>
+        public bool HostFailed => host != null && host.Failed;
+
+        /// <summary>Host: why its LanHost stopped accepting guests; "" while it accepts.</summary>
+        public string HostFailReason => host?.FailReason ?? "";
+
         public bool IsFinished => State == LanSessionState.Refused || State == LanSessionState.Lost || State == LanSessionState.Closed;
 
         /// <summary>ILanChannel: true while Connected (as of the last Poll; TryReceive polls).</summary>

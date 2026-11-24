@@ -55,7 +55,7 @@ namespace Halobellum.UI
 
             Keyboard keyboard = Keyboard.current;
             if (battle == null || battle.Clock == null || keyboard == null) return;
-            if (keyboard.spaceKey.wasPressedThisFrame) TogglePause();
+            if (keyboard.spaceKey.wasPressedThisFrame && battle.PauseAllowed) TogglePause(); // No pause in a LAN match (M11).
             if (keyboard.digit1Key.wasPressedThisFrame) SetSpeed(Speeds[0]);
             if (keyboard.digit2Key.wasPressedThisFrame) SetSpeed(Speeds[1]);
             if (keyboard.digit3Key.wasPressedThisFrame) SetSpeed(Speeds[2]);
@@ -105,7 +105,7 @@ namespace Halobellum.UI
             GUI.Label(new Rect(bar.x + 12f, bar.y + 6f, 576f, 26f), _topLine.Text, _centered);
 
             float buttonsX = bar.x + 120f;
-            DrawSpeedButton(new Rect(buttonsX, bar.y + 38f, 80f, 28f), "Pause", 0f);
+            if (battle.PauseAllowed) DrawSpeedButton(new Rect(buttonsX, bar.y + 38f, 80f, 28f), "Pause", 0f); // None in a LAN match (M11).
             for (int i = 0; i < Speeds.Length; i++)
             {
                 DrawSpeedButton(new Rect(buttonsX + 90f * (i + 1), bar.y + 38f, 80f, 28f), SpeedNames[i], Speeds[i]);

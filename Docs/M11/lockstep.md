@@ -79,6 +79,7 @@ The guest builds the match with `LanMatchFactory.Build` from the host's settings
 | `BattleResult` | host, every round | `round`, `outcome` (`RoundOutcome.ToText`), `hash` (`RoundOutcome.Hash`), `state` (`MatchStateHash` after the host's `FinishBattle`) |
 | `Desync` | either | `round`, `reason` (this game found the match out of sync; the other stops too) |
 | `Leave` | either | `reason`, `refused` (true when the guest refused the MatchStart) |
+| `Status` | both | `round`, `step`: `battleOver` (this game's battle of that round is over) or `continued` (it left that round's result). Only for the HUD (`OpponentStep`); one that makes no sense is ignored, never a desync |
 
 The transport adds `Hello`, `Welcome`, `Reject`, `Ping`, `Pong`. Field names are in `LanFields`, types in `LanMessageTypes`.
 
@@ -107,8 +108,13 @@ bool LocalCanAct;                   // State == Deployment: the local player may
 bool LocalPickedDraft, OpponentPickedDraft, LocalReady, OpponentReady, WaitingForOpponent, CanStartBattle;
 string LastError;                   // the desync (with both hashes), why the other player left, why the connection ended,
                                     // or the guest's "Round N: this game's battle ended differently; the host's result is used."
-string LocalHash, RemoteHash;       // the last hashes compared before a battle (hex)
+string LocalHash, RemoteHash;       // the last hashes compared (hex): before each battle, or (guest) the pair after the host's result
+                                    // when that check failed. After a desync they differ only if it was a state difference.
 bool HostResultUsed; IReadOnlyList<int> HostResultRounds;   // guest: rounds whose own battle ended differently (not fatal)
+bool HostResultUsedThisRound;       // guest, on that round's result (or the match over it gave): the result shown is the host's
+LanOpponentStep OpponentStep;       // what the other player is doing, from its messages only: Picking, Deploying, Ready, InBattle,
+                                    // BattleOver, MatchOver, Left, Gone (never guessed from this game's own phase)
+ulong LastOwnOutcomeHash;           // RoundOutcome.Hash of this game's own battle in the last finished round (host: = LastOutcomeHash)
 bool OpponentGone;                  // the other side left after the match was over (not an error)
 string StatusText;                  // a short line for the top bar
 ulong LastOutcomeHash;              // RoundOutcome.Hash of the last result applied here (the host's, on both games); 0 before the first
@@ -124,6 +130,10 @@ Match Match; ILanChannel Channel; Team LocalTeam, RemoteTeam; bool IsHost;
 5. **Battle.** `StartBattle()` checks once more that nothing local is pending and that the state hash is still the agreed one; if not, it is a desync and no battle starts (so a machine never plays a battle with an army the other game did not agree to). Play it, then `FinishBattle()` once it is over. The host applies its own outcome and sends `BattleResult`. The guest waits for that result (`WaitingForHostResult`). It checks the result against its hash, notes if its own outcome differed (`HostResultUsed`, not fatal), applies it with `Match.FinishBattle(RoundOutcome)`, and checks the host's state hash after it (a mismatch is `Desync`).
 6. **Result.** `ContinueAfterResult()`. The two machines may now be a round apart. A message for a later round (a Ready, a hash, a result) waits in a buffer by round until this machine gets there.
 
+`FinishBattle` sends `Status {battleOver}` (the host right after its `BattleResult`), and `ContinueAfterResult` sends `Status {continued}`. With the other side's DraftPick and Ready, that is enough for `OpponentStep`: its last Ready round, then "battle over" or "continued" for that round, or "in battle" once this game agreed on that round's state.
+
+The log hook gets every command list: this game's starting card and each Ready's list (after "Starting card N sent." and "Round N: Ready sent with K command(s)."), the other side's before they are applied ("The other player's starting card.", "Round N: the other player's list."), and the host's result as `RoundOutcome.ToText` after "Round N: result sent (...).". When the guest's own battle ended differently, both outcomes are written, short and whole. With the seed, that is what a desync between two PCs needs to be looked into or replayed.
+
 ### Endings
 
 - `Leave` from the other side gives `OpponentLeft` with its reason. A closed channel without a Leave gives `ConnectionLost` with `LostReason`. Messages that arrived before the close are read first.
@@ -137,7 +147,8 @@ Match Match; ILanChannel Channel; Team LocalTeam, RemoteTeam; bool IsHost;
 - Act only for `LocalTeam`, and only while `LocalCanAct`. Pick the starting card and press Ready through the coordinator, never on the Match directly.
 - Start the battle through `StartBattle()` (it returns null until both games agree). Finish it through `FinishBattle()`. Show the result when `BattleFinished` fires: for the guest, that can be a few frames later.
 - Call `Update()` every frame, including during the battle and on the result screen.
-- Show `StatusText` and the flags in the top bar. On a final state, show `LastError`.
+- Show `StatusText` and the flags in the top bar, and `OpponentStep` for the other player. On a final state, show `LastError`.
+- On the guest's result, say so when `HostResultUsedThisRound` (the bases are the host's, the survivors and kills its own battle's).
 - Call `Leave()` whenever the player leaves the match screen (Back to menu, quitting), also after a final state or `MatchOver`: it closes the connection and keeps the error or the result on show.
 
 ## Tests (`Assets/Tests/EditMode/Net/Lockstep`)

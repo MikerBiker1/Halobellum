@@ -4,6 +4,8 @@
 // guest is refused with a Reject, a close on the other side is noticed (and the last message before it still arrives),
 // silence is noticed by the heartbeat, pings keep a quiet connection alive, a frame over the limit closes the connection,
 // Close can be called any number of times, and a Close while still connecting stops the attempt before WaitClosed returns.
+// An accept that fails for a passing reason (a connection reset before it was taken) keeps the host accepting; one that fails for
+// good says so (Failed).
 // Depends on: Halobellum.Net (LanHost, LanClient, LanConnection), NetTestKit, NUnit.
 
 using System.Collections.Generic;
@@ -49,6 +51,45 @@ namespace Halobellum.Tests.Net
                 Assert.IsFalse(client.TryReceive(out _));
 
                 client.Close();
+            }
+            finally { host.Stop(); }
+        }
+
+        [Test]
+        public void AnAcceptThatFailsForAPassingReason_KeepsTheHostAccepting()
+        {
+            // As Windows does when a guest connects and resets before the accept (WSAECONNRESET), or for a moment without buffers.
+            int failures = 2;
+            var host = new LanHost(0, IPAddress.Loopback, NetTestKit.Fast())
+            {
+                BeforeAccept = () => { if (Interlocked.Decrement(ref failures) >= 0) throw new SocketException((int)SocketError.ConnectionReset); },
+            };
+            Assert.IsTrue(host.TryStart(out string error), error);
+            try
+            {
+                LanConnection client = NetTestKit.Connect(host, out LanConnection hostSide);
+                Assert.AreEqual(2, host.PassingAcceptErrors);
+                Assert.IsFalse(host.Failed);
+                Assert.IsTrue(host.IsListening);
+                client.Close();
+                hostSide.Close();
+            }
+            finally { host.Stop(); }
+            Assert.IsFalse(host.Failed, "Stop is not a failure.");
+        }
+
+        [Test]
+        public void AnAcceptThatFailsForGood_SaysSo()
+        {
+            var host = new LanHost(0, IPAddress.Loopback, NetTestKit.Fast()) { BeforeAccept = () => throw new SocketException((int)SocketError.AccessDenied) };
+            Assert.IsTrue(host.TryStart(out string error), error);
+            try
+            {
+                Assert.IsTrue(NetTestKit.Until(() => host.Failed), "The host says it stopped accepting.");
+                Assert.IsFalse(host.IsListening);
+                Assert.Greater(host.FailReason.Length, 0);
+                Assert.IsTrue(LanHost.IsPassingAcceptError(SocketError.ConnectionReset));
+                Assert.IsFalse(LanHost.IsPassingAcceptError(SocketError.AccessDenied));
             }
             finally { host.Stop(); }
         }

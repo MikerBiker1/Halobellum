@@ -6,7 +6,9 @@
 //          start, even in the same moment its handshake passed, puts the host back to waiting on a fresh listener. A full host
 //          (HostReady) stops announcing itself, so join lists show only games that can be joined. Start hands the session over
 //          (TakeChannel).
-//          HostFailed when the port cannot be used; it tries again every RetryMs.
+//          HostFailed when the port cannot be used, or when the listener stopped accepting players by itself (LanHost.Failed);
+//          it tries again every RetryMs. The host's own addresses (LanAddresses) show on the page, for a guest to type when the
+//          list stays empty.
 //   Join   listens for announcements (LanBrowser) while the page shows: Games is the list. Join(address) connects and runs the
 //          handshake: JoinConnecting -> JoinWaiting ("Joined X. Waiting for the host to start...") -> GuestStarting once the
 //          host's MatchStart arrives (TakeChannel gives the session with that message put back, for LanGuestStart in the Match
@@ -62,6 +64,8 @@ namespace Halobellum.Net
         public bool Browse = true;
         public LanTimings Timings = new LanTimings();
         public Action<string> Log;
+        /// <summary>Tests only: given to every LanHost this lobby makes (LanHost.BeforeAccept), to act out accept errors.</summary>
+        public Action BeforeAccept;
 
         public LanLobbyOptions Copy()
         {
@@ -80,6 +84,15 @@ namespace Halobellum.Net
         public const string WaitingText = "Waiting for a player...";
         public const string FirewallHint = "If the game is hosting there, Windows Firewall on that PC may be blocking it: allow Halobellum there, or check the address.";
 
+        /// <summary>The join list while it is empty, for the first NoGamesHintMs.</summary>
+        public const string LookingText = "No games found yet. Looking...";
+
+        /// <summary>The join list after NoGamesHintMs with nothing heard: this PC's own firewall can drop the announcements.</summary>
+        public const string NoGamesHint = "No games heard yet. Windows Firewall on this PC may be blocking the list: allow Halobellum on this PC, or type the address shown on the host's screen.";
+
+        /// <summary>How long the join list says it is looking before it gives the hint.</summary>
+        public const int NoGamesHintMs = 5000;
+
         private readonly LanLobbyOptions options;
         private readonly Func<long> clockMs;
         private LanHello mine;
@@ -90,6 +103,7 @@ namespace Halobellum.Net
         private string lastRefusal = "";
         private string shownRefusal = "";          // the refusal the status shows, for this listener
         private long retryAtMs;
+        private long browseStartedMs;
         private List<LanGameInfo> games = new List<LanGameInfo>();
 
         public LanLobby(LanLobbyOptions options = null, Func<long> clockMs = null)
@@ -140,6 +154,26 @@ namespace Halobellum.Net
         /// <summary>Why the join page cannot list games ("" when it can): the address field still works.</summary>
         public string BrowseError { get; private set; } = "";
 
+        /// <summary>
+        /// What the join list says while no game is heard: BrowseError if it can't listen; "looking" for the first NoGamesHintMs; then
+        /// the hint about this PC's firewall and the host's address. "" while games are listed.
+        /// </summary>
+        public string NoGamesText
+        {
+            get
+            {
+                if (games.Count > 0) return "";
+                if (BrowseError.Length > 0) return BrowseError;
+                return browser != null && clockMs() - browseStartedMs >= NoGamesHintMs ? NoGamesHint : LookingText;
+            }
+        }
+
+        /// <summary>
+        /// Host: where others can reach this game, for the page ("Others can join at 192.168.1.5 (PC-NAME)."), read once when it starts
+        /// listening. "" when not hosting or not known.
+        /// </summary>
+        public string JoinAt { get; private set; } = "";
+
         /// <summary>This game's description as sent.</summary>
         public LanHello Mine => mine;
 
@@ -156,7 +190,7 @@ namespace Halobellum.Net
 
         private void StartListening(string status)
         {
-            var host = new LanHost(options.GamePort, options.BindAddress, options.Timings, options.Log);
+            var host = new LanHost(options.GamePort, options.BindAddress, options.Timings, options.Log) { BeforeAccept = options.BeforeAccept };
             session = LanSession.Host(host, mine, options.Log);
             if (session.State == LanSessionState.Lost)
             {
@@ -170,12 +204,23 @@ namespace Halobellum.Net
                 return;
             }
             HostPort = host.Port;
+            JoinAt = JoinAtFor(options.BindAddress, host.Port);
             shownRefusal = "";
             announcer = new LanAnnouncer(mine.Name, mine.Version, host.Port, options.DiscoveryPort, options.BindAddress, options.Log) { Broadcast = options.Broadcast };
             foreach (IPEndPoint target in options.AnnounceTargets) announcer.AddTarget(target);
             if (!announcer.TryStart(out string error)) NetLog.Write(options.Log, "No announcements: " + error);
             State = LanLobbyState.HostWaiting;
             Status = status;
+        }
+
+        /// <summary>The host page's line for a listener on this address and port: its own address, or this PC's addresses and name.</summary>
+        public static string JoinAtFor(IPAddress bind, int port)
+        {
+            string suffix = port > 0 && port != LanDefaults.GamePort ? ":" + port : "";
+            if (bind != null && IPAddress.IsLoopback(bind)) return "Only this PC can join, at " + bind + suffix + ".";
+            List<string> addresses = bind == null || bind.Equals(IPAddress.Any) ? LanAddresses.LocalIPv4() : new List<string> { bind.ToString() };
+            for (int i = 0; i < addresses.Count; i++) addresses[i] += suffix;
+            return LanAddresses.JoinAtText(addresses, LanAddresses.ComputerName());
         }
 
         private void UpdateHost()
@@ -186,6 +231,17 @@ namespace Halobellum.Net
                 return;
             }
             session.Poll();
+            if (State == LanLobbyState.HostWaiting && session.State == LanSessionState.Waiting && session.HostFailed)
+            {
+                // The listener stopped taking players by itself: without this the page would wait for ever and every guest time out.
+                string reason = session.HostFailReason;
+                NetLog.Write(options.Log, "The listener stopped; hosting again: " + reason);
+                CloseConnection(null);
+                State = LanLobbyState.HostFailed;
+                Status = "Hosting stopped: " + LanIdentity.CleanText(reason, TextLength) + " Trying again...";
+                retryAtMs = clockMs() + RetryMs;
+                return;
+            }
             if (session.LastRefusal.Length > 0 && session.LastRefusal != shownRefusal)
             {
                 // Each fresh listener starts with none shown, so a guest refused again for the same reason is shown again.
@@ -269,6 +325,7 @@ namespace Halobellum.Net
             BrowseError = "";
             games = new List<LanGameInfo>();
             if (!options.Browse || browser != null) return;
+            browseStartedMs = clockMs();
             browser = new LanBrowser(options.DiscoveryPort, options.BindAddress, options.Log);
             if (!browser.TryStart(out string error))
             {
@@ -284,7 +341,8 @@ namespace Halobellum.Net
             if (mine == null) mine = new LanHello();
             CloseConnection("The other player left.");
             if (browser == null && !IsJoinSide) StartBrowser();
-            string where = (address ?? "").Trim();
+            string where = LanAddresses.SplitPort(address, out int typedPort); // "192.168.1.5:47810", as people copy it
+            if (port <= 0) port = typedPort;
             if (where.Length == 0)
             {
                 State = LanLobbyState.JoinFailed;
@@ -438,6 +496,7 @@ namespace Halobellum.Net
             announcer?.Close();
             announcer = null;
             HostPort = 0;
+            JoinAt = "";
         }
 
         private void CloseAll(string leaveReason)

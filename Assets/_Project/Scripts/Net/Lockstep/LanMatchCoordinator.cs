@@ -13,6 +13,10 @@
 //               (HostResultUsed) and the match goes on with the host's numbers; if the state after it still differs, it is Desync.
 //   Result      ContinueAfterResult here (or on the Match) starts the next round on this machine; the other one may be ahead or
 //               behind: messages for a later round wait in a buffer until this machine gets there.
+// Status messages tell the other game where this one is (its battle is over; it left the result for the next round), so the HUD
+// can say what the other player is doing (OpponentStep). They change nothing in the match.
+// The log (when given) gets every command list sent and applied and the round's result text, so a desync between two PCs can be
+// looked into and replayed from both games' logs.
 // A Leave from the other side gives OpponentLeft, a closed channel ConnectionLost, a found desync Desync (the other side is told
 // with a Desync message, so both stop). A message that cannot be read, of any kind, is a desync too. After the match is over,
 // the other side leaving is not an error. If the host leaves right after sending the last result, the guest still finishes
@@ -64,6 +68,27 @@ namespace Halobellum.Net
         Left,
     }
 
+    /// <summary>What the other player is doing, as far as this game knows from the other game's messages (for the HUD).</summary>
+    public enum LanOpponentStep
+    {
+        /// <summary>Picking its starting card.</summary>
+        Picking,
+        /// <summary>Deploying (its Ready for its current round is not here).</summary>
+        Deploying,
+        /// <summary>Its Ready is here; this game has not agreed on that round's state yet.</summary>
+        Ready,
+        /// <summary>Both games agreed: its battle is playing (or about to).</summary>
+        InBattle,
+        /// <summary>Its battle is over: it sees the round's result (the guest may still wait for the host's).</summary>
+        BattleOver,
+        /// <summary>The match is over.</summary>
+        MatchOver,
+        /// <summary>It left after the match was over.</summary>
+        Left,
+        /// <summary>The match has ended (a final state).</summary>
+        Gone,
+    }
+
     public sealed class LanMatchCoordinator
     {
         private sealed class HostResult
@@ -91,6 +116,8 @@ namespace Halobellum.Net
         private string pendingReason = "";
         private bool channelEnded;         // the closed channel has been seen (it is acted on once)
         private bool leftAfterMatch;       // Leave was called after the match was over: nothing more is read
+        private int remoteBattleOverRound; // the last round the other game said its battle was over (Status)
+        private int remoteContinuedRound;  // the last round the other game said it left the result of (Status)
 
         /// <summary>
         /// A coordinator for a two-humans match in its draft, with this machine playing <paramref name="local"/> (the host Team A,
@@ -177,7 +204,11 @@ namespace Halobellum.Net
         /// <summary>The last problem in words (a desync, why the other player left, why the connection ended); "" if none.</summary>
         public string LastError { get; private set; } = "";
 
-        /// <summary>The last state hashes compared before a battle (hex), here and from the other game; "" before the first.</summary>
+        /// <summary>
+        /// The last state hashes compared (hex), here and from the other game: before each battle, and (guest) after the host's result
+        /// when that comparison failed. "" before the first. After a desync they differ only if the desync was a state difference:
+        /// then they are the two hashes that differed (otherwise they are an earlier agreed pair, or one is "").
+        /// </summary>
         public string LocalHash { get; private set; } = "";
         public string RemoteHash { get; private set; } = "";
 
@@ -192,6 +223,36 @@ namespace Halobellum.Net
 
         /// <summary>The hash of the last round result applied here (RoundOutcome.Hash: the host's own, or on the guest the host's); 0 before the first.</summary>
         public ulong LastOutcomeHash { get; private set; }
+
+        /// <summary>
+        /// The hash of this game's own battle result in the last finished round (RoundOutcome.Hash); 0 before the first. On the host it
+        /// is LastOutcomeHash. On the guest it differs from LastOutcomeHash when its own battle ended differently (the host's was used).
+        /// </summary>
+        public ulong LastOwnOutcomeHash { get; private set; }
+
+        /// <summary>Guest: true on the result of a round (Match.Round) whose battle ended differently here, so the host's result was used.</summary>
+        public bool HostResultUsedThisRound => hostResultRounds.Count > 0 && hostResultRounds[hostResultRounds.Count - 1] == Match.Round
+            && (Match.Phase == MatchPhase.Result || Match.Phase == MatchPhase.MatchOver);
+
+        /// <summary>
+        /// What the other player is doing, from what its messages said: its starting card, its Ready for a round, its Status (battle
+        /// over, result left). Never taken from this game's own phase alone, which may be a round ahead or behind the other one.
+        /// </summary>
+        public LanOpponentStep OpponentStep
+        {
+            get
+            {
+                if (final.HasValue) return LanOpponentStep.Gone;
+                if (Match.Phase == MatchPhase.Draft) return OpponentPickedDraft ? LanOpponentStep.Ready : LanOpponentStep.Picking;
+                if (Match.Phase == MatchPhase.MatchOver) return OpponentGone ? LanOpponentStep.Left : LanOpponentStep.MatchOver;
+                int ready = Math.Max(lastRemoteReadyRound, appliedRound); // the last round the other player pressed Ready in
+                if (ready <= 0 || remoteContinuedRound >= ready) return LanOpponentStep.Deploying;
+                if (remoteBattleOverRound >= ready) return LanOpponentStep.BattleOver;
+                // Its Ready is here. Once this game agrees on that round's state (it sent its own hash first), both start the battle.
+                bool started = agreedRound >= ready || Match.Round > ready || (Match.Round == ready && Match.Phase != MatchPhase.Deployment);
+                return started ? LanOpponentStep.InBattle : LanOpponentStep.Ready;
+            }
+        }
 
         /// <summary>A short line for the HUD.</summary>
         public string StatusText
@@ -232,7 +293,7 @@ namespace Halobellum.Net
             draftSent = true;
             Channel.Send(new NetMessage(LanMessageTypes.DraftPick).Set(LanFields.Round, 0).Set(LanFields.Index, cardIndex)
                 .Set(LanFields.Commands, MatchCommand.ListToText(commands)));
-            NetLog.Write(log, "Starting card " + cardIndex + " sent.");
+            NetLog.Write(log, "Starting card " + cardIndex + " sent." + CommandLines(commands));
             Advance();
             return result;
         }
@@ -246,7 +307,7 @@ namespace Halobellum.Net
             List<MatchCommand> commands = Match.TakeCommands(LocalTeam);
             readyRound = Match.Round;
             Channel.Send(new NetMessage(LanMessageTypes.Ready).Set(LanFields.Round, Match.Round).Set(LanFields.Commands, MatchCommand.ListToText(commands)));
-            NetLog.Write(log, "Round " + Match.Round + ": Ready sent with " + commands.Count + " command(s).");
+            NetLog.Write(log, "Round " + Match.Round + ": Ready sent with " + commands.Count + " command(s)." + CommandLines(commands));
             Advance();
             return ActionResult.Success();
         }
@@ -281,13 +342,16 @@ namespace Halobellum.Net
                 RoundOutcome outcome = Match.OutcomeOfCurrentBattle();
                 RoundSummary summary = Match.FinishBattle(outcome);
                 LastOutcomeHash = outcome.Hash();
+                LastOwnOutcomeHash = LastOutcomeHash;
                 ulong state = MatchStateHash.Compute(Match);
                 Channel.Send(new NetMessage(LanMessageTypes.BattleResult).Set(LanFields.Round, outcome.Round).Set(LanFields.Outcome, outcome.ToText())
                     .Set(LanFields.Hash, outcome.Hash()).Set(LanFields.State, state));
-                NetLog.Write(log, "Round " + outcome.Round + ": result sent (" + outcome + ").");
+                SendStatus(outcome.Round, LanStatusSteps.BattleOver);
+                NetLog.Write(log, "Round " + outcome.Round + ": result sent (" + outcome + ").\n" + outcome.ToText());
                 BattleFinished?.Invoke(summary);
                 return true;
             }
+            if (!finishWanted) SendStatus(Match.Round, LanStatusSteps.BattleOver);
             finishWanted = true;
             Advance();
             return !finishWanted;
@@ -297,7 +361,10 @@ namespace Halobellum.Net
         public void ContinueAfterResult()
         {
             if (final.HasValue) return;
+            int round = Match.Round;
+            bool onResult = Match.Phase == MatchPhase.Result;
             Match.ContinueAfterResult();
+            if (onResult && Match.Phase != MatchPhase.Result) SendStatus(round, LanStatusSteps.Continued);
             Advance();
         }
 
@@ -386,6 +453,16 @@ namespace Halobellum.Net
                     case LanMessageTypes.Desync:
                         End(LanMatchState.Desync, "The other game found the match out of sync in round " + m.GetInt(LanFields.Round) + ": " + m.GetString(LanFields.Reason, ""));
                         break;
+                    case LanMessageTypes.Status:
+                    {
+                        // Only for the HUD: a Status that makes no sense is ignored, never a desync.
+                        int round = m.GetInt(LanFields.Round);
+                        string step = m.GetString(LanFields.Step, "");
+                        if (round < 1 || round > lastRemoteReadyRound) NetLog.Write(log, "Ignored a Status for round " + round + ".");
+                        else if (step == LanStatusSteps.BattleOver) remoteBattleOverRound = Math.Max(remoteBattleOverRound, round);
+                        else if (step == LanStatusSteps.Continued) remoteContinuedRound = Math.Max(remoteContinuedRound, round);
+                        break;
+                    }
                     case LanMessageTypes.Leave:
                     {
                         string reason = m.GetString(LanFields.Reason, "");
@@ -416,6 +493,7 @@ namespace Halobellum.Net
             {
                 string text = remoteDraft;
                 remoteDraft = null;
+                NetLog.Write(log, "The other player's starting card." + CommandLines(text));
                 if (!ApplyRemote(text, "starting card")) return;
             }
 
@@ -431,6 +509,7 @@ namespace Halobellum.Net
                         Desync("this game acted on the match after pressing Ready.");
                         return;
                     }
+                    NetLog.Write(log, "Round " + round + ": the other player's list." + CommandLines(text));
                     if (!ApplyRemote(text, "list")) return;
                     if (!Match.CanStartBattle)
                     {
@@ -498,9 +577,11 @@ namespace Halobellum.Net
             }
             bool differed;
             RoundSummary summary;
+            RoundOutcome own;
             try
             {
-                differed = Match.OutcomeOfCurrentBattle().Hash() != result.Hash;
+                own = Match.OutcomeOfCurrentBattle();
+                differed = own.Hash() != result.Hash;
                 summary = Match.FinishBattle(result.Outcome);
             }
             catch (Exception e)
@@ -510,16 +591,20 @@ namespace Halobellum.Net
             }
             finishWanted = false;
             LastOutcomeHash = result.Hash;
+            LastOwnOutcomeHash = own.Hash();
             if (differed)
             {
                 hostResultRounds.Add(round);
                 LastError = "Round " + round + ": this game's battle ended differently; the host's result is used.";
-                NetLog.Write(log, LastError);
+                NetLog.Write(log, LastError + "\nhost: " + result.Outcome + "\nhere: " + own + "\nhost: " + result.Outcome.ToText() + "\nhere: " + own.ToText());
             }
             ulong state = MatchStateHash.Compute(Match);
             if (state != result.State)
             {
-                Desync("the state after the host's result differs (hash " + MatchStateHash.Hex(state) + " here, " + MatchStateHash.Hex(result.State) + " there).");
+                // The end screen shows the pair that differed, not the round's agreed pair from before the battle.
+                LocalHash = MatchStateHash.Hex(state);
+                RemoteHash = MatchStateHash.Hex(result.State);
+                Desync("the state after the host's result differs (hash " + LocalHash + " here, " + RemoteHash + " there).");
                 return;
             }
             BattleFinished?.Invoke(summary);
@@ -586,6 +671,17 @@ namespace Halobellum.Net
         }
 
         private void Protocol(string what) => Desync("the other game sent " + what + ".");
+
+        private void SendStatus(int round, string step) => Channel.Send(new NetMessage(LanMessageTypes.Status).Set(LanFields.Round, round).Set(LanFields.Step, step));
+
+        /// <summary>A command list for the log: its lines after a line break, or "" if it is empty.</summary>
+        private static string CommandLines(string text)
+        {
+            text = (text ?? "").TrimEnd('\n', '\r');
+            return text.Length == 0 ? "" : "\n" + text;
+        }
+
+        private static string CommandLines(List<MatchCommand> commands) => CommandLines(MatchCommand.ListToText(commands));
 
         private void End(LanMatchState state, string reason)
         {

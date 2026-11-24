@@ -293,6 +293,7 @@ namespace Halobellum.Presentation
                 // M11: an ordinary match stands in for the moment it takes to build the LAN match; the HUD shows "Starting" meanwhile.
                 Lan = gameObject.AddComponent<LanMatch>();
                 Lan.Launch = lan;
+                _battle.PauseAllowed = false; // A pause on one machine would hold up the other one's result with no limit.
                 NewMatch();
                 return;
             }
