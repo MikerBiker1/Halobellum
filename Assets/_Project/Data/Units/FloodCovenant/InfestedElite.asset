@@ -33,7 +33,7 @@ MonoBehaviour:
   targetFilter: 0
   weapons:
   - weaponName: Scythe Claw
-    damagePerShot: 60
+    damagePerShot: 70
     fireInterval: 0.7
     range: 1.5
     minRange: 0

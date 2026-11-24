@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 1
   cost: 300
   baseDamage: 60
-  maxHealth: 1550
+  maxHealth: 1000
   armorType: 1
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -33,7 +33,7 @@ MonoBehaviour:
   targetFilter: 2
   weapons:
   - weaponName: Plasma Turrets
-    damagePerShot: 15
+    damagePerShot: 20
     fireInterval: 0.3
     range: 14
     minRange: 0

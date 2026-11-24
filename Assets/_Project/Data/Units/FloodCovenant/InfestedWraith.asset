@@ -33,7 +33,7 @@ MonoBehaviour:
   targetFilter: 0
   weapons:
   - weaponName: Scavenged Mortar
-    damagePerShot: 90
+    damagePerShot: 98
     fireInterval: 3.5
     range: 34
     minRange: 10

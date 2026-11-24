@@ -52,7 +52,7 @@ MonoBehaviour:
   - attacker: Marine
     defender: Pelican
     winRate: 0
-    margin: -0.87
+    margin: -0.79
     hasMargin: 1
   - attacker: Marine
     defender: Spartan
@@ -731,8 +731,8 @@ MonoBehaviour:
     hasMargin: 1
   - attacker: Warthog
     defender: Pelican
-    winRate: 0
-    margin: -0.11
+    winRate: 1
+    margin: 0.22
     hasMargin: 1
   - attacker: Warthog
     defender: Spartan
@@ -797,7 +797,7 @@ MonoBehaviour:
   - attacker: Warthog
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.27
+    margin: -0.14
     hasMargin: 1
   - attacker: Warthog
     defender: Hunter Pair
@@ -1412,7 +1412,7 @@ MonoBehaviour:
   - attacker: Scorpion
     defender: Pelican
     winRate: 0
-    margin: -0.42
+    margin: -0.3
     hasMargin: 1
   - attacker: Scorpion
     defender: Spartan
@@ -1477,7 +1477,7 @@ MonoBehaviour:
   - attacker: Scorpion
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.71
+    margin: -0.67
     hasMargin: 1
   - attacker: Scorpion
     defender: Hunter Pair
@@ -1752,7 +1752,7 @@ MonoBehaviour:
   - attacker: Wolverine
     defender: Pelican
     winRate: 0
-    margin: -0.35
+    margin: -0.14
     hasMargin: 1
   - attacker: Wolverine
     defender: Spartan
@@ -1817,7 +1817,7 @@ MonoBehaviour:
   - attacker: Wolverine
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.38
+    margin: -0.15
     hasMargin: 1
   - attacker: Wolverine
     defender: Hunter Pair
@@ -2092,7 +2092,7 @@ MonoBehaviour:
   - attacker: Hornet
     defender: Pelican
     winRate: 0
-    margin: -0.48
+    margin: -0.35
     hasMargin: 1
   - attacker: Hornet
     defender: Spartan
@@ -2157,7 +2157,7 @@ MonoBehaviour:
   - attacker: Hornet
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.51
+    margin: -0.41
     hasMargin: 1
   - attacker: Hornet
     defender: Hunter Pair
@@ -2737,7 +2737,7 @@ MonoBehaviour:
   - attacker: Pelican
     defender: Marine
     winRate: 1
-    margin: 0.87
+    margin: 0.79
     hasMargin: 1
   - attacker: Pelican
     defender: Flamethrower Trooper
@@ -2746,8 +2746,8 @@ MonoBehaviour:
     hasMargin: 1
   - attacker: Pelican
     defender: Warthog
-    winRate: 1
-    margin: 0.11
+    winRate: 0
+    margin: -0.22
     hasMargin: 1
   - attacker: Pelican
     defender: Gauss Warthog
@@ -2757,17 +2757,17 @@ MonoBehaviour:
   - attacker: Pelican
     defender: Scorpion
     winRate: 1
-    margin: 0.42
+    margin: 0.3
     hasMargin: 1
   - attacker: Pelican
     defender: Wolverine
     winRate: 1
-    margin: 0.35
+    margin: 0.14
     hasMargin: 1
   - attacker: Pelican
     defender: Hornet
     winRate: 1
-    margin: 0.48
+    margin: 0.35
     hasMargin: 1
   - attacker: Pelican
     defender: Archer Missile Pod
@@ -2776,23 +2776,23 @@ MonoBehaviour:
     hasMargin: 1
   - attacker: Pelican
     defender: Spartan
-    winRate: 1
-    margin: 0.28
+    winRate: 0.4
+    margin: -0.02
     hasMargin: 1
   - attacker: Pelican
     defender: Mantis
     winRate: 0
-    margin: -0.3
+    margin: -0.45
     hasMargin: 1
   - attacker: Pelican
     defender: Elephant
     winRate: 0
-    margin: -0.68
+    margin: -0.72
     hasMargin: 1
   - attacker: Pelican
     defender: Grunt
     winRate: 1
-    margin: 0.85
+    margin: 0.77
     hasMargin: 1
   - attacker: Pelican
     defender: Fuel Rod Grunt
@@ -2802,22 +2802,22 @@ MonoBehaviour:
   - attacker: Pelican
     defender: 'Jackal (Beam Rifle)'
     winRate: 1
-    margin: 0.6
+    margin: 0.34
     hasMargin: 1
   - attacker: Pelican
     defender: 'Jackal (Shield)'
     winRate: 1
-    margin: 0.84
+    margin: 0.88
     hasMargin: 1
   - attacker: Pelican
     defender: Ghost
-    winRate: 1
-    margin: 0.19
+    winRate: 0
+    margin: -0.23
     hasMargin: 1
   - attacker: Pelican
     defender: Elite
     winRate: 0
-    margin: -0.66
+    margin: -0.73
     hasMargin: 1
   - attacker: Pelican
     defender: Wraith
@@ -2827,22 +2827,22 @@ MonoBehaviour:
   - attacker: Pelican
     defender: Vampire
     winRate: 0
-    margin: -0.35
+    margin: -0.51
     hasMargin: 1
   - attacker: Pelican
     defender: Banshee
     winRate: 1
-    margin: 0.37
+    margin: 0.25
     hasMargin: 1
   - attacker: Pelican
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.09
+    margin: -0.14
     hasMargin: 1
   - attacker: Pelican
     defender: Hunter Pair
     winRate: 0
-    margin: -0.77
+    margin: -0.82
     hasMargin: 1
   - attacker: Pelican
     defender: Zealot
@@ -2852,7 +2852,7 @@ MonoBehaviour:
   - attacker: Pelican
     defender: Scarab
     winRate: 0
-    margin: -0.84
+    margin: -0.86
     hasMargin: 1
   - attacker: Pelican
     defender: Infection Forms
@@ -2877,17 +2877,17 @@ MonoBehaviour:
   - attacker: Pelican
     defender: Pure Form Ranged
     winRate: 1
-    margin: 0.85
+    margin: 0.79
     hasMargin: 1
   - attacker: Pelican
     defender: Swarm Form
     winRate: 1
-    margin: 0.4
+    margin: 0.29
     hasMargin: 1
   - attacker: Pelican
     defender: Pure Form Tank
     winRate: 1
-    margin: 0.74
+    margin: 0.94
     hasMargin: 1
   - attacker: Pelican
     defender: Seeder
@@ -2902,7 +2902,7 @@ MonoBehaviour:
   - attacker: Pelican
     defender: Infected Phantom
     winRate: 1
-    margin: 0.41
+    margin: 0.26
     hasMargin: 1
   - attacker: Pelican
     defender: Flood Abomination
@@ -2911,13 +2911,13 @@ MonoBehaviour:
     hasMargin: 1
   - attacker: Pelican
     defender: Spartan Sniper
-    winRate: 1
-    margin: 0.33
+    winRate: 0
+    margin: -0.51
     hasMargin: 1
   - attacker: Pelican
     defender: Spartan Heavy Weapons
     winRate: 0
-    margin: -0.29
+    margin: -0.49
     hasMargin: 1
   - attacker: Pelican
     defender: Spartan Grenadier
@@ -2932,12 +2932,12 @@ MonoBehaviour:
   - attacker: Pelican
     defender: Spartan Fireteam
     winRate: 1
-    margin: 0.57
+    margin: 0.45
     hasMargin: 1
   - attacker: Pelican
     defender: Gremlin
     winRate: 0
-    margin: -0.6
+    margin: -0.7
     hasMargin: 1
   - attacker: Pelican
     defender: Cobra
@@ -2952,12 +2952,12 @@ MonoBehaviour:
   - attacker: Pelican
     defender: Grizzly
     winRate: 0
-    margin: -0.12
+    margin: -0.33
     hasMargin: 1
   - attacker: Pelican
     defender: Sparrowhawk
     winRate: 1
-    margin: 0.34
+    margin: 0.15
     hasMargin: 1
   - attacker: Pelican
     defender: Longsword
@@ -2967,17 +2967,17 @@ MonoBehaviour:
   - attacker: Pelican
     defender: Vulture
     winRate: 0
-    margin: -0.27
+    margin: -0.44
     hasMargin: 1
   - attacker: Pelican
     defender: Condor Gunship
     winRate: 0
-    margin: -0.36
+    margin: -0.43
     hasMargin: 1
   - attacker: Pelican
     defender: Chopper
-    winRate: 1
-    margin: 0.13
+    winRate: 0
+    margin: -0.27
     hasMargin: 1
   - attacker: Pelican
     defender: Brute Grenadier
@@ -2986,18 +2986,18 @@ MonoBehaviour:
     hasMargin: 1
   - attacker: Pelican
     defender: Marauder
-    winRate: 1
-    margin: 0.13
+    winRate: 0
+    margin: -0.08
     hasMargin: 1
   - attacker: Pelican
     defender: Reaver
     winRate: 0
-    margin: -0.88
+    margin: -0.92
     hasMargin: 1
   - attacker: Pelican
     defender: Skitterer
     winRate: 0
-    margin: -0.13
+    margin: -0.22
     hasMargin: 1
   - attacker: Pelican
     defender: Goliath
@@ -3012,12 +3012,12 @@ MonoBehaviour:
   - attacker: Pelican
     defender: Cannon Fodder
     winRate: 1
-    margin: 0.55
+    margin: 0.37
     hasMargin: 1
   - attacker: Pelican
     defender: Heavy Grunts
     winRate: 1
-    margin: 0.41
+    margin: 0.36
     hasMargin: 1
   - attacker: Pelican
     defender: Grunt Goblin
@@ -3026,13 +3026,13 @@ MonoBehaviour:
     hasMargin: 1
   - attacker: Pelican
     defender: Infested Marine
-    winRate: 0.5
-    margin: -0.02
+    winRate: 0.4
+    margin: -0
     hasMargin: 1
   - attacker: Pelican
     defender: Infested Warthog
     winRate: 1
-    margin: 0.71
+    margin: 0.63
     hasMargin: 1
   - attacker: Pelican
     defender: Infested Scorpion
@@ -3042,22 +3042,22 @@ MonoBehaviour:
   - attacker: Pelican
     defender: Infested Hornet
     winRate: 1
-    margin: 0.64
+    margin: 0.57
     hasMargin: 1
   - attacker: Pelican
     defender: Juggernaut
     winRate: 1
-    margin: 0.91
+    margin: 1
     hasMargin: 1
   - attacker: Pelican
     defender: Infested Ghost
     winRate: 1
-    margin: 0.6
+    margin: 0.53
     hasMargin: 1
   - attacker: Pelican
     defender: Infested Elite
     winRate: 0
-    margin: -0.39
+    margin: -0.51
     hasMargin: 1
   - attacker: Pelican
     defender: Infested Wraith
@@ -3067,12 +3067,12 @@ MonoBehaviour:
   - attacker: Pelican
     defender: Infested Banshee
     winRate: 1
-    margin: 0.44
+    margin: 0.33
     hasMargin: 1
   - attacker: Pelican
     defender: Spawner
     winRate: 1
-    margin: 0.89
+    margin: 1
     hasMargin: 1
   - attacker: Spartan
     defender: Marine
@@ -3116,8 +3116,8 @@ MonoBehaviour:
     hasMargin: 1
   - attacker: Spartan
     defender: Pelican
-    winRate: 0
-    margin: -0.28
+    winRate: 0.6
+    margin: 0.02
     hasMargin: 1
   - attacker: Spartan
     defender: Mantis
@@ -3177,7 +3177,7 @@ MonoBehaviour:
   - attacker: Spartan
     defender: Covenant Phantom
     winRate: 1
-    margin: 0.37
+    margin: 0.5
     hasMargin: 1
   - attacker: Spartan
     defender: Hunter Pair
@@ -3457,7 +3457,7 @@ MonoBehaviour:
   - attacker: Mantis
     defender: Pelican
     winRate: 1
-    margin: 0.3
+    margin: 0.45
     hasMargin: 1
   - attacker: Mantis
     defender: Spartan
@@ -3517,7 +3517,7 @@ MonoBehaviour:
   - attacker: Mantis
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.49
+    margin: -0.41
     hasMargin: 1
   - attacker: Mantis
     defender: Hunter Pair
@@ -3797,7 +3797,7 @@ MonoBehaviour:
   - attacker: Elephant
     defender: Pelican
     winRate: 1
-    margin: 0.68
+    margin: 0.72
     hasMargin: 1
   - attacker: Elephant
     defender: Spartan
@@ -3857,7 +3857,7 @@ MonoBehaviour:
   - attacker: Elephant
     defender: Covenant Phantom
     winRate: 1
-    margin: 0.36
+    margin: 0.43
     hasMargin: 1
   - attacker: Elephant
     defender: Hunter Pair
@@ -4137,7 +4137,7 @@ MonoBehaviour:
   - attacker: Grunt
     defender: Pelican
     winRate: 0
-    margin: -0.85
+    margin: -0.77
     hasMargin: 1
   - attacker: Grunt
     defender: Spartan
@@ -4197,7 +4197,7 @@ MonoBehaviour:
   - attacker: Grunt
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.55
+    margin: -0.69
     hasMargin: 1
   - attacker: Grunt
     defender: Hunter Pair
@@ -4817,7 +4817,7 @@ MonoBehaviour:
   - attacker: 'Jackal (Beam Rifle)'
     defender: Pelican
     winRate: 0
-    margin: -0.6
+    margin: -0.34
     hasMargin: 1
   - attacker: 'Jackal (Beam Rifle)'
     defender: Spartan
@@ -4877,7 +4877,7 @@ MonoBehaviour:
   - attacker: 'Jackal (Beam Rifle)'
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.5
+    margin: -0.22
     hasMargin: 1
   - attacker: 'Jackal (Beam Rifle)'
     defender: Hunter Pair
@@ -5157,7 +5157,7 @@ MonoBehaviour:
   - attacker: 'Jackal (Shield)'
     defender: Pelican
     winRate: 0
-    margin: -0.84
+    margin: -0.88
     hasMargin: 1
   - attacker: 'Jackal (Shield)'
     defender: Spartan
@@ -5217,7 +5217,7 @@ MonoBehaviour:
   - attacker: 'Jackal (Shield)'
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.56
+    margin: -0.58
     hasMargin: 1
   - attacker: 'Jackal (Shield)'
     defender: Hunter Pair
@@ -5496,8 +5496,8 @@ MonoBehaviour:
     hasMargin: 1
   - attacker: Ghost
     defender: Pelican
-    winRate: 0
-    margin: -0.19
+    winRate: 1
+    margin: 0.23
     hasMargin: 1
   - attacker: Ghost
     defender: Spartan
@@ -5557,7 +5557,7 @@ MonoBehaviour:
   - attacker: Ghost
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.31
+    margin: -0.15
     hasMargin: 1
   - attacker: Ghost
     defender: Hunter Pair
@@ -5837,7 +5837,7 @@ MonoBehaviour:
   - attacker: Elite
     defender: Pelican
     winRate: 1
-    margin: 0.66
+    margin: 0.73
     hasMargin: 1
   - attacker: Elite
     defender: Spartan
@@ -5897,7 +5897,7 @@ MonoBehaviour:
   - attacker: Elite
     defender: Covenant Phantom
     winRate: 1
-    margin: 0.63
+    margin: 0.7
     hasMargin: 1
   - attacker: Elite
     defender: Hunter Pair
@@ -6517,7 +6517,7 @@ MonoBehaviour:
   - attacker: Vampire
     defender: Pelican
     winRate: 1
-    margin: 0.35
+    margin: 0.51
     hasMargin: 1
   - attacker: Vampire
     defender: Spartan
@@ -6577,7 +6577,7 @@ MonoBehaviour:
   - attacker: Vampire
     defender: Covenant Phantom
     winRate: 1
-    margin: 0.33
+    margin: 0.5
     hasMargin: 1
   - attacker: Vampire
     defender: Hunter Pair
@@ -6857,7 +6857,7 @@ MonoBehaviour:
   - attacker: Banshee
     defender: Pelican
     winRate: 0
-    margin: -0.37
+    margin: -0.25
     hasMargin: 1
   - attacker: Banshee
     defender: Spartan
@@ -6917,7 +6917,7 @@ MonoBehaviour:
   - attacker: Banshee
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.42
+    margin: -0.35
     hasMargin: 1
   - attacker: Banshee
     defender: Hunter Pair
@@ -7167,7 +7167,7 @@ MonoBehaviour:
   - attacker: Covenant Phantom
     defender: Warthog
     winRate: 1
-    margin: 0.27
+    margin: 0.14
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Gauss Warthog
@@ -7177,17 +7177,17 @@ MonoBehaviour:
   - attacker: Covenant Phantom
     defender: Scorpion
     winRate: 1
-    margin: 0.71
+    margin: 0.67
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Wolverine
     winRate: 1
-    margin: 0.38
+    margin: 0.15
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Hornet
     winRate: 1
-    margin: 0.51
+    margin: 0.41
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Archer Missile Pod
@@ -7197,27 +7197,27 @@ MonoBehaviour:
   - attacker: Covenant Phantom
     defender: Pelican
     winRate: 1
-    margin: 0.09
+    margin: 0.14
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Spartan
     winRate: 0
-    margin: -0.37
+    margin: -0.5
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Mantis
     winRate: 1
-    margin: 0.49
+    margin: 0.41
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Elephant
     winRate: 0
-    margin: -0.36
+    margin: -0.43
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Grunt
     winRate: 1
-    margin: 0.55
+    margin: 0.69
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Fuel Rod Grunt
@@ -7227,22 +7227,22 @@ MonoBehaviour:
   - attacker: Covenant Phantom
     defender: 'Jackal (Beam Rifle)'
     winRate: 1
-    margin: 0.5
+    margin: 0.22
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: 'Jackal (Shield)'
     winRate: 1
-    margin: 0.56
+    margin: 0.58
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Ghost
     winRate: 1
-    margin: 0.31
+    margin: 0.15
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Elite
     winRate: 0
-    margin: -0.63
+    margin: -0.7
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Wraith
@@ -7252,17 +7252,17 @@ MonoBehaviour:
   - attacker: Covenant Phantom
     defender: Vampire
     winRate: 0
-    margin: -0.33
+    margin: -0.5
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Banshee
     winRate: 1
-    margin: 0.42
+    margin: 0.35
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Hunter Pair
     winRate: 0
-    margin: -0.53
+    margin: -0.61
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Zealot
@@ -7272,7 +7272,7 @@ MonoBehaviour:
   - attacker: Covenant Phantom
     defender: Scarab
     winRate: 0
-    margin: -0.68
+    margin: -0.73
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Infection Forms
@@ -7297,12 +7297,12 @@ MonoBehaviour:
   - attacker: Covenant Phantom
     defender: Pure Form Ranged
     winRate: 1
-    margin: 0.89
+    margin: 0.86
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Swarm Form
     winRate: 0
-    margin: -0.31
+    margin: -0.44
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Pure Form Tank
@@ -7312,7 +7312,7 @@ MonoBehaviour:
   - attacker: Covenant Phantom
     defender: Seeder
     winRate: 0
-    margin: -0.14
+    margin: -0.08
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Infected Pelican
@@ -7322,22 +7322,22 @@ MonoBehaviour:
   - attacker: Covenant Phantom
     defender: Infected Phantom
     winRate: 1
-    margin: 0.32
+    margin: 0.3
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Flood Abomination
     winRate: 0
-    margin: -0.92
+    margin: -1
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Spartan Sniper
-    winRate: 0.2
-    margin: -0.13
+    winRate: 0
+    margin: -0.68
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Spartan Heavy Weapons
     winRate: 0
-    margin: -0.22
+    margin: -0.41
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Spartan Grenadier
@@ -7351,13 +7351,13 @@ MonoBehaviour:
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Spartan Fireteam
-    winRate: 1
-    margin: 0.43
+    winRate: 0.9
+    margin: 0.21
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Gremlin
     winRate: 0
-    margin: -0.54
+    margin: -0.64
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Cobra
@@ -7372,12 +7372,12 @@ MonoBehaviour:
   - attacker: Covenant Phantom
     defender: Grizzly
     winRate: 1
-    margin: 0.57
+    margin: 0.5
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Sparrowhawk
     winRate: 1
-    margin: 0.39
+    margin: 0.27
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Longsword
@@ -7387,17 +7387,17 @@ MonoBehaviour:
   - attacker: Covenant Phantom
     defender: Vulture
     winRate: 1
-    margin: 0.5
+    margin: 0.39
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Condor Gunship
     winRate: 0
-    margin: -0.31
+    margin: -0.37
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Chopper
-    winRate: 1
-    margin: 0.23
+    winRate: 0.8
+    margin: 0.06
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Brute Grenadier
@@ -7407,17 +7407,17 @@ MonoBehaviour:
   - attacker: Covenant Phantom
     defender: Marauder
     winRate: 1
-    margin: 0.59
+    margin: 0.53
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Reaver
     winRate: 0
-    margin: -0.78
+    margin: -0.83
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Skitterer
-    winRate: 0
-    margin: -0.16
+    winRate: 0.8
+    margin: 0.05
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Goliath
@@ -7427,32 +7427,32 @@ MonoBehaviour:
   - attacker: Covenant Phantom
     defender: Hunter Captain
     winRate: 0
-    margin: -1
+    margin: -0.97
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Cannon Fodder
     winRate: 0
-    margin: -0.2
+    margin: -0.43
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Heavy Grunts
     winRate: 0
-    margin: -0.28
+    margin: -0.37
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Grunt Goblin
     winRate: 0
-    margin: -0.64
+    margin: -0.66
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Infested Marine
     winRate: 0
-    margin: -0.56
+    margin: -0.58
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Infested Warthog
     winRate: 1
-    margin: 0.73
+    margin: 0.69
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Infested Scorpion
@@ -7462,7 +7462,7 @@ MonoBehaviour:
   - attacker: Covenant Phantom
     defender: Infested Hornet
     winRate: 1
-    margin: 0.65
+    margin: 0.59
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Juggernaut
@@ -7472,12 +7472,12 @@ MonoBehaviour:
   - attacker: Covenant Phantom
     defender: Infested Ghost
     winRate: 1
-    margin: 0.53
+    margin: 0.45
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Infested Elite
     winRate: 0
-    margin: -0.64
+    margin: -0.69
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Infested Wraith
@@ -7487,12 +7487,12 @@ MonoBehaviour:
   - attacker: Covenant Phantom
     defender: Infested Banshee
     winRate: 1
-    margin: 0.46
+    margin: 0.39
     hasMargin: 1
   - attacker: Covenant Phantom
     defender: Spawner
     winRate: 1
-    margin: 0.67
+    margin: 0.98
     hasMargin: 1
   - attacker: Hunter Pair
     defender: Marine
@@ -7537,7 +7537,7 @@ MonoBehaviour:
   - attacker: Hunter Pair
     defender: Pelican
     winRate: 1
-    margin: 0.77
+    margin: 0.82
     hasMargin: 1
   - attacker: Hunter Pair
     defender: Spartan
@@ -7602,7 +7602,7 @@ MonoBehaviour:
   - attacker: Hunter Pair
     defender: Covenant Phantom
     winRate: 1
-    margin: 0.53
+    margin: 0.61
     hasMargin: 1
   - attacker: Hunter Pair
     defender: Zealot
@@ -8217,7 +8217,7 @@ MonoBehaviour:
   - attacker: Scarab
     defender: Pelican
     winRate: 1
-    margin: 0.84
+    margin: 0.86
     hasMargin: 1
   - attacker: Scarab
     defender: Spartan
@@ -8282,7 +8282,7 @@ MonoBehaviour:
   - attacker: Scarab
     defender: Covenant Phantom
     winRate: 1
-    margin: 0.68
+    margin: 0.73
     hasMargin: 1
   - attacker: Scarab
     defender: Hunter Pair
@@ -9917,7 +9917,7 @@ MonoBehaviour:
   - attacker: Pure Form Ranged
     defender: Pelican
     winRate: 0
-    margin: -0.85
+    margin: -0.79
     hasMargin: 1
   - attacker: Pure Form Ranged
     defender: Spartan
@@ -9982,7 +9982,7 @@ MonoBehaviour:
   - attacker: Pure Form Ranged
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.89
+    margin: -0.86
     hasMargin: 1
   - attacker: Pure Form Ranged
     defender: Hunter Pair
@@ -10257,7 +10257,7 @@ MonoBehaviour:
   - attacker: Swarm Form
     defender: Pelican
     winRate: 0
-    margin: -0.4
+    margin: -0.29
     hasMargin: 1
   - attacker: Swarm Form
     defender: Spartan
@@ -10322,7 +10322,7 @@ MonoBehaviour:
   - attacker: Swarm Form
     defender: Covenant Phantom
     winRate: 1
-    margin: 0.31
+    margin: 0.44
     hasMargin: 1
   - attacker: Swarm Form
     defender: Hunter Pair
@@ -10597,7 +10597,7 @@ MonoBehaviour:
   - attacker: Pure Form Tank
     defender: Pelican
     winRate: 0
-    margin: -0.74
+    margin: -0.94
     hasMargin: 1
   - attacker: Pure Form Tank
     defender: Spartan
@@ -11002,7 +11002,7 @@ MonoBehaviour:
   - attacker: Seeder
     defender: Covenant Phantom
     winRate: 1
-    margin: 0.14
+    margin: 0.08
     hasMargin: 1
   - attacker: Seeder
     defender: Hunter Pair
@@ -11617,7 +11617,7 @@ MonoBehaviour:
   - attacker: Infected Phantom
     defender: Pelican
     winRate: 0
-    margin: -0.41
+    margin: -0.26
     hasMargin: 1
   - attacker: Infected Phantom
     defender: Spartan
@@ -11682,7 +11682,7 @@ MonoBehaviour:
   - attacker: Infected Phantom
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.32
+    margin: -0.3
     hasMargin: 1
   - attacker: Infected Phantom
     defender: Hunter Pair
@@ -12022,7 +12022,7 @@ MonoBehaviour:
   - attacker: Flood Abomination
     defender: Covenant Phantom
     winRate: 1
-    margin: 0.92
+    margin: 1
     hasMargin: 1
   - attacker: Flood Abomination
     defender: Hunter Pair
@@ -12296,8 +12296,8 @@ MonoBehaviour:
     hasMargin: 1
   - attacker: Spartan Sniper
     defender: Pelican
-    winRate: 0
-    margin: -0.33
+    winRate: 1
+    margin: 0.51
     hasMargin: 1
   - attacker: Spartan Sniper
     defender: Spartan
@@ -12361,8 +12361,8 @@ MonoBehaviour:
     hasMargin: 1
   - attacker: Spartan Sniper
     defender: Covenant Phantom
-    winRate: 0.8
-    margin: 0.13
+    winRate: 1
+    margin: 0.68
     hasMargin: 1
   - attacker: Spartan Sniper
     defender: Hunter Pair
@@ -12637,7 +12637,7 @@ MonoBehaviour:
   - attacker: Spartan Heavy Weapons
     defender: Pelican
     winRate: 1
-    margin: 0.29
+    margin: 0.49
     hasMargin: 1
   - attacker: Spartan Heavy Weapons
     defender: Spartan
@@ -12702,7 +12702,7 @@ MonoBehaviour:
   - attacker: Spartan Heavy Weapons
     defender: Covenant Phantom
     winRate: 1
-    margin: 0.22
+    margin: 0.41
     hasMargin: 1
   - attacker: Spartan Heavy Weapons
     defender: Hunter Pair
@@ -13657,7 +13657,7 @@ MonoBehaviour:
   - attacker: Spartan Fireteam
     defender: Pelican
     winRate: 0
-    margin: -0.57
+    margin: -0.45
     hasMargin: 1
   - attacker: Spartan Fireteam
     defender: Spartan
@@ -13721,8 +13721,8 @@ MonoBehaviour:
     hasMargin: 1
   - attacker: Spartan Fireteam
     defender: Covenant Phantom
-    winRate: 0
-    margin: -0.43
+    winRate: 0.1
+    margin: -0.21
     hasMargin: 1
   - attacker: Spartan Fireteam
     defender: Hunter Pair
@@ -13997,7 +13997,7 @@ MonoBehaviour:
   - attacker: Gremlin
     defender: Pelican
     winRate: 1
-    margin: 0.6
+    margin: 0.7
     hasMargin: 1
   - attacker: Gremlin
     defender: Spartan
@@ -14062,7 +14062,7 @@ MonoBehaviour:
   - attacker: Gremlin
     defender: Covenant Phantom
     winRate: 1
-    margin: 0.54
+    margin: 0.64
     hasMargin: 1
   - attacker: Gremlin
     defender: Hunter Pair
@@ -15017,7 +15017,7 @@ MonoBehaviour:
   - attacker: Grizzly
     defender: Pelican
     winRate: 1
-    margin: 0.12
+    margin: 0.33
     hasMargin: 1
   - attacker: Grizzly
     defender: Spartan
@@ -15082,7 +15082,7 @@ MonoBehaviour:
   - attacker: Grizzly
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.57
+    margin: -0.5
     hasMargin: 1
   - attacker: Grizzly
     defender: Hunter Pair
@@ -15357,7 +15357,7 @@ MonoBehaviour:
   - attacker: Sparrowhawk
     defender: Pelican
     winRate: 0
-    margin: -0.34
+    margin: -0.15
     hasMargin: 1
   - attacker: Sparrowhawk
     defender: Spartan
@@ -15422,7 +15422,7 @@ MonoBehaviour:
   - attacker: Sparrowhawk
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.39
+    margin: -0.27
     hasMargin: 1
   - attacker: Sparrowhawk
     defender: Hunter Pair
@@ -16037,7 +16037,7 @@ MonoBehaviour:
   - attacker: Vulture
     defender: Pelican
     winRate: 1
-    margin: 0.27
+    margin: 0.44
     hasMargin: 1
   - attacker: Vulture
     defender: Spartan
@@ -16102,7 +16102,7 @@ MonoBehaviour:
   - attacker: Vulture
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.5
+    margin: -0.39
     hasMargin: 1
   - attacker: Vulture
     defender: Hunter Pair
@@ -16377,7 +16377,7 @@ MonoBehaviour:
   - attacker: Condor Gunship
     defender: Pelican
     winRate: 1
-    margin: 0.36
+    margin: 0.43
     hasMargin: 1
   - attacker: Condor Gunship
     defender: Spartan
@@ -16442,7 +16442,7 @@ MonoBehaviour:
   - attacker: Condor Gunship
     defender: Covenant Phantom
     winRate: 1
-    margin: 0.31
+    margin: 0.37
     hasMargin: 1
   - attacker: Condor Gunship
     defender: Hunter Pair
@@ -16716,8 +16716,8 @@ MonoBehaviour:
     hasMargin: 1
   - attacker: Chopper
     defender: Pelican
-    winRate: 0
-    margin: -0.13
+    winRate: 1
+    margin: 0.27
     hasMargin: 1
   - attacker: Chopper
     defender: Spartan
@@ -16781,8 +16781,8 @@ MonoBehaviour:
     hasMargin: 1
   - attacker: Chopper
     defender: Covenant Phantom
-    winRate: 0
-    margin: -0.23
+    winRate: 0.2
+    margin: -0.06
     hasMargin: 1
   - attacker: Chopper
     defender: Hunter Pair
@@ -17396,8 +17396,8 @@ MonoBehaviour:
     hasMargin: 1
   - attacker: Marauder
     defender: Pelican
-    winRate: 0
-    margin: -0.13
+    winRate: 1
+    margin: 0.08
     hasMargin: 1
   - attacker: Marauder
     defender: Spartan
@@ -17462,7 +17462,7 @@ MonoBehaviour:
   - attacker: Marauder
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.59
+    margin: -0.53
     hasMargin: 1
   - attacker: Marauder
     defender: Hunter Pair
@@ -17737,7 +17737,7 @@ MonoBehaviour:
   - attacker: Reaver
     defender: Pelican
     winRate: 1
-    margin: 0.88
+    margin: 0.92
     hasMargin: 1
   - attacker: Reaver
     defender: Spartan
@@ -17802,7 +17802,7 @@ MonoBehaviour:
   - attacker: Reaver
     defender: Covenant Phantom
     winRate: 1
-    margin: 0.78
+    margin: 0.83
     hasMargin: 1
   - attacker: Reaver
     defender: Hunter Pair
@@ -18077,7 +18077,7 @@ MonoBehaviour:
   - attacker: Skitterer
     defender: Pelican
     winRate: 1
-    margin: 0.13
+    margin: 0.22
     hasMargin: 1
   - attacker: Skitterer
     defender: Spartan
@@ -18141,8 +18141,8 @@ MonoBehaviour:
     hasMargin: 1
   - attacker: Skitterer
     defender: Covenant Phantom
-    winRate: 1
-    margin: 0.16
+    winRate: 0.2
+    margin: -0.05
     hasMargin: 1
   - attacker: Skitterer
     defender: Hunter Pair
@@ -18822,7 +18822,7 @@ MonoBehaviour:
   - attacker: Hunter Captain
     defender: Covenant Phantom
     winRate: 1
-    margin: 1
+    margin: 0.97
     hasMargin: 1
   - attacker: Hunter Captain
     defender: Hunter Pair
@@ -19097,7 +19097,7 @@ MonoBehaviour:
   - attacker: Cannon Fodder
     defender: Pelican
     winRate: 0
-    margin: -0.55
+    margin: -0.37
     hasMargin: 1
   - attacker: Cannon Fodder
     defender: Spartan
@@ -19162,7 +19162,7 @@ MonoBehaviour:
   - attacker: Cannon Fodder
     defender: Covenant Phantom
     winRate: 1
-    margin: 0.2
+    margin: 0.43
     hasMargin: 1
   - attacker: Cannon Fodder
     defender: Hunter Pair
@@ -19437,7 +19437,7 @@ MonoBehaviour:
   - attacker: Heavy Grunts
     defender: Pelican
     winRate: 0
-    margin: -0.41
+    margin: -0.36
     hasMargin: 1
   - attacker: Heavy Grunts
     defender: Spartan
@@ -19502,7 +19502,7 @@ MonoBehaviour:
   - attacker: Heavy Grunts
     defender: Covenant Phantom
     winRate: 1
-    margin: 0.28
+    margin: 0.37
     hasMargin: 1
   - attacker: Heavy Grunts
     defender: Hunter Pair
@@ -19842,7 +19842,7 @@ MonoBehaviour:
   - attacker: Grunt Goblin
     defender: Covenant Phantom
     winRate: 1
-    margin: 0.64
+    margin: 0.66
     hasMargin: 1
   - attacker: Grunt Goblin
     defender: Hunter Pair
@@ -20116,8 +20116,8 @@ MonoBehaviour:
     hasMargin: 1
   - attacker: Infested Marine
     defender: Pelican
-    winRate: 0.5
-    margin: 0.02
+    winRate: 0.6
+    margin: 0
     hasMargin: 1
   - attacker: Infested Marine
     defender: Spartan
@@ -20182,7 +20182,7 @@ MonoBehaviour:
   - attacker: Infested Marine
     defender: Covenant Phantom
     winRate: 1
-    margin: 0.56
+    margin: 0.58
     hasMargin: 1
   - attacker: Infested Marine
     defender: Hunter Pair
@@ -20457,7 +20457,7 @@ MonoBehaviour:
   - attacker: Infested Warthog
     defender: Pelican
     winRate: 0
-    margin: -0.71
+    margin: -0.63
     hasMargin: 1
   - attacker: Infested Warthog
     defender: Spartan
@@ -20522,7 +20522,7 @@ MonoBehaviour:
   - attacker: Infested Warthog
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.73
+    margin: -0.69
     hasMargin: 1
   - attacker: Infested Warthog
     defender: Hunter Pair
@@ -21137,7 +21137,7 @@ MonoBehaviour:
   - attacker: Infested Hornet
     defender: Pelican
     winRate: 0
-    margin: -0.64
+    margin: -0.57
     hasMargin: 1
   - attacker: Infested Hornet
     defender: Spartan
@@ -21202,7 +21202,7 @@ MonoBehaviour:
   - attacker: Infested Hornet
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.65
+    margin: -0.59
     hasMargin: 1
   - attacker: Infested Hornet
     defender: Hunter Pair
@@ -21477,7 +21477,7 @@ MonoBehaviour:
   - attacker: Juggernaut
     defender: Pelican
     winRate: 0
-    margin: -0.91
+    margin: -1
     hasMargin: 1
   - attacker: Juggernaut
     defender: Spartan
@@ -21817,7 +21817,7 @@ MonoBehaviour:
   - attacker: Infested Ghost
     defender: Pelican
     winRate: 0
-    margin: -0.6
+    margin: -0.53
     hasMargin: 1
   - attacker: Infested Ghost
     defender: Spartan
@@ -21882,7 +21882,7 @@ MonoBehaviour:
   - attacker: Infested Ghost
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.53
+    margin: -0.45
     hasMargin: 1
   - attacker: Infested Ghost
     defender: Hunter Pair
@@ -22157,7 +22157,7 @@ MonoBehaviour:
   - attacker: Infested Elite
     defender: Pelican
     winRate: 1
-    margin: 0.39
+    margin: 0.51
     hasMargin: 1
   - attacker: Infested Elite
     defender: Spartan
@@ -22222,7 +22222,7 @@ MonoBehaviour:
   - attacker: Infested Elite
     defender: Covenant Phantom
     winRate: 1
-    margin: 0.64
+    margin: 0.69
     hasMargin: 1
   - attacker: Infested Elite
     defender: Hunter Pair
@@ -22837,7 +22837,7 @@ MonoBehaviour:
   - attacker: Infested Banshee
     defender: Pelican
     winRate: 0
-    margin: -0.44
+    margin: -0.33
     hasMargin: 1
   - attacker: Infested Banshee
     defender: Spartan
@@ -22902,7 +22902,7 @@ MonoBehaviour:
   - attacker: Infested Banshee
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.46
+    margin: -0.39
     hasMargin: 1
   - attacker: Infested Banshee
     defender: Hunter Pair
@@ -23177,7 +23177,7 @@ MonoBehaviour:
   - attacker: Spawner
     defender: Pelican
     winRate: 0
-    margin: -0.89
+    margin: -1
     hasMargin: 1
   - attacker: Spawner
     defender: Spartan
@@ -23242,7 +23242,7 @@ MonoBehaviour:
   - attacker: Spawner
     defender: Covenant Phantom
     winRate: 0
-    margin: -0.67
+    margin: -0.98
     hasMargin: 1
   - attacker: Spawner
     defender: Hunter Pair

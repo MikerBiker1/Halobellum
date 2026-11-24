@@ -57,7 +57,7 @@ MonoBehaviour:
     hitSlowSeconds: 0
     hitSlowShare: 0
   - weaponName: Spore Bomb
-    damagePerShot: 37
+    damagePerShot: 42
     fireInterval: 2.5
     range: 8
     minRange: 0

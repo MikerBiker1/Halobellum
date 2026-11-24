@@ -33,7 +33,7 @@ MonoBehaviour:
   targetFilter: 2
   weapons:
   - weaponName: EMP Railgun
-    damagePerShot: 38
+    damagePerShot: 46
     fireInterval: 1
     range: 14
     minRange: 0

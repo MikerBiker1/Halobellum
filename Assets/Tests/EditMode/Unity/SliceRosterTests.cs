@@ -32,7 +32,7 @@ namespace Halobellum.Tests
             ("Wolverine", UnitRole.AntiAir, 2, 50, 1, 300, 480), // Health 500 until D140.
             ("Hornet", UnitRole.Aerial, 2, 50, 2, 300, 505), // 400 until D138. Health 500 until D140, 490 until D141.
             ("Archer Missile Pod", UnitRole.Artillery, 2, 50, 2, 300, 350),
-            ("Pelican", UnitRole.Aerial, 2, 50, 1, 300, 1400), // Health 1200 until D140, 1380 until D141, 1550 until D155.
+            ("Pelican", UnitRole.Aerial, 2, 50, 1, 300, 900), // Health 1200 until D140, 1380 until D141, 1550 until D155, 1400 until D179.
             ("Spartan", UnitRole.SingleTargetDps, 3, 250, 1, 500, 1250),
             ("Mantis", UnitRole.Tank, 3, 250, 1, 500, 3360), // 2500 until D138. Health 2700 until D140.
             ("Elephant", UnitRole.Titan, 4, 150, 1, 800, 8240), // Unlock 350; health 8000 until D140, 8580 until D141.
@@ -49,7 +49,7 @@ namespace Halobellum.Tests
             ("Wraith", UnitRole.Artillery, 2, 50, 1, 300, 900),
             ("Vampire", UnitRole.AntiAir, 2, 50, 1, 300, 800), // 500 until D138, 550 until D141, 570 until D149, 700 until D155.
             ("Banshee", UnitRole.Aerial, 2, 50, 2, 300, 440), // Health 400 until D140, 410 until D141.
-            ("Covenant Phantom", UnitRole.Aerial, 2, 50, 1, 300, 1550), // Added 2026-11-05: the Pelican's mirror. 800 until D151.
+            ("Covenant Phantom", UnitRole.Aerial, 2, 50, 1, 300, 1000), // Added 2026-11-05: the Pelican's mirror. 800 until D151, 1550 until D179.
             ("Hunter Pair", UnitRole.Tank, 3, 225, 2, 450, 1440), // Health 1500 until D140.
             ("Zealot", UnitRole.SingleTargetDps, 3, 200, 1, 400, 1400),
             ("Scarab", UnitRole.Titan, 4, 150, 1, 800, 9050), // Unlock 350, 50 until D141; health 8500 until D140, 8780 until D141.
@@ -153,7 +153,7 @@ namespace Halobellum.Tests
             Assert.AreEqual(1f, u["Hornet"].Weapons[0].SplashRadius, 1e-4f, "Its rockets' 1 m splash (D155).");
             Assert.IsTrue(u["Pelican"].Weapons[0].CanTarget(u["Pelican"], true) && u["Pelican"].Weapons[0].CanTarget(u["Pelican"], false),
                 "Pelican autocannon hits air and ground.");
-            Assert.AreEqual(25f, u["Pelican"].Weapons[0].DamagePerShot, 1e-3f, "2.5 times the autocannon's 10 of D125 (the owner, D142).");
+            Assert.AreEqual(32f, u["Pelican"].Weapons[0].DamagePerShot, 1e-3f, "25 from D142 until D179, when its health came down to 900.");
             Assert.AreEqual(1f, u["Pelican"].Weapons[0].SplashRadius, 1e-3f, "A 1 m splash (the owner, D142).");
             Assert.AreEqual(DamageType.Ballistic, u["Pelican"].Weapons[0].DamageType);
 

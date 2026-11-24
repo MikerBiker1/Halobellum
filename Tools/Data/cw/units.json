@@ -663,7 +663,7 @@
   "unlock": 50,
   "squad": 1,
   "cost": 300,
-  "hp": 1400,
+  "hp": 900,
   "armor": "L",
   "speed": 6.0,
   "radius": 2.5,
@@ -672,7 +672,7 @@
   "weapons": [
    {
     "name": "M370 Autocannon",
-    "dmg": 25,
+    "dmg": 32,
     "interval": 0.3,
     "range": 14,
     "minr": 0,
@@ -1821,7 +1821,7 @@
   "unlock": 50,
   "squad": 1,
   "cost": 300,
-  "hp": 1550,
+  "hp": 1000,
   "armor": "L",
   "speed": 5.0,
   "radius": 3,
@@ -1830,7 +1830,7 @@
   "weapons": [
    {
     "name": "Plasma Turrets",
-    "dmg": 15,
+    "dmg": 20,
     "interval": 0.3,
     "range": 14,
     "minr": 0,

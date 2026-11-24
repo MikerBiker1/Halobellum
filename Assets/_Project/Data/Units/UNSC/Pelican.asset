@@ -19,7 +19,7 @@ MonoBehaviour:
   squadSize: 1
   cost: 300
   baseDamage: 60
-  maxHealth: 1400
+  maxHealth: 900
   armorType: 1
   maxShield: 0
   shieldRegenPerSecond: 0
@@ -33,7 +33,7 @@ MonoBehaviour:
   targetFilter: 2
   weapons:
   - weaponName: M370 Autocannon
-    damagePerShot: 25
+    damagePerShot: 32
     fireInterval: 0.3
     range: 14
     minRange: 0
