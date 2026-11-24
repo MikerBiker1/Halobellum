@@ -27,6 +27,13 @@
 //     with a tab for each battle: the field from above as it started, and both armies' damage dealt, taken and stopped (BattleStatsWindow, D69).
 //     Esc, a right-click or its Close button closes it.
 // The look follows the player's faction (HudTheme: UNSC or Covenant style); the draft screen is neutral.
+// "You" is the local side (MatchController.LocalTeam, M11): Team A in single-player, Team B for a LAN guest. Every number, list and colour here is the
+// local side's (own blue, the other red); in a two-humans match the card screen shows while the local side's own offer is open (Match.InCards).
+// The result and match-over words come from LocalSideTexts.
+// In a LAN match (M11 Stage 4, MatchController.Lan) the top bar names the other player and what it is doing (picking, deploying, ready);
+// after the starting card and after Ready a panel says "Waiting for opponent..."; the guest waits for the host's result after a battle;
+// a match that is starting, or that ended without a winner (left, lost, out of sync, with both state hashes), has its own screen with
+// a way back to the menu; and match over has only Main Menu (no rematch, no battle log).
 // Drawn with Unity's immediate-mode GUI; scales with the screen height.
 // Depends on: Halobellum.Presentation (MatchController, BattleController, UiHitAreas),
 //             Halobellum.Economy (Match, PlayerState, RoundSummary, ShopOrder), HudScale, CardLayout, CardScreens, UnitIcons, MenuStyle, SquadStatsWindow, PauseMenu.
@@ -54,6 +61,7 @@ namespace Halobellum.UI
         [SerializeField] private Color playerColor = new Color(0.35f, 0.55f, 1f);
         [SerializeField] private Color enemyColor = new Color(1f, 0.4f, 0.32f);
 
+        private GUIStyle _smallRight;
         private GUIStyle _title, _big, _text, _small, _smallCentered, _button, _bigButton, _centered, _header, _barLabel, _wrap, _wrapDim, _shopLine, _cellLine, _bannerWord, _bannerLine, _hitSmall, _hitMedium, _hitBig, _infoButton;
         private float _scale;
         private Vector2 _shopScroll;
@@ -78,6 +86,7 @@ namespace Halobellum.UI
         public void OpenBattleStats()
         {
             if (match == null || match.Match == null || match.Match.Phase != MatchPhase.MatchOver) return;
+            _battleStats.LocalTeam = match.LocalTeam;
             _battleStats.Open(match.Match);
             match.Tutorial?.Signal("BattleStats");
         }
@@ -97,14 +106,14 @@ namespace Halobellum.UI
         /// <summary>The page has its own rules while it is open. A squad landing during the drop selects itself, and M, R and Del would then act on it behind the page.</summary>
         private void Update()
         {
-            if (match != null && match.Match != null && match.Match.Phase != MatchPhase.Cards) CardsHidden = CardsStartHidden; // Each card screen starts with its cards showing.
+            if (match != null && match.Match != null && !match.IsChoosingCards) CardsHidden = CardsStartHidden; // Each card screen starts with its cards showing.
             if (OpensBattleStatsAtTheEnd && !_battleStatsOpenedForTest && match != null && match.Match != null && match.Match.Phase == MatchPhase.MatchOver)
             {
                 // The test game's picture of the window, with its best squad picked out.
                 _battleStatsOpenedForTest = true;
                 OpenBattleStats();
                 BattleStats last = match.Match.BattleHistory.Count > 0 ? match.Match.BattleHistory[match.Match.BattleHistory.Count - 1] : null;
-                if (last != null && last.Side(Team.A, false).Count > 0) _battleStats.Pick(last, last.Side(Team.A, false)[0]);
+                if (last != null && last.Side(match.LocalTeam, false).Count > 0) _battleStats.Pick(last, last.Side(match.LocalTeam, false)[0]);
             }
             if (_battleStats.IsOpen) UpdateBattleStats();
             if (!_unlockPageOpen) return;
@@ -139,10 +148,20 @@ namespace Halobellum.UI
                 return;
             }
 
+            LanMatch lan = match.Lan;
+            if (lan != null && (lan.Coordinator == null || lan.Ended))
+            {
+                DrawLanScreen(lan); // M11: starting, or a final state (left, lost, out of sync).
+                return;
+            }
+
             switch (match.Match.Phase)
             {
                 case MatchPhase.Draft: DrawDraft(); break;
-                case MatchPhase.Deployment: DrawDeployment(); break;
+                case MatchPhase.Deployment: // Two humans: the phase stays Deployment while this side's own card offer is open.
+                    if (match.IsChoosingCards) DrawCards();
+                    else DrawDeployment();
+                    break;
                 case MatchPhase.Cards: DrawCards(); break;
                 case MatchPhase.Battle: DrawBattle(); break;
                 case MatchPhase.Result: DrawBattle(); DrawResult(); break;
@@ -167,14 +186,22 @@ namespace Halobellum.UI
             CardScreens.Fit(new Rect(bar.x + 18f, bar.y + 8f, titleWidth, 36f), HudTheme.Title("Starting draft"), CardScreens.TitleStyle, 28, 18, TextAnchor.MiddleLeft, HudTheme.TitleColor);
             CardScreens.Fit(new Rect(bar.x + 18f, bar.y + 44f, titleWidth, 32f), "Its squads are free and start unlocked. Dearer squads mean a weaker base.", CardScreens.LineStyle, 15, 11, TextAnchor.MiddleLeft, HudTheme.DimText);
 
-            int count = m.PlayerDraft.Count;
+            if (match.Lan != null) GUI.Label(new Rect(bar.xMax - 338f, bar.y + 8f, 320f, 30f), match.Lan.OpponentLine, _smallRight); // M11: what the other player does.
+            if (match.Lan != null && match.Lan.WaitingAtDraft)
+            {
+                DrawWaitingForOpponent(width, bar.yMax + 40f, "Your starting card is chosen.");
+                return;
+            }
+
+            List<DraftCard> draft = match.MyDraft;
+            int count = draft.Count;
             CardRow row = CardLayout.Arrange(count, width, bar.yMax + 14f, height - 14f);
-            DraftRowText text = count > 0 ? CardScreens.MeasureDraftRow(m.PlayerDraft, row.CardAt(0)) : default;
+            DraftRowText text = count > 0 ? CardScreens.MeasureDraftRow(draft, row.CardAt(0)) : default;
             if (count > 0) TutorialHud.Mark("area:draft", row.CardAt(0));
             CardScreens.ClearHoveredUnit();
             for (int i = 0; i < count; i++)
             {
-                if (CardScreens.DrawDraftCard(row.CardAt(i), m.PlayerDraft[i], text, m.Rules.StartingBaseHealth(m.PlayerDraft[i].Value))) match.ChooseDraft(i);
+                if (CardScreens.DrawDraftCard(row.CardAt(i), draft[i], text, m.Rules.StartingBaseHealth(draft[i].Value))) match.ChooseDraft(i);
             }
             ShowCardHover(width);
             DrawHoveredUnit();
@@ -185,7 +212,8 @@ namespace Halobellum.UI
         private void DrawDeployment()
         {
             Match m = match.Match;
-            PlayerState player = m.Player;
+            PlayerState player = match.Me, enemy = match.Them;
+            Team local = match.LocalTeam;
             float width = HudScale.ScaledWidth(_scale), height = HudScale.ScaledHeight(_scale);
             bool skirmish = m.Rules.Mode == MatchMode.UnlockSkirmish;
             if (_unlockPageOpen) DimTheField(width, height); // First, so that the top bar stays lit.
@@ -194,22 +222,28 @@ namespace Halobellum.UI
             var bar = new Rect(width * 0.5f - 560f, 8f, 1120f, 64f);
             Panel(bar);
             GUI.Label(new Rect(bar.x + 16f, bar.y + 6f, 220f, 30f), HudTheme.Title($"Round {m.Round}: Deployment"), _header);
-            GUI.Label(new Rect(bar.x + 16f, bar.y + 32f, 260f, 26f), $"Credits {player.Credits}  (+{m.NextIncomeFor(Team.A)} next round)", _text);
-            GUI.Label(new Rect(bar.x + 290f, bar.y + 6f, 220f, 26f), $"Squads bought: {player.SquadsBoughtThisRound} of {m.SquadsPerRound(Team.A)}", _text);
+            GUI.Label(new Rect(bar.x + 16f, bar.y + 32f, 260f, 26f), $"Credits {player.Credits}  (+{m.NextIncomeFor(local)} next round)", _text);
+            GUI.Label(new Rect(bar.x + 290f, bar.y + 6f, 220f, 26f), $"Squads bought: {player.SquadsBoughtThisRound} of {m.SquadsPerRound(local)}", _text);
             GUI.Label(new Rect(bar.x + 290f, bar.y + 32f, 220f, 26f), $"Unlocks: {player.UnlocksThisRound} of {m.Rules.UnlocksPerRound}", _text);
             BaseBar(new Rect(bar.x + 520f, bar.y + 10f, 220f, 20f), _yourBaseLine, "Your base", player.BaseHealth, player.StartingBaseHealth, playerColor);
-            BaseBar(new Rect(bar.x + 520f, bar.y + 36f, 220f, 20f), _enemyBaseLine, "Enemy base", m.Enemy.BaseHealth, m.Enemy.StartingBaseHealth, enemyColor);
-            GUI.Label(new Rect(bar.x + 760f, bar.y + 6f, 200f, 26f), skirmish ? "Unlock Skirmish" : $"{player.Faction.Name} vs {m.Enemy.Faction?.Name ?? "?"}", _small);
-            GUI.Label(new Rect(bar.x + 760f, bar.y + 32f, 200f, 26f), m.EnemyAi.Label, _small);
+            BaseBar(new Rect(bar.x + 520f, bar.y + 36f, 220f, 20f), _enemyBaseLine, "Enemy base", enemy.BaseHealth, enemy.StartingBaseHealth, enemyColor);
+            GUI.Label(new Rect(bar.x + 760f, bar.y + 6f, 200f, 26f), skirmish ? "Unlock Skirmish" : $"{player.Faction.Name} vs {enemy.Faction?.Name ?? "?"}", _small);
+            GUI.Label(new Rect(bar.x + 760f, bar.y + 32f, 200f, 26f), match.Lan != null ? match.Lan.OpponentLine : OpponentLabel(m), _small);
             // The left button only: a right-click closes the unlock page, with this button still live behind it, and GUI.Button takes any mouse button.
             TutorialHud.Mark("area:topbar", bar);
             var ready = new Rect(bar.xMax - 150f, bar.y + 10f, 136f, 44f);
             TutorialHud.Mark("key:Ready", ready);
-            bool readyLocked = match.Tutorial != null && !match.Tutorial.ReadyAllowed; // The tutorial holds the battle back until its step allows it (D77).
+            bool readyLocked = (match.Tutorial != null && !match.Tutorial.ReadyAllowed) || match.ActionsLocked; // The tutorial holds the battle back until its step allows it (D77); a LAN player is ready once.
             bool wasEnabled = GUI.enabled;
             GUI.enabled = wasEnabled && !readyLocked;
             if (MenuStyle.Button(ready, ReadyLabel, _bigButton) && Event.current.button == 0) match.Ready();
             GUI.enabled = wasEnabled;
+            if (match.Lan != null && match.ActionsLocked)
+            {
+                // M11: after Ready nothing more can be done this round.
+                DrawWaitingForOpponent(width, bar.yMax + 40f, "You are ready.");
+                return;
+            }
             DrawUndo(new Rect(bar.xMax - 150f, bar.yMax + 6f, 136f, 30f));
 
             if (!string.IsNullOrEmpty(match.Message))
@@ -267,12 +301,16 @@ namespace Halobellum.UI
             StatsWindow.ShowHover(unit, right, card.yMax, right);
         }
 
+        /// <summary>Who plays the other side: the AI's name, or another player in a two-humans match.</summary>
+        public static string OpponentLabel(Match m) => m.IsTwoHumans ? "Other player" : m.EnemyAi.Label;
+
         // ------------------------------------------------------------------ cards (Milestone 7)
 
         private void DrawCards()
         {
             Match m = match.Match;
-            CardOffer offer = m.Player.Offer;
+            PlayerState me = match.Me;
+            CardOffer offer = me.Offer;
             if (offer == null) return;
             float width = HudScale.ScaledWidth(_scale), height = HudScale.ScaledHeight(_scale);
             var skip = new Rect(width * 0.5f - 150f, height - 62f, 300f, 52f);
@@ -289,7 +327,7 @@ namespace Halobellum.UI
             var bar = new Rect((width - barWidth) * 0.5f, 10f, barWidth, 84f);
             Panel(bar);
             GUI.Label(new Rect(bar.x, bar.y + 8f, bar.width, 40f), HudTheme.Title(general ? $"Round {m.Round}: choose a card" : $"Round {m.Round}: choose reinforcements"), _centered);
-            GUI.Label(new Rect(bar.x, bar.y + 48f, bar.width, 26f), $"Credits {m.Player.Credits}", _smallCentered);
+            GUI.Label(new Rect(bar.x, bar.y + 48f, bar.width, 26f), $"Credits {me.Credits}", _smallCentered);
 
             if (GUI.Button(skip, $"Skip (+{offer.SkipBonus} credits)", _bigButton)) match.SkipCards();
             if (GUI.Button(toggle, "Hide cards", _bigButton)) ToggleCards();
@@ -304,7 +342,7 @@ namespace Halobellum.UI
 
             if (offer.Count == 0)
                 GUI.Label(new Rect(0f, height * 0.5f - 20f, width, 40f), "No cards left to offer.", _centered);
-            string faction = m.Player.Faction?.Name;
+            string faction = me.Faction?.Name;
             CardRow row = CardLayout.Arrange(offer.Count, width, bar.yMax + 14f, bottom);
             if (offer.Count > 0) TutorialHud.Mark("area:cards", Rect.MinMaxRect(row.CardAt(0).xMin, row.CardAt(0).yMin, row.CardAt(offer.Count - 1).xMax, row.CardAt(0).yMax));
             for (int i = 0; i < offer.Count; i++) TutorialHud.Mark("area:card" + i, row.CardAt(i));
@@ -313,10 +351,10 @@ namespace Halobellum.UI
             {
                 Rect card = row.CardAt(i);
                 int price = offer.PriceOf(i);
-                bool canAfford = m.Player.Credits >= price;
+                bool canAfford = me.Credits >= price;
                 bool taken = general
-                    ? CardScreens.DrawGeneralCard(card, offer.Cards[i], m.Player.CopiesOwned(offer.Cards[i]), match.IconFor(offer.Cards[i]), price, canAfford)
-                    : CardScreens.DrawReinforcementCard(card, offer.Reinforcements[i], faction, m.Player.Unlocked.Contains(offer.Reinforcements[i].Type), price, canAfford);
+                    ? CardScreens.DrawGeneralCard(card, offer.Cards[i], me.CopiesOwned(offer.Cards[i]), match.IconFor(offer.Cards[i]), price, canAfford)
+                    : CardScreens.DrawReinforcementCard(card, offer.Reinforcements[i], faction, me.Unlocked.Contains(offer.Reinforcements[i].Type), price, canAfford);
                 if (taken) match.ChooseCard(i);
             }
             ShowCardHover(width);
@@ -346,7 +384,7 @@ namespace Halobellum.UI
             float barWidth = Mathf.Min(420f, width - 28f);
             var bar = new Rect((width - barWidth) * 0.5f, 10f, barWidth, 40f);
             Panel(bar);
-            GUI.Label(bar, $"Round {m.Round}: looking at the board. Credits {m.Player.Credits}", _smallCentered);
+            GUI.Label(bar, $"Round {m.Round}: looking at the board. Credits {match.Me.Credits}", _smallCentered);
 
             UiHitAreas.Add(HudScale.ToScreen(toggle, _scale));
             if (GUI.Button(toggle, "Show cards", _bigButton)) ToggleCards();
@@ -370,7 +408,7 @@ namespace Halobellum.UI
         /// <summary>The Inventory: items waiting to be placed. Click one, then the hexagon over a squad.</summary>
         private void DrawInventory(float top)
         {
-            List<ItemStats> items = match.Match.Player.Inventory;
+            List<ItemStats> items = match.Me.Inventory;
             if (items.Count == 0) return;
             var panel = new Rect(10f, top, 330f, 44f + ItemHud.GridHeight(items.Count) + 44f);
             Panel(panel);
@@ -383,7 +421,7 @@ namespace Halobellum.UI
 
         private void DrawSquadItemSlots()
         {
-            ItemHud.DrawSquadSlots(match.Match.Player.Squads, match.PlacingItem, _scale, match.SquadOnScreen, match.IconFor, squad => match.PlaceItemOn(squad), match.CancelItemPlacement);
+            ItemHud.DrawSquadSlots(match.Me.Squads, match.PlacingItem, _scale, match.SquadOnScreen, match.IconFor, squad => match.PlaceItemOn(squad), match.CancelItemPlacement);
         }
 
         private readonly List<(Vector3 screen, IReadOnlyList<TechUpgrade> techs)> _techRows = new List<(Vector3, IReadOnlyList<TechUpgrade>)>();
@@ -418,7 +456,7 @@ namespace Halobellum.UI
         private void DrawTrainingIcons()
         {
             Match m = match.Match;
-            List<OwnedTraining> copies = m.Player.Trainings;
+            List<OwnedTraining> copies = match.Me.Trainings;
             if (copies.Count == 0) return;
             const float size = 64f, gap = 6f;
             float right = 14f;
@@ -467,7 +505,7 @@ namespace Halobellum.UI
         private float DrawSpellBar()
         {
             Match m = match.Match;
-            List<OwnedSpell> spells = m.Player.Spells;
+            List<OwnedSpell> spells = match.Me.Spells;
             if (spells.Count == 0) return 110f;
             const float rowHeight = 52f;
             var panel = new Rect(10f, 110f, 330f, 44f + spells.Count * rowHeight);
@@ -579,7 +617,7 @@ namespace Halobellum.UI
         private void DrawShop(float width, float height)
         {
             Match m = match.Match;
-            PlayerState player = m.Player;
+            PlayerState player = match.Me;
             List<UnitStats> roster = _shopRows;
             FillShopRows(player.Roster, roster);
             const float panelWidth = ShopPanelWidth, rowHeight = 58f, picture = ShopPicture;
@@ -599,7 +637,7 @@ namespace Halobellum.UI
                 HudTheme.RowBox(row);
                 CardScreens.DrawUnitPicture(new Rect(row.x + 4f, row.y + 2f, picture, picture), unit, player.Faction.Name, UnitIcons.FactionColor(player.Faction.Name));
                 float textX = row.x + picture + 8f, textWidth = ShopTextWidth;
-                int price = m.SquadPrice(Team.A, unit);
+                int price = m.SquadPrice(match.LocalTeam, unit);
                 GUI.Label(new Rect(textX, row.y + 2f, textWidth, 28f), $"{unit.Name} - {price} cr", _text);
                 CardScreens.Fit(new Rect(textX, row.y + 25f, textWidth, 28f), ShopLine(unit, player.SubFaction.ExclusiveUnits.Contains(unit)), _shopLine, 15, ShopLineLeastSize, TextAnchor.MiddleLeft, HudTheme.DimText);
 
@@ -610,7 +648,7 @@ namespace Halobellum.UI
                 UiAudio.Watch(about);
                 if (player.Unlocked.Contains(unit))
                 {
-                    bool canBuy = player.Credits >= price && player.SquadsBoughtThisRound < m.SquadsPerRound(Team.A);
+                    bool canBuy = player.Credits >= price && player.SquadsBoughtThisRound < m.SquadsPerRound(match.LocalTeam);
                     GUI.enabled = canBuy;
                     TutorialHud.MarkScaled("key:Shop/Buy/" + unit.Name, ShopOnScreen(view, button), _scale);
                     if (GUI.Button(button, $"Buy {price}", _button)) match.Buy(unit);
@@ -842,7 +880,7 @@ namespace Halobellum.UI
             }
             float size = Mathf.Min(cell.width - 8f, 60f);
             var picture = new Rect(cell.center.x - size * 0.5f, cell.y + 3f, size, size);
-            string faction = BattleFactions.OfUnit(unit, Team.A);
+            string faction = BattleFactions.OfUnit(unit, match.LocalTeam);
             CardScreens.DrawUnitPicture(picture, unit, faction, UnitIcons.FactionColor(faction));
             GUI.color = old; // Its price stays easy to read: that is why it can't be had.
             CardScreens.Fit(new Rect(cell.x + 2f, picture.yMax, cell.width - 4f, 22f), $"{price} cr", _cellLine, 15, 12, TextAnchor.MiddleCenter, available ? HudTheme.Text : HudTheme.DimText);
@@ -853,7 +891,7 @@ namespace Halobellum.UI
         private void DrawUnitBar(float width, float height)
         {
             Match m = match.Match;
-            PlayerState player = m.Player;
+            PlayerState player = match.Me;
             FillUnitBarRows(player.Roster, player.Unlocked, _shopRows);
             Rect panel = UnitBarRect(width, height, _shopRows.Count);
             UnitBarShown = panel;
@@ -884,8 +922,8 @@ namespace Halobellum.UI
                 var cell = new Rect(origin.x + cellX, origin.y + cellY, BarCell, BarCellHeight);
                 var onScreen = new Rect(view.x + cellX - scroll.x, view.y + cellY - scroll.y, BarCell, BarCellHeight);
                 bool hovered = unit == DemoHover || (inView && onScreen.Contains(pointer));
-                int price = m.SquadPrice(Team.A, unit);
-                bool canBuy = player.Credits >= price && player.SquadsBoughtThisRound < m.SquadsPerRound(Team.A);
+                int price = m.SquadPrice(match.LocalTeam, unit);
+                bool canBuy = player.Credits >= price && player.SquadsBoughtThisRound < m.SquadsPerRound(match.LocalTeam);
                 DrawUnitCell(cell, unit, price, null, default, canBuy, hovered);
                 DrawInfoCorner(cell, unit, BarInfoKey(unit));
                 if (MenuStyle.Button(cell, "", GUIStyle.none, BarCellKey(unit)) && Event.current.button == 0) match.Buy(unit);
@@ -898,7 +936,7 @@ namespace Halobellum.UI
         private void DrawUnlockPage(float width, float height)
         {
             Match m = match.Match;
-            PlayerState player = m.Player;
+            PlayerState player = match.Me;
             Rect page = UnlockPageRect(width, height);
             UnlockPageShown = page;
             Panel(page);
@@ -940,7 +978,7 @@ namespace Halobellum.UI
                 bool unlocked = player.Unlocked.Contains(unit);
                 bool canUnlock = player.Credits >= unit.UnlockCost && player.UnlocksThisRound < m.Rules.UnlocksPerRound;
                 string status = unlocked ? "Unlocked" : unit.UnlockCost > 0 ? $"Unlock {unit.UnlockCost}" : "Unlock (free)";
-                DrawUnitCell(cell, unit, m.SquadPrice(Team.A, unit), status, unlocked ? HudTheme.Accent : canUnlock ? HudTheme.Text : HudTheme.DimText, unlocked || canUnlock, hovered);
+                DrawUnitCell(cell, unit, m.SquadPrice(match.LocalTeam, unit), status, unlocked ? HudTheme.Accent : canUnlock ? HudTheme.Text : HudTheme.DimText, unlocked || canUnlock, hovered);
                 DrawInfoCorner(cell, unit, PageInfoKey(unit));
                 if (MenuStyle.Button(cell, "", GUIStyle.none, PageCellKey(unit)) && Event.current.button == 0) UnlockFromPage(unit);
                 if (hovered && Event.current.type == EventType.Repaint && StatsWindow != null) StatsWindow.ShowHover(unit, SquadStatsWindow.ColumnRight, height - 10f, SquadStatsWindow.ColumnRight);
@@ -988,7 +1026,7 @@ namespace Halobellum.UI
                 var rect = new Rect(screen.x / _scale - 80f, height - screen.y / _scale - 16f, 160f, 28f);
                 if (IsUnderAWindow(rect)) continue;
                 UiHitAreas.Add(HudScale.ToScreen(rect, _scale));
-                if (unit.Team == Team.A) TutorialHud.Mark("key:Tower/" + unit.Stats.Name, rect);
+                if (match.IsMine(unit.Team)) TutorialHud.Mark("key:Tower/" + unit.Stats.Name, rect);
                 if (GUI.Button(rect, unit.Stats.Name, _button)) Selection.SelectTower(unit.Team, unit.Stats.Shockwave.Kind);
             }
         }
@@ -1100,25 +1138,31 @@ namespace Halobellum.UI
 
         private void DrawBattle()
         {
-            Match m = match.Match;
+            Team own = match.LocalTeam, other = match.OpponentTeam;
             float width = HudScale.ScaledWidth(_scale);
             var left = new Rect(10f, 8f, 280f, 64f);
             Panel(left);
             Rect yourBar = new Rect(left.x + 12f, left.y + 10f, 256f, 20f);
-            BaseBar(Kicked(yourBar, Team.A), _yourBaseLine, "Your base", match.ShownBaseHealth(Team.A), m.Player.StartingBaseHealth, playerColor);
-            FlashBar(yourBar, Team.A);
-            GUI.Label(new Rect(left.x + 12f, left.y + 34f, 256f, 24f), ArmyValueText(_yourValueLine, Team.A), _small);
-            DrawShockwave(left, _yourShockwaveLine, Team.A);
+            BaseBar(Kicked(yourBar, own), _yourBaseLine, "Your base", match.ShownBaseHealth(own), match.Me.StartingBaseHealth, playerColor);
+            FlashBar(yourBar, own);
+            GUI.Label(new Rect(left.x + 12f, left.y + 34f, 256f, 24f), ArmyValueText(_yourValueLine, own), _small);
+            DrawShockwave(left, _yourShockwaveLine, own);
 
             var right = new Rect(width - 290f, 40f, 280f, 64f);
             Panel(right);
             Rect enemyBar = new Rect(right.x + 12f, right.y + 10f, 256f, 20f);
-            BaseBar(Kicked(enemyBar, Team.B), _enemyBaseLine, "Enemy base", match.ShownBaseHealth(Team.B), m.Enemy.StartingBaseHealth, enemyColor);
-            FlashBar(enemyBar, Team.B);
-            GUI.Label(new Rect(right.x + 12f, right.y + 34f, 256f, 24f), ArmyValueText(_enemyValueLine, Team.B), _small);
-            DrawShockwave(right, _enemyShockwaveLine, Team.B);
+            BaseBar(Kicked(enemyBar, other), _enemyBaseLine, "Enemy base", match.ShownBaseHealth(other), match.Them.StartingBaseHealth, enemyColor);
+            FlashBar(enemyBar, other);
+            GUI.Label(new Rect(right.x + 12f, right.y + 34f, 256f, 24f), ArmyValueText(_enemyValueLine, other), _small);
+            DrawShockwave(right, _enemyShockwaveLine, other);
             DrawTowerWindow(HudScale.ScaledHeight(_scale));
             DrawEnding(yourBar, enemyBar);
+            if (match.Lan != null && match.Lan.WaitingForHostResult && match.Ending == null)
+            {
+                var wait = new Rect(width * 0.5f - 220f, 84f, 440f, 34f);
+                Panel(wait);
+                GUI.Label(wait, "Waiting for the host's result...", _smallCentered);
+            }
         }
 
         // ------------------------------------------------------------------ the nodes of light at the end of a round
@@ -1159,8 +1203,8 @@ namespace Halobellum.UI
                 if (node.Landed || time < 0f) continue;
                 Vector3 screen = camera.WorldToScreenPoint(node.From);
                 var from = new Vector2(screen.x / _scale, (Screen.height - screen.y) / _scale);
-                Vector2 to = (node.Target == Team.A ? yourBar : enemyBar).center;
-                Color color = Color.Lerp(node.Source == Team.A ? playerColor : enemyColor, Color.white, 0.25f);
+                Vector2 to = (match.IsMine(node.Target) ? yourBar : enemyBar).center;
+                Color color = Color.Lerp(match.IsMine(node.Source) ? playerColor : enemyColor, Color.white, 0.25f);
                 float radius = 13f + 32f * node.Size;
                 float bend = i % 2 == 0 ? 60f : -60f; // Crowds spread out on their way instead of flying in one line.
 
@@ -1181,7 +1225,7 @@ namespace Halobellum.UI
             {
                 RoundEnding.Number number = ending.Numbers[i];
                 float age = (ending.Clock - number.Born) / RoundEnding.NumberSeconds;
-                Rect bar = number.Target == Team.A ? yourBar : enemyBar;
+                Rect bar = match.IsMine(number.Target) ? yourBar : enemyBar;
                 GUIStyle style = number.Size < 0.45f ? _hitSmall : number.Size < 0.8f ? _hitMedium : _hitBig;
                 // A crowd's numbers spread out under the bar, so that they can be read: each has its own place along it and its own distance below.
                 float below = Mathf.Abs(number.Along * 7919f) % 1f * 70f;
@@ -1189,7 +1233,7 @@ namespace Halobellum.UI
                 float alpha = 1f - age * age;
                 GUI.color = new Color(0f, 0f, 0f, alpha);
                 GUI.Label(new Rect(rect.x + 2f, rect.y + 2f, rect.width, rect.height), number.Text, style);
-                GUI.color = number.Target == Team.A ? new Color(1f, 0.32f, 0.26f, alpha) : new Color(1f, 0.88f, 0.35f, alpha);
+                GUI.color = match.IsMine(number.Target) ? new Color(1f, 0.32f, 0.26f, alpha) : new Color(1f, 0.88f, 0.35f, alpha);
                 GUI.Label(rect, number.Text, style);
             }
             GUI.color = Color.white;
@@ -1248,23 +1292,19 @@ namespace Halobellum.UI
             RoundSummary s = match.Match.LastSummary;
             if (s == null) return;
             Team? winner = s.RoundWinner;
-            string word = winner == null ? "MATCH DRAWN" : winner == Team.A ? "MATCH WON" : "MATCH LOST";
-            bool bothFell = s.Battle.TeamA.Survivors == 0 && s.Battle.TeamB.Survivors == 0;
-            string line = bothFell ? $"Round {s.Round}: both armies fell, and neither base was hit" : $"Round {s.Round}: you hit the enemy base for {s.BaseDamageByA}, it hit yours for {s.BaseDamageByB}";
-            DrawOutcome(word, winner == null ? DrawColor : winner == Team.A ? VictoryColor : DefeatColor, line, 550f);
+            Team local = match.LocalTeam;
+            string word = LocalSideTexts.RoundWord(winner, local);
+            string line = LocalSideTexts.RoundLine(s, local);
+            DrawOutcome(word, winner == null ? DrawColor : winner == local ? VictoryColor : DefeatColor, line, 550f);
             Rect panel = CenteredPanel(640f, 550f, BannerRoom);
             float y = panel.y + 12f;
             GUI.Label(new Rect(panel.x, y, panel.width, 34f), HudTheme.Title($"Round {s.Round} result"), _centered);
             y += 44f;
             y = SummaryLines(s, panel, y);
-            if (s.PlayerSquadsReadyToLevel.Count > 0)
-            {
-                GUI.Label(new Rect(panel.x + 20f, y + 8f, panel.width - 40f, 26f),
-                    "Ready to level up: " + string.Join(", ", s.PlayerSquadsReadyToLevel.Distinct()) + " (select it next round)", _text);
-            }
+            string ready = LocalSideTexts.ReadyToLevelLine(s, local);
+            if (ready != null) GUI.Label(new Rect(panel.x + 20f, y + 8f, panel.width - 40f, 26f), ready, _text);
 
-            string footer = (s.Tie ? "Exact tie: both bases are restored. " : "")
-                            + $"Income: +{s.IncomeAwarded} credits for next round.";
+            string footer = LocalSideTexts.ResultFooter(s, local);
             GUI.Label(new Rect(panel.x + 20f, panel.yMax - 96f, panel.width - 40f, 26f), footer, _text);
             var next = new Rect(panel.x + panel.width * 0.5f - 110f, panel.yMax - 58f, 220f, 44f);
             TutorialHud.Mark("key:Continue", next);
@@ -1278,13 +1318,14 @@ namespace Halobellum.UI
             {
                 float screenWidth = HudScale.ScaledWidth(_scale), screenHeight = HudScale.ScaledHeight(_scale);
                 DimTheField(screenWidth, screenHeight);
+                _battleStats.LocalTeam = match.LocalTeam;
                 _battleStats.Draw(screenWidth, screenHeight, m, match.BattlePictureOf, match.IconFor, playerColor, enemyColor, Panel);
                 if (!_battleStats.IsOpen) _battleStatsClosedFrame = Time.frameCount;
                 return;
             }
             RoundSummary s = m.LastSummary;
-            bool won = m.Winner == Team.A;
-            DrawOutcome(won ? "VICTORY" : "DEFEAT", won ? GameVictoryColor : DefeatColor, won ? $"You won the game in round {m.Round}: the enemy base ended at {m.Enemy.BaseHealth}" : $"You lost the game in round {m.Round}: your base ended at {m.Player.BaseHealth}", 560f);
+            bool won = LocalSideTexts.WonGame(m, match.LocalTeam);
+            DrawOutcome(LocalSideTexts.GameWord(m, match.LocalTeam), won ? GameVictoryColor : DefeatColor, LocalSideTexts.GameLine(m, match.LocalTeam), 560f);
             Rect panel = CenteredPanel(640f, 560f, BannerRoom);
             float y = panel.y + 12f;
             GUI.Label(new Rect(panel.x, y, panel.width, 40f), HudTheme.Title("Match over"), _title);
@@ -1293,9 +1334,47 @@ namespace Halobellum.UI
             var stats = new Rect(panel.x + panel.width * 0.5f - 230f, panel.yMax - 100f, 220f, 34f);
             TutorialHud.Mark("key:Battle stats", stats);
             if (GUI.Button(stats, "Battle stats", _button)) OpenBattleStats();
+            if (match.Lan != null)
+            {
+                // M11: no battle log and no rematch in a LAN match; back to the menu, which closes the connection.
+                if (MenuStyle.Button(new Rect(panel.x + panel.width * 0.5f + 10f, panel.yMax - 58f, 220f, 44f), "Main Menu", _bigButton)) match.Lan.LeaveToMenu();
+                return;
+            }
             if (GUI.Button(new Rect(panel.x + panel.width * 0.5f + 10f, panel.yMax - 100f, 220f, 34f), "Open battle logs", _button)) Application.OpenURL("file:///" + BattleLogFile.Folder.Replace('\\', '/'));
             if (GUI.Button(new Rect(panel.x + panel.width * 0.5f - 230f, panel.yMax - 58f, 220f, 44f), "New match", _bigButton)) match.NewMatch();
             if (MenuStyle.Button(new Rect(panel.x + panel.width * 0.5f + 10f, panel.yMax - 58f, 220f, 44f), "Main Menu", _bigButton)) GameFlow.OpenMainMenu();
+        }
+
+        // ------------------------------------------------------------------ a LAN match (M11 Stage 4)
+
+        /// <summary>The words of the wait for the other player.</summary>
+        public const string WaitingForOpponentText = "Waiting for opponent...";
+
+        /// <summary>A panel under the top bar: this side is done, the other player is not (its line says what it is doing).</summary>
+        private void DrawWaitingForOpponent(float width, float y, string done)
+        {
+            var panel = new Rect(width * 0.5f - 300f, y, 600f, 120f);
+            Panel(panel);
+            GUI.Label(new Rect(panel.x, panel.y + 14f, panel.width, 40f), HudTheme.Title(WaitingForOpponentText), _centered);
+            GUI.Label(new Rect(panel.x + 20f, panel.y + 60f, panel.width - 40f, 24f), done, _smallCentered);
+            GUI.Label(new Rect(panel.x + 20f, panel.y + 86f, panel.width - 40f, 24f), match.Lan.OpponentLine, _smallCentered);
+        }
+
+        /// <summary>A LAN match that is starting, or has ended without a winner (the other player left, the connection was lost, out of sync).</summary>
+        private void DrawLanScreen(LanMatch lan)
+        {
+            float width = HudScale.ScaledWidth(_scale), height = HudScale.ScaledHeight(_scale);
+            DimTheField(width, height);
+            bool ended = lan.Ended;
+            string title = ended ? lan.EndTitle : "Starting the LAN match";
+            string text = ended ? lan.EndText : lan.IsHost ? "Setting up the match..." : "Waiting for the host's match...";
+            string hashes = ended ? lan.EndHashes : "";
+            Rect panel = CenteredPanel(720f, 330f);
+            UiHitAreas.Add(HudScale.ToScreen(panel, _scale));
+            GUI.Label(new Rect(panel.x, panel.y + 18f, panel.width, 44f), HudTheme.Title(title), _title);
+            GUI.Label(new Rect(panel.x + 30f, panel.y + 80f, panel.width - 60f, 130f), text, _wrap);
+            if (hashes.Length > 0) GUI.Label(new Rect(panel.x + 30f, panel.y + 210f, panel.width - 60f, 44f), hashes, _wrapDim);
+            if (MenuStyle.Button(new Rect(panel.x + panel.width * 0.5f - 110f, panel.yMax - 62f, 220f, 44f), ended ? "Main Menu" : "Leave", _bigButton)) lan.LeaveToMenu();
         }
 
         private const float BannerHeight = 140f, BannerRoom = 72f;
@@ -1325,24 +1404,23 @@ namespace Halobellum.UI
         private float SummaryLines(RoundSummary s, Rect panel, float y)
         {
             float x = panel.x + 20f, w = panel.width - 40f;
-            GUI.Label(new Rect(x, y, w, 26f), $"Base damage: you dealt {s.BaseDamageByA}, the enemy dealt {s.BaseDamageByB}", _text); y += 28f;
-            GUI.Label(new Rect(x, y, w, 26f), $"Bases: yours {s.BaseHealthA}, enemy {s.BaseHealthB}", _text); y += 28f;
-            GUI.Label(new Rect(x, y, w, 26f),
-                $"Survivors: yours {s.Battle.TeamA.Survivors} of {s.Battle.TeamA.Deployed}, enemy {s.Battle.TeamB.Survivors} of {s.Battle.TeamB.Deployed}" +
-                (s.Battle.TimedOut ? "  (time limit)" : ""), _text);
+            Team local = match.LocalTeam;
+            GUI.Label(new Rect(x, y, w, 26f), LocalSideTexts.BaseDamageLine(s, local), _text); y += 28f;
+            GUI.Label(new Rect(x, y, w, 26f), LocalSideTexts.BasesLine(s, local), _text); y += 28f;
+            GUI.Label(new Rect(x, y, w, 26f), LocalSideTexts.SurvivorsLine(s, local), _text);
             y += 38f;
 
             GUI.Label(new Rect(x, y, w, 24f), "Top damage dealers", _text); y += 26f;
             foreach (UnitTypeResult t in TopDealers(s.Battle, 4))
             {
-                GUI.Label(new Rect(x + 12f, y, w - 12f, 22f), $"{(t.Team == Team.A ? "Your" : "Enemy")} {t.UnitName}: {t.DamageDealt:0} damage, {t.Kills} kills", _small);
+                GUI.Label(new Rect(x + 12f, y, w - 12f, 22f), $"{LocalSideTexts.SideWord(t.Team, local)} {t.UnitName}: {t.DamageDealt:0} damage, {t.Kills} kills", _small);
                 y += 22f;
             }
             y += 10f;
             GUI.Label(new Rect(x, y, w, 24f), "What killed what", _text); y += 26f;
             foreach (KillCount k in s.Kills.Take(5))
             {
-                GUI.Label(new Rect(x + 12f, y, w - 12f, 22f), $"{(k.KillerTeam == Team.A ? "Your" : "Enemy")} {k.KillerType} killed {k.Kills} {k.VictimType}", _small);
+                GUI.Label(new Rect(x + 12f, y, w - 12f, 22f), $"{LocalSideTexts.SideWord(k.KillerTeam, local)} {k.KillerType} killed {k.Kills} {k.VictimType}", _small);
                 y += 22f;
             }
             if (s.Kills.Count == 0) { GUI.Label(new Rect(x + 12f, y, w - 12f, 22f), "Nobody was killed.", _small); y += 22f; }
@@ -1422,6 +1500,7 @@ namespace Halobellum.UI
             _infoButton = new GUIStyle(GUI.skin.button) { fontSize = HudTheme.Size(14), fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleCenter, padding = new RectOffset(0, 0, 0, 0), wordWrap = false, clipping = TextClipping.Overflow };
             HudTheme.Fit(_infoButton);
             _smallCentered = new GUIStyle(_small) { alignment = TextAnchor.MiddleCenter };
+            _smallRight = new GUIStyle(_small) { alignment = TextAnchor.MiddleRight };
             _shopLine = new GUIStyle(_small) { wordWrap = false };
             _cellLine = new GUIStyle(_small) { wordWrap = false };
             _bannerWord = new GUIStyle(_title) { fontSize = HudTheme.TitleSize(76), alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.white } };

@@ -2,7 +2,8 @@
 // Shows the ground the battle is fought on. Since D80 the whole field is one interior look, picked from the two factions and the match seed by TerrainLooks.Pick: a UNSC installation,
 // a Covenant warship, or a ship the Flood has taken, with its own ground, light, ceiling, surroundings and a mild mood in a post-processing volume. The outdoor maps of M10 (the player's side
 // the player's faction's land, the enemy's side the enemy's, real land to the horizon, sky, sun and air from the player's faction) are still here for the terrain gallery (ShowOutdoor). A map is built by TerrainBuilder from the two factions and the match seed; it rebuilds when those change. In the Sandbox it follows the factions of the units in play, or the map its Map setting names (SandboxMaps, D82).
-// Deployment squares (decision D4) are an overlay: clear during deployment and fading out when a battle runs.
+// Deployment squares (decision D4) are an overlay: clear during deployment and fading out when a battle runs. The local side's squares and flank zones
+// are blue and the other side's red (LocalTeam, M11: Team A except for a LAN guest).
 // The fighting floor stays flat and clear: props stand outside it, paint on it can't hide a unit, and from wherever the camera has turned the terrain's shaders leave out what would stand in front of it. Looks only: it reads the battle and the factions and changes neither.
 // Depends on: BattleController (Rules), MatchController, SandboxController, BattleFactions, TerrainBuilder, UnitBlobShadows, UnityEngine.
 
@@ -37,6 +38,30 @@ namespace Halobellum.Presentation
         private readonly List<Material> _materials = new List<Material>();
         private readonly List<Material> _overlays = new List<Material>();
         private float _squares = 1f;
+        private Material _squaresA, _squaresB;
+        private Team _localTeam = Team.A;
+
+        /// <summary>The side whose squares and flank zones are blue (the own colour); the other side's are red. Team A except for a LAN guest.</summary>
+        public Team LocalTeam
+        {
+            get => _localTeam;
+            set
+            {
+                if (value == _localTeam) return;
+                _localTeam = value;
+                if (_squaresA != null) _squaresA.SetColor("_Team", SquaresColor(Team.A));
+                if (_squaresB != null) _squaresB.SetColor("_Team", SquaresColor(Team.B));
+                if (_flankTeam.HasValue)
+                {
+                    Team? shown = _flankTeam;
+                    _flankTeam = null;
+                    ShowFlankZones(shown);
+                }
+            }
+        }
+
+        /// <summary>A side's colour for its squares and flank zones: the own colour for the local side.</summary>
+        public Color SquaresColor(Team team) => team == _localTeam ? teamASquaresColor : teamBSquaresColor;
 
         private string _shownA, _shownB;
         private int _shownSeed, _shownMap;
@@ -242,8 +267,8 @@ namespace Halobellum.Presentation
             sky.SetVector("_MoonDirection", new Vector4(toMoon.x, toMoon.y, toMoon.z, air.MoonSize));
             Part("Sky", _map.Sky, sky);
 
-            SquaresOver("Team A Squares", rules, Team.A, teamASquaresColor);
-            SquaresOver("Team B Squares", rules, Team.B, teamBSquaresColor);
+            _squaresA = SquaresOver("Team A Squares", rules, Team.A, SquaresColor(Team.A));
+            _squaresB = SquaresOver("Team B Squares", rules, Team.B, SquaresColor(Team.B));
 
             ApplyAir(air);
             if (_blobs != null)
@@ -272,7 +297,7 @@ namespace Halobellum.Presentation
             if (!team.HasValue) return;
 
             CombatRules rules = _battle.Rules;
-            Color color = team == Team.A ? teamASquaresColor : teamBSquaresColor;
+            Color color = SquaresColor(team.Value);
             float near = rules.ArenaWidth * 0.5f + rules.FlankGapColumns * rules.SquareSize, far = near + rules.FlankZoneColumns * rules.SquareSize;
             _flankLeft = FlankZone(rules, team.Value, -far, -near, color);
             _flankRight = FlankZone(rules, team.Value, near, far, color);
@@ -295,7 +320,7 @@ namespace Halobellum.Presentation
             return quad;
         }
 
-        private void SquaresOver(string name, CombatRules rules, Team team, Color color)
+        private Material SquaresOver(string name, CombatRules rules, Team team, Color color)
         {
             float width = rules.ArenaWidth, depth = rules.DeploymentDepthSquares * rules.SquareSize, gap = rules.NoMansLandSquares * rules.SquareSize;
             float z0 = team == Team.A ? -gap * 0.5f - depth : gap * 0.5f;
@@ -311,6 +336,7 @@ namespace Halobellum.Presentation
             Transform quad = PlaceholderArt.CreatePart(name, _root, PlaceholderArt.Quad, material);
             quad.SetPositionAndRotation(new Vector3(0f, TerrainCanvas.DecalHeight + 0.01f, (z0 + z1) * 0.5f), Quaternion.Euler(90f, 0f, 0f));
             quad.localScale = new Vector3(width, depth, 1f);
+            return material;
         }
 
         /// <summary>Runs draw with the deployment squares out of sight, for a picture of the field (D69); they come back as they were.</summary>

@@ -109,12 +109,21 @@ namespace Halobellum.Presentation
 
             CombatRules rules = _battle.Rules;
             DeploymentGrid.Footprint(_match.PlacementType, _match.PlacingRotated, rules, out int width, out int depth);
-            if (_match.PlacingTeam == Team.B) hit = -hit; // Team B's grid is mirrored through the centre.
+            CellUnder(hit, _match.PlacingTeam, width, depth, rules, out column, out row);
+            return true;
+        }
+
+        /// <summary>
+        /// The grid spot (left column, front row) of a footprint width x depth squares centred on this ground point, in the team's own grid.
+        /// Team B's grid is Team A's turned 180 degrees about the centre (x and z negated), so a guest's camera, turned the same way, drags as Team A's does.
+        /// </summary>
+        public static void CellUnder(Vector3 hit, Team team, int width, int depth, CombatRules rules, out int column, out int row)
+        {
+            if (team == Team.B) hit = -hit;
             float columnF = (hit.x + rules.ArenaWidth * 0.5f) / rules.SquareSize;
             float rowF = (-hit.z - rules.DeploymentZoneFront) / rules.SquareSize; // Rows count back from the zone's front.
             column = Mathf.RoundToInt(columnF - width * 0.5f);
             row = Mathf.RoundToInt(rowF - depth * 0.5f);
-            return true;
         }
 
         private void ShowGhost(int column, int row)

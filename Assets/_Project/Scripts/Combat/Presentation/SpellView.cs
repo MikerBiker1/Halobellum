@@ -117,7 +117,7 @@ namespace Halobellum.Presentation
                     _match.CancelItemPlacement();
             }
 
-            foreach (OwnedSpell spell in _match.Match.Player.Spells)
+            foreach (OwnedSpell spell in _match.Me.Spells) // The local side's (Team A except for a LAN guest).
             {
                 if (spell.IsPlaced && spell.Id != _match.PlacingSpellId) ShowOutline(spell.Position, spell.Stats, spell.AngleDegrees, ColorFor(spell.Stats), 1f);
             }

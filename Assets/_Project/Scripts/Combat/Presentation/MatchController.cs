@@ -17,7 +17,14 @@
 // (SkirmishFaction), the seed picks one land for the whole field, and each unit keeps the looks of its real faction.
 // The HUD (Scripts/UI/MatchHud) and DeploymentInput call the public methods here; tests do too.
 // With -replayLog it adds a MatchReplay, which plays a battle log again through these same methods (D106).
+// LocalTeam (M11) is the side this screen plays and shows at the bottom: Team A in single-player, Team B for a LAN guest. Every action,
+// the preview, the colours and the camera's home follow it. UseMatch starts the scene on a match built elsewhere (a two-humans match
+// from LanMatchFactory) for either side; PrepareFactions and FreshRules give that match the same unit and card objects as the views use.
 // It adds a TopSquadGlow, which glows under each side's squad with the most damage this battle.
+// A LAN match (M11 Stage 4): Start finds the launch GameFlow kept and adds a LanMatch, which builds the two-humans match and runs it
+// through its coordinator. Then the starting card and Ready go through the coordinator, the battle starts when both games agree
+// (ShowStartedBattle), the round finishes through it (the guest waits for the host's result), and after Ready no action is taken
+// until the battle (ActionsLocked).
 // Depends on: BattleController, SquadSelection, UnitViewManager, TopSquadGlow,
 //             Halobellum.Economy (Match, RuleBasedAi, DeploymentGrid),
 //             Halobellum.Units (MatchRulesDefinition, FactionDefinition, UnitDefinition), UnityEngine.
@@ -69,9 +76,12 @@ namespace Halobellum.Presentation
         public event Action<string, ActionResult> ActionTaken;
         /// <summary>The end of a round, between the last shot landing and its window; null the rest of the time.</summary>
         public RoundEnding Ending { get; private set; }
+        /// <summary>LAN guest: the round ending that has landed while the host's result is still coming, so the bars keep its hits; null otherwise.</summary>
+        private RoundEnding _landedEnding;
         /// <summary>Raised as a node of light hits a base (for sound).</summary>
         public event Action<RoundEnding.Node> EndingHit;
-        private const float FastestPlayerSpeed = 4f;
+        /// <summary>The fastest battle speed a player can pick (BattleHud's 4x).</summary>
+        public const float FastestPlayerSpeed = 4f;
 
         public const string DifficultyKey = "Halobellum.AiDifficulty";
         private MatchupTable _matchups;
@@ -85,12 +95,178 @@ namespace Halobellum.Presentation
         public bool PlacingRotated { get; private set; }
         public bool IsPlacing => MovingSquadId >= 0;
         /// <summary>A side that has units that can flank sees where they could go, throughout deployment.</summary>
-        public bool ShowsFlankZones => IsDeploying && Match.Player.Faction != null && (HasUnitsThatCanFlank() || PulsesFlankZones);
+        public bool ShowsFlankZones => IsDeploying && Me.Faction != null && (HasUnitsThatCanFlank() || PulsesFlankZones);
         /// <summary>The tutorial's flank zone step: the zones glow on and off.</summary>
         public bool PulsesFlankZones => Tutorial?.Current?.FlankZones == true;
-        public bool IsDeploying => Match != null && Match.Phase == MatchPhase.Deployment;
+        /// <summary>Deployment, and this side has no card offer open (a two-humans match keeps the phase at Deployment while one is open).</summary>
+        public bool IsDeploying => Match != null && Match.Phase == MatchPhase.Deployment && !Match.InCards(LocalTeam) && !ActionsLocked;
         /// <summary>The player always deploys in their own zone.</summary>
-        public Team PlacingTeam => Team.A;
+        public Team PlacingTeam => LocalTeam;
+
+        // ------------------------------------------------------------------ the local side (M11)
+
+        /// <summary>The side this screen plays and shows at the bottom: Team A, except for a LAN guest (Team B).</summary>
+        public Team LocalTeam { get; private set; } = Team.A;
+        /// <summary>The other side.</summary>
+        public Team OpponentTeam => LocalTeam.Opponent();
+        /// <summary>The local side's state, or null without a match.</summary>
+        public PlayerState Me => Match?.Get(LocalTeam);
+        /// <summary>The other side's state, or null without a match.</summary>
+        public PlayerState Them => Match?.Get(OpponentTeam);
+        /// <summary>True for the local side.</summary>
+        public bool IsMine(Team team) => team == LocalTeam;
+        /// <summary>The draft cards the local side picks from.</summary>
+        public List<DraftCard> MyDraft => Match == null ? null : LocalTeam == Team.A ? Match.PlayerDraft : Match.EnemyDraft;
+        /// <summary>True once the field has been set up for the armies after the draft (both picks in).</summary>
+        private bool _draftDone;
+
+        // ------------------------------------------------------------------ a LAN match (M11 Stage 4)
+
+        /// <summary>The LAN match driver of this scene, or null in single-player.</summary>
+        public LanMatch Lan { get; internal set; }
+
+        /// <summary>True when the LAN coordinator runs the match on show (the starting card, Ready, the battle's end and Continue go through it).</summary>
+        private bool LanRuns => Lan != null && Lan.Coordinator != null && Lan.Coordinator.Match == Match;
+
+        /// <summary>True in a LAN match while this side may not act: before the match is built, and from Ready until the battle.</summary>
+        public bool ActionsLocked => Lan != null && (Lan.Coordinator == null || (Match != null && Match.Phase == MatchPhase.Deployment && !Lan.Coordinator.LocalCanAct));
+
+        private ActionResult LockedResult() => ActionResult.Fail(Lan != null && Lan.Coordinator != null && Lan.Coordinator.LocalReady ? "You are ready. Waiting for the other player." : "Waiting for the other player.");
+
+        /// <summary>The matchup table the AI uses (null without one), for an AI that plays a LAN test run's side.</summary>
+        public MatchupTable Matchups => _matchups;
+
+        /// <summary>The battle has started on this machine (LAN: once both games agree): shows it and plays it.</summary>
+        public void ShowStartedBattle(BattleSimulation battle)
+        {
+            if (battle == null) return;
+            CancelPlacement();
+            CancelSpellPlacement();
+            CancelItemPlacement();
+            _drops.Clear();
+            Message = "";
+            _views.GhostTeam = null;
+            _selection.ClearTower();
+            _log?.BattleStarted(Match);
+            _battle.ShowBattle(battle, _sources, play: true);
+            _pictureInFrames = 2;
+            PhaseChanged?.Invoke();
+        }
+
+        /// <summary>LAN: the round's result is in (the host's own, or the host's on the guest): the result screen shows.</summary>
+        public void OnLanRoundFinished(RoundSummary summary)
+        {
+            _landedEnding = null; // The bases now hold the round's result.
+            _selection.ClearTower();
+            PhaseChanged?.Invoke();
+        }
+
+        /// <summary>Shows the local side's deployment again after the Match changed outside this script (the LAN test run's AI).</summary>
+        public void RefreshView()
+        {
+            if (Match == null) return;
+            RefreshPreview();
+            PhaseChanged?.Invoke();
+        }
+
+        /// <summary>Sets the local side everywhere the scene shows it: the views' colours, the deployment squares and the camera's home.</summary>
+        private void ApplyLocalTeam(Team team)
+        {
+            LocalTeam = team;
+            if (_views != null) _views.LocalTeam = team;
+            BattlefieldView field = GetComponent<BattlefieldView>();
+            if (field != null) field.LocalTeam = team;
+            BattleCameraController view = FindAnyObjectByType<BattleCameraController>();
+            if (view != null && view.HomeTeam != team) view.ViewFrom(team); // Single-player never moves the camera here.
+        }
+
+        /// <summary>
+        /// The real factions, built from this scene's faction assets, for a match built elsewhere (LanMatchFactory.Build). Their units and cards are
+        /// the objects the views and icons know, so call it before building the match that UseMatch gets.
+        /// </summary>
+        public List<FactionInfo> PrepareFactions()
+        {
+            var cache = new Dictionary<UnitDefinition, UnitStats>();
+            _cardSources.Clear();
+            List<FactionInfo> infos = BuildFactions(cache, _cardSources);
+            _sources.Clear();
+            foreach (var pair in cache) _sources[pair.Value] = pair.Key;
+            _realFactions = infos;
+            return infos;
+        }
+
+        /// <summary>
+        /// A new copy of the real factions from this scene's faction assets, without touching what the views know (for the other game's
+        /// side of a LAN test, which builds its own match from the same content).
+        /// </summary>
+        public List<FactionInfo> BuildFactions() => BuildFactions(new Dictionary<UnitDefinition, UnitStats>(), new Dictionary<CardStats, CardDefinition>());
+
+        private List<FactionInfo> BuildFactions(Dictionary<UnitDefinition, UnitStats> cache, Dictionary<CardStats, CardDefinition> cardSources)
+        {
+            var infos = new List<FactionInfo>();
+            foreach (FactionDefinition faction in factions)
+            {
+                if (faction != null) infos.Add(faction.ToInfo(cache, cardSources));
+            }
+            return infos;
+        }
+
+        /// <summary>A fresh copy of this scene's match rules (a setup writes into it), for a match built elsewhere.</summary>
+        public MatchRules FreshRules() => matchRules.ToRules();
+
+        /// <summary>The battle rules of this scene, for a match built elsewhere.</summary>
+        public CombatRules CombatRules => (_battle != null ? _battle : GetComponent<BattleController>()).Rules;
+
+        /// <summary>
+        /// Shows a match built elsewhere, played by localTeam (M11 LAN: the host is Team A, the guest Team B). Build it with PrepareFactions,
+        /// FreshRules and CombatRules. No battle log is written and no AI is set. "New match" or NewMatch goes back to a single-player match as Team A.
+        /// </summary>
+        public void UseMatch(Match match, Team localTeam)
+        {
+            if (match == null) throw new ArgumentNullException(nameof(match));
+            if (Tutorial != null)
+            {
+                Destroy(Tutorial);
+                Tutorial = null;
+            }
+            Ending = null;
+            _landedEnding = null;
+            CloseBattleLog();
+            ForgetBattlePictures();
+            Match = match;
+            ApplyLocalTeam(localTeam);
+            CancelPlacement();
+            CancelSpellPlacement();
+            CancelItemPlacement();
+            _selection?.ClearTower();
+            _drops.Clear();
+            Message = "";
+            _views.GhostTeam = null;
+            _draftDone = false;
+            _battle.ShowBattle(null, null, play: false);
+            if (Match.Phase != MatchPhase.Draft) FinishDraft();
+            PhaseChanged?.Invoke();
+        }
+
+        /// <summary>
+        /// Call after the other side's commands were applied to the Match (M11 LAN): when they ended the draft, the field is set up for the armies.
+        /// Nothing the other side does during deployment shows here (its army stays hidden until the battle).
+        /// </summary>
+        public void OnRemoteCommandsApplied()
+        {
+            if (Match == null) return;
+            if (!_draftDone && Match.Phase != MatchPhase.Draft) FinishDraft();
+            PhaseChanged?.Invoke();
+        }
+
+        /// <summary>Both starting cards are in: the field shows the factions' lands and the local side's army.</summary>
+        private void FinishDraft()
+        {
+            _draftDone = true;
+            if (Match.Rules.Mode == MatchMode.UnlockSkirmish) BattleFactions.SetSkirmish(SkirmishLand(Match.Seed), RealFactionOfEachUnit());
+            else BattleFactions.Set(Match.Player.Faction?.Name, Match.Enemy.Faction?.Name); // Canonical: Team A's land is in the south on both screens.
+            RefreshPreview();
+        }
 
         private void Start()
         {
@@ -110,6 +286,15 @@ namespace Halobellum.Presentation
             {
                 if (setup == null) setup = new MatchSetup();
                 setup.BaseHealth = baseHealth;
+            }
+            LanLaunch lan = GameFlow.TakeLanMatch();
+            if (lan != null)
+            {
+                // M11: an ordinary match stands in for the moment it takes to build the LAN match; the HUD shows "Starting" meanwhile.
+                Lan = gameObject.AddComponent<LanMatch>();
+                Lan.Launch = lan;
+                NewMatch();
+                return;
             }
             if (GameFlow.TakeTutorial()) StartTutorial();
             else NewMatch(setup: setup);
@@ -216,8 +401,8 @@ namespace Halobellum.Presentation
         /// <summary>In Unlock Skirmish every unit is in the roster, so only those unlocked say anything about this side.</summary>
         private bool HasUnitsThatCanFlank()
         {
-            if (Match.Rules.Mode != MatchMode.UnlockSkirmish) return Match.Player.Roster.Exists(unit => unit.CanFlank);
-            foreach (UnitStats unit in Match.Player.Unlocked)
+            if (Match.Rules.Mode != MatchMode.UnlockSkirmish) return Me.Roster.Exists(unit => unit.CanFlank);
+            foreach (UnitStats unit in Me.Unlocked)
             {
                 if (unit.CanFlank) return true;
             }
@@ -237,29 +422,23 @@ namespace Halobellum.Presentation
                 Tutorial = null;
             }
             Ending = null;
+            _landedEnding = null;
             CloseBattleLog();
             ForgetBattlePictures();
             if (setup != null && !tutorial) _setup = setup; // The tutorial's own setup is not kept for the next match.
             MatchSetup applied = tutorial ? setup : _setup;
-            var cache = new Dictionary<UnitDefinition, UnitStats>();
-            var infos = new List<FactionInfo>();
-            _cardSources.Clear();
-            foreach (FactionDefinition faction in factions)
-            {
-                if (faction != null) infos.Add(faction.ToInfo(cache, _cardSources));
-            }
-            _sources.Clear();
-            foreach (var pair in cache) _sources[pair.Value] = pair.Key;
+            List<FactionInfo> infos = PrepareFactions();
 
             int matchSeed = fixedSeed ?? (seed != 0 ? seed : Environment.TickCount & 0x7FFFFFFF);
             Difficulty = difficulty ?? GameSettings.Difficulty; // A replay's own difficulty (D106) is not saved as the player's.
             _matchups = matchupTable != null ? matchupTable.ToTable() : null;
             MatchRules rules = matchRules.ToRules();
             applied?.ApplyTo(rules);
-            _realFactions = infos;
             IReadOnlyList<FactionInfo> offered = infos;
             if (rules.Mode == MatchMode.UnlockSkirmish) offered = new[] { SkirmishFaction.Build(infos) };
             Match = new Match(rules, _battle.Rules, offered, matchSeed, enemy ?? new RuleBasedAi(Difficulty, matchSeed, _matchups));
+            ApplyLocalTeam(Team.A); // Single-player: the player is Team A.
+            _draftDone = false;
             CancelPlacement();
             CancelSpellPlacement();
             CancelItemPlacement();
@@ -278,10 +457,10 @@ namespace Halobellum.Presentation
         {
             get
             {
-                if (Match?.Player.Faction == null) return null;
+                if (Me?.Faction == null) return null;
                 foreach (FactionDefinition faction in factions)
                 {
-                    if (faction != null && (faction.factionName == Match.Player.Faction.Name || faction.name == Match.Player.Faction.Name)) return faction.uiTheme;
+                    if (faction != null && (faction.factionName == Me.Faction.Name || faction.name == Me.Faction.Name)) return faction.uiTheme;
                 }
                 return null;
             }
@@ -296,16 +475,16 @@ namespace Halobellum.Presentation
             GameSettings.Difficulty = difficulty;
         }
 
+        /// <summary>The local side's starting card. In a two-humans match the round begins once the other side's pick is in too (OnRemoteCommandsApplied).</summary>
         public ActionResult ChooseDraft(int cardIndex)
         {
-            ActionResult result = Match.ChooseDraft(cardIndex);
+            ActionResult result = LanRuns ? Lan.Coordinator.ChooseDraft(cardIndex) // LAN: picked here and sent
+                : Match.IsTwoHumans ? Match.ChooseDraft(LocalTeam, cardIndex) : Match.ChooseDraft(cardIndex);
             Report(result);
             if (result.Ok)
             {
-                OpenBattleLog(cardIndex);
-                if (Match.Rules.Mode == MatchMode.UnlockSkirmish) BattleFactions.SetSkirmish(SkirmishLand(Match.Seed), RealFactionOfEachUnit());
-                else BattleFactions.Set(Match.Player.Faction?.Name, Match.Enemy.Faction?.Name);
-                RefreshPreview();
+                if (!Match.IsTwoHumans) OpenBattleLog(cardIndex);
+                if (Match.Phase != MatchPhase.Draft) FinishDraft();
                 PhaseChanged?.Invoke();
             }
             return result;
@@ -341,7 +520,7 @@ namespace Halobellum.Presentation
 
         // ------------------------------------------------------------------ deployment
 
-        public ActionResult Unlock(UnitStats type) => Report(Match.Unlock(Team.A, type), type?.Name);
+        public ActionResult Unlock(UnitStats type) => Report(ActionsLocked ? LockedResult() : Match.Unlock(LocalTeam, type), type?.Name);
 
         /// <summary>
         /// Buys a squad of this type: it is placed at the free spot nearest the middle of the zone,
@@ -351,10 +530,10 @@ namespace Halobellum.Presentation
         {
             if (Match.Phase != MatchPhase.Deployment) return ActionResult.Fail("Squads can only be bought during deployment.");
             CancelPlacement();
-            ActionResult result = Report(Match.Buy(Team.A, type), type?.Name);
+            ActionResult result = Report(ActionsLocked ? LockedResult() : Match.Buy(LocalTeam, type), type?.Name);
             if (result.Ok)
             {
-                _drops[Match.Player.Squads[Match.Player.Squads.Count - 1].Id] = Time.unscaledTime;
+                _drops[Me.Squads[Me.Squads.Count - 1].Id] = Time.unscaledTime;
                 RefreshPreview();
             }
             return result;
@@ -382,7 +561,7 @@ namespace Halobellum.Presentation
         /// <summary>Starts moving one of this round's squads; the next PlaceAt moves it there.</summary>
         public void BeginMoving(PlacedSquad squad)
         {
-            if (Match.Phase != MatchPhase.Deployment || squad == null) return;
+            if (Match.Phase != MatchPhase.Deployment || squad == null || ActionsLocked) return;
             if (!Match.CanMove(squad))
             {
                 Message = "Only squads bought this round can be moved or turned.";
@@ -416,14 +595,14 @@ namespace Halobellum.Presentation
             PlacedSquad squad = SelectedPlacedSquad;
             if (squad == null) return;
             bool turned = !squad.Rotated90;
-            if (Report(Match.Move(Team.A, squad.Id, squad.Column, squad.Row, turned), MatchLog.TurnDetail(squad, turned)).Ok) RefreshPreview(squad.Id);
+            if (Report(ActionsLocked ? LockedResult() : Match.Move(LocalTeam, squad.Id, squad.Column, squad.Row, turned), MatchLog.TurnDetail(squad, turned)).Ok) RefreshPreview(squad.Id);
         }
 
         /// <summary>The type of the squad being moved (for the ghost), or null.</summary>
-        public UnitStats PlacementType => Match.Player.FindSquad(MovingSquadId)?.Type;
+        public UnitStats PlacementType => Me.FindSquad(MovingSquadId)?.Type;
 
         /// <summary>The squad being moved, or null.</summary>
-        public PlacedSquad MovingSquad => MovingSquadId >= 0 && Match != null ? Match.Player.FindSquad(MovingSquadId) : null;
+        public PlacedSquad MovingSquad => MovingSquadId >= 0 && Match != null ? Me.FindSquad(MovingSquadId) : null;
 
         /// <summary>The preview's squad of the squad being moved, or -1 (D109).</summary>
         public int MovingSimSquadId => SimSquadOf(MovingSquad);
@@ -440,7 +619,7 @@ namespace Halobellum.Presentation
         {
             if (MovingSquadId < 0) return ActionResult.Fail("Nothing to place.");
             int placedId = MovingSquadId;
-            ActionResult result = Report(Match.Move(Team.A, placedId, column, row, PlacingRotated), MatchLog.MoveDetail(Match.Player.FindSquad(placedId), column, row, PlacingRotated));
+            ActionResult result = Report(ActionsLocked ? LockedResult() : Match.Move(LocalTeam, placedId, column, row, PlacingRotated), MatchLog.MoveDetail(Me.FindSquad(placedId), column, row, PlacingRotated));
             if (result.Ok)
             {
                 CancelPlacement();
@@ -454,11 +633,11 @@ namespace Halobellum.Presentation
         public bool CanPlaceAt(int column, int row)
         {
             UnitStats type = PlacementType;
-            return type != null && DeploymentGrid.CanPlace(Match.Player, type, column, row, PlacingRotated, Match.CombatRules, MovingSquadId);
+            return type != null && DeploymentGrid.CanPlace(Me, type, column, row, PlacingRotated, Match.CombatRules, MovingSquadId);
         }
 
         /// <summary>True if a deployment action this round can be taken back (not the card choice).</summary>
-        public bool CanUndo => Match != null && Match.CanUndo;
+        public bool CanUndo => Match != null && Match.CanUndoFor(LocalTeam); // Team A against the AI: Match.CanUndo.
 
         /// <summary>Takes back the last deployment action this round (the owner, 2026-11-06): buys, sells, moves, levels, techs, towers, spells, items.</summary>
         public ActionResult Undo()
@@ -467,13 +646,13 @@ namespace Halobellum.Presentation
             CancelPlacement();
             CancelSpellPlacement();
             CancelItemPlacement();
-            ActionResult result = Match.Undo();
+            ActionResult result = ActionsLocked ? LockedResult() : Match.Undo(LocalTeam); // Team A against the AI: Match.Undo().
             Message = result.Message ?? "";
             _log?.PlayerAction(Match, nameof(Undo), null, result);
             ActionTaken?.Invoke(nameof(Undo), result);
             if (result.Ok)
             {
-                foreach (int id in new List<int>(_drops.Keys)) if (Match.Player.FindSquad(id) == null) _drops.Remove(id);
+                foreach (int id in new List<int>(_drops.Keys)) if (Me.FindSquad(id) == null) _drops.Remove(id);
                 RefreshPreview();
             }
             return result;
@@ -485,7 +664,7 @@ namespace Halobellum.Presentation
         public ActionResult Sell(PlacedSquad squad)
         {
             if (squad == null) return ActionResult.Fail("Select a squad first.");
-            ActionResult result = Report(Match.Sell(Team.A, squad.Id), Label(squad));
+            ActionResult result = Report(ActionsLocked ? LockedResult() : Match.Sell(LocalTeam, squad.Id), Label(squad));
             if (result.Ok)
             {
                 _drops.Remove(squad.Id);
@@ -499,7 +678,7 @@ namespace Halobellum.Presentation
         public ActionResult LevelUp(PlacedSquad squad)
         {
             if (squad == null) return ActionResult.Fail("Select a squad first.");
-            ActionResult result = Report(Match.LevelUp(Team.A, squad.Id), Label(squad));
+            ActionResult result = Report(ActionsLocked ? LockedResult() : Match.LevelUp(LocalTeam, squad.Id), Label(squad));
             if (result.Ok) RefreshPreview(squad.Id);
             return result;
         }
@@ -507,14 +686,14 @@ namespace Halobellum.Presentation
         /// <summary>Levels up every ready squad of this type at once (Match.LevelUpAll).</summary>
         public ActionResult LevelUpAll(UnitStats type, int reselectSquadId = -1)
         {
-            ActionResult result = Report(Match.LevelUpAll(Team.A, type), type?.Name);
+            ActionResult result = Report(ActionsLocked ? LockedResult() : Match.LevelUpAll(LocalTeam, type), type?.Name);
             if (result.Ok) RefreshPreview(reselectSquadId);
             return result;
         }
 
         public ActionResult BuyTech(UnitStats type, TechUpgrade tech, int reselectSquadId = -1)
         {
-            ActionResult result = Report(Match.BuyTech(Team.A, type, tech), MatchLog.TechDetail(type, tech));
+            ActionResult result = Report(ActionsLocked ? LockedResult() : Match.BuyTech(LocalTeam, type, tech), MatchLog.TechDetail(type, tech));
             if (result.Ok) RefreshPreview(reselectSquadId);
             return result;
         }
@@ -523,33 +702,33 @@ namespace Halobellum.Presentation
 
         public ActionResult LevelUpTower(TowerKind kind)
         {
-            ActionResult result = Report(Match.LevelUpTower(Team.A, kind), kind.ToString());
+            ActionResult result = Report(ActionsLocked ? LockedResult() : Match.LevelUpTower(LocalTeam, kind), kind.ToString());
             if (result.Ok) RefreshPreview();
             return result;
         }
 
-        public ActionResult BuyExtraSlot() => Report(Match.BuyExtraSlot(Team.A));
-        public ActionResult BuyOilZone() => Report(Match.BuyOilZone(Team.A));
-        public ActionResult RapidResupply() => Report(Match.RapidResupply(Team.A));
-        public ActionResult BuyEliteRecruitment() => Report(Match.BuyEliteRecruitment(Team.A));
-        public ActionResult BuyDeploymentModule() => Report(Match.BuyDeploymentModule(Team.A));
+        public ActionResult BuyExtraSlot() => Report(ActionsLocked ? LockedResult() : Match.BuyExtraSlot(LocalTeam));
+        public ActionResult BuyOilZone() => Report(ActionsLocked ? LockedResult() : Match.BuyOilZone(LocalTeam));
+        public ActionResult RapidResupply() => Report(ActionsLocked ? LockedResult() : Match.RapidResupply(LocalTeam));
+        public ActionResult BuyEliteRecruitment() => Report(ActionsLocked ? LockedResult() : Match.BuyEliteRecruitment(LocalTeam));
+        public ActionResult BuyDeploymentModule() => Report(ActionsLocked ? LockedResult() : Match.BuyDeploymentModule(LocalTeam));
 
         public ActionResult BuyResearch(bool health)
         {
-            ActionResult result = Report(Match.BuyResearch(Team.A, health), health ? "health" : "damage");
+            ActionResult result = Report(ActionsLocked ? LockedResult() : Match.BuyResearch(LocalTeam, health), health ? "health" : "damage");
             if (result.Ok) RefreshPreview();
             return result;
         }
 
-        /// <summary>What the window of a tower says. The enemy's show only what the player has seen; only the player's own sell anything, and only during deployment.</summary>
+        /// <summary>What the window of a tower says. The other side's show only what the local side has seen; only the local side's own sell anything, and only during deployment.</summary>
         public TowerPanel DescribeTower(Team team, TowerKind kind)
         {
             PlayerState owner = Match.Get(team);
             PlacedTower tower = owner.FindTower(kind);
             if (tower == null) return null;
             MatchRules rules = Match.Rules;
-            bool own = team == Team.A;
-            int level = own ? tower.Level : Match.SeenEnemyTowerLevel(kind);
+            bool own = team == LocalTeam;
+            int level = ShownTowerLevel(Match, LocalTeam, team, kind);
             UnitStats stats = Match.TowerStats(kind, level);
             var panel = new TowerPanel { Title = Match.TowerName(kind), Side = own ? "Your tower" : "Enemy tower, as last seen" };
             panel.Lines.Add($"Level {level} of {rules.TowerMaxLevel}    Health {stats.MaxHealth:0}");
@@ -561,7 +740,7 @@ namespace Halobellum.Presentation
                 : $"Destroying it earns {towerXp:0} XP: {killShare * 100f:0}% to the squad that lands the last hit, the rest shared by the squads that damaged it, by the damage each dealt.");
             if (!own) return panel;
 
-            bool deploying = Match.Phase == MatchPhase.Deployment;
+            bool deploying = IsDeploying; // Not while the local side's own card offer is open (two humans), as in the Cards phase against the AI.
             int credits = owner.Credits;
             if (level < rules.TowerMaxLevel)
             {
@@ -626,6 +805,16 @@ namespace Halobellum.Presentation
             return panel;
         }
 
+        /// <summary>
+        /// The level a tower's window shows to the local side: its own towers' real level, the other side's as last seen at a battle start (1 before the
+        /// first). For local Team A that is Match.SeenEnemyTowerLevel.
+        /// </summary>
+        public static int ShownTowerLevel(Match match, Team local, Team owner, TowerKind kind)
+        {
+            if (owner == local) return match.Get(owner).FindTower(kind)?.Level ?? 1;
+            return match.SeenTowerLevel(local, kind);
+        }
+
         private void AddResearch(TowerPanel panel, string name, float share, int steps, bool health, bool deploying, int credits)
         {
             int[] costs = Match.Rules.ResearchCosts;
@@ -643,17 +832,18 @@ namespace Halobellum.Presentation
             });
         }
 
-        /// <summary>The placed squad behind a simulation squad (preview: the player's; battle: Team A then Team B), or null.</summary>
+        /// <summary>The placed squad behind a simulation squad (preview: the local side's; battle: Team A then Team B), or null.</summary>
         public PlacedSquad PlacedFor(int simSquadId, out Team team)
         {
-            team = Team.A;
+            team = LocalTeam;
             BattleSimulation sim = _battle.Simulation;
             if (Match == null || sim == null) return null;
             int index = -1;
             for (int i = 0; i < sim.Squads.Count; i++) if (sim.Squads[i].Id == simSquadId) { index = i; break; }
             if (index < 0) return null;
-            if (Match.Phase == MatchPhase.Deployment) return index < _previewOrder.Count ? _previewOrder[index] : null;
+            if (Match.Phase == MatchPhase.Deployment) return IsDeploying && index < _previewOrder.Count ? _previewOrder[index] : null; // Behind the local side's open card offer: nothing, as in the Cards phase.
             if (sim != Match.CurrentBattle) return null;
+            team = Team.A; // The battle's order is canonical: Team A's squads first.
             if (index < Match.Player.Squads.Count) return Match.Player.Squads[index];
             team = Team.B;
             index -= Match.Player.Squads.Count;
@@ -697,9 +887,9 @@ namespace Halobellum.Presentation
         /// <summary>Decision D26: the player's squads that are ready to level up show an arrow (deployment and result).</summary>
         private bool ShowsLevelUpArrow(int simSquadId)
         {
-            if (Match == null || (Match.Phase != MatchPhase.Deployment && Match.Phase != MatchPhase.Result)) return false;
+            if (Match == null || (!IsDeploying && Match.Phase != MatchPhase.Result)) return false;
             PlacedSquad squad = PlacedFor(simSquadId, out Team team);
-            return team == Team.A && Match.CanLevelUp(squad);
+            return team == LocalTeam && Match.CanLevelUp(squad);
         }
 
         public SquadProgressView DescribeProgress(int simSquadId)
@@ -721,15 +911,15 @@ namespace Halobellum.Presentation
             PlacedSquad squad = PlacedFor(simSquadId, out Team team);
             if (squad == null) return null;
             var view = new SquadProgressView { Level = squad.Level, ItemText = ItemText(squad.Item) };
-            if (team == Team.B)
+            if (team != LocalTeam)
             {
                 // The enemy in battle: its level and the techs it fights with, nothing else.
-                foreach (TechUpgrade tech in Match.Enemy.TechsFor(squad.Type)) view.Techs.Add(new TechLine { Tech = tech, Owned = true });
+                foreach (TechUpgrade tech in Match.Get(team).TechsFor(squad.Type)) view.Techs.Add(new TechLine { Tech = tech, Owned = true });
                 return view;
             }
 
-            bool deploying = Match.Phase == MatchPhase.Deployment;
-            PlayerState player = Match.Player;
+            bool deploying = IsDeploying;
+            PlayerState player = Me;
             view.ShowXp = squad.Level < UnitUpgrades.MaxLevel;
             view.Xp = Match.XpSoFar(squad); // During a battle the bar fills as the squad kills (D136); the window asks again 5 times a second.
             view.XpNeeded = Match.XpNeeded(squad);
@@ -746,7 +936,7 @@ namespace Halobellum.Presentation
             else view.Note = "Maximum level.";
 
             // Whether or not this squad is one of them: any squad of the type reaches the others.
-            int ready = Match.SquadsReadyToLevel(Team.A, squad.Type, out int readyPrice);
+            int ready = Match.SquadsReadyToLevel(LocalTeam, squad.Type, out int readyPrice);
             if (ready >= 2)
             {
                 view.LevelAllLabel = $"Level all {ready} ({readyPrice})";
@@ -788,13 +978,13 @@ namespace Halobellum.Presentation
         // ------------------------------------------------------------------ cards and spells (Milestone 7)
 
         /// <summary>True while the card screen is up (start of a round from round 2).</summary>
-        public bool IsChoosingCards => Match != null && Match.Phase == MatchPhase.Cards;
+        public bool IsChoosingCards => Match != null && Match.InCards(LocalTeam); // Against the AI: the Cards phase.
 
         public ActionResult ChooseCard(int index)
         {
-            CardOffer offer = Match.Player.Offer;
+            CardOffer offer = Me.Offer;
             string card = offer != null && index >= 0 && index < offer.Count ? offer.NameOf(index) : null;
-            ActionResult result = Report(Match.ChooseCard(Team.A, index), card);
+            ActionResult result = Report(ActionsLocked ? LockedResult() : Match.ChooseCard(LocalTeam, index), card);
             if (result.Ok)
             {
                 LogAnyOffer();
@@ -806,7 +996,7 @@ namespace Halobellum.Presentation
 
         public ActionResult SkipCards()
         {
-            ActionResult result = Report(Match.SkipCards(Team.A));
+            ActionResult result = Report(ActionsLocked ? LockedResult() : Match.SkipCards(LocalTeam));
             if (result.Ok)
             {
                 LogAnyOffer();
@@ -818,12 +1008,12 @@ namespace Halobellum.Presentation
 
         /// <summary>The spell being placed (its outline follows the mouse), or -1.</summary>
         public int PlacingSpellId { get; private set; } = -1;
-        public OwnedSpell PlacingSpell => Match?.Player.FindSpell(PlacingSpellId);
+        public OwnedSpell PlacingSpell => Me?.FindSpell(PlacingSpellId);
 
         /// <summary>Starts placing (or moving) one of the player's ready spells; the next PlaceSpellAt puts it there.</summary>
         public void BeginPlacingSpell(OwnedSpell spell)
         {
-            if (Match.Phase != MatchPhase.Deployment || spell == null) return;
+            if (Match.Phase != MatchPhase.Deployment || spell == null || ActionsLocked) return;
             if (!spell.IsReady(Match.Round))
             {
                 Message = $"{spell.Stats.Name} is recharging ({spell.RoundsLeft(Match.Round)} more round(s)).";
@@ -880,18 +1070,18 @@ namespace Halobellum.Presentation
         }
 
         /// <summary>True if the spell being placed could go at this battlefield point (metres).</summary>
-        public bool CanPlaceSpellAt(Vec2 position) => PlacingSpell != null && Match.CanPlaceSpell(Team.A, PlacingSpell, position);
+        public bool CanPlaceSpellAt(Vec2 position) => PlacingSpell != null && Match.CanPlaceSpell(LocalTeam, PlacingSpell, position);
 
         public ActionResult PlaceSpellAt(Vec2 position, float angleDegrees = 0f)
         {
             if (PlacingSpellId < 0) return ActionResult.Fail("No spell to place.");
-            ActionResult result = Report(Match.PlaceSpell(Team.A, PlacingSpellId, position, angleDegrees), PlacingSpell == null ? null : MatchLog.SpellDetail(PlacingSpell.Stats, position, angleDegrees));
+            ActionResult result = Report(ActionsLocked ? LockedResult() : Match.PlaceSpell(LocalTeam, PlacingSpellId, position, angleDegrees), PlacingSpell == null ? null : MatchLog.SpellDetail(PlacingSpell.Stats, position, angleDegrees));
             if (result.Ok) CancelSpellPlacement();
             return result;
         }
 
         /// <summary>Takes a placed spell back; it stays ready.</summary>
-        public ActionResult UnplaceSpell(OwnedSpell spell) => spell == null ? ActionResult.Fail("No spell.") : Report(Match.UnplaceSpell(Team.A, spell.Id), spell.Stats.Name);
+        public ActionResult UnplaceSpell(OwnedSpell spell) => spell == null ? ActionResult.Fail("No spell.") : Report(ActionsLocked ? LockedResult() : Match.UnplaceSpell(LocalTeam, spell.Id), spell.Stats.Name);
 
         // ------------------------------------------------------------------ items and training (D33)
 
@@ -900,7 +1090,7 @@ namespace Halobellum.Presentation
 
         public void BeginPlacingItem(ItemStats item)
         {
-            if (Match.Phase != MatchPhase.Deployment || item == null || !Match.Player.Inventory.Contains(item)) return;
+            if (Match.Phase != MatchPhase.Deployment || item == null || !Me.Inventory.Contains(item) || ActionsLocked) return;
             CancelPlacement();
             CancelSpellPlacement();
             PlacingItem = item;
@@ -918,7 +1108,7 @@ namespace Halobellum.Presentation
         public ActionResult PlaceItemOn(PlacedSquad squad)
         {
             if (PlacingItem == null || squad == null) return ActionResult.Fail("Pick an item first.");
-            ActionResult result = Report(Match.PlaceItem(Team.A, PlacingItem, squad.Id), MatchLog.ItemDetail(PlacingItem, squad));
+            ActionResult result = Report(ActionsLocked ? LockedResult() : Match.PlaceItem(LocalTeam, PlacingItem, squad.Id), MatchLog.ItemDetail(PlacingItem, squad));
             if (result.Ok)
             {
                 int squadId = squad.Id;
@@ -932,7 +1122,7 @@ namespace Halobellum.Presentation
         public ActionResult UseTraining(PlacedSquad squad)
         {
             if (squad == null) return Report(ActionResult.Fail("Select a squad first."));
-            ActionResult result = Report(Match.UseTraining(Team.A, squad.Id), Label(squad));
+            ActionResult result = Report(ActionsLocked ? LockedResult() : Match.UseTraining(LocalTeam, squad.Id), Label(squad));
             if (result.Ok) RefreshPreview(squad.Id);
             return result;
         }
@@ -975,7 +1165,7 @@ namespace Halobellum.Presentation
             for (int i = 0; i < sim.Squads.Count; i++)
             {
                 int ghost = i - _previewOrder.Count;
-                IReadOnlyList<TechUpgrade> techs = ghost < 0 ? Match.Player.TechsFor(_previewOrder[i].Type) : ghost < _ghostOrder.Count ? _ghostOrder[ghost].Techs : null;
+                IReadOnlyList<TechUpgrade> techs = ghost < 0 ? Me.TechsFor(_previewOrder[i].Type) : ghost < _ghostOrder.Count ? _ghostOrder[ghost].Techs : null;
                 if (techs == null || techs.Count == 0 || !_views.SquadTop(sim.Squads[i].Id, out Vector3 world)) continue;
                 Vector3 screen = camera.WorldToScreenPoint(world);
                 if (screen.z > 0f) into.Add((screen, techs));
@@ -987,7 +1177,20 @@ namespace Halobellum.Presentation
         /// <summary>The player is ready: the round's battle starts (the AI's army is revealed).</summary>
         public void Ready()
         {
-            if (Match.Phase != MatchPhase.Deployment) return;
+            if (LanRuns)
+            {
+                // LAN: the round's decisions go to the other game; the battle starts once both games agree (LanMatch, ShowStartedBattle).
+                ActionResult sent = Lan.Coordinator.Ready();
+                Message = sent.Ok ? "" : sent.Message ?? "";
+                if (!sent.Ok) return;
+                CancelPlacement();
+                CancelSpellPlacement();
+                CancelItemPlacement();
+                _selection.ClearTower();
+                PhaseChanged?.Invoke();
+                return;
+            }
+            if (!Match.CanStartBattle) return; // Against the AI: deployment. Two humans: and no card offer open.
             if (Tutorial != null && !Tutorial.ReadyAllowed)
             {
                 Message = "First: " + (Tutorial.Current?.Doing ?? "the tutorial's step.");
@@ -1027,7 +1230,15 @@ namespace Halobellum.Presentation
             // At the speeds a player can pick it takes its time, however fast the battle ran. Test runs go faster than those.
             Ending.Tick(Time.deltaTime * (_battle.Speed > FastestPlayerSpeed ? _battle.Speed : 1f));
             if (!Ending.IsDone) return;
+            RoundEnding landed = Ending;
             Ending = null;
+            if (LanRuns)
+            {
+                // The guest's bases change only when the host's result comes; until then the bars keep this ending's hits.
+                _landedEnding = landed;
+                Lan.FinishLocalBattle(); // LAN: the host finishes now; the guest once the host's result is here (OnLanRoundFinished).
+                return;
+            }
             RoundSummary summary = Match.FinishBattle();
             _log?.BattleFinished(summary);
             if (Match.Phase == MatchPhase.MatchOver)
@@ -1039,18 +1250,23 @@ namespace Halobellum.Presentation
             PhaseChanged?.Invoke();
         }
 
-        /// <summary>A team's base health as the player sees it: while the nodes land, what is left after the hits so far.</summary>
+        /// <summary>
+        /// A team's base health as the player sees it: while the nodes land, what is left after the hits so far. LAN guest: after they
+        /// landed and until the host's result comes, what is left after all of them.
+        /// </summary>
         public int ShownBaseHealth(Team team)
         {
-            PlayerState player = team == Team.A ? Match.Player : Match.Enemy;
-            return Ending != null ? player.BaseHealth - Ending.HitsTaken(team) : player.BaseHealth;
+            PlayerState player = Match.Get(team);
+            RoundEnding ending = Ending ?? _landedEnding;
+            return ending != null ? player.BaseHealth - ending.HitsTaken(team) : player.BaseHealth;
         }
 
         /// <summary>Leaves the result screen for the next round's deployment.</summary>
         public void Continue()
         {
             if (Match.Phase != MatchPhase.Result) return;
-            Match.ContinueAfterResult();
+            if (LanRuns) Lan.Coordinator.ContinueAfterResult();
+            else Match.ContinueAfterResult();
             LogAnyOffer();
             _selection.ClearTower();
             RefreshPreview();
@@ -1064,12 +1280,12 @@ namespace Halobellum.Presentation
         private void RefreshPreview(int selectPlacedSquadId = -1)
         {
             if (Match.Phase != MatchPhase.Deployment && Match.Phase != MatchPhase.Cards) return;
-            BattleSimulation preview = Match.BuildPreview();
+            BattleSimulation preview = Match.BuildPreview(LocalTeam); // Team A: BuildPreview(). The local side's squads first, then the ghosts.
             _previewOrder.Clear();
-            _previewOrder.AddRange(Match.Player.Squads);
+            _previewOrder.AddRange(Me.Squads);
             _ghostOrder.Clear();
-            _ghostOrder.AddRange(Match.SeenArmy(Team.B));
-            _views.GhostTeam = Team.B;
+            _ghostOrder.AddRange(Match.SeenArmy(OpponentTeam));
+            _views.GhostTeam = OpponentTeam;
             _battle.ShowBattle(preview, _sources, play: false);
 
             // Squads still dropping in keep falling from where they were.

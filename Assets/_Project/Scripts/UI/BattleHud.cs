@@ -2,7 +2,7 @@
 // The battle screen's top bar (Bible Sections 5 and 13): battle time, living bodies on each side,
 // and speed control (Pause, 1x, 2x, 4x). Keyboard: Space = pause/resume, 1 = 1x, 2 = 2x, 3 = 4x.
 // Also shows the frame rate in the top-right corner when the Frame rate counter setting is on (off by default),
-// and the result line when the battle ends.
+// and the result line when the battle ends. The local side's count is on the left (MatchController.LocalTeam, M11: Team B for a LAN guest).
 // Placeholder UI drawn with Unity's immediate-mode GUI; scales with the screen height.
 // Depends on: Halobellum.Presentation (BattleController, UiHitAreas), Unity Input System.
 
@@ -31,6 +31,12 @@ namespace Halobellum.UI
         private float _smoothedFrameTime;
         private GUIStyle _label, _centered, _button, _selectedButton;
         private readonly HudLine _topLine = new HudLine();
+        private MatchController _match;
+        private bool _lookedForMatch;
+
+        /// <summary>The top bar's line: the left side's living bodies, the time, the right side's. The left side is the local one.</summary>
+        public static string TopLine(Team left, int aliveLeft, int aliveRight, float elapsed, float limit) =>
+            $"Team {left}  {aliveLeft}        {elapsed:0.0} s / {limit:0} s        {aliveRight}  Team {left.Opponent()}";
         private string _fpsText;
         private float _nextFpsText;
 
@@ -87,9 +93,15 @@ namespace Halobellum.UI
             UiHitAreas.Add(HudScale.ToScreen(bar, scale));
             HudTheme.PanelBox(bar);
             float limit = battle.Rules.BattleTimeLimitSeconds;
-            int aliveA = battle.CountAlive(Team.A), aliveB = battle.CountAlive(Team.B);
-            if (_topLine.Changed(aliveA, aliveB, HudLine.Tenths(sim.ElapsedSeconds), HudLine.Whole(limit)))
-                _topLine.Text = $"Team A  {aliveA}        {sim.ElapsedSeconds:0.0} s / {limit:0} s        {aliveB}  Team B";
+            if (!_lookedForMatch)
+            {
+                _match = battle.GetComponent<MatchController>(); // None in the Battle and Sandbox scenes.
+                _lookedForMatch = true;
+            }
+            Team left = _match != null ? _match.LocalTeam : Team.A, right = left.Opponent();
+            int aliveLeft = battle.CountAlive(left), aliveRight = battle.CountAlive(right);
+            if (_topLine.Changed(aliveLeft * 2L + (left == Team.B ? 1 : 0), aliveRight, HudLine.Tenths(sim.ElapsedSeconds), HudLine.Whole(limit)))
+                _topLine.Text = TopLine(left, aliveLeft, aliveRight, sim.ElapsedSeconds, limit);
             GUI.Label(new Rect(bar.x + 12f, bar.y + 6f, 576f, 26f), _topLine.Text, _centered);
 
             float buttonsX = bar.x + 120f;

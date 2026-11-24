@@ -9,15 +9,39 @@
 // A run of a test tool always has the cinematic one.
 // A setup chosen for the next match waits here for the Match scene, which takes it once, so that any other load of the scene
 // (a test tool, a test) always gets Faction mode.
-// Depends on: GamePause, SandboxAutoplay, CrowdBenchmark, AudioCapture and MatchReplay (their flags), Halobellum.Economy (MatchSetup), UnityEngine.
+// A LAN match (M11) waits here the same way: the LAN Game page hands over the connection to the other game, this game's team and
+// (on the host) the match settings (LanLaunch); the Match scene takes it once and its LanMatch driver builds the match from it.
+// -lanDemo (a LAN test run, both sides played by the AI) is a test run: the saved settings stay untouched, so two copies on one PC
+// don't overwrite each other's. -windowSlot sets the window from the command line (WindowSlot).
+// Depends on: GamePause, SandboxAutoplay, CrowdBenchmark, AudioCapture and MatchReplay (their flags), Halobellum.Economy (MatchSetup),
+//             Halobellum.Net (ILanChannel, LanMatchSettings, LanDemoArgs), Halobellum.Core (Team), UnityEngine.
 
 using System;
+using Halobellum.Core;
 using Halobellum.Economy;
+using Halobellum.Net;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Halobellum.Presentation
 {
+    /// <summary>What the Match scene needs to start a LAN match (M11): the connection, this game's team and, on the host, the settings.</summary>
+    public sealed class LanLaunch
+    {
+        /// <summary>The connection to the other game, handshake done (a LanSession, or on the guest the session with the host's MatchStart put back).</summary>
+        public ILanChannel Channel;
+        /// <summary>Team A on the host, Team B on the guest.</summary>
+        public Team LocalTeam = Team.A;
+        /// <summary>The host's seed and skirmish settings; null on the guest (the host's MatchStart carries them).</summary>
+        public LanMatchSettings Settings;
+        /// <summary>The other player's name, for the top bar.</summary>
+        public string OpponentName = "";
+        /// <summary>A -lanDemo run: the AI plays this side, battles run fast and the game quits after the match.</summary>
+        public bool Demo;
+
+        public bool IsHost => LocalTeam == Team.A;
+    }
+
     public static class GameFlow
     {
         /// <summary>The scene a build starts in: it reads the unit stats files, then opens the main menu (BootLoader).</summary>
@@ -36,10 +60,13 @@ namespace Halobellum.Presentation
         public const string CardsDemoFlag = "-cardsDemo";
         public const string TerrainGalleryFlag = "-terrainGallery";
         public const string TutorialDemoFlag = "-tutorialDemo";
+        public const string LanDemoFlag = LanDemoArgs.DemoFlag;
+        public const string WindowSlotFlag = LanDemoArgs.WindowSlotFlag;
 
         private static string _lastScene;
         private static MatchSetup _pendingSetup;
         private static bool _tutorialPending;
+        private static LanLaunch _pendingLan;
 
         /// <summary>The scene the Sandbox's Back button returns to.</summary>
         public static string SandboxCameFrom { get; private set; } = MatchScene;
@@ -69,23 +96,60 @@ namespace Halobellum.Presentation
         public static bool IsMeasuring(string[] args) => Has(args, CrowdBenchmark.Flag) || Has(args, BenchmarkFlag);
 
         /// <summary>True for a run of any test tool: the player's saved settings are not applied, and nothing it does reaches them (GameSettings).</summary>
-        public static bool IsTestRun(string[] args) => DirectSceneFor(args) != null || Has(args, MenuDemoFlag) || Has(args, ScreenDemoFlag) || Has(args, TerrainGalleryFlag) || Has(args, TutorialDemoFlag) || Has(args, AudioCapture.Flag);
+        public static bool IsTestRun(string[] args) => DirectSceneFor(args) != null || Has(args, MenuDemoFlag) || Has(args, ScreenDemoFlag) || Has(args, TerrainGalleryFlag) || Has(args, TutorialDemoFlag) || Has(args, AudioCapture.Flag) || Has(args, LanDemoFlag);
 
         /// <summary>True if the command line itself sets the window, which the saved settings must not undo.</summary>
         public static bool CommandLineSetsWindow(string[] args)
         {
-            return Has(args, "-screen-width") || Has(args, "-screen-height") || Has(args, "-screen-fullscreen") || Has(args, "-popupwindow") || Has(args, "-monitor");
+            return Has(args, "-screen-width") || Has(args, "-screen-height") || Has(args, "-screen-fullscreen") || Has(args, "-popupwindow") || Has(args, "-monitor") || Has(args, WindowSlotFlag);
         }
 
         public static void OpenMainMenu() => Load(MenuSceneToOpen);
 
-        public static void NewMatch() => Load(MatchScene);
+        public static void NewMatch()
+        {
+            ForgetLan();
+            Load(MatchScene);
+        }
 
         /// <summary>Starts a match with this setup.</summary>
         public static void NewSkirmish(MatchSetup setup)
         {
+            ForgetLan();
             _pendingSetup = setup;
             Load(MatchScene);
+        }
+
+        /// <summary>Starts a LAN match (M11): the Match scene takes the launch once (TakeLanMatch).</summary>
+        public static void StartLanMatch(LanLaunch launch)
+        {
+            SetLanLaunch(launch);
+            Load(MatchScene);
+        }
+
+        /// <summary>Leaves a LAN launch for the next load of the Match scene, without loading it (StartLanMatch does both).</summary>
+        public static void SetLanLaunch(LanLaunch launch)
+        {
+            if (launch == null || launch.Channel == null) throw new ArgumentException("A LAN launch needs its connection.", nameof(launch));
+            if (_pendingLan != launch) ForgetLan();
+            _pendingSetup = null;
+            _tutorialPending = false;
+            _pendingLan = launch;
+        }
+
+        /// <summary>The LAN launch waiting for the Match scene, or null. It can only be taken once.</summary>
+        public static LanLaunch TakeLanMatch()
+        {
+            LanLaunch launch = _pendingLan;
+            _pendingLan = null;
+            return launch;
+        }
+
+        /// <summary>A launch nobody took is closed, so its connection does not hang on.</summary>
+        private static void ForgetLan()
+        {
+            _pendingLan?.Channel?.Close();
+            _pendingLan = null;
         }
 
         /// <summary>The setup waiting for the Match scene, or null. It can only be taken once.</summary>
@@ -99,6 +163,7 @@ namespace Halobellum.Presentation
         /// <summary>Starts the tutorial's scripted match (D77).</summary>
         public static void StartTutorial()
         {
+            ForgetLan();
             _pendingSetup = null;
             _tutorialPending = true;
             Load(MatchScene);
@@ -141,6 +206,7 @@ namespace Halobellum.Presentation
             _lastScene = null;
             _pendingSetup = null;
             _tutorialPending = false;
+            _pendingLan = null;
             SceneManager.sceneLoaded -= OnSceneLoaded;
             SceneManager.sceneLoaded += OnSceneLoaded;
         }

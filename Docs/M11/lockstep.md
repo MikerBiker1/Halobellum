@@ -111,6 +111,7 @@ string LocalHash, RemoteHash;       // the last hashes compared before a battle 
 bool HostResultUsed; IReadOnlyList<int> HostResultRounds;   // guest: rounds whose own battle ended differently (not fatal)
 bool OpponentGone;                  // the other side left after the match was over (not an error)
 string StatusText;                  // a short line for the top bar
+ulong LastOutcomeHash;              // RoundOutcome.Hash of the last result applied here (the host's, on both games); 0 before the first
 Match Match; ILanChannel Channel; Team LocalTeam, RemoteTeam; bool IsHost;
 ```
 

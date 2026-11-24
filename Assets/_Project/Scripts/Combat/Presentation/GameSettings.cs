@@ -40,6 +40,7 @@ namespace Halobellum.Presentation
         public const string SkirmishBaseHealthKey = "Skirmish.BaseHealth";
         public const string BattleLogKey = "Log.BattleLog";
         public const string MenuBackgroundKey = "Ui.MenuBackground";
+        public const string LanNameKey = "Lan.PlayerName", LanAddressKey = "Lan.Address";
 
         public const float DefaultMasterVolume = 1f, DefaultMusicVolume = 0.6f, DefaultSfxVolume = 1f, DefaultUiVolume = 1f;
         public const float SmallestUiScale = 0.75f, LargestUiScale = 1.25f, UiScaleStep = 0.05f;
@@ -48,7 +49,7 @@ namespace Halobellum.Presentation
         private static readonly string[] SavedFloatKeys = { MasterVolumeKey, MusicVolumeKey, SfxVolumeKey, UiVolumeKey, UiScaleKey };
         private static readonly string[] SavedIntKeys = { CameraShakeKey, FullscreenKey, WidthKey, HeightKey, QualityKey, VSyncKey, MatchController.DifficultyKey, SkirmishBaseHealthKey, ShowFrameRateKey, BattleLogKey, MenuBackgroundKey };
 
-        private static readonly string[] SavedStringKeys = { ScreenKey };
+        private static readonly string[] SavedStringKeys = { ScreenKey, LanNameKey, LanAddressKey };
 
         private static float _uiScale = -1f;
         /// <summary>The frame-rate setting as last read: 0 off, 1 on, -1 not read yet.</summary>
@@ -198,6 +199,24 @@ namespace Halobellum.Presentation
                 if (_held != null) _held[ScreenKey] = value;
                 else PlayerPrefs.SetString(ScreenKey, value);
             }
+        }
+
+        /// <summary>The player's name on the LAN Game page (M11), or empty if never typed.</summary>
+        public static string LanPlayerName { get => GetString(LanNameKey); set => SetString(LanNameKey, value ?? ""); }
+
+        /// <summary>The last address typed on the LAN Game page's join panel, or empty.</summary>
+        public static string LanAddress { get => GetString(LanAddressKey); set => SetString(LanAddressKey, value ?? ""); }
+
+        private static string GetString(string key)
+        {
+            if (_held != null && _held.TryGetValue(key, out object value)) return (string)value;
+            return _heldStartedEmpty ? "" : PlayerPrefs.GetString(key, "");
+        }
+
+        private static void SetString(string key, string value)
+        {
+            if (_held != null) _held[key] = value;
+            else PlayerPrefs.SetString(key, value);
         }
 
         /// <summary>Changes the window and remembers it.</summary>

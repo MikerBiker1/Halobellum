@@ -7,6 +7,9 @@
 // it closes Unlock Skirmish's unlock page (those scripts see the same key press, so this one must look before they change anything; hence
 // its early execution order).
 // A small Menu button in the screen's corner does the same for those who don't know about Esc.
+// In a LAN match (M11 Stage 4) time does not stop: the other player's game goes on, so the menu only covers the screen and switches off
+// what takes input. Its third button is "Leave match", which warns that leaving forfeits the match, then tells the other game (LanMatch.Leave).
+// Once the LAN match has ended or is over, nothing is forfeited, so the button and question are the plain "Quit to Main Menu" ones.
 // Depends on: GameFlow, GamePause, BattleController, SquadSelection, MatchHud, DeploymentInput, SpellView, BattleCameraController, UiHitAreas,
 //             MenuStyle, SettingsScreen, Unity Input System.
 
@@ -37,9 +40,20 @@ namespace Halobellum.UI
         private MatchHud _hud;
         private Page _page;
         private int _closedFrame = -1;
+        private bool _openWithoutPause;
 
         /// <summary>The pause menu of the loaded scene, or null if it has none.</summary>
         public static PauseMenu Current { get; private set; }
+
+        /// <summary>True while the menu shows (paused, or in a LAN match open over a game that goes on).</summary>
+        public bool IsOpen => GamePause.IsPaused || _openWithoutPause;
+
+        /// <summary>True in a LAN match: opening the menu does not stop time.</summary>
+        public static bool InLanMatch => LanMatch.Current != null;
+
+        /// <summary>True in a LAN match that is still going on: leaving it forfeits it. Not once it ended (the other player left, the
+        /// connection was lost, the games went out of sync, it could not start) or is over.</summary>
+        public static bool LeavingForfeits => LanMatch.Current != null && LanMatch.Current.LeavingForfeits;
 
         /// <summary>This menu closed this frame: an Esc that did so was for it, and not for what comes back to life behind it.</summary>
         public bool ClosedThisFrame => _closedFrame == Time.frameCount;
@@ -83,7 +97,7 @@ namespace Halobellum.UI
         {
             Keyboard keyboard = Keyboard.current;
             if (keyboard == null || !keyboard.escapeKey.wasPressedThisFrame) return;
-            if (!GamePause.IsPaused)
+            if (!IsOpen)
             {
                 if (!EscapeHasOtherWork()) Open();
                 return;
@@ -107,16 +121,17 @@ namespace Halobellum.UI
         /// <summary>Pauses the game and shows the menu.</summary>
         public void Open()
         {
-            if (GamePause.IsPaused) return;
+            if (IsOpen) return;
             _page = Page.Buttons;
-            GamePause.Pause();
+            if (InLanMatch) _openWithoutPause = true; // The other player's game goes on, and so does this one's.
+            else GamePause.Pause();
             SwitchOffWhatTakesInput();
         }
 
         /// <summary>Closes the menu and lets the game run on.</summary>
         public void Close()
         {
-            if (!GamePause.IsPaused) return;
+            if (!IsOpen) return;
             _closedFrame = Time.frameCount;
             foreach (Behaviour behaviour in _switchedOff)
             {
@@ -126,6 +141,7 @@ namespace Halobellum.UI
             // A script switched back on draws last, whatever its GUI.depth. So this one goes after them, to stay over them: its Menu button stays over a dimmed field.
             enabled = false;
             enabled = true;
+            _openWithoutPause = false;
             GamePause.Resume();
         }
 
@@ -161,7 +177,7 @@ namespace Halobellum.UI
             float scale = HudScale.ApplyFit(LeastWidth, LeastHeight);
             float width = HudScale.ScaledWidth(scale), height = HudScale.ScaledHeight(scale);
 
-            if (!GamePause.IsPaused)
+            if (!IsOpen)
             {
                 DrawCornerButton(width, height, scale);
                 return;
@@ -175,8 +191,12 @@ namespace Halobellum.UI
                 case Page.Settings:
                     if (_settings.Draw(width, height)) _page = Page.Buttons;
                     break;
-                case Page.ConfirmMainMenu: DrawConfirm(width, height, "Leave for the main menu?", GameFlow.OpenMainMenu); break;
-                case Page.ConfirmQuit: DrawConfirm(width, height, "Quit the game?", GameFlow.QuitGame); break;
+                case Page.ConfirmMainMenu:
+                    if (LeavingForfeits) DrawConfirm(width, height, "Leave the match?", LeaveLanMatch);
+                    else if (InLanMatch) DrawConfirm(width, height, "Leave for the main menu?", LeaveLanMatch);
+                    else DrawConfirm(width, height, "Leave for the main menu?", GameFlow.OpenMainMenu);
+                    break;
+                case Page.ConfirmQuit: DrawConfirm(width, height, "Quit the game?", InLanMatch ? (Action)QuitLanMatch : GameFlow.QuitGame); break;
             }
         }
 
@@ -199,11 +219,11 @@ namespace Halobellum.UI
 
         private void DrawButtons(float width, float height)
         {
-            string[] labels = { "Resume", "Settings", "Quit to Main Menu", "Quit Game" };
+            string[] labels = { "Resume", "Settings", ThirdButtonLabel, "Quit Game" };
             float panelHeight = 118f + labels.Length * (ButtonHeight + 6f) + 20f;
             var panel = new Rect((width - PanelWidth) * 0.5f, (height - panelHeight) * 0.5f, PanelWidth, panelHeight);
             MenuStyle.Panel(panel);
-            GUI.Label(new Rect(panel.x, panel.y + 24f, panel.width, 70f), "PAUSED", MenuStyle.Heading);
+            GUI.Label(new Rect(panel.x, panel.y + 24f, panel.width, 70f), InLanMatch ? "MENU" : "PAUSED", MenuStyle.Heading); // A LAN match goes on behind it.
 
             float x = panel.x + 40f, y = panel.y + 118f, buttonWidth = panel.width - 80f;
             if (MenuStyle.MenuButton(new Rect(x, y, buttonWidth, ButtonHeight), labels[0])) Close();
@@ -219,12 +239,40 @@ namespace Halobellum.UI
             if (MenuStyle.MenuButton(new Rect(x, y, buttonWidth, ButtonHeight), labels[3])) _page = Page.ConfirmQuit;
         }
 
+        /// <summary>The pause menu's third button in a LAN match.</summary>
+        public const string LeaveMatchLabel = "Leave match";
+
+        /// <summary>The warning under a question to leave.</summary>
+        public const string ForfeitWarning = "Leaving forfeits the match.";
+
+        /// <summary>The line under the question to leave once a LAN match has ended or is over: nothing is lost.</summary>
+        public const string MatchEndedLine = "The match has ended.";
+
+        /// <summary>The third button's label now ("Leave match" while leaving forfeits a LAN match, else "Quit to Main Menu").</summary>
+        public static string ThirdButtonLabel => LeavingForfeits ? LeaveMatchLabel : "Quit to Main Menu";
+
+        private string ConfirmLine => LeavingForfeits ? ForfeitWarning : InLanMatch ? MatchEndedLine : _battle != null && _battle.GetComponent<MatchController>() != null ? "This match will be lost." : "This sandbox will be cleared.";
+
+        /// <summary>LAN: tells the other game this player left (it wins), then goes back to the main menu.</summary>
+        public void LeaveLanMatch()
+        {
+            LanMatch lan = LanMatch.Current;
+            if (lan != null) lan.LeaveToMenu();
+            else GameFlow.OpenMainMenu();
+        }
+
+        private void QuitLanMatch()
+        {
+            LanMatch.Current?.Leave();
+            GameFlow.QuitGame();
+        }
+
         private void DrawConfirm(float width, float height, string question, Action leave)
         {
             var panel = new Rect((width - PanelWidth) * 0.5f, (height - 250f) * 0.5f, PanelWidth, 250f);
             MenuStyle.Panel(panel);
             GUI.Label(new Rect(panel.x + 30f, panel.y + 26f, panel.width - 60f, 56f), question, MenuStyle.SmallButton);
-            GUI.Label(new Rect(panel.x + 30f, panel.y + 82f, panel.width - 60f, 40f), _battle != null && _battle.GetComponent<MatchController>() != null ? "This match will be lost." : "This sandbox will be cleared.", MenuStyle.SmallButton);
+            GUI.Label(new Rect(panel.x + 30f, panel.y + 82f, panel.width - 60f, 40f), ConfirmLine, MenuStyle.SmallButton);
             float buttonWidth = (panel.width - 100f) * 0.5f;
             if (MenuStyle.SmallFramedButton(new Rect(panel.x + 40f, panel.yMax - 92f, buttonWidth, 58f), "Yes, leave", false)) leave();
             if (MenuStyle.SmallFramedButton(new Rect(panel.xMax - 40f - buttonWidth, panel.yMax - 92f, buttonWidth, 58f), "Stay", false)) _page = Page.Buttons;

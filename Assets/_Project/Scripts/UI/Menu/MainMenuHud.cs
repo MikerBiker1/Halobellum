@@ -1,5 +1,5 @@
 // MainMenuHud.cs
-// The main menu's screen (M10), in the MainMenu scene over MenuBackdrop's picture: the title, and two pages of buttons. The first has Play, Settings and Quit.
+// The main menu's screen (M10), in the MainMenu scene over MenuBackdrop's picture: the title, and pages of buttons. The first has Play, LAN Game, Settings and Quit.
 // Play's page has Faction mode, Unlock Skirmish mode, Sandbox and Back: a chosen mode shows a panel on the right with its settings and Start, and the Sandbox leaves at once.
 // The first time it shows after the game starts, the owner's disclaimer (Disclaimer, D96) comes first, and the menu fades in once it is clicked away,
 // with a button's click and only then the menu's music (D101).
@@ -8,12 +8,24 @@
 // The buttons call plain public methods, which a batch run's tests can call too, since a batch run draws no IMGUI.
 // After the disclaimer, when the unit stats files next to the game have mistakes (UnitStatsMods, mod_json), a panel lists them before the menu shows,
 // once a launch; while changed stats are in force, or the files have mistakes, a line above the version says so.
-// Depends on: Disclaimer, GameFlow, GameSettings, MenuStyle, SettingsScreen, UnitStatsMods, Halobellum.Economy, Unity Input System.
+// LAN Game's page (M11 Stage 4) has Host game, Join game and Back, and a panel for each, a thin view over LanLobby (Halobellum.Net):
+//   Host: your name, the match's mode, and in Unlock Skirmish its base health and cards (the LAN match's own, not the Play page's saved
+//         ones); Host starts hosting ("Waiting for a player...", then the other player's name), Start (once someone joined) and Cancel,
+//         which stops hosting and keeps the panel. The name can be changed until Host is pressed.
+//   Join: your name, the games found on the network (a click joins), an address to type and Join, and what happens (refusals in plain
+//         words; no answer: a hint about Windows Firewall). When the host starts, this game follows by itself.
+//   Either hands GameFlow a LanLaunch (the connection, the team, the host's settings) and the Match scene's LanMatch plays it.
+//   The name and the last address are remembered (GameSettings, not in a test run). Esc or Back leaves the page and tells the other game.
+//   -lanDemo host|join (a test run): the page hosts, or joins 127.0.0.1 (trying again until the host is there), and starts by itself.
+// Depends on: Disclaimer, GameFlow, GameSettings, MenuStyle, SettingsScreen, UnitStatsMods, LanGameIdentity, Halobellum.Economy,
+//             Halobellum.Net (LanLobby, LanDemoArgs), Unity Input System.
 
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Halobellum.Core;
 using Halobellum.Economy;
+using Halobellum.Net;
 using Halobellum.Presentation;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -24,7 +36,10 @@ namespace Halobellum.UI
     {
         public const string Title = "HALOBELLUM";
 
-        public enum Page { Main, Play }
+        public enum Page { Main, Play, Lan }
+
+        /// <summary>Which panel of the LAN Game page shows.</summary>
+        public enum LanPanel { None, Host, Join }
 
         /// <summary>How long after the card list closes a press on the Play page takes nothing: Windows's usual time for a double-click.</summary>
         public const float ClosedListGuardSeconds = 0.5f;
@@ -46,6 +61,20 @@ namespace Halobellum.UI
         private CardFilter _cards = CardFilter.AllCards;
         private bool _cardListOpen;
         private float _ignorePressesUntil;
+        private LanLobby _lobby;
+        private LanPanel _lanPanel;
+        private string _lanName = "";
+        private string _lanAddress = "";
+        private MatchMode _lanMode = MatchMode.Faction;
+        private bool _lanCardListOpen;
+        private int _lanBaseHealth = GameSettings.DefaultSkirmishBaseHealth;
+        private CardFilter _lanCards = CardFilter.AllCards;
+        private LanDemoArgs _demo = new LanDemoArgs();
+        private float _demoJoinAt = -1f;
+        private LanLaunch _launch;
+
+        /// <summary>Ports and addresses of the LAN lobby (tests use the loopback address and ports the system picks); null = the game's.</summary>
+        public static LanLobbyOptions LobbyOptions { get; set; }
 
         /// <summary>True while the settings panel is showing (for the test tool).</summary>
         public bool ShowingSettings => _showSettings;
@@ -72,6 +101,177 @@ namespace Halobellum.UI
         public static float SliderFromBaseHealth(int health) => Mathf.InverseLerp(MatchSetup.LeastBaseHealth, MatchSetup.MostBaseHealth, health);
 
         public void OpenPlayPage() => _page = Page.Play;
+
+        // ------------------------------------------------------------------ the LAN Game page (M11 Stage 4)
+
+        /// <summary>The LAN lobby behind the page, or null before the page was opened.</summary>
+        public LanLobby Lobby => _lobby;
+
+        /// <summary>The LAN match this screen is leaving for (StartLanGame, or the guest following its host), or null.</summary>
+        public LanLaunch LeavingForLan => _launch;
+
+        /// <summary>The LAN panel showing.</summary>
+        public LanPanel CurrentLanPanel => _lanPanel;
+
+        /// <summary>The name typed on the LAN page.</summary>
+        public string LanName { get => _lanName; set => _lanName = value ?? ""; }
+
+        /// <summary>The address typed on the join panel.</summary>
+        public string LanAddress { get => _lanAddress; set => _lanAddress = value ?? ""; }
+
+        /// <summary>The mode the host's match will have.</summary>
+        public MatchMode LanMode { get => _lanMode; set => _lanMode = value; }
+
+        /// <summary>The LAN Unlock Skirmish's base health (its own: the Play page's saved one is not touched).</summary>
+        public int LanBaseHealth { get => _lanBaseHealth; set => _lanBaseHealth = MatchSetup.SnapBaseHealth(value); }
+
+        /// <summary>The LAN Unlock Skirmish's cards (its own: the Play page's are not touched).</summary>
+        public CardFilter LanCards { get => _lanCards; set => _lanCards = value; }
+
+        /// <summary>True while the host panel's card list is open.</summary>
+        public bool LanCardListOpen { get => _lanCardListOpen; set => _lanCardListOpen = value; }
+
+        /// <summary>Opens the LAN Game page, with the name and address remembered from last time.</summary>
+        public void OpenLanPage()
+        {
+            _page = Page.Lan;
+            _lanPanel = LanPanel.None;
+            _lanName = GameSettings.LanPlayerName;
+            _lanAddress = GameSettings.LanAddress;
+            // A test run joins 127.0.0.1 and lists no games, so a second copy on the PC does not listen on the network.
+            if (_lobby == null) _lobby = new LanLobby(LobbyOptions ?? new LanLobbyOptions { Log = LanGameIdentity.Log, Browse = _demo.Role != LanDemoRole.Join });
+        }
+
+        /// <summary>Shows the host panel: the name and the match's settings, and Host. Nothing is hosted yet, so the name can still change.</summary>
+        public void OpenHostPanel()
+        {
+            if (_page != Page.Lan) OpenLanPage();
+            if (_lobby.IsJoinSide) _lobby.Close(); // leaves the join side (a host joined is told)
+            _lanPanel = LanPanel.Host;
+        }
+
+        /// <summary>The host panel's Host: starts hosting with the name typed (Waiting for a player...).</summary>
+        public void HostLanGame()
+        {
+            if (_page != Page.Lan) OpenLanPage();
+            _lanPanel = LanPanel.Host;
+            RememberLanName();
+            _lobby.Host(LanGameIdentity.Hello(_lanName));
+        }
+
+        /// <summary>The join panel: lists the games heard on the network.</summary>
+        public void OpenJoinPanel()
+        {
+            if (_page != Page.Lan) OpenLanPage();
+            if (_lobby.IsHosting) _lobby.Close(); // stops hosting (a player who joined is told)
+            _lanPanel = LanPanel.Join;
+            _lobby.Browse(LanGameIdentity.Hello(_lanName));
+        }
+
+        /// <summary>Joins the game at this address (the one typed if null).</summary>
+        public void JoinLanGame(string address = null, int port = 0)
+        {
+            if (_page != Page.Lan) OpenLanPage();
+            _lanPanel = LanPanel.Join;
+            if (address != null) _lanAddress = address;
+            RememberLanName();
+            if (!_demo.IsDemo) GameSettings.LanAddress = _lanAddress.Trim();
+            _lobby.Join(_lanAddress, port, LanGameIdentity.Hello(_lanName));
+        }
+
+        /// <summary>Joins a game from the list.</summary>
+        public void JoinLanGame(LanGameInfo game)
+        {
+            if (game == null) return;
+            JoinLanGame(game.Address, game.Port);
+        }
+
+        /// <summary>Host: starts the match once a player has joined. Nothing happens before.</summary>
+        public void StartLanGame()
+        {
+            if (_lobby == null || !_lobby.CanStart || _leaving != null) return;
+            string opponent = _lobby.PeerName;
+            LanMatchSettings settings = LanSettingsForHost();
+            ILanChannel channel = _lobby.TakeChannel();
+            var launch = new LanLaunch { Channel = channel, LocalTeam = Team.A, Settings = settings, OpponentName = opponent, Demo = _demo.IsDemo };
+            GameSettings.Save();
+            _launch = launch;
+            Leave(() => GameFlow.StartLanMatch(launch));
+        }
+
+        /// <summary>The host's match: a new seed (or -lanDemoSeed) and the skirmish settings of the mode chosen (Faction mode: the rules as they are).</summary>
+        public LanMatchSettings LanSettingsForHost()
+        {
+            int seed = _demo.Seed ?? (Environment.TickCount & 0x7FFFFFFF);
+            MatchSetup setup = _lanMode == MatchMode.UnlockSkirmish ? new MatchSetup { Mode = MatchMode.UnlockSkirmish, BaseHealth = _lanBaseHealth, Cards = _lanCards } : null;
+            return LanMatchSettings.From(seed, setup);
+        }
+
+        /// <summary>True while the join panel's button leaves a host (Leave) rather than closing the panel (Close).</summary>
+        private bool JoinedOrJoining => _lobby != null && (_lobby.State == LanLobbyState.JoinConnecting || _lobby.State == LanLobbyState.JoinWaiting);
+
+        /// <summary>
+        /// Cancel: the host stops hosting and the host panel stays, with Host again; the guest leaves the host it joined (and stays on its
+        /// list); otherwise (Close) the panel closes.
+        /// </summary>
+        public void CancelLan()
+        {
+            if (_lobby == null) return;
+            _lanCardListOpen = false;
+            if (_lobby.IsHosting || JoinedOrJoining)
+            {
+                _lobby.Cancel();
+                return;
+            }
+            _lobby.Close();
+            _lanPanel = LanPanel.None;
+        }
+
+        private void RememberLanName()
+        {
+            _lanName = LanIdentity.CleanName(_lanName);
+            if (!_demo.IsDemo) GameSettings.LanPlayerName = _lanName;
+        }
+
+        /// <summary>One frame of the LAN page (Update calls it): the lobby moves on, and the guest follows the host into the match once the host's MatchStart is here.</summary>
+        public void UpdateLan()
+        {
+            if (_lobby == null || _leaving != null) return;
+            _lobby.Update();
+            if (_lobby.State == LanLobbyState.GuestStarting)
+            {
+                string opponent = _lobby.PeerName;
+                ILanChannel channel = _lobby.TakeChannel();
+                var launch = new LanLaunch { Channel = channel, LocalTeam = Team.B, OpponentName = opponent, Demo = _demo.IsDemo };
+                GameSettings.Save();
+                _launch = launch;
+                Leave(() => GameFlow.StartLanMatch(launch));
+                return;
+            }
+            if (_demo.Role == LanDemoRole.Host && _lobby.CanStart) StartLanGame();
+            else if (_demo.Role == LanDemoRole.Join && (_lobby.State == LanLobbyState.JoinFailed || _lobby.State == LanLobbyState.Browsing || _lobby.State == LanLobbyState.Idle))
+            {
+                // The host may not be there yet: try again every two seconds.
+                if (_demoJoinAt < 0f) _demoJoinAt = Time.unscaledTime + (_lobby.State == LanLobbyState.JoinFailed ? 2f : 0f);
+                if (Time.unscaledTime >= _demoJoinAt)
+                {
+                    _demoJoinAt = -1f;
+                    JoinLanGame(_demo.Address);
+                }
+            }
+        }
+
+        /// <summary>-lanDemo: opens the page and hosts, or joins.</summary>
+        private void StartLanDemo()
+        {
+            _demo = LanDemoArgs.Parse(Environment.GetCommandLineArgs());
+            if (!_demo.IsDemo) return;
+            OpenLanPage();
+            _lanName = _demo.Role == LanDemoRole.Host ? "Demo host" : "Demo guest";
+            _lanMode = MatchMode.Faction;
+            if (_demo.Role == LanDemoRole.Host) HostLanGame();
+            else JoinLanGame(_demo.Address);
+        }
 
         /// <summary>Shows this mode's panel.</summary>
         public void SelectMode(MatchMode mode)
@@ -111,9 +311,12 @@ namespace Halobellum.UI
             DrawScaled(scale);
         }
 
-        /// <summary>From Play's page back to the first one.</summary>
+        /// <summary>From Play's page (or LAN Game's, which leaves any game hosted or joined) back to the first one.</summary>
         public void Back()
         {
+            if (_page == Page.Lan) _lobby?.Close();
+            _lanPanel = LanPanel.None;
+            _lanCardListOpen = false;
             _page = Page.Main;
             _selectedMode = null;
             _cardListOpen = false;
@@ -138,7 +341,12 @@ namespace Halobellum.UI
                 _cardListOpen = false;
                 return true;
             }
-            if (_page != Page.Play) return false;
+            if (_lanCardListOpen)
+            {
+                _lanCardListOpen = false;
+                return true;
+            }
+            if (_page == Page.Main) return false;
             Back();
             return true;
         }
@@ -149,7 +357,15 @@ namespace Halobellum.UI
             if (Disclaimer.Pending) AudioDirector.HoldMenuMusic = true;
         }
 
-        private void Start() => _shownAt = Time.unscaledTime;
+        private void Start()
+        {
+            _shownAt = Time.unscaledTime;
+            StartLanDemo();
+        }
+
+        private void OnDestroy() => _lobby?.Close(); // A game hosted or joined from here, but not started, is left.
+
+        private void OnApplicationQuit() => _lobby?.Close();
 
         /// <summary>The disclaimer clicked away: a button's click, the menu's music, and the menu fading in from the black.</summary>
         private void PastDisclaimer()
@@ -177,6 +393,7 @@ namespace Halobellum.UI
                 leave();
                 return;
             }
+            UpdateLan();
             Keyboard keyboard = Keyboard.current;
             if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) HandleEscape();
         }
@@ -273,6 +490,7 @@ namespace Halobellum.UI
 
             float y = Mathf.Max(underTitle + 40f, height * 0.42f);
             if (_page == Page.Play) DrawPlayPage(left, y);
+            else if (_page == Page.Lan) DrawLanPage(left, y);
             else DrawMainPage(left, y);
             GUI.enabled = true;
 
@@ -351,6 +569,7 @@ namespace Halobellum.UI
         {
             GUI.enabled = _leaving == null;
             if (ColumnButton(left, ref y, "Play")) OpenPlayPage();
+            if (ColumnButton(left, ref y, LanGameLabel)) OpenLanPage();
             if (ColumnButton(left, ref y, "Settings"))
             {
                 _settings.Open();
@@ -378,6 +597,181 @@ namespace Halobellum.UI
             float panelLeft = left + ButtonWidth + PanelGap;
             if (_selectedMode == MatchMode.Faction) DrawFactionPanel(panelLeft, panelTop);
             else if (_selectedMode == MatchMode.UnlockSkirmish) DrawSkirmishPanel(panelLeft, panelTop, enabled);
+        }
+
+        /// <summary>The main page's LAN item.</summary>
+        public const string LanGameLabel = "LAN Game";
+
+        private const float LanStatusHeight = 64f, LanGameRowHeight = 36f, LanGameRows = 3;
+
+        private static GUIStyle _wrappedSmall, _wrappedFrom;
+
+        /// <summary>The small text, wrapping from the top left (the LAN page's status), made again if the menu's styles were.</summary>
+        private static GUIStyle WrappedSmall
+        {
+            get
+            {
+                if (_wrappedSmall == null || _wrappedFrom != MenuStyle.Small)
+                {
+                    _wrappedFrom = MenuStyle.Small;
+                    _wrappedSmall = new GUIStyle(MenuStyle.Small) { wordWrap = true, alignment = TextAnchor.UpperLeft };
+                }
+                return _wrappedSmall;
+            }
+        }
+
+        private void DrawLanPage(float left, float y)
+        {
+            // As on the Play page: the card list is drawn last and is the only thing that takes a click while open.
+            bool enabled = _leaving == null;
+            GUI.enabled = enabled && !_lanCardListOpen;
+
+            // The second click of a double-click that closed the list would land on what lay under it (Start), so it is thrown away.
+            if (Event.current.type == EventType.MouseDown && Time.unscaledTime < _ignorePressesUntil) Event.current.Use();
+
+            float panelTop = y;
+            if (ColumnButton(left, ref y, "Host game", _lanPanel == LanPanel.Host) && _lanPanel != LanPanel.Host) OpenHostPanel();
+            if (ColumnButton(left, ref y, "Join game", _lanPanel == LanPanel.Join) && _lanPanel != LanPanel.Join) OpenJoinPanel();
+            if (ColumnButton(left, ref y, "Back")) Back();
+
+            float panelLeft = left + ButtonWidth + PanelGap;
+            if (_lanPanel == LanPanel.Host) DrawHostPanel(panelLeft, panelTop, enabled);
+            else if (_lanPanel == LanPanel.Join) DrawJoinPanel(panelLeft, panelTop);
+            else DrawLanIntro(panelLeft, panelTop);
+        }
+
+        private static Rect LanPanelRect(float x, float y, float rowsHeight)
+        {
+            var panel = new Rect(x, y, PanelWidth, 84f + rowsHeight + LanStatusHeight + StartHeight + 2f * PanelMargin);
+            MenuStyle.Panel(panel);
+            return panel;
+        }
+
+        private void DrawLanIntro(float x, float y)
+        {
+            Rect panel = LanPanelRect(x, y, RowHeight);
+            float row = PanelHeading(panel, "LAN GAME", "Play one other person on the same network.");
+            DrawLanName(panel, row);
+            GUI.Label(new Rect(panel.x + PanelMargin, row + RowHeight + 8f, panel.width - 2f * PanelMargin, LanStatusHeight),
+                "One of you hosts, the other joins. Both need the same version of the game.", MenuStyle.Small);
+        }
+
+        private void DrawLanName(Rect panel, float row)
+        {
+            RowLabel(panel, row, "Your name");
+            bool was = GUI.enabled;
+            GUI.enabled = was && (_lobby == null || !_lobby.Busy);
+            _lanName = MenuStyle.TextField(ControlRect(panel, row), _lanName, LanIdentity.NameLength, "LAN/name");
+            GUI.enabled = was;
+        }
+
+        /// <summary>The host panel's line before Host is pressed.</summary>
+        public const string PressHostText = "Set your name and the match, then press Host. The other player can join after that.";
+
+        /// <summary>What the LAN panel's status box says now.</summary>
+        public string LanStatusText
+        {
+            get
+            {
+                if (_lobby == null) return "";
+                if (_lanPanel == LanPanel.Host && !_lobby.IsHosting && _lobby.State != LanLobbyState.Started) return PressHostText;
+                return _lobby.Status;
+            }
+        }
+
+        private void DrawLanStatus(Rect panel, float y)
+        {
+            var box = new Rect(panel.x + PanelMargin, y, panel.width - 2f * PanelMargin, LanStatusHeight);
+            GUI.Label(box, LanStatusText, WrappedSmall);
+        }
+
+        private void DrawHostPanel(float x, float y, bool enabled)
+        {
+            Rect panel = LanPanelRect(x, y, 4f * RowHeight);
+            float row = PanelHeading(panel, "HOST A LAN GAME", "The other player joins from the same network.");
+            DrawLanName(panel, row);
+            bool canChange = _lobby != null && _lobby.State != LanLobbyState.Started; // the settings go with Start
+            bool settingsOpen = GUI.enabled && canChange;
+            row += RowHeight;
+            RowLabel(panel, row, "Mode");
+            bool was = GUI.enabled;
+            GUI.enabled = settingsOpen;
+            int mode = MenuStyle.Choice(ControlRect(panel, row), "LAN mode", new[] { "Faction", "Unlock Skirmish" }, _lanMode == MatchMode.UnlockSkirmish ? 1 : 0);
+            _lanMode = mode == 1 ? MatchMode.UnlockSkirmish : MatchMode.Faction;
+            row += RowHeight;
+            bool skirmish = _lanMode == MatchMode.UnlockSkirmish;
+            if (skirmish) _lanBaseHealth = BaseHealthControl(panel, row, _lanBaseHealth);
+            else GUI.Label(new Rect(panel.x + PanelMargin, row, panel.width - 2f * PanelMargin, ControlHeight), "Each player's starting card picks a faction.", MenuStyle.Small);
+            row += RowHeight;
+            float cardsRow = row;
+            if (skirmish) RowLabel(panel, row, "Cards");
+            row += RowHeight;
+            GUI.enabled = was;
+            DrawLanStatus(panel, row);
+
+            var cancel = new Rect(panel.x + PanelMargin, panel.yMax - PanelMargin - StartHeight, 200f, StartHeight);
+            bool hosting = _lobby != null && _lobby.IsHosting;
+            if (MenuStyle.SmallFramedButton(cancel, hosting ? "Cancel" : "Host", !hosting, hosting ? "LAN/Cancel" : "LAN/Host"))
+            {
+                if (hosting) CancelLan();
+                else HostLanGame();
+            }
+            var start = new Rect(panel.xMax - PanelMargin - 200f, panel.yMax - PanelMargin - StartHeight, 200f, StartHeight);
+            GUI.enabled = was && _lobby != null && _lobby.CanStart;
+            if (MenuStyle.SmallFramedButton(start, "Start", true, "LAN/Start")) StartLanGame();
+            GUI.enabled = was;
+
+            if (!skirmish) return;
+            // Drawn last, with the page's own enabled (not this pass's, which is off while the list is open), so its items take a click.
+            GUI.enabled = enabled && canChange;
+            Rect box = ControlRect(panel, cardsRow);
+            bool wasOpen = _lanCardListOpen;
+            _lanCards = (CardFilter)MenuStyle.Dropdown(box, "LAN cards", CardLabels, (int)_lanCards, ref _lanCardListOpen);
+            if (wasOpen && !_lanCardListOpen) _ignorePressesUntil = Time.unscaledTime + ClosedListGuardSeconds;
+            GUI.enabled = was;
+        }
+
+        private void DrawJoinPanel(float x, float y)
+        {
+            float gamesHeight = LanGameRows * (LanGameRowHeight + 4f);
+            Rect panel = LanPanelRect(x, y, 2f * RowHeight + gamesHeight + 12f);
+            float row = PanelHeading(panel, "JOIN A LAN GAME", "Pick a game found on the network, or type its address.");
+            DrawLanName(panel, row);
+            row += RowHeight;
+
+            RowLabel(panel, row, "Games");
+            Rect list = ControlRect(panel, row);
+            IReadOnlyList<LanGameInfo> games = _lobby != null ? _lobby.Games : (IReadOnlyList<LanGameInfo>)new LanGameInfo[0];
+            bool canJoin = GUI.enabled && _lobby != null && _lobby.State != LanLobbyState.JoinConnecting && _lobby.State != LanLobbyState.JoinWaiting && _lobby.State != LanLobbyState.GuestStarting;
+            bool was = GUI.enabled;
+            if (games.Count == 0)
+            {
+                string none = _lobby != null && _lobby.BrowseError.Length > 0 ? _lobby.BrowseError : "No games found yet. Looking...";
+                GUI.Label(new Rect(list.x, list.y, list.width, gamesHeight), none, WrappedSmall);
+            }
+            for (int i = 0; i < games.Count && i < LanGameRows; i++)
+            {
+                LanGameInfo game = games[i];
+                var line = new Rect(list.x, list.y + i * (LanGameRowHeight + 4f), list.width, LanGameRowHeight);
+                GUI.enabled = canJoin;
+                string label = game.Name + "   " + game.Address + (game.Version != Application.version ? "   (version " + game.Version + ")" : "");
+                if (MenuStyle.SmallFramedButton(line, label, false, "LAN/game/" + i)) JoinLanGame(game);
+                GUI.enabled = was;
+            }
+            row += gamesHeight + 12f;
+
+            RowLabel(panel, row, "Address");
+            Rect field = ControlRect(panel, row);
+            GUI.enabled = canJoin;
+            _lanAddress = MenuStyle.TextField(new Rect(field.x, field.y, field.width - 130f, field.height), _lanAddress, 64, "LAN/address");
+            if (MenuStyle.SmallFramedButton(new Rect(field.xMax - 118f, field.y, 118f, field.height), "Join", true, "LAN/Join")) JoinLanGame();
+            GUI.enabled = was;
+            row += RowHeight;
+            DrawLanStatus(panel, row);
+
+            bool joined = JoinedOrJoining;
+            var cancel = new Rect(panel.x + PanelMargin, panel.yMax - PanelMargin - StartHeight, 200f, StartHeight);
+            if (MenuStyle.SmallFramedButton(cancel, joined ? "Leave" : "Close", false, "LAN/Cancel")) CancelLan();
         }
 
         private bool ColumnButton(float left, ref float y, string label, bool selected = false)
@@ -444,12 +838,19 @@ namespace Halobellum.UI
             if (wanted != current) GameSettings.Difficulty = (AiDifficulty)wanted;
         }
 
-        /// <summary>A slider for the whole range, and arrows for one step at a time.</summary>
+        /// <summary>The Play page's base health, saved in the settings.</summary>
         private static void DrawBaseHealth(Rect panel, float y)
+        {
+            int health = GameSettings.SkirmishBaseHealth;
+            int wanted = BaseHealthControl(panel, y, health);
+            if (wanted != health) GameSettings.SkirmishBaseHealth = wanted;
+        }
+
+        /// <summary>A slider for the whole range, and arrows for one step at a time. Gives the base health wanted now.</summary>
+        private static int BaseHealthControl(Rect panel, float y, int health)
         {
             RowLabel(panel, y, "Base health");
             Rect control = ControlRect(panel, y);
-            int health = GameSettings.SkirmishBaseHealth;
 
             float position = SliderFromBaseHealth(health);
             float moved = MenuStyle.Slider(new Rect(control.x, control.y, control.width - StepperWidth - 12f, control.height), position);
@@ -457,7 +858,7 @@ namespace Halobellum.UI
 
             int step = MenuStyle.Stepper(new Rect(control.xMax - StepperWidth, control.y, StepperWidth, control.height), "Base health", wanted.ToString());
             wanted += step * MatchSetup.BaseHealthStep;
-            if (wanted != health) GameSettings.SkirmishBaseHealth = wanted;
+            return MatchSetup.SnapBaseHealth(wanted);
         }
 
         private void DrawStart(Rect panel)

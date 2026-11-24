@@ -63,7 +63,7 @@ Each stage ends with its tests passing. Engine-free code is tested with `dotnet 
 
 - [x] Stage 1: two-humans Match (`stage1_api.md`)
 - [x] Stage 2: network layer (`net_transport.md`, `lockstep.md`)
-- [ ] Stage 3: each player at the bottom
-- [ ] Stage 4: menu and match flow
+- [x] Stage 3: each player at the bottom (`stage3_view.md`; the guest's terrain is not turned yet)
+- [x] Stage 4: menu and match flow (`stage4_flow.md`; the two-copy `-lanDemo` run waits for Stage 5's test build)
 - [ ] Stage 5: end to end
 - [ ] Stage 6: write-up

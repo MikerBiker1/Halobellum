@@ -7,6 +7,8 @@
 // "Took" is what got through to shield and health; "stopped" is what armor, the shield type and defense arcs kept off, shots
 // blocked included (BattleStats says how it is counted).
 // The window keeps its own state; MatchHud draws it over the match-over screen while it is open.
+// "The player" is LocalTeam (M11: Team A, or Team B for a LAN guest). For Team B the map is turned 180 degrees, picture and icons, so that the
+// player's edge is still at the bottom (the picture itself is always taken from Team A's side).
 // Depends on: Halobellum.Economy (Match, BattleStats), Halobellum.Core, HudTheme, UnitIcons, UiHitAreas (through the panel callback), UnityEngine.
 
 using System;
@@ -30,6 +32,9 @@ namespace Halobellum.UI
         public bool ByReceived;
         /// <summary>The line picked out on the map and in its list, or null.</summary>
         public BattleStatsLine Picked { get; private set; }
+        /// <summary>The player's side: its army is on the left, in the player's colour, and its edge at the bottom of the map. Team A except for a LAN guest.</summary>
+        public Team LocalTeam { get; set; } = Team.A;
+        private bool Turned => LocalTeam == Team.B;
 
         private Vector2 _leftScroll, _rightScroll;
         private float _scrollLeftTo = -1f, _scrollRightTo = -1f;
@@ -58,7 +63,7 @@ namespace Halobellum.UI
             Picked = line;
             if (line == null || stats == null) return;
             int index = stats.Side(line.Team, ByReceived).IndexOf(line);
-            if (line.Team == Team.A) _scrollLeftTo = index * RowHeight;
+            if (line.Team == LocalTeam) _scrollLeftTo = index * RowHeight;
             else _scrollRightTo = index * RowHeight;
         }
 
@@ -70,22 +75,30 @@ namespace Halobellum.UI
             return new Rect(box.x + (box.width - width) * 0.5f, box.y + (box.height - height) * 0.5f, width, height);
         }
 
-        /// <summary>Where a spot on the field is on the map: the player's edge at the bottom, the enemy's at the top.</summary>
-        public static Vector2 OnMap(Rect map, BattleStats stats, Vec2 spot)
+        /// <summary>
+        /// Where a spot on the field is on the map: the player's edge at the bottom, the enemy's at the top. turned: the player is Team B, and the
+        /// map is turned 180 degrees (Team B's edge at the bottom, its left on the left).
+        /// </summary>
+        public static Vector2 OnMap(Rect map, BattleStats stats, Vec2 spot, bool turned = false)
         {
             float u = Mathf.Clamp01((spot.X + stats.FieldWidth * 0.5f) / stats.FieldWidth);
             float v = Mathf.Clamp01((spot.Y + stats.FieldLength * 0.5f) / stats.FieldLength);
+            if (turned)
+            {
+                u = 1f - u;
+                v = 1f - v;
+            }
             return new Vector2(map.x + u * map.width, map.y + (1f - v) * map.height);
         }
 
         /// <summary>The line whose icon is under this point of the map (the nearest, if icons overlap), or null.</summary>
-        public static BattleStatsLine LineAt(Rect map, BattleStats stats, Vector2 point)
+        public static BattleStatsLine LineAt(Rect map, BattleStats stats, Vector2 point, bool turned = false)
         {
             BattleStatsLine best = null;
             float bestDistance = MapIcon * 0.7f;
             foreach (BattleStatsLine line in stats.Lines)
             {
-                float distance = Vector2.Distance(OnMap(map, stats, line.Start), point);
+                float distance = Vector2.Distance(OnMap(map, stats, line.Start, turned), point);
                 if (distance <= bestDistance)
                 {
                     best = line;
@@ -148,8 +161,9 @@ namespace Halobellum.UI
                 mostReceived = Mathf.Max(mostReceived, line.DamageReceived);
             }
 
-            DrawSide(new Rect(content.x, content.y, listWidth, content.height), stats, Team.A, "Your army", playerColor, match.Player.Faction?.Name, spellIcon, most, mostReceived, ref _leftScroll, ref _scrollLeftTo);
-            DrawSide(new Rect(content.xMax - listWidth, content.y, listWidth, content.height), stats, Team.B, "Enemy army", enemyColor, match.Enemy.Faction?.Name, spellIcon, most, mostReceived, ref _rightScroll, ref _scrollRightTo);
+            Team own = LocalTeam, other = LocalTeam.Opponent();
+            DrawSide(new Rect(content.x, content.y, listWidth, content.height), stats, own, "Your army", playerColor, match.Get(own).Faction?.Name, spellIcon, most, mostReceived, ref _leftScroll, ref _scrollLeftTo);
+            DrawSide(new Rect(content.xMax - listWidth, content.y, listWidth, content.height), stats, other, "Enemy army", enemyColor, match.Get(other).Faction?.Name, spellIcon, most, mostReceived, ref _rightScroll, ref _scrollRightTo);
             DrawMap(map, stats, pictureOf(Tab), match, spellIcon, playerColor, enemyColor);
             GUI.Label(new Rect(mapBox.x, mapBox.yMax + 2f, mapBox.width, 28f),
                 stats.Finished ? "Took: what got through to shield and health.  Stopped: what armor, shield type and defense arcs kept off." : "This battle hasn't ended.", _dim);
@@ -235,7 +249,8 @@ namespace Halobellum.UI
         private void DrawMap(Rect map, BattleStats stats, Texture2D picture, Match match, Func<SpellStats, Texture2D> spellIcon, Color playerColor, Color enemyColor)
         {
             Color old = GUI.color;
-            if (picture != null) GUI.DrawTexture(map, picture, ScaleMode.StretchToFill);
+            if (picture != null && Turned) GUI.DrawTextureWithTexCoords(map, picture, new Rect(1f, 1f, -1f, -1f)); // Taken from Team A's side: turned for Team B.
+            else if (picture != null) GUI.DrawTexture(map, picture, ScaleMode.StretchToFill);
             else
             {
                 // No picture (a run that can't render): the field and its halves.
@@ -248,13 +263,13 @@ namespace Halobellum.UI
             GUI.color = new Color(1f, 1f, 1f, 0.35f);
             foreach (float sign in new[] { -1f, 1f })
             {
-                Vector2 near = OnMap(map, stats, new Vec2(sign * stats.FlankZoneFrom, 0f)), far = OnMap(map, stats, new Vec2(sign * stats.FlankZoneTo, 0f));
+                Vector2 near = OnMap(map, stats, new Vec2(sign * stats.FlankZoneFrom, 0f), Turned), far = OnMap(map, stats, new Vec2(sign * stats.FlankZoneTo, 0f), Turned);
                 Outline(new Rect(Mathf.Min(near.x, far.x), map.y + 2f, Mathf.Abs(far.x - near.x), map.height - 4f), 1f);
             }
             GUI.color = old;
 
             Event current = Event.current;
-            BattleStatsLine hovered = map.Contains(current.mousePosition) ? LineAt(map, stats, current.mousePosition) : null;
+            BattleStatsLine hovered = map.Contains(current.mousePosition) ? LineAt(map, stats, current.mousePosition, Turned) : null;
             if (current.type == EventType.MouseDown && current.button == 0 && map.Contains(current.mousePosition))
             {
                 Pick(stats, hovered == Picked ? null : hovered);
@@ -274,7 +289,7 @@ namespace Halobellum.UI
 
             if (hovered != null)
             {
-                Vector2 spot = OnMap(map, stats, hovered.Start);
+                Vector2 spot = OnMap(map, stats, hovered.Start, Turned);
                 string text = Title(hovered) + (hovered.ArrivesLate ? ": flanked, and came late" : "");
                 float width = _tip.CalcSize(new GUIContent(text)).x + 16f;
                 var tip = new Rect(Mathf.Clamp(spot.x - width * 0.5f, map.x, map.xMax - width), spot.y - MapIcon - 26f, width, 24f);
@@ -286,10 +301,10 @@ namespace Halobellum.UI
 
         private void DrawMapIcon(Rect map, BattleStats stats, BattleStatsLine line, float size, Match match, Func<SpellStats, Texture2D> spellIcon, Color playerColor, Color enemyColor, bool picked)
         {
-            Vector2 spot = OnMap(map, stats, line.Start);
+            Vector2 spot = OnMap(map, stats, line.Start, Turned);
             var rect = new Rect(spot.x - size * 0.5f, spot.y - size * 0.5f, size, size);
-            Color color = line.Team == Team.A ? playerColor : enemyColor;
-            string faction = (line.Team == Team.A ? match.Player : match.Enemy).Faction?.Name;
+            Color color = line.Team == LocalTeam ? playerColor : enemyColor;
+            string faction = match.Get(line.Team).Faction?.Name;
             DrawIcon(rect, line, color, faction, spellIcon, picked);
         }
 

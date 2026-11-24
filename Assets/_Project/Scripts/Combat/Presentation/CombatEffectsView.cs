@@ -183,7 +183,9 @@ namespace Halobellum.Presentation
             WeaponStats weapon = unit.Weapons[weaponIndex].Stats;
             Dictionary<WeaponStats, WeaponLook> looks = unit.Team == Team.A ? _looksA : _looksB;
             if (looks.TryGetValue(weapon, out WeaponLook look)) return look;
-            look = WeaponLooks.For(weapon, unit.Stats, BattleFactions.OfUnit(unit.Stats, unit.Team), unit.Team, _mirror);
+            // In a mirror match the other side's shots are pushed to red: the side that is not the local one (UnitViewManager.LocalTeam, M11).
+            Team shownAs = _units == null || unit.Team == _units.LocalTeam ? Team.A : Team.B;
+            look = WeaponLooks.For(weapon, unit.Stats, BattleFactions.OfUnit(unit.Stats, unit.Team), shownAs, _mirror);
             looks[weapon] = look;
             return look;
         }

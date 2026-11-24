@@ -1,6 +1,6 @@
 // TopSquadGlow.cs
 // A soft glow on the ground under the squad of each side that has dealt the most damage this battle (asked by the owner): blue under the
-// player's (Team A, also in autoplay and replays), red under the enemy's. Damage is counted as the Battle stats "Dealt" column counts it
+// player's (MatchController.LocalTeam: Team A, also in autoplay and replays; Team B for a LAN guest), red under the enemy's. Damage is counted as the Battle stats "Dealt" column counts it
 // (SquadDamageLeaders), again whenever the battle has moved on. Only the leader's own bodies glow; a leader that is wiped out stays the
 // leader until another squad passes it. The glows stay through the result, the card screen and the next deployment (on the player's
 // squad and on the enemy's grey ghost, D25), and go the moment the next battle starts. The Sandbox has none (it has no MatchController).
@@ -126,8 +126,10 @@ namespace Halobellum.Presentation
                         _leaders.Count(sim, m.Player.Squads.Count + m.Enemy.Squads.Count);
                         Remember(m);
                     }
-                    BlueSquadId = _leaders.TopA >= 0 && _leaders.TopA < sim.Squads.Count ? sim.Squads[_leaders.TopA].Id : -1;
-                    RedSquadId = _leaders.TopB >= 0 && _leaders.TopB < sim.Squads.Count ? sim.Squads[_leaders.TopB].Id : -1;
+                    bool localA = _match.LocalTeam == Team.A;
+                    int blue = localA ? _leaders.TopA : _leaders.TopB, red = localA ? _leaders.TopB : _leaders.TopA;
+                    BlueSquadId = blue >= 0 && blue < sim.Squads.Count ? sim.Squads[blue].Id : -1;
+                    RedSquadId = red >= 0 && red < sim.Squads.Count ? sim.Squads[red].Id : -1;
                 }
                 else if (m.Phase == MatchPhase.Deployment || m.Phase == MatchPhase.Cards) // The preview: last battle's leaders.
                 {
@@ -138,16 +140,20 @@ namespace Halobellum.Presentation
             Draw(sim);
         }
 
-        /// <summary>Who leads, by what lasts past the battle: the player's placed squad and the enemy's squad as seen at the battle start.</summary>
+        /// <summary>Who leads, by what lasts past the battle: the local side's placed squad and the other side's squad as seen at the battle start.</summary>
         private void Remember(Match m)
         {
-            int playerSquads = m.Player.Squads.Count;
-            int a = _leaders.TopA;
-            _bluePlacedId = a >= 0 && a < playerSquads ? m.Player.Squads[a].Id : -1;
-            // Simulation squad i is placed squad i, Team A's first; SeenArmy(B) was copied from the enemy's squads, in order, at this battle's start.
-            IReadOnlyList<SeenSquad> seen = m.SeenArmy(Team.B);
-            int j = _leaders.TopB - playerSquads;
-            _redGhost = _leaders.TopB >= 0 && j >= 0 && j < seen.Count ? seen[j] : null;
+            // Simulation squad i is placed squad i, Team A's first; SeenArmy(side) was copied from that side's squads, in order, at this battle's start.
+            int squadsA = m.Player.Squads.Count;
+            Team local = _match.LocalTeam;
+            int own = local == Team.A ? _leaders.TopA : _leaders.TopB - squadsA;
+            int other = local == Team.A ? _leaders.TopB - squadsA : _leaders.TopA;
+            bool ownLeads = local == Team.A ? _leaders.TopA >= 0 : _leaders.TopB >= 0;
+            bool otherLeads = local == Team.A ? _leaders.TopB >= 0 : _leaders.TopA >= 0;
+            List<PlacedSquad> mine = m.Get(local).Squads;
+            _bluePlacedId = ownLeads && own >= 0 && own < mine.Count ? mine[own].Id : -1;
+            IReadOnlyList<SeenSquad> seen = m.SeenArmy(local.Opponent());
+            _redGhost = otherLeads && other >= 0 && other < seen.Count ? seen[other] : null;
         }
 
         private void Forget()

@@ -39,7 +39,7 @@ namespace Halobellum.UI
         public static GUIStyle BigButton { get; private set; }
         public static GUIStyle SmallButton { get; private set; }
 
-        private static GUIStyle _clear, _sliderThumb;
+        private static GUIStyle _clear, _sliderThumb, _field;
         private static Texture2D _fadeRight, _fadeDown;
         private static GUISkin _builtFor;
         private static MenuLook _look;
@@ -89,6 +89,21 @@ namespace Halobellum.UI
             SmallButton = Text(textFont, 19, Ink, TextAnchor.MiddleCenter);
             _clear = new GUIStyle();
             _sliderThumb = new GUIStyle { fixedWidth = 20f, fixedHeight = 28f };
+            _field = new GUIStyle(GUI.skin.textField)
+            {
+                font = textFont,
+                fontSize = 19,
+                alignment = TextAnchor.MiddleLeft,
+                wordWrap = false,
+                clipping = TextClipping.Clip,
+                padding = new RectOffset(0, 0, 0, 0),
+                margin = new RectOffset(0, 0, 0, 0),
+            };
+            foreach (GUIStyleState state in new[] { _field.normal, _field.hover, _field.focused, _field.active, _field.onNormal, _field.onHover, _field.onFocused, _field.onActive })
+            {
+                state.background = null;
+                state.textColor = Ink;
+            }
 
             _fadeRight = MakeFade(256, 1, true);
             _fadeDown = MakeFade(1, 256, false);
@@ -295,6 +310,28 @@ namespace Halobellum.UI
                 current.Use();
             }
             return selected;
+        }
+
+        /// <summary>
+        /// A box to type a line of text in (the LAN Game page's name and address, M11). Returns the text now. It has a name (the key), so a
+        /// test tool or the page can give it the keyboard (GUI.FocusControl).
+        /// </summary>
+        public static string TextField(Rect rect, string text, int maxLength, string key)
+        {
+            bool hover = GUI.enabled && rect.Contains(Event.current.mousePosition);
+            bool focused = GUI.GetNameOfFocusedControl() == key;
+            if (Event.current.type == EventType.Repaint)
+            {
+                Fill(rect, new Color(0.02f, 0.02f, 0.03f, GUI.enabled ? 0.85f : 0.45f));
+                Outline(rect, focused ? Accent : hover ? new Color(Accent.r, Accent.g, Accent.b, 0.7f) : Edge);
+            }
+            if (GUI.enabled) UiAudio.Watch(rect);
+            GUI.SetNextControlName(key);
+            Color old = GUI.color;
+            if (!GUI.enabled) GUI.color = new Color(1f, 1f, 1f, 0.55f);
+            string result = GUI.TextField(new Rect(rect.x + 12f, rect.y, rect.width - 24f, rect.height), text ?? "", maxLength, _field);
+            GUI.color = old;
+            return result;
         }
 
         /// <summary>How wide each arrow of a Stepper is.</summary>

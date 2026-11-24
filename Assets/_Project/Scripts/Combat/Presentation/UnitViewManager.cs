@@ -19,6 +19,8 @@
 // A machine a Seeder's seed has taken over (D122) neither blows up nor falls: it stays where it died, in the air if it flew, while the growths of the
 // Flood's version of it (copied from that model) swell on it from nothing, until it rises as that unit.
 // The simulation's 2D position (x, y) becomes the world position (x, height, y).
+// LocalTeam (M11) is the side drawn as "yours": its bodies take the own colour (blue) and its health bars the friendly fill (green), the other side's red.
+// It is Team A except for a LAN guest; MatchController sets it before a battle or preview is shown.
 // Depends on: BattleController, SquadSelection, PlaceholderArt, Halobellum.Combat, UnityEngine.
 
 using System;
@@ -33,11 +35,13 @@ namespace Halobellum.Presentation
     public sealed class UnitViewManager : MonoBehaviour
     {
         [Header("Colors")]
+        [Tooltip("The local side's colour (Team A, except for a LAN guest).")]
         [SerializeField] private Color teamAColor = new Color(0.25f, 0.45f, 0.95f);
+        [Tooltip("The other side's colour.")]
         [SerializeField] private Color teamBColor = new Color(0.9f, 0.3f, 0.22f);
         [SerializeField] private Color selectionColor = new Color(1f, 0.85f, 0.2f);
         [SerializeField] private Color healthBackColor = new Color(0.08f, 0.08f, 0.08f);
-        [Tooltip("Health bars tell the sides apart (D43): your units are green, the enemy's red.")]
+        [Tooltip("Health bars tell the sides apart (D43): your units (LocalTeam) are green, the enemy's red.")]
         [SerializeField] private Color friendlyHealthColor = new Color(0.3f, 0.9f, 0.3f);
         [SerializeField] private Color enemyHealthColor = new Color(0.95f, 0.25f, 0.2f);
         [SerializeField] private Color shieldColor = new Color(0.25f, 0.6f, 1f);
@@ -199,6 +203,15 @@ namespace Halobellum.Presentation
 
         /// <summary>Units of this side are drawn as grey ghosts (set before the battle is shown), or null.</summary>
         public Team? GhostTeam { get; set; }
+        /// <summary>The side drawn as yours, in the own colour with friendly health bars (set before the battle is shown). Team A except for a LAN guest.</summary>
+        public Team LocalTeam { get; set; } = Team.A;
+        /// <summary>A side's body colour: the own colour for LocalTeam, the enemy's for the other.</summary>
+        public Color SideColor(Team team) => team == LocalTeam ? teamAColor : teamBColor;
+        /// <summary>The own side's body colour (for tests).</summary>
+        public Color OwnColor => teamAColor;
+        /// <summary>True if this unit's health bar has the friendly (green) fill (for tests).</summary>
+        public bool HasFriendlyHealthBar(SimUnit unit) =>
+            unit != null && unit.Id >= 0 && unit.Id < _views.Count && _views[unit.Id]?.FillRenderer != null && _views[unit.Id].FillRenderer.sharedMaterial == _fillFriendly;
         /// <summary>Which simulation squads show the level-up arrow (null = none). Asked every frame.</summary>
         public Func<int, bool> LevelUpReady { get; set; }
         /// <summary>The ghost color (for tests).</summary>
@@ -614,7 +627,7 @@ namespace Halobellum.Presentation
             view.Root.transform.SetParent(container, false);
 
             // A tower is always there, so it is never a grey memory of the last battle.
-            Color color = GhostTeam == unit.Team && !stats.IsTower ? ghostColor : unit.Team == Team.A ? teamAColor : teamBColor;
+            Color color = GhostTeam == unit.Team && !stats.IsTower ? ghostColor : SideColor(unit.Team);
             if (stats.InfectedFrom != null) color = Color.Lerp(color, infectedColor, 0.55f);
             Material teamMaterial = PlaceholderArt.MaterialFor(color);
             GameObject prefab = _battle.PrefabFor(stats.InfectedFrom ?? stats);
@@ -688,7 +701,7 @@ namespace Halobellum.Presentation
             view.Bar.localPosition = new Vector3(0f, barY, 0f);
             Transform back = PlaceholderArt.CreatePart("Back", view.Bar, PlaceholderArt.Quad, PlaceholderArt.MaterialFor(healthBackColor));
             back.localScale = new Vector3(view.BarWidth + 0.08f, healthBarHeight + 0.08f, 1f);
-            view.Fill = PlaceholderArt.CreatePart("Fill", view.Bar, PlaceholderArt.Quad, unit.Team == Team.A ? _fillFriendly : _fillEnemy);
+            view.Fill = PlaceholderArt.CreatePart("Fill", view.Bar, PlaceholderArt.Quad, unit.Team == LocalTeam ? _fillFriendly : _fillEnemy);
             view.FillRenderer = view.Fill.GetComponent<MeshRenderer>();
             view.Fill.localPosition = new Vector3(0f, 0f, -0.01f);
             view.Bar.gameObject.SetActive(false);

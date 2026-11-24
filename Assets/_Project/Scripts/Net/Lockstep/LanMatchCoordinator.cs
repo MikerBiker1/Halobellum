@@ -190,6 +190,9 @@ namespace Halobellum.Net
         /// <summary>The other side left or the connection ended after the match was over (not an error then).</summary>
         public bool OpponentGone { get; private set; }
 
+        /// <summary>The hash of the last round result applied here (RoundOutcome.Hash: the host's own, or on the guest the host's); 0 before the first.</summary>
+        public ulong LastOutcomeHash { get; private set; }
+
         /// <summary>A short line for the HUD.</summary>
         public string StatusText
         {
@@ -277,6 +280,7 @@ namespace Halobellum.Net
             {
                 RoundOutcome outcome = Match.OutcomeOfCurrentBattle();
                 RoundSummary summary = Match.FinishBattle(outcome);
+                LastOutcomeHash = outcome.Hash();
                 ulong state = MatchStateHash.Compute(Match);
                 Channel.Send(new NetMessage(LanMessageTypes.BattleResult).Set(LanFields.Round, outcome.Round).Set(LanFields.Outcome, outcome.ToText())
                     .Set(LanFields.Hash, outcome.Hash()).Set(LanFields.State, state));
@@ -505,6 +509,7 @@ namespace Halobellum.Net
                 return;
             }
             finishWanted = false;
+            LastOutcomeHash = result.Hash;
             if (differed)
             {
                 hostResultRounds.Add(round);

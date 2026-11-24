@@ -5,6 +5,8 @@
 //          where it is. A drag that starts over a HUD window does nothing, and a short right-click keeps its old meanings: RightClick tells them apart.
 //   Zoom:  mouse scroll wheel, unless the pointer is over a HUD window (it scrolls the window's list instead: UiHitAreas).
 //   C:     back to the view the scene started with.
+// The home view is from the local side's edge (M11): Team A looks north from the south; a LAN guest (Team B) looks south from the north, the view turned
+// 180 degrees and its focus mirrored. MatchController sets it with ViewFrom.
 // Its focus point stays inside the arena. It runs before other scripts' LateUpdate, so that health bars and whatever else faces the camera turn with it in the same frame.
 // Test tools get the same default view unless the command line says otherwise: -cameraYaw <degrees> and -cameraPitch <degrees>.
 // Put it on the Main Camera. Values are camera feel settings, adjustable in the Inspector.
@@ -14,6 +16,7 @@ using System;
 using System.Globalization;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Halobellum.Core;
 
 namespace Halobellum.Presentation
 {
@@ -93,7 +96,7 @@ namespace Halobellum.Presentation
         /// <summary>The point on the ground the camera looks at (x, z).</summary>
         public Vector2 Focus => _focus;
 
-        /// <summary>Which way the camera faces, in degrees: 0 is north, from Team A's side, and 90 is east.</summary>
+        /// <summary>Which way the camera faces, in degrees: 0 is north, from Team A's side, 90 is east and 180 is south, from Team B's side.</summary>
         public float Yaw => _yaw;
 
         /// <summary>How far the camera looks down, in degrees.</summary>
@@ -139,12 +142,28 @@ namespace Halobellum.Presentation
             _distance = Mathf.Clamp(_distance, minDistance, maxDistance);
         }
 
+        /// <summary>The side whose edge the home view looks from: Team A (yaw 0), or Team B (yaw 180, the focus mirrored).</summary>
+        public Team HomeTeam { get; private set; } = Team.A;
+
+        /// <summary>The home view's yaw for a side: 0 from Team A's edge, 180 from Team B's.</summary>
+        public static float HomeYaw(Team team) => team == Team.B ? 180f : 0f;
+
+        /// <summary>The home view's focus for a side: Team B's is Team A's turned 180 degrees about the field's centre.</summary>
+        public static Vector2 HomeFocus(Vector2 startFocus, Team team) => team == Team.B ? -startFocus : startFocus;
+
+        /// <summary>Makes the home view the one from this side's edge, and goes there.</summary>
+        public void ViewFrom(Team team)
+        {
+            HomeTeam = team;
+            ResetView();
+        }
+
         /// <summary>Back to the view the scene started with: the C key.</summary>
         public void ResetView()
         {
-            _focus = startFocus;
+            _focus = HomeFocus(startFocus, HomeTeam);
             _distance = Mathf.Clamp(startDistance, minDistance, maxDistance);
-            _yaw = 0f;
+            _yaw = HomeYaw(HomeTeam);
             _pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
             ClampFocus();
             Apply();

@@ -191,6 +191,24 @@ namespace Halobellum.Tests.Net
         }
 
         [Test]
+        public void AMatchStartTheGuestCannotBuild_IsRefused_InsteadOfWaitingForEver()
+        {
+            LanMemoryChannel.CreatePair(out LanMemoryChannel hostEnd, out LanMemoryChannel guestEnd);
+            LanMatchCoordinator host = LanMatchStart.BeginAsHost(hostEnd, LockstepTestKit.Rules(), TestRules.Default(), LockstepTestKit.Factions(), LockstepTestKit.Settings(9));
+            // Content the guest's factory cannot handle: building the match throws.
+            var start = new LanGuestStart(guestEnd, LockstepTestKit.Rules(), TestRules.Default(), new List<FactionInfo> { null });
+            start.Poll();
+            Assert.AreEqual(LanGuestStartState.Refused, start.State, start.Reason);
+            StringAssert.StartsWith("The host's match could not be built here: ", start.Reason);
+            Assert.IsNull(start.Coordinator);
+            Assert.IsFalse(guestEnd.IsOpen);
+
+            host.Update();
+            Assert.AreEqual(LanMatchState.OpponentLeft, host.State, "The host is told and does not wait at the draft.");
+            StringAssert.Contains("could not be built here", host.LastError);
+        }
+
+        [Test]
         public void TheMatchStart_ReadsBack_AndAnUnknownModeIsAFormatError()
         {
             var start = new LanMatchStart { Settings = LockstepTestKit.Settings(-5, MatchMode.UnlockSkirmish, 1300), Content = ulong.MaxValue - 3, State = 1UL << 63 };

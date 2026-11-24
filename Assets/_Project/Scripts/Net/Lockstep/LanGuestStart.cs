@@ -1,7 +1,8 @@
 // LanGuestStart.cs
 // The guest's side of the match start: it waits for the host's MatchStart, builds the same two-humans Match from the host's
 // settings with its own rules and factions (LanMatchFactory.Build), and checks that the content fingerprint and the fresh state
-// hash agree with the host's. If they do, it hands over a LanMatchCoordinator for Team B. If not, it tells the host why with
+// hash agree with the host's. If they do, it hands over a LanMatchCoordinator for Team B. If not (or the match cannot be built here at
+// all: an exception while building it), it tells the host why with
 // Leave {refused: true, reason}, closes the channel and stays Refused with the same reason.
 // It reads one message at a time and stops at the MatchStart, so anything the host sends after it (its starting card, say) is
 // left in the channel for the coordinator.
@@ -105,8 +106,20 @@ namespace Halobellum.Net
                 Refuse(LanMatchStart.Check(start, 0, 0));
                 return;
             }
-            Match match = LanMatchFactory.Build(freshRules, combatRules, factions, start.Settings, out ulong content);
-            string reason = LanMatchStart.Check(start, content, MatchStateHash.Compute(match));
+            Match match;
+            string reason;
+            try
+            {
+                match = LanMatchFactory.Build(freshRules, combatRules, factions, start.Settings, out ulong content);
+                reason = LanMatchStart.Check(start, content, MatchStateHash.Compute(match));
+            }
+            catch (Exception e)
+            {
+                // The MatchStart is read already: without this the guest would wait for it for ever, and the host at the draft.
+                NetLog.Write(log, "Building the host's match failed: " + e);
+                Refuse("The host's match could not be built here: " + e.Message);
+                return;
+            }
             if (reason != null)
             {
                 Refuse(reason);
