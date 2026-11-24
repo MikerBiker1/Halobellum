@@ -8,6 +8,10 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.416.0 · 2026-11-23
+- **Pelican and Covenant Phantom health:** the Pelican has 900 health (was 1400) and its autocannon deals 32 a shot (was 25); the Covenant Phantom has 1000 (was 1550) and its turrets deal 20 (was 15), in line with other 300-credit units. The AI's counter table measured the two again: the Pelican now loses to Warthogs, Ghosts, Choppers, Marauders and Spartan Snipers. (D179)
+- **Sub-factions brought back into the band:** Gremlin EMP Railgun 46 (was 38), Grizzly Twin Cannons 120 (was 110), Infested Elite Scythe Claw 70 (was 60), Infested Banshee Spore Bomb 42 (was 37), Infested Wraith mortar 98 (was 90), Spawner Spore Lash 62 (was 55), Brute Grenadier grenades 32 (was 35). Insane against Insane at 2000 health (14,400 matches): every sub-faction 48.1% to 52.0%, every faction 49.6% to 50.4%. (D179)
+
 ## 0.415.2 · 2026-11-23
 - **Transport troops deal no base damage:** the Marines a Pelican drops, the Covenant Phantom's Grunts and an Infected Phantom's Combat Forms no longer hit the enemy base at the round's end, like summoned bodies. The transport itself still does. (D178)
 
