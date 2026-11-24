@@ -8,6 +8,9 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.417.0 · 2026-11-24
+- **LAN Game:** a new main menu item to play one against one with another person on the same local network. One player hosts (Faction mode or Unlock Skirmish) and the other joins from the list of games found or by the address the host's screen shows. Both deploy at the same time and the battle plays on both screens; each sees their own army at the bottom. The two games send only decisions and check they agree before every battle. No pause during a LAN battle; leaving forfeits. See the LAN Game page. (D182)
+
 ## 0.416.2 · 2026-11-24
 - **Heavy Grunts health:** each Heavy Grunt has 130 health (was 150). Unggoy Rebellion was the sub-faction furthest from 50%. Insane against Insane at 2000 health over five seeds (18,000 matches): Unggoy Rebellion 50.0% on average (was 51.2%), every sub-faction 49.2% to 50.8%, every faction 49.7% to 50.2%. (D181)
 

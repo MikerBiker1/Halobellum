@@ -8,7 +8,7 @@ blurb: Faction mode, Unlock Skirmish, the Tutorial and the Sandbox, plus the in-
 
 ## The main menu
 
-Each launch opens with a disclaimer; click anywhere to go on. The main menu has **Play**, **Settings** and **Quit**, with the game's version in the lower left. Behind it plays a battle of vehicles; **Settings → Menu background → Classic** switches to the older menu scene.
+Each launch opens with a disclaimer; click anywhere to go on. The main menu has **Play**, **LAN Game** (see [LAN Game](#/page/lan)), **Settings** and **Quit**, with the game's version in the lower left. Behind it plays a battle of vehicles; **Settings → Menu background → Classic** switches to the older menu scene.
 
 ## The Play page
 
