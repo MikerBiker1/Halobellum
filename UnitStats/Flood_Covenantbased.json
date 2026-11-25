@@ -1,6 +1,6 @@
 {
   "_help": "Halobellum unit stats: Flood, Covenant-based exclusives. Change numbers, then restart the game. If anything is wrong, the main menu says which file, line and field, and the game uses its own values for every unit; it never changes this file. Delete this file to get this version's values back. A new version of the game writes its own values over these files, so keep a copy of your changes.",
-  "gameVersion": "0.417.0",
+  "gameVersion": "0.418.0",
   "units": [
     {
       "name": "Infected Phantom",
