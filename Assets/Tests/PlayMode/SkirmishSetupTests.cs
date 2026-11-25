@@ -64,7 +64,7 @@ namespace Halobellum.Tests
             Assert.IsTrue(Controller().ChooseDraft(0).Ok, Controller().Message);
             yield return null;
             Assert.AreEqual(health, match.Player.BaseHealth);
-            Assert.AreEqual(70, match.Player.Roster.Count);
+            Assert.AreEqual(69, match.Player.Roster.Count, "34 base units and 35 exclusives: the Infested Grunt is gone (D116).");
             Assert.AreEqual(MatchPhase.Deployment, match.Phase);
         }
 

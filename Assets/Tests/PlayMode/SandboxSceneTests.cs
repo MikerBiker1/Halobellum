@@ -78,12 +78,14 @@ namespace Halobellum.Tests
         public IEnumerator OffersEverySliceUnit_FromBothFactions_PlusThePlaceholders()
         {
             yield return LoadSandbox();
-            Assert.AreEqual(72, _sandbox.Units.Count, "36 base units, 33 exclusive to a sub-faction, and the 3 placeholders.");
-            Assert.AreEqual(11, _sandbox.Units.Count(u => u.Faction == "Flood"));
+            Assert.AreEqual(72, _sandbox.Units.Count, "34 base units, 35 exclusive to a sub-faction, and the 3 placeholders.");
+            // D157: the Infected Pelican is UNSC-based's alone and the Infected Phantom Covenant-based's, so the Flood base roster is 9.
+            Assert.AreEqual(9, _sandbox.Units.Count(u => u.Faction == "Flood"));
             Assert.AreEqual(12, _sandbox.Units.Count(u => u.Faction == "UNSC"));
             Assert.AreEqual(13, _sandbox.Units.Count(u => u.Faction == "Covenant"));
             Assert.AreEqual(5, _sandbox.Units.Count(u => u.Faction == "UNSC: Noble"));
-            Assert.AreEqual(5, _sandbox.Units.Count(u => u.Faction == "Flood: Covenant-based"));
+            Assert.AreEqual(6, _sandbox.Units.Count(u => u.Faction == "Flood: Covenant-based"), "Five of its own (D116) and the Infected Phantom (D157).");
+            Assert.AreEqual(6, _sandbox.Units.Count(u => u.Faction == "Flood: UNSC-based"), "Five of its own and the Infected Pelican (D157).");
             Assert.AreEqual(3, _sandbox.Units.Count(u => u.Faction == SandboxController.ExtraUnitsLabel));
             Assert.IsTrue(_sandbox.IsDeploying);
         }
@@ -181,8 +183,11 @@ namespace Halobellum.Tests
             SimUnit blue = _battle.Simulation.Units.First(u => u.Team == Team.A);
             SimUnit red = _battle.Simulation.Units.First(u => u.Team == Team.B);
             Assert.AreEqual(views.BodyColor(blue), views.BodyColor(red), "Both sides have the same paint.");
-            Assert.Greater(views.BodyColor(blue).g, views.BodyColor(blue).b, "Olive, not the side's blue.");
-            Transform bar = GameObject.Find("Units").transform.GetChild(blue.Id).Find("Health Bar");
+            // The owner's updated Scorpion (D71) carries its paint in its own textures, on white materials: not the side's blue.
+            Assert.AreEqual(Color.white, views.BodyColor(blue), "Its own paint, not the side's blue.");
+            Transform root = GameObject.Find("Units").transform.GetChild(blue.Id);
+            Assert.IsNotNull(root.GetComponentInChildren<Renderer>().sharedMaterial.GetTexture("_BaseMap"), "The paint is in its textures (D71).");
+            Transform bar = root.Find("Health Bar");
             Assert.Greater(bar.localPosition.y, 2f, "Above the top of the real model.");
         }
 
@@ -713,8 +718,8 @@ namespace Halobellum.Tests
         public IEnumerator OffersEveryItem_OnceEach_NoSpells_AndTheyWorkOnBothSides()
         {
             yield return LoadSandbox();
-            Assert.AreEqual(8, _sandbox.Items.Count, "All 8 items, once each.");
-            Assert.AreEqual(8, _sandbox.Items.Select(i => i.Name).Distinct().Count());
+            Assert.AreEqual(9, _sandbox.Items.Count, "All 9 items, once each (the Energy Barrier is the 9th, D175).");
+            Assert.AreEqual(9, _sandbox.Items.Select(i => i.Name).Distinct().Count());
             Assert.IsTrue(_sandbox.Items.All(i => _sandbox.IconFor(i) != null), "With their icons.");
 
             UnitStats marine = Unit("Marine");

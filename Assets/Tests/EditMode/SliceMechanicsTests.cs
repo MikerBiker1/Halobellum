@@ -252,8 +252,8 @@ namespace Halobellum.Tests
 
             UnitTypeResult marines = result.TeamA.UnitTypes.Single(t => t.UnitName == "Dropped Marine");
             Assert.AreEqual(4, marines.Deployed);
-            Assert.AreEqual(4, marines.Survivors, "Dropped units still alive at the end deal base damage too.");
-            Assert.AreEqual(4f, marines.SurvivorBaseDamage, 1e-3f, "An air carrier's squad is carried, not summoned: it hits the base.");
+            Assert.AreEqual(4, marines.Survivors, "Dropped units still alive at the end count as survivors.");
+            Assert.AreEqual(0f, marines.SurvivorBaseDamage, 1e-3f, "D178: troops a transport drops deal no base damage.");
             Assert.AreEqual(5, result.TeamA.Survivors);
         }
 
