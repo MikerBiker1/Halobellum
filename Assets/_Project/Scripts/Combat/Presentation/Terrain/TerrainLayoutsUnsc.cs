@@ -240,7 +240,7 @@ namespace Halobellum.Presentation
         {
             TerrainTheme mood = theme.Clone();
             mood.SunColor = new Color(1f, 0.9f, 0.72f);
-            mood.SunAngles = new Vector2(44f, -40f);
+            mood.SunAngles = new Vector2(44f, -76f);
             mood.SkyHorizon = new Color(0.86f, 0.8f, 0.66f);
             mood.FogColor = new Color(0.8f, 0.77f, 0.66f);
             return mood;
@@ -381,7 +381,7 @@ namespace Halobellum.Presentation
         {
             TerrainTheme mood = theme.Clone();
             mood.SunColor = new Color(1f, 0.92f, 0.78f);
-            mood.SunAngles = new Vector2(48f, -18f);
+            mood.SunAngles = new Vector2(48f, -68f);
             mood.SkyTop = new Color(0.36f, 0.5f, 0.66f);
             mood.SkyHorizon = new Color(0.85f, 0.74f, 0.58f);
             mood.FogColor = new Color(0.78f, 0.68f, 0.54f);

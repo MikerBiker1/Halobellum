@@ -249,7 +249,7 @@ namespace Halobellum.Presentation
                     float rim = Mathf.Exp(-Mathf.Pow((edge - 0.12f) * 9f, 2f));
                     float streak = Mathf.Pow(Mathf.Clamp01(1f - Mathf.Abs(Fbm(u * 5f + 11f, v * 1.6f + 3f, 3) - 0.5f) * 12f), 3f) * 0.6f;
                     float hue = Mathf.Repeat(lobes * 3.1f + r * 1.7f, 1f);
-                    Color sheen = Color.HSVToRGB(hue, 0.55f, 1f) * (rim * 0.32f + streak * 0.2f);
+                    Color sheen = Color.HSVToRGB(hue, 0.35f, 1f) * (rim * 0.13f + streak * 0.08f);
                     Color body = new Color(0.035f, 0.03f, 0.028f);
                     pixels[y * size + x] = new Color(body.r + sheen.r, body.g + sheen.g, body.b + sheen.b, a * 0.94f);
                 }

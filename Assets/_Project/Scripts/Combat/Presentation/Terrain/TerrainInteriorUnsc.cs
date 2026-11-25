@@ -40,7 +40,7 @@ namespace Halobellum.Presentation
                 // Clean, cool industrial light from high overhead.
                 SunColor = Rgb(240, 246, 255),
                 SunIntensity = 1.15f,
-                SunAngles = new Vector2(62f, -24f),
+                SunAngles = new Vector2(50f, -70f),
                 AmbientSky = Rgb(138, 148, 164),
                 AmbientEquator = Rgb(126, 130, 140),
                 AmbientGround = Rgb(80, 80, 84),
@@ -1020,20 +1020,29 @@ namespace Halobellum.Presentation
 
         private static readonly Color32[] ContainerPaints = { S(86, 96, 66), S(108, 112, 116), S(150, 92, 50), S(70, 82, 96), S(132, 122, 94), S(96, 104, 80) };
 
+        /// <summary>
+        /// One container. Its yellow trim is part of the body rather than painted over it: either a cap along the top edge, on a body that stops under it,
+        /// or a frame at each end, with the body between them. No two faces ever lie in one plane, so the paints can't flicker through each other as the camera moves.
+        /// </summary>
         private static void Container(TerrainMeshBuilder m, TerrainRandom r, Vector3 foot, float length)
         {
             Color32 paint = Vary(r, ContainerPaints[r.Int(ContainerPaints.Length)], 0.07f);
-            const float h = 2.6f, w = 2.44f;
-            m.Box(foot, new Vector3(length, h, w), paint);
-            // Corrugation, cheaply: a darker inset band on the long sides.
-            m.Box(foot + new Vector3(0f, 0.2f, 0f), new Vector3(length - 0.5f, h - 0.4f, w + 0.06f), Shade(paint, 0.74f));
-            // Doors at one end, and yellow trim along the top edge or at the corners.
-            m.Box(foot + new Vector3(length * 0.5f, 0.15f, 0f), new Vector3(0.06f, h - 0.3f, w - 0.25f), Shade(paint, 0.62f));
-            if (r.Chance(0.6f)) m.Box(foot + new Vector3(0f, h - 0.16f, 0f), new Vector3(length + 0.04f, 0.16f, w + 0.04f), Yellow);
+            const float h = 2.6f, w = 2.44f, cap = 0.16f, frame = 0.32f;
+            bool capped = r.Chance(0.6f);
+            float body = capped ? length : length - 2f * frame;
+            m.Box(foot, new Vector3(body, capped ? h - cap : h, w), paint);
+            // Corrugation, cheaply: a darker inset band on the long sides, standing 3 cm proud of them.
+            m.Box(foot + new Vector3(0f, 0.2f, 0f), new Vector3(body - 0.5f, h - 0.4f, w + 0.06f), Shade(paint, 0.74f));
+            if (capped)
+            {
+                m.Box(foot + new Vector3(0f, h - cap, 0f), new Vector3(length + 0.04f, cap, w + 0.04f), Yellow);
+                // Doors at one end (the frames cover the ends of the other kind).
+                m.Box(foot + new Vector3(length * 0.5f, 0.15f, 0f), new Vector3(0.06f, h - 0.45f, w - 0.25f), Shade(paint, 0.62f));
+            }
             else
             {
                 for (int i = -1; i <= 1; i += 2)
-                    m.Box(foot + new Vector3(i * (length * 0.5f - 0.15f), 0f, 0f), new Vector3(0.32f, h + 0.02f, w + 0.04f), Yellow);
+                    m.Box(foot + new Vector3(i * (length - frame) * 0.5f, 0f, 0f), new Vector3(frame, h, w + 0.04f), Yellow);
             }
         }
 

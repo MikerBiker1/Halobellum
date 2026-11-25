@@ -49,7 +49,7 @@ namespace Halobellum.Presentation
                     // A plain, faintly warm key light, bright enough that units stay lit; dim, warm grey ambient. No green: the eeriness comes from the dark and the glows.
                     SunColor = Rgb(255, 240, 230),
                     SunIntensity = 1f,
-                    SunAngles = new Vector2(56f, -22f),
+                    SunAngles = new Vector2(50f, -70f),
                     AmbientSky = Rgb(108, 98, 104),
                     AmbientEquator = Rgb(94, 80, 80),
                     AmbientGround = Rgb(56, 42, 42),

@@ -46,7 +46,7 @@ namespace Halobellum.Presentation
         // Light.
         public Color SunColor;
         public float SunIntensity = 1.2f;
-        public Vector2 SunAngles = new Vector2(50f, -30f); // Pitch and yaw of the light.
+        public Vector2 SunAngles = new Vector2(50f, -72f); // Pitch and yaw of the light. Every look keeps it well to one side (the shadows pass): from behind the camera, each shadow hides behind what casts it.
         public Color AmbientSky, AmbientEquator, AmbientGround;
 
         // Air.
@@ -147,7 +147,7 @@ namespace Halobellum.Presentation
             CloudAmount = 0.75f,
             SunColor = Rgb(255, 244, 222),
             SunIntensity = 1.25f,
-            SunAngles = new Vector2(52f, -32f),
+            SunAngles = new Vector2(50f, -73f),
             AmbientSky = Rgb(150, 170, 196),
             AmbientEquator = Rgb(128, 128, 118),
             AmbientGround = Rgb(82, 72, 58),
@@ -180,7 +180,7 @@ namespace Halobellum.Presentation
             MoonSize = 0.14f,
             SunColor = Rgb(246, 236, 255),
             SunIntensity = 1.2f,
-            SunAngles = new Vector2(42f, -48f),
+            SunAngles = new Vector2(42f, -79f),
             AmbientSky = Rgb(140, 138, 178),
             AmbientEquator = Rgb(120, 110, 134),
             AmbientGround = Rgb(70, 62, 84),
@@ -209,7 +209,7 @@ namespace Halobellum.Presentation
             CloudAmount = 0.85f,
             SunColor = Rgb(240, 242, 212),
             SunIntensity = 1.15f,
-            SunAngles = new Vector2(58f, 26f),
+            SunAngles = new Vector2(50f, 71f),
             AmbientSky = Rgb(124, 130, 108),
             AmbientEquator = Rgb(104, 102, 82),
             AmbientGround = Rgb(66, 58, 44),

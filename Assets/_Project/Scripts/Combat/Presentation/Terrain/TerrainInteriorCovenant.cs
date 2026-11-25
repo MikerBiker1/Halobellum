@@ -38,7 +38,7 @@ namespace Halobellum.Presentation
                 // A cool lavender-white key light from behind the camera's usual view, so units are lit on the side one sees.
                 SunColor = Rgb(236, 228, 255),
                 SunIntensity = 1.1f,
-                SunAngles = new Vector2(50f, -35f),
+                SunAngles = new Vector2(50f, -74f),
                 AmbientSky = Rgb(120, 122, 180),
                 AmbientEquator = Rgb(102, 96, 146),
                 AmbientGround = Rgb(56, 44, 76),

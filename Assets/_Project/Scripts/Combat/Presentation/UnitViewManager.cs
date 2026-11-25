@@ -619,6 +619,21 @@ namespace Halobellum.Presentation
             _shown = null;
         }
 
+        /// <summary>
+        /// A body made from its prefab casts the sun's shadow like a baked one (the shadows pass; High quality only, since the light has none at Low). The prefabs were
+        /// made with shadows off; what glows or shows through (thrusters, shields: the transparent queue) still casts none.
+        /// </summary>
+        private static void CastShadows(Transform body)
+        {
+            foreach (Renderer renderer in body.GetComponentsInChildren<Renderer>(true))
+            {
+                if (!(renderer is MeshRenderer) && !(renderer is SkinnedMeshRenderer)) continue;
+                Material material = renderer.sharedMaterial;
+                if (material == null || material.renderQueue >= 2500) continue;
+                renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+            }
+        }
+
         private View CreateView(SimUnit unit, Transform container)
         {
             UnitStats stats = unit.Stats;
@@ -693,6 +708,7 @@ namespace Halobellum.Presentation
                 body.localScale = PlaceholderArt.BodyScale(stats);
                 body.localPosition = new Vector3(0f, stats.IsAir ? 0f : PlaceholderArt.BodyHeight(stats) * 0.5f, 0f);
             }
+            if (view.Baked == null && GhostTeam != unit.Team && !stats.IsTower) CastShadows(view.Root.transform);
 
             // Health bar: a dark background quad and a colored fill quad that shrinks from the right.
             view.BarWidth = Mathf.Max(healthBarMinWidth, stats.CollisionRadius * 2f);

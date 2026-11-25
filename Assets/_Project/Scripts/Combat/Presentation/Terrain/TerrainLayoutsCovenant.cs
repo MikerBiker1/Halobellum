@@ -115,7 +115,7 @@ namespace Halobellum.Presentation
             mood.SkyHorizon = new Color(0.72f, 0.36f, 0.62f);
             mood.FogColor = new Color(0.55f, 0.3f, 0.52f);
             mood.Cloud = new Color(0.8f, 0.42f, 0.66f);
-            mood.SunAngles = new Vector2(46f, -20f);
+            mood.SunAngles = new Vector2(46f, -69f);
             mood.MoteColor = new Color(1f, 0.5f, 0.9f);
             return mood;
         }
@@ -247,7 +247,7 @@ namespace Halobellum.Presentation
             mood.Cloud = new Color(0.72f, 0.82f, 0.88f);
             mood.Haze = new Color(0.66f, 0.76f, 0.84f);
             mood.SunColor = new Color(0.94f, 0.97f, 1f);
-            mood.SunAngles = new Vector2(38f, -58f);
+            mood.SunAngles = new Vector2(38f, -82f);
             mood.MoteColor = new Color(0.6f, 1f, 0.9f);
             return mood;
         }
