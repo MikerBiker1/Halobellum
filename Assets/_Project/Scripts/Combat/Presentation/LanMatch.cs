@@ -15,9 +15,15 @@
 // Leaving the scene, by any way, tells the other game (Leave). A final state (Desync, OpponentLeft, ConnectionLost) shows its
 // screen (MatchHud) with a way back to the menu. So does a start that failed with an exception (FailStart: the other game is told,
 // and the log says "[LAN] ended StartFailed ...").
+// New game (the match-over panel): RequestRematch tells the other game. Once both pressed it (LanMatchCoordinator.RematchAgreed),
+// StartRematch hands a new LanLaunch over the same open connection and loads the Match scene again (GameFlow.StartLanMatch): the
+// host with the same mode, base health and cards and a new seed, the guest with no settings (it waits for the host's MatchStart).
+// From then on this driver does nothing more and its Leave neither tells the other game nor closes the connection, so the old
+// scene's teardown (OnDestroy) leaves the connection to the new match.
 // A -lanDemo run (LanLaunch.Demo): the Insane AI plays this side through the same steps as a player (the starting card through
 // the coordinator, its card and deployment on the Match for its own team, then Ready), battles run at the fastest speed a player
-// can pick, and the game quits a few seconds after the match ends.
+// can pick, and the game quits a few seconds after the match ends. With -lanDemoMatches N it presses New game after each of the
+// first N - 1 matches instead; each new match logs "[LAN] rematch <k>".
 // Depends on: MatchController, BattleController, GameFlow (LanLaunch), LanGameIdentity, Halobellum.Net (LanMatchCoordinator,
 //             LanMatchStart, LanGuestStart, LanMatchLog), Halobellum.Economy, Halobellum.Combat, Halobellum.Core, UnityEngine.
 
@@ -44,6 +50,8 @@ namespace Halobellum.Presentation
         private RuleBasedAi _ai;
         private float _demoWaitUntil;
         private float _quitAt = -1f;
+        private LanMatchSettings _settings; // host: the settings of this match (the next game keeps all but the seed)
+        private bool _handedOver;           // New game: the connection belongs to the next match
 
         /// <summary>The LAN match of the loaded scene, or null.</summary>
         public static LanMatch Current { get; private set; }
@@ -160,6 +168,18 @@ namespace Halobellum.Presentation
         /// <summary>Guest, on a round's result: this game's own battle ended differently, so the result shown is the host's.</summary>
         public bool HostResultUsedThisRound => Coordinator != null && Coordinator.HostResultUsedThisRound;
 
+        /// <summary>New game can be pressed: the match is over, the other player is still here, and this player has not pressed it yet.</summary>
+        public bool CanRequestRematch => !_handedOver && Coordinator != null && Coordinator.CanRematch && !Coordinator.LocalWantsRematch;
+
+        /// <summary>The match-over line about New game: waiting for the other player, the other player wants one, or it went back to the menu.</summary>
+        public string RematchStatus => Coordinator == null ? "" : Coordinator.RematchStatus(OpponentName);
+
+        /// <summary>
+        /// New game: the other game is told. When the other player pressed it too (now or later), the next match starts on the same
+        /// connection (StartRematch, from Update). False when no new game is possible.
+        /// </summary>
+        public bool RequestRematch() => !_handedOver && Coordinator != null && Coordinator.RequestRematch();
+
         private void Awake() => Current = this;
 
         private void Start()
@@ -179,6 +199,7 @@ namespace Halobellum.Presentation
                 if (Launch.IsHost)
                 {
                     LanMatchSettings settings = Launch.Settings ?? LanMatchSettings.From(Environment.TickCount & 0x7FFFFFFF, null);
+                    _settings = settings.Copy();
                     Coordinator = LanMatchStart.BeginAsHost(Launch.Channel, _controller.FreshRules(), _controller.CombatRules, factions, settings, LanGameIdentity.Log);
                     Begin();
                 }
@@ -245,11 +266,13 @@ namespace Halobellum.Presentation
         {
             Coordinator.BattleFinished += OnRoundFinished;
             _controller.UseMatch(Coordinator.Match, Coordinator.LocalTeam);
+            if (Launch.MatchNumber > 1) Debug.Log(LanMatchLog.Rematch(Launch.MatchNumber - 1));
             if (IsDemo) _ai = new RuleBasedAi(AiDifficulty.Insane, Coordinator.Match.Seed * 31 + (Coordinator.IsHost ? 1 : 2), _controller.Matchups);
         }
 
         private void Update()
         {
+            if (_handedOver) return; // The next match has the connection; this scene is being replaced.
             if (Coordinator == null && _guestStart != null && StartError.Length == 0)
             {
                 try
@@ -277,8 +300,43 @@ namespace Halobellum.Presentation
                     }
                 }
                 if (Coordinator.IsFinished && !_endLogged) LogEnd();
+                if (Coordinator.RematchAgreed)
+                {
+                    StartRematch();
+                    return;
+                }
             }
             if (IsDemo) DemoStep();
+        }
+
+        /// <summary>
+        /// Both players pressed New game: a new launch over the same open connection, and the Match scene loads again. The host keeps
+        /// Team A and this match's mode, base health and cards with a new seed (-lanDemoSeed plus k in a demo given one); the guest
+        /// keeps Team B and waits for the host's MatchStart (put back in front if it came already).
+        /// </summary>
+        private void StartRematch()
+        {
+            ILanChannel channel = Coordinator.TakeRematchChannel();
+            if (channel == null) return;
+            _handedOver = true;
+            Coordinator.BattleFinished -= OnRoundFinished;
+            var next = new LanLaunch
+            {
+                Channel = channel,
+                LocalTeam = Launch.LocalTeam,
+                OpponentName = Launch.OpponentName,
+                Demo = Launch.Demo,
+                DemoMatches = Launch.DemoMatches,
+                DemoSeed = Launch.DemoSeed,
+                MatchNumber = Launch.MatchNumber + 1,
+            };
+            if (Launch.IsHost)
+            {
+                LanMatchSettings last = _settings ?? LanMatchSettings.From(Coordinator.Match.Seed, null);
+                int seed = LanMatchSettings.NextSeed(Coordinator.Match.Seed, Launch.DemoSeed, Launch.MatchNumber, Environment.TickCount & 0x7FFFFFFF);
+                next.Settings = last.WithSeed(seed);
+            }
+            GameFlow.StartLanMatch(next);
         }
 
         /// <summary>MatchController: the local battle is over (its round ending has played). The host finishes now; the guest when the host's result is here.</summary>
@@ -302,6 +360,7 @@ namespace Halobellum.Presentation
         /// <summary>Tells the other game this player leaves (a forfeit during the match) and closes the connection. Safe to call more than once.</summary>
         public void Leave(string reason = LeftReason)
         {
+            if (_handedOver) return; // New game: the connection belongs to the next match.
             if (Coordinator != null) Coordinator.Leave(reason);
             else if (StartError.Length == 0 && Launch?.Channel != null && Launch.Channel.IsOpen)
                 Launch.Channel.Send(new NetMessage(LanMessageTypes.Leave).Set(LanFields.Reason, reason ?? "")); // Still starting (guest): the other game is told, not left to find a lost connection.
@@ -338,6 +397,12 @@ namespace Halobellum.Presentation
         private void DemoStep()
         {
             bool over = Ended || (Coordinator != null && Coordinator.State == LanMatchState.MatchOver);
+            // -lanDemoMatches: more matches to play, so New game instead of quitting (the other side presses it too).
+            if (over && !Ended && Launch.MatchNumber < Launch.DemoMatches && Coordinator.CanRematch)
+            {
+                if (!Coordinator.LocalWantsRematch && Time.unscaledTime >= _demoWaitUntil) RequestRematch();
+                return;
+            }
             if (over)
             {
                 if (_quitAt < 0f) _quitAt = Time.unscaledTime + 3f;

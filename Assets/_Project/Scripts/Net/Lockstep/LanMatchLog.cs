@@ -5,6 +5,7 @@
 //         result> baseA <x> baseB <y>
 //   [LAN] match over winner <A|B>
 //   [LAN] ended <state> <reason>
+//   [LAN] rematch <k>    (New game: the k-th new match on the same connection starts; 1 for the second match)
 // Hashes are 16 hex digits (MatchStateHash.Hex). The bases are after the round's result. The result is the one used (on the guest
 // the host's); "own" is this game's own battle's, so a guest battle that ended differently makes the two logs' lines differ.
 // Plain C# 9 without the engine.
@@ -20,6 +21,9 @@ namespace Halobellum.Net
         public static string Round(int round, string stateHash, ulong outcomeHash, ulong ownOutcomeHash, int baseA, int baseB) =>
             "[LAN] round " + round + " hash " + (string.IsNullOrEmpty(stateHash) ? "none" : stateHash) + " result " + MatchStateHash.Hex(outcomeHash)
             + " own " + MatchStateHash.Hex(ownOutcomeHash) + " baseA " + baseA + " baseB " + baseB;
+
+        /// <summary>"[LAN] rematch k": the k-th new game on the same connection starts (New game; 1 for the second match).</summary>
+        public static string Rematch(int k) => "[LAN] rematch " + k;
 
         public static string MatchOver(Team? winner) => "[LAN] match over winner " + (winner.HasValue ? winner.Value.ToString() : "none");
 

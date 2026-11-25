@@ -2,7 +2,7 @@
 
 The engine-free code that runs one two-humans `Match` over a LAN channel by lockstep of decisions. It lives in `Assets/_Project/Scripts/Net/Lockstep` (assembly `Halobellum.Net`, namespace `Halobellum.Net`). It sits on the transport (`net_transport.md`) and on the two-humans Match (`stage1_api.md`). Nothing here knows about Unity: the Match scene (Stage 4) and the tests drive it the same way, by calling `Update` every frame on the main thread.
 
-Tests: `dotnet test Tools/SimTests --filter "FullyQualifiedName~LanMatchCoordinatorTests"` (18 tests, about 10 s).
+Tests: `dotnet test Tools/SimTests --filter "FullyQualifiedName~LanMatchCoordinatorTests"` (18 tests, about 10 s); New game: `--filter "FullyQualifiedName~LanRematchTests"` (16 tests, about 30 s).
 
 ## Files
 
@@ -80,6 +80,7 @@ The guest builds the match with `LanMatchFactory.Build` from the host's settings
 | `Desync` | either | `round`, `reason` (this game found the match out of sync; the other stops too) |
 | `Leave` | either | `reason`, `refused` (true when the guest refused the MatchStart) |
 | `Status` | both | `round`, `step`: `battleOver` (this game's battle of that round is over) or `continued` (it left that round's result). Only for the HUD (`OpponentStep`); one that makes no sense is ignored, never a desync |
+| `Rematch` | either, once its own match is over | none. This player pressed **New game**. When both did, the host sends the next `MatchStart` on the same connection (see New game below) |
 
 The transport adds `Hello`, `Welcome`, `Reject`, `Ping`, `Pong`. Field names are in `LanFields`, types in `LanMessageTypes`.
 
@@ -119,6 +120,15 @@ bool OpponentGone;                  // the other side left after the match was o
 string StatusText;                  // a short line for the top bar
 ulong LastOutcomeHash;              // RoundOutcome.Hash of the last result applied here (the host's, on both games); 0 before the first
 Match Match; ILanChannel Channel; Team LocalTeam, RemoteTeam; bool IsHost;
+
+// New game, after the match (see below)
+bool RequestRematch();              // sends Rematch once; false unless CanRematch
+bool LocalWantsRematch, OpponentWantsRematch;
+bool CanRematch;                    // MatchOver here, the other game still here, the channel open, not left, not handed over
+bool RematchAgreed;                 // CanRematch and both want it
+ILanChannel TakeRematchChannel();   // once RematchAgreed: the channel for the next match (null before); HandedOver from then on
+bool HandedOver;
+string RematchStatus(string name);  // "Waiting for <name>...", "<name> wants a new game.", "<name> went back to the menu." or ""
 ```
 
 ### Round by round
@@ -141,7 +151,17 @@ The log hook gets every command list: this game's starting card and each Ready's
 - Once the match is over, the other side leaving only sets `OpponentGone`, with its reason in `LastError` (also when the guest's round finished with the host's last result after the host left).
 - A message that breaks the protocol is a desync ("the other game sent ..."): a second starting card, a Ready for a past round, a message for a round more than 2 ahead, a BattleResult sent to the host, or a broken message. Text from the other game in a reason (its message type, its Desync or Leave reason) is cut short (`LanLimits.Clip`, 300 characters), so the Desync sent back stays small.
 - `Update` handles at most `LanLimits.MaxMessagesPerUpdate` (256) messages; the rest wait for the next frame (a close is noticed after them). `LanGuestStart.Poll` does the same. A message or command list that cannot be read is a desync whatever the reader throws (cut-off JSON can give IndexOutOfRange, not only FormatException); it never escapes `Update`, `Ready` or `ChooseDraft`. The other side is sent `Desync`.
-- A final state keeps the channel open, so the `Desync` message is not cut off. `Leave()` closes it: during a match the state becomes `Left`; after a final state (`Desync`, `OpponentLeft`, `ConnectionLost`) or `MatchOver` the state and `LastError` stay as they are (after `MatchOver` the other game is still told).
+- A final state keeps the channel open, so the `Desync` message is not cut off. `Leave()` closes it: during a match the state becomes `Left`; after a final state (`Desync`, `OpponentLeft`, `ConnectionLost`) or `MatchOver` the state and `LastError` stay as they are (after `MatchOver` the other game is still told). After `TakeRematchChannel` it does nothing: the channel belongs to the next match.
+- A message of a type the coordinator does not know is logged and ignored, never a desync. `Rematch` and `MatchStart` are known (New game, below): a `Rematch` is only noted, in any phase; a `MatchStart` during the match, or one sent to the host, is a desync ("the other game sent a match start during the match").
+
+### New game (after the match)
+
+Once a game's own match is over, its player may press **New game** (`RequestRematch`, which sends `Rematch` once). The other game notes a `Rematch` in any phase: the host's match is over first (its result decides), so its `Rematch` can reach the guest while the guest still plays its last battle. `CanRematch` is false until the match is over here.
+
+- **Both want it** (`RematchAgreed`): the coordinator stops reading, so whatever comes next in the channel is the next match's. `TakeRematchChannel()` hands the open channel over and the coordinator is `HandedOver`: `Update` reads nothing and `Leave` neither sends nor closes, so the old Match scene going away leaves the connection to the new one.
+- **The host** starts the next match with `LanMatchStart.BeginAsHost` on that channel (the same mode, base health and cards, a new seed: `LanMatchSettings.WithSeed(LanMatchSettings.NextSeed(last, demoSeed, k, fresh))`, which gives `-lanDemoSeed` + k in a demo given a seed, else a fresh seed, never the last one). It still plays Team A.
+- **The guest** starts it with `LanGuestStart` on the channel it is handed (Team B). The host sends its `MatchStart` only after the guest's `Rematch` is in. If the guest's coordinator still reads one (it came behind the host's `Rematch`, or a host sent it early), it keeps it, stops reading there and counts it as the host's request; `TakeRematchChannel` then puts it back in front (`LanBufferedChannel.PutBackInFront`, which first unwraps buffered channels with nothing left to give, so match after match does not grow a chain). A guest holding the `MatchStart` sends no `Rematch` of its own when it presses New game, since it would reach the next match.
+- **The other game leaves** (Main Menu: `Leave`) or the connection ends while waiting: `OpponentGone`, `CanRematch` is false, and `RematchStatus` says "<name> went back to the menu." The state stays `MatchOver`; it is not an error. A closed channel is noticed also while the coordinator has stopped reading for the next match.
 
 ### Rules for the Match scene (Stage 4)
 
@@ -150,7 +170,8 @@ The log hook gets every command list: this game's starting card and each Ready's
 - Call `Update()` every frame, including during the battle and on the result screen.
 - Show `StatusText` and the flags in the top bar, and `OpponentStep` for the other player. On a final state, show `LastError`.
 - On the guest's result, say so when `HostResultUsedThisRound` (the bases are the host's, the survivors and kills its own battle's).
-- Call `Leave()` whenever the player leaves the match screen (Back to menu, quitting), also after a final state or `MatchOver`: it closes the connection and keeps the error or the result on show.
+- Call `Leave()` whenever the player leaves the match screen (Back to menu, quitting), also after a final state or `MatchOver`: it closes the connection and keeps the error or the result on show. After New game (`TakeRematchChannel`) it does nothing.
+- New game: show `RematchStatus`, call `RequestRematch` on the button, and once `RematchAgreed` take the channel and start the next match with it.
 
 ## Tests (`Assets/Tests/EditMode/Net/Lockstep`)
 
@@ -170,3 +191,13 @@ The log hook gets every command list: this game's starting card and each Ready's
 - broken command lists in a Ready or DraftPick, and broken BattleResult outcomes, give Desync and never an exception (also a broken Ready that arrived before the local Ready);
 - Leave after Desync, OpponentLeft or MatchOver keeps that state and closes the channel; the host leaving after its last result gives the guest OpponentGone with the host's reason;
 - Ready waits for the card; a match against the AI is refused.
+
+`LanRematchTests` (New game; the shorter matches clear the guest's squads and nearly empty its base the same way on both machines after the draft, then both press Ready with no decisions until a base falls):
+
+- two whole AI matches back to back on one channel through New game, over the memory pair (the guest pressing first, and the host pressing first) and over loopback TCP: no desync, the same winner and the same state hashes in each, the second with another seed and the same base health; the host keeps its channel, the guest's coordinator stops at the host's `Rematch` and leaves the `MatchStart` behind it in the channel, and the old coordinators' `Leave` and `Update` leave the channel open;
+- one side going back to the menu instead (the guest or the host, memory and TCP; also before the other asked) gives the other `OpponentGone`, "went back to the menu", no new game and no channel, with the state still `MatchOver`;
+- the host's next `MatchStart` arriving before the guest pressed New game is kept with the starting card behind it, put back in front, and no `Rematch` reaches the next match;
+- the host's `Rematch` arriving during the guest's last battle is kept;
+- a `Rematch` during the match is only noted; a `MatchStart` during the match is a desync;
+- the connection dropping while waiting (memory and TCP), also after the `MatchStart` was kept, ends the wait without an error;
+- the next seed, the settings kept but the seed, `-lanDemoMatches`, `PutBackInFront`, the `[LAN] rematch k` line.

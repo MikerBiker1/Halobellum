@@ -33,7 +33,8 @@
 // In a LAN match (M11 Stage 4, MatchController.Lan) the top bar names the other player and what it is doing (picking, deploying, ready);
 // after the starting card and after Ready a panel says "Waiting for opponent..."; the guest waits for the host's result after a battle;
 // a match that is starting, or that ended without a winner (left, lost, out of sync, with both state hashes), has its own screen with
-// a way back to the menu; and match over has only Main Menu (no rematch, no battle log).
+// a way back to the menu; and match over has New game (another match on the same connection once both press it, with a line:
+// "Waiting for <name>...", "<name> wants a new game.", "<name> went back to the menu.") and Main Menu, but no battle log.
 // Drawn with Unity's immediate-mode GUI; scales with the screen height.
 // Depends on: Halobellum.Presentation (MatchController, BattleController, UiHitAreas),
 //             Halobellum.Economy (Match, PlayerState, RoundSummary, ShopOrder), HudScale, CardLayout, CardScreens, UnitIcons, MenuStyle, SquadStatsWindow, PauseMenu.
@@ -1343,8 +1344,16 @@ namespace Halobellum.UI
             if (GUI.Button(stats, "Battle stats", _button)) OpenBattleStats();
             if (match.Lan != null)
             {
-                // M11: no battle log and no rematch in a LAN match; back to the menu, which closes the connection.
-                if (MenuStyle.Button(new Rect(panel.x + panel.width * 0.5f + 10f, panel.yMax - 58f, 220f, 44f), "Main Menu", _bigButton)) match.Lan.LeaveToMenu();
+                // M11: no battle log in a LAN match. New game asks the other player for another match on the same connection (it
+                // starts once both pressed it); Main Menu leaves, which tells the other game and closes the connection.
+                LanMatch lan = match.Lan;
+                string status = lan.RematchStatus;
+                if (status.Length > 0) GUI.Label(new Rect(panel.x + 20f, panel.yMax - 136f, panel.width - 40f, 28f), status, _smallCentered);
+                bool enabled = GUI.enabled;
+                GUI.enabled = enabled && lan.CanRequestRematch;
+                if (GUI.Button(new Rect(panel.x + panel.width * 0.5f - 230f, panel.yMax - 58f, 220f, 44f), NewGameLabel, _bigButton)) lan.RequestRematch();
+                GUI.enabled = enabled;
+                if (MenuStyle.Button(new Rect(panel.x + panel.width * 0.5f + 10f, panel.yMax - 58f, 220f, 44f), "Main Menu", _bigButton)) lan.LeaveToMenu();
                 return;
             }
             if (GUI.Button(new Rect(panel.x + panel.width * 0.5f + 10f, panel.yMax - 100f, 220f, 34f), "Open battle logs", _button)) Application.OpenURL("file:///" + BattleLogFile.Folder.Replace('\\', '/'));
@@ -1356,6 +1365,9 @@ namespace Halobellum.UI
 
         /// <summary>The words of the wait for the other player.</summary>
         public const string WaitingForOpponentText = "Waiting for opponent...";
+
+        /// <summary>The LAN match-over button that asks the other player for another match on the same connection.</summary>
+        public const string NewGameLabel = "New game";
 
         /// <summary>A panel under the top bar: this side is done, the other player is not (its line says what it is doing).</summary>
         private void DrawWaitingForOpponent(float width, float y, string done)

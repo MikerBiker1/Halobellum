@@ -10,6 +10,9 @@
 //   Status       both:                {round, step}                  only for the HUD: "battleOver" (this game's battle of the round
 //                                                                    is over) or "continued" (it left the round's result); a Status
 //                                                                    that makes no sense is ignored
+//   Rematch      either, after its own match is over: {}           this player pressed New game. When both did, the host sends
+//                                                                    the next MatchStart over the same connection (the coordinator's
+//                                                                    rematch step: RequestRematch, RematchAgreed, TakeRematchChannel)
 // Command lists are MatchCommand.ListToText (one JSON command per line, floats as int bits), so positions go across exactly.
 // Hashes are whole unsigned 64-bit numbers (JsonObject.Set(key, ulong), read with GetULong).
 // Plain C# 9 without the engine.
@@ -27,6 +30,7 @@ namespace Halobellum.Net
         public const string Desync = "Desync";
         public const string Leave = "Leave";
         public const string Status = "Status";
+        public const string Rematch = "Rematch";
     }
 
     /// <summary>The steps a Status message names.</summary>

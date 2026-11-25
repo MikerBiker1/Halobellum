@@ -1,7 +1,7 @@
 // LanBufferedChannel.cs
 // A channel with messages put back in front of it. The guest's lobby reads the host's MatchStart in the menu (that is how it knows the
 // host pressed Start), then hands the session to the Match scene with that message put back, so LanGuestStart reads it there as if it
-// had never been taken.
+// had never been taken. After a match, the guest's coordinator does the same with the host's next MatchStart (New game).
 // Plain C# 9 without the engine.
 // Depends on: ILanChannel, NetMessage.
 
@@ -19,6 +19,16 @@ namespace Halobellum.Net
             Inner = inner ?? throw new ArgumentNullException(nameof(inner));
             if (putBack != null)
                 foreach (NetMessage m in putBack) front.Enqueue(m);
+        }
+
+        /// <summary>
+        /// <paramref name="channel"/> with these messages put back in front. Buffered channels with nothing left to give back are
+        /// unwrapped first, so a connection used for match after match (New game) does not grow a chain of wrappers.
+        /// </summary>
+        public static LanBufferedChannel PutBackInFront(ILanChannel channel, params NetMessage[] putBack)
+        {
+            while (channel is LanBufferedChannel buffered && buffered.PutBack == 0) channel = buffered.Inner;
+            return new LanBufferedChannel(channel, putBack);
         }
 
         /// <summary>The channel underneath (a LanSession in the game).</summary>

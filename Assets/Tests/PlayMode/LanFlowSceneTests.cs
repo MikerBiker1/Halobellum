@@ -6,6 +6,9 @@
 //   controller, which goes through the coordinator and waits for the guest's), both press Ready (the host is then locked out of acting),
 //   and once both games agree on the state the battle starts in the scene with the agreed hash. The pause menu does not stop time in a
 //   LAN match, and leaving forfeits it until it ended. The guest leaving gives the host's end screen.
+//   New game: a match made to end in a round or two (the same change on both games), then the host presses New game and the guest
+//   wants one too: the Match scene loads again with a new two-humans match as Team A, a new seed, on the same open connection, and the
+//   guest builds the same match from the host's next MatchStart.
 //   A start that fails with an exception ends the host's match with its end screen, and the other game is told.
 //   The guest: an in-process host (lobby, then LanMatchStart.BeginAsHost) starts, the guest's lobby sees the MatchStart and GameFlow
 //   starts the LAN match as Team B: the scene reads the host's MatchStart put back for it, builds the same match, and shows it turned.
@@ -185,6 +188,115 @@ namespace Halobellum.Tests
             StringAssert.Contains("left", lan.EndText);
             Assert.IsFalse(PauseMenu.LeavingForfeits, "Nothing left to forfeit.");
             Assert.AreEqual("Quit to Main Menu", PauseMenu.ThirdButtonLabel);
+        }
+
+        [UnityTest]
+        public IEnumerator AfterTheMatch_NewGameOnBothSides_ReloadsTheMatchScene_WithANewMatch_OnTheSameConnection()
+        {
+            _hostLobby = new LanLobby(Loopback());
+            _hostLobby.Host(LanGameIdentity.Hello("Hosty"));
+            _guestSession = LanSession.Join("127.0.0.1", _hostLobby.HostPort, LanGameIdentity.Hello("Guesty"));
+            yield return Until(() => _hostLobby.CanStart && _guestSession.State == LanSessionState.Connected, "the guest joins the host's lobby", () =>
+            {
+                _hostLobby.Update();
+                _guestSession.Poll();
+            });
+            ILanChannel channel = _hostLobby.TakeChannel();
+            var settings = new LanMatchSettings { Seed = 5151, Mode = MatchMode.Faction, BaseHealth = 0, Cards = CardFilter.AllCards };
+            GameFlow.StartLanMatch(new LanLaunch { Channel = channel, LocalTeam = Team.A, Settings = settings, OpponentName = "Guesty" });
+            yield return Until(() => LanMatch.Current != null && LanMatch.Current.Coordinator != null, "the Match scene builds the host's match");
+            LanMatch lan = LanMatch.Current;
+            MatchController host = Object.FindAnyObjectByType<MatchController>();
+            BattleController battle = Object.FindAnyObjectByType<BattleController>();
+            var start = new LanGuestStart(_guestSession, host.FreshRules(), host.CombatRules, host.BuildFactions());
+            yield return Until(() => start.State != LanGuestStartState.Waiting, "the guest reads the host's MatchStart", start.Poll);
+            Assert.AreEqual(LanGuestStartState.Started, start.State, start.Reason);
+            _remote = start.Coordinator;
+
+            Assert.IsTrue(host.ChooseDraft(0).Ok, host.Message);
+            yield return Until(() => _remote.OpponentPickedDraft, "the host's card reaches the guest", _remote.Update);
+            Assert.IsTrue(_remote.ChooseDraft(0).Ok);
+            yield return Until(() => host.Match.Phase == MatchPhase.Deployment, "the guest's card ends the host's draft", _remote.Update);
+
+            // The match is made to end soon, the same way on both games so their states still agree: the guest's squads leave, its base
+            // is nearly gone, and the host's squads are at the top level, so the host's survivors finish it.
+            foreach (Halobellum.Economy.Match m in new[] { host.Match, _remote.Match })
+            {
+                m.Enemy.Squads.Clear();
+                m.Enemy.BaseHealth = 1;
+                foreach (PlacedSquad squad in m.Player.Squads) squad.Level = UnitUpgrades.MaxLevel;
+            }
+            host.RefreshView();
+            for (int round = 0; round < 6 && host.Match.Phase != MatchPhase.MatchOver; round++)
+            {
+                if (host.Match.InCards(Team.A)) Assert.IsTrue(host.SkipCards().Ok, host.Message);
+                if (_remote.Match.InCards(Team.B)) Assert.IsTrue(_remote.Match.SkipCards(Team.B).Ok);
+                host.Ready();
+                Assert.IsTrue(_remote.Ready().Ok, _remote.StatusText);
+                yield return Until(() => host.Match.Phase == MatchPhase.Battle && battle.Simulation == host.Match.CurrentBattle, "the battle starts in the scene", () =>
+                {
+                    _remote.Update();
+                    if (_remote.CanStartBattle && _remote.Match.Phase == MatchPhase.Deployment) Assert.IsNotNull(_remote.StartBattle());
+                });
+                battle.Speed = 16f;
+                _remote.Match.CurrentBattle.Run();
+                _remote.FinishBattle();
+                yield return Until(() => host.Match.Phase != MatchPhase.Battle && _remote.Match.Phase != MatchPhase.Battle, "the round's result on both games", _remote.Update, 180f);
+                if (host.Match.Phase != MatchPhase.Result) break;
+                host.Continue();
+                _remote.ContinueAfterResult();
+            }
+            Assert.AreEqual(MatchPhase.MatchOver, host.Match.Phase);
+            Assert.AreEqual(LanMatchState.MatchOver, lan.Coordinator.State, lan.Coordinator.LastError);
+            Assert.AreEqual(LanMatchState.MatchOver, _remote.State, _remote.LastError);
+            Assert.AreEqual(MatchStateHash.Compute(host.Match), MatchStateHash.Compute(_remote.Match), "The same end on both games.");
+
+            // New game: the host presses it first (the match-over panel's button), then the guest.
+            Assert.IsTrue(lan.CanRequestRematch);
+            Assert.AreEqual("", lan.RematchStatus);
+            Assert.IsFalse(PauseMenu.LeavingForfeits, "Nothing to forfeit once the match is over.");
+            int oldSeed = host.Match.Seed;
+            LogAssert.Expect(LogType.Log, "[LAN] rematch 1");
+            Assert.IsTrue(lan.RequestRematch());
+            Assert.IsFalse(lan.CanRequestRematch, "Pressed once.");
+            Assert.AreEqual("Waiting for Guesty...", lan.RematchStatus);
+            yield return Until(() => _remote.OpponentWantsRematch, "the host's New game reaches the guest", _remote.Update);
+            Assert.IsTrue(_remote.RequestRematch());
+            Assert.IsTrue(_remote.RematchAgreed);
+            ILanChannel guestNext = _remote.TakeRematchChannel();
+            Assert.AreSame(_guestSession, guestNext, "The guest goes on with the same connection.");
+
+            // The host's scene sees both want a new game and loads the Match scene again, over the same connection.
+            yield return Until(() => LanMatch.Current != null && LanMatch.Current != lan && LanMatch.Current.Coordinator != null, "the Match scene loads again with the next match");
+            Assert.IsTrue(lan == null, "The old scene is gone.");
+            LanMatch next = LanMatch.Current;
+            MatchController host2 = Object.FindAnyObjectByType<MatchController>();
+            Assert.AreSame(next, host2.Lan);
+            Assert.AreSame(channel, next.Launch.Channel, "The same connection.");
+            Assert.IsTrue(channel.IsOpen, "The old scene's teardown did not close it.");
+            Assert.IsTrue(_guestSession.IsOpen);
+            Assert.AreEqual(2, next.Launch.MatchNumber);
+            Assert.IsTrue(next.IsHost);
+            Assert.AreEqual("Guesty", next.OpponentName);
+            Assert.IsTrue(host2.Match.IsTwoHumans, "A two-humans match again.");
+            Assert.AreEqual(Team.A, host2.LocalTeam);
+            Assert.AreEqual(MatchPhase.Draft, host2.Match.Phase);
+            Assert.AreNotEqual(oldSeed, host2.Match.Seed, "A new seed.");
+            Assert.AreEqual(MatchMode.Faction, host2.Match.Rules.Mode, "The same mode.");
+
+            // The guest reads the host's next MatchStart on the same connection and builds the same match.
+            var start2 = new LanGuestStart(guestNext, host2.FreshRules(), host2.CombatRules, host2.BuildFactions());
+            yield return Until(() => start2.State != LanGuestStartState.Waiting, "the guest reads the host's next MatchStart", start2.Poll);
+            Assert.AreEqual(LanGuestStartState.Started, start2.State, start2.Reason);
+            _remote = start2.Coordinator;
+            Assert.AreEqual(host2.Match.Seed, _remote.Match.Seed);
+            Assert.AreEqual(Team.B, _remote.LocalTeam);
+            Assert.IsTrue(host2.ChooseDraft(0).Ok, host2.Message);
+            yield return Until(() => _remote.OpponentPickedDraft, "the host's card reaches the guest", _remote.Update);
+            Assert.IsTrue(_remote.ChooseDraft(0).Ok);
+            yield return Until(() => host2.Match.Phase == MatchPhase.Deployment, "the guest's card ends the host's draft", _remote.Update);
+            Assert.AreEqual(MatchStateHash.Compute(host2.Match), MatchStateHash.Compute(_remote.Match), "The same new match on both games.");
+            Assert.IsFalse(next.Ended);
         }
 
         [UnityTest]

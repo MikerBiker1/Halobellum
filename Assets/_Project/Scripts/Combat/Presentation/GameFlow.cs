@@ -11,6 +11,7 @@
 // (a test tool, a test) always gets Faction mode.
 // A LAN match (M11) waits here the same way: the LAN Game page hands over the connection to the other game, this game's team and
 // (on the host) the match settings (LanLaunch); the Match scene takes it once and its LanMatch driver builds the match from it.
+// New game after a LAN match hands a new launch over the same open connection and loads the Match scene again (LanMatch.StartRematch).
 // -lanDemo (a LAN test run, both sides played by the AI) is a test run: the saved settings stay untouched, so two copies on one PC
 // don't overwrite each other's. -windowSlot sets the window from the command line (WindowSlot).
 // Depends on: GamePause, SandboxAutoplay, CrowdBenchmark, AudioCapture and MatchReplay (their flags), Halobellum.Economy (MatchSetup),
@@ -38,6 +39,12 @@ namespace Halobellum.Presentation
         public string OpponentName = "";
         /// <summary>A -lanDemo run: the AI plays this side, battles run fast and the game quits after the match.</summary>
         public bool Demo;
+        /// <summary>-lanDemoMatches: how many matches a demo plays on this connection through New game before it quits.</summary>
+        public int DemoMatches = 1;
+        /// <summary>-lanDemoSeed (host): the k-th new game uses this seed plus k; null for a fresh seed each time.</summary>
+        public int? DemoSeed;
+        /// <summary>Which match this is on the connection: 1 from the menu, 2 after the first New game, and so on.</summary>
+        public int MatchNumber = 1;
 
         public bool IsHost => LocalTeam == Team.A;
     }

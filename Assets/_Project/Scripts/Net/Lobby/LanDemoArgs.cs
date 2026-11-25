@@ -3,7 +3,9 @@
 //   -lanDemo host|join   host: hosts at once with the default settings and starts as soon as a guest joins; join: joins 127.0.0.1
 //                        (or -lanDemoAddress A). Both sides are played by the Insane AI, battles run at the fastest speed, and the
 //                        game quits after the match.
-//   -lanDemoSeed N       the match's seed (the host's choice; the guest takes the host's).
+//   -lanDemoSeed N       the match's seed (the host's choice; the guest takes the host's). The k-th new game uses N + k.
+//   -lanDemoMatches N    play N matches back to back on the same connection (New game, pressed by both sides), then quit
+//                        (default 1). Give both copies the same N.
 //   -windowSlot 0|1      a window half the screen wide: slot 0 on the left, slot 1 on the right (two copies side by side).
 // Plain C# 9 without the engine.
 // Depends on: nothing.
@@ -19,6 +21,9 @@ namespace Halobellum.Net
     {
         public const string DemoFlag = "-lanDemo";
         public const string SeedFlag = "-lanDemoSeed";
+        public const string MatchesFlag = "-lanDemoMatches";
+        /// <summary>The most matches -lanDemoMatches takes.</summary>
+        public const int MostMatches = 1000;
         public const string AddressFlag = "-lanDemoAddress";
         public const string WindowSlotFlag = "-windowSlot";
         /// <summary>A demo host listens on 127.0.0.1 only (no Windows Firewall prompt) unless this flag is given, for a demo across two PCs.</summary>
@@ -28,6 +33,8 @@ namespace Halobellum.Net
         public LanDemoRole Role = LanDemoRole.None;
         /// <summary>The seed the host uses, or null for a new one.</summary>
         public int? Seed;
+        /// <summary>How many matches to play back to back through New game before quitting (-lanDemoMatches, 1 to MostMatches).</summary>
+        public int Matches = 1;
         /// <summary>Where the guest joins.</summary>
         public string Address = DefaultAddress;
         /// <summary>0 (left half) or 1 (right half), or -1 for the window as usual.</summary>
@@ -47,6 +54,7 @@ namespace Halobellum.Net
             if (string.Equals(role, "host", StringComparison.OrdinalIgnoreCase)) result.Role = LanDemoRole.Host;
             else if (string.Equals(role, "join", StringComparison.OrdinalIgnoreCase)) result.Role = LanDemoRole.Join;
             if (int.TryParse(Value(args, SeedFlag), NumberStyles.Integer, CultureInfo.InvariantCulture, out int seed)) result.Seed = seed;
+            if (int.TryParse(Value(args, MatchesFlag), NumberStyles.Integer, CultureInfo.InvariantCulture, out int matches) && matches >= 1) result.Matches = Math.Min(matches, MostMatches);
             string address = Value(args, AddressFlag);
             if (!string.IsNullOrWhiteSpace(address) && !address.StartsWith("-")) result.Address = address.Trim();
             foreach (string arg in args) if (string.Equals(arg, NetworkFlag, StringComparison.OrdinalIgnoreCase)) result.ListenOnNetwork = true;

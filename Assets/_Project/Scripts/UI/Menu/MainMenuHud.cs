@@ -199,7 +199,7 @@ namespace Halobellum.UI
             string opponent = _lobby.PeerName;
             LanMatchSettings settings = LanSettingsForHost();
             ILanChannel channel = _lobby.TakeChannel();
-            var launch = new LanLaunch { Channel = channel, LocalTeam = Team.A, Settings = settings, OpponentName = opponent, Demo = _demo.IsDemo };
+            var launch = new LanLaunch { Channel = channel, LocalTeam = Team.A, Settings = settings, OpponentName = opponent, Demo = _demo.IsDemo, DemoMatches = _demo.Matches, DemoSeed = _demo.Seed };
             GameSettings.Save();
             _launch = launch;
             Leave(() => GameFlow.StartLanMatch(launch));
@@ -248,7 +248,7 @@ namespace Halobellum.UI
             {
                 string opponent = _lobby.PeerName;
                 ILanChannel channel = _lobby.TakeChannel();
-                var launch = new LanLaunch { Channel = channel, LocalTeam = Team.B, OpponentName = opponent, Demo = _demo.IsDemo };
+                var launch = new LanLaunch { Channel = channel, LocalTeam = Team.B, OpponentName = opponent, Demo = _demo.IsDemo, DemoMatches = _demo.Matches };
                 GameSettings.Save();
                 _launch = launch;
                 Leave(() => GameFlow.StartLanMatch(launch));

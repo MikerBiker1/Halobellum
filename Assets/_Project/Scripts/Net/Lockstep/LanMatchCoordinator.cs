@@ -29,9 +29,18 @@
 // The local player must not act on the Match after Ready in the same round (LocalCanAct says when it may), nor ever for the
 // other team: an action after Ready is a desync, found when the lists are applied, when the hashes are compared, or at the
 // latest in StartBattle (before this machine plays a battle the other game did not agree to).
+// After the match (the rematch step, "New game"): either game may ask for a new game once its own match is over
+// (RequestRematch sends Rematch). A Rematch from the other game is noted in any phase (the host's can reach the guest while the
+// guest still plays its last battle). When both asked (RematchAgreed), this coordinator stops reading, so the next match's
+// messages stay in the channel; TakeRematchChannel hands the open channel over for the next match (the host starts it with
+// LanMatchStart.BeginAsHost, the guest with LanGuestStart), and from then on Update reads nothing and Leave neither sends nor
+// closes. The guest keeps a MatchStart that comes after its match is over (it is the host's next match) and stops reading
+// there; TakeRematchChannel puts it back in front. The other game leaving or the connection ending meanwhile sets
+// OpponentGone, and no new game can start. The host never sends its next MatchStart before the guest's Rematch is in, so a
+// guest that holds one does not send a Rematch of its own (it would reach the next match).
 // Everything runs on the caller's thread: call Update every frame.
 // Plain C# 9 without the engine.
-// Depends on: ILanChannel, LanMessages, NetMessage, NetLog, LanLimits, Halobellum.Economy (Match, MatchCommand, MatchCommands, MatchStateHash,
+// Depends on: ILanChannel, LanBufferedChannel, LanMessages, NetMessage, NetLog, LanLimits, Halobellum.Economy (Match, MatchCommand, MatchCommands, MatchStateHash,
 //             RoundOutcome, RoundSummary), Halobellum.Combat (BattleSimulation), Halobellum.Core (Team).
 
 using System;
@@ -122,6 +131,8 @@ namespace Halobellum.Net
         private bool leftAfterMatch;       // Leave was called after the match was over: nothing more is read
         private int remoteBattleOverRound; // the last round the other game said its battle was over (Status)
         private int remoteContinuedRound;  // the last round the other game said it left the result of (Status)
+        private NetMessage heldStart;      // guest, after the match: the host's next MatchStart, kept for the next match
+        private bool handedOver;           // TakeRematchChannel: the channel belongs to the next match now
 
         /// <summary>
         /// A coordinator for a two-humans match in its draft, with this machine playing <paramref name="local"/> (the host Team A,
@@ -380,6 +391,7 @@ namespace Halobellum.Net
         /// </summary>
         public void Leave(string reason = "The other player left the match.")
         {
+            if (handedOver) return; // the channel belongs to the next match
             if (final.HasValue)
             {
                 if (final.Value != LanMatchState.Left) Channel.Close(); // the other game already stopped, or was told why
@@ -398,6 +410,72 @@ namespace Halobellum.Net
             NetLog.Write(log, "Left the match.");
         }
 
+        // ------------------------------------------------------------------ after the match: a new game on the same connection
+
+        /// <summary>This player pressed New game (RequestRematch).</summary>
+        public bool LocalWantsRematch { get; private set; }
+
+        /// <summary>The other player pressed New game: its Rematch is here (or, on the guest, the host's next MatchStart).</summary>
+        public bool OpponentWantsRematch { get; private set; }
+
+        /// <summary>
+        /// A new game is still possible: the match is over here, the other game has not left, the connection is open, this player has
+        /// not left, and the channel has not been handed over yet.
+        /// </summary>
+        public bool CanRematch => Match.Phase == MatchPhase.MatchOver && !final.HasValue && !leftAfterMatch && !OpponentGone && !handedOver && Channel.IsOpen;
+
+        /// <summary>Both players pressed New game: TakeRematchChannel hands the channel over for the next match.</summary>
+        public bool RematchAgreed => CanRematch && LocalWantsRematch && OpponentWantsRematch;
+
+        /// <summary>True once TakeRematchChannel has handed the channel to the next match.</summary>
+        public bool HandedOver => handedOver;
+
+        /// <summary>
+        /// The match-over line about a new game: "NAME went back to the menu." once the other game left or the connection ended,
+        /// "Waiting for NAME..." after this player pressed New game, "NAME wants a new game." when the other pressed first; else "".
+        /// </summary>
+        public string RematchStatus(string opponentName)
+        {
+            if (Match.Phase != MatchPhase.MatchOver || final.HasValue) return "";
+            string name = string.IsNullOrEmpty(opponentName) ? "The other player" : opponentName;
+            if (OpponentGone || (!handedOver && !Channel.IsOpen)) return name + " went back to the menu.";
+            if (LocalWantsRematch) return "Waiting for " + name + "...";
+            if (OpponentWantsRematch) return name + " wants a new game.";
+            return "";
+        }
+
+        /// <summary>
+        /// This player pressed New game: the other game is told (Rematch), once. False when no new game is possible (CanRematch).
+        /// A guest that already holds the host's next MatchStart sends nothing: the host only sends it after this game's Rematch.
+        /// </summary>
+        public bool RequestRematch()
+        {
+            if (!CanRematch) return false;
+            if (LocalWantsRematch) return true;
+            LocalWantsRematch = true;
+            if (heldStart == null) Channel.Send(new NetMessage(LanMessageTypes.Rematch));
+            NetLog.Write(log, "Asked for a new game.");
+            return true;
+        }
+
+        /// <summary>
+        /// Once RematchAgreed: the open channel for the next match (on the guest with the host's MatchStart put back in front, if it
+        /// came already); this coordinator then reads nothing more and its Leave neither sends nor closes. Null before.
+        /// The host starts the next match with LanMatchStart.BeginAsHost on it, the guest with LanGuestStart.
+        /// </summary>
+        public ILanChannel TakeRematchChannel()
+        {
+            if (!RematchAgreed) return null;
+            handedOver = true;
+            ILanChannel next = heldStart != null ? LanBufferedChannel.PutBackInFront(Channel, heldStart) : Channel;
+            heldStart = null;
+            NetLog.Write(log, "A new game on the same connection.");
+            return next;
+        }
+
+        /// <summary>True while Update must not read: the channel is handed over, or the next match's messages are next in it.</summary>
+        private bool StopsReading => handedOver || heldStart != null || (LocalWantsRematch && OpponentWantsRematch && Match.Phase == MatchPhase.MatchOver);
+
         // ------------------------------------------------------------------ every frame
 
         /// <summary>
@@ -409,16 +487,25 @@ namespace Halobellum.Net
         /// <summary>Reads the other game's messages, applies what can be applied, and notices a closed channel. Call every frame.</summary>
         public void Update()
         {
-            if (final.HasValue || leftAfterMatch) return;
+            if (final.HasValue || leftAfterMatch || handedOver) return;
             bool open = Channel.IsOpen; // read before the inbox: a message that came just before a close is still read
             int handled = 0;
-            while (!final.HasValue && handled < LanLimits.MaxMessagesPerUpdate && Channel.TryReceive(out NetMessage message))
+            bool stopped = false;
+            while (!final.HasValue && handled < LanLimits.MaxMessagesPerUpdate)
             {
+                // After the match, once both want a new game (or the host's next MatchStart is held), the rest is the next match's.
+                if (StopsReading)
+                {
+                    stopped = true;
+                    break;
+                }
+                if (!Channel.TryReceive(out NetMessage message)) break;
                 handled++;
                 Handle(message);
             }
-            // With the frame's share used up, more may wait: the close is noticed in a later Update, after them.
-            if (!final.HasValue && !open && !channelEnded && handled < LanLimits.MaxMessagesPerUpdate)
+            // With the frame's share used up, more may wait: the close is noticed in a later Update, after them. When reading
+            // stopped for the next match, a closed channel still means the other game is gone.
+            if (!final.HasValue && !open && !channelEnded && (stopped || handled < LanLimits.MaxMessagesPerUpdate))
             {
                 channelEnded = true;
                 OtherSideEnded(LanMatchState.ConnectionLost, Describe(Channel.LostReason));
@@ -490,6 +577,21 @@ namespace Halobellum.Net
                         OtherSideEnded(LanMatchState.OpponentLeft, reason.Length > 0 ? reason : "The other player left the match.");
                         break;
                     }
+                    case LanMessageTypes.Rematch:
+                        // The other player pressed New game. Noted in any phase: the host's can come while the guest still plays
+                        // its last battle. It only counts once the match is over here (CanRematch).
+                        if (!OpponentWantsRematch) NetLog.Write(log, "The other player wants a new game.");
+                        OpponentWantsRematch = true;
+                        break;
+                    case LanMessageTypes.MatchStart:
+                        // The host's next match, after a new game was agreed: kept for it (TakeRematchChannel puts it back), and
+                        // nothing after it is read here.
+                        if (IsHost) { Protocol("a match start (only the host sends those)"); return; }
+                        if (Match.Phase != MatchPhase.MatchOver) { Protocol("a match start during the match"); return; }
+                        heldStart = m;
+                        OpponentWantsRematch = true;
+                        NetLog.Write(log, "The host's next match start is kept for the new game.");
+                        break;
                     default:
                         NetLog.Write(log, "Ignored a " + LanLimits.Clip(m.Type, LanLimits.MaxNameChars) + " message.");
                         break;

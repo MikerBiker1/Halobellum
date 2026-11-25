@@ -22,6 +22,7 @@ blurb: Play one against one with another person on the same local network.
 - When both have pressed **Ready**, the battle plays on both screens. Battle speed is your own, but there is no pause in a LAN battle.
 - **Esc** opens the menu without stopping the match. **Leave match** forfeits.
 - If the other player leaves or the connection drops, a screen says so and takes you back to the menu.
+- When the match is over, press **New game** to play again with the same player, without connecting again. The next match starts once both have pressed it, with the same settings and a new seed; if the other player goes back to the menu instead, the screen says so.
 
 ## Staying in step
 

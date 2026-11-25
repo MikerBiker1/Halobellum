@@ -28,6 +28,24 @@ namespace Halobellum.Net
 
         public LanMatchSettings Copy() => (LanMatchSettings)MemberwiseClone();
 
+        /// <summary>The settings for a new game on the same connection (New game): the same mode, base health and cards, this seed.</summary>
+        public LanMatchSettings WithSeed(int seed)
+        {
+            LanMatchSettings next = Copy();
+            next.Seed = seed;
+            return next;
+        }
+
+        /// <summary>
+        /// The seed of the host's next game after <paramref name="lastSeed"/>: with a demo seed (-lanDemoSeed) it is that seed plus
+        /// <paramref name="rematch"/> (1 for the first new game, 2 for the next...), else <paramref name="fresh"/>. Never the last seed.
+        /// </summary>
+        public static int NextSeed(int lastSeed, int? demoSeed, int rematch, int fresh)
+        {
+            int seed = demoSeed.HasValue ? unchecked(demoSeed.Value + rematch) : fresh;
+            return seed == lastSeed ? unchecked(seed + 1) : seed;
+        }
+
         /// <summary>The settings from a seed and a skirmish setup (null = Faction mode with the rules as they are).</summary>
         public static LanMatchSettings From(int seed, MatchSetup setup)
         {
