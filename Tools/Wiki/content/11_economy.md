@@ -81,4 +81,4 @@ Research is open to every faction and to the AI. It lasts for the match and also
 ## Skip bonuses
 
 - Skipping a **general** card offer: **+50** credits.
-- Skipping a **reinforcement** offer: **+100** credits.
+- Skipping a **reinforcement** offer: **half the round's reinforcement budget** (round 4: +200, round 6: +250, round 10: +350).

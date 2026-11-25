@@ -60,6 +60,8 @@ namespace Halobellum.Units
         public int cardsPerOffer = 3;
         public int spellSkipBonus = 50;
         public int reinforcementSkipBonus = 100;
+        [Tooltip("Skipping a reinforcement offer gives this share of the round's budget (0.5: 200 in round 4); 0 = the flat bonus above (D185).")]
+        public float reinforcementSkipBudgetShare = 0.5f;
         [Tooltip("Reinforcement budget = base + per round x round number.")]
         public int reinforcementBudgetBase = 200;
         public int reinforcementBudgetPerRound = 50;
@@ -136,6 +138,7 @@ namespace Halobellum.Units
                 CardsPerOffer = cardsPerOffer,
                 SpellSkipBonus = spellSkipBonus,
                 ReinforcementSkipBonus = reinforcementSkipBonus,
+                ReinforcementSkipBudgetShare = reinforcementSkipBudgetShare,
                 ReinforcementBudgetBase = reinforcementBudgetBase,
                 ReinforcementBudgetPerRound = reinforcementBudgetPerRound,
                 ReinforcementMaxLevel = reinforcementMaxLevel,

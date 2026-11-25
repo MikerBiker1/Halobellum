@@ -8,6 +8,10 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.418.2 · 2026-11-24
+- **Reinforcement skip:** skipping a reinforcement offer now gives half the round's reinforcement budget (200 in round 4, 250 in round 6, 350 in round 10) instead of 100, so taking a free card just to sell its squads no longer pays more. Insane against Insane at 2000 health over five seeds (18,000 matches): every sub-faction 49.4% to 50.7%. (D185)
+- **Stats window:** health, shield, move speed, damage and rate of fire are in bold. (D186)
+
 ## 0.418.1 · 2026-11-24
 - **LAN New game:** at the end of a LAN match, **New game** plays again with the same player without connecting again. The next match starts when both have pressed it, with the same settings and a new seed. (D183)
 

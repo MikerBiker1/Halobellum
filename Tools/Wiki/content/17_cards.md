@@ -10,7 +10,7 @@ blurb: When cards are offered, how spells are placed and recharge, how items wor
 
 - **From round 2**, every round starts with a card offer, with the battlefield visible behind it.
 - **Reinforcement offers** come in rounds **4, 6, 8…** (every other round from round 4). The other rounds (2, 3, 5, 7, 9…) offer **general cards**.
-- Each offer shows up to **3 cards**. Take one and pay its price, or **skip** for **50** credits (general) or **100** (reinforcement).
+- Each offer shows up to **3 cards**. Take one and pay its price, or **skip** for **50** credits (general) or **half the round's budget** (reinforcement: 200 in round 4, 250 in round 6).
 - **Hide cards** puts them aside so you can look over the field before choosing.
 
 ## Kinds of card

@@ -127,7 +127,7 @@ namespace Halobellum.Economy
             }
             else
             {
-                offer.SkipBonus = rules.ReinforcementSkipBonus;
+                offer.SkipBonus = rules.ReinforcementSkipBonusFor(round);
                 int budget = rules.ReinforcementBudget(round);
                 int levelCap = rules.ReinforcementLevelCap(round);
                 foreach (UnitStats type in PickDistinct(player.Roster.FindAll(unit => unit.Tier <= rules.ReinforcementMaxTier), rules.CardsPerOffer, random))

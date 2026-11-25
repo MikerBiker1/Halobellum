@@ -37,7 +37,7 @@ namespace Halobellum.UI
 
         private SquadSelection _selection;
         private ISquadProgression _progression;
-        private GUIStyle _title, _text, _small, _center, _techName;
+        private GUIStyle _title, _text, _bodyText, _small, _center, _techName;
         private readonly StringBuilder _builder = new StringBuilder();
 
         // OnGUI runs at least twice a frame, and what it shows here means a lot of new strings and a new view from the Match or Sandbox.
@@ -215,7 +215,7 @@ namespace Halobellum.UI
                 ShopUnit = null;
                 _selection.Select(-1);
             }
-            GUI.Label(new Rect(window.x + TextInset, window.y + HeaderHeight - 6f, windowWidth - 2f * TextInset, textHeight), body, _text);
+            GUI.Label(new Rect(window.x + TextInset, window.y + HeaderHeight - 6f, windowWidth - 2f * TextInset, textHeight), body, _bodyText);
             if (progress != null) DrawProgress(progress, window.x + TextInset, window.y + HeaderHeight - 2f + textHeight, windowWidth - 2f * TextInset);
             if (Event.current.type == EventType.MouseUp || Event.current.type == EventType.Used) _nextRefresh = 0f;
         }
@@ -231,7 +231,7 @@ namespace Halobellum.UI
             _shownStyles = _styleVersion;
             _body = BuildText(stats, sample != null, alive, totalHealth);
             _measure.text = _body;
-            _textHeight = _text.CalcHeight(_measure, windowWidth - 2f * TextInset);
+            _textHeight = _bodyText.CalcHeight(_measure, windowWidth - 2f * TextInset);
             _progress = sample != null ? _progression?.DescribeProgress(_shownSquad) : ShopProgress(stats, hovered);
             _side = _progress?.SideLabel ?? $"Team {sample.Team}";
             _techNames.Clear();
@@ -395,9 +395,9 @@ namespace Halobellum.UI
             b.AppendLine($"Role: {RoleName(s.Role)}    Tier {s.Tier}    Cost {s.Cost}    Level {Mathf.Max(1, s.Level)}"); // Level 1 too (the owner, 2026-11-08; D115).
             string packs = s.FormsPerBody > 1 ? $" in {s.SquadSize} packs" : "";
             b.AppendLine(fielded ? $"Squad size: {s.FormsInSquad}{packs}  ({alive} alive, {totalHealth:0} health left)" : $"Squad size: {s.FormsInSquad}{packs}");
-            b.AppendLine($"Health: {s.MaxHealth:0} per {(s.FormsPerBody > 1 ? "pack" : "body")}    Armor: {s.ArmorType}");
-            b.AppendLine(s.HasShield ? $"Shield: {s.MaxShield:0} (regen {s.ShieldRegenPerSecond:0.#}/s)" : "Shield: none");
-            b.AppendLine(s.MoveSpeed > 0f ? $"Move speed: {s.MoveSpeed:0.#} m/s    Collision size: {s.CollisionRadius * 2f:0.#} m" : $"Cannot move    Collision size: {s.CollisionRadius * 2f:0.#} m");
+            b.AppendLine($"Health: {B(s.MaxHealth.ToString("0"))} per {(s.FormsPerBody > 1 ? "pack" : "body")}    Armor: {s.ArmorType}");
+            b.AppendLine(s.HasShield ? $"Shield: {B(s.MaxShield.ToString("0"))} (regen {B(s.ShieldRegenPerSecond.ToString("0.#"))}/s)" : "Shield: none");
+            b.AppendLine(s.MoveSpeed > 0f ? $"Move speed: {B(s.MoveSpeed.ToString("0.#"))} m/s    Collision size: {s.CollisionRadius * 2f:0.#} m" : $"Cannot move    Collision size: {s.CollisionRadius * 2f:0.#} m");
             b.AppendLine(s.TurnTime180 > 0f ? $"Turn time: {s.TurnTime180:0.##} s for 180 degrees" : "Turn time: instant");
             b.AppendLine($"Targets: {s.TargetFilter}{(s.IsAir ? "    (air unit)" : "")}");
             AppendFloodLines(b, s);
@@ -421,12 +421,12 @@ namespace Halobellum.UI
                 b.AppendLine(count > 1 ? $"{BaseName(w.Name)} x{count}{role}" : $"{w.Name}{role}");
                 if (w.IsBeam)
                 {
-                    b.AppendLine($"  Beam {w.DamagePerShot * w.ShotsPerSecond:0.#} damage/s {w.DamageType}{(w.IsAntiArmor ? ", anti-armor" : "")}");
+                    b.AppendLine($"  Beam {B((w.DamagePerShot * w.ShotsPerSecond).ToString("0.#"))} damage/s {w.DamageType}{(w.IsAntiArmor ? ", anti-armor" : "")}");
                     b.AppendLine($"  Charges {w.BeamChargeSeconds:0.#} s, fires {w.BeamSeconds:0.#} s, rests {w.BeamRestSeconds:0.#} s");
                 }
                 else
                 {
-                    b.AppendLine($"  Damage {w.DamagePerShot:0.#} {w.DamageType}{(w.IsAntiArmor ? ", anti-armor" : "")}    Rate {w.ShotsPerSecond:0.##}/s");
+                    b.AppendLine($"  Damage {B(w.DamagePerShot.ToString("0.#"))} {w.DamageType}{(w.IsAntiArmor ? ", anti-armor" : "")}    Rate {B(w.ShotsPerSecond.ToString("0.##"))}/s");
                 }
                 if (w.AirDamageMultiplier != 1f) b.AppendLine(AirDamageLine(w));
                 if (w.ShotsPerAttack > 1) b.AppendLine($"  Fires {w.ShotsPerAttack} shots {w.BurstGapSeconds:0.##} s apart each attack");
@@ -470,6 +470,9 @@ namespace Halobellum.UI
         }
 
         /// <summary>A weapon's name without the part in brackets that says where it sits.</summary>
+        /// <summary>A number in bold in the stats text (rich text).</summary>
+        private static string B(string number) => "<b>" + number + "</b>";
+
         public static string BaseName(string name)
         {
             int bracket = name.IndexOf(" (", System.StringComparison.Ordinal);
@@ -526,6 +529,8 @@ namespace Halobellum.UI
             _styleVersion = HudTheme.Version;
             _title = new GUIStyle(GUI.skin.label) { font = HudTheme.TitleFont, fontSize = HudTheme.TitleSize(17), fontStyle = HudTheme.TitleFontStyle, normal = { textColor = HudTheme.TitleColor } };
             _text = new GUIStyle(GUI.skin.label) { fontSize = HudTheme.Size(15), wordWrap = true, normal = { textColor = HudTheme.Text } };
+            // The stats text bolds its key numbers (health, shield, move speed, damage, rate; the owner, D186), so it is rich text.
+            _bodyText = new GUIStyle(_text) { richText = true };
             _small = new GUIStyle(_text) { fontSize = HudTheme.Size(13), wordWrap = false, normal = { textColor = HudTheme.DimText } };
             _center = new GUIStyle(_text) { fontSize = HudTheme.Size(13), alignment = TextAnchor.MiddleCenter, wordWrap = false, normal = { textColor = Color.white } };
             _techName = new GUIStyle(_text) { fontStyle = FontStyle.Bold, wordWrap = false };

@@ -77,8 +77,13 @@ namespace Halobellum.Economy
         public int CardsPerOffer = 3;
         /// <summary>Credits for skipping a general offer (spells, items, economy, buffs; Bible: 50).</summary>
         public int SpellSkipBonus = 50;
-        /// <summary>Credits for skipping a reinforcement offer (Bible: 100).</summary>
+        /// <summary>Credits for skipping a reinforcement offer when ReinforcementSkipBudgetShare is 0 (Bible: 100).</summary>
         public int ReinforcementSkipBonus = 100;
+        /// <summary>
+        /// Skipping a reinforcement offer gives this share of the round's reinforcement budget (the owner, D185: half, so 200 in round 4,
+        /// 250 in round 6), as much as selling the card's squads after one battle would. 0 = the flat ReinforcementSkipBonus.
+        /// </summary>
+        public float ReinforcementSkipBudgetShare = 0.5f;
         /// <summary>Reinforcement budget: base plus this much per round number (Bible Section 18: 200 + 50 per round).</summary>
         public int ReinforcementBudgetBase = 200;
         public int ReinforcementBudgetPerRound = 50;
@@ -142,6 +147,10 @@ namespace Halobellum.Economy
 
         /// <summary>The reinforcement budget of a round.</summary>
         public int ReinforcementBudget(int round) => ReinforcementBudgetBase + ReinforcementBudgetPerRound * round;
+
+        /// <summary>Credits for skipping this round's reinforcement offer (D185).</summary>
+        public int ReinforcementSkipBonusFor(int round) =>
+            ReinforcementSkipBudgetShare > 0f ? (int)MathF.Round(ReinforcementBudget(round) * ReinforcementSkipBudgetShare) : ReinforcementSkipBonus;
 
         /// <summary>The highest level a reinforcement card can have in this round.</summary>
         public int ReinforcementLevelCap(int round) =>

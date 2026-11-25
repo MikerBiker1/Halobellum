@@ -33,6 +33,7 @@ MonoBehaviour:
   cardsPerOffer: 3
   spellSkipBonus: 50
   reinforcementSkipBonus: 100
+  reinforcementSkipBudgetShare: 0.5
   reinforcementBudgetBase: 200
   reinforcementBudgetPerRound: 50
   reinforcementMaxLevel: 3

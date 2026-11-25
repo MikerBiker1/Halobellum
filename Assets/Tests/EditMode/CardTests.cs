@@ -123,7 +123,7 @@ namespace Halobellum.Tests
         }
 
         [Test]
-        public void Skipping_GivesTheBonus_50ForSpells_100ForReinforcements()
+        public void Skipping_GivesTheBonus_50ForSpells_HalfTheBudgetForReinforcements()
         {
             Match match = NewMatch();
             PlayRound(match);
@@ -137,8 +137,20 @@ namespace Halobellum.Tests
             match.SkipCards(Team.A);
             PlayRound(match); // Round 4: reinforcements.
             before = match.Player.Credits;
+            Assert.AreEqual(200, match.Player.Offer.SkipBonus, "D185: half the round 4 budget of 400.");
             match.SkipCards(Team.A);
-            Assert.AreEqual(before + 100, match.Player.Credits);
+            Assert.AreEqual(before + 200, match.Player.Credits);
+        }
+
+        [Test]
+        public void ReinforcementSkip_IsHalfTheRoundsBudget_OrTheFlatBonusWhenTheShareIsZero()
+        {
+            var rules = new MatchRules();
+            Assert.AreEqual(200, rules.ReinforcementSkipBonusFor(4), "Round 4: budget 400.");
+            Assert.AreEqual(250, rules.ReinforcementSkipBonusFor(6), "Round 6: budget 500.");
+            Assert.AreEqual(350, rules.ReinforcementSkipBonusFor(10), "Round 10: budget 700.");
+            rules.ReinforcementSkipBudgetShare = 0f;
+            Assert.AreEqual(rules.ReinforcementSkipBonus, rules.ReinforcementSkipBonusFor(6));
         }
 
         [Test]

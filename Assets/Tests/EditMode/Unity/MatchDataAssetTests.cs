@@ -43,6 +43,7 @@ namespace Halobellum.Tests
             Assert.AreEqual(cards.CardsPerOffer, actual.CardsPerOffer);
             Assert.AreEqual(cards.SpellSkipBonus, actual.SpellSkipBonus);
             Assert.AreEqual(cards.ReinforcementSkipBonus, actual.ReinforcementSkipBonus);
+            Assert.AreEqual(cards.ReinforcementSkipBudgetShare, actual.ReinforcementSkipBudgetShare, 1e-5f, "D185: half the round's budget.");
             Assert.AreEqual(cards.ReinforcementBudgetBase, actual.ReinforcementBudgetBase);
             Assert.AreEqual(cards.ReinforcementBudgetPerRound, actual.ReinforcementBudgetPerRound);
             Assert.AreEqual(cards.ReinforcementMaxLevel, actual.ReinforcementMaxLevel);
