@@ -8,6 +8,9 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.418.1 · 2026-11-24
+- **LAN New game:** at the end of a LAN match, **New game** plays again with the same player without connecting again. The next match starts when both have pressed it, with the same settings and a new seed. (D183)
+
 ## 0.418.0 · 2026-11-24
 - **Rhino:** your new model, its turret turning on its round base. (D184)
 - **Hornet and Infested Hornet:** your new Hornet, its two rotors spinning. (D184)
