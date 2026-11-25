@@ -34,7 +34,7 @@ namespace Halobellum.UI
         public static Color Accent => Current != null ? Current.accentColor : new Color(0.45f, 0.75f, 1f);
 
         /// <summary>
-        /// A squad level's text colour (the owner, D187): white for level 1, blue 2, orange 3, purple 4, red 5. Used for "Level N"
+        /// A squad level's text colour (the owner, D187): white for level 1, blue 2, yellow 3, purple 4, orange 5 (D188). Used for "Level N"
         /// in the squad stats window and on reinforcement cards.
         /// </summary>
         public static Color LevelColor(int level)
@@ -42,10 +42,10 @@ namespace Halobellum.UI
             switch (level)
             {
                 case 2: return new Color(0.35f, 0.66f, 1f);    // blue
-                case 3: return new Color(1f, 0.6f, 0.18f);     // orange
+                case 3: return new Color(1f, 0.9f, 0.25f);     // yellow
                 case 4: return new Color(0.72f, 0.48f, 1f);    // purple
-                case 5: return new Color(1f, 0.3f, 0.3f);      // red
-                default: return level > 5 ? new Color(1f, 0.3f, 0.3f) : Color.white;
+                case 5: return new Color(1f, 0.6f, 0.18f);     // orange
+                default: return level > 5 ? new Color(1f, 0.6f, 0.18f) : Color.white;
             }
         }
 
