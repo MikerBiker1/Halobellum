@@ -283,7 +283,7 @@ namespace Halobellum.UI
 
             // What's in the card, on the picture: how many squads, and their level.
             float chip = Mathf.Clamp(size * 0.16f, 28f, 42f);
-            DrawChip(new Rect(area.x, y, Mathf.Clamp(area.width * 0.4f, 76f, 118f), chip), $"Level {reinforcement.Level}", kind, 17);
+            DrawChip(new Rect(area.x, y, Mathf.Clamp(area.width * 0.4f, 76f, 118f), chip), $"Level {reinforcement.Level}", kind, 17, HudTheme.LevelColor(reinforcement.Level));
             DrawChip(new Rect(area.xMax - chip * 1.7f, y, chip * 1.7f, chip), $"x{reinforcement.Squads}", kind, 22);
             y = picture.yMax + 4f;
 
@@ -319,7 +319,7 @@ namespace Halobellum.UI
             if (icon != null) GUI.DrawTexture(rect, icon, ScaleMode.ScaleToFit, true);
         }
 
-        private static void DrawChip(Rect rect, string text, CardFrameKind kind, int fontSize)
+        private static void DrawChip(Rect rect, string text, CardFrameKind kind, int fontSize, Color? textColor = null)
         {
             if (Event.current.type == EventType.Repaint)
             {
@@ -331,7 +331,7 @@ namespace Halobellum.UI
                 GUI.DrawTexture(new Rect(rect.x, rect.yMax - 2f, rect.width, 2f), Texture2D.whiteTexture);
                 GUI.color = old;
             }
-            Fit(rect, text, _ribbon, fontSize, 12, TextAnchor.MiddleCenter, Color.white);
+            Fit(rect, text, _ribbon, fontSize, 12, TextAnchor.MiddleCenter, textColor ?? Color.white);
         }
 
         private static void DrawTinted(Rect rect, Texture2D texture, Color color)

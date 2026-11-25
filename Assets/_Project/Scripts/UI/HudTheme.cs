@@ -32,6 +32,25 @@ namespace Halobellum.UI
         public static Color DimText => Current != null ? Current.dimTextColor : new Color(0.75f, 0.75f, 0.75f);
         public static Color TitleColor => Current != null ? Current.titleColor : Color.white;
         public static Color Accent => Current != null ? Current.accentColor : new Color(0.45f, 0.75f, 1f);
+
+        /// <summary>
+        /// A squad level's text colour (the owner, D187): white for level 1, blue 2, orange 3, purple 4, red 5. Used for "Level N"
+        /// in the squad stats window and on reinforcement cards.
+        /// </summary>
+        public static Color LevelColor(int level)
+        {
+            switch (level)
+            {
+                case 2: return new Color(0.35f, 0.66f, 1f);    // blue
+                case 3: return new Color(1f, 0.6f, 0.18f);     // orange
+                case 4: return new Color(0.72f, 0.48f, 1f);    // purple
+                case 5: return new Color(1f, 0.3f, 0.3f);      // red
+                default: return level > 5 ? new Color(1f, 0.3f, 0.3f) : Color.white;
+            }
+        }
+
+        /// <summary>"Level N" in its level's colour, as rich text.</summary>
+        public static string LevelRichText(int level, string text) => "<color=#" + ColorUtility.ToHtmlStringRGB(LevelColor(level)) + ">" + text + "</color>";
         /// <summary>The font for titles and headers (null = the skin's font).</summary>
         public static Font TitleFont => Current != null ? Current.titleFontAsset : null;
         /// <summary>Bold for the default fonts; a title font file is used as it is (it is already bold).</summary>

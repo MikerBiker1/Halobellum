@@ -37,7 +37,7 @@ namespace Halobellum.UI
 
         private SquadSelection _selection;
         private ISquadProgression _progression;
-        private GUIStyle _title, _text, _bodyText, _small, _center, _techName;
+        private GUIStyle _title, _levelTitle, _text, _bodyText, _small, _center, _techName;
         private readonly StringBuilder _builder = new StringBuilder();
 
         // OnGUI runs at least twice a frame, and what it shows here means a lot of new strings and a new view from the Match or Sandbox.
@@ -294,7 +294,8 @@ namespace Halobellum.UI
         {
             y += 10f;
             var levelLine = new Rect(x, y, p.LevelAllLabel != null ? _levelLineWidth : 170f, LineHeight + 6f);
-            GUI.Label(levelLine, _levelLine, _title);
+            _levelTitle.normal.textColor = HudTheme.LevelColor(p.Level); // The level's colour (D187).
+            GUI.Label(levelLine, _levelLine, _levelTitle);
             LevelLineShown = levelLine;
             if (_levelButtonsOwnRow) y += LevelRowHeight;
             float buttonX = x + width;
@@ -392,7 +393,7 @@ namespace Halobellum.UI
         private string BuildText(UnitStats s, bool fielded, int alive, float totalHealth)
         {
             StringBuilder b = _builder.Clear();
-            b.AppendLine($"Role: {RoleName(s.Role)}    Tier {s.Tier}    Cost {s.Cost}    Level {Mathf.Max(1, s.Level)}"); // Level 1 too (the owner, 2026-11-08; D115).
+            b.AppendLine($"Role: {RoleName(s.Role)}    Tier {s.Tier}    Cost {s.Cost}    {HudTheme.LevelRichText(Mathf.Max(1, s.Level), "Level " + Mathf.Max(1, s.Level))}"); // Level 1 too (the owner, 2026-11-08; D115).
             string packs = s.FormsPerBody > 1 ? $" in {s.SquadSize} packs" : "";
             b.AppendLine(fielded ? $"Squad size: {s.FormsInSquad}{packs}  ({alive} alive, {totalHealth:0} health left)" : $"Squad size: {s.FormsInSquad}{packs}");
             b.AppendLine($"Health: {B(s.MaxHealth.ToString("0"))} per {(s.FormsPerBody > 1 ? "pack" : "body")}    Armor: {s.ArmorType}");
@@ -531,6 +532,7 @@ namespace Halobellum.UI
             _text = new GUIStyle(GUI.skin.label) { fontSize = HudTheme.Size(15), wordWrap = true, normal = { textColor = HudTheme.Text } };
             // The stats text bolds its key numbers (health, shield, move speed, damage, rate; the owner, D186), so it is rich text.
             _bodyText = new GUIStyle(_text) { richText = true };
+            _levelTitle = new GUIStyle(_title);
             _small = new GUIStyle(_text) { fontSize = HudTheme.Size(13), wordWrap = false, normal = { textColor = HudTheme.DimText } };
             _center = new GUIStyle(_text) { fontSize = HudTheme.Size(13), alignment = TextAnchor.MiddleCenter, wordWrap = false, normal = { textColor = Color.white } };
             _techName = new GUIStyle(_text) { fontStyle = FontStyle.Bold, wordWrap = false };
