@@ -1,0 +1,16 @@
+Battle effect flipbooks (the effects pass, before 1.0)
+
+Source: Unity Labs Paris, "Free VFX image sequences and flipbooks" (Thomas Iché, Unity Technologies, 28 November 2016)
+  https://unity.com/blog/engine-platform/free-vfx-image-sequences-flipbooks
+Licence: CC0 1.0 (public domain dedication), https://creativecommons.org/publicdomain/zero/1.0/
+Downloaded: 2026-11-25, the "Flipbooks" zips from https://unity3d.com/files/labs/downloads/vfx/assets01/<Name>/<Name>-flipbooks.zip
+The original zips are kept, outside the repository, in Art_Source/VFX_UnityLabs.
+
+What each file here is made from (converted by a script: straight alpha RGBA PNG, top row first):
+  Smoke_8x8.png      WispySmoke01_8x8.tga, colour brightened 1.8x so that the game's smoke colours tint it
+  Fire_8x8.png       FireBall01_8x8.tga (no alpha of its own): alpha is the brightest channel, colour divided by it
+  FireGrey_8x8.png   the same, in grey, for fire that the game colours itself (a Covenant machine's light blue plasma)
+  Flame_16x4.png     Flame02_16x4.tga, as it is
+  Explosion_5x5.png  Explosion02_5x5.tga, as it is
+
+Nothing here is from a Halo game.

@@ -87,6 +87,8 @@ namespace Halobellum.Presentation
             public float Top;
             /// <summary>A Covenant wreck burns light blue.</summary>
             public bool Blue;
+            /// <summary>How far round it a pool of spilt oil burns on the ground, 0 for none, and until when.</summary>
+            public float Oil, OilUntil;
         }
 
         private readonly EffectRecipes _recipes;
@@ -213,7 +215,7 @@ namespace Halobellum.Presentation
                     if (!rises)
                     {
                         Keep(unit, CorpseKind.Wreck, titan ? TitanWreckSeconds : WreckSeconds, position, false, blue);
-                        AddFire(position, radius, titan ? TitanWreckSeconds : WreckSeconds, _units.BodyTopOf(unit) * HullTopShare, blue);
+                        AddFire(position, radius, titan ? TitanWreckSeconds : WreckSeconds, _units.BodyTopOf(unit) * HullTopShare, blue, !blue);
                     }
                     break;
 
@@ -420,7 +422,7 @@ namespace Halobellum.Presentation
             if (corpse.Age < GhostDriftSeconds) return false;
             _recipes.VehicleDeath(position, corpse.BodyRadius, false, corpse.Blue);
             if (corpse.Flood) _recipes.FloodBurst(position, corpse.BodyRadius, false); // What had taken it goes up with it.
-            AddFire(position, corpse.BodyRadius, WreckSeconds, corpse.Top, corpse.Blue);
+            AddFire(position, corpse.BodyRadius, WreckSeconds, corpse.Top, corpse.Blue, !corpse.Blue);
             Blacken(corpse.Root);
             return true;
         }
@@ -449,9 +451,10 @@ namespace Halobellum.Presentation
 
         // ------------------------------------------------------------------ what goes on burning
 
-        private void AddFire(Vector3 position, float bodyRadius, float seconds, float top = 0f, bool blue = false)
+        private void AddFire(Vector3 position, float bodyRadius, float seconds, float top = 0f, bool blue = false, bool oil = false)
         {
-            _fires[_nextFire] = new BurningSpot { Position = position, Until = _kit.BattleTime + seconds, BodyRadius = bodyRadius, NextPuff = _kit.BattleTime + 0.6f, Top = top, Blue = blue };
+            float pool = oil ? EffectRecipes.OilPoolDiameter(bodyRadius) * 0.42f : 0f;
+            _fires[_nextFire] = new BurningSpot { Position = position, Until = _kit.BattleTime + seconds, BodyRadius = bodyRadius, NextPuff = _kit.BattleTime + 0.6f, Top = top, Blue = blue, Oil = pool, OilUntil = _kit.BattleTime + seconds * 0.5f };
             _nextFire = (_nextFire + 1) % MostFires;
         }
 
@@ -469,13 +472,30 @@ namespace Halobellum.Presentation
                 Vector3 spot = fire.Position + new Vector3(Random.Range(-0.6f, 0.6f) * fire.BodyRadius, fire.Top + 0.3f, Random.Range(-0.6f, 0.6f) * fire.BodyRadius);
                 float size = fire.BodyRadius * 0.8f + 0.7f;
                 float flames = size * Mathf.Max(1f, _kit.ReadScale);
-                // A thin column, rising quickly, so that it marks the wreck and doesn't hide what is fighting around it.
-                _kit.Smoke(EffectPriority.Small, spot + Vector3.up * 1.2f, Vector3.up * Random.Range(4f, 6.5f) + Random.insideUnitSphere * 0.4f, size * Random.Range(0.9f, 1.3f), new Color(0.17f, 0.165f, 0.16f, 0.42f * strength), Random.Range(1.8f, 2.8f));
+                // A thin column, rising quickly, so that it marks the wreck and doesn't hide what is fighting around it. Burning fuel makes it black.
+                Color smoke = fire.Blue ? new Color(0.17f, 0.165f, 0.16f, 0.42f * strength) : new Color(0.075f, 0.07f, 0.065f, 0.5f * strength);
+                _kit.Smoke(EffectPriority.Small, spot + Vector3.up * 1.2f, Vector3.up * Random.Range(4f, 6.5f) + Random.insideUnitSphere * 0.4f, size * Random.Range(0.9f, 1.3f), smoke, Random.Range(1.8f, 2.8f));
                 if (strength >= 1f)
                 {
-                    Flames(fire.Blue, spot, flames * Random.Range(0.7f, 1.15f), Random.Range(0.55f, 0.95f));
                     Vector3 other = fire.Position + new Vector3(Random.Range(-0.6f, 0.6f) * fire.BodyRadius, fire.Top + 0.3f, Random.Range(-0.6f, 0.6f) * fire.BodyRadius);
-                    Flames(fire.Blue, other, flames * Random.Range(0.45f, 0.8f), Random.Range(0.45f, 0.8f));
+                    if (fire.Blue)
+                    {
+                        Flames(true, spot, flames * Random.Range(0.7f, 1.15f), Random.Range(0.55f, 0.95f));
+                        Flames(true, other, flames * Random.Range(0.45f, 0.8f), Random.Range(0.45f, 0.8f));
+                    }
+                    else
+                    {
+                        // Upright flames licking off the hull (the flame flipbook), with a rolling lick of fire among them for body.
+                        _kit.Burn(EffectPriority.Small, spot - Vector3.up * 0.3f, flames * Random.Range(0.4f, 0.6f), Random.Range(0.7f, 1.1f));
+                        Flames(false, other, flames * Random.Range(0.4f, 0.7f), Random.Range(0.45f, 0.8f));
+                    }
+                }
+                // The pool of oil burns on the ground round the wreck for the first half of the fire.
+                if (fire.Oil > 0f && now < fire.OilUntil && Random.value < 0.7f)
+                {
+                    Vector2 at = Random.insideUnitCircle * fire.Oil;
+                    float low = Mathf.Max(1f, _kit.ReadScale) * (0.45f + fire.BodyRadius * 0.12f);
+                    _kit.Burn(EffectPriority.Small, new Vector3(fire.Position.x + at.x, 0.05f, fire.Position.z + at.y), low * Random.Range(0.7f, 1.2f), Random.Range(0.6f, 1f));
                 }
                 if (Random.value < 0.15f) _kit.Spark(EffectPriority.Small, spot, Vector3.up * Random.Range(3f, 7f) + Random.insideUnitSphere * 1.5f, 0.05f * _kit.ReadScale, fire.Blue ? EffectRecipes.SparkPlasma : EffectRecipes.SparkHot, Random.Range(0.4f, 0.9f));
             }

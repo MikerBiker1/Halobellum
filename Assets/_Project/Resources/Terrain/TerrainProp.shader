@@ -2,6 +2,7 @@
 // Everything that stands on the terrain (M10): barricades, crystals, tendrils. One mesh, one draw call, colours in the vertices.
 // Vertex colour rgb is the surface in sRGB, alpha how much it glows. A grey grain tile, read in world space, keeps surfaces from looking flat when
 // zoomed in. uv.x is how much the vertex sways and uv.y its phase, for tendrils and treetops; the sway only ever moves it sideways by a little.
+// Props cast the sun's shadows and receive them (the shadows pass, before 1.0); a glowing part lights itself, so shadow only dims its unlit share.
 // Depends on: TerrainCommon.hlsl, BattlefieldView (sets the textures and the globals).
 Shader "Halobellum/TerrainProp"
 {
@@ -66,6 +67,8 @@ Shader "Halobellum/TerrainProp"
 
             HLSLPROGRAM
             #pragma target 4.5
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
+            #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
             #pragma vertex PropVertex
             #pragma fragment Fragment
 
@@ -82,7 +85,7 @@ Shader "Halobellum/TerrainProp"
                 half grain = SAMPLE_TEXTURE2D(_Grain, sampler_Grain, uv * 0.11).r;
                 half3 albedo = input.color.rgb * lerp(1.0, grain * 5.6, 0.55);
 
-                half3 lit = albedo * TerrainLight(normal);
+                half3 lit = albedo * TerrainLightAt(normal, p);
                 lit += input.color.rgb * input.color.a * _GlowBoost;
                 return half4(ApplyWorldFog(lit, p), 1.0);
             }
@@ -103,6 +106,36 @@ Shader "Halobellum/TerrainProp"
             half4 Fragment(Varyings input) : SV_Target
             {
                 KeepFloorInView(input.positionWS, input.positionCS.xy);
+                return 0;
+            }
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "ShadowCaster"
+            Tags { "LightMode" = "ShadowCaster" }
+            ZWrite On
+            ZTest LEqual
+            ColorMask 0
+            Cull Off
+
+            HLSLPROGRAM
+            #pragma target 4.5
+            #pragma vertex ShadowVertex
+            #pragma fragment Fragment
+
+            float3 _LightDirection;
+
+            Varyings ShadowVertex(Attributes input)
+            {
+                Varyings output = PropVertex(input);
+                output.positionCS = ApplyShadowClamping(TransformWorldToHClip(ApplyShadowBias(output.positionWS, normalize(output.normalWS), _LightDirection)));
+                return output;
+            }
+
+            half4 Fragment(Varyings input) : SV_Target
+            {
                 return 0;
             }
             ENDHLSL

@@ -371,7 +371,9 @@ namespace Halobellum.Presentation
             EffectPriority lesser = priority == EffectPriority.Huge ? EffectPriority.Big : priority == EffectPriority.Big ? EffectPriority.Medium : EffectPriority.Small;
             _kit.Glow(priority, position, radius * 3.6f, blue ? PlasmaGlow : FireGlow, 0.24f);
             _kit.Glow(priority, position, radius * 1.8f, Color.white, 0.1f);
-            int fire = Mathf.Clamp(Mathf.RoundToInt(radius * 5f) + 8, 12, 46);
+            // Its heart is a real explosion's flipbook (orange only), from the flash to dark smoke; the licks of fire round it are fewer then.
+            if (!blue) _kit.Blast(priority, position + Vector3.up * radius * 0.2f, radius * 2.4f, Random.Range(1.2f, 1.5f));
+            int fire = Mathf.Clamp(Mathf.RoundToInt((radius * 5f + 8f) * (blue ? 1f : 0.7f)), 10, 46);
             for (int i = 0; i < fire; i++)
             {
                 Vector3 out3 = Random.onUnitSphere;
@@ -410,7 +412,10 @@ namespace Halobellum.Presentation
             for (int i = 0; i < 3; i++) _kit.Dust(EffectPriority.Medium, ground + Random.insideUnitSphere * 0.3f, Random.insideUnitSphere * 1.4f + Vector3.up * 0.6f, size * Random.Range(1f, 1.5f), DustTan, Random.Range(0.45f, 0.8f));
         }
 
-        /// <summary>A vehicle blows up: fireball, smoke, sparks, flying debris, a shock ring and a scorch mark. The wreck goes on burning (DeathEffects).</summary>
+        /// <summary>How wide the pool of oil a vehicle of this size spills is.</summary>
+        public static float OilPoolDiameter(float bodyRadius) => bodyRadius * 2.6f + 1.2f;
+
+        /// <summary>A vehicle blows up: fireball, smoke, sparks, flying debris, a shock ring, a scorch mark and a pool of oil. The wreck goes on burning (DeathEffects).</summary>
         public void VehicleDeath(Vector3 position, float bodyRadius, bool titan, bool blue = false)
         {
             Vector3 middle = position + Vector3.up * Mathf.Max(0.8f, bodyRadius * 0.45f);
@@ -421,6 +426,8 @@ namespace Halobellum.Presentation
             _kit.Ring(priority, ground, radius * 3.4f, blue ? new Color(0.7f, 0.9f, 1f, 0.85f) : new Color(1f, 0.8f, 0.55f, 0.85f), 0.65f);
             _kit.GroundGlow(priority, ground, radius * 5f, blue ? GroundPlasma : GroundFire, 0.7f);
             _kit.Scorch(priority, ground, radius * 2.1f, ScorchBlack, 60f);
+            // A machine that runs on fuel spills it, and the pool burns for a while (DeathEffects). Plasma leaves none.
+            if (!blue) _kit.Oil(priority, ground + new Vector3(Random.Range(-0.3f, 0.3f), 0f, Random.Range(-0.3f, 0.3f)) * bodyRadius, OilPoolDiameter(bodyRadius), titan ? 70f : 45f);
             int chunks = Mathf.Clamp(Mathf.RoundToInt(bodyRadius * 7f) + 6, 8, 40);
             for (int i = 0; i < chunks; i++)
             {

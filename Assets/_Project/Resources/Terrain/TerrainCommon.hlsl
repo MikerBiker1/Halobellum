@@ -55,4 +55,13 @@ half3 TerrainLight(half3 normalWS)
     return light.color * lit + SampleSH(normalWS);
 }
 
+/// The sun, darkened where something stands between it and this point, and the ambient (the shadows pass, before 1.0). The shader needs URP's main light
+/// shadow keywords for the shadow to show; without them, or with the light's shadows off (Low quality), this is TerrainLight. Only the sun's direct part is shaded.
+half3 TerrainLightAt(half3 normalWS, float3 positionWS)
+{
+    Light light = GetMainLight(TransformWorldToShadowCoord(positionWS));
+    half lit = saturate(dot(normalWS, light.direction)) * light.shadowAttenuation;
+    return light.color * lit + SampleSH(normalWS);
+}
+
 #endif

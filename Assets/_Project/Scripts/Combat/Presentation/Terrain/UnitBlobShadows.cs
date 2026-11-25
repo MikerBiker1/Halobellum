@@ -1,5 +1,5 @@
 // UnitBlobShadows.cs
-// A soft dark blob on the ground under every living unit (M10), so that units sit on the terrain instead of floating over it. Models cast no real shadows. Air units get a fainter, wider one, thrown a little aside by the sun: it
+// A soft dark blob on the ground under every living unit (M10), so that units sit on the terrain instead of floating over it. At High quality models also cast the sun's real shadows and the blob is lighter, just the contact with the floor. Air units get a fainter, wider one, thrown a little aside by the sun: it
 // also shows where a flyer is over the ground. All blobs share one mesh, rewritten each frame from arrays kept for the purpose, so it is one draw call and allocates nothing during battle.
 // Looks only: it reads the simulation and the units' views. Depends on: BattleController, UnitViewManager, BattlefieldView's shader folder, Halobellum.Combat, UnityEngine.
 
@@ -25,6 +25,20 @@ namespace Halobellum.Presentation
         /// <summary>Blobs drawn last frame (for tests).</summary>
         public int Shown => _shownLast;
 
+        private const float FullDarkness = 0.65f;
+        private float _strength = 1f;
+
+        /// <summary>How dark the blobs are, as a share of their full darkness: 1 at Low quality, lighter at High, where units cast real shadows too.</summary>
+        public float Strength
+        {
+            get => _strength;
+            set
+            {
+                _strength = value;
+                if (_material != null) _material.SetFloat("_Strength", FullDarkness * value);
+            }
+        }
+
         /// <summary>Where the sun throws a flyer's blob, per metre of flying height.</summary>
         public Vector2 ThrowPerMetre { get; set; }
 
@@ -39,6 +53,7 @@ namespace Halobellum.Presentation
                 return;
             }
             _material = new Material(shader) { name = "Unit Blobs" };
+            _material.SetFloat("_Strength", FullDarkness * _strength);
 
             _positions = new Vector3[Capacity * 4];
             _uvs = new Vector3[Capacity * 4];

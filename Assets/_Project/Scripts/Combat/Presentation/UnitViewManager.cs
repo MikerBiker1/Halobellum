@@ -643,7 +643,8 @@ namespace Halobellum.Presentation
                 body.AddComponent<MeshFilter>().sharedMesh = baked.mesh;
                 view.BakedRenderer = body.AddComponent<MeshRenderer>();
                 view.BakedRenderer.sharedMaterials = baked.Materials;
-                view.BakedRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                // A living body casts the sun's shadow (High quality only: the light has none at Low); a grey ghost of the last battle casts none.
+                view.BakedRenderer.shadowCastingMode = GhostTeam == unit.Team ? UnityEngine.Rendering.ShadowCastingMode.Off : UnityEngine.Rendering.ShadowCastingMode.On;
                 view.BakedRenderer.receiveShadows = false;
                 view.Baked = baked;
                 // A real model keeps its own colours (D43); only a ghost or an infected body is tinted, or a unit whose

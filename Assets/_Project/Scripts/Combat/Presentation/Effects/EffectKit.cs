@@ -66,7 +66,7 @@ namespace Halobellum.Presentation
         private const float HeadStretch = 1f;
 
         private readonly Transform _root;
-        private readonly Layer _glow, _orb, _streak, _bolt, _sparks, _fire, _plasmaFire, _flame, _smoke, _dust, _blood, _ring, _groundGlow, _scorch, _chunks, _heat, _slash, _spores;
+        private readonly Layer _glow, _orb, _streak, _bolt, _sparks, _fire, _plasmaFire, _flame, _smoke, _dust, _blood, _ring, _groundGlow, _scorch, _chunks, _heat, _slash, _spores, _burn, _blast, _oil;
         private readonly Layer[] _layers;
         private readonly Layer _headGlow, _headStreak, _groundHead, _cloudSmoke, _cloudFire;
         private readonly ParticleSystem.Particle[] _headGlowData = new ParticleSystem.Particle[HeadCapacity];
@@ -171,17 +171,20 @@ namespace Halobellum.Presentation
 
             // What is drawn over what: marks on the ground, shimmer, smoke, fire, then everything that glows.
             _scorch = Flat("Scorch", EffectAssets.ParticleMaterial("Effect Scorch", EffectAssets.Scorch, 1f, 1f, 0f, 2960), 96);
+            _oil = Flat("Oil", EffectAssets.ParticleMaterial("Effect Oil", EffectAssets.Oil, 1f, 1f, 0f, 2962), 64);
             _heat = Billboard("Heat", EffectAssets.HeatMaterial(2970), 160);
             _groundGlow = Flat("Ground Glow", EffectAssets.ParticleMaterial("Effect Ground Glow", EffectAssets.Soft, 1.6f, 0f, 0f, 2980), 96);
             _ring = Flat("Shock Ring", EffectAssets.ParticleMaterial("Effect Ring", EffectAssets.Ring, 2.2f, 0f, 0f, 2985), 96);
             _groundHead = Flat("Ground Heads", EffectAssets.ParticleMaterial("Effect Ground Head", EffectAssets.Soft, 2.4f, 0f, 0f, 2981), GroundHeadCapacity);
-            _smoke = Billboard("Smoke", EffectAssets.ParticleMaterial("Effect Smoke", EffectAssets.Smoke, 1f, 1f, 2f, 3000), 900);
-            _dust = Billboard("Dust", EffectAssets.ParticleMaterial("Effect Dust", EffectAssets.Smoke, 1f, 1f, 0.8f, 3001), Mathf.RoundToInt(DustPerScale * Mathf.Max(HighQualityScale, _forcedScale)));
+            _smoke = Billboard("Smoke", EffectAssets.ParticleMaterial("Effect Smoke", EffectAssets.SmokeSheet.Texture, 1f, 1f, 2f, 3000), 900);
+            _dust = Billboard("Dust", EffectAssets.ParticleMaterial("Effect Dust", EffectAssets.SmokeSheet.Texture, 1f, 1f, 0.8f, 3001), Mathf.RoundToInt(DustPerScale * Mathf.Max(HighQualityScale, _forcedScale)));
             _blood = Billboard("Blood", EffectAssets.ParticleMaterial("Effect Blood", EffectAssets.Soft, 1f, 1f, 0f, 3005), BloodCapacity);
             _spores = Billboard("Spores", EffectAssets.ParticleMaterial("Effect Spores", EffectAssets.Soft, 1.5f, 0.1f, 0f, 3010), 600);
-            _fire = Billboard("Fire", EffectAssets.ParticleMaterial("Effect Fire", EffectAssets.Flame, 2.2f, 0.55f, 0.6f, 3020), 1300);
-            _plasmaFire = Billboard("Plasma Fire", EffectAssets.ParticleMaterial("Effect Plasma Fire", EffectAssets.Flame, 2.2f, 0.55f, 0.6f, 3020), 600);
-            _flame = Billboard("Flame", EffectAssets.ParticleMaterial("Effect Flame", EffectAssets.Flame, 1.9f, 0.4f, 0.3f, 3021), 1500);
+            _blast = Billboard("Blast", EffectAssets.ParticleMaterial("Effect Blast", EffectAssets.BlastSheet.Texture, 1.7f, 0.9f, 1.5f, 3018), 120);
+            _burn = Billboard("Burning", EffectAssets.ParticleMaterial("Effect Burning", EffectAssets.FlameSheet.Texture, 2f, 0.35f, 0.4f, 3019), 600);
+            _fire = Billboard("Fire", EffectAssets.ParticleMaterial("Effect Fire", EffectAssets.FireSheet.Texture, 2.2f, 0.55f, 0.6f, 3020), 1300);
+            _plasmaFire = Billboard("Plasma Fire", EffectAssets.ParticleMaterial("Effect Plasma Fire", EffectAssets.FireGreySheet.Texture, 2.2f, 0.55f, 0.6f, 3020), 600);
+            _flame = Billboard("Flame", EffectAssets.ParticleMaterial("Effect Flame", EffectAssets.FireSheet.Texture, 1.9f, 0.4f, 0.3f, 3021), 1500);
             _glow = Billboard("Glow", EffectAssets.ParticleMaterial("Effect Glow", EffectAssets.Soft, 3f, 0f, 0f, 3030, true), 1500);
             _orb = Billboard("Orb", EffectAssets.ParticleMaterial("Effect Orb", EffectAssets.Soft, 3f, 0f, 0f, 3031), 500);
             _bolt = Stretched("Bolt", EffectAssets.ParticleMaterial("Effect Bolt", EffectAssets.Streak, 3.4f, 0f, 0f, 3032), 900, BoltStretch);
@@ -190,12 +193,12 @@ namespace Halobellum.Presentation
             _slash = Billboard("Slash", EffectAssets.ParticleMaterial("Effect Slash", EffectAssets.Slash, 2.6f, 0f, 0f, 3035), 240);
             _headGlow = Billboard("Head Glow", EffectAssets.ParticleMaterial("Effect Head Glow", EffectAssets.Soft, 3f, 0f, 0f, 3036, true), HeadCapacity);
             _headStreak = Stretched("Head Streak", EffectAssets.ParticleMaterial("Effect Head Streak", EffectAssets.Streak, 3.4f, 0f, 0f, 3037), HeadCapacity, HeadStretch);
-            _cloudSmoke = Cloud("Cloud Smoke", EffectAssets.ParticleMaterial("Effect Cloud Smoke", EffectAssets.Smoke, 1f, 1f, 2f, 3002), CloudSmokeCapacity);
-            _cloudFire = Cloud("Cloud Fire", EffectAssets.ParticleMaterial("Effect Cloud Fire", EffectAssets.Flame, 2.2f, 0.55f, 0.6f, 3022), CloudFireCapacity);
+            _cloudSmoke = Cloud("Cloud Smoke", EffectAssets.ParticleMaterial("Effect Cloud Smoke", EffectAssets.SmokeSheet.Texture, 1f, 1f, 2f, 3002), CloudSmokeCapacity, EffectAssets.SmokeSheet);
+            _cloudFire = Cloud("Cloud Fire", EffectAssets.ParticleMaterial("Effect Cloud Fire", EffectAssets.FireGreySheet.Texture, 2.2f, 0.55f, 0.6f, 3022), CloudFireCapacity, EffectAssets.FireGreySheet);
             _chunkMaterial = EffectAssets.ChunkMaterial();
             _chunks = MakeChunks("Chunks", _chunkMaterial, 320);
 
-            _layers = new[] { _scorch, _heat, _groundGlow, _ring, _smoke, _dust, _blood, _spores, _fire, _plasmaFire, _flame, _glow, _orb, _bolt, _streak, _sparks, _slash, _chunks };
+            _layers = new[] { _scorch, _oil, _heat, _groundGlow, _ring, _smoke, _dust, _blood, _spores, _blast, _burn, _fire, _plasmaFire, _flame, _glow, _orb, _bolt, _streak, _sparks, _slash, _chunks };
 
             Fades(_glow, Fade(1f, 0.25f, 0.8f, 0f), Grow(0.55f, 0.2f, 1f));
             Fades(_orb, Fade(1f, 0.85f, 1f, 0f), null);
@@ -206,14 +209,17 @@ namespace Halobellum.Presentation
             Gravity(_sparks, 1.5f);
 
             var fire = new Gradient();
-            fire.SetKeys(
-                new[] { new GradientColorKey(new Color(1f, 0.92f, 0.65f), 0f), new GradientColorKey(new Color(1f, 0.58f, 0.14f), 0.25f), new GradientColorKey(new Color(0.42f, 0.11f, 0.03f), 0.55f), new GradientColorKey(new Color(0.05f, 0.03f, 0.025f), 0.85f) },
+            // The flipbook has its own white-hot core and orange edges, so the colour over its life only cools it towards dark red and soot;
+            // the made-in-code sheet is white and needs the whole range of colours.
+            fire.SetKeys(EffectAssets.FireSheet.Animated
+                    ? new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(new Color(1f, 0.88f, 0.74f), 0.3f), new GradientColorKey(new Color(0.72f, 0.4f, 0.24f), 0.6f), new GradientColorKey(new Color(0.12f, 0.08f, 0.06f), 0.9f) }
+                    : new[] { new GradientColorKey(new Color(1f, 0.92f, 0.65f), 0f), new GradientColorKey(new Color(1f, 0.58f, 0.14f), 0.25f), new GradientColorKey(new Color(0.42f, 0.11f, 0.03f), 0.55f), new GradientColorKey(new Color(0.05f, 0.03f, 0.025f), 0.85f) },
                 new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(1f, 0.05f), new GradientAlphaKey(0.7f, 0.6f), new GradientAlphaKey(0f, 1f) });
             ColorOverLife(_fire, fire);
             SizeOverLife(_fire, Grow(0.45f, 0.45f, 1f));
             Drag(_fire, 2.4f);
             Gravity(_fire, -0.25f);
-            Sheet(_fire);
+            Sheet(_fire, EffectAssets.FireSheet);
             Spin(_fire, 1.2f);
 
             // A Covenant machine goes up in plasma: white-hot through light blue to deep blue, then dark.
@@ -225,34 +231,48 @@ namespace Halobellum.Presentation
             SizeOverLife(_plasmaFire, Grow(0.45f, 0.45f, 1f));
             Drag(_plasmaFire, 2.4f);
             Gravity(_plasmaFire, -0.25f);
-            Sheet(_plasmaFire);
+            Sheet(_plasmaFire, EffectAssets.FireGreySheet);
             Spin(_plasmaFire, 1.2f);
 
             // Flamethrower fire: small at the muzzle, growing all the way to the end of its range.
             var flame = new Gradient();
-            flame.SetKeys(
-                new[] { new GradientColorKey(new Color(1f, 0.86f, 0.5f), 0f), new GradientColorKey(new Color(1f, 0.55f, 0.12f), 0.35f), new GradientColorKey(new Color(0.65f, 0.16f, 0.03f), 0.7f), new GradientColorKey(new Color(0.08f, 0.04f, 0.03f), 1f) },
+            flame.SetKeys(EffectAssets.FireSheet.Animated
+                    ? new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(new Color(1f, 0.86f, 0.7f), 0.35f), new GradientColorKey(new Color(0.8f, 0.42f, 0.22f), 0.7f), new GradientColorKey(new Color(0.12f, 0.07f, 0.05f), 1f) }
+                    : new[] { new GradientColorKey(new Color(1f, 0.86f, 0.5f), 0f), new GradientColorKey(new Color(1f, 0.55f, 0.12f), 0.35f), new GradientColorKey(new Color(0.65f, 0.16f, 0.03f), 0.7f), new GradientColorKey(new Color(0.08f, 0.04f, 0.03f), 1f) },
                 new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(0.95f, 0.06f), new GradientAlphaKey(0.7f, 0.55f), new GradientAlphaKey(0f, 1f) });
             ColorOverLife(_flame, flame);
             SizeOverLife(_flame, Ease(new Keyframe(0f, 0.12f), new Keyframe(1f, 1f)));
             Drag(_flame, 2.4f);
             Gravity(_flame, -0.35f);
-            Sheet(_flame);
+            Sheet(_flame, EffectAssets.FireSheet);
             Spin(_flame, 1.6f);
 
             ColorOverLife(_smoke, Rise(0.07f, 0.3f));
             SizeOverLife(_smoke, Grow(0.35f, 0.45f, 0.82f));
             Drag(_smoke, 1.1f);
             Gravity(_smoke, -0.1f);
-            Sheet(_smoke);
+            Sheet(_smoke, EffectAssets.SmokeSheet);
             Spin(_smoke, 0.5f);
             Wander(_smoke, 0.5f, 0.3f);
 
             ColorOverLife(_dust, Rise(0.06f, 0.5f));
             SizeOverLife(_dust, Grow(0.4f, 0.4f, 0.85f));
             Drag(_dust, 2.2f);
-            Sheet(_dust);
+            Sheet(_dust, EffectAssets.SmokeSheet);
             Spin(_dust, 0.4f);
+
+            // A burning wreck's flames, or a pool of oil's: upright, each one a flame licking up through its frames, flickering in and out.
+            _burn.System.GetComponent<ParticleSystemRenderer>().renderMode = ParticleSystemRenderMode.VerticalBillboard;
+            ParticleSystem.MainModule burnMain = _burn.System.main;
+            burnMain.startSize3D = true;
+            ColorOverLife(_burn, Fade(0f, 0.15f, 1f, 0f));
+            Sheet(_burn, EffectAssets.FlameSheet);
+            // The explosion plays once, from the flash to its dark smoke, so every one starts at its first frame.
+            ColorOverLife(_blast, Fade(1f, 0.6f, 1f, 0f));
+            SizeOverLife(_blast, Grow(0.7f, 0.35f, 1f));
+            Sheet(_blast, EffectAssets.BlastSheet, fromAnyFrame: false);
+            ColorOverLife(_oil, Rise(0.04f, 0.9f));
+            SizeOverLife(_oil, Grow(0.3f, 0.12f, 1f));
 
             ColorOverLife(_blood, Fade(1f, 0.75f, 1f, 0f));
             Gravity(_blood, 1.8f);
@@ -471,6 +491,36 @@ namespace Halobellum.Presentation
         {
             var emit = new ParticleSystem.EmitParams { position = position, velocity = velocity, startSize = size, startColor = tint, startLifetime = life, rotation = Random.value * 360f };
             Emit(_fire, priority, ref emit);
+        }
+
+        /// <summary>
+        /// An upright flame standing on a burning wreck or a pool of oil, this wide (it is twice as tall), rising a little as it licks up through its frames.
+        /// Its bottom is at position. Orange only: a Covenant machine's plasma burns with PlasmaFire.
+        /// </summary>
+        public void Burn(EffectPriority priority, Vector3 position, float width, float life)
+        {
+            float height = width / EffectAssets.FlameSheet.Aspect;
+            var emit = new ParticleSystem.EmitParams
+            {
+                position = position + Vector3.up * height * 0.42f, velocity = Vector3.up * Random.Range(0.2f, 0.6f), startSize3D = new Vector3(width, height, 1f),
+                startColor = Color.white, startLifetime = life, rotation = 0f,
+            };
+            Emit(_burn, priority, ref emit);
+        }
+
+        /// <summary>The heart of an explosion: one flipbook from the flash through the fireball to its dark smoke, this wide.</summary>
+        public void Blast(EffectPriority priority, Vector3 position, float size, float life)
+        {
+            var emit = new ParticleSystem.EmitParams { position = position, velocity = Vector3.up * size * 0.12f, startSize = size, startColor = Color.white, startLifetime = life, rotation = Random.value * 360f };
+            Emit(_blast, priority, ref emit);
+        }
+
+        /// <summary>A pool of black oil spreading on the ground out of a wreck, to this diameter, staying this long.</summary>
+        public void Oil(EffectPriority priority, Vector3 position, float diameter, float life)
+        {
+            position.y = 0.05f;
+            var emit = new ParticleSystem.EmitParams { position = position, startSize = diameter, startColor = Color.white, startLifetime = life, rotation3D = new Vector3(0f, Random.value * 360f, 0f) };
+            Emit(_oil, priority, ref emit);
         }
 
         public void Smoke(EffectPriority priority, Vector3 position, Vector3 velocity, float size, Color color, float life)
@@ -721,11 +771,12 @@ namespace Halobellum.Presentation
         }
 
         /// <summary>Puffs of a cloud held in shape from outside. They overlap heavily, so the far ones are drawn first.</summary>
-        private Layer Cloud(string name, Material material, int max)
+        private Layer Cloud(string name, Material material, int max, EffectAssets.Sheet sheet)
         {
             Layer layer = Billboard(name, material, max);
             layer.System.GetComponent<ParticleSystemRenderer>().sortMode = ParticleSystemSortMode.Distance;
-            Sheet(layer);
+            // A cloud's puff is redrawn every frame: it keeps one frame of the flipbook, picked by its seed.
+            Sheet(layer, sheet, playThrough: false);
             return layer;
         }
 
@@ -827,16 +878,20 @@ namespace Halobellum.Presentation
             main.gravityModifier = gravity;
         }
 
-        /// <summary>Each particle picks one of the texture's four tiles and keeps it.</summary>
-        private static void Sheet(Layer layer)
+        /// <summary>
+        /// A flipbook plays through once over each particle's life, from a random frame (they loop), or from its first frame when it must start
+        /// at the beginning (fromAnyFrame false: the explosion). A sheet that is not animated, or playThrough false, gives each particle one tile to keep.
+        /// </summary>
+        private static void Sheet(Layer layer, EffectAssets.Sheet sheet, bool fromAnyFrame = true, bool playThrough = true)
         {
             ParticleSystem.TextureSheetAnimationModule module = layer.System.textureSheetAnimation;
             module.enabled = true;
-            module.numTilesX = 2;
-            module.numTilesY = 2;
+            module.numTilesX = sheet.TilesX;
+            module.numTilesY = sheet.TilesY;
             module.animation = ParticleSystemAnimationType.WholeSheet;
-            module.frameOverTime = 0f;
-            module.startFrame = new ParticleSystem.MinMaxCurve(0f, 0.999f);
+            bool plays = sheet.Animated && playThrough;
+            module.frameOverTime = plays ? new ParticleSystem.MinMaxCurve(1f, AnimationCurve.Linear(0f, 0f, 1f, 0.999f)) : new ParticleSystem.MinMaxCurve(0f);
+            module.startFrame = plays && !fromAnyFrame ? new ParticleSystem.MinMaxCurve(0f) : new ParticleSystem.MinMaxCurve(0f, 0.999f);
             module.cycleCount = 1;
         }
 

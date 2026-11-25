@@ -73,6 +73,11 @@ namespace Halobellum.Presentation
         private readonly BattlefieldLighting _lighting = new BattlefieldLighting();
         private readonly List<MeshRenderer> _mirrors = new List<MeshRenderer>();
         private int _qualityShown = -1;
+        private Light _sun;
+        private UniversalRenderPipelineAsset _shadowAsset;
+        private float _assetShadowDistance;
+        private Vector3 _assetCascades;
+        private int _assetCascadeCount;
         private string _wantedA, _wantedB;
         private float _wantedSince;
 
@@ -143,6 +148,7 @@ namespace Halobellum.Presentation
         {
             if (_battle == null || _battle.Rules == null) return;
             if (QualitySettings.GetQualityLevel() != _qualityShown && _map != null) ApplyQuality();
+            UpdateShadowRange();
             UpdateSquares();
             UpdateFlankPulse();
             if (_forced) return;
@@ -255,7 +261,8 @@ namespace Halobellum.Presentation
             Material solid = Make("Terrain/TerrainProp");
             solid.SetTexture("_Grain", grain);
             solid.SetFloat("_GlowBoost", air.PropGlow);
-            Part("Solid", _map.Solid, solid);
+            // What stands casts the sun's shadow (High quality, the shadows pass); the floor, its decals and glows only receive it.
+            PlaceholderArt.CreatePart("Solid", _root, _map.Solid, solid).GetComponent<MeshRenderer>().shadowCastingMode = ShadowCastingMode.On;
 
             Material glow = Make("Terrain/TerrainGlow");
             glow.SetFloat("_Core", air.GlowCore);
@@ -406,6 +413,7 @@ namespace Halobellum.Presentation
             foreach (Light light in FindObjectsByType<Light>(FindObjectsSortMode.None))
             {
                 if (light.type != LightType.Directional) continue;
+                _sun = light;
                 light.color = air.SunColor;
                 light.intensity = air.SunIntensity;
                 light.transform.rotation = Quaternion.Euler(air.SunAngles.x, air.SunAngles.y, 0f);
@@ -450,6 +458,63 @@ namespace Halobellum.Presentation
                 if (mirror != null) mirror.enabled = high;
             if (_mood != null && _mood.sharedProfile != null && _map != null) BattlefieldLighting.Configure(_mood.sharedProfile, _map.Atmosphere, high);
             BattlefieldLighting.UseBattleRenderer(Camera.main);
+            if (_sun != null && _map != null)
+            {
+                _sun.shadows = high ? LightShadows.Soft : LightShadows.None;
+                _sun.shadowStrength = _map.Atmosphere.SunShadow;
+            }
+            if (_blobs != null) _blobs.Strength = high ? HighQualityBlobStrength : 1f;
+        }
+
+        /// <summary>How dark the blob under a unit is at High quality, where the unit also casts a real shadow: only the soft contact with the floor is left.</summary>
+        public const float HighQualityBlobStrength = 0.55f;
+
+        /// <summary>
+        /// The sun's shadows reach exactly as far as the fighting floor seen from where the camera is (the shadows pass): from 150 m away, a fixed short range would
+        /// leave the field unshadowed and a long one would spread the shadow map thin. The four cascades split what lies between the nearest and farthest corner of
+        /// the floor (the air in front of it needs none). The pipeline asset's own values come back when the battlefield goes, so the editor's asset never keeps them.
+        /// </summary>
+        private void UpdateShadowRange()
+        {
+            if (_sun == null || _sun.shadows == LightShadows.None || _battle.Rules == null) return;
+            Camera view = Camera.main;
+            var asset = UniversalRenderPipeline.asset;
+            if (view == null || asset == null) return;
+            if (asset != _shadowAsset)
+            {
+                RestoreShadowAsset();
+                _shadowAsset = asset;
+                _assetShadowDistance = asset.shadowDistance;
+                _assetCascades = asset.cascade4Split;
+                _assetCascadeCount = asset.shadowCascadeCount;
+            }
+            CombatRules rules = _battle.Rules;
+            float halfWidth = rules.ArenaWidth * 0.5f + 6f, halfLength = rules.ArenaLength * 0.5f + 6f;
+            Vector3 eye = view.transform.position;
+            float near = float.MaxValue, far = 0f;
+            for (int corner = 0; corner < 4; corner++)
+            {
+                var point = new Vector3((corner & 1) == 0 ? -halfWidth : halfWidth, 0f, (corner & 2) == 0 ? -halfLength : halfLength);
+                float metres = Vector3.Distance(eye, point);
+                near = Mathf.Min(near, metres);
+                far = Mathf.Max(far, metres);
+            }
+            // A camera right over the floor is nearest to the point under it, not to a corner.
+            near = Mathf.Min(near, Mathf.Max(0f, eye.y - 2f));
+            float range = Mathf.Clamp(far + 10f, 40f, 500f);
+            float start = Mathf.Clamp01(near / range);
+            asset.shadowDistance = range;
+            asset.shadowCascadeCount = 4;
+            asset.cascade4Split = new Vector3(Mathf.Lerp(start, 1f, 0.22f), Mathf.Lerp(start, 1f, 0.46f), Mathf.Lerp(start, 1f, 0.72f));
+        }
+
+        private void RestoreShadowAsset()
+        {
+            if (_shadowAsset == null) return;
+            _shadowAsset.shadowDistance = _assetShadowDistance;
+            _shadowAsset.cascade4Split = _assetCascades;
+            _shadowAsset.shadowCascadeCount = _assetCascadeCount;
+            _shadowAsset = null;
         }
 
         /// <summary>A polished floor's mirror of a mesh that stands around the field (TerrainMirror).</summary>
@@ -509,6 +574,7 @@ namespace Halobellum.Presentation
 
         private void OnDestroy()
         {
+            RestoreShadowAsset();
             Clear();
             _lighting.Destroy();
         }

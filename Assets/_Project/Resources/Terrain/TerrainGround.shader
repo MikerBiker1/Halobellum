@@ -2,7 +2,8 @@
 // The ground of the battlefield and the land around it (M10). Three tiled layers for each side's faction, sampled in world space, mixed by a
 // control map built for this map: R is how much of the second layer, G the third, B how far towards the enemy's ground, A soft shade from what
 // stands nearby. Each layer's alpha is its height, so one ground gives way to another around its stones and lumps rather than in a smooth fade.
-// A slow macro tile breaks up repetition. It has its own light and haze, so it needs no shader keywords that a build could strip.
+// A slow macro tile breaks up repetition. It has its own light and haze. The only keywords are URP's for the sun's shadows (the shadows pass, before 1.0),
+// which every URP shader of the build shares.
 // Floors can shine (D80): each layer has a gloss, lit by a light of its own (_GlossDir, _GlossColor) rather than the sun, so a polished deck can catch a highlight
 // towards the camera while units stay lit from the front. The highlight is brightest where a layer's height (alpha) is high: raised plates shine, seams and grime don't.
 // Depends on: TerrainCommon.hlsl, BattlefieldView (sets the textures and the globals).
@@ -79,6 +80,8 @@ Shader "Halobellum/TerrainGround"
 
             HLSLPROGRAM
             #pragma target 4.5
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
+            #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
             #pragma vertex GroundVertex
             #pragma fragment Fragment
 
@@ -139,7 +142,7 @@ Shader "Halobellum/TerrainGround"
                 albedo *= 1.0 + (sqrt(patches) - 0.72) * 2.0 * _MacroStrength;
 
                 half3 normal = normalize(input.normalWS);
-                half3 lit = albedo * TerrainLight(normal) * control.a;
+                half3 lit = albedo * TerrainLightAt(normal, input.positionWS) * control.a;
                 if (shine > 0.001)
                 {
                     float3 toCamera = normalize(_WorldSpaceCameraPos - input.positionWS);

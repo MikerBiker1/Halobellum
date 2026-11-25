@@ -1,7 +1,8 @@
 // EffectAssets.cs
-// The textures, meshes and materials of the battle effects (M10), all made in code, so no art files are needed and nothing is
-// borrowed from anywhere. Made once on first use and kept for the whole run of the game, so changing scenes costs nothing.
-// Shaders live in Resources/Effects, so that they are included in builds.
+// The textures, meshes and materials of the battle effects (M10), made in code. Made once on first use and kept for the whole run of the game,
+// so changing scenes costs nothing. Shaders live in Resources/Effects, so that they are included in builds.
+// Smoke, fire, flames and the explosion are real flipbooks (the effects pass, before 1.0): simulations rendered by Unity Labs, CC0, in
+// Resources/Effects/Flipbooks with their SOURCE.txt. Without them the made-in-code sheets stand in, so nothing breaks.
 // Depends on: UnityEngine.
 
 using UnityEngine;
@@ -10,7 +11,39 @@ namespace Halobellum.Presentation
 {
     public static class EffectAssets
     {
-        private static Texture2D _soft, _streak, _smoke, _flame, _ring, _scorch, _slash, _heat, _beam;
+        private static Texture2D _soft, _streak, _smoke, _flame, _ring, _scorch, _slash, _heat, _beam, _oil;
+        private static Sheet _smokeSheet, _fireSheet, _fireGreySheet, _flameSheet, _blastSheet;
+
+        /// <summary>A grid of frames on one texture. Animated: a particle plays it through over its life; otherwise each particle keeps one tile.</summary>
+        public sealed class Sheet
+        {
+            public Texture2D Texture;
+            public int TilesX, TilesY;
+            public bool Animated;
+            /// <summary>Width over height of one frame.</summary>
+            public float Aspect = 1f;
+        }
+
+        /// <summary>A billowing puff of smoke, 8 by 8 frames, grey enough for the game's smoke colours to tint it.</summary>
+        public static Sheet SmokeSheet => _smokeSheet ??= Book("Smoke_8x8", 8, 8, 1f, () => Smoke);
+        /// <summary>A rolling ball of fire, 8 by 8 frames, in its own colours.</summary>
+        public static Sheet FireSheet => _fireSheet ??= Book("Fire_8x8", 8, 8, 1f, () => Flame);
+        /// <summary>The same ball of fire in grey, for fire the game colours itself (plasma, a cloud's fire).</summary>
+        public static Sheet FireGreySheet => _fireGreySheet ??= Book("FireGrey_8x8", 8, 8, 1f, () => Flame);
+        /// <summary>An upright flame licking upwards, 16 by 4 frames, each twice as tall as wide: a burning wreck or a pool of oil.</summary>
+        public static Sheet FlameSheet => _flameSheet ??= Book("Flame_16x4", 16, 4, 0.5f, () => Flame);
+        /// <summary>An explosion from flash to dark smoke, 5 by 5 frames, played once.</summary>
+        public static Sheet BlastSheet => _blastSheet ??= Book("Explosion_5x5", 5, 5, 1f, () => Flame);
+        /// <summary>A spill of black oil with a faint rainbow sheen at its edges and streaks.</summary>
+        public static Texture2D Oil => _oil != null ? _oil : (_oil = MakeOil(256));
+
+        private static Sheet Book(string file, int tilesX, int tilesY, float aspect, System.Func<Texture2D> fallback)
+        {
+            var texture = Resources.Load<Texture2D>("Effects/Flipbooks/" + file);
+            if (texture != null) return new Sheet { Texture = texture, TilesX = tilesX, TilesY = tilesY, Animated = true, Aspect = aspect };
+            Debug.LogWarning($"Effect flipbook {file} is missing; the made-in-code sheet stands in.");
+            return new Sheet { Texture = fallback(), TilesX = 2, TilesY = 2, Animated = false };
+        }
         private static Mesh[] _chunks;
         private static Mesh _flatQuad;
 
@@ -194,6 +227,31 @@ namespace Halobellum.Presentation
                     float a = Mathf.Clamp01((1f - r) * 1.7f + (noise - 0.55f) * 1.1f);
                     a = Mathf.SmoothStep(0f, 1f, a);
                     pixels[y * size + x] = new Color(1f, 1f, 1f, a * Mathf.Lerp(0.8f, 1f, noise));
+                }
+            }
+            return Finish(texture, pixels);
+        }
+
+        /// <summary>Black oil: crisp, lobed edges as a liquid has, nearly black inside, a thin bright sheen of rainbow colours near the edge and in a few streaks.</summary>
+        private static Texture2D MakeOil(int size)
+        {
+            Texture2D texture = NewTexture("Effect Oil", size, size);
+            var pixels = new Color[size * size];
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    float r = Radius(x, y, size);
+                    float u = (float)x / size, v = (float)y / size;
+                    float lobes = Fbm(u * 3.2f + 4.7f, v * 3.2f + 1.9f, 3);
+                    float edge = (1f - r) * 1.6f + (lobes - 0.5f) * 1.4f;
+                    float a = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(edge * 9f)); // A liquid's edge is sharp.
+                    float rim = Mathf.Exp(-Mathf.Pow((edge - 0.12f) * 9f, 2f));
+                    float streak = Mathf.Pow(Mathf.Clamp01(1f - Mathf.Abs(Fbm(u * 5f + 11f, v * 1.6f + 3f, 3) - 0.5f) * 12f), 3f) * 0.6f;
+                    float hue = Mathf.Repeat(lobes * 3.1f + r * 1.7f, 1f);
+                    Color sheen = Color.HSVToRGB(hue, 0.55f, 1f) * (rim * 0.32f + streak * 0.2f);
+                    Color body = new Color(0.035f, 0.03f, 0.028f);
+                    pixels[y * size + x] = new Color(body.r + sheen.r, body.g + sheen.g, body.b + sheen.b, a * 0.94f);
                 }
             }
             return Finish(texture, pixels);

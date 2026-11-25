@@ -25,6 +25,8 @@ Shader "Halobellum/TerrainDecal"
 
             HLSLPROGRAM
             #pragma target 4.5
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
+            #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
             #pragma vertex Vertex
             #pragma fragment Fragment
 
@@ -65,7 +67,7 @@ Shader "Halobellum/TerrainDecal"
                 half4 grain = SAMPLE_TEXTURE2D(_Grain, sampler_Grain, input.positionWS.xz * 0.083);
                 half3 albedo = input.color.rgb * lerp(1.0, grain.r * 5.6, input.uv.y);
                 float wear = input.uv.x > 0.0 ? smoothstep(input.uv.x - 0.08, input.uv.x + 0.08, grain.a) : 1.0;
-                half3 lit = albedo * TerrainLight(half3(0, 1, 0));
+                half3 lit = albedo * TerrainLightAt(half3(0, 1, 0), input.positionWS);
                 return half4(lit, input.color.a * wear);
             }
             ENDHLSL

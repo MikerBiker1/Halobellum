@@ -12,7 +12,8 @@
 // _BaseColor tints the body: rgb is the colour, alpha how strongly (the side's colour, a ghost, infection).
 // A second material can draw a see-through part of the mesh, such as a Jackal's shield: _Glass on, in the transparent queue, with blending.
 // That part glows in its vertices' own colour, unlit, and their colour's alpha says how much it shows. The depth pass never sees that queue.
-// _Cutout on leaves out the texture where its alpha is under a half, in both passes: a Flood form's fronds (D90).
+// _Cutout on leaves out the texture where its alpha is under a half, in every pass: a Flood form's fronds (D90).
+// Bodies cast real shadows from the scene's sun and receive them (the shadows pass, before 1.0); the see-through part casts none. The light's shadows are off at Low quality.
 Shader "Halobellum/BakedCrowd"
 {
     Properties
@@ -68,6 +69,7 @@ Shader "Halobellum/BakedCrowd"
             float4 positionCS : SV_POSITION;
             float3 normalWS : TEXCOORD0;
             float2 uv : TEXCOORD1;
+            float3 positionWS : TEXCOORD2;
             float4 color : COLOR;
             UNITY_VERTEX_INPUT_INSTANCE_ID
         };
@@ -102,12 +104,9 @@ Shader "Halobellum/BakedCrowd"
                  + BoneMatrix((int)input.bones.y, row) * (1.0 - input.weights.x);
         }
 
-        Varyings BakedVertex(Attributes input)
+        /// The body's vertex where its animation puts it this moment, in world space, and its normal.
+        float3 SkinnedWorld(Attributes input, out float3 normalWS)
         {
-            Varyings output;
-            UNITY_SETUP_INSTANCE_ID(input);
-            UNITY_TRANSFER_INSTANCE_ID(input, output);
-
             float4 blend = UNITY_ACCESS_INSTANCED_PROP(BakedCrowdProps, _AnimBlend);
             float fade = blend.y > 0.0 ? saturate((_BattleTime - blend.x) / blend.y) : 1.0;
             fade = fade * fade * (3.0 - 2.0 * fade); // Ease in and out.
@@ -118,9 +117,17 @@ Shader "Halobellum/BakedCrowd"
                 skin = skin * fade + Skin(input, ClipRow(UNITY_ACCESS_INSTANCED_PROP(BakedCrowdProps, _AnimOld))) * (1.0 - fade);
 
             float3 position = mul(skin, float4(input.positionOS.xyz, 1.0));
-            float3 normal = mul((float3x3)skin, input.normalOS);
-            output.positionCS = TransformWorldToHClip(TransformObjectToWorld(position));
-            output.normalWS = TransformObjectToWorldNormal(normal);
+            normalWS = TransformObjectToWorldNormal(mul((float3x3)skin, input.normalOS));
+            return TransformObjectToWorld(position);
+        }
+
+        Varyings BakedVertex(Attributes input)
+        {
+            Varyings output;
+            UNITY_SETUP_INSTANCE_ID(input);
+            UNITY_TRANSFER_INSTANCE_ID(input, output);
+            output.positionWS = SkinnedWorld(input, output.normalWS);
+            output.positionCS = TransformWorldToHClip(output.positionWS);
             output.uv = input.uv;
             output.color = input.color;
             return output;
@@ -138,6 +145,8 @@ Shader "Halobellum/BakedCrowd"
             HLSLPROGRAM
             #pragma target 4.5
             #pragma multi_compile_instancing
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
+            #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
             #pragma vertex BakedVertex
             #pragma fragment Fragment
 
@@ -150,8 +159,8 @@ Shader "Halobellum/BakedCrowd"
                 // Keeps the texture's light and dark, lifted so that dark armour still shows the colour.
                 albedo = lerp(albedo, (0.35 + 0.9 * dot(albedo, half3(0.3, 0.59, 0.11))) * tint.rgb * 1.3, tint.a);
                 if (_Glass > 0.5) return half4(albedo * 1.6, input.color.a);
-                Light light = GetMainLight();
-                half lit = saturate(dot(normalize(input.normalWS), light.direction));
+                Light light = GetMainLight(TransformWorldToShadowCoord(input.positionWS));
+                half lit = saturate(dot(normalize(input.normalWS), light.direction)) * light.shadowAttenuation;
                 return half4(albedo * (0.45 + 0.75 * lit * light.color), 1.0);
             }
             ENDHLSL
@@ -171,6 +180,46 @@ Shader "Halobellum/BakedCrowd"
 
             half4 Fragment(Varyings input) : SV_Target
             {
+                CutOut(input);
+                return 0;
+            }
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "ShadowCaster"
+            Tags { "LightMode" = "ShadowCaster" }
+            ZWrite On
+            ZTest LEqual
+            ColorMask 0
+            Cull Off
+
+            HLSLPROGRAM
+            #pragma target 4.5
+            #pragma multi_compile_instancing
+            #pragma vertex ShadowVertex
+            #pragma fragment Fragment
+
+            float3 _LightDirection;
+
+            Varyings ShadowVertex(Attributes input)
+            {
+                Varyings output;
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_TRANSFER_INSTANCE_ID(input, output);
+                output.positionWS = SkinnedWorld(input, output.normalWS);
+                output.positionCS = ApplyShadowClamping(TransformWorldToHClip(ApplyShadowBias(output.positionWS, output.normalWS, _LightDirection)));
+                output.uv = input.uv;
+                output.color = input.color;
+                return output;
+            }
+
+            half4 Fragment(Varyings input) : SV_Target
+            {
+                UNITY_SETUP_INSTANCE_ID(input);
+                // The see-through part (a Jackal's shield) lets the light through.
+                if (_Glass > 0.5) clip(-1.0);
                 CutOut(input);
                 return 0;
             }
