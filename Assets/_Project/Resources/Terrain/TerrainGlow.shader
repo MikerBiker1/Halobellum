@@ -4,12 +4,15 @@
 // Vertex colour is the light in sRGB, alpha how strong. uv.x is how much it pulses, uv.y the pulse's phase. A vertex's normal, if not zero, makes it
 // drift slowly: x how far sideways, y how far up and down, z how fast. uv1, if not zero, turns it to face the camera: how far right and up along the screen it stands from its position.
 // A light goes when the point it stands at would hide the floor (FloorHiding), since what it hangs on has gone from there too. Drifting specks hang on nothing, so they stay.
+// _Core (the lighting pass, set per look from TerrainTheme.GlowCore) makes the bright cores (alpha near 1: strips, seams, slits, lamps) brighter than white, so that the bloom
+// picks them up; the soft spill and pools of light (low alpha) stay as they were, so the floor isn't washed out.
 // Depends on: UnityEngine's time, TerrainCommon.hlsl.
 Shader "Halobellum/TerrainGlow"
 {
     Properties
     {
         _Boost("Brightness", Float) = 1.6
+        _Core("Extra brightness of a light's core", Float) = 0
     }
 
     SubShader
@@ -34,7 +37,7 @@ Shader "Halobellum/TerrainGlow"
             #include "TerrainCommon.hlsl"
 
             CBUFFER_START(UnityPerMaterial)
-                float _Boost;
+                float _Boost, _Core;
             CBUFFER_END
 
             struct Attributes
@@ -69,7 +72,8 @@ Shader "Halobellum/TerrainGlow"
                 world += UNITY_MATRIX_V[0].xyz * input.face.x + UNITY_MATRIX_V[1].xyz * input.face.y;
                 output.positionCS = TransformWorldToHClip(world);
                 float pulse = 1.0 - input.uv.x * (0.5 + 0.5 * sin(_Time.y * 1.3 + input.uv.y));
-                output.color = half4(SRGBToLinear(input.color.rgb) * input.color.a * pulse * stays * _Boost, 1.0);
+                float core = 1.0 + _Core * smoothstep(0.55, 0.95, input.color.a);
+                output.color = half4(SRGBToLinear(input.color.rgb) * input.color.a * pulse * stays * _Boost * core, 1.0);
                 return output;
             }
 

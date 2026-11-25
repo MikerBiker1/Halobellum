@@ -55,12 +55,24 @@ namespace Halobellum.Presentation
                 Gloss = new Vector4(0.3f, 0.4f, 0.3f, 40f),
                 GlossColor = new Color(0.6f, 0.7f, 0.95f, 0.05f),
                 GlossLightAngles = new Vector2(40f, 180f),
+                // Lavender and indigo, richer (the lighting pass): indigo darks, lavender lights, more saturation and contrast, a touch darker so the deck isn't milky.
                 Vignette = 0.3f,
                 VignetteColor = Rgb(18, 8, 34),
                 ColorFilter = new Color(0.97f, 0.955f, 1f),
-                Contrast = 8f,
+                Contrast = 14f,
                 Saturation = 6f,
-                Exposure = 0f,
+                Exposure = -0.15f,
+                Temperature = 0f,
+                Tint = 6f,
+                ShadowTone = new Color(0.44f, 0.4f, 0.6f),
+                HighlightTone = new Color(0.54f, 0.5f, 0.56f),
+                BloomTint = new Color(0.85f, 0.8f, 1f),
+                BloomIntensity = 0.7f,
+                // Energy lines, slits, orbs and lift columns go past white and bloom.
+                GlowCore = 1.6f,
+                PropGlow = 3.2f,
+                // The polished deck mirrors the ribs, pillars and their lights.
+                Mirror = 0.35f,
             },
             Layout = new CovenantWarshipLayout(),
         };

@@ -70,7 +70,9 @@ namespace Halobellum.Presentation
         private TerrainLook _forcedLook;
         private bool _forcedOutdoor;
         private Volume _mood;
-        private VolumeProfile _moodProfile;
+        private readonly BattlefieldLighting _lighting = new BattlefieldLighting();
+        private readonly List<MeshRenderer> _mirrors = new List<MeshRenderer>();
+        private int _qualityShown = -1;
         private string _wantedA, _wantedB;
         private float _wantedSince;
 
@@ -80,6 +82,18 @@ namespace Halobellum.Presentation
         public string ShownFactionB => _shownB;
         /// <summary>How clear the deployment squares are, 0 to 1.</summary>
         public float SquaresShown => _squares;
+        /// <summary>The look's own post-processing profile on the mood volume (BattlefieldLighting): named after the look's Id, or "Outdoor".</summary>
+        public VolumeProfile MoodProfile => _mood != null ? _mood.sharedProfile : null;
+        /// <summary>True while the polished floor's mirror is drawn (a look with one, on the High quality level).</summary>
+        public bool MirrorShown
+        {
+            get
+            {
+                foreach (MeshRenderer mirror in _mirrors)
+                    if (mirror != null && mirror.enabled) return true;
+                return false;
+            }
+        }
 
         private void Start()
         {
@@ -128,6 +142,7 @@ namespace Halobellum.Presentation
         private void LateUpdate()
         {
             if (_battle == null || _battle.Rules == null) return;
+            if (QualitySettings.GetQualityLevel() != _qualityShown && _map != null) ApplyQuality();
             UpdateSquares();
             UpdateFlankPulse();
             if (_forced) return;
@@ -236,13 +251,21 @@ namespace Halobellum.Presentation
             decals.SetTexture("_Grain", grain);
             Part("Decals", _map.Decals, decals);
 
+            TerrainTheme air = _map.Atmosphere;
             Material solid = Make("Terrain/TerrainProp");
             solid.SetTexture("_Grain", grain);
+            solid.SetFloat("_GlowBoost", air.PropGlow);
             Part("Solid", _map.Solid, solid);
 
-            Part("Glow", _map.Glow, Make("Terrain/TerrainGlow"));
+            Material glow = Make("Terrain/TerrainGlow");
+            glow.SetFloat("_Core", air.GlowCore);
+            Part("Glow", _map.Glow, glow);
+            if (air.Mirror > 0f)
+            {
+                _mirrors.Add(Mirror("Mirror Solid", _map.Solid, air, false));
+                _mirrors.Add(Mirror("Mirror Glow", _map.Glow, air, true));
+            }
 
-            TerrainTheme air = _map.Atmosphere;
             Material haze = Make("Terrain/TerrainHaze");
             haze.SetTexture("_Macro", macro);
             Color hazeColor = air.Haze;
@@ -271,6 +294,7 @@ namespace Halobellum.Presentation
             _squaresB = SquaresOver("Team B Squares", rules, Team.B, SquaresColor(Team.B));
 
             ApplyAir(air);
+            ApplyQuality();
             if (_blobs != null)
             {
                 Vector3 forward = Quaternion.Euler(air.SunAngles.x, air.SunAngles.y, 0f) * Vector3.forward;
@@ -399,8 +423,8 @@ namespace Halobellum.Presentation
         }
 
         /// <summary>
-        /// The map's mood (D80): a vignette and a mild colour grade in a global volume of its own, above the effects' bloom. Neutral on the outdoor maps.
-        /// The camera's post-processing is already on for the bloom (EffectsPostProcess).
+        /// The map's mood (D80) and light (the lighting pass): the look's own profile (BattlefieldLighting) on a global volume above the effects' bloom: its tonemapping,
+        /// colour grade, white balance, split toning, vignette and bloom. Each look has its own profile, named after its Id; the outdoor maps share a nearly neutral one.
         /// </summary>
         private void ApplyMood(TerrainTheme air)
         {
@@ -411,30 +435,35 @@ namespace Halobellum.Presentation
                 _mood = body.AddComponent<Volume>();
                 _mood.isGlobal = true;
                 _mood.priority = -5f;
-                _moodProfile = ScriptableObject.CreateInstance<VolumeProfile>();
-                _moodProfile.name = "Battlefield Mood";
-                _moodProfile.hideFlags = HideFlags.DontSave;
-                _moodProfile.Add<Vignette>(true);
-                _moodProfile.Add<ColorAdjustments>(true);
-                _mood.sharedProfile = _moodProfile;
             }
-            if (_moodProfile.TryGet(out Vignette vignette))
-            {
-                vignette.intensity.Override(air.Vignette);
-                vignette.color.Override(air.VignetteColor);
-                vignette.smoothness.Override(0.45f);
-                vignette.active = air.Vignette > 0.001f;
-            }
-            if (_moodProfile.TryGet(out ColorAdjustments grade))
-            {
-                grade.colorFilter.Override(air.ColorFilter);
-                grade.contrast.Override(air.Contrast);
-                grade.saturation.Override(air.Saturation);
-                grade.postExposure.Override(air.Exposure);
-                grade.active = air.ColorFilter != Color.white || air.Contrast != 0f || air.Saturation != 0f || air.Exposure != 0f;
-            }
+            _mood.sharedProfile = _lighting.ProfileFor(_map.Look != null ? _map.Look.Id : BattlefieldLighting.OutdoorId, air, BattlefieldLighting.HighQualityNow);
             Camera view = Camera.main;
             if (view != null) view.GetUniversalAdditionalCameraData().renderPostProcessing = true;
+        }
+
+        /// <summary>What follows the quality level, which can change at any moment: the bloom's quality, the floor's mirror and the renderer with the soft contact shadows (High only).</summary>
+        private void ApplyQuality()
+        {
+            _qualityShown = QualitySettings.GetQualityLevel();
+            bool high = BattlefieldLighting.IsHighQuality(_qualityShown);
+            foreach (MeshRenderer mirror in _mirrors)
+                if (mirror != null) mirror.enabled = high;
+            if (_mood != null && _mood.sharedProfile != null && _map != null) BattlefieldLighting.Configure(_mood.sharedProfile, _map.Atmosphere, high);
+            BattlefieldLighting.UseBattleRenderer(Camera.main);
+        }
+
+        /// <summary>A polished floor's mirror of a mesh that stands around the field (TerrainMirror).</summary>
+        private MeshRenderer Mirror(string name, Mesh mesh, TerrainTheme air, bool glow)
+        {
+            Material material = Make("Terrain/TerrainMirror");
+            material.SetFloat("_Strength", air.Mirror);
+            material.SetFloat("_FadeHeight", 12f);
+            material.SetFloat("_GlowBoost", air.PropGlow);
+            material.SetFloat("_Core", air.GlowCore);
+            material.SetFloat("_IsGlow", glow ? 1f : 0f);
+            // Turned upside down, the solid mesh's outsides wind the other way. The glow's halos are turned to the camera after the flip, so they keep theirs.
+            material.SetFloat("_Cull", glow ? (float)CullMode.Off : (float)CullMode.Front);
+            return PlaceholderArt.CreatePart(name, _root, mesh, material).GetComponent<MeshRenderer>();
         }
 
         private void Part(string name, Mesh mesh, Material material) =>
@@ -470,6 +499,7 @@ namespace Halobellum.Presentation
             _root = null;
             _flankLeft = _flankRight = null;
             _flankTeam = null;
+            _mirrors.Clear();
             foreach (Material material in _materials) Destroy(material);
             _materials.Clear();
             _overlays.Clear();
@@ -480,7 +510,7 @@ namespace Halobellum.Presentation
         private void OnDestroy()
         {
             Clear();
-            if (_moodProfile != null) Destroy(_moodProfile);
+            _lighting.Destroy();
         }
     }
 }

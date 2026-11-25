@@ -67,12 +67,25 @@ namespace Halobellum.Presentation
                     Gloss = new Vector4(covenant ? 0.45f : 0.22f, 0.75f, 0.2f, 28f),
                     GlossColor = new Color(1f, 0.88f, 0.82f, 0.05f),
                     GlossLightAngles = new Vector2(44f, 180f),
+                    // Murky and warm-sick (the lighting pass): warmer and a little green, red-brown darks, sickly yellow lights, darker edges.
                     Vignette = 0.35f,
                     VignetteColor = Rgb(10, 5, 5),
                     ColorFilter = new Color(1f, 0.97f, 0.955f),
-                    Contrast = 12f,
-                    Saturation = 0f,
-                    Exposure = -0.05f,
+                    Contrast = 14f,
+                    Saturation = -6f,
+                    Exposure = -0.1f,
+                    Temperature = 7f,
+                    Tint = -8f,
+                    ShadowTone = new Color(0.5f, 0.42f, 0.38f),
+                    HighlightTone = new Color(0.55f, 0.56f, 0.42f),
+                    ToneBalance = -10f,
+                    BloomTint = new Color(1f, 0.95f, 0.7f),
+                    BloomIntensity = 0.65f,
+                    // Pod cores, fungus and the dying lights go past white and bloom.
+                    GlowCore = 1.5f,
+                    PropGlow = 3f,
+                    // Only the polished Covenant hull mirrors, faintly.
+                    Mirror = covenant ? 0.1f : 0f,
                 },
                 Layout = new FloodShipLayout(hull),
             };

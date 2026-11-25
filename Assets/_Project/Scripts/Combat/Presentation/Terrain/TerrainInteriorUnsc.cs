@@ -57,13 +57,24 @@ namespace Halobellum.Presentation
                 Gloss = new Vector4(0.3f, 0.1f, 0.16f, 30f),
                 GlossColor = new Color(0.86f, 0.92f, 1f, 0.05f),
                 GlossLightAngles = new Vector2(48f, 180f),
-                // A mild, cool mood.
+                // A cool, clean mood with a little more contrast (the lighting pass): a cooler white balance and steel-blue darks, the lights left white.
                 Vignette = 0.25f,
                 VignetteColor = new Color(0.02f, 0.03f, 0.05f),
-                ColorFilter = new Color(0.96f, 0.98f, 1f),
-                Contrast = 6f,
-                Saturation = -4f,
+                ColorFilter = new Color(0.98f, 0.99f, 1f),
+                Contrast = 10f,
+                Saturation = -2f,
                 Exposure = 0f,
+                Temperature = -5f,
+                Tint = 0f,
+                ShadowTone = new Color(0.47f, 0.49f, 0.53f),
+                HighlightTone = Color.grey,
+                BloomTint = new Color(0.9f, 0.95f, 1f),
+                BloomIntensity = 0.6f,
+                // Strips, deck lights and lit doors go past white and bloom.
+                GlowCore = 1.2f,
+                PropGlow = 3f,
+                // Polished deck plates mirror the yards and their lights faintly.
+                Mirror = 0.1f,
             },
             Layout = new UnscInstallationLayout(),
         };

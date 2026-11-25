@@ -294,6 +294,29 @@ namespace Halobellum.Presentation
             _qualityAtStart = QualitySettings.GetQualityLevel();
             Debug.Log("GameSettings: a test run: the settings are held in memory.");
             Application.quitting += EndTestRun;
+            int quality = QualityFromCommandLine(Environment.GetCommandLineArgs(), QualitySettings.names);
+            if (quality >= 0)
+            {
+                // For this run only, as with -msaa: put back as the run ends, and nothing is saved.
+                QualitySettings.SetQualityLevel(quality, true);
+                Debug.Log($"GameSettings: this test run uses the quality level {QualitySettings.names[quality]} ({QualityArgument}).");
+            }
+        }
+
+        /// <summary>A test tool's "-quality Low" or "-quality High" (as the settings screen names them), a level's own name, or its number: measures one level against another on one build.</summary>
+        public const string QualityArgument = "-quality";
+
+        /// <summary>The quality level a test run's command line asks for, or -1 if none (or none that exists).</summary>
+        public static int QualityFromCommandLine(string[] args, string[] levels)
+        {
+            int at = Array.IndexOf(args, QualityArgument);
+            if (at < 0 || at + 1 >= args.Length) return -1;
+            string wanted = args[at + 1];
+            if (string.Equals(wanted, "Low", StringComparison.OrdinalIgnoreCase)) wanted = "Mobile";
+            else if (string.Equals(wanted, "High", StringComparison.OrdinalIgnoreCase)) wanted = "PC";
+            for (int i = 0; i < levels.Length; i++)
+                if (string.Equals(levels[i], wanted, StringComparison.OrdinalIgnoreCase)) return i;
+            return int.TryParse(wanted, out int index) && index >= 0 && index < levels.Length ? index : -1;
         }
 
         private static void EndTestRun()

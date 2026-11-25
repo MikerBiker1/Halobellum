@@ -73,6 +73,22 @@ namespace Halobellum.Presentation
         /// <summary>Stops of exposure.</summary>
         public float Exposure;
 
+        // The lighting pass (BattlefieldLighting): each look's own grade, glow and mirror. Neutral by default, so the outdoor maps keep their look.
+        /// <summary>White balance, -100 to 100 as URP's: below 0 is cooler (bluer), above 0 warmer. Tint: below 0 greener, above 0 more magenta.</summary>
+        public float Temperature, Tint;
+        /// <summary>Split toning: what the darks and the lights lean towards (grey is none), and the balance between them, -100 (more of the darks' tone) to 100.</summary>
+        public Color ShadowTone = Color.grey, HighlightTone = Color.grey;
+        public float ToneBalance;
+        /// <summary>The bloom on this look. Its threshold stays above white (BattlefieldLighting.BloomThreshold), so only lights and effects glow.</summary>
+        public Color BloomTint = Color.white;
+        public float BloomIntensity = 0.55f;
+        /// <summary>How much brighter the bright core of a strip, seam, slit or lamp is (TerrainGlow's _Core), so that it goes past white and blooms. Soft spill and pools of light on the floor stay as they are.</summary>
+        public float GlowCore = 1f;
+        /// <summary>How bright a full glow on something that stands is: pods, fungus, lit doors, slits (TerrainProp's _GlowBoost).</summary>
+        public float PropGlow = 2.5f;
+        /// <summary>How strongly a polished floor mirrors what stands around it and its lights (TerrainMirror), 0 for none. High quality only.</summary>
+        public float Mirror;
+
         public TerrainTheme Clone() => (TerrainTheme)MemberwiseClone();
 
         /// <summary>This theme's hills above flat ground at a point, before they are pressed flat around the arena.</summary>
