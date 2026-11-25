@@ -7,6 +7,8 @@
 // in the folder the weapon's kind is heard as before (FireFor, LandingFor, BattleAudio.DeathCue). A few loop while their guns fire
 // rather than playing once a shot (LoopsWhileFiring; BattleAudio plays them). The end of a round's nodes of light have the owner's
 // sounds too, by size (NodeHit), and the Glassing Beam's long sound starts ahead of the beam so that it strikes with it (SpellLeadSeconds).
+// A few slots are silent until the owner puts a file in (WaitingForOwner): the engine and hover hums, a squad dropping in and a unit being
+// infected have no generated sound any more (the owner, 2026-11-24). The Archer Missile Barrage plays the owner's rocket at each wave (ArcherRocket).
 // A cue finds its clips the first time it is played. Nothing here allocates once a cue has been asked for, because the shots
 // of a battle come through here. Sound only.
 // Depends on: AudioSlots, AudioLibrary, WeaponFeel, Halobellum.Core (SpellStats).
@@ -100,6 +102,7 @@ namespace Halobellum.Presentation
         private static readonly Dictionary<string, SfxCue> BySlot = new Dictionary<string, SfxCue>();
 
         private static readonly List<SfxCue> Owners = new List<SfxCue>();
+        private static readonly List<SfxCue> Waiting = new List<SfxCue>();
 
         private static SfxCue Cue(string slot, SfxGroup group, float volume, float pitch, int priority, float loudness = -15f, bool loops = false)
         {
@@ -120,11 +123,12 @@ namespace Halobellum.Presentation
 
         /// <summary>
         /// A slot waiting for the owner's own file: it has no generated sound, so it stands outside the list of Cues, which all have one.
-        /// Until a file is dropped in, nothing asks for it (see BattleAudio.DeathCue).
+        /// Until a file is dropped in, it is silent: asking for it plays nothing (see BattleAudio.DeathCue, AudioDirector.PlaySfx).
         /// </summary>
         private static SfxCue WaitingCue(string slot, SfxGroup group, float volume, float pitch, int priority, float loudness = -15f)
         {
             var cue = new SfxCue(slot, group, volume, pitch, priority, loudness);
+            Waiting.Add(cue);
             BySlot[slot] = cue;
             return cue;
         }
@@ -162,11 +166,13 @@ namespace Halobellum.Presentation
         public static readonly SfxCue FloodBurst = Cue("sfx_flood_burst", SfxGroup.Bursts, 0.85f, 0.1f, 6, -13f);
         /// <summary>A Hunter's or a Goliath's death, once the owner has a sound for it.</summary>
         public static readonly SfxCue DeathLekgolo = WaitingCue("sfx_death_lekgolo", SfxGroup.BigDeaths, 0.95f, 0.05f, 8, -11f);
-        public static readonly SfxCue InfectionStart = Cue("sfx_infection_start", SfxGroup.Infection, 0.55f, 0.1f, 3, -22f);
+        /// <summary>A dying unit being infected: silent until the owner's file is in (the owner, 2026-11-24).</summary>
+        public static readonly SfxCue InfectionStart = WaitingCue("sfx_infection_start", SfxGroup.Infection, 0.55f, 0.1f, 3, -22f);
         public static readonly SfxCue InfectionRise = Cue("sfx_infection_rise", SfxGroup.Infection, 0.75f, 0.1f, 4, -19f);
         public static readonly SfxCue PelicanDive = Cue("sfx_pelican_dive", SfxGroup.BigDeaths, 1f, 0.03f, 9, -16f);
         public static readonly SfxCue PelicanCrash = Cue("sfx_pelican_crash", SfxGroup.BigDeaths, 1f, 0.03f, 10, -9.9f);
-        public static readonly SfxCue DropIn = Cue("sfx_drop_in", SfxGroup.Drops, 0.8f, 0.05f, 6, -15f);
+        /// <summary>A squad dropping in (from a transport, bought, placed in the Sandbox): silent until the owner's file is in (the owner, 2026-11-24).</summary>
+        public static readonly SfxCue DropIn = WaitingCue("sfx_drop_in", SfxGroup.Drops, 0.8f, 0.05f, 6, -15f);
 
         // One weapon's or unit's own sound, from the owner (see OwnerCue). The guns that fire fast loop while they fire.
         public static readonly SfxCue FireAssaultRifle = OwnerCue("sfx_fire_assaultrifle", SfxGroup.SmallArms, 0.6f, 0.06f, 1, -17f);
@@ -278,6 +284,17 @@ namespace Halobellum.Presentation
         /// </summary>
         public static readonly SfxCue SeederDeath = new SfxCue("sfx_infectionform_leap", SfxGroup.BigDeaths, 0.85f, 0.08f, 8, -14f);
         /// <summary>
+        /// The owner's turret explosion, the Ghost's blast at the end of its drift, as a Skitterer's death (the owner, 2026-11-24), in place of a Covenant
+        /// soldier's fall. A Skitterer squad is six of them, so they keep the infantry deaths' voices they had and a lower priority than the machines' blasts,
+        /// a little quieter. Not in the slot table: the turret explosion's cue owns the slot.
+        /// </summary>
+        public static readonly SfxCue SkittererDeath = new SfxCue("sfx_explosion_turret", SfxGroup.InfantryDeaths, 0.8f, 0.08f, 3, -13f);
+        /// <summary>
+        /// The owner's rocket as each wave of the Archer Missile Barrage lands (the owner, 2026-11-24), after its coming down (FallingIn): six waves 0.5 s
+        /// apart, one sound each, as the spells' group lets four play at once. Not in the slot table: the rocket launchers' cue owns the slot.
+        /// </summary>
+        public static readonly SfxCue ArcherRocket = new SfxCue("sfx_fire_rocket", SfxGroup.Spells, 0.9f, 0.06f, 9, -13f);
+        /// <summary>
         /// The same file, quieter, for each UNSC rocket or bomb in flight (ComesDown; the owner, 2026-11-08; D118): its end, as long as the shot flies, so
         /// that it ends as the shot lands. Not in the slot table: the strikes' cue owns the slot.
         /// </summary>
@@ -308,14 +325,17 @@ namespace Halobellum.Presentation
         /// <summary>The owner's sounds of one weapon or unit (they have no generated sound).</summary>
         public static IReadOnlyList<SfxCue> OwnerOnly => Owners;
 
-        // Long loops, one for all the engines and one for all the hovering, at the level of how many are alive.
-        public static readonly SfxCue HumEngine = Cue("sfx_hum_engine", SfxGroup.Loops, 0.5f, 0f, 0, -18f);
-        public static readonly SfxCue HumHover = Cue("sfx_hum_hover", SfxGroup.Loops, 0.5f, 0f, 0, -18f);
+        // Long loops, one for all the engines and one for all the hovering, at the level of how many are alive. Silent until the owner's files are in (the owner, 2026-11-24).
+        public static readonly SfxCue HumEngine = WaitingCue("sfx_hum_engine", SfxGroup.Loops, 0.5f, 0f, 0, -18f);
+        public static readonly SfxCue HumHover = WaitingCue("sfx_hum_hover", SfxGroup.Loops, 0.5f, 0f, 0, -18f);
+
+        /// <summary>The slots that are silent until the owner's file is in (WaitingCue).</summary>
+        public static IReadOnlyList<SfxCue> WaitingForOwner => Waiting;
 
         /// <summary>Every spell's slot (see AudioSlots.Spell).</summary>
         public static readonly string[] SpellSlots =
         {
-            "sfx_spell_mac", "sfx_spell_nuke", "sfx_spell_glassing", "sfx_spell_missiles", "sfx_spell_plasma", "sfx_spell_storm_tick", "sfx_spell_spore", "sfx_spell_wrath",
+            "sfx_spell_mac", "sfx_spell_nuke", "sfx_spell_glassing", "sfx_spell_plasma", "sfx_spell_storm_tick", "sfx_spell_spore", "sfx_spell_wrath",
             "sfx_spell_buff_unsc", "sfx_spell_buff_covenant", "sfx_spell_buff_flood", "sfx_spell_shield", "sfx_spell_drop_pods", "sfx_spell_drop_air", "sfx_spell_drop_flood",
             "sfx_spell_emp", "sfx_spell_smoke",
         };
@@ -539,8 +559,12 @@ namespace Halobellum.Presentation
             }
         }
 
-        /// <summary>The cue of a spell's effect, or null if this effect makes no new sound.</summary>
-        public static SfxCue Spell(SpellStats spell, int tick, string faction) => ForSlot(AudioSlots.Spell(spell, tick, faction));
+        /// <summary>The cue of a spell's effect, or null if this effect makes no new sound. The Archer's waves play the rocket as a spell (ArcherRocket).</summary>
+        public static SfxCue Spell(SpellStats spell, int tick, string faction)
+        {
+            string slot = AudioSlots.Spell(spell, tick, faction);
+            return slot == AudioSlots.ArcherWave ? ArcherRocket : ForSlot(slot);
+        }
 
         /// <summary>
         /// Where in the owner's Glassing Beam the beam strikes, in seconds: the file builds up for this long first (measured from the file, D71).
@@ -577,8 +601,13 @@ namespace Halobellum.Presentation
         {
             foreach (SfxCue cue in All) cue.Forget();
             foreach (SfxCue cue in Owners) cue.Forget();
+            foreach (SfxCue cue in Waiting) cue.Forget();
             FireLightSpartanLaser.Forget();
-            DeathLekgolo.Forget();
+            AirFall.Forget();
+            SeederDeath.Forget();
+            Incoming.Forget();
+            SkittererDeath.Forget();
+            ArcherRocket.Forget();
         }
     }
 }

@@ -3,6 +3,7 @@
 // spell, a screen. A slot is a name such as "music_combat". AudioLibrary finds the file behind a name: the owner's
 // file in Art/Imported/Audio/Resources/AudioOverride if there is one, otherwise the generated one. The sound effects
 // have more settings than a name, so they are listed in AudioCatalog. Sound only; nothing here touches the simulation.
+// A squad sold and the cards skipped sound as an unlock (SoundsAs; the owner, 2026-11-24): they have no slots of their own.
 // Depends on: Halobellum.Core (SpellStats), Halobellum.Combat (BattleSimulation).
 
 using System;
@@ -12,7 +13,7 @@ using Halobellum.Core;
 
 namespace Halobellum.Presentation
 {
-    /// <summary>What a UI sound means. Each faction has its own sound for each of these.</summary>
+    /// <summary>What a UI sound means. Each faction has its own sound for each of these, but Sell and Skip, which sound as Unlock (AudioSlots.SoundsAs).</summary>
     public enum UiSound
     {
         Click,
@@ -94,12 +95,22 @@ namespace Halobellum.Presentation
             return false;
         }
 
+        /// <summary>
+        /// The sound a UI event plays. A squad sold or removed, a spell taken back, the cards skipped and a squad moved play the unlock sound (the owner's
+        /// ui_unlock, for every faction and the neutral menus; the owner, 2026-11-24): Sell and Skip have no sound of their own.
+        /// </summary>
+        public static UiSound SoundsAs(UiSound sound) => sound == UiSound.Sell || sound == UiSound.Skip ? UiSound.Unlock : sound;
+
         /// <summary>The slot of a UI sound for a faction; a null faction means no side has been chosen yet.</summary>
         public static string Ui(string faction, UiSound sound)
         {
+            sound = SoundsAs(sound);
             if (faction == null && HasNeutral(sound)) return $"ui_{NeutralKey}_{UiEventNames[(int)sound]}";
             return $"ui_{FactionKey(faction)}_{UiEventNames[(int)sound]}";
         }
+
+        /// <summary>The Archer Missile Barrage's sound at each of its waves: the owner's rocket (AudioCatalog.ArcherRocket), after its coming down.</summary>
+        public const string ArcherWave = "sfx_fire_rocket";
 
         public static bool HasNeutral(UiSound sound) => sound == UiSound.Click || sound == UiSound.Hover || sound == UiSound.Error || sound == UiSound.CardPick;
 
@@ -111,7 +122,7 @@ namespace Halobellum.Presentation
             if (name.Contains("mac strike")) return "sfx_spell_mac";
             if (name.Contains("nuke") || name.Contains("havok")) return "sfx_spell_nuke";
             if (name.Contains("glassing")) return tick <= 1 ? "sfx_spell_glassing" : null; // One long sound covers all its hits.
-            if (name.Contains("missile")) return tick <= 1 ? "sfx_spell_missiles" : null;
+            if (name.Contains("missile")) return ArcherWave; // The owner's rocket at each wave (the owner, 2026-11-24).
             if (name.Contains("wrath")) return "sfx_spell_wrath";
             if (name.Contains("plasma")) return repeats ? "sfx_spell_storm_tick" : "sfx_spell_plasma";
             if (spell.Lingers) return "sfx_spell_smoke";
@@ -143,7 +154,10 @@ namespace Halobellum.Presentation
             foreach (string faction in FactionKeys)
             {
                 yield return GameDefeat(faction);
-                foreach (UiSound sound in Enum.GetValues(typeof(UiSound))) yield return Ui(faction, sound);
+                foreach (UiSound sound in Enum.GetValues(typeof(UiSound)))
+                {
+                    if (SoundsAs(sound) == sound) yield return Ui(faction, sound);
+                }
             }
             foreach (UiSound sound in Enum.GetValues(typeof(UiSound)))
             {

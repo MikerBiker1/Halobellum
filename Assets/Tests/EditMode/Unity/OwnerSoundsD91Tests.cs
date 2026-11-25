@@ -82,7 +82,7 @@ namespace Halobellum.Tests
             UnitStats captain = Unit("LekgoloColony/HunterCaptain");
             WeaponStats laser = captain.Weapons[0];
             Assert.IsTrue(laser.IsBeam);
-            Assert.AreEqual(1f, laser.BeamSeconds, 0.001f, "A 1 s beam.");
+            Assert.AreEqual(2f, laser.BeamSeconds, 0.001f, "A 2 s beam since the balance passes (D138-D163; it was 1 s in D91).");
             Assert.AreEqual(WeaponFeelKind.Laser, WeaponFeel.For(laser), "A laser, not the Scarab's beam.");
             Assert.AreSame(AudioCatalog.FireSiphon, AudioCatalog.OwnFire(laser, captain));
             WeaponLook look = WeaponLooks.For(laser, captain, "Covenant", Team.A, false);

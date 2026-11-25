@@ -534,13 +534,13 @@ namespace Halobellum.UI
                 }
             }
             Check("a spot to move to was found", column >= 0);
-            yield return Heard("moving a squad", heard, () => match.PlaceAt(column, row), "_skip", 1);
+            yield return Heard("moving a squad", heard, () => match.PlaceAt(column, row), "_unlock", 1); // Moving sounds as an unlock (AudioSlots.SoundsAs, 2026-11-24).
             yield return Shot("s3_moved");
 
             // A spell of its own, for this match only.
             var spell = new OwnedSpell { Id = 9001, Stats = new SpellStats { Name = "Sound check" }, IsPlaced = true };
             game.Player.Spells.Add(spell);
-            yield return Heard("taking a spell back", heard, () => match.UnplaceSpell(spell), "_sell", 1);
+            yield return Heard("taking a spell back", heard, () => match.UnplaceSpell(spell), "_unlock", 1);
             game.Player.Spells.Remove(spell);
 
             PauseMenu.Current.Open();

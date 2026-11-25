@@ -1,6 +1,6 @@
 // MatchAudio.cs
 // The sound of a match: which music plays on which screen (a random song for each round's cards and deployment, another for its battle), which UI sound goes with what the
-// player does (buy, sell, unlock, a card, a spell, a level, a move, a mistake), and what sounds when a round or the whole game ends (a round drawn has its own), with their own sounds against Flood.
+// player does (buy, sell, unlock, a card, a spell, a level, a move, a mistake; sell and skip sound as unlock, AudioSlots.SoundsAs), and what sounds when a round or the whole game ends (a round drawn has its own), with their own sounds against Flood.
 // "Won" and "lost" are from the local side (MatchController.LocalTeam: Team A, or Team B for a LAN guest), and so are its UI sounds and its game-over song.
 // Added at run time to the object with the MatchController (see AudioDirector). In Unlock Skirmish no side has a faction: the UI sounds are the neutral ones, or UNSC's where there is no neutral one.
 // Depends on: AudioDirector, AudioSlots, MatchController, Halobellum.Economy (Match, RoundSummary), UnityEngine.
@@ -125,7 +125,7 @@ namespace Halobellum.Presentation
             {
                 case nameof(MatchController.Buy):
                     GameAudio.Ui(UiSound.Buy);
-                    GameAudio.Sfx(AudioCatalog.DropIn);
+                    GameAudio.Sfx(AudioCatalog.DropIn); // Silent until the owner's file is in (the owner, 2026-11-24).
                     break;
                 case nameof(MatchController.Sell): GameAudio.Ui(UiSound.Sell); break;
                 case nameof(MatchController.Unlock):

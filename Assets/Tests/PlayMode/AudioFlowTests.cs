@@ -2,7 +2,8 @@
 // Sound at the edges of a battle (M10): the game's pause holds the battle's sounds, leaving from the pause leaves nothing behind, a
 // stinger doesn't follow the player off its screen, the Sandbox's sound goes by the armies really placed, what is done to a squad each round is heard
 // softly, menu buttons sound when the pointer goes over them (with a test's pointer, never the real mouse), and the Glassing Beam's long sound starts
-// ahead of its strike and fades with its beam (D71).
+// ahead of its strike and fades with its beam (D71). Since 2026-11-24 the hums and a squad dropping in are silent until the owner's file is in, and moving,
+// selling and taking a spell back play the unlock sound; the pause tests give the engines a file of the test's own to listen for.
 // These can only check what is asked for and what is playing, not how it sounds. The tests run in batch mode, where the room stays silent.
 // Depends on: Halobellum.Presentation, Halobellum.Combat, Halobellum.Economy, Halobellum.Core, NUnit, Unity Test Framework.
 
@@ -29,9 +30,19 @@ namespace Halobellum.Tests
 
         private void Heard(string slot) => _played.Add(slot);
 
+        private System.Func<string, AudioClip> _realLoader;
+        private AudioClip _humClip;
+
         [TearDown]
         public void TearDown()
         {
+            if (_realLoader != null)
+            {
+                AudioLibrary.Loader = _realLoader;
+                _realLoader = null;
+                AudioLibrary.Forget();
+            }
+            if (_humClip != null) Object.Destroy(_humClip);
             GamePause.Resume();
             UiAudio.PointerByTest = null;
             MenuStyle.ButtonDrawnForTest -= NoteButton;
@@ -56,7 +67,24 @@ namespace Halobellum.Tests
             return unit.Stats;
         }
 
-        /// <summary>A Sandbox battle of tanks, running with its engines heard.</summary>
+        /// <summary>
+        /// Gives the engine hum a file of the test's own, as if the owner had dropped one in: without one it is silent (the owner, 2026-11-24), and the
+        /// pause tests listen for it.
+        /// </summary>
+        private void GiveTheEnginesAFile()
+        {
+            _humClip = AudioClip.Create("sfx_hum_engine", 44100, 1, 44100, false);
+            var samples = new float[44100];
+            for (int i = 0; i < samples.Length; i++) samples[i] = 0.2f * Mathf.Sin(i * 0.02f);
+            _humClip.SetData(samples, 0);
+            _realLoader = AudioLibrary.Loader;
+            System.Func<string, AudioClip> real = _realLoader;
+            AudioClip clip = _humClip;
+            AudioLibrary.Loader = path => path == AudioLibrary.OverrideFolder + "sfx_hum_engine" ? clip : real(path);
+            AudioLibrary.Forget();
+        }
+
+        /// <summary>A Sandbox battle of tanks, running with its engines heard (give them a file first: GiveTheEnginesAFile).</summary>
         private IEnumerator TankBattle()
         {
             yield return Load("Sandbox");
@@ -170,9 +198,9 @@ namespace Halobellum.Tests
             }
             Assert.GreaterOrEqual(column, 0);
             Assert.IsTrue(match.PlaceAt(column, row).Ok, match.Message);
-            Assert.AreEqual(1, Count($"ui_{_key}_skip"), string.Join(", ", _played));
+            Assert.AreEqual(1, Count($"ui_{_key}_unlock"), "Moving plays the unlock sound (2026-11-24): " + string.Join(", ", _played));
             Assert.AreEqual(1, _played.Count, "Only that: " + string.Join(", ", _played));
-            Assert.Less(UiLevelOf($"ui_{_key}_skip"), 1f);
+            Assert.Less(UiLevelOf($"ui_{_key}_unlock"), 1f);
         }
 
         /// <summary>The first card of the draft and the first squad the player can buy, as -menuDemoSounds does, without drawing them.</summary>
@@ -244,9 +272,28 @@ namespace Halobellum.Tests
             match.Match.Player.Spells.Add(spell);
             _played.Clear();
             Assert.IsTrue(match.UnplaceSpell(spell).Ok, match.Message);
-            Assert.AreEqual(1, Count($"ui_{_key}_sell"), string.Join(", ", _played));
-            Assert.Less(UiLevelOf($"ui_{_key}_sell"), 1f);
+            Assert.AreEqual(1, Count($"ui_{_key}_unlock"), "Taking a spell back plays the unlock sound (2026-11-24): " + string.Join(", ", _played));
+            Assert.Less(UiLevelOf($"ui_{_key}_unlock"), 1f);
             Assert.IsFalse(spell.IsPlaced);
+        }
+
+        [UnityTest]
+        public IEnumerator SellingASquad_PlaysTheOwnersUnlockSound([Values("UNSC", "Flood")] string faction)
+        {
+            yield return MatchWithASquad(faction);
+            var match = Object.FindAnyObjectByType<MatchController>();
+            PlayerState player = match.Match.Player;
+            PlacedSquad squad = player.Squads[player.Squads.Count - 1];
+            _played.Clear();
+            Assert.IsTrue(match.Sell(squad).Ok, match.Message);
+            Assert.AreEqual(1, Count($"ui_{_key}_unlock"), string.Join(", ", _played));
+            Assert.AreEqual(0, Count($"ui_{_key}_sell"), "No sell sound of its own any more.");
+            AudioSource playing = null;
+            foreach (AudioSource source in Director.GetComponents<AudioSource>())
+            {
+                if (source.isPlaying && source.clip != null && source.clip.name == "ui_unlock") playing = source;
+            }
+            Assert.IsNotNull(playing, "The owner's ui_unlock file, for every faction.");
         }
 
         [UnityTest]
@@ -279,11 +326,11 @@ namespace Halobellum.Tests
                 }
             }
             Assert.IsTrue(sandbox.PlaceAt(column, row).Ok, sandbox.Message);
-            Assert.AreEqual(1, Count($"ui_{key}_skip"), string.Join(", ", _played));
+            Assert.AreEqual(1, Count($"ui_{key}_unlock"), "Moving plays the unlock sound (2026-11-24): " + string.Join(", ", _played));
             yield return null;
             Assert.AreEqual(0, Count("sfx_drop_in"), "Moved, not new.");
 
-            // A new squad placed by hand drops in, and doesn't sound moved as well. (After the shortest gap between two drops, which has its own limit.)
+            // A new squad placed by hand is silent, as its drop-in has no file (the owner, 2026-11-24), and doesn't sound moved either.
             yield return new WaitForSecondsRealtime(0.2f);
             _played.Clear();
             sandbox.BeginPlacing(UnitNamed(sandbox, "Marine"));
@@ -298,8 +345,8 @@ namespace Halobellum.Tests
             sandbox.CancelPlacement();
             yield return null;
             Assert.IsTrue(placed);
-            Assert.AreEqual(1, Count("sfx_drop_in"));
-            Assert.AreEqual(0, Count($"ui_{key}_skip"));
+            Assert.AreEqual(0, Count("sfx_drop_in"), "No drop-in sound until the owner's file is in.");
+            Assert.AreEqual(0, Count($"ui_{key}_unlock"), string.Join(", ", _played));
         }
 
         [UnityTest]
@@ -406,8 +453,28 @@ namespace Halobellum.Tests
         }
 
         [UnityTest]
+        public IEnumerator WithoutTheOwnersFiles_TheHumsAreSilent()
+        {
+            yield return Load("Sandbox");
+            var sandbox = Object.FindAnyObjectByType<SandboxController>();
+            Assert.IsTrue(sandbox.AddSquad(Team.A, UnitNamed(sandbox, "Scorpion")).Ok);
+            Assert.IsTrue(sandbox.AddSquad(Team.B, UnitNamed(sandbox, "Banshee")).Ok);
+            yield return null;
+            sandbox.Run();
+            float until = Time.realtimeSinceStartup + 3f;
+            while (Time.realtimeSinceStartup < until)
+            {
+                Assert.IsFalse(Director.AnyHumPlaying, "Neither engine nor hover hum without a file.");
+                yield return null;
+            }
+            Assert.IsFalse(_played.Contains("sfx_hum_engine") || _played.Contains("sfx_hum_hover"), string.Join(", ", _played));
+            Assert.IsFalse(_played.Contains("sfx_drop_in"));
+        }
+
+        [UnityTest]
         public IEnumerator TheGamesPause_HoldsTheBattlesSounds_AndResumeBringsThemBack()
         {
+            GiveTheEnginesAFile();
             yield return TankBattle();
             Assert.IsFalse(Director.BattlePaused);
             Assert.IsTrue(Director.AnyHumPlaying, "The Scorpions' engines.");
@@ -434,6 +501,7 @@ namespace Halobellum.Tests
         [UnityTest]
         public IEnumerator LeavingFromThePause_LeavesNoSoundBehind()
         {
+            GiveTheEnginesAFile();
             yield return TankBattle();
             GamePause.Pause();
             yield return null;

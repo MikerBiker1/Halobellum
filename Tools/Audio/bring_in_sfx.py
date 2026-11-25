@@ -118,6 +118,11 @@ SLOTS = [
     ("banshee-banshee-windup-and-explosion.mp3", "sfx_death_banshee", "the Banshee and the Infested Banshee shot down: 1.3 s of falling, then the crash, started so that the crash comes as the wreck lands"),
     ("turret_explosion.mp3", "sfx_explosion_turret", "every machine whose death had a generated sound (Warthog, Ghost, Chopper, Cobra, Gremlin, Wolverine, Reaver, Grunt Goblin, Archer pod; the Phantoms and the Vampire), and the Ghost's blast after its drift"),
     ("ghost_initial_destroyed.mp3", "sfx_death_ghost_start", "a Ghost knocked out, as it starts drifting away; it blows up 2.1 s later"),
+    # The owner's sixth batch (2026-11-24).
+    ("hover button.wav", "ui_hover", "the mouse going over a button, every faction and the neutral menus"),
+    ("MAC.wav", "sfx_spell_mac", "MAC Strike"),
+    ("Nuke explosion.mp3", "sfx_spell_nuke", "HAVOK Nuke, as it strikes, after it is heard coming down (sfx_falling_in)"),
+    ("shield.wav", "sfx_spell_shield", "Bubble Shield and Energy Shield Dome"),
 ]
 
 # Slots whose file is too quiet for the game's levelling (it raises a file at most 1.5x, and a voice can't go over full volume): they go

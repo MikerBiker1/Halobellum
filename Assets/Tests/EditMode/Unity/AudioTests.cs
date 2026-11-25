@@ -228,6 +228,62 @@ namespace Halobellum.Tests
             CollectionAssert.DoesNotContain(AudioCatalog.Cues, AudioCatalog.DeathLekgolo);
         }
 
+        [Test]
+        public void SellAndSkip_PlayTheOwnersUnlock_ForEveryFaction()
+        {
+            AudioLibrary.Forget();
+            foreach (string faction in new[] { "UNSC", "Covenant", "Flood", null })
+            {
+                foreach (UiSound sound in new[] { UiSound.Sell, UiSound.Skip })
+                {
+                    string slot = AudioSlots.Ui(faction, sound);
+                    Assert.AreEqual(AudioSlots.Ui(faction, UiSound.Unlock), slot, $"{faction ?? "neutral"} {sound}");
+                    AudioClipSet set = AudioLibrary.Get(slot);
+                    Assert.IsTrue(set.IsOverride, slot);
+                    Assert.AreEqual("ui_unlock", set.Slot, "The owner's one unlock file.");
+                }
+            }
+            CollectionAssert.DoesNotContain(AudioSlots.MusicAndUiSlots().ToList(), "ui_unsc_sell");
+            CollectionAssert.DoesNotContain(AudioSlots.MusicAndUiSlots().ToList(), "ui_flood_skip");
+            foreach (string faction in AudioSlots.FactionKeys)
+            {
+                Assert.IsFalse(File.Exists(GeneratedFolder + $"ui_{faction}_sell.wav"), "No generated sell sound any more.");
+                Assert.IsFalse(File.Exists(GeneratedFolder + $"ui_{faction}_skip.wav"));
+            }
+        }
+
+        [Test]
+        public void TheHums_TheDropIn_AndTheInfectionStart_AreSilent_UntilTheOwnersFileIsIn()
+        {
+            AudioLibrary.Forget();
+            SfxCue[] silent = { AudioCatalog.HumEngine, AudioCatalog.HumHover, AudioCatalog.DropIn, AudioCatalog.InfectionStart };
+            foreach (SfxCue cue in silent)
+            {
+                Assert.IsFalse(cue.HasSound, cue.Slot + " should be silent.");
+                CollectionAssert.Contains(AudioCatalog.WaitingForOwner, cue);
+                CollectionAssert.DoesNotContain(AudioCatalog.Cues, cue);
+                Assert.AreSame(cue, AudioCatalog.ForSlot(cue.Slot));
+                Assert.IsFalse(File.Exists(GeneratedFolder + cue.Slot + ".wav") || File.Exists(GeneratedFolder + cue.Slot + "_1.wav"), cue.Slot);
+            }
+            // A file named after the slot brings it back.
+            System.Func<string, AudioClip> real = AudioLibrary.Loader;
+            AudioClip clip = AudioClip.Create("sfx_drop_in", 4410, 1, 44100, false);
+            try
+            {
+                AudioLibrary.Loader = path => path == AudioLibrary.OverrideFolder + "sfx_drop_in" ? clip : real(path);
+                AudioLibrary.Forget();
+                Assert.IsTrue(AudioCatalog.DropIn.HasSound);
+                Assert.IsTrue(AudioCatalog.DropIn.Clips.IsOverride);
+                Assert.IsFalse(AudioCatalog.HumEngine.HasSound);
+            }
+            finally
+            {
+                AudioLibrary.Loader = real;
+                AudioLibrary.Forget();
+                UnityEngine.Object.DestroyImmediate(clip);
+            }
+        }
+
         // ------------------------------------------------------------------ Unlock Skirmish
 
         [Test]
@@ -242,7 +298,8 @@ namespace Halobellum.Tests
                 Assert.AreEqual("ui_neutral_error", AudioSlots.Ui(faction, UiSound.Error));
                 Assert.AreEqual("ui_neutral_cardpick", AudioSlots.Ui(faction, UiSound.CardPick));
                 Assert.AreEqual("ui_unsc_buy", AudioSlots.Ui(faction, UiSound.Buy));
-                Assert.AreEqual("ui_unsc_sell", AudioSlots.Ui(faction, UiSound.Sell));
+                Assert.AreEqual("ui_unsc_unlock", AudioSlots.Ui(faction, UiSound.Sell), "Selling sounds as an unlock (2026-11-24).");
+                Assert.AreEqual("ui_unsc_unlock", AudioSlots.Ui(faction, UiSound.Skip));
                 Assert.AreEqual("ui_unsc_unlock", AudioSlots.Ui(faction, UiSound.Unlock));
                 Assert.AreEqual("ui_unsc_battlestart", AudioSlots.Ui(faction, UiSound.BattleStart));
             }
@@ -560,7 +617,8 @@ namespace Halobellum.Tests
         public void EveryTestToolOnTheCommandLine_IsSilent()
         {
             // These only change what a tool that has already been started does, or record it.
-            string[] notTools = { "-effects", "-effectsBench", "-menuDemoShort", "-menuDemoWatch", "-menuDemoSounds", "-menuDemoUiScale", "-cardsDemoLayout", "-cardsDemoLevelAll", "-cardsDemoPlaytest", "-screenDemoFake", "-screenDemoEndOn", EffectKit.ParticleScaleFlag, AudioCapture.Flag, BattleLogFile.FolderFlag, UnitStatsMods.FolderFlag, "-galleryTowers", "-replayShots", "-battleScene" };
+            string[] notTools = { "-effects", "-effectsBench", "-menuDemoShort", "-menuDemoWatch", "-menuDemoSounds", "-menuDemoUiScale", "-cardsDemoLayout", "-cardsDemoLevelAll", "-cardsDemoPlaytest", "-screenDemoFake", "-screenDemoEndOn", EffectKit.ParticleScaleFlag, AudioCapture.Flag, BattleLogFile.FolderFlag, UnitStatsMods.FolderFlag, "-galleryTowers", "-replayShots", "-battleScene",
+                                 "-lanDemoSeed", "-lanDemoMatches", "-lanDemoAddress", "-lanDemoNetwork", "-windowSlot" }; // They change a -lanDemo run (D182, D183).
             var flags = new HashSet<string>();
             var declared = new Regex(@"const string \w*Flag\w* = ""(-\w+)""");
             var checkedByName = new Regex(@"Array\.IndexOf\(args, ""(-\w+)""\) < 0\)");

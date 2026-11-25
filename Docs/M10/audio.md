@@ -37,6 +37,24 @@ Songs crossfade (2.5 s, 1.5 s into a battle). A song remembers where it was and 
 
 UI sounds use the player's faction from the moment the draft is chosen. Before that (main menu, draft) a small neutral set plays.
 
+## The owner's changes of 2026-11-24
+
+- **New files:** `ui_hover` (the owner's "hover button", for every faction and the neutral menus), `sfx_spell_mac` (MAC Strike), `sfx_spell_nuke`
+  (the HAVOK Nuke: heard coming down with `sfx_falling_in` as before, then this explosion as it strikes; the file goes off at once) and `sfx_spell_shield`
+  (Bubble Shield, Energy Shield Dome). The shield file builds up to its loudest about 3.5 s in, and the hover file is quiet (its loudest moment about
+  -36 dB, raised at most 1.5 times), which is for the owner's ears.
+- **Skitterer:** dies with the turret explosion, the blast a Ghost makes after its drift (`AudioCatalog.SkittererDeath`), in place of a Covenant soldier's fall.
+  A squad is six of them, so it keeps the infantry deaths' voices it had and a lower priority than the machines' blasts.
+- **Archer Missile Barrage:** heard coming down as before, then the owner's rocket (`sfx_fire_rocket`, the only rocket file) as each of its six waves lands,
+  0.5 s apart (`AudioCatalog.ArcherRocket`, in the spells' group). One sound per wave rather than per missile: the six missiles of a wave land at the same
+  moment, and the limiter would let only one of them through anyway (a shortest gap of 0.08 s), so six sounds in 3 s with at most four overlapping.
+  The generated `sfx_spell_missiles` is gone.
+- **Sell and skip** play the unlock sound (`ui_unlock`), for every faction and the neutral menus: a squad sold or removed in the Sandbox, a spell taken back,
+  the cards skipped, a squad moved (`AudioSlots.SoundsAs`). The generated sell and skip sounds are gone.
+- **Silent:** the engine and hover hums, a squad dropping in (from a transport, bought, placed in the Sandbox) and a unit being infected. Their generated
+  files are gone and they are slots waiting for the owner (`AudioCatalog.WaitingForOwner`): a file named after one in `AudioOverride` brings it back.
+  A slot with no file plays nothing and takes no voice.
+
 ## How it is built
 
 Code is in `Scripts/Combat/Presentation/Audio/`, created at run time, with no scene files touched:
@@ -74,7 +92,7 @@ Left as they are, for the owner's ears: every landing but Bone Shards is the sam
 
 **Landings.** A rocket, a bomb, a cannon shell, a heavy plasma shot or a plasma shot with a blast makes a small explosion where it lands; a lobbed Flood shot with a blast makes a Flood burst. The simulation raises `ShotLanded(attacker, weapon, point)` for each shot that isn't blocked, so this goes by the weapon that really fired, once per shot however many it hits, and also when the target died while the shot was in the air. The event changes nothing in the simulation. A coaxial gun makes no explosion, and a second weapon's rockets do.
 
-**Deaths.** By what died: an armoured flier crashes, Swarm Forms die as small Flood forms, Hunters die as creatures and make no engine or hover hum, and small and large vehicles go up by size. Only a Flood unit's death burst sounds like a Flood burst: the Methane Wagon explodes as a vehicle.
+**Deaths.** By what died: an armoured flier crashes, Swarm Forms die as small Flood forms, Hunters die as creatures and make no engine or hover hum (the hums are silent anyway until the owner gives them files), a Skitterer goes up with the turret explosion, and small and large vehicles go up by size. Only a Flood unit's death burst sounds like a Flood burst: the Methane Wagon explodes as a vehicle.
 
 **Clicks with almost no HUD changes.** An IMGUI button takes `GUIUtility.hotControl` when the mouse goes down on it. The director watches that each frame, so every button in every HUD,
 including ones not written yet, clicks by itself on the mouse press, as long as it is IMGUI. A uGUI screen would need `GameAudio.Ui(UiSound.Click)` in its buttons.
@@ -88,8 +106,8 @@ including ones not written yet, clicks by itself on the mouse press, as long as 
 |---|---|---|---|
 | A squad selected by a click on the field | click | 0.6 | -28 dB |
 | A squad turned, or its ghost | click | 0.8 | -26 dB |
-| A squad set down in a new spot | skip | 0.6 | -25 dB |
-| A placed spell taken back | sell | 0.5 | -26 dB |
+| A squad set down in a new spot | unlock (was skip, 2026-11-24) | 0.6 | -21 dB (the owner's ui_unlock is played at -17) |
+| A placed spell taken back | unlock (was sell, 2026-11-24) | 0.5 | -23 dB |
 
 Only the player's own click on a squad is heard (`SquadSelection.SelectByPlayer`): `Select` itself stays silent, because it also runs for every preview rebuilt and when a bought squad lands. Clearing a selection is silent. The Sandbox has the same sounds for moving and turning, through events of its controller, and now its refusals are heard too. Picking a squad up (Move) has its button's click and nothing else. Those are figures from the files; the deployment music was around -30 dB (RMS) under them in a recording. Whether they sit right is for the owner's ears: all four are the constants at the top of `UiAudio`.
 
@@ -108,7 +126,7 @@ buttons, draft cards and Ready, and on every button of the main menu, Settings a
 Generators are in `Tools/Audio/` (Python with numpy; run with the venv):
 
 - `synth.py`: oscillators, filters, reverb, instruments (brass, strings, choir, drums, chimes, wet noises), loudness.
-- `make_sfx.py`: effects and UI sounds, 159 files. `make_music.py`: 10 tracks and 6 stingers.
+- `make_sfx.py`: effects and UI sounds, 132 files. `make_music.py`: 10 tracks and 6 stingers.
 - `measure.py`: the checks below, and spectrograms with `--pictures`. `make_readme.py`: the slot list.
 
 Files are in `Assets/_Project/Audio/Generated/Resources/GeneratedAudio/` (a `Resources` folder so that they load by name).

@@ -97,14 +97,16 @@ namespace Halobellum.Tests
             Assert.AreEqual(AudioSlots.DeploymentMusic, Director.Music.CurrentSlot);
             Assert.AreEqual(faction, Director.UiFaction);
 
-            // A purchase: its faction's sound, and the squad dropping in survives the preview being rebuilt.
+            // A purchase: its faction's sound, with no drop-in (silent until the owner's file is in, 2026-11-24), and a sound already playing survives the
+            // preview being rebuilt.
             UnitStats unit = controller.Match.Player.Roster.Find(u => controller.Match.Player.Unlocked.Contains(u) && u.Cost <= controller.Match.Player.Credits);
             Assert.IsNotNull(unit);
             _played.Clear();
+            Director.PlaySfx(AudioCatalog.ExplosionSmall);
             Assert.IsTrue(controller.Buy(unit).Ok);
             Assert.Contains($"ui_{key}_buy", _played);
-            Assert.Contains("sfx_drop_in", _played);
-            Assert.Greater(Director.ActiveSfxVoices, 0, "Rebuilding the preview must not cut the drop's sound.");
+            CollectionAssert.DoesNotContain(_played, "sfx_drop_in");
+            Assert.Greater(Director.ActiveSfxVoices, 0, "Rebuilding the preview must not cut a sound that is playing.");
 
             _played.Clear();
             controller.UseTraining(null);
@@ -173,7 +175,7 @@ namespace Halobellum.Tests
             Assert.AreEqual(BattleFactions.Unsc, BattleFactions.TeamB);
             yield return null;
             yield return null;
-            Assert.Contains("sfx_drop_in", _played);
+            CollectionAssert.DoesNotContain(_played, "sfx_drop_in", "Silent until the owner's file is in (2026-11-24).");
             _played.Clear();
             sandbox.Run();
             yield return null;

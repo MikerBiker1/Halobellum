@@ -8,6 +8,9 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.418.5 · 2026-11-24
+- **Sounds:** your hover sound on every button, and your MAC Strike, HAVOK Nuke and shield spell sounds. The Skitterer dies with the Ghost's blast, the Archer Missile Barrage uses your rocket sound, and selling or skipping cards plays your unlock sound. No more engine or hover hums, drop-in or infection sounds. (D189)
+
 ## 0.418.4 · 2026-11-24
 - **Level colours:** level 3 is yellow and level 5 orange (white 1, blue 2, yellow 3, purple 4, orange 5). (D188)
 - **Icons:** the Spartan, Spartan Grenadier, Spartan Sniper and Infested Elite icons match their current models. (D188)

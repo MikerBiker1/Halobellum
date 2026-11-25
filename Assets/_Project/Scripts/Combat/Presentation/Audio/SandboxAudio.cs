@@ -1,6 +1,6 @@
 // SandboxAudio.cs
-// The sound of the Sandbox: a random deployment song while placing and a random combat song while fighting, a squad placed drops in, a squad
-// moved or turned sounds as in a match, a squad removed sounds sold, what can't be done sounds so, and pressing Run starts the battle with its sound. Squads coming and going and the battle starting are watched here each frame; the rest are the SandboxController's events.
+// The sound of the Sandbox: a random deployment song while placing and a random combat song while fighting, a squad placed drops in (silent until
+// the owner's sfx_drop_in is in), a squad moved or turned sounds as in a match, a squad removed sounds sold (the unlock sound, AudioSlots.SoundsAs), what can't be done sounds so, and pressing Run starts the battle with its sound. Squads coming and going and the battle starting are watched here each frame; the rest are the SandboxController's events.
 // Added at run time to the object with the SandboxController (see AudioDirector).
 // Depends on: AudioDirector, AudioSlots, SandboxController, WeaponFeel (BattleFactions), UnityEngine.
 

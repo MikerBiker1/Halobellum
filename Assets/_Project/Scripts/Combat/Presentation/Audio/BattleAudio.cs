@@ -1,6 +1,7 @@
 // BattleAudio.cs
 // Listens to the battle in a scene and asks for its sounds: each shot from its weapon kind and the faction firing it, hits, explosions,
-// deaths by size and kind, Flood bursts, infection rising, spells, drops, the Infected Pelican's dive. Added at run time to the object with
+// deaths by size and kind, Flood bursts, infection rising, spells, the Infected Pelican's dive. Hums, drops and the start of an infection are silent until
+// the owner's files are in (AudioCatalog.WaitingForOwner; the owner, 2026-11-24). Added at run time to the object with
 // the BattleController (see AudioDirector). It only reads the simulation's events and never changes anything, so battles play out the
 // same with or without it. What a weapon sounds like is worked out once per weapon and kept: the many shots of a battle allocate nothing.
 // The battle's sounds stop while it stands still, by the battle's own speed or by the game's pause (GamePause).
@@ -8,6 +9,7 @@
 //   - flamethrowers loop while any of them fire, louder the more do (the SMG, the machine guns and the Ghost play every shot, overlapping: D114, D117);
 //   - an aircraft that blows up and falls is heard diving as it falls (the Infected Pelican's dive), and its crash comes as it hits the ground (D117);
 //   - the Archer missiles and the HAVOK warhead are heard coming down, ending as they hit (D117), and so is every UNSC rocket and bomb in flight (D118);
+//     then each Archer wave lands with the owner's rocket, and the HAVOK with the owner's nuke (2026-11-24);
 //   - a Wraith's shell is heard in the air until it lands;
 //   - the Scarab's beam: its charge as it starts charging (heard to its end), then "in" as it fires, the loop after that, and "out" as it stops;
 //   - a Scarab walking is a loop;
@@ -393,6 +395,7 @@ namespace Halobellum.Presentation
             if (unit.HasDived) return AudioCatalog.DeathAirUnsc.HasSound ? AudioCatalog.DeathAirUnsc : AudioCatalog.PelicanCrash; // A UNSC airframe hitting the ground.
             if (unit.Stats.Name == "Scarab" && AudioCatalog.DeathScarab.HasSound) return AudioCatalog.DeathScarab;
             if (unit.Stats.Name.IndexOf("Infection Form", System.StringComparison.Ordinal) >= 0 && AudioCatalog.DeathInfectionForm.HasSound) return AudioCatalog.DeathInfectionForm;
+            if (unit.Stats.Name == "Skitterer" && AudioCatalog.SkittererDeath.HasSound) return AudioCatalog.SkittererDeath; // The Ghost's end blast (the owner, 2026-11-24).
             bool flood = IsFloodBody(unit.Stats);
             // A death burst with no reach only leaves bodies behind (the Infected Phantom): nothing goes off.
             if (flood && unit.Stats.DeathBurst != null && unit.Stats.DeathBurst.Radius > 0f) return AudioCatalog.FloodBurst;
@@ -474,7 +477,11 @@ namespace Halobellum.Presentation
             return stats.ArmorType == ArmorType.Unarmored || stats.Name.IndexOf("Hunter", System.StringComparison.Ordinal) >= 0;
         }
 
-        private void OnUnitInfected(SimUnit corpse) => GameAudio.Sfx(AudioCatalog.InfectionStart, Place(corpse));
+        /// <summary>Silent until the owner's sfx_infection_start is in (the owner, 2026-11-24).</summary>
+        private void OnUnitInfected(SimUnit corpse)
+        {
+            if (AudioCatalog.InfectionStart.HasSound) GameAudio.Sfx(AudioCatalog.InfectionStart, Place(corpse));
+        }
 
         private void OnUnitRose(SimUnit corpse, SimUnit risen) => GameAudio.Sfx(AudioCatalog.InfectionRise, Place(risen));
 
@@ -491,10 +498,13 @@ namespace Halobellum.Presentation
             return BattleFactions.PerUnitLooks && spell.DropUnit != null ? BattleFactions.OfUnit(spell.DropUnit, team) : BattleFactions.For(team);
         }
 
-        /// <summary>A squad landing from a carrier. One hatched by a body on the ground (the Spawner's Swarm Brood, D113) comes with no landing thud.</summary>
+        /// <summary>
+        /// A squad landing from a carrier. One hatched by a body on the ground (the Spawner's Swarm Brood, D113) comes with no landing thud. Silent until the
+        /// owner's sfx_drop_in is in (the owner, 2026-11-24).
+        /// </summary>
         private void OnReinforcementDropped(SimUnit carrier, int squadId)
         {
-            if (carrier.IsAir) GameAudio.Sfx(AudioCatalog.DropIn, Place(carrier));
+            if (carrier.IsAir && AudioCatalog.DropIn.HasSound) GameAudio.Sfx(AudioCatalog.DropIn, Place(carrier));
         }
 
         private void NoteDiver(SimUnit unit)
@@ -722,12 +732,17 @@ namespace Halobellum.Presentation
             }
         }
 
-        /// <summary>One engine sound for all the ground vehicles, one hover sound for what flies or floats. Each only as loud as how many there are.</summary>
+        /// <summary>
+        /// One engine sound for all the ground vehicles, one hover sound for what flies or floats. Each only as loud as how many there are. Both are silent
+        /// until the owner's files are in (the owner, 2026-11-24): with neither, nothing is counted.
+        /// </summary>
         private void UpdateHums(AudioDirector director)
         {
             int engines = 0, hovers = 0;
+            bool hums = AudioCatalog.HumEngine.HasSound || AudioCatalog.HumHover.HasSound;
             foreach (SimUnit unit in _shown.Units)
             {
+                if (!hums) break;
                 if (!unit.IsAlive || IsLiving(unit.Stats) || unit.Stats.IsTower) continue;
                 if (unit.IsAir) hovers++;
                 else if (unit.Radius >= 1f)

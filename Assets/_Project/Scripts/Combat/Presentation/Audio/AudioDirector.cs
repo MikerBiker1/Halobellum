@@ -123,7 +123,7 @@ namespace Halobellum.Presentation
         /// <summary>The test tools that run the game by themselves: each of these makes a run silent. A tool's flag belongs here as soon as the tool exists (AudioTests reads them from the code).</summary>
         public static readonly string[] TestRunFlags =
         {
-            GameFlow.AutoplayFlag, SandboxAutoplay.Flag, GameFlow.GalleryFlag, CrowdBenchmark.Flag, GameFlow.BenchmarkFlag, GameFlow.MenuDemoFlag, GameFlow.ScreenDemoFlag, GameFlow.CardsDemoFlag, "-terrainGallery", GameFlow.TutorialDemoFlag, MatchReplay.LogFlag,
+            GameFlow.AutoplayFlag, SandboxAutoplay.Flag, GameFlow.GalleryFlag, CrowdBenchmark.Flag, GameFlow.BenchmarkFlag, GameFlow.MenuDemoFlag, GameFlow.ScreenDemoFlag, GameFlow.CardsDemoFlag, "-terrainGallery", GameFlow.TutorialDemoFlag, MatchReplay.LogFlag, GameFlow.LanDemoFlag, // -lanDemo: two copies on one PC, both silent (D182).
         };
 
         /// <summary>True if this run should make no sound in the room: a test or a batch run, unless asked with -audioOn.</summary>
@@ -201,7 +201,7 @@ namespace Halobellum.Presentation
         {
             foreach (SfxCue cue in AudioCatalog.Cues) _ = cue.Clips;
             foreach (SfxCue cue in AudioCatalog.OwnerOnly) _ = cue.Clips;
-            _ = AudioCatalog.DeathLekgolo.Clips;
+            foreach (SfxCue cue in AudioCatalog.WaitingForOwner) _ = cue.Clips;
             foreach (string slot in AudioSlots.MusicAndUiSlots())
             {
                 if (slot.StartsWith("ui_", StringComparison.Ordinal)) AudioLibrary.Get(slot);
@@ -336,7 +336,7 @@ namespace Halobellum.Presentation
 
         private Voice Begin(SfxCue cue, bool placed, Vector3 world)
         {
-            if (cue == null || BattlePaused) return null;
+            if (cue == null || BattlePaused || !cue.HasSound) return null; // A slot with no file (AudioCatalog.WaitingForOwner) is silent.
             if (!_limiter.TryStart((int)cue.Group, _battleClock))
             {
                 DroppedVoices++; // Most shots of a big battle end here, before any more work.

@@ -5,6 +5,7 @@
 // Call it from OnGUI, in the same coordinates as the button. A hover is the mouse moving onto a button: a screen that opens under a mouse
 // standing still is silent, and so is a mouse resting on a button (see HoverWatch).
 // Also here: the sounds of what is done to a squad every round (selected, moved, turned, a spell taken back), kept below the sounds of buying and selling.
+// Moved and taken back play the unlock sound, as selling and skipping do (AudioSlots.SoundsAs; the owner, 2026-11-24).
 // Depends on: GameAudio, UnityEngine.
 
 using System.Collections.Generic;
@@ -108,10 +109,10 @@ namespace Halobellum.Presentation
             if (current == null || current.type == EventType.Repaint || current.type == EventType.Layout) GameAudio.Ui(UiSound.Click, TurnedVolume);
         }
 
-        /// <summary>A squad set down in a new spot.</summary>
+        /// <summary>A squad set down in a new spot: the skip sound, which is the unlock sound (AudioSlots.SoundsAs), well below it.</summary>
         public static void SquadMoved() => GameAudio.Ui(UiSound.Skip, MovedVolume);
 
-        /// <summary>A placed spell taken back: the falling sound of a sale, well below one.</summary>
+        /// <summary>A placed spell taken back: the sound of a sale, which is the unlock sound (AudioSlots.SoundsAs), well below it.</summary>
         public static void SpellTakenBack() => GameAudio.Ui(UiSound.Sell, TakenBackVolume);
     }
 }

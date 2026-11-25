@@ -42,7 +42,6 @@ BATTLE SOUNDS
   sfx_death_infantry               A UNSC soldier falling.
   sfx_death_infantry_covenant      A Covenant soldier falling.
   sfx_death_vehicle                A light vehicle going up (sfx_explosion_turret once it is in).
-  sfx_drop_in                      A squad falling into place: it lands 0.6 s in.
   sfx_explosion_large              The biggest units going up.
   sfx_explosion_medium             Medium vehicles and walkers going up.
   sfx_explosion_small              Rockets, shells and fuel rods landing.
@@ -62,12 +61,9 @@ BATTLE SOUNDS
   sfx_fire_needle                  Needle weapons.
   sfx_fire_plasma                  Plasma rifles, pistols, turrets.
   sfx_fire_plasmaheavy             Heavy plasma: plasma shots that fly and burst (Marauder), and fuel rod guns and mortars where they have no file of their own.
-  sfx_fire_rocket                  Rocket launchers and missiles, the launch.
+  sfx_fire_rocket                  Rocket launchers and missiles, the launch; also each wave of the Archer Missile Barrage landing, after sfx_falling_in.
   sfx_flood_burst                  A carrier form going off, a Flood unit bursting, or Bone Shards landing.
-  sfx_hum_engine                   A loop: the engines of all UNSC ground vehicles, as loud as how many are alive.
-  sfx_hum_hover                    A loop: what flies or floats (aircraft, Covenant vehicles). Loops must close without a click.
   sfx_infection_rise               An infected corpse rising.
-  sfx_infection_start              A dying unit being infected.
   sfx_pelican_crash                The Infected Pelican hitting the ground (sfx_death_air_unsc once it is in); also the biggest Flood units dying.
   sfx_pelican_dive                 The Infected Pelican starting its dive, and any aircraft falling as it dies.
   sfx_spell_buff_covenant          Prophet's Blessing.
@@ -79,8 +75,7 @@ BATTLE SOUNDS
   sfx_spell_emp                    Electromagnetic Pulse and Nerve Spores.
   sfx_spell_glassing               Glassing Beam: one sound for its whole 3 s. The owner's file builds up for 1.85 s before the beam strikes, so it starts that long ahead, and fades as the beam goes.
   sfx_spell_mac                    MAC Strike.
-  sfx_spell_missiles               Archer Missile Barrage (one sound at its start).
-  sfx_spell_nuke                   HAVOK Nuke.
+  sfx_spell_nuke                   HAVOK Nuke, as it strikes (sfx_falling_in is heard coming down before it).
   sfx_spell_plasma                 Plasma Bombardment.
   sfx_spell_shield                 Bubble Shield and Energy Shield Dome.
   sfx_spell_smoke                  Smoke Bomb.
@@ -95,16 +90,12 @@ UI SOUNDS (each faction has its own set)
     ui_unsc_hover  ui_covenant_hover  ui_flood_hover
   a squad bought:
     ui_unsc_buy  ui_covenant_buy  ui_flood_buy
-  a squad sold; quieter, a spell taken back:
-    ui_unsc_sell  ui_covenant_sell  ui_flood_sell
-  a unit unlocked or a tech bought:
+  a unit unlocked or a tech bought; also a squad sold or removed in the Sandbox and the cards skipped, and quieter, a spell taken back or a squad moved:
     ui_unsc_unlock  ui_covenant_unlock  ui_flood_unlock
   something that can't be done, or a click on a greyed-out button:
     ui_unsc_error  ui_covenant_error  ui_flood_error
   a card taken:
     ui_unsc_cardpick  ui_covenant_cardpick  ui_flood_cardpick
-  the cards skipped; quieter, a squad moved:
-    ui_unsc_skip  ui_covenant_skip  ui_flood_skip
   a spell or an item placed:
     ui_unsc_spellplaced  ui_covenant_spellplaced  ui_flood_spellplaced
   a squad leveled up:
@@ -190,9 +181,17 @@ ONE WEAPON'S OR UNIT'S OWN (no generated sound: until a file is in, the weapon's
   sfx_node_small                   A small or medium node of light hitting a base at the end of a round (until it is in: the battle's hits).
   sfx_node_big                     A big node of light (about 60 damage to a base and up, and every Titan's).
 
+SILENT UNTIL A FILE IS IN (no generated sound, as the owner asked, 2026-11-24: nothing plays until you put a file here)
+  sfx_hum_engine                   A loop: the engines of all UNSC ground vehicles, as loud as how many are alive.
+  sfx_hum_hover                    A loop: what flies or floats (aircraft, Covenant vehicles). Loops must close without a click.
+  sfx_drop_in                      A squad falling into place (from a transport in battle, bought, placed in the Sandbox): it lands 0.6 s in.
+  sfx_infection_start              A dying unit being infected.
+
 UI SOUNDS FOR EVERY FACTION
   A UI file named without its faction, such as ui_click or ui_error, serves every faction's set (and the neutral one) that has no
   file of its own here.
+  A squad sold or removed, the cards skipped, a spell taken back and a squad moved play the unlock sound (ui_unlock): there are no
+  sell or skip sounds any more (the owner, 2026-11-24).
 
 LOUDNESS
   Files can come as loud as they were made: the game measures each one and plays it at its slot's own level, a little under the music.

@@ -304,9 +304,65 @@ namespace Halobellum.Tests
                 Assert.IsTrue(click.IsOverride, $"{faction ?? "neutral"}: the owner's ui_click.");
                 Assert.IsTrue(AudioLibrary.Get(AudioSlots.Ui(faction, UiSound.Error)).IsOverride);
             }
-            Assert.IsFalse(AudioLibrary.Get(AudioSlots.Ui("UNSC", UiSound.Hover)).IsOverride, "No hover file: the generated one stays.");
+            Assert.IsFalse(AudioLibrary.Get(AudioSlots.Ui("UNSC", UiSound.RoundWon)).IsOverride, "No round-won file: the generated one stays.");
             Assert.AreEqual("ui_click", AudioLibrary.SharedUiSlot("ui_covenant_click"));
             Assert.IsNull(AudioLibrary.SharedUiSlot("sfx_fire_bullet"));
+        }
+
+        // ------------------------------------------------------------------ the owner's changes of 2026-11-24
+
+        [Test]
+        public void TheOwnersHover_ServesEveryFaction_AndTheNeutralMenus()
+        {
+            foreach (string faction in new[] { "UNSC", "Covenant", "Flood", null })
+            {
+                AudioClipSet hover = AudioLibrary.Get(AudioSlots.Ui(faction, UiSound.Hover));
+                Assert.IsTrue(hover.IsOverride, $"{faction ?? "neutral"}: the owner's ui_hover.");
+                Assert.AreEqual("ui_hover", hover.Slot);
+                Assert.AreEqual(1, hover.Clips.Length);
+            }
+        }
+
+        [TestCase("sfx_spell_mac", "UNSC/MacStrike")]
+        [TestCase("sfx_spell_nuke", "UNSC/HavokNuke")]
+        [TestCase("sfx_spell_shield", "UNSC/BubbleShield")]
+        [TestCase("sfx_spell_shield", "Covenant/ShieldDome")]
+        public void TheOwnersSpellFiles_AreTheSpellsSounds(string slot, string spellPath)
+        {
+            SpellStats spell = Spell(spellPath);
+            SfxCue cue = AudioCatalog.Spell(spell, 1, BattleFactions.Unsc);
+            Assert.AreEqual(slot, cue.Slot, spell.Name);
+            Assert.IsTrue(cue.HasSound);
+            Assert.IsTrue(cue.Clips.IsOverride, $"{slot}: the owner's file, not the generated one.");
+            Assert.AreEqual(slot, cue.Clips.Clips[0].name);
+            Assert.AreEqual(0f, AudioCatalog.SpellLeadSeconds(spell), "It plays as the spell strikes.");
+        }
+
+        [Test]
+        public void TheHavok_IsHeardComingDown_ThenTheOwnersNukeAsItStrikes()
+        {
+            SpellStats nuke = Spell("UNSC/HavokNuke");
+            Assert.IsTrue(AudioCatalog.FallsIn(nuke), "Its lead-in, the owner's sfx_falling_in.");
+            Assert.IsTrue(AudioCatalog.FallingIn.Clips.IsOverride);
+            Assert.AreEqual(1, nuke.Ticks);
+            SfxCue strike = AudioCatalog.Spell(nuke, 1, BattleFactions.Unsc);
+            Assert.AreEqual("sfx_spell_nuke", strike.Slot, "At its strike.");
+            Assert.AreEqual("sfx_spell_nuke.mp3", System.IO.Path.GetFileName(AssetDatabase.GetAssetPath(strike.Clips.Clips[0])));
+        }
+
+        [Test]
+        public void TheArcherBarrage_PlaysTheOwnersRocket_AtEachWave_AfterComingDown()
+        {
+            SpellStats barrage = Spell("UNSC/MissileBarrage");
+            Assert.IsTrue(AudioCatalog.FallsIn(barrage), "Still heard coming down first.");
+            Assert.Greater(barrage.Ticks, 1);
+            for (int tick = 1; tick <= barrage.Ticks; tick++)
+                Assert.AreSame(AudioCatalog.ArcherRocket, AudioCatalog.Spell(barrage, tick, BattleFactions.Unsc), "Wave " + tick);
+            Assert.AreEqual("sfx_fire_rocket", AudioCatalog.ArcherRocket.Slot);
+            Assert.IsTrue(AudioCatalog.ArcherRocket.Clips.IsOverride, "The owner's rocket.");
+            Assert.AreEqual(SfxGroup.Spells, AudioCatalog.ArcherRocket.Group, "A spell's voice, not one of the rocket launchers'.");
+            Assert.IsNull(AudioCatalog.ForSlot("sfx_spell_missiles"), "The generated barrage is gone.");
+            Assert.AreNotSame(AudioCatalog.ArcherRocket, AudioCatalog.ForSlot("sfx_fire_rocket"), "The rocket launchers keep their own cue.");
         }
 
         [Test]

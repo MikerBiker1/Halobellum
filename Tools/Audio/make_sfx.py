@@ -410,15 +410,6 @@ def flood_burst(seed):
     return s.fade_out(mix(n, swell, (0.07, hit)), 0.06)
 
 
-def infection_start(seed):
-    # Something finds its way in.
-    rng = R(seed)
-    n = samples(0.5)
-    t = s.time_axis(n)
-    worm = s.svf(s.noise(n, rng), 500.0 + 650.0 * np.sin(2 * np.pi * rng.uniform(9.0, 15.0) * t) ** 2, q=5.0, mode="bp") * s.env_adsr(n, 0.05, 0.05, 0.75, 0.15)
-    return s.fade_out(worm + s.bubbles(0.5, 55.0, 140.0, 800.0, seed=seed, tau=0.02, gain=0.5), 0.03)
-
-
 def infection_rise(seed):
     # A corpse gets up: wet tearing, then a low rising moan.
     rng = R(seed)
@@ -472,17 +463,6 @@ def pelican_crash(seed):
     return s.fade_out(mix(len(y), y, s.squelch(1.2, 1800.0, 110.0, q=1.8, seed=seed, density=110.0) * 0.8, (0.3, s.bubbles(1.2, 40.0, 180.0, 1000.0, seed=seed, tau=0.025, gain=0.3))), 0.3)
 
 
-def drop_in(seed):
-    # A falling squad: the bought squad takes 0.6 s to land, so the thud is there.
-    rng = R(seed)
-    n = samples(1.05)
-    t = s.time_axis(n)
-    whoosh = s.svf(s.noise(n, rng), np.interp(t, (0.0, 0.6), (700.0, 3000.0)), q=1.2, mode="bp") * np.minimum(t / 0.5, 1.0) ** 2 * (t < 0.6) * 0.55
-    thud = thump(samples(0.4), 110.0, 42.0, 0.11, 22.0) * 1.3
-    dust = band_noise(samples(0.4), rng, 240.0, 2700.0, 2) * s.env_exp(samples(0.4), 0.05, 0.0005) * 0.75
-    return s.fade_out(mix(n, whoosh, (0.59, thud), (0.59, dust)), 0.05)
-
-
 # ------------------------------------------------------------------ spells
 
 def spell_mac(seed):
@@ -514,17 +494,6 @@ def spell_glassing(seed):
     sear = band_noise(n, rng, 500.0, 9000.0, 2) * 0.9
     sub = np.sin(s.phase_of(np.full(n, 42.0))) * 1.2
     return s.fade_out(s.soft_clip((tone * 0.35 + sear + sub) * s.env_adsr(n, 0.05, 0.3, 0.75, 0.7), 1.6), 0.15)
-
-
-def spell_missiles(seed):
-    rng = R(seed)
-    n = samples(1.6)
-    parts = []
-    for k in range(6):
-        when = k * 0.14 + rng.uniform(-0.02, 0.02)
-        parts.append((when, fire_rocket(seed + k)[:samples(0.32)] * 0.55))
-        parts.append((when + 0.62, explosion_small(seed + 10 + k) * 0.7))
-    return s.fade_out(s.soft_clip(mix(n, *parts), 1.3), 0.1)
 
 
 def spell_plasma(seed):
@@ -653,43 +622,6 @@ def spell_smoke(seed):
     return s.fade_out(pop + hiss, 0.1)
 
 
-# ------------------------------------------------------------------ engine and hover loops (one per kind, level follows how many are alive)
-
-def loopable(y, overlap=0.5):
-    """Folds the end of a sound over its start with a crossfade, so that it loops without a click."""
-    k = samples(overlap)
-    fade = np.linspace(0.0, 1.0, k)
-    out = y[:-k].copy()
-    out[:k] = y[:k] * np.sqrt(fade) + y[-k:] * np.sqrt(1.0 - fade)
-    return out
-
-
-def hum_engine(seed):
-    # A diesel idle, seen from far up: slow, uneven low throbs.
-    rng = R(seed)
-    n = samples(4.5)
-    t = s.time_axis(n)
-    rate = 26.0
-    y = np.zeros(n)
-    for h, g in ((1, 1.0), (2, 0.75), (3, 0.42), (4, 0.3), (6, 0.15), (8, 0.08)):
-        y += g * np.sin(2 * np.pi * rate * h * t + rng.uniform(0, 6.28))
-    chug = 0.72 + 0.28 * np.sin(2 * np.pi * 6.5 * t + 1.3 * np.sin(2 * np.pi * 1.1 * t))
-    grit = band_noise(n, rng, 110.0, 620.0, 2) * 0.35
-    return loopable((y * 0.5 + grit) * chug)
-
-
-def hum_hover(seed):
-    # An anti-gravity hum: steady and glassy, slowly beating.
-    rng = R(seed)
-    n = samples(4.5)
-    t = s.time_axis(n)
-    y = np.zeros(n)
-    for f, g in ((58.0, 1.0), (58.6, 0.8), (116.3, 0.45), (348.0, 0.18), (349.3, 0.18), (1044.0, 0.05)):
-        y += g * np.sin(2 * np.pi * f * t + rng.uniform(0, 6.28))
-    air = band_noise(n, rng, 800.0, 3200.0, 2) * 0.05
-    return loopable(y * 0.6 + air)
-
-
 # ------------------------------------------------------------------ UI: small parts
 
 def tick(seed, length=0.006, lo=2200.0, gain=1.0):
@@ -739,8 +671,6 @@ def ui_unsc(event, seed=0):
         return s.fade_out(mix(samples(0.03), tick(seed, 0.004, 4500.0, 0.8), beep(3400.0, 0.012, 0.25)), 0.005)
     if event == "buy":
         return s.fade_out(mix(samples(0.3), beep(1240.0, 0.055, 0.7), (0.07, beep(1860.0, 0.08, 0.75)), (0.15, latch(seed, 1.2))), 0.02)
-    if event == "sell":
-        return s.fade_out(mix(samples(0.3), latch(seed, 1.0), (0.09, beep(1660.0, 0.05, 0.65)), (0.16, beep(1110.0, 0.09, 0.7))), 0.02)
     if event == "unlock":
         rng = R(seed)
         n = samples(0.55)
@@ -754,11 +684,6 @@ def ui_unsc(event, seed=0):
         n = samples(0.32)
         snap = band_noise(n, rng, 900.0, 7000.0, 2) * s.env_exp(n, 0.012, 0.001) * 1.0
         return s.fade_out(mix(n, snap, (0.04, beep(1480.0, 0.05, 0.6)), (0.1, beep(2220.0, 0.12, 0.65))), 0.02)
-    if event == "skip":
-        rng = R(seed)
-        n = samples(0.26)
-        slide = s.svf(s.noise(n, rng), np.interp(s.time_axis(n), (0.0, 0.2), (3200.0, 700.0)), q=1.2, mode="bp") * s.env_adsr(n, 0.01, 0.06, 0.4, 0.1) * 0.7
-        return s.fade_out(mix(n, slide, (0.13, beep(880.0, 0.08, 0.5))), 0.02)
     if event == "spellplaced":
         return s.fade_out(mix(samples(0.62), beep(1760.0, 0.04, 0.55), (0.08, beep(1760.0, 0.04, 0.55)), (0.16, beep(1760.0, 0.04, 0.6)), (0.24, beep(2350.0, 0.3, 0.7, attack=0.002, release=0.1)), (0.23, latch(seed, 0.8))), 0.03)
     if event == "levelup":
@@ -793,8 +718,6 @@ def ui_covenant(event, seed=0):
         return s.fade_out(s.glass(93, dur=0.12, vel=0.45, seed=seed), 0.03)
     if event == "buy":
         return s.fade_out(hall(bells([(0.0, 74), (0.07, 78), (0.14, 81)], dur=0.7, seed=seed), 0.6, 0.06)[:samples(1.0)], 0.1)
-    if event == "sell":
-        return s.fade_out(hall(bells([(0.0, 81), (0.08, 75), (0.16, 70)], dur=0.7, seed=seed), 0.6, 0.06)[:samples(1.0)], 0.1)
     if event == "unlock":
         y = bells([(0.0, 70), (0.08, 74), (0.16, 75), (0.24, 78), (0.32, 81), (0.4, 87)], dur=1.0, vel=0.55, seed=seed)
         return s.fade_out(mix(samples(1.5), hall(y, 0.7, 0.06), low_choir(50, 0.7, "oo", "ah", 0.45, seed)), 0.15)
@@ -803,8 +726,6 @@ def ui_covenant(event, seed=0):
         return s.fade_out(mix(samples(0.5), s.glass(49, dur=0.45, vel=1.0, seed=seed), s.glass(50, dur=0.45, vel=1.0, seed=seed + 1), low_choir(38, 0.26, "mm", vel=0.7, seed=seed)), 0.04)
     if event == "cardpick":
         return s.fade_out(hall(bells([(0.0, 78), (0.09, 86)], dur=0.8, seed=seed), 0.6, 0.06)[:samples(1.0)], 0.1)
-    if event == "skip":
-        return s.fade_out(hall(s.glass(70, dur=0.5, vel=0.7, seed=seed), 0.5, 0.06)[:samples(0.7)], 0.08)
     if event == "spellplaced":
         rng = R(seed)
         n = samples(0.8)
@@ -840,8 +761,6 @@ def ui_flood(event, seed=0):
         return s.fade_out(s.bubbles(0.05, 80.0, 420.0, 1000.0, seed=seed, tau=0.01) * 0.8, 0.01)
     if event == "buy":
         return s.fade_out(mix(samples(0.45), s.squelch(0.18, 800.0, 220.0, seed=seed), (0.12, s.squelch(0.26, 1300.0, 260.0, q=2.8, seed=seed + 1)), (0.12, thump(samples(0.15), 130.0, 66.0, 0.05, 24.0) * 0.7)), 0.03)
-    if event == "sell":
-        return s.fade_out(mix(samples(0.45), s.squelch(0.28, 1700.0, 150.0, q=2.0, seed=seed), (0.15, s.bubbles(0.26, 70.0, 160.0, 560.0, seed=seed, tau=0.02, gain=0.45))), 0.03)
     if event == "unlock":
         n = samples(0.9)
         tear = s.squelch(0.65, 700.0, 2200.0, q=2.6, seed=seed, density=70.0)
@@ -854,8 +773,6 @@ def ui_flood(event, seed=0):
         return s.fade_out(mix(n, gag, thump(samples(0.12), 90.0, 58.0, 0.05, 22.0) * 0.9), 0.03)
     if event == "cardpick":
         return s.fade_out(mix(samples(0.42), s.squelch(0.34, 1500.0, 200.0, q=2.4, seed=seed), (0.05, s.bubbles(0.3, 90.0, 320.0, 1200.0, seed=seed, tau=0.015, gain=0.45))), 0.03)
-    if event == "skip":
-        return s.fade_out(mix(samples(0.3), s.squelch(0.26, 420.0, 130.0, q=2.0, seed=seed, density=25.0)), 0.03)
     if event == "spellplaced":
         return s.fade_out(mix(samples(0.65), s.heartbeat(0.6, seed=seed, f0=60.0)[:samples(0.4)], (0.14, s.squelch(0.42, 1900.0, 260.0, q=2.2, seed=seed)), (0.2, s.bubbles(0.35, 70.0, 220.0, 950.0, seed=seed, tau=0.02, gain=0.45))), 0.05)
     if event == "levelup":
@@ -896,7 +813,7 @@ def ui_neutral(event, seed=0):
 # ------------------------------------------------------------------ the list of every clip: name, make, loudness target
 
 UI_EVENTS = {
-    "click": -24.0, "hover": -32.0, "buy": -20.0, "sell": -20.0, "unlock": -19.0, "error": -19.0, "cardpick": -20.0, "skip": -22.0,
+    "click": -24.0, "hover": -32.0, "buy": -20.0, "unlock": -19.0, "error": -19.0, "cardpick": -20.0,
     "spellplaced": -20.0, "levelup": -18.0, "battlestart": -15.0, "roundwon": -16.0, "roundlost": -16.0, "matchwon": -14.0, "matchlost": -14.0,
 }
 
@@ -938,15 +855,12 @@ def clip_list():
     add("sfx_death_vehicle", death_vehicle, -12.0, 2)
     add("sfx_death_air", death_air, -12.0, 2)
     add("sfx_flood_burst", flood_burst, -14.0, 3)
-    add("sfx_infection_start", infection_start, -22.0, 2)
     add("sfx_infection_rise", infection_rise, -19.0, 2)
     add("sfx_pelican_dive", pelican_dive, -14.0)
     add("sfx_pelican_crash", pelican_crash, -10.0)
-    add("sfx_drop_in", drop_in, -17.0, 2)
     add("sfx_spell_mac", spell_mac, -9.0)
     add("sfx_spell_nuke", spell_nuke, -9.0)
     add("sfx_spell_glassing", spell_glassing, -12.0)
-    add("sfx_spell_missiles", spell_missiles, -13.0)
     add("sfx_spell_plasma", spell_plasma, -13.0, 2)
     add("sfx_spell_storm_tick", spell_storm_tick, -17.0, 3)
     add("sfx_spell_spore", spell_spore, -18.0, 3)
@@ -960,8 +874,8 @@ def clip_list():
     add("sfx_spell_drop_flood", spell_drop_flood, -13.0)
     add("sfx_spell_emp", spell_emp, -13.0)
     add("sfx_spell_smoke", spell_smoke, -18.0)
-    add("sfx_hum_engine", hum_engine, -22.0)
-    add("sfx_hum_hover", hum_hover, -22.0)
+    # No hums, drop-in, infection start or Archer barrage any more, and no sell or skip UI sounds: silent until the owner's file is in, or
+    # the owner's unlock and rocket sounds play (the owner, 2026-11-24).
     for faction, fn in (("unsc", ui_unsc), ("covenant", ui_covenant), ("flood", ui_flood)):
         for event, target in UI_EVENTS.items():
             add(f"ui_{faction}_{event}", _bind(fn, event), target)
@@ -983,8 +897,7 @@ def render(item):
     y = s.remove_dc(np.asarray(fn(seed + 1), dtype=np.float64))
     y = s.level_short(y, target)
     y = s.remove_dc(y)
-    if not name.startswith("sfx_hum"):
-        y = s.fade_out(y, 0.004)
+    y = s.fade_out(y, 0.004)
     s.write_wav(os.path.join(OUT, name + ".wav"), y)
     return name, len(y) / s.SR, s.peak_db(y), s.momentary_peak(y)
 

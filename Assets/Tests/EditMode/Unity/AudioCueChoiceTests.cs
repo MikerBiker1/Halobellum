@@ -172,9 +172,21 @@ namespace Halobellum.Tests
         [TestCase("Flood/Abomination", "sfx_death_flood_huge")]
         [TestCase("UNSC/Marine", "sfx_death_human")]
         [TestCase("Covenant/Grunt", "sfx_death_grunt")]
+        [TestCase("LekgoloColony/Skitterer", "sfx_explosion_turret")] // The Ghost's end blast (the owner, 2026-11-24).
         public void ADeath_GoesByWhatDied(string path, string expected)
         {
             Assert.AreEqual(expected, Death(path, Team.B));
+        }
+
+        [Test]
+        public void ASkitterer_GoesUpWithTheGhostsEndBlast_InTheInfantryDeathsVoices()
+        {
+            SfxCue death = BattleAudio.DeathCue(new SimUnit(0, Team.B, 0, Unit("LekgoloColony/Skitterer"), new Vec2(0f, 0f), new Vec2(0f, 1f)));
+            Assert.AreSame(AudioCatalog.SkittererDeath, death, "Not a Covenant soldier's fall.");
+            Assert.AreEqual(AudioCatalog.ExplosionTurret.Slot, death.Slot, "The same file as the blast after a Ghost's drift.");
+            Assert.IsTrue(death.Clips.IsOverride);
+            Assert.AreEqual(SfxGroup.InfantryDeaths, death.Group, "Six to a squad: they share the voices they had.");
+            Assert.Less(death.Priority, AudioCatalog.ExplosionTurret.Priority);
         }
 
         [Test]
