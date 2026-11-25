@@ -1,66 +1,81 @@
-# The Rhino: a model for a 3D printer with no colours, reduced and painted by Meshy (Tools/Meshy/texture_inputs.py, meshy_paint.py). Its turret
-# stands on its ring and turns (Turret_0). Sizes are in metres, from texture_inputs.py. It faces -Y.
+# The Rhino (D184): the owner's new Meshy model, Meshy/rhino.glb, one closed skin of 3,319,898 triangles with its own textures. Its long
+# artillery barrel points along -X in the file, so it is turned to face -Y. Reduced to about 20,000 triangles (as many as the old one had) and
+# painted afresh from its own colours (reduce_and_repaint: reducing Meshy's seams as they are would tear them). Its turret stands on a round
+# base: it is sliced off level just above the hull, inside the base's circle alone, the cuts get black caps, and it turns (Turret_0).
+# Its shells leave the end of the barrel. Numbers are in a model 10 units long (start() brings it to that), on the ground with its middle on
+# the origin.
+#   blender --background --factory-startup --python Tools/Art/units/Rhino.py        (HB_ONLY=measure: print slices and stop)
+import math
 import os
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 import model_tools as mt
-import bpy
-from mathutils import Matrix, Vector
+import bmesh
+import numpy as np
 
-METRES = 9.5 / 177.0
-RING = (-53.27 * METRES, -43.45 * METRES)
-BARREL_TIP = (RING[0], -141.0 * METRES, 39.0 * METRES)
-
-
-
-def box_of(part):
-    """Where this part was when it was sent to Meshy: its file sets the size and place."""
-    before = set(bpy.context.scene.objects)
-    bpy.ops.import_scene.gltf(filepath=os.path.join(mt.SOURCE, "Prepared", "_Paint", part, "input.glb"))
-    bpy.context.view_layer.update()
-    new = [o for o in bpy.context.scene.objects if o not in before]
-    box = mt._bounds([o for o in new if o.type == "MESH"])
-    for o in new:
-        bpy.data.objects.remove(o)
-    return box
+ONLY = os.environ.get("HB_ONLY", "")
+BIG = 20
+CUT = 1.92  # Just above the hull's deck, through the turret's round base.
+AXIS = (0.0, 0.2)  # The middle of the base, which it turns about.
+RADIUS = 1.4  # The base is 1.28 across from its middle: nothing else of the hull is cut.
+CAP_UV = (0.002, 0.002)  # A corner of the baked texture with nothing painted on it: black.
 
 
-def fit_box(parts, low, high):
-    a, b = mt._bounds(parts)
-    size = max(b[i] - a[i] for i in range(3))
-    wanted = max(high[i] - low[i] for i in range(3))
-    for o in parts:
-        o.data.transform(Matrix.Scale(wanted / size, 4))
-        o.data.update()
-    a, _ = mt._bounds(parts)
-    for o in parts:
-        o.data.transform(Matrix.Translation(Vector(low) - a))
-        o.data.update()
+def slice_turret(o):
+    """Cuts level at CUT, through the faces inside RADIUS of the turret's axis alone, and closes both sides with caps."""
+    mesh = bmesh.new()
+    mesh.from_mesh(o.data)
+    near = [f for f in mesh.faces if all(math.hypot(v.co.x - AXIS[0], v.co.y - AXIS[1]) < RADIUS for v in f.verts)]
+    geom = near + list({e for f in near for e in f.edges}) + list({v for f in near for v in f.verts})
+    cut = [e for e in bmesh.ops.bisect_plane(mesh, geom=geom, dist=1e-5, plane_co=(0, 0, CUT), plane_no=(0, 0, 1))["geom_cut"]
+           if isinstance(e, bmesh.types.BMEdge)]
+    print(f"REPORT cut at {CUT}: {len(cut)} edges")
+    bmesh.ops.split_edges(mesh, edges=cut)
+    faces = bmesh.ops.holes_fill(mesh, edges=[e for e in mesh.edges if e.is_boundary], sides=0)["faces"]
+    faces = bmesh.ops.triangulate(mesh, faces=faces)["faces"]
+    bmesh.ops.recalc_face_normals(mesh, faces=mesh.faces)
+    layer = mesh.loops.layers.uv.active
+    for face in faces:
+        for loop in face.loops:
+            loop[layer].uv = CAP_UV
+    mesh.to_mesh(o.data)
+    mesh.free()
+    o.data.update()
 
+mt.start("Rhino", "Meshy/rhino.glb")
+mt.turn(yaw=90)
+mt.centre_on_ground()
 
-mt.start("Rhino", "Prepared/_Paint/RhinoHull/painted.glb")
-mt.source_size()
-for o in mt.meshes():
-    o.name = "Hull"
-bpy.ops.import_scene.gltf(filepath=os.path.join(mt.SOURCE, "Prepared", "_Paint", "RhinoTurret", "painted.glb"))
-bpy.context.view_layer.update()
-turret = [o for o in mt.meshes() if o.name != "Hull"]
-for o in turret:
-    world = o.matrix_world.copy()
-    o.parent = None
-    o.matrix_world = world
-for o in list(bpy.context.scene.objects):
-    if o.type != "MESH":
-        bpy.data.objects.remove(o)
-mt._select(turret)
-bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
-# Meshy gives each part back centred and 2 units long, so each goes back where it was.
-fit_box(mt.meshes("Hull"), *box_of("RhinoHull"))
-fit_box(turret, *box_of("RhinoTurret"))
-mt.report("loaded")
-mt.smooth(35)
-mt.part("Turret_0", "^(?!Hull)", pivot=(RING[0], RING[1], 0.8))
-mt.muzzle("Muzzle_0", BARREL_TIP, parent="Turret_0")
+if ONLY == "measure":
+    o = mt.meshes()[0]
+    n = len(o.data.vertices)
+    co = np.empty(n * 3, dtype=np.float32)
+    o.data.vertices.foreach_get("co", co)
+    co = co.reshape(n, 3) @ np.array(o.matrix_world)[:3, :3].T + np.array(o.matrix_world)[:3, 3]
+    print("REPORT bounds", co.min(0).round(3), co.max(0).round(3))
+    top = co[co[:, 2] > co[:, 2].max() - 0.2]
+    print("REPORT barrel tip", top.mean(0).round(3), "front-most of it", top[top[:, 1].argmin()].round(3))
+    for z0 in np.arange(0, co[:, 2].max(), 0.1):
+        s = co[(co[:, 2] >= z0) & (co[:, 2] < z0 + 0.1)]
+        if len(s):
+            print(f"REPORT z {z0:4.1f}: n {len(s):7d} x {s[:, 0].min():6.2f}..{s[:, 0].max():6.2f} y {s[:, 1].min():6.2f}..{s[:, 1].max():6.2f}")
+    sys.exit(0)
+
+mt.reduce_and_repaint(20000, 2048, weld_distance=0.001, reach=0.05)
+body = mt.meshes("^Body$")[0]
+slice_turret(body)
+mt.smooth(40)
+mt.islands("^Body$", smallest=30)
+mt.take("Turret_0", (-BIG, -BIG, CUT + 0.005), (BIG, BIG, BIG), "^Body$", pivot=(AXIS[0], AXIS[1], CUT))
+mt.remove_small_islands(30, "^Body$")  # A crumb the cut leaves under a pin on the base.
+
+# Its shells leave the end of the barrel: the middle of its furthest-forward part, a little ahead of it.
+turret = mt.meshes("^Turret_0$")[0]
+points = np.array([turret.matrix_world @ v.co for v in turret.data.vertices])
+tip = points[points[:, 1] < points[:, 1].min() + 0.25]
+end = (tip.min(axis=0) + tip.max(axis=0)) / 2
+print(f"REPORT barrel end {tuple(round(float(v), 3) for v in end)}")
+mt.muzzle("Muzzle_0", (float(end[0]), float(points[:, 1].min()) - 0.05, float(end[2])), parent="Turret_0")
 mt.merge_rest()
 mt.report("done")
 mt.finish(texture_size=1024)

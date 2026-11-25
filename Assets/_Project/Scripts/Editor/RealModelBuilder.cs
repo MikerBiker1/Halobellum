@@ -49,6 +49,9 @@ namespace Halobellum.EditorTools
             public string Unit, Folder;
             public float Length, Height;
             public Color Tint = Color.white;
+            /// <summary>How much its colours are lifted, over its tint: a texture near black reads as a black shape from the game's camera (the
+            /// Hornet's new model, D184). Unlike a tint, it keeps the model's own materials and doesn't make it an infested one.</summary>
+            public float Lift = 1f;
             /// <summary>Glowing thrusters at the back of the outermost parts, lit while moving (the owner, 2026-11-07, D82).</summary>
             public bool Thrusters;
             /// <summary>A weapon held at Muzzle_1, a Weapon_ folder in Art/Imported/Models, and its length in metres.</summary>
@@ -88,6 +91,9 @@ namespace Halobellum.EditorTools
         private static readonly Color Infested = new Color(0.96f, 0.93f, 0.88f);
         /// <summary>The Phantom's texture is grey: a Covenant purple over it, for the Covenant's own (the Flood's is Infested).</summary>
         private static readonly Color CovenantHull = new Color(0.9f, 0.72f, 1.2f);
+        /// <summary>The Hornet's new model (D184) is painted near black, a mean brightness of 5%: lifted, it reads as a dark blue craft from the
+        /// game's camera instead of a black shape. The infested one is lifted as much.</summary>
+        private const float HornetLift = 1.7f;
         /// <summary>The growths keep their own texture, a little greener, and lifted: as it is, the dark brown reads as black from the game's camera.</summary>
         private static readonly Color GrowthTint = new Color(1.15f, 1.25f, 0.85f);
 
@@ -107,7 +113,7 @@ namespace Halobellum.EditorTools
             new Entry { Unit = "UNSC/Elephant", Folder = "Elephant", Length = 10f, Seats = new[] { new Seat("Marine_Gun", 1.61f, 2.72f, 3.25f, "Turret_2") } },
             new Entry { Unit = "UNSC/Warthog", Folder = "Warthog", Length = 4.6f, Seats = WarthogCrew },
             new Entry { Unit = "UNSC/GaussWarthog", Folder = "GaussWarthog", Length = 4.6f, Seats = WarthogCrew },
-            new Entry { Unit = "UNSC/Hornet", Folder = "Hornet", Length = 6f },
+            new Entry { Unit = "UNSC/Hornet", Folder = "Hornet", Length = 6f, Lift = HornetLift }, // Its new model is near black (D184).
             new Entry { Unit = "UNSC/Pelican", Folder = "Pelican", Length = 10f },
             new Entry { Unit = "Covenant/Banshee", Folder = "Banshee", Length = 6.6f, Thrusters = true }, // Its wings are wider than it is long: 5.4 m nose to tail.
             new Entry { Unit = "Covenant/Wraith", Folder = "Wraith", Length = 6.2f, Seats = new[] { new Seat("Elite_Hatch", 0f, 1.84f, 0.48f) } },
@@ -128,7 +134,7 @@ namespace Halobellum.EditorTools
             new Entry { Unit = "AerospaceCommand/CondorGunship", Folder = "Condor", Length = 11f },
             new Entry { Unit = "FloodUNSC/InfestedWarthog", Folder = "Warthog", Length = 4.6f, Tint = Infested, Seats = InfestedWarthogCrew },
             new Entry { Unit = "FloodUNSC/InfestedScorpion", Folder = "Scorpion", Length = 6.2f, Tint = Infested },
-            new Entry { Unit = "FloodUNSC/InfestedHornet", Folder = "Hornet", Length = 6f, Tint = Infested },
+            new Entry { Unit = "FloodUNSC/InfestedHornet", Folder = "Hornet", Length = 6f, Tint = Infested, Lift = HornetLift },
             new Entry { Unit = "FloodCovenant/InfestedWraith", Folder = "Wraith", Length = 6.2f, Tint = Infested, Seats = new[] { new Seat("CombatForm_Hatch", 0f, 1.84f, 0.48f) } },
             new Entry { Unit = "FloodCovenant/InfestedBanshee", Folder = "Banshee", Length = 6.6f, Tint = Infested, Thrusters = true },
             // The owner's second batch (M11).
@@ -270,7 +276,8 @@ namespace Halobellum.EditorTools
             if (unit == null) throw new InvalidOperationException("No unit at " + assetPath);
             string unitName = Path.GetFileNameWithoutExtension(assetPath);
             bool infested = entry.Tint == Infested;
-            GameObject root = MakeModel(entry.Folder, unitName + "_Model", entry.Length, entry.Height, unit.isAir, entry.Tint, entry.Tint != Color.white ? "_" + unitName : "",
+            var tint = new Color(entry.Tint.r * entry.Lift, entry.Tint.g * entry.Lift, entry.Tint.b * entry.Lift, 1f);
+            GameObject root = MakeModel(entry.Folder, unitName + "_Model", entry.Length, entry.Height, unit.isAir, tint, entry.Tint != Color.white ? "_" + unitName : "",
                 glows: !infested, flood: infested, yaw: entry.Yaw);
             if (root == null) return; // Rigged and baked instead.
             try
@@ -575,6 +582,15 @@ namespace Halobellum.EditorTools
                 material.globalIlluminationFlags = glows ? MaterialGlobalIlluminationFlags.RealtimeEmissive : MaterialGlobalIlluminationFlags.None;
                 material.SetColor("_EmissionColor", hasGlowColour ? new Color(info.glow[0], info.glow[1], info.glow[2]) : Color.white);
                 if (!string.IsNullOrEmpty(info.glowTexture)) material.SetTexture("_EmissionMap", AssetDatabase.LoadAssetAtPath<Texture2D>($"{folder}/{info.glowTexture}"));
+            }
+            else if (!isNew && (material.IsKeywordEnabled("_EMISSION") || material.GetTexture("_EmissionMap") != null))
+            {
+                // A model that lost its glow keeps no glow from its old material: the Hornet's new model (D184) has none, and its old material,
+                // still glowing white through a texture that was gone, drew it as a white shape.
+                material.DisableKeyword("_EMISSION");
+                material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.EmissiveIsBlack;
+                material.SetColor("_EmissionColor", Color.black);
+                material.SetTexture("_EmissionMap", null);
             }
 
             if (isNew) AssetDatabase.CreateAsset(material, path);

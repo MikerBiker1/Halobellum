@@ -2,6 +2,11 @@
 
 Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
 
+## 2026-11-24: your new Rhino and Hornet (D184)
+- **Rhino:** your model from the Meshy folder, cut from 3.3 million triangles to about 20,000 and repainted from its own colours. Its turret turns on its round base, and its shells leave the end of the long barrel.
+- **Hornet:** the first of the three Hornets in your file. Its two wing-tip rotors spin now. It is painted almost black, so the game brightens it a little, to read as dark blue. The Infested Hornet wears it too, with its Flood growths.
+- **Checked:** the tests, the game's gallery. **Not checked:** played in a match.
+
 ## 2026-11-20: balancing to 48-52% (D163)
 
 - Seven tournament rounds while the owner was out. Changed: Spartan Sniper 76, Heavy Weapons chaingun 14, Fireteam rifle 33, Infested Marine 125, Infested Warthog ram 50, Grunt Goblin 13.5, Marauder 1600 health and 104 cannon, Brute Grenadier 158 health and 35, Chopper 315 health and 66 blades, Condor autocannons 22.

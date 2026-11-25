@@ -204,6 +204,7 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] The balance remade to the owner's vision: base factions 50% each without exclusive units, every Titan unlocks for 150; then every sub-faction has a matchup of 56% or more with its exclusives (D141; not committed until the owner's review)
 - [x] The owner's playtest batch: the Covenant Phantom drops from the air and never lands; Pelican 10 → 25 with a 1 m splash, Condor lasers 19.5 → 60, Skitterer 12 m, Heavy Weapons 15 → 13, Goliath melee only with a charge; summoned bodies deal no base damage and fight at their maker's level; kill XP half to the killer, half by damage; the Oil Zone lasts the round and stays in your spells (2 rounds to recharge); a blue and red glow under each side's top squad; moddable unit stats JSON files; stats on the Unlock Skirmish and card icons (D142; not committed until the owner's review, no tournament)
 - [x] After the D142 tournaments: the Pelican lands where it is to drop its Marines, never behind enemy lines; Sandbox unit icons open their stats; the Spawner releases 3 Combat Forms (was 5); Swarm Brood 200 -> 300 (D143; not committed, no tournament)
+- [x] The owner's new Rhino and Hornet in the game; the Hornet's rotors spin (D184)
 - [ ] The Scarab session's new Goliath body and Jackal icons (`m13/art`, D139): merge when the owner says so (D142)
 - [ ] A balance tournament after D142, when the owner asks
 - [ ] XP for bodies made in a battle: the owner decides (D140, `BattleBodyXpShare`)

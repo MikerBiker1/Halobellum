@@ -1,3 +1,7 @@
-Source: found by the project owner on Sketchfab, file sketchfab.com/halo_downfall_-_hornet.glb in Art_Source.
-Prepared by Tools/Art/units/Hornet.py (decision D45).
+Source: found by the project owner on Sketchfab, file sketchfab.com/vehicleshumanfightershornet.glb in Art_Source.
+Prepared by Tools/Art/units/Hornet.py (decisions D45 and D184).
 The repository is private and must stay private.
+Title in the file: Vehicles>Human>Fighters>Hornet
+Author in the file: jameslucino117 (https://sketchfab.com/jameslucino117)
+Licence in the file: CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+Page in the file: https://sketchfab.com/3d-models/vehicleshumanfightershornet-8ad23b536b46451e86ad8a8b81f4b54e

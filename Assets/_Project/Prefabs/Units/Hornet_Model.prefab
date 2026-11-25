@@ -54,11 +54,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e71661ef6069e1443987e8cff4765bbf, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.00000023841858
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e71661ef6069e1443987e8cff4765bbf, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.4652721
+      value: -1.342406
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e71661ef6069e1443987e8cff4765bbf, type: 3}
       propertyPath: m_LocalPosition.z
@@ -92,19 +92,31 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7031808166276622644, guid: e71661ef6069e1443987e8cff4765bbf, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7031808166276622644, guid: e71661ef6069e1443987e8cff4765bbf, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7031808166276622644, guid: e71661ef6069e1443987e8cff4765bbf, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 02251f48331a77a44aa18d3d779728cc, type: 2}
     - target: {fileID: 919132149155446097, guid: e71661ef6069e1443987e8cff4765bbf, type: 3}
       propertyPath: m_Name
       value: Hornet
       objectReference: {fileID: 0}
-    - target: {fileID: 5790575196777360314, guid: e71661ef6069e1443987e8cff4765bbf, type: 3}
+    - target: {fileID: 6558849322862441928, guid: e71661ef6069e1443987e8cff4765bbf, type: 3}
       propertyPath: m_CastShadows
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5790575196777360314, guid: e71661ef6069e1443987e8cff4765bbf, type: 3}
+    - target: {fileID: 6558849322862441928, guid: e71661ef6069e1443987e8cff4765bbf, type: 3}
       propertyPath: m_ReceiveShadows
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5790575196777360314, guid: e71661ef6069e1443987e8cff4765bbf, type: 3}
+    - target: {fileID: 6558849322862441928, guid: e71661ef6069e1443987e8cff4765bbf, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 02251f48331a77a44aa18d3d779728cc, type: 2}

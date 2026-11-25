@@ -294,7 +294,7 @@ namespace Halobellum.Tests
                 .GetComponentsInChildren<MeshRenderer>().Where(r => !IsExtra(r)).SelectMany(r => r.sharedMaterials).First(m => m.GetTexture("_EmissionMap") != null);
             Assert.IsTrue(Body("Covenant/Banshee").IsKeywordEnabled("_EMISSION"));
             Assert.IsTrue(Body("Covenant/Wraith").IsKeywordEnabled("_EMISSION"));
-            Assert.IsTrue(Body("UNSC/Hornet").IsKeywordEnabled("_EMISSION"));
+            Assert.IsTrue(Body("UNSC/Elephant").IsKeywordEnabled("_EMISSION")); // The Hornet's new model (D184) has no glow of its own.
             Assert.IsFalse(Body("FloodCovenant/InfestedBanshee").IsKeywordEnabled("_EMISSION"));
         }
 

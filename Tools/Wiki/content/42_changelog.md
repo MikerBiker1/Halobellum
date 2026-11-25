@@ -8,6 +8,10 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 0.418.0 · 2026-11-24
+- **Rhino:** your new model, its turret turning on its round base. (D184)
+- **Hornet and Infested Hornet:** your new Hornet, its two rotors spinning. (D184)
+
 ## 0.417.0 · 2026-11-24
 - **LAN Game:** a new main menu item to play one against one with another person on the same local network. One player hosts (Faction mode or Unlock Skirmish) and the other joins from the list of games found or by the address the host's screen shows. Both deploy at the same time and the battle plays on both screens; each sees their own army at the bottom. The two games send only decisions and check they agree before every battle. No pause during a LAN battle; leaving forfeits. See the LAN Game page. (D182)
 

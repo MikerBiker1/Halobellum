@@ -7,6 +7,7 @@
 //   Leg_<n>_<phase %>, its child Knee_<n>, and Foot_<n>  a walker's leg, bent at hip and knee, whose foot stays planted while it carries
 //                            weight and steps in its turn; the body sways its weight onto the feet that carry it (WalkerLegs, the Scarab: D84)
 //   Flap_L, Flap_R           beats up and down all the time, like a wing, around its own origin
+//   Rotor_<n>                spins all the time about the model's up axis, around its own origin (its hub); odd ones the other way (the Hornet, D184)
 //   Motion_Hover             the whole body bobs a little, as a hover vehicle does
 //   Motion_Wobble            the whole body sways and squashes, as a Flood form does
 //   Thruster_<size>          a glow this many metres wide that lights up while the unit moves and goes out when it stops (the Banshee's wing tips,
@@ -31,6 +32,8 @@ namespace Halobellum.Presentation
         private const float SwingCyclesPerSecond = 0.5f;
         private const float FlapAngle = 30f;
         private const float FlapCyclesPerSecond = 2.2f;
+        /// <summary>How fast a rotor turns: fast enough that its blades' streaks read as a spin, slow enough not to strobe (the Hornet, D184).</summary>
+        public const float RotorDegreesPerSecond = 720f;
         private const float AirBobHeight = 0.3f;
         private const float HoverBobHeight = 0.07f;
         private const float BobSpeed = 1.3f;
@@ -80,12 +83,22 @@ namespace Halobellum.Presentation
             public Vector3 Axis;
         }
 
+        private sealed class Rotor
+        {
+            public Transform Node;
+            public Quaternion Rest;
+            /// <summary>The model's up, in the rotor's own axes, and which way round it turns.</summary>
+            public Vector3 Axis;
+            public float Sign;
+        }
+
         private readonly Transform _root, _body;
         private readonly Dictionary<int, List<Transform>> _muzzles = new Dictionary<int, List<Transform>>();
         private readonly List<Turret> _turrets = new List<Turret>();
         private readonly List<Wheel> _wheels = new List<Wheel>();
         private readonly List<Swing> _swings = new List<Swing>();
         private readonly List<Flap> _flaps = new List<Flap>();
+        private readonly List<Rotor> _rotors = new List<Rotor>();
         private readonly List<Thruster> _thrusters = new List<Thruster>();
         private WalkerLegs _walker;
         private readonly Vector3 _restPosition, _restScale;
@@ -153,6 +166,12 @@ namespace Halobellum.Presentation
                     float sign = name.StartsWith("Flap_L") ? 1f : -1f;
                     parts._flaps.Add(new Flap { Node = node, Rest = node.localRotation, Axis = Quaternion.Inverse(node.rotation) * root.forward * sign });
                 }
+                else if (name.StartsWith("Rotor_"))
+                {
+                    // Odd ones turn the other way, as a pair of rotors does so that the craft doesn't spin.
+                    float sign = WeaponOf(name, "Rotor_".Length) % 2 == 1 ? -1f : 1f;
+                    parts._rotors.Add(new Rotor { Node = node, Rest = node.localRotation, Axis = Quaternion.Inverse(node.rotation) * root.up, Sign = sign });
+                }
                 else if (name.StartsWith("Thruster_"))
                 {
                     float.TryParse(name.Substring("Thruster_".Length), NumberStyles.Float, CultureInfo.InvariantCulture, out float size);
@@ -165,7 +184,7 @@ namespace Halobellum.Presentation
             foreach (List<Transform> list in parts._muzzles.Values) list.Sort((a, b) => string.CompareOrdinal(a.name, b.name));
             // A walker's legs are read now, while the body is still as made.
             if (hips != null && feet != null && !isAir) parts._walker = WalkerLegs.Create(root, body, hips, feet, phase);
-            bool any = parts._air || parts._hover || parts._wobble || parts._muzzles.Count > 0 || parts._turrets.Count > 0 || parts._wheels.Count > 0 || parts._swings.Count > 0 || parts._flaps.Count > 0 || parts._thrusters.Count > 0 || parts._walker != null;
+            bool any = parts._air || parts._hover || parts._wobble || parts._muzzles.Count > 0 || parts._turrets.Count > 0 || parts._wheels.Count > 0 || parts._swings.Count > 0 || parts._flaps.Count > 0 || parts._rotors.Count > 0 || parts._thrusters.Count > 0 || parts._walker != null;
             return any ? parts : null;
         }
 
@@ -245,6 +264,11 @@ namespace Halobellum.Presentation
             {
                 float beat = Mathf.Sin((time + _phase) * FlapCyclesPerSecond * Mathf.PI * 2f) * FlapAngle;
                 flap.Node.localRotation = flap.Rest * Quaternion.AngleAxis(beat, flap.Axis);
+            }
+            foreach (Rotor rotor in _rotors)
+            {
+                float turn = Mathf.Repeat((time + _phase) * RotorDegreesPerSecond, 360f) * rotor.Sign;
+                rotor.Node.localRotation = rotor.Rest * Quaternion.AngleAxis(turn, rotor.Axis);
             }
 
             if (_thrusters.Count > 0) Light(time);
