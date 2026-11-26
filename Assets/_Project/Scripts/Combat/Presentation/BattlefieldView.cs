@@ -462,10 +462,15 @@ namespace Halobellum.Presentation
             {
                 // Hard shadows from the light, softened in the game's own shaders (SunShadow.hlsl): URP's soft ones crash the game as it closes on Direct3D 12.
                 _sun.shadows = high ? LightShadows.Hard : LightShadows.None;
+                Shader.SetGlobalFloat(SunShadowModeId, SunShadowSoft);
                 _sun.shadowStrength = _map.Atmosphere.SunShadow;
             }
             if (_blobs != null) _blobs.Strength = high ? HighQualityBlobStrength : 1f;
         }
+
+        /// <summary>SunShadow.hlsl's _HBSunShadowMode: soft edges (nine taps of the shadow map). 1 would be sharp, 2 none.</summary>
+        public const float SunShadowSoft = 0f;
+        private static readonly int SunShadowModeId = Shader.PropertyToID("_HBSunShadowMode");
 
         /// <summary>How dark the blob under a unit is at High quality, where the unit also casts a real shadow: only the soft contact with the floor is left.</summary>
         public const float HighQualityBlobStrength = 0.55f;
