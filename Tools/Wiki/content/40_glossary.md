@@ -83,7 +83,7 @@ blurb: Every game term in one place.
 | **Command Center / Research Center** | Your two towers. The Command Center sells help for the round; the Research Center sells lasting research. |
 | **Rapid Resupply** | +200 credits now, −300 next income. |
 | **Elite Recruitment** | This round's bought squads start at level 2, for 1.5× the price. |
-| **Oil Zone** | A Command Center spell, bought once and kept: a line that slows ground units and makes fire hurt more for the whole battle. Recharges for 2 rounds. |
+| **Oil Zone** | A Command Center spell, bought once and kept: a line that slows ground units and makes fire hurt more for the whole battle; it lies on the ground as black oil. Recharges for 2 rounds. |
 | **Flank zone** | Strips beside the enemy's zone where certain aircraft can deploy. They arrive 10 s late the first time. |
 | **No man's land** | The 2-square (4 m) gap between the two deployment zones. |
 | **Ghosts** | Grey copies of the enemy's army as it was at the last battle start, shown while you deploy. |

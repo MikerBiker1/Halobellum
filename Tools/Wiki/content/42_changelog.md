@@ -8,6 +8,15 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 1.0.0 · 2026-11-25
+Version 1.0.
+- **Lighting:** each battlefield look has its own colour grade and mood: the UNSC hold cool and clean, the Covenant warship richer violet with a faint mirror in its polished floor, the Flood ships warm and sick. The bright cores of lights glow (bloom), and soft contact shadows sit where things touch. (D190)
+- **Shadows:** on High quality the light casts real shadows: units, aircraft, the ship's structures, and rockets, missiles, bombs and shells in flight. Each look's light now comes from the side, so the shadows show. Low quality keeps the soft blob under each unit. (D191)
+- **Smoke, fire and explosions:** real simulated smoke, fire and explosion animations (free CC0 flipbooks by Unity Labs) replace the old puffs: billowing smoke, rolling fire, a real explosion at the heart of every vehicle's death, and burning wrecks with upright flames and black smoke. (D192)
+- **Oil Zone:** the spell now lies on the ground as real oil: black drops splash down and glossy black pools spread over its strip for the whole round. (D193)
+- **UNSC containers:** no more paint flickering through paint on the cargo containers as the camera moves. (D194)
+- **Graphics:** the game now runs on Direct3D 11 on Windows (Direct3D 12 as a fallback): as fast, and it never crashes as it closes with shadows on. (D191)
+
 ## 0.418.5 · 2026-11-24
 - **Sounds:** your hover sound on every button, and your MAC Strike, HAVOK Nuke and shield spell sounds. The Skitterer dies with the Ghost's blast, the Archer Missile Barrage uses your rocket sound, and selling or skipping cards plays your unlock sound. No more engine or hover hums, drop-in or infection sounds. (D189)
 

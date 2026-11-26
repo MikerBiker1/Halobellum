@@ -50,6 +50,6 @@ Battles in the Sandbox play out exactly like match battles, which makes it the p
 ## Settings
 
 - **Sound:** master, music, effects and interface volumes.
-- **Display:** screen, windowed or full screen, resolution, quality, VSync.
+- **Display:** screen, windowed or full screen, resolution, quality, VSync. **High** quality draws real shadows (units, aircraft, structures, rockets in flight), soft contact shadows, a faint mirror on polished floors and a finer glow; **Low** keeps a soft blob under each unit and a lighter glow.
 - **Interface and effects:** UI scale, camera shake, frame rate counter, battle log, menu background.
 - **Reset to defaults.** The same panel opens from the pause menu.

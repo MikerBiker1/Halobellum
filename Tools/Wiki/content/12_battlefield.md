@@ -17,7 +17,7 @@ blurb: The field's size, deployment zones, placement and formations, flank zones
 
 One square is **2 m**. You deploy at the bottom of the field and the AI at the top, each only in its own zone.
 
-The battlefield takes one of three interior looks (a UNSC installation, a Covenant warship, or a Flood-infested ship), chosen from the two factions and the match seed. The floor is always flat, and the look has **no effect on play**.
+The battlefield takes one of three interior looks (a UNSC installation, a Covenant warship, or a Flood-infested ship), chosen from the two factions and the match seed. The floor is always flat, and the look has **no effect on play**. Each look has its own light and colour grade, and on High quality its light casts real shadows.
 
 ## Placement
 

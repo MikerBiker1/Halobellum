@@ -35,7 +35,9 @@ namespace Halobellum.Tests
             string[] parts = UnityEngine.Application.version.Split('.');
             Assert.AreEqual(3, parts.Length, "MAJOR.MINOR.PATCH (D102): " + UnityEngine.Application.version);
             foreach (string part in parts) Assert.IsTrue(int.TryParse(part, out _), UnityEngine.Application.version);
-            Assert.GreaterOrEqual(int.Parse(parts[1]), 378, "Counting on from 0.378.0.");
+            // Counting on from 0.378.0; 1.0.0 (the owner's, 2026-11-25) and on are past it whatever their minor number.
+            int major = int.Parse(parts[0]), minor = int.Parse(parts[1]);
+            Assert.IsTrue(major >= 1 || minor >= 378, "Counting on from 0.378.0: " + UnityEngine.Application.version);
         }
 
         [TestCase(false, new string[0], true)]
