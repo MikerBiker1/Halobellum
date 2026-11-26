@@ -72,14 +72,58 @@ From the terrain gallery (`-terrainGallery <folder>`): the game camera (default 
 | Flood on a Covenant hull | `before_flood_covenant.png`, `before_flood_covenant_units.png` | `after_flood_covenant.png`, `after_flood_covenant_units.png` |
 | Outdoor (Firebase against Seam Flats) | `before_outdoor.png` | `after_outdoor.png` |
 
+## Shadows (second test build, 2026-11-25)
+
+On High the sun casts real shadows: units (animated bodies and prefab models), the structures around the field and what stands on it. They fall on the floor, its marks, the structures and the units. Low has no real shadows and keeps the blob under each unit as before.
+
+| What | How |
+| --- | --- |
+| Casting | `BakedCrowd.shader` has a ShadowCaster pass that plays the same baked animation; `TerrainProp.shader` has one with the sway. The unit prefabs were made with shadows off; `UnitViewManager.CastShadows` turns them on for opaque parts (not thrusters or shields). Grey ghosts of the last battle cast none. |
+| Receiving | `SunShadow.hlsl`: nine filtered taps of the shadow map around the point, so edges are soft over about four texels. In shade the ambient dims to 60% and the floor's shine to 25%, or shadows hardly show in the holds, whose ambient light is strong. |
+| Light | Hard shadows from the light (`LightShadows.Hard`); the softness is in our shaders. URP's own soft shadows made the game crash as it closed on Direct3D 12, every run (a driver access violation in `D3D12Core.dll`, after "Effects gallery finished"). Hard shadows with our nine taps also crashed, until the tap count became a run-time switch (`_HBSunShadowMode`, 0 soft, 1 sharp, 2 none); with it, 12 runs out of 12 closed cleanly. Direct3D 11 never crashed. If it comes back, the safe fallbacks are `_HBSunShadowMode` 1, or Direct3D 11 first in the Player settings. |
+| Direction | Every look's light now comes from the side (yaw about 70 degrees from the camera's direction, pitch 50 or less). From behind the camera, as before, every shadow hid behind what cast it. |
+| Range | `BattlefieldView.UpdateShadowRange`: the shadow distance reaches just past the farthest corner of the floor from where the camera is, and the four cascades split what lies between the nearest and farthest corner. The pipeline asset's own values are put back when the battlefield goes. Shadow map 4096 on High (was 2048). |
+| Strength | `TerrainTheme.SunShadow`, 0.85 on every look. The blob under a unit is at 55% on High (`BattlefieldView.HighQualityBlobStrength`). |
+
+Large things read well from the game camera (vehicles, flyers, structures); a single infantryman's shadow is small and soft from 150 m.
+
+Frame time at the game camera (terrain gallery, paused, High, this PC): 1.0 to 1.2 ms on every look, against 0.8 to 0.9 ms after the lighting pass.
+
+## Smoke, fire and oil (same test build)
+
+The made-in-code puffs are replaced by real flipbooks: simulations rendered by Unity Labs and given away under CC0 (`Resources/Effects/Flipbooks/SOURCE.txt`; the original zips are outside the repository in `Art_Source/VFX_UnityLabs`). `EffectFlipbookImport` sets their import (clamped, colour carried into clear texels, mipmaps, high-quality compression). Without them the old sheets stand in.
+
+| Effect | Flipbook | Where |
+| --- | --- | --- |
+| Smoke, dust, a big cloud's smoke | `Smoke_8x8` (WispySmoke01) | every smoke puff; a puff plays the 64 frames over its life |
+| Fire, flamethrower | `Fire_8x8` (FireBall01) | licks of fire keep the flipbook's own white core and orange edges; the colour over life only cools them |
+| Plasma fire, a cloud's fire | `FireGrey_8x8` | the same in grey, coloured by the game (light blue for Covenant machines) |
+| Burning wrecks, burning oil | `Flame_16x4` (Flame02) | new `Burn` layer: upright flames, twice as tall as wide |
+| Explosions | `Explosion_5x5` (Explosion02) | new `Blast` layer: the heart of every orange fireball, from the flash to dark smoke, played once |
+
+Oil: a vehicle that runs on fuel (not a Covenant machine) spills a pool of black oil with a faint rainbow sheen (new `Oil` layer, a texture made in code), out to one side of the wreck, 4 times its radius plus 2.5 m across, for 45 s (70 s for a titan). The pool burns for the first half of the wreck's fire, and the wreck's smoke is black.
+
+| | Before | After |
+| --- | --- | --- |
+| Explosion (Scorpion, 0.4 s) | `effects_explosion_before.png` | `effects_explosion_after.png` |
+| Burning wreck (Warthog, 3.5 s) | `effects_wreck_before.png` | `effects_wreck_oil_after.png` |
+| Flamethrower | `effects_flamethrower_before.png` | `effects_flamethrower_after.png` |
+| Shadows from the game camera | (none) | `shadows_unsc_units.png`, `shadows_unsc_wide.png` |
+
+The "before" pictures are from the test build of 2026-11-21.
+
+## UNSC containers
+
+The cargo containers in the UNSC hold had paint fighting through paint as the camera moved: the yellow trim's top lay exactly on the container's top, and the corner bands 1 cm off its ends. The trim is now part of the body (a cap on a body that stops under it, or a frame at each end with the body between), so no two faces lie in one plane.
+
 ## Tests
 
 - `BattlefieldLightingTests` (new, PlayMode): every look puts its own profile on the mood volume, set from its theme (tonemapping, white balance, saturation, vignette, bloom threshold above white), and the outdoor maps theirs. On High the mirror is drawn on the looks that have one, and the battle renderer with SSAO is chosen. On Low there is no mirror, no renderer with SSAO and a cheaper bloom. Low's pipeline asset has no SSAO at all, and High's battle renderer has it. A test run's `-quality` is read as described.
-- Run for this change: PlayMode filtered to `BattleTerrainTests|BattlefieldLightingTests|EffectsTests|BattleCameraTests|MatchSceneTests|SettingsHeldForTests`. The filter also caught the scene tests that use the held settings, so 252 tests ran: 251 passed, 0 failed, 1 skipped (`AudioFlowTests.MenuButtons_...`, "Batch mode draws no IMGUI", as always). EditMode `AudioTests|MenuFlowTests|DisclaimerTests` (the command-line flag checks): 159 passed, 0 failed.
+- Shadows and effects: `TheEffectFlipbooks_AreInTheBuild` (new), and the look test now checks hard shadows on High from the side, the theme's strength, lighter blobs, and none on Low. Run: PlayMode `BattlefieldLighting|Terrain|Effect|Death|Blob|Wreck|Fire|Smoke` 90 passed, then `BattlefieldLighting` 11 passed; EditMode `Terrain|Effect|Death|Blob|Container|Shadow|Flipbook|Unsc` 43 passed.
+- Lighting pass run: PlayMode filtered to `BattleTerrainTests|BattlefieldLightingTests|EffectsTests|BattleCameraTests|MatchSceneTests|SettingsHeldForTests`. The filter also caught the scene tests that use the held settings, so 252 tests ran: 251 passed, 0 failed, 1 skipped (`AudioFlowTests.MenuButtons_...`, "Batch mode draws no IMGUI", as always). EditMode `AudioTests|MenuFlowTests|DisclaimerTests` (the command-line flag checks): 159 passed, 0 failed.
 
 ## What is left
 
-- No realtime shadows in battle (see "Shadows"). Real shadows of units and props on the floor would be the next big step in realism. They need shadow-caster passes in `BakedCrowd.shader`, shadow sampling in the terrain shaders, a shadow distance of about 300 m with cascades fitted to the game camera, and a measurement on a modest card.
 - The mirror doesn't show units, only what stands around the field and its lights. Mirroring units would need a second draw of every body.
 - No Medium quality level. If one is added, `BattlefieldLighting.IsHighQuality` treats any level but Low as High, and it needs a pipeline asset with `PC_BattleRenderer` in its list to get SSAO.
 - The UNSC look's change is the mildest of the four, as asked ("cool, clean, slight contrast"). If the owner wants more, the next things to raise are `Contrast`, `GlowCore` and `Mirror` in `TerrainInteriorUnsc.cs`.

@@ -1,6 +1,8 @@
 // BattlefieldLightingTests.cs
 // The lighting pass: every interior look puts a post-processing profile of its own on the mood volume, made from its theme, and the outdoor maps theirs; the bloom stays
 // above white; the polished floor's mirror and the soft contact shadows (SSAO) are on High only, and Low has neither; a test run can pick its quality level.
+// The shadows pass: on High the sun casts hard shadows (softened in the game's shaders), from the side, and the blob under a unit is lighter; on Low there are none.
+// The effects pass: the smoke, fire, flame and explosion flipbooks are in the build.
 // Depends on: Halobellum.Presentation, URP, NUnit, Unity Test Framework.
 
 using System.Collections;
@@ -62,6 +64,25 @@ namespace Halobellum.Tests
         public void ATestRun_KeepsItsQualityLevel_UnlessOneThatExistsIsAskedFor(string[] args, int expected) =>
             Assert.AreEqual(expected, GameSettings.QualityFromCommandLine(args, new[] { "Mobile", "PC" }));
 
+        private static Light Sun()
+        {
+            foreach (Light light in Object.FindObjectsByType<Light>(FindObjectsSortMode.None))
+                if (light.type == LightType.Directional) return light;
+            Assert.Fail("No sun.");
+            return null;
+        }
+
+        [Test]
+        public void TheEffectFlipbooks_AreInTheBuild()
+        {
+            foreach (EffectAssets.Sheet sheet in new[] { EffectAssets.SmokeSheet, EffectAssets.FireSheet, EffectAssets.FireGreySheet, EffectAssets.FlameSheet, EffectAssets.BlastSheet })
+            {
+                Assert.IsTrue(sheet.Animated, sheet.Texture != null ? sheet.Texture.name : "missing");
+                Assert.Greater(sheet.TilesX * sheet.TilesY, 4);
+            }
+            Assert.AreEqual(0.5f, EffectAssets.FlameSheet.Aspect, 1e-4f, "The flame's frames are twice as tall as wide.");
+        }
+
         [UnityTest]
         public IEnumerator EveryLook_SwitchesTheMoodToItsOwnProfile_AndLowDropsTheMirrorAndSsao()
         {
@@ -96,7 +117,13 @@ namespace Halobellum.Tests
                     Assert.IsTrue(bloom.highQualityFiltering.value, look.Id + " on High.");
                     Assert.AreEqual(theme.Mirror > 0f, field.MirrorShown, look.Id + ": the mirror on High.");
                     Assert.GreaterOrEqual(BattlefieldLighting.BattleRendererIndex(), 0, "High has the battle's renderer, with SSAO.");
+                    Light sun = Sun();
+                    Assert.AreEqual(LightShadows.Hard, sun.shadows, look.Id + ": hard shadows on High (URP's soft ones crash on exit on D3D12; ours are softened in the shaders).");
+                    Assert.AreEqual(theme.SunShadow, sun.shadowStrength, 1e-4f, look.Id);
+                    Assert.Greater(Mathf.Abs(Mathf.DeltaAngle(theme.SunAngles.y, 0f)), 55f, look.Id + ": the light comes from the side, or every shadow hides behind what casts it.");
                 }
+                var blobs = Object.FindAnyObjectByType<UnitBlobShadows>();
+                if (blobs != null) Assert.AreEqual(BattlefieldView.HighQualityBlobStrength, blobs.Strength, 1e-4f, "Lighter blobs where units cast real shadows.");
                 // The looks differ in their grade, not only in name.
                 Assert.AreNotEqual(TerrainLooks.UnscInstallation.Theme.Temperature, TerrainLooks.FloodOnUnsc.Theme.Temperature);
                 Assert.AreNotEqual(TerrainLooks.UnscInstallation.Theme.Saturation, TerrainLooks.CovenantWarship.Theme.Saturation);
@@ -108,6 +135,8 @@ namespace Halobellum.Tests
                 yield return null;
                 yield return null;
                 Assert.IsFalse(field.MirrorShown, "No mirror on Low.");
+                Assert.AreEqual(LightShadows.None, Sun().shadows, "No real shadows on Low.");
+                if (blobs != null) Assert.AreEqual(1f, blobs.Strength, 1e-4f, "Full blobs on Low.");
                 Assert.AreEqual(-1, BattlefieldLighting.BattleRendererIndex(), "Low's pipeline asset has no renderer with SSAO.");
                 Assert.IsTrue(field.MoodProfile.TryGet(out Bloom lowBloom));
                 Assert.IsFalse(lowBloom.highQualityFiltering.value, "A cheaper bloom on Low.");
