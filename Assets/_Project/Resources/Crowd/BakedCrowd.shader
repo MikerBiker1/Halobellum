@@ -37,6 +37,7 @@ Shader "Halobellum/BakedCrowd"
         HLSLINCLUDE
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+        #include "../Terrain/SunShadow.hlsl"
 
         TEXTURE2D(_AnimTex);
         TEXTURE2D(_MainTex);
@@ -146,7 +147,6 @@ Shader "Halobellum/BakedCrowd"
             #pragma target 4.5
             #pragma multi_compile_instancing
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
-            #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
             #pragma vertex BakedVertex
             #pragma fragment Fragment
 
@@ -159,9 +159,10 @@ Shader "Halobellum/BakedCrowd"
                 // Keeps the texture's light and dark, lifted so that dark armour still shows the colour.
                 albedo = lerp(albedo, (0.35 + 0.9 * dot(albedo, half3(0.3, 0.59, 0.11))) * tint.rgb * 1.3, tint.a);
                 if (_Glass > 0.5) return half4(albedo * 1.6, input.color.a);
-                Light light = GetMainLight(TransformWorldToShadowCoord(input.positionWS));
-                half lit = saturate(dot(normalize(input.normalWS), light.direction)) * light.shadowAttenuation;
-                return half4(albedo * (0.45 + 0.75 * lit * light.color), 1.0);
+                Light light = GetMainLight();
+                half shade = SunShadow(input.positionWS);
+                half lit = saturate(dot(normalize(input.normalWS), light.direction)) * shade;
+                return half4(albedo * (0.45 * lerp(0.7, 1.0, shade) + 0.75 * lit * light.color), 1.0);
             }
             ENDHLSL
         }

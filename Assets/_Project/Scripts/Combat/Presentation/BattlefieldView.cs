@@ -460,7 +460,8 @@ namespace Halobellum.Presentation
             BattlefieldLighting.UseBattleRenderer(Camera.main);
             if (_sun != null && _map != null)
             {
-                _sun.shadows = high ? LightShadows.Soft : LightShadows.None;
+                // Hard shadows from the light, softened in the game's own shaders (SunShadow.hlsl): URP's soft ones crash the game as it closes on Direct3D 12.
+                _sun.shadows = high ? LightShadows.Hard : LightShadows.None;
                 _sun.shadowStrength = _map.Atmosphere.SunShadow;
             }
             if (_blobs != null) _blobs.Strength = high ? HighQualityBlobStrength : 1f;

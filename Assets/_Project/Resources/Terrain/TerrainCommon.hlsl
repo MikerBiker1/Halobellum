@@ -3,10 +3,12 @@
 // so the fighting floor stays perfectly clear at every zoom while the far land melts into the sky, and the light from the scene's sun.
 // It also holds the rule that keeps the floor in view from every side: whatever stands between the camera and the fighting floor is left out, pixel by pixel, and TerrainGlow's lights fade with it.
 // Set by BattlefieldView with Shader.SetGlobalVector. Colours are already linear.
-// Depends on: URP Core.hlsl and Lighting.hlsl, included by the shader first.
+// Depends on: URP Core.hlsl and Lighting.hlsl, included by the shader first; SunShadow.hlsl.
 
 #ifndef HALOBELLUM_TERRAIN_COMMON
 #define HALOBELLUM_TERRAIN_COMMON
+
+#include "SunShadow.hlsl"
 
 float4 _HBFogColor; // rgb: the colour the land melts into.
 float4 _HBFogRange; // x: metres from the middle where it starts, y: where it is complete, z: how strong.
@@ -55,13 +57,21 @@ half3 TerrainLight(half3 normalWS)
     return light.color * lit + SampleSH(normalWS);
 }
 
-/// The sun, darkened where something stands between it and this point, and the ambient (the shadows pass, before 1.0). The shader needs URP's main light
-/// shadow keywords for the shadow to show; without them, or with the light's shadows off (Low quality), this is TerrainLight. Only the sun's direct part is shaded.
+/// The sun, darkened where something stands between it and this point (SunShadow: soft edged), and the ambient (the shadows pass, before 1.0). The shader needs URP's
+/// main light shadow keywords for the shadow to show; without them, or with the light's shadows off (Low quality), this is TerrainLight. Only the sun's direct part is shaded.
+/// The same, with the shadow already read (SunShadow). In shade the ambient dims a little too (ShadeAmbient), so that a shadow still reads in a hold
+/// whose ambient light is strong; in full sun it is the ambient as it is.
+#define ShadeAmbient 0.6
+half3 TerrainLightShaded(half3 normalWS, half shadow)
+{
+    Light light = GetMainLight();
+    half lit = saturate(dot(normalWS, light.direction)) * shadow;
+    return light.color * lit + SampleSH(normalWS) * lerp(ShadeAmbient, 1.0, shadow);
+}
+
 half3 TerrainLightAt(half3 normalWS, float3 positionWS)
 {
-    Light light = GetMainLight(TransformWorldToShadowCoord(positionWS));
-    half lit = saturate(dot(normalWS, light.direction)) * light.shadowAttenuation;
-    return light.color * lit + SampleSH(normalWS);
+    return TerrainLightShaded(normalWS, SunShadow(positionWS));
 }
 
 #endif

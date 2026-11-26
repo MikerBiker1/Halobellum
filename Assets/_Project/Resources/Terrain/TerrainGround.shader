@@ -81,7 +81,6 @@ Shader "Halobellum/TerrainGround"
             HLSLPROGRAM
             #pragma target 4.5
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
-            #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
             #pragma vertex GroundVertex
             #pragma fragment Fragment
 
@@ -142,14 +141,16 @@ Shader "Halobellum/TerrainGround"
                 albedo *= 1.0 + (sqrt(patches) - 0.72) * 2.0 * _MacroStrength;
 
                 half3 normal = normalize(input.normalWS);
-                half3 lit = albedo * TerrainLightAt(normal, input.positionWS) * control.a;
+                half shade = SunShadow(input.positionWS);
+                half3 lit = albedo * TerrainLightShaded(normal, shade) * control.a;
                 if (shine > 0.001)
                 {
                     float3 toCamera = normalize(_WorldSpaceCameraPos - input.positionWS);
                     float3 halfway = normalize(normalize(_GlossDir.xyz) + toCamera);
                     half highlight = pow(saturate(dot(normal, halfway)), power) * (power + 8.0) / 32.0;
                     // Shade (from what stands nearby) dims the shine too, so a container's shadow isn't polished.
-                    lit += _GlossColor.rgb * shine * (highlight + _GlossColor.a) * control.a * control.a;
+                    // A real shadow takes most of the shine away too (the shadows pass).
+                    lit += _GlossColor.rgb * shine * (highlight + _GlossColor.a) * control.a * control.a * lerp(0.25, 1.0, shade);
                 }
                 return half4(ApplyWorldFog(lit, input.positionWS), 1.0);
             }
