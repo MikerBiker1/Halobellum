@@ -1,6 +1,36 @@
-# Daily report: 2026-11-02 (overnight), M10
+# Daily report: 2026-11-25, version 1.0.0
 
-Earlier reports are in this file's Git history. **M10 is built and merged**, and the Infected Pelican now dives. It is waiting for your play test. **Start with `MORNING_DECISIONS.md`.** It lists every choice I made for you.
+Earlier reports are below and in this file's Git history. **Version 1.0.0 is pushed** to main and game-build, and your game in `E:\AI\Halobellum_Game` is built from it. Every entry in DECISIONS.md up to D189 is approved by you; D190 to D194 are today's, all tested by you.
+
+## 2026-11-25: version 1.0.0 (D190-D194)
+- **Lighting (D190):** each battlefield look has its own colour grade and mood; light cores glow (bloom); soft contact shadows (SSAO) and a faint mirror on polished floors on High.
+- **Real shadows (D191):** on High the light casts shadows: units, aircraft, the ship's structures, and rockets, missiles, bombs and shells in flight. Every look's light moved to the side, since from behind the camera each shadow hid behind its caster. Full strength after your "I barely see them". Low keeps the blob under each unit.
+- **Direct3D 11 (D191):** with shadows on, the game could crash as it closed on Direct3D 12 (a driver fault, coming and going between builds). The Windows player now uses Direct3D 11 first: it never crashed and is as fast (battle benchmark 1.24 ms against 1.28 ms a frame).
+- **Smoke, fire and explosions (D192):** free CC0 flipbooks by Unity Labs: billowing smoke, rolling fire, a real explosion at the heart of every vehicle's death, upright flames and black smoke on wrecks. Sources in `Resources/Effects/Flipbooks/SOURCE.txt`.
+- **Oil Zone (D193):** the spell lies on the ground as glossy black oil for the round. Wrecks spill no oil (a test build did, and you said no).
+- **UNSC containers (D194):** no more paint flickering through paint as the camera moves.
+- **Checked:** the relevant tests, the terrain and effects galleries, your own play test of the test build. **Version:** 1.0.0, set by you.
+- **Your game's French summary** for Discord is in the conversation.
+
+## 2026-11-24: LAN, reinforcement skip, level colours, sounds (D182, D183, D185-D189)
+- **LAN 1v1 (D182, Milestone 11):** host or join on the same network; both deploy at the same time; only decisions travel, and both games check they agree before every battle. You played a whole match with a friend: "super smooth".
+- **New game (D183):** at a LAN match's end, play again with the same player without connecting again.
+- **Reinforcement skip (D185):** half the round's reinforcement budget (200 in round 4, 350 in round 10). Tournament: every sub-faction 49.4% to 50.7%.
+- **Stats window (D186):** health, shield, speed, damage and rate of fire in bold.
+- **Level colours (D187, D188):** white 1, blue 2, yellow 3, purple 4, orange 5, in the stats window and on cards.
+- **Sounds (D189):** your hover, MAC, nuke and shield sounds; the Skitterer dies with the Ghost's blast; selling and skipping play your unlock sound; no more hums.
+- **DECISIONS.md:** every entry left for review marked approved by you.
+
+## 2026-11-21 to 2026-11-23: tutorial, items, XP and the last balance (D164-D181)
+- **Build size (D164):** no file over GitHub's 100 MB, so game-build pushes again.
+- **Animations (D165):** the Combat Form, Infested Elite and Spartans fit their new speeds and fire rates.
+- **Stats window (D166):** damage against aircraft shown when it isn't the usual.
+- **Strikes and sounds (D167, D168, D173, D174):** precise strikes hit five times harder (MAC Strike 4,000, Plasma Bombardment 2,500); new plasma pistol sounds; the Vampire louder, the Banshee's death quieter.
+- **Tutorial (D169-D172, D176):** a Flankers step, a Hide button, End tutorial, the Deployment Module step.
+- **Research Center and items (D175, D176):** the Deployment Module (one a round) and the Energy Barrier item card.
+- **Kill XP (D177):** 75% of a body's worth goes to the squads that damaged it, as the damage lands.
+- **Transports (D178):** the Pelican's Marines and the Phantoms' troops deal no base damage.
+- **Balance (D179-D181):** Pelican 900, Covenant Phantom 1000, Infested Banshee 440, Rhino 1100, Heavy Grunts 130. Tournaments over five seeds: every sub-faction 49.2% to 50.8%.
 
 ## 2026-11-24: your new Rhino and Hornet (D184)
 - **Rhino:** your model from the Meshy folder, cut from 3.3 million triangles to about 20,000 and repainted from its own colours. Its turret turns on its round base, and its shells leave the end of the long barrel.

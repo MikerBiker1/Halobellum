@@ -206,10 +206,24 @@ Asked for by the owner as one overnight job. Built in parallel, then merged and 
 - [x] After the D142 tournaments: the Pelican lands where it is to drop its Marines, never behind enemy lines; Sandbox unit icons open their stats; the Spawner releases 3 Combat Forms (was 5); Swarm Brood 200 -> 300 (D143; not committed, no tournament)
 - [x] The owner's new Rhino and Hornet in the game; the Hornet's rotors spin (D184)
 - [ ] The Scarab session's new Goliath body and Jackal icons (`m13/art`, D139): merge when the owner says so (D142)
-- [ ] A balance tournament after D142, when the owner asks
+- [x] Balance tournaments after D142: every sub-faction 48% to 52%, Insane against Insane at 2000 health (D163, D179-D181, D185)
 - [ ] XP for bodies made in a battle: the owner decides (D140, `BattleBodyXpShare`)
 - [ ] Transports: the owner's beacon, placed by the player and movable each round (D138)
 - [ ] The AI places the Zealot further back (the owner, D138)
 - [ ] Models for the remaining units (see Assets_to_Download.md)
-- [ ] The owner's play test of M10
+- [x] The owner's play tests of M10: every decision up to D189 approved by the owner (2026-11-24)
 
+## M11: LAN 1v1 (confirmed by the owner 2026-11-24, after a whole match with a friend)
+- [x] Host and join on the same local network: the game found on the network, or typed by address; Windows Firewall on Private networks (D182)
+- [x] Lockstep of decisions: both deploy at the same time, only decisions travel, both games check they agree before every battle; the host's result counts (D182)
+- [x] The guest sees its own army at the bottom; leaving forfeits; a lost connection says so (D182)
+- [x] New game at match end, with the same player and settings and a new seed (D183)
+
+## Version 1.0 (released 2026-11-25)
+- [x] Reinforcement skip, bold stats, level colours, the last sounds (D185-D189)
+- [x] Battlefield lighting: a grade per look, bloom on lights, SSAO and floor mirror on High (D190)
+- [x] Real sun shadows on High, from units, aircraft, structures and what flies; Direct3D 11 first on Windows (D191)
+- [x] Smoke, fire and explosion flipbooks (CC0, Unity Labs) (D192)
+- [x] The Oil Zone as real oil; no oil from wrecks (D193)
+- [x] UNSC containers without flicker (D194)
+- [x] Version 1.0.0 pushed to main and game-build; the owner's game built from it (2026-11-25)
