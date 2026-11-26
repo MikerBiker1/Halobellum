@@ -392,6 +392,13 @@ namespace Halobellum.Presentation
         /// <summary>How big the Jackal's charged bolt is drawn, in metres (D151); a pistol shot is 0.55 wide.</summary>
         public const float ChargedBoltSize = 0.9f;
 
+        // The shadows of what flies (the shadows pass): rockets, missiles, bombs and shells cast one, in metres, a little bigger from far away so that it still
+        // shows from the game's camera. Plasma and other light casts none.
+        private const float RocketShadowLength = 1.8f, RocketShadowThickness = 0.38f;
+        private const float BombShadowLength = 1.4f, BombShadowThickness = 0.5f;
+        private const float ShellShadowLength = 1.1f, ShellShadowThickness = 0.26f;
+        private static float ShadowScale(float read) => Mathf.Clamp(read * 0.55f, 1f, 2.2f);
+
         private void DrawShot(in ShotInFlight shot)
         {
             WeaponLook look = LookOf(shot.Attacker, shot.WeaponIndex);
@@ -452,6 +459,7 @@ namespace Halobellum.Presentation
                 {
                     // A short hot flame with a wide glow, on a thick pale trail that shows from the game's camera.
                     _kit.HeadStreak(world, direction, 1.5f * read, look.ShotWidth * read, look.Shot);
+                    _kit.ShadowBody(world, direction, RocketShadowLength * ShadowScale(read), RocketShadowThickness * ShadowScale(read));
                     _kit.HeadGlow(world, 1.9f * read, new Color(look.Shot.r, look.Shot.g, look.Shot.b, 0.8f));
                     _kit.HeadGlow(world, 0.7f * read, Color.Lerp(look.Shot, Color.white, 0.6f));
                     if (!look.SmokeTrail) return;
@@ -466,6 +474,7 @@ namespace Halobellum.Presentation
                 {
                     // A long thin tracer, nearly white, with hardly any glow: a shell is fast and straight.
                     _kit.HeadStreak(world, direction, 4f * read, look.ShotWidth * 0.8f * read, Color.Lerp(look.Shot, Color.white, 0.45f));
+                    _kit.ShadowBody(world, direction, ShellShadowLength * ShadowScale(read), ShellShadowThickness * ShadowScale(read));
                     _kit.HeadGlow(world, 0.7f * read, new Color(look.Shot.r, look.Shot.g, look.Shot.b, 0.5f));
                     if (!look.SmokeTrail) return;
                     int puffs = TrailPuffsDue(track.LastPuff, world, 2.2f * read, out Vector3 step);
@@ -480,6 +489,7 @@ namespace Halobellum.Presentation
                     float pulse = 0.75f + 0.25f * Mathf.Sin(_kit.BattleTime * 15f + shot.Serial);
                     Color glow = look.SmokeTrail ? new Color(look.Shot.r, look.Shot.g * 0.55f, look.Shot.b * 0.55f, 0.8f) : new Color(look.Shot.r, look.Shot.g, look.Shot.b, 0.7f);
                     _kit.HeadStreak(world, direction, 1.5f * read, look.ShotWidth * 1.5f * read, look.Shot);
+                    _kit.ShadowBody(world, direction, BombShadowLength * ShadowScale(read), BombShadowThickness * ShadowScale(read));
                     _kit.HeadGlow(world, 1.6f * read * pulse, glow);
                     if (!look.SmokeTrail) return;
                     int puffs = TrailPuffsDue(track.LastPuff, world, 1.8f * read, out Vector3 step);

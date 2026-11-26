@@ -89,7 +89,7 @@ namespace Halobellum.Presentation
         /// <summary>How strongly a polished floor mirrors what stands around it and its lights (TerrainMirror), 0 for none. High quality only.</summary>
         public float Mirror;
         /// <summary>How dark the sun's real shadows are, 0 (none) to 1 (only ambient light left in them). High quality only; Low keeps the blob under each unit (the shadows pass).</summary>
-        public float SunShadow = 0.85f;
+        public float SunShadow = 1f;
 
         public TerrainTheme Clone() => (TerrainTheme)MemberwiseClone();
 

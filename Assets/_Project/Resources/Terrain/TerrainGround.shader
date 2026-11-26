@@ -150,7 +150,7 @@ Shader "Halobellum/TerrainGround"
                     half highlight = pow(saturate(dot(normal, halfway)), power) * (power + 8.0) / 32.0;
                     // Shade (from what stands nearby) dims the shine too, so a container's shadow isn't polished.
                     // A real shadow takes most of the shine away too (the shadows pass).
-                    lit += _GlossColor.rgb * shine * (highlight + _GlossColor.a) * control.a * control.a * lerp(0.25, 1.0, shade);
+                    lit += _GlossColor.rgb * shine * (highlight + _GlossColor.a) * control.a * control.a * lerp(0.08, 1.0, shade);
                 }
                 return half4(ApplyWorldFog(lit, input.positionWS), 1.0);
             }

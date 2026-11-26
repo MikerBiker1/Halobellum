@@ -162,7 +162,7 @@ Shader "Halobellum/BakedCrowd"
                 Light light = GetMainLight();
                 half shade = SunShadow(input.positionWS);
                 half lit = saturate(dot(normalize(input.normalWS), light.direction)) * shade;
-                return half4(albedo * (0.45 * lerp(0.7, 1.0, shade) + 0.75 * lit * light.color), 1.0);
+                return half4(albedo * (0.45 * lerp(0.55, 1.0, shade) + 0.75 * lit * light.color), 1.0);
             }
             ENDHLSL
         }

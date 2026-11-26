@@ -444,6 +444,7 @@ namespace Halobellum.Presentation
                 new SpellShot(new SpellStats { Name = "Battlefield Rally", Effect = SpellEffect.Buff, Radius = 10f, DamageMultiplier = 1.3f, DelaySeconds = 1f }, 0.4f),
                 new SpellShot(new SpellStats { Name = "Bubble Shield", Effect = SpellEffect.Buff, Radius = 8f, ShieldBonusShare = 0.5f, DelaySeconds = 1f }, 0.4f),
                 new SpellShot(new SpellStats { Name = "Smoke Bomb", Offensive = false, Effect = SpellEffect.Smoke, AreaWidth = 45f, AreaDepth = 8f, RangeMultiplier = 0.5f, DelaySeconds = 0.5f }, 2.5f),
+                new SpellShot(new SpellStats { Name = "Oil Zone", Offensive = true, Effect = SpellEffect.Oil, AreaWidth = 45f, AreaDepth = 8f, SlowShare = 0.4f, FireDamageMultiplier = 1.5f }, 0.2f, 2.5f),
                 new SpellShot(new SpellStats { Name = "ODST Drop Pods", Offensive = true, Effect = SpellEffect.DropSquad, Radius = 4f, DropUnit = marine, DropSquads = 1, DelaySeconds = 1f }, 0.1f, 0.5f),
             };
             foreach (SpellShot shot in list)

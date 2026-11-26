@@ -87,9 +87,6 @@ namespace Halobellum.Presentation
             public float Top;
             /// <summary>A Covenant wreck burns light blue.</summary>
             public bool Blue;
-            /// <summary>How far round its middle a pool of spilt oil burns on the ground, 0 for none, and until when.</summary>
-            public float Oil, OilUntil;
-            public Vector3 Pool;
         }
 
         private readonly EffectRecipes _recipes;
@@ -212,11 +209,11 @@ namespace Halobellum.Presentation
 
                 case DeathStyle.Vehicle:
                     bool titan = DeathLooks.IsTitan(stats);
-                    Vector3 pool = _recipes.VehicleDeath(position, radius, titan, blue);
+                    _recipes.VehicleDeath(position, radius, titan, blue);
                     if (!rises)
                     {
                         Keep(unit, CorpseKind.Wreck, titan ? TitanWreckSeconds : WreckSeconds, position, false, blue);
-                        AddFire(position, radius, titan ? TitanWreckSeconds : WreckSeconds, _units.BodyTopOf(unit) * HullTopShare, blue, !blue, pool);
+                        AddFire(position, radius, titan ? TitanWreckSeconds : WreckSeconds, _units.BodyTopOf(unit) * HullTopShare, blue);
                     }
                     break;
 
@@ -421,9 +418,9 @@ namespace Halobellum.Presentation
                 _recipes.BurningTrail(position, corpse.BodyRadius * 0.6f, EffectPriority.Small, corpse.Blue);
             }
             if (corpse.Age < GhostDriftSeconds) return false;
-            Vector3 spilt = _recipes.VehicleDeath(position, corpse.BodyRadius, false, corpse.Blue);
+            _recipes.VehicleDeath(position, corpse.BodyRadius, false, corpse.Blue);
             if (corpse.Flood) _recipes.FloodBurst(position, corpse.BodyRadius, false); // What had taken it goes up with it.
-            AddFire(position, corpse.BodyRadius, WreckSeconds, corpse.Top, corpse.Blue, !corpse.Blue, spilt);
+            AddFire(position, corpse.BodyRadius, WreckSeconds, corpse.Top, corpse.Blue);
             Blacken(corpse.Root);
             return true;
         }
@@ -452,14 +449,9 @@ namespace Halobellum.Presentation
 
         // ------------------------------------------------------------------ what goes on burning
 
-        private void AddFire(Vector3 position, float bodyRadius, float seconds, float top = 0f, bool blue = false, bool oil = false, Vector3 pool = default)
+        private void AddFire(Vector3 position, float bodyRadius, float seconds, float top = 0f, bool blue = false)
         {
-            float burning = oil ? EffectRecipes.OilPoolDiameter(bodyRadius) * 0.38f : 0f;
-            _fires[_nextFire] = new BurningSpot
-            {
-                Position = position, Until = _kit.BattleTime + seconds, BodyRadius = bodyRadius, NextPuff = _kit.BattleTime + 0.6f, Top = top, Blue = blue,
-                Oil = burning, OilUntil = _kit.BattleTime + seconds * 0.5f, Pool = pool,
-            };
+            _fires[_nextFire] = new BurningSpot { Position = position, Until = _kit.BattleTime + seconds, BodyRadius = bodyRadius, NextPuff = _kit.BattleTime + 0.6f, Top = top, Blue = blue };
             _nextFire = (_nextFire + 1) % MostFires;
         }
 
@@ -494,13 +486,6 @@ namespace Halobellum.Presentation
                         _kit.Burn(EffectPriority.Small, spot - Vector3.up * 0.3f, flames * Random.Range(0.4f, 0.6f), Random.Range(0.7f, 1.1f));
                         Flames(false, other, flames * Random.Range(0.4f, 0.7f), Random.Range(0.45f, 0.8f));
                     }
-                }
-                // The pool of oil burns on the ground round the wreck for the first half of the fire.
-                if (fire.Oil > 0f && now < fire.OilUntil && Random.value < 0.7f)
-                {
-                    Vector2 at = Random.insideUnitCircle * fire.Oil;
-                    float low = Mathf.Max(1f, _kit.ReadScale) * (0.45f + fire.BodyRadius * 0.12f);
-                    _kit.Burn(EffectPriority.Small, new Vector3(fire.Pool.x + at.x, 0.05f, fire.Pool.z + at.y), low * Random.Range(0.7f, 1.2f), Random.Range(0.6f, 1f));
                 }
                 if (Random.value < 0.15f) _kit.Spark(EffectPriority.Small, spot, Vector3.up * Random.Range(3f, 7f) + Random.insideUnitSphere * 1.5f, 0.05f * _kit.ReadScale, fire.Blue ? EffectRecipes.SparkPlasma : EffectRecipes.SparkHot, Random.Range(0.4f, 0.9f));
             }

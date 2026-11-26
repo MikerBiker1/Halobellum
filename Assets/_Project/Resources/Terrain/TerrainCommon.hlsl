@@ -61,7 +61,7 @@ half3 TerrainLight(half3 normalWS)
 /// main light shadow keywords for the shadow to show; without them, or with the light's shadows off (Low quality), this is TerrainLight. Only the sun's direct part is shaded.
 /// The same, with the shadow already read (SunShadow). In shade the ambient dims a little too (ShadeAmbient), so that a shadow still reads in a hold
 /// whose ambient light is strong; in full sun it is the ambient as it is.
-#define ShadeAmbient 0.6
+#define ShadeAmbient 0.42
 half3 TerrainLightShaded(half3 normalWS, half shadow)
 {
     Light light = GetMainLight();

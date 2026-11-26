@@ -412,14 +412,8 @@ namespace Halobellum.Presentation
             for (int i = 0; i < 3; i++) _kit.Dust(EffectPriority.Medium, ground + Random.insideUnitSphere * 0.3f, Random.insideUnitSphere * 1.4f + Vector3.up * 0.6f, size * Random.Range(1f, 1.5f), DustTan, Random.Range(0.45f, 0.8f));
         }
 
-        /// <summary>How wide the pool of oil a vehicle of this size spills is.</summary>
-        public static float OilPoolDiameter(float bodyRadius) => bodyRadius * 4f + 2.5f;
-
-        /// <summary>
-        /// A vehicle blows up: fireball, smoke, sparks, flying debris, a shock ring, a scorch mark and a pool of oil. The wreck goes on burning (DeathEffects).
-        /// Returns the middle of the pool, which runs out to one side of the wreck so that it shows (the wreck's own spot for a Covenant machine, which spills none).
-        /// </summary>
-        public Vector3 VehicleDeath(Vector3 position, float bodyRadius, bool titan, bool blue = false)
+        /// <summary>A vehicle blows up: fireball, smoke, sparks, flying debris, a shock ring and a scorch mark. The wreck goes on burning (DeathEffects).</summary>
+        public void VehicleDeath(Vector3 position, float bodyRadius, bool titan, bool blue = false)
         {
             Vector3 middle = position + Vector3.up * Mathf.Max(0.8f, bodyRadius * 0.45f);
             float radius = (titan ? bodyRadius * 1.2f : bodyRadius * 1.7f) + 1f;
@@ -429,10 +423,6 @@ namespace Halobellum.Presentation
             _kit.Ring(priority, ground, radius * 3.4f, blue ? new Color(0.7f, 0.9f, 1f, 0.85f) : new Color(1f, 0.8f, 0.55f, 0.85f), 0.65f);
             _kit.GroundGlow(priority, ground, radius * 5f, blue ? GroundPlasma : GroundFire, 0.7f);
             _kit.Scorch(priority, ground, radius * 2.1f, ScorchBlack, 60f);
-            // A machine that runs on fuel spills it, and the pool burns for a while (DeathEffects). Plasma leaves none.
-            Vector2 spill = Random.insideUnitCircle.normalized * bodyRadius * 0.7f;
-            Vector3 pool = blue ? position : new Vector3(position.x + spill.x, 0f, position.z + spill.y);
-            if (!blue) _kit.Oil(priority, pool, OilPoolDiameter(bodyRadius), titan ? 70f : 45f);
             int chunks = Mathf.Clamp(Mathf.RoundToInt(bodyRadius * 7f) + 6, 8, 40);
             for (int i = 0; i < chunks; i++)
             {
@@ -442,7 +432,7 @@ namespace Halobellum.Presentation
                 _kit.Chunk(priority, middle + out3 * bodyRadius * 0.3f, out3 * Random.Range(7f, 18f), Random.Range(0.18f, 0.32f + bodyRadius * 0.12f), color, Random.Range(1.8f, 3.6f));
             }
             CameraShake.Kick(position, titan ? 0.8f : 0.3f);
-            if (!titan) return pool;
+            if (!titan) return;
             // A giant goes up in a chain of blasts along its body.
             for (int i = 0; i < 6; i++)
             {
@@ -450,7 +440,6 @@ namespace Halobellum.Presentation
                 FireballAfter(0.2f + i * 0.28f, spot, bodyRadius * Random.Range(0.45f, 0.75f), EffectPriority.Big, blue);
             }
             FireballAfter(2f, position + Vector3.up * bodyRadius * 0.6f, bodyRadius * 1.2f, EffectPriority.Huge, blue);
-            return pool;
         }
 
         /// <summary>An air unit blows up where it flies; burning pieces rain down. The body itself falls too (DeathEffects).</summary>

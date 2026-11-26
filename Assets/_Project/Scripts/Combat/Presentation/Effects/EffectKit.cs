@@ -66,7 +66,7 @@ namespace Halobellum.Presentation
         private const float HeadStretch = 1f;
 
         private readonly Transform _root;
-        private readonly Layer _glow, _orb, _streak, _bolt, _sparks, _fire, _plasmaFire, _flame, _smoke, _dust, _blood, _ring, _groundGlow, _scorch, _chunks, _heat, _slash, _spores, _burn, _blast, _oil;
+        private readonly Layer _glow, _orb, _streak, _bolt, _sparks, _fire, _plasmaFire, _flame, _smoke, _dust, _blood, _ring, _groundGlow, _scorch, _chunks, _heat, _slash, _spores, _burn, _blast, _slick;
         private readonly Layer[] _layers;
         private readonly Layer _headGlow, _headStreak, _groundHead, _cloudSmoke, _cloudFire;
         private readonly ParticleSystem.Particle[] _headGlowData = new ParticleSystem.Particle[HeadCapacity];
@@ -171,7 +171,7 @@ namespace Halobellum.Presentation
 
             // What is drawn over what: marks on the ground, shimmer, smoke, fire, then everything that glows.
             _scorch = Flat("Scorch", EffectAssets.ParticleMaterial("Effect Scorch", EffectAssets.Scorch, 1f, 1f, 0f, 2960), 96);
-            _oil = Flat("Oil", EffectAssets.ParticleMaterial("Effect Oil", EffectAssets.Oil, 1f, 1f, 0f, 2962), 64);
+            _slick = Flat("Oil Slick", EffectAssets.ParticleMaterial("Effect Oil Slick", EffectAssets.Oil, 1f, 1f, 0f, 2961), 160);
             _heat = Billboard("Heat", EffectAssets.HeatMaterial(2970), 160);
             _groundGlow = Flat("Ground Glow", EffectAssets.ParticleMaterial("Effect Ground Glow", EffectAssets.Soft, 1.6f, 0f, 0f, 2980), 96);
             _ring = Flat("Shock Ring", EffectAssets.ParticleMaterial("Effect Ring", EffectAssets.Ring, 2.2f, 0f, 0f, 2985), 96);
@@ -198,7 +198,7 @@ namespace Halobellum.Presentation
             _chunkMaterial = EffectAssets.ChunkMaterial();
             _chunks = MakeChunks("Chunks", _chunkMaterial, 320);
 
-            _layers = new[] { _scorch, _oil, _heat, _groundGlow, _ring, _smoke, _dust, _blood, _spores, _blast, _burn, _fire, _plasmaFire, _flame, _glow, _orb, _bolt, _streak, _sparks, _slash, _chunks };
+            _layers = new[] { _scorch, _slick, _heat, _groundGlow, _ring, _smoke, _dust, _blood, _spores, _blast, _burn, _fire, _plasmaFire, _flame, _glow, _orb, _bolt, _streak, _sparks, _slash, _chunks };
 
             Fades(_glow, Fade(1f, 0.25f, 0.8f, 0f), Grow(0.55f, 0.2f, 1f));
             Fades(_orb, Fade(1f, 0.85f, 1f, 0f), null);
@@ -261,7 +261,7 @@ namespace Halobellum.Presentation
             Sheet(_dust, EffectAssets.SmokeSheet);
             Spin(_dust, 0.4f);
 
-            // A burning wreck's flames, or a pool of oil's: upright, each one a flame licking up through its frames, flickering in and out.
+            // A burning wreck's flames: upright, each one a flame licking up through its frames, flickering in and out.
             _burn.System.GetComponent<ParticleSystemRenderer>().renderMode = ParticleSystemRenderMode.VerticalBillboard;
             ParticleSystem.MainModule burnMain = _burn.System.main;
             burnMain.startSize3D = true;
@@ -271,8 +271,9 @@ namespace Halobellum.Presentation
             ColorOverLife(_blast, Fade(1f, 0.6f, 1f, 0f));
             SizeOverLife(_blast, Grow(0.7f, 0.35f, 1f));
             Sheet(_blast, EffectAssets.BlastSheet, fromAnyFrame: false);
-            ColorOverLife(_oil, Rise(0.04f, 0.9f));
-            SizeOverLife(_oil, Grow(0.3f, 0.12f, 1f));
+            // The Oil spell's pools lie for minutes (a whole round): they spread in a second or two and fade only in their last seconds.
+            ColorOverLife(_slick, Rise(0.003f, 0.995f));
+            SizeOverLife(_slick, Grow(0.55f, 0.005f, 1f));
 
             ColorOverLife(_blood, Fade(1f, 0.75f, 1f, 0f));
             Gravity(_blood, 1.8f);
@@ -409,6 +410,49 @@ namespace Halobellum.Presentation
             Hand(_groundHead, _groundHeadData, _groundHeadCount, ref _groundHeadShown);
             Hand(_cloudSmoke, _cloudSmokeData, _cloudSmokeCount, ref _cloudSmokeShown);
             Hand(_cloudFire, _cloudFireData, _cloudFireCount, ref _cloudFireShown);
+            DrawShadowBodies();
+        }
+
+        // ------------------------------------------------------------------ shadows of what flies
+
+        private const int ShadowBodyCapacity = 256;
+        private readonly Matrix4x4[] _shadowBodies = new Matrix4x4[ShadowBodyCapacity];
+        private int _shadowBodyCount;
+        private Material _shadowBodyMaterial;
+
+        /// <summary>Shadow bodies drawn last frame (for tests).</summary>
+        public int ShadowBodiesShown { get; private set; }
+
+        /// <summary>
+        /// For this frame only, a body no camera sees but the sun does (the shadows pass): a rocket, bomb or shell in flight is light and smoke on screen,
+        /// and this gives it a shadow on the ground, this long along its flight and this thick. High quality only in effect: the light casts no shadows at Low.
+        /// </summary>
+        public void ShadowBody(Vector3 position, Vector3 direction, float length, float thickness)
+        {
+            if (Muted || _shadowBodyCount >= ShadowBodyCapacity) return;
+            Quaternion turn = direction.sqrMagnitude > 1e-6f ? Quaternion.FromToRotation(Vector3.up, direction.normalized) : Quaternion.identity;
+            // The capsule is 2 long along its y and 1 thick.
+            _shadowBodies[_shadowBodyCount++] = Matrix4x4.TRS(position, turn, new Vector3(thickness, length * 0.5f, thickness));
+        }
+
+        private void DrawShadowBodies()
+        {
+            ShadowBodiesShown = _shadowBodyCount;
+            if (_shadowBodyCount == 0) return;
+            if (_shadowBodyMaterial == null) _shadowBodyMaterial = PlaceholderArt.MaterialFor(Color.black);
+            Mesh mesh = PlaceholderArt.Capsule;
+            if (_shadowBodyMaterial != null && mesh != null)
+            {
+                // One by one: the URP Lit materials have no instanced variant in a build (PlaceholderArt). There are rarely more than a few dozen.
+                var draw = new RenderParams(_shadowBodyMaterial)
+                {
+                    shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly,
+                    receiveShadows = false,
+                    layer = 0,
+                };
+                for (int i = 0; i < _shadowBodyCount; i++) Graphics.RenderMesh(draw, mesh, 0, _shadowBodies[i]);
+            }
+            _shadowBodyCount = 0;
         }
 
         private static void Hand(Layer layer, ParticleSystem.Particle[] data, int count, ref int shown)
@@ -494,7 +538,7 @@ namespace Halobellum.Presentation
         }
 
         /// <summary>
-        /// An upright flame standing on a burning wreck or a pool of oil, this wide (it is twice as tall), rising a little as it licks up through its frames.
+        /// An upright flame standing on a burning wreck, this wide (it is twice as tall), rising a little as it licks up through its frames.
         /// Its bottom is at position. Orange only: a Covenant machine's plasma burns with PlasmaFire.
         /// </summary>
         public void Burn(EffectPriority priority, Vector3 position, float width, float life)
@@ -515,12 +559,13 @@ namespace Halobellum.Presentation
             Emit(_blast, priority, ref emit);
         }
 
-        /// <summary>A pool of black oil spreading on the ground out of a wreck, to this diameter, staying this long.</summary>
-        public void Oil(EffectPriority priority, Vector3 position, float diameter, float life)
+        /// <summary>A pool of the Oil spell's oil, this wide, lying for this long (minutes: its curves are made for a long life). Never left out for the budget: the zone must show.</summary>
+        public void OilSlick(Vector3 position, float diameter, float life)
         {
-            position.y = 0.05f;
+            if (Muted) return;
+            position.y = 0.045f;
             var emit = new ParticleSystem.EmitParams { position = position, startSize = diameter, startColor = Color.white, startLifetime = life, rotation3D = new Vector3(0f, Random.value * 360f, 0f) };
-            Emit(_oil, priority, ref emit);
+            _slick.System.Emit(emit, 1);
         }
 
         public void Smoke(EffectPriority priority, Vector3 position, Vector3 velocity, float size, Color color, float life)

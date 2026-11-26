@@ -137,7 +137,8 @@ namespace Halobellum.Presentation
                 case SpellLook.Buff: Buff(at, radius, stats.ShieldBonusShare > 0f ? new Color(0.4f, 0.8f, 1f) : new Color(1f, 0.82f, 0.3f)); break;
                 case SpellLook.Drop: DropIn(at, radius); break;
                 case SpellLook.Smoke:
-                    break; // Drawn every moment in Tick.
+                    if (stats.Effect == SpellEffect.Oil && first) OilSpill(spell);
+                    break; // Smoke is drawn every moment in Tick; oil lies on the ground for as long as it lasts.
             }
         }
 
@@ -256,10 +257,9 @@ namespace Halobellum.Presentation
             {
                 SimSpell spell = spells[i];
                 SpellStats stats = spell.Stats;
-                if (!stats.Lingers || spell.TicksDone == 0 || spell.IsOverAt(battle)) continue;
+                if (!stats.Lingers || stats.Effect == SpellEffect.Oil || spell.TicksDone == 0 || spell.IsOverAt(battle)) continue;
                 bool spores = (stats.Name ?? "").IndexOf("spore", System.StringComparison.OrdinalIgnoreCase) >= 0;
                 Color color = spores ? new Color(0.36f, 0.44f, 0.18f, 0.36f) : new Color(0.62f, 0.63f, 0.65f, 0.34f);
-                if (stats.Effect == SpellEffect.Oil) color = new Color(0.07f, 0.06f, 0.05f, 0.5f);
                 float width = stats.IsRectangle ? stats.AreaWidth : stats.Radius * 2f;
                 float depth = stats.IsRectangle ? stats.AreaDepth : stats.Radius * 2f;
                 int puffs = Mathf.Clamp(Mathf.RoundToInt(width * depth / 22f), 2, 16);
@@ -271,6 +271,44 @@ namespace Halobellum.Presentation
                 }
             }
         }
+
+        /// <summary>
+        /// The Oil spell lands (the effects pass): black oil splashes down over its strip and spreads into overlapping pools that cover it, glossy, with a faint
+        /// rainbow sheen, lying there for as long as the spell lasts (a whole round's worth when it lasts the round). They run on battle time like every effect.
+        /// </summary>
+        private void OilSpill(SimSpell spell)
+        {
+            SpellStats stats = spell.Stats;
+            float width = stats.IsRectangle ? stats.AreaWidth : stats.Radius * 2f;
+            float depth = stats.IsRectangle ? stats.AreaDepth : stats.Radius * 2f;
+            float lasts = stats.DurationSeconds > 0f ? stats.DurationSeconds : OilRoundSeconds;
+            const float step = 4.5f;
+            int along = Mathf.Max(1, Mathf.CeilToInt(width / step)), across = Mathf.Max(1, Mathf.CeilToInt(depth / step));
+            for (int a = 0; a < along; a++)
+            {
+                for (int c = 0; c < across; c++)
+                {
+                    // A grid over the strip, shaken up, so the pools overlap without a pattern; the outer ones stay inside its edge.
+                    float x = ((a + 0.5f) / along - 0.5f) * width + Random.Range(-0.3f, 0.3f) * step;
+                    float y = ((c + 0.5f) / across - 0.5f) * depth + Random.Range(-0.3f, 0.3f) * step;
+                    float size = Mathf.Min(Random.Range(1.3f, 1.7f) * step, Mathf.Min(width, depth) * 1.1f);
+                    Vec2 local = new Vec2(x, y).Rotated(spell.AngleDegrees);
+                    _kit.OilSlick(new Vector3(spell.Position.X + local.X, 0f, spell.Position.Y + local.Y), size, lasts + Random.Range(0f, 1.5f));
+                }
+            }
+            // Splashing down: dark drops that fall onto the strip.
+            int drops = Mathf.Clamp(Mathf.RoundToInt(width * depth / 6f), 12, 60);
+            for (int i = 0; i < drops; i++)
+            {
+                Vec2 local = new Vec2(Random.Range(-0.5f, 0.5f) * width, Random.Range(-0.5f, 0.5f) * depth).Rotated(spell.AngleDegrees);
+                var spot = new Vector3(spell.Position.X + local.X, Random.Range(2f, 6f), spell.Position.Y + local.Y);
+                _kit.Blood(EffectPriority.Medium, spot, Random.insideUnitSphere * 1.5f + Vector3.down * 3f, Random.Range(0.25f, 0.5f) * _kit.ReadScale, OilDrop, Random.Range(0.5f, 0.9f));
+            }
+        }
+
+        /// <summary>How long oil that lasts the whole round lies there: longer than any battle.</summary>
+        private const float OilRoundSeconds = 400f;
+        private static readonly Color OilDrop = new Color(0.04f, 0.035f, 0.03f, 0.95f);
 
         // ------------------------------------------------------------------ strikes
 

@@ -79,13 +79,15 @@ On High the sun casts real shadows: units (animated bodies and prefab models), t
 | What | How |
 | --- | --- |
 | Casting | `BakedCrowd.shader` has a ShadowCaster pass that plays the same baked animation; `TerrainProp.shader` has one with the sway. The unit prefabs were made with shadows off; `UnitViewManager.CastShadows` turns them on for opaque parts (not thrusters or shields). Grey ghosts of the last battle cast none. |
-| Receiving | `SunShadow.hlsl`: nine filtered taps of the shadow map around the point, so edges are soft over about four texels. In shade the ambient dims to 60% and the floor's shine to 25%, or shadows hardly show in the holds, whose ambient light is strong. |
-| Light | Hard shadows from the light (`LightShadows.Hard`); the softness is in our shaders. URP's own soft shadows made the game crash as it closed on Direct3D 12, every run (a driver access violation in `D3D12Core.dll`, after "Effects gallery finished"). Hard shadows with our nine taps also crashed, until the tap count became a run-time switch (`_HBSunShadowMode`, 0 soft, 1 sharp, 2 none); with it, 12 runs out of 12 closed cleanly. Direct3D 11 never crashed. If it comes back, the safe fallbacks are `_HBSunShadowMode` 1, or Direct3D 11 first in the Player settings. |
+| Receiving | `SunShadow.hlsl`: nine filtered taps of the shadow map around the point, so edges are soft over about three texels. In shade the ambient dims to 42% and the floor's shine to 8% (units keep 55% of theirs), or shadows hardly show in the holds, whose ambient light is strong. |
+| Light and graphics API | Hard shadows from the light (`LightShadows.Hard`); the softness is in our shaders (`_HBSunShadowMode`: 0 soft, 1 sharp, 2 none). With the sun's shadows on, the game could crash as it closed on Direct3D 12: a driver access violation in `D3D12Core.dll` after everything was saved. It came and went from build to build (URP's soft shadows, our nine taps, a run-time switch: each looked like the cause, or the cure, for one build). Direct3D 11 never crashed, so the Windows player now uses Direct3D 11 first, Direct3D 12 second (Player settings). The battle benchmark (High, 1600x900): Direct3D 11 1.24 ms per frame, 1% low 3.57 ms; Direct3D 12 1.28 ms, 3.72 ms. |
 | Direction | Every look's light now comes from the side (yaw about 70 degrees from the camera's direction, pitch 50 or less). From behind the camera, as before, every shadow hid behind what cast it. |
 | Range | `BattlefieldView.UpdateShadowRange`: the shadow distance reaches just past the farthest corner of the floor from where the camera is, and the four cascades split what lies between the nearest and farthest corner. The pipeline asset's own values are put back when the battlefield goes. Shadow map 4096 on High (was 2048). |
-| Strength | `TerrainTheme.SunShadow`, 0.85 on every look. The blob under a unit is at 55% on High (`BattlefieldView.HighQualityBlobStrength`). |
+| Strength | `TerrainTheme.SunShadow`, 1 (full) on every look; it was 0.85 in the first test build, and the owner found the shadows too faint. The blob under a unit is at 55% on High (`BattlefieldView.HighQualityBlobStrength`). |
 
 Large things read well from the game camera (vehicles, flyers, structures); a single infantryman's shadow is small and soft from 150 m.
+
+What flies casts one too (third test build): rockets and missiles, bombs and tank shells get, for each frame, a capsule no camera draws but the sun sees (`EffectKit.ShadowBody`, `ShadowCastingMode.ShadowsOnly`, the black placeholder material): rockets 1.8 x 0.38 m, bombs 1.4 x 0.5 m, shells 1.1 x 0.26 m, up to 2.2 times bigger from far away (`CombatEffectsView.ShadowScale`). One draw each, since the URP Lit materials have no instanced variant in a build. Plasma and other light casts none.
 
 Frame time at the game camera (terrain gallery, paused, High, this PC): 1.0 to 1.2 ms on every look, against 0.8 to 0.9 ms after the lighting pass.
 
@@ -98,15 +100,15 @@ The made-in-code puffs are replaced by real flipbooks: simulations rendered by U
 | Smoke, dust, a big cloud's smoke | `Smoke_8x8` (WispySmoke01) | every smoke puff; a puff plays the 64 frames over its life |
 | Fire, flamethrower | `Fire_8x8` (FireBall01) | licks of fire keep the flipbook's own white core and orange edges; the colour over life only cools them |
 | Plasma fire, a cloud's fire | `FireGrey_8x8` | the same in grey, coloured by the game (light blue for Covenant machines) |
-| Burning wrecks, burning oil | `Flame_16x4` (Flame02) | new `Burn` layer: upright flames, twice as tall as wide |
+| Burning wrecks | `Flame_16x4` (Flame02) | new `Burn` layer: upright flames, twice as tall as wide |
 | Explosions | `Explosion_5x5` (Explosion02) | new `Blast` layer: the heart of every orange fireball, from the flash to dark smoke, played once |
 
-Oil: a vehicle that runs on fuel (not a Covenant machine) spills a pool of black oil with a faint rainbow sheen (new `Oil` layer, a texture made in code), out to one side of the wreck, 4 times its radius plus 2.5 m across, for 45 s (70 s for a titan). The pool burns for the first half of the wreck's fire, and the wreck's smoke is black.
+Oil (third test build): the owner asked for no oil out of destroyed vehicles, so wrecks burn with flames and black smoke only. The **Oil Zone** spell (what "oil" meant) now lies on the ground as real oil: when it lands, dark drops splash down over its 45 x 8 m strip and overlapping glossy black pools with a faint rainbow sheen spread over it in a second or two (`SpellEffects.OilSpill`, the `Oil Slick` layer), and stay for as long as the spell lasts (the round). Before, it was dark smoke drifting down over the strip. The effects gallery has it (`-galleryOnly s_OilZone`).
 
 | | Before | After |
 | --- | --- | --- |
 | Explosion (Scorpion, 0.4 s) | `effects_explosion_before.png` | `effects_explosion_after.png` |
-| Burning wreck (Warthog, 3.5 s) | `effects_wreck_before.png` | `effects_wreck_oil_after.png` |
+| Burning wreck (Warthog, 3.5 s) | `effects_wreck_before.png` | `effects_wreck_oil_after.png` (second test build: the oil pool is gone since) |
 | Flamethrower | `effects_flamethrower_before.png` | `effects_flamethrower_after.png` |
 | Shadows from the game camera | (none) | `shadows_unsc_units.png`, `shadows_unsc_wide.png` |
 
