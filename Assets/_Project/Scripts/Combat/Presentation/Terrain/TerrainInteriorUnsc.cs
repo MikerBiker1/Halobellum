@@ -73,8 +73,8 @@ namespace Halobellum.Presentation
                 // Strips, deck lights and lit doors go past white and bloom.
                 GlowCore = 1.2f,
                 PropGlow = 3f,
-                // Polished deck plates mirror the yards and their lights faintly.
-                Mirror = 0.1f,
+                // No mirror (1.0.1): the yard walls and lights mirrored under the deck read as seeing through the floor.
+                Mirror = 0f,
             },
             Layout = new UnscInstallationLayout(),
         };

@@ -16,7 +16,7 @@ The owner approved "#4 better lighting": the battlefields should look more reali
 
 | Look | Grade | Glow | Mirror |
 | --- | --- | --- | --- |
-| UNSC Installation | Cool and clean: white balance -5, steel-blue darks, contrast 10 (was 6), saturation -2. Lights stay white. | Strips, deck lights and lit doors bloom (core x2.2, props 3.0), cool white bloom. | 0.1, faint on the polished plates. |
+| UNSC Installation | Cool and clean: white balance -5, steel-blue darks, contrast 10 (was 6), saturation -2. Lights stay white. | Strips, deck lights and lit doors bloom (core x2.2, props 3.0), cool white bloom. | None since 1.0.1 (D195): the yard walls and lights mirrored under the deck read as seeing through the floor. |
 | Covenant Warship | Lavender and indigo: tint +6 (magenta), indigo darks, lavender lights, contrast 14 (was 8), saturation +6, exposure -0.15 so the deck isn't milky. | Energy lines, slits, orbs and lift columns bloom (core x2.6, props 3.2), lavender bloom. | 0.35. The ribs, pillars and slits show on the deck around the field. |
 | Flood on a UNSC hull | Murky and warm-sick: white balance +7, tint -8 (greener), red-brown darks, sickly yellow lights, contrast 14, saturation -6, exposure -0.1, vignette 0.35. | Pod cores, fungus and the dying lights bloom (core x2.5, props 3.0), yellowish bloom. | None (the deck is mostly flesh). |
 | Flood on a Covenant hull | As above. | As above. | 0.1, on the polished hull. |
@@ -128,5 +128,5 @@ The cargo containers in the UNSC hold had paint fighting through paint as the ca
 
 - The mirror doesn't show units, only what stands around the field and its lights. Mirroring units would need a second draw of every body.
 - No Medium quality level. If one is added, `BattlefieldLighting.IsHighQuality` treats any level but Low as High, and it needs a pipeline asset with `PC_BattleRenderer` in its list to get SSAO.
-- The UNSC look's change is the mildest of the four, as asked ("cool, clean, slight contrast"). If the owner wants more, the next things to raise are `Contrast`, `GlowCore` and `Mirror` in `TerrainInteriorUnsc.cs`.
+- The UNSC look's change is the mildest of the four, as asked ("cool, clean, slight contrast"). If the owner wants more, the next things to raise are `Contrast` and `GlowCore` in `TerrainInteriorUnsc.cs`.
 - Not measured on a weaker graphics card.

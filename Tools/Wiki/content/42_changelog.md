@@ -8,6 +8,11 @@ blurb: What changed in each version of the game, newest first.
 
 Every version since version numbers began (0.378.0). The first number is the owner's, the second goes up for a substantial change and the third for a small one. The D numbers point to the full entries in the project's decision log.
 
+## 1.0.1 · 2026-11-26
+- **UNSC floor:** the UNSC hold's deck no longer mirrors the yard walls and their lights, which looked like seeing through the floor. The Covenant warship keeps its polished floor. (D195)
+- **Warthog:** a new tech, **Nitrous Injection** (100): the Warthog moves 25% faster. (D196)
+- **Absorption Module:** no longer gives 30% more health, and heals for 75% of the damage dealt instead of 90%. (D197)
+
 ## 1.0.0 · 2026-11-25
 Version 1.0.
 - **Lighting:** each battlefield look has its own colour grade and mood: the UNSC hold cool and clean, the Covenant warship richer violet with a faint mirror in its polished floor, the Flood ships warm and sick. The bright cores of lights glow (bloom), and soft contact shadows sit where things touch. (D190)
